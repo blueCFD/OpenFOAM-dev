@@ -11,3 +11,6 @@ EXE_LIBS = \
     -lincompressibleTransportModels \
     -lfiniteVolume \
     -lgenericPatchFields
+
+EXE_LIBS += \
+    -lincompressibleTurbulenceModel

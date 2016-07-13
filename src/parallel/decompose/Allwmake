@@ -1,6 +1,6 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-makeType=${1:-libso}
+allwmakeOptions='-allow-lib makeType' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 
 # get SCOTCH_VERSION, SCOTCH_ARCH_PATH
 if settings=`$WM_PROJECT_DIR/bin/foamEtcFile config/scotch.sh`
@@ -25,9 +25,9 @@ wmakeMpiLib()
     for libName
     do
     (
-        WM_OPTIONS="$WM_OPTIONS$WM_MPLIB"
-        whichmpi="$libName/Make/$WM_OPTIONS/using:$FOAM_MPI"
-        whichscotch="$libName/Make/$WM_OPTIONS/using:$SCOTCH_VERSION"
+        export WM_OPTIONS_LOCAL="$WM_OPTIONS$WM_MPLIB"
+        whichmpi="$libName/Make/$WM_OPTIONS_LOCAL/using:$FOAM_MPI"
+        whichscotch="$libName/Make/$WM_OPTIONS_LOCAL/using:$SCOTCH_VERSION"
         [ -e "$whichmpi" -a -e "$whichscotch" ] || wclean $libName
         echo "wmake $makeType $libName"
         wmake $makeType $libName
@@ -40,6 +40,14 @@ wmakeMpiLib()
 set -x
 
 wmakeLnInclude decompositionMethods
+
+if [ -n "$WM_MPLIB" ]; then
+
+#this is to guarantee that scotchDecomp is built with the correct headers
+if [ -e "scotchDecomp/scotchDecomp.dep" ]; then
+  rm scotchDecomp/scotchDecomp.dep
+fi
+
 
 if [ -n "$SCOTCH_ARCH_PATH" ]
 then
@@ -62,6 +70,7 @@ else
     echo
 fi
 
+fi
 
 # Try and build metisDecomp (has own logic)
 (cd metisDecomp && ./Allwmake $makeType)

@@ -2,7 +2,7 @@
 cd ${0%/*} || exit 1    # run from this directory
 set -x
 
-if [ -n "$CGAL_ARCH_PATH" ]
+if [ -n "$CGAL_ARCH_PATH" -a -d "$CGAL_ARCH_PATH" ] || [ "$CGAL_ARCH_PATH" = "system" ]
 then
     wmake libso conformalVoronoiMesh
     wmake

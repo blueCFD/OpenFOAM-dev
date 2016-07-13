@@ -10,7 +10,9 @@ application=`getApplication`
 # This case uses the #codeStream which is disabled by default. Enable for
 # just this case.
 MAIN_CONTROL_DICT=`foamEtcFile controlDict`
-if [ -f "$MAIN_CONTROL_DICT" ]
+ALREADY_ALLOWS_SO=$(grep "allowSystemOperations" $MAIN_CONTROL_DICT | \
+                    sed -e 's=^.*allowSystemOperations[ \t]*\([0-9]\);=\1=g')
+if [ -f "$MAIN_CONTROL_DICT" -a "x$ALREADY_ALLOWS_SO" = "x0" ]
 then
     echo "Modifying ${MAIN_CONTROL_DICT} to enable allowSystemOperations"
 

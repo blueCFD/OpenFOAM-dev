@@ -20,3 +20,10 @@ EXE_LIBS = \
     -lmeshTools \
     -lfvOptions \
     -lsampling
+
+EXE_LIBS += \
+    -limmiscibleIncompressibleTwoPhaseMixture \
+    -ltwoPhaseMixture \
+    -lincompressibleTransportModels \
+    -linterfaceProperties \
+    -ltwoPhaseProperties

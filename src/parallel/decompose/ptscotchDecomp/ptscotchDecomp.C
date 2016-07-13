@@ -5,6 +5,10 @@
     \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2011 blueCAPE: Changed 'long()' casts to 'reinterpret_cast<long long>()'.
+                Avoid defining 'GNU_SOURCE' for MinGW builds.
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -110,6 +114,12 @@ License
     - %r gets replaced by current processor rank
     - decompose into 2 domains
 
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
 \*---------------------------------------------------------------------------*/
 
 #include "ptscotchDecomp.H"
@@ -126,10 +136,11 @@ extern "C"
 #include "ptscotch.h"
 }
 
+#include "longLong.H"
 
 // Hack: scotch generates floating point errors so need to switch of error
 //       trapping!
-#ifdef __GLIBC__
+#if defined(__GLIBC__) && (!defined(WIN32) && !defined(WIN64))
 #   ifndef _GNU_SOURCE
 #       define _GNU_SOURCE
 #   endif
@@ -566,10 +577,10 @@ Foam::label Foam::ptscotchDecomp::decompose
     {
         Pout<< "SCOTCH_dgraphBuild with:" << nl
             << "xadjSize-1      : " << xadjSize-1 << nl
-            << "xadj            : " << long(xadj) << nl
-            << "velotab         : " << long(velotab.begin()) << nl
+            << "xadj            : " << reinterpret_cast<long long>(xadj) << nl
+            << "velotab         : " << reinterpret_cast<long long>(velotab.begin()) << nl
             << "adjncySize      : " << adjncySize << nl
-            << "adjncy          : " << long(adjncy) << nl
+            << "adjncy          : " << reinterpret_cast<long long>(adjncy) << nl
             << endl;
     }
 

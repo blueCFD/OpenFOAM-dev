@@ -4,6 +4,8 @@ EXE_NDEBUG = -DNDEBUG
 
 include $(GENERAL_RULES)/CGAL
 
+#if ! (defined( WIN32 ) || defined( WIN64 ))
+
 EXE_INC = \
     ${EXE_FROUNDING_MATH} \
     ${EXE_NDEBUG} \
@@ -40,3 +42,45 @@ EXE_LIBS = \
     -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp \
     -lsampling \
     -lfileFormats
+
+#else
+
+EXE_INC = \
+    ${EXE_FROUNDING_MATH} \
+    ${EXE_NDEBUG} \
+    ${CGAL_INC} \
+    ${c++CGALWARN} \
+    -I$(FOAM_APP)/utilities/mesh/generation/extrude2DMesh/extrude2DMesh/lnInclude \
+    -IconformalVoronoi2DMesh/lnInclude \
+    -I$(FOAM_APP)/utilities/mesh/generation/foamyHexMesh/conformalVoronoiMesh/lnInclude \
+    -I$(LIB_SRC)/parallel/decompose/decompositionMethods/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
+    -I$(LIB_SRC)/edgeMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/mesh/extrudeModel/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/triSurface/lnInclude \
+    -I$(LIB_SRC)/fileFormats/lnInclude \
+    -I$(LIB_SRC)/mesh/autoMesh/lnInclude \
+
+EXE_LIBS = \
+    $(CGAL_LIBS) \
+    -lgmp \
+    -lextrude2DMesh \
+    -lextrudeModel \
+    -lcv2DMesh \
+    -lconformalVoronoiMesh \
+    -lmeshTools \
+    -lsurfMesh \
+    -ledgeMesh \
+    -ltriSurface \
+    -ldynamicMesh \
+    -ldecompositionMethods \
+    -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp \
+    -lsampling \
+    -lfileFormats \
+    -lboost_thread-mt
+
+#endif

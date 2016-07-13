@@ -13,3 +13,7 @@ LIB_LIBS = \
     -lcompressibleTwoPhaseSystem \
     -lfluidThermophysicalModels \
     -lspecie
+
+LIB_LIBS += \
+    -lfiniteVolume \
+    -lmeshTools

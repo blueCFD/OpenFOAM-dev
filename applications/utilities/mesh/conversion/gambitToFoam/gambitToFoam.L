@@ -5,6 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -20,6 +22,16 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - Always open the files in binary mode, because of how things work on 
+        Windows.
 
 Application
     gambitToFoam
@@ -80,7 +92,7 @@ label nValuesForPatchFaces = 0;
 // Dummy yywrap to keep yylex happy at compile time.
 // It is called by yylex but is not used as the mechanism to change file.
 // See <<EOF>>
-#if YY_FLEX_SUBMINOR_VERSION < 34
+#if YY_FLEX_MINOR_VERSION < 6 && YY_FLEX_SUBMINOR_VERSION < 34
 extern "C" int yywrap()
 #else
 int yyFlexLexer::yywrap()
@@ -647,7 +659,11 @@ int main(int argc, char *argv[])
 #   include "createTime.H"
 
     const fileName gambitFile = args[1];
-    ifstream gambitStream(gambitFile.c_str());
+
+    // Use binary mode in case we read binary.
+    // Causes windows reading to fail if we don't.
+    ifstream gambitStream(gambitFile.c_str(),
+                          ios_base::in|ios_base::binary);
 
     if (!gambitStream)
     {

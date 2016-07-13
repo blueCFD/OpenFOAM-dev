@@ -1,11 +1,11 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-makeType=${1:-libso}
+allwmakeOptions='-allow-lib makeType' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 set -x
 
 wmake ${1:-libo} postCalc
 wmake $makeType foamCalcFunctions
 
-functionObjects/Allwmake $*
+functionObjects/Allwmake $OriginalOptions
 
 # ----------------------------------------------------------------- end-of-file

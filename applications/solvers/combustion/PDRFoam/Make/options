@@ -4,6 +4,7 @@ EXE_INC = \
     -IXiModels/XiGModels/XiGModel \
     -IPDRModels/dragModels/PDRDragModel \
     -IlaminarFlameSpeed/SCOPE \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/engine/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
@@ -11,7 +12,6 @@ EXE_INC = \
     -I$(LIB_SRC)/turbulenceModels/compressible/RAS/lnInclude \
     -I$(LIB_SRC)/turbulenceModels \
     -I$(LIB_SRC)/thermophysicalModels/laminarFlameSpeed/lnInclude \
-    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
     -I$(LIB_SRC)/dynamicMesh/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \

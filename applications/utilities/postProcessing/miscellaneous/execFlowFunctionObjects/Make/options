@@ -21,3 +21,7 @@ EXE_LIBS = \
     -lmeshTools \
     -lsampling \
     -lgenericPatchFields
+
+EXE_LIBS += \
+    -lincompressibleTurbulenceModel \
+    -lcompressibleTurbulenceModel

@@ -17,3 +17,6 @@ EXE_LIBS = \
     -lsampling \
     -lmeshTools \
     -lfvOptions
+
+EXE_LIBS += \
+    -lcompressibleTurbulenceModel

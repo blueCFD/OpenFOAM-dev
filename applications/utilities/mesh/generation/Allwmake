@@ -1,5 +1,6 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 set -x
 
 wmake all blockMesh
@@ -7,12 +8,8 @@ wmake all extrude
 wmake all extrude2DMesh
 wmake all snappyHexMesh
 
-if [ -n "$CGAL_ARCH_PATH" ]
-then
-    wmake libso foamyHexMesh/conformalVoronoiMesh
-    wmake all foamyHexMesh
-    wmake all foamyQuadMesh
-fi
+wmake all foamyHexMesh
+wmake all foamyQuadMesh
 
 
 # ----------------------------------------------------------------- end-of-file

@@ -1,0 +1,20 @@
+CPP        = cpp -traditional-cpp $(GFLAGS)
+LD         = $(WM_COMPILER_ARCH)-ld
+RANLIB     = $(WM_COMPILER_ARCH)-ranlib
+AR         = $(WM_COMPILER_ARCH)-ar
+
+PROJECT_LIBS = -l$(WM_PROJECT) -L$(FOAM_LIBBIN)/$(FOAM_MPI) -lPstream
+
+include $(GENERAL_RULES)/standard
+include $(GENERAL_RULES)/rc
+
+include $(RULES)/c
+include $(RULES)/c++
+
+SO      = dll
+EXE_EXT = .exe
+
+# Ensure we know what OS we are compiling for
+# during MakefileFiles and MakefileOptions
+GFLAGS  += -DWIN32 -DLITTLE_ENDIAN
+

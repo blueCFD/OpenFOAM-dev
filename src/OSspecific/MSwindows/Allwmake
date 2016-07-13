@@ -1,0 +1,9 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+unset COMP_FLAGS LINK_FLAGS
+
+# make static library, instead of object library
+wmake lib
+
+# ----------------------------------------------------------------- end-of-file

@@ -8,3 +8,6 @@ EXE_LIBS = \
     -ldynamicMesh \
     -lfiniteVolume \
     -lcompressibleRASModels
+
+EXE_LIBS += \
+    -lcompressibleTurbulenceModel

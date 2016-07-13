@@ -1,0 +1,144 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# =========                 |
+# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+#  \\    /   O peration     |
+#   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+#    \\/     M anipulation  |
+#-------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.4 and 3.0
+#------------------------------------------------------------------------------
+# License
+#     This file is a derivative work of OpenFOAM.
+#
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added the ability to build localized builds for each MPI toolbox.
+#        - Added ability to build the resource files for embedding into the
+#          binaries, therefore allowing us to add version information to the
+#          binaries for Windows to see.
+#
+# Script
+#     makeVersionResourceFile
+#
+# Description
+#     Constructs the version resource file.
+#
+#------------------------------------------------------------------------------
+
+[ -z "$WM_OPTIONS_LOCAL" ] && WM_OPTIONS_LOCAL=$WM_OPTIONS
+
+[ -d "$WM_OPTIONS_LOCAL" ] || {
+    echo "The '$WM_OPTIONS_LOCAL' directory does not exist, exiting" 1>&2
+    exit 1
+}
+
+# change to the $WM_OPTIONS directory
+cd "$WM_OPTIONS_LOCAL" 2>/dev/null || {
+    echo "Could not change to directory '$WM_OPTIONS_LOCAL'" 1>&2
+    exit 1
+}
+
+# special preparations for MinGW builds
+TIS_MinGW=0
+if [ -e "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" ]; then
+    TIS_MinGW=1
+    cp "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" tmpver.rc
+fi
+
+if [ $TIS_MinGW -eq 1 ]; then
+    #Extract the binary name
+    MGW_EXENAME=`grep -e "^EXE =" files`
+    MGW_LIBNAME=`grep -e "^LIB =" files`
+    MGW_FINALNAME="NONAME"
+
+    if [ -n "$MGW_EXENAME" ]; then
+        MGW_FINALNAME=`echo $MGW_EXENAME | sed -e 's=.*/=='`.exe
+    fi
+
+    if [ -n "$MGW_LIBNAME" ]; then
+        MGW_FINALNAME=`echo $MGW_LIBNAME | sed -e 's=.*/=='`.dll
+    fi
+
+    #get current OpenFOAM version
+    MGW_OFversion=`wmakePrintBuild -update`
+
+    #apply values to template
+    sed -e 's=2\.0\.\0\.0='$MGW_OFversion'=g' \
+        -e 's=tmpintname='$MGW_FINALNAME'=' \
+        -e 's=tmporigname='$MGW_FINALNAME'=' \
+        tmpver.rc > version_of_build.rc
+
+    #clean up
+    unset MGW_OFversion MGW_EXENAME MGW_LIBNAME MGW_FINALNAME
+    rm tmpver.rc
+fi
+
+# Plug in the version resource file for being compiled along
+if [ $TIS_MinGW -eq 1 ]; then
+    echo "Make/$WM_OPTIONS_LOCAL/version_of_build.rc" > files.$$
+fi
+
+# update sourceFiles
+# ~~~~~~~~~~~~~~~~
+sed -i -e '$s/$/\\/' sourceFiles
+
+cat files.$$ >> sourceFiles
+
+
+# update objectFiles
+# ~~~~~~~~~~~~~~~~
+sed -i -e '$s/$/\\/' objectFiles
+
+sed -e 's%.*/%%'               \
+    -e 's%^%$(OBJECTS_DIR)/%'  \
+    -e 's%\.[a-zA-Z]*$%\.o%'   \
+    files.$$ >> objectFiles
+
+
+# update localObjectFiles
+# ~~~~~~~~~~~~~~~~~~~~~
+sed -i -e '$s/$/\\/' localObjectFiles
+
+sed -e 's%.*/%%'               \
+    -e 's%\.[a-zA-Z]*$%\.o%'   \
+    files.$$ >> localObjectFiles
+
+
+# update dependencyFiles
+# ~~~~~~~~~~~~~~~~~~~~
+sed -i -e '$s/$/\\/' dependencyFiles
+
+sed 's/\.[a-zA-Z]*$/\.dep/' \
+     files.$$ >> dependencyFiles
+
+
+# update includeDeps
+# ~~~~~~~~~~~~~~~~
+sed -e 's/\.[a-zA-Z]*$/.dep/'   \
+    -e 's/^/include /'          \
+    files.$$ >> includeDeps
+
+rm files.$$
+
+#------------------------------------------------------------------------------

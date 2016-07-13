@@ -5,6 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -20,6 +22,16 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - Always open the files in binary mode, because of how things work on 
+        Windows.
 
 \*---------------------------------------------------------------------------*/
 
@@ -45,7 +57,10 @@ void writePatch
     const fileName& fileName
 )
 {
-    std::ofstream pStream(fileName.c_str());
+    // Use binary mode in case we write binary.
+    // Causes windows reading to fail if we don't
+    std::ofstream pStream(fileName.c_str(), 
+                       ios_base::out|ios_base::binary);
 
     pStream
         << "# vtk DataFile Version 2.0" << std::endl

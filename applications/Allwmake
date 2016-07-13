@@ -1,5 +1,6 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 
 wmakeCheckPwd "$WM_PROJECT_DIR/applications" || {
     echo "Error: Current directory is not \$WM_PROJECT_DIR/applications"
@@ -18,5 +19,23 @@ set -x
 
 wmake all utilities $*
 wmake all solvers $*
+
+if isMinGW; then
+
+  #ccm26ToFoam - use a containment shell since it depends on license.
+  ( set +e; wmake all utilities/mesh/conversion/Optional ; exit 0 )
+
+  #Test-parallel  
+  wmake all test/parallel
+
+  wmakeVerifyExeDependencies utilities || wmake all utilities
+  wmakeVerifyExeDependencies solvers || wmake all solvers
+  
+  #ccm26ToFoam - use a containment shell since it depends on license.
+  ( set +e; wmake all utilities/mesh/conversion/Optional ; exit 0 )
+
+  #Test-parallel
+  wmakeVerifyExeDependencies test/parallel || wmake all test/parallel
+fi
 
 # ----------------------------------------------------------------- end-of-file

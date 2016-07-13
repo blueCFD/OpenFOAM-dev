@@ -1,10 +1,10 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-makeType=${1:-libso}
+allwmakeOptions='-allow-lib makeType' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 set -x
 
-decompose/Allwmake $*
-reconstruct/Allwmake $*
+decompose/Allwmake $OriginalOptions
+reconstruct/Allwmake $OriginalOptions
 wmake $makeType distributed
 
 

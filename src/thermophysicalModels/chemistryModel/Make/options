@@ -14,3 +14,7 @@ LIB_LIBS = \
     -lspecie \
     -lthermophysicalFunctions \
     -lODE
+
+LIB_LIBS += \
+    -lfiniteVolume \
+    -lcompressibleTurbulenceModel

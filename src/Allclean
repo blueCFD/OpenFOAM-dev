@@ -1,0 +1,54 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# License
+#
+#     Copyright (C) 2009-2013 blueCAPE Lda
+#
+#     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     This file is a derivative work of OpenFOAM.
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     Allclean
+#
+# Description
+#     Try to do a proper clean up of the build folders and lnInclude folders.
+#
+#------------------------------------------------------------------------------
+
+cd ${0%/*} || exit 1    # run from this directory
+
+echo "Removing lnInclude folders..."
+find * -type d | grep lnInclude$ | \
+while read file
+do
+  rm -rf $file
+done
+
+echo "Removing $WM_OPTIONS folders..."
+find * -type d | grep Make/$WM_OPTIONS | \
+while read file
+do
+  rm -rf $file
+done
+
+echo "Removing dependency files"
+find . -name "*.dep" -type f | \
+while read file
+do
+  rm -f $file
+done

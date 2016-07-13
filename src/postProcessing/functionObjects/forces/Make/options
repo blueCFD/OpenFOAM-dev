@@ -18,3 +18,7 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lfileFormats
+
+LIB_LIBS += \
+    -lincompressibleTurbulenceModel \
+    -lcompressibleTurbulenceModel

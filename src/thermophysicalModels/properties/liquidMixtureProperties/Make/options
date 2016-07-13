@@ -9,3 +9,6 @@ LIB_LIBS = \
     -lliquidProperties \
     -lthermophysicalFunctions
 
+LIB_LIBS += \
+    -lfluidThermophysicalModels \
+    -lspecie

@@ -46,3 +46,6 @@ LIB_LIBS = \
     -lsurfaceFilmModels \
     -ldynamicFvMesh \
     -lsampling
+
+LIB_LIBS += \
+    -lincompressibleTurbulenceModel

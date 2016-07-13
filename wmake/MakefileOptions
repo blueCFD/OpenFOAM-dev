@@ -5,8 +5,10 @@
 #   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +22,16 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added the ability to build localized builds for each MPI toolbox.
 #
 # File
 #     MakefileOptions
@@ -40,7 +52,8 @@ include $(RULES)/general
 # declare names of make system control files derived from file 'options'
 #------------------------------------------------------------------------------
 
-OPTIONS = $(WM_OPTIONS)/options
+WM_OPTIONS_LOCAL  ?= $(WM_OPTIONS)
+OPTIONS = $(WM_OPTIONS_LOCAL)/options
 
 #------------------------------------------------------------------------------
 # Declare dependency of all make system files on OPTIONS
@@ -48,7 +61,7 @@ OPTIONS = $(WM_OPTIONS)/options
 #------------------------------------------------------------------------------
 
 $(OPTIONS) : options
-	@$(WM_SCRIPTS)/makeDir $(WM_OPTIONS) ; $(CPP) $(GFLAGS) options | sed -e 's@   *@ @g' > $(OPTIONS)
+	@$(WM_SCRIPTS)/makeDir $(WM_OPTIONS_LOCAL) ; $(CPP) $(GFLAGS) options | sed -e 's@   *@ @g' > $(OPTIONS)
 
 
 #------------------------------------------------------------------------------

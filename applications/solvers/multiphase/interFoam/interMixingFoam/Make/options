@@ -5,7 +5,6 @@ EXE_INC = \
     -IincompressibleThreePhaseMixture \
     -IthreePhaseInterfaceProperties \
     -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
-    -I$(LIB_SRC)/transportModels/twoPhaseProperties/alphaContactAngle/alphaContactAngle \
     -I$(LIB_SRC)/turbulenceModels/incompressible/turbulenceModel \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/transportModels \
@@ -24,3 +23,6 @@ EXE_LIBS = \
     -lmeshTools \
     -lfvOptions \
     -lsampling
+
+EXE_LIBS += \
+    -linterfaceProperties

@@ -5,6 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -20,6 +22,16 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - Always open the files in binary mode, because of how things work on 
+        Windows.
 
 \*---------------------------------------------------------------------------*/
 
@@ -778,7 +790,10 @@ void Foam::chemkinReader::read
 {
     if (thermoFileName != fileName::null)
     {
-        std::ifstream thermoStream(thermoFileName.c_str());
+        // Use binary mode in case we read binary.
+        // Causes windows reading to fail if we don't.
+        std::ifstream thermoStream(thermoFileName.c_str(), 
+                                   ios_base::in|ios_base::binary);
 
         if (!thermoStream)
         {
@@ -801,8 +816,11 @@ void Foam::chemkinReader::read
         lineNo_ = 1;
     }
 
-    std::ifstream CHEMKINStream(CHEMKINFileName.c_str());
-
+    // Use binary mode in case we read binary.
+    // Causes windows reading to fail if we don't.
+    std::ifstream CHEMKINStream(CHEMKINFileName.c_str(), 
+                               ios_base::in|ios_base::binary);
+    
     if (!CHEMKINStream)
     {
         FatalErrorIn

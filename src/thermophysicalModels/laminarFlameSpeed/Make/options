@@ -6,3 +6,8 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lfiniteVolume
+
+LIB_LIBS += \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lreactionThermophysicalModels

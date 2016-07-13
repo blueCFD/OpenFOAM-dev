@@ -5,8 +5,13 @@
     \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2011 Symscape: Changed the 'Hash<long>' to 'Hash<HashType>', where 'HashType'
+                is a type definition based on 'intptr_t'.
+ 2011 blueCAPE: Definition of 'HashType' now depends on the macro WIN64.
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -20,6 +25,12 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
 
 Class
     Foam::Hash
@@ -210,17 +221,23 @@ class Hash<void*>
 {
 public:
 
+#ifdef WIN64
+    typedef intptr_t HashType;
+#else
+    typedef long HashType;
+#endif
+
     Hash()
     {}
 
     unsigned operator()(const void* const& p, unsigned seed) const
     {
-        return Hash<long>()(long(p), seed);
+        return Hash<HashType>()(HashType(p), seed);
     }
 
     unsigned operator()(const void* const& p) const
     {
-        return Hash<long>()(long(p));
+        return Hash<HashType>()(HashType(p));
     }
 
 };

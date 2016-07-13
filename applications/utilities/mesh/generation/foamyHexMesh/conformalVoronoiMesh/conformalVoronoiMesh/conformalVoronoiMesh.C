@@ -1793,7 +1793,7 @@ void Foam::conformalVoronoiMesh::checkCoPlanarCells() const
     }
 
     Pout<< "There are " << badCells << " bad cells out of "
-        << number_of_finite_cells() << endl;
+        << label(number_of_finite_cells()) << endl;
 
 
     label nNonGabriel = 0;
@@ -1811,7 +1811,7 @@ void Foam::conformalVoronoiMesh::checkCoPlanarCells() const
     }
 
     Pout<< "There are " << nNonGabriel << " non-Gabriel faces out of "
-        << number_of_finite_facets() << endl;
+        << label(number_of_finite_facets()) << endl;
 }
 
 

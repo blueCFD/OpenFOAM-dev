@@ -21,5 +21,8 @@ EXE_LIBS = \
     -lsampling \
     -lfvOptions \
     -lincompressibleTransportModels \
+
+EXE_LIBS += \
+    -ltwoPhaseMixture \
     -lturbulenceModels \
     -lcompressibleTurbulenceModels

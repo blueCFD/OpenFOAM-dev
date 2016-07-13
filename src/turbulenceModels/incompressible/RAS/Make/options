@@ -8,3 +8,6 @@ LIB_LIBS = \
     -lincompressibleTurbulenceModel \
     -lfiniteVolume \
     -lmeshTools
+
+LIB_LIBS += \
+    -lincompressibleTransportModels

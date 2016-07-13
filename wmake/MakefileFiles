@@ -5,8 +5,10 @@
 #   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -21,6 +23,16 @@
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added the ability to build localized builds for each MPI toolbox.
+#
 # File
 #     MakefileFiles
 #
@@ -32,7 +44,8 @@
 GENERAL_RULES = $(WM_DIR)/rules/General
 RULES         = $(WM_DIR)/rules/$(WM_ARCH)$(WM_COMPILER)
 WM_SCRIPTS    = $(WM_DIR)/scripts
-OBJECTS_DIR   = $(WM_OPTIONS)
+WM_OPTIONS_LOCAL  ?= $(WM_OPTIONS)
+OBJECTS_DIR   = $(WM_OPTIONS_LOCAL)
 FFLAGS        =
 
 include $(GENERAL_RULES)/general
@@ -43,12 +56,14 @@ include $(OBJECTS_DIR)/options
 # declare names of make system control files derived from file 'files'
 #------------------------------------------------------------------------------
 
-FILES   = $(WM_OPTIONS)/files
+FILES   = $(OBJECTS_DIR)/files
 
-SFILES  = $(WM_OPTIONS)/sourceFiles
-OFILES  = $(WM_OPTIONS)/objectFiles
-DFILES  = $(WM_OPTIONS)/dependencyFiles
-IFILES  = $(WM_OPTIONS)/includeDeps
+SFILES  = $(OBJECTS_DIR)/sourceFiles
+OFILES  = $(OBJECTS_DIR)/objectFiles
+DFILES  = $(OBJECTS_DIR)/dependencyFiles
+IFILES  = $(OBJECTS_DIR)/includeDeps
+
+VERSIONFILE = $(OBJECTS_DIR)/version_of_build.rc
 
 #------------------------------------------------------------------------------
 # Declare dependecy of all make system files on FILES
@@ -56,6 +71,8 @@ IFILES  = $(WM_OPTIONS)/includeDeps
 #------------------------------------------------------------------------------
 
 allFiles : $(FILES) $(SFILES) $(OFILES) $(DFILES) $(IFILES)
+
+versioning : $(VERSIONFILE)
 
 $(FILES) : files
 	@$(CPP) $(GFLAGS) $(FFLAGS) files | sed -e 's@   *@ @g' > $(FILES)
@@ -71,6 +88,8 @@ $(DFILES): files
 
 $(IFILES): files
 	@$(WM_SCRIPTS)/makeDerivedFiles
-
+	
+$(VERSIONFILE): files
+	@$(WM_SCRIPTS)/makeVersionResourceFile
 
 #------------------------------------------------------------------------------

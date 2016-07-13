@@ -5,8 +5,10 @@
 #   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +22,20 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added the functions _foamAppendPath() and _foamAppendLib(), for 
+#          appending in the PATH's and LD_LIBRARY_PATH's, but only appending
+#          after all of OpenFOAM's own binaries.
+#        - Used these new functions for replacing the default way how the paths
+#          were added to the respective global environment variables.
 #
 # File
 #     config/paraview.sh
@@ -36,6 +52,37 @@
 # clean the PATH
 cleaned=`$WM_PROJECT_DIR/bin/foamCleanPath "$PATH" "$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/cmake- $WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/paraview-"` && PATH="$cleaned"
 
+# prefix to system, i.e. append to OpenFOAM's PATH
+_foamAppendPath()
+{
+    systempath=`echo $PATH | sed -e 's=.*OpenFOAM==' -e 's=:=,,,=' -e 's=.*,,,=='`
+    ofpath=`echo $PATH | sed -e 's=:*'$systempath'=='`
+    while [ $# -ge 1 ]
+    do
+        ofpath=$ofpath:$1
+        shift
+    done
+
+    export PATH=$ofpath:$systempath
+    unset ofpath systempath
+}
+
+# prefix to system, i.e. append to OpenFOAM's LD_LIBRARY_PATH
+_foamAppendLib()
+{
+    systempath=`echo $LD_LIBRARY_PATH | sed -e 's=.*OpenFOAM==' -e 's=:=,,,=' -e 's=.*,,,=='`
+    ofpath=`echo $LD_LIBRARY_PATH | sed -e 's=:*'$systempath'=='`
+    while [ $# -ge 1 ]
+    do
+        ofpath=$ofpath:$1
+        shift
+    done
+
+    export LD_LIBRARY_PATH=$ofpath:$systempath
+    unset ofpath systempath
+}
+
+
 # determine the cmake to be used
 unset CMAKE_HOME
 for cmake in cmake-2.8.12.1 cmake-2.8.8 cmake-2.8.4 cmake-2.8.3 cmake-2.8.1
@@ -44,7 +91,7 @@ do
     if [ -r $cmake ]
     then
         export CMAKE_HOME=$cmake
-        export PATH=$CMAKE_HOME/bin:$PATH
+        _foamAppendPath $CMAKE_HOME/bin
         break
     fi
 done
@@ -116,8 +163,8 @@ then
         ParaView_LIB_DIR=$ParaView_DIR/lib/paraview
     fi
 
-    export PATH=$ParaView_DIR/bin:$PATH
-    export LD_LIBRARY_PATH=$ParaView_LIB_DIR:$LD_LIBRARY_PATH
+    _foamAppendPath $ParaView_DIR/bin
+    _foamAppendLib $ParaView_LIB_DIR
     export PV_PLUGIN_PATH=$FOAM_LIBBIN/paraview-$ParaView_MAJOR
 
     if [ "$FOAM_VERBOSE" -a "$PS1" ]

@@ -59,6 +59,11 @@ class SprayParcel
 :
     public ParcelType
 {
+    // Private data
+
+        //- Size in bytes of the fields
+        static const std::size_t sizeofFields_;
+
 
 public:
 
@@ -172,9 +177,6 @@ protected:
 public:
 
     // Static data members
-
-        //- String representation of properties
-        static string propHeader;
 
         //- Runtime type information
         TypeName("SprayParcel");

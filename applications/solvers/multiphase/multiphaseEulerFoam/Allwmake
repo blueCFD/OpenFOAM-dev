@@ -1,10 +1,50 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 set -x
+
+if ! onWin; then
 
 wmakeLnInclude interfacialModels
 wmake libso multiphaseSystem
 wmake libso interfacialModels
 wmake
+
+else
+
+wmakeLnInclude interfacialModels
+
+set +x
+# Going to ommit the first build loop, as it will give a few errors, but it's
+# the second loop that matters.
+(
+
+  for libitem in $(grep -h "LIB =" */Make/files | sed 's=.*/=='); do
+    if [ ! -e "$FOAM_LIBBIN/${libitem}.a" ]; then
+      cp $FOAM_LIBBIN/libstubLibrary.a $FOAM_LIBBIN/${libitem}.a
+    fi
+  done
+
+  export WM_CONTINUE_ON_ERROR=1
+  set +e
+
+  set -x
+  wmake libso multiphaseSystem
+  wmake libso interfacialModels
+  set +x
+
+  exit 0
+
+) > /dev/null 2>&1
+
+# Now going to do the second and final linking step.
+set -x
+
+wmake libso multiphaseSystem
+wmake libso interfacialModels
+
+wmake
+
+fi
 
 # ----------------------------------------------------------------- end-of-file

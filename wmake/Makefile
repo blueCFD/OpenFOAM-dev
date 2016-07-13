@@ -5,8 +5,10 @@
 #   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +22,20 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Originally based on Sysmcape's patches for OpenFOAM, circa 2009,
+#          which added the ability to build binaries for Windows.
+#        - Further modifications by blueCAPE were made for being able to build
+#          localized builds for each MPI toolbox.
+#        - Added ability to rely on the smart scheduling system.
 #
 # File
 #     Makefile
@@ -57,7 +73,8 @@ WM_SCRIPTS   = $(WM_DIR)/scripts
 
 LIB_SRC            = $(WM_PROJECT_DIR)/src
 LIB_PLATFORMS      = $(WM_PROJECT_DIR)/platforms/$(WM_OPTIONS)/lib
-OBJECTS_DIR        = $(MAKE_DIR)/$(WM_OPTIONS)
+WM_OPTIONS_LOCAL  ?= $(WM_OPTIONS)
+OBJECTS_DIR        = $(MAKE_DIR)/$(WM_OPTIONS_LOCAL)
 CLASSES_DIR        = $(MAKE_DIR)/classes
 
 SYS_INC            =
@@ -92,6 +109,9 @@ LIB             = libNULL
 
 # Shared library extension
 SO              = so
+
+# Executable extension
+EXE_EXT         =
 
 # Project executable
 EXE             = $(WM_PROJECT).out
@@ -145,18 +165,24 @@ LIB_HEADER_DIRS = \
 # define link statements for executables
 #------------------------------------------------------------------------------
 
-$(EXE):  $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(EXE)
+EXECUTABLE  = $(EXE)$(EXE_EXT)
+SEXECUTABLE = $(SEXE)$(EXE_EXT)
+
+$(EXECUTABLE):  $(OBJECTS)
+	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
+	     @$(WM_SCRIPTS)/makeTargetDir $(EXECUTABLE)
 	     $(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
-	     $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(EXE)
+	     $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) $(LINK_LIBS) \
+	     $(GLIBS) -o $(EXECUTABLE)
 
-exe:     $(SEXE)
-	     @echo \'$(SEXE)\' is up to date.
+exe:     $(SEXECUTABLE)
+	     @echo \`$(SEXECUTABLE)\' is up to date.
 
-$(SEXE): $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(SEXE)
+$(SEXECUTABLE): $(OBJECTS)
+	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
+	     @$(WM_SCRIPTS)/makeTargetDir $(SEXECUTABLE)
 	     $(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
-         $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)
+	     $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXECUTABLE)
 
 
 #------------------------------------------------------------------------------
@@ -169,15 +195,18 @@ libso:   $(LIB).$(SO)
 	     @echo \'$(LIB).$(SO)\' is up to date.
 
 $(LIB).$(SO): $(OBJECTS)
+	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
 	     @$(WM_SCRIPTS)/makeTargetDir $(LIB)
 	     @rm -f so_locations
-	     @cd $(OBJECTS_DIR) ; \
-	     $(LINKLIBSO) $(LOCAL_OBJECTS) -L$(LIB_PLATFORMS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
+	     cd $(OBJECTS_DIR) ; \
+	     $(LINKLIBSO) $(LOCAL_OBJECTS) -L$(LIB_PLATFORMS) \
+	     $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 
 lib:     $(LIB).a
 	     @echo \'$(LIB).a\' is up to date.
 
 $(LIB).a: $(OBJECTS)
+	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
 	     @$(WM_SCRIPTS)/makeTargetDir $(LIB)
 	     @rm -f $(LIB).a
 	     $(AR) $(ARFLAGS) $(LIB).a $(OBJECTS)
@@ -187,6 +216,7 @@ libo:    $(LIB).o
 	     @echo \'$(LIB).o\' is up to date.
 
 $(LIB).o: $(OBJECTS)
+	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
 	     @$(WM_SCRIPTS)/makeTargetDir $(LIB)
 	     @rm -f $(LIB).o
 	     $(LD) -r -o $(LIB).o $(OBJECTS)

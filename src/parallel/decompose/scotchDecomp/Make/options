@@ -12,5 +12,12 @@ EXE_INC = \
     -I/usr/include/scotch \
     -I../decompositionMethods/lnInclude
 
+#if defined( WIN32 ) || defined( WIN64 )
+EXE_INC += $(GFLAGS)
+LIB_LIBS = \
+    -L$(SCOTCH_ROOT)/lib -L$(FOAM_EXT_LIBBIN) -lscotch -lscotcherrexit \
+    -ldecompositionMethods
+#else
 LIB_LIBS = \
     -L$(SCOTCH_ROOT)/lib -L$(FOAM_EXT_LIBBIN) -lscotch -lscotcherrexit -lrt
+#endif

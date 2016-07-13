@@ -1,0 +1,16 @@
+.SUFFIXES: .c .h
+
+cWARN        = -Wall
+
+cc          = $(WM_CC) -m$(WM_ARCH_OPTION)
+
+include $(RULES)/c$(WM_COMPILE_OPTION)
+
+cFLAGS      = $(GFLAGS) -I$(WM_COMPILER_DIR)/include $(cWARN) $(cOPT) $(cDBUG) $(LIB_HEADER_DIRS)
+
+ctoo        = $(WM_SCHEDULER) $(cc) $(cFLAGS) -c $$SOURCE -o $@
+
+LINK_LIBS   = $(cDBUG)
+
+LINKLIBSO   = $(cc) $(cFLAGS) -Wl,--output-def,$(LIB).def -Wl,--out-implib,$(LIB).a -Wl,--enable-auto-import -shared
+LINKEXE     = $(cc) $(cFLAGS) -Wl,--enable-auto-import,--force-exe-suffix

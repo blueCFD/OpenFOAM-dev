@@ -24,6 +24,15 @@ refineMeshByCellSet()
    done
 }
 
+#First check if the 2D case has been properly executed
+HADTORUN2D=""
+if [ -z "$(ls ../throttle/[1-9]* 2> /dev/null)" ]; then
+   echo "The 2D case has no results, therefore will have at least run one iteration."
+   HADTORUN2D="yes"
+   ../throttle/Allrun
+   echo "2D case has been executed (did not check for success)."
+fi
+
 cp -r 0.org 0
 
 runApplication blockMesh
@@ -35,5 +44,9 @@ refineMeshByCellSet 1 2 3
 runApplication decomposePar
 runParallel $application 4
 runApplication reconstructPar
+
+if [ -n "$HADTORUN2D" ]; then
+  ../throttle/Allclean
+fi
 
 # ----------------------------------------------------------------- end-of-file

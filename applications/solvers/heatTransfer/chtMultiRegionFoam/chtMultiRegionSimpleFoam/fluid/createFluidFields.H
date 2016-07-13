@@ -1,3 +1,11 @@
+
+// This hack was developped by Symscape, circa 2009 -------
+#if defined( WIN32 ) || defined( WIN64 )
+    // Rename K to k_ to prevent name clashes on Windows with k
+    IOobject::replaceFileName("K", "K_");
+#endif
+// End of hack --------------------------------------------
+
     // Initialise fluid field pointer lists
     PtrList<rhoThermo> thermoFluid(fluidRegions.size());
     PtrList<volScalarField> rhoFluid(fluidRegions.size());

@@ -18,7 +18,7 @@ set -x
 
 wmake $makeType renumberMethods
 
-if [ -n "$BOOST_ARCH_PATH" ]
+if [ -n "$BOOST_ARCH_PATH" -a -d "$BOOST_ARCH_PATH" ] || [ "$BOOST_ARCH_PATH" = "system" ]
 then
     wmake $makeType SloanRenumber
 else
@@ -28,7 +28,7 @@ else
 fi
 
 
-if [ -n "$ZOLTAN_ARCH_PATH" ]
+if [ -n "$ZOLTAN_ARCH_PATH" -a -d "$ZOLTAN_ARCH_PATH" ]
 then
     wmake $makeType zoltanRenumber
 else

@@ -6,8 +6,11 @@
 #   \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
+# 2014-03-10 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -21,6 +24,20 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added the ability to build localized builds for each MPI toolbox.
+#        - Added the ability to generate object files in Prof mode, so that we
+#          can more easily create static applications.
+#        - Also added the option "-k" that was suggested by Michael Wild at
+#           http://www.openfoam.org/mantisbt/view.php?id=256
 #
 # Script
 #     wmake
@@ -64,6 +81,9 @@ USAGE
 
 # normally use "make"
 make="make"
+
+# Use an empty scheduler manager by default
+export WM_SCHEDULER_MANAGER=":"
 
 # parse options
 while [ "$#" -gt 0 ]
@@ -120,7 +140,7 @@ then
     [ $? -eq 0 ] || unset WM_NCOMPPROCS
 fi
 
-if [ "$WM_NCOMPPROCS" ]
+if [ -n "$WM_NCOMPPROCS" ]
 then
     if [ "$WM_NCOMPPROCS" -gt 1 -a ! "$MAKEFLAGS" ]
     then
@@ -169,6 +189,13 @@ then
     fi
 fi
 
+if isMinGW; then
+
+    if [ "$WM_COMPILE_OPTION" = "Prof" -a "$makeOption" = "libso" ]; then
+        makeType="libo"
+    fi
+
+fi
 
 #------------------------------------------------------------------------------
 # Recurse the application directories tree
@@ -178,14 +205,16 @@ if [ "$makeType" = all ]
 then
     if [ -e Allwmake ]
     then
+
         ./Allwmake
         exit $?
+
     elif [ ! -d $MakeDir ]
     then
         # FOAM_APPS=$(find . -maxdepth 1 \( -type d -a ! -name "." -a ! -name Optional -a ! -name Make \)  -printf "%f ")
         # avoid 'find' with '-printf' ... not entirely portable
         FOAM_APPS=$(for d in *; do [ -d "$d" -a "$d" != Optional -a "$d" != Make ] && echo "$d"; done | xargs)
-        $make -k -f $WM_DIR/MakefileApps FOAM_APPS="$FOAM_APPS"
+        $make ${WM_CONTINUE_ON_ERROR:+-k} -f $WM_DIR/MakefileApps FOAM_APPS="$FOAM_APPS"
         exit $?
     fi
 fi
@@ -273,6 +302,14 @@ fi
     unset MAKEFLAGS
     make -s -f $WM_DIR/MakefileOptions
     make -s -f $WM_DIR/MakefileFiles allFiles
+
+    if isMinGW && \
+       [ "$makeType" = "libso" -o "$makeType" = "all" -o \
+         "$makeType" = "dep" -o -z "$makeType" ]
+    then
+        make -s -f $WM_DIR/MakefileFiles versioning
+    fi
+
 )
 
 
@@ -281,7 +318,8 @@ fi
 # was created successfully
 #------------------------------------------------------------------------------
 
-OBJECTS_DIR=$MakeDir/$WM_OPTIONS
+[ -z "$WM_OPTIONS_LOCAL" ] && WM_OPTIONS_LOCAL=$WM_OPTIONS
+OBJECTS_DIR=$MakeDir/$WM_OPTIONS_LOCAL
 
 [ -r $OBJECTS_DIR/objectFiles ] || {
     echo "$Script error: file '$OBJECTS_DIR/objectFiles' could not be created in $PWD" 1>&2

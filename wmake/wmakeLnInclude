@@ -145,6 +145,8 @@ then
     echo "$Script: linking include files to $incDir" 1>&2
 fi
 
+if ! onWin; then
+
 #
 # remove any broken links first (this helps when file locations have moved)
 #
@@ -158,5 +160,34 @@ find .. $findOpt \
     \( -name lnInclude -o -name Make -o -name config -o -name noLink \) -prune \
  -o \( -name '*.[CHh]' -o -name '*.[ch]xx' -o -name '*.[ch]pp' -o -name '*.type' \)  \
  -exec ln $lnOpt {} . \;
+
+else
+
+    #
+    # remove any broken links first (this helps when file locations have moved)
+    #
+    find . -type f | while read possibleBrokenLinks; do
+
+        theItemPath=$(grep "#include" ${possibleBrokenLinks} | head -1 | sed 's=.*"\(.*\)"=\1=')
+        if [ -z "$theItemPath" ] || [ ! -e "$theItemPath" ]; then
+          rm ${possibleBrokenLinks}
+        fi
+
+    done
+
+    #
+    # create links, avoid recreating links unless necessary
+    # things placed in the 'noLink' directory are skipped
+    #
+    find .. $findOpt \
+        \( -name lnInclude -o -name Make -o -name config -o -name noLink \) -prune \
+     -o \( -name '*.[CHh]' -o -name '*.[ch]xx' -o -name '*.[ch]pp' -o -name '*.type' \) | \
+    while read newItemToCreate; do
+    
+      echo "#include \"$newItemToCreate\"" > ${newItemToCreate##*/}
+    
+    done    
+
+fi
 
 #------------------------------------------------------------------------------

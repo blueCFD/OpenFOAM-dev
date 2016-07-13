@@ -5,8 +5,10 @@
 #   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +22,19 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added sourcing of the "*.sh" scripts from the folder
+#          "etc/config.d/".
+#        - Added aliases for the following items:
+#            wmSC, wmMC, wmNONSTOP, wmSTOPON1st, user
 #
 # File
 #     etc/config/aliases.sh
@@ -47,6 +62,18 @@ alias wmUNSET='. $WM_PROJECT_DIR/etc/config/unset.sh'
 alias wmSchedON='export WM_SCHEDULER=$WM_PROJECT_DIR/wmake/wmakeScheduler'
 alias wmSchedOFF='unset WM_SCHEDULER'
 
+# Toggle Multi-Core On/Off
+# Proposed the following bug report: http://www.openfoam.com/mantisbt/view.php?id=211
+#wmSC - single core machine
+#wmMC - multi-core machine
+alias wmSC='unset WM_NCOMPPROCS && echo "Building enabled for a single core"'
+alias wmMC='export WM_NCOMPPROCS=${NUMBER_OF_PROCESSORS:-1}; test -r /proc/cpuinfo && export WM_NCOMPPROCS=$(egrep "^processor" /proc/cpuinfo | wc -l); echo "Building enabled for $WM_NCOMPPROCS cores"'
+
+# Toggle WM_CONTINUE_ON_ERROR on/off
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+alias wmNONSTOP='export WM_CONTINUE_ON_ERROR=1'
+alias wmSTOPON1st='unset WM_CONTINUE_ON_ERROR'
+
 # Change ParaView version
 # ~~~~~~~~~~~~~~~~~~~~~~~
 unset foamPV
@@ -62,6 +89,7 @@ foamPV()
 alias src='cd $FOAM_SRC'
 alias lib='cd $FOAM_LIBBIN'
 alias run='cd $FOAM_RUN'
+alias user='cd ${FOAM_RUN%/*}'
 alias foam='cd $WM_PROJECT_DIR'
 alias foamsrc='cd $FOAM_SRC/$WM_PROJECT'
 alias foamfv='cd $FOAM_SRC/finiteVolume'

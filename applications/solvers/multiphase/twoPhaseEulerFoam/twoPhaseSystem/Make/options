@@ -1,5 +1,4 @@
 EXE_INC = \
-    -I../twoPhaseSystem \
     -I../interfacialModels/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \
@@ -13,3 +12,13 @@ LIB_LIBS = \
     -lincompressibleTransportModels \
     -lfluidThermophysicalModels \
     -lspecie
+
+#if (defined( WIN32 ) || defined( WIN64 ))
+LIB_LIBS += \
+    -lfiniteVolume \
+    -lfvOptions \
+    -lturbulenceModels \
+    -lcompressibleTurbulenceModels \
+    -lcompressibleEulerianInterfacialModels \
+    -lphaseCompressibleTurbulenceModels
+#endif

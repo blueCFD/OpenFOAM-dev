@@ -9,3 +9,10 @@ EXE_INC = \
     -I$(LIB_SRC)/TurbulenceModels/phaseCompressible/lnInclude \
     -I../twoPhaseSystem/lnInclude \
     -I../interfacialModels/lnInclude
+
+LIB_LIBS = \
+    -lfiniteVolume \
+    -lturbulenceModels \
+    -lcompressibleTurbulenceModels \
+    -lcompressibleTwoPhaseSystem \
+    -lcompressibleEulerianInterfacialModels

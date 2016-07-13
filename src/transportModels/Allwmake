@@ -1,11 +1,32 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-makeType=${1:-libso}
+allwmakeOptions='-allow-lib makeType' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 set -x
 
-wmake $makeType twoPhaseMixture
+
+ wmake $makeType twoPhaseMixture
+
+if onWin; then
+
+  #First build them in static form
+  wmake lib twoPhaseProperties
+  wmake lib interfaceProperties
+
+  #Then build libtwoPhaseInterfaceProperties in dynamic
+  rm $FOAM_LIBBIN/libtwoPhaseProperties.*
+  wmake $makeType twoPhaseProperties
+
+  #Then build libinterfaceProperties in dynamic
+  rm $FOAM_LIBBIN/libinterfaceProperties.*
+  wmake $makeType interfaceProperties
+
+else # ! onWin
+
 wmake $makeType interfaceProperties
 wmake $makeType twoPhaseProperties
+
+fi #onWin
+
 wmake $makeType incompressible
 wmake $makeType compressible
 wmake $makeType immiscibleIncompressibleTwoPhaseMixture

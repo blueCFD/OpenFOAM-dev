@@ -12,3 +12,10 @@ LIB_LIBS = \
     -lgenericPatchFields \
     -llagrangian \
     $(PROJECT_LIBS)
+
+#if (defined( WIN64 ))
+
+EXE_INC += \
+    -DWIN32
+
+#endif

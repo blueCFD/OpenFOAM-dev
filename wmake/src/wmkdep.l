@@ -6,8 +6,10 @@
    \\  /     A nd            | Copyright (C) 2011-2013 OpenFOAM Foundation
     \\/      M anipulation   |
 ------------------------------------------------------------------------------
+ 2014-02-23 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -21,6 +23,16 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+       - Derived from the patches for blueCFD-Core 2.2.
+       - Added hack to support 2048 open files.
 
 Application
     wmkdep
@@ -47,6 +59,10 @@ Usage
 #include <sys/types.h>
 #include <dirent.h>
 #include <errno.h>
+
+#if defined(_WIN_HACK_)
+#include <stdio.h>
+#endif
 
 void nextFile(const char* fileName);
 void importFile(const char* fileName);
@@ -157,6 +173,10 @@ int main(int argc, char* argv[])
         fprintf(stderr, "input file not supplied\n");
         exit(1);
     }
+
+#if defined(_WIN_HACK_)
+  _setmaxstdio(2048);
+#endif
 
     sourceFile = strdup(argv[argc-1]);
     fprintf(stderr, "Making dependency list for source file %s\n", sourceFile);
@@ -315,6 +335,7 @@ void nextFile(const char* fileName)
 
     if (!(newyyin = fopen(fileName, "r")))
     {
+
         int d;
         for (d=0; d<nDirectories; d++)
         {

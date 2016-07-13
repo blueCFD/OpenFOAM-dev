@@ -5,8 +5,10 @@
     \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -21,17 +23,32 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - These changes are technically from Sysmcape's own patches for Windows,
+        circa 2009.
+      - The adaptation derived from the patches for blueCFD 2.1, adjusted to
+        OpenFOAM 2.2.
+
 \*---------------------------------------------------------------------------*/
 
 #include "IOobject.H"
 #include "Time.H"
 #include "IFstream.H"
+#include "StaticHashTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 defineTypeNameAndDebug(IOobject, 0);
+
+static StaticHashTable<Foam::word> replacedFileNames_;
 }
 
 
@@ -317,11 +334,32 @@ Foam::fileName Foam::IOobject::path
 }
 
 
+void Foam::IOobject::replaceFileName(const Foam::word & from, 
+                                     const Foam::word & to)
+{
+    replacedFileNames_.insert(from, to);
+}
+
+
+const Foam::word & Foam::IOobject::uniqueFileName() const
+{
+    StaticHashTable<word>::const_iterator findIt = 
+      replacedFileNames_.find(name());
+
+    const word & diskFileName = (findIt == replacedFileNames_.end()) ?
+      name() : *findIt;
+
+    return diskFileName;
+}
+
+
 Foam::fileName Foam::IOobject::filePath() const
 {
+    const word & diskFileName = uniqueFileName();
+
     if (instance().isAbsolute())
     {
-        fileName objectPath = instance()/name();
+        fileName objectPath = instance()/diskFileName;
         if (isFile(objectPath))
         {
             return objectPath;
@@ -334,7 +372,7 @@ Foam::fileName Foam::IOobject::filePath() const
     else
     {
         fileName path = this->path();
-        fileName objectPath = path/name();
+        fileName objectPath = path/diskFileName;
 
         if (isFile(objectPath))
         {
@@ -353,7 +391,7 @@ Foam::fileName Foam::IOobject::filePath() const
             {
                 fileName parentObjectPath =
                     rootPath()/time().globalCaseName()
-                   /instance()/db_.dbDir()/local()/name();
+                   /instance()/db_.dbDir()/local()/diskFileName;
 
                 if (isFile(parentObjectPath))
                 {
@@ -373,7 +411,7 @@ Foam::fileName Foam::IOobject::filePath() const
                     fileName fName
                     (
                         rootPath()/caseName()
-                       /newInstancePath/db_.dbDir()/local()/name()
+                       /newInstancePath/db_.dbDir()/local()/diskFileName
                     );
 
                     if (isFile(fName))

@@ -55,3 +55,7 @@ EXE_LIBS = \
     -llagrangianIntermediate \
     -llagrangianTurbulence \
     -lODE
+
+EXE_LIBS += \
+    -lcompressibleTurbulenceModel \
+    -llagrangian

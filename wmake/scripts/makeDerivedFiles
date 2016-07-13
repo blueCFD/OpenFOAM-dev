@@ -6,6 +6,9 @@
 #   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.4 and 3.0
+#------------------------------------------------------------------------------
 # License
 #     This file is part of OpenFOAM.
 #
@@ -22,6 +25,16 @@
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added the ability to build localized builds for each MPI toolbox.
+#
 # Script
 #     makeDerivedFiles
 #
@@ -31,14 +44,16 @@
 #
 #------------------------------------------------------------------------------
 
-[ -d "$WM_OPTIONS" ] || {
-    echo "The '$WM_OPTIONS' directory does not exist, exiting" 1>&2
+[ -z "$WM_OPTIONS_LOCAL" ] && WM_OPTIONS_LOCAL=$WM_OPTIONS
+
+[ -d "$WM_OPTIONS_LOCAL" ] || {
+    echo "The '$WM_OPTIONS_LOCAL' directory does not exist, exiting" 1>&2
     exit 1
 }
 
-# change to the $WM_OPTIONS directory
-cd "$WM_OPTIONS" 2>/dev/null || {
-    echo "Could not change to directory '$WM_OPTIONS'" 1>&2
+# change to the $WM_OPTIONS_LOCAL directory
+cd "$WM_OPTIONS_LOCAL" 2>/dev/null || {
+    echo "Could not change to directory '$WM_OPTIONS_LOCAL'" 1>&2
     exit 1
 }
 

@@ -8,3 +8,7 @@ EXE_LIBS = \
     -lgenericPatchFields \
     -lincompressibleRASModels \
     -lincompressibleTransportModels
+
+EXE_LIBS += \
+    -lincompressibleTurbulenceModel \
+    -lcompressibleTurbulenceModel

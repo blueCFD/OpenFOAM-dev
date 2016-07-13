@@ -40,7 +40,7 @@ if [ "$#" -gt 0 ]
 then
     filePath=$(echo $1 | sed -e s@^$WM_PROJECT_DIR@../../..@ )
     # dirName=$(echo "$filePath" | sed -e 's@/[^/]*$@@' )
-    dirName=${filePath%/[^/]*}
+    dirName=${filePath%/*}
     fileName=${filePath##*/}
 
     awkScript=$WM_PROJECT_DIR/bin/tools/doxyFilter.awk

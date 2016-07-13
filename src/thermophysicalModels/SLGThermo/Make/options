@@ -10,3 +10,11 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lfiniteVolume
+
+LIB_LIBS += \
+    -lsolidProperties \
+    -lsolidMixtureProperties \
+    -lliquidProperties \
+    -lliquidMixtureProperties \
+    -lspecie \
+    -lfluidThermophysicalModels

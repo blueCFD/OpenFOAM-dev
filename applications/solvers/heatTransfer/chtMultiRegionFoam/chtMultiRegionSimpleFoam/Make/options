@@ -28,3 +28,6 @@ EXE_LIBS = \
     -lfvOptions \
     -lregionModels \
     -lsampling
+
+EXE_LIBS += \
+    -lmeshTools

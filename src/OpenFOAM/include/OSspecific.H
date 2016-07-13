@@ -5,8 +5,16 @@
     \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2011 Symscape: Added method 'toUnixPath' and hacks for the 'pid_t' type, as
+                well as adjust the methods 'p*id()' accordingly.
+ 2011 blueCAPE: Returned the methods 'p*id()' back to the original source code.
+                Added different hack, which defines a macro for the word
+                'pid_t'.
+                Added the method 'osRandomBit()'.
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -20,6 +28,12 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
 
 InNamespace
     Foam
@@ -40,6 +54,11 @@ SourceFiles
 #include "long.H"
 
 #include <sys/types.h>
+
+#ifdef WIN64
+//redefine by force, to override casting issues :(
+#define pid_t long int
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -213,11 +232,13 @@ bool dlSymFound(void* handle, const std::string& symbol);
 //- Return all loaded libraries
 fileNameList dlLoaded();
 
-
 // Low level random numbers. Use Random class instead.
 
 //- Seed random number generator.
 void osRandomSeed(const label seed);
+
+//- Return random bit (uniform distribution of 0 and 1)
+int osRandomBit();
 
 //- Return random integer (uniform distribution between 0 and 2^31)
 label osRandomInteger();
@@ -225,6 +246,8 @@ label osRandomInteger();
 //- Return random double precision (uniform distribution between 0 and 1)
 scalar osRandomDouble();
 
+//- Convert to unix path separators
+string toUnixPath(const string& path);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

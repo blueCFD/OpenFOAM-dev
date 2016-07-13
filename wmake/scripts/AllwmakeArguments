@@ -1,0 +1,219 @@
+#----------------------------------*-sh-*--------------------------------------
+# License
+#
+#     This file is part of a patch submitted here:
+#         http://www.openfoam.com/mantisbt/view.php?id=256
+#     It's licensed under the same license of the target software, namely GPL
+#     v3 or above (see <http://www.gnu.org/licenses/>).
+#
+# File
+#     wmake/scripts/AllwmakeArguments
+#
+# Description
+#     Parses arguments (options) sent to any Allwmake scripts that source this file.
+#     The variable "OriginalOptions" will save the original options, in case
+#   the Allwmake script needs them.
+#
+# Usage
+#     . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
+#  or
+#     allwmakeOptions='-allow-doc doDoxygen' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
+#
+# Valid arguments
+#   -h or -help    : shows a list of valid arguments and respective descriptions.
+#   -helpdev       : shows a list of hidden arguments and respective descriptions
+#                    relevant only to developers.
+#   -k or -nonstop : argument used for building without stopping when errors occur.
+#   -j or -j N     : argument used for either running with all available
+#                    cores/hyperthreads or with just N cores.
+#   -j+            : variant of the previous option, but running with all available
+#                    cores/hyperthreads + 1.
+#   -schedoff      : build without wmakeScheduler.
+#
+# Arguments for "allwmakeOptions"
+#   -allow-doc docvarname   : if "doc" is picked up later on during parsing, then
+#                             "docvarname" will be set to 1.
+#   -allow-lib libvarname   : if "lib", "libo" or "libso" are detected during parsing,
+#                             "libvarname" will be assigned that value.
+#   -allow-inotify varname  : if "USE_STAT" is detected, it will assigned to "varname".
+#   -allow-readline varname : if "NO_READLINE" is detected, it will assigned to "varname".
+#
+#------------------------------------------------------------------------------
+
+Script=${0##*/}
+OriginalOptions=$*
+
+usage() {
+    exec 1>&2
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+
+    #show normal usage options
+    cat<<USAGE
+
+Usage: $Script [OPTIONS]
+
+options:
+  -h or -help       shows a list of valid options and respective descriptions
+  -helpdev          shows a list of hidden options and respective descriptions relevant only to developers
+  -k or -nonstop    option used for building without stopping when errors occur
+  -j , -jN or -j N  option used for either running with all available cores/hyperthreads or with just N cores
+  -j+               variant of the previous option, but running with all available cores/hyperthreads + 1 (optimum build speed)
+  -schedoff         build without wmakeScheduler
+USAGE
+
+    #show options for building code documentation
+    test -n "$doc_varname" && cat<<USAGE_DOC
+  doc               build code documentation (requires Doxygen to be installed)
+USAGE_DOC
+
+    #show options for building libraries
+    test -n "$lib_varname" && cat<<USAGE_LIB
+  lib               build statically linked archive lib (.a)
+  libo              build statically linked lib (.o)
+  libso             build dynamically linked lib (.so)
+USAGE_LIB
+
+    #show options for inotify/stat
+    test -n "$inotify_varname" && cat<<USAGE_INOTF
+  USE_STAT          don't use <sys/inotify.h> if found (Linux)
+USAGE_INOTF
+
+    #show options for readline
+    test -n "$readline_varname" && cat<<USAGE_RL
+  NO_READLINE       don't use <readline/readline.h> if found
+USAGE_RL
+    exit 1
+}
+
+usage_dev() {
+    exec 1>&2
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+
+    #show options for developers
+    cat<<USAGE_DEV
+
+Options to be used only within Allwmake scripts via "allwmakeOptions":
+  -allow-doc docvarname      if "doc" is picked up later on during parsing, then "docvarname" will be set to 1.
+  -allow-lib libvarname      if "lib", "libo" or "libso" are detected during parsing, "libvarname" will be assigned that value.
+  -allow-inotify varname     if "USE_STAT" is detected, it will assigned to "varname".
+  -allow-readline varname    if "NO_READLINE" is detected, it will assigned to "varname".
+
+USAGE_DEV
+    exit 1
+}
+
+#based on ThirdParty-1.7.x/tools/makeThirdPartyFunctions
+getNCOMPPROCS()
+{
+    if [ -r /proc/cpuinfo ]
+    then
+        WM_NCOMPPROCS=$(egrep "^processor" /proc/cpuinfo | wc -l)
+        [ $WM_NCOMPPROCS -le 8 ] || WM_NCOMPPROCS=8
+    else
+        WM_NCOMPPROCS=${NUMBER_OF_PROCESSORS:-1}
+    fi
+
+    export WM_NCOMPPROCS
+}
+
+resetParser()
+{
+  optcount=0; opt1=""
+}
+
+unset doc_varname lib_varname inotify_varname readline_varname
+
+#parse internal options first
+resetParser
+for internalOpt in $allwmakeOptions
+do
+  if [ $optcount -eq 0 ]; then
+    opt1=$internalOpt
+    optcount=1
+  else
+    case "$opt1" in
+    -allow-doc)
+        doc_varname="$internalOpt"    # save "docvarname"
+        eval $doc_varname=0  #set "no doc" as default option
+        ;;
+    -allow-lib)
+        lib_varname="$internalOpt"    # save "libvarname"
+        eval $lib_varname="libso"  #set libso as default option
+        ;;
+    -allow-inotify)
+        inotify_varname="$internalOpt"    # save "varname"
+        ;;
+    -allow-readline)
+        readline_varname="$internalOpt"    # save "varname"
+        ;;
+    *)
+        usage_dev "'$1' is an invalid internal option"
+        ;;
+    esac
+    resetParser
+  fi
+done
+
+# parse options
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+    -h | -help)
+        usage
+        ;;
+    -helpdev)
+        usage_dev
+        ;;
+    -j)
+        getNCOMPPROCS
+        test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1 && shift && export WM_NCOMPPROCS=$1
+        echo "Building enabled for $WM_NCOMPPROCS cores"
+        ;;
+    -j+)
+        getNCOMPPROCS
+        export WM_NCOMPPROCS=`expr $WM_NCOMPPROCS + 1`
+        echo "Building enabled for $WM_NCOMPPROCS cores"
+        ;;
+    -j*)
+        export WM_NCOMPPROCS=${1#-j}
+        echo "Building enabled for $WM_NCOMPPROCS cores"
+        ;;
+    -k | -nonstop)
+        export WM_CONTINUE_ON_ERROR=1
+        ;;
+    -schedoff)
+        unset WM_SCHEDULER
+        ;;
+    doc)
+        test -n "$doc_varname" || usage "invalid option '$1'"
+        eval $doc_varname=1
+        ;;
+    lib | libo | libso)
+        test -n "$lib_varname" || usage "invalid option '$1'"
+        eval $lib_varname="$1"
+        ;;
+    USE_STAT)
+        test -n "$inotify_varname" || usage "invalid option '$1'"
+        eval $inotify_varname="$1"
+        ;;
+    NO_READLINE)
+        test -n "$readline_varname" || usage "invalid option '$1'"
+        eval $readline_varname="$1"
+        ;;
+    --)
+        shift
+        break
+        ;;
+    -* | *)
+        usage "invalid option '$1'"
+        ;;
+    esac
+    shift
+done
+
+#local cleanup
+unset getNCOMPPROCS usage optcount opt1 allwmakeOptions
+
+#if WM_CONTINUE_ON_ERROR has not been set, then
+#  activate the shell option "stop on error"
+[ -n "${WM_CONTINUE_ON_ERROR}" ] || set -e

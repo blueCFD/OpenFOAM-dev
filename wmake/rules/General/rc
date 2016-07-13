@@ -1,0 +1,2 @@
+
+rctoo = windres $$SOURCE $@

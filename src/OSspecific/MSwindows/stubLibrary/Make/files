@@ -1,0 +1,3 @@
+stubLibrary.C
+
+LIB = $(FOAM_LIBBIN)/libstubLibrary

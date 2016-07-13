@@ -190,6 +190,7 @@ DebugSwitches
     MB                  0;
     MC                  0;
     MCV                 0;
+    MSwindows           0;
     MUSCL               0;
     MUSCL01             0;
     MUSCLV              0;

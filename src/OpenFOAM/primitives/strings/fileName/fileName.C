@@ -5,8 +5,14 @@
     \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2011 Symscape: Added hack for 'isAbsolute()' to properly detect absolute
+                paths on Windows.
+ 2011 blueCAPE: Changed hack in 'isAbsolute()' to "size>1", instead of
+                "size>3".
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -20,6 +26,12 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
 
 \*---------------------------------------------------------------------------*/
 
@@ -48,6 +60,12 @@ Foam::fileName::fileName(const wordList& lst)
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void Foam::fileName::toUnixPath()
+{
+    operator=(Foam::toUnixPath(*this));
+}
+
+
 Foam::fileName::Type Foam::fileName::type() const
 {
     return ::Foam::type(*this);
@@ -56,7 +74,12 @@ Foam::fileName::Type Foam::fileName::type() const
 
 bool Foam::fileName::isAbsolute() const
 {
+#if defined(WIN32) || defined(WIN64)
+    return size()>1 && (operator[](0) == '/' || operator[](1) == ':' ||
+                        (operator[](0) == '\\' && operator[](1) == '\\'));
+#else
     return !empty() && operator[](0) == '/';
+#endif
 }
 
 
@@ -207,6 +230,35 @@ Foam::word Foam::fileName::name() const
 {
     size_type i = rfind('/');
 
+#if defined(WIN32) || defined(WIN64)
+
+    //And strip ".exe" from the end of the path name
+    size_type j = rfind(".exe");
+    if (j != size()-4)
+    {
+      if (i == npos)
+      {
+          return *this;
+      }
+      else
+      {
+          return substr(i+1, npos);
+      }
+    }
+    else
+    {
+      if (i == npos)
+      {
+          return substr(0, j-1);
+      }
+      else
+      {
+          return substr(i+1, j-i-1);
+      }
+    }
+
+#else
+
     if (i == npos)
     {
         return *this;
@@ -215,6 +267,9 @@ Foam::word Foam::fileName::name() const
     {
         return substr(i+1, npos);
     }
+
+#endif
+
 }
 
 

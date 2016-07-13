@@ -32,3 +32,9 @@ EXE_LIBS = \
     -lregionModels \
     -lsurfaceFilmModels \
     -lsampling
+
+
+EXE_LIBS += \
+    -lincompressibleTurbulenceModel \
+    -lincompressibleRASModels \
+    -lincompressibleLESModels

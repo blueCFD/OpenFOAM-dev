@@ -12,3 +12,6 @@ LIB_LIBS = \
     -lLESfilters \
     -lfiniteVolume \
     -lmeshTools
+
+LIB_LIBS += \
+    -lfluidThermophysicalModels

@@ -1,4 +1,5 @@
 EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
@@ -14,3 +15,6 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lcompressibleLESModels \
     -lchemistryModel
+
+LIB_LIBS += \
+    -lreactionThermophysicalModels

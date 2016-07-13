@@ -29,7 +29,7 @@ cloneParallelCase()
 cloneParallelCase motorBike motorBikeLES
 
 # Do the LES case
-cp lesFiles/Allrun motorBikeLES/
+cp lesFiles/Allrun.org motorBikeLES/Allrun
 (cd motorBikeLES && foamRunTutorials)
 
 # ----------------------------------------------------------------- end-of-file

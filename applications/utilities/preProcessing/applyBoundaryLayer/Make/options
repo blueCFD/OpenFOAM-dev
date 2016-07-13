@@ -13,3 +13,6 @@ EXE_LIBS = \
     -lincompressibleTransportModels \
     -lgenericPatchFields \
     -lmeshTools
+
+EXE_LIBS += \
+    -lincompressibleTurbulenceModel

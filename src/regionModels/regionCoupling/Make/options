@@ -36,3 +36,6 @@ LIB_LIBS = \
     -lmeshTools \
     -lcompressibleRASModels \
     -lcompressibleLESModels
+
+LIB_LIBS += \
+    -lcompressibleTurbulenceModel

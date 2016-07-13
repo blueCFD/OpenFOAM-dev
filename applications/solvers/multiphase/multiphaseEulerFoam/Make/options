@@ -20,3 +20,6 @@ EXE_LIBS = \
     -lincompressibleLESModels \
     -lincompressibleRASModels \
     -lfiniteVolume
+
+EXE_LIBS += \
+    -lincompressibleTurbulenceModel

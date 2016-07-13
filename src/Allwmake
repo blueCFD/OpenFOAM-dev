@@ -1,6 +1,6 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-makeType=${1:-libso}
+allwmakeOptions='-allow-lib makeType' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 
 wmakeCheckPwd "$WM_PROJECT_DIR/src" || {
     echo "Error: Current directory is not \$WM_PROJECT_DIR/src"
@@ -22,10 +22,34 @@ wmakePrintBuild -check || /bin/rm -f OpenFOAM/Make/*/global.? 2>/dev/null
 
 wmakeLnInclude OpenFOAM
 wmakeLnInclude OSspecific/${WM_OSTYPE:-POSIX}
-Pstream/Allwmake $*
+
+wmakeVersionTag #generate version tag, after OpenFOAM/lnInclude has been created
+Pstream/Allwmake $OriginalOptions
 
 OSspecific/${WM_OSTYPE:-POSIX}/Allwmake $*
 wmake $makeType OpenFOAM
+
+#in case direct linking isn't to be used, then setup settings for using Pstream library
+if isMinGW; then
+  export WM_PSTREAMLINK="LINKTOPSTREAM"
+
+  #build all Pstream libraries
+  (cd Pstream && ./Allwmake)
+
+  rm -f $FOAM_LIBBIN/libOpenFOAM.*
+
+  wmake $makeType OpenFOAM
+
+  unset WM_PSTREAMLINK
+
+  # mingw excludes default compiler path so copy
+  # missing /usr/include/FlexLexer.h for flex
+  cp /usr/include/FlexLexer.h "$FOAM_SRC/OpenFOAM/lnInclude/"
+  
+  #Build the stub library
+  wmake libso OSspecific/${WM_OSTYPE:-POSIX}/stubLibrary
+fi
+
 
 wmake $makeType fileFormats
 wmake $makeType surfMesh
@@ -33,20 +57,29 @@ wmake $makeType triSurface
 wmake $makeType meshTools
 wmake $makeType edgeMesh
 
+# lagrangian is needed by finiteVolume
+wmake $makeType lagrangian/basic
+
+# finiteVolume is needed by the Decomposition methods
+wmake $makeType finiteVolume
+
 # Decomposition methods needed by dummyThirdParty
 parallel/decompose/AllwmakeLnInclude
-# dummyThirdParty (dummy metisDecomp, scotchDecomp etc) needed by e.g. meshTools
-dummyThirdParty/Allwmake $*
 
-wmake $makeType finiteVolume
-wmake $makeType lagrangian/basic
+if isMinGW; then
+  wmake $makeType parallel/decompose/decompositionMethods
+fi
+
+# dummyThirdParty (dummy metisDecomp, scotchDecomp etc) needed by e.g. meshTools
+dummyThirdParty/Allwmake $OriginalOptions
+
 wmake $makeType lagrangian/distributionModels
 wmake $makeType genericPatchFields
 
 # Build the proper scotchDecomp, metisDecomp etc.
-parallel/Allwmake $*
+parallel/Allwmake $OriginalOptions
 
-renumber/Allwmake $*
+renumber/Allwmake $OriginalOptions
 
 wmake $makeType conversion
 
@@ -61,16 +94,22 @@ wmake $makeType topoChangerFvMesh
 wmake $makeType ODE
 wmake $makeType randomProcesses
 
-thermophysicalModels/Allwmake $*
-transportModels/Allwmake $*
-turbulenceModels/Allwmake $*
-TurbulenceModels/Allwmake $*
-wmake $makeType combustionModels
-regionModels/Allwmake $*
-lagrangian/Allwmake $*
-mesh/Allwmake $*
+thermophysicalModels/Allwmake $OriginalOptions
+transportModels/Allwmake $OriginalOptions
+turbulenceModels/Allwmake $OriginalOptions
+TurbulenceModels/Allwmake $OriginalOptions
 
-fvAgglomerationMethods/Allwmake $*
+# Depends on RAS/turbulenceModels/compressible
+# hence not in thermophysicalModels
+wmake $makeType thermophysicalModels/chemistryModel
+wmake $makeType thermophysicalModels/solidChemistryModel
+
+wmake $makeType combustionModels
+regionModels/Allwmake $OriginalOptions
+lagrangian/Allwmake $OriginalOptions
+mesh/Allwmake $OriginalOptions
+
+fvAgglomerationMethods/Allwmake $OriginalOptions
 
 wmake $makeType fvMotionSolver
 wmake $makeType engine
@@ -79,7 +118,7 @@ wmake $makeType fvOptions
 
 wmake $makeType regionCoupled
 
-postProcessing/Allwmake $*
+postProcessing/Allwmake $OriginalOptions
 
 wmake $makeType sixDoFRigidBodyMotion
 

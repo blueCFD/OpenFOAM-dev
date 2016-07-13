@@ -10,3 +10,9 @@ EXE_LIBS = \
     -llagrangian \
     -lfiniteVolume \
     -lgenericPatchFields
+
+EXE_LIBS += \
+  -lcompressibleRASModels \
+  -lincompressibleRASModels \
+  -lcompressibleLESModels \
+  -lincompressibleLESModels

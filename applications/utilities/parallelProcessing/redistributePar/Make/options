@@ -8,6 +8,17 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lgenericPatchFields \
     -ldecompositionMethods \
-    -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp \
     -lmeshTools \
     -ldynamicMesh
+
+#if (defined( WIN32 ) || defined( WIN64 ))
+
+EXE_LIBS += \
+    -lptscotchDecomp
+
+#else
+
+EXE_LIBS += \
+    -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp
+
+#endif

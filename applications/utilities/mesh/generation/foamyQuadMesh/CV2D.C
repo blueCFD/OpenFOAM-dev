@@ -740,7 +740,7 @@ void Foam::CV2D::newPoints()
 
     Info<< "    Total displacement = " << totalDisp << nl
         << "    Total distance = " << totalDist << nl
-        << "    Points added = " << pointsToInsert.size()
+        << "    Points added = " << label(pointsToInsert.size())
         << endl;
 
     write("internal");

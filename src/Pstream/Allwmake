@@ -1,7 +1,6 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-makeType=${1:-libso}
-
+allwmakeOptions='-allow-lib makeType' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
 
 #
 # define how to create an mpi-versioned library of $makeType
@@ -11,14 +10,15 @@ makeType=${1:-libso}
 wmakeMpiLib()
 {
     set +x
+    export makeType
     for libName
     do
     (
-        WM_OPTIONS="$WM_OPTIONS$WM_MPLIB"
-        whichmpi="$libName/Make/$WM_OPTIONS/using:$FOAM_MPI"
+        export WM_OPTIONS_LOCAL="$WM_OPTIONS$WM_MPLIB"
+        whichmpi="$libName/Make/$WM_OPTIONS_LOCAL/using:$FOAM_MPI"
         [ -e "$whichmpi" ] || wclean $libName
-        echo "wmake $makeType $libName"
-        wmake $makeType $libName
+        echo "wmake $buildMode $libName"
+        wmake $buildMode $libName
         touch "$whichmpi"
     )
     done
@@ -26,7 +26,18 @@ wmakeMpiLib()
 }
 
 set -x
-wmake $makeType dummy
+
+buildMode=$makeType
+
+if isMinGW; then
+  if [ "$WM_PSTREAMLINK" = "LINKTOPSTREAM" ]; then
+    buildMode=$makeType
+  else
+    buildMode="lib"
+  fi
+fi
+
+wmake $buildMode dummy
 
 case "$WM_MPLIB" in
 *MPI*)

@@ -1,4 +1,4 @@
-.SUFFIXES: .c .cc .cxx .cpp .C .F .f .dep
+.SUFFIXES: .c .cc .cxx .cpp .C .F .f .rc .dep
 
 MKDEP       = $(WMAKE_BIN)/wmkdep -I$(*D) $(LIB_HEADER_DIRS)
 
@@ -21,4 +21,7 @@ MKDEP       = $(WMAKE_BIN)/wmkdep -I$(*D) $(LIB_HEADER_DIRS)
 	$(MAKE_DEP)
 
 .f.dep:
+	$(MAKE_DEP)
+
+.rc.dep:
 	$(MAKE_DEP)
