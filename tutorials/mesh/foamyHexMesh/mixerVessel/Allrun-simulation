@@ -4,7 +4,7 @@ cd ${0%/*} || exit 1    # run from this directory
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
-\cp system/controlDict.flow system/controlDict
+cp system/controlDict.flow system/controlDict
 
 # Set application name
 application=$(getApplication)
@@ -12,7 +12,7 @@ application=$(getApplication)
 # Get number of processors to run on
 nProcs=$(getNumberOfProcessors)
 
-\rm -rf 0
+rm -rf 0
 
 runApplication createBaffles -overwrite
 runApplication mergeOrSplitBaffles -split -overwrite
@@ -21,13 +21,13 @@ runApplication mergeOrSplitBaffles -split -overwrite
 runApplication createPatch -overwrite
 
 # Copy fields after meshing to avoind the generation of unnecessary patch fields
-\cp -r 0.org 0
+cp -r 0.org 0
 
 # Initialize alpha
 runApplication setFields
 
 # Decompose
-\rm log.decomposePar
+rm log.decomposePar
 runApplication decomposePar -force
 
 # Run
