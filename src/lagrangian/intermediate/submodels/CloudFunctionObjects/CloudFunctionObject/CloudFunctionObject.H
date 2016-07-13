@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,6 +65,9 @@ class CloudFunctionObject
 
 
     // Private Member Functions
+
+        //- Inherite write from CloudSubModelBase
+        using CloudSubModelBase<CloudType>::write;
 
         //- Write post-processing info
         virtual void write();
@@ -186,28 +189,31 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeCloudFunctionObject(CloudType)                                    \
-                                                                              \
-    typedef CloudType::kinematicCloudType kinematicCloudType;                 \
-    defineNamedTemplateTypeNameAndDebug                                       \
-    (                                                                         \
-        CloudFunctionObject<kinematicCloudType>,                              \
-        0                                                                     \
-    );                                                                        \
-    defineTemplateRunTimeSelectionTable                                       \
-    (                                                                         \
-        CloudFunctionObject<kinematicCloudType>,                              \
-        dictionary                                                            \
-    );
+#define makeCloudFunctionObject(CloudType)                                     \
+                                                                               \
+    typedef Foam::CloudType::kinematicCloudType kinematicCloudType;            \
+    defineNamedTemplateTypeNameAndDebug                                        \
+    (                                                                          \
+        Foam::CloudFunctionObject<kinematicCloudType>,                         \
+        0                                                                      \
+    );                                                                         \
+    namespace Foam                                                             \
+    {                                                                          \
+        defineTemplateRunTimeSelectionTable                                    \
+        (                                                                      \
+            CloudFunctionObject<kinematicCloudType>,                           \
+            dictionary                                                         \
+        );                                                                     \
+    }
 
 
-#define makeCloudFunctionObjectType(SS, CloudType)                            \
-                                                                              \
-    typedef CloudType::kinematicCloudType kinematicCloudType;                 \
-    defineNamedTemplateTypeNameAndDebug(SS<kinematicCloudType>, 0);           \
-                                                                              \
-    CloudFunctionObject<kinematicCloudType>::                                 \
-        adddictionaryConstructorToTable<SS<kinematicCloudType> >              \
+#define makeCloudFunctionObjectType(SS, CloudType)                             \
+                                                                               \
+    typedef Foam::CloudType::kinematicCloudType kinematicCloudType;            \
+    defineNamedTemplateTypeNameAndDebug(Foam::SS<kinematicCloudType>, 0);      \
+                                                                               \
+    Foam::CloudFunctionObject<kinematicCloudType>::                            \
+        adddictionaryConstructorToTable<Foam::SS<kinematicCloudType> >         \
             add##SS##CloudType##kinematicCloudType##ConstructorToTable_;
 
 

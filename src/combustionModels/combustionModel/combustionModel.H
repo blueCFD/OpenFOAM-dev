@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ SourceFiles
 #define combustionModel_H
 
 #include "IOdictionary.H"
-#include "turbulenceModel.H"
+#include "turbulentFluidThermoModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,13 +51,21 @@ class combustionModel
 :
     public IOdictionary
 {
+    // Private Member Functions
+
+        //- Disallow copy construct
+        combustionModel(const combustionModel&);
+
+        //- Disallow default bitwise assignment
+        void operator=(const combustionModel&);
+
 
 protected:
 
     // Protected data
 
         //- Reference to the turbulence model
-        compressible::turbulenceModel* turbulencePtr_;
+        compressibleTurbulenceModel* turbulencePtr_;
 
         //- Reference to the mesh database
         const fvMesh& mesh_;
@@ -68,19 +76,11 @@ protected:
         //- Dictionary of the model
         dictionary coeffs_;
 
-        //- Model name
+        //- Model type
         const word modelType_;
 
-
-private:
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        combustionModel(const combustionModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const combustionModel&);
+        //- Phase name
+        const word phaseName_;
 
 
 public:
@@ -91,9 +91,13 @@ public:
 
     // Constructors
 
-
         //- Construct from components
-        combustionModel(const word& modelType, const fvMesh& mesh);
+        combustionModel
+        (
+            const word& modelType,
+            const fvMesh& mesh,
+            const word& phaseName=word::null
+        );
 
 
     //- Destructor
@@ -103,7 +107,6 @@ public:
     // Member Functions
 
         // Access
-
 
             //- Return const access to the mesh database
             inline const fvMesh& mesh() const;
@@ -115,12 +118,12 @@ public:
             virtual tmp<volScalarField> rho() const = 0;
 
             //- Return access to turbulence
-            inline const compressible::turbulenceModel& turbulence() const;
+            inline const compressibleTurbulenceModel& turbulence() const;
 
             //- Set turbulence
             inline void setTurbulence
             (
-                compressible::turbulenceModel& turbModel
+                compressibleTurbulenceModel& turbModel
             );
 
             //- Is combustion active?
@@ -145,7 +148,7 @@ public:
         virtual tmp<volScalarField> Sh() const;
 
 
-    // I-O
+    // IO
 
         //- Update properties from given dictionary
         virtual bool read();

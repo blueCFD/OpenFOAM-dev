@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ SourceFiles
 #ifndef fixedTemperatureConstraint_H
 #define fixedTemperatureConstraint_H
 
-#include "fvOption.H"
+#include "cellSetOption.H"
 #include "NamedEnum.H"
 #include "DataEntry.H"
 
@@ -69,7 +69,7 @@ namespace fv
 
 class fixedTemperatureConstraint
 :
-    public option
+    public cellSetOption
 {
 
 public:
@@ -136,19 +136,11 @@ public:
 
     // Member Functions
 
-        virtual bool alwaysApply() const;
+        //- Constrain energy equation to fix the temperature
+        virtual void constrain(fvMatrix<scalar>& eqn, const label fieldI);
 
 
-        // Set values directly
-
-            //- Scalar
-            virtual void setValue(fvMatrix<scalar>& eqn, const label fieldI);
-
-
-        // I-O
-
-            //- Write data
-            virtual void writeData(Ostream&) const;
+        // IO
 
             //- Read dictionary
             virtual bool read(const dictionary& dict);

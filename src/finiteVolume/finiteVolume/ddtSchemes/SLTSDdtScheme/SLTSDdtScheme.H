@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,8 @@ Description
     using transient codes where local time-stepping is preferably to
     under-relaxation for transport consistency reasons.
 
-    See also CoEulerDdtScheme.
+See Also
+    Foam::fv::CoEulerDdtScheme
 
 SourceFiles
     SLTSDdtScheme.C

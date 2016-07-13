@@ -28,13 +28,15 @@ gradSchemes
 divSchemes
 {
     default         none;
+
     div(phi,U)      Gauss linear;
-    div((nuEff*dev(T(grad(U))))) Gauss linear;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
 {
     default         Gauss linear corrected;
+
     laplacian(diffusivity,cellMotionU) Gauss linear uncorrected;
 }
 
@@ -46,13 +48,6 @@ interpolationSchemes
 snGradSchemes
 {
     default         corrected;
-}
-
-fluxRequired
-{
-    default         no;
-    pcorr           ;
-    p               ;
 }
 
 

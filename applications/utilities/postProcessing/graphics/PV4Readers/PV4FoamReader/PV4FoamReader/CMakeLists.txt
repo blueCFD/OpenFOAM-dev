@@ -26,6 +26,7 @@ INCLUDE_DIRECTORIES(
 
 ADD_DEFINITIONS(
     -DWM_$ENV{WM_PRECISION_OPTION}
+    -DWM_LABEL_SIZE=$ENV{WM_LABEL_SIZE}
 )
 
 # Set output library destination to plugin directory
@@ -72,6 +73,7 @@ ENDIF("${PARAVIEW_VERSION_MINOR}" EQUAL 0)
 
 TARGET_LINK_LIBRARIES(
     PV4FoamReader_SM
+    LINK_PUBLIC
     OpenFOAM
     finiteVolume
     vtkPV4Foam

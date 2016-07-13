@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -114,7 +114,7 @@ void Foam::fieldValues::fieldValueDelta::processFields(bool& found)
 
             Type result = applyOperation(r1, r2);
 
-            Info(log_)<< "    " << operationTypeNames_[operation_]
+            if (log_) Info<< "    " << operationTypeNames_[operation_]
                 << "(" << fieldName << ") = " << result
                 << endl;
 

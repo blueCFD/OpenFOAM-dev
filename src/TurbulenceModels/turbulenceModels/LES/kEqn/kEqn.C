@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,6 +31,33 @@ namespace Foam
 {
 namespace LESModels
 {
+
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+template<class BasicTurbulenceModel>
+void kEqn<BasicTurbulenceModel>::correctNut()
+{
+    this->nut_ = Ck_*sqrt(k_)*this->delta();
+    this->nut_.correctBoundaryConditions();
+
+    BasicTurbulenceModel::correctNut();
+}
+
+
+template<class BasicTurbulenceModel>
+tmp<fvScalarMatrix> kEqn<BasicTurbulenceModel>::kSource() const
+{
+    return tmp<fvScalarMatrix>
+    (
+        new fvScalarMatrix
+        (
+            k_,
+            dimVolume*this->rho_.dimensions()*k_.dimensions()
+            /dimTime
+        )
+    );
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -82,6 +109,8 @@ kEqn<BasicTurbulenceModel>::kEqn
         )
     )
 {
+    bound(k_, this->kMin_);
+
     if (type == typeName)
     {
         correctNut();
@@ -130,29 +159,6 @@ tmp<volScalarField> kEqn<BasicTurbulenceModel>::epsilon() const
 
 
 template<class BasicTurbulenceModel>
-void kEqn<BasicTurbulenceModel>::correctNut()
-{
-    this->nut_ = Ck_*sqrt(k_)*this->delta();
-    this->nut_.correctBoundaryConditions();
-}
-
-
-template<class BasicTurbulenceModel>
-tmp<fvScalarMatrix> kEqn<BasicTurbulenceModel>::kSource() const
-{
-    return tmp<fvScalarMatrix>
-    (
-        new fvScalarMatrix
-        (
-            k_,
-            dimVolume*this->rho_.dimensions()*k_.dimensions()
-            /dimTime
-        )
-    );
-}
-
-
-template<class BasicTurbulenceModel>
 void kEqn<BasicTurbulenceModel>::correct()
 {
     if (!this->turbulence_)
@@ -179,7 +185,6 @@ void kEqn<BasicTurbulenceModel>::correct()
     (
         fvm::ddt(alpha, rho, k_)
       + fvm::div(alphaRhoPhi, k_)
-      - fvm::Sp(fvc::ddt(alpha, rho) + fvc::div(alphaRhoPhi), k_)
       - fvm::laplacian(alpha*rho*DkEff(), k_)
      ==
         alpha*rho*G

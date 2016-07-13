@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,10 +80,10 @@ Foam::Ostream& Foam::OSstream::write(const string& str)
 {
     os_ << token::BEGIN_STRING;
 
-    register int backslash = 0;
+    int backslash = 0;
     for (string::const_iterator iter = str.begin(); iter != str.end(); ++iter)
     {
-        register char c = *iter;
+        char c = *iter;
 
         if (c == '\\')
         {
@@ -131,7 +131,7 @@ Foam::Ostream& Foam::OSstream::writeQuoted
     {
         os_ << token::BEGIN_STRING;
 
-        register int backslash = 0;
+        int backslash = 0;
         for
         (
             string::const_iterator iter = str.begin();
@@ -139,7 +139,7 @@ Foam::Ostream& Foam::OSstream::writeQuoted
             ++iter
         )
         {
-            register char c = *iter;
+            char c = *iter;
 
             if (c == '\\')
             {
@@ -183,7 +183,15 @@ Foam::Ostream& Foam::OSstream::writeQuoted
 }
 
 
-Foam::Ostream& Foam::OSstream::write(const label val)
+Foam::Ostream& Foam::OSstream::write(const int32_t val)
+{
+    os_ << val;
+    setState(os_.rdstate());
+    return *this;
+}
+
+
+Foam::Ostream& Foam::OSstream::write(const int64_t val)
 {
     os_ << val;
     setState(os_.rdstate());
@@ -228,7 +236,7 @@ Foam::Ostream& Foam::OSstream::write(const char* buf, std::streamsize count)
 
 void Foam::OSstream::indent()
 {
-    for (register unsigned short i = 0; i < indentLevel_*indentSize_; i++)
+    for (unsigned short i = 0; i < indentLevel_*indentSize_; i++)
     {
         os_ << ' ';
     }

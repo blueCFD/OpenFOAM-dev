@@ -37,7 +37,7 @@ divSchemes
     div(rhoPhi,K)  Gauss linear;
     div((phi+meshPhi),p)  Gauss linear;
 
-    div((muEff*dev2(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -54,13 +54,5 @@ snGradSchemes
 {
     default         corrected;
 }
-
-fluxRequired
-{
-    default         no;
-    p_rgh;
-    pcorr;
-}
-
 
 // ************************************************************************* //

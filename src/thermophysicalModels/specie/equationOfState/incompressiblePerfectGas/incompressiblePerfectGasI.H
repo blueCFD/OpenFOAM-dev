@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -115,37 +115,47 @@ inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::rho
 
 
 template<class Specie>
-inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::psi
+inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::s
 (
-    scalar,
+    scalar p,
     scalar T
 ) const
 {
-    return 0.0;
+    return 0;
+}
+
+
+template<class Specie>
+inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::psi
+(
+    scalar p,
+    scalar T
+) const
+{
+    return 0;
 }
 
 
 template<class Specie>
 inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::Z
 (
-    scalar,
-    scalar
+    scalar p,
+    scalar T
 ) const
 {
-    return 0.0;
+    return 0;
 }
 
 
 template<class Specie>
 inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::cpMcv
 (
-    scalar,
-    scalar
+    scalar p,
+    scalar T
 ) const
 {
-    return this->RR;
+    return RR;
 }
-
 
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

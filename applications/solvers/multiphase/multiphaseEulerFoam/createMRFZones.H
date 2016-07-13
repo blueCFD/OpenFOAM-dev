@@ -1,8 +1,8 @@
-    IOMRFZoneList mrfZones(mesh);
+    IOMRFZoneList MRF(mesh);
 
     forAllIter(PtrDictionary<phaseModel>, fluid.phases(), iter)
     {
-        mrfZones.correctBoundaryVelocity(iter().U());
+        MRF.correctBoundaryVelocity(iter().U());
     }
 
-    mrfZones.correctBoundaryVelocity(U);
+    MRF.correctBoundaryVelocity(U);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -231,6 +231,11 @@ void mixtureKEpsilon<BasicTurbulenceModel>::initMixtureFields()
     const volScalarField& kl = turbc.k_;
     const volScalarField& epsilonl = turbc.epsilon_;
 
+    word startTimeName
+    (
+        this->runTime_.timeName(this->runTime_.startTime().value())
+    );
+
     Ct2_.set
     (
         new volScalarField
@@ -238,7 +243,7 @@ void mixtureKEpsilon<BasicTurbulenceModel>::initMixtureFields()
             IOobject
             (
                 "Ct2",
-                this->runTime_.timeName(),
+                startTimeName,
                 this->mesh_,
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
@@ -254,7 +259,7 @@ void mixtureKEpsilon<BasicTurbulenceModel>::initMixtureFields()
             IOobject
             (
                 "rhom",
-                this->runTime_.timeName(),
+                startTimeName,
                 this->mesh_,
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
@@ -270,7 +275,7 @@ void mixtureKEpsilon<BasicTurbulenceModel>::initMixtureFields()
             IOobject
             (
                 "km",
-                this->runTime_.timeName(),
+                startTimeName,
                 this->mesh_,
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
@@ -288,7 +293,7 @@ void mixtureKEpsilon<BasicTurbulenceModel>::initMixtureFields()
             IOobject
             (
                 "epsilonm",
-                this->runTime_.timeName(),
+                startTimeName,
                 this->mesh_,
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
@@ -342,7 +347,8 @@ mixtureKEpsilon<BasicTurbulenceModel>::liquidTurbulence() const
         const volVectorField& U = this->U_;
 
         const transportModel& gas = this->transport();
-        const twoPhaseSystem& fluid = gas.fluid();
+        const twoPhaseSystem& fluid =
+            refCast<const twoPhaseSystem>(gas.fluid());
         const transportModel& liquid = fluid.otherPhase(gas);
 
         liquidTurbulencePtr_ =
@@ -370,7 +376,7 @@ tmp<volScalarField> mixtureKEpsilon<BasicTurbulenceModel>::Ct2() const
         this->liquidTurbulence();
 
     const transportModel& gas = this->transport();
-    const twoPhaseSystem& fluid = gas.fluid();
+    const twoPhaseSystem& fluid = refCast<const twoPhaseSystem>(gas.fluid());
     const transportModel& liquid = fluid.otherPhase(gas);
 
     const volScalarField& alphag = this->alpha_;
@@ -394,7 +400,7 @@ template<class BasicTurbulenceModel>
 tmp<volScalarField> mixtureKEpsilon<BasicTurbulenceModel>::rholEff() const
 {
     const transportModel& gas = this->transport();
-    const twoPhaseSystem& fluid = gas.fluid();
+    const twoPhaseSystem& fluid = refCast<const twoPhaseSystem>(gas.fluid());
     return fluid.otherPhase(gas).rho();
 }
 
@@ -403,7 +409,7 @@ template<class BasicTurbulenceModel>
 tmp<volScalarField> mixtureKEpsilon<BasicTurbulenceModel>::rhogEff() const
 {
     const transportModel& gas = this->transport();
-    const twoPhaseSystem& fluid = gas.fluid();
+    const twoPhaseSystem& fluid = refCast<const twoPhaseSystem>(gas.fluid());
     return
         gas.rho()
       + fluid.virtualMass(gas).Cvm()*fluid.otherPhase(gas).rho();
@@ -467,8 +473,8 @@ tmp<surfaceScalarField> mixtureKEpsilon<BasicTurbulenceModel>::mixFlux
     surfaceScalarField rhogEfff(fvc::interpolate(rhogEff()));
 
     return
-       fvc::interpolate(rhom_()/(alphal*rholEff() + alphag*rhogEff()*Ct2_()))
-      *(alphalf*rholEfff*fc + alphagf*rhogEfff*fvc::interpolate(Ct2_())*fd);
+       (alphalf*rholEfff*fc + alphagf*rhogEfff*fvc::interpolate(Ct2_())*fd)
+      /(alphalf*rholEfff + alphagf*rhogEfff*fvc::interpolate(Ct2_()));
 }
 
 
@@ -479,7 +485,7 @@ tmp<volScalarField> mixtureKEpsilon<BasicTurbulenceModel>::bubbleG() const
         this->liquidTurbulence();
 
     const transportModel& gas = this->transport();
-    const twoPhaseSystem& fluid = gas.fluid();
+    const twoPhaseSystem& fluid = refCast<const twoPhaseSystem>(gas.fluid());
     const transportModel& liquid = fluid.otherPhase(gas);
 
     volScalarField magUr(mag(liquidTurbulence.U() - this->U()));
@@ -511,14 +517,14 @@ tmp<volScalarField> mixtureKEpsilon<BasicTurbulenceModel>::bubbleG() const
 template<class BasicTurbulenceModel>
 tmp<fvScalarMatrix> mixtureKEpsilon<BasicTurbulenceModel>::kSource() const
 {
-    return fvm::Su(bubbleG(), km_());
+    return fvm::Su(bubbleG()/rhom_(), km_());
 }
 
 
 template<class BasicTurbulenceModel>
 tmp<fvScalarMatrix> mixtureKEpsilon<BasicTurbulenceModel>::epsilonSource() const
 {
-    return fvm::Su(C3_*epsilonm_()*bubbleG()/km_(), epsilonm_());
+    return fvm::Su(C3_*epsilonm_()*bubbleG()/(rhom_()*km_()), epsilonm_());
 }
 
 
@@ -526,7 +532,7 @@ template<class BasicTurbulenceModel>
 void mixtureKEpsilon<BasicTurbulenceModel>::correct()
 {
     const transportModel& gas = this->transport();
-    const twoPhaseSystem& fluid = gas.fluid();
+    const twoPhaseSystem& fluid = refCast<const twoPhaseSystem>(gas.fluid());
 
     // Only solve the mixture turbulence for the gas-phase
     if (&gas != &fluid.phase1())
@@ -642,14 +648,14 @@ void mixtureKEpsilon<BasicTurbulenceModel>::correct()
     // Dissipation equation
     tmp<fvScalarMatrix> epsEqn
     (
-        fvm::ddt(rhom, epsilonm)
+        fvm::ddt(epsilonm)
       + fvm::div(phim, epsilonm)
-      - fvm::Sp(fvc::ddt(rhom) + fvc::div(phim), epsilonm)
-      - fvm::laplacian(DepsilonEff(rhom*nutm), epsilonm)
+      - fvm::Sp(fvc::div(phim), epsilonm)
+      - fvm::laplacian(DepsilonEff(nutm), epsilonm)
      ==
-        C1_*rhom*Gm*epsilonm/km
-      - fvm::SuSp(((2.0/3.0)*C1_)*rhom*divUm, epsilonm)
-      - fvm::Sp(C2_*rhom*epsilonm/km, epsilonm)
+        C1_*Gm*epsilonm/km
+      - fvm::SuSp(((2.0/3.0)*C1_)*divUm, epsilonm)
+      - fvm::Sp(C2_*epsilonm/km, epsilonm)
       + epsilonSource()
     );
 
@@ -664,14 +670,14 @@ void mixtureKEpsilon<BasicTurbulenceModel>::correct()
     // Turbulent kinetic energy equation
     tmp<fvScalarMatrix> kmEqn
     (
-        fvm::ddt(rhom, km)
+        fvm::ddt(km)
       + fvm::div(phim, km)
-      - fvm::Sp(fvc::ddt(rhom) + fvc::div(phim), km)
-      - fvm::laplacian(DkEff(rhom*nutm), km)
+      - fvm::Sp(fvc::div(phim), km)
+      - fvm::laplacian(DkEff(nutm), km)
      ==
-        rhom*Gm
-      - fvm::SuSp((2.0/3.0)*rhom*divUm, km)
-      - fvm::Sp(rhom*epsilonm/km, km)
+        Gm
+      - fvm::SuSp((2.0/3.0)*divUm, km)
+      - fvm::Sp(epsilonm/km, km)
       + kSource()
     );
 

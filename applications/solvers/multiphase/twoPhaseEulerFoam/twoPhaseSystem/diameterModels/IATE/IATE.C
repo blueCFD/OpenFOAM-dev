@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,6 +32,7 @@ License
 #include "fvcDdt.H"
 #include "fvcDiv.H"
 #include "fvcAverage.H"
+#include "fvOptionList.H"
 #include "mathematicalConstants.H"
 #include "fundamentalConstants.H"
 #include "addToRunTimeSelectionTable.H"
@@ -75,13 +76,13 @@ Foam::diameterModels::IATE::IATE
         ),
         phase_.U().mesh()
     ),
-    dMax_("dMax", dimLength, diameterProperties_.lookup("dMax")),
-    dMin_("dMin", dimLength, diameterProperties_.lookup("dMin")),
+    dMax_("dMax", dimLength, diameterProperties_),
+    dMin_("dMin", dimLength, diameterProperties_),
     residualAlpha_
     (
         "residualAlpha",
         dimless,
-        diameterProperties_.lookup("residualAlpha")
+        diameterProperties_
     ),
     d_
     (
@@ -155,6 +156,13 @@ void Foam::diameterModels::IATE::correct()
         R -= sources_[j].R();
     }
 
+    // const_cast needed because the operators and functions of fvOptions
+    // are currently non-const.
+    fv::optionList& fvOptions = const_cast<fv::optionList&>
+    (
+        phase_.U().mesh().lookupObject<fv::optionList>("fvOptions")
+    );
+
     // Construct the interfacial curvature equation
     fvScalarMatrix kappaiEqn
     (
@@ -163,9 +171,13 @@ void Foam::diameterModels::IATE::correct()
      ==
       - fvm::SuSp(R, kappai_)
     //+ Rph() // Omit the nucleation/condensation term
+      + fvOptions(kappai_)
     );
 
     kappaiEqn.relax();
+
+    fvOptions.constrain(kappaiEqn);
+
     kappaiEqn.solve();
 
     // Update the Sauter-mean diameter

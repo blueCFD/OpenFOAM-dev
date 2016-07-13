@@ -24,9 +24,11 @@ int main()
 
     tensor t6(1,0,-4,0,5,4,-4,4,3);
     //tensor t6(1,2,0,2,5,0,0,0,0);
+
     Info<< "tensor " << t6 << endl;
     vector e = eigenValues(t6);
     Info<< "eigenvalues " << e << endl;
+
     tensor ev = eigenVectors(t6);
     Info<< "eigenvectors " << ev << endl;
 
@@ -55,8 +57,18 @@ int main()
     Info<< "Check symmetric transformation "
         << transform(t1, st1) << endl;
 
-    Info<< "Check for dot product of symmetric tensors "
+    Info<< "Check dot product of symmetric tensors "
         << (st1 & st2) << endl;
+
+    Info<< "Check inner sqr of a symmetric tensor "
+        << innerSqr(st1) << " " << innerSqr(st1) - (st1 & st1) << endl;
+
+    Info<< "Check symmetric part of dot product of symmetric tensors "
+        << twoSymm(st1&st2) - ((st1&st2) + (st2&st1)) << endl;
+
+    tensor sk1 = skew(t6);
+    Info<< "Check dot product of symmetric and skew tensors "
+        << twoSymm(st1&sk1) - ((st1&sk1) - (sk1&st1)) << endl;
 
     vector v1(1, 2, 3);
 
@@ -183,7 +195,6 @@ int main()
     tensor U_triple(eigenVectors(T_triple));
     Debug(U_triple);
     */
-
 
     return 0;
 }

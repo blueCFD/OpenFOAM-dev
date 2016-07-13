@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,7 @@ License
 #include "triPointRef.H"
 #include "mathematicalConstants.H"
 #include "Swap.H"
-#include "const_circulator.H"
+#include "ConstCirculator.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -69,7 +69,7 @@ Foam::scalar Foam::face::edgeCos
     label leftEdgeI = left(index);
     label rightEdgeI = right(index);
 
-    // note negate on left edge to get correct left-pointing edge.
+    // Note negate on left edge to get correct left-pointing edge.
     return -(edges[leftEdgeI] & edges[rightEdgeI]);
 }
 
@@ -237,7 +237,7 @@ Foam::label Foam::face::split
                 minIndex = index;
             }
 
-            // go to next candidate
+            // Go to next candidate
             index = fcIndex(index);
         }
 
@@ -254,7 +254,7 @@ Foam::label Foam::face::split
         }
         else
         {
-            // folded around
+            // Folded around
             diff = minIndex + size() - startIndex;
         }
 
@@ -300,10 +300,6 @@ Foam::face::face(const triFace& f)
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
-// return
-//   0: no match
-//  +1: identical
-//  -1: same face, but different orientation
 int Foam::face::compare(const face& a, const face& b)
 {
     // Basic rule: we assume that the sequence of labels in each list
@@ -330,8 +326,8 @@ int Foam::face::compare(const face& a, const face& b)
         }
     }
 
-    const_circulator<face> aCirc(a);
-    const_circulator<face> bCirc(b);
+    ConstCirculator<face> aCirc(a);
+    ConstCirculator<face> bCirc(b);
 
     // Rotate face b until its element matches the starting element of face a.
     do
@@ -406,6 +402,53 @@ int Foam::face::compare(const face& a, const face& b)
 }
 
 
+bool Foam::face::sameVertices(const face& a, const face& b)
+{
+    label sizeA = a.size();
+    label sizeB = b.size();
+
+    // Trivial reject: faces are different size
+    if (sizeA != sizeB)
+    {
+        return false;
+    }
+    // Check faces with a single vertex
+    else if (sizeA == 1)
+    {
+        if (a[0] == b[0])
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    forAll(a, i)
+    {
+        // Count occurrences of a[i] in a
+        label aOcc = 0;
+        forAll(a, j)
+        {
+            if (a[i] == a[j]) aOcc++;
+        }
+
+        // Count occurrences of a[i] in b
+        label bOcc = 0;
+        forAll(b, j)
+        {
+            if (a[i] == b[j]) bOcc++;
+        }
+
+        // Check if occurrences of a[i] in a and b are the same
+        if (aOcc != bOcc) return false;
+    }
+
+    return true;
+}
+
+
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::label Foam::face::collapse()
@@ -468,7 +511,7 @@ Foam::point Foam::face::centre(const pointField& points) const
 
 
     point centrePoint = point::zero;
-    for (register label pI=0; pI<nPoints; ++pI)
+    for (label pI=0; pI<nPoints; ++pI)
     {
         centrePoint += points[operator[](pI)];
     }
@@ -477,7 +520,7 @@ Foam::point Foam::face::centre(const pointField& points) const
     scalar sumA = 0;
     vector sumAc = vector::zero;
 
-    for (register label pI=0; pI<nPoints; ++pI)
+    for (label pI=0; pI<nPoints; ++pI)
     {
         const point& nextPoint = points[operator[]((pI + 1) % nPoints)];
 
@@ -532,7 +575,7 @@ Foam::vector Foam::face::normal(const pointField& p) const
         ).normal();
     }
 
-    register label pI;
+    label pI;
 
     point centrePoint = vector::zero;
     for (pI = 0; pI < nPoints; ++pI)
@@ -572,7 +615,7 @@ Foam::vector Foam::face::normal(const pointField& p) const
 
 Foam::face Foam::face::reverseFace() const
 {
-    // reverse the label list and return
+    // Reverse the label list and return
     // The starting points of the original and reverse face are identical.
 
     const labelList& f = *this;
@@ -646,7 +689,7 @@ Foam::scalar Foam::face::sweptVol
 
     label nPoints = size();
 
-    for (register label pi=0; pi<nPoints-1; ++pi)
+    for (label pi=0; pi<nPoints-1; ++pi)
     {
         // Note: for best accuracy, centre point always comes last
         sv += triPointRef
@@ -731,7 +774,7 @@ Foam::edgeList Foam::face::edges() const
         e[pointI] = edge(points[pointI], points[pointI + 1]);
     }
 
-    // add last edge
+    // Add last edge
     e.last() = edge(points.last(), points[0]);
 
     return e;
@@ -746,37 +789,37 @@ int Foam::face::edgeDirection(const edge& e) const
         {
             if (operator[](rcIndex(i)) == e.end())
             {
-                // reverse direction
+                // Reverse direction
                 return -1;
             }
             else if (operator[](fcIndex(i)) == e.end())
             {
-                // forward direction
+                // Forward direction
                 return 1;
             }
 
-            // no match
+            // No match
             return 0;
         }
         else if (operator[](i) == e.end())
         {
             if (operator[](rcIndex(i)) == e.start())
             {
-                // forward direction
+                // Forward direction
                 return 1;
             }
             else if (operator[](fcIndex(i)) == e.start())
             {
-                // reverse direction
+                // Reverse direction
                 return -1;
             }
 
-            // no match
+            // No match
             return 0;
         }
     }
 
-    // not found
+    // Not found
     return 0;
 }
 

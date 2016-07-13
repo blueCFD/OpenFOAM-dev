@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -123,7 +123,8 @@ const labelIOList& procAddressing
                     procMesh.meshSubDir,
                     procMesh,
                     IOobject::MUST_READ,
-                    IOobject::NO_WRITE
+                    IOobject::NO_WRITE,
+                    false
                 )
             )
         );
@@ -346,7 +347,10 @@ int main(int argc, char *argv[])
             (
                 regionName,
                 runTime.timeName(),
-                runTime
+                runTime,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
             )
         );
 
@@ -579,7 +583,10 @@ int main(int argc, char *argv[])
                 (
                     mesh,
                     runTime.timeName(),
-                    cloud::prefix/cloudDirs[i]
+                    cloud::prefix/cloudDirs[i],
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE,
+                    false
                 );
 
                 IOobject* positionsPtr = sprayObjs.lookup(word("positions"));
@@ -661,7 +668,10 @@ int main(int argc, char *argv[])
                     (
                         mesh,
                         runTime.timeName(),
-                        cloud::prefix/cloudDirs[cloudI]
+                        cloud::prefix/cloudDirs[cloudI],
+                        IOobject::MUST_READ,
+                        IOobject::NO_WRITE,
+                        false
                     );
 
                     lagrangianFieldDecomposer::readFields
@@ -1119,7 +1129,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    Info<< "\nEnd.\n" << endl;
+    Info<< "\nEnd\n" << endl;
 
     return 0;
 }

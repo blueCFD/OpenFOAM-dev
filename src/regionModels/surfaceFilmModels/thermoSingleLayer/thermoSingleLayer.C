@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,6 +31,7 @@ License
 #include "zeroGradientFvPatchFields.H"
 #include "mappedFieldFvPatchField.H"
 #include "mapDistribute.H"
+#include "constants.H"
 
 // Sub-models
 #include "filmThermoModel.H"
@@ -255,26 +256,13 @@ void thermoSingleLayer::updateSubmodels()
 
 tmp<fvScalarMatrix> thermoSingleLayer::q(volScalarField& hs) const
 {
-    dimensionedScalar Tstd("Tstd", dimTemperature, 298.15);
-
-    volScalarField htcst(htcs_->h());
-    volScalarField htcwt(htcw_->h());
-
-    const volScalarField mask(pos(delta_ - deltaSmall_));
-
-    forAll(mask, i)
-    {
-        htcst[i] *= max(mask[i], ROOTVSMALL);
-        htcwt[i] *= max(mask[i], ROOTVSMALL);
-    }
-
-    htcst.correctBoundaryConditions();
-    htcwt.correctBoundaryConditions();
-
     return
     (
-      - fvm::Sp(htcst/Cp_, hs) - htcst*(Tstd - TPrimary_)
-      - fvm::Sp(htcwt/Cp_, hs) - htcwt*(Tstd - Tw_)
+      - fvm::Sp(htcs_->h()/Cp_, hs)
+      - htcs_->h()*(constant::standard::Tstd - TPrimary_)
+
+      - fvm::Sp(htcw_->h()/Cp_, hs)
+      - htcw_->h()*(constant::standard::Tstd - Tw_)
     );
 }
 

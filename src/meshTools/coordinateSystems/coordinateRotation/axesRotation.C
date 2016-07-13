@@ -103,9 +103,10 @@ void Foam::axesRotation::calcTransform
         }
     }
 
-    // the global->local transformation
+    // Global->local transformation
     Rtr_ = Rtr;
-    // the local->global transformation
+
+    // Local->global transformation
     R_ = Rtr.T();
 }
 
@@ -172,7 +173,7 @@ const Foam::tensorField& Foam::axesRotation::Tr() const
     (
         "const Foam::tensorField& axesRotation::Tr() const"
     );
-    return *reinterpret_cast<const tensorField*>(0);
+    return NullObjectRef<tensorField>();
 }
 
 
@@ -298,7 +299,8 @@ void Foam::axesRotation::operator=(const dictionary& dict)
     }
     else if (dict.found("axis") || dict.found("direction"))
     {
-        // let it bomb if only one of axis/direction is defined
+        // Both "axis" and "direction" are required
+        // If one is missing the appropriate error message will be generated
         order = e3e1;
         dict.lookup("axis") >> axis1;
         dict.lookup("direction") >> axis2;

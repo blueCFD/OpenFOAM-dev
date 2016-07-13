@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -222,15 +222,6 @@ Foam::Field<Type>::Field(const Xfer<Field<Type> >& f)
 {}
 
 
-#ifdef __INTEL_COMPILER
-template<class Type>
-Foam::Field<Type>::Field(const typename Field<Type>::subField& sf)
-:
-    List<Type>(sf)
-{}
-#endif
-
-
 template<class Type>
 Foam::Field<Type>::Field(const UList<Type>& list)
 :
@@ -239,7 +230,7 @@ Foam::Field<Type>::Field(const UList<Type>& list)
 
 
 // Construct as copy of tmp<Field>
-#ifdef ConstructFromTmp
+#ifndef NoConstructFromTmp
 template<class Type>
 Foam::Field<Type>::Field(const tmp<Field<Type> >& tf)
 :
@@ -458,7 +449,7 @@ void Foam::Field<Type>::map
     if
     (
         mapper.direct()
-     && &mapper.directAddressing()
+     && notNull(mapper.directAddressing())
      && mapper.directAddressing().size()
     )
     {
@@ -493,7 +484,7 @@ void Foam::Field<Type>::autoMap
     (
         (
             mapper.direct()
-         && &mapper.directAddressing()
+         && notNull(mapper.directAddressing())
          && mapper.directAddressing().size()
         )
      || (!mapper.direct() && mapper.addressing().size())

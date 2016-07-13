@@ -1,4 +1,4 @@
-#include "mrfZonesCorrectBCs.H"
+#include "MRFCorrectBCs.H"
 
 PtrList<fvVectorMatrix> UEqns(fluid.phases().size());
 autoPtr<multiphaseSystem::dragCoeffFields> dragCoeffs(fluid.dragCoeffs());
@@ -10,7 +10,7 @@ forAllIter(PtrDictionary<phaseModel>, fluid.phases(), iter)
     const volScalarField& alpha = phase;
     volVectorField& U = phase.U();
 
-    volScalarField nuEff(sgsModel->nut() + iter().nu());
+    volScalarField nuEff(turbulence->nut() + iter().nu());
 
     UEqns.set
     (
@@ -18,7 +18,7 @@ forAllIter(PtrDictionary<phaseModel>, fluid.phases(), iter)
         new fvVectorMatrix
         (
             fvm::ddt(alpha, U)
-          + fvm::div(phase.phiAlpha(), U)
+          + fvm::div(phase.alphaPhi(), U)
 
           + (alpha/phase.rho())*fluid.Cvm(phase)*
             (
@@ -51,7 +51,7 @@ forAllIter(PtrDictionary<phaseModel>, fluid.phases(), iter)
             )
         )
     );
-    mrfZones.addCoriolis
+    MRF.addAcceleration
     (
         alpha*(1 + (1/phase.rho())*fluid.Cvm(phase)),
         UEqns[phasei]

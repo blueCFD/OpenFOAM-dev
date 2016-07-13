@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    threePhaseInterfaceProperties
+    Foam::threePhaseInterfaceProperties
 
 Description
     Properties to aid interFoam :
@@ -78,8 +78,8 @@ class threePhaseInterfaceProperties
         void operator=(const threePhaseInterfaceProperties&);
 
         //- Correction for the boundary condition on the unit normal nHat on
-        //  walls to produce the correct contact dynamic angle
-        //  calculated from the component of U parallel to the wall
+        //  walls to produce the correct contact dynamic angle.
+        //  Calculated from the component of U parallel to the wall
         void correctContactAngle
         (
             surfaceVectorField::GeometricBoundaryField& nHat

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,23 +41,23 @@ thermophysical types.
     - \ref grpWallBoundaryConditions
 
 \subsection secBC2 Turbulent flow boundary conditions
-    - \ref grpIcoRASBoundaryConditions
-    - \ref grpCmpRASBoundaryConditions
+    - \ref grpRASBoundaryConditions
 
 \subsection secBC3 Thermophysical boundary conditions
     - \ref grpThermoBoundaryConditions
 
 
-\section secWallFunctions Wall functions
-Wall functions in OpenFOAM are modelled as boundary conditions, applied to
-the viscosity for momentum, and thermal diffusivity for energy.  Two groups of
-wall functions are available, which vary in terms of the underlying
-compressibility assumption.
+\section secWallFunctions Wall-functions
+Wall-functions in OpenFOAM are modelled as boundary conditions, applied to
+the viscosity for momentum, and thermal diffusivity for energy.
 
-Wall functions for incompressible flow
+Wall-functions
+    - \ref grpWallFunctions
+
+Thermal wall-functions for incompressible flow
     - \ref grpIcoWallFunctions
 
-Wall functions for compressible flow
+Thermal wall-functions for compressible flow
     - \ref grpCmpWallFunctions
 
 

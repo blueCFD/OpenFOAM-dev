@@ -1,17 +1,14 @@
 #!/bin/sh
-cd ${0%/*} || exit 1    # run from this directory
-allwmakeOptions='-allow-readline readingMode' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
+cd ${0%/*} || exit 1    # Run from this directory
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 
 unset COMP_FLAGS LINK_FLAGS
 
 #
 # use readline if available
-# unless otherwise specified (with NO_READLINE)
-#
-# eg,  ./Allwmake NO_READLINE
 #
 
-if ! isMinGW && [ -f /usr/include/readline/readline.h -a "${readingMode%NO_READLINE}" = "$readingMode" ]
+if ! isMinGW && [ -f /usr/include/readline/readline.h ]
 then
     echo "Found <readline/readline.h>  --  enabling readline support."
     export COMP_FLAGS="-DHAS_READLINE"

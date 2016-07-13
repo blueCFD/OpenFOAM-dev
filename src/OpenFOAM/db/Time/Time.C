@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,10 @@ const Foam::NamedEnum<Foam::Time::writeControls, 5>
     Foam::Time::writeControlNames_;
 
 Foam::Time::fmtflags Foam::Time::format_(Foam::Time::general);
+
 int Foam::Time::precision_(6);
+
+const int Foam::Time::maxPrecision_(3 - log10(SMALL));
 
 Foam::word Foam::Time::controlDictName("controlDict");
 
@@ -187,6 +190,56 @@ void Foam::Time::setControls()
     readDict();
     deltaTSave_ = deltaT_;
     deltaT0_ = deltaT_;
+
+    // Check if time directory exists
+    // If not increase time precision to see if it is formatted differently.
+    if (!exists(timePath(), false))
+    {
+        int oldPrecision = precision_;
+        int requiredPrecision = -1;
+        bool found = false;
+        for
+        (
+            precision_ = maxPrecision_;
+            precision_ > oldPrecision;
+            precision_--
+        )
+        {
+            // Update the time formatting
+            setTime(startTime_, 0);
+
+            // Check the existence of the time directory with the new format
+            found = exists(timePath(), false);
+
+            if (found)
+            {
+                requiredPrecision = precision_;
+            }
+        }
+
+        if (requiredPrecision > 0)
+        {
+            // Update the time precision
+            precision_ = requiredPrecision;
+
+            // Update the time formatting
+            setTime(startTime_, 0);
+
+            WarningIn("Time::setControls()")
+                << "Increasing the timePrecision from " << oldPrecision
+                << " to " << precision_
+                << " to support the formatting of the current time directory "
+                << timeName() << nl << endl;
+        }
+        else
+        {
+            // Could not find time directory so assume it is not present
+            precision_ = oldPrecision;
+
+            // Revert the time formatting
+            setTime(startTime_, 0);
+        }
+    }
 
     if (Pstream::parRun())
     {
@@ -433,7 +486,13 @@ Foam::Time::Time
     graphFormat_("raw"),
     runTimeModifiable_(false),
 
-    functionObjects_(*this, !args.optionFound("noFunctionObjects"))
+    functionObjects_
+    (
+        *this,
+        argList::validOptions.found("withFunctionObjects")
+      ? args.optionFound("withFunctionObjects")
+      : !args.optionFound("noFunctionObjects")
+    )
 {
     libs_.open(controlDict_, "libs");
 
@@ -679,11 +738,11 @@ void Foam::Time::setUnmodified(const label watchFd) const
 }
 
 
-Foam::word Foam::Time::timeName(const scalar t)
+Foam::word Foam::Time::timeName(const scalar t, const int precision)
 {
     std::ostringstream buf;
     buf.setf(ios_base::fmtflags(format_), ios_base::floatfield);
-    buf.precision(precision_);
+    buf.precision(precision);
     buf << t;
     return buf.str();
 }
@@ -754,13 +813,13 @@ Foam::instant Foam::Time::findClosestTime(const scalar t) const
     label nearestIndex = -1;
     scalar deltaT = GREAT;
 
-    for (label timeI=1; timeI < timeDirs.size(); ++timeI)
+    for (label timei=1; timei < timeDirs.size(); ++timei)
     {
-        scalar diff = mag(timeDirs[timeI].value() - t);
+        scalar diff = mag(timeDirs[timei].value() - t);
         if (diff < deltaT)
         {
             deltaT = diff;
-            nearestIndex = timeI;
+            nearestIndex = timei;
         }
     }
 
@@ -788,15 +847,15 @@ Foam::label Foam::Time::findClosestTimeIndex
     label nearestIndex = -1;
     scalar deltaT = GREAT;
 
-    forAll(timeDirs, timeI)
+    forAll(timeDirs, timei)
     {
-        if (timeDirs[timeI].name() == constantName) continue;
+        if (timeDirs[timei].name() == constantName) continue;
 
-        scalar diff = mag(timeDirs[timeI].value() - t);
+        scalar diff = mag(timeDirs[timei].value() - t);
         if (diff < deltaT)
         {
             deltaT = diff;
-            nearestIndex = timeI;
+            nearestIndex = timei;
         }
     }
 
@@ -1026,9 +1085,11 @@ Foam::Time& Foam::Time::operator++()
     deltaT0_ = deltaTSave_;
     deltaTSave_ = deltaT_;
 
-    // Save old time name
+    // Save old time value and name
+    const scalar oldTimeValue = timeToUserTime(value());
     const word oldTimeName = dimensionedScalar::name();
 
+    // Increment time
     setTime(value() + deltaT_, timeIndex_ + 1);
 
     if (!subCycling_)
@@ -1038,41 +1099,7 @@ Foam::Time& Foam::Time::operator++()
         {
             setTime(0.0, timeIndex_);
         }
-    }
 
-
-    // Check that new time representation differs from old one
-    if (dimensionedScalar::name() == oldTimeName)
-    {
-        int oldPrecision = precision_;
-        do
-        {
-            precision_++;
-            setTime(value(), timeIndex());
-        }
-        while (precision_ < 100 && dimensionedScalar::name() == oldTimeName);
-
-        WarningIn("Time::operator++()")
-            << "Increased the timePrecision from " << oldPrecision
-            << " to " << precision_
-            << " to distinguish between timeNames at time " << value()
-            << endl;
-
-        if (precision_ == 100 && precision_ != oldPrecision)
-        {
-            // Reached limit.
-            WarningIn("Time::operator++()")
-                << "Current time name " << dimensionedScalar::name()
-                << " is the old as the previous one " << oldTimeName
-                << endl
-                << "    This might result in overwriting old results."
-                << endl;
-        }
-    }
-
-
-    if (!subCycling_)
-    {
         if (sigStopAtWriteNow_.active() || sigWriteNow_.active())
         {
             // A signal might have been sent on one processor only
@@ -1219,7 +1246,7 @@ Foam::Time& Foam::Time::operator++()
         outputTime_ = primaryOutputTime_ || secondaryOutputTime_;
 
 
-        // see if endTime needs adjustment to stop at the next run()/end() check
+        // Check if endTime needs adjustment to stop at the next run()/end()
         if (!end())
         {
             if (stopAt_ == saNoWriteNow)
@@ -1244,6 +1271,84 @@ Foam::Time& Foam::Time::operator++()
             primaryOutputTime_ = true;
             outputTime_ = true;
             writeOnce_ = false;
+        }
+
+        // Adjust the precision of the time directory name if necessary
+        if (outputTime_)
+        {
+            // Tolerance used when testing time equivalence
+            const scalar timeTol =
+                max(min(pow(10.0, -precision_), 0.1*deltaT_), SMALL);
+
+            // User-time equivalent of deltaT
+            const scalar userDeltaT = timeToUserTime(deltaT_);
+
+            // Time value obtained by reading timeName
+            scalar timeNameValue = -VGREAT;
+
+            // Check that new time representation differs from old one
+            // reinterpretation of the word
+            if
+            (
+                readScalar(dimensionedScalar::name().c_str(), timeNameValue)
+             && (mag(timeNameValue - oldTimeValue - userDeltaT) > timeTol)
+            )
+            {
+                int oldPrecision = precision_;
+                while
+                (
+                    precision_ < maxPrecision_
+                 && readScalar(dimensionedScalar::name().c_str(), timeNameValue)
+                 && (mag(timeNameValue - oldTimeValue - userDeltaT) > timeTol)
+                )
+                {
+                    precision_++;
+                    setTime(value(), timeIndex());
+                }
+
+                if (precision_ != oldPrecision)
+                {
+                    WarningIn("Time::operator++()")
+                        << "Increased the timePrecision from " << oldPrecision
+                        << " to " << precision_
+                        << " to distinguish between timeNames at time "
+                        << dimensionedScalar::name()
+                        << endl;
+
+                    if (precision_ == maxPrecision_)
+                    {
+                        // Reached maxPrecision limit
+                        WarningIn("Time::operator++()")
+                            << "Current time name " << dimensionedScalar::name()
+                            << nl
+                            << "    The maximum time precision has been reached"
+                               " which might result in overwriting previous"
+                               " results."
+                            << endl;
+                    }
+
+                    // Check if round-off error caused time-reversal
+                    scalar oldTimeNameValue = -VGREAT;
+                    if
+                    (
+                        readScalar(oldTimeName.c_str(), oldTimeNameValue)
+                     && (
+                            sign(timeNameValue - oldTimeNameValue)
+                         != sign(deltaT_)
+                        )
+                    )
+                    {
+                        WarningIn("Time::operator++()")
+                            << "Current time name " << dimensionedScalar::name()
+                            << " is set to an instance prior to the "
+                               "previous one "
+                            << oldTimeName << nl
+                            << "    This might result in temporal "
+                               "discontinuities."
+                            << endl;
+                    }
+                }
+            }
         }
 
         functionObjects_.timeSet();

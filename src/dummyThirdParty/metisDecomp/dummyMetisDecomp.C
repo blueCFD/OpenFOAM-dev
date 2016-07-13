@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,20 +57,20 @@ namespace Foam
 
 Foam::label Foam::metisDecomp::decompose
 (
-    const List<int>& adjncy,
-    const List<int>& xadj,
+    const List<label>& adjncy,
+    const List<label>& xadj,
     const scalarField& cellWeights,
-    List<int>& finalDecomp
+    List<label>& finalDecomp
 )
 {
     FatalErrorIn
     (
         "labelList metisDecomp::decompose"
         "("
-            "const List<int>&, "
-            "const List<int>&, "
+            "const List<label>&, "
+            "const List<label>&, "
             "const scalarField&, "
-            "List<int>&"
+            "List<label>&"
         ")"
     )   << notImplementedMessage << exit(FatalError);
 

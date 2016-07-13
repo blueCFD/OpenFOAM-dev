@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,7 +80,7 @@ public:
             virtual lduInterfacePtrsList interfaces() const = 0;
 
             //- Return communicator used for parallel communication
-            virtual int comm() const = 0;
+            virtual label comm() const = 0;
 
             //- Helper: reduce with current communicator
             template<class T, class BinaryOp>

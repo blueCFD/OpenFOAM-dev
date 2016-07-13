@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,12 +51,13 @@ Description
     solidificationMeltingSource1
     {
         type            solidificationMeltingSource;
-        active          on;
-        selectionMode   cellZone;
-        cellZone        iceZone;
+        active          yes;
 
         solidificationMeltingSourceCoeffs
         {
+            selectionMode   cellZone;
+            cellZone        iceZone;
+
             Tmelt           273;
             L               334000;
             thermoMode      thermo;
@@ -96,7 +97,7 @@ SourceFiles
 
 #include "fvMesh.H"
 #include "volFields.H"
-#include "fvOption.H"
+#include "cellSetOption.H"
 #include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -112,7 +113,7 @@ namespace fv
 
 class solidificationMeltingSource
 :
-    public option
+    public cellSetOption
 {
 public:
 
@@ -177,9 +178,6 @@ private:
 
     // Private Member Functions
 
-        //- Flag to indicate whether to solve for given field
-        bool solveField(const word& fieldName) const;
-
         //- Return the specific heat capacity field
         tmp<volScalarField> Cp() const;
 
@@ -220,10 +218,6 @@ public:
 
     // Member Functions
 
-        //- Flag to bypass the apply flag list checking
-        virtual bool alwaysApply() const;
-
-
         // Add explicit and implicit contributions
 
             //- Add explicit contribution to enthalpy equation
@@ -252,10 +246,7 @@ public:
             );
 
 
-        // I-O
-
-            //- Write the source properties
-            virtual void writeData(Ostream&) const;
+        // IO
 
             //- Read source dictionary
             virtual bool read(const dictionary& dict);

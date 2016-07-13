@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,11 +86,7 @@ void Foam::blockMesh::calcMergeInfo()
             blockPfaceLabel++
         )
         {
-            if
-            (
-                blockFaces[blockPfaces[blockPfaceLabel]]
-             == blockFaces[blockFaceLabel]
-            )
+            if (blockPfaces[blockPfaceLabel] == blockFaceLabel)
             {
                 foundFace = true;
                 break;
@@ -118,7 +114,7 @@ void Foam::blockMesh::calcMergeInfo()
         // the size of the block.
 
         boundBox bb(blockCells[blockPlabel].points(blockFaces, blockPoints));
-        const scalar mergeSqrDist = magSqr(SMALL*bb.span());
+        const scalar mergeSqrDist = magSqr(10*SMALL*bb.span());
 
         // This is an N^2 algorithm
 
@@ -345,7 +341,6 @@ void Foam::blockMesh::calcMergeInfo()
                 }
             }
 
-// FIXME? - there seems to be some logic missing here
 
             label blockNfaceLabel;
             for
@@ -364,8 +359,6 @@ void Foam::blockMesh::calcMergeInfo()
                     break;
                 }
             }
-
-// FIXME? - there seems to be some logic missing here
 
 
             const labelListList& blockPfaceFaces =
@@ -416,7 +409,7 @@ void Foam::blockMesh::calcMergeInfo()
         {
             FatalErrorIn("blockMesh::calcMergeInfo()")
                 << "Point merging failed after max number of passes."
-                << abort(FatalError);
+                << exit(FatalError);
         }
     }
     while (changedPointMerge);
@@ -551,7 +544,7 @@ void Foam::blockMesh::calcMergeInfo()
     }
 
 
-    // sort merge list to return new point label (in new shorter list)
+    // Sort merge list to return new point label (in new shorter list)
     // given old point label
     label newPointLabel = 0;
 
@@ -560,7 +553,8 @@ void Foam::blockMesh::calcMergeInfo()
         if (mergeList_[pointLabel] > pointLabel)
         {
             FatalErrorIn("blockMesh::calcMergeInfo()")
-                << "ouch" << exit(FatalError);
+                << "Merge list contains point index out of range"
+                << exit(FatalError);
         }
 
         if
@@ -579,7 +573,7 @@ void Foam::blockMesh::calcMergeInfo()
     }
 
     nPoints_ = newPointLabel;
-
 }
+
 
 // ************************************************************************* //

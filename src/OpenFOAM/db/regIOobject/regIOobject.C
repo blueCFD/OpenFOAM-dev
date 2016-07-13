@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,24 +26,13 @@ License
 #include "regIOobject.H"
 #include "Time.H"
 #include "polyMesh.H"
+#include "registerSwitch.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(regIOobject, 0);
-
-    int regIOobject::fileModificationSkew
-    (
-        debug::optimisationSwitch("fileModificationSkew", 30)
-    );
-    registerOptSwitchWithName
-    (
-        Foam::regIOobject::fileModificationSkew,
-        fileModificationSkew,
-        "fileModificationSkew"
-    );
-
 
     template<>
     const char* NamedEnum
@@ -58,6 +47,17 @@ namespace Foam
         "inotifyMaster"
     };
 }
+
+int Foam::regIOobject::fileModificationSkew
+(
+    Foam::debug::optimisationSwitch("fileModificationSkew", 30)
+);
+registerOptSwitch
+(
+    "fileModificationSkew",
+    int,
+    Foam::regIOobject::fileModificationSkew
+);
 
 
 const Foam::NamedEnum<Foam::regIOobject::fileCheckTypes, 4>
@@ -74,35 +74,42 @@ Foam::regIOobject::fileCheckTypes Foam::regIOobject::fileModificationChecking
         )
     )
 );
-// Register re-reader
-class addfileModificationCheckingToOpt
-:
-    public ::Foam::simpleRegIOobject
+
+namespace Foam
 {
-public:
-    addfileModificationCheckingToOpt(const char* name)
+    // Register re-reader
+    class addfileModificationCheckingToOpt
     :
-        ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
-    {}
-    virtual ~addfileModificationCheckingToOpt()
-    {}
-    virtual void readData(Foam::Istream& is)
+        public ::Foam::simpleRegIOobject
     {
-        Foam::regIOobject::fileModificationChecking =
-            Foam::regIOobject::fileCheckTypesNames.read(is);
-    }
-    virtual void writeData(Foam::Ostream& os) const
-    {
-        os <<   Foam::regIOobject::fileCheckTypesNames
-                [
-                    Foam::regIOobject::fileModificationChecking
-                ];
-    }
-};
-addfileModificationCheckingToOpt addfileModificationCheckingToOpt_
-(
-    "fileModificationChecking"
-);
+    public:
+
+        addfileModificationCheckingToOpt(const char* name)
+        :
+            ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
+        {}
+
+        virtual ~addfileModificationCheckingToOpt()
+        {}
+
+        virtual void readData(Foam::Istream& is)
+        {
+            regIOobject::fileModificationChecking =
+                regIOobject::fileCheckTypesNames.read(is);
+        }
+
+        virtual void writeData(Foam::Ostream& os) const
+        {
+            os <<  regIOobject::fileCheckTypesNames
+                [regIOobject::fileModificationChecking];
+        }
+    };
+
+    addfileModificationCheckingToOpt addfileModificationCheckingToOpt_
+    (
+        "fileModificationChecking"
+    );
+}
 
 
 bool Foam::regIOobject::masterOnlyReading = false;
@@ -161,6 +168,47 @@ Foam::regIOobject::regIOobject(const regIOobject& rio, bool registerCopy)
     if (registerCopy && rio.registered_)
     {
         const_cast<regIOobject&>(rio).checkOut();
+        checkIn();
+    }
+}
+
+
+Foam::regIOobject::regIOobject
+(
+    const word& newName,
+    const regIOobject& rio,
+    bool registerCopy
+)
+:
+    IOobject(newName, rio.instance(), rio.local(), rio.db()),
+    registered_(false),
+    ownedByRegistry_(false),
+    watchIndex_(-1),
+    eventNo_(db().getEvent()),
+    isPtr_(NULL)
+{
+    if (registerCopy)
+    {
+        checkIn();
+    }
+}
+
+
+Foam::regIOobject::regIOobject
+(
+    const IOobject& io,
+    const regIOobject& rio
+)
+:
+    IOobject(io),
+    registered_(false),
+    ownedByRegistry_(false),
+    watchIndex_(-1),
+    eventNo_(db().getEvent()),
+    isPtr_(NULL)
+{
+    if (registerObject())
+    {
         checkIn();
     }
 }

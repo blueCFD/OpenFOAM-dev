@@ -2,10 +2,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -35,6 +36,8 @@
 #          running on Windows.
 #        - Added the macros ADDITIONAL_*FLAGS, so that we can turn on a
 #          few hacks.
+#        - Recovered the wmkdepend utility, because we need it on Windows, due
+#          to the limitation on the number of files currently open.
 #
 # File
 #     Makefile
@@ -51,11 +54,10 @@
 SHELL      = /bin/sh
 
 #------------------------------------------------------------------------------
-# Initialise suffices list
+# Unset suffices list (suffix rules are not used)
 #------------------------------------------------------------------------------
 
 .SUFFIXES:
-.SUFFIXES: .o
 
 #------------------------------------------------------------------------------
 # set compilation and dependency building rules

@@ -31,16 +31,16 @@ Description
     \verbatim
         "Implementation and Comparison of Correlations for interfacial Forces
         in a Gas-Liquid System within an Euler-Euler Framework"
-        M Otromke
+        Otromke, M.
         PhD Thesis
         April 2013
     \endverbatim
 
     \verbatim
         "The lift force on a spherical bubble in a viscous linear shear flow"
-        D Legendre, J Magnaudet
+        Legendre, D., Magnaudet, J.,
         Journal of Fluid Mechanics
-        Volume 368, pp 81-126, August 1998
+        Volume 368, August 1998, pp. 81-126
     \endverbatim
 
 SourceFiles
@@ -71,8 +71,6 @@ class LegendreMagnaudet
 :
     public liftModel
 {
-private:
-
     // Private data
 
         //- Residual Reynold's number

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ Description
 
     codeCorrect
     (
-        GeometricField<Type, fvPatchField, volMesh>& fld
+        GeometricField<Type, fvPatchField, volMesh>& field
     )
 
     codeAddSup
@@ -40,14 +40,14 @@ Description
         const label fieldI
     )
 
-    setValue
+    constrain
     (
         fvMatrix<Type}>& eqn,
         const label fieldI
     )
 
     where :
-        fld is the field in fieldNames
+        field is the field in fieldNames
         eqn is the fvMatrix
 
     \heading Source usage
@@ -58,11 +58,12 @@ Description
     {
         type            scalarCodedSource;
 
-        active          true;
-        selectionMode   all;
+        active          yes;
 
         scalarCodedSourceCoeffs
         {
+            selectionMode   all;
+
             fieldNames      (h);
             redirectType    sourceTime;
 
@@ -115,7 +116,7 @@ SourceFiles
 #ifndef CodedSource_H
 #define CodedSource_H
 
-#include "fvOption.H"
+#include "cellSetOption.H"
 #include "codedBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -132,7 +133,7 @@ namespace fv
 template<class Type>
 class CodedSource
 :
-    public option,
+    public cellSetOption,
     public codedBase
 {
 
@@ -152,10 +153,10 @@ protected:
 
     // Protected Member Functions
 
-        //- get the loaded dynamic libraries
+        //- Get the loaded dynamic libraries
         virtual dlLibraryTable& libs() const;
 
-        //- adapt the context for the current object
+        //- Adapt the context for the current object
         virtual void prepare(dynamicCode&, const dynamicCodeContext&) const;
 
         // Return a description (type + name) for the output
@@ -216,17 +217,14 @@ public:
             );
 
             //- Set value
-            virtual void setValue
+            virtual void constrain
             (
                 fvMatrix<Type>& eqn,
                 const label fieldI
             );
 
 
-        // I-O
-
-            //- Write the source properties
-            virtual void writeData(Ostream&) const;
+        // IO
 
             //- Read source dictionary
             virtual bool read(const dictionary& dict);

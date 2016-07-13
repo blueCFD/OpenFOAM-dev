@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,8 @@ License
 #include "FSD.H"
 #include "addToRunTimeSelectionTable.H"
 #include "LESModel.H"
+#include "fvcGrad.H"
+#include "fvcDiv.H"
 
 namespace Foam
 {
@@ -38,10 +40,16 @@ template<class CombThermoType, class ThermoType>
 FSD<CombThermoType, ThermoType>::FSD
 (
     const word& modelType,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const word& phaseName
 )
 :
-    singleStepCombustion<CombThermoType, ThermoType>(modelType, mesh),
+    singleStepCombustion<CombThermoType, ThermoType>
+    (
+        modelType,
+        mesh,
+        phaseName
+    ),
     reactionRateFlameArea_
     (
         reactionRateFlameArea::New
@@ -55,7 +63,7 @@ FSD<CombThermoType, ThermoType>::FSD
     (
         IOobject
         (
-            "ft",
+            IOobject::groupName("ft", phaseName),
             this->mesh().time().timeName(),
             this->mesh(),
             IOobject::NO_READ,
@@ -75,7 +83,7 @@ FSD<CombThermoType, ThermoType>::FSD
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructors * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class CombThermoType, class ThermoType>
 FSD<CombThermoType, ThermoType>::~FSD()
@@ -142,7 +150,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
         (
             IOobject
             (
-                "Pc",
+                IOobject::groupName("Pc", this->phaseName_),
                 U.time().timeName(),
                 U.db(),
                 IOobject::NO_READ,
@@ -161,7 +169,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
         (
             IOobject
             (
-                "omegaFuelBar",
+                IOobject::groupName("omegaFuelBar", this->phaseName_),
                 U.time().timeName(),
                 U.db(),
                 IOobject::NO_READ,
@@ -289,7 +297,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
         (
             IOobject
             (
-                "products",
+                IOobject::groupName("products", this->phaseName_),
                 U.time().timeName(),
                 U.db(),
                 IOobject::NO_READ,

@@ -15,11 +15,14 @@
     const volScalarField& psi = thermo.psi();
 
     volScalarField& p_rgh = p_rghFluid[i];
+
+    const dimensionedVector& g = gFluid[i];
     const volScalarField& gh = ghFluid[i];
     const surfaceScalarField& ghf = ghfFluid[i];
 
     radiation::radiationModel& rad = radiation[i];
 
+    IOMRFZoneList& MRF = MRFfluid[i];
     fv::IOoptionList& fvOptions = fluidFvOptions[i];
 
     const dimensionedScalar initialMass

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,36 +45,35 @@ License
 #include "makeReactingParcelSurfaceFilmModels.H"
 
 // Spray
+#include "DistortedSphereDragForce.H"
 #include "makeSprayParcelAtomizationModels.H"
 #include "makeSprayParcelBreakupModels.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-    makeParcelCloudFunctionObjects(basicSprayCloud);
+makeParcelCloudFunctionObjects(basicSprayCloud);
 
-    // Kinematic sub-models
-    makeThermoParcelForces(basicSprayCloud);
-    makeThermoParcelTurbulenceForces(basicSprayCloud);
-    makeParcelDispersionModels(basicSprayCloud);
-    makeParcelTurbulenceDispersionModels(basicSprayCloud);
-    makeSprayParcelInjectionModels(basicSprayCloud);
-    makeParcelPatchInteractionModels(basicSprayCloud);
-    makeSprayParcelStochasticCollisionModels(basicSprayCloud);
+// Kinematic sub-models
+makeThermoParcelForces(basicSprayCloud);
+makeThermoParcelTurbulenceForces(basicSprayCloud);
+makeParcelDispersionModels(basicSprayCloud);
+makeParcelTurbulenceDispersionModels(basicSprayCloud);
+makeSprayParcelInjectionModels(basicSprayCloud);
+makeParcelPatchInteractionModels(basicSprayCloud);
+makeSprayParcelStochasticCollisionModels(basicSprayCloud);
 
-    // Thermo sub-models
-    makeParcelHeatTransferModels(basicSprayCloud);
+// Thermo sub-models
+makeParcelHeatTransferModels(basicSprayCloud);
 
-    // Reacting sub-models
-    makeReactingParcelCompositionModels(basicSprayCloud);
-    makeReactingParcelPhaseChangeModels(basicSprayCloud);
-    makeReactingParcelSurfaceFilmModels(basicSprayCloud);
+// Reacting sub-models
+makeReactingParcelCompositionModels(basicSprayCloud);
+makeReactingParcelPhaseChangeModels(basicSprayCloud);
+makeReactingParcelSurfaceFilmModels(basicSprayCloud);
 
-    // Spray sub-models
-    makeSprayParcelAtomizationModels(basicSprayCloud);
-    makeSprayParcelBreakupModels(basicSprayCloud);
-};
+// Spray sub-models
+makeParticleForceModelType(DistortedSphereDragForce, basicSprayCloud);
+makeSprayParcelAtomizationModels(basicSprayCloud);
+makeSprayParcelBreakupModels(basicSprayCloud);
 
 
 // ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,6 +83,10 @@ protected:
             //- Flag to indicate to solve using transonic algorithm
             bool transonic_;
 
+            //- Flag to indicate to relax pressure using the
+            //  "consistent" approach of SIMPLEC
+            bool consistent_;
+
 
         // Evolution
 
@@ -97,6 +101,9 @@ protected:
 
         //- Read controls from fvSolution dictionary
         virtual void read(const bool absTolOnly);
+
+        //- Read controls from fvSolution dictionary
+        virtual void read();
 
         //- Return index of field in residualControl_ if present
         virtual label applyToField
@@ -168,6 +175,10 @@ public:
 
             //- Flag to indicate to solve using transonic algorithm
             inline bool transonic() const;
+
+            //- Flag to indicate to relax pressure using the
+            //  "consistent" approach of SIMPLEC
+            inline bool consistent() const;
 
 
         // Evolution

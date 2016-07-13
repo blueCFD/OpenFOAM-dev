@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,6 +90,11 @@ Type Foam::fieldValues::cellSource::processValues
             result = sum(values);
             break;
         }
+        case opSumMag:
+        {
+            result = sum(cmptMag(values));
+            break;
+        }
         case opAverage:
         {
             result = sum(values)/values.size();
@@ -97,17 +102,22 @@ Type Foam::fieldValues::cellSource::processValues
         }
         case opWeightedAverage:
         {
-            result = sum(values)/sum(weightField);
+            result = sum(weightField*values)/sum(weightField);
             break;
         }
         case opVolAverage:
         {
-            result = sum(values*V)/sum(V);
+            result = sum(V*values)/sum(V);
+            break;
+        }
+        case opWeightedVolAverage:
+        {
+            result = sum(weightField*V*values)/sum(weightField*V);
             break;
         }
         case opVolIntegrate:
         {
-            result = sum(values*V);
+            result = sum(V*values);
             break;
         }
         case opMin:
@@ -170,14 +180,11 @@ bool Foam::fieldValues::cellSource::writeValues(const word& fieldName)
         combineFields(V);
         combineFields(weightField);
 
-        // apply weight field
-        values *= weightField;
-
         if (Pstream::master())
         {
             Type result = processValues(values, V, weightField);
 
-            // add to result dictionary, over-writing any previous entry
+            // Add to result dictionary, over-writing any previous entry
             resultDict_.add(fieldName, result, true);
 
             if (valueOutput_)
@@ -193,15 +200,15 @@ bool Foam::fieldValues::cellSource::writeValues(const word& fieldName)
                         IOobject::NO_READ,
                         IOobject::NO_WRITE
                     ),
-                    values
+                    weightField*values
                 ).write();
             }
 
 
             file()<< tab << result;
 
-            Info(log_)<< "    " << operationTypeNames_[operation_]
-                << "(" << sourceName_ << ") for " << fieldName
+            if (log_) Info<< "    " << operationTypeNames_[operation_]
+                << "(" << sourceName_ << ") of " << fieldName
                 <<  " = " << result << endl;
         }
     }
@@ -221,4 +228,3 @@ Foam::tmp<Foam::Field<Type> > Foam::fieldValues::cellSource::filterField
 
 
 // ************************************************************************* //
-

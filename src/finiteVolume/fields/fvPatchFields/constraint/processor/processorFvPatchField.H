@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -248,7 +248,7 @@ public:
         //- Processor coupled interface functions
 
             //- Return communicator used for comms
-            virtual int comm() const
+            virtual label comm() const
             {
                 return procPatch_.comm();
             }

@@ -17,12 +17,12 @@
         (
             "phiHbyA",
             (
-                (fvc::interpolate(rho*HbyA) & mesh.Sf())
-              + rhorAUf*fvc::ddtCorr(rho, U, phi)
-            )/fvc::interpolate(rho)
+                (fvc::interpolate(HbyA) & mesh.Sf())
+              + rhorAUf*fvc::ddtCorr(rho, U, phi)/fvc::interpolate(rho)
+            )
         );
 
-        fvOptions.makeRelative(phiHbyA);
+        MRF.makeRelative(phiHbyA);
 
         surfaceScalarField phid("phid", fvc::interpolate(thermo.psi())*phiHbyA);
 
@@ -44,8 +44,6 @@
                 fvOptions(psi, p, rho.name())
             );
 
-            fvOptions.constrain(pEqn);
-
             pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
 
             if (pimple.finalNonOrthogonalIter())
@@ -65,7 +63,7 @@
             )
         );
 
-        fvOptions.makeRelative(fvc::interpolate(rho), phiHbyA);
+        MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
         fvScalarMatrix pDDtEqn
         (
@@ -82,8 +80,6 @@
                 pDDtEqn
               - fvm::laplacian(rhorAUf, p)
             );
-
-            fvOptions.constrain(pEqn);
 
             pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
 

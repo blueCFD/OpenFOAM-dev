@@ -14,14 +14,14 @@ if (pimple.transonic())
         fvc::interpolate(psi)
        *(
             (
-                (fvc::interpolate(rho*HbyA) & mesh.Sf())
-              + rhorAUf*fvc::ddtCorr(rho, U, rhoUf)
-            )/fvc::interpolate(rho)
+                (fvc::interpolate(HbyA) & mesh.Sf())
+              + rhorAUf*fvc::ddtCorr(rho, U, rhoUf)/fvc::interpolate(rho)
+            )
         )
     );
 
     fvc::makeRelative(phid, psi, U);
-    fvOptions.makeRelative(fvc::interpolate(psi), phid);
+    MRF.makeRelative(fvc::interpolate(psi), phid);
 
     while (pimple.correctNonOrthogonal())
     {
@@ -33,8 +33,6 @@ if (pimple.transonic())
          ==
             fvOptions(psi, p, rho.name())
         );
-
-        fvOptions.constrain(pEqn);
 
         pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
 
@@ -56,7 +54,7 @@ else
     );
 
     fvc::makeRelative(phiHbyA, rho, U);
-    fvOptions.makeRelative(fvc::interpolate(rho), phiHbyA);
+    MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
     while (pimple.correctNonOrthogonal())
     {
@@ -68,8 +66,6 @@ else
          ==
             fvOptions(psi, p, rho.name())
         );
-
-        fvOptions.constrain(pEqn);
 
         pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
 

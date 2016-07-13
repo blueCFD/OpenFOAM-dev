@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,6 +54,7 @@ Foam::RASModel<BasicTurbulenceModel>::RASModel
 :
     BasicTurbulenceModel
     (
+        type,
         alpha,
         rho,
         U,
@@ -74,8 +75,8 @@ Foam::RASModel<BasicTurbulenceModel>::RASModel
         (
             "kMin",
             RASDict_,
-            SMALL,
-            sqr(dimVelocity)
+            sqr(dimVelocity),
+            SMALL
         )
     ),
 
@@ -85,8 +86,8 @@ Foam::RASModel<BasicTurbulenceModel>::RASModel
         (
             "epsilonMin",
             RASDict_,
-            SMALL,
-            kMin_.dimensions()/dimTime
+            kMin_.dimensions()/dimTime,
+            SMALL
         )
     ),
 
@@ -96,8 +97,8 @@ Foam::RASModel<BasicTurbulenceModel>::RASModel
         (
             "omegaMin",
             RASDict_,
-            SMALL,
-            dimless/dimTime
+            dimless/dimTime,
+            SMALL
         )
     )
 {
@@ -174,16 +175,9 @@ Foam::RASModel<BasicTurbulenceModel>::New
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class BasicTurbulenceModel>
-void Foam::RASModel<BasicTurbulenceModel>::correct()
-{
-    BasicTurbulenceModel::correct();
-}
-
-
-template<class BasicTurbulenceModel>
 bool Foam::RASModel<BasicTurbulenceModel>::read()
 {
-    if (turbulenceModel::read())
+    if (BasicTurbulenceModel::read())
     {
         RASDict_ <<= this->subDict("RAS");
         RASDict_.lookup("turbulence") >> turbulence_;
@@ -203,6 +197,13 @@ bool Foam::RASModel<BasicTurbulenceModel>::read()
     {
         return false;
     }
+}
+
+
+template<class BasicTurbulenceModel>
+void Foam::RASModel<BasicTurbulenceModel>::correct()
+{
+    BasicTurbulenceModel::correct();
 }
 
 

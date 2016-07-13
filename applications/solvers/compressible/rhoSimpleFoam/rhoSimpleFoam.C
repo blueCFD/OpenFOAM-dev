@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,7 @@ Description
 
 #include "fvCFD.H"
 #include "psiThermo.H"
-#include "RASModel.H"
+#include "turbulentFluidThermoModel.H"
 #include "simpleControl.H"
 #include "fvIOoptionList.H"
 
@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
     simpleControl simple(mesh);
 
     #include "createFields.H"
+    #include "createMRF.H"
     #include "createFvOptions.H"
     #include "initContinuityErrs.H"
 
@@ -59,9 +60,15 @@ int main(int argc, char *argv[])
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         // Pressure-velocity SIMPLE corrector
+        #include "UEqn.H"
+        #include "EEqn.H"
+
+        if (simple.consistent())
         {
-            #include "UEqn.H"
-            #include "EEqn.H"
+            #include "pcEqn.H"
+        }
+        else
+        {
             #include "pEqn.H"
         }
 

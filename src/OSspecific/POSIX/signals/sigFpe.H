@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,12 +45,13 @@ SourceFiles
 
 #include <signal.h>
 
-#if defined(linux) || defined(linuxAMD64) || defined(linuxIA64)
-#    define LINUX
+#if defined(linux) || defined(linux64) || defined(linuxIA64) || \
+    defined(linuxARM7) || defined(linuxPPC64) || defined(linuxPPC64le)
+    #define LINUX
 #endif
 
 #if defined(LINUX) && defined(__GNUC__)
-#    define LINUX_GNUC
+    #define LINUX_GNUC
 #endif
 
 #include "UList.H"
@@ -71,25 +72,13 @@ class sigFpe
         //- Saved old signal trapping setting
         static struct sigaction oldAction_;
 
-#       ifdef LINUX
-
-            //- Saved old malloc
-            static void *(*oldMallocHook_)(size_t, const void *);
-
-            //- NaN malloc function. From malloc_hook manpage.
-            static void* nanMallocHook_(size_t size, const void *caller);
-
-#       endif
-
 
     // Static data members
 
-#   ifdef LINUX_GNUC
-
+        #ifdef LINUX_GNUC
         //- Handler for caught signals
         static void sigHandler(int);
-
-#   endif
+        #endif
 
 
 public:
@@ -111,9 +100,16 @@ public:
         //  Fill memory with NaN when FOAM_SETNAN is %set
         void set(const bool verbose);
 
-        //- Helper: fill block of data with NaN
-        static void fillSignallingNan(UList<scalar>&);
+        //- Flag to indicate mallocNan is enabled
+        static bool mallocNanActive_;
 
+        #ifdef LINUX
+        //- Malloc function which initializes to NaN
+        static void* mallocNan(size_t size);
+        #endif
+
+        //- Fill block of data with NaN
+        static void fillNan(UList<scalar>&);
 };
 
 

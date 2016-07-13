@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -151,7 +151,7 @@ Foam::fv::effectivenessHeatExchangerSource::effectivenessHeatExchangerSource
     const fvMesh& mesh
 )
 :
-    option(name, modelType, dict, mesh),
+    cellSetOption(name, modelType, dict, mesh),
     secondaryMassFlowRate_(readScalar(coeffs_.lookup("secondaryMassFlowRate"))),
     secondaryInletT_(readScalar(coeffs_.lookup("secondaryInletT"))),
     primaryInletT_(readScalar(coeffs_.lookup("primaryInletT"))),
@@ -166,7 +166,6 @@ Foam::fv::effectivenessHeatExchangerSource::effectivenessHeatExchangerSource
     faceSign_(),
     faceZoneArea_(0)
 {
-
     if (zoneID_ < 0)
     {
         FatalErrorIn
@@ -185,7 +184,14 @@ Foam::fv::effectivenessHeatExchangerSource::effectivenessHeatExchangerSource
             << nl << exit(FatalError);
     }
 
-    fieldNames_.setSize(1, "energy");
+    // Set the field name to that of the energy field from which the temperature
+    // is obtained
+
+    const basicThermo& thermo =
+        mesh_.lookupObject<basicThermo>(basicThermo::dictName);
+
+    fieldNames_.setSize(1, thermo.he().name());
+
     applied_.setSize(1, false);
 
     eTable_.reset(new interpolation2DTable<scalar>(coeffs_));
@@ -196,12 +202,6 @@ Foam::fv::effectivenessHeatExchangerSource::effectivenessHeatExchangerSource
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::fv::effectivenessHeatExchangerSource::alwaysApply() const
-{
-    return true;
-}
-
-
 void Foam::fv::effectivenessHeatExchangerSource::addSup
 (
     const volScalarField& rho,
@@ -210,12 +210,7 @@ void Foam::fv::effectivenessHeatExchangerSource::addSup
 )
 {
     const basicThermo& thermo =
-        mesh_.lookupObject<basicThermo>("thermophysicalProperties");
-
-    if (eqn.psi().name() != thermo.he().name())
-    {
-        return;
-    }
+        mesh_.lookupObject<basicThermo>(basicThermo::dictName);
 
     const surfaceScalarField Cpf(fvc::interpolate(thermo.Cp()));
 
@@ -308,16 +303,9 @@ void Foam::fv::effectivenessHeatExchangerSource::addSup
 }
 
 
-void Foam::fv::effectivenessHeatExchangerSource::writeData(Ostream& os) const
-{
-    os  << indent << name_ << endl;
-    dict_.write(os);
-}
-
-
 bool Foam::fv::effectivenessHeatExchangerSource::read(const dictionary& dict)
 {
-    if (option::read(dict))
+    if (cellSetOption::read(dict))
     {
         coeffs_.lookup("secondaryMassFlowRate") >> secondaryMassFlowRate_;
         coeffs_.lookup("secondaryInletT") >> secondaryInletT_;

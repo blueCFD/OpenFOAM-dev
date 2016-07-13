@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ void Foam::lduMatrix::sumDiag()
     const labelUList& l = lduAddr().lowerAddr();
     const labelUList& u = lduAddr().upperAddr();
 
-    for (register label face=0; face<l.size(); face++)
+    for (label face=0; face<l.size(); face++)
     {
         Diag[l[face]] += Lower[face];
         Diag[u[face]] += Upper[face];
@@ -56,7 +56,7 @@ void Foam::lduMatrix::negSumDiag()
     const labelUList& l = lduAddr().lowerAddr();
     const labelUList& u = lduAddr().upperAddr();
 
-    for (register label face=0; face<l.size(); face++)
+    for (label face=0; face<l.size(); face++)
     {
         Diag[l[face]] -= Lower[face];
         Diag[u[face]] -= Upper[face];
@@ -75,7 +75,7 @@ void Foam::lduMatrix::sumMagOffDiag
     const labelUList& l = lduAddr().lowerAddr();
     const labelUList& u = lduAddr().upperAddr();
 
-    for (register label face = 0; face < l.size(); face++)
+    for (label face = 0; face < l.size(); face++)
     {
         sumOff[u[face]] += mag(Lower[face]);
         sumOff[l[face]] += mag(Upper[face]);
@@ -306,25 +306,22 @@ void Foam::lduMatrix::operator*=(const scalarField& sf)
         *diagPtr_ *= sf;
     }
 
-    if (upperPtr_)
+    // Non-uniform scaling causes a symmetric matrix
+    // to become asymmetric
+    if (symmetric() || asymmetric())
     {
-        scalarField& upper = *upperPtr_;
+        scalarField& upper = this->upper();
+        scalarField& lower = this->lower();
 
         const labelUList& l = lduAddr().lowerAddr();
+        const labelUList& u = lduAddr().upperAddr();
 
-        for (register label face=0; face<upper.size(); face++)
+        for (label face=0; face<upper.size(); face++)
         {
             upper[face] *= sf[l[face]];
         }
-    }
 
-    if (lowerPtr_)
-    {
-        scalarField& lower = *lowerPtr_;
-
-        const labelUList& u = lduAddr().upperAddr();
-
-        for (register label face=0; face<lower.size(); face++)
+        for (label face=0; face<lower.size(); face++)
         {
             lower[face] *= sf[u[face]];
         }

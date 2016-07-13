@@ -5,15 +5,18 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
     -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
-    -I$(LIB_SRC)/turbulenceModels/compressible/turbulenceModel \
-    -I$(LIB_SRC)/finiteVolume/lnInclude
+    -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
 
 EXE_LIBS = \
     -lmultiphaseMixtureThermo \
+    -lcompressibleTransportModels \
     -lfluidThermophysicalModels \
     -lspecie \
     -linterfaceProperties \
-    -lcompressibleTurbulenceModel \
-    -lcompressibleRASModels \
-    -lcompressibleLESModels \
-    -lfiniteVolume
+    -lturbulenceModels \
+    -lcompressibleTurbulenceModels \
+    -lfiniteVolume \
+    -lmeshTools

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -413,7 +413,7 @@ public:
         }
 
         //- Process ID of given process index
-        static List<int>& procID(int communicator)
+        static List<int>& procID(label communicator)
         {
             return procIDs_[communicator];
         }

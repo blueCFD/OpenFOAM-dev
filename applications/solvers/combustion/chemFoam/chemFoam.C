@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
 
 #include "fvCFD.H"
 #include "psiReactionThermo.H"
-#include "turbulenceModel.H"
+#include "turbulentFluidThermoModel.H"
 #include "psiChemistryModel.H"
 #include "chemistrySolver.H"
 #include "OFstream.H"
@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     #include "createSingleCellMesh.H"
     #include "createFields.H"
     #include "readInitialConditions.H"
+    #include "createControls.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -83,7 +84,7 @@ int main(int argc, char *argv[])
     Info << "Number of steps = " << runTime.timeIndex() << endl;
     Info << "End" << nl << endl;
 
-    return(0);
+    return 0;
 }
 
 

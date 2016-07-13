@@ -17,7 +17,7 @@ FoamFile
 
 solvers
 {
-    alpha
+    "alpha.*"
     {
         nAlphaSubCycles 4;
         cAlpha          2;
@@ -83,7 +83,7 @@ solvers
         maxIter         20;
     }
 
-    "(U|alpha)"
+    U
     {
         solver          smoothSolver;
         smoother        GaussSeidel;
@@ -102,9 +102,6 @@ PIMPLE
 
 relaxationFactors
 {
-    fields
-    {
-    }
     equations
     {
         "U.*"           1;

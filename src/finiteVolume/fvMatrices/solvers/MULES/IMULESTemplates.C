@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,11 +75,6 @@ void Foam::MULES::implicitSolve
     label maxIter
     (
         readLabel(MULEScontrols.lookup("maxIter"))
-    );
-
-    label nLimiterIter
-    (
-        readLabel(MULEScontrols.lookup("nLimiterIter"))
     );
 
     scalar maxUnboundedness
@@ -187,8 +182,7 @@ void Foam::MULES::implicitSolve
             Sp,
             Su,
             psiMax,
-            psiMin,
-            nLimiterIter
+            psiMin
         );
 
         solve

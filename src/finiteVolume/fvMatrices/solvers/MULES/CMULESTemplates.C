@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "CMULES.H"
 #include "fvcSurfaceIntegrate.H"
+#include "localEulerDdtScheme.H"
 #include "slicedSurfaceFields.H"
 #include "wedgeFvPatch.H"
 #include "syncTools.H"
@@ -87,68 +88,44 @@ void Foam::MULES::correct
 )
 {
     const fvMesh& mesh = psi.mesh();
-    const scalar rDeltaT = 1.0/mesh.time().deltaTValue();
 
-    const dictionary& MULEScontrols = mesh.solverDict(psi.name());
+    if (fv::localEulerDdt::enabled(mesh))
+    {
+        const volScalarField& rDeltaT = fv::localEulerDdt::localRDeltaT(mesh);
 
-    label nLimiterIter
-    (
-        readLabel(MULEScontrols.lookup("nLimiterIter"))
-    );
+        limitCorr
+        (
+            rDeltaT,
+            rho,
+            psi,
+            phi,
+            phiCorr,
+            Sp,
+            Su,
+            psiMax,
+            psiMin
+        );
+        correct(rDeltaT, rho, psi, phi, phiCorr, Sp, Su);
+    }
+    else
+    {
+        const scalar rDeltaT = 1.0/mesh.time().deltaTValue();
 
-    limitCorr
-    (
-        rDeltaT,
-        rho,
-        psi,
-        phi,
-        phiCorr,
-        Sp, Su,
-        psiMax, psiMin,
-        nLimiterIter
-    );
+        limitCorr
+        (
+            rDeltaT,
+            rho,
+            psi,
+            phi,
+            phiCorr,
+            Sp,
+            Su,
+            psiMax,
+            psiMin
+        );
 
-    correct(rDeltaT, rho, psi, phi, phiCorr, Sp, Su);
-}
-
-
-template<class RhoType, class SpType, class SuType>
-void Foam::MULES::LTScorrect
-(
-    const RhoType& rho,
-    volScalarField& psi,
-    const surfaceScalarField& phi,
-    surfaceScalarField& phiCorr,
-    const SpType& Sp,
-    const SuType& Su,
-    const scalar psiMax,
-    const scalar psiMin
-)
-{
-    const fvMesh& mesh = psi.mesh();
-
-    const volScalarField& rDeltaT =
-        mesh.objectRegistry::lookupObject<volScalarField>("rSubDeltaT");
-
-    const dictionary& MULEScontrols = mesh.solverDict(psi.name());
-
-    label nLimiterIter
-    (
-        readLabel(MULEScontrols.lookup("nLimiterIter"))
-    );
-
-    limitCorr
-    (
-        rDeltaT,
-        rho,
-        psi,
-        phi,
-        phiCorr,
-        Sp, Su,
-        psiMax, psiMin,
-        nLimiterIter
-    );
-    correct(rDeltaT, rho, psi, phi, phiCorr, Sp, Su);
+        correct(rDeltaT, rho, psi, phi, phiCorr, Sp, Su);
+    }
 }
 
 
@@ -164,8 +141,7 @@ void Foam::MULES::limiterCorr
     const SpType& Sp,
     const SuType& Su,
     const scalar psiMax,
-    const scalar psiMin,
-    const label nLimiterIter
+    const scalar psiMin
 )
 {
     const scalarField& psiIf = psi;
@@ -175,9 +151,19 @@ void Foam::MULES::limiterCorr
 
     const dictionary& MULEScontrols = mesh.solverDict(psi.name());
 
+    label nLimiterIter
+    (
+        readLabel(MULEScontrols.lookup("nLimiterIter"))
+    );
+
+    scalar smoothLimiter
+    (
+        MULEScontrols.lookupOrDefault<scalar>("smoothLimiter", 0)
+    );
+
     scalar extremaCoeff
     (
-        MULEScontrols.lookupOrDefault<scalar>("extremaCoeff", 0.0)
+        MULEScontrols.lookupOrDefault<scalar>("extremaCoeff", 0)
     );
 
     const labelUList& owner = mesh.owner();
@@ -294,9 +280,13 @@ void Foam::MULES::limiterCorr
     psiMaxn = min(psiMaxn + extremaCoeff*(psiMax - psiMin), psiMax);
     psiMinn = max(psiMinn - extremaCoeff*(psiMax - psiMin), psiMin);
 
-    // scalar smooth = 0.5;
-    // psiMaxn = min((1.0 - smooth)*psiIf + smooth*psiMaxn, psiMax);
-    // psiMinn = max((1.0 - smooth)*psiIf + smooth*psiMinn, psiMin);
+    if (smoothLimiter > SMALL)
+    {
+        psiMaxn =
+            min(smoothLimiter*psiIf + (1.0 - smoothLimiter)*psiMaxn, psiMax);
+        psiMinn =
+            max(smoothLimiter*psiIf + (1.0 - smoothLimiter)*psiMinn, psiMin);
+    }
 
     psiMaxn =
         V
@@ -483,8 +473,7 @@ void Foam::MULES::limitCorr
     const SpType& Sp,
     const SuType& Su,
     const scalar psiMax,
-    const scalar psiMin,
-    const label nLimiterIter
+    const scalar psiMin
 )
 {
     const fvMesh& mesh = psi.mesh();
@@ -519,8 +508,7 @@ void Foam::MULES::limitCorr
         Sp,
         Su,
         psiMax,
-        psiMin,
-        nLimiterIter
+        psiMin
     );
 
     phiCorr *= lambda;

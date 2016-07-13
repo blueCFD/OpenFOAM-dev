@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,33 +27,47 @@ License
 #include "pTraits.H"
 #include "dictionary.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::dimensioned<Type> Foam::dimensioned<Type>::lookupOrDefault
-(
-    const word& name,
-    const dictionary& dict,
-    const Type& defaultValue,
-    const dimensionSet& dims
-)
+void Foam::dimensioned<Type>::initialize(Istream& is)
 {
-    Type value = dict.lookupOrDefault<Type>(name, defaultValue);
-    return dimensioned<Type>(name, dims, value);
-}
+    token nextToken(is);
+    is.putBack(nextToken);
 
+    // Check if the original format is used in which the name is provided
+    // and reset the name to that read
+    if (nextToken.isWord())
+    {
+        is >> name_;
+        is >> nextToken;
+        is.putBack(nextToken);
+    }
 
-template<class Type>
-Foam::dimensioned<Type> Foam::dimensioned<Type>::lookupOrAddToDict
-(
-    const word& name,
-    dictionary& dict,
-    const Type& defaultValue,
-    const dimensionSet& dims
-)
-{
-    Type value = dict.lookupOrAddDefault<Type>(name, defaultValue);
-    return dimensioned<Type>(name, dims, value);
+    // If the dimensions are provided compare with the argument
+    scalar multiplier = 1.0;
+
+    if (nextToken == token::BEGIN_SQR)
+    {
+        dimensionSet dims(dimless);
+        dims.read(is, multiplier);
+
+        if (dims != dimensions_)
+        {
+            FatalIOErrorIn
+            (
+                "dimensioned<Type>::dimensioned"
+                "(const word&, const dimensionSet&, Istream&)",
+                is
+            ) << "The dimensions " << dims
+              << " provided do not match the required dimensions "
+              << dimensions_
+              << abort(FatalIOError);
+        }
+    }
+
+    is >> value_;
+    value_ *= multiplier;
 }
 
 
@@ -127,42 +141,23 @@ Foam::dimensioned<Type>::dimensioned
     dimensions_(dimSet),
     value_(pTraits<Type>::zero)
 {
-    token nextToken(is);
-    is.putBack(nextToken);
+    initialize(is);
+}
 
-    // Check if the original format is used in which the name is provided
-    // and reset the name to that read
-    if (nextToken.isWord())
-    {
-        is >> name_;
-        is >> nextToken;
-        is.putBack(nextToken);
-    }
 
-    // If the dimensions are provided compare with the argument
-    scalar multiplier = 1.0;
-
-    if (nextToken == token::BEGIN_SQR)
-    {
-        dimensionSet dims(dimless);
-        dims.read(is, multiplier);
-
-        if (dims != dimensions_)
-        {
-            FatalIOErrorIn
-            (
-                "dimensioned<Type>::dimensioned"
-                "(const word&, const dimensionSet&, Istream&)",
-                is
-            ) << "The dimensions " << dims
-              << " provided do not match the required dimensions "
-              << dimensions_
-              << abort(FatalIOError);
-        }
-    }
-
-    is >> value_;
-    value_ *= multiplier;
+template<class Type>
+Foam::dimensioned<Type>::dimensioned
+(
+    const word& name,
+    const dimensionSet& dimSet,
+    const dictionary& dict
+)
+:
+    name_(name),
+    dimensions_(dimSet),
+    value_(pTraits<Type>::zero)
+{
+    initialize(dict.lookup(name));
 }
 
 
@@ -174,6 +169,66 @@ Foam::dimensioned<Type>::dimensioned
     dimensions_(dimless),
     value_(pTraits<Type>::zero)
 {}
+
+
+// * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
+
+template<class Type>
+Foam::dimensioned<Type> Foam::dimensioned<Type>::lookupOrDefault
+(
+    const word& name,
+    const dictionary& dict,
+    const dimensionSet& dims,
+    const Type& defaultValue
+)
+{
+    if (dict.found(name))
+    {
+        return dimensioned<Type>(name, dims, dict.lookup(name));
+    }
+    else
+    {
+        return dimensioned<Type>(name, dims, defaultValue);
+    }
+}
+
+
+template<class Type>
+Foam::dimensioned<Type> Foam::dimensioned<Type>::lookupOrDefault
+(
+    const word& name,
+    const dictionary& dict,
+    const Type& defaultValue
+)
+{
+    return lookupOrDefault(name, dict, dimless, defaultValue);
+}
+
+
+template<class Type>
+Foam::dimensioned<Type> Foam::dimensioned<Type>::lookupOrAddToDict
+(
+    const word& name,
+    dictionary& dict,
+    const dimensionSet& dims,
+    const Type& defaultValue
+)
+{
+    Type value = dict.lookupOrAddDefault<Type>(name, defaultValue);
+    return dimensioned<Type>(name, dims, value);
+}
+
+
+template<class Type>
+Foam::dimensioned<Type> Foam::dimensioned<Type>::lookupOrAddToDict
+(
+    const word& name,
+    dictionary& dict,
+    const Type& defaultValue
+)
+{
+    return lookupOrAddToDict(name, dict, dimless, defaultValue);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

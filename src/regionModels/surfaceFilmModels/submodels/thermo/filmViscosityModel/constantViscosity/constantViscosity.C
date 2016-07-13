@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,10 +56,9 @@ constantViscosity::constantViscosity
 )
 :
     filmViscosityModel(typeName, owner, dict, mu),
-    mu0_(readScalar(coeffDict_.lookup("mu0")))
+    mu0_("mu0", dimDynamicViscosity, coeffDict_)
 {
-    mu_.internalField() = mu0_;
-    mu_.correctBoundaryConditions();
+    mu_ == mu0_;
 }
 
 
@@ -77,7 +76,7 @@ void constantViscosity::correct
     const volScalarField& T
 )
 {
-    // do nothing
+    mu_ == mu0_;
 }
 
 

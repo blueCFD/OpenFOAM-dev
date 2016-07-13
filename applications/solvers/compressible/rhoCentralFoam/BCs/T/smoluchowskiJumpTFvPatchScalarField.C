@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,6 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
+#include "basicThermo.H"
 #include "mathematicalConstants.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -181,7 +182,7 @@ void Foam::smoluchowskiJumpTFvPatchScalarField::updateCoeffs()
 
     // Prandtl number reading consistent with rhoCentralFoam
     const dictionary& thermophysicalProperties =
-        db().lookupObject<IOdictionary>("thermophysicalProperties");
+        db().lookupObject<IOdictionary>(basicThermo::dictName);
 
     dimensionedScalar Pr
     (

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,8 @@ Description
 #include "dynamicFvMesh.H"
 #include "barotropicCompressibilityModel.H"
 #include "incompressibleTwoPhaseMixture.H"
-#include "turbulenceModel.H"
+#include "turbulentTransportModel.H"
+#include "CorrectPhi.H"
 #include "pimpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -47,12 +48,11 @@ int main(int argc, char *argv[])
 
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
-    #include "initContinuityErrs.H"
 
     pimpleControl pimple(mesh);
 
     #include "readThermodynamicProperties.H"
-    #include "readControls.H"
+    #include "createControls.H"
     #include "createFields.H"
     #include "createUf.H"
     #include "createPcorrTypes.H"
@@ -66,24 +66,19 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "readControls.H"
-        #include "CourantNo.H"
-        #include "setDeltaT.H"
 
-        runTime++;
-        Info<< "Time = " << runTime.timeName() << nl << endl;
-
-        scalar timeBeforeMeshUpdate = runTime.elapsedCpuTime();
-
-        // Do any mesh changes
-        mesh.update();
-
-        if (mesh.changing())
         {
-            Info<< "Execution time for mesh.update() = "
-                << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
-                << " s" << endl;
+            #include "CourantNo.H"
+            #include "setDeltaT.H"
 
-            if (correctPhi)
+            runTime++;
+
+            Info<< "Time = " << runTime.timeName() << nl << endl;
+
+            // Do any mesh changes
+            mesh.update();
+
+            if (mesh.changing() && correctPhi)
             {
                 // Calculate absolute flux from the mapped surface velocity
                 phi = mesh.Sf() & Uf;

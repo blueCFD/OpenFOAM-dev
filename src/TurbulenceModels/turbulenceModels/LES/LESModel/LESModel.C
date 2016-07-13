@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,6 +54,7 @@ Foam::LESModel<BasicTurbulenceModel>::LESModel
 :
     BasicTurbulenceModel
     (
+        type,
         alpha,
         rho,
         U,
@@ -74,8 +75,8 @@ Foam::LESModel<BasicTurbulenceModel>::LESModel
         (
             "kMin",
             LESDict_,
-            SMALL,
-            sqr(dimVelocity)
+            sqr(dimVelocity),
+            SMALL
         )
     ),
 
@@ -84,7 +85,7 @@ Foam::LESModel<BasicTurbulenceModel>::LESModel
         LESdelta::New
         (
             IOobject::groupName("delta", U.group()),
-            U.mesh(),
+            *this,
             LESDict_
         )
     )
@@ -162,16 +163,9 @@ Foam::LESModel<BasicTurbulenceModel>::New
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class BasicTurbulenceModel>
-void Foam::LESModel<BasicTurbulenceModel>::correct()
-{
-    BasicTurbulenceModel::correct();
-}
-
-
-template<class BasicTurbulenceModel>
 bool Foam::LESModel<BasicTurbulenceModel>::read()
 {
-    if (turbulenceModel::read())
+    if (BasicTurbulenceModel::read())
     {
         LESDict_ <<= this->subDict("LES");
         LESDict_.lookup("turbulence") >> turbulence_;
@@ -181,6 +175,8 @@ bool Foam::LESModel<BasicTurbulenceModel>::read()
             coeffDict_ <<= *dictPtr;
         }
 
+        delta_().read(LESDict_);
+
         kMin_.readIfPresent(LESDict_);
 
         return true;
@@ -189,6 +185,14 @@ bool Foam::LESModel<BasicTurbulenceModel>::read()
     {
         return false;
     }
+}
+
+
+template<class BasicTurbulenceModel>
+void Foam::LESModel<BasicTurbulenceModel>::correct()
+{
+    delta_().correct();
+    BasicTurbulenceModel::correct();
 }
 
 

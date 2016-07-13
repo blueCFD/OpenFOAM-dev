@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,9 +35,11 @@ Description
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "singlePhaseTransportModel.H"
-#include "turbulenceModel.H"
+#include "turbulentTransportModel.H"
 #include "pimpleControl.H"
+#include "CorrectPhi.H"
 #include "fvIOoptionList.H"
+#include "fixedFluxPressureFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,9 +54,9 @@ int main(int argc, char *argv[])
 
     #include "createFields.H"
     #include "createUf.H"
+    #include "createMRF.H"
     #include "createFvOptions.H"
-    #include "readTimeControls.H"
-    #include "createPcorrTypes.H"
+    #include "createControls.H"
     #include "CourantNo.H"
     #include "setInitialDeltaT.H"
 
@@ -104,6 +106,7 @@ int main(int argc, char *argv[])
 
             if (pimple.turbCorr())
             {
+                laminarTransport.correct();
                 turbulence->correct();
             }
         }

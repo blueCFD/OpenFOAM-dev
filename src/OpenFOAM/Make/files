@@ -16,11 +16,16 @@ $(chars)/char/charIO.C
 $(chars)/wchar/wcharIO.C
 
 ints = primitives/ints
-$(ints)/int/intIO.C
+$(ints)/uint32/uint32.C
+$(ints)/uint32/uint32IO.C
+$(ints)/uint64/uint64.C
+$(ints)/uint64/uint64IO.C
 $(ints)/uint/uintIO.C
-$(ints)/long/longIO.C
-$(ints)/longLong/longLongIO.C
-$(ints)/ulong/ulongIO.C
+$(ints)/int32/int32.C
+$(ints)/int32/int32IO.C
+$(ints)/int64/int64.C
+$(ints)/int64/int64IO.C
+$(ints)/int/intIO.C
 $(ints)/label/label.C
 $(ints)/uLabel/uLabel.C
 $(ints)/lists/labelIOList.C
@@ -68,9 +73,6 @@ primitives/triad/triad.C
 
 /* functions, data entries */
 primitives/functions/DataEntry/makeDataEntries.C
-primitives/functions/DataEntry/polynomial/polynomial.C
-primitives/functions/DataEntry/polynomial/polynomialIO.C
-
 primitives/functions/Polynomial/polynomialFunction.C
 
 primitives/subModelBase/subModelBase.C
@@ -96,14 +98,13 @@ $(sha1)/SHA1.C
 $(sha1)/SHA1Digest.C
 
 primitives/random/Random/Random.C
-primitives/random/cachedRandom/cachedRandom.H
+primitives/random/cachedRandom/cachedRandom.C
 
 ranges = primitives/ranges
 $(ranges)/labelRange/labelRange.C
 $(ranges)/labelRange/labelRanges.C
 $(ranges)/scalarRange/scalarRange.C
 $(ranges)/scalarRange/scalarRanges.C
-
 
 containers/HashTables/HashTable/HashTableCore.C
 containers/HashTables/StaticHashTable/StaticHashTableCore.C
@@ -173,6 +174,7 @@ $(functionEntries)/calcEntry/calcEntry.C
 $(functionEntries)/codeStream/codeStream.C
 $(functionEntries)/functionEntry/functionEntry.C
 $(functionEntries)/includeEntry/includeEntry.C
+$(functionEntries)/includeEtcEntry/includeEtcEntry.C
 $(functionEntries)/includeIfPresentEntry/includeIfPresentEntry.C
 $(functionEntries)/inputModeEntry/inputModeEntry.C
 $(functionEntries)/removeEntry/removeEntry.C

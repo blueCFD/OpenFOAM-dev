@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,63 +30,63 @@ License
 #include "IOstreams.H"
 
 #ifdef LINUX_GNUC
-
-#   ifndef __USE_GNU
-#       define __USE_GNU
-#   endif
-
-#   include <fenv.h>
-#   include <malloc.h>
-
+    #ifndef __USE_GNU
+        #define __USE_GNU
+    #endif
+    #include <fenv.h>
+    #include <malloc.h>
 #elif defined(sgiN32) || defined(sgiN32Gcc)
-
-#   include <sigfpe.h>
-
+    #include <sigfpe.h>
 #endif
 
-#include <stdint.h>
 #include <limits>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 struct sigaction Foam::sigFpe::oldAction_;
 
-
-void Foam::sigFpe::fillSignallingNan(UList<scalar>& lst)
+void Foam::sigFpe::fillNan(UList<scalar>& lst)
 {
     lst = std::numeric_limits<scalar>::signaling_NaN();
 }
 
+bool Foam::sigFpe::mallocNanActive_ = false;
+
 
 #ifdef LINUX
-
-void *(*Foam::sigFpe::oldMallocHook_)(size_t, const void *) = NULL;
-
-void* Foam::sigFpe::nanMallocHook_(size_t size, const void *caller)
+extern "C"
 {
-    void *result;
+    extern void* __libc_malloc(size_t size);
 
-    // Restore all old hooks
-    __malloc_hook = oldMallocHook_;
+    // Override the GLIBC malloc to support mallocNan
+    void* malloc(size_t size)
+    {
+        if (Foam::sigFpe::mallocNanActive_)
+        {
+            return Foam::sigFpe::mallocNan(size);
+        }
+        else
+        {
+            return __libc_malloc(size);
+        }
+    }
+}
 
-    // Call recursively
-    result = malloc(size);
+void* Foam::sigFpe::mallocNan(size_t size)
+{
+    // Call the low-level GLIBC malloc function
+    void * result = __libc_malloc(size);
 
-    // initialize to signalling NaN
+    // Initialize to signalling NaN
     UList<scalar> lst(reinterpret_cast<scalar*>(result), size/sizeof(scalar));
-    fillSignallingNan(lst);
-
-    // Restore our own hooks
-    __malloc_hook = nanMallocHook_;
+    sigFpe::fillNan(lst);
 
     return result;
 }
-
 #endif
 
 
 #ifdef LINUX_GNUC
-
 void Foam::sigFpe::sigHandler(int)
 {
     // Reset old handling
@@ -107,7 +107,6 @@ void Foam::sigFpe::sigHandler(int)
     // Throw signal (to old handler)
     raise(SIGFPE);
 }
-
 #endif
 
 
@@ -125,8 +124,7 @@ Foam::sigFpe::~sigFpe()
 {
     if (env("FOAM_SIGFPE"))
     {
-#       ifdef LINUX_GNUC
-
+        #ifdef LINUX_GNUC
         // Reset signal
         if (oldAction_.sa_handler && sigaction(SIGFPE, &oldAction_, NULL) < 0)
         {
@@ -136,21 +134,15 @@ Foam::sigFpe::~sigFpe()
             )   << "Cannot reset SIGFPE trapping"
                 << abort(FatalError);
         }
-
-#       endif
+        #endif
     }
 
     if (env("FOAM_SETNAN"))
     {
-#       ifdef LINUX_GNUC
-
-        // Reset to standard malloc
-        if (oldAction_.sa_handler)
-        {
-            __malloc_hook = oldMallocHook_;
-        }
-
-#       endif
+        #ifdef LINUX
+        // Disable initialization to NaN
+        mallocNanActive_ = false;
+        #endif
     }
 }
 
@@ -172,7 +164,7 @@ void Foam::sigFpe::set(const bool verbose)
     {
         bool supported = false;
 
-#       ifdef LINUX_GNUC
+        #ifdef LINUX_GNUC
         supported = true;
 
         feenableexcept
@@ -196,7 +188,7 @@ void Foam::sigFpe::set(const bool verbose)
         }
 
 
-#       elif defined(sgiN32) || defined(sgiN32Gcc)
+        #elif defined(sgiN32) || defined(sgiN32Gcc)
         supported = true;
 
         sigfpe_[_DIVZERO].abort=1;
@@ -217,8 +209,7 @@ void Foam::sigFpe::set(const bool verbose)
             _ABORT_ON_ERROR,
             NULL
         );
-
-#       endif
+        #endif
 
 
         if (verbose)
@@ -239,20 +230,13 @@ void Foam::sigFpe::set(const bool verbose)
 
     if (env("FOAM_SETNAN"))
     {
-        bool supported = false;
-
-#       ifdef LINUX_GNUC
-        supported = true;
-
-        // Set our malloc
-        __malloc_hook = Foam::sigFpe::nanMallocHook_;
-
-#       endif
-
+        #ifdef LINUX
+        mallocNanActive_ = true;
+        #endif
 
         if (verbose)
         {
-            if (supported)
+            if (mallocNanActive_)
             {
                 Info<< "SetNaN : Initialising allocated memory to NaN"
                     << " (FOAM_SETNAN)." << endl;

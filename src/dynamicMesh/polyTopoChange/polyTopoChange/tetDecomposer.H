@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    tetDecomposer
+    Foam::tetDecomposer
 
 Description
     Decomposes polyMesh into tets.
@@ -63,10 +63,13 @@ public:
 
         enum decompositionType
         {
-            FACECENTRETETS, // tet decomposition using facectr and cellctr
-            FACEDIAGTETS    // tet decomposition using face diag and cellctr
+            FACE_CENTRE_TRIS, //- Faces decomposed into triangles
+                              //  using face-centre
+
+            FACE_DIAG_TRIS    //- Faces decomposed into triangles diagonally
         };
         static const NamedEnum<decompositionType, 2> decompositionTypeNames;
+
 
 private:
 
@@ -88,6 +91,7 @@ private:
         // Per face, per point (faceCentre) or triangle (faceDiag)
         // the added tet on the neighbour side
         labelListList faceNeighbourCells_;
+
 
     // Private Member Functions
 
@@ -186,6 +190,7 @@ public:
             //- Force recalculation of locally stored data on topological change
             void updateMesh(const mapPolyMesh&);
 };
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

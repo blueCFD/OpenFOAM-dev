@@ -31,7 +31,8 @@ volVectorField U
 
 label pRefCell = 0;
 scalar pRefValue = 0.0;
-setRefCell(p, mesh.solutionDict().subDict("PIMPLE"), pRefCell, pRefValue);
+setRefCell(p, pimple.dict(), pRefCell, pRefValue);
+mesh.setFluxRequired(p.name());
 
 
 singlePhaseTransportModel laminarTransport(U, phi);

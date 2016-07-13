@@ -32,7 +32,7 @@ divSchemes
     "div\(phi,alpha.*\)"    Gauss vanLeer;
     "div\(phir,alpha.*,alpha.*\)"   Gauss vanLeer;
 
-    "div\(phiAlpha.*,U.*\)" Gauss limitedLinearV 1;
+    "div\(alphaPhi.*,U.*\)" Gauss limitedLinearV 1;
     div(Rc)                 Gauss linear;
     "div\(phi.*,U.*\)"      Gauss limitedLinearV 1;
 }
@@ -51,13 +51,5 @@ snGradSchemes
 {
     default         corrected;
 }
-
-fluxRequired
-{
-    default         no;
-    p               ;
-    pcorr           ;
-}
-
 
 // ************************************************************************* //

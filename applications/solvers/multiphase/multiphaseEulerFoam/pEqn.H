@@ -1,6 +1,6 @@
 {
-    // rho1 = rho10 + psi1*p;
-    // rho2 = rho20 + psi2*p;
+    // rho1 = rho10 + psi1*p_rgh;
+    // rho2 = rho20 + psi2*p_rgh;
 
     // tmp<fvScalarMatrix> pEqnComp1;
     // tmp<fvScalarMatrix> pEqnComp2;
@@ -14,14 +14,14 @@
     //     surfaceScalarField phid2("phid2", fvc::interpolate(psi2)*phi2);
 
     //     pEqnComp1 =
-    //         fvc::ddt(rho1) + psi1*correction(fvm::ddt(p))
-    //       + fvc::div(phid1, p)
-    //       - fvc::Sp(fvc::div(phid1), p);
+    //         fvc::ddt(rho1) + psi1*correction(fvm::ddt(p_rgh))
+    //       + fvc::div(phid1, p_rgh)
+    //       - fvc::Sp(fvc::div(phid1), p_rgh);
 
     //     pEqnComp2 =
-    //         fvc::ddt(rho2) + psi2*correction(fvm::ddt(p))
-    //       + fvc::div(phid2, p)
-    //       - fvc::Sp(fvc::div(phid2), p);
+    //         fvc::ddt(rho2) + psi2*correction(fvm::ddt(p_rgh))
+    //       + fvc::div(phid2, p_rgh)
+    //       - fvc::Sp(fvc::div(phid2), p_rgh);
     // }
 
     PtrList<surfaceScalarField> alphafs(fluid.phases().size());
@@ -35,8 +35,8 @@
     {
         phaseModel& phase = iter();
 
-        mrfZones.makeAbsolute(phase.phi().oldTime());
-        mrfZones.makeAbsolute(phase.phi());
+        MRF.makeAbsolute(phase.phi().oldTime());
+        MRF.makeAbsolute(phase.phi());
 
         HbyAs.set(phasei, new volVectorField(phase.U()));
         phiHbyAs.set(phasei, new surfaceScalarField(1.0*phase.phi()));
@@ -57,6 +57,9 @@
         mesh,
         dimensionedScalar("phiHbyA", dimArea*dimVelocity, 0)
     );
+
+    volScalarField rho("rho", fluid.rho());
+    surfaceScalarField ghSnGradRho(ghf*fvc::snGrad(rho)*mesh.magSf());
 
     phasei = 0;
     forAllIter(PtrDictionary<phaseModel>, fluid.phases(), iter)
@@ -97,16 +100,17 @@
             (fvc::interpolate(HbyAs[phasei]) & mesh.Sf())
           + rAlphaAUfs[phasei]*fvc::ddtCorr(phase.U(), phase.phi())
         );
-        mrfZones.makeRelative(phiHbyAs[phasei]);
-        mrfZones.makeRelative(phase.phi().oldTime());
-        mrfZones.makeRelative(phase.phi());
+        MRF.makeRelative(phiHbyAs[phasei]);
+        MRF.makeRelative(phase.phi().oldTime());
+        MRF.makeRelative(phase.phi());
 
         phiHbyAs[phasei] +=
             rAlphaAUfs[phasei]
            *(
-               fluid.surfaceTension(phase)*mesh.magSf()/phase.rho()
-             + (g & mesh.Sf())
-            );
+               fluid.surfaceTension(phase)*mesh.magSf()
+             + (phase.rho() - fvc::interpolate(rho))*(g & mesh.Sf())
+             - ghSnGradRho
+            )/phase.rho();
 
         multiphaseSystem::dragModelTable::const_iterator dmIter =
             fluid.dragModels().begin();
@@ -199,9 +203,9 @@
 
         setSnGrad<fixedFluxPressureFvPatchScalarField>
         (
-            p.boundaryField(),
+            p_rgh.boundaryField(),
             (
-                phiHbyA.boundaryField() - mrfZones.relative(phib)
+                phiHbyA.boundaryField() - MRF.relative(phib)
             )/(mesh.magSf().boundaryField()*rAUf.boundaryField())
         );
     }
@@ -211,7 +215,7 @@
         fvScalarMatrix pEqnIncomp
         (
             fvc::div(phiHbyA)
-          - fvm::laplacian(rAUf, p)
+          - fvm::laplacian(rAUf, p_rgh)
         );
 
         pEqnIncomp.setReference(pRefCell, pRefValue);
@@ -223,7 +227,7 @@
             //   + (alpha2/rho2)*pEqnComp2()
             // ) +
             pEqnIncomp,
-            mesh.solver(p.select(pimple.finalInnerIter()))
+            mesh.solver(p_rgh.select(pimple.finalInnerIter()))
         );
 
         if (pimple.finalNonOrthogonalIter())
@@ -254,7 +258,10 @@
             //   - pos(alpha1)*(pEqnComp1 & p)/rho1
             // );
 
-            p.relax();
+            p_rgh.relax();
+
+            p = p_rgh + rho*gh;
+
             mSfGradp = pEqnIncomp.flux()/rAUf;
 
             U = dimensionedVector("U", dimVelocity, vector::zero);
@@ -269,9 +276,14 @@
                     HbyAs[phasei]
                   + fvc::reconstruct
                     (
-                        rAlphaAUfs[phasei]*(g & mesh.Sf())
-                      + rAlphaAUfs[phasei]*mSfGradp/phase.rho()
-                    );
+                        rAlphaAUfs[phasei]
+                       *(
+                            (phase.rho() - fvc::interpolate(rho))
+                           *(g & mesh.Sf())
+                          - ghSnGradRho
+                          + mSfGradp
+                        )
+                    )/phase.rho();
 
                 //phase.U() = fvc::reconstruct(phase.phi());
                 phase.U().correctBoundaryConditions();
@@ -287,9 +299,9 @@
 
     #include "continuityErrs.H"
 
-    // rho1 = rho10 + psi1*p;
-    // rho2 = rho20 + psi2*p;
+    // rho1 = rho10 + psi1*p_rgh;
+    // rho2 = rho20 + psi2*p_rgh;
 
-    // Dp1Dt = fvc::DDt(phi1, p);
-    // Dp2Dt = fvc::DDt(phi2, p);
+    // Dp1Dt = fvc::DDt(phi1, p_rgh);
+    // Dp2Dt = fvc::DDt(phi2, p_rgh);
 }

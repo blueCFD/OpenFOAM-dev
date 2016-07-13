@@ -20,7 +20,7 @@
         )
     );
 
-    fvOptions.makeRelative(fvc::interpolate(rho), phiHbyA);
+    MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
     fvScalarMatrix pDDtEqn
     (
@@ -38,8 +38,6 @@
             pDDtEqn
           - fvm::laplacian(rhorAUf, p)
         );
-
-        fvOptions.constrain(pEqn);
 
         pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
 

@@ -33,7 +33,7 @@ divSchemes
     div(phirb,alpha) Gauss linear;
     div(phi,k)      Gauss linearUpwind limitedGrad;
     div(phi,omega)  Gauss linearUpwind limitedGrad;
-    div((muEff*dev(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -51,12 +51,9 @@ snGradSchemes
     default         corrected;
 }
 
-fluxRequired
+wallDist
 {
-    default         no;
-    p_rgh;
-    pcorr;
-    alpha.water;
+    method meshWave;
 }
 
 

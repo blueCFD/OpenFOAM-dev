@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,21 +26,17 @@ License
 #include "pureMixture.H"
 #include "fvMesh.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class ThermoType>
-pureMixture<ThermoType>::pureMixture
+Foam::pureMixture<ThermoType>::pureMixture
 (
     const dictionary& thermoDict,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const word& phaseName
 )
 :
-    basicMixture(thermoDict, mesh),
+    basicMixture(thermoDict, mesh, phaseName),
     mixture_(thermoDict.subDict("mixture"))
 {}
 
@@ -48,14 +44,10 @@ pureMixture<ThermoType>::pureMixture
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class ThermoType>
-void pureMixture<ThermoType>::read(const dictionary& thermoDict)
+void Foam::pureMixture<ThermoType>::read(const dictionary& thermoDict)
 {
     mixture_ = ThermoType(thermoDict.subDict("mixture"));
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

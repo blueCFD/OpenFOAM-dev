@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,17 +32,18 @@ template<class Type>
 Foam::combustionModels::PaSR<Type>::PaSR
 (
     const word& modelType,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const word& phaseName
 )
 :
-    laminar<Type>(modelType, mesh),
+    laminar<Type>(modelType, mesh, phaseName),
     Cmix_(readScalar(this->coeffs().lookup("Cmix"))),
     turbulentReaction_(this->coeffs().lookup("turbulentReaction")),
     kappa_
     (
         IOobject
         (
-            "PaSR:kappa",
+            IOobject::groupName("PaSR:kappa", phaseName),
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -72,20 +73,19 @@ void Foam::combustionModels::PaSR<Type>::correct()
 
         if (turbulentReaction_)
         {
-            tmp<volScalarField> trho(this->rho());
-            const volScalarField& rho = trho();
             tmp<volScalarField> tepsilon(this->turbulence().epsilon());
             const volScalarField& epsilon = tepsilon();
             tmp<volScalarField> tmuEff(this->turbulence().muEff());
             const volScalarField& muEff = tmuEff();
-
             tmp<volScalarField> ttc(this->tc());
             const volScalarField& tc = ttc();
+            tmp<volScalarField> trho(this->rho());
+            const volScalarField& rho = trho();
 
             forAll(epsilon, i)
             {
                 scalar tk =
-                    Cmix_*Foam::sqrt(muEff[i]/rho[i]/(epsilon[i] + SMALL));
+                    Cmix_*sqrt(max(muEff[i]/rho[i]/(epsilon[i] + SMALL), 0));
 
                 if (tk > SMALL)
                 {
@@ -117,11 +117,14 @@ template<class Type>
 Foam::tmp<Foam::volScalarField>
 Foam::combustionModels::PaSR<Type>::dQ() const
 {
-    return
-        tmp<volScalarField>
+    return tmp<volScalarField>
+    (
+        new volScalarField
         (
-            new volScalarField("PaSR:dQ", kappa_*laminar<Type>::dQ())
-        );
+            IOobject::groupName("PaSR:dQ", this->phaseName_),
+            kappa_*laminar<Type>::dQ()
+        )
+    );
 }
 
 
@@ -129,11 +132,14 @@ template<class Type>
 Foam::tmp<Foam::volScalarField>
 Foam::combustionModels::PaSR<Type>::Sh() const
 {
-    return
-        tmp<volScalarField>
+    return tmp<volScalarField>
+    (
+        new volScalarField
         (
-            new volScalarField("PaSR:Sh", kappa_*laminar<Type>::Sh())
-        );
+            IOobject::groupName("PaSR:Sh", this->phaseName_),
+            kappa_*laminar<Type>::Sh()
+        )
+    );
 }
 
 

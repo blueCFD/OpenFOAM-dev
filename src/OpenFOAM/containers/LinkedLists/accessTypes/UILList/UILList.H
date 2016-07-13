@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -209,6 +209,16 @@ public:
                 }
         };
 
+        inline iterator begin()
+        {
+            return LListBase::begin();
+        }
+
+        inline const iterator& end()
+        {
+            return static_cast<const iterator&>(LListBase::end());
+        }
+
 
     // STL const_iterator
 
@@ -256,24 +266,44 @@ public:
                 }
         };
 
+        inline const_iterator cbegin() const
+        {
+            return LListBase::cbegin();
+        }
+
+        inline const const_iterator& cend() const
+        {
+            return static_cast<const const_iterator&>(LListBase::cend());
+        }
+
+        inline const_iterator begin() const
+        {
+            return LListBase::begin();
+        }
+
+        inline const const_iterator& end() const
+        {
+            return static_cast<const const_iterator&>(LListBase::end());
+        }
+
 
     // STL const_reverse_iterator
-
-        typedef typename LListBase::const_reverse_iterator
-            LListBase_const_reverse_iterator;
 
         //- An STL-conforming const_reverse_iterator
         class const_reverse_iterator
         :
-            public LListBase_const_reverse_iterator
+            public LListBase::const_reverse_iterator
         {
 
         public:
 
             //- Construct from base const_reverse_iterator
-            const_reverse_iterator(LListBase_const_reverse_iterator baseIter)
+            const_reverse_iterator
+            (
+                typename LListBase::const_reverse_iterator baseIter
+            )
             :
-                LListBase_const_reverse_iterator(baseIter)
+                LListBase::const_reverse_iterator(baseIter)
             {}
 
 
@@ -283,7 +313,7 @@ public:
                 {
                     return
                         static_cast<const T&>
-                        (LListBase_const_reverse_iterator::operator*());
+                        (LListBase::const_reverse_iterator::operator*());
                 }
 
                 const T& operator()()
@@ -293,10 +323,33 @@ public:
 
                 const_reverse_iterator& operator++()
                 {
-                    LListBase_const_reverse_iterator::operator++();
+                    LListBase::const_reverse_iterator::operator++();
                     return *this;
                 }
         };
+
+        inline const_reverse_iterator crbegin() const
+        {
+            return LListBase::crbegin();
+        }
+
+        inline const const_reverse_iterator& crend() const
+        {
+            return
+                static_cast<const const_reverse_iterator&>(LListBase::crend());
+        }
+
+
+        inline const_reverse_iterator rbegin() const
+        {
+            return LListBase::rbegin();
+        }
+
+        inline const const_reverse_iterator& rend() const
+        {
+            return
+                static_cast<const const_reverse_iterator&>(LListBase::rend());
+        }
 
 
     // STL member operators

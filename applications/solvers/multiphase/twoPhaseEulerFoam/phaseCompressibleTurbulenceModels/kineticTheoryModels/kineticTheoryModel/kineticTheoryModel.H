@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,8 +30,8 @@ Description
     Reference:
     \verbatim
         "Derivation, implementation, and validation of computer simulation
-        models for gas-solid fluidized beds",
-        B.G.M. van Wachem,
+         models for gas-solid fluidized beds",
+        van Wachem, B.G.M.,
         Ph.D. Thesis, Delft University of Technology, Amsterdam, 2000.
     \endverbatim
 
@@ -48,6 +48,8 @@ SourceFiles
 #include "RASModel.H"
 #include "eddyViscosity.H"
 #include "PhaseCompressibleTurbulenceModel.H"
+#include "ThermalDiffusivity.H"
+#include "EddyDiffusivity.H"
 #include "phaseModel.H"
 #include "dragModel.H"
 #include "viscosityModel.H"
@@ -72,7 +74,10 @@ class kineticTheoryModel
 :
     public eddyViscosity
     <
-        RASModel<PhaseCompressibleTurbulenceModel<phaseModel> >
+        RASModel<EddyDiffusivity<ThermalDiffusivity
+        <
+            PhaseCompressibleTurbulenceModel<phaseModel>
+        > > >
     >
 {
     // Private data

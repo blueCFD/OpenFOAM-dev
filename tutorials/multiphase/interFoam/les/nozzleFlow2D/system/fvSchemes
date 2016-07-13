@@ -34,7 +34,7 @@ divSchemes
     div(phi,B)      Gauss limitedLinear 1;
     div(B)          Gauss linear;
     div(phi,nuTilda) Gauss limitedLinear 1;
-    div((muEff*dev(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -51,13 +51,5 @@ snGradSchemes
 {
     default         corrected;
 }
-
-fluxRequired
-{
-    default         no;
-    p_rgh;
-    pcorr;
-}
-
 
 // ************************************************************************* //

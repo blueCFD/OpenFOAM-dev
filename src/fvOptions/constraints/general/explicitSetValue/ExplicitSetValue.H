@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,7 @@ SourceFiles
 #ifndef ExplicitSetValue_H
 #define ExplicitSetValue_H
 
-#include "fvOption.H"
+#include "cellSetOption.H"
 #include "Tuple2.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -68,7 +68,7 @@ namespace fv
 template<class Type>
 class ExplicitSetValue
 :
-    public option
+    public cellSetOption
 {
 
 protected:
@@ -108,13 +108,10 @@ public:
         // Evaluation
 
             //- Set value on field
-            virtual void setValue(fvMatrix<Type>& eqn, const label fieldI);
+            virtual void constrain(fvMatrix<Type>& eqn, const label fieldI);
 
 
-        // I-O
-
-            //- Write the source properties
-            virtual void writeData(Ostream&) const;
+        // IO
 
             //- Read source dictionary
             virtual bool read(const dictionary& dict);

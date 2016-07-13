@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ${0%/*} || exit 1    # run from this directory
+cd ${0%/*} || exit 1    # Run from this directory
 
 #
 # FUNCTIONS
@@ -25,7 +25,7 @@ USAGE
 unset timeOpt
 
 # parse options
-while [ "$#" -gt 0 ]
+while [ "$#" -gt 0]
 do
     case "$1" in
     -h | -help)

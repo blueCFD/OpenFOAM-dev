@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,8 +97,8 @@ Foam::incompressibleTwoPhaseMixture::incompressibleTwoPhaseMixture
         )
     ),
 
-    rho1_("rho", dimDensity, nuModel1_->viscosityProperties().lookup("rho")),
-    rho2_("rho", dimDensity, nuModel2_->viscosityProperties().lookup("rho")),
+    rho1_("rho", dimDensity, nuModel1_->viscosityProperties()),
+    rho2_("rho", dimDensity, nuModel2_->viscosityProperties()),
 
     U_(U),
     phi_(phi),
@@ -112,7 +112,7 @@ Foam::incompressibleTwoPhaseMixture::incompressibleTwoPhaseMixture
             U_.db()
         ),
         U_.mesh(),
-        dimensionedScalar("nu", dimensionSet(0, 2, -1, 0, 0), 0),
+        dimensionedScalar("nu", dimViscosity, 0),
         calculatedFvPatchScalarField::typeName
     )
 {

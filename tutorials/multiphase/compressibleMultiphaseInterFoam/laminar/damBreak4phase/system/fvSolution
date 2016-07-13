@@ -17,6 +17,12 @@ FoamFile
 
 solvers
 {
+    "alpha.*"
+    {
+        nAlphaSubCycles 4;
+        cAlpha          2;
+    }
+
     pcorr
     {
         solver          PCG;
@@ -102,15 +108,10 @@ PIMPLE
 {
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
-    nAlphaSubCycles 4;
-    cAlpha          2;
 }
 
 relaxationFactors
 {
-    fields
-    {
-    }
     equations
     {
         "U.*"           1;

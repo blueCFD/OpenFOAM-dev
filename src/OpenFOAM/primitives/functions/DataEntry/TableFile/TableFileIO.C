@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,32 +28,12 @@ License
 // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
 
 template<class Type>
-Foam::Ostream& Foam::operator<<
-(
-    Ostream& os,
-    const TableFile<Type>& tbl
-)
-{
-    os  << static_cast<const DataEntry<Type>&>(tbl)
-        << static_cast<const TableBase<Type>&>(tbl);
-
-    // Check state of Ostream
-    os.check
-    (
-        "Ostream& operator<<(Ostream&, const TableFile<Type>&)"
-    );
-
-    return os;
-}
-
-
-template<class Type>
 void Foam::TableFile<Type>::writeData(Ostream& os) const
 {
     DataEntry<Type>::writeData(os);
 
     os  << token::END_STATEMENT << nl
-        << indent << word(type() + "Coeffs") << nl
+        << indent << word(this->name() + "Coeffs") << nl
         << indent << token::BEGIN_BLOCK << nl << incrIndent;
 
     // Note: for TableBase write the dictionary entries it needs but not

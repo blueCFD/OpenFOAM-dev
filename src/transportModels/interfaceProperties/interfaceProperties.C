@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -167,7 +167,7 @@ Foam::interfaceProperties::interfaceProperties
             alpha1.mesh().solverDict(alpha1.name()).lookup("cAlpha")
         )
     ),
-    sigma_(dict.lookup("sigma")),
+    sigma_("sigma", dimensionSet(1, 0, -2, 0, 0), dict),
 
     deltaN_
     (
@@ -219,6 +219,15 @@ Foam::tmp<Foam::volScalarField>
 Foam::interfaceProperties::nearInterface() const
 {
     return pos(alpha1_ - 0.01)*pos(0.99 - alpha1_);
+}
+
+
+bool Foam::interfaceProperties::read()
+{
+    alpha1_.mesh().solverDict(alpha1_.name()).lookup("cAlpha") >> cAlpha_;
+    transportPropertiesDict_.lookup("sigma") >> sigma_;
+
+    return true;
 }
 
 

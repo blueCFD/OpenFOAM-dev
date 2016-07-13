@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,7 @@ Description
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "RASModel.H"
+#include "turbulentTransportModel.H"
 #include "SRFModel.H"
 #include "simpleControl.H"
 #include "fvIOoptionList.H"
@@ -44,11 +44,12 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
+
+    simpleControl simple(mesh);
+
     #include "createFields.H"
     #include "createFvOptions.H"
     #include "initContinuityErrs.H"
-
-    simpleControl simple(mesh);
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,25 +65,12 @@ int main(int argc, char *argv[])
             #include "pEqn.H"
         }
 
+        U = Urel + SRF->U();
+
+        laminarTransport.correct();
         turbulence->correct();
 
-        if (runTime.outputTime())
-        {
-            volVectorField Uabs
-            (
-                IOobject
-                (
-                    "Uabs",
-                    runTime.timeName(),
-                    mesh,
-                    IOobject::NO_READ,
-                    IOobject::AUTO_WRITE
-                ),
-                Urel + SRF->U()
-            );
-
-            runTime.write();
-        }
+        runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

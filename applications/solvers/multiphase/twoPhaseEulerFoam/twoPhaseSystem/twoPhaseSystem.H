@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,13 +40,13 @@ SourceFiles
 #include "orderedPhasePair.H"
 #include "volFields.H"
 #include "surfaceFields.H"
+#include "dragModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-class dragModel;
 class virtualMassModel;
 class heatTransferModel;
 class liftModel;
@@ -64,8 +64,6 @@ class twoPhaseSystem
 :
     public IOdictionary
 {
-private:
-
     // Private data
 
         //- Reference to the mesh
@@ -80,8 +78,11 @@ private:
         //- Total volumetric flux
         surfaceScalarField phi_;
 
-        //-  Dilatation term
+        //- Dilatation term
         volScalarField dgdt_;
+
+        //- Optional dispersion diffusivity
+        tmp<surfaceScalarField> pPrimeByA_;
 
         //- Unordered phase pair
         autoPtr<phasePair> pair_;
@@ -143,22 +144,29 @@ public:
         tmp<volVectorField> U() const;
 
         //- Return the drag coefficient
-        tmp<volScalarField> dragCoeff() const;
+        tmp<volScalarField> Kd() const;
+
+        //- Return the face drag coefficient
+        tmp<surfaceScalarField> Kdf() const;
 
         //- Return the virtual mass coefficient
-        tmp<volScalarField> virtualMassCoeff() const;
+        tmp<volScalarField> Vm() const;
+
+        //- Return the face virtual mass coefficient
+        tmp<surfaceScalarField> Vmf() const;
 
         //- Return the heat transfer coefficient
-        tmp<volScalarField> heatTransferCoeff() const;
+        tmp<volScalarField> Kh() const;
 
-        //- Return the lift force
-        tmp<volVectorField> liftForce() const;
+        //- Return the combined force (lift + wall-lubrication)
+        tmp<volVectorField> F() const;
 
-        //- Return the wall lubrication force
-        tmp<volVectorField> wallLubricationForce() const;
+        //- Return the combined face-force (lift + wall-lubrication)
+        tmp<surfaceScalarField> Ff() const;
 
-        //- Return the wall lubrication force
-        tmp<volVectorField> turbulentDispersionForce() const;
+        //- Return the turbulent diffusivity
+        //  Multiplies the phase-fraction gradient
+        tmp<volScalarField> D() const;
 
         //- Solve for the two-phase-fractions
         void solve();
@@ -174,10 +182,10 @@ public:
 
         // Access
 
-            //- Return the drag model for the supplied phase
+            //- Return the drag model for the given phase
             const dragModel& drag(const phaseModel& phase) const;
 
-            //- Return the virtual mass model for the supplied phase
+            //- Return the virtual mass model for the given phase
             const virtualMassModel& virtualMass(const phaseModel& phase) const;
 
             //- Return the surface tension coefficient
@@ -212,6 +220,9 @@ public:
 
             //- Return non-const access to the dilatation parameter
             inline volScalarField& dgdt();
+
+            //- Return non-const access to the dispersion diffusivity
+            inline tmp<surfaceScalarField>& pPrimeByA();
 };
 
 

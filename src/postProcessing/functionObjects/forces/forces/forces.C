@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,10 +30,8 @@ License
 #include "wordReList.H"
 #include "fvcGrad.H"
 #include "porosityModel.H"
-#include "fluidThermo.H"
-#include "incompressible/turbulenceModel/turbulenceModel.H"
-#include "compressible/turbulenceModel/turbulenceModel.H"
-#include "incompressible/transportModel/transportModel.H"
+#include "turbulentTransportModel.H"
+#include "turbulentFluidThermoModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -209,17 +207,17 @@ Foam::tmp<Foam::volSymmTensorField> Foam::forces::devRhoReff() const
     typedef compressible::turbulenceModel cmpTurbModel;
     typedef incompressible::turbulenceModel icoTurbModel;
 
-    if (obr_.foundObject<cmpTurbModel>(cmpTurbModel::typeName))
+    if (obr_.foundObject<cmpTurbModel>(cmpTurbModel::propertiesName))
     {
         const cmpTurbModel& turb =
-            obr_.lookupObject<cmpTurbModel>(cmpTurbModel::typeName);
+            obr_.lookupObject<cmpTurbModel>(cmpTurbModel::propertiesName);
 
         return turb.devRhoReff();
     }
-    else if (obr_.foundObject<icoTurbModel>(icoTurbModel::typeName))
+    else if (obr_.foundObject<icoTurbModel>(icoTurbModel::propertiesName))
     {
         const incompressible::turbulenceModel& turb =
-            obr_.lookupObject<icoTurbModel>(icoTurbModel::typeName);
+            obr_.lookupObject<icoTurbModel>(icoTurbModel::propertiesName);
 
         return rho()*turb.devReff();
     }
@@ -268,10 +266,10 @@ Foam::tmp<Foam::volSymmTensorField> Foam::forces::devRhoReff() const
 
 Foam::tmp<Foam::volScalarField> Foam::forces::mu() const
 {
-    if (obr_.foundObject<fluidThermo>("thermophysicalProperties"))
+    if (obr_.foundObject<fluidThermo>(basicThermo::dictName))
     {
         const fluidThermo& thermo =
-             obr_.lookupObject<fluidThermo>("thermophysicalProperties");
+             obr_.lookupObject<fluidThermo>(basicThermo::dictName);
 
         return thermo.mu();
     }
@@ -377,13 +375,14 @@ void Foam::forces::applyBins
 
         forAll(dd, i)
         {
-            label binI = floor(dd[i]/binDx_);
-            force_[0][binI] += fN[i];
-            force_[1][binI] += fT[i];
-            force_[2][binI] += fP[i];
-            moment_[0][binI] += Md[i]^fN[i];
-            moment_[1][binI] += Md[i]^fT[i];
-            moment_[2][binI] += Md[i]^fP[i];
+            label bini = min(max(floor(dd[i]/binDx_), 0), force_[0].size() - 1);
+
+            force_[0][bini] += fN[i];
+            force_[1][bini] += fT[i];
+            force_[2][bini] += fP[i];
+            moment_[0][bini] += Md[i]^fN[i];
+            moment_[1][bini] += Md[i]^fT[i];
+            moment_[2][bini] += Md[i]^fP[i];
         }
     }
 }
@@ -391,7 +390,7 @@ void Foam::forces::applyBins
 
 void Foam::forces::writeForces()
 {
-    Info(log_)
+    if (log_) Info
         << type() << " " << name_ << " output:" << nl
         << "    sum of forces:" << nl
         << "        pressure : " << sum(force_[0]) << nl
@@ -640,7 +639,7 @@ void Foam::forces::read(const dictionary& dict)
 
         log_ = dict.lookupOrDefault<Switch>("log", false);
 
-        Info(log_)<< type() << " " << name_ << ":" << nl;
+        if (log_) Info<< type() << " " << name_ << ":" << nl;
 
         directForceDensity_ = dict.lookupOrDefault("directForceDensity", false);
 
@@ -681,11 +680,11 @@ void Foam::forces::read(const dictionary& dict)
         dict.readIfPresent("porosity", porosity_);
         if (porosity_)
         {
-            Info(log_)<< "    Including porosity effects" << endl;
+            if (log_) Info<< "    Including porosity effects" << endl;
         }
         else
         {
-            Info(log_)<< "    Not including porosity effects" << endl;
+            if (log_) Info<< "    Not including porosity effects" << endl;
         }
 
         if (dict.found("binData"))
@@ -802,7 +801,7 @@ void Foam::forces::write()
 
         writeBins();
 
-        Info(log_)<< endl;
+        if (log_) Info<< endl;
     }
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "turbulenceModel.H"
+#include "turbulentFluidThermoModel.H"
 #include "basicReactingCloud.H"
 #include "surfaceFilmModel.H"
 #include "psiCombustionModel.H"
@@ -49,18 +49,19 @@ int main(int argc, char *argv[])
 
     #include "createTime.H"
     #include "createMesh.H"
-    #include "readGravitationalAcceleration.H"
+
+    pimpleControl pimple(mesh);
+
     #include "createFields.H"
+    #include "createMRF.H"
     #include "createFvOptions.H"
     #include "createClouds.H"
     #include "createRadiationModel.H"
     #include "createSurfaceFilmModel.H"
     #include "initContinuityErrs.H"
-    #include "readTimeControls.H"
+    #include "createTimeControls.H"
     #include "compressibleCourantNo.H"
     #include "setInitialDeltaT.H"
-
-    pimpleControl pimple(mesh);
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "readTimeControls.H"
+        #include "createTimeControls.H"
         #include "compressibleCourantNo.H"
         #include "setMultiRegionDeltaT.H"
         #include "setDeltaT.H"
@@ -116,7 +117,7 @@ int main(int argc, char *argv[])
 
     Info<< "End" << endl;
 
-    return(0);
+    return 0;
 }
 
 

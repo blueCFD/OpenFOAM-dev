@@ -2,13 +2,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -23,73 +21,64 @@
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Modifications
-#     This file has been modified by blueCAPE's unofficial mingw patches for
-#     OpenFOAM.
-#     For more information about these patches, visit:
-#         http://bluecfd.com/Core
-#
-#     Modifications made:
-#        - Derived from the patches for blueCFD 2.1 and 2.2.
-#        - Added the ability to build localized builds for each MPI toolbox.
-#
 # File
 #     MakefileFiles
 #
 # Description
-#     A Makefile for the 'files', used by wmake
+#     A Makefile for the 'options' and 'files' files, used by wmake
 #
 #------------------------------------------------------------------------------
 
 GENERAL_RULES = $(WM_DIR)/rules/General
 RULES         = $(WM_DIR)/rules/$(WM_ARCH)$(WM_COMPILER)
-WM_SCRIPTS    = $(WM_DIR)/scripts
-WM_OPTIONS_LOCAL  ?= $(WM_OPTIONS)
-OBJECTS_DIR   = $(WM_OPTIONS_LOCAL)
-FFLAGS        =
+OBJECTS_DIR   = $(MAKE_DIR)/$(WM_OPTIONS)
 
 include $(GENERAL_RULES)/general
 include $(RULES)/general
-include $(OBJECTS_DIR)/options
 
 #------------------------------------------------------------------------------
 # declare names of make system control files derived from file 'files'
 #------------------------------------------------------------------------------
 
+OPTIONS = $(OBJECTS_DIR)/options
 FILES   = $(OBJECTS_DIR)/files
-
+VARS    = $(OBJECTS_DIR)/variables
 SFILES  = $(OBJECTS_DIR)/sourceFiles
-OFILES  = $(OBJECTS_DIR)/objectFiles
-DFILES  = $(OBJECTS_DIR)/dependencyFiles
-IFILES  = $(OBJECTS_DIR)/includeDeps
 
-VERSIONFILE = $(OBJECTS_DIR)/version_of_build.rc
+-include $(OPTIONS)
 
 #------------------------------------------------------------------------------
 # Declare dependecy of all make system files on FILES
 # Causes all derived files to be remade if any are changed or missing
 #------------------------------------------------------------------------------
 
-allFiles : $(FILES) $(SFILES) $(OFILES) $(DFILES) $(IFILES)
+all : $(OPTIONS) $(SFILES) $(VARS)
 
-versioning : $(VERSIONFILE)
+$(OPTIONS) : $(MAKE_DIR)/options
+	@$(CPP) $(GFLAGS) $(MAKE_DIR)/options | sed -e 's@   *@ @g' > $(OPTIONS)
 
-$(FILES) : files
-	@$(CPP) $(GFLAGS) $(FFLAGS) files | sed -e 's@   *@ @g' > $(FILES)
+$(SFILES): $(MAKE_DIR)/files
+	@$(CPP) $(GFLAGS) $(MAKE_DIR)/files | sed -e 's@   *@ @g' > $(FILES)
+	# Find all macro definitions in the files
+	@grep "=" $(FILES) > $(VARS)
+	echo "SOURCE = " > $(SFILES)
+	# Remove all macro definitions from the files list
+	@grep -v "=" $(FILES) >> $(SFILES)
+	@rm -f $(FILES)
+	# Add a newline to files to ensure the last line is followed by a newline
+	@echo "" >> $(SFILES)
+	# Remove commented lines, blank lines, and trailing blanks from files
+	@sed -i \
+	    -e '/^#/ d'         \
+	    -e '/^[ \t]*$$/ d'   \
+	    -e 's,[ \t]*$$,,'    \
+	     $(SFILES)
+	# Add backslashes
+	@sed -i \
+	    -e 's,$$, \\,'    \
+	    -e '$$s,\\,,'    \
+	    $(SFILES)
 
-$(SFILES): files
-	@$(WM_SCRIPTS)/makeDerivedFiles
-
-$(OFILES): files
-	@$(WM_SCRIPTS)/makeDerivedFiles
-
-$(DFILES): files
-	@$(WM_SCRIPTS)/makeDerivedFiles
-
-$(IFILES): files
-	@$(WM_SCRIPTS)/makeDerivedFiles
-	
-$(VERSIONFILE): files
-	@$(WM_SCRIPTS)/makeVersionResourceFile
+$(VARS): $(SFILES)
 
 #------------------------------------------------------------------------------

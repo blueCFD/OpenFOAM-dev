@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,8 +39,8 @@ Foam::COxidationHurtMitchell<CloudType>::COxidationHurtMitchell
     Sb_(readScalar(this->coeffDict().lookup("Sb"))),
     CsLocalId_(-1),
     ashLocalId_(-1),
-    O2GlobalId_(owner.composition().globalCarrierId("O2")),
-    CO2GlobalId_(owner.composition().globalCarrierId("CO2")),
+    O2GlobalId_(owner.composition().carrierId("O2")),
+    CO2GlobalId_(owner.composition().carrierId("CO2")),
     WC_(0.0),
     WO2_(0.0),
     HcCO2_(0.0),
@@ -162,7 +162,7 @@ Foam::scalar Foam::COxidationHurtMitchell<CloudType>::calculate
 
     // Far field partial pressure O2 [Pa]
     // Note: Should really use the surface partial pressure
-    const scalar ppO2 = max(0.0, rhoc*YO2/WO2_*specie::RR*Tc);
+    const scalar ppO2 = max(0.0, rhoc*YO2/WO2_*RR*Tc);
 
     // Activation energy [kcal/mol]
     const scalar E = -5.94 + 0.355*charPrc;

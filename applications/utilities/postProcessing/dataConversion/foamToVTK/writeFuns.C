@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "writeFuns.H"
 #include "vtkTopo.H"
 
-#if defined(__mips) && !defined(__SICORTEX__)
+#if defined(__mips)
 #include <standards.h>
 #include <sys/endian.h>
 #endif

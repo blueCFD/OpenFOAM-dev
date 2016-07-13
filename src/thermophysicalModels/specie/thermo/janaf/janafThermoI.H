@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ inline Foam::janafThermo<EquationOfState>::janafThermo
     Thigh_(Thigh),
     Tcommon_(Tcommon)
 {
-    for (register label coefLabel=0; coefLabel<nCoeffs_; coefLabel++)
+    for (label coefLabel=0; coefLabel<nCoeffs_; coefLabel++)
     {
         highCpCoeffs_[coefLabel] = highCpCoeffs[coefLabel];
         lowCpCoeffs_[coefLabel] = lowCpCoeffs[coefLabel];
@@ -84,7 +84,7 @@ inline Foam::janafThermo<EquationOfState>::janafThermo
     Thigh_(jt.Thigh_),
     Tcommon_(jt.Tcommon_)
 {
-    for (register label coefLabel=0; coefLabel<nCoeffs_; coefLabel++)
+    for (label coefLabel=0; coefLabel<nCoeffs_; coefLabel++)
     {
         highCpCoeffs_[coefLabel] = jt.highCpCoeffs_[coefLabel];
         lowCpCoeffs_[coefLabel] = jt.lowCpCoeffs_[coefLabel];
@@ -164,7 +164,7 @@ inline Foam::scalar Foam::janafThermo<EquationOfState>::cp
 ) const
 {
     const coeffArray& a = coeffs(T);
-    return this->RR*((((a[4]*T + a[3])*T + a[2])*T + a[1])*T + a[0]);
+    return RR*((((a[4]*T + a[3])*T + a[2])*T + a[1])*T + a[0]);
 }
 
 
@@ -176,7 +176,7 @@ inline Foam::scalar Foam::janafThermo<EquationOfState>::ha
 ) const
 {
     const coeffArray& a = coeffs(T);
-    return this->RR*
+    return RR*
     (
         ((((a[4]/5.0*T + a[3]/4.0)*T + a[2]/3.0)*T + a[1]/2.0)*T + a[0])*T
       + a[5]
@@ -199,8 +199,7 @@ template<class EquationOfState>
 inline Foam::scalar Foam::janafThermo<EquationOfState>::hc() const
 {
     const coeffArray& a = lowCpCoeffs_;
-    const scalar Tstd = specie::Tstd;
-    return this->RR*
+    return RR*
     (
         (
             (((a[4]/5.0*Tstd + a[3]/4.0)*Tstd + a[2]/3.0)*Tstd + a[1]/2.0)*Tstd
@@ -219,11 +218,12 @@ inline Foam::scalar Foam::janafThermo<EquationOfState>::s
 {
     const coeffArray& a = coeffs(T);
     return
-    this->RR*
+    RR*
     (
-        (((a[4]/4.0*T + a[3]/3.0)*T + a[2]/2.0)*T + a[1])*T + a[0]*::log(T)
+        (((a[4]/4.0*T + a[3]/3.0)*T + a[2]/2.0)*T + a[1])*T + a[0]*log(T)
       + a[6]
-    );
+    )
+  + EquationOfState::s(p, T);
 }
 
 
@@ -260,7 +260,7 @@ inline void Foam::janafThermo<EquationOfState>::operator+=
 
     for
     (
-        register label coefLabel=0;
+        label coefLabel=0;
         coefLabel<janafThermo<EquationOfState>::nCoeffs_;
         coefLabel++
     )
@@ -307,7 +307,7 @@ inline void Foam::janafThermo<EquationOfState>::operator-=
 
     for
     (
-        register label coefLabel=0;
+        label coefLabel=0;
         coefLabel<janafThermo<EquationOfState>::nCoeffs_;
         coefLabel++
     )
@@ -343,7 +343,7 @@ inline Foam::janafThermo<EquationOfState> Foam::operator+
 
     for
     (
-        register label coefLabel=0;
+        label coefLabel=0;
         coefLabel<janafThermo<EquationOfState>::nCoeffs_;
         coefLabel++
     )
@@ -405,7 +405,7 @@ inline Foam::janafThermo<EquationOfState> Foam::operator-
 
     for
     (
-        register label coefLabel=0;
+        label coefLabel=0;
         coefLabel<janafThermo<EquationOfState>::nCoeffs_;
         coefLabel++
     )

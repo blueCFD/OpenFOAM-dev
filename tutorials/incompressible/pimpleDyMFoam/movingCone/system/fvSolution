@@ -17,20 +17,6 @@ FoamFile
 
 solvers
 {
-    pcorr
-    {
-        solver          GAMG;
-        tolerance       0.02;
-        relTol          0;
-        smoother        GaussSeidel;
-        nPreSweeps      0;
-        nPostSweeps     2;
-        cacheAgglomeration no;
-        nCellsInCoarsestLevel 10;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-    }
-
     p
     {
         solver          GAMG;
@@ -49,6 +35,13 @@ solvers
     {
         $p;
         tolerance       1e-06;
+        relTol          0;
+    }
+
+    pcorr
+    {
+        $p
+        tolerance       0.02;
         relTol          0;
     }
 
@@ -86,13 +79,11 @@ PIMPLE
 
 relaxationFactors
 {
-    fields
-    {
-    }
     equations
     {
         "U.*"           1;
     }
 }
+
 
 // ************************************************************************* //

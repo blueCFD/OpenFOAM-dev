@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,14 +45,9 @@ Description
 #include "ReadFields.H"
 #include "fvIOoptionList.H"
 
-#include "incompressible/singlePhaseTransportModel/singlePhaseTransportModel.H"
-
-#include "incompressible/RAS/RASModel/RASModel.H"
-#include "incompressible/LES/LESModel/LESModel.H"
-
-#include "fluidThermo.H"
-#include "compressible/RAS/RASModel/RASModel.H"
-#include "compressible/LES/LESModel/LESModel.H"
+#include "singlePhaseTransportModel.H"
+#include "turbulentTransportModel.H"
+#include "turbulentFluidThermoModel.H"
 
 using namespace Foam;
 
@@ -303,9 +298,9 @@ void calc
 
         if (phi.dimensions() == dimVolume/dimTime)
         {
-            IOobject RASPropertiesHeader
+            IOobject turbulencePropertiesHeader
             (
-                "RASProperties",
+                "turbulenceProperties",
                 runTime.constant(),
                 mesh,
                 IOobject::MUST_READ_IF_MODIFIED,
@@ -313,43 +308,18 @@ void calc
                 false
             );
 
-            IOobject LESPropertiesHeader
-            (
-                "LESProperties",
-                runTime.constant(),
-                mesh,
-                IOobject::MUST_READ_IF_MODIFIED,
-                IOobject::NO_WRITE,
-                false
-            );
-
-            if (RASPropertiesHeader.headerOk())
+            if (turbulencePropertiesHeader.headerOk())
             {
-                IOdictionary RASProperties(RASPropertiesHeader);
-
                 singlePhaseTransportModel laminarTransport(U, phi);
 
-                autoPtr<incompressible::RASModel> RASModel
+                autoPtr<incompressible::turbulenceModel> turbulenceModel
                 (
-                    incompressible::RASModel::New
+                    incompressible::turbulenceModel::New
                     (
                         U,
                         phi,
                         laminarTransport
                     )
-                );
-
-                fol.execute(true);
-            }
-            else if (LESPropertiesHeader.headerOk())
-            {
-                IOdictionary LESProperties(LESPropertiesHeader);
-
-                singlePhaseTransportModel laminarTransport(U, phi);
-
-                autoPtr<incompressible::LESModel> sgsModel
-                (
-                    incompressible::LESModel::New(U, phi, laminarTransport)
                 );
 
                 fol.execute(true);
@@ -386,9 +356,9 @@ void calc
                 thermo->rho()
             );
 
-            IOobject RASPropertiesHeader
+            IOobject turbulencePropertiesHeader
             (
-                "RASProperties",
+                "turbulenceProperties",
                 runTime.constant(),
                 mesh,
                 IOobject::MUST_READ_IF_MODIFIED,
@@ -396,40 +366,17 @@ void calc
                 false
             );
 
-            IOobject LESPropertiesHeader
-            (
-                "LESProperties",
-                runTime.constant(),
-                mesh,
-                IOobject::MUST_READ_IF_MODIFIED,
-                IOobject::NO_WRITE,
-                false
-            );
-
-            if (RASPropertiesHeader.headerOk())
+            if (turbulencePropertiesHeader.headerOk())
             {
-                IOdictionary RASProperties(RASPropertiesHeader);
-
-                autoPtr<compressible::RASModel> RASModel
+                autoPtr<compressible::turbulenceModel> turbulenceModel
                 (
-                    compressible::RASModel::New
+                    compressible::turbulenceModel::New
                     (
                         rho,
                         U,
                         phi,
                         thermo()
                     )
-                );
-
-                fol.execute(true);
-            }
-            else if (LESPropertiesHeader.headerOk())
-            {
-                IOdictionary LESProperties(LESPropertiesHeader);
-
-                autoPtr<compressible::LESModel> sgsModel
-                (
-                    compressible::LESModel::New(rho, U, phi, thermo())
                 );
 
                 fol.execute(true);
@@ -461,27 +408,14 @@ void calc
 }
 
 
-int main(int argc, char *argv[])
+autoPtr<functionObjectList> readFunctionObjects
+(
+    const argList& args,
+    const Time& runTime,
+    dictionary& folDict
+)
 {
-    Foam::timeSelector::addOptions();
-    #include "addRegionOption.H"
-    Foam::argList::addBoolOption
-    (
-        "noFlow",
-        "suppress creating flow models"
-    );
-    #include "addDictOption.H"
-
-    #include "setRootCase.H"
-    #include "createTime.H"
-    Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
-    #include "createNamedMesh.H"
-
-    // Construct functionObjectList
-
     autoPtr<functionObjectList> folPtr;
-    // Externally stored dictionary for if fol constructed not from runTime
-    dictionary folDict;
 
     if (args.optionFound("dict"))
     {
@@ -502,6 +436,35 @@ int main(int argc, char *argv[])
     }
     folPtr->start();
 
+    return folPtr;
+}
+
+
+int main(int argc, char *argv[])
+{
+    Foam::timeSelector::addOptions();
+    #include "addRegionOption.H"
+    Foam::argList::addBoolOption
+    (
+        "noFlow",
+        "suppress creating flow models"
+    );
+    #include "addDictOption.H"
+
+    #include "setRootCase.H"
+    #include "createTime.H"
+    Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
+    #include "createNamedMesh.H"
+
+    // Externally stored dictionary for functionObjectList
+    // if not constructed from runTime
+    dictionary folDict;
+
+    // Construct functionObjectList
+    autoPtr<functionObjectList> folPtr
+    (
+        readFunctionObjects(args, runTime, folDict)
+    );
 
     forAll(timeDirs, timeI)
     {
@@ -509,7 +472,11 @@ int main(int argc, char *argv[])
 
         Info<< "Time = " << runTime.timeName() << endl;
 
-        mesh.readUpdate();
+        if (mesh.readUpdate() != polyMesh::UNCHANGED)
+        {
+            // Update functionObjectList if mesh changes
+            folPtr = readFunctionObjects(args, runTime, folDict);
+        }
 
         FatalIOError.throwExceptions();
 

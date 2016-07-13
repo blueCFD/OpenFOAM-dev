@@ -36,11 +36,10 @@ divSchemes
     default         none;
 
     div(phi,U)      Gauss LUST unlimitedGrad(U);
-    //div(phi,U)      Gauss linearUpwind unlimitedGrad(U);
     div(phi,k)      Gauss limitedLinear 1;
     div(phi,nuTilda) Gauss limitedLinear 1;
 
-    div((nuEff*dev(T(grad(U))))) Gauss linear;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -58,10 +57,10 @@ snGradSchemes
     default         limited corrected 0.33;
 }
 
-fluxRequired
+wallDist
 {
-    default         no;
-    p;
+    method meshWave;
 }
+
 
 // ************************************************************************* //

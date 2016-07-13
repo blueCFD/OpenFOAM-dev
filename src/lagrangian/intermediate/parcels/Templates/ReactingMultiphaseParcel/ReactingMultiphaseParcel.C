@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -341,7 +341,7 @@ void Foam::ReactingMultiphaseParcel<ParcelType>::calc
     }
 
     // Remove the particle when mass falls below minimum threshold
-    if (np0*mass1 < td.cloud().constProps().minParticleMass())
+    if (np0*mass1 < td.cloud().constProps().minParcelMass())
     {
         td.keepParticle = false;
 
@@ -352,22 +352,24 @@ void Foam::ReactingMultiphaseParcel<ParcelType>::calc
             // Absorb parcel into carrier phase
             forAll(YGas_, i)
             {
-                label gid = composition.localToGlobalCarrierId(GAS, i);
+                label gid = composition.localToCarrierId(GAS, i);
                 td.cloud().rhoTrans(gid)[cellI] += dm*YMix[GAS]*YGas_[i];
             }
             forAll(YLiquid_, i)
             {
-                label gid = composition.localToGlobalCarrierId(LIQ, i);
+                label gid = composition.localToCarrierId(LIQ, i);
                 td.cloud().rhoTrans(gid)[cellI] += dm*YMix[LIQ]*YLiquid_[i];
             }
-/*
+
             // No mapping between solid components and carrier phase
+            /*
             forAll(YSolid_, i)
             {
-                label gid = composition.localToGlobalCarrierId(SLD, i);
+                label gid = composition.localToCarrierId(SLD, i);
                 td.cloud().rhoTrans(gid)[cellI] += dm*YMix[SLD]*YSolid_[i];
             }
-*/
+            */
+
             td.cloud().UTrans()[cellI] += dm*U0;
 
             td.cloud().hsTrans()[cellI] += dm*HsEff(td, pc, T0, idG, idL, idS);
@@ -426,7 +428,7 @@ void Foam::ReactingMultiphaseParcel<ParcelType>::calc
         forAll(YGas_, i)
         {
             scalar dm = np0*dMassGas[i];
-            label gid = composition.localToGlobalCarrierId(GAS, i);
+            label gid = composition.localToCarrierId(GAS, i);
             scalar hs = composition.carrier().Hs(gid, pc, T0);
             td.cloud().rhoTrans(gid)[cellI] += dm;
             td.cloud().UTrans()[cellI] += dm*U0;
@@ -435,24 +437,26 @@ void Foam::ReactingMultiphaseParcel<ParcelType>::calc
         forAll(YLiquid_, i)
         {
             scalar dm = np0*dMassLiquid[i];
-            label gid = composition.localToGlobalCarrierId(LIQ, i);
+            label gid = composition.localToCarrierId(LIQ, i);
             scalar hs = composition.carrier().Hs(gid, pc, T0);
             td.cloud().rhoTrans(gid)[cellI] += dm;
             td.cloud().UTrans()[cellI] += dm*U0;
             td.cloud().hsTrans()[cellI] += dm*hs;
         }
-/*
+
         // No mapping between solid components and carrier phase
+        /*
         forAll(YSolid_, i)
         {
             scalar dm = np0*dMassSolid[i];
-            label gid = composition.localToGlobalCarrierId(SLD, i);
+            label gid = composition.localToCarrierId(SLD, i);
             scalar hs = composition.carrier().Hs(gid, pc, T0);
             td.cloud().rhoTrans(gid)[cellI] += dm;
             td.cloud().UTrans()[cellI] += dm*U0;
             td.cloud().hsTrans()[cellI] += dm*hs;
         }
-*/
+        */
+
         forAll(dMassSRCarrier, i)
         {
             scalar dm = np0*dMassSRCarrier[i];
@@ -474,7 +478,7 @@ void Foam::ReactingMultiphaseParcel<ParcelType>::calc
         if (td.cloud().radiation())
         {
             const scalar ap = this->areaP();
-            const scalar T4 = pow4(this->T_);
+            const scalar T4 = pow4(T0);
             td.cloud().radAreaP()[cellI] += dt*np0*ap;
             td.cloud().radT4()[cellI] += dt*np0*T4;
             td.cloud().radAreaPT4()[cellI] += dt*np0*ap*T4;
@@ -557,7 +561,7 @@ void Foam::ReactingMultiphaseParcel<ParcelType>::calcDevolatilisation
     {
         // Molar average molecular weight of carrier mix
         const scalar Wc =
-            max(SMALL, this->rhoc_*specie::RR*this->Tc_/this->pc_);
+            max(SMALL, this->rhoc_*RR*this->Tc_/this->pc_);
 
         // Note: hardcoded gaseous diffusivities for now
         // TODO: add to carrier thermo
@@ -565,7 +569,7 @@ void Foam::ReactingMultiphaseParcel<ParcelType>::calcDevolatilisation
 
         forAll(dMassDV, i)
         {
-            const label id = composition.localToGlobalCarrierId(GAS, i);
+            const label id = composition.localToCarrierId(GAS, i);
             const scalar Cp = composition.carrier().Cp(id, this->pc_, Ts);
             const scalar W = composition.carrier().W(id);
             const scalar Ni = dMassDV[i]/(this->areaS(d)*dt*W);

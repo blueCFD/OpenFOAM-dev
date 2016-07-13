@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,38 +37,25 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-
 #include "argList.H"
-#include "fvMesh.H"
 #include "Time.H"
+#include "fvMesh.H"
+#include "singleCellFvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
+#include "fixedValueFvPatchFields.H"
 #include "distributedTriSurfaceMesh.H"
 #include "cyclicAMIPolyPatch.H"
-#include "triSurfaceTools.H"
 #include "mapDistribute.H"
-
-#include "OFstream.H"
 #include "meshTools.H"
-#include "plane.H"
 #include "uindirectPrimitivePatch.H"
 #include "DynamicField.H"
-#include "IFstream.H"
-#include "unitConversion.H"
-
-#include "mathematicalConstants.H"
 #include "scalarMatrices.H"
-#include "CompactListList.H"
-#include "labelIOList.H"
-#include "labelListIOList.H"
 #include "scalarListIOList.H"
-
-#include "singleCellFvMesh.H"
-#include "IOdictionary.H"
-#include "fixedValueFvPatchFields.H"
 
 using namespace Foam;
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 triSurface triangulate
 (
@@ -129,7 +116,7 @@ triSurface triangulate
         newPatchI++;
     }
 
-    triSurfaceToAgglom.resize(localTriFaceI-1);
+    triSurfaceToAgglom.resize(localTriFaceI);
 
     triangles.shrink();
 
@@ -208,19 +195,27 @@ scalar calculateViewFactorFij
 {
     vector r = i - j;
     scalar rMag = mag(r);
-    scalar dAiMag = mag(dAi);
-    scalar dAjMag = mag(dAj);
 
-    vector ni = dAi/dAiMag;
-    vector nj = dAj/dAjMag;
-    scalar cosThetaJ = mag(nj & r)/rMag;
-    scalar cosThetaI = mag(ni & r)/rMag;
+    if (rMag > SMALL)
+    {
+        scalar dAiMag = mag(dAi);
+        scalar dAjMag = mag(dAj);
 
-    return
-    (
-        (cosThetaI*cosThetaJ*dAjMag*dAiMag)
-       /(sqr(rMag)*constant::mathematical::pi)
-    );
+        vector ni = dAi/dAiMag;
+        vector nj = dAj/dAjMag;
+        scalar cosThetaJ = mag(nj & r)/rMag;
+        scalar cosThetaI = mag(ni & r)/rMag;
+
+        return
+        (
+            (cosThetaI*cosThetaJ*dAjMag*dAiMag)
+            /(sqr(rMag)*constant::mathematical::pi)
+        );
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
@@ -316,7 +311,7 @@ int main(int argc, char *argv[])
     (
         IOobject
         (
-            mesh.name(),
+            "coarse:" + mesh.name(),
             runTime.timeName(),
             runTime,
             IOobject::NO_READ,
@@ -360,7 +355,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    viewFactorsPatches.resize(count--);
+    viewFactorsPatches.resize(count);
 
     // total number of coarse faces
     label totalNCoarseFaces = nCoarseFaces;

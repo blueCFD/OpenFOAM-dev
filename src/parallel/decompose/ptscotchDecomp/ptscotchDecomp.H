@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,22 +64,22 @@ class ptscotchDecomp
         label decompose
         (
             const fileName& meshPath,
-            const List<int>& adjncy,
-            const List<int>& xadj,
+            const List<label>& adjncy,
+            const List<label>& xadj,
             const scalarField& cWeights,
-            List<int>& finalDecomp
+            List<label>& finalDecomp
         ) const;
 
         //- Low level decompose
         label decompose
         (
             const fileName& meshPath,
-            const int adjncySize,
-            const int adjncy[],
-            const int xadjSize,
-            const int xadj[],
+            const label adjncySize,
+            const label adjncy[],
+            const label xadjSize,
+            const label xadj[],
             const scalarField& cWeights,
-            List<int>& finalDecomp
+            List<label>& finalDecomp
         ) const;
 
         //- Disallow default bitwise copy construct and assignment
@@ -111,6 +111,9 @@ public:
             // ptscotch does not know about proc boundaries
             return true;
         }
+
+        //- Inherit decompose from decompositionMethod
+        using decompositionMethod::decompose;
 
         //- Return for every coordinate the wanted processor number. Use the
         //  mesh connectivity (if needed). See note on weights in scotchDecomp.H

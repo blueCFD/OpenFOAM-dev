@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -530,7 +530,7 @@ TMP_UNARY_FUNCTION(Type, average)
 #define G_UNARY_FUNCTION(ReturnType, gFunc, Func, rFunc)                      \
                                                                               \
 template<class Type>                                                          \
-ReturnType gFunc(const UList<Type>& f, const int comm)                        \
+ReturnType gFunc(const UList<Type>& f, const label comm)                      \
 {                                                                             \
     ReturnType res = Func(f);                                                 \
     reduce(res, rFunc##Op<Type>(), Pstream::msgType(), comm);                 \
@@ -554,7 +554,7 @@ scalar gSumProd
 (
     const UList<Type>& f1,
     const UList<Type>& f2,
-    const int comm
+    const label comm
 )
 {
     scalar SumProd = sumProd(f1, f2);
@@ -567,7 +567,7 @@ Type gSumCmptProd
 (
     const UList<Type>& f1,
     const UList<Type>& f2,
-    const int comm
+    const label comm
 )
 {
     Type SumProd = sumCmptProd(f1, f2);
@@ -579,7 +579,7 @@ template<class Type>
 Type gAverage
 (
     const UList<Type>& f,
-    const int comm
+    const label comm
 )
 {
     label n = f.size();

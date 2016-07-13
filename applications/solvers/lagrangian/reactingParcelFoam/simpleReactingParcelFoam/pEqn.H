@@ -15,7 +15,7 @@
         fvc::interpolate(rho)*(fvc::interpolate(HbyA) & mesh.Sf())
     );
 
-    fvOptions.makeRelative(fvc::interpolate(rho), phiHbyA);
+    MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
     while (simple.correctNonOrthogonal())
     {
@@ -27,8 +27,6 @@
             parcels.Srho()
           + fvOptions(psi, p, rho.name())
         );
-
-        fvOptions.constrain(pEqn);
 
         pEqn.solve();
 

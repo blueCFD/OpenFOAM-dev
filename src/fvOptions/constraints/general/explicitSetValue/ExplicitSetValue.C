@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,7 +59,7 @@ Foam::fv::ExplicitSetValue<Type>::ExplicitSetValue
     const fvMesh& mesh
 )
 :
-    option(name, modelType, dict, mesh),
+    cellSetOption(name, modelType, dict, mesh),
     injectionRate_()
 {
     read(dict);
@@ -69,7 +69,7 @@ Foam::fv::ExplicitSetValue<Type>::ExplicitSetValue
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-void Foam::fv::ExplicitSetValue<Type>::setValue
+void Foam::fv::ExplicitSetValue<Type>::constrain
 (
     fvMatrix<Type>& eqn,
     const label fieldI
@@ -78,7 +78,7 @@ void Foam::fv::ExplicitSetValue<Type>::setValue
     if (debug)
     {
         Info<< "ExplicitSetValue<"<< pTraits<Type>::typeName
-            << ">::setValue for source " << name_ << endl;
+            << ">::constrain for source " << name_ << endl;
     }
 
     List<Type> values(cells_.size(), injectionRate_[fieldI]);

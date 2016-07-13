@@ -1,62 +1,99 @@
-    Info<< "Reading field p\n" << endl;
-    volScalarField p
+Info<< "Reading velocity field U\n" << endl;
+volVectorField U
+(
+    IOobject
     (
-        IOobject
-        (
-            "p",
-            runTime.timeName(),
-            mesh,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh
-    );
+        "U",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
 
-    p = dimensionedScalar("zero", p.dimensions(), 0.0);
+U = dimensionedVector("0", U.dimensions(), vector::zero);
 
-
-    Info<< "Reading field U\n" << endl;
-    volVectorField U
+surfaceScalarField phi
+(
+    IOobject
     (
-        IOobject
-        (
-            "U",
-            runTime.timeName(),
-            mesh,
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        ),
-        mesh
-    );
+        "phi",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    fvc::interpolate(U) & mesh.Sf()
+);
 
-    U = dimensionedVector("0", U.dimensions(), vector::zero);
+if (args.optionFound("initialiseUBCs"))
+{
+    U.correctBoundaryConditions();
+    phi = fvc::interpolate(U) & mesh.Sf();
+}
 
-    surfaceScalarField phi
-    (
-        IOobject
-        (
-            "phi",
-            runTime.timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        fvc::interpolate(U) & mesh.Sf()
-    );
 
-    if (args.optionFound("initialiseUBCs"))
+// Default name for the pressure field
+word pName("p");
+
+// Update name of the pressure field from the command-line option
+args.optionReadIfPresent("pName", pName);
+
+// Infer the pressure BCs from the velocity BCs
+wordList pBCTypes
+(
+    U.boundaryField().size(),
+    fixedValueFvPatchScalarField::typeName
+);
+
+forAll(U.boundaryField(), patchi)
+{
+    if (U.boundaryField()[patchi].fixesValue())
     {
-        U.correctBoundaryConditions();
-        phi = fvc::interpolate(U) & mesh.Sf();
+        pBCTypes[patchi] = zeroGradientFvPatchScalarField::typeName;
     }
+}
 
-
-    label pRefCell = 0;
-    scalar pRefValue = 0.0;
-    setRefCell
+Info<< "Constructing pressure field " << pName << nl << endl;
+volScalarField p
+(
+    IOobject
     (
-        p,
-        potentialFlow,
-        pRefCell,
-        pRefValue
-    );
+        pName,
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar(pName, sqr(dimVelocity), 0),
+    pBCTypes
+);
+
+Info<< "Constructing velocity potential field Phi\n" << endl;
+volScalarField Phi
+(
+    IOobject
+    (
+        "Phi",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("Phi", dimLength*dimVelocity, 0),
+    p.boundaryField().types()
+);
+
+label PhiRefCell = 0;
+scalar PhiRefValue = 0;
+setRefCell
+(
+    Phi,
+    potentialFlow.dict(),
+    PhiRefCell,
+    PhiRefValue
+);
+mesh.setFluxRequired(Phi.name());

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,10 +51,6 @@ SourceFiles
 #include "InfoProxy.H"
 
 #include <iostream>
-
-#if __GNUC__ < 3
-#   define ios_base ios
-#endif
 
 using std::ios_base;
 using std::istream;
@@ -182,7 +178,7 @@ public:
                     return index_ > vn.index_;
                 }
 
-                //- this version the same as or newer than the one given
+                //- This version the same as or newer than the one given
                 bool operator>=(const versionNumber& vn)
                 {
                     return index_ >= vn.index_;
@@ -542,6 +538,9 @@ public:
 
 Ostream& operator<<(Ostream& os, const IOstream::streamFormat& sf);
 Ostream& operator<<(Ostream& os, const IOstream::versionNumber& vn);
+
+template<>
+Ostream& operator<<(Ostream& os, const InfoProxy<IOstream>& ip);
 
 
 // --------------------------------------------------------------------

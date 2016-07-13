@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ Class
     Foam::fixedShearStressFvPatchVectorField
 
 Group
-    grpWallBoundaryConditions
+    grpTurbulenceBoundaryConditions
 
 Description
     Set a constant shear stress as tau0 = -nuEff dU/dn.
@@ -55,12 +55,6 @@ class fixedShearStressFvPatchVectorField
     public fixedValueFvPatchVectorField
 {
     // Private data
-
-        //- Name of flux field (default = phi)
-        const word phiName_;
-
-        //- Name of density field (default = rho)
-        const word rhoName_;
 
         //- Constant shear stress
         const vector tau0_;

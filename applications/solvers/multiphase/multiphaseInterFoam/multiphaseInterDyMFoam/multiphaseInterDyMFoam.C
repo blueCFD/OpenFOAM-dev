@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,9 +35,10 @@ Description
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "multiphaseMixture.H"
-#include "turbulenceModel.H"
+#include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 #include "fvIOoptionList.H"
+#include "CorrectPhi.H"
 #include "fixedFluxPressureFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -51,9 +52,10 @@ int main(int argc, char *argv[])
 
     pimpleControl pimple(mesh);
 
+    #include "createControls.H"
     #include "createFields.H"
-    #include "readTimeControls.H"
-    #include "createPrghCorrTypes.H"
+    #include "createMRF.H"
+    #include "createFvOptions.H"
 
     volScalarField rAU
     (
@@ -105,8 +107,8 @@ int main(int argc, char *argv[])
                         << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
                         << " s" << endl;
 
-                    gh = g & mesh.C();
-                    ghf = g & mesh.Cf();
+                    gh = (g & mesh.C()) - ghRef;
+                    ghf = (g & mesh.Cf()) - ghRef;
                 }
 
                 if (mesh.changing() && correctPhi)

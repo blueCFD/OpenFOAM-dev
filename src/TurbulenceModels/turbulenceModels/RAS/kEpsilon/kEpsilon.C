@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,6 +32,48 @@ namespace Foam
 {
 namespace RASModels
 {
+
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+template<class BasicTurbulenceModel>
+void kEpsilon<BasicTurbulenceModel>::correctNut()
+{
+    this->nut_ = Cmu_*sqr(k_)/epsilon_;
+    this->nut_.correctBoundaryConditions();
+
+    BasicTurbulenceModel::correctNut();
+}
+
+
+template<class BasicTurbulenceModel>
+tmp<fvScalarMatrix> kEpsilon<BasicTurbulenceModel>::kSource() const
+{
+    return tmp<fvScalarMatrix>
+    (
+        new fvScalarMatrix
+        (
+            k_,
+            dimVolume*this->rho_.dimensions()*k_.dimensions()
+            /dimTime
+        )
+    );
+}
+
+
+template<class BasicTurbulenceModel>
+tmp<fvScalarMatrix> kEpsilon<BasicTurbulenceModel>::epsilonSource() const
+{
+    return tmp<fvScalarMatrix>
+    (
+        new fvScalarMatrix
+        (
+            epsilon_,
+            dimVolume*this->rho_.dimensions()*epsilon_.dimensions()
+            /dimTime
+        )
+    );
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -93,7 +135,7 @@ kEpsilon<BasicTurbulenceModel>::kEpsilon
         (
             "C3",
             this->coeffDict_,
-            0
+            -0.33
         )
     ),
     sigmak_
@@ -145,8 +187,8 @@ kEpsilon<BasicTurbulenceModel>::kEpsilon
 
     if (type == typeName)
     {
-        correctNut();
         this->printCoeffs(type);
+        correctNut();
     }
 }
 
@@ -175,44 +217,6 @@ bool kEpsilon<BasicTurbulenceModel>::read()
 
 
 template<class BasicTurbulenceModel>
-void kEpsilon<BasicTurbulenceModel>::correctNut()
-{
-    this->nut_ = Cmu_*sqr(k_)/epsilon_;
-    this->nut_.correctBoundaryConditions();
-}
-
-
-template<class BasicTurbulenceModel>
-tmp<fvScalarMatrix> kEpsilon<BasicTurbulenceModel>::kSource() const
-{
-    return tmp<fvScalarMatrix>
-    (
-        new fvScalarMatrix
-        (
-            k_,
-            dimVolume*this->rho_.dimensions()*k_.dimensions()
-            /dimTime
-        )
-    );
-}
-
-
-template<class BasicTurbulenceModel>
-tmp<fvScalarMatrix> kEpsilon<BasicTurbulenceModel>::epsilonSource() const
-{
-    return tmp<fvScalarMatrix>
-    (
-        new fvScalarMatrix
-        (
-            epsilon_,
-            dimVolume*this->rho_.dimensions()*epsilon_.dimensions()
-            /dimTime
-        )
-    );
-}
-
-
-template<class BasicTurbulenceModel>
 void kEpsilon<BasicTurbulenceModel>::correct()
 {
     if (!this->turbulence_)
@@ -232,7 +236,7 @@ void kEpsilon<BasicTurbulenceModel>::correct()
     volScalarField divU(fvc::div(fvc::absolute(this->phi(), U)));
 
     tmp<volTensorField> tgradU = fvc::grad(U);
-    volScalarField G(this->GName(), nut*(tgradU() && dev(twoSymm(tgradU()))));
+    volScalarField G(this->GName(), nut*(dev(twoSymm(tgradU())) && tgradU()));
     tgradU.clear();
 
     // Update epsilon and G at the wall
@@ -243,7 +247,6 @@ void kEpsilon<BasicTurbulenceModel>::correct()
     (
         fvm::ddt(alpha, rho, epsilon_)
       + fvm::div(alphaRhoPhi, epsilon_)
-      - fvm::Sp(fvc::ddt(alpha, rho) + fvc::div(alphaRhoPhi), epsilon_)
       - fvm::laplacian(alpha*rho*DepsilonEff(), epsilon_)
      ==
         C1_*alpha*rho*G*epsilon_/k_
@@ -253,20 +256,15 @@ void kEpsilon<BasicTurbulenceModel>::correct()
     );
 
     epsEqn().relax();
-
     epsEqn().boundaryManipulate(epsilon_.boundaryField());
-
     solve(epsEqn);
     bound(epsilon_, this->epsilonMin_);
 
-
     // Turbulent kinetic energy equation
-
     tmp<fvScalarMatrix> kEqn
     (
         fvm::ddt(alpha, rho, k_)
       + fvm::div(alphaRhoPhi, k_)
-      - fvm::Sp(fvc::ddt(alpha, rho) + fvc::div(alphaRhoPhi), k_)
       - fvm::laplacian(alpha*rho*DkEff(), k_)
      ==
         alpha*rho*G

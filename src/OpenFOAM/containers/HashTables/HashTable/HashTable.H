@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -370,7 +370,7 @@ public:
                 );
 
                 //- Construct from hash table, element and hash index
-                inline explicit iteratorBase
+                inline iteratorBase
                 (
                     const HashTable<T, Key, Hash>* curHashTable,
                     const hashedEntry* elmt,
@@ -428,7 +428,7 @@ public:
                 );
 
                 //- Construct from hash table, element and hash index
-                inline explicit iterator
+                inline iterator
                 (
                     HashTable<T, Key, Hash>* curHashTable,
                     hashedEntry* elmt,
@@ -461,7 +461,7 @@ public:
                 inline iterator operator++(int);
         };
 
-        //- iterator set to the beginning of the HashTable
+        //- Iterator set to the beginning of the HashTable
         inline iterator begin();
 
 
@@ -483,7 +483,7 @@ public:
                 );
 
                 //- Construct from hash table, element and hash index
-                inline explicit const_iterator
+                inline const_iterator
                 (
                     const HashTable<T, Key, Hash>* curHashTable,
                     const hashedEntry* elmt,

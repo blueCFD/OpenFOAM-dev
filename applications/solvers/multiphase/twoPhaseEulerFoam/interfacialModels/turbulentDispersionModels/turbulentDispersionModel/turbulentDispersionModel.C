@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "turbulentDispersionModel.H"
 #include "phasePair.H"
+#include "fvcGrad.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -34,6 +35,7 @@ namespace Foam
     defineRunTimeSelectionTable(turbulentDispersionModel, dictionary);
 }
 
+const Foam::dimensionSet Foam::turbulentDispersionModel::dimD(1, -1, -2, 0, 0);
 const Foam::dimensionSet Foam::turbulentDispersionModel::dimF(1, -2, -2, 0, 0);
 
 
@@ -53,6 +55,15 @@ Foam::turbulentDispersionModel::turbulentDispersionModel
 
 Foam::turbulentDispersionModel::~turbulentDispersionModel()
 {}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volVectorField>
+Foam::turbulentDispersionModel::F() const
+{
+    return D()*fvc::grad(pair_.dispersed());
+}
 
 
 // ************************************************************************* //

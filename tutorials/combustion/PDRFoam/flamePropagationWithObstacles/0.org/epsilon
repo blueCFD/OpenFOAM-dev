@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [ 0 2 -3 0 0 0 0 ];
+dimensions      [0 2 -3 0 0 0 0];
 
 internalField   uniform 0.1;
 
@@ -29,7 +29,7 @@ boundaryField
     }
     ground
     {
-        type            compressible::epsilonWallFunction;
+        type            epsilonWallFunction;
         Cmu             0.09;
         kappa           0.41;
         E               9.8;
@@ -37,7 +37,7 @@ boundaryField
     }
     blockedFaces
     {
-        type            compressible::epsilonWallFunction;
+        type            epsilonWallFunction;
         Cmu             0.09;
         kappa           0.41;
         E               9.8;
@@ -45,7 +45,7 @@ boundaryField
     }
     baffleWall
     {
-        type            compressible::epsilonWallFunction;
+        type            epsilonWallFunction;
         Cmu             0.09;
         kappa           0.41;
         E               9.8;

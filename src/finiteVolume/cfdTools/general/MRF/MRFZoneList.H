@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -93,36 +93,47 @@ public:
         //- Reset the source list
         void reset(const dictionary& dict);
 
-        //- Add the Coriolis force contribution to the acceleration field
-        void addCoriolis(const volVectorField& U, volVectorField& ddtU) const;
+        //- Add the frame acceleration
+        void addAcceleration
+        (
+            const volVectorField& U,
+            volVectorField& ddtU
+        ) const;
 
-        //- Add the Coriolis force contribution to the momentum equation
-        void addCoriolis(fvVectorMatrix& UEqn) const;
+        //- Add the frame acceleration contribution to the momentum equation
+        void addAcceleration(fvVectorMatrix& UEqn) const;
 
-        //- Add the Coriolis force contribution to the momentum equation
-        void addCoriolis(const volScalarField& rho, fvVectorMatrix& UEqn) const;
+        //- Add the frame acceleration contribution to the momentum equation
+        void addAcceleration
+        (
+            const volScalarField& rho,
+            fvVectorMatrix& UEqn
+        ) const;
 
         //- Return the frame acceleration
-        tmp<volVectorField> operator()
+        tmp<volVectorField> DDt
         (
             const volVectorField& U
-        );
+        ) const;
 
-        //- Return the frame acceleration force
-        tmp<volVectorField> operator()
+        //- Return the frame acceleration
+        tmp<volVectorField> DDt
         (
             const volScalarField& rho,
             const volVectorField& U
-        );
+        ) const;
 
         //- Make the given absolute velocity relative within the MRF region
         void makeRelative(volVectorField& U) const;
 
-        //- Make the given relative velocity absolute within the MRF region
-        void makeAbsolute(volVectorField& U) const;
-
         //- Make the given absolute flux relative within the MRF region
         void makeRelative(surfaceScalarField& phi) const;
+
+        //- Return the given absolute flux relative within the MRF region
+        tmp<surfaceScalarField> relative
+        (
+            const tmp<surfaceScalarField>& phi
+        ) const;
 
         //- Return the given absolute boundary flux relative within
         //  the MRF region
@@ -138,8 +149,17 @@ public:
             surfaceScalarField& phi
         ) const;
 
+        //- Make the given relative velocity absolute within the MRF region
+        void makeAbsolute(volVectorField& U) const;
+
         //- Make the given relative flux absolute within the MRF region
         void makeAbsolute(surfaceScalarField& phi) const;
+
+        //- Return the given relative flux absolute within the MRF region
+        tmp<surfaceScalarField> absolute
+        (
+            const tmp<surfaceScalarField>& phi
+        ) const;
 
         //- Make the given relative mass-flux absolute within the MRF region
         void makeAbsolute
@@ -148,8 +168,15 @@ public:
             surfaceScalarField& phi
         ) const;
 
-        //- Correct the boundary velocity for the roation of the MRF region
+        //- Correct the boundary velocity for the rotation of the MRF region
         void correctBoundaryVelocity(volVectorField& U) const;
+
+        //- Correct the boundary flux for the rotation of the MRF region
+        void correctBoundaryFlux
+        (
+            const volVectorField& U,
+            surfaceScalarField& phi
+        ) const;
 
 
         // I-O

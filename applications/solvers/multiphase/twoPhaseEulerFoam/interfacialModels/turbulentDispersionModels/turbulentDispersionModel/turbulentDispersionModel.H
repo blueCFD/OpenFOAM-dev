@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -82,7 +82,10 @@ public:
 
     // Static data members
 
-        //- Force dimensions 
+        //- Diffusivity dimensions
+        static const dimensionSet dimD;
+
+        //- Force dimensions
         static const dimensionSet dimF;
 
 
@@ -111,8 +114,12 @@ public:
 
     // Member Functions
 
+        //- Turbulent diffusivity
+        //  multiplying the gradient of the phase-fraction
+        virtual tmp<volScalarField> D() const = 0;
+
         //- Turbulent dispersion force
-        virtual tmp<volVectorField> F() const = 0;
+        virtual tmp<volVectorField> F() const;
 };
 
 

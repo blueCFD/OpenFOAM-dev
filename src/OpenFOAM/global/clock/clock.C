@@ -39,8 +39,6 @@ Modifications
 #include <sstream>
 #include <iomanip>
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 const char *Foam::clock::monthNames[] =
@@ -153,7 +151,5 @@ time_t Foam::clock::clockTimeIncrement() const
     return newTime_ - lastTime_;
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -129,13 +129,7 @@ public:
         PhaseChangeModel(const PhaseChangeModel<CloudType>& pcm);
 
         //- Construct and return a clone
-        virtual autoPtr<PhaseChangeModel<CloudType> > clone() const
-        {
-            return autoPtr<PhaseChangeModel<CloudType> >
-            (
-                new PhaseChangeModel<CloudType>(*this)
-            );
-        }
+        virtual autoPtr<PhaseChangeModel<CloudType> > clone() const = 0;
 
 
     //- Destructor
@@ -171,9 +165,9 @@ public:
             const scalar Ts,
             const scalar pc,
             const scalar Tc,
-            const scalarField& Yl,
+            const scalarField& X,
             scalarField& dMassPC
-        ) const;
+        ) const = 0;
 
         //- Return the enthalpy per unit mass
         virtual scalar dh
@@ -185,10 +179,10 @@ public:
         ) const;
 
         //- Return vapourisation temperature
-        virtual scalar Tvap(const scalarField& Y) const;
+        virtual scalar Tvap(const scalarField& X) const;
 
         //- Return maximum/limiting temperature
-        virtual scalar TMax(const scalar p, const scalarField& Y) const;
+        virtual scalar TMax(const scalar p, const scalarField& X) const;
 
         //- Add to phase change mass
         void addToPhaseChangeMass(const scalar dMass);
@@ -209,26 +203,29 @@ public:
 
 #define makePhaseChangeModel(CloudType)                                       \
                                                                               \
-    typedef CloudType::reactingCloudType reactingCloudType;                   \
+    typedef Foam::CloudType::reactingCloudType reactingCloudType;             \
     defineNamedTemplateTypeNameAndDebug                                       \
     (                                                                         \
-        PhaseChangeModel<reactingCloudType>,                                  \
+        Foam::PhaseChangeModel<reactingCloudType>,                            \
         0                                                                     \
     );                                                                        \
-    defineTemplateRunTimeSelectionTable                                       \
-    (                                                                         \
-        PhaseChangeModel<reactingCloudType>,                                  \
-        dictionary                                                            \
-    );
+    namespace Foam                                                            \
+    {                                                                         \
+        defineTemplateRunTimeSelectionTable                                   \
+        (                                                                     \
+            PhaseChangeModel<reactingCloudType>,                              \
+            dictionary                                                        \
+        );                                                                    \
+    }
 
 
 #define makePhaseChangeModelType(SS, CloudType)                               \
                                                                               \
-    typedef CloudType::reactingCloudType reactingCloudType;                   \
-    defineNamedTemplateTypeNameAndDebug(SS<reactingCloudType>, 0);            \
+    typedef Foam::CloudType::reactingCloudType reactingCloudType;             \
+    defineNamedTemplateTypeNameAndDebug(Foam::SS<reactingCloudType>, 0);      \
                                                                               \
-    PhaseChangeModel<reactingCloudType>::                                     \
-        adddictionaryConstructorToTable<SS<reactingCloudType> >               \
+    Foam::PhaseChangeModel<reactingCloudType>::                               \
+        adddictionaryConstructorToTable<Foam::SS<reactingCloudType> >         \
             add##SS##CloudType##reactingCloudType##ConstructorToTable_;
 
 

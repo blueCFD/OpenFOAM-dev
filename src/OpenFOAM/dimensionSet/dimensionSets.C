@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -193,9 +193,11 @@ const dimensionSet dimEnergy(dimForce*dimLength);
 const dimensionSet dimPower(dimEnergy/dimTime);
 
 const dimensionSet dimPressure(dimForce/dimArea);
+const dimensionSet dimCompressibility(dimDensity/dimPressure);
 const dimensionSet dimGasConstant(dimEnergy/dimMass/dimTemperature);
 const dimensionSet dimSpecificHeatCapacity(dimGasConstant);
 const dimensionSet dimViscosity(dimArea/dimTime);
+const dimensionSet dimDynamicViscosity(dimDensity*dimViscosity);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

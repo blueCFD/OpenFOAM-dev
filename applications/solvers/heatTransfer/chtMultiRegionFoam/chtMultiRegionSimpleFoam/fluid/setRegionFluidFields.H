@@ -12,6 +12,7 @@
     volScalarField& p = thermo.p();
     const volScalarField& psi = thermo.psi();
 
+    IOMRFZoneList& MRF = MRFfluid[i];
     fv::IOoptionList& fvOptions = fluidFvOptions[i];
 
     const dimensionedScalar initialMass
@@ -28,5 +29,7 @@
     const bool frozenFlow = frozenFlowFluid[i];
 
     volScalarField& p_rgh = p_rghFluid[i];
+
+    const dimensionedVector& g = gFluid[i];
     const volScalarField& gh = ghFluid[i];
     const surfaceScalarField& ghf = ghfFluid[i];

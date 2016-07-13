@@ -1,8 +1,10 @@
 chemistryReaders/chemkinReader/chemkinReader.C
-chemistryReaders/chemkinReader/chemkinLexer.C
+chemistryReaders/chemkinReader/chemkinLexer.L
 chemistryReaders/chemistryReader/makeChemistryReaders.C
 
 mixtures/basicMultiComponentMixture/basicMultiComponentMixture.C
+mixtures/basicSpecieMixture/basicSpecieMixture.C
+mixtures/basicCombustionMixture/basicCombustionMixture.C
 
 psiReactionThermo/psiReactionThermo.C
 psiReactionThermo/psiReactionThermos.C

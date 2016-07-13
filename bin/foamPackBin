@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # License
@@ -133,7 +133,7 @@ fi
 
 #------------------------------------------------------------------------------
 
-# get list of directories
+# Get list of directories
 dirList=$( $listBinDirs $packDir $archOptions )
 if [ $? -eq 0 -a -n "$dirList" ]
 then

@@ -15,34 +15,35 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [ 0 1 -1 0 0 0 0 ];
+dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform ( 0 0 0 );
+internalField   uniform (0 0 -10);
 
 boundaryField
 {
     inlet
     {
         type            SRFVelocity;
-        inletValue      uniform ( 0 0 -10 );
+        inletValue      uniform (0 0 -10);
         relative        no;
-        value           uniform ( 0 0 0 );
+        value           uniform (0 0 0);
     }
     outlet
     {
-        type            zeroGradient;
+        type            pressureInletOutletVelocity;
+        value           $internalField;
     }
     innerWall
     {
         type            fixedValue;
-        value           uniform ( 0 0 0 );
+        value           uniform (0 0 0);
     }
     outerWall
     {
         type            SRFVelocity;
-        inletValue      uniform ( 0 0 0 );
+        inletValue      uniform (0 0 0);
         relative        no;
-        value           uniform ( 0 0 0 );
+        value           uniform (0 0 0);
     }
     cyclic_half0
     {

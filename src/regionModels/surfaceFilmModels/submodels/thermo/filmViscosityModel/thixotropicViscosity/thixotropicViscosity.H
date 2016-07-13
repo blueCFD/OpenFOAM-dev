@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,6 @@ Description
         \mu_{\infty}    | limiting viscosity when \f$ \lambda = 0 \f$
     \endvartable
 
-
     Reference:
     \verbatim
         Barnes H A, 1997.  Thixotropy - a review.  J. Non-Newtonian Fluid
@@ -90,8 +89,6 @@ class thixotropicViscosity
 :
     public filmViscosityModel
 {
-private:
-
     // Private member functions
 
         //- Disallow default bitwise copy construct
@@ -132,12 +129,6 @@ protected:
         volScalarField lambda_;
 
 
-    // Protected Member Functions
-
-        //- Update the viscosity
-        void updateMu();
-
-
 public:
 
     //- Runtime type information
@@ -161,14 +152,12 @@ public:
 
     // Member Functions
 
-        // Evolution
-
-            //- Correct
-            virtual void correct
-            (
-                const volScalarField& p,
-                const volScalarField& T
-            );
+        //- Correct
+        virtual void correct
+        (
+            const volScalarField& p,
+            const volScalarField& T
+        );
 };
 
 

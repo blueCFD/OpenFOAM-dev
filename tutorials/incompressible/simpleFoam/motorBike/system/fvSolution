@@ -30,6 +30,11 @@ solvers
         mergeLevels      1;
     }
 
+    Phi
+    {
+        $p;
+    }
+
     U
     {
         solver           smoothSolver;
@@ -61,6 +66,7 @@ solvers
 SIMPLE
 {
     nNonOrthogonalCorrectors 0;
+    consistent yes;
 }
 
 potentialFlow
@@ -70,13 +76,9 @@ potentialFlow
 
 relaxationFactors
 {
-    fields
-    {
-        p               0.3;
-    }
     equations
     {
-        U               0.7;
+        U               0.9;
         k               0.7;
         omega           0.7;
     }

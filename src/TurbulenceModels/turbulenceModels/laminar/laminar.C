@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,8 +44,9 @@ Foam::laminar<BasicTurbulenceModel>::laminar
     const word& propertiesName
 )
 :
-    BasicTurbulenceModel
+    linearViscousStress<BasicTurbulenceModel>
     (
+        typeName,
         alpha,
         rho,
         U,
@@ -99,6 +100,13 @@ Foam::laminar<BasicTurbulenceModel>::coeffDict() const
 
 
 template<class BasicTurbulenceModel>
+bool Foam::laminar<BasicTurbulenceModel>::read()
+{
+    return true;
+}
+
+
+template<class BasicTurbulenceModel>
 Foam::tmp<Foam::volScalarField>
 Foam::laminar<BasicTurbulenceModel>::nut() const
 {
@@ -112,7 +120,8 @@ Foam::laminar<BasicTurbulenceModel>::nut() const
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             this->mesh_,
             dimensionedScalar("nut", dimViscosity, 0.0)
@@ -174,7 +183,8 @@ Foam::laminar<BasicTurbulenceModel>::k() const
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             this->mesh_,
             dimensionedScalar("k", sqr(this->U_.dimensions()), 0.0)
@@ -197,7 +207,8 @@ Foam::laminar<BasicTurbulenceModel>::epsilon() const
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             this->mesh_,
             dimensionedScalar
@@ -223,7 +234,8 @@ Foam::laminar<BasicTurbulenceModel>::R() const
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             this->mesh_,
             dimensionedSymmTensor
@@ -236,53 +248,9 @@ Foam::laminar<BasicTurbulenceModel>::R() const
 
 
 template<class BasicTurbulenceModel>
-Foam::tmp<Foam::volSymmTensorField>
-Foam::laminar<BasicTurbulenceModel>::devRhoReff() const
-{
-    return tmp<volSymmTensorField>
-    (
-        new volSymmTensorField
-        (
-            IOobject
-            (
-                IOobject::groupName("devRhoReff", this->U_.group()),
-                this->runTime_.timeName(),
-                this->mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-           -(this->alpha_*this->rho_*nuEff())*dev(twoSymm(fvc::grad(this->U_)))
-        )
-    );
-}
-
-
-template<class BasicTurbulenceModel>
-Foam::tmp<Foam::fvVectorMatrix>
-Foam::laminar<BasicTurbulenceModel>::divDevRhoReff
-(
-    volVectorField& U
-) const
-{
-    return
-    (
-      - fvm::laplacian(this->alpha_*this->rho_*nuEff(), U)
-      - fvc::div(this->alpha_*this->rho_*nuEff()*dev2(T(fvc::grad(U))))
-    );
-}
-
-
-template<class BasicTurbulenceModel>
 void Foam::laminar<BasicTurbulenceModel>::correct()
 {
     BasicTurbulenceModel::correct();
-}
-
-
-template<class BasicTurbulenceModel>
-bool Foam::laminar<BasicTurbulenceModel>::read()
-{
-    return true;
 }
 
 

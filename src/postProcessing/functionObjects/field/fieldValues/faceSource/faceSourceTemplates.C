@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -197,7 +197,7 @@ Type Foam::fieldValues::faceSource::processSameTypeValues
         {
             if (weightField.size())
             {
-                result = sum(values)/sum(weightField);
+                result = sum(weightField*values)/sum(weightField);
             }
             else
             {
@@ -209,14 +209,28 @@ Type Foam::fieldValues::faceSource::processSameTypeValues
         {
             const scalarField magSf(mag(Sf));
 
-            result = sum(values*magSf)/sum(magSf);
+            result = sum(magSf*values)/sum(magSf);
+            break;
+        }
+        case opWeightedAreaAverage:
+        {
+            const scalarField magSf(mag(Sf));
+
+            if (weightField.size())
+            {
+                result = sum(weightField*magSf*values)/sum(magSf*weightField);
+            }
+            else
+            {
+                result = sum(magSf*values)/sum(magSf);
+            }
             break;
         }
         case opAreaIntegrate:
         {
             const scalarField magSf(mag(Sf));
 
-            result = sum(values*magSf);
+            result = sum(magSf*values);
             break;
         }
         case opMin:
@@ -337,24 +351,20 @@ bool Foam::fieldValues::faceSource::writeValues
         }
 
 
-        // apply scale factor and weight field
+        // Apply scale factor
         values *= scaleFactor_;
-        if (weightField.size())
-        {
-            values *= weightField;
-        }
 
         if (Pstream::master())
         {
             Type result = processValues(values, Sf, weightField);
 
-            // add to result dictionary, over-writing any previous entry
+            // Add to result dictionary, over-writing any previous entry
             resultDict_.add(fieldName, result, true);
 
             file()<< tab << result;
 
-            Info(log_)<< "    " << operationTypeNames_[operation_]
-                << "(" << sourceName_ << ") for " << fieldName
+            if (log_) Info<< "    " << operationTypeNames_[operation_]
+                << "(" << sourceName_ << ") of " << fieldName
                 <<  " = " << result << endl;
         }
     }
@@ -447,4 +457,3 @@ Foam::tmp<Foam::Field<Type> > Foam::fieldValues::faceSource::filterField
 
 
 // ************************************************************************* //
-

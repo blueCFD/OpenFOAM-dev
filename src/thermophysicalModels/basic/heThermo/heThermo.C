@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ Foam::heThermo<BasicThermo, MixtureType>::heThermo
 )
 :
     BasicThermo(mesh, phaseName),
-    MixtureType(*this, mesh),
+    MixtureType(*this, mesh, phaseName),
 
     he_
     (
@@ -123,7 +123,7 @@ Foam::heThermo<BasicThermo, MixtureType>::heThermo
 )
 :
     BasicThermo(mesh, dict, phaseName),
-    MixtureType(*this, mesh),
+    MixtureType(*this, mesh, phaseName),
 
     he_
     (
@@ -176,7 +176,8 @@ Foam::tmp<Foam::volScalarField> Foam::heThermo<BasicThermo, MixtureType>::he
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             mesh,
             he_.dimensions()
@@ -268,7 +269,8 @@ Foam::heThermo<BasicThermo, MixtureType>::hc() const
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             mesh,
             he_.dimensions()
@@ -334,7 +336,8 @@ Foam::heThermo<BasicThermo, MixtureType>::Cp() const
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             mesh,
             dimEnergy/dimMass/dimTemperature
@@ -404,7 +407,8 @@ Foam::heThermo<BasicThermo, MixtureType>::Cv() const
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             mesh,
             dimEnergy/dimMass/dimTemperature
@@ -470,7 +474,8 @@ Foam::heThermo<BasicThermo, MixtureType>::gamma() const
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             mesh,
             dimless
@@ -542,7 +547,8 @@ Foam::heThermo<BasicThermo, MixtureType>::Cpv() const
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             mesh,
             dimEnergy/dimMass/dimTemperature
@@ -611,7 +617,8 @@ Foam::heThermo<BasicThermo, MixtureType>::CpByCpv() const
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             mesh,
             dimless
@@ -729,7 +736,7 @@ Foam::heThermo<BasicThermo, MixtureType>::kappaEff
     const volScalarField& alphat
 ) const
 {
-    tmp<Foam::volScalarField> kappaEff(Cp()*alphaEff(alphat));
+    tmp<Foam::volScalarField> kappaEff(Cp()*(this->alpha_ + alphat));
     kappaEff().rename("kappaEff");
     return kappaEff;
 }
@@ -749,7 +756,11 @@ Foam::heThermo<BasicThermo, MixtureType>::kappaEff
             this->p_.boundaryField()[patchi],
             this->T_.boundaryField()[patchi],
             patchi
-        )*alphaEff(alphat, patchi);
+        )
+       *(
+           this->alpha_.boundaryField()[patchi]
+         + alphat
+        );
 }
 
 

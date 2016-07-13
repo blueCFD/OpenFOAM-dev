@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "basic.H"
+#include "zeroGradientFvPatchFields.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -50,8 +51,8 @@ Foam::PDRDragModels::basic::basic
 )
 :
     PDRDragModel(PDRProperties, turbulence, rho, U, phi),
-    Csu("Csu", dimless, PDRDragModelCoeffs_.lookup("Csu")),
-    Csk("Csk", dimless, PDRDragModelCoeffs_.lookup("Csk")),
+    Csu("Csu", dimless, PDRDragModelCoeffs_),
+    Csk("Csk", dimless, PDRDragModelCoeffs_),
 
     Aw_
     (
@@ -81,7 +82,7 @@ Foam::PDRDragModels::basic::basic
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructors * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 Foam::PDRDragModels::basic::~basic()
 {}

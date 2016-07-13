@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,7 +85,7 @@ public:
     // Member functions
 
         //- Return communicator used for comms
-        virtual int comm() const
+        virtual label comm() const
         {
             return procPolyPatch_.comm();
         }
@@ -156,6 +156,9 @@ public:
             (
                 const labelUList& internalData
             ) const;
+
+            //- Inherit initInternalFieldTransfer from coupledFvPatch
+            using coupledFvPatch::initInternalFieldTransfer;
 
             //- Initialise neighbour field transfer
             virtual void initInternalFieldTransfer

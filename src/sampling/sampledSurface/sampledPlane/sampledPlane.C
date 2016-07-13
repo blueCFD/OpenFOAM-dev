@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,7 +80,7 @@ Foam::sampledPlane::sampledPlane
     // allow lookup from global coordinate systems
     if (dict.found("coordinateSystem"))
     {
-        coordinateSystem cs(mesh, dict);
+        coordinateSystem cs(mesh, dict.subDict("coordinateSystem"));
 
         point  base = cs.globalPosition(planeDesc().refPoint());
         vector norm = cs.globalVector(planeDesc().normal());

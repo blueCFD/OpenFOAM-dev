@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,19 +60,19 @@ Foam::mixtureViscosityModels::BinghamPlastic::BinghamPlastic
     (
         "BinghamCoeff",
         dimensionSet(1, -1, -2, 0, 0),
-        plasticCoeffs_.lookup("BinghamCoeff")
+        plasticCoeffs_
     ),
     yieldStressExponent_
     (
         "BinghamExponent",
         dimless,
-        plasticCoeffs_.lookup("BinghamExponent")
+        plasticCoeffs_
     ),
     yieldStressOffset_
     (
         "BinghamOffset",
         dimless,
-        plasticCoeffs_.lookup("BinghamOffset")
+        plasticCoeffs_
     ),
     U_(U)
 {}
@@ -112,7 +112,7 @@ Foam::mixtureViscosityModels::BinghamPlastic::mu
     (
         tauy
        /(
-            mag(fvc::grad(U_))
+            sqrt(2.0)*mag(symm(fvc::grad(U_)))
           + 1.0e-4*(tauy + tauySmall)/mup
         )
       + mup,

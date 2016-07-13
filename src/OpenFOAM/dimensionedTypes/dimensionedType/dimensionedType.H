@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ class dictionary;
 template<class Type>
 class dimensioned
 {
-    // private data
+    // Private data
 
         //- Variable name
         word name_;
@@ -74,6 +74,13 @@ class dimensioned
 
         //- The data value
         Type value_;
+
+
+    // Private member functions
+
+        //- Initialize from Istream
+        //  Helper-function for constructors
+        void initialize(Istream& is);
 
 
 public:
@@ -107,16 +114,30 @@ public:
         //- Construct from an Istream with a given name and dimensions
         dimensioned(const word&, const dimensionSet&, Istream&);
 
+        //- Construct from dictionary lookup with a given name and dimensions
+        dimensioned(const word&, const dimensionSet&, const dictionary&);
+
         //- Null constructor
         dimensioned();
 
-        //- Construct from dictionary, with default value.
+
+    // Static member functions
+
+        //- Construct from dictionary, with default dimensions and value.
         static dimensioned<Type> lookupOrDefault
         (
             const word&,
             const dictionary&,
-            const Type& defaultValue = pTraits<Type>::zero,
-            const dimensionSet& dims = dimless
+            const dimensionSet& dims = dimless,
+            const Type& defaultValue = pTraits<Type>::zero
+        );
+
+        //- Construct from dictionary dimensionless with value.
+        static dimensioned<Type> lookupOrDefault
+        (
+            const word&,
+            const dictionary&,
+            const Type& defaultValue = pTraits<Type>::zero
         );
 
         //- Construct from dictionary, with default value.
@@ -125,8 +146,17 @@ public:
         (
             const word&,
             dictionary&,
-            const Type& defaultValue = pTraits<Type>::zero,
-            const dimensionSet& dims = dimless
+            const dimensionSet& dims = dimless,
+            const Type& defaultValue = pTraits<Type>::zero
+        );
+
+        //- Construct from dictionary, dimensionless with default value.
+        //  If the value is not found, it is added into the dictionary.
+        static dimensioned<Type> lookupOrAddToDict
+        (
+            const word&,
+            dictionary&,
+            const Type& defaultValue = pTraits<Type>::zero
         );
 
 

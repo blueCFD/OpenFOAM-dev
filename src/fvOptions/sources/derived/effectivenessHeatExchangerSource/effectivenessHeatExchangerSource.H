@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,12 +66,13 @@ Description
     effectivenessHeatExchangerSource1
     {
         type            effectivenessHeatExchangerSource;
-        active          true;
-        selectionMode   cellZone;
-        cellZone        porosity;
+        active          yes;
 
         effectivenessHeatExchangerSourceCoeffs
         {
+            selectionMode   cellZone;
+            cellZone        porosity;
+
             secondaryMassFlowRate   1.0;
             secondaryInletT         336;
             primaryInletT           293;
@@ -133,7 +134,7 @@ SourceFiles
 #ifndef effectivenessHeatExchangerSource_H
 #define effectivenessHeatExchangerSource_H
 
-#include "fvOption.H"
+#include "cellSetOption.H"
 #include "autoPtr.H"
 #include "interpolation2DTable.H"
 
@@ -150,7 +151,7 @@ namespace fv
 
 class effectivenessHeatExchangerSource
 :
-    public option
+    public cellSetOption
 {
 
 protected:
@@ -244,10 +245,7 @@ public:
 
     // Member Functions
 
-        virtual bool alwaysApply() const;
-
-
-        // Add explicit and implicit contributions
+        // Explicit and implicit source
 
             //- Scalar
             virtual void addSup
@@ -264,7 +262,7 @@ public:
             }
 
 
-        // Add explicit and implicit contributions to compressible equation
+        // Explicit and implicit source for compressible equation
 
             //- Scalar
             virtual void addSup
@@ -275,10 +273,7 @@ public:
             );
 
 
-        // I-O
-
-            //- Write data
-            virtual void writeData(Ostream&) const;
+        // IO
 
             //- Read dictionary
             virtual bool read(const dictionary& dict);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -67,7 +67,7 @@ Foam::fv::fixedTemperatureConstraint::fixedTemperatureConstraint
     const fvMesh& mesh
 )
 :
-    option(name, modelType, dict, mesh),
+    cellSetOption(name, modelType, dict, mesh),
     mode_(temperatureModeNames_.read(coeffs_.lookup("mode"))),
     Tuniform_(NULL),
     TName_("T")
@@ -94,70 +94,60 @@ Foam::fv::fixedTemperatureConstraint::fixedTemperatureConstraint
     }
 
 
-    fieldNames_.setSize(1, "energy");
+    // Set the field name to that of the energy field from which the temperature
+    // is obtained
+
+    const basicThermo& thermo =
+        mesh_.lookupObject<basicThermo>(basicThermo::dictName);
+
+    fieldNames_.setSize(1, thermo.he().name());
+
     applied_.setSize(1, false);
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::fv::fixedTemperatureConstraint::alwaysApply() const
-{
-    return true;
-}
-
-
-void Foam::fv::fixedTemperatureConstraint::setValue
+void Foam::fv::fixedTemperatureConstraint::constrain
 (
     fvMatrix<scalar>& eqn,
     const label
 )
 {
     const basicThermo& thermo =
-        mesh_.lookupObject<basicThermo>("thermophysicalProperties");
+        mesh_.lookupObject<basicThermo>(basicThermo::dictName);
 
-    if (eqn.psi().name() == thermo.he().name())
+    switch (mode_)
     {
-        switch (mode_)
+        case tmUniform:
         {
-            case tmUniform:
-            {
-                const scalar t = mesh_.time().value();
-                scalarField Tuni(cells_.size(), Tuniform_->value(t));
-                eqn.setValues(cells_, thermo.he(thermo.p(), Tuni, cells_));
+            const scalar t = mesh_.time().value();
+            scalarField Tuni(cells_.size(), Tuniform_->value(t));
+            eqn.setValues(cells_, thermo.he(thermo.p(), Tuni, cells_));
 
-                break;
-            }
-            case tmLookup:
-            {
-                const volScalarField& T =
-                    mesh().lookupObject<volScalarField>(TName_);
-
-                scalarField Tlkp(T, cells_);
-                eqn.setValues(cells_, thermo.he(thermo.p(), Tlkp, cells_));
-
-                break;
-            }
-            default:
-            {
-                // error handling done by NamedEnum
-            }
+            break;
         }
+        case tmLookup:
+        {
+            const volScalarField& T =
+                mesh().lookupObject<volScalarField>(TName_);
 
+            scalarField Tlkp(T, cells_);
+            eqn.setValues(cells_, thermo.he(thermo.p(), Tlkp, cells_));
+
+            break;
+        }
+        default:
+        {
+            // error handling done by NamedEnum
+        }
     }
-}
-
-
-void Foam::fv::fixedTemperatureConstraint::writeData(Ostream& os) const
-{
-    os  << indent << name_ << endl;
-    dict_.write(os);
 }
 
 
 bool Foam::fv::fixedTemperatureConstraint::read(const dictionary& dict)
 {
-    if (option::read(dict))
+    if (cellSetOption::read(dict))
     {
         if (coeffs_.found(Tuniform_->name()))
         {

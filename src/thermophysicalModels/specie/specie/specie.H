@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,6 +40,9 @@ SourceFiles
 #include "scalar.H"
 #include "dictionary.H"
 
+#include "thermodynamicConstants.H"
+using namespace Foam::constant::thermodynamic;
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -70,20 +73,6 @@ public:
 
     //- Runtime type information
     ClassName("specie");
-
-
-    // Public constants
-
-        // Thermodynamic constants
-
-            //- Universal gas constant [J/(kmol K)]
-            static const scalar RR;
-
-            //- Standard pressure [Pa]
-            static const scalar Pstd;
-
-            //- Standard temperature [K]
-            static const scalar Tstd;
 
 
     // Constructors

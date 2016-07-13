@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,35 +39,66 @@ Description
 #include "thermoPhysicsTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// hConstSolidThermoPhysics
 
-namespace Foam
-{
-    makeSolidChemistryModel
-    (
-        solidChemistryModel,
-        pyrolysisChemistryModel,
-        basicSolidChemistryModel,
-        hConstSolidThermoPhysics,
-        gasHThermoPhysics
-    );
+makeSolidChemistryModel
+(
+    solidChemistryModel,
+    pyrolysisChemistryModel,
+    basicSolidChemistryModel,
+    hConstSolidThermoPhysics
+);
 
-    makeSolidChemistryModel
-    (
-        solidChemistryModel,
-        pyrolysisChemistryModel,
-        basicSolidChemistryModel,
-        hExponentialSolidThermoPhysics,
-        gasHThermoPhysics
-    );
+makeSolidGasChemistryModel
+(
+    solidChemistryModel,
+    pyrolysisChemistryModel,
+    basicSolidChemistryModel,
+    hConstSolidThermoPhysics,
+    gasHThermoPhysics
+);
 
-    makeSolidChemistryModel
-    (
-        solidChemistryModel,
-        pyrolysisChemistryModel,
-        basicSolidChemistryModel,
-        hExpKappaConstSolidThermoPhysics,
-        gasHThermoPhysics
-    );
-}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// hPowerSolidThermoPhysics
+
+makeSolidChemistryModel
+(
+    solidChemistryModel,
+    pyrolysisChemistryModel,
+    basicSolidChemistryModel,
+    hPowerSolidThermoPhysics
+);
+
+makeSolidGasChemistryModel
+(
+    solidChemistryModel,
+    pyrolysisChemistryModel,
+    basicSolidChemistryModel,
+    hPowerSolidThermoPhysics,
+    gasHThermoPhysics
+);
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// hExpKappaConstSolidThermoPhysics
+
+makeSolidChemistryModel
+(
+    solidChemistryModel,
+    pyrolysisChemistryModel,
+    basicSolidChemistryModel,
+    hExpKappaConstSolidThermoPhysics
+);
+
+makeSolidGasChemistryModel
+(
+    solidChemistryModel,
+    pyrolysisChemistryModel,
+    basicSolidChemistryModel,
+    hExpKappaConstSolidThermoPhysics,
+    gasHThermoPhysics
+);
+
 
 // ************************************************************************* //

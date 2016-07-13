@@ -246,6 +246,7 @@ addLayersControls
 
     // Wanted thickness of final added cell layer. If multiple layers
     // is the thickness of the layer furthest away from the wall.
+    // Relative to undistorted size of cell outside layer.
     // See relativeSizes parameter.
     finalLayerThickness 0.3;
 
@@ -342,11 +343,11 @@ meshQualityControls
     minArea -1;
 
     //- Minimum face twist. Set to <-1 to disable. dot product of face normal
-    //- and face centre triangles normal
+    //  and face centre triangles normal
     minTwist 0.05;
 
-    //- minimum normalised cell determinant
-    //- 1 = hex, <= 0 = folded or flattened illegal cell
+    //- Minimum normalised cell determinant
+    //  1 = hex, <= 0 = folded or flattened illegal cell
     minDeterminant 0.001;
 
     //- minFaceWeight (0 -> 0.5)
@@ -358,7 +359,7 @@ meshQualityControls
     //must be >0 for Fluent compatibility
     minTriangleTwist -1;
 
-    //- if >0 : preserve single cells with all points on the surface if the
+    //- If >0 : preserve single cells with all points on the surface if the
     //  resulting volume after snapping (by approximation) is larger than
     //  minVolCollapseRatio times old volume (i.e. not collapsed to flat cell).
     //  If <0 : delete always.
@@ -369,7 +370,7 @@ meshQualityControls
 
     //- Number of error distribution iterations
     nSmoothScale 4;
-    //- amount to scale back displacement at error points
+    //- Amount to scale back displacement at error points
     errorReduction 0.75;
 
 

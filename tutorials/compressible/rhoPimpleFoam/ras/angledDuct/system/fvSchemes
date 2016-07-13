@@ -39,7 +39,7 @@ divSchemes
     div((rho*R))    Gauss linear;
     div(R)          Gauss linear;
     div(U)          Gauss linear;
-    div((muEff*dev2(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -55,12 +55,6 @@ interpolationSchemes
 snGradSchemes
 {
     default         corrected;
-}
-
-fluxRequired
-{
-    default         no;
-    p               ;
 }
 
 

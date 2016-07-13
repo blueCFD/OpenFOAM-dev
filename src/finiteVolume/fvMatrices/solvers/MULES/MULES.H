@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,29 +103,6 @@ void explicitSolve
     const scalar psiMin
 );
 
-template<class RhoType, class SpType, class SuType>
-void explicitLTSSolve
-(
-    const RhoType& rho,
-    volScalarField& psi,
-    const surfaceScalarField& phiBD,
-    surfaceScalarField& phiPsi,
-    const SpType& Sp,
-    const SuType& Su,
-    const scalar psiMax,
-    const scalar psiMin
-);
-
-void explicitLTSSolve
-(
-    volScalarField& psi,
-    const surfaceScalarField& phiBD,
-    surfaceScalarField& phiPsi,
-    const scalar psiMax,
-    const scalar psiMin
-);
-
-
 template<class RdeltaTType, class RhoType, class SpType, class SuType>
 void limiter
 (
@@ -138,8 +115,7 @@ void limiter
     const SpType& Sp,
     const SuType& Su,
     const scalar psiMax,
-    const scalar psiMin,
-    const label nLimiterIter
+    const scalar psiMin
 );
 
 template<class RdeltaTType, class RhoType, class SpType, class SuType>
@@ -154,7 +130,6 @@ void limit
     const SuType& Su,
     const scalar psiMax,
     const scalar psiMin,
-    const label nLimiterIter,
     const bool returnCorr
 );
 

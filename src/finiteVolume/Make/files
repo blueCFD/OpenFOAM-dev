@@ -38,13 +38,14 @@ $(derivedFvPatches)/regionCoupled/regionCoupledWallFvPatch.C
 
 
 wallDist = fvMesh/wallDist
-$(wallDist)/patchDist.C
 $(wallDist)/wallPointYPlus/wallPointYPlus.C
-$(wallDist)/nearWallDistNoSearch.C
-$(wallDist)/nearWallDist.C
-$(wallDist)/wallDist.C
-$(wallDist)/reflectionVectors.C
-$(wallDist)/wallDistReflection.C
+$(wallDist)/nearWallDist/nearWallDistNoSearch.C
+$(wallDist)/nearWallDist/nearWallDist.C
+$(wallDist)/wallDist/wallDist.C
+$(wallDist)/patchDistMethods/patchDistMethod/patchDistMethod.C
+$(wallDist)/patchDistMethods/meshWave/meshWavePatchDistMethod.C
+$(wallDist)/patchDistMethods/Poisson/PoissonPatchDistMethod.C
+$(wallDist)/patchDistMethods/advectionDiffusion/advectionDiffusionPatchDistMethod.C
 
 
 fvMeshMapper = fvMesh/fvMeshMapper
@@ -198,6 +199,7 @@ $(derivedFvPatchFields)/waveTransmissive/waveTransmissiveFvPatchFields.C
 $(derivedFvPatchFields)/waveSurfacePressure/waveSurfacePressureFvPatchScalarField.C
 $(derivedFvPatchFields)/interstitialInletVelocity/interstitialInletVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/prghPressure/prghPressureFvPatchScalarField.C
+$(derivedFvPatchFields)/prghTotalPressure/prghTotalPressureFvPatchScalarField.C
 
 fvsPatchFields = fields/fvsPatchFields
 $(fvsPatchFields)/fvsPatchField/fvsPatchFields.C
@@ -271,6 +273,7 @@ $(schemes)/fixedBlended/fixedBlended.C
 $(schemes)/localBlended/localBlended.C
 $(schemes)/limiterBlended/limiterBlended.C
 $(schemes)/CoBlended/CoBlended.C
+$(schemes)/cellCoBlended/cellCoBlended.C
 $(schemes)/localMax/localMax.C
 $(schemes)/localMin/localMin.C
 
@@ -334,6 +337,7 @@ $(ddtSchemes)/steadyStateDdtScheme/steadyStateDdtSchemes.C
 $(ddtSchemes)/EulerDdtScheme/EulerDdtSchemes.C
 $(ddtSchemes)/CoEulerDdtScheme/CoEulerDdtSchemes.C
 $(ddtSchemes)/SLTSDdtScheme/SLTSDdtSchemes.C
+$(ddtSchemes)/localEulerDdtScheme/localEulerDdt.C
 $(ddtSchemes)/localEulerDdtScheme/localEulerDdtSchemes.C
 $(ddtSchemes)/backwardDdtScheme/backwardDdtSchemes.C
 $(ddtSchemes)/CrankNicolsonDdtScheme/CrankNicolsonDdtSchemes.C
@@ -391,11 +395,13 @@ general = cfdTools/general
 $(general)/findRefCell/findRefCell.C
 $(general)/adjustPhi/adjustPhi.C
 $(general)/bound/bound.C
+$(general)/CorrectPhi/correctUphiBCs.C
 
 solutionControl = $(general)/solutionControl
 $(solutionControl)/solutionControl/solutionControl.C
 $(solutionControl)/simpleControl/simpleControl.C
 $(solutionControl)/pimpleControl/pimpleControl.C
+$(solutionControl)/pisoControl/pisoControl.C
 
 porosity = $(general)/porosityModel
 $(porosity)/porosityModel/porosityModel.C

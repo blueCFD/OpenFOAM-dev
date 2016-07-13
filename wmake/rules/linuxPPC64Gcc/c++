@@ -1,6 +1,9 @@
-.SUFFIXES: .C .cxx .cc .cpp
+SUFFIXES += .C
 
-c++WARN     = -Wall -Wextra -Wno-unused-parameter -Wold-style-cast
+c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof
+
+# Suppress some warnings for flex++ and CGAL
+c++LESSWARN = -Wno-old-style-cast -Wno-unused-local-typedefs -Wno-array-bounds
 
 CC          = g++ -m64 -mcpu=power5+
 
@@ -10,7 +13,7 @@ ptFLAGS     = -DNoRepository -ftemplate-depth-100
 
 c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) $(LIB_HEADER_DIRS) -fPIC
 
-Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $$SOURCE -o $@
+Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $@
 cxxtoo      = $(Ctoo)
 cctoo       = $(Ctoo)
 cpptoo      = $(Ctoo)

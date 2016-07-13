@@ -1,11 +1,9 @@
-.SUFFIXES: .C .cxx .cc .cpp
+SUFFIXES += .C
 
-# -Woverloaded-virtual may produce spurious warnings, disable for now
-c++WARN     = -Wall -Wextra -Wno-unused-parameter -Wold-style-cast -Wnon-virtual-dtor -Wno-overloaded-virtual -Wno-unused-comparison
+c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-c++11-extensions
 
-
-# Suppress CGAL warnings
-c++CGALWARN = -Wno-c++11-extensions -Wno-sometimes-uninitialized -Wno-mismatched-tags
+# Suppress some warnings for flex++ and CGAL
+c++LESSWARN = -Wno-old-style-cast -Wno-unused-local-typedef -Wno-tautological-undefined-compare -Wno-shift-negative-value
 
 CC          = clang++ -m32
 
@@ -15,7 +13,7 @@ ptFLAGS     = -DNoRepository -ftemplate-depth-100
 
 c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) $(LIB_HEADER_DIRS) -fPIC
 
-Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $$SOURCE -o $@
+Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $@
 cxxtoo      = $(Ctoo)
 cctoo       = $(Ctoo)
 cpptoo      = $(Ctoo)

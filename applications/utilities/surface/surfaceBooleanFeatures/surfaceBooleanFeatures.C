@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -360,7 +360,6 @@ void calcFeaturePoints(const pointField& points, const edgeList& edges)
 
     const labelListList& pointEdges = eMesh.pointEdges();
 
-
     // Get total number of feature points
     label nFeaturePoints = 0;
     forAll(pointEdges, pI)
@@ -390,19 +389,6 @@ void calcFeaturePoints(const pointField& points, const edgeList& edges)
             nFeatPts++;
         }
     }
-
-
-
-    label concaveStart = 0;
-    label mixedStart = 0;
-    label nonFeatureStart = nFeaturePoints;
-
-
-    labelListList featurePointNormals(nFeaturePoints);
-    labelListList featurePointEdges(nFeaturePoints);
-    labelList regionEdges;
-
-
 }
 
 
@@ -439,8 +425,8 @@ int main(int argc, char *argv[])
         "This is only sensible for union and intersection."
     );
 
-    #   include "setRootCase.H"
-    #   include "createTime.H"
+    #include "setRootCase.H"
+    #include "createTime.H"
 
     word action(args.args()[1]);
 

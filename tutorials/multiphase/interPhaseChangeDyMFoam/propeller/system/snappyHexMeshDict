@@ -338,10 +338,8 @@ addLayersControls
     expansionRatio 1.0;
 
     // Wanted thickness of final added cell layer. If multiple layers
-    // is the
-    // thickness of the layer furthest away from the wall.
-    // Relative to undistorted size of cell outside layer.
     // is the thickness of the layer furthest away from the wall.
+    // Relative to undistorted size of cell outside layer.
     // See relativeSizes parameter.
     finalLayerThickness 0.3;
 
@@ -434,11 +432,11 @@ meshQualityControls
     minArea -1;
 
     //- Minimum face twist. Set to <-1 to disable. dot product of face normal
-    //- and face centre triangles normal
+    //  and face centre triangles normal
     minTwist 0.01;
 
-    //- minimum normalised cell determinant
-    //- 1 = hex, <= 0 = folded or flattened illegal cell
+    //- Minimum normalised cell determinant
+    //  1 = hex, <= 0 = folded or flattened illegal cell
     minDeterminant 0.001;
 
     //- minFaceWeight (0 -> 0.5)
@@ -455,7 +453,7 @@ meshQualityControls
 
     //- Number of error distribution iterations
     nSmoothScale 4;
-    //- amount to scale back displacement at error points
+    //- Amount to scale back displacement at error points
     errorReduction 0.75;
 
     // Optional : some meshing phases allow usage of relaxed rules.

@@ -17,7 +17,7 @@ FoamFile
 
 solvers
 {
-    alpha
+    "alpha.*"
     {
         nAlphaSubCycles 1;
         cAlpha          1;
@@ -70,9 +70,6 @@ PIMPLE
 
 relaxationFactors
 {
-    fields
-    {
-    }
     equations
     {
         "U.*"           1;

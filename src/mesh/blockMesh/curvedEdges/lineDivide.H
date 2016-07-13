@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,6 +37,7 @@ SourceFiles
 
 #include "pointField.H"
 #include "scalarList.H"
+#include "gradingDescriptors.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,12 +62,12 @@ public:
 
     // Constructors
 
-        //- Construct from components with discretization and expansion ratio
+        //- Construct from components
         lineDivide
         (
             const curvedEdge&,
             const label ndiv,
-            const scalar xratio = 1.0
+            const gradingDescriptors& gd = gradingDescriptors()
         );
 
 

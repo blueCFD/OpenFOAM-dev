@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,8 +52,6 @@ namespace Foam
 template<class modelType>
 class BlendedInterfacialModel
 {
-private:
-
     // Private data
 
         //- Unordered phase pair
@@ -77,6 +75,9 @@ private:
         //- Blending model
         const blendingMethod& blending_;
 
+        //- If true set coefficients and forces to 0 at fixed-flux BCs
+        bool correctFixedFluxBCs_;
+
 
     // Private Member Functions
 
@@ -87,11 +88,8 @@ private:
         void operator=(const BlendedInterfacialModel<modelType>&);
 
         //- Correct coeff/value on fixed flux boundary conditions
-        template<class Type>
-        void correctFixedFluxBCs
-        (
-            GeometricField<Type, fvPatchField, volMesh>& field
-        ) const;
+        template<class GeometricField>
+        void correctFixedFluxBCs(GeometricField& field) const;
 
 
 public:
@@ -105,7 +103,8 @@ public:
             const blendingMethod& blending,
             const phasePair& pair,
             const orderedPhasePair& pair1In2,
-            const orderedPhasePair& pair2In1
+            const orderedPhasePair& pair2In1,
+            const bool correctFixedFluxBCs = true
         );
 
 
@@ -115,15 +114,27 @@ public:
 
     // Member Functions
 
-        //- Return the implicit coefficient
-        tmp<volScalarField> K() const;
+        //- Return true if a model is specified for the supplied phase
+        bool hasModel(const phaseModel& phase) const;
 
-        //- Return the explicit value
-        template<class Type>
-        tmp<GeometricField<Type, fvPatchField, volMesh> > F() const;
-        
         //- Return the model for the supplied phase
         const modelType& phaseModel(const phaseModel& phase) const;
+
+        //- Return the blended force coefficient
+        tmp<volScalarField> K() const;
+
+        //- Return the face blended force coefficient
+        tmp<surfaceScalarField> Kf() const;
+
+        //- Return the blended force
+        template<class Type>
+        tmp<GeometricField<Type, fvPatchField, volMesh> > F() const;
+
+        //- Return the face blended force
+        tmp<surfaceScalarField> Ff() const;
+
+        //- Return the blended diffusivity
+        tmp<volScalarField> D() const;
 };
 
 
@@ -134,7 +145,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "BlendedInterfacialModel.C"
+    #include "BlendedInterfacialModel.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

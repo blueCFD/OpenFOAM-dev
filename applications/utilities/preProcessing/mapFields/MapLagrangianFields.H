@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
 
 #include "cloud.H"
 #include "GeometricField.H"
-#include "meshToMesh.H"
+#include "meshToMesh0.H"
 #include "IOobjectList.H"
 #include "CompactIOField.H"
 
@@ -51,18 +51,19 @@ void MapLagrangianFields
 (
     const string& cloudName,
     const IOobjectList& objects,
-    const polyMesh& meshTarget,
+    const meshToMesh0& meshToMesh0Interp,
     const labelList& addParticles
 )
 {
+    const fvMesh& meshTarget = meshToMesh0Interp.toMesh();
+
     {
         IOobjectList fields = objects.lookupClass(IOField<Type>::typeName);
 
         forAllIter(IOobjectList, fields, fieldIter)
         {
-            const word& fieldName = fieldIter()->name();
-
-            Info<< "    mapping lagrangian field " << fieldName << endl;
+            Info<< "    mapping lagrangian field "
+                << fieldIter()->name() << endl;
 
             // Read field (does not need mesh)
             IOField<Type> fieldSource(*fieldIter());
@@ -72,7 +73,7 @@ void MapLagrangianFields
             (
                 IOobject
                 (
-                    fieldName,
+                    fieldIter()->name(),
                     meshTarget.time().timeName(),
                     cloud::prefix/cloudName,
                     meshTarget,
@@ -99,9 +100,8 @@ void MapLagrangianFields
 
         forAllIter(IOobjectList, fieldFields, fieldIter)
         {
-            const word& fieldName = fieldIter()->name();
-
-            Info<< "    mapping lagrangian fieldField " << fieldName << endl;
+            Info<< "    mapping lagrangian fieldField "
+                << fieldIter()->name() << endl;
 
             // Read field (does not need mesh)
             IOField<Field<Type> > fieldSource(*fieldIter());
@@ -112,7 +112,7 @@ void MapLagrangianFields
             (
                 IOobject
                 (
-                    fieldName,
+                    fieldIter()->name(),
                     meshTarget.time().timeName(),
                     cloud::prefix/cloudName,
                     meshTarget,

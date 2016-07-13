@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,8 +30,7 @@ License
 template<class Type>
 Foam::Table<Type>::Table(const word& entryName, const dictionary& dict)
 :
-    DataEntry<Type>(entryName),
-    TableBase<Type>(entryName, dictionary::null)
+    TableBase<Type>(entryName, dict)
 {
     Istream& is(dict.lookup(entryName));
     word entryType(is);
@@ -51,7 +50,6 @@ Foam::Table<Type>::Table(const word& entryName, const dictionary& dict)
 template<class Type>
 Foam::Table<Type>::Table(const Table<Type>& tbl)
 :
-    DataEntry<Type>(tbl),
     TableBase<Type>(tbl)
 {}
 
@@ -61,11 +59,6 @@ Foam::Table<Type>::Table(const Table<Type>& tbl)
 template<class Type>
 Foam::Table<Type>::~Table()
 {}
-
-
-// * * * * * * * * * * * * * *  IOStream operators * * * * * * * * * * * * * //
-
-#include "TableIO.C"
 
 
 // ************************************************************************* //

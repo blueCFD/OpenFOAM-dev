@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,6 @@ License
 #include "twoPhaseSystem.H"
 #include "PhaseCompressibleTurbulenceModel.H"
 #include "BlendedInterfacialModel.H"
-#include "dragModel.H"
 #include "virtualMassModel.H"
 #include "heatTransferModel.H"
 #include "liftModel.H"
@@ -47,6 +46,7 @@ License
 
 #include "blendingMethod.H"
 #include "HashPtrTable.H"
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -184,7 +184,8 @@ Foam::twoPhaseSystem::twoPhaseSystem
             ),
             pair_,
             pair1In2_,
-            pair2In1_
+            pair2In1_,
+            false // Do not zero drag coefficent at fixed-flux BCs
         )
     );
 
@@ -298,41 +299,51 @@ Foam::tmp<Foam::surfaceScalarField> Foam::twoPhaseSystem::calcPhi() const
 }
 
 
-Foam::tmp<Foam::volScalarField> Foam::twoPhaseSystem::dragCoeff() const
+Foam::tmp<Foam::volScalarField> Foam::twoPhaseSystem::Kd() const
 {
     return drag_->K();
 }
 
 
-Foam::tmp<Foam::volScalarField> Foam::twoPhaseSystem::virtualMassCoeff() const
+Foam::tmp<Foam::surfaceScalarField> Foam::twoPhaseSystem::Kdf() const
+{
+    return drag_->Kf();
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::twoPhaseSystem::Vm() const
 {
     return virtualMass_->K();
 }
 
 
-Foam::tmp<Foam::volScalarField> Foam::twoPhaseSystem::heatTransferCoeff() const
+Foam::tmp<Foam::surfaceScalarField> Foam::twoPhaseSystem::Vmf() const
+{
+    return virtualMass_->Kf();
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::twoPhaseSystem::Kh() const
 {
     return heatTransfer_->K();
 }
 
 
-Foam::tmp<Foam::volVectorField> Foam::twoPhaseSystem::liftForce() const
+Foam::tmp<Foam::volVectorField> Foam::twoPhaseSystem::F() const
 {
-    return lift_->F<vector>();
+    return lift_->F<vector>() + wallLubrication_->F<vector>();
 }
 
 
-Foam::tmp<Foam::volVectorField>
-Foam::twoPhaseSystem::wallLubricationForce() const
+Foam::tmp<Foam::surfaceScalarField> Foam::twoPhaseSystem::Ff() const
 {
-    return wallLubrication_->F<vector>();
+    return lift_->Ff() + wallLubrication_->Ff();
 }
 
 
-Foam::tmp<Foam::volVectorField>
-Foam::twoPhaseSystem::turbulentDispersionForce() const
+Foam::tmp<Foam::volScalarField> Foam::twoPhaseSystem::D() const
 {
-    return turbulentDispersion_->F<vector>();
+    return turbulentDispersion_->D();
 }
 
 
@@ -353,10 +364,6 @@ void Foam::twoPhaseSystem::solve()
 
     label nAlphaSubCycles(readLabel(alphaControls.lookup("nAlphaSubCycles")));
     label nAlphaCorr(readLabel(alphaControls.lookup("nAlphaCorr")));
-    Switch implicitPhasePressure
-    (
-        alphaControls.lookupOrDefault<Switch>("implicitPhasePressure", false)
-    );
 
     word alphaScheme("div(phi," + alpha1.name() + ')');
     word alpharScheme("div(phir," + alpha1.name() + ')');
@@ -367,31 +374,19 @@ void Foam::twoPhaseSystem::solve()
     surfaceScalarField phic("phic", phi_);
     surfaceScalarField phir("phir", phi1 - phi2);
 
-    surfaceScalarField alpha1f(fvc::interpolate(max(alpha1, scalar(0))));
+    tmp<surfaceScalarField> alpha1alpha2f;
 
-    tmp<surfaceScalarField> pPrimeByA;
-
-    if (implicitPhasePressure)
+    if (pPrimeByA_.valid())
     {
-        const volScalarField& rAU1 = mesh_.lookupObject<volScalarField>
-        (
-            IOobject::groupName("rAU", phase1_.name())
-        );
-        const volScalarField& rAU2 = mesh_.lookupObject<volScalarField>
-        (
-            IOobject::groupName("rAU", phase2_.name())
-        );
-
-        pPrimeByA =
-            fvc::interpolate(rAU1*phase1_.turbulence().pPrime())
-          + fvc::interpolate(rAU2*phase2_.turbulence().pPrime());
+        alpha1alpha2f =
+            fvc::interpolate(max(alpha1, scalar(0)))
+           *fvc::interpolate(max(alpha2, scalar(0)));
 
         surfaceScalarField phiP
         (
-            pPrimeByA()*fvc::snGrad(alpha1, "bounded")*mesh_.magSf()
+            pPrimeByA_()*fvc::snGrad(alpha1, "bounded")*mesh_.magSf()
         );
 
-        phic += alpha1f*phiP;
         phir += phiP;
     }
 
@@ -523,12 +518,12 @@ void Foam::twoPhaseSystem::solve()
             phase1_.alphaPhi() = alphaPhic1;
         }
 
-        if (implicitPhasePressure)
+        if (pPrimeByA_.valid())
         {
             fvScalarMatrix alpha1Eqn
             (
                 fvm::ddt(alpha1) - fvc::ddt(alpha1)
-              - fvm::laplacian(alpha1f*pPrimeByA(), alpha1, "bounded")
+              - fvm::laplacian(alpha1alpha2f*pPrimeByA_(), alpha1, "bounded")
             );
 
             alpha1Eqn.relax();
@@ -547,8 +542,8 @@ void Foam::twoPhaseSystem::solve()
 
         Info<< alpha1.name() << " volume fraction = "
             << alpha1.weightedAverage(mesh_.V()).value()
-            << "  Min(alpha1) = " << min(alpha1).value()
-            << "  Max(alpha1) = " << max(alpha1).value()
+            << "  Min(" << alpha1.name() << ") = " << min(alpha1).value()
+            << "  Max(" << alpha1.name() << ") = " << max(alpha1).value()
             << endl;
     }
 }
@@ -588,8 +583,7 @@ bool Foam::twoPhaseSystem::read()
 }
 
 
-const Foam::dragModel&
-Foam::twoPhaseSystem::drag(const phaseModel& phase) const
+const Foam::dragModel& Foam::twoPhaseSystem::drag(const phaseModel& phase) const
 {
     return drag_->phaseModel(phase);
 }

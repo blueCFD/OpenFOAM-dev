@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -198,7 +198,6 @@ mtype                 {space}"MTYPE:"{space}
     label curNumberOfNodes = 0;
     label curNumberOfCells = 0;
     label curGroupID = 0;
-    label nFlagsForStream = 0;
     label curBoundaryPatch = 0;
     label curPatchFace = 0;
 %}
@@ -490,7 +489,7 @@ mtype                 {space}"MTYPE:"{space}
 
         IStringStream nFlagsStream(YYText());
 
-        nFlagsForStream = readLabel(nFlagsStream);
+        readLabel(nFlagsStream);
 
         BEGIN(cellStreamTitle);
     }
@@ -522,7 +521,6 @@ mtype                 {space}"MTYPE:"{space}
 
         // reset current group ID and a number of flags
         curGroupID = 0;
-        nFlagsForStream = 0;
     }
 
 
@@ -534,7 +532,6 @@ mtype                 {space}"MTYPE:"{space}
 
         // reset current group ID and a number of flags
         curGroupID = 0;
-        nFlagsForStream = 0;
 
         BEGIN(INITIAL);
     }
@@ -656,7 +653,7 @@ int main(int argc, char *argv[])
 
     const scalar scaleFactor = args.optionLookupOrDefault("scale", 1.0);
 
-#   include "createTime.H"
+    #include "createTime.H"
 
     const fileName gambitFile = args[1];
 

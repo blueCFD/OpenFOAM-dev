@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
+|  \\    /   O peration     | Version:  2.2.2                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -13,12 +13,6 @@ FoamFile
     object      mapFieldsDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-// Specify how to map patches. There are three different options:
-// - patch exists in the source case: specify mapping (patchMap)
-// - patch should be interpolated from internal values in source case
-//   (cuttingPatches)
-// - patch should not be mapped. Default if not in patchMap or cuttingPatches
 
 // List of pairs of target/source patches for mapping
 patchMap

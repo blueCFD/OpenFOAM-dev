@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -137,7 +137,14 @@ Foam::Ostream& Foam::prefixOSstream::writeQuoted
 }
 
 
-Foam::Ostream& Foam::prefixOSstream::write(const label val)
+Foam::Ostream& Foam::prefixOSstream::write(const int32_t val)
+{
+    checkWritePrefix();
+    return OSstream::write(val);
+}
+
+
+Foam::Ostream& Foam::prefixOSstream::write(const int64_t val)
 {
     checkWritePrefix();
     return OSstream::write(val);

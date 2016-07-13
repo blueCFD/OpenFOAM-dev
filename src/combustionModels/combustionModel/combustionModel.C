@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,14 +37,15 @@ namespace Foam
 Foam::combustionModel::combustionModel
 (
     const word& modelType,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const word& phaseName
 )
 :
     IOdictionary
     (
         IOobject
         (
-            "combustionProperties",
+            IOobject::groupName("combustionProperties", phaseName),
             mesh.time().constant(),
             mesh,
             IOobject::MUST_READ_IF_MODIFIED,
@@ -55,11 +56,12 @@ Foam::combustionModel::combustionModel
     mesh_(mesh),
     active_(lookupOrDefault<Switch>("active", true)),
     coeffs_(subDict(modelType + "Coeffs")),
-    modelType_(modelType)
+    modelType_(modelType),
+    phaseName_(phaseName)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructors * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 Foam::combustionModel::~combustionModel()
 {
@@ -96,7 +98,7 @@ Foam::tmp<Foam::volScalarField> Foam::combustionModel::Sh() const
         (
             IOobject
             (
-                "Sh",
+                IOobject::groupName("Sh", phaseName_),
                 mesh_.time().timeName(),
                 mesh_,
                 IOobject::NO_READ,

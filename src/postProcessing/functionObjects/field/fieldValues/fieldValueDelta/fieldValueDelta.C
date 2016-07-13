@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -158,7 +158,7 @@ void Foam::fieldValues::fieldValueDelta::write()
         file()<< obr_.time().value();
     }
 
-    Info(log_)<< type() << " " << name_ << " output:" << endl;
+    if (log_) Info<< type() << " " << name_ << " output:" << endl;
 
     bool found = false;
     processFields<scalar>(found);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
 #include "fvCFD.H"
 #include "barotropicCompressibilityModel.H"
 #include "incompressibleTwoPhaseMixture.H"
-#include "turbulenceModel.H"
+#include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -46,14 +46,14 @@ int main(int argc, char *argv[])
 
     #include "createTime.H"
     #include "createMesh.H"
-    #include "readThermodynamicProperties.H"
-    #include "readControls.H"
-    #include "createFields.H"
-    #include "initContinuityErrs.H"
-    #include "CourantNo.H"
-    #include "setInitialDeltaT.H"
 
     pimpleControl pimple(mesh);
+
+    #include "readThermodynamicProperties.H"
+    #include "createControls.H"
+    #include "createFields.H"
+    #include "CourantNo.H"
+    #include "setInitialDeltaT.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

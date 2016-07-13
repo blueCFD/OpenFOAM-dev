@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,15 +26,15 @@ License
 #include "wallShearStress.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "incompressible/turbulenceModel/turbulenceModel.H"
-#include "compressible/turbulenceModel/turbulenceModel.H"
+#include "turbulentTransportModel.H"
+#include "turbulentFluidThermoModel.H"
 #include "wallPolyPatch.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-defineTypeNameAndDebug(wallShearStress, 0);
+    defineTypeNameAndDebug(wallShearStress, 0);
 }
 
 
@@ -83,7 +83,7 @@ void Foam::wallShearStress::calcShearStress
                 << endl;
         }
 
-        Info(log_)<< "    min/max(" << pp.name() << ") = "
+        if (log_) Info<< "    min/max(" << pp.name() << ") = "
             << minSsp << ", " << maxSsp << endl;
     }
 }
@@ -238,27 +238,27 @@ void Foam::wallShearStress::execute()
                 mesh.lookupObject<volVectorField>(type())
             );
 
-        Info(log_)<< type() << " " << name_ << " output:" << nl;
+        if (log_) Info<< type() << " " << name_ << " output:" << nl;
 
 
         tmp<volSymmTensorField> Reff;
-        if (mesh.foundObject<cmpModel>("turbulenceModel"))
+        if (mesh.foundObject<cmpModel>(turbulenceModel::propertiesName))
         {
             const cmpModel& model =
-                mesh.lookupObject<cmpModel>("turbulenceModel");
+                mesh.lookupObject<cmpModel>(turbulenceModel::propertiesName);
 
             Reff = model.devRhoReff();
         }
-        else if (mesh.foundObject<icoModel>("turbulenceModel"))
+        else if (mesh.foundObject<icoModel>(turbulenceModel::propertiesName))
         {
             const icoModel& model =
-                mesh.lookupObject<icoModel>("turbulenceModel");
+                mesh.lookupObject<icoModel>(turbulenceModel::propertiesName);
 
             Reff = model.devReff();
         }
         else
         {
-            FatalErrorIn("void Foam::wallShearStress::write()")
+            FatalErrorIn("void Foam::wallShearStress::execute()")
                 << "Unable to find turbulence model in the "
                 << "database" << exit(FatalError);
         }
@@ -292,7 +292,7 @@ void Foam::wallShearStress::write()
         const volVectorField& wallShearStress =
             obr_.lookupObject<volVectorField>(type());
 
-        Info(log_)<< type() << " " << name_ << " output:" << nl
+        if (log_) Info<< type() << " " << name_ << " output:" << nl
             << "    writing field " << wallShearStress.name() << nl
             << endl;
 

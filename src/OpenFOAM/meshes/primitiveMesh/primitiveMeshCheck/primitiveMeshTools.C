@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,13 +47,13 @@ Foam::scalar Foam::primitiveMeshTools::faceSkewness
     // Skewness vector
     vector sv =
         Cpf
-      - ((fAreas[faceI] & Cpf)/((fAreas[faceI] & d) + SMALL))*d;
-    vector svHat = sv/(mag(sv) + VSMALL);
+      - ((fAreas[faceI] & Cpf)/((fAreas[faceI] & d) + ROOTVSMALL))*d;
+    vector svHat = sv/(mag(sv) + ROOTVSMALL);
 
     // Normalisation distance calculated as the approximate distance
     // from the face centre to the edge of the face in the direction
     // of the skewness
-    scalar fd = 0.2*mag(d) + VSMALL;
+    scalar fd = 0.2*mag(d) + ROOTVSMALL;
     const face& f = mesh.faces()[faceI];
     forAll(f, pi)
     {
@@ -63,6 +63,7 @@ Foam::scalar Foam::primitiveMeshTools::faceSkewness
     // Normalised skewness
     return mag(sv)/fd;
 }
+
 
 Foam::scalar Foam::primitiveMeshTools::boundaryFaceSkewness
 (
@@ -78,20 +79,20 @@ Foam::scalar Foam::primitiveMeshTools::boundaryFaceSkewness
     vector Cpf = fCtrs[faceI] - ownCc;
 
     vector normal = fAreas[faceI];
-    normal /= mag(normal) + VSMALL;
+    normal /= mag(normal) + ROOTVSMALL;
     vector d = normal*(normal & Cpf);
 
 
     // Skewness vector
     vector sv =
         Cpf
-      - ((fAreas[faceI] & Cpf)/((fAreas[faceI] & d) + VSMALL))*d;
-    vector svHat = sv/(mag(sv) + VSMALL);
+      - ((fAreas[faceI] & Cpf)/((fAreas[faceI] & d) + ROOTVSMALL))*d;
+    vector svHat = sv/(mag(sv) + ROOTVSMALL);
 
     // Normalisation distance calculated as the approximate distance
     // from the face centre to the edge of the face in the direction
     // of the skewness
-    scalar fd = 0.4*mag(d) + VSMALL;
+    scalar fd = 0.4*mag(d) + ROOTVSMALL;
     const face& f = mesh.faces()[faceI];
     forAll(f, pi)
     {
@@ -112,7 +113,7 @@ Foam::scalar Foam::primitiveMeshTools::faceOrthogonality
 {
     vector d = neiCc - ownCc;
 
-    return (d & s)/(mag(d)*mag(s) + VSMALL);
+    return (d & s)/(mag(d)*mag(s) + ROOTVSMALL);
 }
 
 
@@ -195,6 +196,7 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::faceSkewness
 
     return tskew;
 }
+
 
 void Foam::primitiveMeshTools::facePyramidVolume
 (
@@ -294,7 +296,7 @@ void Foam::primitiveMeshTools::cellClosedness
             (
                 maxOpenness,
                 mag(sumClosed[cellI][cmpt])
-               /(sumMagClosed[cellI][cmpt] + VSMALL)
+               /(sumMagClosed[cellI][cmpt] + ROOTVSMALL)
             );
         }
         openness[cellI] = maxOpenness;
@@ -312,10 +314,10 @@ void Foam::primitiveMeshTools::cellClosedness
             }
         }
 
-        scalar aspectRatio = maxCmpt/(minCmpt + VSMALL);
+        scalar aspectRatio = maxCmpt/(minCmpt + ROOTVSMALL);
         if (nDims == 3)
         {
-            scalar v = max(VSMALL, vols[cellI]);
+            scalar v = max(ROOTVSMALL, vols[cellI]);
 
             aspectRatio = max
             (
@@ -340,7 +342,7 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::faceConcavity
     const faceList& fcs = mesh.faces();
 
     vectorField faceNormals(faceAreas);
-    faceNormals /= mag(faceNormals) + VSMALL;
+    faceNormals /= mag(faceNormals) + ROOTVSMALL;
 
     tmp<scalarField> tfaceAngles(new scalarField(mesh.nFaces()));
     scalarField& faceAngles = tfaceAngles();
@@ -353,7 +355,7 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::faceConcavity
         // Get edge from f[0] to f[size-1];
         vector ePrev(p[f.first()] - p[f.last()]);
         scalar magEPrev = mag(ePrev);
-        ePrev /= magEPrev + VSMALL;
+        ePrev /= magEPrev + ROOTVSMALL;
 
         scalar maxEdgeSin = 0.0;
 
@@ -365,7 +367,7 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::faceConcavity
             // Normalized vector between two consecutive points
             vector e10(p[f[fp1]] - p[f[fp0]]);
             scalar magE10 = mag(e10);
-            e10 /= magE10 + VSMALL;
+            e10 /= magE10 + ROOTVSMALL;
 
             if (magEPrev > SMALL && magE10 > SMALL)
             {
@@ -421,7 +423,7 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::faceFlatness
     {
         const face& f = fcs[faceI];
 
-        if (f.size() > 3 && magAreas[faceI] > VSMALL)
+        if (f.size() > 3 && magAreas[faceI] > ROOTVSMALL)
         {
             const point& fc = fCtrs[faceI];
 
@@ -440,7 +442,7 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::faceFlatness
                 sumA += mag(n);
             }
 
-            faceFlatness[faceI] = magAreas[faceI] / (sumA+VSMALL);
+            faceFlatness[faceI] = magAreas[faceI]/(sumA + ROOTVSMALL);
         }
     }
 
@@ -448,116 +450,6 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::faceFlatness
 }
 
 
-//Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::edgeAlignment
-//(
-//    const primitiveMesh& mesh,
-//    const Vector<label>& meshD,
-//    const pointField& p
-//)
-//{
-//    label nDirs = 0;
-//    for (direction cmpt=0; cmpt<vector::nComponents; cmpt++)
-//    {
-//        if (meshD[cmpt] == 1)
-//        {
-//            nDirs++;
-//        }
-//        else if (meshD[cmpt] != 0)
-//        {
-//            FatalErrorIn
-//            (
-//                "primitiveMeshTools::edgeAlignment"
-//                "(const primitiveMesh&, const Vector<label>&"
-//                ", const pointField&)"
-//            )   << "directions should contain 0 or 1 but is now " << meshD
-//                << exit(FatalError);
-//        }
-//    }
-//
-//    tmp<scalarField> tedgeAlignment(new scalarField(mesh.nFaces(), 0.0));
-//    scalarField& edgeAlignment = tedgeAlignment();
-//
-//    if (nDirs != vector::nComponents)
-//    {
-//        const faceList& fcs = mesh.faces();
-//
-//        forAll(fcs, faceI)
-//        {
-//            const face& f = fcs[faceI];
-//
-//            forAll(f, fp)
-//            {
-//                label p0 = f[fp];
-//                label p1 = f.nextLabel(fp);
-//                if (p0 < p1)
-//                {
-//                    vector d(p[p1]-p[p0]);
-//                    scalar magD = mag(d);
-//
-//                    if (magD > ROOTVSMALL)
-//                    {
-//                        d /= magD;
-//
-//                        // Check how many empty directions are used by the
-//                        // edge.
-//                        label nEmptyDirs = 0;
-//                        label nNonEmptyDirs = 0;
-//                        for
-//                        (
-//                              direction cmpt=0;
-//                              cmpt<vector::nComponents;
-//                              cmpt++
-//                        )
-//                        {
-//                            if (mag(d[cmpt]) > 1e-6)
-//                            {
-//                                if (meshD[cmpt] == 0)
-//                                {
-//                                    nEmptyDirs++;
-//                                }
-//                                else
-//                                {
-//                                    nNonEmptyDirs++;
-//                                }
-//                            }
-//                        }
-//
-//                        if (nEmptyDirs == 0)
-//                        {
-//                            // Purely in ok directions.
-//                        }
-//                        else if (nEmptyDirs == 1)
-//                        {
-//                            // Ok if purely in empty directions.
-//                            if (nNonEmptyDirs > 0)
-//                            {
-//                                edgeAlignment[faceI] = max
-//                                (
-//                                    edgeAlignment[faceI],
-//                                    1
-//                                );
-//                            }
-//                        }
-//                        else if (nEmptyDirs > 1)
-//                        {
-//                            // Always an error
-//                            edgeAlignment[faceI] = max
-//                            (
-//                                edgeAlignment[faceI],
-//                                2
-//                            );
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    return tedgeAlignment;
-//}
-
-
-// Checks cells with 1 or less internal faces. Give numerical problems.
 Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::cellDeterminant
 (
     const primitiveMesh& mesh,
@@ -580,8 +472,6 @@ Foam::tmp<Foam::scalarField> Foam::primitiveMeshTools::cellDeterminant
             twoD = dir;
         }
     }
-
-
 
     tmp<scalarField> tcellDeterminant(new scalarField(mesh.nCells()));
     scalarField& cellDeterminant = tcellDeterminant();

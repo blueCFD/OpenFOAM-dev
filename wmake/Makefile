@@ -2,10 +2,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -33,9 +34,6 @@
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
 #        - Originally based on Sysmcape's patches for OpenFOAM, circa 2009,
 #          which added the ability to build binaries for Windows.
-#        - Further modifications by blueCAPE were made for being able to build
-#          localized builds for each MPI toolbox.
-#        - Added ability to rely on the smart scheduling system.
 #
 # File
 #     Makefile
@@ -53,11 +51,10 @@ SHELL      = /bin/sh
 
 
 #------------------------------------------------------------------------------
-# Initialise suffices list
+# Unset suffices list (suffix rules are not used)
 #------------------------------------------------------------------------------
 
 .SUFFIXES:
-.SUFFIXES: .o
 
 
 #------------------------------------------------------------------------------
@@ -68,24 +65,20 @@ WM_SCRIPTS   = $(WM_DIR)/scripts
 
 
 #------------------------------------------------------------------------------
-# declare default paths
+# Declare default paths
 #------------------------------------------------------------------------------
 
 LIB_SRC            = $(WM_PROJECT_DIR)/src
 LIB_PLATFORMS      = $(WM_PROJECT_DIR)/platforms/$(WM_OPTIONS)/lib
-WM_OPTIONS_LOCAL  ?= $(WM_OPTIONS)
-OBJECTS_DIR        = $(MAKE_DIR)/$(WM_OPTIONS_LOCAL)
-CLASSES_DIR        = $(MAKE_DIR)/classes
+OBJECTS_DIR        = $(MAKE_DIR)/$(WM_OPTIONS)
 
 SYS_INC            =
 SYS_LIBS           =
 
-PROJECT_INC        = -I$(LIB_SRC)/$(WM_PROJECT)/lnInclude -I$(LIB_SRC)/OSspecific/$(WM_OSTYPE)/lnInclude
+PROJECT_INC        = -I$(LIB_SRC)/$(WM_PROJECT)/lnInclude \
+		     -I$(LIB_SRC)/OSspecific/$(WM_OSTYPE)/lnInclude
+
 PROJECT_LIBS       = -l$(WM_PROJECT)
-##
-## unused:
-## PROJECT_VERSION    = $(shell printf -- "-DPROJECT_VERSION=%d%03d%03d" $$(echo $(WM_PROJECT_VERSION) | sed -e 's/\./ /g'))
-##
 
 EXE_INC            =
 EXE_LIBS           =
@@ -94,14 +87,7 @@ LIB_LIBS           =
 
 
 #------------------------------------------------------------------------------
-# declare all .o files depend on $(OBJECTS_DIR)/options
-#------------------------------------------------------------------------------
-
-EXE_DEP         = $(OBJECTS_DIR)/options
-
-
-#------------------------------------------------------------------------------
-# declare default name of libraries and executables
+# Declare default name of libraries and executables
 #------------------------------------------------------------------------------
 
 # Library
@@ -121,7 +107,7 @@ SEXE            = a.out
 
 
 #------------------------------------------------------------------------------
-# set compilation and dependency building rules
+# Set compilation and dependency building rules
 #------------------------------------------------------------------------------
 
 GENERAL_RULES = $(WM_DIR)/rules/General
@@ -131,25 +117,25 @@ WMAKE_BIN     = $(WM_DIR)/platforms/$(WM_ARCH)$(WM_COMPILER)
 include $(GENERAL_RULES)/general
 include $(RULES)/general
 include $(RULES)/$(WM_LINK_LANGUAGE)
-
-MAKE_DEP   = @$(MKDEP) $< | $(WM_SCRIPTS)/addCompile $<
+include $(GENERAL_RULES)/transform
 
 
 #------------------------------------------------------------------------------
 # Include PROJECT directory tree file and
 # source, object and dependency list files.
-# These are constructed by scripts/makeDerivedFiles
+# These are constructed by MakefileFiles
 #------------------------------------------------------------------------------
 
 include $(OBJECTS_DIR)/options
-include $(OBJECTS_DIR)/filesMacros
+include $(OBJECTS_DIR)/variables
 include $(OBJECTS_DIR)/sourceFiles
-include $(OBJECTS_DIR)/objectFiles
-include $(OBJECTS_DIR)/localObjectFiles
-include $(OBJECTS_DIR)/dependencyFiles
+DEPENDENCIES=$(SOURCE:%=$(OBJECTS_DIR)/%.dep)
+BASENAMES=$(basename $(SOURCE))
+OBJECTS=$(BASENAMES:%=$(OBJECTS_DIR)/%.o)
+
 
 #------------------------------------------------------------------------------
-# set header file include paths
+# Set header file include paths
 #------------------------------------------------------------------------------
 
 LIB_HEADER_DIRS = \
@@ -162,88 +148,85 @@ LIB_HEADER_DIRS = \
 
 
 #------------------------------------------------------------------------------
-# define link statements for executables
+# Define link statements for executables
 #------------------------------------------------------------------------------
 
-EXECUTABLE  = $(EXE)$(EXE_EXT)
-SEXECUTABLE = $(SEXE)$(EXE_EXT)
+EXE  = $(EXE)$(EXE_EXT)
+SEXE = $(SEXE)$(EXE_EXT)
 
-$(EXECUTABLE):  $(OBJECTS)
-	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(EXECUTABLE)
-	     $(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
-	     $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) $(LINK_LIBS) \
-	     $(GLIBS) -o $(EXECUTABLE)
+$(EXE): $(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(EXE)
+	$(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
+	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
+	    $(LINK_LIBS) $(GLIBS) -o $(EXE)
 
-exe:     $(SEXECUTABLE)
-	     @echo \`$(SEXECUTABLE)\' is up to date.
+exe:    $(SEXE)
+	@echo \'$(SEXE)\' is up to date.
 
-$(SEXECUTABLE): $(OBJECTS)
-	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(SEXECUTABLE)
-	     $(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
-	     $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXECUTABLE)
+$(SEXE):$(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)
+	$(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
+	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)
 
 
 #------------------------------------------------------------------------------
-# define link statements for libraries
+# Define link statements for libraries
 #------------------------------------------------------------------------------
 
 objects: $(OBJECTS)
 
-libso:   $(LIB).$(SO)
-	     @echo \'$(LIB).$(SO)\' is up to date.
+libso:  $(LIB).$(SO)
+	@echo \'$(LIB).$(SO)\' is up to date.
 
 $(LIB).$(SO): $(OBJECTS)
-	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(LIB)
-	     @rm -f so_locations
-	     cd $(OBJECTS_DIR) ; \
-	     $(LINKLIBSO) $(LOCAL_OBJECTS) -L$(LIB_PLATFORMS) \
-	     $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
+	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
+	$(LINKLIBSO) $(OBJECTS) -L$(LIB_PLATFORMS) \
+	    $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 
-lib:     $(LIB).a
-	     @echo \'$(LIB).a\' is up to date.
+lib:    $(LIB).a
+	@echo \'$(LIB).a\' is up to date.
 
 $(LIB).a: $(OBJECTS)
-	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(LIB)
-	     @rm -f $(LIB).a
-	     $(AR) $(ARFLAGS) $(LIB).a $(OBJECTS)
-	     $(RANLIB) $(LIB).a
+	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
+	@rm -f $(LIB).a
+	$(AR) $(ARFLAGS) $(LIB).a $(OBJECTS)
+	$(RANLIB) $(LIB).a
 
-libo:    $(LIB).o
-	     @echo \'$(LIB).o\' is up to date.
+libo:   $(LIB).o
+	@echo \'$(LIB).o\' is up to date.
 
 $(LIB).o: $(OBJECTS)
-	     @$(WM_SCHEDULER_MANAGER) $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(LIB)
-	     @rm -f $(LIB).o
-	     $(LD) -r -o $(LIB).o $(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
+	@rm -f $(LIB).o
+	$(LD) -r -o $(LIB).o $(OBJECTS)
 
-jar:     $(LIB).jar
-	     @echo \'$(LIB).jar\' is up to date.
-
-$(LIB).jar: $(OBJECTS)
-	     @$(WM_SCRIPTS)/makeTargetDir $(LIB)
-	     jar cfm $(LIB).jar $(LIB_LIBS) -C $(CLASSES_DIR) .
 
 #------------------------------------------------------------------------------
 # Set rule to create the include directory for libraries
 #------------------------------------------------------------------------------
 
-lnInclude/uptodate: $(MAKE_DIR)/files $(MAKE_DIR)/options
-	     @rm -rf lnInclude ; wmakeLnInclude . ; touch lnInclude/uptodate
+lnInclude: $(MAKE_DIR)/files $(MAKE_DIR)/options
+	@rm -rf lnInclude ; wmakeLnInclude .
+
+
+#------------------------------------------------------------------------------
+# Declare all qbject files depend on $(OBJECTS_DIR)/options
+#------------------------------------------------------------------------------
+
+$(OBJECTS) : $(OBJECTS_DIR)/options
+$(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(basename $S).o : $(OBJECTS_DIR)/$S.dep))
 
 
 #------------------------------------------------------------------------------
 # Set depedency rule and include dependency lists
 #------------------------------------------------------------------------------
 
-$(OBJECTS_DIR)/dependencies: $(DEPENDENCIES)
-	@echo dependencies up to date > $(OBJECTS_DIR)/dependencies
+.PHONY: dep
+dep: $(DEPENDENCIES)
 
-include $(INCLUDE_DEPS)
+ifeq ($(findstring lnInclude,$(MAKECMDGOALS)),)
+-include $(DEPENDENCIES)
+endif
 
 
 #------------------------------------------------------------------------------

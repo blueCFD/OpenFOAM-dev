@@ -59,7 +59,12 @@ sixDoFRigidBodyMotionCoeffs
     };
 
     report          on;
-    accelerationRelaxation 0.5;
+    accelerationRelaxation 0.7;
+
+    solver
+    {
+        type Newmark;
+    }
 
     constraints
     {

@@ -32,7 +32,7 @@ divSchemes
     div(phi,rho)    Gauss vanLeer;
     div(rhoPhi,U)   Gauss LUST grad(U);
     div(phi,k)      Gauss LUST grad(k);
-    div((muEff*dev(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 gradSchemes
@@ -49,13 +49,5 @@ snGradSchemes
 {
     default         corrected;
 }
-
-fluxRequired
-{
-    default         none;
-    p               ;
-    rho             ;
-}
-
 
 // ************************************************************************* //

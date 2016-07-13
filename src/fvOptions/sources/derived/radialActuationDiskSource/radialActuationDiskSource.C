@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,20 +111,10 @@ void Foam::fv::radialActuationDiskSource::addSup
 }
 
 
-void Foam::fv::radialActuationDiskSource::writeData(Ostream& os) const
-{
-    actuationDiskSource::writeData(os);
-}
-
-
 bool Foam::fv::radialActuationDiskSource::read(const dictionary& dict)
 {
-    if (option::read(dict))
+    if (actuationDiskSource::read(dict))
     {
-        coeffs_.readIfPresent("diskDir", diskDir_);
-        coeffs_.readIfPresent("Cp", Cp_);
-        coeffs_.readIfPresent("Ct", Ct_);
-        coeffs_.readIfPresent("diskArea", diskArea_);
         coeffs_.lookup("coeffs") >> radialCoeffs_;
         return true;
     }

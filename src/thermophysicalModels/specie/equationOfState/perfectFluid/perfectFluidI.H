@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "perfectFluid.H"
+#include "specie.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -100,21 +101,28 @@ inline Foam::scalar Foam::perfectFluid<Specie>::rho(scalar p, scalar T) const
 
 
 template<class Specie>
-inline Foam::scalar Foam::perfectFluid<Specie>::psi(scalar, scalar T) const
+inline Foam::scalar Foam::perfectFluid<Specie>::s(scalar p, scalar T) const
+{
+    return -RR*log(p/Pstd);
+}
+
+
+template<class Specie>
+inline Foam::scalar Foam::perfectFluid<Specie>::psi(scalar p, scalar T) const
 {
     return 1.0/(this->R()*T);
 }
 
 
 template<class Specie>
-inline Foam::scalar Foam::perfectFluid<Specie>::Z(scalar, scalar) const
+inline Foam::scalar Foam::perfectFluid<Specie>::Z(scalar p, scalar T) const
 {
-    return 1.0;
+    return 1;
 }
 
 
 template<class Specie>
-inline Foam::scalar Foam::perfectFluid<Specie>::cpMcv(scalar, scalar) const
+inline Foam::scalar Foam::perfectFluid<Specie>::cpMcv(scalar p, scalar T) const
 {
     return 0;
 }
@@ -178,7 +186,7 @@ inline Foam::perfectFluid<Specie> Foam::operator+
     scalar molr1 = pf1.nMoles()/nMoles;
     scalar molr2 = pf2.nMoles()/nMoles;
 
-    return rhoConst<Specie>
+    return perfectFluid<Specie>
     (
         static_cast<const Specie&>(pf1)
       + static_cast<const Specie&>(pf2),
@@ -199,7 +207,7 @@ inline Foam::perfectFluid<Specie> Foam::operator-
     scalar molr1 = pf1.nMoles()/nMoles;
     scalar molr2 = pf2.nMoles()/nMoles;
 
-    return rhoConst<Specie>
+    return perfectFluid<Specie>
     (
         static_cast<const Specie&>(pf1)
       - static_cast<const Specie&>(pf2),

@@ -1,9 +1,9 @@
 {
-    surfaceScalarField phiAlpha
+    surfaceScalarField alphaPhi
     (
         IOobject
         (
-            "phiAlpha",
+            "alphaPhi",
             runTime.timeName(),
             mesh
         ),
@@ -19,11 +19,11 @@
     if (nAlphaSubCycles > 1)
     {
         dimensionedScalar totalDeltaT = runTime.deltaT();
-        surfaceScalarField phiAlphaSum
+        surfaceScalarField alphaPhiSum
         (
             IOobject
             (
-                "phiAlphaSum",
+                "alphaPhiSum",
                 runTime.timeName(),
                 mesh
             ),
@@ -38,10 +38,10 @@
         )
         {
             #include "alphaEqn.H"
-            phiAlphaSum += (runTime.deltaT()/totalDeltaT)*phiAlpha;
+            alphaPhiSum += (runTime.deltaT()/totalDeltaT)*alphaPhi;
         }
 
-        phiAlpha = phiAlphaSum;
+        alphaPhi = alphaPhiSum;
     }
     else
     {
@@ -59,16 +59,16 @@
 
         alpha1Eqn.solve(mesh.solver("alpha1Diffusion"));
 
-        phiAlpha += alpha1Eqn.flux();
+        alphaPhi += alpha1Eqn.flux();
         alpha2 = 1.0 - alpha1;
 
         Info<< "Phase-1 volume fraction = "
             << alpha1.weightedAverage(mesh.Vsc()).value()
-            << "  Min(alpha1) = " << min(alpha1).value()
-            << "  Max(alpha1) = " << max(alpha1).value()
+            << "  Min(" << alpha1.name() << ") = " << min(alpha1).value()
+            << "  Max(" << alpha1.name() << ") = " << max(alpha1).value()
             << endl;
     }
 
-    rhoPhi = phiAlpha*(rho1 - rho2) + phi*rho2;
+    rhoPhi = alphaPhi*(rho1 - rho2) + phi*rho2;
     rho = mixture.rho();
 }

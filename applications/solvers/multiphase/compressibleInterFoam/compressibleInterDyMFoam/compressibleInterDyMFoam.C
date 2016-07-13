@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,8 +44,9 @@ Description
 #include "interfaceProperties.H"
 #include "twoPhaseMixture.H"
 #include "twoPhaseMixtureThermo.H"
-#include "turbulenceModel.H"
+#include "turbulentFluidThermoModel.H"
 #include "pimpleControl.H"
+#include "CorrectPhi.H"
 #include "fixedFluxPressureFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -55,15 +56,13 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
-    #include "readGravitationalAcceleration.H"
     #include "initContinuityErrs.H"
 
     pimpleControl pimple(mesh);
 
     #include "createFields.H"
     #include "createUf.H"
-    #include "readControls.H"
-    #include "createPrghCorrTypes.H"
+    #include "createControls.H"
     #include "CourantNo.H"
     #include "setInitialDeltaT.H"
 
@@ -73,17 +72,19 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "readControls.H"
-        #include "CourantNo.H"
-
-        #include "setDeltaT.H"
-
-        runTime++;
-
-        Info<< "Time = " << runTime.timeName() << nl << endl;
 
         {
-            // Store divU from the previous mesh for the correctPhi
-            volScalarField divU(fvc::div(fvc::absolute(phi, U)));
+            // Store divU from the previous mesh so that it can be mapped
+            // and used in correctPhi to ensure the corrected phi has the
+            // same divergence
+            volScalarField divU("divU0", fvc::div(fvc::absolute(phi, U)));
+
+            #include "CourantNo.H"
+            #include "setDeltaT.H"
+
+            runTime++;
+
+            Info<< "Time = " << runTime.timeName() << nl << endl;
 
             scalar timeBeforeMeshUpdate = runTime.elapsedCpuTime();
 
@@ -96,8 +97,8 @@ int main(int argc, char *argv[])
                     << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
                     << " s" << endl;
 
-                gh = g & mesh.C();
-                ghf = g & mesh.Cf();
+                gh = (g & mesh.C()) - ghRef;
+                ghf = (g & mesh.Cf()) - ghRef;
             }
 
             if (mesh.changing() && correctPhi)

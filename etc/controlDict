@@ -38,6 +38,7 @@ InfoSwitches
     writePrecision  6;
     writeJobInfo    0;
     writeDictionaries 0;
+    writeOptionalEntries 0;
 
     // Allow case-supplied C++ code (#codeStream, codedFixedValue)
     allowSystemOperations   1;
@@ -55,14 +56,15 @@ OptimisationSwitches
     //  - inotify           : use inotify framework
     //  - timeStampMaster   : do time stamp (and file reading) only on master.
     //  - inotifyMaster     : do inotify (and file reading) only on master.
-    fileModificationChecking timeStampMaster;//inotify;timeStamp;inotifyMaster;
+    fileModificationChecking timeStampMaster;
 
     commsType       nonBlocking; //scheduled; //blocking;
     floatTransfer   0;
     nProcsSimpleSum 0;
 
     // Force dumping (at next timestep) upon signal (-1 to disable)
-    writeNowSignal              -1; //10;
+    writeNowSignal              -1; // 10;
+
     // Force dumping (at next timestep) upon signal (-1 to disable) and exit
     stopAtWriteNowSignal        -1;
 }
@@ -610,6 +612,7 @@ DebugSwitches
     meshCutAndRemove    0;
     meshCutter          0;
     meshModifier        0;
+    meshObject          0;
     meshRefinement      0;
     meshSearch          0;
     meshToMesh          0;

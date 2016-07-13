@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,9 +63,10 @@ protected:
 
         scalar y0_;
         scalar yDot0_;
+
         scalar TABComega_;
         scalar TABCmu_;
-        scalar TABWeCrit_;
+        scalar TABtwoWeCrit_;
 
 
 public:
@@ -105,13 +106,7 @@ public:
         BreakupModel(const BreakupModel<CloudType>& bum);
 
         //- Construct and return a clone
-        virtual autoPtr<BreakupModel<CloudType> > clone() const
-        {
-            return autoPtr<BreakupModel<CloudType> >
-            (
-                new BreakupModel<CloudType>(*this)
-            );
-        }
+        virtual autoPtr<BreakupModel<CloudType> > clone() const = 0;
 
 
     //- Destructor
@@ -153,9 +148,9 @@ public:
             return TABCmu_;
         }
 
-        inline const scalar& TABWeCrit() const
+        inline const scalar& TABtwoWeCrit() const
         {
-            return TABWeCrit_;
+            return TABtwoWeCrit_;
         }
 
 
@@ -186,7 +181,7 @@ public:
             const scalar tMom,
             scalar& dChild,
             scalar& massChild
-        );
+        ) = 0;
 };
 
 
@@ -198,26 +193,30 @@ public:
 
 #define makeBreakupModel(CloudType)                                           \
                                                                               \
-    typedef CloudType::sprayCloudType sprayCloudType;                         \
+    typedef Foam::CloudType::sprayCloudType sprayCloudType;                   \
     defineNamedTemplateTypeNameAndDebug                                       \
     (                                                                         \
-        BreakupModel<sprayCloudType>,                                         \
+        Foam::BreakupModel<sprayCloudType>,                                   \
         0                                                                     \
     );                                                                        \
-    defineTemplateRunTimeSelectionTable                                       \
-    (                                                                         \
-        BreakupModel<sprayCloudType>,                                         \
-        dictionary                                                            \
-    );
+                                                                              \
+    namespace Foam                                                            \
+    {                                                                         \
+        defineTemplateRunTimeSelectionTable                                   \
+        (                                                                     \
+            BreakupModel<sprayCloudType>,                                     \
+            dictionary                                                        \
+        );                                                                    \
+    }
 
 
 #define makeBreakupModelType(SS, CloudType)                                   \
                                                                               \
-    typedef CloudType::sprayCloudType sprayCloudType;                         \
-    defineNamedTemplateTypeNameAndDebug(SS<sprayCloudType>, 0);               \
+    typedef Foam::CloudType::sprayCloudType sprayCloudType;                   \
+    defineNamedTemplateTypeNameAndDebug(Foam::SS<sprayCloudType>, 0);         \
                                                                               \
-    BreakupModel<sprayCloudType>::                                            \
-        adddictionaryConstructorToTable<SS<sprayCloudType> >                  \
+    Foam::BreakupModel<sprayCloudType>::                                      \
+        adddictionaryConstructorToTable<Foam::SS<sprayCloudType> >            \
             add##SS##CloudType##sprayCloudType##ConstructorToTable_;
 
 

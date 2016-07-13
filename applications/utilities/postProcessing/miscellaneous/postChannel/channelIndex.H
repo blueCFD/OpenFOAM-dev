@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ class channelIndex
         //- Is mesh symmetric
         const bool symmetric_;
 
-        //- direction to sort
+        //- Direction to sort
         const direction dir_;
 
         //- Per cell the global region
@@ -123,7 +123,7 @@ public:
             template<class T>
             Field<T> regionSum(const Field<T>& cellField) const;
 
-            //- collapse a field to a line
+            //- Collapse a field to a line
             template<class T>
             Field<T> collapse
             (
@@ -131,7 +131,7 @@ public:
                 const bool asymmetric=false
             ) const;
 
-            //- return the field of Y locations from the cell centres
+            //- Return the field of Y locations from the cell centres
             const scalarField& y() const
             {
                 return y_;
@@ -147,7 +147,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "channelIndexTemplates.C"
+    #include "channelIndexTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,6 @@ Ostream& operator<<
 template<class Type>
 class Table
 :
-    public DataEntry<Type>,
     public TableBase<Type>
 {
     // Private Member Functions
@@ -102,61 +101,6 @@ public:
 
     //- Destructor
     virtual ~Table();
-
-
-    // Member Functions
-
-        // Manipulation
-
-            //- Convert time
-            virtual void convertTimeBase(const Time& t)
-            {
-                TableBase<Type>::convertTimeBase(t);
-            }
-
-
-        // Evaluation
-
-            //- Return Table value
-            virtual Type value(const scalar x) const
-            {
-                return TableBase<Type>::value(x);
-            }
-
-            //- Integrate between two (scalar) values
-            virtual Type integrate(const scalar x1, const scalar x2) const
-            {
-                return TableBase<Type>::integrate(x1, x2);
-            }
-
-             //- Return dimensioned constant value
-            virtual dimensioned<Type> dimValue(const scalar x) const
-            {
-                return TableBase<Type>::dimValue(x);
-            }
-
-            //- Integrate between two values and return dimensioned type
-            virtual dimensioned<Type> dimIntegrate
-            (
-                const scalar x1,
-                const scalar x2
-            )
-            {
-                return TableBase<Type>::dimIntegrate(x1, x2);
-            }
-
-
-    // I/O
-
-        //- Ostream Operator
-        friend Ostream& operator<< <Type>
-        (
-            Ostream& os,
-            const Table<Type>& tbl
-        );
-
-        //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
 };
 
 

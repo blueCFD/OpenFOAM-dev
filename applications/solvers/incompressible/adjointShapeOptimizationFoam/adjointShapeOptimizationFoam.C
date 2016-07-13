@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ Description
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "RASModel.H"
+#include "turbulentTransportModel.H"
 #include "simpleControl.H"
 
 template<class Type>
@@ -72,11 +72,12 @@ int main(int argc, char *argv[])
 
     #include "createTime.H"
     #include "createMesh.H"
+
+    simpleControl simple(mesh);
+
     #include "createFields.H"
     #include "initContinuityErrs.H"
     #include "initAdjointContinuityErrs.H"
-
-    simpleControl simple(mesh);
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -216,6 +217,7 @@ int main(int argc, char *argv[])
             Ua.correctBoundaryConditions();
         }
 
+        laminarTransport.correct();
         turbulence->correct();
 
         runTime.write();
@@ -227,7 +229,7 @@ int main(int argc, char *argv[])
 
     Info<< "End\n" << endl;
 
-    return(0);
+    return 0;
 }
 
 

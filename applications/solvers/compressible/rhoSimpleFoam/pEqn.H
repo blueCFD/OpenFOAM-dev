@@ -16,7 +16,7 @@
            *(fvc::interpolate(HbyA) & mesh.Sf())
         );
 
-        fvOptions.makeRelative(fvc::interpolate(psi), phid);
+        MRF.makeRelative(fvc::interpolate(psi), phid);
 
         while (simple.correctNonOrthogonal())
         {
@@ -30,8 +30,6 @@
 
             // Relax the pressure equation to ensure diagonal-dominance
             pEqn.relax();
-
-            fvOptions.constrain(pEqn);
 
             pEqn.setReference(pRefCell, pRefValue);
 
@@ -51,7 +49,7 @@
             fvc::interpolate(rho*HbyA) & mesh.Sf()
         );
 
-        fvOptions.makeRelative(fvc::interpolate(rho), phiHbyA);
+        MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
         closedVolume = adjustPhi(phiHbyA, U, p);
 
@@ -66,8 +64,6 @@
             );
 
             pEqn.setReference(pRefCell, pRefValue);
-
-            fvOptions.constrain(pEqn);
 
             pEqn.solve();
 

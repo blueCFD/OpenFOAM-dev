@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [ 0 2 -3 0 0 0 0 ];
+dimensions      [0 2 -3 0 0 0 0];
 
 internalField   uniform 20;
 
@@ -23,13 +23,13 @@ boundaryField
 {
     rotor
     {
-        type            compressible::epsilonWallFunction;
+        type            epsilonWallFunction;
         value           uniform 20;
     }
 
     stator
     {
-        type            compressible::epsilonWallFunction;
+        type            epsilonWallFunction;
         value           uniform 20;
     }
 

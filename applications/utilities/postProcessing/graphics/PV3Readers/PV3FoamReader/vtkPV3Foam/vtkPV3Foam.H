@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -184,7 +184,7 @@ class vtkPV3Foam
             }
         };
 
-        //- bookkeeping for polyhedral cell decomposition
+        //- Bookkeeping for polyhedral cell decomposition
         //  hide in extra pointMap (cellSet/cellZone) for now
         class polyDecomp
         {
@@ -536,7 +536,7 @@ class vtkPV3Foam
                 const label datasetNo
             );
 
-            //- face set/zone field
+            //- Face set/zone field
             template<class Type>
             void convertFaceField
             (
@@ -700,7 +700,7 @@ public:
         //- Add/remove patch names to/from the view
         void renderPatchNames(vtkRenderer*, const bool show);
 
-        //- set the runTime to the first plausible request time,
+        //- Set the runTime to the first plausible request time,
         //  returns the timeIndex
         //  sets to "constant" on error
         int setTime(int count, const double requestTimes[]);
@@ -731,7 +731,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "vtkPV3FoamTemplates.C"
+    #include "vtkPV3FoamTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -1,30 +1,34 @@
 #!/bin/sh
-cd ${0%/*} || exit 1    # run from this directory
-allwmakeOptions='-allow-lib makeType' && . $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Parse arguments for library compilation
+targetType=libso
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 set -x
 
-wmake $makeType specie
-wmake $makeType solidSpecie
-wmake $makeType thermophysicalFunctions
+wmake $targetType specie
+wmake $targetType solidSpecie
+wmake $targetType thermophysicalFunctions
 
-wmake $makeType basic
-wmake $makeType reactionThermo
-wmake $makeType laminarFlameSpeed
+wmake $targetType basic
+wmake $targetType reactionThermo
+wmake $targetType laminarFlameSpeed
 
 # Depends on basic above
-./properties/Allwmake $OriginalOptions
+./properties/Allwmake $targetType $*
 
 # Can't build here as chemistryModel depends on RAS/turbulenceModels/compressible
-#wmake $makeType chemistryModel
+#wmake $targetType chemistryModel
 
-wmake $makeType barotropicCompressibilityModel
-wmake $makeType SLGThermo
+wmake $targetType barotropicCompressibilityModel
+wmake $targetType SLGThermo
 
-wmake $makeType solidThermo
+
+wmake $targetType solidThermo
 
 # Can't build here as solidChemistryModel also depends on RAS/turbulenceModels/compressible
-#wmake $makeType solidChemistryModel
+#wmake $targetType solidChemistryModel
 
-wmake $makeType radiationModels
+wmake $targetType radiation
 
 # ----------------------------------------------------------------- end-of-file

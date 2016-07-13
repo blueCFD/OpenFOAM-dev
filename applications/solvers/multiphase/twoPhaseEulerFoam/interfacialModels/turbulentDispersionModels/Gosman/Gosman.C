@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,6 @@ License
 
 #include "Gosman.H"
 #include "phasePair.H"
-#include "fvc.H"
 #include "PhaseCompressibleTurbulenceModel.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -57,7 +56,7 @@ Foam::turbulentDispersionModels::Gosman::Gosman
 )
 :
     turbulentDispersionModel(dict, pair),
-    sigma_("sigma", dimless, dict.lookup("sigma"))
+    sigma_("sigma", dimless, dict)
 {}
 
 
@@ -69,8 +68,8 @@ Foam::turbulentDispersionModels::Gosman::~Gosman()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField>
-Foam::turbulentDispersionModels::Gosman::F() const
+Foam::tmp<Foam::volScalarField>
+Foam::turbulentDispersionModels::Gosman::D() const
 {
     const fvMesh& mesh(pair_.phase1().mesh());
     const dragModel&
@@ -92,8 +91,7 @@ Foam::turbulentDispersionModels::Gosman::F() const
             sigma_
            *sqr(pair_.dispersed().d())
         )
-       *pair_.continuous().rho()
-       *fvc::grad(pair_.dispersed());
+       *pair_.continuous().rho();
 }
 
 

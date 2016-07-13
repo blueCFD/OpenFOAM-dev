@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -120,9 +120,9 @@ bool Foam::pimpleControl::criteriaSatisfied()
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::pimpleControl::pimpleControl(fvMesh& mesh)
+Foam::pimpleControl::pimpleControl(fvMesh& mesh, const word& dictName)
 :
-    solutionControl(mesh, "PIMPLE"),
+    solutionControl(mesh, dictName),
     nCorrPIMPLE_(0),
     nCorrPISO_(0),
     corrPISO_(0),
@@ -226,12 +226,8 @@ bool Foam::pimpleControl::loop()
 
         if (corr_ <= nCorrPIMPLE_)
         {
-            if (nCorrPIMPLE_ != 1)
-            {
-                Info<< algorithmName_ << ": iteration " << corr_ << endl;
-                storePrevIterFields();
-            }
-
+            Info<< algorithmName_ << ": iteration " << corr_ << endl;
+            storePrevIterFields();
             completed = false;
         }
     }

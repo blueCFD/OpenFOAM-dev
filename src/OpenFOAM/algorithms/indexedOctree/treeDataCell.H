@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,9 +65,9 @@ class treeDataCell
         const bool cacheBb_;
 
         //- How to decide if point is inside cell
-        const polyMesh::cellRepresentation decompMode_;
+        const polyMesh::cellDecomposition decompMode_;
 
-        //- cell bounding boxes (valid only if cacheBb_)
+        //- Cell bounding boxes (valid only if cacheBb_)
         treeBoundBoxList bbs_;
 
 
@@ -143,7 +143,7 @@ public:
             const bool cacheBb,
             const polyMesh&,
             const labelUList&,
-            const polyMesh::cellRepresentation decompMode
+            const polyMesh::cellDecomposition decompMode
         );
 
         //- Construct from mesh and subset of cells, transferring contents
@@ -152,7 +152,7 @@ public:
             const bool cacheBb,
             const polyMesh&,
             const Xfer<labelList>&,
-            const polyMesh::cellRepresentation decompMode
+            const polyMesh::cellDecomposition decompMode
         );
 
         //- Construct from mesh. Uses all cells in mesh.
@@ -160,7 +160,7 @@ public:
         (
             const bool cacheBb,
             const polyMesh&,
-            const polyMesh::cellRepresentation decompMode
+            const polyMesh::cellDecomposition decompMode
         );
 
 
@@ -178,7 +178,7 @@ public:
                 return mesh_;
             }
 
-            inline polyMesh::cellRepresentation decompMode() const
+            inline polyMesh::cellDecomposition decompMode() const
             {
                 return decompMode_;
             }

@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # License
@@ -34,11 +34,13 @@
 #            wcleanMachine <machineType> [ .. <machineTypeN> ]
 #
 #------------------------------------------------------------------------------
+Script=${0##*/}
+
 usage() {
     exec 1>&2
     while [ "$#" -ge 1 ]; do echo "$1"; shift; done
     cat<<USAGE
-Usage: ${0##*/} machineType [... machineTypeN] [ -current ]
+Usage: $Script machineType [... machineTypeN] [ -current ]
 
   Searches the directory tree starting at the current directory for the
   object file directories of the specified machine type(s) and deletes them.
@@ -77,12 +79,20 @@ do
     echo "Cleaning machine type: $machType"
 
     find . -depth \( -name Make -o -name "Make.[A-Za-z]*" \) -type d -print | \
-        xargs -i find '{}' -mindepth 1 -maxdepth 1 \
+        xargs -I {} find '{}' -mindepth 1 -maxdepth 1 \
               \( -type d -name "*$machType" -o -name "*$machType$WM_MPLIB" \) \
               -print | xargs rm -rf
 
     rm -rf platforms/${machType}*
 
 done
+
+
+#------------------------------------------------------------------------------
+# Cleanup local variables and functions
+#------------------------------------------------------------------------------
+
+unset Script machines
+
 
 #------------------------------------------------------------------------------

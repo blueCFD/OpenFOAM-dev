@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,10 +39,13 @@ Description
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "psiThermo.H"
-#include "turbulenceModel.H"
+#include "turbulentFluidThermoModel.H"
 #include "bound.H"
 #include "pimpleControl.H"
+#include "CorrectPhi.H"
 #include "fvIOoptionList.H"
+#include "localEulerDdtScheme.H"
+#include "fvcSmooth.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,17 +54,22 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
-    #include "initContinuityErrs.H"
 
     pimpleControl pimple(mesh);
 
-    #include "readControls.H"
+    #include "createRDeltaT.H"
+    #include "initContinuityErrs.H"
     #include "createFields.H"
+    #include "createMRF.H"
     #include "createFvOptions.H"
-    #include "createPcorrTypes.H"
     #include "createRhoUf.H"
-    #include "CourantNo.H"
-    #include "setInitialDeltaT.H"
+    #include "createControls.H"
+
+    if (!LTS)
+    {
+        #include "compressibleCourantNo.H"
+        #include "setInitialDeltaT.H"
+    }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,17 +78,26 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "readControls.H"
-        #include "compressibleCourantNo.H"
-
-        #include "setDeltaT.H"
 
         {
-            // Store divrhoU from the previous time-step/mesh for the correctPhi
+            // Store divrhoU from the previous mesh so that it can be mapped
+            // and used in correctPhi to ensure the corrected phi has the
+            // same divergence
             volScalarField divrhoU
             (
                 "divrhoU",
                 fvc::div(fvc::absolute(phi, rho, U))
             );
+
+            if (LTS)
+            {
+                #include "setRDeltaT.H"
+            }
+            else
+            {
+                #include "compressibleCourantNo.H"
+                #include "setDeltaT.H"
+            }
 
             runTime++;
 

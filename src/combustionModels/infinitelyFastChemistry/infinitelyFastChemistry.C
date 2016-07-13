@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,15 +35,22 @@ namespace combustionModels
 template<class CombThermoType, class ThermoType>
 infinitelyFastChemistry<CombThermoType, ThermoType>::infinitelyFastChemistry
 (
-    const word& modelType, const fvMesh& mesh
+    const word& modelType,
+    const fvMesh& mesh,
+    const word& phaseName
 )
 :
-    singleStepCombustion<CombThermoType, ThermoType>(modelType, mesh),
+    singleStepCombustion<CombThermoType, ThermoType>
+    (
+        modelType,
+        mesh,
+        phaseName
+    ),
     C_(readScalar(this->coeffs().lookup("C")))
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructors * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class CombThermoType, class ThermoType>
 infinitelyFastChemistry<CombThermoType, ThermoType>::~infinitelyFastChemistry()

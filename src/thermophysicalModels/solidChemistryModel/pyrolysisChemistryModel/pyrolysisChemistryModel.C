@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "pyrolysisChemistryModel.H"
 #include "solidReaction.H"
+#include "basicThermo.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -32,10 +33,11 @@ template<class CompType, class SolidThermo, class GasThermo>
 Foam::pyrolysisChemistryModel<CompType, SolidThermo, GasThermo>::
 pyrolysisChemistryModel
 (
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const word& phaseName
 )
 :
-    solidChemistryModel<CompType, SolidThermo>(mesh),
+    solidChemistryModel<CompType, SolidThermo>(mesh, phaseName),
     pyrolisisGases_(this->reactions_[0].gasSpecies()),
     gasThermo_(pyrolisisGases_.size()),
     nGases_(pyrolisisGases_.size()),
@@ -140,7 +142,7 @@ pyrolysisChemistryModel
         dictionary thermoDict =
             mesh.lookupObject<dictionary>
             (
-                "thermophysicalProperties"
+                basicThermo::dictName
             ).subDict(pyrolisisGases_[gasI]);
 
         gasThermo_.set
@@ -628,7 +630,8 @@ Foam::pyrolysisChemistryModel<CompType, SolidThermo, GasThermo>::gasHs
                 this->mesh_.time().timeName(),
                 this->mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             this->mesh_,
             dimensionedScalar("zero", dimEnergy/dimMass, 0.0),

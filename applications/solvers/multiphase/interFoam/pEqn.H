@@ -11,8 +11,8 @@
         (fvc::interpolate(HbyA) & mesh.Sf())
       + fvc::interpolate(rho*rAU)*fvc::ddtCorr(U, phi)
     );
+    MRF.makeRelative(phiHbyA);
     adjustPhi(phiHbyA, U, p_rgh);
-    fvOptions.makeRelative(phiHbyA);
 
     surfaceScalarField phig
     (
@@ -30,7 +30,7 @@
         p_rgh.boundaryField(),
         (
             phiHbyA.boundaryField()
-          - fvOptions.relative(mesh.Sf().boundaryField() & U.boundaryField())
+          - MRF.relative(mesh.Sf().boundaryField() & U.boundaryField())
         )/(mesh.magSf().boundaryField()*rAUf.boundaryField())
     );
 

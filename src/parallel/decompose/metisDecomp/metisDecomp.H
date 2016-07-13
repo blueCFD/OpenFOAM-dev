@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,10 +53,10 @@ class metisDecomp
 
         label decompose
         (
-            const List<int>& adjncy,
-            const List<int>& xadj,
+            const List<label>& adjncy,
+            const List<label>& xadj,
             const scalarField& cellWeights,
-            List<int>& finalDecomp
+            List<label>& finalDecomp
         );
 
         //- Disallow default bitwise copy construct and assignment
@@ -88,6 +88,9 @@ public:
             // Metis does not know about proc boundaries
             return false;
         }
+
+        //- Inherit decompose from decompositionMethod
+        using decompositionMethod::decompose;
 
         //- Return for every coordinate the wanted processor number. Use the
         //  mesh connectivity (if needed)

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,7 @@ class axesRotation
         //- Global-to-Local transformation tensor
         tensor Rtr_;
 
-        //- the combination of local axes to be used
+        //- The combination of local axes to be used
         enum axisOrder
         {
             e1e2,
@@ -87,6 +87,7 @@ class axesRotation
             const vector& axis2,
             const axisOrder& order = e3e1
         );
+
 
 public:
 
@@ -134,7 +135,7 @@ public:
         //- Update the rotation for a list of cells
         virtual void updateCells(const polyMesh&, const labelList&)
         {
-            // do nothing
+            // Do nothing
         }
 
         //- Return local-to-global transformation tensor
@@ -196,20 +197,20 @@ public:
         ) const;
 
         //- Transform vectorField using transformation tensorField and return
-        // symmetrical tensorField
+        //  symmetric tensorField
         virtual tmp<symmTensorField> transformVector
         (
             const vectorField& st
         ) const;
 
         //- Transform vector using transformation tensor and return
-        // symmetrical tensor
+        //  symmetric tensor
         virtual symmTensor transformVector(const vector& st) const;
 
 
     // Member Operators
 
-        //- assign from dictionary
+        //- Assign from dictionary
         void operator=(const dictionary&);
 
 

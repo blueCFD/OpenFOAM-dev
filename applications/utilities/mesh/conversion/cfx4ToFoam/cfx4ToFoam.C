@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
     const scalar scaleFactor = args.optionLookupOrDefault("scale", 1.0);
 
-#   include "createTime.H"
+    #include "createTime.H"
 
     IFstream cfxFile(args[1]);
 
@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 
         sqrMergeTol /= 10.0;
 
-        register bool found = false;
+        bool found = false;
 
         // N-squared point search over all points of all faces of
         // master block over all point of all faces of slave block
@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
     }
 
 
-    register bool changedPointMerge = false;
+    bool changedPointMerge = false;
     label nPasses = 0;
 
     do

@@ -11,6 +11,7 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lcompressibleTwoPhaseSystem \
+    -lcompressibleTransportModels \
     -lfluidThermophysicalModels \
     -lspecie
 

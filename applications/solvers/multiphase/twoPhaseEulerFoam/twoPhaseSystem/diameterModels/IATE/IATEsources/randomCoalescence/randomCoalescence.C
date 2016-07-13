@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,9 +51,9 @@ randomCoalescence
 )
 :
     IATEsource(iate),
-    Crc_("Crc", dimless, dict.lookup("Crc")),
-    C_("C", dimless, dict.lookup("C")),
-    alphaMax_("alphaMax", dimless, dict.lookup("alphaMax"))
+    Crc_("Crc", dimless, dict),
+    C_("C", dimless, dict),
+    alphaMax_("alphaMax", dimless, dict)
 {}
 
 
@@ -94,7 +94,7 @@ Foam::diameterModels::IATEsources::randomCoalescence::R() const
             scalar cbrtAlphaMaxMAlpha = cbrtAlphaMax - cbrt(alpha[celli]);
 
             R[celli] =
-                12*phi()*kappai[celli]*alpha[celli]
+                (-12)*phi()*kappai[celli]*alpha[celli]
                *Crc
                *Ut[celli]
                *(1 - exp(-C*cbrt(alpha[celli]*alphaMax)/cbrtAlphaMaxMAlpha))

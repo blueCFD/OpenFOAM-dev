@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,12 +25,17 @@ Typedef
     Foam::Scalar
 
 Description
-    Single floating point number
+    Single floating point number (float or double)
 
 SourceFiles
     Scalar.C
 
 \*---------------------------------------------------------------------------*/
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -123,6 +128,18 @@ inline Scalar pos(const Scalar s)
 inline Scalar neg(const Scalar s)
 {
     return (s < 0)? 1: 0;
+}
+
+
+inline Scalar posPart(const Scalar s)
+{
+    return (s > 0)? s: 0;
+}
+
+
+inline Scalar negPart(const Scalar s)
+{
+    return (s < 0)? s: 0;
 }
 
 
@@ -226,6 +243,12 @@ inline Scalar cmptMultiply(const Scalar s1, const Scalar s2)
 }
 
 
+inline Scalar cmptPow(const Scalar s1, const Scalar s2)
+{
+    return pow(s1, s2);
+}
+
+
 inline Scalar cmptDivide(const Scalar s1, const Scalar s2)
 {
     return s1/s2;
@@ -308,5 +331,8 @@ Scalar readScalar(Istream&);
 Istream& operator>>(Istream&, Scalar&);
 Ostream& operator<<(Ostream&, const Scalar);
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 // ************************************************************************* //

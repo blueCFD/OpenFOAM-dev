@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,6 +37,9 @@ SourceFiles
 
 #ifndef thermo_H
 #define thermo_H
+
+#include "thermodynamicConstants.H"
+using namespace Foam::constant::thermodynamic;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -128,7 +131,7 @@ public:
 
     // Constructors
 
-        //- construct from components
+        //- Construct from components
         inline thermo(const Thermo& sp);
 
         //- Construct from Istream
@@ -187,7 +190,7 @@ public:
                 //- Heat capacity at constant pressure/volume [J/(kmol K)]
                 inline scalar cpv(const scalar p, const scalar T) const;
 
-                //- gamma = cp/cv []
+                //- Gamma = cp/cv []
                 inline scalar gamma(const scalar p, const scalar T) const;
 
                 //- Ratio of heat capacity at constant pressure to that at

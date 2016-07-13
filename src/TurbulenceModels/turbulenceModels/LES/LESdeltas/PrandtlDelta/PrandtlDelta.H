@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,31 @@ Class
     Foam::PrandtlDelta
 
 Description
-    Simple cube-root of cell volume delta used in LES models.
+    Apply Prandtl mixing-length based damping function to the specified
+    geometric delta to improve near-wall behavior or LES models.
+
+    \verbatim
+        delta = min(geometricDelta, (kappa/Cdelta)*y)
+    \endverbatim
+
+    Example specification in the turbulenceProperties dictionary:
+    \verbatim
+    delta           Prandtl;
+
+    PrandtlCoeffs
+    {
+        delta   cubeRootVol;
+
+        cubeRootVolCoeffs
+        {
+            deltaCoeff      1;
+        }
+
+        // Default coefficients
+        kappa           0.41;
+        Cdelta          0.158;
+    }
+    \endverbatim
 
 SourceFiles
     PrandtlDelta.C
@@ -40,6 +64,8 @@ SourceFiles
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
+{
+namespace LESModels
 {
 
 /*---------------------------------------------------------------------------*\
@@ -75,11 +101,11 @@ public:
 
     // Constructors
 
-        //- Construct from name, mesh and IOdictionary
+        //- Construct from name, turbulenceModel and dictionary
         PrandtlDelta
         (
             const word& name,
-            const fvMesh& mesh,
+            const turbulenceModel& turbulence,
             const dictionary&
         );
 
@@ -101,6 +127,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace LESModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

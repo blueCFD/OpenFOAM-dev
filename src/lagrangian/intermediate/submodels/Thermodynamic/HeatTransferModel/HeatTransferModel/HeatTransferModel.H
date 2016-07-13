@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,13 +97,7 @@ public:
         HeatTransferModel(const HeatTransferModel<CloudType>& htm);
 
         //- Construct and return a clone
-        virtual autoPtr<HeatTransferModel<CloudType> > clone() const
-        {
-            return autoPtr<HeatTransferModel<CloudType> >
-            (
-                new HeatTransferModel<CloudType>(*this)
-            );
-        }
+        virtual autoPtr<HeatTransferModel<CloudType> > clone() const = 0;
 
 
     //- Destructor
@@ -133,7 +127,7 @@ public:
             (
                 const scalar Re,
                 const scalar Pr
-            ) const;
+            ) const = 0;
 
             //- Return heat transfer coefficient
             virtual scalar htc
@@ -155,26 +149,29 @@ public:
 
 #define makeHeatTransferModel(CloudType)                                      \
                                                                               \
-    typedef CloudType::thermoCloudType thermoCloudType;                       \
+    typedef Foam::CloudType::thermoCloudType thermoCloudType;                 \
     defineNamedTemplateTypeNameAndDebug                                       \
     (                                                                         \
-        HeatTransferModel<thermoCloudType>,                                   \
+        Foam::HeatTransferModel<thermoCloudType>,                             \
         0                                                                     \
     );                                                                        \
-    defineTemplateRunTimeSelectionTable                                       \
-    (                                                                         \
-        HeatTransferModel<thermoCloudType>,                                   \
-        dictionary                                                            \
-    );
+    namespace Foam                                                            \
+    {                                                                         \
+        defineTemplateRunTimeSelectionTable                                   \
+        (                                                                     \
+            HeatTransferModel<thermoCloudType>,                               \
+            dictionary                                                        \
+        );                                                                    \
+    }
 
 
 #define makeHeatTransferModelType(SS, CloudType)                              \
                                                                               \
-    typedef CloudType::thermoCloudType thermoCloudType;                       \
-    defineNamedTemplateTypeNameAndDebug(SS<thermoCloudType>, 0);              \
+    typedef Foam::CloudType::thermoCloudType thermoCloudType;                 \
+    defineNamedTemplateTypeNameAndDebug(Foam::SS<thermoCloudType>, 0);        \
                                                                               \
-    HeatTransferModel<thermoCloudType>::                                      \
-        adddictionaryConstructorToTable<SS<thermoCloudType> >                 \
+    Foam::HeatTransferModel<thermoCloudType>::                                \
+        adddictionaryConstructorToTable<Foam::SS<thermoCloudType> >           \
             add##SS##CloudType##thermoCloudType##ConstructorToTable_;
 
 

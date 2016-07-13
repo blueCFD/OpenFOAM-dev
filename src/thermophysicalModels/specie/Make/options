@@ -1,1 +1,1 @@
-LIB_LIBS =
+LIB_LIBS = -lOpenFOAM

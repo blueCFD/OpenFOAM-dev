@@ -46,6 +46,7 @@ const volScalarField& T = thermo.T();
 
 #include "compressibleCreatePhi.H"
 
+mesh.setFluxRequired(p.name());
 
 Info << "Creating turbulence model.\n" << nl;
 autoPtr<compressible::turbulenceModel> turbulence
@@ -63,9 +64,9 @@ autoPtr<compressible::turbulenceModel> turbulence
 reaction->setTurbulence(turbulence());
 
 
-Info<< "Calculating field g.h\n" << endl;
-volScalarField gh("gh", g & mesh.C());
-surfaceScalarField ghf("ghf", g & mesh.Cf());
+#include "readGravitationalAcceleration.H"
+#include "readhRef.H"
+#include "gh.H"
 
 Info<< "Reading field p_rgh\n" << endl;
 volScalarField p_rgh

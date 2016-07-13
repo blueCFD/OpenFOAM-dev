@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ inline Foam::scalar Foam::solidProperties::Hf() const
 
 inline Foam::scalar Foam::solidProperties::Hs(const scalar T) const
 {
-    return Cp_*(T - specie::Tstd);
+    return Cp_*(T - Tstd);
 }
 
 

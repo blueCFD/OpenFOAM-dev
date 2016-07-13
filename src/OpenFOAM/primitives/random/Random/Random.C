@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -41,12 +41,14 @@ Modifications
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
+#if INT_MAX    != 2147483647
+#    error "INT_MAX    != 2147483647"
+#    error "The random number generator may not work!"
+#endif
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Random::Random(const label seed)
+Foam::Random::Random(const label seed)
 {
     if (seed > 1)
     {
@@ -61,19 +63,19 @@ Random::Random(const label seed)
 }
 
 
-int Random::bit()
+int Foam::Random::bit()
 {
     return osRandomBit();
 }
 
 
-scalar Random::scalar01()
+Foam::scalar Foam::Random::scalar01()
 {
     return osRandomDouble();
 }
 
 
-vector Random::vector01()
+Foam::vector Foam::Random::vector01()
 {
     vector rndVec;
     for (direction cmpt=0; cmpt<vector::nComponents; cmpt++)
@@ -85,7 +87,7 @@ vector Random::vector01()
 }
 
 
-sphericalTensor Random::sphericalTensor01()
+Foam::sphericalTensor Foam::Random::sphericalTensor01()
 {
     sphericalTensor rndTen;
     rndTen.ii() = scalar01();
@@ -94,7 +96,7 @@ sphericalTensor Random::sphericalTensor01()
 }
 
 
-symmTensor Random::symmTensor01()
+Foam::symmTensor Foam::Random::symmTensor01()
 {
     symmTensor rndTen;
     for (direction cmpt=0; cmpt<symmTensor::nComponents; cmpt++)
@@ -106,7 +108,7 @@ symmTensor Random::symmTensor01()
 }
 
 
-tensor Random::tensor01()
+Foam::tensor Foam::Random::tensor01()
 {
     tensor rndTen;
     for (direction cmpt=0; cmpt<tensor::nComponents; cmpt++)
@@ -118,13 +120,13 @@ tensor Random::tensor01()
 }
 
 
-label Random::integer(const label lower, const label upper)
+Foam::label Foam::Random::integer(const label lower, const label upper)
 {
     return lower + (osRandomInteger() % (upper+1-lower));
 }
 
 
-vector Random::position(const vector& start, const vector& end)
+Foam::vector Foam::Random::position(const vector& start, const vector& end)
 {
     vector rndVec(start);
 
@@ -138,40 +140,37 @@ vector Random::position(const vector& start, const vector& end)
 }
 
 
-void Random::randomise(scalar& s)
+void Foam::Random::randomise(scalar& s)
 {
      s = scalar01();
 }
 
 
-void Random::randomise(vector& v)
+void Foam::Random::randomise(vector& v)
 {
     v = vector01();
 }
 
 
-void Random::randomise(sphericalTensor& st)
+void Foam::Random::randomise(sphericalTensor& st)
 {
     st = sphericalTensor01();
 }
 
 
-void Random::randomise(symmTensor& st)
+void Foam::Random::randomise(symmTensor& st)
 {
     st = symmTensor01();
 }
 
 
-void Random::randomise(tensor& t)
+void Foam::Random::randomise(tensor& t)
 {
     t = tensor01();
 }
 
 
-// return a normal Gaussian randon number
-// with zero mean and unity variance N(0, 1)
-
-scalar Random::GaussNormal()
+Foam::scalar Foam::Random::GaussNormal()
 {
     static int iset = 0;
     static scalar gset;
@@ -183,10 +182,10 @@ scalar Random::GaussNormal()
         {
             v1 = 2.0*scalar01() - 1.0;
             v2 = 2.0*scalar01() - 1.0;
-            rsq = v1*v1 + v2*v2;
+            rsq = sqr(v1) + sqr(v2);
         } while (rsq >= 1.0 || rsq == 0.0);
 
-        fac = sqrt(-2.0 * log(rsq)/rsq);
+        fac = sqrt(-2.0*log(rsq)/rsq);
         gset = v1*fac;
         iset = 1;
 
@@ -200,9 +199,5 @@ scalar Random::GaussNormal()
     }
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

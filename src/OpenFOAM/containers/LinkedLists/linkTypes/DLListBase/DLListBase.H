@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -263,6 +263,7 @@ public:
         inline const_iterator begin() const;
         inline const const_iterator& end() const;
 
+
     // STL const_reverse_iterator
 
         //- An STL-conforming const_reverse_iterator
@@ -300,9 +301,10 @@ public:
         inline const_reverse_iterator rbegin() const;
         inline const const_reverse_iterator& rend() const;
 
+
 private:
 
-        //- iterator returned by end()
+        //- Iterator returned by end()
         static iterator endIter_;
 
         //- const_iterator returned by end()
@@ -310,7 +312,6 @@ private:
 
         //- const_reverse_iterator returned by end()
         static const_reverse_iterator endConstRevIter_;
-
 };
 
 

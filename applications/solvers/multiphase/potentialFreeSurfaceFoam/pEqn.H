@@ -16,9 +16,8 @@ surfaceScalarField phiHbyA
   + rAUf*fvc::ddtCorr(U, phi)
 );
 
+MRF.makeRelative(phiHbyA);
 adjustPhi(phiHbyA, U, p_gh);
-
-fvOptions.makeRelative(phiHbyA);
 
 // Update the fixedFluxPressure BCs to ensure flux consistency
 setSnGrad<fixedFluxPressureFvPatchScalarField>

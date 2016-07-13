@@ -20,7 +20,7 @@ $(csys)/coordinateRotation/coordinateRotation.C
 $(csys)/coordinateRotation/coordinateRotationNew.C
 $(csys)/coordinateRotation/EulerCoordinateRotation.C
 $(csys)/coordinateRotation/STARCDCoordinateRotation.C
-$(csys)/coordinateRotation/localAxesRotation.C
+$(csys)/coordinateRotation/cylindrical.C
 
 edgeFaceCirculator/edgeFaceCirculator.C
 
@@ -28,7 +28,7 @@ polyMeshZipUpCells/polyMeshZipUpCells.C
 primitiveMeshGeometry/primitiveMeshGeometry.C
 
 meshSearch/meshSearch.C
-meshSearch/meshSearchFACECENTRETETSMeshObject.C
+meshSearch/meshSearchFACE_CENTRE_TRISMeshObject.C
 meshSearch/meshSearchMeshObject.C
 
 meshTools/meshTools.C

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,57 +23,52 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type, class GeoMesh>
-inline const DimensionedField<Type, GeoMesh>&
-DimensionedField<Type, GeoMesh>::null()
+inline const Foam::DimensionedField<Type, GeoMesh>&
+Foam::DimensionedField<Type, GeoMesh>::null()
 {
-    return *reinterpret_cast< DimensionedField<Type, GeoMesh>* >(0);
+    return NullObjectRef<DimensionedField<Type, GeoMesh> >();
 }
 
 
 template<class Type, class GeoMesh>
 inline const typename GeoMesh::Mesh&
-DimensionedField<Type, GeoMesh>::mesh() const
+Foam::DimensionedField<Type, GeoMesh>::mesh() const
 {
     return mesh_;
 }
 
 
 template<class Type, class GeoMesh>
-inline const dimensionSet& DimensionedField<Type, GeoMesh>::dimensions() const
+inline const Foam::dimensionSet&
+Foam::DimensionedField<Type, GeoMesh>::dimensions() const
 {
     return dimensions_;
 }
 
 template<class Type, class GeoMesh>
-inline dimensionSet& DimensionedField<Type, GeoMesh>::dimensions()
+inline Foam::dimensionSet&
+Foam::DimensionedField<Type, GeoMesh>::dimensions()
 {
     return dimensions_;
 }
 
 
 template<class Type, class GeoMesh>
-inline const Field<Type>& DimensionedField<Type, GeoMesh>::field() const
+inline const Foam::Field<Type>&
+Foam::DimensionedField<Type, GeoMesh>::field() const
 {
     return *this;
 }
 
 template<class Type, class GeoMesh>
-inline Field<Type>& DimensionedField<Type, GeoMesh>::field()
+inline Foam::Field<Type>&
+Foam::DimensionedField<Type, GeoMesh>::field()
 {
     return *this;
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

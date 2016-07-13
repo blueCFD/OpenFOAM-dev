@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -85,7 +85,7 @@ _foamAppendLib()
 
 # determine the cmake to be used
 unset CMAKE_HOME
-for cmake in cmake-2.8.12.1 cmake-2.8.8 cmake-2.8.4 cmake-2.8.3 cmake-2.8.1
+for cmake in cmake-3.2.1 cmake-2.8.12.1 cmake-2.8.8 cmake-2.8.4 cmake-2.8.3 cmake-2.8.1
 do
     cmake=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$cmake
     if [ -r $cmake ]
@@ -100,7 +100,9 @@ done
 #- ParaView version, automatically determine major version
 #export ParaView_VERSION=3.12.0
 #export ParaView_VERSION=4.0.1
-export ParaView_VERSION=4.1.0
+#export ParaView_VERSION=4.1.0
+#export ParaView_VERSION=4.3.1
+export ParaView_VERSION=4.4.0
 export ParaView_MAJOR=detect
 
 
@@ -139,12 +141,6 @@ export ParaView_VERSION ParaView_MAJOR
 
 paraviewInstDir=$WM_THIRD_PARTY_DIR/ParaView-$ParaView_VERSION
 paraviewArchName=ParaView-$ParaView_VERSION
-
-# Reset the name of the binary install directory for version 3
-if [ `echo $ParaView_VERSION | sed -e 's/^\([0-9][0-9]*\).*$/\1/'` -eq 3 ]
-then
-    paraviewArchName=paraview-$ParaView_VERSION
-fi
 
 export ParaView_DIR=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$paraviewArchName
 

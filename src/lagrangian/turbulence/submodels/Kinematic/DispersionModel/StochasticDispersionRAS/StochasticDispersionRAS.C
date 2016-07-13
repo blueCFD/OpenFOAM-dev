@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "StochasticDispersionRAS.H"
+#include "constants.H"
+
+using namespace Foam::constant::mathematical;
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -41,7 +44,7 @@ Foam::StochasticDispersionRAS<CloudType>::StochasticDispersionRAS
 template<class CloudType>
 Foam::StochasticDispersionRAS<CloudType>::StochasticDispersionRAS
 (
-    StochasticDispersionRAS<CloudType>& dm
+    const StochasticDispersionRAS<CloudType>& dm
 )
 :
     DispersionRASModel<CloudType>(dm)
@@ -89,29 +92,20 @@ Foam::vector Foam::StochasticDispersionRAS<CloudType>::update
 
         if (tTurb > tTurbLoc)
         {
-            tTurb = 0.0;
+            tTurb = 0;
 
-            scalar sigma = sqrt(2.0*k/3.0);
-            vector dir = 2.0*rnd.sample01<vector>() - vector::one;
-            dir /= mag(dir) + SMALL;
+            const scalar sigma = sqrt(2*k/3.0);
 
-            // Numerical Recipes... Ch. 7. Random Numbers...
-            scalar x1 = 0.0;
-            scalar x2 = 0.0;
-            scalar rsq = 10.0;
-            while ((rsq > 1.0) || (rsq == 0.0))
-            {
-                x1 = 2.0*rnd.sample01<scalar>() - 1.0;
-                x2 = 2.0*rnd.sample01<scalar>() - 1.0;
-                rsq = x1*x1 + x2*x2;
-            }
+            // Calculate a random direction dir distributed uniformly
+            // in spherical coordinates
 
-            scalar fac = sqrt(-2.0*log(rsq)/rsq);
+            const scalar theta = rnd.sample01<scalar>()*twoPi;
+            const scalar u = 2*rnd.sample01<scalar>() - 1;
 
-            fac *= mag(x1);
+            const scalar a = sqrt(1 - sqr(u));
+            const vector dir(a*cos(theta), a*sin(theta), u);
 
-            UTurb = sigma*fac*dir;
-
+            UTurb = sigma*mag(rnd.GaussNormal<scalar>())*dir;
         }
     }
     else

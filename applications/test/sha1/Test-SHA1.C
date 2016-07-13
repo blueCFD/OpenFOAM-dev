@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,8 +70,6 @@ int main(int argc, char * argv[])
     // start over:
     sha.clear();
     sha.append(str);
-
-    SHA1Digest shaDig_A = sha;
 
     SHA1 sha_A = sha;
 

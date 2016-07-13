@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ${0%/*} || exit 1    # run from this directory
+cd ${0%/*} || exit 1    # Run from this directory
 
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
@@ -26,7 +26,7 @@ copySolutionDirs()
 
 setCavityFine()
 {
-    blockMeshDict="$caseName/constant/polyMesh/blockMeshDict"
+    blockMeshDict="$caseName/system/blockMeshDict"
     controlDict="$caseName/system/controlDict"
     sed s/"20 20 1"/"41 41 1"/g $blockMeshDict > temp.$$
     mv temp.$$ $blockMeshDict

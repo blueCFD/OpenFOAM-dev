@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -198,8 +198,10 @@ int main(int argc, char *argv[])
 {
     argList::addNote
     (
-        "merge the faces on the specified patches (if geometrically possible)\n"
-        "so the faces become internal"
+        "Merge the faces on the specified patches (if geometrically possible)\n"
+        "so the faces become internal.\n"
+        "Integral matching is used when the options -partial and -perfect are "
+        "omitted.\n"
     );
 
     argList::noParallel();
@@ -212,12 +214,12 @@ int main(int argc, char *argv[])
     argList::addBoolOption
     (
         "partial",
-        "couple partially overlapping patches"
+        "couple partially overlapping patches (optional)"
     );
     argList::addBoolOption
     (
         "perfect",
-        "couple perfectly aligned patches"
+        "couple perfectly aligned patches (optional)"
     );
     argList::addOption
     (
@@ -443,7 +445,7 @@ int main(int argc, char *argv[])
     PtrList<volTensorField> volTensorFields;
     ReadFields(mesh, objects, volTensorFields);
 
-    //- uncomment if you want to interpolate surface fields (usually bad idea)
+    //- Uncomment if you want to interpolate surface fields (usually bad idea)
     //Info<< "Reading all current surfaceFields" << endl;
     //PtrList<surfaceScalarField> surfaceScalarFields;
     //ReadFields(mesh, objects, surfaceScalarFields);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,13 +91,7 @@ public:
         AtomizationModel(const AtomizationModel<CloudType>& am);
 
         //- Construct and return a clone
-        virtual autoPtr<AtomizationModel<CloudType> > clone() const
-        {
-            return autoPtr<AtomizationModel<CloudType> >
-            (
-                new AtomizationModel<CloudType>(*this)
-            );
-        }
+        virtual autoPtr<AtomizationModel<CloudType> > clone() const = 0;
 
 
     //- Destructor
@@ -114,14 +108,14 @@ public:
 
     // Member Functions
 
-        //- initial value of liquidCore
-        virtual scalar initLiquidCore() const;
-
         //- Average temperature calculation
         scalar Taverage(const scalar& Tliq, const scalar& Tc) const;
 
-        //- flag to indicate if chi needs to be calculated
-        virtual bool calcChi() const;
+        //- Initial value of liquidCore
+        virtual scalar initLiquidCore() const = 0;
+
+        //- Flag to indicate if chi needs to be calculated
+        virtual bool calcChi() const = 0;
 
         virtual void update
         (
@@ -140,7 +134,7 @@ public:
             const scalar pAmbient,
             const scalar chi,
             cachedRandom& rndGen
-        ) const;
+        ) const = 0;
 };
 
 
@@ -152,26 +146,30 @@ public:
 
 #define makeAtomizationModel(CloudType)                                       \
                                                                               \
-    typedef CloudType::sprayCloudType sprayCloudType;                         \
+    typedef Foam::CloudType::sprayCloudType sprayCloudType;                   \
     defineNamedTemplateTypeNameAndDebug                                       \
     (                                                                         \
-        AtomizationModel<sprayCloudType>,                                     \
+        Foam::AtomizationModel<sprayCloudType>,                               \
         0                                                                     \
     );                                                                        \
-    defineTemplateRunTimeSelectionTable                                       \
-    (                                                                         \
-        AtomizationModel<sprayCloudType>,                                     \
-        dictionary                                                            \
-    );
+                                                                              \
+    namespace Foam                                                            \
+    {                                                                         \
+        defineTemplateRunTimeSelectionTable                                   \
+        (                                                                     \
+            AtomizationModel<sprayCloudType>,                                 \
+            dictionary                                                        \
+        );                                                                    \
+    }
 
 
 #define makeAtomizationModelType(SS, CloudType)                               \
                                                                               \
-    typedef CloudType::sprayCloudType sprayCloudType;                         \
-    defineNamedTemplateTypeNameAndDebug(SS<sprayCloudType>, 0);               \
+    typedef Foam::CloudType::sprayCloudType sprayCloudType;                   \
+    defineNamedTemplateTypeNameAndDebug(Foam::SS<sprayCloudType>, 0);         \
                                                                               \
-    AtomizationModel<sprayCloudType>::                                        \
-        adddictionaryConstructorToTable<SS<sprayCloudType> >                  \
+    Foam::AtomizationModel<sprayCloudType>::                                  \
+        adddictionaryConstructorToTable<Foam::SS<sprayCloudType> >            \
             add##SS##CloudType##sprayCloudType##ConstructorToTable_;
 
 

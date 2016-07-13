@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,6 @@ License
 
 #include "constantTurbulentDispersionCoefficient.H"
 #include "phasePair.H"
-#include "fvc.H"
 #include "PhaseCompressibleTurbulenceModel.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -56,7 +55,7 @@ constantTurbulentDispersionCoefficient
 )
 :
     turbulentDispersionModel(dict, pair),
-    Ctd_("Ctd", dimless, dict.lookup("Ctd"))
+    Ctd_("Ctd", dimless, dict)
 {}
 
 
@@ -69,16 +68,15 @@ Foam::turbulentDispersionModels::constantTurbulentDispersionCoefficient::
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField>
+Foam::tmp<Foam::volScalarField>
 Foam::turbulentDispersionModels::constantTurbulentDispersionCoefficient::
-F() const
+D() const
 {
     return
         Ctd_
        *pair_.dispersed()
        *pair_.continuous().rho()
-       *pair_.continuous().turbulence().k()
-       *fvc::grad(pair_.dispersed());
+       *pair_.continuous().turbulence().k();
 }
 
 

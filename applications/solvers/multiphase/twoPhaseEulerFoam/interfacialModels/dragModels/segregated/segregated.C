@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,8 +25,9 @@ License
 
 #include "segregated.H"
 #include "phasePair.H"
+#include "fvcGrad.H"
+#include "surfaceInterpolate.H"
 #include "addToRunTimeSelectionTable.H"
-#include "fvc.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -50,8 +51,8 @@ Foam::dragModels::segregated::segregated
 )
 :
     dragModel(dict, pair, registerObject),
-    m_("m", dimless, dict.lookup("m")),
-    n_("n", dimless, dict.lookup("n"))
+    m_("m", dimless, dict),
+    n_("n", dimless, dict)
 {}
 
 
@@ -111,7 +112,7 @@ Foam::tmp<Foam::volScalarField> Foam::dragModels::segregated::K() const
        /max
         (
             alpha1 + alpha2,
-            residualAlpha_
+            pair_.phase1().residualAlpha() + pair_.phase2().residualAlpha()
         )
     );
     volScalarField magGradI
@@ -119,7 +120,7 @@ Foam::tmp<Foam::volScalarField> Foam::dragModels::segregated::K() const
         max
         (
             mag(fvc::grad(I)),
-            residualAlpha_/L
+            (pair_.phase1().residualAlpha() + pair_.phase2().residualAlpha())/L
         )
     );
 
@@ -144,6 +145,12 @@ Foam::tmp<Foam::volScalarField> Foam::dragModels::segregated::K() const
     volScalarField lambda(m_*ReI + n_*muAlphaI/muI);
 
     return lambda*sqr(magGradI)*muI;
+}
+
+
+Foam::tmp<Foam::surfaceScalarField> Foam::dragModels::segregated::Kf() const
+{
+    return fvc::interpolate(K());
 }
 
 

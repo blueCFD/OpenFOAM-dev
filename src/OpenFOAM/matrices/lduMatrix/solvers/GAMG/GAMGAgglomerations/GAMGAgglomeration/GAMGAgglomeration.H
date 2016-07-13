@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -435,7 +435,7 @@ public:
                 const label comm,
                 const labelList& procAgglomMap,
                 labelList& masterProcs,
-                List<int>& agglomProcIDs
+                List<label>& agglomProcIDs
             );
 
             //- Whether to agglomerate across processors

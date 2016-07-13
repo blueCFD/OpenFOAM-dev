@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -96,7 +96,9 @@ NicenoKEqn<BasicTurbulenceModel>::NicenoKEqn
 {
     if (type == typeName)
     {
-        correctNut();
+        // Cannot correct nut yet: construction of the phases is not complete
+        // correctNut();
+
         this->printCoeffs(type);
     }
 }
@@ -134,7 +136,8 @@ NicenoKEqn<BasicTurbulenceModel>::gasTurbulence() const
         const volVectorField& U = this->U_;
 
         const transportModel& liquid = this->transport();
-        const twoPhaseSystem& fluid = liquid.fluid();
+        const twoPhaseSystem& fluid =
+            refCast<const twoPhaseSystem>(liquid.fluid());
         const transportModel& gas = fluid.otherPhase(liquid);
 
         gasTurbulencePtr_ =
@@ -175,7 +178,8 @@ tmp<volScalarField> NicenoKEqn<BasicTurbulenceModel>::bubbleG() const
         this->gasTurbulence();
 
     const transportModel& liquid = this->transport();
-    const twoPhaseSystem& fluid = liquid.fluid();
+    const twoPhaseSystem& fluid =
+        refCast<const twoPhaseSystem>(liquid.fluid());
     const transportModel& gas = fluid.otherPhase(liquid);
 
     volScalarField magUr(mag(this->U_ - gasTurbulence.U()));

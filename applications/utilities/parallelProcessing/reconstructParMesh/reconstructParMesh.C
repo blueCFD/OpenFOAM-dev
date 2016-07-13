@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -109,8 +109,8 @@ autoPtr<faceCoupleInfo> determineCoupledFaces
             (
                 masterMesh,
                 meshToAdd,
-                mergeDist,      // absolute merging distance
-                true            // matching faces identical
+                mergeDist,      // Absolute merging distance
+                true            // Matching faces identical
             )
         );
     }
@@ -208,9 +208,9 @@ autoPtr<faceCoupleInfo> determineCoupledFaces
                 masterFaces,
                 meshToAdd,
                 addFaces,
-                mergeDist,      // absolute merging distance
-                true,           // matching faces identical?
-                false,          // if perfectmatch are faces already ordered
+                mergeDist,      // Absolute merging distance
+                true,           // Matching faces identical?
+                false,          // If perfect match are faces already ordered
                                 // (e.g. processor patches)
                 false           // are faces each on separate patch?
             )
@@ -443,6 +443,9 @@ int main(int argc, char *argv[])
         "reconstruct a mesh using geometric information only"
     );
 
+    // Enable -constant ... if someone really wants it
+    // Enable -withZero to prevent accidentally trashing the initial fields
+    timeSelector::addOptions(true, true);
     argList::noParallel();
     argList::addOption
     (
@@ -463,7 +466,6 @@ int main(int argc, char *argv[])
         "decomposition method or as a volScalarField for post-processing."
     );
 
-    #include "addTimeOptions.H"
     #include "addRegionOption.H"
     #include "setRootCase.H"
     #include "createTime.H"
@@ -579,38 +581,26 @@ int main(int argc, char *argv[])
         );
     }
 
-
-    // use the times list from the master processor
+    // Use the times list from the master processor
     // and select a subset based on the command-line options
-    instantList Times = timeSelector::select
+    instantList timeDirs = timeSelector::select
     (
         databases[0].times(),
         args
     );
 
-    // set startTime and endTime depending on -time and -latestTime options
-    #include "checkTimeOptions.H"
-
-    if (Times.empty())
-    {
-        FatalErrorIn(args.executable())
-            << "No times selected"
-            << exit(FatalError);
-    }
-
-
     // Loop over all times
-    for (label timeI = startTime; timeI < endTime; timeI++)
+    forAll(timeDirs, timeI)
     {
         // Set time for global database
-        runTime.setTime(Times[timeI], timeI);
+        runTime.setTime(timeDirs[timeI], timeI);
 
-        Info<< "Time = " << runTime.timeName() << endl << endl;
+        Info<< "Time = " << runTime.timeName() << nl << endl;
 
         // Set time for all databases
         forAll(databases, procI)
         {
-            databases[procI].setTime(Times[timeI], timeI);
+            databases[procI].setTime(timeDirs[timeI], timeI);
         }
 
         const fileName meshPath =
@@ -646,6 +636,7 @@ int main(int argc, char *argv[])
 
         // Internal faces on the final reconstructed mesh
         label masterInternalFaces;
+
         // Owner addressing on the final reconstructed mesh
         labelList masterOwner;
 
@@ -804,7 +795,7 @@ int main(int argc, char *argv[])
                     procMesh,
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
-                    false                       // do not register
+                    false                       // Do not register
                 ),
                 pointProcAddressing[procI]
             ).write();
@@ -828,7 +819,7 @@ int main(int argc, char *argv[])
                     procMesh,
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
-                    false                       // do not register
+                    false                       // Do not register
                 ),
                 faceProcAddressing[procI]
             );
@@ -891,7 +882,7 @@ int main(int argc, char *argv[])
                     procMesh,
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
-                    false                       // do not register
+                    false                       // Do not register
                 ),
                 cellProcAddressing[procI]
             ).write();
@@ -916,7 +907,7 @@ int main(int argc, char *argv[])
                     procMesh,
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
-                    false                       // do not register
+                    false                       // Do not register
                 ),
                 boundaryProcAddressing[procI]
             ).write();

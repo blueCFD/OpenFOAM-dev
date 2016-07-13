@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -350,8 +350,8 @@ Foam::Istream& Foam::ISstream::read(token& t)
                 {
                     if (asLabel)
                     {
-                        label labelVal;
-                        if (readLabel(buf, labelVal))
+                        label labelVal = 0;
+                        if (Foam::read(buf, labelVal))
                         {
                             t = labelVal;
                         }
@@ -367,21 +367,6 @@ Foam::Istream& Foam::ISstream::read(token& t)
                             {
                                 t.setBad();
                             }
-// ---------------------------------------
-// this would also be possible if desired:
-// ---------------------------------------
-//                        // return as a label when possible
-//                        // eg, 1E6 -> 1000000
-//                        if (scalarVal <= labelMax && scalarVal >= labelMin)
-//                        {
-//                            label labelVal(scalarVal);
-//
-//                            if (labelVal == scalarVal)
-//                            {
-//                                t = labelVal;
-//                            }
-//                        }
-
                         }
                     }
                     else
@@ -428,8 +413,8 @@ Foam::Istream& Foam::ISstream::read(word& str)
     static const int errLen = 80; // truncate error message for readability
     static char buf[maxLen];
 
-    register int nChar = 0;
-    register int listDepth = 0;
+    int nChar = 0;
+    int listDepth = 0;
     char c;
 
     while (get(c) && word::valid(c))
@@ -520,7 +505,7 @@ Foam::Istream& Foam::ISstream::read(string& str)
         return *this;
     }
 
-    register int nChar = 0;
+    int nChar = 0;
     bool escaped = false;
 
     while (get(c))
@@ -601,8 +586,8 @@ Foam::Istream& Foam::ISstream::readVariable(string& str)
     static const int errLen = 80; // truncate error message for readability
     static char buf[maxLen];
 
-    register int nChar = 0;
-    register int blockCount = 0;
+    int nChar = 0;
+    int blockCount = 0;
     char c;
 
     if (!get(c) || c != '$')
@@ -723,7 +708,7 @@ Foam::Istream& Foam::ISstream::readVerbatim(string& str)
 
     char c;
 
-    register int nChar = 0;
+    int nChar = 0;
 
     while (get(c))
     {

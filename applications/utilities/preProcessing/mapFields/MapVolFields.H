@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,11 +23,11 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef MapConsistentVolFields_H
-#define MapConsistentVolFields_H
+#ifndef MapVolFields_H
+#define MapVolFields_H
 
 #include "GeometricField.H"
-#include "meshToMesh.H"
+#include "meshToMesh0.H"
 #include "IOobjectList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -39,55 +39,62 @@ template<class Type, class CombineOp>
 void MapVolFields
 (
     const IOobjectList& objects,
-    const HashSet<word>& selectedFields,
-    const meshToMesh& interp,
+    const meshToMesh0& meshToMesh0Interp,
+    const meshToMesh0::order& mapOrder,
     const CombineOp& cop
 )
 {
-    typedef GeometricField<Type, fvPatchField, volMesh> fieldType;
+    const fvMesh& meshSource = meshToMesh0Interp.fromMesh();
+    const fvMesh& meshTarget = meshToMesh0Interp.toMesh();
 
-    const fvMesh& meshSource = static_cast<const fvMesh&>(interp.srcRegion());
-    const fvMesh& meshTarget = static_cast<const fvMesh&>(interp.tgtRegion());
+    word fieldClassName
+    (
+        GeometricField<Type, fvPatchField, volMesh>::typeName
+    );
 
-    IOobjectList fields = objects.lookupClass(fieldType::typeName);
+    IOobjectList fields = objects.lookupClass(fieldClassName);
 
     forAllIter(IOobjectList, fields, fieldIter)
     {
-        const word& fieldName = fieldIter()->name();
+        IOobject fieldTargetIOobject
+        (
+            fieldIter()->name(),
+            meshTarget.time().timeName(),
+            meshTarget,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        );
 
-        if (selectedFields.empty() || selectedFields.found(fieldName))
+        if (fieldTargetIOobject.headerOk())
         {
-            Info<< "    interpolating " << fieldName << endl;
+            Info<< "    interpolating " << fieldIter()->name()
+                << endl;
 
-            const fieldType fieldSource(*fieldIter(), meshSource);
-
-            IOobject targetIO
+            // Read field fieldSource
+            GeometricField<Type, fvPatchField, volMesh> fieldSource
             (
-                fieldName,
-                meshTarget.time().timeName(),
-                meshTarget,
-                IOobject::MUST_READ
+                *fieldIter(),
+                meshSource
             );
 
-            if (targetIO.headerOk())
-            {
-                fieldType fieldTarget(targetIO, meshTarget);
+            // Read fieldTarget
+            GeometricField<Type, fvPatchField, volMesh> fieldTarget
+            (
+                fieldTargetIOobject,
+                meshTarget
+            );
 
-                interp.mapSrcToTgt(fieldSource, cop, fieldTarget);
+            // Interpolate field
+            meshToMesh0Interp.interpolate
+            (
+                fieldTarget,
+                fieldSource,
+                mapOrder,
+                cop
+            );
 
-                fieldTarget.write();
-            }
-            else
-            {
-                targetIO.readOpt() = IOobject::NO_READ;
-
-                tmp<fieldType>
-                    tfieldTarget(interp.mapSrcToTgt(fieldSource, cop));
-
-                fieldType fieldTarget(targetIO, tfieldTarget);
-
-                fieldTarget.write();
-            }
+            // Write field
+            fieldTarget.write();
         }
     }
 }

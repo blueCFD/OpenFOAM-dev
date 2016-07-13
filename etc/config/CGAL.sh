@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -47,9 +47,9 @@ cgal_version=CGAL-system
 
 if [ "$FOAM_VERBOSE" -a "$PS1" ]
 then
-    echo "Using CGAL and boost"
-    echo "    $cgal_version at $CGAL_ARCH_PATH"
-    echo "    $boost_version at $BOOST_ARCH_PATH"
+    echo "Using CGAL and boost" 1>&2
+    echo "    $cgal_version at $CGAL_ARCH_PATH" 1>&2
+    echo "    $boost_version at $BOOST_ARCH_PATH" 1>&2
 fi
 
 if [ "$cgal_version" != "CGAL-system" ]

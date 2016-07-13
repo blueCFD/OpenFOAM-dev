@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -119,7 +119,7 @@ Foam::fv::CodedSource<Type>::CodedSource
     const fvMesh& mesh
 )
 :
-    option(name, modelType, dict, mesh)
+    cellSetOption(name, modelType, dict, mesh)
 {
     read(dict);
 }
@@ -149,7 +149,7 @@ Foam::fv::option& Foam::fv::CodedSource<Type>::redirectFvOption() const
 template<class Type>
 void Foam::fv::CodedSource<Type>::correct
 (
-    GeometricField<Type, fvPatchField, volMesh>& fld
+    GeometricField<Type, fvPatchField, volMesh>& field
 )
 {
     if (debug)
@@ -159,7 +159,7 @@ void Foam::fv::CodedSource<Type>::correct
     }
 
     updateLibrary(redirectType_);
-    redirectFvOption().correct(fld);
+    redirectFvOption().correct(field);
 }
 
 
@@ -201,7 +201,7 @@ void Foam::fv::CodedSource<Type>::addSup
 
 
 template<class Type>
-void Foam::fv::CodedSource<Type>::setValue
+void Foam::fv::CodedSource<Type>::constrain
 (
     fvMatrix<Type>& eqn,
     const label fieldI
@@ -210,11 +210,11 @@ void Foam::fv::CodedSource<Type>::setValue
     if (debug)
     {
         Info<< "CodedSource<"<< pTraits<Type>::typeName
-            << ">::setValue for source " << name_ << endl;
+            << ">::constrain for source " << name_ << endl;
     }
 
     updateLibrary(redirectType_);
-    redirectFvOption().setValue(eqn, fieldI);
+    redirectFvOption().constrain(eqn, fieldI);
 }
 
 

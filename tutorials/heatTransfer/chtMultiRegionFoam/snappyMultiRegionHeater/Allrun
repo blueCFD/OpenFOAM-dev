@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ${0%/*} || exit 1    # run from this directory
+cd ${0%/*} || exit 1    # Run from this directory
 
 
 # Source tutorial run functions
@@ -16,7 +16,7 @@ runApplication splitMeshRegions -cellZones -overwrite
 # remove fluid fields from solid regions (important for post-processing)
 for i in heater leftSolid rightSolid
 do
-   rm -f 0*/$i/{mut,alphat,epsilon,k,U,p_rgh}
+   rm -f 0*/$i/{nut,alphat,epsilon,k,U,p_rgh}
 done
 
 

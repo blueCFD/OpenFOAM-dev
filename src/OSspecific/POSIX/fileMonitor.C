@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,7 +130,7 @@ namespace Foam
 
 
 
-        //- initialise inotify
+        //- Initialise inotify
         inline fileMonitorWatcher(const bool useInotify, const label sz = 20)
         :
             useInotify_(useInotify),
@@ -179,7 +179,7 @@ namespace Foam
             }
         }
 
-        //- remove all watches
+        //- Remove all watches
         inline ~fileMonitorWatcher()
         {
             #ifdef FOAM_USE_INOTIFY
@@ -327,7 +327,7 @@ void Foam::fileMonitor::checkFiles() const
             else if (FD_ISSET(watcher_->inotifyFd_, &fdSet))
             {
                 // Read events
-                ssize_t nBytes = read
+                ssize_t nBytes = ::read
                 (
                     watcher_->inotifyFd_,
                     buffer,

@@ -23,7 +23,7 @@
       + phig
     );
 
-    fvOptions.makeRelative(fvc::interpolate(rho), phiHbyA);
+    MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
     // Update the fixedFluxPressure BCs to ensure flux consistency
     setSnGrad<fixedFluxPressureFvPatchScalarField>
@@ -31,7 +31,7 @@
         p_rgh.boundaryField(),
         (
             phiHbyA.boundaryField()
-          - fvOptions.relative(mesh.Sf().boundaryField() & U.boundaryField())
+          - MRF.relative(mesh.Sf().boundaryField() & U.boundaryField())
            *rho.boundaryField()
         )/(mesh.magSf().boundaryField()*rAUf.boundaryField())
     );
@@ -51,8 +51,6 @@
             p_rghDDtEqn
           - fvm::laplacian(rAUf, p_rgh)
         );
-
-        fvOptions.constrain(p_rghEqn);
 
         p_rghEqn.solve(mesh.solver(p_rgh.select(pimple.finalInnerIter())));
 

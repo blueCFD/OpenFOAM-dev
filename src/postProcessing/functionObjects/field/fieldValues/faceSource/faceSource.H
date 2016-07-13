@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,6 +66,7 @@ Description
         type         | type name: faceSource   | yes         |
         log          | write data to standard output | no    | no
         valueOutput  | write the output values | yes         |
+        writeArea    | Write the area of the faceSource | no |
         surfaceFormat | output value format    | no          |
         source       | face source: see below  | yes         |
         sourceName   | name of face source if required  | no |
@@ -96,6 +97,7 @@ Description
        average       | ensemble average
        weightedAverage | weighted average
        areaAverage   | area weighted average
+       weightedAreaAverage | weighted area average
        areaIntegrate | area integral
        min           | minimum
        max           | maximum
@@ -189,6 +191,7 @@ public:
             opAverage,
             opWeightedAverage,
             opAreaAverage,
+            opWeightedAreaAverage,
             opAreaIntegrate,
             opMin,
             opMax,
@@ -198,7 +201,7 @@ public:
         };
 
         //- Operation type names
-        static const NamedEnum<operationType, 14> operationTypeNames_;
+        static const NamedEnum<operationType, 15> operationTypeNames_;
 
 
 private:
@@ -214,19 +217,22 @@ private:
         //- Set faces according to sampledSurface
         void sampledSurfaceFaces(const dictionary&);
 
-        //- Combine mesh faces and points from multiple processors 
+        //- Combine mesh faces and points from multiple processors
         void combineMeshGeometry
         (
             faceList& faces,
             pointField& points
         ) const;
 
-        //- Combine surface faces and points from multiple processors 
+        //- Combine surface faces and points from multiple processors
         void combineSurfaceGeometry
         (
             faceList& faces,
             pointField& points
         ) const;
+
+        //- Calculate and return total area of the faceSource: sum(magSf)
+        scalar totalArea() const;
 
 
 protected:
@@ -254,6 +260,12 @@ protected:
         //- Scale factor - optional
         scalar scaleFactor_;
 
+        //- Total area of the faceSource
+        scalar totalArea_;
+
+        //- Optionally write the area of the faceSource
+        bool writeArea_;
+
         //- Global number of faces
         label nFaces_;
 
@@ -273,7 +285,7 @@ protected:
 
         // If operating on sampledSurface
 
-            //- underlying sampledSurface
+            //- Underlying sampledSurface
             autoPtr<sampledSurface> surfacePtr_;
 
 

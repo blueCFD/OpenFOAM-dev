@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,14 +69,14 @@ namespace Foam
 
 void Foam::fv::rotorDiskSource::checkData()
 {
-    // set inflow type
+    // Set inflow type
     switch (selectionMode())
     {
         case smCellSet:
         case smCellZone:
         case smAll:
         {
-            // set the profile ID for each blade section
+            // Set the profile ID for each blade section
             profiles_.connectBlades(blade_.profileName(), blade_.profileID());
             switch (inletFlow_)
             {
@@ -96,7 +96,7 @@ void Foam::fv::rotorDiskSource::checkData()
                 }
                 case ifLocal:
                 {
-                    // do nothing
+                    // Do nothing
                     break;
                 }
                 default:
@@ -137,7 +137,7 @@ void Foam::fv::rotorDiskSource::setFaceArea(vector& axis, const bool correct)
 
     vector n = vector::zero;
 
-    // calculate cell addressing for selected cells
+    // Calculate cell addressing for selected cells
     labelList cellAddr(mesh_.nCells(), -1);
     UIndirectList<label>(cellAddr, cells_) = identity(cells_.size());
     labelList nbrFaceCellAddr(mesh_.nFaces() - nInternalFaces, -1);
@@ -157,10 +157,10 @@ void Foam::fv::rotorDiskSource::setFaceArea(vector& axis, const bool correct)
         }
     }
 
-    // correct for parallel running
+    // Correct for parallel running
     syncTools::swapBoundaryFaceList(mesh_, nbrFaceCellAddr);
 
-    // add internal field contributions
+    // Add internal field contributions
     for (label faceI = 0; faceI < nInternalFaces; faceI++)
     {
         const label own = cellAddr[mesh_.faceOwner()[faceI]];
@@ -189,7 +189,7 @@ void Foam::fv::rotorDiskSource::setFaceArea(vector& axis, const bool correct)
     }
 
 
-    // add boundary contributions
+    // Add boundary contributions
     forAll(pbm, patchI)
     {
         const polyPatch& pp = pbm[patchI];
@@ -262,7 +262,7 @@ void Foam::fv::rotorDiskSource::setFaceArea(vector& axis, const bool correct)
 
 void Foam::fv::rotorDiskSource::createCoordinateSystem()
 {
-    // construct the local rotor co-prdinate system
+    // Construct the local rotor co-prdinate system
     vector origin(vector::zero);
     vector axis(vector::zero);
     vector refDir(vector::zero);
@@ -274,7 +274,7 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
     {
         case gmAuto:
         {
-            // determine rotation origin (cell volume weighted)
+            // Determine rotation origin (cell volume weighted)
             scalar sumV = 0.0;
             const scalarField& V = mesh_.V();
             const vectorField& C = mesh_.C();
@@ -288,7 +288,7 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
             reduce(sumV, sumOp<scalar>());
             origin /= sumV;
 
-            // determine first radial vector
+            // Determine first radial vector
             vector dx1(vector::zero);
             scalar magR = -GREAT;
             forAll(cells_, i)
@@ -304,7 +304,7 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
             reduce(dx1, maxMagSqrOp<vector>());
             magR = mag(dx1);
 
-            // determine second radial vector and cross to determine axis
+            // Determine second radial vector and cross to determine axis
             forAll(cells_, i)
             {
                 const label cellI = cells_[i];
@@ -321,7 +321,7 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
             reduce(axis, maxMagSqrOp<vector>());
             axis /= mag(axis);
 
-            // correct the axis direction using a point above the rotor
+            // Correct the axis direction using a point above the rotor
             {
                 vector pointAbove(coeffs_.lookup("pointAbove"));
                 vector dir = pointAbove - origin;
@@ -334,9 +334,9 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
 
             coeffs_.lookup("refDirection") >> refDir;
 
-            localAxesRotation_.reset
+            cylindrical_.reset
             (
-                new localAxesRotation
+                new cylindrical
                 (
                     mesh_,
                     axis,
@@ -345,7 +345,7 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
                 )
             );
 
-            // set the face areas and apply correction to calculated axis
+            // Set the face areas and apply correction to calculated axis
             // e.g. if cellZone is more than a single layer in thickness
             setFaceArea(axis, true);
 
@@ -357,9 +357,9 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
             coeffs_.lookup("axis") >> axis;
             coeffs_.lookup("refDirection") >> refDir;
 
-            localAxesRotation_.reset
+            cylindrical_.reset
             (
-                new localAxesRotation
+                new cylindrical
                 (
                     mesh_,
                     axis,
@@ -405,20 +405,20 @@ void Foam::fv::rotorDiskSource::constructGeometry()
         {
             const label cellI = cells_[i];
 
-            // position in (planar) rotor co-ordinate system
+            // Position in (planar) rotor co-ordinate system
             x_[i] = coordSys_.localPosition(C[cellI]);
 
-            // cache max radius
+            // Cache max radius
             rMax_ = max(rMax_, x_[i].x());
 
-            // swept angle relative to rDir axis [radians] in range 0 -> 2*pi
+            // Swept angle relative to rDir axis [radians] in range 0 -> 2*pi
             scalar psi = x_[i].y();
 
-            // blade flap angle [radians]
+            // Blade flap angle [radians]
             scalar beta =
                 flap_.beta0 - flap_.beta1c*cos(psi) - flap_.beta2s*sin(psi);
 
-            // determine rotation tensor to convert from planar system into the
+            // Determine rotation tensor to convert from planar system into the
             // rotor cone system
             scalar c = cos(beta);
             scalar s = sin(beta);
@@ -478,7 +478,7 @@ Foam::fv::rotorDiskSource::rotorDiskSource
 
 )
 :
-    option(name, modelType, dict, mesh),
+    cellSetOption(name, modelType, dict, mesh),
     rhoRef_(1.0),
     omega_(0.0),
     nBlades_(0),
@@ -491,7 +491,7 @@ Foam::fv::rotorDiskSource::rotorDiskSource
     invR_(cells_.size(), I),
     area_(cells_.size(), 0.0),
     coordSys_(false),
-    localAxesRotation_(),
+    cylindrical_(),
     rMax_(0.0),
     trim_(trimModel::New(*this, coeffs_)),
     blade_(coeffs_.subDict("blade")),
@@ -587,21 +587,14 @@ void Foam::fv::rotorDiskSource::addSup
 }
 
 
-void Foam::fv::rotorDiskSource::writeData(Ostream& os) const
-{
-    os  << indent << name_ << endl;
-    dict_.write(os);
-}
-
-
 bool Foam::fv::rotorDiskSource::read(const dictionary& dict)
 {
-    if (option::read(dict))
+    if (cellSetOption::read(dict))
     {
         coeffs_.lookup("fieldNames") >> fieldNames_;
         applied_.setSize(fieldNames_.size(), false);
 
-        // read co-ordinate system/geometry invariant properties
+        // Read co-ordinate system/geometry invariant properties
         scalar rpm(readScalar(coeffs_.lookup("rpm")));
         omega_ = rpm/60.0*mathematical::twoPi;
 
@@ -620,10 +613,10 @@ bool Foam::fv::rotorDiskSource::read(const dictionary& dict)
         flap_.beta2s = degToRad(flap_.beta2s);
 
 
-        // create co-ordinate system
+        // Create co-ordinate system
         createCoordinateSystem();
 
-        // read co-odinate system dependent properties
+        // Read co-odinate system dependent properties
         checkData();
 
         constructGeometry();

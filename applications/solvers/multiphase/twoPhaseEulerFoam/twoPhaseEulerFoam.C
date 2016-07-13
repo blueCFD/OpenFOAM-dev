@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,9 +34,9 @@ Description
 #include "twoPhaseSystem.H"
 #include "PhaseCompressibleTurbulenceModel.H"
 #include "pimpleControl.H"
-#include "IOMRFZoneList.H"
 #include "fvIOoptionList.H"
 #include "fixedFluxPressureFvPatchScalarField.H"
+#include "fixedValueFvsPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,16 +46,31 @@ int main(int argc, char *argv[])
 
     #include "createTime.H"
     #include "createMesh.H"
-    #include "readGravitationalAcceleration.H"
+
+    pimpleControl pimple(mesh);
+
     #include "createFields.H"
-    #include "createMRFZones.H"
+    #include "createMRF.H"
     #include "createFvOptions.H"
-    #include "initContinuityErrs.H"
-    #include "readTimeControls.H"
+    #include "createTimeControls.H"
     #include "CourantNos.H"
     #include "setInitialDeltaT.H"
 
-    pimpleControl pimple(mesh);
+    Switch faceMomentum
+    (
+        pimple.dict().lookupOrDefault<Switch>("faceMomentum", false)
+    );
+
+    Switch implicitPhasePressure
+    (
+        mesh.solverDict(alpha1.name()).lookupOrDefault<Switch>
+        (
+            "implicitPhasePressure", false
+        )
+    );
+
+    #include "pUf/createDDtU.H"
+    #include "pU/createDDtU.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,7 +78,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "readTimeControls.H"
+        #include "createTimeControls.H"
         #include "CourantNos.H"
         #include "setDeltaT.H"
 
@@ -76,29 +91,22 @@ int main(int argc, char *argv[])
             fluid.solve();
             fluid.correct();
 
-            volScalarField contErr1
-            (
-                fvc::ddt(alpha1, rho1) + fvc::div(alphaRhoPhi1)
-              - (fvOptions(alpha1, rho1)&rho1)
-            );
+            #include "contErrs.H"
 
-            volScalarField contErr2
-            (
-                fvc::ddt(alpha2, rho2) + fvc::div(alphaRhoPhi2)
-               - (fvOptions(alpha2, rho2)&rho2)
-            );
-
-
-            #include "UEqns.H"
-            #include "EEqns.H"
-
-            // --- Pressure corrector loop
-            while (pimple.correct())
+            if (faceMomentum)
             {
-                #include "pEqn.H"
+                #include "pUf/UEqns.H"
+                #include "EEqns.H"
+                #include "pUf/pEqn.H"
+                #include "pUf/DDtU.H"
             }
-
-            #include "DDtU.H"
+            else
+            {
+                #include "pU/UEqns.H"
+                #include "EEqns.H"
+                #include "pU/pEqn.H"
+                #include "pU/DDtU.H"
+            }
 
             if (pimple.turbCorr())
             {

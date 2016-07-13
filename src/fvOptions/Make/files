@@ -1,10 +1,16 @@
-fvOptions/fvOption.C
-fvOptions/fvOptionIO.C
-fvOptions/fvOptionList.C
-fvOptions/fvIOoptionList.C
+fvOption/fvOption.C
+fvOption/fvOptionIO.C
+fvOption/fvOptionList.C
+fvOption/fvIOoptionList.C
+
+cellSetOption/cellSetOption.C
+cellSetOption/cellSetOptionIO.C
+
+interRegionOption/interRegionOption.C
+interRegionOption/interRegionOptionIO.C
 
 
-/* sources */
+/* Sources */
 
 generalSources=sources/general
 $(generalSources)/codedSource/codedSource.C
@@ -14,9 +20,9 @@ derivedSources=sources/derived
 $(derivedSources)/actuationDiskSource/actuationDiskSource.C
 $(derivedSources)/effectivenessHeatExchangerSource/effectivenessHeatExchangerSource.C
 $(derivedSources)/explicitPorositySource/explicitPorositySource.C
-$(derivedSources)/MRFSource/MRFSource.C
-$(derivedSources)/pressureGradientExplicitSource/pressureGradientExplicitSource.C
-$(derivedSources)/pressureGradientExplicitSource/pressureGradientExplicitSourceIO.C
+$(derivedSources)/meanVelocityForce/meanVelocityForce.C
+$(derivedSources)/meanVelocityForce/meanVelocityForceIO.C
+$(derivedSources)/meanVelocityForce/patchMeanVelocityForce/patchMeanVelocityForce.C
 $(derivedSources)/radialActuationDiskSource/radialActuationDiskSource.C
 $(derivedSources)/rotorDiskSource/rotorDiskSource.C
 $(derivedSources)/rotorDiskSource/bladeModel/bladeModel.C
@@ -30,24 +36,31 @@ $(derivedSources)/rotorDiskSource/trimModel/fixed/fixedTrim.C
 $(derivedSources)/rotorDiskSource/trimModel/targetCoeff/targetCoeffTrim.C
 $(derivedSources)/solidificationMeltingSource/solidificationMeltingSource.C
 $(derivedSources)/solidificationMeltingSource/solidificationMeltingSourceIO.C
+$(derivedSources)/tabulatedAccelerationSource/tabulatedAccelerationSource.C
+$(derivedSources)/tabulatedAccelerationSource/tabulated6DoFAcceleration/tabulated6DoFAcceleration.C
+
 
 interRegion = sources/interRegion
-$(interRegion)/interRegionHeatTransferModel/constantHeatTransfer/constantHeatTransfer.C
-$(interRegion)/interRegionHeatTransferModel/interRegionHeatTransferModel/interRegionHeatTransferModel.C
-$(interRegion)/interRegionHeatTransferModel/tabulatedHeatTransfer/tabulatedHeatTransfer.C
-$(interRegion)/interRegionHeatTransferModel/variableHeatTransfer/variableHeatTransfer.C
+$(interRegion)/interRegionHeatTransfer/interRegionHeatTransferModel/interRegionHeatTransferModel.C
+$(interRegion)/interRegionHeatTransfer/interRegionHeatTransferModel/interRegionHeatTransferModelIO.C
+$(interRegion)/interRegionHeatTransfer/constantHeatTransfer/constantHeatTransfer.C
+$(interRegion)/interRegionHeatTransfer/tabulatedHeatTransfer/tabulatedHeatTransfer.C
+$(interRegion)/interRegionHeatTransfer/variableHeatTransfer/variableHeatTransfer.C
 $(interRegion)/interRegionExplicitPorositySource/interRegionExplicitPorositySource.C
 
 
-
-/* constraints */
+/* Constraints */
 
 generalConstraints=constraints/general
 $(generalConstraints)/explicitSetValue/explicitSetValue.C
 
 derivedConstraints=constraints/derived
 $(derivedConstraints)/fixedTemperatureConstraint/fixedTemperatureConstraint.C
-$(derivedConstraints)/temperatureLimitsConstraint/temperatureLimitsConstraint.C
+
+
+/* Corrections */
+
+corrections/limitTemperature/limitTemperature.C
 
 
 LIB = $(FOAM_LIBBIN)/libfvOptions

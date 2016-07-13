@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,10 +30,12 @@ License
 #include "PhaseCompressibleTurbulenceModel.H"
 #include "dragModel.H"
 #include "heatTransferModel.H"
+#include "fixedValueFvsPatchFields.H"
 #include "fixedValueFvPatchFields.H"
 #include "slipFvPatchFields.H"
 #include "partialSlipFvPatchFields.H"
 #include "surfaceInterpolate.H"
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -62,6 +64,12 @@ Foam::phaseModel::phaseModel
     phaseDict_
     (
         phaseProperties.subDict(name_)
+    ),
+    residualAlpha_
+    (
+        "residualAlpha",
+        dimless,
+        fluid.subDict(phaseName).lookup("residualAlpha")
     ),
     alphaMax_(phaseDict_.lookupOrDefault("alphaMax", 1.0)),
     thermo_(rhoThermo::New(fluid.mesh(), name_)),
@@ -151,7 +159,7 @@ Foam::phaseModel::phaseModel
              || isA<partialSlipFvPatchVectorField>(U_.boundaryField()[i])
             )
             {
-                phiTypes[i] = fixedValueFvPatchScalarField::typeName;
+                phiTypes[i] = fixedValueFvsPatchScalarField::typeName;
             }
         }
 
@@ -211,11 +219,13 @@ Foam::tmp<Foam::volScalarField> Foam::phaseModel::d() const
     return dPtr_().d();
 }
 
+
 Foam::PhaseCompressibleTurbulenceModel<Foam::phaseModel>&
 Foam::phaseModel::turbulence()
 {
     return turbulence_();
 }
+
 
 const Foam::PhaseCompressibleTurbulenceModel<Foam::phaseModel>&
 Foam::phaseModel::turbulence() const
@@ -223,10 +233,12 @@ Foam::phaseModel::turbulence() const
     return turbulence_();
 }
 
+
 void Foam::phaseModel::correct()
 {
     return dPtr_->correct();
 }
+
 
 bool Foam::phaseModel::read(const dictionary& phaseProperties)
 {

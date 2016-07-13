@@ -9,14 +9,29 @@ EXE_INC = \
     -I../decompositionMethods/lnInclude
 
 #if !defined( WIN32 ) && !defined( WIN64 )
+
 LIB_LIBS = \
-    -L$(SCOTCH_ROOT)/lib -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) -lptscotch -lptscotcherrexit ${LINK_FLAGS} -lrt
+    -L$(SCOTCH_ROOT)/lib \
+    -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
+    -lptscotch \
+    -lptscotcherrexit \
+    -lscotch \
+    ${LINK_FLAGS} \
+    -lrt
 
 #else
 
-EXE_INC += $(GFLAGS) -DSCOTCH_PTSCOTCH
+EXE_INC += \
+    $(GFLAGS) -DSCOTCH_PTSCOTCH
+
 LIB_LIBS = \
-    -L$(SCOTCH_ROOT)/lib -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) -lptscotch -lptscotcherrexit \
-    -lscotch ${LINK_FLAGS} -ldecompositionMethods $(PLIBS)
+    -L$(SCOTCH_ROOT)/lib \
+    -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
+    -lptscotch \
+    -lptscotcherrexit \
+    -lscotch \
+    ${LINK_FLAGS} \
+    -ldecompositionMethods \
+    $(PLIBS)
 
 #endif

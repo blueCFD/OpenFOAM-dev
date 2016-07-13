@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -125,7 +125,7 @@ void Foam::displacementSBRStressFvMotionSolver::solve()
 
     surfaceScalarField Df(diffusivityPtr_->operator()());
 
-    volTensorField gradCd(fvc::grad(cellDisplacement_));
+    volTensorField gradCd("gradCd", fvc::grad(cellDisplacement_));
 
     Foam::solve
     (

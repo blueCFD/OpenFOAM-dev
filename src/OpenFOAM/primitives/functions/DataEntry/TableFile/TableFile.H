@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,8 +28,8 @@ Description
     Templated table container data entry where data is read from file.
 
     \verbatim
-        <entryName>   tableFile;
-        tableFileCoeffs
+        <entryName> tableFile;
+        <entryName>Coeffs
         {
             dimensions          [0 0 1 0 0]; // optional dimensions
             fileName            dataFile;    // name of data file
@@ -43,8 +43,8 @@ Description
     that is (scalar, vector):
     \verbatim
         (
-            0.0 (1 2 3)
-            1.0 (4 5 6)
+            (0.0 (1 2 3))
+            (1.0 (4 5 6))
         );
     \endverbatim
 
@@ -82,7 +82,6 @@ Ostream& operator<<
 template<class Type>
 class TableFile
 :
-    public DataEntry<Type>,
     public TableBase<Type>
 {
     // Private data
@@ -122,56 +121,7 @@ public:
     virtual ~TableFile();
 
 
-    // Member Functions
-
-        // Manipulation
-
-            //- Convert time
-            virtual void convertTimeBase(const Time& t)
-            {
-                TableBase<Type>::convertTimeBase(t);
-            }
-
-
-        // Evaluation
-
-            //- Return TableFile value
-            virtual Type value(const scalar x) const
-            {
-                return TableBase<Type>::value(x);
-            }
-
-            //- Integrate between two (scalar) values
-            virtual Type integrate(const scalar x1, const scalar x2) const
-            {
-                return TableBase<Type>::integrate(x1, x2);
-            }
-
-            //- Return dimensioned constant value
-            virtual dimensioned<Type> dimValue(const scalar x) const
-            {
-                return TableBase<Type>::dimValue(x);
-            }
-
-            //- Integrate between two values and return dimensioned type
-            virtual dimensioned<Type> dimIntegrate
-            (
-                const scalar x1,
-                const scalar x2
-            )
-            {
-                return TableBase<Type>::dimIntegrate(x1, x2);
-            }
-
-
     // I/O
-
-        //- Ostream Operator
-        friend Ostream& operator<< <Type>
-        (
-            Ostream& os,
-            const TableFile<Type>& tbl
-        );
 
         //- Write in dictionary format
         virtual void writeData(Ostream& os) const;

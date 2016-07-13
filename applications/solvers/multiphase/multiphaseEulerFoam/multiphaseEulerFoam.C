@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,11 +36,11 @@ Description
 #include "dragModel.H"
 #include "heatTransferModel.H"
 #include "singlePhaseTransportModel.H"
-#include "LESModel.H"
+#include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 #include "IOMRFZoneList.H"
+#include "CorrectPhi.H"
 #include "fixedFluxPressureFvPatchScalarField.H"
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,8 +56,7 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "createMRFZones.H"
     #include "initContinuityErrs.H"
-    #include "readTimeControls.H"
-    #include "createPcorrTypes.H"
+    #include "createTimeControls.H"
     #include "correctPhi.H"
     #include "CourantNo.H"
     #include "setInitialDeltaT.H"
@@ -68,7 +67,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "readTimeControls.H"
+        #include "createTimeControls.H"
         #include "CourantNo.H"
         #include "setDeltaT.H"
 
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
-            sgsModel->correct();
+            turbulence->correct();
             fluid.solve();
             rho = fluid.rho();
             #include "zonePhaseVolumes.H"

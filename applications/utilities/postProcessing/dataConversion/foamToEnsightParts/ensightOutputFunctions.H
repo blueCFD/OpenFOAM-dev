@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ void ensightParticlePositions
 );
 
 
-//- write lagrangian parcels
+//- Write lagrangian parcels
 template<class Type>
 void ensightLagrangianField
 (
@@ -75,7 +75,7 @@ void ensightLagrangianField
     IOstream::streamFormat format
 );
 
-//- write generalized field components
+//- Write generalized field components
 template<class Type>
 void ensightVolField
 (
@@ -92,7 +92,7 @@ void ensightVolField
 } // namespace Foam
 
 #ifdef NoRepository
-#   include "ensightOutputFunctions.C"
+    #include "ensightOutputFunctions.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

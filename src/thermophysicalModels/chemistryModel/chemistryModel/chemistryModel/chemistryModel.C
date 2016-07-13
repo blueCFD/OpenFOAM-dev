@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,10 +32,11 @@ License
 template<class CompType, class ThermoType>
 Foam::chemistryModel<CompType, ThermoType>::chemistryModel
 (
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const word& phaseName
 )
 :
-    CompType(mesh),
+    CompType(mesh, phaseName),
     ODESystem(),
     Y_(this->thermo().composition().Y()),
     reactions_
@@ -50,7 +51,7 @@ Foam::chemistryModel<CompType, ThermoType>::chemistryModel
 
     nSpecie_(Y_.size()),
     nReaction_(reactions_.size()),
-
+    Treact_(CompType::template lookupOrDefault<scalar>("Treact", 0.0)),
     RR_(nSpecie_)
 {
     // create the fields for the chemistry sources
@@ -343,7 +344,7 @@ void Foam::chemistryModel<CompType, ThermoType>::jacobian
         }
     }
 
-    // length of the first argument must be nSpecie()
+    // Length of the first argument must be nSpecie()
     dcdt = omega(c2, T, p);
 
     forAll(reactions_, ri)
@@ -351,7 +352,7 @@ void Foam::chemistryModel<CompType, ThermoType>::jacobian
         const Reaction<ThermoType>& R = reactions_[ri];
 
         const scalar kf0 = R.kf(p, T, c2);
-        const scalar kr0 = R.kr(p, T, c2);
+        const scalar kr0 = R.kr(kf0, p, T, c2);
 
         forAll(R.lhs(), j)
         {
@@ -489,7 +490,8 @@ Foam::chemistryModel<CompType, ThermoType>::tc() const
                 this->time().timeName(),
                 this->mesh(),
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false
             ),
             this->mesh(),
             dimensionedScalar("zero", dimTime, SMALL),
@@ -631,7 +633,7 @@ Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh> >
 Foam::chemistryModel<CompType, ThermoType>::calculateRR
 (
     const label reactionI,
-    const label specieI
+    const label speciei
 ) const
 {
     scalar pf, cf, pr, cr;
@@ -700,7 +702,7 @@ Foam::chemistryModel<CompType, ThermoType>::calculateRR
             rRef
         );
 
-        RR[celli] = w*specieThermo_[specieI].W();
+        RR[celli] = w*specieThermo_[speciei].W();
 
     }
 
@@ -794,32 +796,44 @@ Foam::scalar Foam::chemistryModel<CompType, ThermoType>::solve
 
     forAll(rho, celli)
     {
-        const scalar rhoi = rho[celli];
-        scalar pi = p[celli];
         scalar Ti = T[celli];
 
-        for (label i=0; i<nSpecie_; i++)
+        if (Ti > Treact_)
         {
-            c[i] = rhoi*Y_[i][celli]/specieThermo_[i].W();
-            c0[i] = c[i];
+            const scalar rhoi = rho[celli];
+            scalar pi = p[celli];
+
+            for (label i=0; i<nSpecie_; i++)
+            {
+                c[i] = rhoi*Y_[i][celli]/specieThermo_[i].W();
+                c0[i] = c[i];
+            }
+
+            // Initialise time progress
+            scalar timeLeft = deltaT[celli];
+
+            // Calculate the chemical source terms
+            while (timeLeft > SMALL)
+            {
+                scalar dt = timeLeft;
+                this->solve(c, Ti, pi, dt, this->deltaTChem_[celli]);
+                timeLeft -= dt;
+            }
+
+            deltaTMin = min(this->deltaTChem_[celli], deltaTMin);
+
+            for (label i=0; i<nSpecie_; i++)
+            {
+                RR_[i][celli] =
+                    (c[i] - c0[i])*specieThermo_[i].W()/deltaT[celli];
+            }
         }
-
-        // Initialise time progress
-        scalar timeLeft = deltaT[celli];
-
-        // Calculate the chemical source terms
-        while (timeLeft > SMALL)
+        else
         {
-            scalar dt = timeLeft;
-            this->solve(c, Ti, pi, dt, this->deltaTChem_[celli]);
-            timeLeft -= dt;
-        }
-
-        deltaTMin = min(this->deltaTChem_[celli], deltaTMin);
-
-        for (label i=0; i<nSpecie_; i++)
-        {
-            RR_[i][celli] = (c[i] - c0[i])*specieThermo_[i].W()/deltaT[celli];
+            for (label i=0; i<nSpecie_; i++)
+            {
+                RR_[i][celli] = 0;
+            }
         }
     }
 

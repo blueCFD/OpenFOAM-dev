@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ${0%/*} || exit 1    # run from this directory
+cd ${0%/*} || exit 1    # Run from this directory
 
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
@@ -24,9 +24,11 @@ runApplication topoSet -dict system/fBurner.topoSetDict
 
 runApplication createPatch -overwrite
 
-decomposePar -force > log.decomposePar.log 2>&1
+decomposePar -force > log.decomposePar 2>&1
 
-decomposePar -region panelRegion > log.decomposeParPanelRegion.log 2>&1
+decomposePar -region panelRegion > log.decomposeParPanelRegion 2>&1
+
+decomposePar -fields > log.decomposePar 2>&1
 
 runParallel `getApplication` 6
 

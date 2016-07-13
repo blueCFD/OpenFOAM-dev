@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "UPstream.H"
 #include "debug.H"
+#include "registerSwitch.H"
 #include "dictionary.H"
 #include "IOstreams.H"
 
@@ -409,7 +410,12 @@ Foam::UPstream::treeCommunication_(10);
 
 // Allocate a serial communicator. This gets overwritten in parallel mode
 // (by UPstream::setParRun())
-Foam::UPstream::communicator serialComm(-1, Foam::labelList(1, 0), false);
+Foam::UPstream::communicator serialComm
+(
+    -1,
+    Foam::labelList(1, Foam::label(0)),
+    false
+);
 
 
 
@@ -418,59 +424,67 @@ Foam::UPstream::communicator serialComm(-1, Foam::labelList(1, 0), false);
 // in accuracy
 bool Foam::UPstream::floatTransfer
 (
-    debug::optimisationSwitch("floatTransfer", 0)
+    Foam::debug::optimisationSwitch("floatTransfer", 0)
 );
-registerOptSwitchWithName
+registerOptSwitch
 (
-    Foam::UPstream::floatTransfer,
-    floatTransfer,
-    "floatTransfer"
+    "floatTransfer",
+    bool,
+    Foam::UPstream::floatTransfer
 );
 
 // Number of processors at which the reduce algorithm changes from linear to
 // tree
 int Foam::UPstream::nProcsSimpleSum
 (
-    debug::optimisationSwitch("nProcsSimpleSum", 16)
+    Foam::debug::optimisationSwitch("nProcsSimpleSum", 16)
 );
-registerOptSwitchWithName
+registerOptSwitch
 (
-    Foam::UPstream::nProcsSimpleSum,
-    nProcsSimpleSum,
-    "nProcsSimpleSum"
+    "nProcsSimpleSum",
+    int,
+    Foam::UPstream::nProcsSimpleSum
 );
 
 // Default commsType
 Foam::UPstream::commsTypes Foam::UPstream::defaultCommsType
 (
-    commsTypeNames.read(debug::optimisationSwitches().lookup("commsType"))
+    commsTypeNames.read(Foam::debug::optimisationSwitches().lookup("commsType"))
 );
-// Register re-reader
-class addcommsTypeToOpt
-:
-    public ::Foam::simpleRegIOobject
-{
-public:
-    addcommsTypeToOpt(const char* name)
-    :
-        ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
-    {}
-    virtual ~addcommsTypeToOpt()
-    {}
-    virtual void readData(Foam::Istream& is)
-    {
-        Foam::UPstream::defaultCommsType = Foam::UPstream::commsTypeNames.read
-        (
-            is
-        );
-    }
-    virtual void writeData(Foam::Ostream& os) const
-    {
-        os << Foam::UPstream::commsTypeNames[Foam::UPstream::defaultCommsType];
-    }
-};
-addcommsTypeToOpt addcommsTypeToOpt_("commsType");
 
+namespace Foam
+{
+    // Register re-reader
+    class addcommsTypeToOpt
+    :
+        public ::Foam::simpleRegIOobject
+    {
+    public:
+
+        addcommsTypeToOpt(const char* name)
+        :
+            ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
+        {}
+
+        virtual ~addcommsTypeToOpt()
+        {}
+
+        virtual void readData(Foam::Istream& is)
+        {
+            UPstream::defaultCommsType = UPstream::commsTypeNames.read
+            (
+                is
+            );
+        }
+
+        virtual void writeData(Foam::Ostream& os) const
+        {
+            os << UPstream::commsTypeNames[UPstream::defaultCommsType];
+        }
+    };
+
+    addcommsTypeToOpt addcommsTypeToOpt_("commsType");
+}
 
 // Default communicator
 Foam::label Foam::UPstream::worldComm(0);
@@ -483,13 +497,14 @@ Foam::label Foam::UPstream::warnComm(-1);
 // Number of polling cycles in processor updates
 int Foam::UPstream::nPollProcInterfaces
 (
-    debug::optimisationSwitch("nPollProcInterfaces", 0)
+    Foam::debug::optimisationSwitch("nPollProcInterfaces", 0)
 );
-registerOptSwitchWithName
+registerOptSwitch
 (
-    Foam::UPstream::nPollProcInterfaces,
-    nPollProcInterfaces,
-    "nPollProcInterfaces"
+    "nPollProcInterfaces",
+    int,
+    Foam::UPstream::nPollProcInterfaces
 );
+
 
 // ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,9 +25,6 @@ License
 
 #include "fieldMinMax.H"
 #include "volFields.H"
-#include "dictionary.H"
-#include "Time.H"
-#include "ListOps.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -44,46 +41,60 @@ void Foam::fieldMinMax::output
     const Type& maxValue
 )
 {
-    file()<< obr_.time().value();
-    writeTabbed(file(), fieldName);
+    OFstream& file = this->file();
 
-    file()
-        << token::TAB << minValue
-        << token::TAB << minC;
-
-    if (Pstream::parRun())
+    if (location_)
     {
-        file()<< token::TAB << minProcI;
+        file<< obr_.time().value();
+
+        writeTabbed(file, fieldName);
+
+        file<< token::TAB << minValue
+            << token::TAB << minC;
+
+        if (Pstream::parRun())
+        {
+            file<< token::TAB << minProcI;
+        }
+
+        file<< token::TAB << maxValue
+            << token::TAB << maxC;
+
+        if (Pstream::parRun())
+        {
+            file<< token::TAB << maxProcI;
+        }
+
+        file<< endl;
+
+        if (log_) Info
+            << "    min(" << outputName << ") = " << minValue
+            << " at location " << minC;
+
+        if (Pstream::parRun())
+        {
+            if (log_) Info<< " on processor " << minProcI;
+        }
+
+        if (log_) Info
+            << nl << "    max(" << outputName << ") = " << maxValue
+            << " at location " << maxC;
+
+        if (Pstream::parRun())
+        {
+            if (log_) Info<< " on processor " << maxProcI;
+        }
+    }
+    else
+    {
+        file<< token::TAB << minValue << token::TAB << maxValue;
+
+        if (log_) Info
+            << "    min/max(" << outputName << ") = "
+            << minValue << ' ' << maxValue;
     }
 
-    file()
-        << token::TAB << maxValue
-        << token::TAB << maxC;
-
-    if (Pstream::parRun())
-    {
-        file()<< token::TAB << maxProcI;
-    }
-
-    file() << endl;
-
-    Info(log_)<< "    min(" << outputName << ") = "
-        << minValue << " at position " << minC;
-
-    if (Pstream::parRun())
-    {
-        Info(log_)<< " on processor " << minProcI;
-    }
-
-    Info(log_)<< nl << "    max(" << outputName << ") = "
-        << maxValue << " at position " << maxC;
-
-    if (Pstream::parRun())
-    {
-        Info(log_)<< " on processor " << maxProcI;
-    }
-
-    Info(log_)<< endl;
+    if (log_) Info<< endl;
 }
 
 
@@ -263,8 +274,7 @@ void Foam::fieldMinMax::calcMinMaxFields
                         "const word&, "
                         "const modeType&"
                     ")"
-                )
-                    << "Unknown min/max mode: " << modeTypeNames_[mode_]
+                )   << "Unknown min/max mode: " << modeTypeNames_[mode_]
                     << exit(FatalError);
             }
         }

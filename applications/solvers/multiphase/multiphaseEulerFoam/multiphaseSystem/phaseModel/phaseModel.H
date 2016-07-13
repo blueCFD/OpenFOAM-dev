@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,7 +80,7 @@ class phaseModel
         volVectorField DDtU_;
 
         //- Volumetric flux of the phase
-        surfaceScalarField phiAlpha_;
+        surfaceScalarField alphaPhi_;
 
         //- Volumetric flux for the phase
         autoPtr<surfaceScalarField> phiPtr_;
@@ -198,18 +198,21 @@ public:
             return phiPtr_();
         }
 
-        const surfaceScalarField& phiAlpha() const
+        const surfaceScalarField& alphaPhi() const
         {
-            return phiAlpha_;
+            return alphaPhi_;
         }
 
-        surfaceScalarField& phiAlpha()
+        surfaceScalarField& alphaPhi()
         {
-            return phiAlpha_;
+            return alphaPhi_;
         }
 
         //- Correct the phase properties
         void correct();
+
+        //-Inherit read from volScalarField
+        using volScalarField::read;
 
         //- Read base transportProperties dictionary
         bool read(const dictionary& phaseDict);

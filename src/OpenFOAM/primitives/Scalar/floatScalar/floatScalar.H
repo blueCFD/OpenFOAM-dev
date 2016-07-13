@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,6 +55,7 @@ static const floatScalar floatScalarGREAT = 1.0e+6;
 static const floatScalar floatScalarVGREAT = 1.0e+37;
 static const floatScalar floatScalarROOTVGREAT = 1.0e+18;
 static const floatScalar floatScalarSMALL = 1.0e-6;
+static const floatScalar floatScalarROOTSMALL = 1.0e-3;
 static const floatScalar floatScalarVSMALL = 1.0e-37;
 static const floatScalar floatScalarROOTVSMALL = 1.0e-18;
 
@@ -85,7 +86,20 @@ inline Scalar func(const Scalar s) \
     return ::func##f(s);           \
 }
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
 #include "Scalar.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 inline Scalar hypot(const Scalar x, const Scalar y)
 {

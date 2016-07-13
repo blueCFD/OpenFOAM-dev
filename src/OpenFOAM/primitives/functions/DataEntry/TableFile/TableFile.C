@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,11 +30,10 @@ License
 template<class Type>
 Foam::TableFile<Type>::TableFile(const word& entryName, const dictionary& dict)
 :
-    DataEntry<Type>(entryName),
-    TableBase<Type>(entryName, dict.subDict(type() + "Coeffs")),
+    TableBase<Type>(entryName, dict.subDict(entryName + "Coeffs")),
     fName_("none")
 {
-    const dictionary coeffs(dict.subDict(type() + "Coeffs"));
+    const dictionary coeffs(dict.subDict(entryName + "Coeffs"));
     coeffs.lookup("fileName") >> fName_;
 
     if (coeffs.found("dimensions"))
@@ -63,7 +62,6 @@ Foam::TableFile<Type>::TableFile(const word& entryName, const dictionary& dict)
 template<class Type>
 Foam::TableFile<Type>::TableFile(const TableFile<Type>& tbl)
 :
-    DataEntry<Type>(tbl),
     TableBase<Type>(tbl),
     fName_(tbl.fName_)
 {}

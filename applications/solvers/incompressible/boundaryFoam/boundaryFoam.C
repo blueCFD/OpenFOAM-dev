@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ Description
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "RASModel.H"
+#include "turbulentTransportModel.H"
 #include "wallFvPatch.H"
 #include "makeGraph.H"
 
@@ -45,6 +45,8 @@ Description
 
 int main(int argc, char *argv[])
 {
+    argList::noParallel();
+
     #include "setRootCase.H"
 
     #include "createTime.H"
@@ -79,7 +81,7 @@ int main(int argc, char *argv[])
         U += (Ubar - UbarStar);
         gradP += (Ubar - UbarStar)/(1.0/UEqn.A())().weightedAverage(mesh.V());
 
-
+        laminarTransport.correct();
         turbulence->correct();
 
         Info<< "Uncorrected Ubar = " << (flowDirection & UbarStar.value())

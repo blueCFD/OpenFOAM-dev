@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,16 +42,15 @@ void Foam::fvSchemes::clear()
     defaultD2dt2Scheme_.clear();
     interpolationSchemes_.clear();
     defaultInterpolationScheme_.clear();
-    divSchemes_.clear(); // optional
+    divSchemes_.clear();
     defaultDivScheme_.clear();
-    gradSchemes_.clear(); // optional
+    gradSchemes_.clear();
     defaultGradScheme_.clear();
     snGradSchemes_.clear();
     defaultSnGradScheme_.clear();
-    laplacianSchemes_.clear(); // optional
+    laplacianSchemes_.clear();
     defaultLaplacianScheme_.clear();
-    fluxRequired_.clear();
-    defaultFluxRequired_ = false;
+    // Do not clear fluxRequired settings
 }
 
 
@@ -60,42 +59,6 @@ void Foam::fvSchemes::read(const dictionary& dict)
     if (dict.found("ddtSchemes"))
     {
         ddtSchemes_ = dict.subDict("ddtSchemes");
-    }
-    else if (dict.found("timeScheme"))
-    {
-        // For backward compatibility.
-        // The timeScheme will be deprecated with warning or removed
-        WarningIn("fvSchemes::read()")
-            << "Using deprecated 'timeScheme' instead of 'ddtSchemes'"
-            << nl << endl;
-
-        word schemeName(dict.lookup("timeScheme"));
-
-        if (schemeName == "EulerImplicit")
-        {
-            schemeName = "Euler";
-        }
-        else if (schemeName == "BackwardDifferencing")
-        {
-            schemeName = "backward";
-        }
-        else if (schemeName == "SteadyState")
-        {
-            schemeName = "steadyState";
-        }
-        else
-        {
-            FatalIOErrorIn("fvSchemes::read()", dict.lookup("timeScheme"))
-                << "\n    Only EulerImplicit, BackwardDifferencing and "
-                   "SteadyState\n    are supported by the old timeScheme "
-                   "specification.\n    Please use ddtSchemes instead."
-                << exit(FatalIOError);
-        }
-
-        ddtSchemes_.set("default", schemeName);
-
-        ddtSchemes_.lookup("default")[0].lineNumber() =
-            dict.lookup("timeScheme").lineNumber();
     }
     else
     {
@@ -120,30 +83,6 @@ void Foam::fvSchemes::read(const dictionary& dict)
     if (dict.found("d2dt2Schemes"))
     {
         d2dt2Schemes_ = dict.subDict("d2dt2Schemes");
-    }
-    else if (dict.found("timeScheme"))
-    {
-        // For backward compatibility.
-        // The timeScheme will be deprecated with warning or removed
-        WarningIn("fvSchemes::read()")
-            << "Using deprecated 'timeScheme' instead of 'd2dt2Schemes'"
-            << nl << endl;
-
-        word schemeName(dict.lookup("timeScheme"));
-
-        if (schemeName == "EulerImplicit")
-        {
-            schemeName = "Euler";
-        }
-        else if (schemeName == "SteadyState")
-        {
-            schemeName = "steadyState";
-        }
-
-        d2dt2Schemes_.set("default", schemeName);
-
-        d2dt2Schemes_.lookup("default")[0].lineNumber() =
-            dict.lookup("timeScheme").lineNumber();
     }
     else
     {
@@ -237,7 +176,7 @@ void Foam::fvSchemes::read(const dictionary& dict)
 
     if (dict.found("fluxRequired"))
     {
-        fluxRequired_ = dict.subDict("fluxRequired");
+        fluxRequired_.merge(dict.subDict("fluxRequired"));
 
         if
         (
@@ -373,9 +312,6 @@ Foam::fvSchemes::fvSchemes(const objectRegistry& obr)
     defaultFluxRequired_(false),
     steady_(false)
 {
-    // persistent settings across reads is incorrect
-    clear();
-
     if
     (
         readOpt() == IOobject::MUST_READ
@@ -394,7 +330,7 @@ bool Foam::fvSchemes::read()
 {
     if (regIOobject::read())
     {
-        // persistent settings across reads is incorrect
+        // Clear current settings except fluxRequired
         clear();
 
         read(schemesDict());
@@ -555,6 +491,17 @@ Foam::ITstream& Foam::fvSchemes::laplacianScheme(const word& name) const
         const_cast<ITstream&>(defaultLaplacianScheme_).rewind();
         return const_cast<ITstream&>(defaultLaplacianScheme_);
     }
+}
+
+
+void Foam::fvSchemes::setFluxRequired(const word& name) const
+{
+    if (debug)
+    {
+        Info<< "Setting fluxRequired for " << name << endl;
+    }
+
+    fluxRequired_.add(name, true, true);
 }
 
 

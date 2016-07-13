@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,6 @@ License
 
 #include "Burns.H"
 #include "phasePair.H"
-#include "fvc.H"
 #include "PhaseCompressibleTurbulenceModel.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -57,8 +56,17 @@ Foam::turbulentDispersionModels::Burns::Burns
 )
 :
     turbulentDispersionModel(dict, pair),
-    sigma_("sigma", dimless, dict.lookup("sigma")),
-    residualAlpha_("residualAlpha", dimless, dict.lookup("residualAlpha"))
+    sigma_("sigma", dimless, dict),
+    residualAlpha_
+    (
+        "residualAlpha",
+        dimless,
+        dict.lookupOrDefault<scalar>
+        (
+            "residualAlpha",
+            pair_.dispersed().residualAlpha().value()
+        )
+    )
 {}
 
 
@@ -70,8 +78,8 @@ Foam::turbulentDispersionModels::Burns::~Burns()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField>
-Foam::turbulentDispersionModels::Burns::F() const
+Foam::tmp<Foam::volScalarField>
+Foam::turbulentDispersionModels::Burns::D() const
 {
     const fvMesh& mesh(pair_.phase1().mesh());
     const dragModel&
@@ -84,9 +92,8 @@ Foam::turbulentDispersionModels::Burns::F() const
         );
 
     return
-      - 0.75
+        0.75
        *drag.CdRe()
-       *pair_.dispersed()
        *pair_.continuous().nu()
        *pair_.continuous().turbulence().nut()
        /(
@@ -94,7 +101,6 @@ Foam::turbulentDispersionModels::Burns::F() const
            *sqr(pair_.dispersed().d())
         )
        *pair_.continuous().rho()
-       *fvc::grad(pair_.continuous())
        *(1.0 + pair_.dispersed()/max(pair_.continuous(), residualAlpha_));
 }
 

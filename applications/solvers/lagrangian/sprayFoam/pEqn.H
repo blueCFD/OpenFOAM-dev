@@ -1,10 +1,18 @@
 rho = thermo.rho();
+rho = max(rho, rhoMin);
+rho = min(rho, rhoMax);
+rho.relax();
 
-volScalarField rAU(1.0/UEqn.A());
+volScalarField rAU(1.0/UEqn().A());
 surfaceScalarField rhorAUf("rhorAUf", fvc::interpolate(rho*rAU));
 
 volVectorField HbyA("HbyA", U);
-HbyA = rAU*UEqn.H();
+HbyA = rAU*UEqn().H();
+
+if (pimple.nCorrPISO() <= 1)
+{
+    UEqn.clear();
+}
 
 if (pimple.transonic())
 {
@@ -13,12 +21,12 @@ if (pimple.transonic())
         "phid",
         fvc::interpolate(psi)
        *(
-            (fvc::interpolate(rho*HbyA) & mesh.Sf())
-          + rhorAUf*fvc::ddtCorr(rho, U, phi)
-        )/fvc::interpolate(rho)
+            (fvc::interpolate(HbyA) & mesh.Sf())
+          + rhorAUf*fvc::ddtCorr(rho, U, phi)/fvc::interpolate(rho)
+        )
     );
 
-    fvOptions.makeRelative(fvc::interpolate(psi), phid);
+    MRF.makeRelative(fvc::interpolate(psi), phid);
 
     while (pimple.correctNonOrthogonal())
     {
@@ -31,8 +39,6 @@ if (pimple.transonic())
             parcels.Srho()
           + fvOptions(psi, p, rho.name())
         );
-
-        fvOptions.constrain(pEqn);
 
         pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
 
@@ -53,7 +59,7 @@ else
         )
     );
 
-    fvOptions.makeRelative(fvc::interpolate(rho), phiHbyA);
+    MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
     while (pimple.correctNonOrthogonal())
     {
@@ -67,8 +73,6 @@ else
           + fvOptions(psi, p, rho.name())
         );
 
-        fvOptions.constrain(pEqn);
-
         pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
 
         if (pimple.finalNonOrthogonalIter())
@@ -80,6 +84,17 @@ else
 
 #include "rhoEqn.H"
 #include "compressibleContinuityErrs.H"
+
+// Explicitly relax pressure for momentum corrector
+p.relax();
+
+// Recalculate density from the relaxed pressure
+rho = thermo.rho();
+rho = max(rho, rhoMin);
+rho = min(rho, rhoMax);
+rho.relax();
+Info<< "rho max/min : " << max(rho).value()
+    << " " << min(rho).value() << endl;
 
 U = HbyA - rAU*fvc::grad(p);
 U.correctBoundaryConditions();

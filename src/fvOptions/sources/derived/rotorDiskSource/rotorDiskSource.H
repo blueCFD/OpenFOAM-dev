@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,10 +25,10 @@ Class
     Foam::fv::rotorDiskSource
 
 Description
-    Cell based momemtum source
+    Rotor disk source
 
-    Source approximates the mean effects of rotor forces on a cylindrical
-    region within the domain
+    Cell based momemtum source which approximates the mean effects of
+    rotor forces on a cylindrical region within the domain.
 
     \heading Source usage
 
@@ -58,12 +58,21 @@ Description
 
         blade
         {
-            ...
+            // see bladeModel.H for documentation
         }
 
         profiles
         {
-            ...
+            profile1
+            {
+                type    lookup; // lookup || series
+                ...
+                // see lookupProfile.H or seriesProfile.H for documentation
+            }
+            profile2
+            {
+                ...
+            }
         }
     }
     \endverbatim
@@ -78,6 +87,10 @@ Description
     - local         : use local flow conditions
     - surfaceNormal : specified normal velocity (positive towards rotor)
 
+See Also
+    Foam::bladeModel
+    Foam::lookupProfile
+    Foam::seriesProfile
 
 SourceFiles
     rotorDiskSource.C
@@ -88,9 +101,9 @@ SourceFiles
 #ifndef rotorDiskSource_H
 #define rotorDiskSource_H
 
-#include "fvOption.H"
+#include "cellSetOption.H"
 #include "cylindricalCS.H"
-#include "localAxesRotation.H"
+#include "cylindrical.H"
 #include "NamedEnum.H"
 #include "bladeModel.H"
 #include "profileModelList.H"
@@ -113,7 +126,7 @@ namespace fv
 
 class rotorDiskSource
 :
-    public option
+    public cellSetOption
 {
 public:
 
@@ -188,7 +201,7 @@ protected:
         cylindricalCS coordSys_;
 
          //- Rotor transformation co-ordinate system
-        autoPtr<localAxesRotation> localAxesRotation_;
+        autoPtr<cylindrical> cylindrical_;
 
         //- Maximum radius
         scalar rMax_;
@@ -305,10 +318,7 @@ public:
             );
 
 
-        // I-O
-
-            //- Write the source properties
-            virtual void writeData(Ostream&) const;
+        // IO
 
             //- Read source dictionary
             virtual bool read(const dictionary& dict);

@@ -11,7 +11,7 @@
 /^License/,/\*\//{
 /^License/,\%http://www.gnu.org/licenses%{
 s?^License.*?\*\/\
-\/\*! \\file %filePath%\
+\/\*! \\file %realFilePath%\
 <b>Original source file</b> <a href="%filePath%">%fileName%</a>\
 \
 \
@@ -58,9 +58,21 @@ s/^    /\\relates /
 # =>
 # \\class Foam::className
 #
-/^Class *$/,/^[^ ]/{
-s/^Class *$//
-s/^    /\\class /
+# Class
+#     Foam::namespaceName::
+#         className
+# =>
+# \\class Foam::namespaceName::className
+#
+/^Class *$/{
+N
+:loop
+/.*:: *$/{
+N
+s/^ *\(.*\) *\n *\(.*\) */\1\2/
+}
+t loop
+s/Class *\n *\(.*\) */\\class \1/
 }
 
 

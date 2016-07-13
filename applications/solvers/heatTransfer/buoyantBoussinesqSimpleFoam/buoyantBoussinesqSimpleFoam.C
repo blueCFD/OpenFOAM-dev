@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ Description
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "RASModel.H"
+#include "turbulentTransportModel.H"
 #include "fvIOoptionList.H"
 #include "simpleControl.H"
 #include "fixedFluxPressureFvPatchScalarField.H"
@@ -59,12 +59,13 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
-    #include "readGravitationalAcceleration.H"
-    #include "createFields.H"
-    #include "createFvOptions.H"
-    #include "initContinuityErrs.H"
 
     simpleControl simple(mesh);
+
+    #include "createFields.H"
+    #include "createMRF.H"
+    #include "createFvOptions.H"
+    #include "initContinuityErrs.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -81,6 +82,7 @@ int main(int argc, char *argv[])
             #include "pEqn.H"
         }
 
+        laminarTransport.correct();
         turbulence->correct();
 
         runTime.write();
