@@ -353,11 +353,15 @@ fi
 
     $make -s -f $WM_DIR/MakefileFiles MAKE_DIR=$MakeDir OBJECTS_DIR=$objectsDir
 
+    $make -s -f $WM_DIR/MakefileFiles MAKE_DIR=$MakeDir OBJECTS_DIR=$objectsDir\
+          $objectsDir/variables
+
     if isMinGW && \
-       [ "$makeType" = "libso" -o "$makeType" = "all" -o \
-         "$makeType" = "dep" -o -z "$makeType" ]
+       [ "$targetType" = "libso" -o "$targetType" = "all" -o \
+         "$targetType" = "dep" -o -z "$targetType" ]
     then
-        make -s -f $WM_DIR/MakefileFiles versioning
+        make -s -f $WM_DIR/MakefileFiles versioning MAKE_DIR=$MakeDir \
+            OBJECTS_DIR=$objectsDir
     fi
 )
 

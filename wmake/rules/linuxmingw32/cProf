@@ -1,2 +1,2 @@
 cDBUG       = -pg
-cOPT        = -O2
+cOPT        = -O2 -pg

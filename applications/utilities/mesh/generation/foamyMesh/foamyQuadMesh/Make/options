@@ -50,8 +50,8 @@ EXE_INC = \
     ${CGAL_INC} \
     ${c++CGALWARN} \
     -I$(FOAM_APP)/utilities/mesh/generation/extrude2DMesh/extrude2DMesh/lnInclude \
-    -IconformalVoronoi2DMesh/lnInclude \
-    -I$(FOAM_APP)/utilities/mesh/generation/foamyHexMesh/conformalVoronoiMesh/lnInclude \
+    -I../conformalVoronoi2DMesh/lnInclude \
+    -I../conformalVoronoiMesh/lnInclude \
     -I$(LIB_SRC)/parallel/decompose/decompositionMethods/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
@@ -62,7 +62,7 @@ EXE_INC = \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)/fileFormats/lnInclude \
-    -I$(LIB_SRC)/mesh/autoMesh/lnInclude \
+    -I$(LIB_SRC)/mesh/autoMesh/lnInclude
 
 EXE_LIBS = \
     $(CGAL_LIBS) \

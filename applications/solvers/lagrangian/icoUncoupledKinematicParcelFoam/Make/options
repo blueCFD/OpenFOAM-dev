@@ -31,6 +31,3 @@ EXE_LIBS = \
     -lmeshTools \
     -lregionModels \
     -lsurfaceFilmModels
-
-EXE_LIBS += \
-    -lincompressibleTurbulenceModel

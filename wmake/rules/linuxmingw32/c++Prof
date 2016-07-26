@@ -1,2 +1,2 @@
 c++DBUG    = -pg
-c++OPT     = -O2
+c++OPT     = -O2 -pg

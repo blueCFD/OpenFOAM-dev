@@ -5,7 +5,7 @@ EXE_INC  = $(PFLAGS) $(PINC)
 LIB_LIBS = $(PLIBS)
 
 #if defined( WIN32 ) || defined( WIN64 )
-PROJECT_LIBS = -l$(WM_PROJECT)
+PROJECT_LIBS = -L$(FOAM_LIBBIN) -l$(WM_PROJECT)
 #else
 PROJECT_LIBS =
 #endif

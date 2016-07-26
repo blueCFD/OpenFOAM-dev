@@ -20,10 +20,10 @@ wmakeCheckPwd "$WM_PROJECT_DIR" || {
 }
 
 # Compile wmake support applications
-(cd wmake/src && make)
+(cd wmake/src && make $(isMinGW && echo 'EXE_EXTENSION=.exe'))
 
 if onWin; then
-    mv ${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdepend.exe \
+    cp ${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdepend.exe \
        ${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdep.exe
 fi
 

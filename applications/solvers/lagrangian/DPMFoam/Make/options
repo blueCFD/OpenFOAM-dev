@@ -1,5 +1,6 @@
 EXE_INC = \
     -I./DPMTurbulenceModels/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
     -I$(LIB_SRC)/lagrangian/intermediate/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
@@ -14,7 +15,6 @@ EXE_INC = \
     -I$(LIB_SRC)/TurbulenceModels/phaseIncompressible/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
-    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude
 
 EXE_LIBS = \
@@ -34,8 +34,3 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lmeshTools
 
-
-EXE_LIBS += \
-    -lincompressibleTurbulenceModel \
-    -lincompressibleRASModels \
-    -lincompressibleLESModels

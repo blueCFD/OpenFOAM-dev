@@ -33,25 +33,26 @@ wmakeVersionTag
 OSspecific/${WM_OSTYPE:-POSIX}/Allwmake $*
 wmake $targetType OpenFOAM
 
-#in case direct linking isn't to be used, then setup settings for using Pstream library
+# In case direct linking isn't to be used, then setup settings for using
+# Pstream library
 if isMinGW; then
-  export WM_PSTREAMLINK="LINKTOPSTREAM"
+    export WM_PSTREAMLINK="LINKTOPSTREAM"
 
-  #build all Pstream libraries
-  (cd Pstream && ./Allwmake)
+    #build all Pstream libraries
+    (cd Pstream && ./Allwmake)
 
-  rm -f $FOAM_LIBBIN/libOpenFOAM.*
+    rm -f $FOAM_LIBBIN/libOpenFOAM.*
 
-  wmake $makeType OpenFOAM
+    wmake $makeType OpenFOAM
 
-  unset WM_PSTREAMLINK
+    unset WM_PSTREAMLINK
 
-  # mingw excludes default compiler path so copy
-  # missing /usr/include/FlexLexer.h for flex
-  cp /usr/include/FlexLexer.h "$FOAM_SRC/OpenFOAM/lnInclude/"
-  
-  #Build the stub library
-  wmake libso OSspecific/${WM_OSTYPE:-POSIX}/stubLibrary
+    # mingw excludes default compiler path so copy
+    # missing /usr/include/FlexLexer.h for flex
+    cp /usr/include/FlexLexer.h "$FOAM_SRC/OpenFOAM/lnInclude/"
+
+    #Build the stub library
+    wmake libso OSspecific/${WM_OSTYPE:-POSIX}/stubLibrary
 fi
 
 
@@ -61,17 +62,15 @@ wmake $targetType triSurface
 wmake $targetType meshTools
 wmake $targetType edgeMesh
 
-# lagrangian is needed by finiteVolume
-wmake $makeType lagrangian/basic
-
-# finiteVolume is needed by the Decomposition methods
-wmake $makeType finiteVolume
-
 # Decomposition methods needed by dummyThirdParty
 # (dummy metisDecomp, scotchDecomp etc) needed by e.g. meshTools
 parallel/decompose/AllwmakeLnInclude
 
 if isMinGW; then
+  # finiteVolume is needed by the Decomposition methods
+  wmake $makeType finiteVolume
+
+  # Decomposition methods are needed for dummyThirdParty
   wmake $makeType parallel/decompose/decompositionMethods
 fi
 
@@ -98,12 +97,6 @@ wmake $targetType randomProcesses
 transportModels/Allwmake $targetType $*
 thermophysicalModels/Allwmake $targetType $*
 TurbulenceModels/Allwmake $targetType $*
-
-# Depends on RAS/turbulenceModels/compressible
-# hence not in thermophysicalModels
-wmake $makeType thermophysicalModels/chemistryModel
-wmake $makeType thermophysicalModels/solidChemistryModel
-
 wmake $targetType combustionModels
 regionModels/Allwmake $targetType $*
 lagrangian/Allwmake $targetType $*

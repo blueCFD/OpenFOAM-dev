@@ -219,7 +219,7 @@ else
         -o -name '*.[ch]xx' \
         -o -name '*.[ch]pp' \
         -o -name '*.type' \
-        \) | \
+        \) -print | \
     while read newItemToCreate; do
 
       echo "#include \"$newItemToCreate\"" > ${newItemToCreate##*/}

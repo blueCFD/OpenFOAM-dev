@@ -58,7 +58,7 @@ __p_sig_fn_t Foam::sigFpe::oldAction_ = SIG_DFL;
 
 static unsigned int fpOld_ = 0;
 
-void Foam::sigFpe::fillSignallingNan(UList<scalar>& lst)
+void Foam::sigFpe::fillNan(UList<scalar>& lst)
 {
     lst = std::numeric_limits<scalar>::signaling_NaN();
 }

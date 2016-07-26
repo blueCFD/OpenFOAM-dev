@@ -9,25 +9,18 @@ set -x
 wmake $targetType specie
 wmake $targetType solidSpecie
 wmake $targetType thermophysicalFunctions
+./properties/Allwmake $targetType $*
 
 wmake $targetType basic
 wmake $targetType reactionThermo
 wmake $targetType laminarFlameSpeed
-
-# Depends on basic above
-./properties/Allwmake $targetType $*
-
-# Can't build here as chemistryModel depends on RAS/turbulenceModels/compressible
-#wmake $targetType chemistryModel
-
+wmake $targetType chemistryModel
 wmake $targetType barotropicCompressibilityModel
 wmake $targetType SLGThermo
 
 
 wmake $targetType solidThermo
-
-# Can't build here as solidChemistryModel also depends on RAS/turbulenceModels/compressible
-#wmake $targetType solidChemistryModel
+wmake $targetType solidChemistryModel
 
 wmake $targetType radiation
 

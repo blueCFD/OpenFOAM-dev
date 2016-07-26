@@ -151,22 +151,19 @@ LIB_HEADER_DIRS = \
 # Define link statements for executables
 #------------------------------------------------------------------------------
 
-EXE  = $(EXE)$(EXE_EXT)
-SEXE = $(SEXE)$(EXE_EXT)
-
-$(EXE): $(OBJECTS)
-	@$(WM_SCRIPTS)/makeTargetDir $(EXE)
+$(EXE)$(EXE_EXT): $(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
 	$(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
-	    $(LINK_LIBS) $(GLIBS) -o $(EXE)
+	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
 
-exe:    $(SEXE)
-	@echo \'$(SEXE)\' is up to date.
+exe:    $(SEXE)$(EXE_EXT)
+	@echo \'$(SEXE)$(EXE_EXT)\' is up to date.
 
-$(SEXE):$(OBJECTS)
-	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)
+$(SEXE)$(EXE_EXT):$(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)$(EXE_EXT)
 	$(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
-	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)
+	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)$(EXE_EXT)
 
 
 #------------------------------------------------------------------------------
@@ -180,8 +177,10 @@ libso:  $(LIB).$(SO)
 
 $(LIB).$(SO): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
-	$(LINKLIBSO) $(OBJECTS) -L$(LIB_PLATFORMS) \
-	    $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
+	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
+      $(OBJECTS)
+	$(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
+	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 
 lib:    $(LIB).a
 	@echo \'$(LIB).a\' is up to date.

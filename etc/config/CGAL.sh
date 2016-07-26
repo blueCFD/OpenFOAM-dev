@@ -65,7 +65,12 @@ then
 
 else
 
-    export CGAL_ARCH_PATH=system
+    if onWin
+    then
+        export CGAL_ARCH_PATH=/mingw64
+    else
+        export CGAL_ARCH_PATH=system
+    fi
 
 fi
 
@@ -82,7 +87,12 @@ then
 
 else
 
-    export BOOST_ARCH_PATH=system
+    if onWin
+    then
+        export BOOST_ARCH_PATH=/mingw64
+    else
+        export BOOST_ARCH_PATH=system
+    fi
 
 fi
 

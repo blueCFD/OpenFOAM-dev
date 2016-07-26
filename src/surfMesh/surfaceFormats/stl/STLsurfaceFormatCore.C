@@ -45,7 +45,7 @@ int Foam::fileFormats::STLsurfaceFormatCore::detectBINARY
     const fileName& filename
 )
 {
-    off_t dataFileSize = Foam::fileSize(filename);
+    off64_t dataFileSize = Foam::fileSize(filename);
 
     IFstream str(filename, IOstream::BINARY);
     istream& is = str().stdStream();
@@ -89,7 +89,7 @@ int Foam::fileFormats::STLsurfaceFormatCore::detectBINARY
 bool Foam::fileFormats::STLsurfaceFormatCore::readBINARY
 (
     istream& is,
-    const off_t dataFileSize
+    const off64_t dataFileSize
 )
 {
     sorted_ = true;
@@ -223,7 +223,7 @@ Foam::fileFormats::STLsurfaceFormatCore::STLsurfaceFormatCore
     names_(0),
     sizes_(0)
 {
-    off_t dataFileSize = Foam::fileSize(filename);
+    off64_t dataFileSize = Foam::fileSize(filename);
 
     // auto-detect ascii/binary
     if (detectBINARY(filename))

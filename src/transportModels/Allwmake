@@ -7,28 +7,8 @@ targetType=libso
 set -x
 
 wmake $targetType twoPhaseMixture
-
-if onWin; then
-
-  #First build them in static form
-  wmake lib twoPhaseProperties
-  wmake lib interfaceProperties
-
-  #Then build libtwoPhaseInterfaceProperties in dynamic
-  rm $FOAM_LIBBIN/libtwoPhaseProperties.*
-  wmake $targetType twoPhaseProperties
-
-  #Then build libinterfaceProperties in dynamic
-  rm $FOAM_LIBBIN/libinterfaceProperties.*
-  wmake $targetType interfaceProperties
-
-else # ! onWin
-
 wmake $targetType interfaceProperties
 wmake $targetType twoPhaseProperties
-
-fi #onWin
-
 wmake $targetType incompressible
 wmake $targetType compressible
 wmake $targetType immiscibleIncompressibleTwoPhaseMixture

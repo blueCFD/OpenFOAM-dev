@@ -13,43 +13,46 @@ wmake
 
 else
 
-wmakeLnInclude interfacialModels
+    wmakeLnInclude interfacialModels
 
-set +x
-# Going to ommit the first build loop, as it will give a few errors, but it's
-# the second loop that matters.
-(
+    set +x
 
-  for libitem in $(grep -h "LIB =" */Make/files | sed 's=.*/=='); do
-    if [ ! -e "$FOAM_LIBBIN/${libitem}.a" ]; then
-      cp $FOAM_LIBBIN/libstubLibrary.a $FOAM_LIBBIN/${libitem}.a
-    fi
-    if [ -e "$FOAM_LIBBIN/${libitem}.dll" ]; then
-      rm $FOAM_LIBBIN/${libitem}.dll
-    fi
-  done
+    echo "Library stub stack is currently being built at twoPhaseEulerFoam..."
 
-  export WM_CONTINUE_ON_ERROR=1
-  set +e
+    # Going to ommit the first build loop, as it will give a few errors, but
+    # it's the second loop that matters.
+    (
 
-  set -x
-  wmake libso twoPhaseSystem
-  wmake libso interfacialModels
-  wmake libso phaseCompressibleTurbulenceModels
-  set +x
+      for libitem in $(grep -h "LIB =" */Make/files | sed 's=.*/=='); do
+        if [ ! -e "$FOAM_LIBBIN/${libitem}.a" ]; then
+          cp $FOAM_LIBBIN/libstubLibrary.a $FOAM_LIBBIN/${libitem}.a
+        fi
+        if [ -e "$FOAM_LIBBIN/${libitem}.dll" ]; then
+          rm $FOAM_LIBBIN/${libitem}.dll
+        fi
+      done
 
-  exit 0
+      export WM_CONTINUE_ON_ERROR=1
+      set +e
 
-) 2> /dev/null
+      wmake libso twoPhaseSystem
+      wmake libso interfacialModels
+      wmake libso phaseCompressibleTurbulenceModels
 
-# Now going to do the second and final linking step.
-set -x
+      exit 0
 
-wmake libso twoPhaseSystem
-wmake libso interfacialModels
-wmake libso phaseCompressibleTurbulenceModels
+    ) > /dev/null 2>&1
 
-wmake
+    echo "Library stub stack is done being built at twoPhaseEulerFoam."
+
+    # Now going to do the second and final pass.
+    set -x
+
+    wmake libso twoPhaseSystem
+    wmake libso interfacialModels
+    wmake libso phaseCompressibleTurbulenceModels
+
+    wmake
 
 fi
 

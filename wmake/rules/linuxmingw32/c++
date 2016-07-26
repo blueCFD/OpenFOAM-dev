@@ -1,16 +1,19 @@
-.SUFFIXES: .C .cxx .cc .cpp
+SUFFIXES += .C
 
-c++WARN     = -Wall -Wextra -Wno-unused-parameter -Wold-style-cast
+c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof
+
+# Suppress some warnings for flex++ and CGAL
+c++LESSWARN = -Wno-old-style-cast -Wno-unused-local-typedefs -Wno-array-bounds
 
 CC          = $(WM_CXX)
 
 include $(RULES)/c++$(WM_COMPILE_OPTION)
 
-ptFLAGS     = -DNoRepository -ftemplate-depth-100
+ptFLAGS     = -DNoRepository -ftemplate-depth-100 -I$(WM_COMPILER_DIR)/include
 
-c++FLAGS    = $(GFLAGS) -I$(WM_COMPILER_DIR)/include $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) $(LIB_HEADER_DIRS)
+c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) $(LIB_HEADER_DIRS)
 
-Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $$SOURCE -o $@
+Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $@
 cxxtoo      = $(Ctoo)
 cctoo       = $(Ctoo)
 cpptoo      = $(Ctoo)
@@ -18,6 +21,6 @@ cpptoo      = $(Ctoo)
 LINK_LIBS   = $(c++DBUG)
 
 # Tried using -Wl,-no-undefined,--enable-runtime-pseudo-reloc
-# but didnt forgive undefined symbols during linking
+# but didn't forgive undefined symbols during linking
 LINKLIBSO   = $(CC) $(c++FLAGS) -Wl,--output-def,$(LIB).def -Wl,--out-implib,$(LIB).a -Wl,--enable-auto-import -shared
 LINKEXE     = $(CC) $(c++FLAGS) -Wl,--enable-auto-import,--force-exe-suffix

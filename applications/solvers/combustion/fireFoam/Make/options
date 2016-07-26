@@ -60,5 +60,5 @@ EXE_LIBS = \
     -lODE
 
 EXE_LIBS += \
-    -lcompressibleTurbulenceModel \
-    -llagrangian
+    -llagrangian \
+    -lliquidMixtureProperties

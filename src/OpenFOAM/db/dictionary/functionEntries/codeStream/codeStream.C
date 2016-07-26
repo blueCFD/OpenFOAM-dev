@@ -192,8 +192,8 @@ Foam::functionEntries::codeStream::getFunction
             //  We do this by just polling a few times using the
             //  fileModificationSkew.
 
-            off_t mySize = Foam::fileSize(libPath);
-            off_t masterSize = mySize;
+            off64_t mySize = Foam::fileSize(libPath);
+            off64_t masterSize = mySize;
             Pstream::scatter(masterSize);
 
             if (debug)

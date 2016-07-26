@@ -827,11 +827,11 @@ bool isFile(const fileName& name, const bool checkGzip)
 
 
 // Return size of file
-off_t fileSize(const fileName& name)
+off64_t fileSize(const fileName& name)
 {
     fileStat fileStatus(name);
 
-    const off_t fileSize = fileStatus.isValid() ?
+    const off64_t fileSize = fileStatus.isValid() ?
       fileStatus.status().st_size : -1;
     return fileSize;
 }

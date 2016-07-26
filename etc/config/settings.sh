@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.4
+# 2016-07-25 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -35,6 +36,7 @@
 #        - Added environment settings for the MinGW based Gcc cross-compilers.
 #        - Upped version of MPICH2.
 #        - Added MPI options for MSMPI 2008R2 and 2012.
+#        - Added MPI options for MSMPI 2012R2 and 7.1.
 #        - Switched to using MSYS2's software stack.
 #
 # File
@@ -696,6 +698,24 @@ MSMPI2008)
 
 MSMPI2012)
     export FOAM_MPI=msmpi-2012
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    ;;
+
+MSMPI2012R2)
+    export FOAM_MPI=msmpi-2012R2
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    ;;
+
+MSMPI71)
+    export FOAM_MPI=MS-MPI-7.1
     export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
     export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
 

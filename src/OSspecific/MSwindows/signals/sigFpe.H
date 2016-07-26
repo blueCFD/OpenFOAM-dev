@@ -102,7 +102,7 @@ public:
         void set(const bool verbose);
 
         //- Helper: fill block of data with NaN
-        static void fillSignallingNan(UList<scalar>&);
+        static void fillNan(UList<scalar>&);
 };
 
 

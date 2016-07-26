@@ -20,3 +20,7 @@ EXE_LIBS = \
     -ldynamicMesh \
     -ldynamicFvMesh \
     -lmeshTools
+
+EXE_LIBS += \
+    -lincompressibleTransportModels \
+    -ltwoPhaseMixture

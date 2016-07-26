@@ -53,6 +53,5 @@ EXE_LIBS = \
     -lcombustionModels
 
 EXE_LIBS += \
-    -lcompressibleTurbulenceModel \
-    -lincompressibleTurbulenceModel \
-    -llagrangian
+    -llagrangian \
+    -lliquidMixtureProperties

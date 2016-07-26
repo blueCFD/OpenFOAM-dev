@@ -2,6 +2,8 @@
 cd ${0%/*} || exit 1    # Run from this directory
 set -x
 
+if ! onWin; then
+
 wmakeLnInclude interfacialModels
 wmakeLnInclude interfacialCompositionModels
 wmake libso phaseSystems
@@ -9,5 +11,23 @@ wmake libso interfacialModels
 wmake libso interfacialCompositionModels
 reactingTwoPhaseEulerFoam/Allwmake
 reactingMultiphaseEulerFoam/Allwmake
+
+else
+
+    wmakeLnInclude interfacialModels
+    wmakeLnInclude interfacialCompositionModels
+    wmakeLnInclude phaseSystems
+
+    # These libraries are not built here, because we have to build one copy
+    # per solver, due to cyclic dependencies with their own turbulence models.
+
+    ## wmake libso phaseSystems
+    ## wmake libso interfacialModels
+    ## wmake libso interfacialCompositionModels
+
+    reactingTwoPhaseEulerFoam/Allwmake
+    reactingMultiphaseEulerFoam/Allwmake
+
+fi
 
 # ----------------------------------------------------------------- end-of-file

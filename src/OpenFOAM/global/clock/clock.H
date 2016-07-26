@@ -104,11 +104,6 @@ public:
         //- Returns wall-clock time from clock instantiation
         time_t elapsedClockTime() const;
 
-#ifdef WIN64
-        //add a compatible definition, since "long long == long int" in GCC+WIN64
-        long int elapsedClockTime();
-#endif
-
         //- Returns wall-clock time from last call of clockTimeIncrement()
         time_t clockTimeIncrement() const;
 };

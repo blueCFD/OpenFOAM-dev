@@ -11,6 +11,3 @@ EXE_LIBS = \
     -lmeshTools \
     -ldynamicMesh \
     -lfiniteVolume
-
-EXE_LIBS += \
-    -lcompressibleTurbulenceModel

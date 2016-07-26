@@ -6,8 +6,9 @@
 #   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
-# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.4 and 3.0
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3-1
+# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-07-22 blueCAPE Lda: More modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -46,20 +47,19 @@
 #
 #------------------------------------------------------------------------------
 
-[ -z "$WM_OPTIONS_LOCAL" ] && WM_OPTIONS_LOCAL=$WM_OPTIONS
+# Provided by MakefileFiles
+OBJECTS_DIR=$1
+VERSIONFILE=$2
+SFILES=$3
+VARS=$4
 
-[ -d "$WM_OPTIONS_LOCAL" ] || {
-    echo "The '$WM_OPTIONS_LOCAL' directory does not exist, exiting" 1>&2
+# Change to the $OBJECTS_DIR directory
+cd "$OBJECTS_DIR" 2>/dev/null || {
+    echo "Could not change to directory '$OBJECTS_DIR'" 1>&2
     exit 1
 }
 
-# change to the $WM_OPTIONS directory
-cd "$WM_OPTIONS_LOCAL" 2>/dev/null || {
-    echo "Could not change to directory '$WM_OPTIONS_LOCAL'" 1>&2
-    exit 1
-}
-
-# special preparations for MinGW builds
+# Special preparations for MinGW builds
 TIS_MinGW=0
 if [ -e "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" ]; then
     TIS_MinGW=1
@@ -68,77 +68,58 @@ fi
 
 if [ $TIS_MinGW -eq 1 ]; then
     #Extract the binary name
-    MGW_EXENAME=`grep -e "^EXE =" files`
-    MGW_LIBNAME=`grep -e "^LIB =" files`
+    MGW_EXENAME=$(grep -e "^EXE =" $VARS)
+    MGW_LIBNAME=$(grep -e "^LIB =" $VARS)
     MGW_FINALNAME="NONAME"
 
     if [ -n "$MGW_EXENAME" ]; then
-        MGW_FINALNAME=`echo $MGW_EXENAME | sed -e 's=.*/=='`.exe
+        MGW_FINALNAME=$(echo $MGW_EXENAME | sed -e 's=.*/==').exe
     fi
 
     if [ -n "$MGW_LIBNAME" ]; then
-        MGW_FINALNAME=`echo $MGW_LIBNAME | sed -e 's=.*/=='`.dll
+        MGW_FINALNAME=$(echo $MGW_LIBNAME | sed -e 's=.*/==').dll
     fi
 
     #get current OpenFOAM version
-    MGW_OFversion=`wmakePrintBuild -update`
+    MGW_OFversion=$(wmakePrintBuild)
 
     #apply values to template
     sed -e 's=2\.0\.\0\.0='$MGW_OFversion'=g' \
         -e 's=tmpintname='$MGW_FINALNAME'=' \
         -e 's=tmporigname='$MGW_FINALNAME'=' \
-        tmpver.rc > version_of_build.rc
+        tmpver.rc > $VERSIONFILE
 
     #clean up
     unset MGW_OFversion MGW_EXENAME MGW_LIBNAME MGW_FINALNAME
     rm tmpver.rc
+
+else
+
+    exit 1
 fi
 
 # Plug in the version resource file for being compiled along
-if [ $TIS_MinGW -eq 1 ]; then
-    echo "Make/$WM_OPTIONS_LOCAL/version_of_build.rc" > files.$$
-fi
+DEPFILE=${VERSIONFILE}.dep
+FILE_NAMEwEXT=${VERSIONFILE##*/}
+FILE_NAME=${FILE_NAMEwEXT%%.rc}
 
-# update sourceFiles
-# ~~~~~~~~~~~~~~~~
-sed -i -e '$s/$/\\/' sourceFiles
+echo "$FILE_NAMEwEXT" > files.$$
 
-cat files.$$ >> sourceFiles
+# Update sourceFiles
+sed -i -e '$s/$/\\/' $SFILES
 
+cat files.$$ >> $SFILES
 
-# update objectFiles
-# ~~~~~~~~~~~~~~~~
-sed -i -e '$s/$/\\/' objectFiles
+# Create custom made dep file
+touch ${VERSIONFILE}.dep
+echo '$(OBJECTS_DIR)/'$FILE_NAMEwEXT'.dep: $(OBJECTS_DIR)/'$FILE_NAMEwEXT \
+     >> $DEPFILE
+echo '' >> $DEPFILE
+echo '$(OBJECTS_DIR)/'$FILE_NAME'.o : $(OBJECTS_DIR)/'$FILE_NAMEwEXT \
+     >> $DEPFILE
+echo '	$(rctoo)' >> $DEPFILE
 
-sed -e 's%.*/%%'               \
-    -e 's%^%$(OBJECTS_DIR)/%'  \
-    -e 's%\.[a-zA-Z]*$%\.o%'   \
-    files.$$ >> objectFiles
-
-
-# update localObjectFiles
-# ~~~~~~~~~~~~~~~~~~~~~
-sed -i -e '$s/$/\\/' localObjectFiles
-
-sed -e 's%.*/%%'               \
-    -e 's%\.[a-zA-Z]*$%\.o%'   \
-    files.$$ >> localObjectFiles
-
-
-# update dependencyFiles
-# ~~~~~~~~~~~~~~~~~~~~
-sed -i -e '$s/$/\\/' dependencyFiles
-
-sed 's/\.[a-zA-Z]*$/\.dep/' \
-     files.$$ >> dependencyFiles
-
-
-# update includeDeps
-# ~~~~~~~~~~~~~~~~
-sed -e 's/\.[a-zA-Z]*$/.dep/'   \
-    -e 's/^/include /'          \
-    files.$$ >> includeDeps
-
+# Remove temporary file
 rm files.$$
 
 #------------------------------------------------------------------------------

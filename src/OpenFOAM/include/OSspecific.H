@@ -54,11 +54,6 @@ SourceFiles
 
 #include <sys/types.h>
 
-#ifdef WIN64
-//redefine by force, to override casting issues :(
-#define pid_t long int
-#endif
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -168,7 +163,7 @@ bool isDir(const fileName&);
 bool isFile(const fileName&, const bool checkGzip=true);
 
 //- Return size of file
-off_t fileSize(const fileName&);
+off64_t fileSize(const fileName&);
 
 //- Return time of last file modification
 time_t lastModified(const fileName&);

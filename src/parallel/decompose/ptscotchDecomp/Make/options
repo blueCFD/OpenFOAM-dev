@@ -21,6 +21,10 @@ LIB_LIBS = \
 
 #else
 
+PROJECT_LIBS = \
+    -L$(FOAM_LIBBIN)  -l$(WM_PROJECT)  \
+    -L$(FOAM_LIBBIN)/$(FOAM_MPI)  -lPstream
+
 EXE_INC += \
     $(GFLAGS) -DSCOTCH_PTSCOTCH
 

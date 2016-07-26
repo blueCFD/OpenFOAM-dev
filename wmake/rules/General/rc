@@ -1,2 +1,3 @@
+SUFFIXES += .rc
 
-rctoo = windres $$SOURCE $@
+rctoo = windres $(@D)/$(<F) $@

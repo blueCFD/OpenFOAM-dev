@@ -63,4 +63,7 @@ unset WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
 #    WM_ARCH_OPTION = 32 | 64
 export WM_ARCH_OPTION=64
 
+#Build foamyMesh stack
+export FOAMY_HEX_MESH=1
+
 # ----------------------------------------------------------------- end-of-file

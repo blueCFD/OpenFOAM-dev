@@ -25,3 +25,4 @@ EXE_LIBS = \
 
 EXE_LIBS += \
     -ltwoPhaseMixture \
+    -lincompressibleTransportModels

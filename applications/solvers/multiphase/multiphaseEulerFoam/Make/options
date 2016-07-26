@@ -23,6 +23,3 @@ EXE_LIBS = \
     -lincompressibleTurbulenceModels \
     -lfiniteVolume \
     -lmeshTools
-
-EXE_LIBS += \
-    -lincompressibleTurbulenceModel

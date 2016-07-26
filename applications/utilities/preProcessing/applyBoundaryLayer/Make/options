@@ -13,6 +13,3 @@ EXE_LIBS = \
     -lgenericPatchFields \
     -lfiniteVolume \
     -lmeshTools
-
-EXE_LIBS += \
-    -lincompressibleTurbulenceModel

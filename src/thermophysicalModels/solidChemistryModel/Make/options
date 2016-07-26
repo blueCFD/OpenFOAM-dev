@@ -18,7 +18,5 @@ LIB_LIBS = \
 
 LIB_LIBS += \
     -lfluidThermophysicalModels \
-    -lspecie \
-    -lsolidSpecie \
-    -lfluidThermophysicalModels \
-    -lsolidThermo
+    -lsolidThermo \
+    -lspecie

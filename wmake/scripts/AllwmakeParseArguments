@@ -84,7 +84,7 @@ setWM_NCOMPPROCS()
     then
         WM_NCOMPPROCS=$(egrep "^processor" /proc/cpuinfo | wc -l)
     else
-        WM_NCOMPPROCS=1
+        WM_NCOMPPROCS=${NUMBER_OF_PROCESSORS:-1}
     fi
 
     export WM_NCOMPPROCS

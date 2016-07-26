@@ -15,17 +15,4 @@ fi
 
 wmake $targetType pairPatchAgglomeration
 
-
-## get SCOTCH_VERSION, SCOTCH_ARCH_PATH
-if settings=`$WM_PROJECT_DIR/bin/foamEtcFile config/scotch.sh`
-then
-    . $settings
-    echo "using SCOTCH_ARCH_PATH=$SCOTCH_ARCH_PATH"
-else
-    echo
-    echo "Error: no config/scotch.sh settings"
-    echo
-fi
-
-
 # ----------------------------------------------------------------- end-of-file

@@ -1,2 +1,4 @@
 c++DBUG     = 
 c++OPT      = -O2 -DNDEBUG -Wl,--strip-all
+
+ROUNDING_MATH = -frounding-math

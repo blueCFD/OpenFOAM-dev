@@ -294,7 +294,7 @@ then
         #
         ! isMinGW && mpiopts="$mpiopts -x FOAM_SETTINGS"
         ;;
-    MPICH | MSMPI)
+    MPICH | MSMPI*)
         # add hostfile info
         for hostfile in \
             hostfile \

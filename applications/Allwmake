@@ -26,19 +26,13 @@ wmake -all solvers $*
 
 if isMinGW; then
 
-  #ccm26ToFoam - use a containment shell since it depends on license.
-  ( set +e; wmake -all utilities/mesh/conversion/Optional ; exit 0 )
-
-  #Test-parallel  
+  # Test-parallel, because MPi on Windows can be rather finicky
   wmake -all test/parallel
 
   wmakeVerifyExeDependencies utilities || wmake -all utilities
   wmakeVerifyExeDependencies solvers || wmake -all solvers
 
-  #ccm26ToFoam - use a containment shell since it depends on license.
-  ( set +e; wmake all utilities/mesh/conversion/Optional ; exit 0 )
-
-  #Test-parallel
+  # Redo Test-parallel, to sort out for missing dependencies
   wmakeVerifyExeDependencies test/parallel || wmake -all test/parallel
 fi
 

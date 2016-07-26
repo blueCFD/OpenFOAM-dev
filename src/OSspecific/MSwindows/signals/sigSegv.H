@@ -91,6 +91,7 @@ public:
 
     // Member functions
 
+        //- Activate SIGSEGV signal handler
         void set(const bool verbose);
 };
 

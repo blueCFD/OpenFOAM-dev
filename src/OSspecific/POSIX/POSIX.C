@@ -639,7 +639,7 @@ bool Foam::isFile(const fileName& name, const bool checkGzip)
 
 
 // Return size of file
-off_t Foam::fileSize(const fileName& name)
+off64_t Foam::fileSize(const fileName& name)
 {
     fileStat fileStatus(name);
     if (fileStatus.isValid())
