@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -186,18 +186,17 @@ Foam::twoPhaseSystem::dmdt() const
 
 void Foam::twoPhaseSystem::solve()
 {
-    const fvMesh& mesh = this->mesh();
-    const Time& runTime = mesh.time();
+    const Time& runTime = mesh_.time();
 
     volScalarField& alpha1 = phase1_;
     volScalarField& alpha2 = phase2_;
 
-    const dictionary& alphaControls = mesh.solverDict(alpha1.name());
+    const dictionary& alphaControls = mesh_.solverDict(alpha1.name());
 
     label nAlphaSubCycles(readLabel(alphaControls.lookup("nAlphaSubCycles")));
     label nAlphaCorr(readLabel(alphaControls.lookup("nAlphaCorr")));
 
-    bool LTS = fv::localEulerDdt::enabled(mesh);
+    bool LTS = fv::localEulerDdt::enabled(mesh_);
 
     word alphaScheme("div(phi," + alpha1.name() + ')');
     word alpharScheme("div(phir," + alpha1.name() + ')');
@@ -207,32 +206,32 @@ void Foam::twoPhaseSystem::solve()
     const surfaceScalarField& phi2 = phase2_.phi();
 
     // Construct the dilatation rate source term
-    tmp<volScalarField::DimensionedInternalField> tdgdt;
+    tmp<volScalarField::Internal> tdgdt;
 
     if (phase1_.divU().valid() && phase2_.divU().valid())
     {
         tdgdt =
         (
-            alpha2.dimensionedInternalField()
-           *phase1_.divU()().dimensionedInternalField()
-          - alpha1.dimensionedInternalField()
-           *phase2_.divU()().dimensionedInternalField()
+            alpha2()
+           *phase1_.divU()()()
+          - alpha1()
+           *phase2_.divU()()()
         );
     }
     else if (phase1_.divU().valid())
     {
         tdgdt =
         (
-            alpha2.dimensionedInternalField()
-           *phase1_.divU()().dimensionedInternalField()
+            alpha2()
+           *phase1_.divU()()()
         );
     }
     else if (phase2_.divU().valid())
     {
         tdgdt =
         (
-          - alpha1.dimensionedInternalField()
-           *phase2_.divU()().dimensionedInternalField()
+          - alpha1()
+           *phase2_.divU()()()
         );
     }
 
@@ -258,25 +257,25 @@ void Foam::twoPhaseSystem::solve()
 
     for (int acorr=0; acorr<nAlphaCorr; acorr++)
     {
-        volScalarField::DimensionedInternalField Sp
+        volScalarField::Internal Sp
         (
             IOobject
             (
                 "Sp",
                 runTime.timeName(),
-                mesh
+                mesh_
             ),
-            mesh,
+            mesh_,
             dimensionedScalar("Sp", dimless/dimTime, 0.0)
         );
 
-        volScalarField::DimensionedInternalField Su
+        volScalarField::Internal Su
         (
             IOobject
             (
                 "Su",
                 runTime.timeName(),
-                mesh
+                mesh_
             ),
             // Divergence term is handled explicitly to be
             // consistent with the explicit transport solution
@@ -285,7 +284,7 @@ void Foam::twoPhaseSystem::solve()
 
         if (tdgdt.valid())
         {
-            scalarField& dgdt = tdgdt();
+            scalarField& dgdt = tdgdt.ref();
 
             forAll(dgdt, celli)
             {
@@ -317,11 +316,13 @@ void Foam::twoPhaseSystem::solve()
             )
         );
 
+        surfaceScalarField::Boundary& alphaPhic1Bf =
+            alphaPhic1.boundaryFieldRef();
+
         // Ensure that the flux at inflow BCs is preserved
-        forAll(alphaPhic1.boundaryField(), patchi)
+        forAll(alphaPhic1Bf, patchi)
         {
-            fvsPatchScalarField& alphaPhic1p =
-                alphaPhic1.boundaryField()[patchi];
+            fvsPatchScalarField& alphaPhic1p = alphaPhic1Bf[patchi];
 
             if (!alphaPhic1p.coupled())
             {
@@ -345,7 +346,7 @@ void Foam::twoPhaseSystem::solve()
             if (LTS)
             {
                 trSubDeltaT =
-                    fv::localEulerDdt::localRSubDeltaT(mesh, nAlphaSubCycles);
+                    fv::localEulerDdt::localRSubDeltaT(mesh_, nAlphaSubCycles);
             }
 
             for
@@ -420,7 +421,7 @@ void Foam::twoPhaseSystem::solve()
             fvc::interpolate(phase2_.rho())*phase2_.alphaPhi();
 
         Info<< alpha1.name() << " volume fraction = "
-            << alpha1.weightedAverage(mesh.V()).value()
+            << alpha1.weightedAverage(mesh_.V()).value()
             << "  Min(alpha1) = " << min(alpha1).value()
             << "  Max(alpha1) = " << max(alpha1).value()
             << endl;

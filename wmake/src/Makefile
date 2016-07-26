@@ -2,11 +2,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -34,8 +34,6 @@
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
 #        - Added the ability to cross-compile the wmake related binaries for
 #          running on Windows.
-#        - Added the macros ADDITIONAL_*FLAGS, so that we can turn on a
-#          few hacks.
 #        - Recovered the wmkdepend utility, because we need it on Windows, due
 #          to the limitation on the number of files currently open.
 #
@@ -59,27 +57,22 @@ SHELL      = /bin/sh
 
 .SUFFIXES:
 
+
 #------------------------------------------------------------------------------
-# set compilation and dependency building rules
+# Set compilation and dependency building rules
 #------------------------------------------------------------------------------
 
-GENERAL_RULES = $(WM_DIR)/rules/General
-RULES         = $(WM_DIR)/rules/$(WM_ARCH)$(WM_COMPILER)
-WMAKE_BIN    ?= $(WM_DIR)/platforms/$(WM_ARCH)$(WM_COMPILER)
+# Locally set optimized compilation
+WM_COMPILE_OPTION = Opt
+
+GENERAL_RULES   = $(WM_DIR)/rules/General
+include $(GENERAL_RULES)/general
 
 # Executable extension - independent of the global one
 EXE_EXTENSION ?=
 
-# Additional flags, usually for adding more macros
-ADDITIONAL_CFLAGS   ?=
-ADDITIONAL_CXXFLAGS ?=
-
-include $(RULES)/general
-include $(RULES)/$(WM_LINK_LANGUAGE)
-
-
 #------------------------------------------------------------------------------
-# targets
+# Targets
 #------------------------------------------------------------------------------
 
 all:  $(WMAKE_BIN)/dirToString$(EXE_EXTENSION) $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION) $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION)
@@ -96,7 +89,7 @@ $(WMAKE_BIN)/dirToString$(EXE_EXTENSION): dirToString.c
 $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION): wmkdep.l
 	@mkdir -p $(WMAKE_BIN)
 	flex wmkdep.l
-	$(cc) $(cFLAGS) $(ADDITIONAL_CFLAGS) lex.yy.c -o $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION)
+	$(cc) $(cFLAGS) lex.yy.c -o $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION)
 	@rm -f lex.yy.c 2>/dev/null
 
 
@@ -105,7 +98,7 @@ $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION): wmkdepend.cpp \
     wmkdependParser.cpp wmkdependScanner.cpp \
     wmkdependParser.h   wmkdependScanner.h
 	@mkdir -p $(WMAKE_BIN)
-	$(CC) $(c++FLAGS) $(ADDITIONAL_CXXFLAGS) \
+	$(CC) $(c++FLAGS) \
 	     wmkdepend.cpp wmkdependParser.cpp wmkdependScanner.cpp \
 	    -o $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION)
 

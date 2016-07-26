@@ -10,7 +10,6 @@ wclean libso interfacialCompositionModels
 reactingTwoPhaseEulerFoam/Allwclean
 reactingMultiphaseEulerFoam/Allwclean
 
-else
 
     # The libraries are not built here, they are built differently on Windows
     ##wclean libso phaseSystems
@@ -22,4 +21,4 @@ else
 
 fi
 
-# ----------------------------------------------------------------- end-of-file
+#------------------------------------------------------------------------------

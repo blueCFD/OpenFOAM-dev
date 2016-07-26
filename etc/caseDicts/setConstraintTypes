@@ -19,6 +19,7 @@ cyclicAMI
 cyclicACMI
 {
     type  cyclicACMI;
+    value $internalField;
 }
 
 cyclicSlip
@@ -39,11 +40,13 @@ nonuniformTransformCyclic
 processor
 {
     type  processor;
+    value $internalField;
 }
 
 processorCyclic
 {
     type  processorCyclic;
+    value $internalField;
 }
 
 symmetryPlane

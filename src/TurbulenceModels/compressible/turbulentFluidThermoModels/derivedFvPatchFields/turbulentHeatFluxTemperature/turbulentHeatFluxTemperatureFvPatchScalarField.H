@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,15 +22,14 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::turbulentHeatFluxTemperatureFvPatchScalarField
+    Foam::compressible::turbulentHeatFluxTemperatureFvPatchScalarField
 
 Description
     Fixed heat boundary condition to specify temperature gradient. Input
     heat source either specified in terms of an absolute power [W], or as a
     flux [W/m^2].
 
-    \heading Patch usage
-
+Usage
     \table
         Property     | Description             | Required    | Default value
         heatSource   | 'power' [W] or 'flux' [W/m^2] | yes |
@@ -58,7 +57,7 @@ Description
     \endverbatim
 
 
-SeeAlso
+See also
     Foam::temperatureCoupledBase
 
 SourceFiles

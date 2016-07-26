@@ -47,9 +47,9 @@ volVectorField U
 #include "readTransportProperties.H"
 
 Info<< "Creating turbulence model\n" << endl;
-autoPtr<incompressible::RASModel> turbulence
+autoPtr<incompressible::turbulenceModel> turbulence
 (
-    incompressible::RASModel::New(U, phi, laminarTransport)
+    incompressible::turbulenceModel::New(U, phi, laminarTransport)
 );
 
 // Kinematic density for buoyancy force
@@ -120,3 +120,6 @@ if (p_rgh.needReference())
 }
 
 mesh.setFluxRequired(p_rgh.name());
+
+#include "createMRF.H"
+#include "createIncompressibleRadiationModel.H"

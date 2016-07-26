@@ -2,11 +2,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -55,29 +55,28 @@ export WM_PROJECT_VERSION=dev
 ################################################################################
 # USER EDITABLE PART: Changes made here may be lost with the next upgrade
 #
-# either set $FOAM_INST_DIR before sourcing this file or set
-# 'foamInstall' below to where OpenFOAM is installed
+# FOAM_INST_DIR is the location of the OpenFOAM installation which defaults to
+# the directory containing this file if sourced by a bash shell.
 #
-# Location of the OpenFOAM installation
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-foamInstall=$HOME/$WM_PROJECT
-# foamInstall=~$WM_PROJECT
-# foamInstall=/opt/$WM_PROJECT
-# foamInstall=/usr/local/$WM_PROJECT
+# Please set to the appropriate path if the default is not correct.
+#
+[ $BASH_SOURCE ] && \
+export FOAM_INST_DIR=${BASH_SOURCE%/*/*/*} || \
+export FOAM_INST_DIR=$HOME/$WM_PROJECT
+# export FOAM_INST_DIR=~$WM_PROJECT
+# export FOAM_INST_DIR=/opt/$WM_PROJECT
+# export FOAM_INST_DIR=/usr/local/$WM_PROJECT
 #
 # END OF (NORMAL) USER EDITABLE PART
 ################################################################################
 
-#
-# These are the defaults for this version which should generally be
-# overridden from the prefs.sh file or from command-line specification
-#
-#- note the location for later use (eg, in job scripts)
-: ${FOAM_INST_DIR:=$foamInstall}; export FOAM_INST_DIR
+# The default environment variables below can be overridden in a prefs.sh file
+# located in ~/.OpenFOAM/$WM_PROJECT_VERSION, ~/.OpenFOAM,
+# $FOAM_INST_DIR/site/$WM_PROJECT_VERSION or $FOAM_INST_DIR/site
 
 #- Compiler location:
-#    foamCompiler= system | ThirdParty (OpenFOAM)
-foamCompiler=system
+#    WM_COMPILER_TYPE= system | ThirdParty (OpenFOAM)
+export WM_COMPILER_TYPE=system
 
 #- Compiler:
 #    WM_COMPILER = Gcc | Gcc45 | Gcc46 | Gcc47 | Gcc48 | Gcc49| Clang | Icc
@@ -125,15 +124,9 @@ export FOAM_SIGFPE=
 
 ################################################################################
 
-# The old dirs to be cleaned from the various environment variables
-# - remove anything under top-level directory.
-# NB: the WM_PROJECT_INST_DIR might not be identical between versions
-foamOldDirs="$FOAM_INST_DIR $WM_PROJECT_SITE $HOME/$WM_PROJECT/$USER"
-if [ "$WM_PROJECT_INST_DIR" != "$FOAM_INST_DIR" ]
-then
-    foamOldDirs="$WM_PROJECT_INST_DIR $foamOldDirs"
-fi
-
+# The old dirs to be cleaned from the environment variables
+foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR $HOME/$WM_PROJECT/$USER \
+    $WM_PROJECT_SITE $FOAM_SITE_APPBIN $FOAM_SITE_LIBBIN"
 
 # Location of installation
 # ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -158,52 +151,9 @@ fi
 # ~~~~~~~~~~~~~~~~~~~~~~
 export WM_PROJECT_USER_DIR=$HOME/$WM_PROJECT/$USER-$WM_PROJECT_VERSION
 
-
-# Source files, possibly with some verbosity
-_foamSource()
-{
-    while [ $# -ge 1 ]
-    do
-        [ "$FOAM_VERBOSE" -a "$PS1" ] && echo "Sourcing: $1" 1>&2
-        . $1
-       shift
-    done
-}
-
-# Evaluate command-line parameters
-_foamEval()
-{
-    while [ $# -gt 0 ]
-    do
-        case "$1" in
-        -*)
-            # stray option (not meant for us here) -> get out
-            break
-            ;;
-        *=)
-            # name=       -> unset name
-            [ "$FOAM_VERBOSE" -a "$PS1" ] && echo "unset ${1%=}" 1>&2
-            eval "unset ${1%=}"
-            ;;
-        *=*)
-            # name=value  -> export name=value
-            [ "$FOAM_VERBOSE" -a "$PS1" ] && echo "export $1" 1>&2
-            eval "export $1"
-            ;;
-        *)
-            # filename: source it
-            if [ -f "$1" ]
-            then
-                _foamSource "$1"
-            else
-                _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile -silent "$1"`
-            fi
-            ;;
-        esac
-        shift
-    done
-}
-
+# Source initialization functions
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+. $WM_PROJECT_DIR/etc/config.sh/functions
 
 # Add in preset user or site preferences:
 _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile prefs.sh`
@@ -232,16 +182,21 @@ export PATH LD_LIBRARY_PATH MANPATH
 
 # Source project setup files
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~
-_foamSource $WM_PROJECT_DIR/etc/config/settings.sh
-_foamSource $WM_PROJECT_DIR/etc/config/aliases.sh
+_foamSource $WM_PROJECT_DIR/etc/config.sh/settings
+_foamSource $WM_PROJECT_DIR/etc/config.sh/aliases
 
 
 # Source user setup files for optional packages
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config/paraview.sh`
-_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config/ensight.sh`
-_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config/gperftools.sh`
-_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config/CGAL.sh`
+_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/mpi`
+_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/paraview`
+_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/ensight`
+_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/gperftools`
+
+if [ ! -z "$FOAMY_HEX_MESH" ]
+then
+    _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/CGAL`
+fi
 
 # Auto load other packages files present in the global config.d
 if [ -d "$WM_PROJECT_DIR/etc/config.d" ]; then
@@ -271,10 +226,14 @@ then
     export LD_PRELOAD
 fi
 
-# cleanup environment:
+# Cleanup environment:
 # ~~~~~~~~~~~~~~~~~~~~
-unset cleaned foamClean foamInstall foamOldDirs
-unset _foamSource _foamEval
+unset cleaned foamClean foamOldDirs
 unset configdsh
 
-# ----------------------------------------------------------------- end-of-file
+
+# Unload initialization functions:
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+. $WM_PROJECT_DIR/etc/config.sh/functions
+
+#------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ using namespace Foam;
 //! \cond dummy
 int yyFlexLexer::yylex()
 {
-    FatalErrorIn("yyFlexLexer::yylex()")
+    FatalErrorInFunction
         << "Should not have called this function"
         << abort(FatalError);
     return 0;
@@ -356,10 +356,8 @@ endsolid              {space}("endsolid"|"ENDSOLID")({some_space}{word})*
 
 <stlerror>.* {
         yy_pop_state();
-        FatalErrorIn
-        (
-            "triSurface::readSTLASCII(const fileName& STLfileName)"
-        )   << "while " << stateNames[YY_START] << " on line " << lineNo_ << nl
+        FatalErrorInFunction
+            << "while " << stateNames[YY_START] << " on line " << lineNo_ << nl
             << "    expected " << stateExpects[YY_START]
             << " but found '" << startError_.c_str() << YYText() << "'"
             << exit(FatalError);
@@ -382,10 +380,8 @@ bool triSurface::readSTLASCII(const fileName& STLfileName)
 
     if (!STLstream)
     {
-        FatalErrorIn
-        (
-            "triSurface::readSTLASCII(const fileName&)"
-        )   << "file " << STLfileName << " not found"
+        FatalErrorInFunction
+            << "file " << STLfileName << " not found"
             << exit(FatalError);
     }
 
@@ -411,10 +407,8 @@ bool triSurface::readSTLASCII(const fileName& STLfileName)
 
     if (STLpoints.size() != 3*STLnormals.size())
     {
-        FatalErrorIn
-        (
-            "triSurface::readSTLASCII(const fileName& STLfileName)"
-        )   << "in file " << STLfileName << endl
+        FatalErrorInFunction
+            << "in file " << STLfileName << endl
             << "Problem: read " << STLnormals.size() << " normals"
             << " but " << STLpoints.size() << " points"
             << exit(FatalError);
@@ -438,10 +432,10 @@ bool triSurface::readSTLASCII(const fileName& STLfileName)
 
     setSize(lexer.nTriangles());
     sp.setSize(nUniquePoints);
-    forAll(STLpoints, pointI)
+    forAll(STLpoints, pointi)
     {
-        const floatVector& pt = STLpoints[pointI];
-        sp[pointMap[pointI]] = vector
+        const floatVector& pt = STLpoints[pointi];
+        sp[pointMap[pointi]] = vector
         (
             scalar(pt.x()),
             scalar(pt.y()),
@@ -450,12 +444,12 @@ bool triSurface::readSTLASCII(const fileName& STLfileName)
     }
 
     // Assign triangles
-    label pointI = 0;
+    label pointi = 0;
     forAll(*this, i)
     {
-        operator[](i)[0] = pointMap[pointI++];
-        operator[](i)[1] = pointMap[pointI++];
-        operator[](i)[2] = pointMap[pointI++];
+        operator[](i)[0] = pointMap[pointi++];
+        operator[](i)[1] = pointMap[pointi++];
+        operator[](i)[2] = pointMap[pointi++];
         operator[](i).region() = STLlabels[i];
     }
 

@@ -25,9 +25,7 @@ rm -rf 0
 # - generate face/cell sets and zones
 
 #runApplication setSet -batch createInletOutletSets.setSet
-#mv log.setSet log.createInletOutletSets.setSet
 runApplication topoSet -dict system/createInletOutletSets.topoSetDict
-#mv log.topoSet log.createInletOutletSets.topoSet
 
 
 # - create the inlet/outlet and AMI patches
@@ -35,10 +33,10 @@ runApplication topoSet -dict system/createInletOutletSets.topoSetDict
 runApplication createPatch -overwrite
 
 
-# - test by running moveDynamicMes
+# - test by running moveDynamicMesh
 #runApplication moveDynamicMesh -checkAMI
 
 
 # - apply the initial fields
 
-cp -rf 0.org 0
+cp -rf 0.orig 0

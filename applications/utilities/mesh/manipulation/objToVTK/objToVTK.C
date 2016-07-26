@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
     if (!OBJfile.good())
     {
-        FatalErrorIn(args.executable())
+        FatalErrorInFunction
             << "Cannot read file " << objName << exit(FatalError);
     }
 
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
             {
                 hasWarned = true;
 
-                WarningIn(args.executable())
+                WarningInFunction
                     << "Unrecognized OBJ command " << cmd << nl
                     << "In line " << lineStream.str()
                     << " at linenumber " << lineNo << nl

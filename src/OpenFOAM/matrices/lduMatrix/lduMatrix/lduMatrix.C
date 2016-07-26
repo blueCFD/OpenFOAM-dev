@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,14 +70,14 @@ Foam::lduMatrix::lduMatrix(const lduMatrix& A)
 }
 
 
-Foam::lduMatrix::lduMatrix(lduMatrix& A, bool reUse)
+Foam::lduMatrix::lduMatrix(lduMatrix& A, bool reuse)
 :
     lduMesh_(A.lduMesh_),
     lowerPtr_(NULL),
     diagPtr_(NULL),
     upperPtr_(NULL)
 {
-    if (reUse)
+    if (reuse)
     {
         if (A.lowerPtr_)
         {
@@ -260,7 +260,7 @@ const Foam::scalarField& Foam::lduMatrix::lower() const
 {
     if (!lowerPtr_ && !upperPtr_)
     {
-        FatalErrorIn("lduMatrix::lower() const")
+        FatalErrorInFunction
             << "lowerPtr_ or upperPtr_ unallocated"
             << abort(FatalError);
     }
@@ -280,7 +280,7 @@ const Foam::scalarField& Foam::lduMatrix::diag() const
 {
     if (!diagPtr_)
     {
-        FatalErrorIn("const scalarField& lduMatrix::diag() const")
+        FatalErrorInFunction
             << "diagPtr_ unallocated"
             << abort(FatalError);
     }
@@ -293,7 +293,7 @@ const Foam::scalarField& Foam::lduMatrix::upper() const
 {
     if (!lowerPtr_ && !upperPtr_)
     {
-        FatalErrorIn("lduMatrix::upper() const")
+        FatalErrorInFunction
             << "lowerPtr_ or upperPtr_ unallocated"
             << abort(FatalError);
     }

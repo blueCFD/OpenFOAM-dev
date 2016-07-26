@@ -144,7 +144,7 @@ Foam::scalar Foam::chemkinReader::molecularWeight
         }
         else
         {
-            FatalErrorIn("chemkinReader::lex()")
+            FatalErrorInFunction
                 << "Unknown element " << elementName
                 << " on line " << lineNo_-1 << nl
                 << "    specieComposition: " << specieComposition
@@ -165,7 +165,7 @@ void Foam::chemkinReader::checkCoeffs
 {
     if (reactionCoeffs.size() != nCoeffs)
     {
-        FatalErrorIn("chemkinReader::checkCoeffs")
+        FatalErrorInFunction
             << "Wrong number of coefficients for the " << reactionRateName
             << " rate expression on line "
             << lineNo_-1 << ", should be "
@@ -231,7 +231,7 @@ void Foam::chemkinReader::addReactionType
 
             if (rType < 3)
             {
-                FatalErrorIn("chemkinReader::addReactionType")
+                FatalErrorInFunction
                     << "Reaction type " << reactionTypeNames[rType]
                     << " on line " << lineNo_-1
                     << " not handled by this function"
@@ -239,7 +239,7 @@ void Foam::chemkinReader::addReactionType
             }
             else
             {
-                FatalErrorIn("chemkinReader::addReactionType")
+                FatalErrorInFunction
                     << "Unknown reaction type " << rType
                     << " on line " << lineNo_-1
                     << exit(FatalError);
@@ -304,7 +304,7 @@ void Foam::chemkinReader::addPressureDependentReaction
 
             if (TroeCoeffs.size() != 4 && TroeCoeffs.size() != 3)
             {
-                FatalErrorIn("chemkinReader::addPressureDependentReaction")
+                FatalErrorInFunction
                     << "Wrong number of coefficients for Troe rate expression"
                        " on line " << lineNo_-1 << ", should be 3 or 4 but "
                     << TroeCoeffs.size() << " supplied." << nl
@@ -359,7 +359,7 @@ void Foam::chemkinReader::addPressureDependentReaction
 
             if (SRICoeffs.size() != 5 && SRICoeffs.size() != 3)
             {
-                FatalErrorIn("chemkinReader::addPressureDependentReaction")
+                FatalErrorInFunction
                     << "Wrong number of coefficients for SRI rate expression"
                        " on line " << lineNo_-1 << ", should be 3 or 5 but "
                     << SRICoeffs.size() << " supplied." << nl
@@ -409,7 +409,7 @@ void Foam::chemkinReader::addPressureDependentReaction
         }
         default:
         {
-            FatalErrorIn("chemkinReader::addPressureDependentReaction")
+            FatalErrorInFunction
                 << "Fall-off function type "
                 << fallOffFunctionNames[fofType]
                 << " on line " << lineNo_-1
@@ -746,7 +746,7 @@ void Foam::chemkinReader::addReaction
         }
         case unknownReactionRateType:
         {
-            FatalErrorIn("chemkinReader::addReaction")
+            FatalErrorInFunction
                 << "Internal error on line " << lineNo_-1
                 << ": reaction rate type has not been set"
                 << exit(FatalError);
@@ -754,7 +754,7 @@ void Foam::chemkinReader::addReaction
         }
         default:
         {
-            FatalErrorIn("chemkinReader::addReaction")
+            FatalErrorInFunction
                 << "Reaction rate type " << reactionRateTypeNames[rrType]
                 << " on line " << lineNo_-1
                 << " not implemented"
@@ -767,7 +767,7 @@ void Foam::chemkinReader::addReaction
     {
         if (mag(nAtoms[i]) > imbalanceTol_)
         {
-            FatalErrorIn("chemkinReader::addReaction")
+            FatalErrorInFunction
                 << "Elemental imbalance of " << mag(nAtoms[i])
                 << " in " << elementNames_[i]
                 << " in reaction" << nl
@@ -786,9 +786,12 @@ void Foam::chemkinReader::addReaction
 void Foam::chemkinReader::read
 (
     const fileName& CHEMKINFileName,
-    const fileName& thermoFileName
+    const fileName& thermoFileName,
+    const fileName& transportFileName
 )
 {
+    transportDict_.read(IFstream(transportFileName)());
+
     if (thermoFileName != fileName::null)
     {
         // Use binary mode in case we read binary.
@@ -798,11 +801,8 @@ void Foam::chemkinReader::read
 
         if (!thermoStream)
         {
-            FatalErrorIn
-            (
-                "chemkin::chemkin(const fileName& CHEMKINFileName, "
-                "const fileName& thermoFileName)"
-            )   << "file " << thermoFileName << " not found"
+            FatalErrorInFunction
+                << "file " << thermoFileName << " not found"
                 << exit(FatalError);
         }
 
@@ -824,11 +824,8 @@ void Foam::chemkinReader::read
     
     if (!CHEMKINStream)
     {
-        FatalErrorIn
-        (
-            "chemkin::chemkin(const fileName& CHEMKINFileName, "
-            "const fileName& thermoFileName)"
-        )   << "file " << CHEMKINFileName << " not found"
+        FatalErrorInFunction
+            << "file " << CHEMKINFileName << " not found"
             << exit(FatalError);
     }
 
@@ -848,8 +845,9 @@ void Foam::chemkinReader::read
 
 Foam::chemkinReader::chemkinReader
 (
-    const fileName& CHEMKINFileName,
     speciesTable& species,
+    const fileName& CHEMKINFileName,
+    const fileName& transportFileName,
     const fileName& thermoFileName,
     const bool newFormat
 )
@@ -861,7 +859,7 @@ Foam::chemkinReader::chemkinReader
     newFormat_(newFormat),
     imbalanceTol_(ROOTSMALL)
 {
-    read(CHEMKINFileName, thermoFileName);
+    read(CHEMKINFileName, thermoFileName, transportFileName);
 }
 
 
@@ -892,6 +890,11 @@ Foam::chemkinReader::chemkinReader
         thermoFile = fileName(thermoDict.lookup("CHEMKINThermoFile")).expand();
     }
 
+    fileName transportFile
+    (
+        fileName(thermoDict.lookup("CHEMKINTransportFile")).expand()
+    );
+
     // allow relative file names
     fileName relPath = thermoDict.name().path();
     if (relPath.size())
@@ -901,13 +904,18 @@ Foam::chemkinReader::chemkinReader
             chemkinFile = relPath/chemkinFile;
         }
 
-        if (!thermoFile.isAbsolute())
+        if (thermoFile != fileName::null && !thermoFile.isAbsolute())
         {
             thermoFile = relPath/thermoFile;
         }
+
+        if (!transportFile.isAbsolute())
+        {
+            transportFile = relPath/transportFile;
+        }
     }
 
-    read(chemkinFile, thermoFile);
+    read(chemkinFile, thermoFile, transportFile);
 }
 
 

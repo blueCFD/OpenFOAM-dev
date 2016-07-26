@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,6 +33,10 @@ Description
 #define pisoControl_H
 
 #include "pimpleControl.H"
+
+//- Declare that pisoControl will be used
+#define PISO_CONTROL
+#undef PIMPLE_CONTROL
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -72,8 +76,20 @@ public:
 
     //- Destructor
     virtual ~pisoControl();
+
+
+    // Member Functions
+
+        // Solution control
+
+            //- Return true if in the final inner (PISO) iteration
+            inline bool finalInnerIter() const;
 };
 
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "pisoControlI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

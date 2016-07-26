@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,8 +59,7 @@ Foam::relativeVelocityModel::relativeVelocityModel
             IOobject::AUTO_WRITE
         ),
         alphac_.mesh(),
-        dimensionedVector("Udm", dimVelocity, vector::zero),
-        mixture.U().boundaryField().types()
+        dimensionedVector("Udm", dimVelocity, Zero)
     )
 {}
 
@@ -82,13 +81,8 @@ Foam::autoPtr<Foam::relativeVelocityModel> Foam::relativeVelocityModel::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "relativeVelocityModel::New"
-            "("
-                "const dictionary&"
-            ")"
-        )   << "Unknown time scale model type " << modelType
+        FatalErrorInFunction
+            << "Unknown time scale model type " << modelType
             << ", constructor not in hash table" << nl << nl
             << "    Valid time scale model types are:" << nl
             << dictionaryConstructorTablePtr_->sortedToc()

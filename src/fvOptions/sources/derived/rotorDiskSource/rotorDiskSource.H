@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,8 +30,7 @@ Description
     Cell based momemtum source which approximates the mean effects of
     rotor forces on a cylindrical region within the domain.
 
-    \heading Source usage
-
+Usage
     Example usage:
     \verbatim
     rotorDiskSourceCoeffs
@@ -87,7 +86,7 @@ Description
     - local         : use local flow conditions
     - surfaceNormal : specified normal velocity (positive towards rotor)
 
-See Also
+See also
     Foam::bladeModel
     Foam::lookupProfile
     Foam::seriesProfile
@@ -306,7 +305,7 @@ public:
             virtual void addSup
             (
                 fvMatrix<vector>& eqn,
-                const label fieldI
+                const label fieldi
             );
 
             //- Source term to compressible momentum equation
@@ -314,7 +313,7 @@ public:
             (
                 const volScalarField& rho,
                 fvMatrix<vector>& eqn,
-                const label fieldI
+                const label fieldi
             );
 
 

@@ -1,2 +1,0 @@
-The original source for 'radiationProperties' was '../heater/radiationProperties'
-The original source for 'thermophysicalProperties' was '../heater/thermophysicalProperties'

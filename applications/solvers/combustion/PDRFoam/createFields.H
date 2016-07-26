@@ -30,7 +30,6 @@ volScalarField rho
 );
 
 volScalarField& p = thermo.p();
-const volScalarField& psi = thermo.psi();
 
 volScalarField& b = composition.Y("b");
 Info<< "min(b) = " << min(b).value() << endl;
@@ -56,7 +55,7 @@ mesh.setFluxRequired(p.name());
 Info<< "Creating turbulence model\n" << endl;
 autoPtr<compressible::RASModel> turbulence
 (
-    compressible::RASModel::New
+    compressible::New<compressible::RASModel>
     (
         rho,
         U,
@@ -234,3 +233,5 @@ fields.add(b);
 fields.add(thermo.he());
 fields.add(thermo.heu());
 flameWrinkling->addXi(fields);
+
+#include "createMRF.H"

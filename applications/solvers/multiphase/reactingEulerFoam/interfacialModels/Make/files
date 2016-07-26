@@ -10,6 +10,7 @@ dragModels/SchillerNaumann/SchillerNaumann.C
 dragModels/SyamlalOBrien/SyamlalOBrien.C
 dragModels/TomiyamaCorrelated/TomiyamaCorrelated.C
 dragModels/TomiyamaAnalytic/TomiyamaAnalytic.C
+dragModels/TomiyamaKataokaZunSakaguchi/TomiyamaKataokaZunSakaguchi.C
 dragModels/WenYu/WenYu.C
 dragModels/IshiiZuber/IshiiZuber.C
 
@@ -25,6 +26,7 @@ liftModels/constantLiftCoefficient/constantLiftCoefficient.C
 liftModels/Moraga/Moraga.C
 liftModels/LegendreMagnaudet/LegendreMagnaudet.C
 liftModels/TomiyamaLift/TomiyamaLift.C
+liftModels/wallDampedLift/wallDampedLift.C
 
 heatTransferModels/heatTransferModel/heatTransferModel.C
 heatTransferModels/heatTransferModel/newHeatTransferModel.C
@@ -60,5 +62,13 @@ aspectRatioModels/VakhrushevEfremov/VakhrushevEfremov.C
 aspectRatioModels/Wellek/Wellek.C
 
 wallDependentModel/wallDependentModel.C
+
+wallDampingModels/wallDampingModel/wallDampingModel.C
+wallDampingModels/wallDampingModel/newWallDampingModel.C
+wallDampingModels/noWallDamping/noWallDamping.C
+wallDampingModels/interpolated/interpolatedWallDamping.C
+wallDampingModels/linear/linearWallDamping.C
+wallDampingModels/cosine/cosineWallDamping.C
+wallDampingModels/sine/sineWallDamping.C
 
 LIB = $(FOAM_LIBBIN)/libreactingEulerianInterfacialModels

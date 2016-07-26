@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,17 +32,31 @@ Description
     when using wall functions, based on turbulence kinetic energy.
     - replicates OpenFOAM v1.5 (and earlier) behaviour
 
-    \heading Patch usage
+Usage
+    \table
+        Property  | Description         | Required   | Default value
+        Cmu       | Cmu coefficient     | no         | 0.09
+        kappa     | Von Karman constant | no         | 0.41
+        E         | E coefficient       | no         | 9.8
+    \endtable
 
-    Example of the boundary condition specification:
+    Examples of the boundary condition specification:
     \verbatim
-    myPatch
+    <patchName>
     {
         type            nutWallFunction;
+        value           uniform 0.0;
     }
     \endverbatim
 
-SeeAlso
+    Reference for the default model coefficients:
+    \verbatim
+        H. Versteeg, W. Malalasekera
+        An Introduction to Computational Fluid Dynamics: The Finite Volume
+        Method, subsection "3.5.2 k-epsilon model"
+    \endverbatim
+
+See also
     Foam::fixedValueFvPatchField
 
 SourceFiles

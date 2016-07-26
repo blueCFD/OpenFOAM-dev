@@ -2,10 +2,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -31,10 +32,8 @@
 #
 #     Modifications made:
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
-#        - Added sourcing of the "*.sh" scripts from the folder
-#          "etc/config.d/".
 #        - Added aliases for the following items:
-#            wmSC, wmMC, wmNONSTOP, wmSTOPON1st, user
+#            wmSC, wmMC, wmNonStop, wmStopOn1st, user
 #
 # File
 #     etc/config/aliases.sh
@@ -47,23 +46,23 @@
 
 # Change compiled version aliases
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-alias wmSET='. $WM_PROJECT_DIR/etc/bashrc'
-alias wm64='wmSET WM_ARCH_OPTION=64'
-alias wm32='wmSET WM_ARCH_OPTION=32'
-alias wmSP='wmSET WM_PRECISION_OPTION=SP'
-alias wmDP='wmSET WM_PRECISION_OPTION=DP'
+alias wmSet='. $WM_PROJECT_DIR/etc/bashrc'
+alias wm64='wmSet WM_ARCH_OPTION=64'
+alias wm32='wmSet WM_ARCH_OPTION=32'
+alias wmSP='wmSet WM_PRECISION_OPTION=SP'
+alias wmDP='wmSet WM_PRECISION_OPTION=DP'
 
-# refresh the environment
-alias wmREFRESH='wmSET $FOAM_SETTINGS'
+# Refresh the environment
+alias wmRefresh='wmSet $FOAM_SETTINGS'
 
-# clear env
-alias wmUNSET='. $WM_PROJECT_DIR/etc/config/unset.sh'
+# Clear env
+alias wmUnset='. $WM_PROJECT_DIR/etc/config/unset.sh'
 
 # Toggle wmakeScheduler on/off
 #  - also need to set WM_HOSTS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-alias wmSchedON='export WM_SCHEDULER=$WM_PROJECT_DIR/wmake/wmakeScheduler'
-alias wmSchedOFF='unset WM_SCHEDULER'
+alias wmSchedOn='export WM_SCHEDULER=$WM_PROJECT_DIR/wmake/wmakeScheduler'
+alias wmSchedOff='unset WM_SCHEDULER'
 
 # Toggle Multi-Core On/Off
 # Proposed the following bug report: http://www.openfoam.com/mantisbt/view.php?id=211
@@ -74,38 +73,12 @@ alias wmMC='export WM_NCOMPPROCS=${NUMBER_OF_PROCESSORS:-1}; test -r /proc/cpuin
 
 # Toggle WM_CONTINUE_ON_ERROR on/off
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-alias wmNONSTOP='export WM_CONTINUE_ON_ERROR=1'
-alias wmSTOPON1st='unset WM_CONTINUE_ON_ERROR'
-
-# Change ParaView version
-# ~~~~~~~~~~~~~~~~~~~~~~~
-unset foamPV
-foamPV()
-{
-    . $WM_PROJECT_DIR/etc/config/paraview.sh ParaView_VERSION=$1
-    echo "paraview-$ParaView_VERSION  (major: $ParaView_MAJOR)" 1>&2
-}
-
+alias wmNonStop='export WM_CONTINUE_ON_ERROR=1'
+alias wmStopOn1st='unset WM_CONTINUE_ON_ERROR'
 
 # Change directory aliases
 # ~~~~~~~~~~~~~~~~~~~~~~~~
-alias src='cd $FOAM_SRC'
-alias lib='cd $FOAM_LIBBIN'
-alias run='cd $FOAM_RUN'
-alias user='cd ${FOAM_RUN%/*}'
 alias foam='cd $WM_PROJECT_DIR'
-alias foamsrc='cd $FOAM_SRC/$WM_PROJECT'
-alias foamfv='cd $FOAM_SRC/finiteVolume'
-alias app='cd $FOAM_APP'
-alias util='cd $FOAM_UTILITIES'
-alias sol='cd $FOAM_SOLVERS'
-alias tut='cd $FOAM_TUTORIALS'
-
-alias foamApps='cd $FOAM_APP'
-alias foamSol='cd $FOAM_SOLVERS'
-alias foamTuts='cd $FOAM_TUTORIALS'
-alias foamUtils='cd $FOAM_UTILITIES'
-alias foam3rdParty='cd $WM_THIRD_PARTY_DIR'
 
 if [ -n "$WM_PROJECT_SITE" ]
 then
@@ -114,4 +87,41 @@ else
     alias foamSite='cd $WM_PROJECT_INST_DIR/site'
 fi
 
-# -----------------------------------------------------------------------------
+alias src='cd $FOAM_SRC'
+alias lib='cd $FOAM_LIBBIN'
+alias app='cd $FOAM_APP'
+alias sol='cd $FOAM_SOLVERS'
+alias util='cd $FOAM_UTILITIES'
+alias tut='cd $FOAM_TUTORIALS'
+alias run='cd $FOAM_RUN'
+alias user='cd $WM_PROJECT_USER_DIR'
+
+
+# Change OpenFOAM version
+# ~~~~~~~~~~~~~~~~~~~~~~~
+unset foamVersion
+foamVersion()
+{
+    if [ "$1" ]; then
+        foamInstDir=$FOAM_INST_DIR
+        wmUnset
+        . $foamInstDir/OpenFOAM-$1/etc/bashrc
+        foam
+        echo "Changed to OpenFOAM-$1" 1>&2
+    else
+        echo "OpenFOAM-$WM_PROJECT_VERSION" 1>&2
+    fi
+}
+
+
+# Change ParaView version
+# ~~~~~~~~~~~~~~~~~~~~~~~
+unset foamPV
+foamPV()
+{
+    . $WM_PROJECT_DIR/etc/config.sh/paraview ParaView_VERSION=$1
+    echo "paraview-$ParaView_VERSION  (major: $ParaView_MAJOR)" 1>&2
+}
+
+
+#------------------------------------------------------------------------------

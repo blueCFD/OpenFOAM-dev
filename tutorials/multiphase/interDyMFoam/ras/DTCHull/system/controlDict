@@ -56,14 +56,12 @@ functions
     forces
     {
         type forces;
-        functionObjectLibs ( "libforces.so" );
+        libs ( "libforces.so" );
         patches (hull);
         rhoInf  998.8;
-        rhoName rho;
-        UName   U;
         log     on;
-        outputControl   timeStep;
-        outputInterval  1;
+        writeControl   timeStep;
+        writeInterval  1;
         CofR (2.929541 0 0.2);
     }
 }

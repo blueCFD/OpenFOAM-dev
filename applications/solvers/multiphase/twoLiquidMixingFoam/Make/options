@@ -1,4 +1,5 @@
 EXE_INC = \
+    -I. \
     -I../interFoam \
     -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
     -I$(LIB_SRC)/transportModels \
@@ -14,6 +15,7 @@ EXE_LIBS = \
     -lturbulenceModels \
     -lincompressibleTurbulenceModels \
     -lfiniteVolume \
+    -lfvOptions \
     -lmeshTools
 
 EXE_LIBS += \

@@ -2,13 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -23,19 +21,7 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - Derived from the patches for blueCFD 2.1 and 2.2.
-      - Static cast has to be used in "PtrList(const PtrList<T>& a)".
-
 \*---------------------------------------------------------------------------*/
-
-#include "error.H"
 
 #include "PtrList.H"
 #include "SLPtrList.H"
@@ -45,26 +31,25 @@ Modifications
 template<class T>
 Foam::PtrList<T>::PtrList()
 :
-    ptrs_()
+    UPtrList<T>()
 {}
 
 
 template<class T>
 Foam::PtrList<T>::PtrList(const label s)
 :
-    ptrs_(s, reinterpret_cast<T*>(0))
+    UPtrList<T>(s)
 {}
 
 
 template<class T>
 Foam::PtrList<T>::PtrList(const PtrList<T>& a)
 :
-    ptrs_(a.size())
+    UPtrList<T>(a.size())
 {
     forAll(*this, i)
     {
-        // static_cast work around for autoRefineDriver.C compiler error
-        ptrs_[i] = static_cast<T*>((a[i]).clone().ptr());
+        this->ptrs_[i] = (a[i]).clone().ptr();
     }
 }
 
@@ -73,41 +58,32 @@ template<class T>
 template<class CloneArg>
 Foam::PtrList<T>::PtrList(const PtrList<T>& a, const CloneArg& cloneArg)
 :
-    ptrs_(a.size())
+    UPtrList<T>(a.size())
 {
     forAll(*this, i)
     {
-        ptrs_[i] = (a[i]).clone(cloneArg).ptr();
+        this->ptrs_[i] = (a[i]).clone(cloneArg).ptr();
     }
 }
 
 
 template<class T>
-Foam::PtrList<T>::PtrList(const Xfer<PtrList<T> >& lst)
+Foam::PtrList<T>::PtrList(const Xfer<PtrList<T>>& lst)
 {
     transfer(lst());
 }
 
 
 template<class T>
-Foam::PtrList<T>::PtrList(PtrList<T>& a, bool reUse)
+Foam::PtrList<T>::PtrList(PtrList<T>& a, bool reuse)
 :
-    ptrs_(a.size())
+    UPtrList<T>(a, reuse)
 {
-    if (reUse)
+    if (!reuse)
     {
         forAll(*this, i)
         {
-            ptrs_[i] = a.ptrs_[i];
-            a.ptrs_[i] = NULL;
-        }
-        a.setSize(0);
-    }
-    else
-    {
-        forAll(*this, i)
-        {
-            ptrs_[i] = (a[i]).clone().ptr();
+            this->ptrs_[i] = (a[i]).clone().ptr();
         }
     }
 }
@@ -116,7 +92,7 @@ Foam::PtrList<T>::PtrList(PtrList<T>& a, bool reUse)
 template<class T>
 Foam::PtrList<T>::PtrList(const SLPtrList<T>& sll)
 :
-    ptrs_(sll.size())
+    UPtrList<T>(sll.size())
 {
     if (sll.size())
     {
@@ -128,7 +104,7 @@ Foam::PtrList<T>::PtrList(const SLPtrList<T>& sll)
             ++iter
         )
         {
-            ptrs_[i++] = (iter()).clone().ptr();
+            this->ptrs_[i++] = (iter()).clone().ptr();
         }
     }
 }
@@ -141,9 +117,9 @@ Foam::PtrList<T>::~PtrList()
 {
     forAll(*this, i)
     {
-        if (ptrs_[i])
+        if (this->ptrs_[i])
         {
-            delete ptrs_[i];
+            delete this->ptrs_[i];
         }
     }
 }
@@ -156,13 +132,13 @@ void Foam::PtrList<T>::setSize(const label newSize)
 {
     if (newSize < 0)
     {
-        FatalErrorIn("PtrList<T>::setSize(const label)")
+        FatalErrorInFunction
             << "bad set size " << newSize
             << " for type " << typeid(T).name()
             << abort(FatalError);
     }
 
-    label oldSize = size();
+    label oldSize = this->size();
 
     if (newSize == 0)
     {
@@ -173,22 +149,22 @@ void Foam::PtrList<T>::setSize(const label newSize)
         label i;
         for (i=newSize; i<oldSize; i++)
         {
-            if (ptrs_[i])
+            if (this->ptrs_[i])
             {
-                delete ptrs_[i];
+                delete this->ptrs_[i];
             }
         }
 
-        ptrs_.setSize(newSize);
+        this->ptrs_.setSize(newSize);
     }
     else // newSize > oldSize
     {
-        ptrs_.setSize(newSize);
+        this->ptrs_.setSize(newSize);
 
         label i;
         for (i=oldSize; i<newSize; i++)
         {
-            ptrs_[i] = NULL;
+            this->ptrs_[i] = NULL;
         }
     }
 }
@@ -199,13 +175,13 @@ void Foam::PtrList<T>::clear()
 {
     forAll(*this, i)
     {
-        if (ptrs_[i])
+        if (this->ptrs_[i])
         {
-            delete ptrs_[i];
+            delete this->ptrs_[i];
         }
     }
 
-    ptrs_.clear();
+    this->ptrs_.clear();
 }
 
 
@@ -213,83 +189,83 @@ template<class T>
 void Foam::PtrList<T>::transfer(PtrList<T>& a)
 {
     clear();
-    ptrs_.transfer(a.ptrs_);
+    this->ptrs_.transfer(a.ptrs_);
 }
 
 
 template<class T>
 void Foam::PtrList<T>::reorder(const labelUList& oldToNew)
 {
-    if (oldToNew.size() != size())
+    if (oldToNew.size() != this->size())
     {
-        FatalErrorIn("PtrList<T>::reorder(const labelUList&)")
+        FatalErrorInFunction
             << "Size of map (" << oldToNew.size()
-            << ") not equal to list size (" << size()
+            << ") not equal to list size (" << this->size()
             << ") for type " << typeid(T).name()
             << abort(FatalError);
     }
 
-    List<T*> newPtrs_(ptrs_.size(), reinterpret_cast<T*>(0));
+    List<T*> newPtrs_(this->ptrs_.size(), reinterpret_cast<T*>(0));
 
     forAll(*this, i)
     {
         label newI = oldToNew[i];
 
-        if (newI < 0 || newI >= size())
+        if (newI < 0 || newI >= this->size())
         {
-            FatalErrorIn("PtrList<T>::reorder(const labelUList&)")
+            FatalErrorInFunction
                 << "Illegal index " << newI << nl
-                << "Valid indices are 0.." << size()-1
+                << "Valid indices are 0.." << this->size()-1
                 << " for type " << typeid(T).name()
                 << abort(FatalError);
         }
 
         if (newPtrs_[newI])
         {
-            FatalErrorIn("PtrList<T>::reorder(const labelUList&)")
+            FatalErrorInFunction
                 << "reorder map is not unique; element " << newI
                 << " already set for type " << typeid(T).name()
                 << abort(FatalError);
         }
-        newPtrs_[newI] = ptrs_[i];
+        newPtrs_[newI] = this->ptrs_[i];
     }
 
     forAll(newPtrs_, i)
     {
         if (!newPtrs_[i])
         {
-            FatalErrorIn("PtrList<T>::reorder(const labelUList&)")
+            FatalErrorInFunction
                 << "Element " << i << " not set after reordering with type "
                 << typeid(T).name() << nl << abort(FatalError);
         }
     }
 
-    ptrs_.transfer(newPtrs_);
+    this->ptrs_.transfer(newPtrs_);
 }
 
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 template<class T>
-Foam::PtrList<T>& Foam::PtrList<T>::operator=(const PtrList<T>& a)
+void Foam::PtrList<T>::operator=(const PtrList<T>& a)
 {
     if (this == &a)
     {
-        FatalErrorIn("PtrList<T>::operator=(const PtrList<T>&)")
+        FatalErrorInFunction
             << "attempted assignment to self for type " << typeid(T).name()
             << abort(FatalError);
     }
 
-    if (size() == 0)
+    if (this->size() == 0)
     {
         setSize(a.size());
 
         forAll(*this, i)
         {
-            ptrs_[i] = (a[i]).clone().ptr();
+            this->ptrs_[i] = (a[i]).clone().ptr();
         }
     }
-    else if (a.size() == size())
+    else if (a.size() == this->size())
     {
         forAll(*this, i)
         {
@@ -298,14 +274,11 @@ Foam::PtrList<T>& Foam::PtrList<T>::operator=(const PtrList<T>& a)
     }
     else
     {
-        FatalErrorIn("PtrList::operator=(const PtrList<T>&)")
+        FatalErrorInFunction
             << "bad size: " << a.size()
             << " for type " << typeid(T).name()
             << abort(FatalError);
     }
-
-
-    return *this;
 }
 
 

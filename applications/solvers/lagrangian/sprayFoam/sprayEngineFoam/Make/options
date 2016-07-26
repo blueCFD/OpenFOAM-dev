@@ -1,6 +1,7 @@
 EXE_INC = \
-    -I.. \
+    -I. \
     -I../sprayDyMFoam \
+    -I.. \
     -I../../reactingParcelFoam \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I${LIB_SRC}/meshTools/lnInclude \
@@ -27,7 +28,6 @@ EXE_INC = \
     -I$(LIB_SRC)/engine/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
-    -I$(LIB_SRC)/fvOptions/lnInclude \
     -I$(LIB_SRC)/combustionModels/lnInclude
 
 

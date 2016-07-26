@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,39 +32,40 @@ Description
     calculated as:
 
         \f[
-            p_rgh = p - \rho g (h - hRef)
+            p_rgh = p - \rho g.(h - hRef)
+            p = p0 - 0.5 \rho |U|^2
         \f]
 
     where
     \vartable
         p_rgh   | Pseudo hydrostatic pressure [Pa]
         p       | Static pressure [Pa]
+        p0      | Total pressure [Pa]
         h       | Height in the opposite direction to gravity
         hRef    | Reference height in the opposite direction to gravity
-        \rho    | density
-        g       | acceleration due to gravity [m/s^2]
+        \rho    | Density
+        g       | Acceleration due to gravity [m/s^2]
     \endtable
 
-    \heading Patch usage
-
+Usage
     \table
         Property     | Description             | Required    | Default value
-        rhoName      | rho field name          | no          | rho
-        p            | static pressure         | yes         |
+        U            | Velocity field name     | no          | U
+        phi          | Flux field name         | no          | phi
+        rho          | Density field name      | no          | rho
+        p0           | Total pressure          | yes         |
     \endtable
 
     Example of the boundary condition specification:
     \verbatim
-    myPatch
+    <patchName>
     {
         type            prghTotalPressure;
-        rhoName         rho;
-        p               uniform 0;
-        value           uniform 0; // optional initial value
+        p0              uniform 0;
     }
     \endverbatim
 
-SeeAlso
+See also
     Foam::fixedValueFvPatchScalarField
 
 SourceFiles
@@ -179,18 +180,6 @@ public:
     // Member functions
 
         // Access
-
-            //- Return the rhoName
-            const word& rhoName() const
-            {
-                return rhoName_;
-            }
-
-            //- Return reference to the rhoName to allow adjustment
-            word& rhoName()
-            {
-                return rhoName_;
-            }
 
             //- Return the total pressure
             const scalarField& p0() const

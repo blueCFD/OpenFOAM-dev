@@ -20,8 +20,8 @@ wmakeCheckPwd "$WM_PROJECT_DIR/applications" || {
 
 set -x
 
-wmake -all utilities $*
 wmake -all solvers $*
+wmake -all utilities $*
 
 
 if isMinGW; then
@@ -29,11 +29,11 @@ if isMinGW; then
   # Test-parallel, because MPi on Windows can be rather finicky
   wmake -all test/parallel
 
-  wmakeVerifyExeDependencies utilities || wmake -all utilities
   wmakeVerifyExeDependencies solvers || wmake -all solvers
+  wmakeVerifyExeDependencies utilities || wmake -all utilities
 
   # Redo Test-parallel, to sort out for missing dependencies
   wmakeVerifyExeDependencies test/parallel || wmake -all test/parallel
 fi
 
-# ----------------------------------------------------------------- end-of-file
+#------------------------------------------------------------------------------

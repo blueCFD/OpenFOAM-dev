@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,13 +43,8 @@ void Foam::porosityModel::adjustNegativeResistance(dimensionedVector& resist)
 
     if (maxCmpt < 0)
     {
-        FatalErrorIn
-        (
-            "void Foam::porosityModel::adjustNegativeResistance"
-            "("
-                "dimensionedVector&"
-            ")"
-        )   << "Negative resistances are invalid, resistance = " << resist
+        FatalErrorInFunction
+            << "Negative resistances are invalid, resistance = " << resist
             << exit(FatalError);
     }
     else
@@ -123,17 +118,8 @@ Foam::porosityModel::porosityModel
 
     if (!foundZone && Pstream::master())
     {
-        FatalErrorIn
-        (
-            "Foam::porosityModel::porosityModel"
-            "("
-                "const word&, "
-                "const word&, "
-                "const fvMesh&, "
-                "const dictionary&"
-                "const word&, "
-            ")"
-        )   << "cannot find porous cellZone " << zoneName_
+        FatalErrorInFunction
+            << "cannot find porous cellZone " << zoneName_
             << exit(FatalError);
     }
 }
@@ -151,7 +137,7 @@ void Foam::porosityModel::transformModelData()
 {
     if (!mesh_.upToDatePoints(*this))
     {
-        calcTranformModelData();
+        calcTransformModelData();
 
         // set model up-to-date wrt points
         mesh_.setUpToDatePoints(*this);
@@ -168,11 +154,11 @@ Foam::tmp<Foam::vectorField> Foam::porosityModel::porosityModel::force
 {
     transformModelData();
 
-    tmp<vectorField> tforce(new vectorField(U.size(), vector::zero));
+    tmp<vectorField> tforce(new vectorField(U.size(), Zero));
 
     if (!cellZoneIDs_.empty())
     {
-        this->calcForce(U, rho, mu, tforce());
+        this->calcForce(U, rho, mu, tforce.ref());
     }
 
     return tforce;

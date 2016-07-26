@@ -9,9 +9,6 @@ cp system/controlDict.flow system/controlDict
 # Set application name
 application=$(getApplication)
 
-# Get number of processors to run on
-nProcs=$(getNumberOfProcessors)
-
 rm -rf 0
 
 runApplication createBaffles -overwrite
@@ -21,20 +18,20 @@ runApplication mergeOrSplitBaffles -split -overwrite
 runApplication createPatch -overwrite
 
 # Copy fields after meshing to avoind the generation of unnecessary patch fields
-cp -r 0.org 0
+cp -r 0.orig 0
 
 # Initialize alpha
 runApplication setFields
 
 # Decompose
-rm log.decomposePar
-runApplication decomposePar -force
+runApplication -s main \
+    decomposePar -force
 
 # Run
-runParallel $application $nProcs
+runParallel $application
 
 # Reconstruct
 runApplication reconstructPar -noFunctionObjects
 
 
-# ----------------------------------------------------------------- end-of-file
+#------------------------------------------------------------------------------

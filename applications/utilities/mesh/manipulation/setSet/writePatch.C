@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -96,9 +96,9 @@ void writePatch
 
     label nFaceVerts = 0;
 
-    forAll(fp.localFaces(), faceI)
+    forAll(fp.localFaces(), facei)
     {
-        nFaceVerts += fp.localFaces()[faceI].size() + 1;
+        nFaceVerts += fp.localFaces()[facei].size() + 1;
     }
     pStream << "POLYGONS " << fp.size() << ' ' << nFaceVerts
         << std::endl;
@@ -106,9 +106,9 @@ void writePatch
 
     DynamicList<label> vertLabels(nFaceVerts);
 
-    forAll(fp.localFaces(), faceI)
+    forAll(fp.localFaces(), facei)
     {
-        const face& f = fp.localFaces()[faceI];
+        const face& f = fp.localFaces()[facei];
 
         vertLabels.append(f.size());
 

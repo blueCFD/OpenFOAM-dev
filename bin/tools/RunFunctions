@@ -2,10 +2,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -30,8 +31,6 @@
 #
 #     Modifications made:
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
-#        - Added ability to abort a run after a certain wall clock time has
-#          passed.
 #        - Added ability to override how "runParallel" works, as well as using
 #          the mpirun we want, as done in foamJob.
 #        - Added abilities similar to foamJob, regarding the usage of the 
@@ -44,9 +43,20 @@
 #     Miscellaneous functions for running tutorial cases
 #------------------------------------------------------------------------------
 
+isTest()
+{
+    for i in "$@"; do
+        if [ "$i" = "-test" ]
+        then
+            return 0
+        fi
+    done
+    return 1
+}
+
 getNumberOfProcessors()
 {
-    sed -ne 's/^numberOfSubdomains\s*\(.*\);/\1/p' system/decomposeParDict
+    foamDictionary -entry numberOfSubdomains -value system/decomposeParDict
 }
 
 getApplication()
@@ -54,263 +64,105 @@ getApplication()
     sed -ne 's/^ *application\s*\([a-zA-Z]*\)\s*;.*$/\1/p' system/controlDict
 }
 
-#------------------------------------------------------------------------------
-if [ -z "$DEBUG_MAXRUNTIME" ]; then #FUNCTIONS FOR NORMAL MODE
-#------------------------------------------------------------------------------
-
 runApplication()
 {
-    APP_RUN=$1
-    APP_NAME=${1##*/}
-    shift
+    APP_RUN=
+    LOG_IGNORE=false
+    LOG_APPEND=false
+    LOG_SUFFIX=
 
-    if [ -f log.$APP_NAME ]
+    # Parse options and executable
+    while [ $# -gt 0 ] && [ -z "$APP_RUN" ]; do
+        key="$1"
+        case "$key" in
+            -append|-a)
+                LOG_IGNORE=true
+                LOG_APPEND=true
+                ;;
+            -overwrite|-o)
+                LOG_IGNORE=true
+                ;;
+            -suffix|-s)
+                LOG_SUFFIX=".$2"
+                shift
+                ;;
+            *)
+                APP_RUN="$key"
+                APP_NAME="${key##*/}"
+                LOG_SUFFIX="${APP_NAME}${LOG_SUFFIX}"
+                ;;
+        esac
+
+        shift
+    done
+
+    if [ -f log.$LOG_SUFFIX ] && [ "$LOG_IGNORE" = "false" ]
     then
-        echo "$APP_NAME already run on $PWD: remove log file to re-run"
+        echo "$APP_NAME already run on $PWD:" \
+             "remove log file 'log.$LOG_SUFFIX' to re-run"
     else
         echo "Running $APP_RUN on $PWD"
-        $APP_RUN "$@" > log.$APP_NAME 2>&1
+        if [ "$LOG_APPEND" = "true" ]; then
+            $APP_RUN "$@" >> log.$LOG_SUFFIX 2>&1
+        else
+            $APP_RUN "$@" > log.$LOG_SUFFIX 2>&1
+        fi
     fi
 }
 
 runParallel()
 {
-    APP_RUN=$1
-    APP_NAME=${1##*/}
-    shift
+    APP_RUN=
+    LOG_IGNORE=false
+    LOG_APPEND=false
+    LOG_SUFFIX=
+    nProcs=$(getNumberOfProcessors)
 
-    if [ -f log.$APP_NAME ]
-    then
-        echo "$APP_NAME already run on $PWD: remove log file to re-run"
-    else
-        nProcs=$1
+    # Parse options and executable
+    while [ $# -gt 0 ] && [ -z "$APP_RUN" ]; do
+        key="$1"
+        case "$key" in
+            -append|-a)
+                LOG_IGNORE=true
+                LOG_APPEND=true
+                ;;
+            -overwrite|-o)
+                LOG_IGNORE=true
+                ;;
+            -suffix|-s)
+                LOG_SUFFIX=".$2"
+                shift
+                ;;
+            -np|-n)
+                nProcs="$2"
+                shift
+                ;;
+            *)
+                APP_RUN="$key"
+                APP_NAME="${key##*/}"
+                LOG_SUFFIX="${APP_NAME}${LOG_SUFFIX}"
+                ;;
+        esac
+
         shift
-        echo "Running $APP_RUN in parallel on $PWD using $nProcs processes"
+    done
 
-      if [ -z "$MPI_OVERRIDE_RUN_PARALLEL" ]
-      then
+    if [ -f log.$SUFFIX ] && [ "$LOG_IGNORE" = "false" ]
+    then
+        echo "$APP_NAME already run on $PWD:" \
+             "remove log file 'log.$LOG_SUFFIX' to re-run"
+    else
 
         export mpirun=`findMpirun` || echo "'mpirun' not found"
         load_mpi_opts
 
-        #if [ "$WM_SCHEDULER" ]
-        #then
-        #    echo "$PWD: $WM_SCHEDULER -np $nProcs" 1>&2
-        #    $WM_SCHEDULER -np $nProcs "( $mpirun -np $nProcs $APP_RUN -parallel "$@" < /dev/null > log.$APP_NAME 2>&1 )"
-        #else
-
-            ( $mpirun -np $nProcs $mpiopts $APP_RUN -parallel "$@" < /dev/null > log.$APP_NAME 2>&1 )
-
-        #fi
-
-      else
-
-        #
-        # The override is used for corner case scenarios for when the conventional
-        # RunParallel function isn't enough.
-        #
-        $MPI_OVERRIDE_RUN_PARALLEL log.$APP_NAME $nProcs $APP_RUN $*
-
-      fi
-    fi
-}
-
-#------------------------------------------------------------------------------
-else #FUNCTIONS FOR TIME LIMITED EXECUTION MODE
-#------------------------------------------------------------------------------
-
-export DEBUG_MAXMAXRUNTIME=`expr $DEBUG_MAXRUNTIME \* 10`
-
-runApplication ()
-{
-    APP_RUN=$1; shift
-    APP_NAME=${APP_RUN##*/}
-
-    if [ -f log.$APP_NAME ] ; then
-        echo "$APP_NAME already run on $PWD: remove log file to run"
-    else
-        echo "Running $APP_RUN on $PWD"
-        $APP_RUN $* > log.$APP_NAME 2>&1 &
-        pid=$!
-        sleep 10;
-
-        #special run time scenarios
-        case $APP_NAME in
-          md*Foam)
-          DEBUG_MAXRUNTIME=`expr $DEBUG_MAXRUNTIME + 360`
-          ;;
-        esac
-
-        count=0
-        while kill -0 $pid > /dev/null 2>&1; do
-          sleep 1;
-          count=`expr $count + 1`
-          case $APP_NAME in
-            #reconstructPar | decomposePar | blockMesh | snappyHexMesh | mdInitialise | dsmcInitialise | changeDictionary | extrudeMesh | 
-            #autoPatch | createPatch | mapFields | setSet | setsToZones
-            *ToFoam | *tofoam)
-              if [ $count -gt $DEBUG_MAXMAXRUNTIME ]; then
-                break;
-              fi
-            ;;
-            *Foam | *foam)
-              if [ $count -gt $DEBUG_MAXRUNTIME ]; then
-                break;
-              fi
-            ;;
-            *)
-              if [ $count -gt $DEBUG_MAXMAXRUNTIME ]; then
-                break;
-              fi
-            ;;
-          esac
-        done
-        if kill -0 $pid > /dev/null 2>&1; then
-          echo "Runtime: maxmin:$DEBUG_MAXRUNTIME < current:$count < maxmax:$DEBUG_MAXMAXRUNTIME - killing $pid"
-          kill $pid && wait $pid 2>/dev/null
-        fi
-    fi
-}
-
-runParallel ()
-{
-    APP_RUN=$1
-    APP_NAME=${1##*/}
-    shift
-
-    if [ -f log.$APP_NAME ] ; then
-       echo "$APP_NAME already run on $PWD: remove log file to run"
-    else
-       (
-        nProcs=$1
-        shift
         echo "Running $APP_RUN in parallel on $PWD using $nProcs processes"
-
-        if [ -z "$MPI_OVERRIDE_RUN_PARALLEL" ]
-        then
-
-          load_mpi_opts
-
-          export mpirun=`findMpirun` || echo "'mpirun' not found"
-          $mpirun -np $nProcs $mpiopts $APP_RUN -parallel $* < /dev/null > log.$APP_NAME 2>&1  &
-
+        if [ "$LOG_APPEND" = "true" ]; then
+            ( $mpirun -np $nProcs $mpiopts $APP_RUN -parallel "$@" < /dev/null >> log.$LOG_SUFFIX 2>&1 )
         else
-
-          #
-          # The override is used for corner case scenarios for when the conventional
-          # RunParallel function isn't enough.
-          #
-          $MPI_OVERRIDE_RUN_PARALLEL log.$APP_NAME $nProcs $APP_RUN $* &
-
+            ( $mpirun -np $nProcs $mpiopts $APP_RUN -parallel "$@" < /dev/null > log.$LOG_SUFFIX 2>&1 )
         fi
-
-        pid=$!
-        sleep 10;
-
-        #special run time scenarios
-        case $APP_NAME in
-          md*Foam)
-          DEBUG_MAXRUNTIME=`expr $DEBUG_MAXRUNTIME + 360`
-          ;;
-        esac
-
-        count=0
-        while kill -0 $pid > /dev/null 2>&1; do
-          sleep 1;
-          count=`expr $count + 1`
-          case $APP_NAME in
-            #snappyHexMesh | mdInitialise | dsmcInitialise | changeDictionary | extrudeMesh | autoPatch | createPatch | mapFields | setSet | setsToZones
-            *ToFoam | *tofoam)
-              if [ $count -gt $DEBUG_MAXMAXRUNTIME ]; then
-                break;
-              fi
-            ;;
-            *Foam | *foam)
-              if [ $count -gt $DEBUG_MAXRUNTIME ]; then
-                break;
-              fi
-            ;;
-            *)
-              if [ $count -gt $DEBUG_MAXMAXRUNTIME ]; then
-                break;
-              fi
-            ;;
-          esac
-        done
-        if kill -0 $pid > /dev/null 2>&1; then
-          echo "Runtime: maxmin:$DEBUG_MAXRUNTIME < current:$count < maxmax:$DEBUG_MAXMAXRUNTIME - killing $pid"
-          if [ -z "$MPI_OVERRIDE_KILL_PARALLEL" ]; then
-            kill $pid && wait $pid 2>/dev/null
-          else
-            $MPI_OVERRIDE_KILL_PARALLEL $pid log.$APP_NAME
-          fi
-        fi
-       )
     fi
-}
-
-#------------------------------------------------------------------------------
-fi #END OF NORMAL vs TIME LIMITED EXECUTION
-#------------------------------------------------------------------------------
-
-load_mpi_opts()
-{
-    mpiopts=""
-
-    case "$WM_MPLIB" in
-    *OPENMPI)
-        # add hostfile info
-        for hostfile in \
-            hostfile \
-            machines \
-            system/hostfile \
-            system/machines \
-            ;
-        do
-            if [ -r $hostfile ]
-            then
-                mpiopts="$mpiopts -hostfile $hostfile"
-                break
-            fi
-        done
-
-        #
-        # Send FOAM_SETTINGS to parallel processes. so the proper definitions are sent as well.
-        # Note: don't send for now, simply because foamExec isn't being called here
-        #
-        #mpiopts="$mpiopts -x FOAM_SETTINGS"
-        ;;
-    MPICH | MSMPI)
-        # add hostfile info
-        for hostfile in \
-            hostfile \
-            machines \
-            system/hostfile \
-            system/machines \
-            ;
-        do
-           if [ -r $hostfile ]
-           then
-              mpiopts="$mpiopts -machinefile $hostfile"
-              break
-           fi
-        done
-
-        #
-        # Send FOAM_SETTINGS to parallel processes. so the proper definitions are sent as well.
-        # Note: don't send for now, simply because foamExec isn't being called here
-        #
-        #mpiopts="$mpiopts -env FOAM_SETTINGS \"${FOAM_SETTINGS}\""
-        ;;
-    esac
-
-    #
-    # Add additional options that the user might need, such as disabling lo or eth0
-    #
-    mpiopts="$mpiopts $MPI_ACCESSORY_OPTIONS"
-
-    #make sure the variable is visible by forking shells
-    export mpiopts
 }
 
 compileApplication()

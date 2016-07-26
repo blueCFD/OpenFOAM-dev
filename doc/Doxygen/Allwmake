@@ -102,7 +102,6 @@ echo
 echo "Done doxygen"
 echo
 
-
 echo
 echo "Generating Qt collection..."
 echo
@@ -121,4 +120,4 @@ echo
 echo "Done Qt collection generation."
 echo
 
-# ----------------------------------------------------------------- end-of-file
+#------------------------------------------------------------------------------

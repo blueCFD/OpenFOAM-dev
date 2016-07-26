@@ -3,11 +3,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
-# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -62,8 +62,8 @@
 #         wdep -h
 #
 # See also
-#     wmakeLnInclude, wmakeLnIncludeAll, wdep, wrmdep, wrmo and wrmdepold,
-#     wclean, wcleanMachine, wcleanAll, wcleanLnIncludeAll
+#     wmakeLnInclude, wmakeLnIncludeAll, wdep, wrmdep, wrmo,
+#     wclean, wcleanPlatform, wcleanLnIncludeAll
 #
 #------------------------------------------------------------------------------
 Script=${0##*/}
@@ -95,6 +95,7 @@ or a special target:
   libo              Compile statically linked lib (.o)
   libso             Compile dynamically linked lib (.so)
   dep               Compile lnInclude and dependencies only
+  updatedep         Compile dependencies only (in case of broken dependencies)
 
 USAGE
     exit 1
@@ -232,6 +233,9 @@ then
         ./Allwmake
         exit $?
     else
+        # Have to keep track of the main exit code for the call to "make"
+        makeExitCode=0
+
         # Find all the sub-directories containing a 'Make' directory
         FOAM_APPS=$(\
                        for d in *; \
@@ -243,15 +247,19 @@ then
         then
             # Compile all applications in sub-directories
             $make ${WM_CONTINUE_ON_ERROR:+-k} \
-                  -f $WM_DIR/MakefileApps \
+                  -f $WM_DIR/makefiles/apps \
                   TARGET="$targetType" FOAM_APPS="$FOAM_APPS"
+            makeExitCode=$?
         fi
         # If the current directory contains a 'Make' directory continue
-        # otherwise exit
-        if [ ! -d $MakeDir ]
+        # otherwise exit, or always exit in case of error
+        if [ ! -d $MakeDir -o $makeExitCode -ne 0 ]
         then
-            exit $?
+            exit $makeExitCode
         fi
+
+        # Clean up tracking variable
+        unset makeExitCode
     fi
 fi
 
@@ -348,13 +356,11 @@ fi
 
     # Pre-build the $WM_OPTIONS/options file
     # which is included when building the $WM_OPTIONS/files file
-    $make -s -f $WM_DIR/MakefileFiles MAKE_DIR=$MakeDir OBJECTS_DIR=$objectsDir\
-          $objectsDir/options
+    $make -s -f $WM_DIR/makefiles/files MAKE_DIR=$MakeDir \
+          OBJECTS_DIR=$objectsDir $objectsDir/options
 
-    $make -s -f $WM_DIR/MakefileFiles MAKE_DIR=$MakeDir OBJECTS_DIR=$objectsDir
-
-    $make -s -f $WM_DIR/MakefileFiles MAKE_DIR=$MakeDir OBJECTS_DIR=$objectsDir\
-          $objectsDir/variables
+    $make -s -f $WM_DIR/makefiles/files MAKE_DIR=$MakeDir \
+          OBJECTS_DIR=$objectsDir
 
     if isMinGW && \
        [ "$targetType" = "libso" -o "$targetType" = "all" -o \
@@ -387,7 +393,7 @@ case "$targetType" in
         # ... but only if 'LIB' is declared in 'Make/files'
         if grep -e '^ *LIB *=' "$MakeDir/files" >/dev/null 2>&1
         then
-            $make -s -f $WM_DIR/Makefile MAKE_DIR=$MakeDir \
+            $make -s -f $WM_DIR/makefiles/general MAKE_DIR=$MakeDir \
                   OBJECTS_DIR=$objectsDir lnInclude
         fi
         ;;
@@ -395,11 +401,31 @@ esac
 
 
 #------------------------------------------------------------------------------
+# When WM_UPDATE_DEPENDENCIES is set, use forced dependency files update
+#------------------------------------------------------------------------------
+
+if [ -n "$WM_UPDATE_DEPENDENCIES" ]
+then
+
+    $make -f $WM_DIR/makefiles/general MAKE_DIR=$MakeDir \
+        OBJECTS_DIR=$objectsDir updatedep
+    makeExitCode=$?
+
+    if [ $makeExitCode -ne 0 ]
+    then
+        exit $makeExitCode
+    fi
+
+    unset makeExitCode
+fi
+
+
+#------------------------------------------------------------------------------
 # Make the dependency files or object files and link
 #------------------------------------------------------------------------------
 
-exec $make -f $WM_DIR/Makefile MAKE_DIR=$MakeDir OBJECTS_DIR=$objectsDir \
-     $targetType
+exec $make -f $WM_DIR/makefiles/general MAKE_DIR=$MakeDir \
+     OBJECTS_DIR=$objectsDir $targetType
 
 
 #------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ cloneCase moriyoshiHomogeneous moriyoshiHomogeneousPart2
 (
     cd moriyoshiHomogeneousPart2 || exit
 
-    cp -r `find ../moriyoshiHomogeneous -name "0.*" | sort -u | tail -n 1` .
+    cp -r ../moriyoshiHomogeneous/0.005 .
     setControlDict
     runApplication `getApplication`
 )
@@ -51,4 +51,4 @@ cloneCase moriyoshiHomogeneous moriyoshiHomogeneousHydrogen
     runApplication `getApplication`
 )
 
-# ----------------------------------------------------------------- end-of-file
+#------------------------------------------------------------------------------

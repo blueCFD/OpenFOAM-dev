@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2014-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # License
@@ -55,6 +55,8 @@ options:
   -j                Compile using all local cores/hyperthreads
   -jN or -j N       Compile using N cores/hyperthreads
   -no-scheduler     Compile without wmakeScheduler
+  -update           Update lnInclude directories, dep files, remove deprecated
+                    files and directories
 USAGE
 
     # Print options for building code documentation
@@ -122,6 +124,21 @@ do
         -no-scheduler)
             unset WM_SCHEDULER
             ;;
+        # Meant to be used following a pull, this will:
+        # - remove dep files that depend on deleted files;
+        # - remove stale dep files;
+        # - update lnInclude directories;
+        # - remove empty directories, along with deprecated object directories
+        #   and respective binaries.
+        -update)
+            wrmdep -update
+            wrmdep -old
+            wmakeLnIncludeAll
+            wclean empty
+
+            # Set WM_UPDATE_DEPENDENCIES, so that wmake will pick up on it
+            export WM_UPDATE_DEPENDENCIES=yes
+            ;;
         # Generate documentation
         doc)
             test -n "$genDoc" || usage "invalid option '$1'"
@@ -161,4 +178,4 @@ fi
 unset Script usage setWM_NCOMPPROCS
 
 
-# ----------------------------------------------------------------- end-of-file
+#------------------------------------------------------------------------------

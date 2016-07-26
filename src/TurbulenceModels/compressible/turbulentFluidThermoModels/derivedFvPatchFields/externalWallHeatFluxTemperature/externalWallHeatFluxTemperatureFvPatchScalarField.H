@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,8 +34,8 @@ Description
     fixed heat transfer coefficient mode.
 
     The condition can operate in two modes:
-    - fixed heat transfer coefficient: supply h and Ta
-    - fixed heat flux: supply q
+      - fixed heat transfer coefficient: supply h and Ta
+      - fixed heat flux: supply q
 
     where:
     \vartable
@@ -48,9 +48,7 @@ Description
     mesh database using the \c lookup option, or from a \c solidThermo
     thermophysical package.
 
-
-    \heading Patch usage
-
+Usage
     \table
         Property     | Description                 | Required | Default value
         kappa        | thermal conductivity option | yes      |
@@ -66,7 +64,7 @@ Description
 
     Example of the boundary condition specification:
     \verbatim
-    myPatch
+    <patchName>
     {
         type            externalWallHeatFluxTemperature;
         kappa           fluidThermo;
@@ -82,9 +80,12 @@ Description
     }
     \endverbatim
 
-Note
-  - Only supply \c h and \c Ta, or \c q in the dictionary (see above)
-  - kappa entries can be: fluidThermo, solidThermo or lookup
+    Note:
+      - Only supply \c h and \c Ta, or \c q in the dictionary (see above)
+      - \c kappa and \c kappaName are inherited from temperatureCoupledBase.
+
+See also
+    Foam::temperatureCoupledBase
 
 SourceFiles
     externalWallHeatFluxTemperatureFvPatchScalarField.C

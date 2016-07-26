@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: 'isnan' should be 'std::isnan'.
@@ -145,9 +145,8 @@ Foam::autoPtr<Foam::ensightPart> Foam::ensightPart::New(Istream& is)
 
     if (cstrIter == istreamConstructorTablePtr_->end())
     {
-        FatalIOErrorIn
+        FatalIOErrorInFunction
         (
-            "ensightPart::New(Istream&)",
             is
         )   << "unknown ensightPart type "
             << partType << nl << nl

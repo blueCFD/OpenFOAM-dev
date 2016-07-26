@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,9 +25,9 @@ Application
     potentialFoam
 
 Description
-    Potential flow solver which solves for the velocity potential
-    from which the flux-field is obtained and velocity field by reconstructing
-    the flux.
+    Potential flow solver which solves for the velocity potential, to
+    calculate the flux-field, from which the velocity field is obtained by
+    reconstructing the flux.
 
     This application is particularly useful to generate starting fields for
     Navier-Stokes codes.
@@ -36,7 +36,6 @@ Description
 
 #include "fvCFD.H"
 #include "pisoControl.H"
-#include "fvIOoptionList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -80,8 +79,6 @@ int main(int argc, char *argv[])
     pisoControl potentialFlow(mesh, "potentialFlow");
 
     #include "createFields.H"
-    #include "createMRF.H"
-    #include "createFvOptions.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -123,8 +120,7 @@ int main(int argc, char *argv[])
     U.correctBoundaryConditions();
 
     Info<< "Interpolated velocity error = "
-        << (sqrt(sum(sqr((fvc::interpolate(U) & mesh.Sf()) - phi)))
-          /sum(mesh.magSf())).value()
+        << (sqrt(sum(sqr(fvc::flux(U) - phi)))/sum(mesh.magSf())).value()
         << endl;
 
     // Write U and phi

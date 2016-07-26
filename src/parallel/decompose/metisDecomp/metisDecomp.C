@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,13 +25,12 @@ License
 
 #include "metisDecomp.H"
 #include "addToRunTimeSelectionTable.H"
-#include "floatScalar.H"
 #include "Time.H"
 
 extern "C"
 {
-#define OMPI_SKIP_MPICXX
-#   include "metis.h"
+    #define OMPI_SKIP_MPICXX
+    #include "metis.h"
 }
 
 
@@ -40,14 +39,12 @@ extern "C"
 namespace Foam
 {
     defineTypeNameAndDebug(metisDecomp, 0);
-
     addToRunTimeSelectionTable(decompositionMethod, metisDecomp, dictionary);
 }
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-// Call Metis with options from dictionary.
 Foam::label Foam::metisDecomp::decompose
 (
     const List<label>& adjncy,
@@ -57,9 +54,6 @@ Foam::label Foam::metisDecomp::decompose
     List<label>& finalDecomp
 )
 {
-    // C style numbering
-    //int numFlag = 0;
-
     // Method of decomposition
     // recursive: multi-level recursive bisection (default)
     // k-way: multi-level k-way
@@ -67,18 +61,18 @@ Foam::label Foam::metisDecomp::decompose
 
     label numCells = xadj.size()-1;
 
-    // decomposition options
+    // Decomposition options
     List<label> options(METIS_NOPTIONS);
     METIS_SetDefaultOptions(options.begin());
 
-    // processor weights initialised with no size, only used if specified in
+    // Processor weights initialised with no size, only used if specified in
     // a file
-    Field<floatScalar> processorWeights;
+    Field<scalar> processorWeights;
 
-    // cell weights (so on the vertices of the dual)
+    // Cell weights (so on the vertices of the dual)
     List<label> cellWeights;
 
-    // face weights (so on the edges of the dual)
+    // Face weights (so on the edges of the dual)
     List<label> faceWeights;
 
 
@@ -88,24 +82,19 @@ Foam::label Foam::metisDecomp::decompose
     {
         if (minWeights <= 0)
         {
-            WarningIn
-            (
-                "metisDecomp::decompose"
-                "(const pointField&, const scalarField&)"
-            )   << "Illegal minimum weight " << minWeights
+            WarningInFunction
+                << "Illegal minimum weight " << minWeights
                 << endl;
         }
 
         if (cWeights.size() != numCells)
         {
-            FatalErrorIn
-            (
-                "metisDecomp::decompose"
-                "(const pointField&, const scalarField&)"
-            )   << "Number of cell weights " << cWeights.size()
+            FatalErrorInFunction
+                << "Number of cell weights " << cWeights.size()
                 << " does not equal number of cells " << numCells
                 << exit(FatalError);
         }
+
         // Convert to integers.
         cellWeights.setSize(cWeights.size());
         forAll(cellWeights, i)
@@ -120,13 +109,14 @@ Foam::label Foam::metisDecomp::decompose
     {
         const dictionary& metisCoeffs =
             decompositionDict_.subDict("metisCoeffs");
+
         word weightsFile;
 
         if (metisCoeffs.readIfPresent("method", method))
         {
             if (method != "recursive" && method != "k-way")
             {
-                FatalErrorIn("metisDecomp::decompose()")
+                FatalErrorInFunction
                     << "Method " << method << " in metisCoeffs in dictionary : "
                     << decompositionDict_.name()
                     << " should be 'recursive' or 'k-way'"
@@ -141,7 +131,7 @@ Foam::label Foam::metisDecomp::decompose
         {
             if (options.size() != METIS_NOPTIONS)
             {
-                FatalErrorIn("metisDecomp::decompose()")
+                FatalErrorInFunction
                     << "Number of options in metisCoeffs in dictionary : "
                     << decompositionDict_.name()
                     << " should be " << METIS_NOPTIONS
@@ -158,50 +148,23 @@ Foam::label Foam::metisDecomp::decompose
 
             if (processorWeights.size() != nProcessors_)
             {
-                FatalErrorIn("metisDecomp::decompose(const pointField&)")
+                FatalErrorInFunction
                     << "Number of processor weights "
                     << processorWeights.size()
                     << " does not equal number of domains " << nProcessors_
                     << exit(FatalError);
             }
         }
-
-        //if (metisCoeffs.readIfPresent("cellWeightsFile", weightsFile))
-        //{
-        //    Info<< "metisDecomp : Using cell-based weights." << endl;
-        //
-        //    IOList<label> cellIOWeights
-        //    (
-        //        IOobject
-        //        (
-        //            weightsFile,
-        //            mesh_.time().timeName(),
-        //            mesh_,
-        //            IOobject::MUST_READ,
-        //            IOobject::AUTO_WRITE
-        //        )
-        //    );
-        //    cellWeights.transfer(cellIOWeights);
-        //
-        //    if (cellWeights.size() != xadj.size()-1)
-        //    {
-        //        FatalErrorIn("metisDecomp::decompose(const pointField&)")
-        //            << "Number of cell weights " << cellWeights.size()
-        //            << " does not equal number of cells " << xadj.size()-1
-        //            << exit(FatalError);
-        //    }
-        //}
     }
 
-    int ncon = 1;
+    label ncon = 1;
+    label nProcs = nProcessors_;
 
-    int nProcs = nProcessors_;
-
-    // output: cell -> processor addressing
+    // Output: cell -> processor addressing
     finalDecomp.setSize(numCells);
 
-    // output: number of cut edges
-    int edgeCut = 0;
+    // Output: number of cut edges
+    label edgeCut = 0;
 
     if (method == "recursive")
     {
@@ -226,7 +189,7 @@ Foam::label Foam::metisDecomp::decompose
     {
         METIS_PartGraphKway
         (
-            &numCells,         // num vertices in graph
+            &numCells,          // num vertices in graph
             &ncon,              // num balancing constraints
             const_cast<List<label>&>(xadj).begin(),   // indexing into adjncy
             const_cast<List<label>&>(adjncy).begin(), // neighbour info
@@ -265,10 +228,8 @@ Foam::labelList Foam::metisDecomp::decompose
 {
     if (points.size() != mesh.nCells())
     {
-        FatalErrorIn
-        (
-            "metisDecomp::decompose(const pointField&,const scalarField&)"
-        )   << "Can use this decomposition method only for the whole mesh"
+        FatalErrorInFunction
+            << "Can use this decomposition method only for the whole mesh"
             << endl
             << "and supply one coordinate (cellCentre) for every cell." << endl
             << "The number of coordinates " << points.size() << endl
@@ -304,11 +265,8 @@ Foam::labelList Foam::metisDecomp::decompose
 {
     if (agglom.size() != mesh.nCells())
     {
-        FatalErrorIn
-        (
-            "metisDecomp::decompose"
-            "(const labelList&, const pointField&, const scalarField&)"
-        )   << "Size of cell-to-coarse map " << agglom.size()
+        FatalErrorInFunction
+            << "Size of cell-to-coarse map " << agglom.size()
             << " differs from number of cells in mesh " << mesh.nCells()
             << exit(FatalError);
     }
@@ -346,11 +304,8 @@ Foam::labelList Foam::metisDecomp::decompose
 {
     if (cellCentres.size() != globalCellCells.size())
     {
-        FatalErrorIn
-        (
-            "metisDecomp::decompose"
-            "(const pointField&, const labelListList&, const scalarField&)"
-        )   << "Inconsistent number of cells (" << globalCellCells.size()
+        FatalErrorInFunction
+            << "Inconsistent number of cells (" << globalCellCells.size()
             << ") and number of cell centres (" << cellCentres.size()
             << ")." << exit(FatalError);
     }

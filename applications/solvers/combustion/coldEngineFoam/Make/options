@@ -1,4 +1,5 @@
 EXE_INC = \
+    -I. \
     -I../engineFoam \
     -I../XiFoam \
     -I../../compressible/rhoPimpleFoam \
@@ -12,7 +13,6 @@ EXE_INC = \
     -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
-    -I$(LIB_SRC)/fvOptions/lnInclude
 
 EXE_LIBS = \
     -lengine \

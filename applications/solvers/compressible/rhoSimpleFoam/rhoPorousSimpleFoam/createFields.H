@@ -68,9 +68,9 @@ dimensionedScalar rhoMin
 );
 
 Info<< "Creating turbulence model\n" << endl;
-autoPtr<compressible::RASModel> turbulence
+autoPtr<compressible::turbulenceModel> turbulence
 (
-    compressible::RASModel::New
+    compressible::turbulenceModel::New
     (
         rho,
         U,
@@ -80,3 +80,5 @@ autoPtr<compressible::RASModel> turbulence
 );
 
 dimensionedScalar initialMass = fvc::domainIntegrate(rho);
+
+#include "createMRF.H"

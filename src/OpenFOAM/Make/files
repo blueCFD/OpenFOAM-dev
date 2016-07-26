@@ -3,6 +3,7 @@ global/global.Cver
 /* global/constants/dimensionedConstants.C in global.Cver */
 global/argList/argList.C
 global/clock/clock.C
+global/etcFiles/etcFiles.C
 
 bools = primitives/bools
 $(bools)/bool/bool.C
@@ -14,6 +15,8 @@ $(bools)/lists/boolList.C
 chars = primitives/chars
 $(chars)/char/charIO.C
 $(chars)/wchar/wcharIO.C
+
+primitives/direction/directionIO.C
 
 ints = primitives/ints
 $(ints)/uint32/uint32.C
@@ -52,6 +55,7 @@ primitives/Tensor/lists/tensorList.C
 primitives/Vector/complexVector/complexVector.C
 #if !defined(WM_SP)
 primitives/Vector/floatVector/floatVector.C
+primitives/Tensor/floatTensor/floatTensor.C
 #endif
 primitives/Vector/labelVector/labelVector.C
 primitives/Vector/vector/vector.C
@@ -72,7 +76,7 @@ primitives/septernion/septernion.C
 primitives/triad/triad.C
 
 /* functions, data entries */
-primitives/functions/DataEntry/makeDataEntries.C
+primitives/functions/Function1/makeDataEntries.C
 primitives/functions/Polynomial/polynomialFunction.C
 
 primitives/subModelBase/subModelBase.C
@@ -91,6 +95,9 @@ $(strings)/wordRe/wordRe.C
 $(strings)/lists/hashedWordList.C
 $(strings)/stringOps/stringOps.C
 
+ops = primitives/ops
+$(ops)/flipOp.C
+
 primitives/hashes/Hasher/Hasher.C
 
 sha1 = primitives/hashes/SHA1
@@ -105,6 +112,11 @@ $(ranges)/labelRange/labelRange.C
 $(ranges)/labelRange/labelRanges.C
 $(ranges)/scalarRange/scalarRange.C
 $(ranges)/scalarRange/scalarRanges.C
+
+spatialVectorAlgebra = primitives/spatialVectorAlgebra
+$(spatialVectorAlgebra)/SpatialVector/spatialVector/spatialVector.C
+$(spatialVectorAlgebra)/SpatialTensor/spatialTensor/spatialTensor.C
+$(spatialVectorAlgebra)/CompactSpatialTensor/compactSpatialTensor/compactSpatialTensor.C
 
 containers/HashTables/HashTable/HashTableCore.C
 containers/HashTables/StaticHashTable/StaticHashTableCore.C
@@ -175,6 +187,7 @@ $(functionEntries)/codeStream/codeStream.C
 $(functionEntries)/functionEntry/functionEntry.C
 $(functionEntries)/includeEntry/includeEntry.C
 $(functionEntries)/includeEtcEntry/includeEtcEntry.C
+$(functionEntries)/includeFuncEntry/includeFuncEntry.C
 $(functionEntries)/includeIfPresentEntry/includeIfPresentEntry.C
 $(functionEntries)/inputModeEntry/inputModeEntry.C
 $(functionEntries)/removeEntry/removeEntry.C
@@ -208,9 +221,11 @@ $(dll)/codedBase/codedBase.C
 
 db/functionObjects/functionObject/functionObject.C
 db/functionObjects/functionObjectList/functionObjectList.C
-db/functionObjects/functionObjectFile/functionObjectFile.C
-db/functionObjects/outputFilterOutputControl/outputFilterOutputControl.C
-
+db/functionObjects/writeFile/writeFile.C
+db/functionObjects/writeFiles/writeFiles.C
+db/functionObjects/timeControl/timeControl.C
+db/functionObjects/timeControl/timeControlFunctionObject.C
+db/functionObjects/regionFunctionObject/regionFunctionObject.C
 
 Time = db/Time
 $(Time)/TimePaths.C
@@ -256,8 +271,6 @@ $(lduMatrix)/solvers/diagonalSolver/diagonalSolver.C
 $(lduMatrix)/solvers/smoothSolver/smoothSolver.C
 $(lduMatrix)/solvers/PCG/PCG.C
 $(lduMatrix)/solvers/PBiCG/PBiCG.C
-$(lduMatrix)/solvers/ICCG/ICCG.C
-$(lduMatrix)/solvers/BICCG/BICCG.C
 
 $(lduMatrix)/smoothers/GaussSeidel/GaussSeidelSmoother.C
 $(lduMatrix)/smoothers/symGaussSeidel/symGaussSeidelSmoother.C
@@ -504,6 +517,7 @@ $(mapPolyMesh)/mapPolyMesh.C
 $(mapPolyMesh)/faceMapper/faceMapper.C
 $(mapPolyMesh)/cellMapper/cellMapper.C
 $(mapPolyMesh)/mapDistribute/mapDistribute.C
+$(mapPolyMesh)/mapDistribute/mapDistributeBase.C
 $(mapPolyMesh)/mapDistribute/mapDistributePolyMesh.C
 $(mapPolyMesh)/mapDistribute/IOmapDistribute.C
 $(mapPolyMesh)/mapAddedPolyMesh.C

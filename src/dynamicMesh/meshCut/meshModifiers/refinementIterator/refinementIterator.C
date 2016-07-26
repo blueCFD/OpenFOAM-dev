@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -126,10 +126,10 @@ Foam::Map<Foam::label> Foam::refinementIterator::setRefinement
                 OFstream cutsStream(cutsFile);
 
 
-                labelList refCells(currentRefCells.size());
+                labelList refCellsDebug(currentRefCells.size());
                 forAll(currentRefCells, i)
                 {
-                    refCells[i] = currentRefCells[i].cellNo();
+                    refCellsDebug[i] = currentRefCells[i].cellNo();
                 }
                 meshTools::writeOBJ
                 (
@@ -137,7 +137,7 @@ Foam::Map<Foam::label> Foam::refinementIterator::setRefinement
                     mesh().cells(),
                     mesh().faces(),
                     mesh().points(),
-                    refCells
+                    refCellsDebug
                 );
             }
 
@@ -214,7 +214,7 @@ Foam::Map<Foam::label> Foam::refinementIterator::setRefinement
         {
             if (!addedCells.insert(iter.key(), iter()))
             {
-                FatalErrorIn("refinementIterator")
+                FatalErrorInFunction
                     << "Master cell " << iter.key()
                     << " already has been refined" << endl
                     << "Added cell:" << iter() << abort(FatalError);
@@ -272,7 +272,7 @@ Foam::Map<Foam::label> Foam::refinementIterator::setRefinement
 
     if (nRefCells == oldRefCells)
     {
-        WarningIn("refinementIterator")
+        WarningInFunction
             << "stopped refining."
             << "Did not manage to refine a single cell" << endl
             << "Wanted :" << oldRefCells << endl;

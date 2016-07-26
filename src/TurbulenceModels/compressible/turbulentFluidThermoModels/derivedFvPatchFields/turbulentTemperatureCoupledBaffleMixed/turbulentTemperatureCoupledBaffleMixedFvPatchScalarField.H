@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,25 +27,22 @@ Class
 
 Description
     Mixed boundary condition for temperature, to be used for heat-transfer
-    on back-to-back baffles.Optional thin thermal layer
-    resistances can be specified through thicknessLayers and kappaLayers
-    entries.
+    on back-to-back baffles. Optional thin thermal layer resistances can be
+    specified through thicknessLayers and kappaLayers entries.
 
     The thermal conductivity, \c kappa, can either be retrieved from the
     mesh database using the \c lookup option, or from a \c solidThermo
     or \c fluidThermo thermophysical package.
 
-
     Specifies gradient and temperature such that the equations are the same
     on both sides:
-    - refGradient = zero gradient
-    - refValue = neighbour value
-    - mixFraction = nbrKDelta / (nbrKDelta + myKDelta())
+      - refGradient = zero gradient
+      - refValue = neighbour value
+      - mixFraction = nbrKDelta / (nbrKDelta + myKDelta())
 
     where KDelta is heat-transfer coefficient K * deltaCoeffs
 
-    \heading Patch usage
-
+Usage
     \table
         Property     | Description             | Required    | Default value
         kappa        | thermal conductivity option | yes     |
@@ -57,28 +54,26 @@ Description
 
     Example of the boundary condition specification:
     \verbatim
-    myPatch
+    <patchName>
     {
         type            compressible::turbulentTemperatureCoupledBaffleMixed;
         Tnbr            T;
         kappa           lookup;
-        KappaName       kappa;
+        kappaName       kappa;
         thicknessLayers (0.1 0.2 0.3 0.4);
-        kappaLayers     (1 2 3 4)
+        kappaLayers     (1 2 3 4);
         value           uniform 300;
     }
     \endverbatim
 
     Needs to be on underlying mapped(Wall)FvPatch.
 
-    Note: kappa : heat conduction at patch. Gets supplied how to lookup
-        calculate kappa:
+    Note:
+      - \c kappa and \c kappaName are inherited from temperatureCoupledBase.
 
-    - 'lookup' : lookup volScalarField (or volSymmTensorField) with name
-    - 'fluidThermo' : use fluidThermo and compressible::RASmodel to calculate
-        kappa
-    - 'solidThermo' : use solidThermo kappa()
-    - 'directionalSolidThermo' directionalKappa()
+
+See also
+    Foam::temperatureCoupledBase
 
 SourceFiles
     turbulentTemperatureCoupledBaffleMixedFvPatchScalarField.C

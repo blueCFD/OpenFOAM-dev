@@ -1,10 +1,10 @@
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # License
 #     This file is part of OpenFOAM.
 #
@@ -39,7 +39,7 @@
 #         */
 #     The intermediate "/*! ... */" block is left-justified to handle
 #     possible verbatim text
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 BEGIN {
     state = 0
@@ -52,16 +52,15 @@ BEGIN {
     next
 }
 
-
 /^ *\/\// {
-    # start comment block
+    # Start comment block
     if (state == 1)
     {
         printf "/*! "
         state = 2
     }
 
-    # inside comment block
+    # Inside comment block
     if (state == 2)
     {
         if (!sub(/^ *\/\/  /, ""))
@@ -74,9 +73,8 @@ BEGIN {
     next
 }
 
-
 {
-    # end comment block
+    # End comment block
     if (state == 2)
     {
         printf "*/ "
@@ -86,4 +84,4 @@ BEGIN {
     next
 }
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -213,11 +213,11 @@ void Foam::syringePressureFvPatchScalarField::updateCoeffs()
     }
     else
     {
-        FatalErrorIn("syringePressureFvPatchScalarField::updateCoeffs()")
+        FatalErrorInFunction
             << "dimensions of phi are not correct"
             << "\n    on patch " << this->patch().name()
-            << " of field " << this->dimensionedInternalField().name()
-            << " in file " << this->dimensionedInternalField().objectPath()
+            << " of field " << this->internalField().name()
+            << " in file " << this->internalField().objectPath()
             << exit(FatalError);
     }
 
@@ -243,6 +243,7 @@ void Foam::syringePressureFvPatchScalarField::write(Ostream& os) const
     os.writeKeyword("psI") << psI_ << token::END_STATEMENT << nl;
     os.writeKeyword("psi") << psi_ << token::END_STATEMENT << nl;
     os.writeKeyword("ams") << ams_ << token::END_STATEMENT << nl;
+    writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
 
     writeEntry("value", os);
 }

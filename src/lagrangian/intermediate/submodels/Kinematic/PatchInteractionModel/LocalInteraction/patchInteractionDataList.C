@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "patchInteractionDataList.H"
 #include "stringListOps.H"
 #include "emptyPolyPatch.H"
+#include "cyclicAMIPolyPatch.H"
 
 // * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * //
 
@@ -56,14 +57,8 @@ Foam::patchInteractionDataList::patchInteractionDataList
 
         if (patchIDs.empty())
         {
-            WarningIn
-            (
-                "Foam::patchInteractionDataList::patchInteractionDataList"
-                "("
-                    "const polyMesh&, "
-                    "const dictionary&"
-                ")"
-            )   << "Cannot find any patch names matching " << patchName
+            WarningInFunction
+                << "Cannot find any patch names matching " << patchName
                 << endl;
         }
 
@@ -72,13 +67,14 @@ Foam::patchInteractionDataList::patchInteractionDataList
 
     // Check that all patches are specified
     DynamicList<word> badPatches;
-    forAll(bMesh, patchI)
+    forAll(bMesh, patchi)
     {
-        const polyPatch& pp = bMesh[patchI];
+        const polyPatch& pp = bMesh[patchi];
         if
         (
             !pp.coupled()
          && !isA<emptyPolyPatch>(pp)
+         && !isA<cyclicAMIPolyPatch>(pp)
          && applyToPatch(pp.index()) < 0
         )
         {
@@ -88,14 +84,8 @@ Foam::patchInteractionDataList::patchInteractionDataList
 
     if (badPatches.size() > 0)
     {
-        FatalErrorIn
-        (
-            "Foam::patchInteractionDataList::patchInteractionDataList"
-            "("
-                "const polyMesh&, "
-                "const dictionary&"
-            ")"
-        )   << "All patches must be specified when employing local patch "
+        FatalErrorInFunction
+            << "All patches must be specified when employing local patch "
             << "interaction. Please specify data for patches:" << nl
             << badPatches << nl << exit(FatalError);
     }
@@ -119,9 +109,9 @@ Foam::label Foam::patchInteractionDataList::applyToPatch(const label id) const
     forAll(patchGroupIDs_, groupI)
     {
         const labelList& patchIDs = patchGroupIDs_[groupI];
-        forAll(patchIDs, patchI)
+        forAll(patchIDs, patchi)
         {
-            if (patchIDs[patchI] == id)
+            if (patchIDs[patchi] == id)
             {
                 return groupI;
             }

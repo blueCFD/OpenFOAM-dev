@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "thermoSingleLayer.H"
 #include "fvcDiv.H"
 #include "fvcLaplacian.H"
+#include "fvcFlux.H"
 #include "fvm.H"
 #include "addToRunTimeSelectionTable.H"
 #include "zeroGradientFvPatchFields.H"
@@ -60,15 +61,15 @@ addToRunTimeSelectionTable(surfaceFilmModel, thermoSingleLayer, mesh);
 wordList thermoSingleLayer::hsBoundaryTypes()
 {
     wordList bTypes(T_.boundaryField().types());
-    forAll(bTypes, patchI)
+    forAll(bTypes, patchi)
     {
         if
         (
-            T_.boundaryField()[patchI].fixesValue()
-         || bTypes[patchI] == mappedFieldFvPatchField<scalar>::typeName
+            T_.boundaryField()[patchi].fixesValue()
+         || bTypes[patchi] == mappedFieldFvPatchField<scalar>::typeName
         )
         {
-            bTypes[patchI] = fixedValueFvPatchField<scalar>::typeName;
+            bTypes[patchi] = fixedValueFvPatchField<scalar>::typeName;
         }
     }
 
@@ -80,7 +81,7 @@ wordList thermoSingleLayer::hsBoundaryTypes()
 
 bool thermoSingleLayer::read()
 {
-    // no additional properties to read
+    // No additional properties to read
     return kinematicSingleLayer::read();
 }
 
@@ -89,7 +90,7 @@ void thermoSingleLayer::resetPrimaryRegionSourceTerms()
 {
     if (debug)
     {
-        Info<< "thermoSingleLayer::resetPrimaryRegionSourceTerms()" << endl;
+        InfoInFunction << endl;
     }
 
     kinematicSingleLayer::resetPrimaryRegionSourceTerms();
@@ -111,12 +112,14 @@ void thermoSingleLayer::correctHsForMappedT()
 {
     T_.correctBoundaryConditions();
 
-    forAll(T_.boundaryField(), patchI)
+    volScalarField::Boundary& hsBf = hs_.boundaryFieldRef();
+
+    forAll(hsBf, patchi)
     {
-        const fvPatchField<scalar>& Tp = T_.boundaryField()[patchI];
-        if (isA<mappedFieldFvPatchField<scalar> >(Tp))
+        const fvPatchField<scalar>& Tp = T_.boundaryField()[patchi];
+        if (isA<mappedFieldFvPatchField<scalar>>(Tp))
         {
-            hs_.boundaryField()[patchI] == hs(Tp, patchI);
+            hsBf[patchi] == hs(Tp, patchi);
         }
     }
 }
@@ -129,10 +132,10 @@ void thermoSingleLayer::updateSurfaceTemperatures()
     // Push boundary film temperature into wall temperature internal field
     for (label i=0; i<intCoupledPatchIDs_.size(); i++)
     {
-        label patchI = intCoupledPatchIDs_[i];
-        const polyPatch& pp = regionMesh().boundaryMesh()[patchI];
+        label patchi = intCoupledPatchIDs_[i];
+        const polyPatch& pp = regionMesh().boundaryMesh()[patchi];
         UIndirectList<scalar>(Tw_, pp.faceCells()) =
-            T_.boundaryField()[patchI];
+            T_.boundaryField()[patchi];
     }
     Tw_.correctBoundaryConditions();
 
@@ -146,7 +149,7 @@ void thermoSingleLayer::transferPrimaryRegionThermoFields()
 {
     if (debug)
     {
-        Info<< "thermoSingleLayer::transferPrimaryRegionThermoFields()" << endl;
+        InfoInFunction << endl;
     }
 
     kinematicSingleLayer::transferPrimaryRegionThermoFields();
@@ -165,19 +168,22 @@ void thermoSingleLayer::transferPrimaryRegionSourceFields()
 {
     if (debug)
     {
-        Info<< "thermoSingleLayer::transferPrimaryRegionSourceFields()" << endl;
+        InfoInFunction << endl;
     }
 
     kinematicSingleLayer::transferPrimaryRegionSourceFields();
 
+    volScalarField::Boundary& hsSpPrimaryBf =
+        hsSpPrimary_.boundaryFieldRef();
+
     // Convert accummulated source terms into per unit area per unit time
     const scalar deltaT = time_.deltaTValue();
-    forAll(hsSpPrimary_.boundaryField(), patchI)
+    forAll(hsSpPrimaryBf, patchi)
     {
         const scalarField& priMagSf =
-            primaryMesh().magSf().boundaryField()[patchI];
+            primaryMesh().magSf().boundaryField()[patchi];
 
-        hsSpPrimary_.boundaryField()[patchI] /= priMagSf*deltaT;
+        hsSpPrimaryBf[patchi] /= priMagSf*deltaT;
     }
 
     // Retrieve the source fields from the primary region via direct mapped
@@ -224,7 +230,7 @@ void thermoSingleLayer::updateSubmodels()
 {
     if (debug)
     {
-        Info<< "thermoSingleLayer::updateSubmodels()" << endl;
+        InfoInFunction << endl;
     }
 
     // Update heat transfer coefficient sub-models
@@ -258,11 +264,13 @@ tmp<fvScalarMatrix> thermoSingleLayer::q(volScalarField& hs) const
 {
     return
     (
+        // Heat-transfer to the primary region
       - fvm::Sp(htcs_->h()/Cp_, hs)
-      - htcs_->h()*(constant::standard::Tstd - TPrimary_)
+      + htcs_->h()*(hs/Cp_ + alpha_*(TPrimary_ - T_))
 
+        // Heat-transfer to the wall
       - fvm::Sp(htcw_->h()/Cp_, hs)
-      - htcw_->h()*(constant::standard::Tstd - Tw_)
+      + htcw_->h()*(hs/Cp_ + alpha_*(Tw_- T_))
     );
 }
 
@@ -271,7 +279,7 @@ void thermoSingleLayer::solveEnergy()
 {
     if (debug)
     {
-        Info<< "thermoSingleLayer::solveEnergy()" << endl;
+        InfoInFunction << endl;
     }
 
     updateSurfaceTemperatures();
@@ -282,15 +290,14 @@ void thermoSingleLayer::solveEnergy()
       + fvm::div(phi_, hs_)
      ==
       - hsSp_
+      - rhoSp_*hs_
       + q(hs_)
       + radiation_->Shs()
-//      - fvm::SuSp(rhoSp_, hs_)
-      - rhoSp_*hs_
     );
 
     correctThermoFields();
 
-    // evaluate viscosity from user-model
+    // Evaluate viscosity from user-model
     viscosity_->correct(pPrimary_, T_);
 }
 
@@ -448,7 +455,7 @@ thermoSingleLayer::thermoSingleLayer
     (
         IOobject
         (
-            hsSp_.name(), // must have same name as hSp_ to enable mapping
+            hsSp_.name(), // Must have same name as hSp_ to enable mapping
             time().timeName(),
             primaryMesh(),
             IOobject::NO_READ,
@@ -462,7 +469,7 @@ thermoSingleLayer::thermoSingleLayer
     (
         IOobject
         (
-            "T", // same name as T on primary region to enable mapping
+            "T", // Same name as T on primary region to enable mapping
             time().timeName(),
             regionMesh(),
             IOobject::NO_READ,
@@ -556,12 +563,12 @@ thermoSingleLayer::thermoSingleLayer
                 IOobject::AUTO_WRITE,
                 false
             ),
-            fvc::interpolate(deltaRho_*U_) & regionMesh().Sf()
+            fvc::flux(deltaRho_*U_)
         );
 
         phi_ == phi0;
 
-        // evaluate viscosity from user-model
+        // Evaluate viscosity from user-model
         viscosity_->correct(pPrimary_, T_);
     }
 }
@@ -577,8 +584,8 @@ thermoSingleLayer::~thermoSingleLayer()
 
 void thermoSingleLayer::addSources
 (
-    const label patchI,
-    const label faceI,
+    const label patchi,
+    const label facei,
     const scalar massSource,
     const vector& momentumSource,
     const scalar pressureSource,
@@ -587,8 +594,8 @@ void thermoSingleLayer::addSources
 {
     kinematicSingleLayer::addSources
     (
-        patchI,
-        faceI,
+        patchi,
+        facei,
         massSource,
         momentumSource,
         pressureSource,
@@ -600,7 +607,7 @@ void thermoSingleLayer::addSources
         Info<< "    energy   = " << energySource << nl << endl;
     }
 
-    hsSpPrimary_.boundaryField()[patchI][faceI] -= energySource;
+    hsSpPrimary_.boundaryFieldRef()[patchi][facei] -= energySource;
 }
 
 
@@ -608,10 +615,8 @@ void thermoSingleLayer::preEvolveRegion()
 {
     if (debug)
     {
-        Info<< "thermoSingleLayer::preEvolveRegion()" << endl;
+        InfoInFunction << endl;
     }
-
-//    correctHsForMappedT();
 
     kinematicSingleLayer::preEvolveRegion();
 
@@ -625,7 +630,7 @@ void thermoSingleLayer::evolveRegion()
 {
     if (debug)
     {
-        Info<< "thermoSingleLayer::evolveRegion()" << endl;
+        InfoInFunction << endl;
     }
 
     // Update film coverage indicator
@@ -722,18 +727,20 @@ void thermoSingleLayer::info()
 {
     kinematicSingleLayer::info();
 
-    const scalarField& Tinternal = T_.internalField();
+    const scalarField& Tinternal = T_;
 
-    Info<< indent << "min/max(T)         = " << gMin(Tinternal) << ", "
+    Info<< indent << "min/mean/max(T)    = "
+        << gMin(Tinternal) << ", "
+        << gAverage(Tinternal) << ", "
         << gMax(Tinternal) << nl;
 
     phaseChange_->info(Info);
 }
 
 
-tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Srho() const
+tmp<DimensionedField<scalar, volMesh>> thermoSingleLayer::Srho() const
 {
-    tmp<DimensionedField<scalar, volMesh> > tSrho
+    tmp<DimensionedField<scalar, volMesh>> tSrho
     (
         new DimensionedField<scalar, volMesh>
         (
@@ -751,22 +758,22 @@ tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Srho() const
         )
     );
 
-    scalarField& Srho = tSrho();
+    scalarField& Srho = tSrho.ref();
     const scalarField& V = primaryMesh().V();
     const scalar dt = time_.deltaTValue();
 
     forAll(intCoupledPatchIDs(), i)
     {
-        const label filmPatchI = intCoupledPatchIDs()[i];
+        const label filmPatchi = intCoupledPatchIDs()[i];
 
         scalarField patchMass =
-            primaryMassPCTrans_.boundaryField()[filmPatchI];
+            primaryMassPCTrans_.boundaryField()[filmPatchi];
 
-        toPrimary(filmPatchI, patchMass);
+        toPrimary(filmPatchi, patchMass);
 
-        const label primaryPatchI = primaryPatchIDs()[i];
+        const label primaryPatchi = primaryPatchIDs()[i];
         const unallocLabelList& cells =
-            primaryMesh().boundaryMesh()[primaryPatchI].faceCells();
+            primaryMesh().boundaryMesh()[primaryPatchi].faceCells();
 
         forAll(patchMass, j)
         {
@@ -778,14 +785,14 @@ tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Srho() const
 }
 
 
-tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Srho
+tmp<DimensionedField<scalar, volMesh>> thermoSingleLayer::Srho
 (
     const label i
 ) const
 {
     const label vapId = thermo_.carrierId(filmThermo_->name());
 
-    tmp<DimensionedField<scalar, volMesh> > tSrho
+    tmp<DimensionedField<scalar, volMesh>> tSrho
     (
         new DimensionedField<scalar, volMesh>
         (
@@ -805,22 +812,22 @@ tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Srho
 
     if (vapId == i)
     {
-        scalarField& Srho = tSrho();
+        scalarField& Srho = tSrho.ref();
         const scalarField& V = primaryMesh().V();
         const scalar dt = time().deltaTValue();
 
         forAll(intCoupledPatchIDs_, i)
         {
-            const label filmPatchI = intCoupledPatchIDs_[i];
+            const label filmPatchi = intCoupledPatchIDs_[i];
 
             scalarField patchMass =
-                primaryMassPCTrans_.boundaryField()[filmPatchI];
+                primaryMassPCTrans_.boundaryField()[filmPatchi];
 
-            toPrimary(filmPatchI, patchMass);
+            toPrimary(filmPatchi, patchMass);
 
-            const label primaryPatchI = primaryPatchIDs()[i];
+            const label primaryPatchi = primaryPatchIDs()[i];
             const unallocLabelList& cells =
-                primaryMesh().boundaryMesh()[primaryPatchI].faceCells();
+                primaryMesh().boundaryMesh()[primaryPatchi].faceCells();
 
             forAll(patchMass, j)
             {
@@ -833,9 +840,9 @@ tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Srho
 }
 
 
-tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Sh() const
+tmp<DimensionedField<scalar, volMesh>> thermoSingleLayer::Sh() const
 {
-    tmp<DimensionedField<scalar, volMesh> > tSh
+    tmp<DimensionedField<scalar, volMesh>> tSh
     (
         new DimensionedField<scalar, volMesh>
         (
@@ -855,22 +862,22 @@ tmp<DimensionedField<scalar, volMesh> > thermoSingleLayer::Sh() const
 /*
     phase change energy fed back into the film...
 
-    scalarField& Sh = tSh();
+    scalarField& Sh = tSh.ref();
     const scalarField& V = primaryMesh().V();
     const scalar dt = time_.deltaTValue();
 
     forAll(intCoupledPatchIDs_, i)
     {
-        const label filmPatchI = intCoupledPatchIDs_[i];
+        const label filmPatchi = intCoupledPatchIDs_[i];
 
         scalarField patchEnergy =
-            primaryEnergyPCTrans_.boundaryField()[filmPatchI];
+            primaryEnergyPCTrans_.boundaryField()[filmPatchi];
 
-        toPrimary(filmPatchI, patchEnergy);
+        toPrimary(filmPatchi, patchEnergy);
 
-        const label primaryPatchI = primaryPatchIDs()[i];
+        const label primaryPatchi = primaryPatchIDs()[i];
         const unallocLabelList& cells =
-            primaryMesh().boundaryMesh()[primaryPatchI].faceCells();
+            primaryMesh().boundaryMesh()[primaryPatchi].faceCells();
 
         forAll(patchEnergy, j)
         {

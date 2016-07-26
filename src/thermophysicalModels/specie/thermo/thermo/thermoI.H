@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,17 +63,8 @@ inline Foam::scalar Foam::species::thermo<Thermo, Type>::T
 
         if (iter++ > maxIter_)
         {
-            FatalErrorIn
-            (
-                "thermo<Thermo, Type>::T(scalar f, scalar T0, "
-                "scalar (thermo<Thermo, Type>::*F)"
-                "(const scalar) const, "
-                "scalar (thermo<Thermo, Type>::*dFdT)"
-                "(const scalar) const, "
-                "scalar (thermo<Thermo, Type>::*limit)"
-                "(const scalar) const"
-                ") const"
-            )   << "Maximum number of iterations exceeded"
+            FatalErrorInFunction
+                << "Maximum number of iterations exceeded"
                 << abort(FatalError);
         }
 
@@ -102,7 +93,7 @@ template<class Thermo, template<class> class Type>
 inline Foam::word
 Foam::species::thermo<Thermo, Type>::heName()
 {
-    return Type<thermo<Thermo, Type> >::name();
+    return Type<thermo<Thermo, Type>>::name();
 }
 
 
@@ -110,7 +101,7 @@ template<class Thermo, template<class> class Type>
 inline Foam::scalar
 Foam::species::thermo<Thermo, Type>::he(const scalar p, const scalar T) const
 {
-    return Type<thermo<Thermo, Type> >::he(*this, p, T);
+    return Type<thermo<Thermo, Type>>::he(*this, p, T);
 }
 
 
@@ -126,7 +117,7 @@ template<class Thermo, template<class> class Type>
 inline Foam::scalar
 Foam::species::thermo<Thermo, Type>::cpv(const scalar p, const scalar T) const
 {
-    return Type<thermo<Thermo, Type> >::cpv(*this, p, T);
+    return Type<thermo<Thermo, Type>>::cpv(*this, p, T);
 }
 
 
@@ -147,7 +138,7 @@ Foam::species::thermo<Thermo, Type>::cpBycpv
     const scalar T
 ) const
 {
-    return Type<thermo<Thermo, Type> >::cpBycpv(*this, p, T);
+    return Type<thermo<Thermo, Type>>::cpBycpv(*this, p, T);
 }
 
 
@@ -211,7 +202,7 @@ template<class Thermo, template<class> class Type>
 inline Foam::scalar
 Foam::species::thermo<Thermo, Type>::HE(const scalar p, const scalar T) const
 {
-    return Type<thermo<Thermo, Type> >::HE(*this, p, T);
+    return Type<thermo<Thermo, Type>>::HE(*this, p, T);
 }
 
 
@@ -290,7 +281,7 @@ template<class Thermo, template<class> class Type>
 inline Foam::scalar
 Foam::species::thermo<Thermo, Type>::K(const scalar p, const scalar T) const
 {
-    scalar arg = -this->nMoles()*this->g(p, T)/(RR*T);
+    scalar arg = -this->nMoles()*this->g(Pstd, T)/(RR*T);
 
     if (arg < 600.0)
     {
@@ -371,7 +362,7 @@ inline Foam::scalar Foam::species::thermo<Thermo, Type>::THE
     const scalar T0
 ) const
 {
-    return Type<thermo<Thermo, Type> >::THE(*this, he, p, T0);
+    return Type<thermo<Thermo, Type>>::THE(*this, he, p, T0);
 }
 
 

@@ -64,7 +64,7 @@ volVectorField U
 
 singlePhaseTransportModel laminarTransport(U, phi);
 
-autoPtr<incompressible::RASModel> turbulence
+autoPtr<incompressible::turbulenceModel> turbulence
 (
-    incompressible::RASModel::New(U, phi, laminarTransport)
+    incompressible::turbulenceModel::New(U, phi, laminarTransport)
 );

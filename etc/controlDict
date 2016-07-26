@@ -75,7 +75,6 @@ DebugSwitches
     Analytical          0;
     APIdiffCoefFunc     0;
     Ar                  0;
-    BICCG               0;
     BirdCarreau         0;
     C10H22              0;
     C12H26              0;
@@ -123,7 +122,7 @@ DebugSwitches
     DICGaussSeidel      0;
     DILU                0;
     DILUGaussSeidel     0;
-    DataEntry           0;
+    Function1           0;
     DeardorffDiffStress 0;
     DispersionModel     0;
     DispersionRASModel  0;
@@ -158,7 +157,6 @@ DebugSwitches
     HerschelBulkley     0;
     HrenyaSinclair      0;
     IC8H18              0;
-    ICCG                0;
     IDDESDelta          0;
     IDEA                0;
     IFstream            0;
@@ -314,10 +312,10 @@ DebugSwitches
     atomizationModel    0;
     attachDetach        0;
     autoDensity         0;
-    autoHexMeshDriver   0;
-    autoLayerDriver     0;
-    autoRefineDriver    0;
-    autoSnapDriver      0;
+    snappyHexMeshDriver 0;
+    snappyLayerDriver     0;
+    snappyRefineDriver    0;
+    snappySnapDriver      0;
     bC11H10             0;
     backgroundMeshDecomposition 0;
     backward            0;
@@ -684,19 +682,19 @@ DebugSwitches
     pointIndexHitList   0;
     pointPatchField     0;
     pointScalarField    0;
-    pointScalarField::DimensionedInternalField 0;
+    pointScalarField::Internal 0;
     pointSet            0;
     pointSphericalTensorField 0;
-    pointSphericalTensorField::DimensionedInternalField 0;
+    pointSphericalTensorField::Internal 0;
     pointSymmTensorField 0;
-    pointSymmTensorField::DimensionedInternalField 0;
+    pointSymmTensorField::Internal 0;
     pointTensorField    0;
-    pointTensorField::DimensionedInternalField 0;
+    pointTensorField::Internal 0;
     pointToCell         0;
     pointToFace         0;
     pointToPoint        0;
     pointVectorField    0;
-    pointVectorField::DimensionedInternalField 0;
+    pointVectorField::Internal 0;
     pointZone           0;
     polyBoundaryMesh    0;
     polyMesh            0;
@@ -799,18 +797,18 @@ DebugSwitches
     surfacePatch        0;
     surfacePatchIOList  0;
     surfaceScalarField  0;
-    surfaceScalarField::DimensionedInternalField 0;
+    surfaceScalarField::Internal 0;
     surfaceSlipDisplacement 0;
     surfaceSphericalTensorField 0;
-    surfaceSphericalTensorField::DimensionedInternalField 0;
+    surfaceSphericalTensorField::Internal 0;
     surfaceSymmTensorField 0;
-    surfaceSymmTensorField::DimensionedInternalField 0;
+    surfaceSymmTensorField::Internal 0;
     surfaceTensorField 0;
-    surfaceTensorField::DimensionedInternalField 0;
+    surfaceTensorField::Internal 0;
     surfaceToCell       0;
     surfaceToPoint      0;
     surfaceVectorField  0;
-    surfaceVectorField::DimensionedInternalField 0;
+    surfaceVectorField::Internal 0;
     surfaceWriter       0;
     surfaces            0;
     swirlInjector       0;
@@ -877,15 +875,15 @@ DebugSwitches
     viscosityModel      0;
     volPointInterpolation 0;
     volScalarField      0;
-    volScalarField::DimensionedInternalField 0;
+    volScalarField::Internal 0;
     volSphericalTensorField 0;
-    volSphericalTensorField::DimensionedInternalField 0;
+    volSphericalTensorField::Internal 0;
     volSymmTensorField  0;
-    volSymmTensorField::DimensionedInternalField 0;
+    volSymmTensorField::Internal 0;
     volTensorField      0;
-    volTensorField::DimensionedInternalField 0;
+    volTensorField::Internal 0;
     volVectorField      0;
-    volVectorField::DimensionedInternalField 0;
+    volVectorField::Internal 0;
     vtk                 0;
     walkPatch           0;
     wall                0;
@@ -914,60 +912,60 @@ DimensionedConstants
     {
         universal
         {
-            c               c [ 0 1 -1 0 0 0 0 ] 2.99792e+08;
-            G               G [ -1 3 -2 0 0 0 0 ] 6.67429e-11;
-            h               h [ 1 2 -1 0 0 0 0 ] 6.62607e-34;
+            c               c [0 1 -1 0 0 0 0] 2.99792e+08;
+            G               G [-1 3 -2 0 0 0 0] 6.67429e-11;
+            h               h [1 2 -1 0 0 0 0] 6.62607e-34;
         }
         electromagnetic
         {
-            e               e [ 0 0 1 0 0 1 0 ] 1.60218e-19;
+            e               e [0 0 1 0 0 1 0] 1.60218e-19;
         }
         atomic
         {
-            me              me [ 1 0 0 0 0 0 0 ] 9.10938e-31;
-            mp              mp [ 1 0 0 0 0 0 0 ] 1.67262e-27;
+            me              me [1 0 0 0 0 0 0] 9.10938e-31;
+            mp              mp [1 0 0 0 0 0 0] 1.67262e-27;
         }
         physicoChemical
         {
-            mu              mu [ 1 0 0 0 0 0 0 ] 1.66054e-27;
-            k               k [ 1 2 -2 -1 0 0 0 ] 1.38065e-23;
+            mu              mu [1 0 0 0 0 0 0] 1.66054e-27;
+            k               k [1 2 -2 -1 0 0 0] 1.38065e-23;
         }
         standard
         {
             //- Standard pressure [Pa]
-            Pstd            Pstd [ 1 -1 -2 0 0 0 0 ] 100000;
+            Pstd            Pstd [1 -1 -2 0 0 0 0] 1e5;
             //- Standard temperature [degK]
-            Tstd            Tstd [ 0 0 0 1 0 0 0 ] 298.15;
+            Tstd            Tstd [0 0 0 1 0 0 0] 298.15;
         }
     }
     USCSCoeffs
     {
         universal
         {
-            c               c [ 0 1 -1 0 0 0 0 ] 9.83558e+08;
-            G               G [ -1 3 -2 0 0 0 0 ] 1.06909e-09;
-            h               h [ 1 2 -1 0 0 0 0 ] 1.57234e-32;
+            c               c [0 1 -1 0 0 0 0] 9.83558e+08;
+            G               G [-1 3 -2 0 0 0 0] 1.06909e-09;
+            h               h [1 2 -1 0 0 0 0] 1.57234e-32;
         }
         electromagnetic
         {
-            e               e [ 0 0 1 0 0 1 0 ] 1.60218e-19;
+            e               e [0 0 1 0 0 1 0] 1.60218e-19;
         }
         atomic
         {
-            me              me [ 1 0 0 0 0 0 0 ] 2.00825e-30;
-            mp              mp [ 1 0 0 0 0 0 0 ] 3.68746e-27;
+            me              me [1 0 0 0 0 0 0] 2.00825e-30;
+            mp              mp [1 0 0 0 0 0 0] 3.68746e-27;
         }
         physicoChemical
         {
-            mu              mu [ 1 0 0 0 0 0 0 ] 3.66083e-27;
-            k               k [ 1 2 -2 -1 0 0 0 ] 1.82012e-22;
+            mu              mu [1 0 0 0 0 0 0] 3.66083e-27;
+            k               k [1 2 -2 -1 0 0 0] 1.82012e-22;
         }
         standard
         {
             //- Standard pressure [lbm/ft^2]
-            Pstd            Pstd [ 1 -1 -2 0 0 0 0 ] 2088.6;
+            Pstd            Pstd [1 -1 -2 0 0 0 0] 2088.6;
             //- Standard temperature [degR]
-            Tstd            Tstd [ 0 0 0 1 0 0 0 ] 536.67;
+            Tstd            Tstd [0 0 0 1 0 0 0] 536.67;
         }
     }
 }
@@ -980,34 +978,34 @@ DimensionSets
     SICoeffs
     {
         // Basic units
-        kg  kg  [ 1 0 0 0 0 0 0 ] 1.0;
-        m   m   [ 0 1 0 0 0 0 0 ] 1.0;
-        s   s   [ 0 0 1 0 0 0 0 ] 1.0;
-        K   K   [ 0 0 0 1 0 0 0 ] 1.0;
-        mol mol [ 0 0 0 0 1 0 0 ] 1.0;
-        A   A   [ 0 0 0 0 0 1 0 ] 1.0;
-        Cd  Cd  [ 0 0 0 0 0 0 1 ] 1.0;
+        kg  kg  [1 0 0 0 0 0 0] 1.0;
+        m   m   [0 1 0 0 0 0 0] 1.0;
+        s   s   [0 0 1 0 0 0 0] 1.0;
+        K   K   [0 0 0 1 0 0 0] 1.0;
+        mol mol [0 0 0 0 1 0 0] 1.0;
+        A   A   [0 0 0 0 0 1 0] 1.0;
+        Cd  Cd  [0 0 0 0 0 0 1] 1.0;
 
         // Derived units
-        Hz  Hz  [ s^-1 ] 1.0;
-        N   N   [ kg m s^-2 ] 1.0;
-        Pa  Pa  [ N m^-2 ] 1.0;
-        J   J   [ N m ] 1.0;
-        W   W   [ J s^-1 ] 1.0;
+        Hz  Hz  [s^-1] 1.0;
+        N   N   [kg m s^-2] 1.0;
+        Pa  Pa  [N m^-2] 1.0;
+        J   J   [N m] 1.0;
+        W   W   [J s^-1] 1.0;
 
         // Some non-symbolic ones
         area area [m^2] 1.0;
         volume volume [m^3] 1.0;
-        density density [ kg m^-3 ] 1.0;
-        acceleration acceleration  [ m s^-2 ] 1.0;
-        kinematicPressure kinematicPressure [ Pa density^-1 ] 1.0;
+        density density [kg m^-3] 1.0;
+        acceleration acceleration  [m s^-2] 1.0;
+        kinematicPressure kinematicPressure [Pa density^-1] 1.0;
 
         // Scaled units. Only allowed in dimensionedType (dimensionedScalar,
         // dimensionedVector etc.) and UniformDimensionedField, not
         // in DimensionedField or GeometricField
-        cm  cm  [ m ] 1e-2;
-        mm  mm  [ m ] 1e-3;
-        km  km  [ m ] 1e3;
+        cm  cm  [m] 1e-2;
+        mm  mm  [m] 1e-3;
+        km  km  [m] 1e3;
 
         // Set of units used for printing. Can be any basic or derived
         // but not scaled (only supported for dimensionedScalar, etc)
@@ -1017,13 +1015,13 @@ DimensionSets
     USCSCoeffs
     {
         // Basic units
-        lb  lb  [ 1 0 0 0 0 0 0 ] 1.0;
-        ft  ft  [ 0 1 0 0 0 0 0 ] 1.0;
-        s   s   [ 0 0 1 0 0 0 0 ] 1.0;
-        R   R   [ 0 0 0 1 0 0 0 ] 1.0;
-        mol mol [ 0 0 0 0 1 0 0 ] 1.0;
-        A   A   [ 0 0 0 0 0 1 0 ] 1.0;
-        Cd  Cd  [ 0 0 0 0 0 0 1 ] 1.0;
+        lb  lb  [1 0 0 0 0 0 0] 1.0;
+        ft  ft  [0 1 0 0 0 0 0] 1.0;
+        s   s   [0 0 1 0 0 0 0] 1.0;
+        R   R   [0 0 0 1 0 0 0] 1.0;
+        mol mol [0 0 0 0 1 0 0] 1.0;
+        A   A   [0 0 0 0 0 1 0] 1.0;
+        Cd  Cd  [0 0 0 0 0 0 1] 1.0;
 
         // Set of units used for printing. Can be any basic or derived
         // but not scaled (only supported for dimensionedScalar, etc)

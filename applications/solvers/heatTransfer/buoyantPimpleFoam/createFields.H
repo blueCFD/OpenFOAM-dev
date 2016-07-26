@@ -18,8 +18,6 @@ volScalarField rho
 );
 
 volScalarField& p = thermo.p();
-const volScalarField& psi = thermo.psi();
-
 
 Info<< "Reading field U\n" << endl;
 volVectorField U
@@ -50,9 +48,11 @@ autoPtr<compressible::turbulenceModel> turbulence
     )
 );
 
-Info<< "Calculating field g.h\n" << endl;
-volScalarField gh("gh", g & mesh.C());
-surfaceScalarField ghf("ghf", g & mesh.Cf());
+
+#include "readGravitationalAcceleration.H"
+#include "readhRef.H"
+#include "gh.H"
+
 
 Info<< "Reading field p_rgh\n" << endl;
 volScalarField p_rgh
@@ -88,3 +88,6 @@ volScalarField dpdt
 
 Info<< "Creating field kinetic energy K\n" << endl;
 volScalarField K("K", 0.5*magSqr(U));
+
+#include "createMRF.H"
+#include "createRadiationModel.H"

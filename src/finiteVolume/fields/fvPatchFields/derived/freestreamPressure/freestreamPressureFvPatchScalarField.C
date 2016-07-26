@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ freestreamPressureFvPatchScalarField
     zeroGradientFvPatchScalarField(p, iF),
     UName_("U"),
     phiName_("phi"),
-    rhoName_("none")
+    rhoName_("rho")
 {}
 
 
@@ -57,7 +57,7 @@ freestreamPressureFvPatchScalarField
     zeroGradientFvPatchScalarField(p, iF, dict),
     UName_(dict.lookupOrDefault<word>("U", "U")),
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
-    rhoName_(dict.lookupOrDefault<word>("rho", "none"))
+    rhoName_(dict.lookupOrDefault<word>("rho", "rho"))
 {}
 
 
@@ -141,15 +141,25 @@ void Foam::freestreamPressureFvPatchScalarField::updateCoeffs()
     }
     else
     {
-        FatalErrorIn("freestreamPressureFvPatchScalarField::updateCoeffs()")
+        FatalErrorInFunction
             << "dimensions of phi are not correct"
             << "\n    on patch " << this->patch().name()
-            << " of field " << this->dimensionedInternalField().name()
-            << " in file " << this->dimensionedInternalField().objectPath()
+            << " of field " << this->internalField().name()
+            << " in file " << this->internalField().objectPath()
             << exit(FatalError);
     }
 
     zeroGradientFvPatchScalarField::updateCoeffs();
+}
+
+
+void Foam::freestreamPressureFvPatchScalarField::write(Ostream& os) const
+{
+    fvPatchScalarField::write(os);
+    writeEntryIfDifferent<word>(os, "U", "U", UName_);
+    writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
+    writeEntryIfDifferent<word>(os, "rho", "rho", rhoName_);
+    writeEntry("value", os);
 }
 
 

@@ -20,15 +20,15 @@ solvers
     p
     {
         solver          GAMG;
-        tolerance       0;
+        tolerance       1e-6;
         relTol          0.1;
         smoother        GaussSeidel;
-        nPreSweeps      0;
-        nPostSweeps     2;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 10;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
+    }
+
+    pFinal
+    {
+        $p;
+        relTol          0;
     }
 
     U
@@ -42,8 +42,8 @@ solvers
 
 PISO
 {
-    nCorrectors     4;
-    nNonOrthogonalCorrectors 2;
+    nCorrectors     5;
+    nNonOrthogonalCorrectors 0;
 }
 
 
