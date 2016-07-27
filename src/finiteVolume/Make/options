@@ -6,6 +6,3 @@ LIB_LIBS = \
     -lOpenFOAM \
     -ltriSurface \
     -lmeshTools
-
-LIB_LIBS += \
-    -llagrangian
