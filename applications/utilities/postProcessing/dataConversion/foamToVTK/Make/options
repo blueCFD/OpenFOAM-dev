@@ -10,3 +10,7 @@ EXE_LIBS = \
     -ldynamicMesh \
     -llagrangian \
     -lgenericPatchFields
+
+EXE_LIBS += \
+    -lfiniteVolume \
+    -lmeshTools

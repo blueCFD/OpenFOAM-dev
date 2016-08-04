@@ -11,6 +11,20 @@ EXE_LIBS = \
     -ldynamicMesh \
     -ldecompose \
     -lgenericPatchFields \
-    -ldecompositionMethods -L$(FOAM_LIBBIN)/dummy -lmetisDecomp -lscotchDecomp \
+    -ldecompositionMethods \
     -llagrangian \
     -lregionModels
+
+#if (defined( WIN32 ) || defined( WIN64 ))
+
+EXE_LIBS += \
+    -lscotchDecomp \
+    -lfiniteVolume \
+    -lmeshTools
+
+#else
+
+EXE_LIBS += \
+    -L$(FOAM_LIBBIN)/dummy -lmetisDecomp -lscotchDecomp
+
+#endif

@@ -1,5 +1,6 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # Run from this directory
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 
 # Parse arguments for compilation (at least for error catching)
 . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
@@ -9,11 +10,19 @@ unset COMP_FLAGS LINK_FLAGS
 #
 # use readline if available
 #
-if [ -f /usr/include/readline/readline.h ]
+
+if ! isMinGW && [ -f /usr/include/readline/readline.h ]
 then
     echo "Found <readline/readline.h>  --  enabling readline support."
     export COMP_FLAGS="-DHAS_READLINE"
     export LINK_FLAGS="-lreadline"
+
+elif onWin && [ -f /mingw64/include/readline/readline.h ]
+then
+    echo "Found <readline/readline.h>  --  enabling readline support."
+    export COMP_FLAGS="-DHAS_READLINE"
+    export LINK_FLAGS="-lreadline"
+
 fi
 
 wmake

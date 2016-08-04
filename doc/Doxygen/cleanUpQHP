@@ -1,0 +1,158 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2013 blueCAPE Lda
+#
+#    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#    For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     cleanUpQHP
+#
+# Description
+#     This script cleans up the QHP XML file provided in $1.
+#
+#------------------------------------------------------------------------------
+
+updateSpaces()
+{
+  totalSpaces=$(expr $initialSpaces + 2 \* $grouplevel)
+  spaces=""
+  for a in $(seq 1 $totalSpaces); do
+    spaces="$spaces "
+  done
+}
+
+levelUp()
+{
+  grouplevel=$(expr $grouplevel + 1)
+
+  updateSpaces
+  
+  tmpfileNameTODOB=$origfileName.B$$.$grouplevel
+
+  [ -e "$tmpfileNameTODOB" ] && rm "$tmpfileNameTODOB"
+}
+
+levelDown()
+{
+  grouplevel=$(expr $grouplevel - 1)
+
+  updateSpaces
+
+  tmpfileNameTODOB=$origfileName.B$$.$grouplevel
+}
+
+usage() {
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    cat<<USAGE
+
+usage: ${0##*/} path/to/file.qhp
+
+USAGE
+    exit 1
+}
+
+if [ $# -lt 1 ]
+then
+    usage
+fi
+
+origfileName=${1}
+tmpfileNameTODOA=$origfileName.A$$
+tmpfileNameDONE=$origfileName.D$$
+
+if [ ! -e "$origfileName" ]; then
+  usage "File '$origfileName' doesn't exist."
+fi
+
+[ -e "$tmpfileNameTODOA" ] && rm "$tmpfileNameTODOA"
+[ -e "$tmpfileNameDONE" ] && rm "$tmpfileNameDONE"
+
+cp "$origfileName" "$tmpfileNameTODOA"
+
+#kickoff the final file with the part before the toc
+sed -e '1,/^ *<toc>/!d' "$origfileName" > "$tmpfileNameDONE"
+
+#process the section part only of the file
+sed -e '1,/^ *<toc>/d' -e '1,/^ *<\/toc>/!d' "$origfileName" | \
+    sed -e '$d' > "$tmpfileNameTODOA"
+
+grouplevel=0
+initialSpaces=6
+
+spaces=""
+updateSpaces
+
+cat "$tmpfileNameTODOA" | while read line; do
+
+  #if it's the section start, then it gives ">"
+  sectionStartCheck="${line##*\"}"
+
+  #if it's the section end, then it gives an empty string
+  sectionEndCheck="${line##*</section>}"
+
+  #if it's a section end
+  if [ -n "$line" -a -z "$sectionEndCheck" ]; then
+
+    if [ -e "$tmpfileNameTODOB" ]; then
+      cat "$tmpfileNameTODOB" | sort -u | \
+          sed -e '' >> "$tmpfileNameDONE"
+    fi
+
+    [ -e "$tmpfileNameTODOB" ] && rm "$tmpfileNameTODOB"
+
+    levelDown
+
+    echo "$spaces$line" >> "$tmpfileNameDONE"
+
+  elif [ -z "$line" -o -z "$sectionStartCheck" ]; then
+
+    #TODO... do nothing?
+    :
+
+  #if it's a new group
+  elif [ "$sectionStartCheck" = ">" ]; then
+
+    echo "$spaces$line" >> "$tmpfileNameDONE"
+
+    levelUp
+
+  #if it's a single line entry
+  else #if [ "$sectionStartCheck" = "/>" ]; then
+
+    echo "$spaces$line" >> "$tmpfileNameTODOB"
+
+  fi
+
+done
+
+#finish the file
+echo "    </toc>" >> "$tmpfileNameDONE"
+sed -e '1,/^ *<\/toc>/d' "$origfileName" >> "$tmpfileNameDONE"
+
+#complete the process, by taking the advantage to fix some of the broken section titles
+sed -e 's/<section title="Classes">/<section title="Classes" ref="classes.html">/' \
+    -e 's/<section title="Namespaces">/<section title="Namespaces" ref="namespaces.html">/' \
+    -e 's/<section title="Files">/<section title="Files" ref="files.html">/' \
+    "$tmpfileNameDONE" > "$origfileName"
+
+[ -e "$tmpfileNameTODOA" ] && rm "$tmpfileNameTODOA"
+[ -e "$tmpfileNameDONE" ] && rm "$tmpfileNameDONE"

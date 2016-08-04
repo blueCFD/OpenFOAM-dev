@@ -5,8 +5,11 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +23,17 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Support the ability to add version object files on Windows.
+#        - Paths to header files for the local source code folder are now
+#          collected inside a file and included when needed.
 #
 # File
 #     wmake/makefiles/files
@@ -43,7 +57,17 @@ FILES           = $(OBJECTS_DIR)/files
 VARS            = $(OBJECTS_DIR)/variables
 SFILES          = $(OBJECTS_DIR)/sourceFiles
 
+VERSIONFILE = $(OBJECTS_DIR)/version_of_build.rc
+LOCAL_PATHS_INCLUDE = $(OBJECTS_DIR)/includeHeaderPaths
+
 -include $(OPTIONS)
+
+
+#------------------------------------------------------------------------------
+# Set the directory containing the wmake scripts
+#------------------------------------------------------------------------------
+
+WM_SCRIPTS   = $(WM_DIR)/scripts
 
 
 #------------------------------------------------------------------------------
@@ -52,6 +76,10 @@ SFILES          = $(OBJECTS_DIR)/sourceFiles
 #------------------------------------------------------------------------------
 
 all : $(OPTIONS) $(SFILES) $(VARS)
+
+versioning : $(VERSIONFILE)
+
+localHeaderPaths : $(LOCAL_PATHS_INCLUDE)
 
 $(OPTIONS) : $(MAKE_DIR)/options
 	@$(CPP) $(GFLAGS) $(MAKE_DIR)/options | sed -e 's@   *@ @g' > $(OPTIONS)
@@ -73,5 +101,11 @@ $(SFILES): $(MAKE_DIR)/files
 
 $(VARS): $(SFILES)
 
+$(VERSIONFILE): $(MAKE_DIR)/files
+	$(WM_SCRIPTS)/makeVersionResourceFile $(OBJECTS_DIR) $(VERSIONFILE) \
+		$(SFILES) $(VARS)
+
+$(LOCAL_PATHS_INCLUDE): $(MAKE_DIR)/files
+	$(WM_SCRIPTS)/makeLocalHeaderPathsFile $(LOCAL_PATHS_INCLUDE)
 
 #------------------------------------------------------------------------------

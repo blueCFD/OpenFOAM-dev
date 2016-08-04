@@ -5,8 +5,10 @@
     \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -20,6 +22,18 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - These changes are technically from Sysmcape's own patches for Windows,
+        circa 2009.
+      - The adaptation derived from the patches for blueCFD 2.1, adjusted to
+        OpenFOAM 2.2.
 
 Class
     Foam::IOobject
@@ -153,6 +167,13 @@ private:
 
         //- IOobject state
         objectState objState_;
+
+private:
+
+    // Private member functions
+
+        //- Unique on disk file name.
+        const word& uniqueFileName() const;
 
 
 protected:
@@ -363,7 +384,7 @@ public:
             //- Return complete path + object name
             fileName objectPath() const
             {
-                return path()/name();
+                return path()/uniqueFileName();
             }
 
             //- Return complete path + object name if the file exists
@@ -428,6 +449,13 @@ public:
     // Member operators
 
         void operator=(const IOobject&);
+
+
+    // Static functions
+
+        //- Set unique on disk file name 
+        //- e.g., b -> b_ to avoid upper/lowercase clash with B
+        static void replaceFileName(const word& from, const word& to);
 };
 
 

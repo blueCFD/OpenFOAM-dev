@@ -5,9 +5,10 @@
     \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-License
-    This file is part of OpenFOAM.
-
+blueCAPE Lda 2016-07-28: Added in hack to workaround issues with ANSI strict.
+-------------------------------------------------------------------------------
+ License
+    This file is derivative work of OpenFOAM.
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -116,6 +117,8 @@ SourceFiles
 
 #define CGAL_INEXACT
 #define CGAL_HIERARCHY
+
+#include "workaroundMathAndANSIStrict.H"
 
 // Include uint.H before CGAL headers to define __STDC_LIMIT_MACROS
 #include "uint.H"

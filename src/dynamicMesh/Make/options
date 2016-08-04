@@ -8,3 +8,6 @@ LIB_LIBS = \
     -lfiniteVolume \
     -ltriSurface \
     -lextrudeModel
+
+LIB_LIBS += \
+    -lmeshTools

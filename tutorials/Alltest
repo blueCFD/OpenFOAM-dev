@@ -6,8 +6,10 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2016-08-03 blueCAPE Lda: Added -target and -jobs
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -40,7 +42,9 @@ usage: ${0##*/} [OPTION]
 
 options:
   -root <dir>       specify root directory to run tests from
+  -target <dir>     specify directory where the tests are executed in
   -default          sets up a default scheme on all schemes
+  -jobs N           for running multiple serial cases in parallel with N cores
   -help             print the usage
 
 * quickly tests the tutorials and writes out the scheme/solver information
@@ -53,7 +57,9 @@ USAGE
 
 unset DEFAULT_SCHEMES
 
-ROOT="./"
+TUTORIALS_DIR="./"
+TEST_RUN_DIR="../tutorialsTest"
+RUN_ARGUMENTS=""
 
 # parse options
 while [ "$#" -gt 0 ]
@@ -61,14 +67,28 @@ do
     case "$1" in
     -r | -root)
         [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
-        ROOT="$2"
+        TUTORIALS_DIR="$2"
         shift
         ;;
-    -h | -help)
-        usage
+    -t | -target)
+        [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
+        TEST_RUN_DIR="$2"
+        shift
         ;;
     -d | -default)
         DEFAULT_SCHEMES=true
+        ;;
+    -j | -jobs)
+        if test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1
+        then
+            RUN_ARGUMENTS="${RUN_ARGUMENTS} -jobs $2"
+            shift
+        else
+            usage "Error: Missing number of jobs"
+        fi
+        ;;
+    -h | -help)
+        usage
         ;;
     -*)
         usage "unknown option: '$*'"
@@ -130,8 +150,6 @@ done
 [ -f "$MAIN_CONTROL_DICT" ] || usage "main controlDict not found"
 
 
-TUTORIALS_DIR=$ROOT
-TEST_RUN_DIR=../tutorialsTest
 FV_SCHEMES=\
 " \
     gradScheme \
@@ -205,7 +223,7 @@ then
 fi
 
 cp -f $FOAM_TUTORIALS/Allrun .
-./Allrun
+./Allrun $RUN_ARGUMENTS
 
 
 sed -e :a -e '/\\$/N; s/\\\n//; ta' Allrun > temp

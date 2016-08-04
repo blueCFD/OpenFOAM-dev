@@ -299,4 +299,3 @@ void inplaceRotateList(ListType<DataType>& list, label n);
 #endif
 
 // ************************************************************************* //
-

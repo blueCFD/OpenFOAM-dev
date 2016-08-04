@@ -5,6 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -20,6 +22,19 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - These changes are technically from Sysmcape's own patches for Windows,
+        circa 2011.
+      - The adaptation derived from the patches for blueCFD 2.1, adjusted to
+        OpenFOAM 2.2.
+
 
 \*---------------------------------------------------------------------------*/
 
@@ -75,6 +90,7 @@ defineDimensionedConstantWithDefault
     dimensionedScalar
     (
         "sigma",
+        (
         Foam::dimensionedScalar
         (
             "C",
@@ -83,6 +99,15 @@ defineDimensionedConstantWithDefault
         )
        *Foam::pow4(physicoChemical::k)
        /(pow3(universal::hr)*sqr(universal::c))
+       )
+#ifdef WM_SP
+       .dimensions(),
+       // Assuming this is the Stefan-Boltzmann constant
+       // http://en.wikipedia.org/wiki/Stefan%E2%80%93Boltzmann_law
+       // Single precision can't handle the pow4(k), 
+       // where k is Boltzmann constant = 1.3806488e-23
+       5.6704e-8f
+#endif     
     ),
     constantphysicoChemicalsigma,
     "sigma"

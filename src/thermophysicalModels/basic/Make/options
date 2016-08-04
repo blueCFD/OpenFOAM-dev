@@ -8,3 +8,6 @@ LIB_LIBS = \
     -lcompressibleTransportModels \
     -lfiniteVolume \
     -lmeshTools
+
+LIB_LIBS += \
+    -lspecie

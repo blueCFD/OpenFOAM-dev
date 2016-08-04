@@ -12,3 +12,6 @@ LIB_LIBS = \
     -lmeshTools \
     -lfileFormats \
     -ldynamicMesh
+
+LIB_LIBS += \
+    -lfiniteVolume

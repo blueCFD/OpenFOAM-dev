@@ -228,6 +228,8 @@ int main(int argc, char *argv[])
 
     argList args(argc, argv);
 
+#   include "forceLoadLibraries.H"
+
     if (!args.check())
     {
         FatalError.exit();

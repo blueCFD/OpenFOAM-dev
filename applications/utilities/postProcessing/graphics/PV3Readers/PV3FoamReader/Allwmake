@@ -6,6 +6,11 @@ targetType=libso
 . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 set -x
 
+if onWin ; then
+  echo "Default: don't build plugins for ParaView on Windows."
+  exit 0
+fi
+
 if [ -d "$ParaView_DIR" -a -r "$ParaView_DIR" ]
 then
     wmake $targetType vtkPV3Foam

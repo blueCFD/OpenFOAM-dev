@@ -6,3 +6,5 @@ EXE_INC = \
 EXE_LIBS = \
     -ldynamicMesh \
     -lmeshTools
+
+EXE_LIBS += -lfiniteVolume

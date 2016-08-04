@@ -1,0 +1,94 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2011-2014 blueCAPE Lda
+#
+#    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#    For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     qhelpgenerator_mod
+#
+# Description
+#     This script adds missing files to the main html folder and adds those
+#   files to the qhp file given in $1.
+#
+#------------------------------------------------------------------------------
+
+cd ..
+
+filelist="$(find css -mindepth 1 -type f) $(find . -maxdepth 1 -name "*.png" -type f)"
+
+cd html
+
+#clean up the index.qhp file
+echo "Cleaning up the index.qhp file..."
+ls -l index.qhp
+../cleanUpQHP index.qhp
+echo "Clean up complete."
+ls -l index.qhp
+
+echo "Split index.qhp into two parts"
+#split the index.qhp file into 2 parts, as well as filter 
+#out any and all repeated lines
+sed -e '1,/<file>index.html<\/file>/!d' index.qhp > index.qhp.part1
+sed -e '1,/<file>index.html<\/file>/d' index.qhp > index.qhp.part2
+
+[ -e index.qhp.middle ] && rm index.qhp.middle
+
+#embed all css files and images
+echo "Embed all css files and images"
+for file in $filelist; do
+  echo "<file>$file</file>" >> index.qhp.middle
+done
+
+#remove the relative paths for the source code
+find . -name "*.html" | while read file; do
+    echo "Changing paths in $file"
+    sed -i -e 's_href="\.\./\.\./\.\./_href="_' $file
+done
+
+#copy the source code files
+echo "Copying source files for properly embedding them"
+find ../../../src ../../../applications -name "*.[CHLc]" -type f | \
+grep -v "lnInclude" | \
+while read file; do
+ partialpath=${file##../../../}
+ relpath=${partialpath%/*}
+ mkdir -p "$relpath"
+
+ cp "$file" "$partialpath"
+ 
+done
+
+#embed the source code files
+echo "Embedding the source code files"
+find src applications -name "*.[CHLc]" -type f | \
+while read file; do
+ echo "<file>$file</file>" >> index.qhp.middle
+done
+
+#merge middle into parts
+echo "Merge middle into parts"
+cat index.qhp.part1 index.qhp.middle index.qhp.part2 > index.qhp
+
+#run the real qhelpgenerator
+echo "Run the real qhelpgenerator..."
+qhelpgenerator $@

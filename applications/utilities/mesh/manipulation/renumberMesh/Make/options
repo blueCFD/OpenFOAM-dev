@@ -15,4 +15,16 @@ EXE_LIBS = \
     -lgenericPatchFields \
     -lrenumberMethods \
     $(LINK_FLAGS) \
-    -ldecompositionMethods -L$(FOAM_LIBBIN)/dummy -lmetisDecomp -lscotchDecomp
+    -ldecompositionMethods
+
+#if (defined( WIN32 ) || defined( WIN64 ))
+
+EXE_LIBS += \
+    -lscotchDecomp
+
+#else
+
+EXE_LIBS += \
+    -L$(FOAM_LIBBIN)/dummy -lmetisDecomp -lscotchDecomp
+
+#endif

@@ -24,3 +24,6 @@ EXE_LIBS = \
     -lmeshTools \
     -lfvOptions \
     -lsampling
+
+EXE_LIBS += \
+    -linterfaceProperties

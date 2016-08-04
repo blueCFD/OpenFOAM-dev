@@ -5,3 +5,14 @@ EXE_INC = \
 EXE_LIBS = \
     -lmeshTools \
     -ltriSurface
+
+#if defined(WIN32) || defined(WIN64)
+
+/*
+   This hack was needed due to a weird LD limitation in GNU Binutils
+   2.26.20160125, as provided in the GCC build:
+      "(Rev2, Built by MSYS2 project) 5.3.0
+*/
+EXE_LIBS += -L/mingw64/lib/gcc/x86_64-w64-mingw32/5.3.0
+
+#endif

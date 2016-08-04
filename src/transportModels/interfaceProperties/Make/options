@@ -6,3 +6,8 @@ EXE_INC = \
 LIB_LIBS = \
     -ltwoPhaseMixture \
     -lfiniteVolume
+
+#if defined(WIN32) || defined(WIN64)
+LIB_LIBS += \
+    -ltwoPhaseProperties
+#endif

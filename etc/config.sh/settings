@@ -5,8 +5,12 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.4
+# 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -21,6 +25,18 @@
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the modifications made for blueCFD-Core 2.3.
+#        - Added environment settings for the MinGW and MinGW-w64 based Gcc
+#          (cross-)compilers.
+#        - Tested using MSYS2's software stack with mingw-w64.
+#
 # File
 #     etc/config.sh/settings
 #
@@ -29,6 +45,70 @@
 #     Sourced from OpenFOAM-<VERSION>/etc/bashrc
 #
 #------------------------------------------------------------------------------
+
+#-----------------------------
+# Set environment according to compiler mode on MinGW, otherwise use the
+# standard build environment
+if [ -n "$WM_TARGET_ARCH" ]
+then
+#-----------------------------
+
+case "$WM_TARGET_ARCH" in
+mingw32)
+    WM_ARCH=$WM_TARGET_ARCH
+    WM_COMPILER_ARCH=i686-pc-mingw32
+    ;;
+mingw_w32)
+    WM_ARCH=$WM_TARGET_ARCH
+    WM_COMPILER_ARCH=i686-pc-mingw32
+    ;;
+mingw_w64)
+    WM_ARCH=$WM_TARGET_ARCH
+    WM_COMPILER_ARCH=x86_64-w64-mingw32
+    ;;
+*)
+    echo
+    echo "Warning in $WM_PROJECT_DIR/etc/config/settings.sh:"
+    echo "    Unknown OpenFOAM compiler type '$WM_COMPILER'"
+    echo "    Please check your settings"
+    echo
+    ;;
+esac
+
+# Finally export WM_COMPILER_ARCH and WM_ARCH
+export WM_COMPILER_ARCH
+export WM_ARCH
+
+case "`uname -s`" in
+Linux | CYGWIN* | MINGW*)
+
+    # compiler specifics
+    processor=`uname -m`
+
+    if [ "i686" = "$processor" -o "x86_64" = "$processor" ]; then
+        export WM_CC=$WM_COMPILER_ARCH'-gcc'
+        export WM_CXX=$WM_COMPILER_ARCH'-g++'
+    else
+        echo Unknown processor type "$processor" for MinGW \(cross-\)compiler.
+        echo For further assistance, please report at:
+        echo     https://github.com/blueCFD/Core/issues
+    fi
+    ;;
+
+*)    # an unsupported base operating system
+    cat <<USAGE
+
+    Your "$WM_ARCH" operating system is not supported by the modifications
+    made to OpenFOAM. For further assistance, please report at:
+        https://github.com/blueCFD/Core/issues
+
+USAGE
+    ;;
+esac
+
+#-----------------------------
+else # Normal local compiler
+#-----------------------------
 
 # Set environment variables according to system type
 export WM_ARCH=`uname -s`
@@ -131,7 +211,9 @@ USAGE
     ;;
 esac
 
-
+#-----------------------------
+fi # end of compiler modes
+#-----------------------------
 #------------------------------------------------------------------------------
 
 # Location of the jobControl directory

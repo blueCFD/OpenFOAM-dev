@@ -1,0 +1,39 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2011-2016 blueCAPE Lda
+#
+#    This file is part of blueCAPE's blueCFD-Core port of OpenFOAM for 
+#    Windows. It was designed to improve the user experience in using OpenFOAM
+#    in Windows via MSYS/MSYS2.
+#    For more information about blueCFD-Core, visit:
+#        http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM's official site: http://www.openfoam.org
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     onWin
+#
+# Description
+#     Help script for determining if the current shell is running on Windows.
+#
+#------------------------------------------------------------------------------
+
+[ -n "$(uname -s | grep MINGW)" ] && exit 0
+exit 1

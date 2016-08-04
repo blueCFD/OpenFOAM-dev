@@ -1,0 +1,124 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3-1
+# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2 and 2016-1
+# 2016-07-xx blueCAPE Lda: More modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
+# License
+#     This file is a derivative work of OpenFOAM.
+#
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been created by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Originally derived from the patches for blueCFD 2.1 and 2.2, which
+#          were applied to the file makeDerivedFiles.
+#        - This script makeVersionResourceFile was later created for
+#          blueCFD-Core 2.3-2 and 2016-1, based on the original modifications.
+#        - This script has the ability to build the resource files for
+#          embedding them in binaries, therefore allowing us to add version
+#          information to the binaries for Windows to see.
+#
+# Script
+#     makeVersionResourceFile
+#
+# Description
+#     Constructs the version resource file.
+#
+#------------------------------------------------------------------------------
+
+# Provided by makefiles/files
+OBJECTS_DIR=$1
+VERSIONFILE=$2
+SFILES=$3
+VARS=$4
+
+# Change to the $OBJECTS_DIR directory
+if [ ! -d "$OBJECTS_DIR" ]
+then
+    echo "Could not use the directory '$OBJECTS_DIR'" 1>&2
+    exit 1
+fi
+
+# Special preparations for MinGW builds
+TIS_MinGW=0
+if [ -e "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" ]
+then
+    TIS_MinGW=1
+    cp "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" tmpver.rc
+fi
+
+if [ $TIS_MinGW -eq 1 ]
+then
+    #Extract the binary name
+    MGW_EXENAME=$(grep -e "^EXE =" $VARS)
+    MGW_LIBNAME=$(grep -e "^LIB =" $VARS)
+    MGW_FINALNAME="NONAME"
+
+    if [ -n "$MGW_EXENAME" ]; then
+        MGW_FINALNAME=$(echo $MGW_EXENAME | sed -e 's=.*/==').exe
+    fi
+
+    if [ -n "$MGW_LIBNAME" ]; then
+        MGW_FINALNAME=$(echo $MGW_LIBNAME | sed -e 's=.*/==').dll
+    fi
+
+    #get current OpenFOAM version
+    MGW_OFversion=$(wmakePrintBuild)
+
+    #apply values to template
+    sed -e 's=2\.0\.\0\.0='$MGW_OFversion'=g' \
+        -e 's=tmpintname='$MGW_FINALNAME'=' \
+        -e 's=tmporigname='$MGW_FINALNAME'=' \
+        tmpver.rc > $VERSIONFILE
+
+    #clean up
+    unset MGW_OFversion MGW_EXENAME MGW_LIBNAME MGW_FINALNAME
+    rm tmpver.rc
+
+else
+
+    exit 1
+fi
+
+# Plug in the version resource file for being compiled along
+DEPFILE=${VERSIONFILE}.dep
+FILE_NAMEwEXT=${VERSIONFILE##*/}
+FILE_NAME=${FILE_NAMEwEXT%%.rc}
+
+echo "$FILE_NAMEwEXT" > files.$$
+
+# Update sourceFiles
+sed -i -e '$s/$/\\/' $SFILES
+
+cat files.$$ >> $SFILES
+
+# Create custom made dep file
+touch ${VERSIONFILE}.dep
+echo '$(OBJECTS_DIR)/'$FILE_NAMEwEXT'.dep: $(OBJECTS_DIR)/'$FILE_NAMEwEXT \
+     > $DEPFILE
+echo '' >> $DEPFILE
+echo '$(OBJECTS_DIR)/'$FILE_NAME'.o : $(OBJECTS_DIR)/'$FILE_NAMEwEXT \
+     >> $DEPFILE
+echo '	$(rctoo)' >> $DEPFILE
+
+# Remove temporary file
+rm files.$$
+
+#------------------------------------------------------------------------------

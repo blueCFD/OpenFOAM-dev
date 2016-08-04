@@ -6,8 +6,10 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2016-08-03 blueCAPE Lda: Added passing on command line options
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -68,7 +70,7 @@ logReport()
 
 
 # Recursively run all tutorials
-foamRunTutorials -test -skipFirst
+foamRunTutorials -test -skipFirst $@
 
 
 # Analyse all log files

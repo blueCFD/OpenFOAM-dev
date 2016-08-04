@@ -64,21 +64,59 @@ done
 
 set -x
 
-rm -rf latex man
-
-# Remove html directory in background
-mv html html-stagedRemove$$ 2> /dev/null
-rm -rf html-stagedRemove$$ >/dev/null 2>&1 &
+for folder in html latex man qt_qch; do
+  # remove $folder directory in background
+  if [ -d "$folder" ]; then
+    mv $folder ${folder}-stagedRemove$$ 2> /dev/null
+    rm -rf ${folder}-stagedRemove$$ >/dev/null 2>&1 &
+  fi
+done
 
 # Ensure that created files are readable by everyone
 umask 22
+if isMinGW; then
+
+  mkdir html
+  cp -r css html/
+  cp *.png html/
+
+  if onWin; then
+    doxygen DoxyfileMinGWQtWin
+  else
+    doxygen DoxyfileMinGWQt
+  fi
+
+else
+
 doxygen
 
-# Fix permissions (NB: '+X' and not '+x'!)
-chmod -R a+rX html latex man 2>/dev/null
+fi
+
+# fix permissions (NB: '+X' and not '+x'!)
+for folder in html latex man; do
+  [ -d "$folder" ] && chmod -R a+rX $folder 2>/dev/null
+done
 
 echo
 echo "Done doxygen"
+echo
+
+echo
+echo "Generating Qt collection..."
+echo
+
+[ ! -e qt_qch ] && mkdir qt_qch
+
+sed -e "s=WM_PROJECT_VERSION=$WM_PROJECT_VERSION=" openfoam-code.qhcp > \
+    qt_qch/openfoam-code-$WM_PROJECT_VERSION.qhcp
+
+cd qt_qch
+qcollectiongenerator openfoam-code-$WM_PROJECT_VERSION.qhcp \
+    -o openfoam-code-$WM_PROJECT_VERSION.qhc
+cd ..
+
+echo
+echo "Done Qt collection generation."
 echo
 
 #------------------------------------------------------------------------------

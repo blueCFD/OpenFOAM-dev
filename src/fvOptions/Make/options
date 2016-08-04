@@ -15,3 +15,6 @@ LIB_LIBS = \
     -lmeshTools \
     -lturbulenceModels \
     -lcompressibleTurbulenceModels
+
+LIB_LIBS += \
+    -lfluidThermophysicalModels

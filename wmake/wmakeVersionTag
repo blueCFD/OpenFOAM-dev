@@ -1,0 +1,154 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+#
+# License
+#     This file was designed to work with OpenFOAM. It's also bound to the same
+#     license as OpenFOAM.
+#
+#     Origin of this file: http://www.openfoam.org/mantisbt/view.php?id=293
+#
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     OpenFOAM: The Open Source CFD Toolbox
+#     Copyright (C) 2011 OpenFOAM Foundation
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     wmakeVersionTag
+#
+# Description
+#     Print C DEFINES the version used when building the project.
+#
+#------------------------------------------------------------------------------
+# default version tag file for code
+versiontag="$FOAM_SRC/OpenFOAM/lnInclude/foamVersionTag.H"
+
+usage() {
+    exec 1>&2
+
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    cat<<USAGE
+usage: ${0##*/} [OPTION]
+options:
+  -tagfile FILE       Change the file tag where to save the detailed OpenFOAM
+                      version information. If FILE is a hyphen (-), then the
+                      tag is shown on the standard output.
+
+Generate the version tag file that can be used by third party codes:
+  * Default tag file: $versiontag
+  * Relies on OpenFOAM's "wmakePrintBuild" and "foamNewSource" scripts.
+
+USAGE
+    exit 1
+}
+#------------------------------------------------------------------------------
+
+unset printOpt
+
+# parse options
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+    -h | -help)
+        usage
+        ;;
+    -t | -tagfile)
+        # for a file name starting with '-' simply display the code
+        if [ "${2#-}" != "${2}" ]
+        then
+            printOpt=true
+        else
+            tagfile=$2
+        fi
+        shift 2
+        ;;
+    *)
+        usage "unknown option/argument: '$*'"
+        ;;
+    esac
+done
+
+#------------------------------------------------------------------------------
+
+#
+# genCoreTag - output the core version tag file
+#
+genCoreTag()
+{
+    #retrieve and parse version information
+    toolbox_version=`wmakePrintBuild -short`
+    toolbox_major=`echo $toolbox_version | sed -e 's=\([0-9]*\).*=\1='`
+    toolbox_minor=`echo $toolbox_version | sed -e 's=[0-9]*\.\([0-9]*\).*=\1='`
+    toolbox_patch=`echo $toolbox_version | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1='`
+    toolbox_gitcommit=`echo $toolbox_version | sed -e 's=.*\-\([0-9a-z]*\).*=\1='`
+    if [ "$toolbox_gitcommit" = "$toolbox_version" ]
+    then
+      toolbox_gitcommit=""
+    fi
+
+    #generate header inclusion limiter
+    cat << GENCORETAG
+
+#ifndef FOAMVERSIONTAG_H
+#define FOAMVERSIONTAG_H
+
+GENCORETAG
+
+    #generate core version information
+    cat << GENCORETAG
+//TIP: use #FOAM_PROJECT_NAME to get the defined symbol in string form.
+
+#define FOAM_PROJECT_NAME $WM_PROJECT
+#define FOAM_VERSION_MAJOR $toolbox_major
+#define FOAM_VERSION_MINOR $toolbox_minor
+#define FOAM_VERSION_PATCHLEVEL $toolbox_patch
+GENCORETAG
+
+    #generate git related version information
+    if [ -n "$toolbox_gitcommit" ]
+    then
+    cat << GENCORETAG
+
+#define FOAM_VERSION_GIT_COMMIT $toolbox_gitcommit
+GENCORETAG
+    fi
+
+    #finish header inclusion limiter
+    cat << GENCORETAG
+
+#endif
+
+// ************************************************************************* //
+
+GENCORETAG
+}
+
+#
+# genTag - output the version tag file
+#
+genTag()
+{
+    #Get the standard header file
+    $WM_PROJECT_DIR/etc/codeTemplates/source/foamNewSource I - | grep -B 100 '\\\*'
+
+    #generate the code with the version information
+    genCoreTag
+}
+
+if [ -n "$printOpt" ]; then
+  genTag
+else
+  genTag > $versiontag
+fi
+
+#------------------------------------------------------------------------------

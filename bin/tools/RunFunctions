@@ -5,8 +5,11 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +23,18 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added ability to override how "runParallel" works, as well as using
+#          the mpirun we want, as done in foamJob.
+#        - Added abilities similar to foamJob, regarding the usage of the 
+#          machines files.
 #
 # Script
 #     RunFunctions
@@ -137,11 +152,15 @@ runParallel()
         echo "$APP_NAME already run on $PWD:" \
              "remove log file 'log.$LOG_SUFFIX' to re-run"
     else
+
+        export mpirun=`findMpirun` || echo "'mpirun' not found"
+        load_mpi_opts
+
         echo "Running $APP_RUN in parallel on $PWD using $nProcs processes"
         if [ "$LOG_APPEND" = "true" ]; then
-            ( mpirun -np $nProcs $APP_RUN -parallel "$@" < /dev/null >> log.$LOG_SUFFIX 2>&1 )
+            ( $mpirun -np $nProcs $mpiopts $APP_RUN -parallel "$@" < /dev/null >> log.$LOG_SUFFIX 2>&1 )
         else
-            ( mpirun -np $nProcs $APP_RUN -parallel "$@" < /dev/null > log.$LOG_SUFFIX 2>&1 )
+            ( $mpirun -np $nProcs $mpiopts $APP_RUN -parallel "$@" < /dev/null > log.$LOG_SUFFIX 2>&1 )
         fi
     fi
 }
@@ -167,5 +186,128 @@ cloneCase()
         done
     fi
 }
+
+#Functions bellow this line were copied/adapted from foamJob --------------------------
+
+load_mpi_opts()
+{
+    mpiopts=""
+
+    case "$WM_MPLIB" in
+    *OPENMPI)
+        # add hostfile info
+        for hostfile in \
+            hostfile \
+            machines \
+            system/hostfile \
+            system/machines \
+            ;
+        do
+            if [ -r $hostfile ]
+            then
+                mpiopts="$mpiopts -hostfile $hostfile"
+                break
+            fi
+        done
+
+        #
+        # Send FOAM_SETTINGS to parallel processes. so the proper definitions are sent as well.
+        # Note: don't send for now, simply because foamExec isn't being called here
+        #
+        #mpiopts="$mpiopts -x FOAM_SETTINGS"
+        ;;
+    MPICH | MSMPI)
+        # add hostfile info
+        for hostfile in \
+            hostfile \
+            machines \
+            system/hostfile \
+            system/machines \
+            ;
+        do
+           if [ -r $hostfile ]
+           then
+              mpiopts="$mpiopts -machinefile $hostfile"
+              break
+           fi
+        done
+
+        #
+        # Send FOAM_SETTINGS to parallel processes. so the proper definitions are sent as well.
+        # Note: don't send for now, simply because foamExec isn't being called here
+        #
+        #mpiopts="$mpiopts -env FOAM_SETTINGS \"${FOAM_SETTINGS}\""
+        ;;
+    esac
+
+    #
+    # Add additional options that the user might need, such as disabling lo or eth0
+    #
+    mpiopts="$mpiopts $MPI_ACCESSORY_OPTIONS"
+
+    #make sure the variable is visible by forking shells
+    export mpiopts
+}
+
+# replacement for possibly buggy 'which'
+findExec() {
+    case "$1" in
+    */*)
+        if [ -x "$1" ]
+        then
+            echo "$1"
+            return 0
+        fi
+        ;;
+    esac
+
+    oldIFS=$IFS
+    IFS=':'
+    for d in $PATH
+    do
+        # echo "testing: $d/$1" 1>&2
+        if [ -x "$d/$1" -a ! -d "$d/$1" ]
+        then
+            # echo "Found exec: $d/$1" 1>&2
+            IFS=$oldIFS
+            echo "$d/$1"
+            return 0
+        fi
+     done
+     IFS=$oldIFS
+     echo ""
+     return 1
+}
+
+#find mpirun or mpiexec, by checking if MPI_ARCH_PATH matches the path for each
+findMpirun() {
+  path2mpirun=`findExec mpirun`
+  path2mpiexec=`findExec mpiexec`
+
+  if [ -n "$path2mpirun" -a "${path2mpirun%/*}" = "$MPI_ARCH_PATH/bin" ]; then
+    echo $path2mpirun
+    return 0
+  fi
+
+  if [ -n "$path2mpiexec" -a "${path2mpiexec%/*}" = "$MPI_ARCH_PATH/bin" ]; then
+    echo $path2mpiexec
+    return 0
+  fi
+
+  if [ -n "$path2mpirun" ]; then
+    echo $path2mpirun
+    return 0
+  fi
+
+  if [ -n "$path2mpiexec" ]; then
+    echo $path2mpiexec
+    return 0
+  fi
+
+  echo ""
+  return 1
+}
+
+
 
 #------------------------------------------------------------------------------

@@ -8,6 +8,8 @@ EXE_INC = \
     -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude
 
+#if !defined(WIN32) && !defined(WIN64)
+
 EXE_LIBS = \
     -lbarotropicCompressibilityModel \
     -lblockMesh \
@@ -101,3 +103,14 @@ EXE_LIBS = \
     -ltwoPhaseProperties \
     -ltwoPhaseReactingTurbulenceModels \
     -lutilityFunctionObjects
+
+#else
+
+EXE_LIBS = \
+    -lcompressibleTurbulenceModels \
+    -lincompressibleTurbulenceModels \
+    -lfiniteVolume
+
+#include "extraOptions"
+
+#endif

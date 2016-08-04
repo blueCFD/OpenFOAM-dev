@@ -21,3 +21,7 @@ EXE_LIBS = \
     -lcompressibleTransportModels \
     -lturbulenceModels \
     -lcompressibleTurbulenceModels
+
+EXE_LIBS += \
+    -ltwoPhaseMixture \
+    -lincompressibleTransportModels

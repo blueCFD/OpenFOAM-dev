@@ -1,0 +1,3 @@
+#include "../Make/files"
+
+LIB = $(FOAM_LIBBIN)/libreactingPhaseSystemBuiltForMultiphase

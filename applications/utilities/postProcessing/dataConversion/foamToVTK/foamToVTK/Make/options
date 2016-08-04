@@ -8,3 +8,8 @@ LIB_LIBS = \
     -ldynamicMesh \
     -llagrangian \
     -lgenericPatchFields
+
+LIB_LIBS += \
+    -lfiniteVolume \
+    -lgenericPatchFields \
+    -lmeshTools

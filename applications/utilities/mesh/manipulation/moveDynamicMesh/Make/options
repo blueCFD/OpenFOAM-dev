@@ -9,3 +9,6 @@ EXE_LIBS = \
     -lmeshTools \
     -lsampling \
     -ldynamicMesh
+
+EXE_LIBS += \
+    -lfiniteVolume

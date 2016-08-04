@@ -17,3 +17,6 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lfvOptions \
     -lmeshTools
+
+EXE_LIBS += \
+    -lincompressibleTransportModels

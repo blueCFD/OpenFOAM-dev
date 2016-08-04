@@ -27,8 +27,34 @@ wmakeLnInclude OpenFOAM
 wmakeLnInclude OSspecific/${WM_OSTYPE:-POSIX}
 Pstream/Allwmake $targetType $*
 
+# Generate version tag, after OpenFOAM/lnInclude has been created
+wmakeVersionTag
+
 OSspecific/${WM_OSTYPE:-POSIX}/Allwmake $*
 wmake $targetType OpenFOAM
+
+# In case direct linking isn't to be used, then setup settings for using
+# Pstream library
+if isMinGW; then
+    export WM_PSTREAMLINK="LINKTOPSTREAM"
+
+    #build all Pstream libraries
+    (cd Pstream && ./Allwmake)
+
+    rm -f $FOAM_LIBBIN/libOpenFOAM.*
+
+    wmake $targetType OpenFOAM
+
+    unset WM_PSTREAMLINK
+
+    # mingw excludes default compiler path so copy
+    # missing /usr/include/FlexLexer.h for flex
+    cp /usr/include/FlexLexer.h "$FOAM_SRC/OpenFOAM/lnInclude/"
+
+    #Build the stub library
+    wmake libso OSspecific/${WM_OSTYPE:-POSIX}/stubLibrary
+fi
+
 
 wmake $targetType fileFormats
 wmake $targetType surfMesh
@@ -39,6 +65,17 @@ wmake $targetType edgeMesh
 # Decomposition methods needed by dummyThirdParty
 # (dummy metisDecomp, scotchDecomp etc) needed by e.g. meshTools
 parallel/decompose/AllwmakeLnInclude
+
+if isMinGW; then
+  # finiteVolume and dynamicMesh are needed by the Decomposition methods
+  wmake $targetType finiteVolume
+  wmake $targetType mesh/extrudeModel
+  wmake $targetType dynamicMesh
+
+  # Decomposition methods are needed for dummyThirdParty
+  wmake $targetType parallel/decompose/decompositionMethods
+fi
+
 dummyThirdParty/Allwmake $targetType $*
 
 wmakeLnInclude fvOptions
