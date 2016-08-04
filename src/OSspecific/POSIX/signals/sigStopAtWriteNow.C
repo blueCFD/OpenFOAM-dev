@@ -27,7 +27,7 @@ License
 #include "error.H"
 #include "JobInfo.H"
 #include "IOstreams.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

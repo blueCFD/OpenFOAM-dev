@@ -31,7 +31,7 @@ Description
 
 #include "argList.H"
 #include "fileName.H"
-#include "SubList.H"
+#include "SubList.T.H"
 #include "IOobject.H"
 #include "IOstreams.H"
 #include "OSspecific.H"

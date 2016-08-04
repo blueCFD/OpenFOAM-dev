@@ -35,7 +35,7 @@ SourceFiles
 #ifndef IOobjectList_H
 #define IOobjectList_H
 
-#include "HashPtrTable.H"
+#include "HashPtrTable.T.H"
 #include "IOobject.H"
 #include "wordReList.H"
 

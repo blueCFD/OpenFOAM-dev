@@ -34,12 +34,12 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "CMULES.H"
+#include "CMULES.T.H"
 #include "subCycle.H"
 #include "incompressibleTwoPhaseInteractingMixture.H"
 #include "relativeVelocityModel.H"
 #include "turbulenceModel.H"
-#include "CompressibleTurbulenceModel.H"
+#include "CompressibleTurbulenceModel.T.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
 #include "gaussLaplacianScheme.H"

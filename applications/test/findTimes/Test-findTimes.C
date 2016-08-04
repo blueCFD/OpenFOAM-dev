@@ -26,7 +26,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "timeSelector.H"
 
 using namespace Foam;

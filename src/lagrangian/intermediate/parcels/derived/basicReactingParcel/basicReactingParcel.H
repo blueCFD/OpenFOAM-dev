@@ -37,9 +37,9 @@ SourceFiles
 
 #include "contiguous.H"
 #include "particle.H"
-#include "KinematicParcel.H"
-#include "ThermoParcel.H"
-#include "ReactingParcel.H"
+#include "KinematicParcel.T.H"
+#include "ThermoParcel.T.H"
+#include "ReactingParcel.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

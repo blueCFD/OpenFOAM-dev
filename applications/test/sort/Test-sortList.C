@@ -25,8 +25,8 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "SortableList.H"
-#include "ListOps.H"
+#include "SortableList.T.H"
+#include "ListOps.T.H"
 
 using namespace Foam;
 

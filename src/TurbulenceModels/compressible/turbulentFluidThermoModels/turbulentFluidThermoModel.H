@@ -43,11 +43,11 @@ SourceFiles
 #ifndef turbulentFluidThermoModel_H
 #define turbulentFluidThermoModel_H
 
-#include "CompressibleTurbulenceModel.H"
-#include "ThermalDiffusivity.H"
-#include "EddyDiffusivity.H"
-#include "RASModel.H"
-#include "LESModel.H"
+#include "CompressibleTurbulenceModel.T.H"
+#include "ThermalDiffusivity.T.H"
+#include "EddyDiffusivity.T.H"
+#include "RASModel.T.H"
+#include "LESModel.T.H"
 #include "fluidThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

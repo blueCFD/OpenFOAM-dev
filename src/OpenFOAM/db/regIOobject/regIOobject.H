@@ -41,7 +41,7 @@ SourceFiles
 #include "IOobject.H"
 #include "typeInfo.H"
 #include "OSspecific.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

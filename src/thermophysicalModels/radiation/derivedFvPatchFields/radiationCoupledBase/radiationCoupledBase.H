@@ -40,7 +40,7 @@ SourceFiles
 #define radiationCoupledBase_H
 
 #include "scalarField.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "fvPatch.H"
 #include "fvPatchFieldMapper.H"
 

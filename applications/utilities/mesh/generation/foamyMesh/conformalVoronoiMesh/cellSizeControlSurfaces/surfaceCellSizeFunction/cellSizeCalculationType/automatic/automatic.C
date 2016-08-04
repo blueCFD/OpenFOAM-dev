@@ -28,7 +28,7 @@ License
 #include "triSurfaceMesh.H"
 #include "vtkSurfaceWriter.H"
 #include "primitivePatchInterpolation.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

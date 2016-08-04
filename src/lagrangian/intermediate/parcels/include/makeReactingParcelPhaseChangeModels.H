@@ -28,9 +28,9 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoPhaseChange.H"
-#include "LiquidEvaporation.H"
-#include "LiquidEvaporationBoil.H"
+#include "NoPhaseChange.T.H"
+#include "LiquidEvaporation.T.H"
+#include "LiquidEvaporationBoil.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

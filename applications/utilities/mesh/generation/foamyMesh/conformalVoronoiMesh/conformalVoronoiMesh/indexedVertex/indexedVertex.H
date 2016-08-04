@@ -41,8 +41,8 @@ SourceFiles
 #include "CGALTriangulation3DKernel.H"
 #include "tensor.H"
 #include "triad.H"
-#include "InfoProxy.H"
-#include "point.H"
+#include "InfoProxy.T.H"
+#include "point.T.H"
 #include "indexedVertexEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

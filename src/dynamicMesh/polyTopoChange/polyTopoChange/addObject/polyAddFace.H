@@ -37,7 +37,7 @@ Description
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "label.H"
-#include "face.H"
+#include "face.T.H"
 #include "topoAction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

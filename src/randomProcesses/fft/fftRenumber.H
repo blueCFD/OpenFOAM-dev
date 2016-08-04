@@ -37,7 +37,7 @@ SourceFiles
 #define fftRenumber_H
 
 #include "complex.H"
-#include "List.H"
+#include "List.T.H"
 #include "labelList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -28,8 +28,8 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoStochasticCollision.H"
-#include "SuppressionCollision.H"
+#include "NoStochasticCollision.T.H"
+#include "SuppressionCollision.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

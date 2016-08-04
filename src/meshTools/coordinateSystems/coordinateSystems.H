@@ -58,7 +58,7 @@ SourceFiles
 #define coordinateSystems_H
 
 #include "coordinateSystem.H"
-#include "IOPtrList.H"
+#include "IOPtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

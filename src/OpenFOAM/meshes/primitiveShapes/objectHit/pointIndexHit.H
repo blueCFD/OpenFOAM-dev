@@ -31,8 +31,8 @@ Description
 #ifndef pointIndexHit_H
 #define pointIndexHit_H
 
-#include "point.H"
-#include "PointIndexHit.H"
+#include "point.T.H"
+#include "PointIndexHit.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

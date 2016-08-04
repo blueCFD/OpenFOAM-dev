@@ -26,7 +26,7 @@ License
 #include "sampledSurfaces.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "ListListOps.H"
+#include "ListListOps.T.H"
 #include "stringListOps.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

@@ -35,15 +35,15 @@ SourceFiles
 #ifndef cellShapeControlMesh_H
 #define cellShapeControlMesh_H
 
-#include "Time.H"
+#include "Time.T.H"
 #include "scalar.H"
-#include "point.H"
+#include "point.T.H"
 #include "tensor.H"
 #include "triad.H"
 #include "fileName.H"
 #include "searchableSurfaces.H"
 #include "conformationSurfaces.H"
-#include "DistributedDelaunayMesh.H"
+#include "DistributedDelaunayMesh.T.H"
 #include "CGALTriangulation3Ddefs.H"
 #include "backgroundMeshDecomposition.H"
 #include "boundBox.H"

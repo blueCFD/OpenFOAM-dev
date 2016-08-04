@@ -24,14 +24,14 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "boundaryMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "repatchPolyTopoChanger.H"
 #include "faceList.H"
 #include "indexedOctree.H"
 #include "treeDataPrimitivePatch.H"
 #include "triSurface.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "OFstream.H"
 #include "uindirectPrimitivePatch.H"
 

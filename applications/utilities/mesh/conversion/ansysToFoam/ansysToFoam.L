@@ -60,14 +60,14 @@ Description
 using namespace Foam;
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "emptyPolyPatch.H"
 #include "preservePatchTypes.H"
 #include "cellShape.H"
 #include "cellModeller.H"
-#include "SLList.H"
-#include "SLPtrList.H"
+#include "SLList.T.H"
+#include "SLPtrList.T.H"
 
 SLList<point> slPoints;
 SLList<label> slPointMap;

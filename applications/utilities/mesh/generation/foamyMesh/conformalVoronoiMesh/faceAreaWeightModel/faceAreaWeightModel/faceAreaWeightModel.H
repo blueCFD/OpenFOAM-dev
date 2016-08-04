@@ -38,7 +38,7 @@ SourceFiles
 #ifndef faceAreaWeightModel_H
 #define faceAreaWeightModel_H
 
-#include "point.H"
+#include "point.T.H"
 #include "dictionary.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"

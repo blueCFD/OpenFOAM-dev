@@ -33,7 +33,7 @@ SourceFiles
 #ifndef phasePairKey_H
 #define phasePairKey_H
 
-#include "Pair.H"
+#include "Pair.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

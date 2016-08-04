@@ -43,7 +43,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IFstream.H"
 #include "OFstream.H"
 #include "pointField.H"

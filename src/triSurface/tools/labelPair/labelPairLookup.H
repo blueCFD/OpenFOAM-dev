@@ -37,8 +37,8 @@ Note
 #ifndef labelPairLookup_H
 #define labelPairLookup_H
 
-#include "FixedList.H"
-#include "HashTable.H"
+#include "FixedList.T.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

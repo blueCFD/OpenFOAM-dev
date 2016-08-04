@@ -36,7 +36,7 @@ SourceFiles
 #define labelVector_H
 
 #include "label.H"
-#include "Vector.H"
+#include "Vector.T.H"
 #include "contiguous.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

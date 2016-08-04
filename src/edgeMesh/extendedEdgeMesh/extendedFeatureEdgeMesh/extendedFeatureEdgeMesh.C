@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "extendedFeatureEdgeMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

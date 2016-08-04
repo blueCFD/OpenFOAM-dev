@@ -72,9 +72,9 @@ SourceFiles
 
 #include "labelList.H"
 #include "labelPair.H"
-#include "Pstream.H"
+#include "Pstream.T.H"
 #include "boolList.H"
-#include "Map.H"
+#include "Map.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

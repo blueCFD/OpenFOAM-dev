@@ -35,7 +35,7 @@ SourceFiles
 #define treeBoundBoxList_H
 
 #include "treeBoundBox.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

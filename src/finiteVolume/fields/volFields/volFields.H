@@ -34,7 +34,7 @@ SourceFiles
 #ifndef volFields_H
 #define volFields_H
 
-#include "GeometricFields.H"
+#include "GeometricFields.T.H"
 #include "volMesh.H"
 #include "fvMesh.H"
 #include "fvPatchField.H"

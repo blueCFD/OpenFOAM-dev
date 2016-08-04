@@ -28,11 +28,11 @@ License
 #include "addToRunTimeSelectionTable.H"
 
 #include "twoPhaseSystem.H"
-#include "ThermalPhaseChangePhaseSystem.H"
-#include "MomentumTransferPhaseSystem.H"
+#include "ThermalPhaseChangePhaseSystem.T.H"
+#include "MomentumTransferPhaseSystem.T.H"
 #include "compressibleTurbulenceModel.H"
-#include "ThermalDiffusivity.H"
-#include "PhaseCompressibleTurbulenceModel.H"
+#include "ThermalDiffusivity.T.H"
+#include "PhaseCompressibleTurbulenceModel.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

@@ -103,7 +103,7 @@ SourceFiles
 #define v2f_H
 
 #include "v2fBase.H"
-#include "RASModel.H"
+#include "RASModel.T.H"
 #include "eddyViscosity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

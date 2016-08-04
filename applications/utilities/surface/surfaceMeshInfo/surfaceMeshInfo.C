@@ -57,9 +57,9 @@ Note
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 
-#include "UnsortedMeshedSurfaces.H"
+#include "UnsortedMeshedSurfaces.T.H"
 
 using namespace Foam;
 

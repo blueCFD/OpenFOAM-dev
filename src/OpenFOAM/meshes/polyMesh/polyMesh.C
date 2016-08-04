@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "polyMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "cellIOList.H"
 #include "wedgePolyPatch.H"
 #include "emptyPolyPatch.H"
@@ -33,7 +33,7 @@ License
 #include "polyMeshTetDecomposition.H"
 #include "indexedOctree.H"
 #include "treeDataCell.H"
-#include "MeshObject.H"
+#include "MeshObject.T.H"
 #include "pointMesh.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

@@ -28,7 +28,7 @@ License
 #include "polyMesh.H"
 #include "primitiveMesh.H"
 #include "enrichedPatch.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "pointHit.H"
 #include "triPointRef.H"
 #include "plane.H"

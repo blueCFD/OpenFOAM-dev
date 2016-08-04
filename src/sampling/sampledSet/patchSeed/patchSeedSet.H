@@ -36,8 +36,8 @@ SourceFiles
 #define patchSeedSet_H
 
 #include "sampledSet.H"
-#include "DynamicList.H"
-#include "HashSet.H"
+#include "DynamicList.T.H"
+#include "HashSet.T.H"
 #include "Random.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

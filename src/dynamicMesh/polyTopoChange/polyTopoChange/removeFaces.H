@@ -38,9 +38,9 @@ SourceFiles
 #ifndef removeFaces_H
 #define removeFaces_H
 
-#include "Pstream.H"
-#include "HashSet.H"
-#include "Map.H"
+#include "Pstream.T.H"
+#include "HashSet.T.H"
+#include "Map.T.H"
 #include "boolList.H"
 #include "indirectPrimitivePatch.H"
 

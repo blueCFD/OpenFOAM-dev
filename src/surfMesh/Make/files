@@ -2,13 +2,13 @@ surfZone/surfZone/surfZone.C
 surfZone/surfZone/surfZoneIOList.C
 surfZone/surfZoneIdentifier/surfZoneIdentifier.C
 
-MeshedSurfaceAllocator/MeshedSurfaceIOAllocator.C
+MeshedSurfaceAllocator/MeshedSurfaceIOAllocator.T.C
 
-MeshedSurface/MeshedSurfaceCore.C
-MeshedSurface/MeshedSurfaces.C
-UnsortedMeshedSurface/UnsortedMeshedSurfaces.C
+MeshedSurface/MeshedSurfaceCore.T.C
+MeshedSurface/MeshedSurfaces.T.C
+UnsortedMeshedSurface/UnsortedMeshedSurfaces.T.C
 
-MeshedSurfaceProxy/MeshedSurfaceProxyCore.C
+MeshedSurfaceProxy/MeshedSurfaceProxyCore.T.C
 
 surfaceRegistry/surfaceRegistry.C
 surfMesh/surfMesh.C
@@ -20,28 +20,28 @@ surfFields/surfPointFields/surfPointFields.C
 surfaceFormats = surfaceFormats
 $(surfaceFormats)/surfaceFormatsCore.C
 
-$(surfaceFormats)/ac3d/AC3DsurfaceFormatCore.C
-$(surfaceFormats)/ac3d/AC3DsurfaceFormatRunTime.C
-$(surfaceFormats)/gts/GTSsurfaceFormatRunTime.C
-$(surfaceFormats)/nas/NASsurfaceFormatRunTime.C
-$(surfaceFormats)/obj/OBJsurfaceFormatRunTime.C
+$(surfaceFormats)/ac3d/AC3DsurfaceFormatCore.T.C
+$(surfaceFormats)/ac3d/AC3DsurfaceFormatRunTime.T.C
+$(surfaceFormats)/gts/GTSsurfaceFormatRunTime.T.C
+$(surfaceFormats)/nas/NASsurfaceFormatRunTime.T.C
+$(surfaceFormats)/obj/OBJsurfaceFormatRunTime.T.C
 $(surfaceFormats)/obj/OBJstream.C
-$(surfaceFormats)/off/OFFsurfaceFormatRunTime.C
-$(surfaceFormats)/ofs/OFSsurfaceFormatCore.C
-$(surfaceFormats)/ofs/OFSsurfaceFormatRunTime.C
-$(surfaceFormats)/smesh/SMESHsurfaceFormatRunTime.C
-$(surfaceFormats)/starcd/STARCDsurfaceFormatCore.C
-$(surfaceFormats)/starcd/STARCDsurfaceFormatRunTime.C
-$(surfaceFormats)/stl/STLsurfaceFormatCore.C
-$(surfaceFormats)/stl/STLsurfaceFormatRunTime.C
+$(surfaceFormats)/off/OFFsurfaceFormatRunTime.T.C
+$(surfaceFormats)/ofs/OFSsurfaceFormatCore.T.C
+$(surfaceFormats)/ofs/OFSsurfaceFormatRunTime.T.C
+$(surfaceFormats)/smesh/SMESHsurfaceFormatRunTime.T.C
+$(surfaceFormats)/starcd/STARCDsurfaceFormatCore.T.C
+$(surfaceFormats)/starcd/STARCDsurfaceFormatRunTime.T.C
+$(surfaceFormats)/stl/STLsurfaceFormatCore.T.C
+$(surfaceFormats)/stl/STLsurfaceFormatRunTime.T.C
 $(surfaceFormats)/stl/STLsurfaceFormatASCII.L
-$(surfaceFormats)/tri/TRIsurfaceFormatCore.C
-$(surfaceFormats)/tri/TRIsurfaceFormatRunTime.C
-$(surfaceFormats)/vtk/VTKsurfaceFormatCore.C
-$(surfaceFormats)/vtk/VTKsurfaceFormatRunTime.C
-$(surfaceFormats)/wrl/WRLsurfaceFormatCore.C
-$(surfaceFormats)/wrl/WRLsurfaceFormatRunTime.C
-$(surfaceFormats)/x3d/X3DsurfaceFormatCore.C
-$(surfaceFormats)/x3d/X3DsurfaceFormatRunTime.C
+$(surfaceFormats)/tri/TRIsurfaceFormatCore.T.C
+$(surfaceFormats)/tri/TRIsurfaceFormatRunTime.T.C
+$(surfaceFormats)/vtk/VTKsurfaceFormatCore.T.C
+$(surfaceFormats)/vtk/VTKsurfaceFormatRunTime.T.C
+$(surfaceFormats)/wrl/WRLsurfaceFormatCore.T.C
+$(surfaceFormats)/wrl/WRLsurfaceFormatRunTime.T.C
+$(surfaceFormats)/x3d/X3DsurfaceFormatCore.T.C
+$(surfaceFormats)/x3d/X3DsurfaceFormatRunTime.T.C
 
 LIB = $(FOAM_LIBBIN)/libsurfMesh

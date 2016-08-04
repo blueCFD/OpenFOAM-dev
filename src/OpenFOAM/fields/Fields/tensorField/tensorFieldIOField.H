@@ -33,7 +33,7 @@ Description
 #define tensorFieldIOField_H
 
 #include "tensorField.H"
-#include "CompactIOField.H"
+#include "CompactIOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

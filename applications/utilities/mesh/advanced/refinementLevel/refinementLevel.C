@@ -38,10 +38,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "cellSet.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "labelIOList.H"
 #include "fvMesh.H"
 #include "volFields.H"

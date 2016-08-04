@@ -26,7 +26,7 @@ License
 #include "multiDirRefinement.H"
 #include "polyMesh.H"
 #include "polyTopoChanger.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "undoableMeshCutter.H"
 #include "hexCellLooper.H"
 #include "geomCellLooper.H"
@@ -35,7 +35,7 @@ License
 #include "hexRef8.H"
 #include "mapPolyMesh.H"
 #include "polyTopoChange.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "cellModeller.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

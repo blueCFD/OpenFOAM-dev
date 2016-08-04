@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "makeFvOption.H"
-#include "FixedValueConstraint.H"
+#include "FixedValueConstraint.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

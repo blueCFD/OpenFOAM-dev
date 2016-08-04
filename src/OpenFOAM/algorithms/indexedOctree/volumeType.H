@@ -34,7 +34,7 @@ SourceFiles
 #ifndef volumeType_H
 #define volumeType_H
 
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

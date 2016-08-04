@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "BlendedInterfacialModel.H"
+#include "BlendedInterfacialModel.T.H"
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 

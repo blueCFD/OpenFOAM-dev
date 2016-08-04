@@ -25,7 +25,7 @@ License
 
 #include "cellQuality.H"
 #include "unitConversion.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

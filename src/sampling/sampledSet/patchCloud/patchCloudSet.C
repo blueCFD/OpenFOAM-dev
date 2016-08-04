@@ -28,7 +28,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "treeBoundBox.H"
 #include "treeDataFace.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "meshTools.H"
 // For 'nearInfo' helper class only
 #include "mappedPatchBase.H"

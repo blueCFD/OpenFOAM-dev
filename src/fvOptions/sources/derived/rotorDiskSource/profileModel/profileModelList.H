@@ -35,7 +35,7 @@ SourceFiles
 #ifndef profileModelList_H
 #define profileModelList_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "profileModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

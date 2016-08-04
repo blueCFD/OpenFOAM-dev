@@ -36,9 +36,9 @@ SourceFiles
 #define OBJstream_H
 
 #include "OFstream.H"
-#include "point.H"
+#include "point.T.H"
 #include "edge.H"
-#include "face.H"
+#include "face.T.H"
 #include "triPointRef.H"
 #include "linePointRef.H"
 

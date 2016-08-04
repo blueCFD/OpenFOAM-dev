@@ -35,11 +35,11 @@ SourceFiles
 #ifndef sphericalTensorFieldField_H
 #define sphericalTensorFieldField_H
 
-#include "FieldField.H"
+#include "FieldField.T.H"
 #include "sphericalTensor.H"
 
 #define TEMPLATE template<template<class> class Field>
-#include "FieldFieldFunctionsM.H"
+#include "FieldFieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

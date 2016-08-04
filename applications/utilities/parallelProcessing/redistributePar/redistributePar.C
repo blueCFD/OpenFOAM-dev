@@ -60,7 +60,7 @@ Description
 
 #include "fvMesh.H"
 #include "decompositionMethod.H"
-#include "PstreamReduceOps.H"
+#include "PstreamReduceOps.T.H"
 #include "fvCFD.H"
 #include "fvMeshDistribute.H"
 #include "mapDistributePolyMesh.H"

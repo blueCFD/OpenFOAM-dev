@@ -35,11 +35,11 @@ SourceFiles
 #ifndef quaternionField_H
 #define quaternionField_H
 
-#include "Field.H"
+#include "Field.T.H"
 #include "quaternion.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.H"
+#include "FieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

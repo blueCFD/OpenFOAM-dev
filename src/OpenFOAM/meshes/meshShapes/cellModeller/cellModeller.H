@@ -38,8 +38,8 @@ SourceFiles
 #define cellModeller_H
 
 #include "cellModel.H"
-#include "PtrList.H"
-#include "HashTable.H"
+#include "PtrList.T.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

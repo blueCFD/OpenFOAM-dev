@@ -45,7 +45,7 @@ SourceFiles
 #ifndef dynamicLagrangian_H
 #define dynamicLagrangian_H
 
-#include "LESeddyViscosity.H"
+#include "LESeddyViscosity.T.H"
 #include "simpleFilter.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

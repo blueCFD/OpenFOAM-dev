@@ -25,7 +25,7 @@ License
 
 #include "wordRe.H"
 #include "IOstreams.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

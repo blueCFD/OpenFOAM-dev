@@ -35,7 +35,7 @@ SourceFiles
 #define multiphaseMixtureThermo_H
 
 #include "phaseModel.H"
-#include "PtrDictionary.H"
+#include "PtrDictionary.T.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "rhoThermo.H"

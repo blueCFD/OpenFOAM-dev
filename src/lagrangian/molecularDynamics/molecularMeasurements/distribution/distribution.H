@@ -37,8 +37,8 @@ SourceFiles
 #ifndef distribution_H
 #define distribution_H
 
-#include "Map.H"
-#include "Pair.H"
+#include "Map.T.H"
+#include "Pair.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

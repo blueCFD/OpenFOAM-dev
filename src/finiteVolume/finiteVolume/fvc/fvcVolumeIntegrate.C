@@ -25,7 +25,7 @@ License
 
 #include "fvcVolumeIntegrate.H"
 #include "fvMesh.H"
-#include "Field.H"
+#include "Field.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

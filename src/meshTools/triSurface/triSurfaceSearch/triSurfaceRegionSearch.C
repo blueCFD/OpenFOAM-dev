@@ -26,7 +26,7 @@ License
 #include "triSurfaceRegionSearch.H"
 #include "indexedOctree.H"
 #include "triSurface.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

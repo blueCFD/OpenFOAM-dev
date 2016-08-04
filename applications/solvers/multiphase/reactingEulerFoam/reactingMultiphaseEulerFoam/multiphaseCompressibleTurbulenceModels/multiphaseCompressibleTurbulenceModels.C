@@ -28,8 +28,8 @@ License
 #include "makeTurbulenceModel.H"
 
 #include "laminar.H"
-#include "RASModel.H"
-#include "LESModel.H"
+#include "RASModel.T.H"
+#include "LESModel.T.H"
 
 makeBaseTurbulenceModel
 (
@@ -55,7 +55,7 @@ makeRASModel(kEpsilon);
 #include "kOmegaSST.H"
 makeRASModel(kOmegaSST);
 
-#include "Smagorinsky.H"
+#include "Smagorinsky.T.H"
 makeLESModel(Smagorinsky);
 
 #include "kEqn.H"

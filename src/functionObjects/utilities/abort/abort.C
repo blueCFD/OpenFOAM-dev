@@ -26,9 +26,9 @@ License
 #include "abort.H"
 #include "dictionary.H"
 #include "error.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "OSspecific.H"
-#include "PstreamReduceOps.H"
+#include "PstreamReduceOps.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

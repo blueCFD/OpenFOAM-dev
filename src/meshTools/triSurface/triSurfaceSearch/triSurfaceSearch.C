@@ -25,7 +25,7 @@ License
 
 #include "triSurfaceSearch.H"
 #include "triSurface.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 #include "volumeType.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

@@ -26,7 +26,7 @@ License
 #include "undoableMeshCutter.H"
 #include "polyMesh.H"
 #include "polyTopoChange.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "meshCutter.H"
 #include "cellCuts.H"
 #include "splitCell.H"

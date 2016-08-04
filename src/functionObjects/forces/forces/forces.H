@@ -116,7 +116,7 @@ SourceFiles
 #include "writeFiles.H"
 #include "coordinateSystem.H"
 #include "volFieldsFwd.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

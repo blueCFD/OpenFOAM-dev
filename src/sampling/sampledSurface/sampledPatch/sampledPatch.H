@@ -36,7 +36,7 @@ SourceFiles
 #define sampledPatch_H
 
 #include "sampledSurface.H"
-#include "MeshedSurface.H"
+#include "MeshedSurface.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

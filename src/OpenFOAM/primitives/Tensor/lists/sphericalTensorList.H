@@ -39,7 +39,7 @@ Description
 #define sphericalTensorList_H
 
 #include "sphericalTensor.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

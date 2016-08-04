@@ -32,7 +32,7 @@ Description
 #include "scalar.H"
 
 #include "IOstreams.H"
-#include "PtrListDictionary.H"
+#include "PtrListDictionary.T.H"
 
 using namespace Foam;
 

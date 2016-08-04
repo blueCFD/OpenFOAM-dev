@@ -45,7 +45,7 @@ SourceFiles
 #include "dictionary.H"
 #include "autoPtr.H"
 #include "spatialVector.H"
-#include "point.H"
+#include "point.T.H"
 #include "scalarField.H"
 #include "runTimeSelectionTables.H"
 

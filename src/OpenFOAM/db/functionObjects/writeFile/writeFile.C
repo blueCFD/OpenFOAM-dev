@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "writeFile.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "IOmanip.H"
 

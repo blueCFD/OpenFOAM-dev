@@ -38,9 +38,9 @@ Modifications
 \*---------------------------------------------------------------------------*/
 
 #include "IOobject.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IFstream.H"
-#include "StaticHashTable.H"
+#include "StaticHashTable.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

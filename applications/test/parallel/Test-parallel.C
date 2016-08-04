@@ -29,16 +29,16 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "List.H"
+#include "List.T.H"
 #include "mapDistribute.H"
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IPstream.H"
 #include "OPstream.H"
 #include "vector.H"
 #include "IOstreams.H"
 #include "Random.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 
 using namespace Foam;
 

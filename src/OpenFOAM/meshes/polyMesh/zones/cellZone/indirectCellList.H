@@ -32,7 +32,7 @@ Description
 #define indirectCellList_H
 
 #include "cell.H"
-#include "IndirectList.H"
+#include "IndirectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

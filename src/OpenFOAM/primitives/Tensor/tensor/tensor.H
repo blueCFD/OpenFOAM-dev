@@ -35,7 +35,7 @@ SourceFiles
 #ifndef tensor_H
 #define tensor_H
 
-#include "Tensor.H"
+#include "Tensor.T.H"
 #include "vector.H"
 #include "sphericalTensor.H"
 #include "symmTensor.H"

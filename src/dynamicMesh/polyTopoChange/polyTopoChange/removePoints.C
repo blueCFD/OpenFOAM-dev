@@ -23,9 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "BiIndirectList.H"
+#include "BiIndirectList.T.H"
 #include "removePoints.H"
-#include "PstreamReduceOps.H"
+#include "PstreamReduceOps.T.H"
 #include "polyMesh.H"
 #include "polyTopoChange.H"
 #include "polyRemovePoint.H"

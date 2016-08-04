@@ -33,7 +33,7 @@ Description
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "pointFields.H"

@@ -33,7 +33,7 @@ Description
 #define scalarListIOList_H
 
 #include "scalarList.H"
-#include "CompactIOList.H"
+#include "CompactIOList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

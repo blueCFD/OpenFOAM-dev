@@ -25,7 +25,7 @@ License
 
 #include "processorGAMGInterface.H"
 #include "addToRunTimeSelectionTable.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "labelPair.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

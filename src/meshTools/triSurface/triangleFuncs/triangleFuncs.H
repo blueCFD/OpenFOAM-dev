@@ -35,7 +35,7 @@ SourceFiles
 #ifndef triangleFuncs_H
 #define triangleFuncs_H
 
-#include "point.H"
+#include "point.T.H"
 #include "label.H"
 #include "scalar.H"
 #include "pointField.H"

@@ -33,7 +33,7 @@ Description
 #define symmTensorIOField_H
 
 #include "symmTensorField.H"
-#include "IOField.H"
+#include "IOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

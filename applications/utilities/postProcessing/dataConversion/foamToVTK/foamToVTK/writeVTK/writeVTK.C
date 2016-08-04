@@ -25,7 +25,7 @@ License
 
 #include "writeVTK.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "vtkMesh.H"
 #include "internalWriter.H"
 #include "addToRunTimeSelectionTable.H"

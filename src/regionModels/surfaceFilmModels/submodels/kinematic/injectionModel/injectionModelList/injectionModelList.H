@@ -35,7 +35,7 @@ SourceFiles
 #ifndef injectionModelList_H
 #define injectionModelList_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "injectionModel.H"
 #include "filmSubModelBase.H"
 

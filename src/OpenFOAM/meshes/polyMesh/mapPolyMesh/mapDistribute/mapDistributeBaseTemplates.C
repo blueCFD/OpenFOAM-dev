@@ -23,9 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Pstream.H"
-#include "PstreamBuffers.H"
-#include "PstreamCombineReduceOps.H"
+#include "Pstream.T.H"
+#include "PstreamBuffers.T.H"
+#include "PstreamCombineReduceOps.T.H"
 #include "flipOp.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

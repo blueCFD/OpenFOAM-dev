@@ -38,7 +38,7 @@ Description
 #include "radiationModel.H"
 #include "SLGThermo.H"
 #include "pimpleControl.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 #include "fvOptions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -42,7 +42,7 @@ SourceFiles
 #ifndef twoDPointCorrector_H
 #define twoDPointCorrector_H
 
-#include "MeshObject.H"
+#include "MeshObject.T.H"
 #include "pointField.H"
 #include "labelList.H"
 #include "vector.H"

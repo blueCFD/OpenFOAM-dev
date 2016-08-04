@@ -38,7 +38,7 @@ Description
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "fvMesh.H"
 #include "vectorIOField.H"
 #include "volFields.H"

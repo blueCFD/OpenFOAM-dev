@@ -33,7 +33,7 @@ Description
 #define triFaceList_H
 
 #include "triFace.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

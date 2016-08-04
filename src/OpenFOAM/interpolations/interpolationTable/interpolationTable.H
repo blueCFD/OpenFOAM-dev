@@ -61,8 +61,8 @@ SourceFiles
 #ifndef interpolationTable_H
 #define interpolationTable_H
 
-#include "List.H"
-#include "Tuple2.H"
+#include "List.T.H"
+#include "Tuple2.T.H"
 
 #include "tableReader.H"
 #include "autoPtr.H"

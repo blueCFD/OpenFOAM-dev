@@ -26,7 +26,7 @@ License
 #include "cyclicGAMGInterface.H"
 #include "addToRunTimeSelectionTable.H"
 #include "labelPair.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

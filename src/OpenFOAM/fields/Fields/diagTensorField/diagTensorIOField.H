@@ -33,7 +33,7 @@ Description
 #define diagTensorIOField_H
 
 #include "diagTensorField.H"
-#include "IOField.H"
+#include "IOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

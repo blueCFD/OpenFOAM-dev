@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "primitiveMesh.H"
-#include "DynamicList.H"
-#include "ListOps.H"
+#include "DynamicList.T.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

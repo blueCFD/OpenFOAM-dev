@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "UPstream.H"
-#include "PstreamReduceOps.H"
+#include "PstreamReduceOps.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

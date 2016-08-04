@@ -36,7 +36,7 @@ SourceFiles
 #define intersection_H
 
 #include "scalar.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -34,7 +34,7 @@ SourceFiles
 #ifndef meshSearchMeshObject_H
 #define meshSearchMeshObject_H
 
-#include "MeshObject.H"
+#include "MeshObject.T.H"
 #include "meshSearch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

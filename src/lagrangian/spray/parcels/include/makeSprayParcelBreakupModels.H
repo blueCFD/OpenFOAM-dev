@@ -28,13 +28,13 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoBreakup.H"
-#include "PilchErdman.H"
-#include "ReitzDiwakar.H"
-#include "ReitzKHRT.H"
-#include "TAB.H"
-#include "ETAB.H"
-#include "SHF.H"
+#include "NoBreakup.T.H"
+#include "PilchErdman.T.H"
+#include "ReitzDiwakar.T.H"
+#include "ReitzKHRT.T.H"
+#include "TAB.T.H"
+#include "ETAB.T.H"
+#include "SHF.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

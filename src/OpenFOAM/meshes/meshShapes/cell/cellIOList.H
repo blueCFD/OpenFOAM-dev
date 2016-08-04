@@ -33,7 +33,7 @@ Description
 #define cellIOList_H
 
 #include "cell.H"
-#include "CompactIOList.H"
+#include "CompactIOList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

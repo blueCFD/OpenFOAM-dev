@@ -34,8 +34,8 @@ SourceFiles
 #ifndef STLpoint_H
 #define STLpoint_H
 
-#include "point.H"
-#include "Istream.H"
+#include "point.T.H"
+#include "Istream.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

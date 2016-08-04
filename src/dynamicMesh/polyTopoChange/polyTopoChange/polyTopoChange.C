@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "polyTopoChange.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "polyMesh.H"
 #include "polyAddPoint.H"
 #include "polyModifyPoint.H"
@@ -38,8 +38,8 @@ License
 #include "objectMap.H"
 #include "processorPolyPatch.H"
 #include "fvMesh.H"
-#include "CompactListList.H"
-#include "ListOps.H"
+#include "CompactListList.T.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

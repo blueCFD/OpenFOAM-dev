@@ -35,7 +35,7 @@ SourceFiles
 #define nonUniformField_H
 
 #include "triSurfaceFields.H"
-#include "PrimitivePatchInterpolation.H"
+#include "PrimitivePatchInterpolation.T.H"
 #include "surfaceCellSizeFunction.H"
 #include "cellSizeCalculationType.H"
 

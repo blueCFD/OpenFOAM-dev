@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "thermophysicalFunction.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

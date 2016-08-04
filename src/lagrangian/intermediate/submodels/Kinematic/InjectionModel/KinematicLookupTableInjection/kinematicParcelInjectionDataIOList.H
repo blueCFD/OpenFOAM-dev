@@ -34,7 +34,7 @@ SourceFiles
 #ifndef kinematicParcelInjectionDataIOList_H
 #define kinematicParcelInjectionDataIOList_H
 
-#include "IOList.H"
+#include "IOList.T.H"
 #include "kinematicParcelInjectionData.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

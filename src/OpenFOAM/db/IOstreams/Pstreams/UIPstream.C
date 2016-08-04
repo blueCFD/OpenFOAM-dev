@@ -26,7 +26,7 @@ License
 #include "error.H"
 #include "UIPstream.H"
 #include "int.H"
-#include "token.H"
+#include "token.T.H"
 #include <cctype>
 
 

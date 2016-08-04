@@ -32,11 +32,11 @@ Description
 #ifndef basicSprayCloud_H
 #define basicSprayCloud_H
 
-#include "Cloud.H"
-#include "KinematicCloud.H"
-#include "ThermoCloud.H"
-#include "ReactingCloud.H"
-#include "SprayCloud.H"
+#include "Cloud.T.H"
+#include "KinematicCloud.T.H"
+#include "ThermoCloud.T.H"
+#include "ReactingCloud.T.H"
+#include "SprayCloud.T.H"
 #include "basicSprayParcel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -39,7 +39,7 @@ SourceFiles
 #define kOmegaSST_H
 
 #include "kOmegaSSTBase.H"
-#include "RASModel.H"
+#include "RASModel.T.H"
 #include "eddyViscosity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

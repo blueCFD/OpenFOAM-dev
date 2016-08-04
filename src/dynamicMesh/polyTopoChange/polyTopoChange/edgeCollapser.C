@@ -28,7 +28,7 @@ License
 #include "polyTopoChange.H"
 #include "globalMeshData.H"
 #include "syncTools.H"
-#include "PointEdgeWave.H"
+#include "PointEdgeWave.T.H"
 #include "globalIndex.H"
 #include "removePoints.H"
 #include "motionSmoother.H"

@@ -35,7 +35,7 @@ SourceFiles
 #define faceOnlySet_H
 
 #include "sampledSet.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "passiveParticleCloud.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

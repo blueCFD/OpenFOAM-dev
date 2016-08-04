@@ -36,7 +36,7 @@ SourceFiles
 #define polyBoundaryMeshEntries_H
 
 #include "regIOobject.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "entry.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

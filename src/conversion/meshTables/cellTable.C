@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cellTable.H"
-#include "IOMap.H"
+#include "IOMap.T.H"
 #include "OFstream.H"
 #include "wordList.H"
 #include "stringListOps.H"

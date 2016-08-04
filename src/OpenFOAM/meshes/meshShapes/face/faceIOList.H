@@ -32,8 +32,8 @@ Description
 #ifndef faceIOList_H
 #define faceIOList_H
 
-#include "face.H"
-#include "CompactIOList.H"
+#include "face.T.H"
+#include "CompactIOList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

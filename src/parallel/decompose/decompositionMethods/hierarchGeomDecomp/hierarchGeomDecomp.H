@@ -54,7 +54,7 @@ SourceFiles
 #define hierarchGeomDecomp_H
 
 #include "geomDecomp.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "direction.H"
 
 namespace Foam

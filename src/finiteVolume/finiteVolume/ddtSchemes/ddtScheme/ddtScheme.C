@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fv.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "surfaceInterpolate.H"
 #include "fvMatrix.H"
 #include "cyclicAMIFvPatch.H"

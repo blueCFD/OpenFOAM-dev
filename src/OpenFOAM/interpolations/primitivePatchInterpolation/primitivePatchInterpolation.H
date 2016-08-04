@@ -32,10 +32,10 @@ Description
 #ifndef primitivePatchInterpolation_H
 #define primitivePatchInterpolation_H
 
-#include "PrimitivePatchInterpolation.H"
-#include "PrimitivePatch.H"
-#include "face.H"
-#include "SubList.H"
+#include "PrimitivePatchInterpolation.T.H"
+#include "PrimitivePatch.T.H"
+#include "face.T.H"
+#include "SubList.T.H"
 #include "pointField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

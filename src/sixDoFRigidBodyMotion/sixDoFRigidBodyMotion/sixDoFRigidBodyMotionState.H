@@ -40,7 +40,7 @@ SourceFiles
 #define sixDoFRigidBodyMotionState_H
 
 #include "vector.H"
-#include "point.H"
+#include "point.T.H"
 #include "diagTensor.H"
 #include "tensor.H"
 #include "dictionary.H"

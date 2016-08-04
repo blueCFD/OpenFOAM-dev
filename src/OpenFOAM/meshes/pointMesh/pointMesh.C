@@ -27,8 +27,8 @@ License
 #include "globalMeshData.H"
 #include "pointMeshMapper.H"
 #include "pointFields.H"
-#include "MapGeometricFields.H"
-#include "MapPointField.H"
+#include "MapGeometricFields.T.H"
+#include "MapPointField.T.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

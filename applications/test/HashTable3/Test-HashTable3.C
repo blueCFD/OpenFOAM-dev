@@ -27,10 +27,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "HashTable.H"
-#include "HashPtrTable.H"
-#include "Map.H"
-#include "StaticHashTable.H"
+#include "HashTable.T.H"
+#include "HashPtrTable.T.H"
+#include "Map.T.H"
+#include "StaticHashTable.T.H"
 #include "cpuTime.H"
 
 using namespace Foam;

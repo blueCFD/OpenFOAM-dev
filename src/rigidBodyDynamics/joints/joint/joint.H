@@ -50,10 +50,10 @@ SourceFiles
 #ifndef RBD_joint_H
 #define RBD_joint_H
 
-#include "List.H"
+#include "List.T.H"
 #include "spatialVector.H"
 #include "compactSpatialTensor.H"
-#include "CompactSpatialTensorT.H"
+#include "CompactSpatialTensorT.T.H"
 #include "spatialTransform.H"
 #include "quaternion.H"
 #include "scalarField.H"

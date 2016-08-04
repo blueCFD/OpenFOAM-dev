@@ -45,7 +45,7 @@ SourceFiles
 #include "plane.H"
 #include "pointField.H"
 #include "faceList.H"
-#include "MeshedSurface.H"
+#include "MeshedSurface.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

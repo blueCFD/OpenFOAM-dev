@@ -31,8 +31,8 @@ Description
 #ifndef indirectFaceList_H
 #define indirectFaceList_H
 
-#include "face.H"
-#include "IndirectList.H"
+#include "face.T.H"
+#include "IndirectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

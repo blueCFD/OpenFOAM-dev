@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "multivariateScheme.H"
-#include "LimitedScheme.H"
-#include "Limited01.H"
+#include "LimitedScheme.T.H"
+#include "Limited01.T.H"
 #include "limitedLinear.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

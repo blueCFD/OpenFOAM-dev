@@ -29,8 +29,8 @@ License
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "uniformDimensionedFields.H"
-#include "EulerDdtScheme.H"
-#include "CrankNicolsonDdtScheme.H"
+#include "EulerDdtScheme.T.H"
+#include "CrankNicolsonDdtScheme.T.H"
 #include "backwardDdtScheme.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

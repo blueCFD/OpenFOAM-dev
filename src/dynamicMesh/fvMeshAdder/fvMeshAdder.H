@@ -42,7 +42,7 @@ SourceFiles
 #include "fvPatchFieldsFwd.H"
 #include "fvsPatchFieldsFwd.H"
 #include "fvPatchFieldMapper.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

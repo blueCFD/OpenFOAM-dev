@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "TGaussSeidelSmoother.H"
+#include "TGaussSeidelSmoother.T.H"
 #include "fieldTypes.H"
 
 #define makeLduSmoothers(Type, DType, LUType)                                  \

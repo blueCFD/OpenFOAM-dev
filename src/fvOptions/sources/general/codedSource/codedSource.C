@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "makeFvOption.H"
-#include "CodedSource.H"
+#include "CodedSource.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

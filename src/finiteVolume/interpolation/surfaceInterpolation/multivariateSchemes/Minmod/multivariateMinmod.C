@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "multivariateScheme.H"
-#include "LimitedScheme.H"
-#include "Limited01.H"
-#include "Minmod.H"
+#include "LimitedScheme.T.H"
+#include "Limited01.T.H"
+#include "Minmod.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -60,8 +60,8 @@ SourceFiles
 #define manualGAMGProcAgglomeration_H
 
 #include "GAMGProcAgglomeration.H"
-#include "DynamicList.H"
-#include "Tuple2.H"
+#include "DynamicList.T.H"
+#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

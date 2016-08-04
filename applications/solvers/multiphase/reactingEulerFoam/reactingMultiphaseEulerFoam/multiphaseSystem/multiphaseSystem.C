@@ -26,7 +26,7 @@ License
 #include "multiphaseSystem.H"
 #include "alphaContactAngleFvPatchScalarField.H"
 
-#include "MULES.H"
+#include "MULES.T.H"
 #include "subCycle.H"
 
 #include "fvcDdt.H"

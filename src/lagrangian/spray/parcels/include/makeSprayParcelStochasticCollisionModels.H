@@ -28,9 +28,9 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoStochasticCollision.H"
-#include "ORourkeCollision.H"
-#include "TrajectoryCollision.H"
+#include "NoStochasticCollision.T.H"
+#include "ORourkeCollision.T.H"
+#include "TrajectoryCollision.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

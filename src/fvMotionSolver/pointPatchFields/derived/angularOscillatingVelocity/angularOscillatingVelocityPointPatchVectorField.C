@@ -26,7 +26,7 @@ License
 #include "angularOscillatingVelocityPointPatchVectorField.H"
 #include "pointPatchFields.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

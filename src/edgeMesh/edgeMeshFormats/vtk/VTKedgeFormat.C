@@ -28,7 +28,7 @@ License
 #include "clock.H"
 #include "IFstream.H"
 #include "vtkUnstructuredReader.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

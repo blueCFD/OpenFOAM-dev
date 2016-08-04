@@ -71,9 +71,9 @@ SourceFiles
 #ifndef refinementHistory_H
 #define refinementHistory_H
 
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "labelList.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "autoPtr.H"
 #include "regIOobject.H"
 #include "boolList.H"

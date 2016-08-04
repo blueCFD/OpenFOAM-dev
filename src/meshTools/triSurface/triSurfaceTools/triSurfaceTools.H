@@ -37,9 +37,9 @@ SourceFiles
 
 #include "boolList.H"
 #include "pointField.H"
-#include "DynamicList.H"
-#include "HashSet.H"
-#include "FixedList.H"
+#include "DynamicList.T.H"
+#include "HashSet.T.H"
+#include "FixedList.T.H"
 #include "vector2D.H"
 #include "triPointRef.H"
 #include "surfaceLocation.H"

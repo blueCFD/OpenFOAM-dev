@@ -36,7 +36,7 @@ SourceFiles
 #ifndef ISstream_H
 #define ISstream_H
 
-#include "Istream.H"
+#include "Istream.T.H"
 #include "fileName.H"
 #include <iostream>
 

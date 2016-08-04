@@ -36,7 +36,7 @@ SourceFiles
 #define multivariateSurfaceInterpolationScheme_H
 
 #include "surfaceInterpolationScheme.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

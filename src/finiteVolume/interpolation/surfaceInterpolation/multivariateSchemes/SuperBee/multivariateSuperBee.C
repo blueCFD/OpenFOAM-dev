@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "multivariateScheme.H"
-#include "LimitedScheme.H"
-#include "Limited01.H"
-#include "SuperBee.H"
+#include "LimitedScheme.T.H"
+#include "Limited01.T.H"
+#include "SuperBee.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

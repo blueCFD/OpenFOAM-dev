@@ -43,7 +43,7 @@ SourceFiles
 #include "runTimeSelectionTables.H"
 #include "autoPtr.H"
 #include "dictionary.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

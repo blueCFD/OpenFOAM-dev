@@ -40,7 +40,7 @@ SourceFiles
 #define cellToFace_H
 
 #include "topoSetSource.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

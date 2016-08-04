@@ -40,13 +40,13 @@ SourceFiles
 #ifndef triFace_H
 #define triFace_H
 
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "edgeList.H"
 #include "pointHit.H"
 #include "intersection.H"
 #include "pointField.H"
 #include "triPointRef.H"
-#include "ListListOps.H"
+#include "ListListOps.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

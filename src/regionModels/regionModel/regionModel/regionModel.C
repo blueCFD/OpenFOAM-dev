@@ -25,7 +25,7 @@ License
 
 #include "regionModel.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "mappedWallPolyPatch.H"
 #include "zeroGradientFvPatchFields.H"
 

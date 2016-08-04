@@ -36,7 +36,7 @@ SourceFiles
 #ifndef pairGAMGAgglomeration_H
 #define pairGAMGAgglomeration_H
 
-#include "GAMGAgglomeration.H"
+#include "GAMGAgglomeration.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -36,7 +36,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "triSurface.H"
 #include "surfaceFeatures.H"
 #include "featureEdgeMesh.H"
@@ -53,7 +53,7 @@ Description
 #include "plane.H"
 #include "tensor2D.H"
 #include "symmTensor2D.H"
-#include "point.H"
+#include "point.T.H"
 #include "triadField.H"
 #include "transform.H"
 

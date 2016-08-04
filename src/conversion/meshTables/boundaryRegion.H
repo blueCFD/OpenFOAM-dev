@@ -53,7 +53,7 @@ SourceFiles
 #define boundaryRegion_H
 
 #include "polyMesh.H"
-#include "Map.H"
+#include "Map.T.H"
 #include "dictionary.H"
 #include "labelList.H"
 #include "wordList.H"

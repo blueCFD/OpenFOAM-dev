@@ -35,7 +35,7 @@ SourceFiles
 #ifndef directAMI_H
 #define directAMI_H
 
-#include "AMIMethod.H"
+#include "AMIMethod.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

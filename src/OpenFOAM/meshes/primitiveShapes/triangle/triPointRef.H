@@ -31,7 +31,7 @@ Description
 #ifndef triPointRef_H
 #define triPointRef_H
 
-#include "point.H"
+#include "point.T.H"
 #include "triangle.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -43,7 +43,7 @@ SourceFiles
 #define pointPatchField_H
 
 #include "pointPatch.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 #include "autoPtr.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

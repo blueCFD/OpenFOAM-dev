@@ -50,7 +50,7 @@ SourceFiles
 
 #include "triSurfaceMesh.H"
 #include "IOdictionary.H"
-#include "Pair.H"
+#include "Pair.T.H"
 #include "globalIndex.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

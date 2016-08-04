@@ -61,7 +61,7 @@ SourceFiles
 #define cellTable_H
 
 #include "polyMesh.H"
-#include "Map.H"
+#include "Map.T.H"
 #include "dictionary.H"
 #include "labelList.H"
 #include "wordReList.H"

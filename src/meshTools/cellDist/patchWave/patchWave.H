@@ -38,8 +38,8 @@ SourceFiles
 #define patchWave_H
 
 #include "cellDistFuncs.H"
-#include "FieldField.H"
-#include "MeshWave.H"
+#include "FieldField.T.H"
+#include "MeshWave.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

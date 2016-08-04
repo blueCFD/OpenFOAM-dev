@@ -30,7 +30,7 @@ Description
 #define defineDebugSwitch_H
 
 #include "simpleRegIOobject.H"
-#include "debug.H"
+#include "debug.T.H"
 #include "label.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -45,7 +45,7 @@ SourceFiles
 #include "labelList.H"
 #include "cellModel.H"
 #include "autoPtr.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -33,7 +33,7 @@ Description
 #define edgeIOList_H
 
 #include "edge.H"
-#include "CompactIOList.H"
+#include "CompactIOList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

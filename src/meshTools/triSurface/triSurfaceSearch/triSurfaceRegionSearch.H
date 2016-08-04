@@ -40,8 +40,8 @@ SourceFiles
 #include "pointIndexHit.H"
 #include "triSurfaceSearch.H"
 #include "labelledTri.H"
-#include "IndirectList.H"
-#include "PtrList.H"
+#include "IndirectList.T.H"
+#include "PtrList.T.H"
 #include "indexedOctree.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

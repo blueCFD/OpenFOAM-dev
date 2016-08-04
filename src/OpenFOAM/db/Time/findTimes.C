@@ -28,7 +28,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "Time.H"
+#include "Time.T.H"
 #include "OSspecific.H"
 #include "IStringStream.H"
 

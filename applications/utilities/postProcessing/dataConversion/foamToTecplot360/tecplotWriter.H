@@ -37,7 +37,7 @@ SourceFiles
 #define tecplotWriter_H
 
 #include "TECIO.h"
-#include "Time.H"
+#include "Time.T.H"
 #include "indirectPrimitivePatch.H"
 #include "volFields.H"
 #include "surfaceFields.H"

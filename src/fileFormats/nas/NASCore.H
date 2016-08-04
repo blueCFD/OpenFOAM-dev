@@ -36,7 +36,7 @@ SourceFiles
 #define NASCore_H
 
 #include "scalar.H"
-#include "string.H"
+#include "string.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

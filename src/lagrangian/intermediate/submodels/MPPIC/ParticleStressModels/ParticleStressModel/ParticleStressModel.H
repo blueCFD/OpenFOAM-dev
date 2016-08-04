@@ -35,8 +35,8 @@ SourceFiles
 #ifndef ParticleStressModel_H
 #define ParticleStressModel_H
 
-#include "Field.H"
-#include "FieldField.H"
+#include "Field.T.H"
+#include "FieldField.T.H"
 #include "dictionary.H"
 #include "runTimeSelectionTables.H"
 

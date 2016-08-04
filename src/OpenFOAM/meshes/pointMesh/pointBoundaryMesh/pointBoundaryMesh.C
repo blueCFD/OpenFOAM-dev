@@ -27,7 +27,7 @@ License
 #include "polyBoundaryMesh.H"
 #include "facePointPatch.H"
 #include "pointMesh.H"
-#include "PstreamBuffers.H"
+#include "PstreamBuffers.T.H"
 #include "lduSchedule.H"
 #include "globalMeshData.H"
 

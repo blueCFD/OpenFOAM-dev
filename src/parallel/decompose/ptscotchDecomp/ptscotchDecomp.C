@@ -35,10 +35,10 @@ Modifications
 
 #include "ptscotchDecomp.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "OFstream.H"
 #include "globalIndex.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 extern "C"
 {

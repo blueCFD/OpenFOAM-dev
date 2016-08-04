@@ -1,4 +1,4 @@
-#include "point.H"
+#include "point.T.H"
 #include "triangle.H"
 #include "tetrahedron.H"
 #include "IOstreams.H"

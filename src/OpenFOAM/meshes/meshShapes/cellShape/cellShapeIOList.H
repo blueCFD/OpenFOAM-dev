@@ -33,7 +33,7 @@ Description
 #define cellShapeIOList_H
 
 #include "cellShape.H"
-#include "IOList.H"
+#include "IOList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

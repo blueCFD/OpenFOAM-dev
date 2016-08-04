@@ -45,9 +45,9 @@ SourceFiles
 
 #include "scalarField.H"
 #include "vectorField.H"
-#include "Map.H"
-#include "DynamicList.H"
-#include "point.H"
+#include "Map.T.H"
+#include "DynamicList.T.H"
+#include "point.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

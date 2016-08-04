@@ -24,12 +24,12 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "commSchedule.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "boolList.H"
 #include "IOstreams.H"
 #include "IOmanip.H"
 #include "OStringStream.H"
-#include "Pstream.H"
+#include "Pstream.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
