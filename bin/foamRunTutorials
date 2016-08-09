@@ -78,6 +78,7 @@ checkIfAllrunCanBeExecuted()
             echo "Skipping case '$PWD', which is meant to run in parallel."
             exit 0
         elif $parallelOnly && ! $hasGotRunParallel
+        then
             echo "Skipping case '$PWD', which is meant to run in serial."
             exit 0
         fi
