@@ -189,8 +189,8 @@ unalias foamSite
 
 unalias wmSC
 unalias wmMC
-unalias wmNONSTOP
-unalias wmSTOPON1st
+unalias wmNonStop
+unalias wmStopOn1st
 
 unalias src
 unalias lib
