@@ -8,7 +8,7 @@
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 ------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ Modifications
         http://bluecfd.com/Core
 
     Modifications made:
-      - These changes are technically from Sysmcape's own patches for Windows,
+      - These changes are technically from Symscape's own patches for Windows,
         circa 2011.
       - The adaptation derived from the patches for blueCFD 2.1, adjusted to
         OpenFOAM 2.2.

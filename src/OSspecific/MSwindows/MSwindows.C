@@ -35,7 +35,7 @@ Details
         http://bluecfd.com/Core
 
     Details on how this file was created:
-      - This file was originally based on Sysmcape's own work on patching 
+      - This file was originally based on Symscape's own work on patching 
         OpenFOAM for working on Windows, circa 2009.
       - Further changes were made by blueCAPE, culminating in the patches
         by blueCAPE for blueCFD 2.1, now adjusted here to OpenFOAM 2.2.
