@@ -25,3 +25,14 @@ BEGIN
     VALUE "Translation", 0xFFFF, 0x0000
   END
 END
+
+STRINGTABLE
+BEGIN
+   0x00000001, "This string block is essentially for padding out situations"
+   0x00000002, "where the linker has issues with linking."
+   0x00000003, "For more details, please visit:"
+   0x00000004, "  https://github.com/blueCFD/Core/issues/2"
+   0x00000005, "But in essence, we're adding fake data to the final resource"
+   0x00000006, "object, so that the linker does not fail with the crazy error:"
+   0x00000007, "    collect2.exe: error: ld returned 5 exit status"
+END
