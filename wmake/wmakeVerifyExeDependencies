@@ -115,7 +115,18 @@ processFolder()
     unset librariesLinkedToUnique
 
     #now compare the lists of libraries
-    LIBSMUSTLOAD=$(echo -e "$LIBSTOLOAD\n$librariesLinkedTo" | sort | uniq -u)
+    LIST_LIBSMUSTLOAD=$(echo -e "$LIBSTOLOAD\n$librariesLinkedTo" | sort | uniq -u)
+
+    #use only the libraries that we can find
+    LIBSMUSTLOAD=""
+    for librariesToCheck in $LIST_LIBSMUSTLOAD
+    do
+        if [ -e "$FOAM_LIBBIN/lib${librariesToCheck}.dll" -o \
+             -e "$FOAM_USER_LIBBIN/lib${librariesToCheck}.dll" ]
+        then
+            LIBSMUSTLOAD="$LIBSMUSTLOAD $librariesToCheck"
+        fi
+    done
 
     #remove leading spaces
     LIBSMUSTLOAD=$(echo $LIBSMUSTLOAD | sed -e 's=^[ ]*==g')
