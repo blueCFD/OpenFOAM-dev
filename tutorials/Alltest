@@ -49,6 +49,10 @@ options:
 
 * quickly tests the tutorials and writes out the scheme/solver information
 
+Currently defined paths:
+  root:    $(realpath $TUTORIALS_DIR)
+  target:  $(realpath $TEST_RUN_DIR)
+
 USAGE
     exit 1
 }
@@ -192,7 +196,7 @@ sed \
 ${MAIN_CONTROL_DICT}.orig > ${MAIN_CONTROL_DICT}
 
 echo "Copying the tutorials"
-cp -a ${TUTORIALS_DIR} ${TEST_RUN_DIR}
+cp -r ${TUTORIALS_DIR} ${TEST_RUN_DIR}
 
 echo "Modifying the controlDicts to run only one time step"
 cd ${TEST_RUN_DIR} || exit 1
