@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 # 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -34,6 +35,8 @@
 #        - Support the ability to add version object files on Windows.
 #        - Paths to header files for the local source code folder are now
 #          collected inside a file and included when needed.
+#        - Version file now also depends on the main .build file, so that all
+#          binaries are updated according to the latest complete build tag.
 #
 # File
 #     wmake/makefiles/files
@@ -101,7 +104,7 @@ $(SFILES): $(MAKE_DIR)/files
 
 $(VARS): $(SFILES)
 
-$(VERSIONFILE): $(MAKE_DIR)/files
+$(VERSIONFILE): $(MAKE_DIR)/files $(WM_PROJECT_DIR)/.build
 	$(WM_SCRIPTS)/makeVersionResourceFile $(OBJECTS_DIR) $(VERSIONFILE) \
 		$(SFILES) $(VARS)
 
