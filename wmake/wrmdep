@@ -5,9 +5,10 @@
 #  \\    /   O peration     |
 #   \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
-#-------------------------------------------------------------------------------
+# 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -21,6 +22,16 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - -old option now uses the shell function fromDepToSource as well, for
+#          retrieving the original file name directly from the .dep file.
 #
 # Script wrmdep
 #
@@ -179,8 +190,11 @@ oldFolders)
         do
             depToSource $depFile
 
+            # Also check inside the file dep itself
+            fromDepToSource $depFile
+
             # Check C++ or Flex source file exists
-            if [ ! -r "$sourceFile" ];
+            if [ ! -r "$sourceFile" -a ! -r "$sourceFileDirect" ];
             then
                 echo "rm $depFile"
                 rm -f $depFile 2>/dev/null
