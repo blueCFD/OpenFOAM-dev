@@ -29,7 +29,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "CompactListList.T.H"
+#include "CompactListList.H"
 #include "IOstreams.H"
 #include "OStringStream.H"
 #include "IStringStream.H"

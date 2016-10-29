@@ -31,7 +31,7 @@ License
 #include "polyMesh.H"
 #include "OFstream.H"
 #include "meshTools.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

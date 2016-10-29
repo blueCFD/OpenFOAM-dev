@@ -30,14 +30,14 @@ License
 #include "triangleFuncs.H"
 #include "matchPoints.H"
 #include "globalIndex.H"
-#include "Time.T.H"
+#include "Time.H"
 
 #include "IFstream.H"
 #include "decompositionMethod.H"
 #include "geomDecomp.H"
 #include "vectorList.H"
 #include "PackedBoolList.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

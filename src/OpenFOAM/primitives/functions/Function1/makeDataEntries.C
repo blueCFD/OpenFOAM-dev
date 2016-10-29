@@ -23,13 +23,13 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Constant.T.H"
-#include "PolynomialEntry.T.H"
-#include "Sine.T.H"
-#include "Square.T.H"
-#include "CSV.T.H"
-#include "Table.T.H"
-#include "TableFile.T.H"
+#include "Constant.H"
+#include "PolynomialEntry.H"
+#include "Sine.H"
+#include "Square.H"
+#include "CSV.H"
+#include "Table.H"
+#include "TableFile.H"
 
 #include "fieldTypes.H"
 

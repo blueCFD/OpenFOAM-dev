@@ -31,7 +31,7 @@ License
    ------ local definitions
  \* ------------------------------------------------------------------------ */
 
-#include "STLsurfaceFormatCore.T.H"
+#include "STLsurfaceFormatCore.H"
 
 using namespace Foam;
 

@@ -72,7 +72,7 @@ Usage
 
 #include "argList.H"
 #include "IOobjectList.H"
-#include "IOPtrList.T.H"
+#include "IOPtrList.H"
 #include "volFields.H"
 #include "stringListOps.H"
 #include "timeSelector.H"

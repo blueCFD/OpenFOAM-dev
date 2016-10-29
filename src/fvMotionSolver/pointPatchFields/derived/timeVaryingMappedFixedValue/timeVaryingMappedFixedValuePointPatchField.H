@@ -41,7 +41,7 @@ SourceFiles
 #include "fixedValuePointPatchField.H"
 #include "instantList.H"
 #include "pointToPointPlanarInterpolation.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

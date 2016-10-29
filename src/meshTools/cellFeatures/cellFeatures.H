@@ -43,9 +43,9 @@ SourceFiles
 #include "faceList.H"
 #include "labelList.H"
 #include "boolList.H"
-#include "HashSet.T.H"
-#include "Map.T.H"
-#include "DynamicList.T.H"
+#include "HashSet.H"
+#include "Map.H"
+#include "DynamicList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

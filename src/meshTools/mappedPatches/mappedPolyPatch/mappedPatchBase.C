@@ -25,7 +25,7 @@ License
 
 #include "mappedPatchBase.H"
 #include "addToRunTimeSelectionTable.H"
-#include "ListListOps.T.H"
+#include "ListListOps.H"
 #include "meshSearchMeshObject.H"
 #include "meshTools.H"
 #include "OFstream.H"
@@ -35,13 +35,13 @@ License
 #include "indexedOctree.H"
 #include "polyMesh.H"
 #include "polyPatch.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "mapDistribute.H"
-#include "SubField.T.H"
+#include "SubField.H"
 #include "triPointRef.H"
 #include "syncTools.H"
 #include "treeDataCell.H"
-#include "DynamicField.T.H"
+#include "DynamicField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

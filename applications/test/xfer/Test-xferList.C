@@ -32,8 +32,8 @@ Description
 #include "IOstreams.H"
 #include "IStringStream.H"
 #include "labelList.H"
-#include "DynamicList.T.H"
-#include "face.T.H"
+#include "DynamicList.H"
+#include "face.H"
 
 using namespace Foam;
 

@@ -25,7 +25,7 @@ License
 
 #include "IOMRFZoneList.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 

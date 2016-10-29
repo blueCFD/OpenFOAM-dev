@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "sammMesh.H"
 
 using namespace Foam;

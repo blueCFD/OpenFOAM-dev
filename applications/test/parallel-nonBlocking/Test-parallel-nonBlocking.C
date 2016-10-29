@@ -29,17 +29,17 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "List.T.H"
+#include "List.H"
 #include "mapDistribute.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IPstream.H"
 #include "OPstream.H"
 #include "vector.H"
 #include "IOstreams.H"
 #include "Random.H"
-#include "Tuple2.T.H"
-#include "PstreamBuffers.T.H"
+#include "Tuple2.H"
+#include "PstreamBuffers.H"
 
 using namespace Foam;
 

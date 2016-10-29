@@ -36,7 +36,7 @@ SourceFiles
 #define faceToPoint_H
 
 #include "topoSetSource.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

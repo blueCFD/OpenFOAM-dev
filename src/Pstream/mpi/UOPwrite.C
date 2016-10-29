@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "UOPstream.H"
-#include "PstreamGlobals.T.H"
+#include "PstreamGlobals.H"
 
 #include <mpi.h>
 

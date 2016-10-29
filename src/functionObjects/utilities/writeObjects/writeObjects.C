@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "writeObjects.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "addToRunTimeSelectionTable.H"
 

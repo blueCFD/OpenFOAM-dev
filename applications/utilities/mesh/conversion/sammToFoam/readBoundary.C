@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "sammMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "wallPolyPatch.H"
 #include "oldCyclicPolyPatch.H"
 #include "symmetryPolyPatch.H"

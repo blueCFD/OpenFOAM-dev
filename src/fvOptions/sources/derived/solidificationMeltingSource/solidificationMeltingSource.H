@@ -98,7 +98,7 @@ SourceFiles
 #include "fvMesh.H"
 #include "volFields.H"
 #include "cellSetOption.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

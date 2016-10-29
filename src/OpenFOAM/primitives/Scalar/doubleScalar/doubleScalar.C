@@ -36,7 +36,7 @@ License
 #define ScalarROOTVGREAT doubleScalarROOTVGREAT
 #define ScalarROOTVSMALL doubleScalarROOTVSMALL
 #define readScalar readDoubleScalar
-#include "Scalar.T.C"
+#include "Scalar.C"
 #undef Scalar
 #undef ScalarVGREAT
 #undef ScalarVSMALL

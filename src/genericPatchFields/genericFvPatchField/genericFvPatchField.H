@@ -41,7 +41,7 @@ SourceFiles
 #define genericFvPatchField_H
 
 #include "calculatedFvPatchField.H"
-#include "HashPtrTable.T.H"
+#include "HashPtrTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

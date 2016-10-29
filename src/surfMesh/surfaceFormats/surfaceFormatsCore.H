@@ -35,8 +35,8 @@ SourceFiles
 #ifndef surfaceFormatsCore_H
 #define surfaceFormatsCore_H
 
-#include "Map.T.H"
-#include "HashSet.T.H"
+#include "Map.H"
+#include "HashSet.H"
 #include "labelList.H"
 #include "surfZoneList.H"
 #include "surfZoneIdentifierList.H"

@@ -25,9 +25,9 @@ License
 
 #include "noiseFFT.H"
 #include "IFstream.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "fft.H"
-#include "SubField.T.H"
+#include "SubField.H"
 #include "mathematicalConstants.H"
 
 // * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * //

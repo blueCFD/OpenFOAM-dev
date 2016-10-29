@@ -36,7 +36,7 @@ SourceFiles
 #define writeFuns_H
 
 #include "floatScalar.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "volFieldsFwd.H"
 #include "pointFieldsFwd.H"
 #include "vtkMesh.H"

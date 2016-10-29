@@ -33,7 +33,7 @@ Description
 #define diagTensorFieldIOField_H
 
 #include "diagTensorField.H"
-#include "CompactIOField.T.H"
+#include "CompactIOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

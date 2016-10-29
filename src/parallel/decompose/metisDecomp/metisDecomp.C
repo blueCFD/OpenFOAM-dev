@@ -25,7 +25,7 @@ License
 
 #include "metisDecomp.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Time.T.H"
+#include "Time.H"
 
 extern "C"
 {

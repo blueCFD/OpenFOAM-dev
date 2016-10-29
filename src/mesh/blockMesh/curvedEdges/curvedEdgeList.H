@@ -33,7 +33,7 @@ Description
 #define curvedEdgeList_H
 
 #include "curvedEdge.H"
-#include "PtrList.T.H"
+#include "PtrList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -44,7 +44,7 @@ SourceFiles
 #ifndef isotropic_H
 #define isotropic_H
 
-#include "TimeScaleModel.T.H"
+#include "TimeScaleModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

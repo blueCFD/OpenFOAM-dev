@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "walkPatch.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

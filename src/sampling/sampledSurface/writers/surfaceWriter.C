@@ -25,10 +25,10 @@ License
 
 #include "surfaceWriter.H"
 
-#include "MeshedSurfaceProxy.T.H"
+#include "MeshedSurfaceProxy.H"
 #include "proxySurfaceWriter.H"
 
-#include "HashTable.T.H"
+#include "HashTable.H"
 #include "word.H"
 #include "addToRunTimeSelectionTable.H"
 

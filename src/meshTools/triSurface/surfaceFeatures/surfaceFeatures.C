@@ -33,7 +33,7 @@ License
 #include "OFstream.H"
 #include "IFstream.H"
 #include "unitConversion.H"
-#include "EdgeMap.T.H"
+#include "EdgeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

@@ -39,10 +39,10 @@ SourceFiles
 #ifndef solidChemistryModel_H
 #define solidChemistryModel_H
 
-#include "Reaction.T.H"
+#include "Reaction.H"
 #include "ODESystem.H"
 #include "volFieldsFwd.H"
-#include "DimensionedField.T.H"
+#include "DimensionedField.H"
 #include "simpleMatrix.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -26,7 +26,7 @@ License
 #include "sixDoFRigidBodyDisplacementPointPatchVectorField.H"
 #include "pointPatchFields.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "volFields.H"
 #include "uniformDimensionedFields.H"

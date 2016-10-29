@@ -26,7 +26,7 @@ License
 #include "ensightOutputFunctions.H"
 
 #include "passiveParticle.H"
-#include "IOField.T.H"
+#include "IOField.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 

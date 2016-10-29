@@ -45,7 +45,7 @@ SourceFiles
 #include "fileName.H"
 #include "stringList.H"
 #include "wordList.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 
 
 // * * * * * * * * * * * * * Forward Declarations  * * * * * * * * * * * * * //

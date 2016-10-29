@@ -40,7 +40,7 @@ SourceFiles
 #include "autoPtr.H"
 #include "interpolation.H"
 #include "vectorList.H"
-#include "InfoProxy.T.H"
+#include "InfoProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -33,7 +33,7 @@ Description
 #define scalarFieldIOField_H
 
 #include "scalarField.H"
-#include "CompactIOField.T.H"
+#include "CompactIOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

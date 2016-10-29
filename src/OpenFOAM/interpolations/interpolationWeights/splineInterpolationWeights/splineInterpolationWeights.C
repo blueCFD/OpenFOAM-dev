@@ -25,7 +25,7 @@ License
 
 #include "splineInterpolationWeights.H"
 #include "addToRunTimeSelectionTable.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "linearInterpolationWeights.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

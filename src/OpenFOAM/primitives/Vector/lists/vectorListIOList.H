@@ -33,7 +33,7 @@ Description
 #define vectorListIOList_H
 
 #include "vectorList.H"
-#include "CompactIOList.T.H"
+#include "CompactIOList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

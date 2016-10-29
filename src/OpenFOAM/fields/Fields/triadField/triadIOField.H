@@ -33,7 +33,7 @@ Description
 #define triadIOField_H
 
 #include "triadField.H"
-#include "IOField.T.H"
+#include "IOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

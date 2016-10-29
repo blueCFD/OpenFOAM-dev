@@ -35,11 +35,11 @@ License
 #include "IOmanip.H"
 #include "faceSet.H"
 #include "cellSet.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "surfaceWriter.H"
 #include "syncTools.H"
 #include "globalIndex.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 
 
 void Foam::printMeshStats(const polyMesh& mesh, const bool allTopology)

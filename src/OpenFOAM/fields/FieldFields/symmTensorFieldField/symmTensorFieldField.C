@@ -29,7 +29,7 @@ Description
 #include "symmTensorFieldField.H"
 
 #define TEMPLATE template<template<class> class Field>
-#include "FieldFieldFunctionsM.T.C"
+#include "FieldFieldFunctionsM.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

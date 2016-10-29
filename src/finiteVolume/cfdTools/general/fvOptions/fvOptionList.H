@@ -36,8 +36,8 @@ SourceFile
 #define fvOptionList_H
 
 #include "fvOption.H"
-#include "PtrList.T.H"
-#include "GeometricField.T.H"
+#include "PtrList.H"
+#include "GeometricField.H"
 #include "geometricOneField.H"
 #include "fvPatchField.H"
 

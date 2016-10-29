@@ -60,7 +60,7 @@ SourceFiles
 
 #include "interpolationLookUpTable.H"
 #include "sootModel.H"
-#include "HashTable.T.H"
+#include "HashTable.H"
 
 #include "fluidThermo.H"
 #include "singleStepReactingMixture.H"

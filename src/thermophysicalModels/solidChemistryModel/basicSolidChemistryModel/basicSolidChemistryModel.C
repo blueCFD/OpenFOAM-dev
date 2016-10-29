@@ -25,7 +25,7 @@ License
 
 #include "basicSolidChemistryModel.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 
 /* * * * * * * * * * * * * * * private static data * * * * * * * * * * * * * */
 

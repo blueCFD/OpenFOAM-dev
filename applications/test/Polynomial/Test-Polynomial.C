@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "IStringStream.H"
-#include "Polynomial.T.H"
+#include "Polynomial.H"
 #include "polynomialFunction.H"
 #include "Random.H"
 #include "cpuTime.H"

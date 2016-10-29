@@ -71,7 +71,7 @@ SourceFiles
 
 #include "fvMeshFunctionObject.H"
 #include "surfaceFieldsFwd.H"
-#include "Tuple2.T.H"
+#include "Tuple2.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

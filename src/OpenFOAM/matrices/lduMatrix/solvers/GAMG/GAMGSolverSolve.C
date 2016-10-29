@@ -26,7 +26,7 @@ License
 #include "GAMGSolver.H"
 #include "PCG.H"
 #include "PBiCG.H"
-#include "SubField.T.H"
+#include "SubField.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

@@ -28,7 +28,7 @@ License
 #include "primitiveMesh.H"
 #include "primitiveMesh.H"
 #include "cellModeller.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

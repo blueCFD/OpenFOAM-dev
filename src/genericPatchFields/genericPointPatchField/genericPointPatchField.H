@@ -37,7 +37,7 @@ SourceFiles
 #define genericPointPatchField_H
 
 #include "calculatedPointPatchField.H"
-#include "HashPtrTable.T.H"
+#include "HashPtrTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

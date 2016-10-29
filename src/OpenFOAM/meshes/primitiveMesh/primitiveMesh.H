@@ -50,7 +50,7 @@ SourceFiles
 #ifndef primitiveMesh_H
 #define primitiveMesh_H
 
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "edgeList.H"
 #include "pointField.H"
 #include "faceList.H"
@@ -58,8 +58,8 @@ SourceFiles
 #include "cellShapeList.H"
 #include "labelList.H"
 #include "boolList.H"
-#include "HashSet.T.H"
-#include "Map.T.H"
+#include "HashSet.H"
+#include "Map.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

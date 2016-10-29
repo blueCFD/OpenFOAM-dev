@@ -36,7 +36,7 @@ SourceFiles
 #define FECCellToFaceStencil_H
 
 #include "cellToFaceStencil.H"
-#include "EdgeMap.T.H"
+#include "EdgeMap.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -29,7 +29,7 @@ Description
 #include "layerAdditionRemoval.H"
 #include "polyTopoChanger.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "primitiveMesh.H"
 #include "polyTopoChange.H"
 #include "addToRunTimeSelectionTable.H"

@@ -33,10 +33,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "syncTools.H"
 #include "patchFaceOrientation.H"
-#include "PatchEdgeFaceWave.T.H"
+#include "PatchEdgeFaceWave.H"
 #include "orientedSurface.H"
 #include "globalIndex.H"
 

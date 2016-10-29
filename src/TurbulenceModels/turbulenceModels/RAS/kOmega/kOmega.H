@@ -58,7 +58,7 @@ SourceFiles
 #ifndef kOmega_H
 #define kOmega_H
 
-#include "RASModel.T.H"
+#include "RASModel.H"
 #include "eddyViscosity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

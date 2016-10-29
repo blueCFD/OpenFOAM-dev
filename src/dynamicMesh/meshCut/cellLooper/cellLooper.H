@@ -52,7 +52,7 @@ SourceFiles
 #include "vector.H"
 #include "boolList.H"
 #include "scalarField.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

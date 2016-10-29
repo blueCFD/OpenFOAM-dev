@@ -39,7 +39,7 @@ Description
 #define symmTensorList_H
 
 #include "symmTensor.H"
-#include "List.T.H"
+#include "List.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

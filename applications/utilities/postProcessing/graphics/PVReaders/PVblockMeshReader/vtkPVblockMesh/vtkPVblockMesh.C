@@ -28,7 +28,7 @@ License
 
 // OpenFOAM includes
 #include "blockMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "patchZones.H"
 #include "OStringStream.H"
 

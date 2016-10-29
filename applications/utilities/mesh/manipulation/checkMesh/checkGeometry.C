@@ -3,7 +3,7 @@
 #include "cellSet.H"
 #include "faceSet.H"
 #include "pointSet.H"
-#include "EdgeMap.T.H"
+#include "EdgeMap.H"
 #include "wedgePolyPatch.H"
 #include "unitConversion.H"
 #include "polyMeshTetDecomposition.H"

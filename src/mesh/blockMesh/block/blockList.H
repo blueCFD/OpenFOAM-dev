@@ -33,7 +33,7 @@ Description
 #define blockList_H
 
 #include "block.H"
-#include "PtrList.T.H"
+#include "PtrList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -28,14 +28,14 @@ Description
 
 #include "snappyLayerDriver.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "pointFields.H"
 #include "motionSmoother.H"
 #include "pointData.H"
-#include "PointEdgeWave.T.H"
+#include "PointEdgeWave.H"
 #include "OBJstream.H"
 #include "meshTools.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 #include "unitConversion.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

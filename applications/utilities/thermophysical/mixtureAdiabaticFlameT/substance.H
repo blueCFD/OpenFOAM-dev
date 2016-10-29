@@ -38,7 +38,7 @@ SourceFiles
 
 #include "scalar.H"
 #include "word.H"
-#include "Istream.T.H"
+#include "Istream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -29,10 +29,10 @@ License
 #include "specie.H"
 #include "perfectGas.H"
 #include "incompressiblePerfectGas.H"
-#include "Boussinesq.T.H"
+#include "Boussinesq.H"
 #include "rhoConst.H"
 #include "perfectFluid.H"
-#include "PengRobinsonGas.T.H"
+#include "PengRobinsonGas.H"
 #include "adiabaticPerfectFluid.H"
 
 #include "hConstThermo.H"

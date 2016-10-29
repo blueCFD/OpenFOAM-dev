@@ -29,11 +29,11 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 #include "argList.H"
 #include "fvMesh.H"
 #include "volFields.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "OBJstream.H"
 
 using namespace Foam;

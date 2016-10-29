@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "AMIPatchToPatchInterpolation.H"
-#include "AMIMethod.T.H"
+#include "AMIMethod.H"
 #include "directAMI.H"
 #include "mapNearestAMI.H"
 #include "faceAreaWeightAMI.H"

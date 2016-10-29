@@ -32,7 +32,7 @@ Description
 #ifndef linearDirection_H
 #define linearDirection_H
 
-#include "point.T.H"
+#include "point.H"
 #include "extrudeModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "basicKinematicMPPICParcel.H"
-#include "Cloud.T.H"
+#include "Cloud.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

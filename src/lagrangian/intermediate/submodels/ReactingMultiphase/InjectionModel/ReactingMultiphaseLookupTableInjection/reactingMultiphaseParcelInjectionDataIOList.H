@@ -34,7 +34,7 @@ SourceFiles
 #ifndef reactingMultiphaseParcelInjectionDataIOList_H
 #define reactingMultiphaseParcelInjectionDataIOList_H
 
-#include "IOList.T.H"
+#include "IOList.H"
 #include "reactingMultiphaseParcelInjectionData.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

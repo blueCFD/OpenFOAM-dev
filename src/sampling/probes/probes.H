@@ -41,7 +41,7 @@ SourceFiles
 #define probes_H
 
 #include "functionObject.H"
-#include "HashPtrTable.T.H"
+#include "HashPtrTable.H"
 #include "OFstream.H"
 #include "polyMesh.H"
 #include "pointField.H"

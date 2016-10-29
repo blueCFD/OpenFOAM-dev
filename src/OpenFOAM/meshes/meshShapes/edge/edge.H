@@ -36,7 +36,7 @@ SourceFiles
 #ifndef edge_H
 #define edge_H
 
-#include "FixedList.T.H"
+#include "FixedList.H"
 #include "pointField.H"
 #include "linePointRef.H"
 

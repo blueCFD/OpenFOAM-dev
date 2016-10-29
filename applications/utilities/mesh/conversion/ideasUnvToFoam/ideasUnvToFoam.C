@@ -37,15 +37,15 @@ Description
 
 #include "argList.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IFstream.H"
 #include "cellModeller.H"
 #include "cellSet.H"
 #include "faceSet.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 #include <cassert>
-#include "MeshedSurfaces.T.H"
+#include "MeshedSurfaces.H"
 
 using namespace Foam;
 

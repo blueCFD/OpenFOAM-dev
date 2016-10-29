@@ -41,7 +41,7 @@ SourceFiles
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
-#include "Pair.T.H"
+#include "Pair.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -42,13 +42,13 @@ Description
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "pointFields.H"
 #include "cellIOList.H"
 #include "IOobjectList.H"
-#include "IOPtrList.T.H"
+#include "IOPtrList.H"
 
 #include "writeMeshObject.H"
 #include "fieldDictionary.H"

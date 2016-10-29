@@ -35,7 +35,7 @@ SourceFiles
 #ifndef objectRegistry_H
 #define objectRegistry_H
 
-#include "HashTable.T.H"
+#include "HashTable.H"
 #include "regIOobject.H"
 #include "wordReList.H"
 

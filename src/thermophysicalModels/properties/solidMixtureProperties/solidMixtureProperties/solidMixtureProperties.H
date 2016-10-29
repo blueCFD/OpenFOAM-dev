@@ -59,7 +59,7 @@ See also
 #define solidMixtureProperties_H
 
 #include "scalarField.H"
-#include "PtrList.T.H"
+#include "PtrList.H"
 #include "solidProperties.H"
 #include "autoPtr.H"
 

@@ -35,7 +35,7 @@ SourceFiles
 #ifndef faceAreaWeightAMI_H
 #define faceAreaWeightAMI_H
 
-#include "AMIMethod.T.H"
+#include "AMIMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

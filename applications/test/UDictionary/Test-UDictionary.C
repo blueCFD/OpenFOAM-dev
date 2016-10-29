@@ -30,7 +30,7 @@ Description
 #include "OSspecific.H"
 
 #include "IOstreams.H"
-#include "UDictionary.T.H"
+#include "UDictionary.H"
 
 using namespace Foam;
 

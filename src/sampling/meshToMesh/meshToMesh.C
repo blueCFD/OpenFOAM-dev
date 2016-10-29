@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "meshToMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "globalIndex.H"
 #include "meshToMeshMethod.H"
 

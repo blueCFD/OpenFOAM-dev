@@ -66,7 +66,7 @@ SourceFiles
 #ifndef mixtureKEpsilon_H
 #define mixtureKEpsilon_H
 
-#include "RASModel.T.H"
+#include "RASModel.H"
 #include "eddyViscosity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

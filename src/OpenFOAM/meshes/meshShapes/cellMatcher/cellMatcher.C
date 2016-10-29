@@ -26,10 +26,10 @@ License
 #include "cellMatcher.H"
 
 #include "primitiveMesh.H"
-#include "Map.T.H"
+#include "Map.H"
 #include "faceList.H"
 #include "labelList.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

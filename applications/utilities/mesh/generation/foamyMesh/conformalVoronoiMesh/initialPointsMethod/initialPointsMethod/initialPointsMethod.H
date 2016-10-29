@@ -35,7 +35,7 @@ SourceFiles
 #ifndef initialPointsMethod_H
 #define initialPointsMethod_H
 
-#include "point.T.H"
+#include "point.H"
 #include "conformalVoronoiMesh.H"
 #include "backgroundMeshDecomposition.H"
 #include "dictionary.H"

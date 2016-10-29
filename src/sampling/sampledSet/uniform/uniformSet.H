@@ -36,7 +36,7 @@ SourceFiles
 
 #include "passiveParticleCloud.H"
 #include "sampledSet.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

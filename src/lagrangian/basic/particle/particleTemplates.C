@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "IOPosition.T.H"
+#include "IOPosition.H"
 
 #include "cyclicPolyPatch.H"
 #include "cyclicAMIPolyPatch.H"

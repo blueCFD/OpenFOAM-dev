@@ -101,7 +101,7 @@ SourceFiles
 #include "globalIndex.H"
 #include "labelPair.H"
 #include "boolList.H"
-#include "MeshObject.T.H"
+#include "MeshObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "dsmcParcel.H"
-#include "DSMCCloud.T.H"
-#include "FreeStream.T.H"
-#include "NoInflow.T.H"
+#include "DSMCCloud.H"
+#include "FreeStream.H"
+#include "NoInflow.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

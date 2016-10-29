@@ -25,7 +25,7 @@ License
 
 #include "word.H"
 #include "Ostream.H"
-#include "token.T.H"
+#include "token.H"
 #include "keyType.H"
 #include "IOstreams.H"
 

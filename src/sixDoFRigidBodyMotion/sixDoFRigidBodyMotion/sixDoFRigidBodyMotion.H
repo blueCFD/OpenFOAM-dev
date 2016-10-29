@@ -50,7 +50,7 @@ SourceFiles
 #include "pointField.H"
 #include "sixDoFRigidBodyMotionRestraint.H"
 #include "sixDoFRigidBodyMotionConstraint.H"
-#include "Tuple2.T.H"
+#include "Tuple2.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

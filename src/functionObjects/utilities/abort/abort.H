@@ -45,7 +45,7 @@ SourceFiles
 #define functionObjects_abort_H
 
 #include "functionObject.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -25,7 +25,7 @@ License
 
 #include "singleLayerRegion.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "zeroGradientFvPatchFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

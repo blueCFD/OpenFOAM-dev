@@ -36,7 +36,7 @@ SourceFiles
 #define geomDecomp_H
 
 #include "decompositionMethod.H"
-#include "Vector.T.H"
+#include "Vector.H"
 
 namespace Foam
 {

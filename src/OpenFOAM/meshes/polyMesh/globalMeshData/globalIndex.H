@@ -42,7 +42,7 @@ SourceFiles
 #ifndef globalIndex_H
 #define globalIndex_H
 
-#include "Pstream.T.H"
+#include "Pstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

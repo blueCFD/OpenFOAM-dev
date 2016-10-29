@@ -29,10 +29,10 @@ Description
 
 #include "enrichedPatch.H"
 #include "boolList.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "labelPair.H"
 #include "primitiveMesh.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

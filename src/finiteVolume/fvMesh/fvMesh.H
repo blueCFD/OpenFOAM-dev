@@ -55,7 +55,7 @@ SourceFiles
 #include "fvSchemes.H"
 #include "fvSolution.H"
 #include "data.H"
-#include "DimensionedField.T.H"
+#include "DimensionedField.H"
 #include "volFieldsFwd.H"
 #include "surfaceFieldsFwd.H"
 #include "pointFieldsFwd.H"

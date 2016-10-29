@@ -37,7 +37,7 @@ License
 #include "treeDataPoint.H"
 #include "indexedOctree.H"
 #include "snapParameters.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

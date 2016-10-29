@@ -40,7 +40,7 @@ See also
 #include "IStringStream.H"
 #include "scalar.H"
 #include "vector.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 #include<list>
 

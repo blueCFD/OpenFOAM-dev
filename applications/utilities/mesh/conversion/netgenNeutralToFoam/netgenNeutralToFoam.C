@@ -75,7 +75,7 @@ NOTE:
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "IFstream.H"
 #include "polyPatch.H"

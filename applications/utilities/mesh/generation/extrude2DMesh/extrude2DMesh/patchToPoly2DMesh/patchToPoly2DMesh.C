@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "patchToPoly2DMesh.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

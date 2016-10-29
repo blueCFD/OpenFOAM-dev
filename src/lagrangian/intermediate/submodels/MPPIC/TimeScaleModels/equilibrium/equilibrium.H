@@ -44,7 +44,7 @@ SourceFiles
 #ifndef equilibrium_H
 #define equilibrium_H
 
-#include "TimeScaleModel.T.H"
+#include "TimeScaleModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

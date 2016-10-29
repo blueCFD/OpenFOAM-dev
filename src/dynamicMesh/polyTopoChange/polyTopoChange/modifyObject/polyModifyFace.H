@@ -34,7 +34,7 @@ Description
 #define polyModifyFace_H
 
 #include "label.H"
-#include "face.T.H"
+#include "face.H"
 #include "topoAction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

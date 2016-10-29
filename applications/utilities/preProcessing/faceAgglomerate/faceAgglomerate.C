@@ -33,9 +33,9 @@ Description
 
 #include "argList.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "volFields.H"
-#include "CompactListList.T.H"
+#include "CompactListList.H"
 #include "unitConversion.H"
 #include "pairPatchAgglomeration.H"
 #include "labelListIOList.H"

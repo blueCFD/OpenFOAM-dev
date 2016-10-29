@@ -34,7 +34,7 @@ Modifications
 
 #include "ensightPart.H"
 #include "dictionary.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

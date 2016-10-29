@@ -68,7 +68,7 @@ SourceFiles
 #define uniformTotalPressureFvPatchScalarField_H
 
 #include "fixedValueFvPatchFields.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -35,7 +35,7 @@ SourceFiles
 #ifndef dummyAgglomeration_H
 #define dummyAgglomeration_H
 
-#include "GAMGAgglomeration.T.H"
+#include "GAMGAgglomeration.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

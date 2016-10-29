@@ -23,9 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "ListOps.T.H"
-#include "point.T.H"
-#include "Field.T.H"
+#include "ListOps.H"
+#include "point.H"
+#include "Field.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

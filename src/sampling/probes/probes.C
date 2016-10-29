@@ -26,7 +26,7 @@ License
 #include "probes.H"
 #include "volFields.H"
 #include "dictionary.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IOmanip.H"
 #include "mapPolyMesh.H"
 #include "addToRunTimeSelectionTable.H"

@@ -25,7 +25,7 @@ License
 
 #include "chemistryModel.H"
 #include "reactingMixture.H"
-#include "UniformField.T.H"
+#include "UniformField.H"
 #include "extrapolatedCalculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

@@ -26,7 +26,7 @@ License
 #include "extendedUpwindCellToFaceStencil.H"
 #include "cellToFaceStencil.H"
 #include "syncTools.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 #include "dummyTransform.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

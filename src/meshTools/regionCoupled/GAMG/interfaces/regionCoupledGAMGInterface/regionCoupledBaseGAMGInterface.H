@@ -35,9 +35,9 @@ SourceFiles
 #ifndef regionCoupledBaseGAMGInterface_H
 #define regionCoupledBaseGAMGInterface_H
 
-#include "GAMGInterface.T.H"
+#include "GAMGInterface.H"
 #include "regionCoupledLduInterface.H"
-#include "GAMGAgglomeration.T.H"
+#include "GAMGAgglomeration.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

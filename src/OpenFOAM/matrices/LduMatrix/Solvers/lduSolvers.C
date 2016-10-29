@@ -23,10 +23,10 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "PCICG.T.H"
-#include "PBiCCCG.T.H"
-#include "PBiCICG.T.H"
-#include "SmoothSolver.T.H"
+#include "PCICG.H"
+#include "PBiCCCG.H"
+#include "PBiCICG.H"
+#include "SmoothSolver.H"
 #include "fieldTypes.H"
 
 #define makeLduSolvers(Type, DType, LUType)                                    \

@@ -35,7 +35,7 @@ SourceFiles
 #ifndef regionCoupledGAMGInterfaceField_H
 #define regionCoupledGAMGInterfaceField_H
 
-#include "GAMGInterfaceField.T.H"
+#include "GAMGInterfaceField.H"
 #include "regionCoupledGAMGInterface.H"
 
 

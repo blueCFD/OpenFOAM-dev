@@ -45,7 +45,7 @@ Description
 
 #include "argList.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyTopoChange.H"
 #include "mapPolyMesh.H"
 #include "faceSet.H"

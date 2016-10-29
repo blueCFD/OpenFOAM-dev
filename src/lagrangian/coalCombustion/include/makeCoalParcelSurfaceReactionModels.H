@@ -28,12 +28,12 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoSurfaceReaction.T.H"
-#include "COxidationDiffusionLimitedRate.T.H"
-#include "COxidationIntrinsicRate.T.H"
-#include "COxidationKineticDiffusionLimitedRate.T.H"
-#include "COxidationHurtMitchell.T.H"
-#include "COxidationMurphyShaddix.T.H"
+#include "NoSurfaceReaction.H"
+#include "COxidationDiffusionLimitedRate.H"
+#include "COxidationIntrinsicRate.H"
+#include "COxidationKineticDiffusionLimitedRate.H"
+#include "COxidationHurtMitchell.H"
+#include "COxidationMurphyShaddix.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

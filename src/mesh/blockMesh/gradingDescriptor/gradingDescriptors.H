@@ -37,7 +37,7 @@ SourceFiles
 #define gradingDescriptors_H
 
 #include "gradingDescriptor.H"
-#include "List.T.H"
+#include "List.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

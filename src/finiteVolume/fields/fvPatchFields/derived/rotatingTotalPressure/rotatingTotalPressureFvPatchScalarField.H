@@ -74,7 +74,7 @@ SourceFiles
 #define rotatingTotalPressureFvPatchScalarField_H
 
 #include "totalPressureFvPatchScalarField.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -25,7 +25,7 @@ License
 
 #include "ISstream.H"
 #include "int.H"
-#include "token.T.H"
+#include "token.H"
 #include <cctype>
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //

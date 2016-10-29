@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "regIOobject.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "OSspecific.H"
 #include "OFstream.H"
 

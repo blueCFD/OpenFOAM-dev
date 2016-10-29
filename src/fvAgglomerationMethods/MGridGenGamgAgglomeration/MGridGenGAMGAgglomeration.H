@@ -37,7 +37,7 @@ SourceFiles
 #define MGridGenGAMGAgglomeration_H
 
 #include "fvMesh.H"
-#include "GAMGAgglomeration.T.H"
+#include "GAMGAgglomeration.H"
 
 extern "C"
 {

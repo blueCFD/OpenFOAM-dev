@@ -24,14 +24,14 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "functionObjectList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "mapPolyMesh.H"
 #include "argList.H"
 #include "timeControlFunctionObject.H"
 #include "IFstream.H"
 #include "dictionaryEntry.H"
 #include "stringOps.H"
-#include "Tuple2.T.H"
+#include "Tuple2.H"
 #include "etcFiles.H"
 
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */

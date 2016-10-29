@@ -84,7 +84,7 @@ SourceFiles
 
 #include "labelList.H"
 #include "pointField.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

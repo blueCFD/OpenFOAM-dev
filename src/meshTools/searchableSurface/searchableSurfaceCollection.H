@@ -39,7 +39,7 @@ SourceFiles
 #include "searchableSurface.H"
 #include "treeBoundBox.H"
 #include "coordinateSystem.H"
-#include "UPtrList.T.H"
+#include "UPtrList.H"
 #include "Switch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

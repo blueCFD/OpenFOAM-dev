@@ -136,7 +136,7 @@ SourceFiles
 #define functionObjects_surfaceRegion_H
 
 #include "fieldValue.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

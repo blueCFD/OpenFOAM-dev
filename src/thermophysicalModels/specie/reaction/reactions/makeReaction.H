@@ -32,11 +32,11 @@ Description
 #ifndef makeReaction_H
 #define makeReaction_H
 
-#include "Reaction.T.H"
+#include "Reaction.H"
 
-#include "IrreversibleReaction.T.H"
-#include "ReversibleReaction.T.H"
-#include "NonEquilibriumReversibleReaction.T.H"
+#include "IrreversibleReaction.H"
+#include "ReversibleReaction.H"
+#include "NonEquilibriumReversibleReaction.H"
 
 #include "thermo.H"
 

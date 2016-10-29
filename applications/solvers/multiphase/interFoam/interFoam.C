@@ -38,16 +38,16 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "CMULES.T.H"
-#include "EulerDdtScheme.T.H"
+#include "CMULES.H"
+#include "EulerDdtScheme.H"
 #include "localEulerDdtScheme.H"
-#include "CrankNicolsonDdtScheme.T.H"
+#include "CrankNicolsonDdtScheme.H"
 #include "subCycle.H"
 #include "immiscibleIncompressibleTwoPhaseMixture.H"
 #include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
-#include "CorrectPhi.T.H"
+#include "CorrectPhi.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 

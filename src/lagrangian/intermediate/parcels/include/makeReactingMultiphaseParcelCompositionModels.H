@@ -28,8 +28,8 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoComposition.T.H"
-#include "SingleMixtureFraction.T.H"
+#include "NoComposition.H"
+#include "SingleMixtureFraction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

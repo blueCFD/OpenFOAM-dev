@@ -51,10 +51,10 @@ SourceFiles
 #ifndef phasePressureModel_H
 #define phasePressureModel_H
 
-#include "RASModel.T.H"
+#include "RASModel.H"
 #include "eddyViscosity.H"
 #include "phaseCompressibleTurbulenceModel.H"
-#include "EddyDiffusivity.T.H"
+#include "EddyDiffusivity.H"
 #include "phaseModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

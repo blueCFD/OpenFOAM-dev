@@ -26,7 +26,7 @@ License
 #include "zone.H"
 #include "IOstream.H"
 #include "demandDrivenData.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

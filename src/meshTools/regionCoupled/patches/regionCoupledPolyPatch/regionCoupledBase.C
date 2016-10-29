@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "regionCoupledBase.H"
-#include "SubField.T.H"
+#include "SubField.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

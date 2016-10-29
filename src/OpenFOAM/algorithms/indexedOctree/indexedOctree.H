@@ -37,11 +37,11 @@ SourceFiles
 
 #include "treeBoundBox.H"
 #include "pointIndexHit.H"
-#include "FixedList.T.H"
+#include "FixedList.H"
 #include "Ostream.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 #include "labelBits.H"
-#include "PackedList.T.H"
+#include "PackedList.H"
 #include "volumeType.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -45,9 +45,9 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "PstreamReduceOps.T.H"
+#include "PstreamReduceOps.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyTopoChange.H"
 #include "polyModifyFace.H"
 #include "polyAddFace.H"

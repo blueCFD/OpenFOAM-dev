@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "dsmcParcel.H"
-#include "DSMCParcel.T.H"
-#include "DSMCCloud.T.H"
+#include "DSMCParcel.H"
+#include "DSMCCloud.H"
 
 namespace Foam
 {

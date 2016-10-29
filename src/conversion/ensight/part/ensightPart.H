@@ -42,8 +42,8 @@ SourceFiles
 #include "typeInfo.H"
 #include "labelList.H"
 #include "polyMesh.H"
-#include "Field.T.H"
-#include "IOPtrList.T.H"
+#include "Field.H"
+#include "IOPtrList.H"
 #include "IOstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

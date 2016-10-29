@@ -40,19 +40,19 @@ Usage
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "timeSelector.H"
 #include "IOdictionary.H"
 #include "polyMesh.H"
 #include "entry.H"
-#include "IOPtrList.T.H"
+#include "IOPtrList.H"
 #include "cyclicPolyPatch.H"
 #include "dictionaryEntry.H"
 #include "IOobjectList.H"
 #include "volFields.H"
 #include "pointFields.H"
 #include "surfaceFields.H"
-#include "string.T.H"
+#include "string.H"
 
 using namespace Foam;
 

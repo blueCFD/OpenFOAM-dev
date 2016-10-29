@@ -26,9 +26,9 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "PrimitivePatch.T.H"
+#include "PrimitivePatch.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "primitivePatch.H"
 #include "IFstream.H"

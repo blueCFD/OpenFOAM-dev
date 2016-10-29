@@ -27,7 +27,7 @@ License
 #include "IOobject.H"
 #include "IFstream.H"
 #include "clock.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "featureEdgeMesh.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

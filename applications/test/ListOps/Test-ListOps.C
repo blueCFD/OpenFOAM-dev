@@ -29,10 +29,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "List.T.H"
-#include "SubList.T.H"
-#include "ListOps.T.H"
-#include "face.T.H"
+#include "List.H"
+#include "SubList.H"
+#include "ListOps.H"
+#include "face.H"
 
 using namespace Foam;
 

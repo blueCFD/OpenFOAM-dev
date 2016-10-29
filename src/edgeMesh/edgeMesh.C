@@ -27,8 +27,8 @@ License
 #include "mergePoints.H"
 #include "addToRunTimeSelectionTable.H"
 #include "addToMemberFunctionSelectionTable.H"
-#include "ListOps.T.H"
-#include "EdgeMap.T.H"
+#include "ListOps.H"
+#include "EdgeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

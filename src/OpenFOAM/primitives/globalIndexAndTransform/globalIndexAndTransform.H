@@ -44,7 +44,7 @@ SourceFiles
 
 #include "labelPair.H"
 #include "vectorTensorTransform.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

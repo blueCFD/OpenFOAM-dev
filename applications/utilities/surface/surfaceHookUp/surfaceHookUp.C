@@ -33,7 +33,7 @@ Usage
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 
 #include "triSurfaceMesh.H"
 #include "indexedOctree.H"

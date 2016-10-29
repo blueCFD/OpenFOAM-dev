@@ -26,7 +26,7 @@ License
 #include "drippingInjection.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "mathematicalConstants.H"
 #include "Random.H"
 #include "volFields.H"

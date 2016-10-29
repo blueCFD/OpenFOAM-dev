@@ -25,7 +25,7 @@ License
 
 #include "error.H"
 #include "dictionary.H"
-#include "Pstream.T.H"
+#include "Pstream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

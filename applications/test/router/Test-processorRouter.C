@@ -32,13 +32,13 @@ Description
 #include "IStringStream.H"
 #include "OFstream.H"
 #include "IFstream.H"
-#include "point.T.H"
-#include "Time.T.H"
+#include "point.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "router.H"
 #include "processorPolyPatch.H"
 #include "typeInfo.H"
-#include "Gather.T.H"
+#include "Gather.H"
 
 
 using namespace Foam;

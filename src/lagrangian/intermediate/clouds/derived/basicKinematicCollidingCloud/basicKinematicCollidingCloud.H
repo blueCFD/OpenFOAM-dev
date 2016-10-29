@@ -32,9 +32,9 @@ Description
 #ifndef basicKinematicCollidingCloud_H
 #define basicKinematicCollidingCloud_H
 
-#include "Cloud.T.H"
-#include "KinematicCloud.T.H"
-#include "CollidingCloud.T.H"
+#include "Cloud.H"
+#include "KinematicCloud.H"
+#include "CollidingCloud.H"
 #include "basicKinematicCollidingParcel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

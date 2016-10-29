@@ -35,11 +35,11 @@ SourceFiles
 #ifndef tetDecomposer_H
 #define tetDecomposer_H
 
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "PackedBoolList.H"
 #include "boolList.H"
 #include "typeInfo.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

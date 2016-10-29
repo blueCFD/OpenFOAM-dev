@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "timeVaryingUniformFixedValuePointPatchField.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IFstream.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

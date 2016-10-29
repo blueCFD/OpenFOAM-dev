@@ -36,7 +36,7 @@ SourceFiles
 #define multiComponentMixture_H
 
 #include "basicSpecieMixture.H"
-#include "HashPtrTable.T.H"
+#include "HashPtrTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

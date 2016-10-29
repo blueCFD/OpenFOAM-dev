@@ -30,10 +30,10 @@ License
 #include "faceSet.H"
 #include "pointSet.H"
 #include "IOobjectList.H"
-#include "IOPtrList.T.H"
+#include "IOPtrList.H"
 #include "polyBoundaryMeshEntries.H"
 #include "entry.H"
-#include "Cloud.T.H"
+#include "Cloud.H"
 #include "vtkPV3FoamReader.h"
 
 // local headers

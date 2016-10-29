@@ -63,11 +63,11 @@ SourceFiles
 #ifndef polyTopoChange_H
 #define polyTopoChange_H
 
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "labelList.H"
 #include "pointField.H"
-#include "Map.T.H"
-#include "HashSet.T.H"
+#include "Map.H"
+#include "HashSet.H"
 #include "mapPolyMesh.H"
 #include "PackedBoolList.H"
 

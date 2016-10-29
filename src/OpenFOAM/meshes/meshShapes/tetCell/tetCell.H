@@ -39,7 +39,7 @@ SourceFiles
 #ifndef tetCell_H
 #define tetCell_H
 
-#include "FixedList.T.H"
+#include "FixedList.H"
 #include "triFace.H"
 #include "edge.H"
 #include "pointField.H"

@@ -37,7 +37,7 @@ SourceFiles
 
 #include "treeDataPrimitivePatch.H"
 #include "triSurface.H"
-#include "point.T.H"
+#include "point.H"
 #include "indexedOctree.H"
 #include "volumeType.H"
 

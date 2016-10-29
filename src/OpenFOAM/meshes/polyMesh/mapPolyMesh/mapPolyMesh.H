@@ -142,8 +142,8 @@ SourceFiles
 #include "labelList.H"
 #include "objectMap.H"
 #include "pointField.H"
-#include "HashSet.T.H"
-#include "Map.T.H"
+#include "HashSet.H"
+#include "Map.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

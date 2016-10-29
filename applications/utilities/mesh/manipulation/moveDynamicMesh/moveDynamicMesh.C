@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "dynamicFvMesh.H"
 #include "pimpleControl.H"
 #include "vtkSurfaceWriter.H"

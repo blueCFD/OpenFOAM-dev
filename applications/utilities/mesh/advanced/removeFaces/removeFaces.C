@@ -34,11 +34,11 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyTopoChange.H"
 #include "faceSet.H"
 #include "removeFaces.H"
-#include "ReadFields.T.H"
+#include "ReadFields.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 

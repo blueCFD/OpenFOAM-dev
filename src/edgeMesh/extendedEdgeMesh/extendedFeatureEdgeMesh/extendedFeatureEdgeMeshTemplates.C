@@ -24,10 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "extendedFeatureEdgeMesh.H"
-#include "ListListOps.T.H"
+#include "ListListOps.H"
 #include "unitConversion.H"
 #include "PackedBoolList.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 #include "searchableBox.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

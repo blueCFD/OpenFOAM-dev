@@ -87,7 +87,7 @@ SourceFiles
 
 #include "interpolationLookUpTable.H"
 #include "absorptionEmissionModel.H"
-#include "HashTable.T.H"
+#include "HashTable.H"
 #include "absorptionCoeffs.H"
 #include "fluidThermo.H"
 

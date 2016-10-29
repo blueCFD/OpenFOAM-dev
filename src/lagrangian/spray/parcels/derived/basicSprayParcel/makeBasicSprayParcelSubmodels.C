@@ -45,7 +45,7 @@ License
 #include "makeReactingParcelSurfaceFilmModels.H"
 
 // Spray
-#include "DistortedSphereDragForce.T.H"
+#include "DistortedSphereDragForce.H"
 #include "makeSprayParcelAtomizationModels.H"
 #include "makeSprayParcelBreakupModels.H"
 

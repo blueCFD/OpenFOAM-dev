@@ -38,7 +38,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "singleCellFvMesh.H"
 #include "volFields.H"
@@ -49,7 +49,7 @@ Description
 #include "mapDistribute.H"
 #include "meshTools.H"
 #include "uindirectPrimitivePatch.H"
-#include "DynamicField.T.H"
+#include "DynamicField.H"
 #include "scalarMatrices.H"
 #include "scalarListIOList.H"
 

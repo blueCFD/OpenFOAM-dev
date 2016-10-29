@@ -52,7 +52,7 @@ SourceFiles
 #define lookupProfile_H
 
 #include "profileModel.H"
-#include "List.T.H"
+#include "List.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

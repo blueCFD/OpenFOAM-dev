@@ -35,7 +35,7 @@ License
 #include "smoothAlignmentSolver.H"
 #include "OBJstream.H"
 #include "indexedVertexOps.H"
-#include "DelaunayMeshTools.T.H"
+#include "DelaunayMeshTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

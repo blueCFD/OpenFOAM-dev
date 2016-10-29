@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "CentredFitScheme.T.H"
+#include "CentredFitScheme.H"
 #include "linearFitPolynomial.H"
 #include "centredCFCCellToFaceStencilObject.H"
 

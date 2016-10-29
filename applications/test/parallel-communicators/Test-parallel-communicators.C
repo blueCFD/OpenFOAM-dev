@@ -30,12 +30,12 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IPstream.H"
 #include "OPstream.H"
 #include "vector.H"
 #include "IOstreams.H"
-#include "PstreamReduceOps.T.H"
+#include "PstreamReduceOps.H"
 
 using namespace Foam;
 

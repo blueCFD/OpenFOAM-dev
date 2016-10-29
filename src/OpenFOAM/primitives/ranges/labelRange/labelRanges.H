@@ -36,7 +36,7 @@ SourceFiles
 #define labelRanges_H
 
 #include "labelRange.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

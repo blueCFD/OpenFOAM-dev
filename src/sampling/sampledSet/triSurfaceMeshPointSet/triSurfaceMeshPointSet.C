@@ -25,11 +25,11 @@ License
 
 #include "triSurfaceMeshPointSet.H"
 #include "meshSearch.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "polyMesh.H"
 #include "addToRunTimeSelectionTable.H"
 #include "triSurfaceMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

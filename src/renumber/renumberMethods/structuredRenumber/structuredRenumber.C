@@ -27,7 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "topoDistanceData.H"
 #include "fvMeshSubset.H"
-#include "FaceCellWave.T.H"
+#include "FaceCellWave.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

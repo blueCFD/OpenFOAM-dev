@@ -25,7 +25,7 @@ License
 
 #include "faceOnlySet.H"
 #include "meshSearch.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "polyMesh.H"
 
 #include "addToRunTimeSelectionTable.H"

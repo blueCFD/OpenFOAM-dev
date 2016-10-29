@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "motionSolver.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "dlLibraryTable.H"
 #include "twoDPointCorrector.H"

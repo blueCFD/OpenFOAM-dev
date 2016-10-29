@@ -77,10 +77,10 @@ SourceFiles
 #define timeVaryingMappedFixedValueFvPatchField_H
 
 #include "fixedValueFvPatchFields.H"
-#include "FixedList.T.H"
+#include "FixedList.H"
 #include "instantList.H"
 #include "pointToPointPlanarInterpolation.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

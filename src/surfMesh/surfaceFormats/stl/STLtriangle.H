@@ -36,7 +36,7 @@ SourceFiles
 #define STLtriangle_H
 
 #include "STLpoint.H"
-#include "Istream.T.H"
+#include "Istream.H"
 #include "Ostream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

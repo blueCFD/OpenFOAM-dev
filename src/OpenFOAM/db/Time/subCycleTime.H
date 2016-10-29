@@ -35,7 +35,7 @@ SourceFiles
 #ifndef subCycleTime_H
 #define subCycleTime_H
 
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

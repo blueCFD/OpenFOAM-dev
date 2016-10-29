@@ -69,7 +69,7 @@ SourceFiles
 #ifndef kEpsilon_H
 #define kEpsilon_H
 
-#include "RASModel.T.H"
+#include "RASModel.H"
 #include "eddyViscosity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

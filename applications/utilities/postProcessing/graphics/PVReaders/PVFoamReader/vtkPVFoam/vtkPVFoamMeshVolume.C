@@ -30,7 +30,7 @@ License
 #include "fvMesh.H"
 #include "cellModeller.H"
 #include "vtkOpenFOAMPoints.H"
-#include "Swap.T.H"
+#include "Swap.H"
 
 // VTK includes
 #include "vtkCellArray.h"

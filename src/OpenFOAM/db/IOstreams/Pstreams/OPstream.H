@@ -32,7 +32,7 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#include "Pstream.T.H"
+#include "Pstream.H"
 
 #ifndef OPstream_H
 #define OPstream_H

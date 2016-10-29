@@ -36,7 +36,7 @@ SourceFiles
 #define polyTopoChanger_H
 
 #include "regIOobject.H"
-#include "PtrList.T.H"
+#include "PtrList.H"
 #include "polyMeshModifier.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

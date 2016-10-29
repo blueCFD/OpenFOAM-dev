@@ -36,7 +36,7 @@ SourceFiles
 #define extrudeModel_H
 
 #include "dictionary.H"
-#include "point.T.H"
+#include "point.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"
 

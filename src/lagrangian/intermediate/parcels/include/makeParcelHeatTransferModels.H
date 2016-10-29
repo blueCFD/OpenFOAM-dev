@@ -28,8 +28,8 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoHeatTransfer.T.H"
-#include "RanzMarshall.T.H"
+#include "NoHeatTransfer.H"
+#include "RanzMarshall.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

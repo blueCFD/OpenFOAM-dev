@@ -25,7 +25,7 @@ License
 
 #include "nastranSurfaceWriter.H"
 #include "IOmanip.H"
-#include "Tuple2.T.H"
+#include "Tuple2.H"
 #include "makeSurfaceWriterMethods.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

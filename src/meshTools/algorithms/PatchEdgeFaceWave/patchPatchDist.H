@@ -37,7 +37,7 @@ SourceFiles
 #define patchPatchDist_H
 
 #include "scalarField.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

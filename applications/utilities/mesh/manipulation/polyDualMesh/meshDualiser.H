@@ -47,7 +47,7 @@ SourceFiles
 #ifndef meshDualiser_H
 #define meshDualiser_H
 
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "PackedBoolList.H"
 #include "boolList.H"
 #include "typeInfo.H"

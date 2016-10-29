@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "PureUpwindFitScheme.T.H"
+#include "PureUpwindFitScheme.H"
 #include "quadraticLinearUpwindFitPolynomial.H"
 #include "upwindCFCCellToFaceStencilObject.H"
 

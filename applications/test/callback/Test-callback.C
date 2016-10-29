@@ -28,7 +28,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "Callback.T.H"
+#include "Callback.H"
 
 using namespace Foam;
 

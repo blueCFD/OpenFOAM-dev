@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "coordinateSystems.H"
-#include "IOPtrList.T.H"
-#include "Time.T.H"
+#include "IOPtrList.H"
+#include "Time.H"
 #include "stringListOps.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

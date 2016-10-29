@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "CentredFitSnGradScheme.T.H"
+#include "CentredFitSnGradScheme.H"
 #include "quadraticFitPolynomial.H"
 #include "centredCFCCellToFaceStencilObject.H"
 

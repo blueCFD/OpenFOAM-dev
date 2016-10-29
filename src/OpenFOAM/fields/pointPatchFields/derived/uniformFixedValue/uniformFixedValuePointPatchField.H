@@ -49,7 +49,7 @@ SourceFiles
 #define uniformFixedValuePointPatchField_H
 
 #include "fixedValuePointPatchField.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -53,8 +53,8 @@ SourceFiles
 #include "subBody.H"
 #include "joint.H"
 #include "compositeJoint.H"
-#include "PtrList.T.H"
-#include "HashTable.T.H"
+#include "PtrList.H"
+#include "HashTable.H"
 
 namespace Foam
 {

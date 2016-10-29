@@ -35,7 +35,7 @@ SourceFiles
 #ifndef compactSpatialTensor_H
 #define compactSpatialTensor_H
 
-#include "CompactSpatialTensor.T.H"
+#include "CompactSpatialTensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

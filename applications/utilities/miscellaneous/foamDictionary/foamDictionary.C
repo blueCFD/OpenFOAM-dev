@@ -81,7 +81,7 @@ Usage
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IFstream.H"
 #include "OFstream.H"
 #include "includeEntry.H"

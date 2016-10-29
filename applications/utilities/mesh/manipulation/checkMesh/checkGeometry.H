@@ -1,5 +1,5 @@
 #include "label.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 #include "labelVector.H"
 
 namespace Foam

@@ -36,8 +36,8 @@ SourceFiles
 #ifndef lagrangianFieldDecomposer_H
 #define lagrangianFieldDecomposer_H
 
-#include "Cloud.T.H"
-#include "CompactIOField.T.H"
+#include "Cloud.H"
+#include "CompactIOField.H"
 #include "indexedParticle.H"
 #include "passiveParticle.H"
 

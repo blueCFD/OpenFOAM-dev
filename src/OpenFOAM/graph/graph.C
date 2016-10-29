@@ -26,7 +26,7 @@ License
 #include "graph.H"
 #include "OFstream.H"
 #include "IOmanip.H"
-#include "Pair.T.H"
+#include "Pair.H"
 #include "OSspecific.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

@@ -25,7 +25,7 @@ License
 
 #include "fvOptions.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "labelRange.H"
-#include "token.T.H"
+#include "token.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

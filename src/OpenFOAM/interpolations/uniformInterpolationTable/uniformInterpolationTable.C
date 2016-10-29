@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "uniformInterpolationTable.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * *  Private Member Functions * * * * * * * * * * * * //
 

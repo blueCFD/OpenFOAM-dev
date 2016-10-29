@@ -33,7 +33,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "searchableSurfaces.H"
 #include "conformationSurfaces.H"
 #include "triSurfaceMesh.H"

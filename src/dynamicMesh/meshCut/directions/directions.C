@@ -27,7 +27,7 @@ License
 #include "polyMesh.H"
 #include "twoDPointCorrector.H"
 #include "directionInfo.H"
-#include "MeshWave.T.H"
+#include "MeshWave.H"
 #include "OFstream.H"
 #include "meshTools.H"
 #include "hexMatcher.H"

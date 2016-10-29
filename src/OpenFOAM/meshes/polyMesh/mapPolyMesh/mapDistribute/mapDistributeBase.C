@@ -25,9 +25,9 @@ License
 
 #include "mapDistributeBase.H"
 #include "commSchedule.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 #include "globalIndex.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

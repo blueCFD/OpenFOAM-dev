@@ -31,11 +31,11 @@ License
 #include "LandauTellerReactionRate.H"
 #include "thirdBodyArrheniusReactionRate.H"
 
-#include "ChemicallyActivatedReactionRate.T.H"
+#include "ChemicallyActivatedReactionRate.H"
 #include "JanevReactionRate.H"
 #include "powerSeriesReactionRate.H"
 
-#include "FallOffReactionRate.T.H"
+#include "FallOffReactionRate.H"
 #include "LindemannFallOffFunction.H"
 #include "SRIFallOffFunction.H"
 #include "TroeFallOffFunction.H"

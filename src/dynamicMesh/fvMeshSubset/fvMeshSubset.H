@@ -58,8 +58,8 @@ SourceFiles
 
 #include "fvMesh.H"
 #include "pointMesh.H"
-#include "GeometricField.T.H"
-#include "HashSet.T.H"
+#include "GeometricField.H"
+#include "HashSet.H"
 #include "surfaceMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

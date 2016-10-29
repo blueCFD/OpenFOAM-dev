@@ -89,7 +89,7 @@ SourceFiles
 #include "fileName.H"
 #include "typeInfo.H"
 #include "autoPtr.H"
-#include "InfoProxy.T.H"
+#include "InfoProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

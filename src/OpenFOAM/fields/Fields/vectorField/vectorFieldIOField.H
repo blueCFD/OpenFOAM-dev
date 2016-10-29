@@ -33,7 +33,7 @@ Description
 #define vectorFieldIOField_H
 
 #include "vectorField.H"
-#include "CompactIOField.T.H"
+#include "CompactIOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

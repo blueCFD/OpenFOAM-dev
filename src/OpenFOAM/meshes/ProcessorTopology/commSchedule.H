@@ -50,7 +50,7 @@ SourceFiles
 #ifndef commSchedule_H
 #define commSchedule_H
 
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "labelPair.H"
 #include "labelList.H"
 

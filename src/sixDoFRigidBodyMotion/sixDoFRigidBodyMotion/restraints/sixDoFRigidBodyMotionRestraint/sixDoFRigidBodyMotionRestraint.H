@@ -43,7 +43,7 @@ SourceFiles
 #ifndef sixDoFRigidBodyMotionRestraint_H
 #define sixDoFRigidBodyMotionRestraint_H
 
-#include "Time.T.H"
+#include "Time.H"
 #include "dictionary.H"
 #include "autoPtr.H"
 #include "vector.H"

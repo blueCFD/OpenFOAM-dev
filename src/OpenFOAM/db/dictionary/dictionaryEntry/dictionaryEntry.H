@@ -44,7 +44,7 @@ SourceFiles
 
 #include "entry.H"
 #include "dictionary.H"
-#include "InfoProxy.T.H"
+#include "InfoProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -26,7 +26,7 @@ License
 #include "IATEsource.H"
 #include "twoPhaseSystem.H"
 #include "fvMatrix.H"
-#include "PhaseCompressibleTurbulenceModel.T.H"
+#include "PhaseCompressibleTurbulenceModel.H"
 #include "uniformDimensionedFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

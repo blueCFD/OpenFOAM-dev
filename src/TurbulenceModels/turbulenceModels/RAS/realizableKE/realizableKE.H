@@ -64,7 +64,7 @@ SourceFiles
 #ifndef realizableKE_H
 #define realizableKE_H
 
-#include "RASModel.T.H"
+#include "RASModel.H"
 #include "eddyViscosity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

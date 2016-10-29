@@ -33,7 +33,7 @@ Description
 #define IOsampledSurfaces_H
 
 #include "sampledSurfaces.H"
-#include "IOOutputFilter.T.H"
+#include "IOOutputFilter.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -63,12 +63,12 @@ bool Foam::JobInfo::constructed(false);
 #include "messageStream.C"
 #include "error.C"
 #include "IOerror.C"
-#include "token.T.C"
+#include "token.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Read the debug and info switches
 
-#include "debug.T.C"
+#include "debug.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Read file modification checking switches

@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cyclicAMIPolyPatch.H"
-#include "SubField.T.H"
-#include "Time.T.H"
+#include "SubField.H"
+#include "Time.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -32,7 +32,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "MULES.T.H"
+#include "MULES.H"
 #include "subCycle.H"
 #include "incompressibleTwoPhaseMixture.H"
 #include "turbulentTransportModel.H"

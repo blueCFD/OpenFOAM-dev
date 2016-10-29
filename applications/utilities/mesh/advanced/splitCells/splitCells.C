@@ -42,7 +42,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyTopoChange.H"
 #include "polyTopoChanger.H"
 #include "mapPolyMesh.H"
@@ -56,7 +56,7 @@ Description
 #include "plane.H"
 #include "edgeVertex.H"
 #include "meshTools.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 using namespace Foam;
 

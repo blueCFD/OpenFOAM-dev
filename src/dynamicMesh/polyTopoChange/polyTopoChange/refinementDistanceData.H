@@ -37,7 +37,7 @@ SourceFiles
 #ifndef refinementDistanceData_H
 #define refinementDistanceData_H
 
-#include "point.T.H"
+#include "point.H"
 #include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

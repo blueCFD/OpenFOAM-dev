@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "MapLagrangianFields.T.H"
+#include "MapLagrangianFields.H"
 #include "passiveParticleCloud.H"
 #include "meshSearch.H"
 

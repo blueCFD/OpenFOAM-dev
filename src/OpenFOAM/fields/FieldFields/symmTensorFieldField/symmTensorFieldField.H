@@ -35,11 +35,11 @@ SourceFiles
 #ifndef symmTensorFieldField_H
 #define symmTensorFieldField_H
 
-#include "FieldField.T.H"
+#include "FieldField.H"
 #include "symmTensor.H"
 
 #define TEMPLATE template<template<class> class Field>
-#include "FieldFieldFunctionsM.T.H"
+#include "FieldFieldFunctionsM.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

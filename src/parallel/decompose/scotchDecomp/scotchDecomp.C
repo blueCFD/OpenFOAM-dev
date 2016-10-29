@@ -36,10 +36,10 @@ Modifications
 #include "scotchDecomp.H"
 #include "addToRunTimeSelectionTable.H"
 #include "floatScalar.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "OFstream.H"
 #include "globalIndex.H"
-#include "SubField.T.H"
+#include "SubField.H"
 
 extern "C"
 {

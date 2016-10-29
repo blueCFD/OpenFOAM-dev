@@ -37,7 +37,7 @@ SourceFiles
 
 #include "coupledPointPatchField.H"
 #include "cyclicACMIPointPatch.H"
-#include "PrimitivePatchInterpolation.T.H"
+#include "PrimitivePatchInterpolation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

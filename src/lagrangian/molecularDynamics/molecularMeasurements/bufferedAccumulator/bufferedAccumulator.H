@@ -36,7 +36,7 @@ SourceFiles
 #ifndef bufferedAccumulator_H
 #define bufferedAccumulator_H
 
-#include "Field.T.H"
+#include "Field.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

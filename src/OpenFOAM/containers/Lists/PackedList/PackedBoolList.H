@@ -43,8 +43,8 @@ See also
 #ifndef PackedBoolList_H
 #define PackedBoolList_H
 
-#include "PackedList.T.H"
-#include "UIndirectList.T.H"
+#include "PackedList.H"
+#include "UIndirectList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

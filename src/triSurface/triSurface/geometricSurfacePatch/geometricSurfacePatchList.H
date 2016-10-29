@@ -32,7 +32,7 @@ Description
 #define geometricSurfacePatchList_H
 
 #include "geometricSurfacePatch.H"
-#include "List.T.H"
+#include "List.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

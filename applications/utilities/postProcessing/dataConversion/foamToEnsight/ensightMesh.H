@@ -36,8 +36,8 @@ SourceFiles
 
 #include "cellSets.H"
 #include "faceSets.H"
-#include "HashTable.T.H"
-#include "HashSet.T.H"
+#include "HashTable.H"
+#include "HashSet.H"
 #include "PackedBoolList.H"
 #include "wordReList.H"
 #include "scalarField.H"

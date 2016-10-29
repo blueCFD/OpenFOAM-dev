@@ -28,10 +28,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "triSurface.H"
-#include "HashTable.T.H"
-#include "SortableList.T.H"
+#include "HashTable.H"
+#include "SortableList.H"
 #include "transform.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

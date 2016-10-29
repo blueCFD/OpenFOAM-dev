@@ -27,8 +27,8 @@ License
 #include "cellFeatures.H"
 #include "polyMesh.H"
 #include "unitConversion.H"
-#include "DynamicList.T.H"
-#include "ListOps.T.H"
+#include "DynamicList.H"
+#include "ListOps.H"
 #include "meshTools.H"
 #include "hexMatcher.H"
 

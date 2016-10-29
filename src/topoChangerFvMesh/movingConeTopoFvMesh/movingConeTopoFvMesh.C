@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "movingConeTopoFvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "mapPolyMesh.H"
 #include "layerAdditionRemoval.H"
 #include "addToRunTimeSelectionTable.H"

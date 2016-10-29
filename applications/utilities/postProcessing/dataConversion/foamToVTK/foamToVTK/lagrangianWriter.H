@@ -37,7 +37,7 @@ SourceFiles
 #define lagrangianWriter_H
 
 #include "OFstream.H"
-#include "Cloud.T.H"
+#include "Cloud.H"
 #include "volFields.H"
 #include "pointFields.H"
 #include "vtkMesh.H"

@@ -76,7 +76,7 @@ SourceFiles
 #define radialActuationDiskSource_H
 
 #include "actuationDiskSource.H"
-#include "FixedList.T.H"
+#include "FixedList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

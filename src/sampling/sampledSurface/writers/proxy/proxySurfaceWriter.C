@@ -25,7 +25,7 @@ License
 
 #include "proxySurfaceWriter.H"
 
-#include "MeshedSurfaceProxy.T.H"
+#include "MeshedSurfaceProxy.H"
 #include "OFstream.H"
 #include "OSspecific.H"
 

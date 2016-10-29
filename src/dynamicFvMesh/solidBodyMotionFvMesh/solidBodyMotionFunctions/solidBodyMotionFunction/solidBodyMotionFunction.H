@@ -43,7 +43,7 @@ SourceFiles
 #ifndef solidBodyMotionFunction_H
 #define solidBodyMotionFunction_H
 
-#include "Time.T.H"
+#include "Time.H"
 #include "dictionary.H"
 #include "septernion.H"
 #include "autoPtr.H"

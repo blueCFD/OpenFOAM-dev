@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "face.T.H"
+#include "face.H"
 #include "pointHit.H"
 #include "triPointRef.H"
 #include "line.H"

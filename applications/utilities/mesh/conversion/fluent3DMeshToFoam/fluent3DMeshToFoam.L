@@ -38,14 +38,14 @@ Description
 
 #include "cyclicPolyPatch.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "polyTopoChange.H"
 #include "polyMeshZipUpCells.H"
 #include "wallPolyPatch.H"
 #include "symmetryPolyPatch.H"
 #include "oldCyclicPolyPatch.H"
-#include "Swap.T.H"
+#include "Swap.H"
 #include "IFstream.H"
 #include "readHexLabel.H"
 

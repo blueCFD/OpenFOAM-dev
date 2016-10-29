@@ -43,8 +43,8 @@ SourceFiles
 #include "uint.H"
 #include "CGALTriangulation3Ddefs.H"
 #include "vector.H"
-#include "DynamicList.T.H"
-#include "List.T.H"
+#include "DynamicList.H"
+#include "List.H"
 #include "extendedFeatureEdgeMesh.H"
 #include "pointPairs.H"
 

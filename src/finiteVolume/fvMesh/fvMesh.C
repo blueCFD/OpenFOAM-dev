@@ -28,14 +28,14 @@ License
 #include "surfaceFields.H"
 #include "slicedVolFields.H"
 #include "slicedSurfaceFields.H"
-#include "SubField.T.H"
+#include "SubField.H"
 #include "demandDrivenData.H"
 #include "fvMeshLduAddressing.H"
 #include "mapPolyMesh.H"
-#include "MapFvFields.T.H"
+#include "MapFvFields.H"
 #include "fvMeshMapper.H"
 #include "mapClouds.H"
-#include "MeshObject.T.H"
+#include "MeshObject.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

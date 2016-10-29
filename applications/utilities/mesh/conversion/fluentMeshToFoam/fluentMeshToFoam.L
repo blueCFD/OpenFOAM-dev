@@ -51,7 +51,7 @@ Description
  \* ------------------------------------------------------------------------- */
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IStringStream.H"
 #include "polyMesh.H"
 #include "emptyPolyPatch.H"

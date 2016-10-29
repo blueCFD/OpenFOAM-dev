@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "blockMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "preservePatchTypes.H"
 #include "emptyPolyPatch.H"
 #include "cyclicPolyPatch.H"

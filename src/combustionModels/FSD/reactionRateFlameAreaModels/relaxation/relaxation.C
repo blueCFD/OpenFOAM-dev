@@ -26,7 +26,7 @@ License
 #include "relaxation.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvm.H"
-#include "LESModel.T.H"
+#include "LESModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

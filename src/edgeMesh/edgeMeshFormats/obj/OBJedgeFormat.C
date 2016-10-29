@@ -29,7 +29,7 @@ License
 #include "IStringStream.H"
 #include "Ostream.H"
 #include "OFstream.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

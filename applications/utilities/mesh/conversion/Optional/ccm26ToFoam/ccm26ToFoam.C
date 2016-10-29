@@ -32,15 +32,15 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "volFields.H"
 #include "emptyPolyPatch.H"
 #include "symmetryPolyPatch.H"
 #include "wallPolyPatch.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 #include "cellSet.H"
 
 #include <ccmio.h>

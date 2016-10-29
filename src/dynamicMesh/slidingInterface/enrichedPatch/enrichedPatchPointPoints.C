@@ -25,7 +25,7 @@ License
 
 #include "enrichedPatch.H"
 #include "primitiveMesh.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

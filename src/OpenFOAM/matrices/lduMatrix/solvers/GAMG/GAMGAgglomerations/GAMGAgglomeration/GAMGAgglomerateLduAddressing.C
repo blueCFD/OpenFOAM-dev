@@ -23,8 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "GAMGAgglomeration.T.H"
-#include "GAMGInterface.T.H"
+#include "GAMGAgglomeration.H"
+#include "GAMGInterface.H"
 #include "processorGAMGInterface.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

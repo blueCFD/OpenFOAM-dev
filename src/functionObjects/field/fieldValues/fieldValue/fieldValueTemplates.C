@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fieldValue.H"
-#include "ListListOps.T.H"
-#include "Pstream.T.H"
+#include "ListListOps.H"
+#include "Pstream.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

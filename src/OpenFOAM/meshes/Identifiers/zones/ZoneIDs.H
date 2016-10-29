@@ -26,7 +26,7 @@ License
 #ifndef ZoneIDs_H
 #define ZoneIDs_H
 
-#include "DynamicID.T.H"
+#include "DynamicID.H"
 
 #include "cellZoneMeshFwd.H"
 #include "faceZoneMeshFwd.H"

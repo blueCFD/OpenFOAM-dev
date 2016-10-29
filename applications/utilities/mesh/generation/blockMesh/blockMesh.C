@@ -48,9 +48,9 @@ Usage
 
 \*---------------------------------------------------------------------------*/
 
-#include "Time.T.H"
+#include "Time.H"
 #include "IOdictionary.H"
-#include "IOPtrList.T.H"
+#include "IOPtrList.H"
 
 #include "blockMesh.H"
 #include "attachPolyTopoChanger.H"
@@ -61,7 +61,7 @@ Usage
 #include "OSspecific.H"
 #include "OFstream.H"
 
-#include "Pair.T.H"
+#include "Pair.H"
 #include "slidingInterface.H"
 
 using namespace Foam;

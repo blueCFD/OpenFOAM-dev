@@ -26,7 +26,7 @@ License
 #include "meshToMesh0.H"
 #include "volFields.H"
 #include "interpolationCellPoint.H"
-#include "SubField.T.H"
+#include "SubField.H"
 #include "mixedFvPatchField.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

@@ -34,10 +34,10 @@ SourceFiles
 #ifndef surfaceZonesInfo_H
 #define surfaceZonesInfo_H
 
-#include "NamedEnum.T.H"
-#include "point.T.H"
+#include "NamedEnum.H"
+#include "point.H"
 #include "word.H"
-#include "PtrList.T.H"
+#include "PtrList.H"
 #include "labelList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

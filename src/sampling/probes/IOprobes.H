@@ -34,7 +34,7 @@ Description
 
 #include "probes.H"
 #include "patchProbes.H"
-#include "IOOutputFilter.T.H"
+#include "IOOutputFilter.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

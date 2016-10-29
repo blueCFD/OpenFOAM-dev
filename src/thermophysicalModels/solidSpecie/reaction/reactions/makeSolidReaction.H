@@ -33,8 +33,8 @@ Description
 #define makeSolidReactionThermo_H
 
 #include "solidReaction.H"
-#include "IrreversibleReaction.T.H"
-#include "Reaction.T.H"
+#include "IrreversibleReaction.H"
+#include "Reaction.H"
 
 #include "addToRunTimeSelectionTable.H"
 

@@ -39,9 +39,9 @@ SourceFiles
 #define energyRegionCoupledFvPatchScalarField_H
 
 #include "regionCoupledBaseFvPatch.H"
-#include "LduInterfaceField.T.H"
+#include "LduInterfaceField.H"
 #include "fvPatchField.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 #include "basicThermo.H"
 #include "coupledFvPatchField.H"
 

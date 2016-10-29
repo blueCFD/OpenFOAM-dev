@@ -28,7 +28,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "treeBoundBox.H"
 #include "treeDataFace.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "meshTools.H"
 //#include "Random.H"
 // For 'facePoint' helper function only

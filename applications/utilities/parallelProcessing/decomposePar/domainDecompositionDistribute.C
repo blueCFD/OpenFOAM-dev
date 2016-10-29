@@ -28,7 +28,7 @@ License
 #include "cpuTime.H"
 #include "cellSet.H"
 #include "regionSplit.H"
-#include "Tuple2.T.H"
+#include "Tuple2.H"
 #include "faceSet.H"
 #include "decompositionModel.H"
 

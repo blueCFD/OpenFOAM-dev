@@ -35,7 +35,7 @@ SourceFiles
 #ifndef dsmcCloud_H
 #define dsmcCloud_H
 
-#include "DSMCCloud.T.H"
+#include "DSMCCloud.H"
 #include "dsmcParcel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

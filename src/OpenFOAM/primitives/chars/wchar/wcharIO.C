@@ -25,7 +25,7 @@ License
 
 #include "error.H"
 
-#include "wchar.T.H"
+#include "wchar.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //

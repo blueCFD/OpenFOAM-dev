@@ -35,14 +35,14 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyTopoChange.H"
 #include "polyTopoChanger.H"
 #include "edgeCollapser.H"
 #include "perfectInterface.H"
 #include "addPatchCellLayer.H"
 #include "fvMesh.H"
-#include "MeshedSurfaces.T.H"
+#include "MeshedSurfaces.H"
 #include "globalIndex.H"
 #include "cellSet.H"
 

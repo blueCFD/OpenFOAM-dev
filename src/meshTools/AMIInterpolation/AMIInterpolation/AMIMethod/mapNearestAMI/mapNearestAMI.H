@@ -35,7 +35,7 @@ SourceFiles
 #ifndef mapNearestAMI_H
 #define mapNearestAMI_H
 
-#include "AMIMethod.T.H"
+#include "AMIMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

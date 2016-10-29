@@ -50,7 +50,7 @@ Details
 #include "fileStat.H"
 #include "timer.H"
 #include "IFstream.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 // Undefine DebugInfo, because we don't need it and it collides with a macro
 // in windows.h

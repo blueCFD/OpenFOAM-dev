@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "wallLayerCells.H"
-#include "DynamicList.T.H"
-#include "MeshWave.T.H"
+#include "DynamicList.H"
+#include "MeshWave.H"
 #include "wallNormalInfo.H"
 #include "OFstream.H"
 

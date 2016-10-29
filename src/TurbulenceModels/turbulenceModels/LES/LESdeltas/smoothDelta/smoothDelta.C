@@ -25,7 +25,7 @@ License
 
 #include "smoothDelta.H"
 #include "addToRunTimeSelectionTable.H"
-#include "FaceCellWave.T.H"
+#include "FaceCellWave.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

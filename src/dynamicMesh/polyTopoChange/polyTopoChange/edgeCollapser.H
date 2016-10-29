@@ -38,12 +38,12 @@ SourceFiles
 #define edgeCollapser_H
 
 #include "pointEdgeCollapse.H"
-#include "DynamicList.T.H"
-#include "Field.T.H"
+#include "DynamicList.H"
+#include "Field.H"
 #include "pointFieldFwd.H"
-#include "Map.T.H"
+#include "Map.H"
 #include "labelPair.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 #include "typeInfo.H"
 #include "Switch.H"
 

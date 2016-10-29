@@ -33,8 +33,8 @@ Description
 #define labelFieldIOField_H
 
 #include "labelField.H"
-#include "IOField.T.H"
-#include "CompactIOField.T.H"
+#include "IOField.H"
+#include "CompactIOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

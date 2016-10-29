@@ -29,9 +29,9 @@ License
 #include "wallPolyPatch.H"
 #include "symmetryPolyPatch.H"
 #include "cellModeller.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "IFstream.H"
-#include "IOMap.T.H"
+#include "IOMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

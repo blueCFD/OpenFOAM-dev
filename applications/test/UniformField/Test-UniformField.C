@@ -1,4 +1,4 @@
-#include "UniformField.T.H"
+#include "UniformField.H"
 #include "vector.H"
 #include "IOstreams.H"
 

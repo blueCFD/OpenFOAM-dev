@@ -33,7 +33,7 @@ Description
 #define lduInterfaceFieldPtrsList_H
 
 #include "lduInterfaceField.H"
-#include "UPtrList.T.H"
+#include "UPtrList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

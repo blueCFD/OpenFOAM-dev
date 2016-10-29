@@ -38,11 +38,11 @@ SourceFiles
 
 #include "polyPatch.H"
 #include "labelList.H"
-#include "SubList.T.H"
+#include "SubList.H"
 #include "typeInfo.H"
 #include "tmp.H"
 #include "primitiveFields.H"
-#include "SubField.T.H"
+#include "SubField.H"
 #include "fvPatchFieldsFwd.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"

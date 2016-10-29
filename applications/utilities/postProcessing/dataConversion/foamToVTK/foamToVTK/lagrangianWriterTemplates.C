@@ -25,7 +25,7 @@ License
 
 #include "lagrangianWriter.H"
 #include "writeFuns.H"
-#include "IOField.T.H"
+#include "IOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

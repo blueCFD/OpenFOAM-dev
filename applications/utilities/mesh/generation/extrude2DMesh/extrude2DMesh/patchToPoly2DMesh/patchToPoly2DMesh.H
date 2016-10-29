@@ -35,8 +35,8 @@ SourceFiles
 #ifndef patchToPoly2DMesh_H
 #define patchToPoly2DMesh_H
 
-#include "EdgeMap.T.H"
-#include "MeshedSurface.T.H"
+#include "EdgeMap.H"
+#include "MeshedSurface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

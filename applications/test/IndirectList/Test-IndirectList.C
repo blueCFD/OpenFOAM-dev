@@ -25,7 +25,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "IndirectList.T.H"
+#include "IndirectList.H"
 #include "IOstreams.H"
 
 using namespace Foam;

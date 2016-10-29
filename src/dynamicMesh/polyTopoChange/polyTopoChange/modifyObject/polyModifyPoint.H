@@ -33,7 +33,7 @@ Description
 #define polyModifyPoint_H
 
 #include "label.H"
-#include "point.T.H"
+#include "point.H"
 #include "topoAction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

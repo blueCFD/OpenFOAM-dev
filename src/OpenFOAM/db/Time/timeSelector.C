@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "timeSelector.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IStringStream.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

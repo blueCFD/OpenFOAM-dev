@@ -25,7 +25,7 @@ License
 
 #include "CFCCellToCellStencil.H"
 #include "syncTools.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 #include "emptyPolyPatch.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

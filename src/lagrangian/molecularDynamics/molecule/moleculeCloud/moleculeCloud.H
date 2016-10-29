@@ -36,11 +36,11 @@ SourceFiles
 #ifndef moleculeCloud_H
 #define moleculeCloud_H
 
-#include "Cloud.T.H"
+#include "Cloud.H"
 #include "molecule.H"
 #include "IOdictionary.H"
 #include "potential.H"
-#include "InteractionLists.T.H"
+#include "InteractionLists.H"
 #include "labelVector.H"
 #include "Random.H"
 #include "fileName.H"

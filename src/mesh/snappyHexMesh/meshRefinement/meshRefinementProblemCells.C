@@ -26,7 +26,7 @@ License
 #include "meshRefinement.H"
 #include "fvMesh.H"
 #include "syncTools.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "refinementSurfaces.H"
 #include "pointSet.H"
 #include "faceSet.H"
@@ -41,7 +41,7 @@ License
 #include "snapParameters.H"
 #include "motionSmoother.H"
 #include "topoDistanceData.H"
-#include "FaceCellWave.T.H"
+#include "FaceCellWave.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

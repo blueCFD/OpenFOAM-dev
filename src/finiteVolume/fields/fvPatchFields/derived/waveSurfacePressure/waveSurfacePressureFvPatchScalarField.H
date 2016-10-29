@@ -79,7 +79,7 @@ SourceFiles
 #define waveSurfacePressureFvPatchScalarField_H
 
 #include "fixedValueFvPatchFields.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

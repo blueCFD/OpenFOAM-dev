@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "coupledPolyPatch.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "transform.H"
 #include "OFstream.H"
 

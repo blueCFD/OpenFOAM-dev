@@ -33,7 +33,7 @@ Description
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "PhaseIncompressibleTurbulenceModel.T.H"
+#include "PhaseIncompressibleTurbulenceModel.H"
 #include "pimpleControl.H"
 
 #ifdef MPPIC

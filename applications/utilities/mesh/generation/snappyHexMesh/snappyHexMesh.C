@@ -44,7 +44,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "snappyRefineDriver.H"
 #include "snappySnapDriver.H"
@@ -67,8 +67,8 @@ Description
 #include "cellModeller.H"
 #include "uindirectPrimitivePatch.H"
 #include "surfZoneIdentifierList.H"
-#include "UnsortedMeshedSurface.T.H"
-#include "MeshedSurface.T.H"
+#include "UnsortedMeshedSurface.H"
+#include "MeshedSurface.H"
 #include "globalIndex.H"
 #include "IOmanip.H"
 #include "fvMeshTools.H"

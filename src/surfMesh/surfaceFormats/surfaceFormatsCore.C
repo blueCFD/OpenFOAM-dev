@@ -25,10 +25,10 @@ License
 
 #include "surfaceFormatsCore.H"
 
-#include "Time.T.H"
+#include "Time.H"
 #include "IFstream.H"
 #include "OFstream.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 #include "surfMesh.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

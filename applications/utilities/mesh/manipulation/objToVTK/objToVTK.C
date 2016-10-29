@@ -46,8 +46,8 @@ Description
 #include <fstream>
 #include <sstream>
 #include "IStringStream.H"
-#include "point.T.H"
-#include "DynamicList.T.H"
+#include "point.H"
+#include "DynamicList.H"
 
 
 using namespace Foam;

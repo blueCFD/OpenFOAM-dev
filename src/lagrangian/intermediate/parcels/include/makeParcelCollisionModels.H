@@ -28,13 +28,13 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoCollision.T.H"
-#include "PairCollision.T.H"
+#include "NoCollision.H"
+#include "PairCollision.H"
 
-#include "PairSpringSliderDashpot.T.H"
+#include "PairSpringSliderDashpot.H"
 
-#include "WallSpringSliderDashpot.T.H"
-#include "WallLocalSpringSliderDashpot.T.H"
+#include "WallSpringSliderDashpot.H"
+#include "WallLocalSpringSliderDashpot.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

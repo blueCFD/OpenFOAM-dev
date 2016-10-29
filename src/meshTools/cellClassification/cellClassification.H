@@ -93,7 +93,7 @@ SourceFiles
 #define cellClassification_H
 
 #include "pointField.H"
-#include "Map.T.H"
+#include "Map.H"
 #include "boolList.H"
 #include "labelList.H"
 #include "faceList.H"

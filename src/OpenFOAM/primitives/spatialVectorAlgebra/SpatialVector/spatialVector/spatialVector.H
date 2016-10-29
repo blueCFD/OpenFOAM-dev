@@ -35,7 +35,7 @@ SourceFiles
 #ifndef spatialVector_H
 #define spatialVector_H
 
-#include "SpatialVector.T.H"
+#include "SpatialVector.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

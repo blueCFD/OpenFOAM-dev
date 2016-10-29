@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "scalarMatrices.H"
-#include "LUscalarMatrix.T.H"
-#include "LLTMatrix.T.H"
-#include "QRMatrix.T.H"
+#include "LUscalarMatrix.H"
+#include "LLTMatrix.H"
+#include "QRMatrix.H"
 #include "vector.H"
 #include "tensor.H"
 #include "IFstream.H"

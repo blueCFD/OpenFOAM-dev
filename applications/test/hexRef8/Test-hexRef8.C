@@ -31,7 +31,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "pointFields.H"

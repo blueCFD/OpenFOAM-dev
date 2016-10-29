@@ -32,12 +32,12 @@ Description
 
 #include "argList.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "boundaryMesh.H"
 #include "repatchPolyTopoChanger.H"
 #include "unitConversion.H"
 #include "OFstream.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 
 using namespace Foam;
 

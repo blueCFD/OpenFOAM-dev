@@ -27,10 +27,10 @@ License
 
 #include "phaseSystem.H"
 #include "twoPhaseSystem.H"
-#include "MomentumTransferPhaseSystem.T.H"
-#include "HeatTransferPhaseSystem.T.H"
-#include "InterfaceCompositionPhaseChangePhaseSystem.T.H"
-#include "ThermalPhaseChangePhaseSystem.T.H"
+#include "MomentumTransferPhaseSystem.H"
+#include "HeatTransferPhaseSystem.H"
+#include "InterfaceCompositionPhaseChangePhaseSystem.H"
+#include "ThermalPhaseChangePhaseSystem.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

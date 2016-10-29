@@ -30,9 +30,9 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "triSurface.H"
 #include "searchableSurfaces.H"
 #include "conformationSurfaces.H"
@@ -40,7 +40,7 @@ Description
 #include "backgroundMeshDecomposition.H"
 #include "cellShape.H"
 #include "cellModeller.H"
-#include "DynamicField.T.H"
+#include "DynamicField.H"
 #include "isoSurfaceCell.H"
 #include "vtkSurfaceWriter.H"
 #include "syncTools.H"

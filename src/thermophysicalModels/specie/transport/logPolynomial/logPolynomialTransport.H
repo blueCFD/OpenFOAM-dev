@@ -39,7 +39,7 @@ SourceFiles
 #ifndef logPolynomialTransport_H
 #define logPolynomialTransport_H
 
-#include "Polynomial.T.H"
+#include "Polynomial.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

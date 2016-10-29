@@ -39,7 +39,7 @@ SourceFiles
 #ifndef word_H
 #define word_H
 
-#include "string.T.H"
+#include "string.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

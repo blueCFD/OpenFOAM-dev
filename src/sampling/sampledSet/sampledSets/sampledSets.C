@@ -25,10 +25,10 @@ License
 
 #include "sampledSets.H"
 #include "dictionary.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "volFields.H"
-#include "ListListOps.T.H"
-#include "SortableList.T.H"
+#include "ListListOps.H"
+#include "SortableList.H"
 #include "volPointInterpolation.H"
 #include "mapPolyMesh.H"
 #include "addToRunTimeSelectionTable.H"

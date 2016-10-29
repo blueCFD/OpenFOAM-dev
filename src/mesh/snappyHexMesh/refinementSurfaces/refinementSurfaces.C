@@ -24,13 +24,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "refinementSurfaces.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "searchableSurfaces.H"
 #include "shellSurfaces.H"
 #include "triSurfaceMesh.H"
 #include "labelPair.H"
 #include "searchableSurfacesQueries.H"
-#include "UPtrList.T.H"
+#include "UPtrList.H"
 #include "volumeType.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

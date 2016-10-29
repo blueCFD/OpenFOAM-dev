@@ -71,7 +71,7 @@ SourceFiles
 #define uniformJumpAMIFvPatchField_H
 
 #include "fixedJumpAMIFvPatchField.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

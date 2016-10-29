@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "error.H"
-#include "token.T.H"
+#include "token.H"
 
 #include "IOstreams.H"
 #include "scalar.H"

@@ -35,7 +35,7 @@ SourceFiles
 #ifndef spatialTensor_H
 #define spatialTensor_H
 
-#include "SpatialTensor.T.H"
+#include "SpatialTensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

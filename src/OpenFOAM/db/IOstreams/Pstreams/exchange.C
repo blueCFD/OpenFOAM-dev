@@ -26,9 +26,9 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "Pstream.T.H"
+#include "Pstream.H"
 #include "contiguous.H"
-#include "PstreamCombineReduceOps.T.H"
+#include "PstreamCombineReduceOps.H"
 #include "UPstream.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

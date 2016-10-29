@@ -33,7 +33,7 @@ Description
 #define wordIOList_H
 
 #include "wordList.H"
-#include "IOList.T.H"
+#include "IOList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -28,8 +28,8 @@ License
 #include "makeTurbulenceModel.H"
 
 #include "laminar.H"
-#include "RASModel.T.H"
-#include "LESModel.T.H"
+#include "RASModel.H"
+#include "LESModel.H"
 
 makeBaseTurbulenceModel
 (
@@ -61,22 +61,22 @@ makeRASModel(kOmegaSSTSato);
 #include "mixtureKEpsilon.H"
 makeRASModel(mixtureKEpsilon);
 
-#include "LaheyKEpsilon.T.H"
+#include "LaheyKEpsilon.H"
 makeRASModel(LaheyKEpsilon);
 
 #include "continuousGasKEpsilon.H"
 makeRASModel(continuousGasKEpsilon);
 
-#include "Smagorinsky.T.H"
+#include "Smagorinsky.H"
 makeLESModel(Smagorinsky);
 
 #include "kEqn.H"
 makeLESModel(kEqn);
 
-#include "SmagorinskyZhang.T.H"
+#include "SmagorinskyZhang.H"
 makeLESModel(SmagorinskyZhang);
 
-#include "NicenoKEqn.T.H"
+#include "NicenoKEqn.H"
 makeLESModel(NicenoKEqn);
 
 #include "continuousGasKEqn.H"

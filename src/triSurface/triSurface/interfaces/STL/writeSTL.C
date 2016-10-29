@@ -26,7 +26,7 @@ License
 #include "triSurface.H"
 #include "STLtriangle.H"
 #include "primitivePatch.H"
-#include "HashTable.T.H"
+#include "HashTable.H"
 #include "hashSignedLabel.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

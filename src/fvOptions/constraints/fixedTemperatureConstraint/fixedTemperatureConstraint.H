@@ -60,8 +60,8 @@ SourceFiles
 #define fixedTemperatureConstraint_H
 
 #include "cellSetOption.H"
-#include "NamedEnum.T.H"
-#include "Function1.T.H"
+#include "NamedEnum.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

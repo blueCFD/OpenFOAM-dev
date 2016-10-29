@@ -33,7 +33,7 @@ Description
 #define labelListIOList_H
 
 #include "labelList.H"
-#include "CompactIOList.T.H"
+#include "CompactIOList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

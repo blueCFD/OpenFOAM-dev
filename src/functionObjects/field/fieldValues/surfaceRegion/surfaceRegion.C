@@ -31,7 +31,7 @@ License
 #include "sampledSurface.H"
 #include "mergePoints.H"
 #include "indirectPrimitivePatch.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

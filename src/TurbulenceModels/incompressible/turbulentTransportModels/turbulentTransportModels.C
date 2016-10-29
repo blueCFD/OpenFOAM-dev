@@ -23,14 +23,14 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "IncompressibleTurbulenceModel.T.H"
+#include "IncompressibleTurbulenceModel.H"
 #include "incompressible/transportModel/transportModel.H"
 #include "addToRunTimeSelectionTable.H"
 #include "makeTurbulenceModel.H"
 
 #include "laminar.H"
-#include "RASModel.T.H"
-#include "LESModel.T.H"
+#include "RASModel.H"
+#include "LESModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,19 +56,19 @@ makeBaseTurbulenceModel
 // RAS models
 // -------------------------------------------------------------------------- //
 
-#include "SpalartAllmaras.T.H"
+#include "SpalartAllmaras.H"
 makeRASModel(SpalartAllmaras);
 
 #include "kEpsilon.H"
 makeRASModel(kEpsilon);
 
-#include "RNGkEpsilon.T.H"
+#include "RNGkEpsilon.H"
 makeRASModel(RNGkEpsilon);
 
 #include "realizableKE.H"
 makeRASModel(realizableKE);
 
-#include "LaunderSharmaKE.T.H"
+#include "LaunderSharmaKE.H"
 makeRASModel(LaunderSharmaKE);
 
 #include "kOmega.H"
@@ -83,10 +83,10 @@ makeRASModel(kOmegaSSTSAS);
 #include "v2f.H"
 makeRASModel(v2f);
 
-#include "LRR.T.H"
+#include "LRR.H"
 makeRASModel(LRR);
 
-#include "SSG.T.H"
+#include "SSG.H"
 makeRASModel(SSG);
 
 
@@ -94,10 +94,10 @@ makeRASModel(SSG);
 // LES models
 // -------------------------------------------------------------------------- //
 
-#include "Smagorinsky.T.H"
+#include "Smagorinsky.H"
 makeLESModel(Smagorinsky);
 
-#include "WALE.T.H"
+#include "WALE.H"
 makeLESModel(WALE);
 
 #include "kEqn.H"
@@ -112,16 +112,16 @@ makeLESModel(dynamicLagrangian);
 #include "kOmegaSSTDES.H"
 makeLESModel(kOmegaSSTDES);
 
-#include "SpalartAllmarasDES.T.H"
+#include "SpalartAllmarasDES.H"
 makeLESModel(SpalartAllmarasDES);
 
-#include "SpalartAllmarasDDES.T.H"
+#include "SpalartAllmarasDDES.H"
 makeLESModel(SpalartAllmarasDDES);
 
-#include "SpalartAllmarasIDDES.T.H"
+#include "SpalartAllmarasIDDES.H"
 makeLESModel(SpalartAllmarasIDDES);
 
-#include "DeardorffDiffStress.T.H"
+#include "DeardorffDiffStress.H"
 makeLESModel(DeardorffDiffStress);
 
 

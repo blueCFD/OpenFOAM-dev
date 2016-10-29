@@ -37,11 +37,11 @@ SourceFiles
 #define cellDistFuncs_H
 
 #include "scalarField.H"
-#include "HashSet.T.H"
-#include "Map.T.H"
+#include "HashSet.H"
+#include "Map.H"
 #include "wordReList.H"
 #include "scalarField.H"
-#include "point.T.H"
+#include "point.H"
 #include "primitivePatch.H"
 #include "className.H"
 

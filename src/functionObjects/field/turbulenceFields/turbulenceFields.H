@@ -89,8 +89,8 @@ SourceFiles
 #define functionObjects_turbulenceFields_H
 
 #include "fvMeshFunctionObject.H"
-#include "HashSet.T.H"
-#include "NamedEnum.T.H"
+#include "HashSet.H"
+#include "NamedEnum.H"
 #include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

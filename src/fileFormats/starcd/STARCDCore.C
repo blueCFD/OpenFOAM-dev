@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "STARCDCore.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "clock.H"
 #include "PackedBoolList.H"
 #include "IStringStream.H"

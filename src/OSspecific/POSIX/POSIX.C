@@ -49,7 +49,7 @@ Description
 #include "fileStat.H"
 #include "timer.H"
 #include "IFstream.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 #include <fstream>
 #include <cstdlib>

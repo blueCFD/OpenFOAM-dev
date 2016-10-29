@@ -23,18 +23,18 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Pstream.T.H"
+#include "Pstream.H"
 #include "functionObjectList.H"
 #include "streamLine.H"
 #include "fvMesh.H"
 #include "streamLineParticleCloud.H"
-#include "ReadFields.T.H"
+#include "ReadFields.H"
 #include "meshSearch.H"
 #include "sampledSet.H"
 #include "globalIndex.H"
 #include "mapDistribute.H"
 #include "interpolationCellPoint.H"
-#include "PatchTools.T.H"
+#include "PatchTools.H"
 #include "mapPolyMesh.H"
 #include "addToRunTimeSelectionTable.H"
 

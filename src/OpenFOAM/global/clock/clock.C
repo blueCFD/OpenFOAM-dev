@@ -34,7 +34,7 @@ Modifications
 \*---------------------------------------------------------------------------*/
 
 #include "clock.H"
-#include "string.T.H"
+#include "string.H"
 
 #include <sstream>
 #include <iomanip>

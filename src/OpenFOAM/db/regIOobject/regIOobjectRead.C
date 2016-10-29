@@ -25,8 +25,8 @@ License
 
 #include "regIOobject.H"
 #include "IFstream.H"
-#include "Time.T.H"
-#include "Pstream.T.H"
+#include "Time.H"
+#include "Pstream.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

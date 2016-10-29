@@ -27,7 +27,7 @@ License
 #include "OSspecific.H"
 #include "clock.H"
 #include "OFstream.H"
-#include "Pstream.T.H"
+#include "Pstream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

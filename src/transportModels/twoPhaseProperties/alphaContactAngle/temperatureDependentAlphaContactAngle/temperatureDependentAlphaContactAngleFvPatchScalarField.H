@@ -56,7 +56,7 @@ SourceFiles
 #define temperatureDependentAlphaContactAngleFvPatchScalarField_H
 
 #include "alphaContactAngleFvPatchScalarField.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

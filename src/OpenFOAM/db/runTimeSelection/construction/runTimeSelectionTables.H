@@ -32,13 +32,13 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "token.T.H"
+#include "token.H"
 
 #ifndef runTimeSelectionTables_H
 #define runTimeSelectionTables_H
 
 #include "autoPtr.H"
-#include "HashTable.T.H"
+#include "HashTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

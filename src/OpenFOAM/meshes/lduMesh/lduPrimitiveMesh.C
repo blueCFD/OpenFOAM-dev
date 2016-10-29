@@ -25,7 +25,7 @@ License
 
 #include "lduPrimitiveMesh.H"
 #include "processorLduInterface.H"
-#include "EdgeMap.T.H"
+#include "EdgeMap.H"
 #include "labelPair.H"
 #include "processorGAMGInterface.H"
 

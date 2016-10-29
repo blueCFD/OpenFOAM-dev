@@ -42,7 +42,7 @@ Modifications
 #include "error.H"
 #include "JobInfo.H"
 #include "IOstreams.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

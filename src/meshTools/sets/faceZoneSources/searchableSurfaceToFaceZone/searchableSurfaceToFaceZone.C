@@ -28,7 +28,7 @@ License
 #include "faceZoneSet.H"
 #include "searchableSurface.H"
 #include "syncTools.H"
-#include "Time.T.H"
+#include "Time.H"
 
 #include "addToRunTimeSelectionTable.H"
 

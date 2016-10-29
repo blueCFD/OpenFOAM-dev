@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "primitiveMesh.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "indexedOctree.H"
 #include "treeDataCell.H"
 #include "globalMeshData.H"

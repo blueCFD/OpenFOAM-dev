@@ -47,7 +47,7 @@ SourceFiles
 
 #include "pointIndexHit.H"
 #include "triPointRef.H"
-#include "InfoProxy.T.H"
+#include "InfoProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

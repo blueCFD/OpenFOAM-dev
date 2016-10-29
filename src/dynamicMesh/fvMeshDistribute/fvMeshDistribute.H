@@ -52,7 +52,7 @@ SourceFiles
 #ifndef fvMeshDistribute_H
 #define fvMeshDistribute_H
 
-#include "Field.T.H"
+#include "Field.H"
 #include "fvMeshSubset.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

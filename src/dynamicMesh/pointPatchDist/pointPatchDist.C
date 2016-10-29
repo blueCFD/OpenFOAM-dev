@@ -26,7 +26,7 @@ License
 #include "pointPatchDist.H"
 #include "externalPointEdgePoint.H"
 #include "pointMesh.H"
-#include "PointEdgeWave.T.H"
+#include "PointEdgeWave.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

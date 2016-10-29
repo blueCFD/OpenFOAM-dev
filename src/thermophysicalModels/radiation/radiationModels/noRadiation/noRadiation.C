@@ -26,7 +26,7 @@ License
 #include "noRadiation.H"
 #include "physicoChemicalConstants.H"
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "volFields.H"
 #include "addToRunTimeSelectionTable.H"
 

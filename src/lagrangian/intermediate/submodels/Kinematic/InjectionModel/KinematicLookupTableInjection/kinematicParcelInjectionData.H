@@ -37,7 +37,7 @@ SourceFiles
 
 #include "dictionary.H"
 #include "vector.H"
-#include "point.T.H"
+#include "point.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

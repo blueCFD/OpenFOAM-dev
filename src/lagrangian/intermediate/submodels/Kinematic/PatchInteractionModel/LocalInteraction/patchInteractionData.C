@@ -25,7 +25,7 @@ License
 
 #include "patchInteractionData.H"
 #include "dictionaryEntry.H"
-#include "PatchInteractionModel.T.H"
+#include "PatchInteractionModel.H"
 
 // * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * //
 

@@ -25,7 +25,7 @@ License
 
 #include "helpType.H"
 #include "doxygenXmlParser.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

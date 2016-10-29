@@ -35,7 +35,7 @@ SourceFiles
 #ifndef cyclicACMIGAMGInterface_H
 #define cyclicACMIGAMGInterface_H
 
-#include "GAMGInterface.T.H"
+#include "GAMGInterface.H"
 #include "cyclicACMILduInterface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

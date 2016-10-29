@@ -31,7 +31,7 @@ Description
 
 // OpenFOAM includes
 #include "fvMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IFstream.H"
 #include "memInfo.H"
 

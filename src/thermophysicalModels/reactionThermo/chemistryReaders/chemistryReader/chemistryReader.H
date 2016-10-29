@@ -37,8 +37,8 @@ SourceFiles
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
-#include "Reaction.T.H"
-#include "ReactionList.T.H"
+#include "Reaction.H"
+#include "ReactionList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -39,7 +39,7 @@ Description
 #define wordReList_H
 
 #include "wordRe.H"
-#include "List.T.H"
+#include "List.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

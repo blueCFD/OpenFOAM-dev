@@ -25,7 +25,7 @@ License
 
 #include "sampledSets.H"
 #include "volFields.H"
-#include "ListListOps.T.H"
+#include "ListListOps.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

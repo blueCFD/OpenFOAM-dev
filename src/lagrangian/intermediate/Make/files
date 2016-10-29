@@ -92,7 +92,7 @@ $(MPPICCORRECTIONLIMITING)/absolute/absolute.C
 $(MPPICCORRECTIONLIMITING)/relative/relative.C
 
 MPPICTIMESCALE=submodels/MPPIC/TimeScaleModels
-$(MPPICTIMESCALE)/TimeScaleModel/TimeScaleModel.T.C
+$(MPPICTIMESCALE)/TimeScaleModel/TimeScaleModel.C
 $(MPPICTIMESCALE)/equilibrium/equilibrium.C
 $(MPPICTIMESCALE)/nonEquilibrium/nonEquilibrium.C
 $(MPPICTIMESCALE)/isotropic/isotropic.C

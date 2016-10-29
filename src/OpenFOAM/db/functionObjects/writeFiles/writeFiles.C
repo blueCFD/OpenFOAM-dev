@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "writeFiles.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IFstream.H"
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //

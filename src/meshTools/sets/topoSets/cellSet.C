@@ -26,7 +26,7 @@ License
 #include "cellSet.H"
 #include "mapPolyMesh.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

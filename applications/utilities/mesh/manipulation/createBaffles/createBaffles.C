@@ -39,11 +39,11 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyTopoChange.H"
 #include "polyModifyFace.H"
 #include "polyAddFace.H"
-#include "ReadFields.T.H"
+#include "ReadFields.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "fvMeshMapper.H"

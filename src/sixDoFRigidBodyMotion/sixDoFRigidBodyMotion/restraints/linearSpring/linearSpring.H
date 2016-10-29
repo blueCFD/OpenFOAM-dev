@@ -36,7 +36,7 @@ SourceFiles
 #define linearSpring_H
 
 #include "sixDoFRigidBodyMotionRestraint.H"
-#include "point.T.H"
+#include "point.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

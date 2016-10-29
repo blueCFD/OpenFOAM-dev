@@ -27,7 +27,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "string.T.H"
+#include "string.H"
 #include "IOstreams.H"
 
 using namespace Foam;

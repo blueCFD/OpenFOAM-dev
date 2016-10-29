@@ -41,7 +41,7 @@ Usage
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "Time.T.H"
+#include "Time.H"
 
 using namespace Foam;
 

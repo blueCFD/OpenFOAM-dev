@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "tabulated6DoFAcceleration.H"
-#include "Tuple2.T.H"
+#include "Tuple2.H"
 #include "IFstream.H"
 #include "interpolateSplineXY.H"
 

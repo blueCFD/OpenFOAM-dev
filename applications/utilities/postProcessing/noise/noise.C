@@ -80,9 +80,9 @@ See also
 
 #include "noiseFFT.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "writeFiles.H"
-#include "CSV.T.H"
+#include "CSV.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

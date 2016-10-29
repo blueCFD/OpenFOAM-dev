@@ -33,7 +33,7 @@ Description
 #define IOsampledSets_H
 
 #include "sampledSets.H"
-#include "IOOutputFilter.T.H"
+#include "IOOutputFilter.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

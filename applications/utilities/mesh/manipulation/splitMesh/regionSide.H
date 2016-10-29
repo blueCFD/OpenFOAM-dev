@@ -44,7 +44,7 @@ SourceFiles
 #ifndef regionSide_H
 #define regionSide_H
 
-#include "HashSet.T.H"
+#include "HashSet.H"
 #include "typeInfo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -25,10 +25,10 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "UIndirectList.T.H"
-#include "DynamicList.T.H"
+#include "UIndirectList.H"
+#include "DynamicList.H"
 #include "IOstreams.H"
-#include "ListOps.T.H"
+#include "ListOps.H"
 #include "OFstream.H"
 
 using namespace Foam;

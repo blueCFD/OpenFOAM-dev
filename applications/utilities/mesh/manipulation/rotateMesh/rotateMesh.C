@@ -31,7 +31,7 @@ Description
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"

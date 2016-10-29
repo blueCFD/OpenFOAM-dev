@@ -83,7 +83,7 @@ SourceFiles
 #define fanFvPatchField_H
 
 #include "uniformJumpFvPatchField.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

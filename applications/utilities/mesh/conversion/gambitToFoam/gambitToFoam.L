@@ -58,14 +58,14 @@ Description
 using namespace Foam;
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "emptyPolyPatch.H"
 #include "preservePatchTypes.H"
 #include "cellModeller.H"
 #include "cellShape.H"
-#include "SLList.T.H"
-#include "SLPtrList.T.H"
+#include "SLList.H"
+#include "SLPtrList.H"
 
 label nPoints = 0;
 label nCells = 0;

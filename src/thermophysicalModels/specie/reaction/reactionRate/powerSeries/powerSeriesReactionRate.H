@@ -37,7 +37,7 @@ SourceFiles
 
 #include "scalarField.H"
 #include "typeInfo.H"
-#include "FixedList.T.H"
+#include "FixedList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -103,7 +103,7 @@ SourceFiles
 #include "cellSetOption.H"
 #include "cylindricalCS.H"
 #include "cylindrical.H"
-#include "NamedEnum.T.H"
+#include "NamedEnum.H"
 #include "bladeModel.H"
 #include "profileModelList.H"
 #include "volFieldsFwd.H"

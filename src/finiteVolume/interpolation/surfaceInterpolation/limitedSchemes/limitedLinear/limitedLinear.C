@@ -23,8 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "LimitedScheme.T.H"
-#include "Limited01.T.H"
+#include "LimitedScheme.H"
+#include "Limited01.H"
 #include "limitedLinear.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

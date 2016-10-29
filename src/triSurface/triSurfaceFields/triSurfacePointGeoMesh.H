@@ -34,7 +34,7 @@ Description
 #ifndef triSurfacePointGeoMesh_H
 #define triSurfacePointGeoMesh_H
 
-#include "GeoMesh.T.H"
+#include "GeoMesh.H"
 #include "triSurface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

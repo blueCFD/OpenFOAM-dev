@@ -27,10 +27,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "volFields.H"
-#include "PatchEdgeFaceWave.T.H"
+#include "PatchEdgeFaceWave.H"
 #include "patchEdgeFaceInfo.H"
 #include "patchPatchDist.H"
 

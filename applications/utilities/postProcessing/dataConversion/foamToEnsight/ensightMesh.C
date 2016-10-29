@@ -25,10 +25,10 @@ License
 
 #include "ensightMesh.H"
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "fvMesh.H"
 #include "globalMeshData.H"
-#include "PstreamCombineReduceOps.T.H"
+#include "PstreamCombineReduceOps.H"
 #include "processorPolyPatch.H"
 #include "cellModeller.H"
 #include "IOmanip.H"

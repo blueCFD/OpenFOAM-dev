@@ -25,7 +25,7 @@ License
 
 #include "checkTopology.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "regionSplit.H"
 #include "cellSet.H"
 #include "faceSet.H"

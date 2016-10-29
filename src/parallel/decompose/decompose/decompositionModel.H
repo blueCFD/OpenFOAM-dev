@@ -35,7 +35,7 @@ SourceFiles
 #define decompositionModel_H
 
 #include "IOdictionary.H"
-#include "MeshObject.T.H"
+#include "MeshObject.H"
 #include "decompositionMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

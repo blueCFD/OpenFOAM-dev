@@ -40,7 +40,7 @@ SourceFiles
 #define functionObjects_writeFile_H
 
 #include "regionFunctionObject.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "IOmanip.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

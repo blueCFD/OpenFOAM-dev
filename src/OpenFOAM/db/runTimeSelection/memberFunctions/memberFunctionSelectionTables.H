@@ -29,12 +29,12 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "token.T.H"
+#include "token.H"
 
 #ifndef memberFunctionSelectionTables_H
 #define memberFunctionSelectionTables_H
 
-#include "HashTable.T.H"
+#include "HashTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

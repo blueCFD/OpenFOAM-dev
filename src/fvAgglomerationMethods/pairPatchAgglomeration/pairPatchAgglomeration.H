@@ -38,8 +38,8 @@ SourceFiles
 #include "mathematicalConstants.H"
 #include "polyPatch.H"
 #include "indirectPrimitivePatch.H"
-#include "List.T.H"
-#include "EdgeMap.T.H"
+#include "List.H"
+#include "EdgeMap.H"
 
 namespace Foam
 {

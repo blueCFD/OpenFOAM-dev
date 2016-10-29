@@ -37,7 +37,7 @@ SourceFiles
 
 #include "polyMesh.H"
 #include "pointField.H"
-#include "CompactListList.T.H"
+#include "CompactListList.H"
 
 namespace Foam
 {

@@ -35,8 +35,8 @@ Description
 #include "argList.H"
 #include "OFstream.H"
 #include "OBJstream.H"
-#include "SortableList.T.H"
-#include "PatchTools.T.H"
+#include "SortableList.H"
+#include "PatchTools.H"
 #include "vtkSurfaceWriter.H"
 
 using namespace Foam;

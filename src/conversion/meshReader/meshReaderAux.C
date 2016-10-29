@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "meshReader.H"
-#include "IOMap.T.H"
+#include "IOMap.H"
 #include "OFstream.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * * Static Functions  * * * * * * * * * * * * * //
 

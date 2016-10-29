@@ -35,7 +35,7 @@ Description
 #include "fvCFD.H"
 #include "meshToMesh0.H"
 #include "processorFvPatch.H"
-#include "MapMeshes.T.H"
+#include "MapMeshes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

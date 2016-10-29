@@ -29,7 +29,7 @@ License
 #include "fvMesh.H"
 #include "volMesh.H"
 #include "surfaceMesh.H"
-#include "GeometricField.T.H"
+#include "GeometricField.H"
 #include "zeroGradientFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

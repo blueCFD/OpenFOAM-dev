@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "regIOobject.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "registerSwitch.H"
 

@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "UPstream.H"
-#include "debug.T.H"
+#include "debug.H"
 #include "registerSwitch.H"
 #include "dictionary.H"
 #include "IOstreams.H"

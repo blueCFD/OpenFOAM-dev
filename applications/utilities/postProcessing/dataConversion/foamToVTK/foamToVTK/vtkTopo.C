@@ -32,7 +32,7 @@ Description
 #include "polyMesh.H"
 #include "cellShape.H"
 #include "cellModeller.H"
-#include "Swap.T.H"
+#include "Swap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

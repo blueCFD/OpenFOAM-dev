@@ -32,7 +32,7 @@ Description
 #ifndef linearNormal_H
 #define linearNormal_H
 
-#include "point.T.H"
+#include "point.H"
 #include "extrudeModel.H"
 #include "scalarList.H"
 

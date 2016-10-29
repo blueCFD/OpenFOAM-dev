@@ -28,8 +28,8 @@ License
 #include "syncTools.H"
 #include "OFstream.H"
 #include "meshTools.H"
-#include "Time.T.H"
-#include "SortableList.T.H"
+#include "Time.H"
+#include "SortableList.H"
 
 // * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * * //
 

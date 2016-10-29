@@ -32,7 +32,7 @@ Description
 #ifndef patchInteractionData_H
 #define patchInteractionData_H
 
-#include "Istream.T.H"
+#include "Istream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

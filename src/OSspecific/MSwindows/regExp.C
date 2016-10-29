@@ -38,8 +38,8 @@ Modifications
 
 #include "regExp.H"
 #include "label.H"
-#include "string.T.H"
-#include "List.T.H"
+#include "string.H"
+#include "List.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

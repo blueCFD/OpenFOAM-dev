@@ -39,7 +39,7 @@ Description
 
 #include "argList.H"
 #include "polyMesh.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "undoableMeshCutter.H"
 #include "hexCellLooper.H"
 #include "cellSet.H"
@@ -50,7 +50,7 @@ Description
 #include "labelIOList.H"
 #include "wedgePolyPatch.H"
 #include "plane.H"
-#include "SubField.T.H"
+#include "SubField.H"
 
 using namespace Foam;
 

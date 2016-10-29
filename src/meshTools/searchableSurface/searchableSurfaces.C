@@ -25,10 +25,10 @@ License
 
 #include "searchableSurfaces.H"
 #include "searchableSurfacesQueries.H"
-#include "ListOps.T.H"
-#include "Time.T.H"
-#include "DynamicField.T.H"
-#include "PatchTools.T.H"
+#include "ListOps.H"
+#include "Time.H"
+#include "DynamicField.H"
+#include "PatchTools.H"
 #include "triSurfaceMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

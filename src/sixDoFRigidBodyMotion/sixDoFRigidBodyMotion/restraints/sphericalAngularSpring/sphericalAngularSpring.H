@@ -36,7 +36,7 @@ SourceFiles
 #define sphericalAngularSpring_H
 
 #include "sixDoFRigidBodyMotionRestraint.H"
-#include "point.T.H"
+#include "point.H"
 #include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

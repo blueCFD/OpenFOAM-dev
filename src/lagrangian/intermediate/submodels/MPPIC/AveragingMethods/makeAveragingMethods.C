@@ -23,13 +23,13 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Field.T.H"
+#include "Field.H"
 #include "fvcGrad.H"
 #include "polyMeshTetDecomposition.H"
 
-#include "Basic.T.H"
-#include "Dual.T.H"
-#include "Moment.T.H"
+#include "Basic.H"
+#include "Dual.H"
+#include "Moment.H"
 
 // Scalar interpolation
 defineNamedTemplateTypeNameAndDebug(Foam::AveragingMethod<Foam::scalar>, 0);

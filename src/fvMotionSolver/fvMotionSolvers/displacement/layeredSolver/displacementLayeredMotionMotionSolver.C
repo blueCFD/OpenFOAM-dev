@@ -27,7 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "pointEdgeStructuredWalk.H"
 #include "pointFields.H"
-#include "PointEdgeWave.T.H"
+#include "PointEdgeWave.H"
 #include "syncTools.H"
 #include "interpolationTable.H"
 #include "mapPolyMesh.H"

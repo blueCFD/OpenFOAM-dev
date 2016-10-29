@@ -25,13 +25,13 @@ License
 
 #include "geomCellLooper.H"
 #include "polyMesh.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "plane.H"
 #include "meshTools.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 #include "triSurfaceTools.H"
-#include "HashSet.T.H"
-#include "ListOps.T.H"
+#include "HashSet.H"
+#include "ListOps.H"
 #include "transform.H"
 
 #include "addToRunTimeSelectionTable.H"

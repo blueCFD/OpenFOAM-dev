@@ -34,12 +34,12 @@ Note
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 #include "extrude2DMesh.H"
 #include "extrudeModel.H"
 #include "polyTopoChange.H"
-#include "MeshedSurface.T.H"
+#include "MeshedSurface.H"
 #include "edgeCollapser.H"
 #include "addPatchCellLayer.H"
 #include "patchToPoly2DMesh.H"

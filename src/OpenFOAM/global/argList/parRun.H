@@ -32,7 +32,7 @@ Description
 #ifndef parRun_H
 #define parRun_H
 
-#include "Pstream.T.H"
+#include "Pstream.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

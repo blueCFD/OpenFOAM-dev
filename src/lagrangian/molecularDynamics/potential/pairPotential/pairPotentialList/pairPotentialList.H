@@ -35,7 +35,7 @@ SourceFiles
 #ifndef pairPotentialList_H
 #define pairPotentialList_H
 
-#include "PtrList.T.H"
+#include "PtrList.H"
 #include "word.H"
 #include "pairPotential.H"
 #include "polyMesh.H"

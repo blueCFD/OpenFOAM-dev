@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "IOstreams.H"
-#include "face.T.H"
+#include "face.H"
 #include "triPointRef.H"
-#include "Swap.T.H"
+#include "Swap.H"
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 

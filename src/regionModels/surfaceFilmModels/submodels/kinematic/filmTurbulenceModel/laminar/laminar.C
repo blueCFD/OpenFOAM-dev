@@ -27,7 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "fvMesh.H"
 #include "fvMatrices.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "volFields.H"
 #include "fvmSup.H"
 #include "kinematicSingleLayer.H"

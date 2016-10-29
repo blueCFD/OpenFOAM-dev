@@ -35,7 +35,7 @@ SourceFiles
 #ifndef treeDataFace_H
 #define treeDataFace_H
 
-#include "face.T.H"
+#include "face.H"
 #include "indexedOctree.H"
 #include "treeBoundBoxList.H"
 #include "PackedBoolList.H"

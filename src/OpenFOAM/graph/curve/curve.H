@@ -35,7 +35,7 @@ SourceFiles
 #ifndef curve_H
 #define curve_H
 
-#include "string.T.H"
+#include "string.H"
 #include "primitiveFields.H"
 #include "autoPtr.H"
 

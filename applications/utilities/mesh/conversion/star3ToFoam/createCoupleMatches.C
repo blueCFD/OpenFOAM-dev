@@ -31,7 +31,7 @@ Description
 #include "pointHit.H"
 #include "IOmanip.H"
 #include "boundBox.H"
-#include "Map.T.H"
+#include "Map.H"
 #include "unitConversion.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

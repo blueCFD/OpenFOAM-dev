@@ -30,7 +30,7 @@ License
 #include "triSurface.H"
 #include "triSurfaceTools.H"
 #include "OBJstream.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "matchPoints.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

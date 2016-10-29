@@ -41,7 +41,7 @@ SourceFiles
 
 #include "writeFile.H"
 #include "OFstream.H"
-#include "PtrList.T.H"
+#include "PtrList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

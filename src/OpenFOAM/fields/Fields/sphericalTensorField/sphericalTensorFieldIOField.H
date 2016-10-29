@@ -33,7 +33,7 @@ Description
 #define sphericalTensorFieldIOField_H
 
 #include "sphericalTensorField.H"
-#include "CompactIOField.T.H"
+#include "CompactIOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

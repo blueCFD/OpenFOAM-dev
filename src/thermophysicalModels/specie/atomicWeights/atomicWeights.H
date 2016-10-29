@@ -36,7 +36,7 @@ SourceFiles
 #define atomicWeights_H
 
 #include "scalar.H"
-#include "HashTable.T.H"
+#include "HashTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

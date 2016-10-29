@@ -42,10 +42,10 @@ Usage
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
 
-#include "MeshedSurfaces.T.H"
+#include "MeshedSurfaces.H"
 
 using namespace Foam;
 

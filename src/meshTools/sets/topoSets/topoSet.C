@@ -27,7 +27,7 @@ License
 #include "mapPolyMesh.H"
 #include "polyMesh.H"
 #include "boundBox.H"
-#include "Time.T.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

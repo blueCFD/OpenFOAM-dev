@@ -24,10 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "primitiveMesh.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 #include "demandDrivenData.H"
-#include "SortableList.T.H"
-#include "ListOps.T.H"
+#include "SortableList.H"
+#include "ListOps.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

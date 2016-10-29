@@ -43,8 +43,8 @@ SourceFiles
 #define searchableSurfaceWithGaps_H
 
 #include "searchableSurface.H"
-#include "UPtrList.T.H"
-#include "Pair.T.H"
+#include "UPtrList.H"
+#include "Pair.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

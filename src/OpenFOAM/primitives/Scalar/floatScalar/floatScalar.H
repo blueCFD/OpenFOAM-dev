@@ -92,7 +92,7 @@ inline Scalar func(const Scalar s) \
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "Scalar.T.H"
+#include "Scalar.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

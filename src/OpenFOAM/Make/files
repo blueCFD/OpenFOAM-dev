@@ -98,7 +98,7 @@ $(strings)/stringOps/stringOps.C
 ops = primitives/ops
 $(ops)/flipOp.C
 
-primitives/hashes/Hasher/Hasher.T.C
+primitives/hashes/Hasher/Hasher.C
 
 sha1 = primitives/hashes/SHA1
 $(sha1)/SHA1.C
@@ -118,21 +118,21 @@ $(spatialVectorAlgebra)/SpatialVector/spatialVector/spatialVector.C
 $(spatialVectorAlgebra)/SpatialTensor/spatialTensor/spatialTensor.C
 $(spatialVectorAlgebra)/CompactSpatialTensor/compactSpatialTensor/compactSpatialTensor.C
 
-containers/HashTables/HashTable/HashTableCore.T.C
-containers/HashTables/StaticHashTable/StaticHashTableCore.T.C
-containers/Lists/SortableList/ParSortableListName.T.C
-containers/Lists/PackedList/PackedListCore.T.C
+containers/HashTables/HashTable/HashTableCore.C
+containers/HashTables/StaticHashTable/StaticHashTableCore.C
+containers/Lists/SortableList/ParSortableListName.C
+containers/Lists/PackedList/PackedListCore.C
 containers/Lists/PackedList/PackedBoolList.C
-containers/Lists/ListOps/ListOps.T.C
-containers/LinkedLists/linkTypes/SLListBase/SLListBase.T.C
-containers/LinkedLists/linkTypes/DLListBase/DLListBase.T.C
+containers/Lists/ListOps/ListOps.C
+containers/LinkedLists/linkTypes/SLListBase/SLListBase.C
+containers/LinkedLists/linkTypes/DLListBase/DLListBase.C
 
 Streams = db/IOstreams
 $(Streams)/token/tokenIO.C
 
 IOstreams = $(Streams)/IOstreams
 $(IOstreams)/IOstream.C
-$(IOstreams)/Istream.T.C
+$(IOstreams)/Istream.C
 $(IOstreams)/Ostream.C
 
 Sstreams = $(Streams)/Sstreams
@@ -160,10 +160,10 @@ $(Pstreams)/UIPstream.C
 $(Pstreams)/IPstream.C
 /* $(Pstreams)/UPstream.C in global.Cver */
 $(Pstreams)/UPstreamCommsStruct.C
-$(Pstreams)/Pstream.T.C
+$(Pstreams)/Pstream.C
 $(Pstreams)/UOPstream.C
 $(Pstreams)/OPstream.C
-$(Pstreams)/PstreamBuffers.T.C
+$(Pstreams)/PstreamBuffers.C
 
 dictionary = db/dictionary
 $(dictionary)/dictionary.C
@@ -196,7 +196,7 @@ IOdictionary = db/IOobjects/IOdictionary
 $(IOdictionary)/IOdictionary.C
 $(IOdictionary)/IOdictionaryIO.C
 
-db/IOobjects/IOMap/IOMapName.T.C
+db/IOobjects/IOMap/IOMapName.C
 
 IOobject = db/IOobject
 $(IOobject)/IOobject.C
@@ -211,7 +211,7 @@ $(regIOobject)/regIOobjectWrite.C
 
 db/IOobjectList/IOobjectList.C
 db/objectRegistry/objectRegistry.C
-db/CallbackRegistry/CallbackRegistryName.T.C
+db/CallbackRegistry/CallbackRegistryName.C
 
 dll = db/dynamicLibrary
 $(dll)/dlLibraryTable/dlLibraryTable.C
@@ -228,10 +228,10 @@ db/functionObjects/timeControl/timeControlFunctionObject.C
 db/functionObjects/regionFunctionObject/regionFunctionObject.C
 
 Time = db/Time
-$(Time)/TimePaths.T.C
-$(Time)/TimeState.T.C
-$(Time)/Time.T.C
-$(Time)/TimeIO.T.C
+$(Time)/TimePaths.C
+$(Time)/TimeState.C
+$(Time)/Time.C
+$(Time)/TimeIO.C
 $(Time)/findTimes.C
 $(Time)/subCycleTime.C
 $(Time)/findInstance.C
@@ -254,7 +254,7 @@ $(scalarMatrices)/scalarMatrices.C
 $(scalarMatrices)/SVD/SVD.C
 
 LUscalarMatrix = matrices/LUscalarMatrix
-$(LUscalarMatrix)/LUscalarMatrix.T.C
+$(LUscalarMatrix)/LUscalarMatrix.C
 $(LUscalarMatrix)/procLduMatrix.C
 $(LUscalarMatrix)/procLduInterface.C
 
@@ -308,15 +308,15 @@ $(GAMG)/GAMGSolverScale.C
 $(GAMG)/GAMGSolverSolve.C
 
 GAMGInterfaces = $(GAMG)/interfaces
-$(GAMGInterfaces)/GAMGInterface/GAMGInterface.T.C
-$(GAMGInterfaces)/GAMGInterface/GAMGInterfaceNew.T.C
+$(GAMGInterfaces)/GAMGInterface/GAMGInterface.C
+$(GAMGInterfaces)/GAMGInterface/GAMGInterfaceNew.C
 $(GAMGInterfaces)/processorGAMGInterface/processorGAMGInterface.C
 $(GAMGInterfaces)/processorCyclicGAMGInterface/processorCyclicGAMGInterface.C
 $(GAMGInterfaces)/cyclicGAMGInterface/cyclicGAMGInterface.C
 
 GAMGInterfaceFields = $(GAMG)/interfaceFields
-$(GAMGInterfaceFields)/GAMGInterfaceField/GAMGInterfaceField.T.C
-$(GAMGInterfaceFields)/GAMGInterfaceField/GAMGInterfaceFieldNew.T.C
+$(GAMGInterfaceFields)/GAMGInterfaceField/GAMGInterfaceField.C
+$(GAMGInterfaceFields)/GAMGInterfaceField/GAMGInterfaceFieldNew.C
 $(GAMGInterfaceFields)/processorGAMGInterfaceField/processorGAMGInterfaceField.C
 $(GAMGInterfaceFields)/processorCyclicGAMGInterfaceField/processorCyclicGAMGInterfaceField.C
 $(GAMGInterfaceFields)/cyclicGAMGInterfaceField/cyclicGAMGInterfaceField.C
@@ -324,7 +324,7 @@ $(GAMGInterfaceFields)/cyclicGAMGInterfaceField/cyclicGAMGInterfaceField.C
 GAMGAgglomerations = $(GAMG)/GAMGAgglomerations
 
 GAMGAgglomeration = $(GAMGAgglomerations)/GAMGAgglomeration
-$(GAMGAgglomeration)/GAMGAgglomeration.T.C
+$(GAMGAgglomeration)/GAMGAgglomeration.C
 $(GAMGAgglomeration)/GAMGAgglomerateLduAddressing.C
 
 pairGAMGAgglomeration = $(GAMGAgglomerations)/pairGAMGAgglomeration
@@ -360,7 +360,7 @@ meshes/lduMesh/lduPrimitiveMesh.C
 LduMatrix = matrices/LduMatrix
 $(LduMatrix)/LduMatrix/lduMatrices.C
 $(LduMatrix)/LduMatrix/solverPerformance.C
-$(LduMatrix)/LduMatrix/LduInterfaceField/LduInterfaceFields.T.C
+$(LduMatrix)/LduMatrix/LduInterfaceField/LduInterfaceFields.C
 $(LduMatrix)/Smoothers/lduSmoothers.C
 $(LduMatrix)/Preconditioners/lduPreconditioners.C
 $(LduMatrix)/Solvers/lduSolvers.C
@@ -523,8 +523,8 @@ $(mapPolyMesh)/mapDistribute/mapDistributePolyMesh.C
 $(mapPolyMesh)/mapDistribute/IOmapDistribute.C
 $(mapPolyMesh)/mapAddedPolyMesh.C
 
-PrimitivePatch = $(primitiveMesh)/PrimitivePatch.T
-$(PrimitivePatch)/PrimitivePatchName.T.C
+PrimitivePatch = $(primitiveMesh)/PrimitivePatch
+$(PrimitivePatch)/PrimitivePatchName.C
 
 pointMesh = meshes/pointMesh
 $(pointMesh)/pointMesh.C
@@ -637,7 +637,7 @@ meshes/preservePatchTypes/preservePatchTypes.C
 
 interpolations = interpolations
 interpolation = $(interpolations)/interpolation
-$(interpolations)/patchToPatchInterpolation/PatchToPatchInterpolationName.T.C
+$(interpolations)/patchToPatchInterpolation/PatchToPatchInterpolationName.C
 
 $(interpolations)/interpolationTable/tableReaders/tableReaders.C
 $(interpolations)/interpolationTable/tableReaders/openFoam/openFoamTableReaders.C

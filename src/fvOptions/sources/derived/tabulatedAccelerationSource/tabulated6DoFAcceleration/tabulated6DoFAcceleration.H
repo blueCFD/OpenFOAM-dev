@@ -39,8 +39,8 @@ SourceFiles
 #define tabulated6DoFAcceleration_H
 
 #include "primitiveFields.H"
-#include "Vector2D.T.H"
-#include "Time.T.H"
+#include "Vector2D.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

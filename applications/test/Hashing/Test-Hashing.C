@@ -38,7 +38,7 @@ Description
 #include "edgeList.H"
 #include "triFaceList.H"
 
-#include "Hash.T.H"
+#include "Hash.H"
 
 using namespace Foam;
 

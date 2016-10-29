@@ -36,7 +36,7 @@ SourceFiles
 #ifndef topoDistanceData_H
 #define topoDistanceData_H
 
-#include "point.T.H"
+#include "point.H"
 #include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

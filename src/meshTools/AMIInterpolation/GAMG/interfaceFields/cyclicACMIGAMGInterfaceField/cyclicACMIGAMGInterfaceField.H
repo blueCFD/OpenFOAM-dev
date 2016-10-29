@@ -36,7 +36,7 @@ SourceFiles
 #ifndef cyclicACMIGAMGInterfaceField_H
 #define cyclicACMIGAMGInterfaceField_H
 
-#include "GAMGInterfaceField.T.H"
+#include "GAMGInterfaceField.H"
 #include "cyclicACMIGAMGInterface.H"
 #include "cyclicACMILduInterfaceField.H"
 

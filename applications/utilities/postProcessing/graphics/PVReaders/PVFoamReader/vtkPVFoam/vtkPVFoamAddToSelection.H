@@ -28,7 +28,7 @@ License
 
 // OpenFOAM includes
 #include "IOobjectList.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 
 // VTK includes
 #include "vtkDataArraySelection.h"

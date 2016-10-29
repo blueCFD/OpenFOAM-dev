@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "boundaryRegion.H"
-#include "IOMap.T.H"
+#include "IOMap.H"
 #include "OFstream.H"
 #include "stringListOps.H"
 

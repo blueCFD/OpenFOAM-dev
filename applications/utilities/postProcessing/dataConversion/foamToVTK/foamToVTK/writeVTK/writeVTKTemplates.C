@@ -25,7 +25,7 @@ License
 
 #include "writeVTK.H"
 #include "objectRegistry.H"
-#include "DynamicList.T.H"
+#include "DynamicList.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

@@ -33,7 +33,7 @@ Description
 #define stringIOList_H
 
 #include "stringList.H"
-#include "IOList.T.H"
+#include "IOList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

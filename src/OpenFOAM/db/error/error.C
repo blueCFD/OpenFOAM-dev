@@ -28,7 +28,7 @@ License
 #include "fileName.H"
 #include "dictionary.H"
 #include "JobInfo.H"
-#include "Pstream.T.H"
+#include "Pstream.H"
 #include "OSspecific.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

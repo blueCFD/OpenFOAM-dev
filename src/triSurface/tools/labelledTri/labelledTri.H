@@ -36,7 +36,7 @@ SourceFiles
 #define labelledTri_H
 
 #include "triFace.H"
-#include "ListListOps.T.H"
+#include "ListListOps.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

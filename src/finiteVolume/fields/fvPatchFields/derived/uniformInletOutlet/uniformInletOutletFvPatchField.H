@@ -69,7 +69,7 @@ SourceFiles
 #define uniformInletOutletFvPatchField_H
 
 #include "mixedFvPatchField.H"
-#include "Function1.T.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

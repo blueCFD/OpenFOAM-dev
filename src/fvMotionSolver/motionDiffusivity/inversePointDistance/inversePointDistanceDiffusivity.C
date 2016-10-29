@@ -25,9 +25,9 @@ License
 
 #include "inversePointDistanceDiffusivity.H"
 #include "addToRunTimeSelectionTable.H"
-#include "HashSet.T.H"
+#include "HashSet.H"
 #include "pointEdgePoint.H"
-#include "PointEdgeWave.T.H"
+#include "PointEdgeWave.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

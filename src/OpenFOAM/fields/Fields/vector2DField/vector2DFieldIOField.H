@@ -33,7 +33,7 @@ Description
 #define vector2DFieldIOField_H
 
 #include "vector2DField.H"
-#include "CompactIOField.T.H"
+#include "CompactIOField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

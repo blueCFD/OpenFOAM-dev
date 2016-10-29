@@ -31,10 +31,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "polyMesh.H"
-#include "ListOps.T.H"
-#include "face.T.H"
+#include "ListOps.H"
+#include "face.H"
 #include "tetrahedron.H"
 #include "triFaceList.H"
 #include "OFstream.H"

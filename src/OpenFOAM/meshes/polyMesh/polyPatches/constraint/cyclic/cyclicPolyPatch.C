@@ -30,10 +30,10 @@ License
 #include "demandDrivenData.H"
 #include "OFstream.H"
 #include "matchPoints.H"
-#include "EdgeMap.T.H"
-#include "Time.T.H"
+#include "EdgeMap.H"
+#include "Time.H"
 #include "transformField.H"
-#include "SubField.T.H"
+#include "SubField.H"
 #include "unitConversion.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

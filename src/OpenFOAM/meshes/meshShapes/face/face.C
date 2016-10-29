@@ -23,12 +23,12 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "face.T.H"
+#include "face.H"
 #include "triFace.H"
 #include "triPointRef.H"
 #include "mathematicalConstants.H"
-#include "Swap.T.H"
-#include "ConstCirculator.T.H"
+#include "Swap.H"
+#include "ConstCirculator.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

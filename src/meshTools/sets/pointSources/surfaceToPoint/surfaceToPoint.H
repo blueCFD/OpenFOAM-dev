@@ -42,7 +42,7 @@ SourceFiles
 #define surfaceToPoint_H
 
 #include "topoSetSource.H"
-#include "Map.T.H"
+#include "Map.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

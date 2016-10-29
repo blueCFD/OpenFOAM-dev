@@ -32,7 +32,7 @@ Description
 #include "argList.H"
 #include "fvMesh.H"
 #include "volFields.H"
-#include "Time.T.H"
+#include "Time.H"
 #include "OFstream.H"
 #include "meshTools.H"
 #include "removeFaces.H"

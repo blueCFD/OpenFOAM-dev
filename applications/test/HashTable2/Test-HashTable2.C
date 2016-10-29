@@ -26,9 +26,9 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "HashTable.T.H"
-#include "HashPtrTable.T.H"
-#include "Map.T.H"
+#include "HashTable.H"
+#include "HashPtrTable.H"
+#include "Map.H"
 
 using namespace Foam;
 

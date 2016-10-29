@@ -25,7 +25,7 @@ License
 
 #include "searchablePlate.H"
 #include "addToRunTimeSelectionTable.H"
-#include "SortableList.T.H"
+#include "SortableList.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

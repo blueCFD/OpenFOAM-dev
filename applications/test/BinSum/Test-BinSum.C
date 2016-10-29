@@ -29,8 +29,8 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "List.T.H"
-#include "BinSum.T.H"
+#include "List.H"
+#include "BinSum.H"
 #include "IOstreams.H"
 #include "Random.H"
 #include "scalarField.H"
