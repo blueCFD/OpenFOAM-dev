@@ -39,7 +39,7 @@
 
 executableName=$1
 
-if [ "${executableName}" == "${executableName%.exe}" ]
+if [ "${executableName}" = "${executableName%.exe}" ]
 then
     executableName=${executableName}.exe
 fi
