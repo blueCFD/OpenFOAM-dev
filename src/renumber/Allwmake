@@ -26,7 +26,12 @@ set -x
 
 wmake $targetType renumberMethods
 
-if [ -n "$BOOST_ARCH_PATH" -o "$boost_version" = "boost-system" ]
+if isMinGW && ! onWin
+then
+    echo
+    echo "Forcefully skipping SloanRenumber, since we're cross-compiling"
+    echo
+elif [ -n "$BOOST_ARCH_PATH" -o "$boost_version" = "boost-system" ]
 then
     wmake $targetType SloanRenumber
 else
