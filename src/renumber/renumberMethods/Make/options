@@ -10,4 +10,4 @@ LIB_LIBS = \
 
 LIB_LIBS += \
     -lfiniteVolume \
-    -lmeshtools
+    -lmeshTools
