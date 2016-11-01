@@ -1,0 +1,3 @@
+SUFFIXES += .rc
+
+rctoo = $(WM_COMPILER_ARCH)-windres $(@D)/$(<F) $@
