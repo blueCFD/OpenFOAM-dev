@@ -75,11 +75,17 @@ mingw_w64)
     ;;
 esac
 
+if [ "$(uname -s)" = "Linux" ]
+then
+    # Need to change prefix for cross-compiling
+    WM_ARCH=linux$WM_ARCH
+fi
+
 # Finally export WM_COMPILER_ARCH and WM_ARCH
 export WM_COMPILER_ARCH
 export WM_ARCH
 
-case "`uname -s`" in
+case "$(uname -s)" in
 Linux | CYGWIN* | MINGW*)
 
     # compiler specifics

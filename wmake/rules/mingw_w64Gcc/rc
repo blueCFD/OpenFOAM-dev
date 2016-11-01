@@ -1,0 +1,3 @@
+SUFFIXES += .rc
+
+rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) $(@D)/$(<F) $@

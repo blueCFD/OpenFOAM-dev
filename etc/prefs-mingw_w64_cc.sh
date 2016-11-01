@@ -30,13 +30,13 @@
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
 # File
-#     etc/prefs-mingw_w32.sh
+#     etc/prefs-mingw_w64_cc.sh
 #
 # Description
 #     Preset variables for the OpenFOAM configuration - POSIX shell syntax.
 #
 #     This file will only be sourced if set when calling bashrc. Example:
-#       source $HOME/OpenFOAM/OpenFOAM-2.0/etc/bashrc prefs-mingw_w32.sh
+#       source $HOME/OpenFOAM/OpenFOAM-2.0/etc/bashrc prefs-mingw_w64_cc.sh
 #
 #------------------------------------------------------------------------------
 
@@ -44,22 +44,21 @@
 #    WM_OSTYPE = POSIX | MSwindows
 export WM_OSTYPE=MSwindows
 
-# Specify compiler mode: system or ThirdParty
-# ~~~~~~~~~~~~~~~~~~~~~~~
-foamCompiler=ThirdParty
-
-# Specify openmpi
+# Specify MS-MPI 7.1
 # ~~~~~~~~~~~~~~~~~~~~~~
-export WM_MPLIB=OPENMPI
+export WM_MPLIB=MSMPI71
 
 #- Target architecture (e.g. for cross-compiling): WM_TARGET_ARCH = 
 #       mingw_w32  - 32-bit Gcc+mingw-w32 (cross-)compiler
 #       mingw_w64  - 64-bit Gcc+mingw-w64 (cross-)compiler
-export WM_TARGET_ARCH=mingw_w32
+export WM_TARGET_ARCH=mingw_w64
 unset WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
 
 #- Architecture:
 #    WM_ARCH_OPTION = 32 | 64
-export WM_ARCH_OPTION=32
+export WM_ARCH_OPTION=64
+
+#Build foamyMesh stack... disabled for cross-compiling at the moment
+#export FOAMY_HEX_MESH=1
 
 # ----------------------------------------------------------------- end-of-file

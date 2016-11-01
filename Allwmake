@@ -20,11 +20,23 @@ wmakeCheckPwd "$WM_PROJECT_DIR" || {
 }
 
 # Compile wmake support applications
-(cd wmake/src && make $(isMinGW && echo 'EXE_EXTENSION=.exe'))
+if ! isMinGW
+then
 
-if onWin; then
+(cd wmake/src && make)
+
+elif isMinGW && ! onWin
+then
+
+    (cd wmake/src && make cc="gcc" CC="g++")
+
+else
+
+    (cd wmake/src && make EXE_EXTENSION=.exe)
+
     cp ${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdepend.exe \
        ${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdep.exe
+
 fi
 
 # Compile ThirdParty libraries and applications
