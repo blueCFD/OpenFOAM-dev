@@ -60,5 +60,6 @@ export WM_ARCH_OPTION=64
 
 #Build foamyMesh stack... disabled for cross-compiling at the moment
 #export FOAMY_HEX_MESH=1
+unset FOAMY_HEX_MESH
 
 # ----------------------------------------------------------------- end-of-file
