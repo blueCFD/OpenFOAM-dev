@@ -109,7 +109,8 @@ EXE_LIBS = \
 EXE_LIBS = \
     -lcompressibleTurbulenceModels \
     -lincompressibleTurbulenceModels \
-    -lfiniteVolume
+    -lfiniteVolume \
+    -L$(FOAM_LIBBIN)/dummy
 
 #include "extraOptions"
 
