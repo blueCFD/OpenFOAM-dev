@@ -38,12 +38,18 @@ else
             fi
         done
 
-        eval rm $(wdep ../phaseSystems/ | \
-                  sed -e 's=\.dep$={sourceFiles,variables,options}=')
-        eval rm $(wdep ../interfacialModels/ | \
-                  sed -e 's=\.dep$={sourceFiles,variables,options}=')
-        eval rm $(wdep ../interfacialCompositionModels/ | \
-                  sed -e 's=\.dep$={sourceFiles,variables,options}=')
+        for folder in \
+            ../phaseSystems/ \
+            ../interfacialModels/ \
+            ../interfacialCompositionModels/
+        do
+            folder=$(wdep $folder| \
+                     sed -e 's=\.dep$==')
+            for file in sourceFiles variables options
+            do
+                rm $folder$file
+            done
+        done
 
         wmake libso ../phaseSystems Make.multiphase
         wmake libso ../interfacialModels Make.multiphase
