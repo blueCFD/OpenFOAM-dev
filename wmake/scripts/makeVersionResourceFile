@@ -81,6 +81,18 @@ then
 
     #get current OpenFOAM version
     MGW_OFversion=$(wmakePrintBuild)
+    
+    if [ -n "$WM_BLUECFDCORE_PADDING" ]
+    then
+        PADDING=""
+        for a in $(seq 1 $WM_BLUECFDCORE_PADDING)
+        do
+            PADDING="${PADDING}\\\\0"
+        done
+
+        sed -i -e 's=\(0x0000000F.*\)'$PADDING'"$=\1"=' tmpver.rc 2>/dev/null
+        chmod +rw tmpver.rc
+    fi
 
     #apply values to template
     sed -e 's=2\.0\.\0\.0='$MGW_OFversion'=g' \
