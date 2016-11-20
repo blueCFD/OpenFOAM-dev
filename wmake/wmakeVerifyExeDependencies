@@ -35,7 +35,7 @@
 #------------------------------------------------------------------------------
 Script=${0##*/}
 
-#function that tells the user how to use this script
+# Function that tells the user how to use this script
 usage() {
     while [ "$#" -ge 1 ]; do echo "$1"; shift; done
     cat<<USAGE
@@ -55,25 +55,28 @@ USAGE
 }
 
 
-#this will check and try to close dependencies
-# usage:
-# processFolder folder_that_already_has_processed_data
+# This will check and try to close dependencies
+#  usage:
+#  processFolder folder_that_already_has_processed_data
 processFolder()
 {
     localDir=$1
     opFile=$localDir/options
     fiFile=$localDir/variables
 
-    #end if the needed files don't exist
+    # End if the needed files don't exist
     if [ ! -e $opFile -o ! -e $fiFile ]; then return; fi
 
-    #retrieve the name of the binary application
-    exeName=$(grep -e "EXE.*=" $fiFile | sed 's=.*/==')".exe"
+    # Retrieve the name of the binary application
+    exeName=$(grep -e "EXE.*=" $fiFile | sed 's=.*/==')
 
-    #if it didn't find anything, then cancel search for this one
-    if [ "x$exeName" = "x" ]; then return; fi
+    # If it didn't find anything, then cancel search for this one
+    if [ -z "$exeName" ]; then return; fi
 
-    #locate where the binary is
+    # Add file extension
+    exeName="${exeName}.exe"
+
+    # Locate where the binary is
     if [ -e $FOAM_APPBIN/$exeName ]; then
       exeName=$FOAM_APPBIN/$exeName
 
@@ -81,7 +84,7 @@ processFolder()
       exeName=$FOAM_USER_APPBIN/$exeName
 
     else
-      #no executable, then no dependencies to close!
+      # No executable, then no dependencies to close!
       return;
     fi
 
@@ -104,7 +107,8 @@ processFolder()
                  sed -e 's=[ ]=\n=g' | \
                  sed -e "s/\-L.*//g" -e 's/\$.*\.o//g' -e 's/^\$.*)$//g')
 
-    #now remove the libraries that are already loaded and not declared in the other list
+    # Now remove the libraries that are already loaded and not declared in the
+    # other list
     librariesLinkedToUnique=""
     for toParse in $librariesLinkedTo; do
       if [ $(echo $LIBSTOLOAD | grep "$toParse" | wc -l) -gt 0 ]; then
@@ -114,10 +118,11 @@ processFolder()
     librariesLinkedTo=$(echo $librariesLinkedToUnique | sed 's=[ ]=\n=g')
     unset librariesLinkedToUnique
 
-    #now compare the lists of libraries
-    LIST_LIBSMUSTLOAD=$(echo -e "$LIBSTOLOAD\n$librariesLinkedTo" | sort | uniq -u)
+    # Now compare the lists of libraries
+    LIST_LIBSMUSTLOAD=$(echo -e "$LIBSTOLOAD\n$librariesLinkedTo" | \
+                        sort | uniq -u)
 
-    #use only the libraries that we can find
+    # Use only the libraries that we can find
     LIBSMUSTLOAD=""
     for librariesToCheck in $LIST_LIBSMUSTLOAD
     do
@@ -128,13 +133,13 @@ processFolder()
         fi
     done
 
-    #remove leading spaces
+    # Remove leading spaces
     LIBSMUSTLOAD=$(echo $LIBSMUSTLOAD | sed -e 's=^[ ]*==g')
 
-    #convert spaces to commas
+    # Convert spaces to commas
     LIBSMUSTLOAD=$(echo $LIBSMUSTLOAD | sed -e 's=\ =,=g')
 
-    #now if there is anything to still link to  
+    # Now if there is anything to still link to  
     if [ $(echo $LIBSMUSTLOAD | sed 's=,=\n=g' | wc -l) -gt 0 \
          -a "x" != "x$LIBSMUSTLOAD" ]
     then
@@ -146,14 +151,14 @@ processFolder()
 
 }
 
-# provide immediate help, even if none of the environment is set
+# Provide immediate help, even if none of the environment is set
 if [ "$1" = "-h" -o "$1" = "-help" -o "$#" -eq 0 ]
 then
     usage
 fi
 
 #
-# check environment variables
+# Check environment variables
 #
 for check in WM_OPTIONS WM_LINK_LANGUAGE WM_DIR WM_PROJECT WM_PROJECT_DIR
 do
@@ -163,19 +168,19 @@ do
     }
 done
 
-#get the base folder directory
+# Get the base folder directory
 dir=$1
 
-#retrieve a list of paths to the folders named Make
+# Retrieve a list of paths to the folders named Make
 folders=$(find $dir -name Make -type d)
 
-#reset variable that indicates that at least one dependency has been closed
+# Reset variable that indicates that at least one dependency has been closed
 dependenciesClosed=0
 
-#now parse each folder and check each application
+# Now parse each folder and check each application
 for folder in $folders; do
 
-    MakeDir=$(realpath ${folder%%/Make})
+    MakeDir=$(realpath $folder)
     objectsDir=$MakeDir/$WM_OPTIONS
     if echo $MakeDir | grep -q "$WM_PROJECT_DIR"
     then
