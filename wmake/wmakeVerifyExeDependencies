@@ -185,7 +185,8 @@ for folder in $folders; do
     if echo $MakeDir | grep -q "$WM_PROJECT_DIR"
     then
         platformPath=$WM_PROJECT_DIR/platforms/${WM_OPTIONS}
-        objectsDir=$platformPath$(echo $MakeDir | sed s%$WM_PROJECT_DIR%% )
+        srcRelPath=${MakeDir%%/Make}
+        objectsDir=$platformPath$(echo $srcRelPath | sed s%$WM_PROJECT_DIR%% )
     fi
 
     if [ -d $objectsDir ]; then
