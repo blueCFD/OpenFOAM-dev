@@ -4,6 +4,7 @@
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2 and 2016-1
 # 2016-07-xx blueCAPE Lda: More modifications for blueCFD-Core 2016-1
 # 2016-10-16/23 blueCAPE Lda: More modifications for blueCFD-Core 2016-2
+# 2016-12-07 blueCAPE Lda: More modifications for blueCFD-Core 2016-2
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -37,6 +38,10 @@
 #          information to the binaries for Windows to see.
 #        - Cleaned up the code a bit and made the script able to update the dep
 #          file and only update the sourcesFile.
+#        - Split this script into three:
+#          - makeVersionResourceFile
+#          - makeVersionResourceDepFile
+#          - makeVersionResourceSListFile
 #
 # Script
 #     makeVersionResourceFile
@@ -49,8 +54,7 @@
 # Provided by makefiles/files
 OBJECTS_DIR=$1
 VERSIONFILE=$2
-SFILES=$3
-VARS=$4
+VARS=$3
 
 # Change to the $OBJECTS_DIR directory
 if [ ! -d "$OBJECTS_DIR" ]
@@ -95,34 +99,5 @@ then
 else
     exit 1
 fi
-
-# Plug in the version resource file for being compiled along
-DEPFILE=${VERSIONFILE}.dep
-FILE_NAMEwEXT=${VERSIONFILE##*/}
-FILE_NAME=${FILE_NAMEwEXT%%.rc}
-
-# Purge previous .dep file
-if [ -e "$DEPFILE" ]
-then
-    rm -r $DEPFILE
-fi
-
-if ! grep -q "$FILE_NAMEwEXT" $SFILES
-then
-  # Update sourceFiles
-  sed -i -e '$s/$/\\/' $SFILES
-
-  echo "$FILE_NAMEwEXT" >> $SFILES
-fi
-
-# Create custom made dep file
-touch ${VERSIONFILE}.dep
-echo '$(OBJECTS_DIR)/'$FILE_NAMEwEXT'.dep: $(OBJECTS_DIR)/'$FILE_NAMEwEXT \
-     > $DEPFILE
-echo '' >> $DEPFILE
-echo '$(OBJECTS_DIR)/'$FILE_NAME'.o : $(OBJECTS_DIR)/'$FILE_NAMEwEXT \
-     >> $DEPFILE
-echo '	$(rctoo)' >> $DEPFILE
-
 
 #------------------------------------------------------------------------------

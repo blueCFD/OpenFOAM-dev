@@ -78,9 +78,11 @@ WM_SCRIPTS   = $(WM_DIR)/scripts
 # Causes all derived files to be remade if any are changed or missing
 #------------------------------------------------------------------------------
 
+.PHONY: reviseSourceFilesListWithVersion
+
 all : $(OPTIONS) $(SFILES) $(VARS)
 
-versioning : $(VERSIONFILE)
+versioning : $(VERSIONFILE) reviseSourceFilesListWithVersion $(VERSIONFILE).dep
 
 localHeaderPaths : $(LOCAL_PATHS_INCLUDE)
 
@@ -106,7 +108,15 @@ $(VARS): $(SFILES)
 
 $(VERSIONFILE): $(MAKE_DIR)/files $(WM_PROJECT_DIR)/.build
 	$(WM_SCRIPTS)/makeVersionResourceFile $(OBJECTS_DIR) $(VERSIONFILE) \
-		$(SFILES) $(VARS)
+		$(VARS)
+
+reviseSourceFilesListWithVersion: $(VERSIONFILE)
+	$(WM_SCRIPTS)/makeVersionResourceSListFile $(OBJECTS_DIR) $(VERSIONFILE) \
+		$(SFILES)
+
+$(VERSIONFILE).dep: $(VERSIONFILE)
+	$(WM_SCRIPTS)/makeVersionResourceDepFile $(OBJECTS_DIR) $(VERSIONFILE) \
+		$(VERSIONFILE).dep
 
 $(LOCAL_PATHS_INCLUDE): $(MAKE_DIR)/files
 	$(WM_SCRIPTS)/makeLocalHeaderPathsFile $(LOCAL_PATHS_INCLUDE)
