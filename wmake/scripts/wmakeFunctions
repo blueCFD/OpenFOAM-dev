@@ -125,7 +125,7 @@ depToSource()
 fromDepToSource()
 {
     sourceFileDirect=$(head -n 1 $depFile | \
-        sed -e 's=.*:\s*==' -e 's=$(OBJECTS_DIR)='$objectsDir'=')
+        sed -e 's=.*:\s*==' -e 's=$(OBJECTS_DIR)='$(dirname $depFile)'=')
 }
 
 #------------------------------------------------------------------------------
