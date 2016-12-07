@@ -141,7 +141,7 @@ Foam::functionObjects::yPlus::yPlus
                 mesh.time().timeName(),
                 mesh,
                 IOobject::NO_READ,
-                IOobject::AUTO_WRITE
+                IOobject::NO_WRITE
             ),
             mesh,
             dimensionedScalar("0", dimless, 0.0)
@@ -150,6 +150,7 @@ Foam::functionObjects::yPlus::yPlus
 
     mesh.objectRegistry::store(yPlusPtr);
 
+    read(dict);
     resetName(typeName);
 }
 
@@ -235,7 +236,7 @@ bool Foam::functionObjects::yPlus::write()
 
                 writeTime(file());
                 file()
-                << token::TAB << patch.name()
+                    << token::TAB << patch.name()
                     << token::TAB << minYplus
                     << token::TAB << maxYplus
                     << token::TAB << avgYplus

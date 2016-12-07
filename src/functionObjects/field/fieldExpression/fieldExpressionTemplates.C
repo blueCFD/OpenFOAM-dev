@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,36 +23,27 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvcGrad.H"
+#include "fieldExpression.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
 template<class Type>
-bool Foam::functionObjects::grad::calcGrad()
+bool Foam::functionObjects::fieldExpression::foundObject
+(
+    const word& name
+)
 {
-    typedef GeometricField<Type, fvPatchField, volMesh> VolFieldType;
-    typedef GeometricField<Type, fvsPatchField, surfaceMesh> SurfaceFieldType;
-
-    if (foundObject<VolFieldType>(fieldName_))
+    if (fvMeshFunctionObject::foundObject<Type>(name))
     {
-        return store
-        (
-            resultName_,
-            fvc::grad(lookupObject<VolFieldType>(fieldName_)),
-            mesh_.changing() && mesh_.cache(resultName_)
-        );
-    }
-    else if (foundObject<SurfaceFieldType>(fieldName_))
-    {
-        return store
-        (
-            resultName_,
-            fvc::grad(lookupObject<SurfaceFieldType>(fieldName_)),
-            mesh_.changing() && mesh_.cache(resultName_)
-        );
+        return true;
     }
     else
     {
+        Warning
+            << "    functionObjects::" << type() << " " << this->name()
+            << " cannot find required object " << name << " of type "
+            << Type::typeName << endl;
+
         return false;
     }
 }
