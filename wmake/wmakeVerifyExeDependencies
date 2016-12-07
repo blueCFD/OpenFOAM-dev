@@ -105,13 +105,15 @@ processFolder()
     LIBSTOLOAD=$(echo $EXE_LIBS | \
                  sed -e "s/\-l\([a-zA-Z0-9]*\ *\)/\1/g" | \
                  sed -e 's=[ ]=\n=g' | \
-                 sed -e "s/\-L.*//g" -e 's/\$.*\.o//g' -e 's/^\$.*)$//g')
+                 sed -e "s/\-L.*//g" -e 's/\$.*\.o//g' -e 's/^\$.*)$//g' | \
+                 grep -v -e "=" -e "EXE_LIBS")
 
     # Now remove the libraries that are already loaded and not declared in the
     # other list
     librariesLinkedToUnique=""
     for toParse in $librariesLinkedTo; do
-      if [ $(echo $LIBSTOLOAD | grep "$toParse" | wc -l) -gt 0 ]; then
+      if [ $(echo $LIBSTOLOAD | grep "$toParse" | wc -l) -gt 0 ]
+      then
         librariesLinkedToUnique="$librariesLinkedToUnique $toParse"
       fi
     done
@@ -127,7 +129,8 @@ processFolder()
     for librariesToCheck in $LIST_LIBSMUSTLOAD
     do
         if [ -e "$FOAM_LIBBIN/lib${librariesToCheck}.dll" -o \
-             -e "$FOAM_USER_LIBBIN/lib${librariesToCheck}.dll" ]
+             -e "$FOAM_USER_LIBBIN/lib${librariesToCheck}.dll" -o \
+             -e "$FOAM_LIBBIN/$FOAM_MPI/lib${librariesToCheck}.dll" ]
         then
             LIBSMUSTLOAD="$LIBSMUSTLOAD $librariesToCheck"
         fi
