@@ -350,6 +350,15 @@ then
     objectsDir=$platformPath$(echo $PWD | sed s%$WM_PROJECT_DIR%% )
 fi
 
+# Need to override the temporary folder on Windows
+# See https://github.com/blueCFD/Core/issues/35 for more details.
+if onWin
+then
+    export TEMP=$objectsDir/tempDir
+    export TMP=$objectsDir/tempDir
+    mkdir -p $TMP
+fi
+
 (
     unset MAKEFLAGS
     mkdir -p $objectsDir
