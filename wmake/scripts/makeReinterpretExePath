@@ -44,6 +44,6 @@ then
     executableName=${executableName}.exe
 fi
 
-cygpath -w -s $(which $executableName)
+cygpath -w -s -m $(which $executableName)
 
 #------------------------------------------------------------------------------

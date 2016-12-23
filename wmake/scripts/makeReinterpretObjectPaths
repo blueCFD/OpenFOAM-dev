@@ -54,7 +54,7 @@ then
     for object in $@
     do
 
-      cygpath -w $object | sed 's=\\=\\\\=g' >> "${objectListPath}"
+      cygpath -w -m $object >> "${objectListPath}"
 
     done
 
