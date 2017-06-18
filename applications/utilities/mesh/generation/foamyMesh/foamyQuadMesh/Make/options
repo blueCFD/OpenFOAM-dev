@@ -77,7 +77,7 @@ EXE_LIBS = \
     -ltriSurface \
     -ldynamicMesh \
     -ldecompositionMethods \
-    -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp \
+    -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp \
     -lsampling \
     -lfileFormats \
     -lboost_thread-mt \
