@@ -14,11 +14,12 @@ EXE_LIBS = \
 #if (defined( WIN32 ) || defined( WIN64 ))
 
 EXE_LIBS += \
+    -lscotchDecomp \
     -lptscotchDecomp
 
 #else
 
 EXE_LIBS += \
-    -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp
+    -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp
 
 #endif

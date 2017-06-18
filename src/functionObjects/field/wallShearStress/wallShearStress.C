@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,6 +64,8 @@ void Foam::functionObjects::wallShearStress::calcShearStress
     volVectorField& shearStress
 )
 {
+    shearStress.dimensions().reset(Reff.dimensions());
+
     forAllConstIter(labelHashSet, patchSet_, iter)
     {
         label patchi = iter.key();
