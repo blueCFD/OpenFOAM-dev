@@ -16,6 +16,12 @@ runApplication snappyHexMesh -overwrite
 runApplication createBaffles -overwrite
 runApplication mergeOrSplitBaffles -split -overwrite
 
+# Remove refinement files that are damaged at the end of meshing.
+for refinementFiles in cellLevel level0Edge pointLevel refinementHistory
+do
+    rm constant/polyMesh/$refinementFiles
+done
+
 # Copy fields after meshing to avoind the generation of unnecessary patch fields
 cp -r 0.orig 0
 
