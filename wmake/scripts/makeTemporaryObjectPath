@@ -1,6 +1,6 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
-# 2016-07-15 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2017-09-04 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -25,49 +25,29 @@
 #         http://bluecfd.com/Core
 #
 #     Modifications made:
-#        - This script will reinterpret the paths for the object files from
-#          the MSys2 path to Windows paths
-#        - Technically this is not needed on Linux, unless OpenFOAM's object
-#          list shoots up to twice as many in the future.
+#        - This script will reinterpret the paths for a single object file
+#          from the current path to a specific temporary path
 #
 # Script
-#     makeReinterpretObjectPaths
+#     makeTemporaryObjectPath
 #
 # Description
-#     Constructs the object path list.
+#     First argument is the main object folder, second argument is the file to
+#     be temporarily here.
 #
 #------------------------------------------------------------------------------
 
-objectListPath=$1
-objectDir=$2
-shift 2
-
-if [ -e "${objectListPath}" ]
-then
-    rm "${objectListPath}"
-fi
-
-touch "${objectListPath}"
-
-if onWin
+if [ $# -eq 2 ]
 then
 
-    for object in $@
-    do
+    fileName=$(basename $2)
 
-      newObject=$($WM_DIR/scripts/makeTemporaryObjectPath $objectDir $object)
-      cygpath -w -m $newObject >> "${objectListPath}"
-
-    done
-
-else
-
-    for object in $@
-    do
-
-      echo $object >> "${objectListPath}"
-
-    done
+    if [ "$1/$fileName" = "$2" ]
+    then
+        echo $2
+    else
+        echo $1/tempDir/$fileName
+    fi
 
 fi
 
