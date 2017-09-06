@@ -153,7 +153,9 @@ LIB_HEADER_DIRS = \
 
 $(EXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
-	$(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
+	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
+      $(OBJECTS_DIR) $(OBJECTS)
+	$(LINKEXE) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
 	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
 
