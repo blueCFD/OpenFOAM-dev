@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 # 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-09-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-2
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -128,7 +129,13 @@ include $(OBJECTS_DIR)/options
 include $(OBJECTS_DIR)/variables
 include $(OBJECTS_DIR)/sourceFiles
 DEPENDENCIES=$(SOURCE:%=$(OBJECTS_DIR)/%.dep)
+
+ifdef LFN_WORKAROUND
+BASENAMES=$(shell basename -a $(basename $(SOURCE)))
+else
 BASENAMES=$(basename $(SOURCE))
+endif
+
 OBJECTS=$(BASENAMES:%=$(OBJECTS_DIR)/%.o)
 LOCAL_INCLUDE ?=
 
@@ -154,7 +161,7 @@ LIB_HEADER_DIRS = \
 $(EXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
 	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
-      $(OBJECTS_DIR) $(OBJECTS)
+      $(OBJECTS)
 	$(LINKEXE) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
 	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
@@ -162,7 +169,7 @@ $(EXE)$(EXE_EXT): $(OBJECTS)
 exe:    $(SEXE)$(EXE_EXT)
 	@echo \'$(SEXE)$(EXE_EXT)\' is up to date.
 
-$(SEXE)$(EXE_EXT):$(OBJECTS)
+$(SEXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)$(EXE_EXT)
 	$(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
 	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)$(EXE_EXT)
@@ -180,7 +187,7 @@ libso:  $(LIB).$(SO)
 $(LIB).$(SO): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
 	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
-      $(OBJECTS_DIR) $(OBJECTS)
+      $(OBJECTS)
 	$(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 
@@ -215,7 +222,31 @@ lnInclude: $(MAKE_DIR)/files $(MAKE_DIR)/options
 #------------------------------------------------------------------------------
 
 $(OBJECTS) : $(OBJECTS_DIR)/options
+
+ifdef LFN_WORKAROUND
+$(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(shell basename -a $(basename $S)).o : $(OBJECTS_DIR)/$S.dep))
+else
 $(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(basename $S).o : $(OBJECTS_DIR)/$S.dep))
+endif
+
+
+#------------------------------------------------------------------------------
+# Hard-coded compiling rules for C file extension, when the variable
+# LFN_WORKAROUND is set
+#------------------------------------------------------------------------------
+
+ifdef LFN_WORKAROUND
+
+define DEFINE_TRANSFORM_B
+ifeq ($(suffix $1),.C)
+$(OBJECTS_DIR)/$(shell basename -a $(basename $1)).o : $(basename $1).C
+	$$($(subst .,,C)too)
+endif
+endef
+
+$(foreach s,$(SOURCE),$(eval $(call DEFINE_TRANSFORM_B,$(s))))
+
+endif
 
 
 #------------------------------------------------------------------------------

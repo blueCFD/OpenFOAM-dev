@@ -39,8 +39,7 @@
 #------------------------------------------------------------------------------
 
 objectListPath=$1
-objectDir=$2
-shift 2
+shift
 
 if [ -e "${objectListPath}" ]
 then
@@ -55,8 +54,7 @@ then
     for object in $@
     do
 
-      newObject=$($WM_DIR/scripts/makeTemporaryObjectPath $objectDir $object)
-      cygpath -w -m $newObject >> "${objectListPath}"
+      cygpath -w -m $object >> "${objectListPath}"
 
     done
 

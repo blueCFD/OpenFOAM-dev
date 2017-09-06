@@ -13,7 +13,7 @@ ptFLAGS     = -DNoRepository -ftemplate-depth-100
 
 c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) $(LIB_HEADER_DIRS)
 
-Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $(shell $(WM_DIR)/scripts/makeTemporaryObjectPath $(OBJECTS_DIR) $@)
+Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $(shell $(WM_DIR)/scripts/makeFileLongPath $@)
 cxxtoo      = $(Ctoo)
 cctoo       = $(Ctoo)
 cpptoo      = $(Ctoo)
