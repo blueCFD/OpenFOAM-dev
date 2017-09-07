@@ -238,13 +238,17 @@ endif
 ifdef LFN_WORKAROUND
 
 define DEFINE_TRANSFORM_B
-ifeq ($(suffix $1),.C)
-$(OBJECTS_DIR)/$(shell basename -a $(basename $1)).o : $(basename $1).C
-	$$($(subst .,,C)too)
+ifeq ($(suffix $1),.$2)
+$(OBJECTS_DIR)/$(shell basename -a $(basename $1)).o : $(basename $1).$2
+	$$($(2)too)
 endif
 endef
 
-$(foreach s,$(SOURCE),$(eval $(call DEFINE_TRANSFORM_B,$(s))))
+define DEFINE_TRANSFORM_B_CHECK_SUFFIXES
+$(foreach ss,C Cver L c,$(eval $(call DEFINE_TRANSFORM_B,$(1),$(ss))))
+endef
+
+$(foreach s,$(SOURCE),$(eval $(call DEFINE_TRANSFORM_B_CHECK_SUFFIXES,$(s))))
 
 endif
 
