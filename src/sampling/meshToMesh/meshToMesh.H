@@ -46,7 +46,7 @@ SourceFiles
 #include "boundBox.H"
 #include "mapDistribute.H"
 #include "volFieldsFwd.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "AMIPatchToPatchInterpolation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

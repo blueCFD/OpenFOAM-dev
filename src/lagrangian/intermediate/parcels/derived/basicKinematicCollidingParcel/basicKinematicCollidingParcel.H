@@ -37,8 +37,8 @@ SourceFiles
 
 #include "contiguous.H"
 #include "particle.H"
-#include "KinematicParcel.H"
-#include "CollidingParcel.H"
+#include "KinematicParcel.T.H"
+#include "CollidingParcel.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

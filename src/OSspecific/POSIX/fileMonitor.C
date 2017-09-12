@@ -25,9 +25,9 @@ License
 
 #include "fileMonitor.H"
 #include "IOstreams.H"
-#include "Pstream.H"
-#include "PackedList.H"
-#include "PstreamReduceOps.H"
+#include "Pstream.T.H"
+#include "PackedList.T.H"
+#include "PstreamReduceOps.T.H"
 #include "OSspecific.H"
 #include "regIOobject.H"     // for fileModificationSkew symbol
 

@@ -5,8 +5,12 @@
 #   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.4
+# 2016-07-25 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +24,20 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added environment settings for the MinGW based Gcc cross-compilers.
+#        - Upped version of MPICH2.
+#        - Added MPI options for MSMPI 2008R2 and 2012.
+#        - Added MPI options for MSMPI 2012R2 and 7.1.
+#        - Switched to using MSYS2's software stack.
 #
 # File
 #     etc/config/settings.sh
@@ -63,6 +81,65 @@ _foamAddMan()
 #------------------------------------------------------------------------------
 # Set environment variables according to system type
 export WM_ARCH=`uname -s`
+
+#-----------------------------
+#Set environment according to compiler mode (MinGW or normal)
+if $WM_PROJECT_DIR/bin/isMinGW ; then # MinGW cross-compiler
+#-----------------------------
+
+case "$WM_COMPILER" in
+mingw32)
+    WM_COMPILER_ARCH=i686-pc-mingw32
+    ;;
+mingw-w32)
+    WM_COMPILER_ARCH=i686-pc-mingw32
+    ;;
+mingw-w64)
+    WM_COMPILER_ARCH=x86_64-w64-mingw32
+    ;;
+*)
+    echo
+    echo "Warning in $WM_PROJECT_DIR/etc/config/settings.sh:"
+    echo "    Unknown OpenFOAM compiler type '$WM_COMPILER'"
+    echo "    Please check your settings"
+    echo
+    ;;
+esac
+
+#finally export WM_COMPILER_ARCH
+export WM_COMPILER_ARCH
+
+
+case "$WM_ARCH" in
+Linux | CYGWIN* | MINGW*)
+    WM_ARCH=linux
+
+    # compiler specifics
+    processor=`uname -m`
+
+    if [ "i686" = "$processor" -o "x86_64" = "$processor" ]; then
+        export WM_CC=$WM_COMPILER_ARCH'-gcc'
+        export WM_CXX=$WM_COMPILER_ARCH'-g++'
+    else
+        echo Unknown processor type "$processor" for MinGW \(cross-\)compiler.
+        echo For further assistance, please contact www.bluecape.com.pt
+    fi
+    ;;
+
+*)    # an unsupported operating system
+    cat <<USAGE
+
+    Your "$WM_ARCH" operating system is not supported by this release
+    of blueCAPE's patches for OpenFOAM. For further assistance, please 
+    contact www.bluecape.com.pt
+
+USAGE
+    ;;
+esac
+
+#-----------------------------
+else # Normal local compiler
+#-----------------------------
 
 case "$WM_ARCH" in
 Linux)
@@ -162,7 +239,9 @@ USAGE
     ;;
 esac
 
-
+#-----------------------------
+fi # end of compiler modes
+#-----------------------------
 #------------------------------------------------------------------------------
 
 # Location of the jobControl directory
@@ -279,11 +358,20 @@ OpenFOAM | ThirdParty)
         mpfr_version=mpfr-3.1.2
         mpc_version=mpc-1.0.1
         ;;
+    Gcc47 | Gcc47++0x)
+        gcc_version=gcc-4.7.3
+        gmp_version=gmp-5.0.4
+        mpfr_version=mpfr-3.1.0
+        mpc_version=mpc-0.9
+        ;;
     Clang)
         # using clang - not gcc
         export WM_CC='clang'
         export WM_CXX='clang++'
         clang_version=llvm-3.6.0
+        ;;
+    mingw32 | mingw-w32 | mingw-w64)
+        : #nothing to be done, when we are in MSYS2
         ;;
     *)
         echo 1>&2
@@ -470,7 +558,7 @@ SYSTEMMPI)
     ;;
 
 MPICH)
-    export FOAM_MPI=mpich2-1.1.1p1
+    export FOAM_MPI=mpich2-1.4.1p1
     export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
     export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
 
@@ -598,6 +686,43 @@ INTELMPI)
     _foamAddPath    $MPI_ARCH_PATH/bin64
     _foamAddLib     $MPI_ARCH_PATH/lib64
     ;;
+
+MSMPI2008)
+    export FOAM_MPI=msmpi-2008R2
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    ;;
+
+MSMPI2012)
+    export FOAM_MPI=msmpi-2012
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    ;;
+
+MSMPI2012R2)
+    export FOAM_MPI=msmpi-2012R2
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    ;;
+
+MSMPI71)
+    export FOAM_MPI=MS-MPI-7.1
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    ;;
+
 *)
     export FOAM_MPI=dummy
     ;;

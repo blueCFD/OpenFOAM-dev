@@ -31,7 +31,7 @@ License
    ------ local definitions
  \* ------------------------------------------------------------------------ */
 
-#include "STLsurfaceFormatCore.H"
+#include "STLsurfaceFormatCore.T.H"
 
 using namespace Foam;
 
@@ -393,7 +393,7 @@ endsolid              {space}("endsolid"|"ENDSOLID")({some_space}{word})*
 bool Foam::fileFormats::STLsurfaceFormatCore::readASCII
 (
     istream& is,
-    const off_t dataFileSize
+    const off64_t dataFileSize
 )
 {
     // Create the lexer with the approximate number of vertices in the STL

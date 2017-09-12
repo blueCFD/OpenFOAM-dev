@@ -28,7 +28,7 @@ License
 
 // OpenFOAM includes
 #include "blockMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 
 #include "vtkOpenFOAMPoints.H"
 

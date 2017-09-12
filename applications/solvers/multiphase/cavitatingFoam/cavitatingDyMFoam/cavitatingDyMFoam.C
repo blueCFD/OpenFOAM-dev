@@ -37,7 +37,7 @@ Description
 #include "barotropicCompressibilityModel.H"
 #include "incompressibleTwoPhaseMixture.H"
 #include "turbulentTransportModel.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 #include "pimpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -34,7 +34,7 @@ SourceFiles
 #ifndef simpleObjectRegistry_H
 #define simpleObjectRegistry_H
 
-#include "Dictionary.H"
+#include "Dictionary.T.H"
 #include "simpleRegIOobject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

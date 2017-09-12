@@ -48,7 +48,7 @@ SourceFiles
 #include "treeDataTriSurface.H"
 #include "treeDataPrimitivePatch.H"
 #include "treeDataEdge.H"
-#include "EdgeMap.H"
+#include "EdgeMap.T.H"
 #include "triSurface.H"
 #include "triSurfaceRegionSearch.H"
 

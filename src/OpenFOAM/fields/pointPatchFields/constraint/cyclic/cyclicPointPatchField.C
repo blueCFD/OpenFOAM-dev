@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cyclicPointPatchField.H"
-#include "Swap.H"
+#include "Swap.T.H"
 #include "transformField.H"
 #include "pointFields.H"
 

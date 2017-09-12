@@ -85,9 +85,9 @@ SourceFiles
 #ifndef turbulenceFields_H
 #define turbulenceFields_H
 
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "IOobject.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -42,7 +42,7 @@ SourceFiles
 #define meshtoMesh_H
 
 #include "fvMesh.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "fvPatchMapper.H"
 #include "scalarList.H"
 #include "className.H"

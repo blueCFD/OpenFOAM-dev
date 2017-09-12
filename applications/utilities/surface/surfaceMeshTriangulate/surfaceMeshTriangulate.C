@@ -38,13 +38,13 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "MeshedSurface.H"
-#include "UnsortedMeshedSurface.H"
+#include "MeshedSurface.T.H"
+#include "UnsortedMeshedSurface.T.H"
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "processorPolyPatch.H"
-#include "ListListOps.H"
+#include "ListListOps.T.H"
 #include "uindirectPrimitivePatch.H"
 #include "globalMeshData.H"
 #include "globalIndex.H"

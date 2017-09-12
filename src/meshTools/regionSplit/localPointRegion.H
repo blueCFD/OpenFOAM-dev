@@ -43,9 +43,9 @@ SourceFiles
 #define localPointRegion_H
 
 #include "typeInfo.H"
-#include "Map.H"
+#include "Map.T.H"
 #include "labelList.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "faceList.H"
 #include "boolList.H"
 #include "labelPair.H"

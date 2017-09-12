@@ -36,7 +36,7 @@ SourceFiles
 #define scalarRanges_H
 
 #include "scalarRange.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

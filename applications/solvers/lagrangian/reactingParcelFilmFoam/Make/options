@@ -51,3 +51,7 @@ EXE_LIBS = \
     -llagrangianTurbulence \
     -lODE \
     -lcombustionModels
+
+EXE_LIBS += \
+    -llagrangian \
+    -lliquidMixtureProperties

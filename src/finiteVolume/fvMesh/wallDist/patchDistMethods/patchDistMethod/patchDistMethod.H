@@ -36,7 +36,7 @@ SourceFiles
 #define patchDistMethod_H
 
 #include "dictionary.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "volFieldsFwd.H"
 #include "mapPolyMesh.H"
 #include "fixedValueFvPatchFields.H"

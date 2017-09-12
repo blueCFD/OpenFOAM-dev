@@ -38,8 +38,8 @@ Description
 #ifndef stringList_H
 #define stringList_H
 
-#include "string.H"
-#include "List.H"
+#include "string.T.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

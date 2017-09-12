@@ -43,9 +43,9 @@ SourceFiles
 #define fileMonitor_H
 
 #include <sys/types.h>
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "className.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -43,7 +43,7 @@ SourceFiles
 #ifndef pointConstraints_H
 #define pointConstraints_H
 
-#include "MeshObject.H"
+#include "MeshObject.T.H"
 #include "tensorField.H"
 #include "pointFieldsFwd.H"
 #include "pointConstraint.H"

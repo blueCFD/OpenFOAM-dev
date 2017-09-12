@@ -25,8 +25,8 @@ License
 
 #include "writeDictionary.H"
 #include "dictionary.H"
-#include "Time.H"
-#include "HashSet.H"
+#include "Time.T.H"
+#include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

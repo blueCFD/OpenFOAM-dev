@@ -37,7 +37,7 @@ SourceFiles
 #define partialWriteFunctionObject_H
 
 #include "partialWrite.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

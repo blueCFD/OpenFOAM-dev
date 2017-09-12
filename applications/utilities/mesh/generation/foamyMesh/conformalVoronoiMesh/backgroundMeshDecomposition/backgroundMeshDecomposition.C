@@ -27,7 +27,7 @@ License
 #include "meshSearch.H"
 #include "conformationSurfaces.H"
 #include "zeroGradientFvPatchFields.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "Random.H"
 #include "pointConversion.H"
 

@@ -59,7 +59,7 @@ SeeAlso
 
 #include "word.H"
 #include "scalarField.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "liquidProperties.H"
 #include "autoPtr.H"
 

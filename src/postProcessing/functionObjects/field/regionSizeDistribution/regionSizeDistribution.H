@@ -109,7 +109,7 @@ SourceFiles
 #include "functionObjectFile.H"
 #include "pointFieldFwd.H"
 #include "writer.H"
-#include "Map.H"
+#include "Map.T.H"
 #include "volFieldsFwd.H"
 #include "wordReList.H"
 #include "coordinateSystem.H"

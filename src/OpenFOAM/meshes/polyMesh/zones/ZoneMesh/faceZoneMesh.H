@@ -29,7 +29,7 @@ Description
 #ifndef faceZoneMesh_H
 #define faceZoneMesh_H
 
-#include "ZoneMesh.H"
+#include "ZoneMesh.T.H"
 #include "faceZone.H"
 #include "faceZoneMeshFwd.H"
 

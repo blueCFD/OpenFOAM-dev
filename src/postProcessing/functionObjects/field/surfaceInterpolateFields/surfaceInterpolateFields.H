@@ -72,7 +72,7 @@ SourceFiles
 
 #include "OFstream.H"
 #include "surfaceFields.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

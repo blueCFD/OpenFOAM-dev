@@ -33,7 +33,7 @@ Description
 #define pointIndexHitIOList_H
 
 #include "pointIndexHit.H"
-#include "IOList.H"
+#include "IOList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -48,8 +48,8 @@ SourceFiles
 #define surfaceFeatures_H
 
 #include "pointField.H"
-#include "Map.H"
-#include "HashSet.H"
+#include "Map.T.H"
+#include "HashSet.T.H"
 #include "pointIndexHit.H"
 #include "edgeList.H"
 #include "typeInfo.H"

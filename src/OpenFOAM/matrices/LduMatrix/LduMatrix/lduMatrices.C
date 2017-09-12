@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "LduMatrix.H"
+#include "LduMatrix.T.H"
 #include "fieldTypes.H"
 
 namespace Foam

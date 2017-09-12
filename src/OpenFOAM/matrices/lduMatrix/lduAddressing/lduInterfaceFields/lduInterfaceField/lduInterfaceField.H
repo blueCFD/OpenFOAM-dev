@@ -38,7 +38,7 @@ SourceFiles
 
 #include "lduInterface.H"
 #include "primitiveFieldsFwd.H"
-#include "Pstream.H"
+#include "Pstream.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

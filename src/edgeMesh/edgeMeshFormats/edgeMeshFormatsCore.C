@@ -25,7 +25,7 @@ License
 
 #include "edgeMeshFormatsCore.H"
 
-#include "Time.H"
+#include "Time.T.H"
 #include "IFstream.H"
 #include "OFstream.H"
 #include "edgeMesh.H"

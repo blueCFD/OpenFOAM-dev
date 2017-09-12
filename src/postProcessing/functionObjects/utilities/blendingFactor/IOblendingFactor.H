@@ -33,7 +33,7 @@ Description
 #define IOblendingFactor_H
 
 #include "blendingFactor.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

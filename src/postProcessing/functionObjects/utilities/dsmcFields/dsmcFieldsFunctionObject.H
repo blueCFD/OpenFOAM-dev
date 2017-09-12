@@ -37,7 +37,7 @@ SourceFiles
 #define dsmcFieldsFunctionObject_H
 
 #include "dsmcFields.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

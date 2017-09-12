@@ -53,11 +53,11 @@ SourceFiles
 #ifndef GAMGSolver_H
 #define GAMGSolver_H
 
-#include "GAMGAgglomeration.H"
+#include "GAMGAgglomeration.T.H"
 #include "lduMatrix.H"
 #include "labelField.H"
 #include "primitiveFields.H"
-#include "LUscalarMatrix.H"
+#include "LUscalarMatrix.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

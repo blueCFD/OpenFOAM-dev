@@ -32,18 +32,18 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Cloud.H"
+#include "Cloud.T.H"
 #include "IOdictionary.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "timeSelector.H"
 #include "OFstream.H"
 #include "passiveParticleCloud.H"
 
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "IOobjectList.H"
-#include "PtrList.H"
-#include "Field.H"
+#include "PtrList.T.H"
+#include "Field.T.H"
 #include "steadyParticleTracksTemplates.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

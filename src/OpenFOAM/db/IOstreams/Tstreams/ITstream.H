@@ -35,7 +35,7 @@ SourceFiles
 #ifndef ITstream_H
 #define ITstream_H
 
-#include "Istream.H"
+#include "Istream.T.H"
 #include "tokenList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

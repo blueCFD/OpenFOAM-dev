@@ -33,7 +33,7 @@ Description
 #define IOtimeActivatedFileUpdate_H
 
 #include "timeActivatedFileUpdate.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

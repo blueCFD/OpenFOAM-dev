@@ -25,8 +25,8 @@ License
 
 #include "forceCoeffs.H"
 #include "dictionary.H"
-#include "Time.H"
-#include "Pstream.H"
+#include "Time.T.H"
+#include "Pstream.T.H"
 #include "IOmanip.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

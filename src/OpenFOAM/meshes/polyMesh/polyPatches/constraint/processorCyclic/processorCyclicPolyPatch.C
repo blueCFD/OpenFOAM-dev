@@ -25,7 +25,7 @@ License
 
 #include "processorCyclicPolyPatch.H"
 #include "addToRunTimeSelectionTable.H"
-#include "SubField.H"
+#include "SubField.T.H"
 #include "cyclicPolyPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

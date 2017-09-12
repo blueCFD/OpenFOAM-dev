@@ -33,7 +33,7 @@ Description
 #define IOremoveRegisteredObject_H
 
 #include "removeRegisteredObject.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

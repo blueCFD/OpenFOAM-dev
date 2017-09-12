@@ -32,7 +32,7 @@ Description
 #define radial_H
 
 #include "extrudeModel.H"
-#include "DataEntry.H"
+#include "DataEntry.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

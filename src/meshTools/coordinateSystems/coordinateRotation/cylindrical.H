@@ -48,7 +48,7 @@ Description
 #ifndef cylindrical_H
 #define cylindrical_H
 
-#include "point.H"
+#include "point.T.H"
 #include "vector.H"
 #include "coordinateRotation.H"
 

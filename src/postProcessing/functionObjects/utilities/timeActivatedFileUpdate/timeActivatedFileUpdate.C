@@ -25,7 +25,7 @@ License
 
 #include "timeActivatedFileUpdate.H"
 #include "objectRegistry.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "dictionary.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

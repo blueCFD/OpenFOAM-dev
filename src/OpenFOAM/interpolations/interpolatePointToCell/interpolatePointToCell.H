@@ -35,7 +35,7 @@ SourceFiles
 #ifndef interpolatePointToCell_H
 #define interpolatePointToCell_H
 
-#include "GeometricField.H"
+#include "GeometricField.T.H"
 #include "pointMesh.H"
 
 

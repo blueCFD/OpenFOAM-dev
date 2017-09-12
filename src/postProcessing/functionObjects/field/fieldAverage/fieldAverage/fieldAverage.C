@@ -25,7 +25,7 @@ License
 
 #include "fieldAverage.H"
 #include "volFields.H"
-#include "Time.H"
+#include "Time.T.H"
 
 #include "fieldAverageItem.H"
 

@@ -32,7 +32,7 @@ Description
 #define surfacePatchList_H
 
 #include "surfacePatch.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

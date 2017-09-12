@@ -26,7 +26,7 @@ License
 #include "functionObject.H"
 #include "dictionary.H"
 #include "dlLibraryTable.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

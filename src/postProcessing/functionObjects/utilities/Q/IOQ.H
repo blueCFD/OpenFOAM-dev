@@ -33,7 +33,7 @@ Description
 #define IOQ_H
 
 #include "Q.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

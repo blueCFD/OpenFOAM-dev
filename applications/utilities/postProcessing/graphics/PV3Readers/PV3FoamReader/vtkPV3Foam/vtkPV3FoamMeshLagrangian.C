@@ -26,7 +26,7 @@ License
 #include "vtkPV3Foam.H"
 
 // OpenFOAM includes
-#include "Cloud.H"
+#include "Cloud.T.H"
 #include "fvMesh.H"
 #include "IOobjectList.H"
 #include "passiveParticle.H"

@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "EddyDiffusivity.H"
+#include "EddyDiffusivity.T.H"
 
 #define makeBaseTurbulenceModel(                                               \
     Alpha, Rho, baseModel, BaseModel, TDModel, Transport)                      \

@@ -36,10 +36,10 @@ SourceFiles
 #define labelField_H
 
 #include "label.H"
-#include "Field.H"
+#include "Field.T.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.H"
+#include "FieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

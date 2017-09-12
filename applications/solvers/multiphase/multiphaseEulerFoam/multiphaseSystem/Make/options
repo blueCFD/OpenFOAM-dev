@@ -13,3 +13,8 @@ LIB_LIBS = \
     -lincompressibleTransportModels \
     -lfiniteVolume \
     -lmeshTools
+
+#if (defined( WIN32 ) || defined( WIN64 ))
+LIB_LIBS += \
+    -lcompressibleMultiphaseEulerianInterfacialModels
+#endif

@@ -26,7 +26,7 @@ License
 #include "opaqueSolid.H"
 #include "physicoChemicalConstants.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "volFields.H"
 #include "addToRunTimeSelectionTable.H"
 

@@ -60,7 +60,7 @@ SourceFiles
 #include "triPointRef.H"
 #include "polyMesh.H"
 #include "triFace.H"
-#include "face.H"
+#include "face.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

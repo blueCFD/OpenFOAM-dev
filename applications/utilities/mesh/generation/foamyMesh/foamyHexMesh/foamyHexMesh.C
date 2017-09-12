@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IOdictionary.H"
 #include "searchableSurfaces.H"
 #include "conformalVoronoiMesh.H"

@@ -42,11 +42,11 @@ Description
 #include "IFstream.H"
 #include "boundBox.H"
 #include "transformField.H"
-#include "Pair.H"
+#include "Pair.T.H"
 #include "quaternion.H"
 #include "mathematicalConstants.H"
 
-#include "MeshedSurfaces.H"
+#include "MeshedSurfaces.T.H"
 
 using namespace Foam;
 using namespace Foam::constant::mathematical;

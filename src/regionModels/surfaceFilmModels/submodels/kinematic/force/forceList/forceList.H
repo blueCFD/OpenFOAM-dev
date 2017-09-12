@@ -35,7 +35,7 @@ SourceFiles
 #ifndef forceList_H
 #define forceList_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "force.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

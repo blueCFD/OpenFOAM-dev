@@ -25,7 +25,7 @@ License
 
 #include "meanVelocityForce.H"
 #include "fvMatrices.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 #include "IFstream.H"
 #include "addToRunTimeSelectionTable.H"
 

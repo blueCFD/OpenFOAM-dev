@@ -5,8 +5,10 @@
     \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -20,6 +22,16 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - Derived from the patches for blueCFD 2.1 and 2.2.
+      - Changes based on Symscape's patches, circa 2009.
 
 Description
     POSIX versions of the functions declared in OSspecific.H
@@ -37,7 +49,7 @@ Description
 #include "fileStat.H"
 #include "timer.H"
 #include "IFstream.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 
 #include <fstream>
 #include <cstdlib>
@@ -627,7 +639,7 @@ bool Foam::isFile(const fileName& name, const bool checkGzip)
 
 
 // Return size of file
-off_t Foam::fileSize(const fileName& name)
+off64_t Foam::fileSize(const fileName& name)
 {
     fileStat fileStatus(name);
     if (fileStatus.isValid())
@@ -1297,6 +1309,21 @@ void Foam::osRandomSeed(const label seed)
 #endif
 }
 
+int Foam::osRandomBit()
+{
+#ifdef USE_RANDOM
+    if (random() > INT_MAX/2)
+#else
+    if (lrand48() > INT_MAX/2)
+#endif
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 Foam::label Foam::osRandomInteger()
 {
@@ -1317,5 +1344,10 @@ Foam::scalar Foam::osRandomDouble()
 #endif
 }
 
+
+Foam::string Foam::toUnixPath(const string & path)
+{
+  return path;
+}
 
 // ************************************************************************* //

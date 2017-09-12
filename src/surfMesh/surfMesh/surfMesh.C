@@ -24,11 +24,11 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "surfMesh.H"
-#include "MeshedSurfaceProxy.H"
+#include "MeshedSurfaceProxy.T.H"
 
-#include "Time.H"
+#include "Time.T.H"
 #include "OSspecific.H"
-#include "MeshedSurface.H"
+#include "MeshedSurface.T.H"
 #include "demandDrivenData.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

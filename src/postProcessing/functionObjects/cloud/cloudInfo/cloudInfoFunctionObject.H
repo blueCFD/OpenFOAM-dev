@@ -37,7 +37,7 @@ SourceFiles
 #define cloudInfoFunctionObject_H
 
 #include "cloudInfo.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

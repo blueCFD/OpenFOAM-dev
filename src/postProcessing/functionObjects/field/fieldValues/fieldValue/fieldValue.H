@@ -42,7 +42,7 @@ SourceFiles
 #include "Switch.H"
 #include "OFstream.H"
 #include "dictionary.H"
-#include "Field.H"
+#include "Field.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

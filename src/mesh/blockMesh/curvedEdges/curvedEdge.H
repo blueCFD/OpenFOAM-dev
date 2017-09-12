@@ -39,7 +39,7 @@ SourceFiles
 #include "edge.H"
 #include "pointField.H"
 #include "typeInfo.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "autoPtr.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

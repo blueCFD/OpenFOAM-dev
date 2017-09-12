@@ -37,7 +37,7 @@ SourceFiles
 #define QFunctionObject_H
 
 #include "Q.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

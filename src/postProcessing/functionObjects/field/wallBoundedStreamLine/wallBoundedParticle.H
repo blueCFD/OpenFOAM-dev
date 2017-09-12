@@ -39,7 +39,7 @@ SourceFiles
 
 #include "particle.H"
 #include "autoPtr.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

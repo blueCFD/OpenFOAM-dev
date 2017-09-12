@@ -33,7 +33,7 @@ Description
 #define IOwriteRegisteredObject_H
 
 #include "writeRegisteredObject.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -34,7 +34,7 @@ Description
 #define IOfieldValueDelta_H
 
 #include "fieldValueDelta.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

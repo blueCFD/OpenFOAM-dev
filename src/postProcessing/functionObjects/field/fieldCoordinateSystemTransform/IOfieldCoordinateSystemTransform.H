@@ -33,7 +33,7 @@ Description
 #define IOfieldCoordinateSystemTransform_H
 
 #include "fieldCoordinateSystemTransform.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

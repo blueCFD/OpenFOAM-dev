@@ -119,7 +119,7 @@ $(constraintFvPatchFields)/jumpCyclic/jumpCyclicFvPatchFields.C
 $(constraintFvPatchFields)/jumpCyclicAMI/jumpCyclicAMIFvPatchFields.C
 $(constraintFvPatchFields)/nonuniformTransformCyclic/nonuniformTransformCyclicFvPatchFields.C
 $(constraintFvPatchFields)/processor/processorFvPatchFields.C
-$(constraintFvPatchFields)/processor/processorFvPatchScalarField.C
+/*$(constraintFvPatchFields)/processor/processorFvPatchScalarField.C*/
 $(constraintFvPatchFields)/processorCyclic/processorCyclicFvPatchFields.C
 $(constraintFvPatchFields)/symmetryPlane/symmetryPlaneFvPatchFields.C
 $(constraintFvPatchFields)/symmetryPlane/symmetryPlaneFvPatchScalarField.C
@@ -178,7 +178,7 @@ $(derivedFvPatchFields)/supersonicFreestream/supersonicFreestreamFvPatchVectorFi
 $(derivedFvPatchFields)/surfaceNormalFixedValue/surfaceNormalFixedValueFvPatchVectorField.C
 $(derivedFvPatchFields)/swirlFlowRateInletVelocity/swirlFlowRateInletVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/syringePressure/syringePressureFvPatchScalarField.C
-$(derivedFvPatchFields)/timeVaryingMappedFixedValue/AverageIOFields.C
+$(derivedFvPatchFields)/timeVaryingMappedFixedValue/AverageIOFields.T.C
 $(derivedFvPatchFields)/timeVaryingMappedFixedValue/timeVaryingMappedFixedValueFvPatchFields.C
 $(derivedFvPatchFields)/totalPressure/totalPressureFvPatchScalarField.C
 $(derivedFvPatchFields)/totalTemperature/totalTemperatureFvPatchScalarField.C
@@ -228,9 +228,9 @@ fields/surfaceFields/surfaceFields.C
 
 fvMatrices/fvMatrices.C
 fvMatrices/fvScalarMatrix/fvScalarMatrix.C
-fvMatrices/solvers/MULES/MULES.C
-fvMatrices/solvers/MULES/CMULES.C
-fvMatrices/solvers/MULES/IMULES.C
+fvMatrices/solvers/MULES/MULES.T.C
+fvMatrices/solvers/MULES/CMULES.T.C
+fvMatrices/solvers/MULES/IMULES.T.C
 fvMatrices/solvers/GAMGSymSolver/GAMGAgglomerations/faceAreaPairGAMGAgglomeration/faceAreaPairGAMGAgglomeration.C
 
 interpolation = interpolation/interpolation
@@ -272,7 +272,7 @@ $(schemes)/harmonic/harmonic.C
 $(schemes)/fixedBlended/fixedBlended.C
 $(schemes)/localBlended/localBlended.C
 $(schemes)/limiterBlended/limiterBlended.C
-$(schemes)/CoBlended/CoBlended.C
+$(schemes)/CoBlended/CoBlended.T.C
 $(schemes)/cellCoBlended/cellCoBlended.C
 $(schemes)/localMax/localMax.C
 $(schemes)/localMin/localMin.C
@@ -291,24 +291,24 @@ $(schemes)/quadraticLinearPureUpwindFit/quadraticLinearPureUpwindFit.C
 $(schemes)/linearPureUpwindFit/linearPureUpwindFit.C
 $(schemes)/linearUpwind/linearUpwind.C
 $(schemes)/linearUpwind/linearUpwindV.C
-$(schemes)/LUST/LUST.C
+$(schemes)/LUST/LUST.T.C
 
 limitedSchemes = $(surfaceInterpolation)/limitedSchemes
 $(limitedSchemes)/limitedSurfaceInterpolationScheme/limitedSurfaceInterpolationSchemes.C
 $(limitedSchemes)/upwind/upwind.C
 $(limitedSchemes)/blended/blended.C
-$(limitedSchemes)/Gamma/Gamma.C
-$(limitedSchemes)/SFCD/SFCD.C
-$(limitedSchemes)/Minmod/Minmod.C
+$(limitedSchemes)/Gamma/Gamma.T.C
+$(limitedSchemes)/SFCD/SFCD.T.C
+$(limitedSchemes)/Minmod/Minmod.T.C
 $(limitedSchemes)/vanLeer/vanLeer.C
 $(limitedSchemes)/vanAlbada/vanAlbada.C
-$(limitedSchemes)/OSPRE/OSPRE.C
+$(limitedSchemes)/OSPRE/OSPRE.T.C
 $(limitedSchemes)/limitedLinear/limitedLinear.C
 $(limitedSchemes)/limitedCubic/limitedCubic.C
-$(limitedSchemes)/SuperBee/SuperBee.C
-$(limitedSchemes)/QUICK/QUICK.C
-$(limitedSchemes)/MUSCL/MUSCL.C
-$(limitedSchemes)/UMIST/UMIST.C
+$(limitedSchemes)/SuperBee/SuperBee.T.C
+$(limitedSchemes)/QUICK/QUICK.T.C
+$(limitedSchemes)/MUSCL/MUSCL.T.C
+$(limitedSchemes)/UMIST/UMIST.T.C
 $(limitedSchemes)/Phi/Phi.C
 $(limitedSchemes)/filteredLinear/filteredLinear.C
 $(limitedSchemes)/filteredLinear2/filteredLinear2.C
@@ -334,19 +334,19 @@ finiteVolume/fvSchemes/fvSchemes.C
 ddtSchemes = finiteVolume/ddtSchemes
 $(ddtSchemes)/ddtScheme/ddtSchemes.C
 $(ddtSchemes)/steadyStateDdtScheme/steadyStateDdtSchemes.C
-$(ddtSchemes)/EulerDdtScheme/EulerDdtSchemes.C
-$(ddtSchemes)/CoEulerDdtScheme/CoEulerDdtSchemes.C
-$(ddtSchemes)/SLTSDdtScheme/SLTSDdtSchemes.C
+$(ddtSchemes)/EulerDdtScheme/EulerDdtSchemes.T.C
+$(ddtSchemes)/CoEulerDdtScheme/CoEulerDdtSchemes.T.C
+$(ddtSchemes)/SLTSDdtScheme/SLTSDdtSchemes.T.C
 $(ddtSchemes)/localEulerDdtScheme/localEulerDdt.C
 $(ddtSchemes)/localEulerDdtScheme/localEulerDdtSchemes.C
 $(ddtSchemes)/backwardDdtScheme/backwardDdtSchemes.C
-$(ddtSchemes)/CrankNicolsonDdtScheme/CrankNicolsonDdtSchemes.C
+$(ddtSchemes)/CrankNicolsonDdtScheme/CrankNicolsonDdtSchemes.T.C
 $(ddtSchemes)/boundedDdtScheme/boundedDdtSchemes.C
 
 d2dt2Schemes = finiteVolume/d2dt2Schemes
 $(d2dt2Schemes)/d2dt2Scheme/d2dt2Schemes.C
 $(d2dt2Schemes)/steadyStateD2dt2Scheme/steadyStateD2dt2Schemes.C
-$(d2dt2Schemes)/EulerD2dt2Scheme/EulerD2dt2Schemes.C
+$(d2dt2Schemes)/EulerD2dt2Scheme/EulerD2dt2Schemes.T.C
 
 divSchemes = finiteVolume/divSchemes
 $(divSchemes)/divScheme/divSchemes.C
@@ -358,7 +358,7 @@ $(gradSchemes)/gaussGrad/gaussGrads.C
 
 $(gradSchemes)/leastSquaresGrad/leastSquaresVectors.C
 $(gradSchemes)/leastSquaresGrad/leastSquaresGrads.C
-$(gradSchemes)/LeastSquaresGrad/LeastSquaresGrads.C
+$(gradSchemes)/LeastSquaresGrad/LeastSquaresGrads.T.C
 $(gradSchemes)/fourthGrad/fourthGrads.C
 
 limitedGradSchemes = $(gradSchemes)/limitedGradSchemes
@@ -408,13 +408,13 @@ $(porosity)/porosityModel/porosityModel.C
 $(porosity)/porosityModel/porosityModelNew.C
 $(porosity)/porosityModel/porosityModelList.C
 $(porosity)/porosityModel/IOporosityModelList.C
-$(porosity)/DarcyForchheimer/DarcyForchheimer.C
+$(porosity)/DarcyForchheimer/DarcyForchheimer.T.C
 $(porosity)/fixedCoeff/fixedCoeff.C
 $(porosity)/powerLaw/powerLaw.C
 
 MRF = $(general)/MRF
-$(MRF)/MRFZone.C
-$(MRF)/MRFZoneList.C
+$(MRF)/MRFZone.T.C
+$(MRF)/MRFZoneList.T.C
 $(MRF)/IOMRFZoneList.C
 
 SRF = $(general)/SRF

@@ -38,7 +38,7 @@ SourceFiles
 #define janafThermo_H
 
 #include "scalar.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

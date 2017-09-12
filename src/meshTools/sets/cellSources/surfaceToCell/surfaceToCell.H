@@ -45,7 +45,7 @@ SourceFiles
 #define surfaceToCell_H
 
 #include "topoSetSource.H"
-#include "Map.H"
+#include "Map.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

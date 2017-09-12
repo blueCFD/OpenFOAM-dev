@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "UIPstream.H"
-#include "PstreamGlobals.H"
+#include "PstreamGlobals.T.H"
 #include "IOstreams.H"
 
 #include <mpi.h>

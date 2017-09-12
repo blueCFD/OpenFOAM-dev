@@ -37,7 +37,7 @@ SourceFiles
 
 #include "wallFvPatch.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "regionCoupledWallPolyPatch.H"
 #include "regionCoupledBaseFvPatch.H"
 

@@ -28,7 +28,7 @@ License
 #include "polyMesh.H"
 #include "cellModeller.H"
 #include "plane.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "meshTools.H"
 #include "OFstream.H"
 

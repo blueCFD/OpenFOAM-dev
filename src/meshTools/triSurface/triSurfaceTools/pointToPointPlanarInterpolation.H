@@ -36,7 +36,7 @@ SourceFiles
 #ifndef pointToPointPlanarInterpolation_H
 #define pointToPointPlanarInterpolation_H
 
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "coordinateSystem.H"
 #include "instantList.H"
 

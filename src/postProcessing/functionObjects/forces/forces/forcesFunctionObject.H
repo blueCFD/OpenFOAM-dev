@@ -37,7 +37,7 @@ SourceFiles
 #define forcesFunctionObject_H
 
 #include "forces.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

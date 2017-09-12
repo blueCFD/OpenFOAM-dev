@@ -39,7 +39,7 @@ SourceFiles
 #define polyMeshGeometry_H
 
 #include "pointFields.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

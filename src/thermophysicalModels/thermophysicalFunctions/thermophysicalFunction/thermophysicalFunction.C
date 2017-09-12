@@ -26,7 +26,7 @@ License
 #include "error.H"
 
 #include "thermophysicalFunction.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

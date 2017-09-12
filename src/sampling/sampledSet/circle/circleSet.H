@@ -36,7 +36,7 @@ SourceFiles
 #define circleSet_H
 
 #include "sampledSet.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

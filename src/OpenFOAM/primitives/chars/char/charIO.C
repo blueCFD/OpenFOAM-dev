@@ -30,7 +30,7 @@ Description
 
 #include "error.H"
 
-#include "char.H"
+#include "char.T.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

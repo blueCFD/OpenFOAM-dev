@@ -32,7 +32,7 @@ Description
 
 #include "triSurface.H"
 #include "STLpoint.H"
-#include "SLList.H"
+#include "SLList.T.H"
 #include "IFstream.H"
 #include "readHexLabel.H"
 #include "stringList.H"

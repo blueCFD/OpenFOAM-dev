@@ -37,7 +37,7 @@ SourceFiles
 #define fieldCoordinateSystemTransformFunctionObject_H
 
 #include "fieldCoordinateSystemTransform.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

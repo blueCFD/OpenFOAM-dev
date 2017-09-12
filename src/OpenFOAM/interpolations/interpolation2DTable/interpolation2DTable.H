@@ -36,8 +36,8 @@ SourceFiles
 #ifndef interpolation2DTable_H
 #define interpolation2DTable_H
 
-#include "List.H"
-#include "Tuple2.H"
+#include "List.T.H"
+#include "Tuple2.T.H"
 #include "tableReader.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

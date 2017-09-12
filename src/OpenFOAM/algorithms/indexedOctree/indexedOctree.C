@@ -26,7 +26,7 @@ License
 #include "indexedOctree.H"
 #include "linePointRef.H"
 #include "OFstream.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "memInfo.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

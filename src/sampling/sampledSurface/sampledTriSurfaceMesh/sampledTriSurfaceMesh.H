@@ -70,7 +70,7 @@ SourceFiles
 
 #include "sampledSurface.H"
 #include "triSurfaceMesh.H"
-#include "MeshedSurface.H"
+#include "MeshedSurface.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

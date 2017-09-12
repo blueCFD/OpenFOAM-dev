@@ -71,10 +71,10 @@ SourceFiles
 #ifndef refinementHistory_H
 #define refinementHistory_H
 
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "labelList.H"
-#include "FixedList.H"
-#include "SLList.H"
+#include "FixedList.T.H"
+#include "SLList.T.H"
 #include "autoPtr.H"
 #include "regIOobject.H"
 

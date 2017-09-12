@@ -5,6 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -21,6 +23,16 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - Always open the files in binary mode, because of how things work on 
+        Windows.
+
 Application
     datToFoam
 
@@ -31,7 +43,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IFstream.H"
 #include "OFstream.H"
 #include "pointField.H"
@@ -55,7 +67,10 @@ int main(int argc, char *argv[])
 
     #include "createTime.H"
 
-    std::ifstream plot3dFile(args.args()[1].c_str());
+    // Use binary mode in case we read binary.
+    // Causes windows reading to fail if we don't.
+    std::ifstream plot3dFile(args.args()[1].c_str(),
+                             ios_base::in|ios_base::binary);
 
     string line;
     std::getline(plot3dFile, line);

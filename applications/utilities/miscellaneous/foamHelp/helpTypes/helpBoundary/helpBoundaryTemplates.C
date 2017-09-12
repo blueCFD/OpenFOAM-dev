@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "GeometricField.H"
+#include "GeometricField.T.H"
 #include "fvPatchField.H"
 #include "volMesh.H"
 

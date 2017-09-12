@@ -30,8 +30,8 @@ InClass
 #define vtkOpenFOAMTupleRemap_H
 
 // OpenFOAM includes
-#include "StaticAssert.H"
-#include "Swap.H"
+#include "StaticAssert.T.H"
+#include "Swap.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

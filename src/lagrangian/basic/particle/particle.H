@@ -33,13 +33,13 @@ Description
 #define particle_H
 
 #include "vector.H"
-#include "Cloud.H"
-#include "IDLList.H"
+#include "Cloud.T.H"
+#include "IDLList.T.H"
 #include "pointField.H"
 #include "faceList.H"
 #include "OFstream.H"
 #include "tetrahedron.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "polyMeshTetDecomposition.H"
 #include "particleMacros.H"
 

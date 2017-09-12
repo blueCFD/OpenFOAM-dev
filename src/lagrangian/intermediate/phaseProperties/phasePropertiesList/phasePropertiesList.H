@@ -35,7 +35,7 @@ SourceFiles
 #ifndef phasePropertiesList_H
 #define phasePropertiesList_H
 
-#include "Istream.H"
+#include "Istream.T.H"
 #include "volFields.H"
 #include "wordList.H"
 #include "phaseProperties.H"

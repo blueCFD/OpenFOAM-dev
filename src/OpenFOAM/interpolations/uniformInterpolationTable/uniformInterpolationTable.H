@@ -53,7 +53,7 @@ SourceFiles
 #ifndef uniformInterpolationTable_H
 #define uniformInterpolationTable_H
 
-#include "List.H"
+#include "List.T.H"
 #include "Switch.H"
 #include "IOobject.H"
 #include "objectRegistry.H"

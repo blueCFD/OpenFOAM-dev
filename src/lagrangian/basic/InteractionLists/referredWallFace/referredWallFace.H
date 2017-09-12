@@ -37,7 +37,7 @@ SourceFiles
 #ifndef referredWallFace_H
 #define referredWallFace_H
 
-#include "face.H"
+#include "face.T.H"
 #include "pointField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

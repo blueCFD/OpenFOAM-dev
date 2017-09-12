@@ -29,10 +29,10 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "List.H"
+#include "List.T.H"
 #include "vector.H"
-#include "Vector2D.H"
-#include "Tuple2.H"
+#include "Vector2D.T.H"
+#include "Tuple2.T.H"
 #include "OFstream.H"
 
 using namespace Foam;

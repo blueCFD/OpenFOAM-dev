@@ -37,7 +37,7 @@ SourceFiles
 #define sampledSetsFunctionObject_H
 
 #include "sampledSets.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

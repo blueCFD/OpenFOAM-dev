@@ -1,4 +1,20 @@
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added more seperators, to make it easier to things apart
+#        - Added the ability to track phase fractions
+#        - Added the ability to track mdEquilibriumFoam and mdFoam relevant
+#          outputs
+#        - Added the ability to track dsmcFoam relevant outputs
+#------------------------------------------------------------------------------
 # Query database for Foam Log extraction.
 # Each line stands for one query:
 #
@@ -17,6 +33,8 @@
 
 #- String to recognize new iteration by (usually same as 'Time')
 Separator/^[ \t]*Time = /Time = 
+Separator2/^[ \t]*Iteration: /Iteration: 
+Separator3/^ExecutionTime = /ExecutionTime = 
 
 #- Time value:
 Time/^[ \t]*Time = /Time = 
@@ -53,3 +71,24 @@ alpha1Max/Max\(alpha1\) =/Max(alpha1) =
 
 # AMI
 AMIMin/AMI: Patch source sum/average = 
+
+#- inter*Foam related solvers that only use one phase
+AlphaLiquidFrac/Liquid phase volume fraction = /Liquid phase volume fraction = 
+AlphaAirFrac/Air phase volume fraction = /Air phase volume fraction = 
+
+#- mdEquilibriumFoam and mdFoam relevant outputs
+OveNumDen/Overall number density = /Overall number density = 
+OveMassDen/Overall mass density = /Overall mass density = 
+MaxVel/Maximum \|velocity\| = /Maximum |velocity| = 
+AveLinKEpMolec/Average linear KE per molecule = /Average linear KE per molecule = 
+AveAngKEpMolec/Average angular KE per molecule = /Average angular KE per molecule = 
+AvePEpMolec/Average PE per molecule = /Average PE per molecule = 
+AveTEpMolec/Average TE per molecule = /Average TE per molecule = 
+
+#- dsmcFoam relevant outputs
+NumMolec/Number of molecules             = /Number of molecules             = 
+MassSys/Mass in system                  = /Mass in system                  = 
+AveLinMomentum/\|Average linear momentum\|        = /|Average linear momentum|        = 
+AveLinKinEn/Average linear kinetic energy   = /Average linear kinetic energy   = 
+AveIntEn/Average internal energy         = /Average internal energy         = 
+AveTotEn/Average total energy            = /Average total energy            = 

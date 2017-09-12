@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "processorMeshes.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "primitiveMesh.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

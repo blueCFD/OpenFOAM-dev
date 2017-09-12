@@ -37,7 +37,7 @@ SourceFiles
 #define fieldMinMaxFunctionObject_H
 
 #include "fieldMinMax.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

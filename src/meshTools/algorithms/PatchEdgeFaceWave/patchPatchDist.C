@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "patchPatchDist.H"
-#include "PatchEdgeFaceWave.H"
+#include "PatchEdgeFaceWave.T.H"
 #include "syncTools.H"
 #include "polyMesh.H"
 #include "patchEdgeFaceInfo.H"

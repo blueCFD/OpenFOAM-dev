@@ -33,7 +33,7 @@ Description
 #define pointPatchFieldMapper_H
 
 #include "primitiveFields.H"
-#include "FieldMapper.H"
+#include "FieldMapper.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -28,8 +28,8 @@ Description
 #include "IOstreams.H"
 #include "IOobject.H"
 #include "IFstream.H"
-#include "List.H"
-#include "Tuple2.H"
+#include "List.T.H"
+#include "Tuple2.T.H"
 #include "wordRe.H"
 
 using namespace Foam;

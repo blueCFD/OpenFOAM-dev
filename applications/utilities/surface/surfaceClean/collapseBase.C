@@ -27,7 +27,7 @@ License
 #include "triSurfaceTools.H"
 #include "argList.H"
 #include "OFstream.H"
-#include "SubList.H"
+#include "SubList.T.H"
 #include "labelPair.H"
 #include "meshTools.H"
 #include "OSspecific.H"

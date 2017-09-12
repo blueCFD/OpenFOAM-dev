@@ -39,7 +39,7 @@ SourceFiles
 #include "boolList.H"
 #include "labelList.H"
 #include "typeInfo.H"
-#include "Map.H"
+#include "Map.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

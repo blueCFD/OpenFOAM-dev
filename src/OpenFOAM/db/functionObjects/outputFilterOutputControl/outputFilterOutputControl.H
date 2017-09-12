@@ -37,8 +37,8 @@ SourceFiles
 #define outputFilterOutputControl_H
 
 #include "dictionary.H"
-#include "Time.H"
-#include "NamedEnum.H"
+#include "Time.T.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

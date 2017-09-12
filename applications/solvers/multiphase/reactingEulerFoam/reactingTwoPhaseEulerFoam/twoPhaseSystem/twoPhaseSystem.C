@@ -27,7 +27,7 @@ License
 #include "dragModel.H"
 #include "virtualMassModel.H"
 
-#include "MULES.H"
+#include "MULES.T.H"
 #include "subCycle.H"
 
 #include "fvcDdt.H"

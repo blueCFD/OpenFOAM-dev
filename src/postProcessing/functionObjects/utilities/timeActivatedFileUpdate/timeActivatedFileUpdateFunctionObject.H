@@ -37,7 +37,7 @@ SourceFiles
 #define timeActivatedFileUpdateFunctionObject_H
 
 #include "timeActivatedFileUpdate.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -15,3 +15,8 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lODE\
     -lreactionThermophysicalModels
+
+LIB_LIBS += \
+    -lfluidThermophysicalModels \
+    -lsolidThermo \
+    -lspecie

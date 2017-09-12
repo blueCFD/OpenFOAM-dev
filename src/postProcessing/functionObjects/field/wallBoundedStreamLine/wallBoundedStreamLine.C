@@ -23,18 +23,18 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Pstream.H"
+#include "Pstream.T.H"
 #include "functionObjectList.H"
 #include "wallBoundedStreamLine.H"
 #include "fvMesh.H"
 #include "wallBoundedStreamLineParticleCloud.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 #include "meshSearch.H"
 #include "sampledSet.H"
 #include "globalIndex.H"
 #include "mapDistribute.H"
 #include "interpolationCellPoint.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 #include "meshSearchMeshObject.H"
 #include "faceSet.H"
 

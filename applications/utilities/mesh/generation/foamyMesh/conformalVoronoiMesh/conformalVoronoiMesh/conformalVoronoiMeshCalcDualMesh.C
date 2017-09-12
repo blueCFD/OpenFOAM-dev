@@ -30,8 +30,8 @@ License
 #include "indexedCellChecks.H"
 #include "OBJstream.H"
 #include "indexedCellOps.H"
-#include "ListOps.H"
-#include "DelaunayMeshTools.H"
+#include "ListOps.T.H"
+#include "DelaunayMeshTools.T.H"
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 

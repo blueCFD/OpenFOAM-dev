@@ -45,10 +45,10 @@ SourceFiles
 #ifndef kineticTheoryModel_H
 #define kineticTheoryModel_H
 
-#include "RASModel.H"
+#include "RASModel.T.H"
 #include "eddyViscosity.H"
 #include "phaseCompressibleTurbulenceModel.H"
-#include "EddyDiffusivity.H"
+#include "EddyDiffusivity.T.H"
 #include "phaseModel.H"
 #include "dragModel.H"
 #include "viscosityModel.H"

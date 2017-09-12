@@ -75,7 +75,7 @@ SourceFiles
 
 #include "OFstream.H"
 #include "volFields.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "interpolationCellPoint.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

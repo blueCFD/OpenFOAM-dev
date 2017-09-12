@@ -33,7 +33,7 @@ Description
 #define IOLambda2_H
 
 #include "Lambda2.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -33,7 +33,7 @@ Description
 #include "rhoThermo.H"
 #include "turbulentFluidThermoModel.H"
 #include "turbulentFluidThermoModel.H"
-#include "LESModel.H"
+#include "LESModel.T.H"
 #include "radiationModel.H"
 #include "fvIOoptionList.H"
 #include "simpleControl.H"

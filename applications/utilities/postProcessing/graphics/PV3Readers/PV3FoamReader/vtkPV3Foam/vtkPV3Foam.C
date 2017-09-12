@@ -28,7 +28,7 @@ License
 
 // OpenFOAM includes
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "patchZones.H"
 
 // VTK includes

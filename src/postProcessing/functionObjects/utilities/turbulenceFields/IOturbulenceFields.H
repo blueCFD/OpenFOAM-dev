@@ -33,7 +33,7 @@ Description
 #define IOturbulenceFields_H
 
 #include "turbulenceFields.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

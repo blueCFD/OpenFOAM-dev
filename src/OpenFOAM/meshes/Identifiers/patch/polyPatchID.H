@@ -26,7 +26,7 @@ License
 #ifndef polyPatchID_H
 #define polyPatchID_H
 
-#include "DynamicID.H"
+#include "DynamicID.T.H"
 #include "polyBoundaryMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

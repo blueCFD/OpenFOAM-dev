@@ -30,8 +30,8 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "twoPhaseSystem.H"
 #include "phaseSystem.H"
-#include "ThermalPhaseChangePhaseSystem.H"
-#include "MomentumTransferPhaseSystem.H"
+#include "ThermalPhaseChangePhaseSystem.T.H"
+#include "MomentumTransferPhaseSystem.T.H"
 #include "wallFvPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

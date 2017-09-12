@@ -40,7 +40,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IFstream.H"
 #include "hexBlock.H"
 #include "polyMesh.H"

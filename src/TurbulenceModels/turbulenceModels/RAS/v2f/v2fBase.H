@@ -42,7 +42,7 @@ SourceFiles
 #ifndef v2fBase_H
 #define v2fBase_H
 
-#include "RASModel.H"
+#include "RASModel.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -35,7 +35,7 @@ SourceFiles
 #ifndef processorGAMGInterfaceField_H
 #define processorGAMGInterfaceField_H
 
-#include "GAMGInterfaceField.H"
+#include "GAMGInterfaceField.T.H"
 #include "processorGAMGInterface.H"
 #include "processorLduInterfaceField.H"
 

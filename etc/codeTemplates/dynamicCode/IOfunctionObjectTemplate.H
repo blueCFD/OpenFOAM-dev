@@ -33,7 +33,7 @@ Description
 #define IOfunctionObjectTemplate_H
 
 #include "functionObjectTemplate.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

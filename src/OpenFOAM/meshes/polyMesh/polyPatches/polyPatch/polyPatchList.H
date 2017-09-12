@@ -33,7 +33,7 @@ Description
 #define polyPatchList_H
 
 #include "polyPatch.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

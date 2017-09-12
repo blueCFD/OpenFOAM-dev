@@ -58,3 +58,7 @@ EXE_LIBS = \
     -llagrangianIntermediate \
     -llagrangianTurbulence \
     -lODE
+
+EXE_LIBS += \
+    -llagrangian \
+    -lliquidMixtureProperties

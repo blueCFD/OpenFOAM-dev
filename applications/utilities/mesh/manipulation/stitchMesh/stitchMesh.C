@@ -63,11 +63,11 @@ Description
 #include "fvCFD.H"
 #include "polyTopoChanger.H"
 #include "mapPolyMesh.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "slidingInterface.H"
 #include "perfectInterface.H"
 #include "IOobjectList.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

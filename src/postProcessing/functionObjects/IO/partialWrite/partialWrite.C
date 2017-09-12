@@ -25,7 +25,7 @@ License
 
 #include "partialWrite.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IOobjectList.H"
 #include "polyMesh.H"
 #include "cloud.H"

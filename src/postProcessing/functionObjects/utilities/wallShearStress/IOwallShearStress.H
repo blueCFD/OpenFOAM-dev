@@ -33,7 +33,7 @@ Description
 #define IOwallShearStress_H
 
 #include "wallShearStress.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -73,7 +73,7 @@ SourceFiles
 #define cloudInfo_H
 
 #include "functionObjectFile.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "pointFieldFwd.H"
 #include "volFields.H"
 #include "surfaceFields.H"

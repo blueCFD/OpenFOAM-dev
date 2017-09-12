@@ -32,7 +32,7 @@ Description
 #ifndef volMesh_H
 #define volMesh_H
 
-#include "GeoMesh.H"
+#include "GeoMesh.T.H"
 #include "fvMesh.H"
 #include "primitiveMesh.H"
 

@@ -25,7 +25,7 @@ License
 
 #include "bladeModel.H"
 #include "unitConversion.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "vector.H"
 #include "IFstream.H"
 

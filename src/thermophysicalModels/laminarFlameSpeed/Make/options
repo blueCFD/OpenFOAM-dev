@@ -8,3 +8,8 @@ EXE_INC = \
 LIB_LIBS = \
     -lcompressibleTransportModels \
     -lfiniteVolume
+
+LIB_LIBS += \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lreactionThermophysicalModels

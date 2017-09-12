@@ -26,7 +26,7 @@ License
 #include "cellToFace.H"
 #include "polyMesh.H"
 #include "cellSet.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "syncTools.H"
 #include "addToRunTimeSelectionTable.H"
 

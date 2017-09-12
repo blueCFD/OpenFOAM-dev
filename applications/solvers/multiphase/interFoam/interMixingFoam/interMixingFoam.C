@@ -31,13 +31,13 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "CMULES.H"
+#include "CMULES.T.H"
 #include "subCycle.H"
 #include "immiscibleIncompressibleThreePhaseMixture.H"
 #include "turbulentTransportModel.H"
 #include "pimpleControl.H"
 #include "fvIOoptionList.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 #include "fixedFluxPressureFvPatchScalarField.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"

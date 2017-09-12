@@ -28,13 +28,13 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "FacePostProcessing.H"
-#include "ParticleCollector.H"
-#include "ParticleErosion.H"
-#include "ParticleTracks.H"
-#include "ParticleTrap.H"
-#include "PatchPostProcessing.H"
-#include "VoidFraction.H"
+#include "FacePostProcessing.T.H"
+#include "ParticleCollector.T.H"
+#include "ParticleErosion.T.H"
+#include "ParticleTracks.T.H"
+#include "ParticleTrap.T.H"
+#include "PatchPostProcessing.T.H"
+#include "VoidFraction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

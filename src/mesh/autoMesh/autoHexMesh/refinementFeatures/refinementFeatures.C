@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "refinementFeatures.H"
-#include "Time.H"
-#include "Tuple2.H"
-#include "DynamicField.H"
+#include "Time.T.H"
+#include "Tuple2.T.H"
+#include "DynamicField.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

@@ -25,8 +25,8 @@ License
 
 #include "hierarchGeomDecomp.H"
 #include "addToRunTimeSelectionTable.H"
-#include "PstreamReduceOps.H"
-#include "SortableList.H"
+#include "PstreamReduceOps.T.H"
+#include "SortableList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

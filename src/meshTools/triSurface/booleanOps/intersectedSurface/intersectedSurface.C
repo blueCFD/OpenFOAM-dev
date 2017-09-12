@@ -32,7 +32,7 @@ License
 #include "error.H"
 #include "meshTools.H"
 #include "edgeSurface.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "transform.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

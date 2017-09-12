@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "GAMGProcAgglomeration.H"
-#include "GAMGAgglomeration.H"
+#include "GAMGAgglomeration.T.H"
 #include "lduMesh.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

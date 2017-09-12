@@ -13,3 +13,6 @@ EXE_INC = \
 
 LIB_LIBS = \
     -L$(FOAM_EXT_LIBBIN) -lMGridGen
+
+LIB_LIBS += \
+    -lfiniteVolume

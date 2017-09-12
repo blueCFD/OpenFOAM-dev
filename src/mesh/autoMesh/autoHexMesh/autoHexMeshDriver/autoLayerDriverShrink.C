@@ -28,14 +28,14 @@ Description
 
 #include "autoLayerDriver.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "pointFields.H"
 #include "motionSmoother.H"
 #include "pointData.H"
-#include "PointEdgeWave.H"
+#include "PointEdgeWave.T.H"
 #include "OBJstream.H"
 #include "meshTools.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 #include "unitConversion.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

@@ -1,0 +1,3 @@
+The original source for 'snappyMultiRegionHeater' was '../../heatTransfer/chtMultiRegionFoam/snappyMultiRegionHeater'
+The original source for 'iglooWithFridges' was '../../heatTransfer/buoyantBoussinesqSimpleFoam/iglooWithFridges'
+The original source for 'motorBike' was '../../incompressible/simpleFoam/motorBike'

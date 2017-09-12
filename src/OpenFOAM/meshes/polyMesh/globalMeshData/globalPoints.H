@@ -77,7 +77,7 @@ SourceFiles
 #ifndef globalPoints_H
 #define globalPoints_H
 
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "indirectPrimitivePatch.H"
 #include "globalIndex.H"
 #include "globalIndexAndTransform.H"

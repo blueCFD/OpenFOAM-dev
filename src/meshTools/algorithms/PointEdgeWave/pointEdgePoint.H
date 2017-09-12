@@ -38,7 +38,7 @@ SourceFiles
 #ifndef pointEdgePoint_H
 #define pointEdgePoint_H
 
-#include "point.H"
+#include "point.T.H"
 #include "label.H"
 #include "scalar.H"
 #include "tensor.H"

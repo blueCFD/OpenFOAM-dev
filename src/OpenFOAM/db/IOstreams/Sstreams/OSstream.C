@@ -25,7 +25,7 @@ License
 
 #include "error.H"
 #include "OSstream.H"
-#include "token.H"
+#include "token.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

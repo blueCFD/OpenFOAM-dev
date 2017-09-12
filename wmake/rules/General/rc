@@ -1,0 +1,3 @@
+SUFFIXES += .rc
+
+rctoo = windres $(@D)/$(<F) $@

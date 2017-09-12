@@ -3,7 +3,7 @@
 
 #include "parRun.H"
 
-#include "Time.H"
+#include "Time.T.H"
 #include "fvMesh.H"
 #include "fvc.H"
 #include "fvMatrices.H"

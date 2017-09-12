@@ -38,7 +38,7 @@ SourceFiles
 #define icoPolynomial_H
 
 #include "autoPtr.H"
-#include "Polynomial.H"
+#include "Polynomial.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

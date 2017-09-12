@@ -23,13 +23,13 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "CompatibilityConstant.H"
-#include "Constant.H"
-#include "PolynomialEntry.H"
-#include "CSV.H"
-#include "DataEntry.H"
-#include "Table.H"
-#include "TableFile.H"
+#include "CompatibilityConstant.T.H"
+#include "Constant.T.H"
+#include "PolynomialEntry.T.H"
+#include "CSV.T.H"
+#include "DataEntry.T.H"
+#include "Table.T.H"
+#include "TableFile.T.H"
 
 #include "label.H"
 #include "scalar.H"

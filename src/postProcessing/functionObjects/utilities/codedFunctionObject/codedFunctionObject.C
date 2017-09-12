@@ -26,7 +26,7 @@ License
 #include "codedFunctionObject.H"
 #include "volFields.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "SHA1Digest.H"
 #include "dynamicCode.H"
 #include "dynamicCodeContext.H"

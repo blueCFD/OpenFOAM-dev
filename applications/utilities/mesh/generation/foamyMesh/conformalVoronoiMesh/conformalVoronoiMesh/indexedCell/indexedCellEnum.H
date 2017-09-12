@@ -34,7 +34,7 @@ SourceFiles
 #ifndef indexedCellEnum_H
 #define indexedCellEnum_H
 
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

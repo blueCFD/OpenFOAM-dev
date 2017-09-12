@@ -34,7 +34,7 @@ Description
 #define IOcellSource_H
 
 #include "cellSource.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

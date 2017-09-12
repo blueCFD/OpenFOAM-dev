@@ -27,9 +27,9 @@ License
 #include "surfaceFeatures.H"
 #include "triSurface.H"
 #include "Random.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "OBJstream.H"
-#include "DynamicField.H"
+#include "DynamicField.T.H"
 #include "edgeMeshFormatsCore.H"
 #include "IOmanip.H"
 

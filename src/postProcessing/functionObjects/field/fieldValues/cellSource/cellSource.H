@@ -105,7 +105,7 @@ SourceFiles
 #ifndef cellSource_H
 #define cellSource_H
 
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "fieldValue.H"
 #include "labelList.H"
 #include "volFieldsFwd.H"

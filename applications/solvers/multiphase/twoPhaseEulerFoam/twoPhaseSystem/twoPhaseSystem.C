@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "twoPhaseSystem.H"
-#include "PhaseCompressibleTurbulenceModel.H"
-#include "BlendedInterfacialModel.H"
+#include "PhaseCompressibleTurbulenceModel.T.H"
+#include "BlendedInterfacialModel.T.H"
 #include "virtualMassModel.H"
 #include "heatTransferModel.H"
 #include "liftModel.H"
@@ -33,7 +33,7 @@ License
 #include "turbulentDispersionModel.H"
 #include "fvMatrix.H"
 #include "surfaceInterpolate.H"
-#include "MULES.H"
+#include "MULES.T.H"
 #include "subCycle.H"
 #include "fvcDdt.H"
 #include "fvcDiv.H"
@@ -45,7 +45,7 @@ License
 #include "fixedValueFvsPatchFields.H"
 
 #include "blendingMethod.H"
-#include "HashPtrTable.H"
+#include "HashPtrTable.T.H"
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

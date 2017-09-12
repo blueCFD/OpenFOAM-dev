@@ -33,7 +33,7 @@ Description
 #define IOcloudInfo_H
 
 #include "cloudInfo.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

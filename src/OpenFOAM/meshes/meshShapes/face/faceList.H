@@ -31,9 +31,9 @@ Description
 #ifndef faceList_H
 #define faceList_H
 
-#include "face.H"
-#include "List.H"
-#include "SubList.H"
+#include "face.T.H"
+#include "List.T.H"
+#include "SubList.T.H"
 #include "faceListFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

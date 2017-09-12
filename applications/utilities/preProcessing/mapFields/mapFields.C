@@ -35,7 +35,7 @@ Description
 #include "fvCFD.H"
 #include "meshToMesh0.H"
 #include "processorFvPatch.H"
-#include "MapMeshes.H"
+#include "MapMeshes.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -227,6 +227,8 @@ int main(int argc, char *argv[])
     );
 
     argList args(argc, argv);
+
+#   include "forceLoadLibraries.H"
 
     if (!args.check())
     {

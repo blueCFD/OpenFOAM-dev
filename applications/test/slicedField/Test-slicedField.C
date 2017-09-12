@@ -29,7 +29,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "SlicedGeometricField.H"
+#include "SlicedGeometricField.T.H"
 #include "slicedFvPatchFields.H"
 #include "slicedSurfaceFields.H"
 

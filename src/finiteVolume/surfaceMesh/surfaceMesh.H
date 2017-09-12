@@ -32,7 +32,7 @@ Description
 #ifndef surfaceMesh_H
 #define surfaceMesh_H
 
-#include "GeoMesh.H"
+#include "GeoMesh.T.H"
 #include "fvMesh.H"
 #include "primitiveMesh.H"
 

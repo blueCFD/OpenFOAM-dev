@@ -36,7 +36,7 @@ SourceFiles
 #define linearDamper_H
 
 #include "sixDoFRigidBodyMotionRestraint.H"
-#include "point.H"
+#include "point.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

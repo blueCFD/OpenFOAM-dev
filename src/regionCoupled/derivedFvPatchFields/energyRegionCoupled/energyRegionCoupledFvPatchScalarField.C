@@ -25,7 +25,7 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 #include "energyRegionCoupledFvPatchScalarField.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "turbulentFluidThermoModel.H"
 
 // * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * * //

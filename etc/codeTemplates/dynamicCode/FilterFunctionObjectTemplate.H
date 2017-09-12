@@ -34,7 +34,7 @@ SourceFiles
 #define FilterFunctionObject_H
 
 #include "functionObjectTemplate.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

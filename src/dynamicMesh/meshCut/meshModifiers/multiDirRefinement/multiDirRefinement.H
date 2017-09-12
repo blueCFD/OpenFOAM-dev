@@ -55,7 +55,7 @@ SourceFiles
 
 #include "refinementIterator.H"
 #include "vectorField.H"
-#include "Map.H"
+#include "Map.T.H"
 #include "className.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

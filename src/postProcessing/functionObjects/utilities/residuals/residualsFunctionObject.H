@@ -37,7 +37,7 @@ SourceFiles
 #define residualsFunctionObject_H
 
 #include "residuals.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -37,7 +37,7 @@ SourceFiles
 #define PecletFunctionObject_H
 
 #include "Peclet.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

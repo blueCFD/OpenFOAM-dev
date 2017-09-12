@@ -38,7 +38,7 @@ SourceFiles
 #define pyrolysisChemistryModel_H
 
 #include "volFieldsFwd.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 #include "solidChemistryModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

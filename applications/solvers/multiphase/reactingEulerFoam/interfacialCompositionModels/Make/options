@@ -24,3 +24,7 @@ LIB_LIBS = \
     -lfluidThermophysicalModels \
     -lreactionThermophysicalModels \
     -lspecie
+
+LIB_LIBS += \
+    -lreactingPhaseSystem \
+    -lfiniteVolume

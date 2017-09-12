@@ -88,7 +88,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "argList.H"
 #include "regionSplit.H"
 #include "fvMeshSubset.H"
@@ -98,9 +98,9 @@ Description
 #include "cellSet.H"
 #include "polyTopoChange.H"
 #include "removeCells.H"
-#include "EdgeMap.H"
+#include "EdgeMap.T.H"
 #include "syncTools.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 #include "mappedWallPolyPatch.H"
 #include "fvMeshTools.H"
 #include "zeroGradientFvPatchFields.H"

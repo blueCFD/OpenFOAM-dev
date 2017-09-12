@@ -37,7 +37,7 @@ SourceFiles
 #define yPlusFunctionObject_H
 
 #include "yPlus.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

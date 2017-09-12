@@ -139,7 +139,7 @@ SourceFiles
 #ifndef faceSource_H
 #define faceSource_H
 
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "fieldValue.H"
 #include "surfaceFieldsFwd.H"
 #include "volFieldsFwd.H"

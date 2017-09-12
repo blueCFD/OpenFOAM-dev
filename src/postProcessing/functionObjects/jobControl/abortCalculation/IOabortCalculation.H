@@ -33,7 +33,7 @@ Description
 #define IOabortCalculation_H
 
 #include "abortCalculation.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

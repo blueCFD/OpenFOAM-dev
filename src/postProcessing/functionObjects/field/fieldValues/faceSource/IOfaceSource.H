@@ -34,7 +34,7 @@ Description
 #define IOfaceSource_H
 
 #include "faceSource.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

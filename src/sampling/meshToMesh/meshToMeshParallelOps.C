@@ -25,11 +25,11 @@ License
 
 #include "meshToMesh.H"
 #include "OFstream.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "globalIndex.H"
 #include "mergePoints.H"
 #include "processorPolyPatch.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

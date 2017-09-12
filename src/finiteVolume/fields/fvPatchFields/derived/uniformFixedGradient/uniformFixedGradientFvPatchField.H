@@ -64,7 +64,7 @@ SourceFiles
 #define uniformFixedGradientFvPatchField_H
 
 #include "fixedGradientFvPatchFields.H"
-#include "DataEntry.H"
+#include "DataEntry.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -28,16 +28,16 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "CellZoneInjection.H"
-#include "ConeInjection.H"
-#include "ConeNozzleInjection.H"
-#include "FieldActivatedInjection.H"
-#include "InflationInjection.H"
-#include "KinematicLookupTableInjection.H"
-#include "ManualInjection.H"
-#include "NoInjection.H"
-#include "PatchInjection.H"
-#include "PatchFlowRateInjection.H"
+#include "CellZoneInjection.T.H"
+#include "ConeInjection.T.H"
+#include "ConeNozzleInjection.T.H"
+#include "FieldActivatedInjection.T.H"
+#include "InflationInjection.T.H"
+#include "KinematicLookupTableInjection.T.H"
+#include "ManualInjection.T.H"
+#include "NoInjection.T.H"
+#include "PatchInjection.T.H"
+#include "PatchFlowRateInjection.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

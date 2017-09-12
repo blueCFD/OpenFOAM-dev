@@ -32,7 +32,7 @@ Description
 #ifndef pointBoundaryMeshMapper_H
 #define pointBoundaryMeshMapper_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "pointPatchMapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

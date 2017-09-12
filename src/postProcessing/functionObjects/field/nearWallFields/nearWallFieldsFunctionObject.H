@@ -37,7 +37,7 @@ SourceFiles
 #define nearWallFieldsFunctionObject_H
 
 #include "nearWallFields.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

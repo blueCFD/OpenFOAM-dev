@@ -37,7 +37,7 @@ SourceFiles
 #ifndef cellInfo_H
 #define cellInfo_H
 
-#include "point.H"
+#include "point.T.H"
 #include "label.H"
 #include "tensor.H"
 

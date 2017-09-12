@@ -37,7 +37,7 @@ SourceFiles
 #define calcFvcDivFunctionObject_H
 
 #include "calcFvcDiv.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

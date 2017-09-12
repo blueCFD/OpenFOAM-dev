@@ -35,7 +35,7 @@ SourceFiles
 #define indexedCellOps_H
 
 #include "label.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

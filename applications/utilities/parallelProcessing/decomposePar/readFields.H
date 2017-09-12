@@ -35,7 +35,7 @@ SourceFiles
 #define readFields_H
 
 #include "IOobjectList.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

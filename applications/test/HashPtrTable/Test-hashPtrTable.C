@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include <iostream>
-#include "HashPtrTable.H"
+#include "HashPtrTable.T.H"
 
 using namespace Foam;
 

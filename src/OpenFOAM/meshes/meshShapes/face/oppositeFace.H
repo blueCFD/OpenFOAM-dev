@@ -36,7 +36,7 @@ SourceFiles
 #ifndef oppositeFace_H
 #define oppositeFace_H
 
-#include "face.H"
+#include "face.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

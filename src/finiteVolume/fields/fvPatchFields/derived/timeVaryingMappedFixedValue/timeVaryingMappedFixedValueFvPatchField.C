@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "timeVaryingMappedFixedValueFvPatchField.H"
-#include "Time.H"
-#include "AverageIOField.H"
+#include "Time.T.H"
+#include "AverageIOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

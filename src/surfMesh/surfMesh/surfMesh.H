@@ -38,9 +38,9 @@ SourceFiles
 #define surfMesh_H
 
 #include "surfaceRegistry.H"
-#include "MeshedSurfaceIOAllocator.H"
-#include "PrimitivePatch.H"
-#include "SubField.H"
+#include "MeshedSurfaceIOAllocator.T.H"
+#include "PrimitivePatch.T.H"
+#include "SubField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

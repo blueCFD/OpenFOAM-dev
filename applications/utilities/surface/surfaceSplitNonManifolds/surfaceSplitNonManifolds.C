@@ -55,7 +55,7 @@ Description
 #include "argList.H"
 #include "triSurface.H"
 #include "OFstream.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "triSurfaceTools.H"
 
 using namespace Foam;

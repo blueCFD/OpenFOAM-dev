@@ -33,7 +33,7 @@ Description
 #define IOforces_H
 
 #include "forces.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

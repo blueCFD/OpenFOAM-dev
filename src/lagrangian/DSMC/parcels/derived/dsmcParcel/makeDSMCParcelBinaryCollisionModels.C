@@ -24,10 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "dsmcParcel.H"
-#include "DSMCCloud.H"
-#include "NoBinaryCollision.H"
-#include "VariableHardSphere.H"
-#include "LarsenBorgnakkeVariableHardSphere.H"
+#include "DSMCCloud.T.H"
+#include "NoBinaryCollision.T.H"
+#include "VariableHardSphere.T.H"
+#include "LarsenBorgnakkeVariableHardSphere.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

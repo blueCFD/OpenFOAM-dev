@@ -29,7 +29,7 @@ InClass
 #ifndef vtkPV4FoamLagrangianFields_H
 #define vtkPV4FoamLagrangianFields_H
 
-#include "Cloud.H"
+#include "Cloud.T.H"
 
 #include "vtkOpenFOAMTupleRemap.H"
 

@@ -37,7 +37,7 @@ SourceFiles
 #define scalarTransportFunctionObject_H
 
 #include "scalarTransport.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

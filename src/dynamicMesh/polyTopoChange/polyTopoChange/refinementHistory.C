@@ -23,9 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "refinementHistory.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "mapPolyMesh.H"
 #include "mapDistributePolyMesh.H"
 #include "polyMesh.H"

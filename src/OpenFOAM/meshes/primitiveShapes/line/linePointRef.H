@@ -32,7 +32,7 @@ Description
 #ifndef linePointRef_H
 #define linePointRef_H
 
-#include "point.H"
+#include "point.T.H"
 #include "line.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

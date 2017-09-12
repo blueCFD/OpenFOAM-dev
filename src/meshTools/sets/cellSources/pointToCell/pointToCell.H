@@ -36,7 +36,7 @@ SourceFiles
 #define pointToCell_H
 
 #include "topoSetSource.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

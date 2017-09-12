@@ -37,7 +37,7 @@ SourceFiles
 #ifndef wallPoint_H
 #define wallPoint_H
 
-#include "point.H"
+#include "point.T.H"
 #include "label.H"
 #include "scalar.H"
 #include "tensor.H"

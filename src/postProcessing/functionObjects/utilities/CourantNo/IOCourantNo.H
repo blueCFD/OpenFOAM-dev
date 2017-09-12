@@ -33,7 +33,7 @@ Description
 #define IOCourantNo_H
 
 #include "CourantNo.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

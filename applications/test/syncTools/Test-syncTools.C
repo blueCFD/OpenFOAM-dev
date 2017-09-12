@@ -33,9 +33,9 @@ Description
 #include "syncTools.H"
 #include "argList.H"
 #include "polyMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "Random.H"
-#include "PackedList.H"
+#include "PackedList.T.H"
 
 using namespace Foam;
 

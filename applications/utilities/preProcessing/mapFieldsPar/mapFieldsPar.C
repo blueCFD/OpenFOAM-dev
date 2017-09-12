@@ -33,7 +33,7 @@ Description
 #include "fvCFD.H"
 #include "meshToMesh.H"
 #include "processorPolyPatch.H"
-#include "MapMeshes.H"
+#include "MapMeshes.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

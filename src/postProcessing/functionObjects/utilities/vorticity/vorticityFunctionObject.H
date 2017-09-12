@@ -37,7 +37,7 @@ SourceFiles
 #define vorticityFunctionObject_H
 
 #include "vorticity.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

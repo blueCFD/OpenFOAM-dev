@@ -5,8 +5,11 @@
 #   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +23,17 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Originally based on Sysmcape's patches for OpenFOAM, circa 2009,
+#          which added the ability to build binaries for Windows.
 #
 # File
 #     Makefile
@@ -82,6 +96,9 @@ LIB             = libNULL
 # Shared library extension
 SO              = so
 
+# Executable extension
+EXE_EXT         =
+
 # Project executable
 EXE             = $(WM_PROJECT).out
 
@@ -134,19 +151,19 @@ LIB_HEADER_DIRS = \
 # Define link statements for executables
 #------------------------------------------------------------------------------
 
-$(EXE): $(OBJECTS)
-	@$(WM_SCRIPTS)/makeTargetDir $(EXE)
+$(EXE)$(EXE_EXT): $(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
 	$(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
-	    $(LINK_LIBS) $(GLIBS) -o $(EXE)
+	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
 
-exe:    $(SEXE)
-	@echo \'$(SEXE)\' is up to date.
+exe:    $(SEXE)$(EXE_EXT)
+	@echo \'$(SEXE)$(EXE_EXT)\' is up to date.
 
-$(SEXE):$(OBJECTS)
-	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)
+$(SEXE)$(EXE_EXT):$(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)$(EXE_EXT)
 	$(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
-	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)
+	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)$(EXE_EXT)
 
 
 #------------------------------------------------------------------------------
@@ -160,8 +177,10 @@ libso:  $(LIB).$(SO)
 
 $(LIB).$(SO): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
-	$(LINKLIBSO) $(OBJECTS) -L$(LIB_PLATFORMS) \
-	    $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
+	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
+      $(OBJECTS)
+	$(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
+	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 
 lib:    $(LIB).a
 	@echo \'$(LIB).a\' is up to date.

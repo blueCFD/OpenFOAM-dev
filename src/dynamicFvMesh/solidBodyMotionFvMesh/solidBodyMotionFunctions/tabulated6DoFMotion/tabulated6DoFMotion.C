@@ -25,7 +25,7 @@ License
 
 #include "tabulated6DoFMotion.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "IFstream.H"
 #include "interpolateSplineXY.H"
 #include "mathematicalConstants.H"

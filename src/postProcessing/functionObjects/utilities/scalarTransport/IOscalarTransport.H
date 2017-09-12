@@ -33,7 +33,7 @@ Description
 #define IOscalarTransport_H
 
 #include "scalarTransport.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -37,7 +37,7 @@ SourceFiles
 #define pressureToolsFunctionObject_H
 
 #include "pressureTools.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

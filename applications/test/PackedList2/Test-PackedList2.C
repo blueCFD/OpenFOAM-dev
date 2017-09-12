@@ -30,8 +30,8 @@ Description
 #include "argList.H"
 #include "boolList.H"
 #include "PackedBoolList.H"
-#include "HashSet.H"
-#include "StaticHashTable.H"
+#include "HashSet.T.H"
+#include "StaticHashTable.T.H"
 #include "cpuTime.H"
 #include <vector>
 

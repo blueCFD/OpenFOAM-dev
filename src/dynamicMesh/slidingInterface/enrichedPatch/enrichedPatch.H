@@ -53,8 +53,8 @@ SourceFiles
 #define enrichedPatch_H
 
 #include "primitiveFacePatch.H"
-#include "Map.H"
-#include "point.H"
+#include "Map.T.H"
+#include "point.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

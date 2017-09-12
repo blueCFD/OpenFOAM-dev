@@ -45,11 +45,11 @@ SourceFiles
 #include "incompressible/transportModel/transportModel.H"
 #include "IOdictionary.H"
 #include "phaseModel.H"
-#include "PtrDictionary.H"
+#include "PtrDictionary.T.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "dragModel.H"
-#include "HashPtrTable.H"
+#include "HashPtrTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

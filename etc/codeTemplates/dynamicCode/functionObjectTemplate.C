@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "functionObjectTemplate.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "fvCFD.H"
 #include "unitConversion.H"
 

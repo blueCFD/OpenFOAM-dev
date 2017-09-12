@@ -63,7 +63,7 @@ SourceFiles
 #define intersectedSurface_H
 
 #include "triSurface.H"
-#include "Map.H"
+#include "Map.T.H"
 #include "typeInfo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

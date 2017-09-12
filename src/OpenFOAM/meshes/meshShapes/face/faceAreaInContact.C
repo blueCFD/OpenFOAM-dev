@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "face.H"
+#include "face.T.H"
 #include "scalarField.H"
 
 

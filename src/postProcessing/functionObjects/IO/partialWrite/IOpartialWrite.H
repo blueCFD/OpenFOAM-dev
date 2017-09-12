@@ -33,7 +33,7 @@ Description
 #define IOpartialWrite_H
 
 #include "partialWrite.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

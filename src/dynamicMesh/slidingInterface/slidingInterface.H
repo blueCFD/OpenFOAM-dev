@@ -57,7 +57,7 @@ SourceFiles
 #include "polyPatchID.H"
 #include "ZoneIDs.H"
 #include "intersection.H"
-#include "Pair.H"
+#include "Pair.T.H"
 #include "objectHit.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

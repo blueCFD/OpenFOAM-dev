@@ -36,7 +36,7 @@ SourceFiles
 #ifndef regionModelFunctionObjectList_H
 #define regionModelFunctionObjectList_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "regionModelFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

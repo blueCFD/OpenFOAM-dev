@@ -49,7 +49,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "polyTopoChange.H"
 #include "mapPolyMesh.H"
@@ -57,7 +57,7 @@ Description
 #include "cellSplitter.H"
 #include "edgeCollapser.H"
 #include "meshTools.H"
-#include "Pair.H"
+#include "Pair.T.H"
 #include "globalIndex.H"
 
 using namespace Foam;

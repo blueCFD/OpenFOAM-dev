@@ -42,7 +42,7 @@ SourceFiles
 #ifndef boundaryCutter_H
 #define boundaryCutter_H
 
-#include "Map.H"
+#include "Map.T.H"
 #include "labelList.H"
 #include "edge.H"
 #include "typeInfo.H"

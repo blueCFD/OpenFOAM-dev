@@ -33,7 +33,7 @@ Description
 #define IOwriteDictionary_H
 
 #include "writeDictionary.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

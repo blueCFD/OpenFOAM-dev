@@ -56,7 +56,7 @@ SourceFiles
 #include "fvOption.H"
 #include "cellSet.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

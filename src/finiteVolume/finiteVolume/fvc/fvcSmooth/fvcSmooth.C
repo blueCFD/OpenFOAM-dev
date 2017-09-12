@@ -25,7 +25,7 @@ License
 
 #include "fvcSmooth.H"
 #include "volFields.H"
-#include "FaceCellWave.H"
+#include "FaceCellWave.T.H"
 #include "smoothData.H"
 #include "sweepData.H"
 

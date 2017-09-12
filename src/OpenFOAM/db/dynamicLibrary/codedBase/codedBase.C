@@ -28,7 +28,7 @@ License
 #include "dynamicCode.H"
 #include "dynamicCodeContext.H"
 #include "dlLibraryTable.H"
-#include "PstreamReduceOps.H"
+#include "PstreamReduceOps.T.H"
 #include "OSspecific.H"
 #include "regIOobject.H"
 
@@ -226,8 +226,8 @@ void Foam::codedBase::createLibrary
 
         const fileName libPath = dynCode.libPath();
 
-        off_t mySize = Foam::fileSize(libPath);
-        off_t masterSize = mySize;
+        off64_t mySize = Foam::fileSize(libPath);
+        off64_t masterSize = mySize;
         Pstream::scatter(masterSize);
 
         if (debug)

@@ -5,9 +5,11 @@
 #  \\    /   O peration     |
 #   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
 #    \\/     M anipulation  |
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -21,6 +23,17 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added the option "-minpath", for using the minimal PATH necessary
+#          for running ParaView.
 #
 # Script
 #     paraFoam
@@ -45,6 +58,7 @@ options:
   -region <name>    specify alternative mesh region
   -touch            only create the file  (eg, .blockMesh, .OpenFOAM, etc)
   -touchAll         create .blockMesh, .OpenFOAM files (and for all regions)
+  -minpath          trim PATH to the bare minimum path (necessary for very slow shells)
   -help             print the usage
 
 
@@ -60,7 +74,7 @@ USAGE
 # to clean up
 unset FOAM_ABORT
 
-unset regionName optTouch
+unset regionName optTouch minimalPath
 
 # Hack: change all locale to 'C' i.e. using '.' for decimal point. This is
 # only needed temporarily until paraview is locale aware. (git version is
@@ -71,6 +85,7 @@ export LC_ALL=C
 extension=OpenFOAM
 
 requirePV=1
+minimalPath=0
 
 # Parse options
 while [ "$#" -gt 0 ]
@@ -106,6 +121,10 @@ do
     -touchAll)
         optTouch=all
         requirePV=0
+        shift
+        ;;
+    -minpath)
+        minimalPath=1
         shift
         ;;
     --)
@@ -273,6 +292,9 @@ else
         touch "$caseFile"
         echo "Created temporary '$caseFile'"
     }
+
+    [ $minimalPath -eq 1 ] && \
+        export PATH=/bin:/usr/bin:/usr/local/bin:$ParaView_DIR/bin
 
     # For now filter out any ld.so errors. Caused by non-system compiler?
     paraview --data="$caseFile" "$@" 2>&1 \

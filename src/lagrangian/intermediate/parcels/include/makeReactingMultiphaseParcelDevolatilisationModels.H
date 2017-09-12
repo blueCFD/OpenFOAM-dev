@@ -28,9 +28,9 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "ConstantRateDevolatilisation.H"
-#include "NoDevolatilisation.H"
-#include "SingleKineticRateDevolatilisation.H"
+#include "ConstantRateDevolatilisation.T.H"
+#include "NoDevolatilisation.T.H"
+#include "SingleKineticRateDevolatilisation.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -34,7 +34,7 @@ Description
 #include "CV2D.H"
 #include "argList.H"
 
-#include "MeshedSurfaces.H"
+#include "MeshedSurfaces.T.H"
 #include "shortEdgeFilter2D.H"
 #include "extrude2DMesh.H"
 #include "polyMesh.H"

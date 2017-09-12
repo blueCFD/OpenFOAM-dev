@@ -26,7 +26,7 @@ License
 #include "residuals.H"
 #include "volFields.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

@@ -38,7 +38,7 @@ SourceFiles
 #include "morphFieldMapper.H"
 #include "fvMesh.H"
 #include "faceMapper.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "mapPolyMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

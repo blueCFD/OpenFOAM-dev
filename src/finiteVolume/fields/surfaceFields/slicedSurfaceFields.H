@@ -29,7 +29,7 @@ InClass
 #ifndef slicedSurfaceFields_H
 #define slicedSurfaceFields_H
 
-#include "SlicedGeometricField.H"
+#include "SlicedGeometricField.T.H"
 #include "slicedFvsPatchField.H"
 #include "surfaceMesh.H"
 #include "slicedSurfaceFieldsFwd.H"

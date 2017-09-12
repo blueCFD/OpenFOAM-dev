@@ -37,7 +37,7 @@ SourceFiles
 #define writeRegisteredObjectFunctionObject_H
 
 #include "writeRegisteredObject.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -1,0 +1,3 @@
+The original source for 'constant' was '../angledDuctImplicit/constant'
+The original source for 'Allrun' was '../angledDuctImplicit/Allrun'
+The original source for '0' was '../angledDuctImplicit/0'

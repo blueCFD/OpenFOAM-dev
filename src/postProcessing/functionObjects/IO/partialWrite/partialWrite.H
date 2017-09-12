@@ -65,7 +65,7 @@ SourceFiles
 #ifndef partialWrite_H
 #define partialWrite_H
 
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "runTimeSelectionTables.H"
 #include "volFields.H"
 #include "surfaceFields.H"

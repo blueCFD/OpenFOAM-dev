@@ -44,7 +44,7 @@ SourceFiles
 
 #include "functionObject.H"
 #include "dictionary.H"
-#include "DataEntry.H"
+#include "DataEntry.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

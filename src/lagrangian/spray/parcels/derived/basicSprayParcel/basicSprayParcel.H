@@ -38,10 +38,10 @@ SourceFiles
 
 #include "contiguous.H"
 #include "particle.H"
-#include "KinematicParcel.H"
-#include "ThermoParcel.H"
-#include "ReactingParcel.H"
-#include "SprayParcel.H"
+#include "KinematicParcel.T.H"
+#include "ThermoParcel.T.H"
+#include "ReactingParcel.T.H"
+#include "SprayParcel.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

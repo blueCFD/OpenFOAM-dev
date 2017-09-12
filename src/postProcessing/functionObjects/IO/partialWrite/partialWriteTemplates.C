@@ -26,7 +26,7 @@ License
 #include "partialWrite.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -41,8 +41,8 @@ SourceFiles
 #include "pointHit.H"
 #include "Random.H"
 #include "cachedRandom.H"
-#include "FixedList.H"
-#include "UList.H"
+#include "FixedList.T.H"
+#include "UList.T.H"
 #include "linePointRef.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -42,9 +42,9 @@ SourceFiles
 #include "dimensionedVector.H"
 #include "runTimeSelectionTables.H"
 #include "volFieldsFwd.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 #include "labelList.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

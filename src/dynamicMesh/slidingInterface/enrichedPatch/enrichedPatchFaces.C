@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "enrichedPatch.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

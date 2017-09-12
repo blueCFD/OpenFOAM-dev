@@ -33,7 +33,7 @@ Description
 #define IOvorticity_H
 
 #include "vorticity.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

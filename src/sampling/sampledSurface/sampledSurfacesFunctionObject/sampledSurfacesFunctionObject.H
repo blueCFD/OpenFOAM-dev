@@ -37,7 +37,7 @@ SourceFiles
 #define sampledSurfacesFunctionObject_H
 
 #include "sampledSurfaces.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

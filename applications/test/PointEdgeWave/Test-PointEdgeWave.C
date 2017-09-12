@@ -27,13 +27,13 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "pointMesh.H"
 #include "OSspecific.H"
 #include "IFstream.H"
 #include "pointEdgePoint.H"
-#include "PointEdgeWave.H"
+#include "PointEdgeWave.T.H"
 
 using namespace Foam;
 

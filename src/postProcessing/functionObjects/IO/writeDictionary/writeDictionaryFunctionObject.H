@@ -37,7 +37,7 @@ SourceFiles
 #define writeDictionaryFunctionObject_H
 
 #include "writeDictionary.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

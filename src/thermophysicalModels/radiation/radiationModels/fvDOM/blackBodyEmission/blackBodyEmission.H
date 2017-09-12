@@ -41,7 +41,7 @@ SourceFiles
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "interpolationTable.H"
-#include "Vector2D.H"
+#include "Vector2D.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

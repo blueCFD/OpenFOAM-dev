@@ -35,9 +35,9 @@ SourceFiles
 #define readFields_H
 
 #include "fvMesh.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "IOobjectList.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

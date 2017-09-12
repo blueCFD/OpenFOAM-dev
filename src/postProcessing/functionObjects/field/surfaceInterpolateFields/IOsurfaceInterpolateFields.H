@@ -33,7 +33,7 @@ Description
 #define IOsurfaceInterpolateFields_H
 
 #include "surfaceInterpolateFields.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

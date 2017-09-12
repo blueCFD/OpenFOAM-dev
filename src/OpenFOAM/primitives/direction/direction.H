@@ -34,7 +34,7 @@ Description
 #ifndef direction_H
 #define direction_H
 
-#include "char.H"
+#include "char.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

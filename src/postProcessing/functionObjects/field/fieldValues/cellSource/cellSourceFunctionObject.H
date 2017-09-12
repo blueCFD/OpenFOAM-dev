@@ -37,7 +37,7 @@ SourceFiles
 #define cellSourceFunctionObject_H
 
 #include "cellSource.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

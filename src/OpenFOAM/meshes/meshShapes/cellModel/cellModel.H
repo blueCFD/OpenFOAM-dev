@@ -42,7 +42,7 @@ SourceFiles
 #include "pointField.H"
 #include "edgeList.H"
 #include "faceList.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 #include "autoPtr.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

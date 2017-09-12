@@ -36,7 +36,7 @@ SourceFiles
 #ifndef cellSplitter_H
 #define cellSplitter_H
 
-#include "Map.H"
+#include "Map.T.H"
 #include "edge.H"
 #include "typeInfo.H"
 

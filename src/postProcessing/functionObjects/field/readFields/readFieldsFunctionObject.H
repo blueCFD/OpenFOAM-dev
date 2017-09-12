@@ -37,7 +37,7 @@ SourceFiles
 #define readFieldsFunctionObject_H
 
 #include "readFields.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

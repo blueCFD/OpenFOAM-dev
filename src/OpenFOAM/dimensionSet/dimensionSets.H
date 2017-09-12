@@ -38,7 +38,7 @@ SourceFiles
 
 #include "scalarMatrices.H"
 #include "dimensionedScalarFwd.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

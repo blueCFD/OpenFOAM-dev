@@ -41,8 +41,8 @@ SourceFiles
 
 #include "objectRegistry.H"
 #include "OFstream.H"
-#include "PtrList.H"
-#include "HashSet.H"
+#include "PtrList.T.H"
+#include "HashSet.T.H"
 #include "IOmanip.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

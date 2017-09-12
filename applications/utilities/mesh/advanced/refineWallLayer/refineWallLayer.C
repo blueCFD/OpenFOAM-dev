@@ -45,7 +45,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyTopoChange.H"
 #include "cellCuts.H"
 #include "cellSet.H"

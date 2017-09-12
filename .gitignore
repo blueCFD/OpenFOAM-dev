@@ -37,6 +37,7 @@ lnInclude
 linux*Clang*/
 linux*Gcc*/
 linux*Icc*/
+linuxming*/
 solaris*Gcc*/
 SunOS*Gcc*/
 platforms/
@@ -59,6 +60,7 @@ doc/Doxygen/DTAGS
 /etc/prefs.sh
 /etc/config/prefs.csh
 /etc/config/prefs.sh
+/etc/config.d
 
 # Source packages - anywhere
 *.tar.bz2

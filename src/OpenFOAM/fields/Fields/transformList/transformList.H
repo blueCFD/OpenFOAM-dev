@@ -36,9 +36,9 @@ SourceFiles
 #define transformList_H
 
 #include "transform.H"
-#include "List.H"
-#include "Map.H"
-#include "EdgeMap.H"
+#include "List.T.H"
+#include "Map.T.H"
+#include "EdgeMap.T.H"
 #include "tensorField.H"
 
 

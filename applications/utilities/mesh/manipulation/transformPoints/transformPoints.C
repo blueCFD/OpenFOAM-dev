@@ -57,11 +57,11 @@ Usage
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 #include "pointFields.H"
 #include "transformField.H"
 #include "transformGeometricField.H"

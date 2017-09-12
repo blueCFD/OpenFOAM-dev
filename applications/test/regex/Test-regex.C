@@ -30,8 +30,8 @@ Description
 #include "IOobject.H"
 #include "IFstream.H"
 #include "regExp.H"
-#include "List.H"
-#include "Tuple2.H"
+#include "List.T.H"
+#include "Tuple2.T.H"
 
 using namespace Foam;
 

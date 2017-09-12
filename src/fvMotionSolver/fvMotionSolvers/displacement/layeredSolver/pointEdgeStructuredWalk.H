@@ -36,7 +36,7 @@ SourceFiles
 #ifndef pointEdgeStructuredWalk_H
 #define pointEdgeStructuredWalk_H
 
-#include "point.H"
+#include "point.T.H"
 #include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -25,10 +25,10 @@ License
 
 #include "primitiveMesh.H"
 #include "pyramidPointFaceRef.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "unitConversion.H"
-#include "SortableList.H"
-#include "EdgeMap.H"
+#include "SortableList.T.H"
+#include "EdgeMap.T.H"
 #include "primitiveMeshTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

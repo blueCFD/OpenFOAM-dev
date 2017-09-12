@@ -33,7 +33,7 @@ Description
 #define IOpressureTools_H
 
 #include "pressureTools.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

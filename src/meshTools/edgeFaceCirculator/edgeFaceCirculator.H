@@ -69,8 +69,8 @@ SourceFiles
 #ifndef edgeFaceCirculator_H
 #define edgeFaceCirculator_H
 
-#include "face.H"
-#include "ListOps.H"
+#include "face.T.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

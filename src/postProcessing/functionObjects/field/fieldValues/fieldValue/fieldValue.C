@@ -25,7 +25,7 @@ License
 
 #include "fieldValue.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

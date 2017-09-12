@@ -31,7 +31,7 @@ License
 #include "contiguous.H"
 #include "transform.H"
 #include "transformList.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

@@ -29,7 +29,7 @@ License
 #include "polyModifyPoint.H"
 #include "polyModifyFace.H"
 #include "polyRemoveFace.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "meshTools.H"
 #include "OFstream.H"
 

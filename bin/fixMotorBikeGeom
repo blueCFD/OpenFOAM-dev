@@ -1,0 +1,68 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2011-2014 blueCAPE Lda
+#
+#    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#    For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     fixMotorBikeGeom
+#
+# Description
+#     Help script for preparing the motorBike geometry for Windows.
+#
+#------------------------------------------------------------------------------
+
+usage() {
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    cat<<USAGE
+
+usage: ${0##*/} /full/path/to/tutorial_folder
+
+  Help script for preparing the motorBike geometry for the Windows environment.
+  It will rename all occurrences of % and : to _
+
+USAGE
+    exit 1
+}
+
+if [ $# -lt 1 -o "$1" = "--help" ]
+then
+    usage
+fi
+
+if [ -d "$1/resources/geometry" ]; then
+  cd "$1/resources/geometry"
+
+  if [ -e motorBike.obj.gz ]; then
+    echo "Processing motorBike.obj..."
+    gunzip -c motorBike.obj.gz | sed -e 's/\(.*\):\(.*\)%/\1_\2_/' -e 's/\(.*\)%/\1_/' > motorBike.obj
+    rm motorBike.obj.gz
+    echo "Repacking motorBike.obj..."
+    gzip -9 motorBike.obj
+
+    echo "The motorBike geometry is now compatible with the Windows filesystem."
+  else
+    echo "File motorBike.obj.gz doesn't exist."
+  fi
+else
+    echo "Folder '$1/resources/geometry' doesn't exist."
+fi

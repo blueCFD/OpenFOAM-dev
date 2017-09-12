@@ -28,7 +28,7 @@ License
 #include "calculatedFvPatchFields.H"
 #include "zeroGradientFvPatchFields.H"
 #include "coupledFvPatchFields.H"
-#include "UIndirectList.H"
+#include "UIndirectList.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

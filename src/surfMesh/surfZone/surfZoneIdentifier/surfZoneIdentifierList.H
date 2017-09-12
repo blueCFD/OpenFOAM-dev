@@ -32,7 +32,7 @@ Description
 #define surfZoneIdentifierList_H
 
 #include "surfZoneIdentifier.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

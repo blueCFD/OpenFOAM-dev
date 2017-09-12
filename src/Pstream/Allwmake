@@ -29,6 +29,11 @@ wmakeMpiLib()
 }
 
 set -x
+
+if isMinGW && [ -z "$WM_PSTREAMLINK" ]; then
+    export targetType="lib"
+fi
+
 wmake $targetType dummy
 
 case "$WM_MPLIB" in

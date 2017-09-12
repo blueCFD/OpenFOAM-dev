@@ -60,7 +60,7 @@ SourceFiles
 #include "indexedOctree.H"
 #include "treeDataEdge.H"
 #include "treeDataPoint.H"
-#include "PrimitivePatch.H"
+#include "PrimitivePatch.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

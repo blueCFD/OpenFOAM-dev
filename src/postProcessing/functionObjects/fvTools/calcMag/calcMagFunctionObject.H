@@ -37,7 +37,7 @@ SourceFiles
 #define calcMagFunctionObject_H
 
 #include "calcMag.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

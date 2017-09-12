@@ -26,10 +26,10 @@ License
 #include "sampledSurfaces.H"
 #include "volFields.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "IOmanip.H"
 #include "volPointInterpolation.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

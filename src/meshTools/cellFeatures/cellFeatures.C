@@ -25,10 +25,10 @@ License
 
 #include "cellFeatures.H"
 #include "primitiveMesh.H"
-#include "HashSet.H"
-#include "Map.H"
+#include "HashSet.T.H"
+#include "Map.T.H"
 #include "demandDrivenData.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "meshTools.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

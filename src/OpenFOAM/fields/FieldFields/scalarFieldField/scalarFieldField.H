@@ -35,11 +35,11 @@ SourceFiles
 #ifndef scalarFieldField_H
 #define scalarFieldField_H
 
-#include "FieldField.H"
+#include "FieldField.T.H"
 #include "scalar.H"
 
 #define TEMPLATE template<template<class> class Field>
-#include "FieldFieldFunctionsM.H"
+#include "FieldFieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

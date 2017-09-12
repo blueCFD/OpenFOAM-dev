@@ -71,7 +71,7 @@ SourceFiles
 #define uniformJumpAMIFvPatchField_H
 
 #include "fixedJumpAMIFvPatchField.H"
-#include "DataEntry.H"
+#include "DataEntry.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

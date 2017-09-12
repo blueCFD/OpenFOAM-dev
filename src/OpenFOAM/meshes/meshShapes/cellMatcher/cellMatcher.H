@@ -80,7 +80,7 @@ SourceFiles
 #include "labelList.H"
 #include "faceList.H"
 #include "boolList.H"
-#include "Map.H"
+#include "Map.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

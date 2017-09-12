@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<QHelpCollectionProject version="1.0">
+    <assistant>
+        <title>OpenFOAM programmer's C++ documentation</title>
+        <startPage>qthelp://org.openfoam.WM_PROJECT_VERSION/openfoam-code/index.html</startPage>
+        <applicationIcon>../OpenFOAMdocIcon.png</applicationIcon>
+        <enableFilterFunctionality>false</enableFilterFunctionality>
+        <enableDocumentationManager>false</enableDocumentationManager>
+        <enableAddressBar visible="true">true</enableAddressBar>
+        <cacheDirectory>blueCFD/OpenFOAM</cacheDirectory>
+    </assistant>
+    <docFiles>
+        <register>
+            <file>openfoam-code-WM_PROJECT_VERSION.qch</file>
+        </register>
+    </docFiles>
+</QHelpCollectionProject>

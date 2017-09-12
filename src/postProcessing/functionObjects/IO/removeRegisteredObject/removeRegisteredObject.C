@@ -25,7 +25,7 @@ License
 
 #include "removeRegisteredObject.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

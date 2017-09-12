@@ -66,7 +66,7 @@ SourceFiles
 #include "globalIndex.H"
 #include "treeBoundBox.H"
 #include "primitivePatch.H"
-#include "face.H"
+#include "face.T.H"
 #include "labelList.H"
 #include "pointField.H"
 #include "indexedOctree.H"

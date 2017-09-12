@@ -31,7 +31,7 @@ License
 #include "incompressiblePerfectGas.H"
 #include "rhoConst.H"
 #include "perfectFluid.H"
-#include "PengRobinsonGas.H"
+#include "PengRobinsonGas.T.H"
 #include "adiabaticPerfectFluid.H"
 
 #include "hConstThermo.H"

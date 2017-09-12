@@ -23,9 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "IntegrationScheme.H"
-#include "Euler.H"
-#include "Analytical.H"
+#include "IntegrationScheme.T.H"
+#include "Euler.T.H"
+#include "Analytical.T.H"
 
 #include "scalar.H"
 #include "vector.H"

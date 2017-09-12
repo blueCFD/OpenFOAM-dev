@@ -88,7 +88,7 @@ SourceFiles
 #include "boolList.H"
 #include "scalarField.H"
 #include "pointField.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "typeInfo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

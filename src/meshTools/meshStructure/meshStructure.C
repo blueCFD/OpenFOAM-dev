@@ -24,10 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "meshStructure.H"
-#include "FaceCellWave.H"
+#include "FaceCellWave.T.H"
 #include "topoDistanceData.H"
 #include "pointTopoDistanceData.H"
-#include "PointEdgeWave.H"
+#include "PointEdgeWave.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

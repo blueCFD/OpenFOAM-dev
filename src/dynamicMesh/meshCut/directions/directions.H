@@ -40,10 +40,10 @@ SourceFiles
 #ifndef directions_H
 #define directions_H
 
-#include "List.H"
+#include "List.T.H"
 #include "vectorField.H"
-#include "NamedEnum.H"
-#include "point.H"
+#include "NamedEnum.T.H"
+#include "point.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

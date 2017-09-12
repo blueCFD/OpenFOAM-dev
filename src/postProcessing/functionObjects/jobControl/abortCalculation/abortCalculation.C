@@ -26,9 +26,9 @@ License
 #include "abortCalculation.H"
 #include "dictionary.H"
 #include "error.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "OSspecific.H"
-#include "PstreamReduceOps.H"
+#include "PstreamReduceOps.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

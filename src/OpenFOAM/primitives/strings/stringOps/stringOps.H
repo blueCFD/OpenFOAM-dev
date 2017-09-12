@@ -35,9 +35,9 @@ SourceFiles
 #ifndef stringOps_H
 #define stringOps_H
 
-#include "string.H"
+#include "string.T.H"
 #include "dictionary.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

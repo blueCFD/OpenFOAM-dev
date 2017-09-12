@@ -25,7 +25,7 @@ License
 
 #include "patchIdentifier.H"
 #include "dictionary.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

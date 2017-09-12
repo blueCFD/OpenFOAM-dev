@@ -40,7 +40,7 @@ SourceFiles
 #ifndef probes_H
 #define probes_H
 
-#include "HashPtrTable.H"
+#include "HashPtrTable.T.H"
 #include "OFstream.H"
 #include "polyMesh.H"
 #include "pointField.H"

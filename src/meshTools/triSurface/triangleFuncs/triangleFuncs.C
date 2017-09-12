@@ -26,7 +26,7 @@ License
 #include "triangleFuncs.H"
 #include "pointField.H"
 #include "treeBoundBox.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "boolList.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

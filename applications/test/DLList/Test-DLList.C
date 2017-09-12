@@ -30,7 +30,7 @@ Description
 #include "OSspecific.H"
 
 #include "IOstreams.H"
-#include "DLList.H"
+#include "DLList.T.H"
 
 using namespace Foam;
 

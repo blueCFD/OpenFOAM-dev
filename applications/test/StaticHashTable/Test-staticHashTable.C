@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "StaticHashTable.H"
+#include "StaticHashTable.T.H"
 #include "IOstreams.H"
 #include "IStringStream.H"
 #include "OStringStream.H"

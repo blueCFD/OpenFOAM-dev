@@ -44,8 +44,8 @@ SourceFiles
 #include "dimensionedScalarFwd.H"
 #include "className.H"
 #include "scalarField.H"
-#include "PtrList.H"
-#include "HashTable.H"
+#include "PtrList.T.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

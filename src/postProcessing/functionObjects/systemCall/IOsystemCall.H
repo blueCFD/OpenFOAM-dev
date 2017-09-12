@@ -33,7 +33,7 @@ Description
 #define IOsystemCall_H
 
 #include "systemCall.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

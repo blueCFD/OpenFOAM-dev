@@ -33,7 +33,7 @@ Description
 #define IOyPlus_H
 
 #include "yPlus.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

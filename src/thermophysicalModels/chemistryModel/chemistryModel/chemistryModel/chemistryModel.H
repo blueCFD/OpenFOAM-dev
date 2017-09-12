@@ -38,11 +38,11 @@ SourceFiles
 #ifndef chemistryModel_H
 #define chemistryModel_H
 
-#include "Reaction.H"
+#include "Reaction.T.H"
 #include "ODESystem.H"
 #include "volFieldsFwd.H"
 #include "simpleMatrix.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

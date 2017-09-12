@@ -29,7 +29,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "meshToMesh0.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 #include "indexedOctree.H"
 #include "treeDataCell.H"

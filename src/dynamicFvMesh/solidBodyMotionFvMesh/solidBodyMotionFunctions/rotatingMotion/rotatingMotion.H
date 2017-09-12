@@ -40,8 +40,8 @@ SourceFiles
 
 #include "solidBodyMotionFunction.H"
 #include "primitiveFields.H"
-#include "point.H"
-#include "DataEntry.H"
+#include "point.T.H"
+#include "DataEntry.T.H"
 #include "autoPtr.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

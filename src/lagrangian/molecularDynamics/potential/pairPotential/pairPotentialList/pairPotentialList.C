@@ -25,7 +25,7 @@ License
 
 #include "pairPotentialList.H"
 #include "OFstream.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

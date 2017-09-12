@@ -31,8 +31,8 @@ Description
 #ifndef indirectPointList_H
 #define indirectPointList_H
 
-#include "point.H"
-#include "IndirectList.H"
+#include "point.T.H"
+#include "IndirectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

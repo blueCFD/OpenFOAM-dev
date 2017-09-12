@@ -38,7 +38,7 @@ SourceFiles
 #include "chemistryReader.H"
 #include "fileName.H"
 #include "typeInfo.H"
-#include "HashPtrTable.H"
+#include "HashPtrTable.T.H"
 #include "labelList.H"
 #include "speciesTable.H"
 #include "atomicWeights.H"

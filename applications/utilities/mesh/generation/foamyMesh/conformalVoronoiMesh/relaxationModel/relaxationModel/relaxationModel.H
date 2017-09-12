@@ -36,8 +36,8 @@ SourceFiles
 #ifndef relaxationModel_H
 #define relaxationModel_H
 
-#include "point.H"
-#include "Time.H"
+#include "point.T.H"
+#include "Time.T.H"
 #include "dictionary.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"

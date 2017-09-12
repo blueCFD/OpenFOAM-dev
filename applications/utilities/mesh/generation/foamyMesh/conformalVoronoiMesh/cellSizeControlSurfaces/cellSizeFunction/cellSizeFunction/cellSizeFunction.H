@@ -35,7 +35,7 @@ SourceFiles
 #ifndef cellSizeFunction_H
 #define cellSizeFunction_H
 
-#include "point.H"
+#include "point.T.H"
 #include "conformalVoronoiMesh.H"
 #include "searchableSurface.H"
 #include "dictionary.H"

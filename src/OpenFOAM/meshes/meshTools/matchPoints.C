@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "matchPoints.H"
-#include "SortableList.H"
-#include "ListOps.H"
+#include "SortableList.T.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

@@ -5,6 +5,9 @@
     \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2011 blueCAPE: Avoid defining 'GNU_SOURCE' for MinGW builds.
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -117,15 +120,21 @@ License
     Note: instead of gmap run gpart <nProcs> -vs <grfFile>
     where <grfFile> can be obtained by running with 'writeGraph=true'
 
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
 \*---------------------------------------------------------------------------*/
 
 #include "scotchDecomp.H"
 #include "addToRunTimeSelectionTable.H"
 #include "floatScalar.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "OFstream.H"
 #include "globalIndex.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 extern "C"
 {
@@ -135,7 +144,7 @@ extern "C"
 
 // Hack: scotch generates floating point errors so need to switch of error
 //       trapping!
-#ifdef __GLIBC__
+#if defined(__GLIBC__) && (!defined(WIN32) && !defined(WIN64))
 #   ifndef _GNU_SOURCE
 #       define _GNU_SOURCE
 #   endif

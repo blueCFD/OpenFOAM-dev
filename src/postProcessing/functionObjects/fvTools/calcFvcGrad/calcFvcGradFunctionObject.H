@@ -37,7 +37,7 @@ SourceFiles
 #define calcFvcGradFunctionObject_H
 
 #include "calcFvcGrad.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -37,7 +37,7 @@ SourceFiles
 #define removeRegisteredObjectFunctionObject_H
 
 #include "removeRegisteredObject.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

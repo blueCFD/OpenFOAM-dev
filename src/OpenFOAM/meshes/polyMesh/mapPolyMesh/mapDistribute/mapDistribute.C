@@ -25,11 +25,11 @@ License
 
 #include "mapDistribute.H"
 #include "commSchedule.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "globalIndex.H"
 #include "globalIndexAndTransform.H"
 #include "transformField.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

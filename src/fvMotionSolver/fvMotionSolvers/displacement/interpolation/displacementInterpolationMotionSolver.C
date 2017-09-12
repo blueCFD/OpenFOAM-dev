@@ -25,9 +25,9 @@ License
 
 #include "displacementInterpolationMotionSolver.H"
 #include "addToRunTimeSelectionTable.H"
-#include "SortableList.H"
-#include "IOList.H"
-#include "Tuple2.H"
+#include "SortableList.T.H"
+#include "IOList.T.H"
+#include "Tuple2.T.H"
 #include "mapPolyMesh.H"
 #include "interpolateXY.H"
 

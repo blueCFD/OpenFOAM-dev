@@ -6,8 +6,11 @@
 #   \\  /    A nd           | Copyright (C) 2011-2014 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
+# 2014-03-11 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -21,6 +24,18 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Modified the script to operate differently in Windows, by relying
+#          heavily on file inclusion. This way it guarantees that the links are
+#          always up-to-date on Windows.
+#
 #
 # Script
 #     wmakeLnInclude
@@ -146,6 +161,7 @@ then
     echo "$Script: linking include files to $incDir" 1>&2
 fi
 
+if ! onWin; then
 
 #------------------------------------------------------------------------------
 # Remove any broken links first (this helps when file locations have moved)
@@ -175,5 +191,41 @@ find .. $findOpt \
 
 unset Script usage
 
+
+else
+
+    #
+    # remove any broken links first (this helps when file locations have moved)
+    #
+    find . -type f | while read possibleBrokenLinks; do
+
+        theItemPath=$(grep "#include" ${possibleBrokenLinks} | head -1 | \
+                      sed 's=.*"\(.*\)"=\1=')
+        if [ -z "$theItemPath" ] || [ ! -e "$theItemPath" ]; then
+          rm ${possibleBrokenLinks}
+        fi
+
+    done
+
+    #
+    # create links, avoid recreating links unless necessary
+    # things placed in the 'noLink' directory are skipped
+    #
+    find .. $findOpt \
+        \( -name lnInclude -o -name Make -o -name config -o -name noLink \) \
+        -prune \
+        -o \( \
+        -name '*.[CHh]' \
+        -o -name '*.[ch]xx' \
+        -o -name '*.[ch]pp' \
+        -o -name '*.type' \
+        \) -print | \
+    while read newItemToCreate; do
+
+      echo "#include \"$newItemToCreate\"" > ${newItemToCreate##*/}
+
+    done    
+
+fi
 
 #------------------------------------------------------------------------------

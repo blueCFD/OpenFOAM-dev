@@ -26,7 +26,7 @@ License
 #include "meshRefinement.H"
 #include "fvMesh.H"
 #include "syncTools.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "refinementSurfaces.H"
 #include "pointSet.H"
 #include "faceSet.H"
@@ -46,7 +46,7 @@ License
 #include "unitConversion.H"
 #include "OBJstream.H"
 #include "patchFaceOrientation.H"
-#include "PatchEdgeFaceWave.H"
+#include "PatchEdgeFaceWave.T.H"
 #include "patchEdgeFaceRegion.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

@@ -38,7 +38,7 @@ SourceFiles
 
 #include "probes.H"
 #include "patchProbes.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

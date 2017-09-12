@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "systemCall.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "dynamicCode.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

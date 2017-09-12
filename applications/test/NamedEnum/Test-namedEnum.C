@@ -25,7 +25,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "IOstreams.H"
 
 using namespace Foam;

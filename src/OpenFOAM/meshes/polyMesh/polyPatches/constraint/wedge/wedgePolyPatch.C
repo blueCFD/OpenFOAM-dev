@@ -25,7 +25,7 @@ License
 
 #include "wedgePolyPatch.H"
 #include "addToRunTimeSelectionTable.H"
-#include "SubField.H"
+#include "SubField.T.H"
 #include "transform.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

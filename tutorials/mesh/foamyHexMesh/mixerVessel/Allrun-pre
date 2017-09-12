@@ -18,7 +18,7 @@ intersectSurfaces()
     outputName2=${outputName2%.*}
 
     mv log.surfaceBooleanFeatures \
-       log.surfaceBooleanFeatures.$outputName1:$outputName2
+       log.surfaceBooleanFeatures.$outputName1_$outputName2
 }
 
 # Set application name
@@ -27,7 +27,7 @@ application=$(getApplication)
 # Get number of processors to run on
 nProcs=$(getNumberOfProcessors)
 
-\rm -rf 0
+rm -rf 0
 
 
 # Run the surface preparation script
@@ -79,8 +79,8 @@ done
 
 
 # Meshing
-\cp system/controlDict.mesh system/controlDict
-\cp system/collapseDict.collapseFaces system/collapseDict
+cp system/controlDict.mesh system/controlDict
+cp system/collapseDict.collapseFaces system/collapseDict
 
 runApplication blockMesh -region backgroundMeshDecomposition
 
@@ -93,7 +93,7 @@ runParallel foamyHexMesh $nProcs
 runParallel collapseEdges $nProcs -collapseFaces -latestTime
 mv log.collapseEdges log.collapseFaces
 
-#\cp system/collapseDict.indirectPatchFaces system/collapseDict
+#cp system/collapseDict.indirectPatchFaces system/collapseDict
 #runParallel collapseEdges $nProcs -collapseFaceSet indirectPatchFaces -latestTime
 #mv log.collapseEdges log.collapseFaceSet
 
@@ -102,8 +102,8 @@ runParallel checkMesh $nProcs -allTopology -allGeometry -latestTime
 runApplication reconstructParMesh -latestTime
 
 # Copy the mesh into polyMesh and delete the 102 directory
-\cp -r 101/polyMesh constant
-\rm -rf 101
+cp -r 101/polyMesh constant
+rm -rf 101
 
 
 # ----------------------------------------------------------------- end-of-file

@@ -42,7 +42,7 @@ Description
 #include "boundBox.H"
 #include "edgeMesh.H"
 #include "matchPoints.H"
-#include "MeshedSurfaces.H"
+#include "MeshedSurfaces.T.H"
 
 using namespace Foam;
 

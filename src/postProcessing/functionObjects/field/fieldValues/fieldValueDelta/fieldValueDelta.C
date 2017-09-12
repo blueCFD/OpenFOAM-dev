@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fieldValueDelta.H"
-#include "ListOps.H"
-#include "Time.H"
+#include "ListOps.T.H"
+#include "Time.T.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 

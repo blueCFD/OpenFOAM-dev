@@ -25,7 +25,7 @@ License
 
 #include "coupleGroupIdentifier.H"
 #include "polyMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

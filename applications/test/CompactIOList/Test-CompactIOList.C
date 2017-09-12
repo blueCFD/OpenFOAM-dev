@@ -31,7 +31,7 @@ Description
 
 #include "IOstreams.H"
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 
 using namespace Foam;

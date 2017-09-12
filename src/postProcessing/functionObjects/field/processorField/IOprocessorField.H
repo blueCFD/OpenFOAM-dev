@@ -33,7 +33,7 @@ Description
 #define IOprocessorField_H
 
 #include "processorField.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

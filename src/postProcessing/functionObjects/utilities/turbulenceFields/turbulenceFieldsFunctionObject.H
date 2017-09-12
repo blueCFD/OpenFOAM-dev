@@ -37,7 +37,7 @@ SourceFiles
 #define turbulenceFieldsFunctionObject_H
 
 #include "turbulenceFields.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -28,11 +28,11 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "LocalInteraction.H"
-#include "NoInteraction.H"
-#include "Rebound.H"
-#include "StandardWallInteraction.H"
-#include "MultiInteraction.H"
+#include "LocalInteraction.T.H"
+#include "NoInteraction.T.H"
+#include "Rebound.T.H"
+#include "StandardWallInteraction.T.H"
+#include "MultiInteraction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

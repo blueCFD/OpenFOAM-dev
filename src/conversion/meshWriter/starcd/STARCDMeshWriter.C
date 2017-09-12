@@ -25,8 +25,8 @@ License
 
 #include "STARCDMeshWriter.H"
 
-#include "Time.H"
-#include "SortableList.H"
+#include "Time.T.H"
+#include "SortableList.T.H"
 #include "OFstream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

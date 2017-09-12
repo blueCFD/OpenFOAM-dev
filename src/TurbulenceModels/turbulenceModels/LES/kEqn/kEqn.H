@@ -58,7 +58,7 @@ SourceFiles
 #ifndef kEqn_H
 #define kEqn_H
 
-#include "LESeddyViscosity.H"
+#include "LESeddyViscosity.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

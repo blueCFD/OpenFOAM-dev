@@ -5,8 +5,11 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +23,18 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Derived from the patches for blueCFD 2.1 and 2.2.
+#        - Added sourcing of the "*.sh" scripts from the folder
+#          "etc/config.d/unset/".
+#        - Added unset and unalias for those added in "aliases.sh".
 #
 # File
 #     etc/config/unset.sh
@@ -37,6 +52,15 @@ foamClean=$WM_PROJECT_DIR/bin/foamCleanPath
 foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR $HOME/$WM_PROJECT/$USER \
     $WM_PROJECT_SITE $FOAM_SITE_APPBIN $FOAM_SITE_LIBBIN $ParaView_DIR"
 
+# Auto unload other packages files present in the global config.d/unset
+if [ -d "$WM_PROJECT_DIR/etc/config.d/unset" ]; then
+  for configdsh in "$WM_PROJECT_DIR/etc/config.d/unset"/*.sh; do
+    [ -e ${configdsh} ] && . ${configdsh}
+  done
+fi
+
+unset configdsh
+
 #------------------------------------------------------------------------------
 # Unset WM_* environment variables
 
@@ -47,6 +71,7 @@ unset WM_CFLAGS
 unset WM_COMPILER
 unset WM_COMPILER_TYPE
 unset WM_COMPILER_LIB_ARCH
+unset WM_COMPILER_DIR
 unset WM_COMPILE_OPTION
 unset WM_CXX
 unset WM_CXXFLAGS
@@ -69,6 +94,7 @@ unset WM_PROJECT_USER_DIR
 unset WM_PROJECT_VERSION
 unset WM_SCHEDULER
 unset WM_THIRD_PARTY_DIR
+unset WM_CONTINUE_ON_ERROR
 
 
 #------------------------------------------------------------------------------
@@ -102,6 +128,7 @@ unset FOAM_UTILITIES
 unset MPI_ARCH_PATH
 unset MPI_BUFFER_SIZE
 unset OPAL_PREFIX
+unset MPI_ACCESSORY_OPTIONS
 
 
 #------------------------------------------------------------------------------
@@ -133,7 +160,6 @@ then
     cleaned=`$foamClean "$MANPATH" "$foamOldDirs"` && MANPATH="$cleaned"
 fi
 
-
 [ -n "$LD_LIBRARY_PATH" ] || unset LD_LIBRARY_PATH
 [ -n "$MANPATH" ] || unset MANPATH
 [ -n "$LD_PRELOAD" ] || unset LD_PRELOAD
@@ -159,6 +185,11 @@ unalias wmSchedOff
 unalias foam
 unalias foamSite
 
+unalias wmSC
+unalias wmMC
+unalias wmNonStop
+unalias wmStopOn1st
+
 unalias src
 unalias lib
 unalias app
@@ -166,9 +197,9 @@ unalias sol
 unalias util
 unalias tut
 unalias run
+unalias user
 
 unset foamVersion
 unset foamPV
-
 
 #------------------------------------------------------------------------------

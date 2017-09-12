@@ -25,10 +25,10 @@ License
 
 #include "sampledSets.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "volFields.H"
-#include "ListListOps.H"
-#include "SortableList.H"
+#include "ListListOps.T.H"
+#include "SortableList.T.H"
 #include "volPointInterpolation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

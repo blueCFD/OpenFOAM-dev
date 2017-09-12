@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fvMeshDistribute.H"
-#include "PstreamCombineReduceOps.H"
+#include "PstreamCombineReduceOps.T.H"
 #include "fvMeshAdder.H"
 #include "faceCoupleInfo.H"
 #include "processorFvPatchField.H"
@@ -38,7 +38,7 @@ License
 #include "mapDistributePolyMesh.H"
 #include "surfaceFields.H"
 #include "syncTools.H"
-#include "CompactListList.H"
+#include "CompactListList.T.H"
 #include "fvMeshTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

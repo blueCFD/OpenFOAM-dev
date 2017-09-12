@@ -33,7 +33,7 @@ Description
 #define IOfieldMinMax_H
 
 #include "fieldMinMax.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

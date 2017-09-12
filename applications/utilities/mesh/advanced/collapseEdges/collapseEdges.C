@@ -47,7 +47,7 @@ Usage
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "timeSelector.H"
 #include "polyTopoChange.H"
 #include "fvMesh.H"

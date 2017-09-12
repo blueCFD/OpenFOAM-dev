@@ -1,0 +1,17 @@
+MSwindows.C
+printStack.C
+regExp.C
+signals/sigFpe.C
+signals/sigSegv.C
+signals/sigInt.C
+signals/sigQuit.C
+signals/sigStopAtWriteNow.C
+signals/sigWriteNow.C
+timer.C
+fileStat.C
+cpuTime/cpuTime.C
+clockTime/clockTime.C
+memInfo/memInfo.C
+fileMonitor.C
+
+LIB = $(FOAM_LIBBIN)/libOSspecific

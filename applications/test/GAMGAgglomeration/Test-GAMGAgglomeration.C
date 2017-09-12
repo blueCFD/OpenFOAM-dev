@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "GAMGAgglomeration.H"
+#include "GAMGAgglomeration.T.H"
 #include "OFstream.H"
 #include "meshTools.H"
 

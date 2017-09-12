@@ -25,9 +25,9 @@ License
 
 #include "simpleGeomDecomp.H"
 #include "addToRunTimeSelectionTable.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "globalIndex.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

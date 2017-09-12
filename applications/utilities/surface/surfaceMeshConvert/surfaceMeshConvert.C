@@ -58,9 +58,9 @@ Note
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 
-#include "MeshedSurfaces.H"
+#include "MeshedSurfaces.T.H"
 #include "coordinateSystems.H"
 
 using namespace Foam;

@@ -33,7 +33,7 @@ Description
 #define makeReactingSolidThermo_H
 
 #include "addToRunTimeSelectionTable.H"
-#include "SpecieMixture.H"
+#include "SpecieMixture.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 #define makeSolidReactionMixtureThermo(BaseThermo,Cthermo,Mixture,ThermoPhys) \

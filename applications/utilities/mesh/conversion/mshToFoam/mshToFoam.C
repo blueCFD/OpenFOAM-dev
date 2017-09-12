@@ -40,11 +40,11 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "IFstream.H"
 #include "polyPatch.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "cellModeller.H"
 
 #include <fstream>

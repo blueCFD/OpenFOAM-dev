@@ -27,8 +27,8 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
-#include "EulerDdtScheme.H"
-#include "CrankNicolsonDdtScheme.H"
+#include "EulerDdtScheme.T.H"
+#include "CrankNicolsonDdtScheme.T.H"
 #include "backwardDdtScheme.H"
 
 

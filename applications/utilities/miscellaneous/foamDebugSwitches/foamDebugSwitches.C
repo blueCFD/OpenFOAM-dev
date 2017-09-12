@@ -5,8 +5,10 @@
     \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -21,6 +23,16 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - Derived from the patches for blueCFD 2.1 and 2.2.
+      - Added the inclusion of the "forceLoadLibraries.H" header file.
+
 Application
     foamDebugSwitches
 
@@ -33,7 +45,7 @@ Description
 #include "dictionary.H"
 #include "IFstream.H"
 #include "IOobject.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 
 using namespace Foam;
 
@@ -56,6 +68,8 @@ int main(int argc, char *argv[])
     );
 
     argList args(argc, argv);
+
+#   include "forceLoadLibraries.H"
 
     wordList currDebug(debug::debugSwitches().toc());
     wordList currInfo(debug::infoSwitches().toc());

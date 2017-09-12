@@ -44,6 +44,14 @@ set -x
 
 wmakeLnInclude decompositionMethods
 
+if [ -n "$WM_MPLIB" ]; then
+
+#this is to guarantee that scotchDecomp is built with the correct headers
+if [ -e "scotchDecomp/scotchDecomp.dep" ]; then
+    wrmdep scotchDecomp/scotchDecomp.C
+fi
+
+
 if [ -n "$SCOTCH_ARCH_PATH" ]
 then
     wmake $targetType scotchDecomp
@@ -58,6 +66,7 @@ else
     echo
 fi
 
+fi
 
 # Try and build metisDecomp (has own logic)
 (cd metisDecomp && ./Allwmake $targetType)

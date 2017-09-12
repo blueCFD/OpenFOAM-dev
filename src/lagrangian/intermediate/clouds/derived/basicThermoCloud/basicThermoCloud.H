@@ -32,7 +32,7 @@ Description
 #ifndef basicThermoCloud_H
 #define basicThermoCloud_H
 
-#include "ThermoCloud.H"
+#include "ThermoCloud.T.H"
 #include "basicThermoParcel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

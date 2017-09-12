@@ -1,4 +1,4 @@
-DelaunayMeshTools/DelaunayMeshTools.C
+DelaunayMeshTools/DelaunayMeshTools.T.C
 
 conformalVoronoiMesh/indexedVertex/indexedVertexEnum.C
 conformalVoronoiMesh/indexedCell/indexedCellEnum.C

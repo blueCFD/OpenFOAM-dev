@@ -57,7 +57,7 @@ Description
 #include "polyModifyFace.H"
 #include "polyAddFace.H"
 #include "regionSplit.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "cyclicFvPatch.H"
 
 using namespace Foam;

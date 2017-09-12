@@ -31,8 +31,8 @@ Description
 #ifndef primitiveFaceZone_H
 #define primitiveFaceZone_H
 
-#include "face.H"
-#include "PrimitivePatch.H"
+#include "face.T.H"
+#include "PrimitivePatch.T.H"
 #include "indirectFaceList.H"
 #include "pointField.H"
 

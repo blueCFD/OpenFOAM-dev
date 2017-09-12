@@ -42,7 +42,7 @@ Description
 #include "surfaceFields.H"
 #include "pointFields.H"
 #include "uniformDimensionedFields.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 #include "fvIOoptionList.H"
 
 #include "singlePhaseTransportModel.H"

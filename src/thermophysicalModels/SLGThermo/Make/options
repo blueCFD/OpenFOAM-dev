@@ -12,3 +12,11 @@ EXE_INC = \
 LIB_LIBS = \
     -lcompressibleTransportModels \
     -lfiniteVolume
+
+LIB_LIBS += \
+    -lsolidProperties \
+    -lsolidMixtureProperties \
+    -lliquidProperties \
+    -lliquidMixtureProperties \
+    -lspecie \
+    -lfluidThermophysicalModels

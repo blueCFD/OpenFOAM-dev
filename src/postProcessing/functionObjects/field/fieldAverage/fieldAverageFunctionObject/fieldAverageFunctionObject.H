@@ -37,7 +37,7 @@ SourceFiles
 #define fieldAverageFunctionObject_H
 
 #include "fieldAverage.H"
-#include "OutputFilterFunctionObject.H"
+#include "OutputFilterFunctionObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

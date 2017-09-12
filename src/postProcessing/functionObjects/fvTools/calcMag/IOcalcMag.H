@@ -33,7 +33,7 @@ Description
 #define IOcalcMag_H
 
 #include "calcMag.H"
-#include "IOOutputFilter.H"
+#include "IOOutputFilter.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -28,9 +28,9 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "NoAtomization.H"
-#include "BlobsSheetAtomization.H"
-#include "LISAAtomization.H"
+#include "NoAtomization.T.H"
+#include "BlobsSheetAtomization.T.H"
+#include "LISAAtomization.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

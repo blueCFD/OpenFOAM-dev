@@ -25,7 +25,7 @@ License
 
 #include "surfaceDisplacementPointPatchVectorField.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "transformField.H"
 #include "fvMesh.H"
 #include "displacementMotionSolver.H"
