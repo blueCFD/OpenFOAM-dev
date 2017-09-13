@@ -1,19 +1,20 @@
 #                            -*- mode: org; -*-
 #
-#+TITLE:          blueCFD-Core README for version 3.0-x
+#+TITLE:          blueCFD-Core README for port of OpenFOAM 4.x
 #+AUTHOR:                      blueCAPE Lda
-#+DATE:                       13th July 2016
-#+LINK:                  http://bluecfd.com/Core
+#+DATE:                       2nd August 2016
+#+LINK:                    http://bluecfd.com/Core
 #+OPTIONS: author:nil ^:{}
 # Copyright (c) 2013-2016 blueCAPE Lda.
 
 * About blueCFD-Core
-  blueCFD®-Core is a service package provided by blueCAPE Lda, of a high
-  quality build version of OpenFOAM® for up-to-date Windows 7 to 10, all 64bit,
-  with some additional tweaks, executables and scripts, in order to maintain
-  usability under a Windows environment.
-  Building for 32 bit and/or running on Windows XP to 10 should be
-  possible, but it's currently not supported.
+  blueCFD®-Core is an open source project provided by blueCAPE Lda. It
+  provides source code and high quality builds of OpenFOAM® and related open
+  source projects, as unofficial ports for up-to-date 64 bit Windows 7 to 10.
+  Additional tweaks, executables and scripts are also provided, in order to
+  maintain usability when working within Microsoft Windows Operating Systems.
+  Building for 32 bit and/or running on Windows XP should be possible
+  but it is not supported at the moment.
 
   OpenFOAM is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
@@ -33,24 +34,35 @@
   modifications to the OpenFOAM source code, which are provided at their
   website: [[http://www.symscape.com]]
 
-* Disclaimer
-  blueCAPE Lda is responsible for blueCFD®-Core. blueCAPE Lda is in no way
-  associated with OpenCFD (ESI Group), nor holds any copyrights over OpenFOAM®.
+* Disclaimers
+  blueCAPE Lda is responsible for the development of the blueCFD®-Core project:
+      [[http://bluecape.com.pt]]
+
+  blueCFD® is a registered trade mark of blueCAPE Lda:
+      [[http://bluecfd.com/trademark]]
+
+  blueCAPE Lda is in no way associated with OpenCFD (ESI Group), nor holds any
+  copyrights over OpenFOAM®.
   This offering is not approved or endorsed by OpenCFD (ESI Group), the
   producer of the OpenFOAM+ software and owner of the OPENFOAM® and OpenCFD®
   trade marks.
+
+  blueCAPE Lda is a contributor to the OpenFOAM Foundation, but the majority of
+  the modifications present in the source code herein will not be accepted in
+  the official releases of OpenFOAM, mostly due to the maintenance overhead
+  associated to supporting closed-source operating systems.
 
 * Project page
   [[http://bluecfd.github.io/Core/]]
 
 * Release notes
-  =TODO=
+  [[http://bluecfd.github.io/Core/ReleaseNotes]]
 
 * Documentation
-  [[https://github.com/blueCFD/Core/wiki]]
+  [[http://bluecfd.github.io/Core/UserGuide]]
 
 * Support and development contracts related to blueCFD-Core
   [[http://bluecfd.com/contact]]
 
-* Reporting Bugs in blueCFD
+* Reporting Bugs
   [[https://github.com/blueCFD/Core/issues]]

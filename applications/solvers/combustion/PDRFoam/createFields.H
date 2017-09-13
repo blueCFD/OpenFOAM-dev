@@ -1,4 +1,4 @@
-// This hack was developped by Symscape, circa 2009 -------
+// This hack was developed by Symscape, circa 2009 -------
 #if defined( WIN32 ) || defined( WIN64 )
 // Rename B to B_ to prevent name clashes on Windows with B
 IOobject::replaceFileName("B", "B_");

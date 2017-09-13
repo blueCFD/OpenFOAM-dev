@@ -40,7 +40,7 @@ SourceFiles
 #ifndef forceSuSp_H
 #define forceSuSp_H
 
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

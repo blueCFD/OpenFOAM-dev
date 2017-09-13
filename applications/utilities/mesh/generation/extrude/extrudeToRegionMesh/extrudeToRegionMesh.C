@@ -137,7 +137,7 @@ Notes:
 //#include "ReadFields.H"
 #include "fvMeshTools.H"
 #include "OBJstream.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 
 using namespace Foam;
 

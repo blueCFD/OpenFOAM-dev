@@ -43,10 +43,10 @@ SourceFiles
 #ifndef sixDoFRigidBodyMotionConstraint_H
 #define sixDoFRigidBodyMotionConstraint_H
 
-#include "Time.H"
+#include "Time.T.H"
 #include "dictionary.H"
 #include "autoPtr.H"
-#include "point.H"
+#include "point.T.H"
 #include "pointConstraint.H"
 #include "runTimeSelectionTables.H"
 

@@ -53,9 +53,9 @@ SourceFiles
 #define faceCollapser_H
 
 #include "labelList.H"
-#include "point.H"
-#include "Map.H"
-#include "HashSet.H"
+#include "point.T.H"
+#include "Map.T.H"
+#include "HashSet.T.H"
 #include "typeInfo.H"
 #include "edgeList.H"
 

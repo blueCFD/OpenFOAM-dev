@@ -57,7 +57,7 @@ SourceFiles
 #define meshReader_H
 
 #include "polyMesh.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "IOstream.H"
 
 #include "cellTable.H"

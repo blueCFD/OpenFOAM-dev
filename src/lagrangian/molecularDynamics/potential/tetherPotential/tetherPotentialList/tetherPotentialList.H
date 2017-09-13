@@ -34,8 +34,8 @@ SourceFiles
 #ifndef tetherPotentialList_H
 #define tetherPotentialList_H
 
-#include "ListOps.H"
-#include "PtrList.H"
+#include "ListOps.T.H"
+#include "PtrList.T.H"
 #include "word.H"
 #include "tetherPotential.H"
 

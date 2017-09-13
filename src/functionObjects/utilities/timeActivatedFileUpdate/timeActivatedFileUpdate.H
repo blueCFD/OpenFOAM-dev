@@ -60,7 +60,7 @@ SourceFiles
 #define functionObjects_timeActivatedFileUpdate_H
 
 #include "functionObject.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

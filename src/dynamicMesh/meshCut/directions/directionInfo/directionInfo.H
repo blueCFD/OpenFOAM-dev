@@ -54,7 +54,7 @@ SourceFiles
 #ifndef directionInfo_H
 #define directionInfo_H
 
-#include "point.H"
+#include "point.T.H"
 #include "labelList.H"
 #include "tensor.H"
 

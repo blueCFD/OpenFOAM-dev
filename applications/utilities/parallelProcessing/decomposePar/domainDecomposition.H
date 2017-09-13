@@ -38,10 +38,10 @@ SourceFiles
 
 #include "fvMesh.H"
 #include "labelList.H"
-#include "SLList.H"
-#include "PtrList.H"
-#include "point.H"
-#include "Time.H"
+#include "SLList.T.H"
+#include "PtrList.T.H"
+#include "point.T.H"
+#include "Time.T.H"
 #include "volFields.H"
 
 

@@ -28,9 +28,9 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "DampingModel.H"
-#include "NoDamping.H"
-#include "Relaxation.H"
+#include "DampingModel.T.H"
+#include "NoDamping.T.H"
+#include "Relaxation.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

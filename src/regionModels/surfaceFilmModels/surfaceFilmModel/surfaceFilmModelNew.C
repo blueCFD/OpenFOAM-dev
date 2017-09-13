@@ -25,7 +25,7 @@ License
 
 #include "surfaceFilmModel.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

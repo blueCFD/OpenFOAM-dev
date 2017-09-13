@@ -98,7 +98,7 @@ SourceFiles
 
 #include "labelList.H"
 #include "lduSchedule.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

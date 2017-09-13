@@ -40,8 +40,8 @@ SourceFiles
 #define polyMeshFilter_H
 
 #include "IOdictionary.H"
-#include "Time.H"
-#include "List.H"
+#include "Time.T.H"
+#include "List.T.H"
 #include "autoPtr.H"
 #include "scalarField.H"
 #include "polyMeshFilterSettings.H"

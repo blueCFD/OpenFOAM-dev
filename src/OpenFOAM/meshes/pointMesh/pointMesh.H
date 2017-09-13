@@ -32,8 +32,8 @@ Description
 #ifndef pointMesh_H
 #define pointMesh_H
 
-#include "GeoMesh.H"
-#include "MeshObject.H"
+#include "GeoMesh.T.H"
+#include "MeshObject.T.H"
 #include "polyMesh.H"
 #include "pointBoundaryMesh.H"
 

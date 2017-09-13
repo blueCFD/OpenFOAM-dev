@@ -72,7 +72,7 @@ SourceFiles
 #include "boolList.H"
 #include "cellLooper.H"
 #include "meshCutter.H"
-#include "Map.H"
+#include "Map.T.H"
 #include "typeInfo.H"
 #include "removeFaces.H"
 

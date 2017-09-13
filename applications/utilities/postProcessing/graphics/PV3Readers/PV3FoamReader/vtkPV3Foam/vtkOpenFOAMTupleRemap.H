@@ -30,7 +30,7 @@ InClass
 #define vtkOpenFOAMTupleRemap_H
 
 // OpenFOAM includes
-#include "Swap.H"
+#include "Swap.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

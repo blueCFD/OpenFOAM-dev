@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "makeFvOption.H"
-#include "SemiImplicitSource.H"
+#include "SemiImplicitSource.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

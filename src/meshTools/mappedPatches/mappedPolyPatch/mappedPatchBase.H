@@ -83,7 +83,7 @@ SourceFiles
 #define mappedPatchBase_H
 
 #include "pointField.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "pointIndexHit.H"
 #include "AMIPatchToPatchInterpolation.H"
 #include "coupleGroupIdentifier.H"

@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "regionFunctionObject.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

@@ -31,18 +31,18 @@ Description
 #include "polyTopoChange.H"
 #include "syncTools.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "OFstream.H"
 #include "OBJstream.H"
 #include "mapPolyMesh.H"
 #include "pointEdgePoint.H"
-#include "PointEdgeWave.H"
+#include "PointEdgeWave.T.H"
 #include "mergePoints.H"
 #include "snapParameters.H"
 #include "refinementSurfaces.H"
 #include "unitConversion.H"
 #include "localPointRegion.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

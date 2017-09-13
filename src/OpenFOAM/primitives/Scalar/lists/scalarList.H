@@ -39,7 +39,7 @@ Description
 #define scalarList_H
 
 #include "scalar.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

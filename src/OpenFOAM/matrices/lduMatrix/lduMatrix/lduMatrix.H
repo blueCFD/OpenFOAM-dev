@@ -52,13 +52,13 @@ SourceFiles
 
 #include "lduMesh.H"
 #include "primitiveFieldsFwd.H"
-#include "FieldField.H"
+#include "FieldField.T.H"
 #include "lduInterfaceFieldPtrsList.H"
 #include "typeInfo.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"
 #include "solverPerformance.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

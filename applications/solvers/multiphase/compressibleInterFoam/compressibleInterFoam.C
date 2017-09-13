@@ -36,7 +36,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "MULES.H"
+#include "MULES.T.H"
 #include "subCycle.H"
 #include "rhoThermo.H"
 #include "interfaceProperties.H"

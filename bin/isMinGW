@@ -33,5 +33,9 @@
 #
 #------------------------------------------------------------------------------
 
-[ -n "$(echo $WM_COMPILER | grep mingw)" ] && exit 0
+if [ -n "$WM_TARGET_ARCH" -a "${WM_TARGET_ARCH#mingw}" != "$WM_TARGET_ARCH" ]
+then
+    exit 0
+fi
+
 exit 1

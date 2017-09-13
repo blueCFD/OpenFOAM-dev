@@ -147,7 +147,7 @@ runParallel()
         shift
     done
 
-    if [ -f log.$SUFFIX ] && [ "$LOG_IGNORE" = "false" ]
+    if [ -f log.$LOG_SUFFIX ] && [ "$LOG_IGNORE" = "false" ]
     then
         echo "$APP_NAME already run on $PWD:" \
              "remove log file 'log.$LOG_SUFFIX' to re-run"
@@ -187,7 +187,67 @@ cloneCase()
     fi
 }
 
-#Functions bellow this line were copied from foamJob --------------------------
+#Functions bellow this line were copied/adapted from foamJob --------------------------
+
+load_mpi_opts()
+{
+    mpiopts=""
+
+    case "$WM_MPLIB" in
+    *OPENMPI)
+        # add hostfile info
+        for hostfile in \
+            hostfile \
+            machines \
+            system/hostfile \
+            system/machines \
+            ;
+        do
+            if [ -r $hostfile ]
+            then
+                mpiopts="$mpiopts -hostfile $hostfile"
+                break
+            fi
+        done
+
+        #
+        # Send FOAM_SETTINGS to parallel processes. so the proper definitions are sent as well.
+        # Note: don't send for now, simply because foamExec isn't being called here
+        #
+        #mpiopts="$mpiopts -x FOAM_SETTINGS"
+        ;;
+    MPICH | MSMPI)
+        # add hostfile info
+        for hostfile in \
+            hostfile \
+            machines \
+            system/hostfile \
+            system/machines \
+            ;
+        do
+           if [ -r $hostfile ]
+           then
+              mpiopts="$mpiopts -machinefile $hostfile"
+              break
+           fi
+        done
+
+        #
+        # Send FOAM_SETTINGS to parallel processes. so the proper definitions are sent as well.
+        # Note: don't send for now, simply because foamExec isn't being called here
+        #
+        #mpiopts="$mpiopts -env FOAM_SETTINGS \"${FOAM_SETTINGS}\""
+        ;;
+    esac
+
+    #
+    # Add additional options that the user might need, such as disabling lo or eth0
+    #
+    mpiopts="$mpiopts $MPI_ACCESSORY_OPTIONS"
+
+    #make sure the variable is visible by forking shells
+    export mpiopts
+}
 
 # replacement for possibly buggy 'which'
 findExec() {

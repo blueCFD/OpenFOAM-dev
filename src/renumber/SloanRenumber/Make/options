@@ -8,7 +8,7 @@ EXE_INC = \
 #if !defined(WIN32) && !defined(WIN64)
 
 LIB_LIBS = \
-    -L$(BOOST_ARCH_PATH)/lib -lboost_thread \
+    -L$(BOOST_ARCH_PATH)/lib -lboost_system \
     -lmeshTools \
     -ldecompositionMethods \
     -lrenumberMethods

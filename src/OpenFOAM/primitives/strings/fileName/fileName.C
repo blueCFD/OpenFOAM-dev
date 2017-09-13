@@ -37,7 +37,7 @@ Modifications
 
 #include "fileName.H"
 #include "wordList.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "OSspecific.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "IOstreams.H"
 #include "IStringStream.H"
 #include "OStringStream.H"

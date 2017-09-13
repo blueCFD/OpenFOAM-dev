@@ -30,7 +30,7 @@ Modifications
         http://bluecfd.com/Core
 
     Modifications made:
-      - These changes are technically from Sysmcape's own patches for Windows,
+      - These changes are technically from Symscape's own patches for Windows,
         circa 2009.
       - The adaptation derived from the patches for blueCFD 2.1, adjusted to
         OpenFOAM 2.2.
@@ -89,7 +89,7 @@ SourceFiles
 #include "fileName.H"
 #include "typeInfo.H"
 #include "autoPtr.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

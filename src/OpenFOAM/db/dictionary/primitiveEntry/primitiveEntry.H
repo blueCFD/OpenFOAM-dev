@@ -47,7 +47,7 @@ SourceFiles
 
 #include "entry.H"
 #include "ITstream.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -7,8 +7,8 @@ targetType=libso
 set -x
 
 wmake $targetType twoPhaseMixture
-wmake $targetType interfaceProperties
 wmake $targetType twoPhaseProperties
+wmake $targetType interfaceProperties
 wmake $targetType incompressible
 wmake $targetType compressible
 wmake $targetType immiscibleIncompressibleTwoPhaseMixture

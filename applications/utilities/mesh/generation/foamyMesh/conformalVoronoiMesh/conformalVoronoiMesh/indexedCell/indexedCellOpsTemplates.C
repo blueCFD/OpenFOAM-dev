@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "indexedCellOps.H"
-#include "Pstream.H"
+#include "Pstream.T.H"
 
 // * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
 

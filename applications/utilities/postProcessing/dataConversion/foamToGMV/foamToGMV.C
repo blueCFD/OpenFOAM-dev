@@ -37,7 +37,7 @@ Description
 #include "instantList.H"
 #include "IOobjectList.H"
 #include "itoa.H"
-#include "Cloud.H"
+#include "Cloud.T.H"
 #include "passiveParticle.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "GAMGSolver.H"
-#include "GAMGInterfaceField.H"
+#include "GAMGInterfaceField.T.H"
 #include "processorLduInterfaceField.H"
 #include "processorGAMGInterfaceField.H"
 

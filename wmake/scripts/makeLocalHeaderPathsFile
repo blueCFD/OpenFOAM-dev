@@ -1,0 +1,76 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# 2016-07-28 blueCAPE Lda: Created for blueCFD-Core 2016-1
+#------------------------------------------------------------------------------
+# License
+#     This file is a derivative work of OpenFOAM.
+#
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been created by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+# Script
+#     makeLocalHeaderPathsFile
+#
+# Description
+#     Constructs the local header include paths file, so that it's easier to
+#     find local header files, which can be a problem for long paths on
+#     Windows.
+#
+#------------------------------------------------------------------------------
+
+# Provided by makefiles/files
+HEADER_PATHS_FILE=$1
+
+# Create the file
+[ -e $HEADER_PATHS_FILE ] && rm $HEADER_PATHS_FILE
+touch $HEADER_PATHS_FILE
+
+# First we need to sort out which folders we should not use
+TO_SIFT_OUT=$(find . -name Make -type d -printf '%h\n' | grep -v "^\.$" | sed -e 's=\(.*\)=-e "^\1" =g')
+
+# Next we get the full list of possible folders and exclude those that don't matter
+
+find . \
+    \( -name lnInclude  \
+       -o -name Make    \
+       -o -name config  \
+       -o -name noLink  \
+    \) -prune \
+    -o \( \
+          -name '*.[CHh]'     \
+          -o -name '*.[ch]xx' \
+          -o -name '*.[ch]pp' \
+          -o -name '*.type'   \
+       \) \
+    -printf '%h\n' | \
+    grep -v -e '^\.$' | \
+    sort -u | \
+while read line
+do
+    if [ -n "$TO_SIFT_OUT" ]
+    then
+        echo $line | eval grep -v $TO_SIFT_OUT | \
+        sed -e 's=\(.*\)=-I\1=g' >> $HEADER_PATHS_FILE
+    else
+        echo $line | \
+        sed -e 's=\(.*\)=-I\1=g' >> $HEADER_PATHS_FILE
+    fi
+done
+
+#------------------------------------------------------------------------------

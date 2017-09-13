@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "Function1.H"
+#include "Function1.T.H"
 #include "IOdictionary.H"
 #include "linearInterpolationWeights.H"
 #include "splineInterpolationWeights.H"

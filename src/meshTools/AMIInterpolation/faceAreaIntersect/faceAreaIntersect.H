@@ -38,10 +38,10 @@ SourceFiles
 #define faceAreaIntersect_H
 
 #include "pointField.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "plane.H"
-#include "face.H"
-#include "NamedEnum.H"
+#include "face.T.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

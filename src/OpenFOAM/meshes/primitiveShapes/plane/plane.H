@@ -36,7 +36,7 @@ SourceFiles
 #ifndef plane_H
 #define plane_H
 
-#include "point.H"
+#include "point.T.H"
 #include "scalarList.H"
 #include "dictionary.H"
 #include "line.H"

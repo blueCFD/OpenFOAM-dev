@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "meshReader.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "faceSet.H"
 #include "emptyPolyPatch.H"

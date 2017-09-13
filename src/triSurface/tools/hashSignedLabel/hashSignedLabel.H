@@ -32,7 +32,7 @@ Description
 #ifndef HashSignedLabel_H
 #define HashSignedLabel_H
 
-#include "List.H"
+#include "List.T.H"
 #include "word.H"
 
 namespace Foam

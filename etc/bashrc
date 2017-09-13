@@ -6,7 +6,8 @@
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-# 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -38,6 +39,9 @@
 #          namely:
 #          - Added "MSwindows" to "WM_OSTYPE".
 #          - Added "mingw" to "WM_COMPILER".
+#        - Extended compiler options are now done through WM_TARGET_ARCH.
+#        - Using the local environment variable FOAM_ITS_A_CLEAN_SHELL to trim
+#          down the time it takes to start up the environment.
 #
 # File
 #     etc/bashrc
@@ -51,6 +55,12 @@
 
 export WM_PROJECT=OpenFOAM
 export WM_PROJECT_VERSION=dev
+
+# blueCFD-Core: Speed up flag for faster start on Windows
+if [ -z "$WM_PROJECT_DIR" ]
+then
+    export FOAM_ITS_A_CLEAN_SHELL=Yes
+fi
 
 ################################################################################
 # USER EDITABLE PART: Changes made here may be lost with the next upgrade
@@ -66,6 +76,9 @@ export FOAM_INST_DIR=$HOME/$WM_PROJECT
 # export FOAM_INST_DIR=~$WM_PROJECT
 # export FOAM_INST_DIR=/opt/$WM_PROJECT
 # export FOAM_INST_DIR=/usr/local/$WM_PROJECT
+#
+# Build foamyHexMesh
+export FOAMY_HEX_MESH=yes
 #
 # END OF (NORMAL) USER EDITABLE PART
 ################################################################################
@@ -85,6 +98,13 @@ export WM_COMPILER_TYPE=system
 #       mingw-w64  - custom build of the 64bit Gcc+mingw-w64
 export WM_COMPILER=Gcc
 unset WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
+
+#- Target architecture (cross-compiline):
+#  - On Linux, don't define this.
+#  - On Windows (MSYS2) = 
+#       mingw_w32  - 32-bit Gcc+mingw-w64
+#       mingw_w64  - 64-bit Gcc+mingw-w64
+#export WM_TARGET_ARCH=mingw_w64
 
 #- Memory addressing:
 #    On a 64bit OS this can be 32bit or 64bit
@@ -115,11 +135,11 @@ export WM_OSTYPE=POSIX
 
 #- Floating-point signal handling:
 #    set or unset
-export FOAM_SIGFPE=
+export FOAM_SIGFPE=1
 
 #- memory initialisation:
 #    set or unset
-#export FOAM_SETNAN=
+#export FOAM_SETNAN=1
 
 
 ################################################################################
@@ -167,6 +187,11 @@ _foamEval $@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 foamClean=$WM_PROJECT_DIR/bin/foamCleanPath
 
+    # blueCFD-Core: Speed up check
+    if [ -z "$FOAM_ITS_A_CLEAN_SHELL" ]
+    then
+    # ----
+
 #- Clean PATH
 cleaned=`$foamClean "$PATH" "$foamOldDirs"` && PATH="$cleaned"
 
@@ -176,6 +201,10 @@ cleaned=`$foamClean "$LD_LIBRARY_PATH" "$foamOldDirs"` \
 
 #- Clean MANPATH
 cleaned=`$foamClean "$MANPATH" "$foamOldDirs"` && MANPATH="$cleaned"
+
+    # ----
+    fi
+    # ----
 
 export PATH LD_LIBRARY_PATH MANPATH
 
@@ -208,6 +237,12 @@ fi
 
 # Clean environment paths again. Only remove duplicates
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # blueCFD-Core: Speed up check
+    if [ -z "$FOAM_ITS_A_CLEAN_SHELL" ]
+    then
+    # ----
+
 #- Clean PATH
 cleaned=`$foamClean "$PATH"` && PATH="$cleaned"
 
@@ -226,10 +261,15 @@ then
     export LD_PRELOAD
 fi
 
+    # ----
+    fi
+    # ----
+
 # Cleanup environment:
 # ~~~~~~~~~~~~~~~~~~~~
 unset cleaned foamClean foamOldDirs
 unset configdsh
+unset FOAM_ITS_A_CLEAN_SHELL
 
 
 # Unload initialization functions:

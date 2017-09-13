@@ -47,14 +47,11 @@
 #         boost_version=boost-system
 #         cgal_version=cgal-system
 #
-# Note
-#     If CGAL/Boost is to be entirely disabled, either rename this file or
-#     create an empty one with the same name at a user or site location.
-#
 #------------------------------------------------------------------------------
 
 boost_version=boost-system
-cgal_version=CGAL-4.8
+cgal_version=cgal-system
+#cgal_version=CGAL-4.8
 
 if [ -z "$SOURCE_CGAL_VERSIONS_ONLY" ]
 then
@@ -75,8 +72,8 @@ then
     if onWin
     then
         export CGAL_ARCH_PATH=/mingw64
-		export BOOST_ARCH_PATH=/mingw64
-	fi
+        export BOOST_ARCH_PATH=/mingw64
+    fi
 
     if [ -d "$CGAL_ARCH_PATH" -a "$cgal_version" != "cgal-system" ]
     then

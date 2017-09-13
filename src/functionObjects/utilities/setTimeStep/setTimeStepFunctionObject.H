@@ -43,7 +43,7 @@ SourceFiles
 #define functionObjects_setTimeStepFunctionObject_H
 
 #include "functionObject.H"
-#include "Function1.H"
+#include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

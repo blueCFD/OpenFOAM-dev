@@ -32,7 +32,7 @@ Description
 #ifndef IOmanip_H
 #define IOmanip_H
 
-#include "Istream.H"
+#include "Istream.T.H"
 #include "Ostream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

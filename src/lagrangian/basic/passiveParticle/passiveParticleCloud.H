@@ -35,7 +35,7 @@ SourceFiles
 #ifndef passiveParticleCloud_H
 #define passiveParticleCloud_H
 
-#include "Cloud.H"
+#include "Cloud.T.H"
 #include "passiveParticle.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

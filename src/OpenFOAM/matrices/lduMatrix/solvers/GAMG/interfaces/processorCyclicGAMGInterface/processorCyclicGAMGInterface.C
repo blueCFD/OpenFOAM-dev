@@ -25,7 +25,7 @@ License
 
 #include "processorCyclicGAMGInterface.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Map.H"
+#include "Map.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

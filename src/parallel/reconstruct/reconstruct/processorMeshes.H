@@ -35,7 +35,7 @@ SourceFiles
 #ifndef processorMeshes_H
 #define processorMeshes_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "fvMesh.H"
 #include "IOobjectList.H"
 #include "labelIOList.H"

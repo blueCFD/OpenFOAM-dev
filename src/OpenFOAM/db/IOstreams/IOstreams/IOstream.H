@@ -42,13 +42,13 @@ SourceFiles
 #ifndef IOstream_H
 #define IOstream_H
 
-#include "char.H"
+#include "char.T.H"
 #include "bool.H"
 #include "label.H"
 #include "uLabel.H"
 #include "scalar.H"
 #include "fileName.H"
-#include "InfoProxy.H"
+#include "InfoProxy.T.H"
 
 #include <iostream>
 

@@ -25,7 +25,7 @@ License
 
 #include "general.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

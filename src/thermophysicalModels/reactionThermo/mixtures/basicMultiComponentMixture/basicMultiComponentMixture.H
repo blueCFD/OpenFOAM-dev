@@ -39,7 +39,7 @@ SourceFiles
 #define basicMultiComponentMixture_H
 
 #include "volFields.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "speciesTable.H"
 #include "typeInfo.H"
 

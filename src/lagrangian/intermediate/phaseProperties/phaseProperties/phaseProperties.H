@@ -36,9 +36,9 @@ SourceFiles
 #ifndef phaseProperties_H
 #define phaseProperties_H
 
-#include "NamedEnum.H"
-#include "Tuple2.H"
-#include "PtrList.H"
+#include "NamedEnum.T.H"
+#include "Tuple2.T.H"
+#include "PtrList.T.H"
 #include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

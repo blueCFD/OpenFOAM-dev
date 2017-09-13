@@ -43,7 +43,7 @@ if isMinGW; then
 
     rm -f $FOAM_LIBBIN/libOpenFOAM.*
 
-    wmake $makeType OpenFOAM
+    wmake $targetType OpenFOAM
 
     unset WM_PSTREAMLINK
 
@@ -67,11 +67,13 @@ wmake $targetType edgeMesh
 parallel/decompose/AllwmakeLnInclude
 
 if isMinGW; then
-  # finiteVolume is needed by the Decomposition methods
-  wmake $makeType finiteVolume
+  # finiteVolume and dynamicMesh are needed by the Decomposition methods
+  wmake $targetType finiteVolume
+  wmake $targetType mesh/extrudeModel
+  wmake $targetType dynamicMesh
 
   # Decomposition methods are needed for dummyThirdParty
-  wmake $makeType parallel/decompose/decompositionMethods
+  wmake $targetType parallel/decompose/decompositionMethods
 fi
 
 dummyThirdParty/Allwmake $targetType $*

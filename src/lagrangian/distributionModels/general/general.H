@@ -36,8 +36,8 @@ SourceFiles
 #define general_H
 
 #include "distributionModel.H"
-#include "Vector.H"
-#include "VectorSpace.H"
+#include "Vector.T.H"
+#include "VectorSpace.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

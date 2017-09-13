@@ -29,8 +29,8 @@ InClass
 #include "polyDualMesh.H"
 #include "meshTools.H"
 #include "OFstream.H"
-#include "Time.H"
-#include "SortableList.H"
+#include "Time.T.H"
+#include "SortableList.T.H"
 #include "pointSet.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

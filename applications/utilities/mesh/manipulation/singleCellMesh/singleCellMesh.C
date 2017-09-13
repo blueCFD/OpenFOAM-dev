@@ -37,8 +37,8 @@ Description
 #include "argList.H"
 #include "fvMesh.H"
 #include "volFields.H"
-#include "Time.H"
-#include "ReadFields.H"
+#include "Time.T.H"
+#include "ReadFields.T.H"
 #include "singleCellFvMesh.H"
 #include "timeSelector.H"
 

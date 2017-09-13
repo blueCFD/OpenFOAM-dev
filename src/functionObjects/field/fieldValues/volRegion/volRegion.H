@@ -103,7 +103,7 @@ SourceFiles
 #define functionObjects_volRegion_H
 
 #include "fieldValue.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

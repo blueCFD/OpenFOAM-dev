@@ -30,7 +30,7 @@ Description
 
 #include "fvMeshSubset.H"
 #include "boolList.H"
-#include "Pstream.H"
+#include "Pstream.T.H"
 #include "emptyPolyPatch.H"
 #include "demandDrivenData.H"
 #include "cyclicPolyPatch.H"

@@ -35,7 +35,7 @@ SourceFiles
 
 #include "extendedUpwindCellToFaceStencil.H"
 #include "CECCellToFaceStencil.H"
-#include "MeshObject.H"
+#include "MeshObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

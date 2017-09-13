@@ -23,8 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "GeometricField.H"
-#include "HashPtrTable.H"
+#include "GeometricField.T.H"
+#include "HashPtrTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

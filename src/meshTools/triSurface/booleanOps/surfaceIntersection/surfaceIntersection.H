@@ -56,8 +56,8 @@ SourceFiles
 #ifndef surfaceIntersection_H
 #define surfaceIntersection_H
 
-#include "DynamicList.H"
-#include "point.H"
+#include "DynamicList.T.H"
+#include "point.T.H"
 #include "edge.H"
 #include "labelPairLookup.H"
 #include "typeInfo.H"

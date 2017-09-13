@@ -36,10 +36,10 @@ SourceFiles
 #define line_H
 
 #include "vector.H"
-#include "PointHit.H"
+#include "PointHit.T.H"
 #include "point2D.H"
-#include "FixedList.H"
-#include "UList.H"
+#include "FixedList.T.H"
+#include "UList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

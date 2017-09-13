@@ -39,7 +39,7 @@
 if onWin
 then
 
-    cygpath -a -w $1 | sed 's=\\=\\\\=g'
+    cygpath -a -w -m $1 | sed 's=\\=\\\\=g'
 
 else
 

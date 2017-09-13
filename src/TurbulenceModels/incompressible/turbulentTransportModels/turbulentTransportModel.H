@@ -43,9 +43,9 @@ SourceFiles
 #ifndef turbulentTransportModel_H
 #define turbulentTransportModel_H
 
-#include "IncompressibleTurbulenceModel.H"
-#include "RASModel.H"
-#include "LESModel.H"
+#include "IncompressibleTurbulenceModel.T.H"
+#include "RASModel.T.H"
+#include "LESModel.T.H"
 #include "incompressible/transportModel/transportModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

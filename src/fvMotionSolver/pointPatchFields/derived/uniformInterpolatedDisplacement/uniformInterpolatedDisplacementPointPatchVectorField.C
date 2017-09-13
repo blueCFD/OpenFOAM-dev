@@ -26,11 +26,11 @@ License
 #include "uniformInterpolatedDisplacementPointPatchVectorField.H"
 #include "pointFields.H"
 #include "addToRunTimeSelectionTable.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "interpolationWeights.H"
 #include "uniformInterpolate.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -42,7 +42,7 @@ SourceFiles
 #include "pointFields.H"
 #include "vtkMesh.H"
 #include "indirectPrimitivePatch.H"
-#include "PrimitivePatchInterpolation.H"
+#include "PrimitivePatchInterpolation.T.H"
 
 using namespace Foam;
 

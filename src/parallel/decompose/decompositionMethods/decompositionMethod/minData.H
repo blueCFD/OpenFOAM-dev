@@ -35,7 +35,7 @@ SourceFiles
 #ifndef minData_H
 #define minData_H
 
-#include "point.H"
+#include "point.T.H"
 #include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

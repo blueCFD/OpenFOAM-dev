@@ -36,7 +36,7 @@ SourceFiles
 #define dlLibraryTable_H
 
 #include "label.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

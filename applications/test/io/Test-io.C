@@ -31,7 +31,7 @@ Description
 #include "IOstreams.H"
 #include "IOmanip.H"
 #include "scalar.H"
-#include "List.H"
+#include "List.T.H"
 
 using namespace Foam;
 

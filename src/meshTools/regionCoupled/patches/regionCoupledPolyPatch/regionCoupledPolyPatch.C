@@ -25,7 +25,7 @@ License
 
 #include "regionCoupledPolyPatch.H"
 #include "polyMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 

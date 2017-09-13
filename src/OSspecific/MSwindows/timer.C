@@ -45,6 +45,10 @@ Description
 #include "MSwindows.H"
 #include "timer.H"
 
+// Undefine DebugInfo, because we don't use it here and it collides with a
+// macro in windows.h
+#undef DebugInfo
+
 #ifndef WINVER
 #define WINVER 0x0500 // To access CreateTimerQueueTimer
 #else

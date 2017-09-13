@@ -24,12 +24,12 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "slicedVolFields.H"
 #include "slicedSurfaceFields.H"
-#include "SubField.H"
+#include "SubField.T.H"
 #include "cyclicFvPatchFields.H"
 #include "cyclicAMIFvPatchFields.H"
 

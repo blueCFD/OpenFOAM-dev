@@ -34,7 +34,7 @@ Description
 #include "cellShape.H"
 #include "cellModeller.H"
 #include "faceList.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

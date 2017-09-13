@@ -41,13 +41,13 @@ Description
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "OFstream.H"
 #include "meshTools.H"
 #include "cellSet.H"
 #include "faceSet.H"
-#include "SubField.H"
+#include "SubField.T.H"
 
 using namespace Foam;
 

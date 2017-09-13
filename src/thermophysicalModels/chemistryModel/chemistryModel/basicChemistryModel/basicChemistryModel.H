@@ -41,7 +41,7 @@ SourceFiles
 #include "scalarField.H"
 #include "volFieldsFwd.H"
 #include "volMesh.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

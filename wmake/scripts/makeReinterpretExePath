@@ -1,0 +1,49 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# 2016-10-16 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
+#------------------------------------------------------------------------------
+# License
+#     This file is a derivative work of OpenFOAM.
+#
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been created by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - This script will reinterpret the paths for the executable paths to 
+#          a short path whenever possible for Windows paths
+#        - This is not meant to be used on Linux
+#
+# Script
+#     makeReinterpretExePath
+#
+# Description
+#     Shortens the path of the executable when necessary
+#
+#------------------------------------------------------------------------------
+
+executableName=$1
+
+if [ "${executableName}" = "${executableName%.exe}" ]
+then
+    executableName=${executableName}.exe
+fi
+
+cygpath -w -s -m $(which $executableName)
+
+#------------------------------------------------------------------------------

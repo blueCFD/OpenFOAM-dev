@@ -33,7 +33,7 @@ Description
 #define quaternionIOField_H
 
 #include "quaternionField.H"
-#include "IOField.H"
+#include "IOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

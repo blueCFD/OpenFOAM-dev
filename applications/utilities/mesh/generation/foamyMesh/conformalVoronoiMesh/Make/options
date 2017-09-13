@@ -5,6 +5,7 @@ CGAL_EXACT = /*-DCGAL_DONT_USE_LAZY_KERNEL*/
 CGAL_INEXACT = -DCGAL_INEXACT
 
 include $(GENERAL_RULES)/CGAL
+sinclude $(RULES)/CGAL
 
 #if ! (defined( WIN32 ) || defined( WIN64 ))
 
@@ -25,8 +26,7 @@ EXE_INC = \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/mesh/snappyHexMesh/lnInclude \
-    -IPrintTable \
-    -I/usr/include
+    -IPrintTable
 
 LIB_LIBS = \
     ${CGAL_LIBS} \
@@ -74,6 +74,7 @@ LIB_LIBS = \
     -lsurfMesh \
     -lsampling \
     -lsnappyHexMesh \
-    -lboost_thread-mt
+    -lboost_thread-mt \
+    -lboost_system-mt
 
 #endif

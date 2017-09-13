@@ -33,7 +33,7 @@ Description
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "OFstream.H"
 #include "meshTools.H"
 

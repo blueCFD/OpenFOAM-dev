@@ -25,7 +25,8 @@ else
         export WM_CONTINUE_ON_ERROR=1
         set +e
 
-        find .. -name "Make.multiphase" -type d | \
+        (find .. -name "Make.multiphase" -type d ; \
+         find . -name "Make.win" -type d) | \
             xargs -I {} grep -h "LIB =" {}/files | sed 's=.*/==' | \
             while read libitem
         do

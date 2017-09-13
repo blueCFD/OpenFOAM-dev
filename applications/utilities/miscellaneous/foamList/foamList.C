@@ -49,7 +49,7 @@ Usage
 #include "simpleObjectRegistry.H"
 #include "IFstream.H"
 #include "IOobject.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "etcFiles.H"
 #include "fvPatchField.H"
 #include "functionObject.H"
@@ -194,6 +194,8 @@ int main(int argc, char *argv[])
     );
 
     argList args(argc, argv);
+
+#   include "forceLoadLibraries.H"
 
     if (!args.options().size())
     {

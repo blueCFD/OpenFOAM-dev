@@ -31,10 +31,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "bandCompression.H"
-#include "SLList.H"
+#include "SLList.T.H"
 #include "IOstreams.H"
-#include "DynamicList.H"
-#include "ListOps.H"
+#include "DynamicList.T.H"
+#include "ListOps.T.H"
 #include "PackedBoolList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

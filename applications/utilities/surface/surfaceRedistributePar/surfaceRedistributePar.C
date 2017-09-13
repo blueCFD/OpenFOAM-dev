@@ -38,14 +38,14 @@ Note
 \*---------------------------------------------------------------------------*/
 
 #include "treeBoundBox.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "distributedTriSurfaceMesh.H"
 #include "mapDistribute.H"
 #include "triSurfaceFields.H"
-#include "Pair.H"
+#include "Pair.T.H"
 
 using namespace Foam;
 

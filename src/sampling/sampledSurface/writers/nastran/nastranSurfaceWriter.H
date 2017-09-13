@@ -50,7 +50,7 @@ SourceFiles
 #define nastranSurfaceWriter_H
 
 #include "surfaceWriter.H"
-#include "NamedEnum.H"
+#include "NamedEnum.T.H"
 #include "OFstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

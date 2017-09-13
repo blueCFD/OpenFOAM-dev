@@ -52,11 +52,10 @@ foamCompiler=ThirdParty
 # ~~~~~~~~~~~~~~~~~~~~~~
 export WM_MPLIB=OPENMPI
 
-#- Cross-compilers: WM_COMPILER = 
-#       mingw32    - custom build of the Gcc+mingw cross-compiler
-#       mingw-w32  - custom build of the 32bit Gcc+mingw-w64 cross-compiler
-#       mingw-w64  - custom build of the 64bit Gcc+mingw-w64 cross-compiler
-export WM_COMPILER=mingw32
+#- Target architecture (e.g. for cross-compiling): WM_TARGET_ARCH = 
+#       mingw_w32  - 32-bit Gcc+mingw-w32 (cross-)compiler
+#       mingw_w64  - 64-bit Gcc+mingw-w64 (cross-)compiler
+export WM_TARGET_ARCH=mingw32
 unset WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
 
 #- Architecture:

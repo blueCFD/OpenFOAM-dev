@@ -32,7 +32,7 @@ Description
 #ifndef valveBank_H
 #define valveBank_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "engineValve.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

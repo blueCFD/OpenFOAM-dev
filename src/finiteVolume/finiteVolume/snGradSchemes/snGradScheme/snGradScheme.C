@@ -27,7 +27,7 @@ License
 #include "snGradScheme.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

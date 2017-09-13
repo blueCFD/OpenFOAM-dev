@@ -6,7 +6,8 @@
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-# 2016-07-13 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-09-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-2
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -34,6 +35,10 @@
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
 #        - Originally based on Sysmcape's patches for OpenFOAM, circa 2009,
 #          which added the ability to build binaries for Windows.
+#        - Object file paths are now stored inside a file, which is built and
+#          included through this Makefile.
+#        - Paths to header files for the local source code folder are now
+#          collected inside a file and included when needed.
 #
 # File
 #     wmake/makefiles/general
@@ -47,7 +52,7 @@
 # The Makefile uses a POSIX shell
 #------------------------------------------------------------------------------
 
-SHELL           = /bin/sh
+SHELL           = /bin/dash
 
 
 #------------------------------------------------------------------------------
@@ -124,8 +129,15 @@ include $(OBJECTS_DIR)/options
 include $(OBJECTS_DIR)/variables
 include $(OBJECTS_DIR)/sourceFiles
 DEPENDENCIES=$(SOURCE:%=$(OBJECTS_DIR)/%.dep)
+
+ifdef LFN_WORKAROUND
+BASENAMES=$(shell basename -a $(basename $(SOURCE)))
+else
 BASENAMES=$(basename $(SOURCE))
+endif
+
 OBJECTS=$(BASENAMES:%=$(OBJECTS_DIR)/%.o)
+LOCAL_INCLUDE ?=
 
 
 #------------------------------------------------------------------------------
@@ -134,6 +146,7 @@ OBJECTS=$(BASENAMES:%=$(OBJECTS_DIR)/%.o)
 
 LIB_HEADER_DIRS = \
         $(EXE_INC) \
+        $(LOCAL_INCLUDE) \
         -IlnInclude \
         -I. \
         $(PROJECT_INC) \
@@ -147,14 +160,16 @@ LIB_HEADER_DIRS = \
 
 $(EXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
-	$(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
+	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
+      $(OBJECTS)
+	$(LINKEXE) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
 	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
 
 exe:    $(SEXE)$(EXE_EXT)
 	@echo \'$(SEXE)$(EXE_EXT)\' is up to date.
 
-$(SEXE)$(EXE_EXT):$(OBJECTS)
+$(SEXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)$(EXE_EXT)
 	$(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
 	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)$(EXE_EXT)
@@ -207,7 +222,35 @@ lnInclude: $(MAKE_DIR)/files $(MAKE_DIR)/options
 #------------------------------------------------------------------------------
 
 $(OBJECTS) : $(OBJECTS_DIR)/options
+
+ifdef LFN_WORKAROUND
+$(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(shell basename -a $(basename $S)).o : $(OBJECTS_DIR)/$S.dep))
+else
 $(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(basename $S).o : $(OBJECTS_DIR)/$S.dep))
+endif
+
+
+#------------------------------------------------------------------------------
+# Hard-coded compiling rules for C file extension, when the variable
+# LFN_WORKAROUND is set
+#------------------------------------------------------------------------------
+
+ifdef LFN_WORKAROUND
+
+define DEFINE_TRANSFORM_B
+ifeq ($(suffix $1),.$2)
+$(OBJECTS_DIR)/$(shell basename -a $(basename $1)).o : $(basename $1).$2
+	$$($(2)too)
+endif
+endef
+
+define DEFINE_TRANSFORM_B_CHECK_SUFFIXES
+$(foreach ss,C Cver L c,$(eval $(call DEFINE_TRANSFORM_B,$(1),$(ss))))
+endef
+
+$(foreach s,$(SOURCE),$(eval $(call DEFINE_TRANSFORM_B_CHECK_SUFFIXES,$(s))))
+
+endif
 
 
 #------------------------------------------------------------------------------

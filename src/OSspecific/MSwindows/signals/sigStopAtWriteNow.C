@@ -42,7 +42,7 @@ Modifications
 #include "error.H"
 #include "JobInfo.H"
 #include "IOstreams.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -110,8 +110,12 @@ Foam::sigStopAtWriteNow::sigStopAtWriteNow
                 "(const bool, const Time&)"
             )   << "stopAtWriteNowSignal : " << signal_
                 << " cannot be the same as the writeNowSignal."
+<<<<<<< HEAD
                 << " Please change this in the controlDict ("
                 << findEtcFile("controlDict", false) << ")."
+=======
+                << " Please change this in the controlDict."
+>>>>>>> a8c5233... Cumulative commits for the release of blueCFD-Core 2016-1.
                 << exit(FatalError);
         }
 

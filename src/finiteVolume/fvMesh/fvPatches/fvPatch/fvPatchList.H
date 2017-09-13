@@ -33,7 +33,7 @@ Description
 #define fvPatchList_H
 
 #include "fvPatch.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

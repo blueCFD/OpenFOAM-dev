@@ -1,24 +1,3 @@
-phaseModel/phaseModel/phaseModel.C
-phaseModel/phaseModel/newPhaseModel.C
-phaseModel/phaseModel/phaseModels.C
-
-phasePair/phasePairKey/phasePairKey.C
-phasePair/phasePair/phasePair.C
-phasePair/orderedPhasePair/orderedPhasePair.C
-
-phaseSystem/phaseSystem.C
-
-diameterModels/diameterModel/diameterModel.C
-diameterModels/diameterModel/newDiameterModel.C
-diameterModels/constantDiameter/constantDiameter.C
-diameterModels/isothermalDiameter/isothermalDiameter.C
-
-BlendedInterfacialModel/blendingMethods/blendingMethod/blendingMethod.C
-BlendedInterfacialModel/blendingMethods/blendingMethod/newBlendingMethod.C
-BlendedInterfacialModel/blendingMethods/noBlending/noBlending.C
-BlendedInterfacialModel/blendingMethods/linear/linear.C
-BlendedInterfacialModel/blendingMethods/hyperbolic/hyperbolic.C
-
-reactionThermo/hRefConstThermos.C
+#include "../Make/files"
 
 LIB = $(FOAM_LIBBIN)/libreactingPhaseSystemBuiltForMultiphase

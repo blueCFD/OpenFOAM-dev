@@ -25,7 +25,7 @@ License
 
 #include "structuredDecomp.H"
 #include "addToRunTimeSelectionTable.H"
-#include "FaceCellWave.H"
+#include "FaceCellWave.T.H"
 #include "topoDistanceData.H"
 #include "fvMeshSubset.H"
 

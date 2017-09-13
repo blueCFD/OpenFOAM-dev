@@ -103,7 +103,7 @@ SourceFiles
 
 #include "functionObject.H"
 #include "volFieldsFwd.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "scalarList.H"
 #include "vectorList.H"
 #include "writer.H"

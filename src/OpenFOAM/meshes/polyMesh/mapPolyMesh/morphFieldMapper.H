@@ -32,8 +32,8 @@ Description
 #ifndef morphFieldMapper_H
 #define morphFieldMapper_H
 
-#include "Field.H"
-#include "Map.H"
+#include "Field.T.H"
+#include "Map.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

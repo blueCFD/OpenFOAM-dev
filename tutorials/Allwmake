@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # License
 #
-#    Copyright (C) 2011-2014 blueCAPE Lda
+#    Copyright (C) 2011-2016 blueCAPE Lda
 #
 #    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
 #    For more information about these patches, visit:
@@ -34,18 +34,15 @@
 #run only from the tutorials folder
 cd ${0%/*} || exit 1
 
-. $WM_PROJECT_DIR/wmake/scripts/AllwmakeArguments
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 
-find . -name Make | \
+find . -name Make -printf '%h\n' | \
 while read makeFolder; do
 
-  #get the parent folder of Make
-  folderToBuild=`echo $makeFolder | sed -e 's=/Make$=='`
-
-  wmake all $folderToBuild
+  wmake -all $makeFolder
 
   if isMinGW; then
-    wmakeVerifyExeDependencies $folderToBuild || wmake all $folderToBuild
+    wmakeVerifyExeDependencies $makeFolder || wmake -all $makeFolder
   fi
 
 done

@@ -49,7 +49,7 @@ SourceFiles
 #include "labelPair.H"
 #include "indirectPrimitivePatch.H"
 #include "pointFieldsFwd.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "pointIndexHit.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

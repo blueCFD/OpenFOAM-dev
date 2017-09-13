@@ -29,7 +29,7 @@ Description
 
 #include "memInfo.H"
 #include "IOstreams.H"
-#include "List.H"
+#include "List.T.H"
 #include "vector.H"
 
 using namespace Foam;

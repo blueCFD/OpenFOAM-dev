@@ -28,7 +28,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "label.H"
 #include "scalar.H"
 

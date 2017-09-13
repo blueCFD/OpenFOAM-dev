@@ -41,7 +41,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "IOdictionary.H"
 #include "twoDPointCorrector.H"
@@ -54,7 +54,7 @@ Description
 #include "cellClassification.H"
 #include "cellSet.H"
 #include "cellInfo.H"
-#include "MeshWave.H"
+#include "MeshWave.T.H"
 #include "edgeStats.H"
 #include "treeDataTriSurface.H"
 #include "indexedOctree.H"

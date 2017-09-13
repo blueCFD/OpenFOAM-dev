@@ -50,7 +50,7 @@ SourceFiles
 #define seriesProfile_H
 
 #include "profileModel.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

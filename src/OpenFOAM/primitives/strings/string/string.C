@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "string.H"
+#include "string.T.H"
 #include "stringOps.H"
 
 

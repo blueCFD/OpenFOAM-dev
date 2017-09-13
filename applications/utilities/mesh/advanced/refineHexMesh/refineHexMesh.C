@@ -32,7 +32,7 @@ Description
 #include "fvMesh.H"
 #include "pointMesh.H"
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "hexRef8.H"
 #include "cellSet.H"
 #include "OFstream.H"
@@ -45,7 +45,7 @@ Description
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "pointFields.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 
 using namespace Foam;
 

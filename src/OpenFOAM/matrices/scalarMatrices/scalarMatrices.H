@@ -40,10 +40,10 @@ SourceFiles
 #ifndef scalarMatrices_H
 #define scalarMatrices_H
 
-#include "RectangularMatrix.H"
-#include "SquareMatrix.H"
-#include "SymmetricSquareMatrix.H"
-#include "DiagonalMatrix.H"
+#include "RectangularMatrix.T.H"
+#include "SquareMatrix.T.H"
+#include "SymmetricSquareMatrix.T.H"
+#include "DiagonalMatrix.T.H"
 #include "scalarField.H"
 #include "labelList.H"
 

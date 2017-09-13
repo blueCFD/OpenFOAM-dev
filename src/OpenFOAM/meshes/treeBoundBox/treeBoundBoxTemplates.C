@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "treeBoundBox.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

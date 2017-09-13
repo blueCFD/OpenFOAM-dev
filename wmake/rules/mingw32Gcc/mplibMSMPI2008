@@ -1,0 +1,3 @@
+PFLAGS     = 
+PINC       = -I$(MPI_ARCH_PATH)/include -D"__int64=long long"
+PLIBS      = -L$(MPI_ARCH_PATH)/lib -lmpi

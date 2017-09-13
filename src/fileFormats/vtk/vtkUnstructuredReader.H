@@ -49,8 +49,8 @@ SourceFiles
 
 #include "objectRegistry.H"
 #include "cellShapeList.H"
-#include "HashSet.H"
-#include "NamedEnum.H"
+#include "HashSet.T.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

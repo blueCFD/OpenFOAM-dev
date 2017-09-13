@@ -38,7 +38,7 @@ SourceFiles
 
 #include "labelIOList.H"
 #include "uniformDimensionedFields.H"
-#include "UPtrList.H"
+#include "UPtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

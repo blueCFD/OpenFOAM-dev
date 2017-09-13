@@ -35,7 +35,7 @@ Details
         http://bluecfd.com/Core
 
     Details on how this file was created:
-      - This file was originally based on Sysmcape's own work on patching 
+      - This file was originally based on Symscape's own work on patching 
         OpenFOAM for working on Windows, circa 2009.
       - Further changes were made by blueCAPE, culminating in the patches
         by blueCAPE for blueCFD 2.1, now adjusted here to OpenFOAM 2.2.
@@ -50,7 +50,11 @@ Details
 #include "fileStat.H"
 #include "timer.H"
 #include "IFstream.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
+
+// Undefine DebugInfo, because we don't need it and it collides with a macro
+// in windows.h
+#undef DebugInfo
 
 #include <cassert>
 #include <cstdlib>
@@ -486,208 +490,6 @@ bool chDir(const fileName& dir)
 {
     const bool success = ::SetCurrentDirectory(dir.c_str());
     return success; 
-}
-
-
-fileNameList findEtcFiles(const fileName& name, bool mandatory, bool findFirst)
-{
-    fileNameList results;
-
-    // Search for user files in
-    // * ~/.OpenFOAM/VERSION
-    // * ~/.OpenFOAM
-    //
-    fileName searchDir = home()/".OpenFOAM";
-    if (isDir(searchDir))
-    {
-        fileName fullName = searchDir/FOAMversion/name;
-        if (isFile(fullName))
-        {
-            results.append(fullName);
-            if (findFirst)
-            {
-                return results;
-            }
-        }
-
-        fullName = searchDir/name;
-        if (isFile(fullName))
-        {
-            results.append(fullName);
-            if (findFirst)
-            {
-                return results;
-            }
-        }
-    }
-
-    // Search for group (site) files in
-    // * $WM_PROJECT_SITE/VERSION
-    // * $WM_PROJECT_SITE
-    //
-    searchDir = getEnv("WM_PROJECT_SITE");
-    if (searchDir.size())
-    {
-        if (isDir(searchDir))
-        {
-            fileName fullName = searchDir/FOAMversion/name;
-            if (isFile(fullName))
-            {
-                results.append(fullName);
-                if (findFirst)
-                {
-                    return results;
-                }
-            }
-
-            fullName = searchDir/name;
-            if (isFile(fullName))
-            {
-                results.append(fullName);
-                if (findFirst)
-                {
-                    return results;
-                }
-            }
-        }
-    }
-    else
-    {
-        // OR search for group (site) files in
-        // * $WM_PROJECT_INST_DIR/site/VERSION
-        // * $WM_PROJECT_INST_DIR/site
-        //
-        searchDir = getEnv("WM_PROJECT_INST_DIR");
-        if (isDir(searchDir))
-        {
-            fileName fullName = searchDir/"site"/FOAMversion/name;
-            if (isFile(fullName))
-            {
-                results.append(fullName);
-                if (findFirst)
-                {
-                    return results;
-                }
-            }
-
-            fullName = searchDir/"site"/name;
-            if (isFile(fullName))
-            {
-                results.append(fullName);
-                if (findFirst)
-                {
-                    return results;
-                }
-            }
-        }
-    }
-
-    // Search for other (shipped) files in
-    // * $WM_PROJECT_DIR/etc
-    //
-    searchDir = getEnv("WM_PROJECT_DIR");
-    if (isDir(searchDir))
-    {
-        fileName fullName = searchDir/"etc"/name;
-        if (isFile(fullName))
-        {
-            results.append(fullName);
-            if (findFirst)
-            {
-                return results;
-            }
-        }
-    }
-
-    // Not found
-    if (results.empty())
-    {
-        // Abort if the file is mandatory, otherwise return null
-        if (mandatory)
-        {
-            std::cerr
-                << "--> FOAM FATAL ERROR in Foam::findEtcFiles() :"
-                   " could not find mandatory file\n    '"
-                << name.c_str() << "'\n\n" << std::endl;
-            ::exit(1);
-        }
-    }
-
-    // Return list of matching paths or empty list if none found
-    return results;
-}
-
-
-fileName findEtcFile(const fileName& name, bool mandatory)
-{
-    // Search most likely location first
-    // Search installation files:
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fileName searchDir = getEnv("WM_PROJECT_DIR");
-    if (isDir(searchDir))
-    {
-        // Check for shipped OpenFOAM file in $WM_PROJECT_DIR/etc
-        fileName fullName = searchDir/"etc"/name;
-        if (isFile(fullName))
-        {
-            return fullName;
-        }
-    }
-
-    // Search user files:
-    // ~~~~~~~~~~~~~~~~~~
-    searchDir = home()/".OpenFOAM";
-    if (isDir(searchDir))
-    {
-        // Check for user file in ~/.OpenFOAM/VERSION
-        fileName fullName = searchDir/FOAMversion/name;
-        if (isFile(fullName))
-        {
-            return fullName;
-        }
-
-        // Check for version-independent user file in ~/.OpenFOAM
-        fullName = searchDir/name;
-        if (isFile(fullName))
-        {
-            return fullName;
-        }
-    }
-
-
-    // Search site files:
-    // ~~~~~~~~~~~~~~~~~~
-    searchDir = getEnv("WM_PROJECT_INST_DIR");
-    if (isDir(searchDir))
-    {
-        // Check for site file in $WM_PROJECT_INST_DIR/site/VERSION
-        fileName fullName = searchDir/"site"/FOAMversion/name;
-        if (isFile(fullName))
-        {
-            return fullName;
-        }
-
-        // Check for version-independent site file in $WM_PROJECT_INST_DIR/site
-        fullName = searchDir/"site"/name;
-        if (isFile(fullName))
-        {
-            return fullName;
-        }
-    }
-
-    // Not found
-    // abort if the file is mandatory, otherwise return null
-    if (mandatory)
-    {
-        cerr<< "--> FOAM FATAL ERROR in Foam::findEtcFile() :"
-               " could not find mandatory file\n    '"
-            << name.c_str() << "'\n\n" << std::endl;
-        ::exit(1);
-    }
-
-    // Return null-constructed fileName rather than fileName::null
-    // to avoid cyclic dependencies in the construction of globals
-    return fileName();
 }
 
 

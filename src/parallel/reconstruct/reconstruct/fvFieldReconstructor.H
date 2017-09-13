@@ -36,7 +36,7 @@ SourceFiles
 #ifndef fvFieldReconstructor_H
 #define fvFieldReconstructor_H
 
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "fvMesh.H"
 #include "IOobjectList.H"
 #include "fvPatchFieldMapper.H"

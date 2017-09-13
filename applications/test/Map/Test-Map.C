@@ -29,7 +29,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "Map.H"
+#include "Map.T.H"
 #include <map>
 #include "IOstreams.H"
 

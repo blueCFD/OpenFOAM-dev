@@ -38,7 +38,7 @@ SourceFiles
 #include "word.H"
 #include "direction.H"
 #include "dimensionSet.H"
-#include "VectorSpace.H"
+#include "VectorSpace.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

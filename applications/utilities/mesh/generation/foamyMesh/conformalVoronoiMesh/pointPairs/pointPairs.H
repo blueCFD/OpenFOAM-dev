@@ -40,7 +40,7 @@ Description
 #define pointPairs_H
 
 #include "labelPair.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -4,8 +4,8 @@
 #include "scalar.H"
 #include "vector.H"
 #include "curve.H"
-#include "char.H"
-#include "List.H"
+#include "char.T.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

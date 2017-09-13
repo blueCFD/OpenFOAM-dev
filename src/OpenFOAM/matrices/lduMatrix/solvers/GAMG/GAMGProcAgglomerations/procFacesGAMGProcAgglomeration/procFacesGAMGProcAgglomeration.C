@@ -25,7 +25,7 @@ License
 
 #include "procFacesGAMGProcAgglomeration.H"
 #include "addToRunTimeSelectionTable.H"
-#include "GAMGAgglomeration.H"
+#include "GAMGAgglomeration.T.H"
 #include "Random.H"
 #include "lduMesh.H"
 #include "processorLduInterface.H"

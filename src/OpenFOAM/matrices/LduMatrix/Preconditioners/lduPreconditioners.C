@@ -23,9 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "NoPreconditioner.H"
-#include "DiagonalPreconditioner.H"
-#include "TDILUPreconditioner.H"
+#include "NoPreconditioner.T.H"
+#include "DiagonalPreconditioner.T.H"
+#include "TDILUPreconditioner.T.H"
 #include "fieldTypes.H"
 
 #define makeLduPreconditioners(Type, DType, LUType)                            \

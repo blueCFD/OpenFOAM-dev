@@ -37,7 +37,7 @@ SourceFiles
 #define hashedWordList_H
 
 #include "wordList.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

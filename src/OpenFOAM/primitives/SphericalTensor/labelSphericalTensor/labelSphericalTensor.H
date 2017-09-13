@@ -35,7 +35,7 @@ SourceFiles
 #ifndef labelSphericalTensor_H
 #define labelSphericalTensor_H
 
-#include "SphericalTensor.H"
+#include "SphericalTensor.T.H"
 #include "contiguous.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

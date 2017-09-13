@@ -36,9 +36,9 @@ SourceFiles
 
 #include "cellToCellStencil.H"
 #include "boolList.H"
-#include "HashSet.H"
-#include "Map.H"
-#include "EdgeMap.H"
+#include "HashSet.T.H"
+#include "Map.T.H"
+#include "EdgeMap.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

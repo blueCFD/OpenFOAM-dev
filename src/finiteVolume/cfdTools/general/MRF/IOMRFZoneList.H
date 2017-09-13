@@ -53,7 +53,7 @@ SourceFiles
 #define IOMRFZoneList_H
 
 #include "IOdictionary.H"
-#include "MRFZoneList.H"
+#include "MRFZoneList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

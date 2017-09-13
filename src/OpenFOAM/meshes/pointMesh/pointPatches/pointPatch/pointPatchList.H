@@ -33,7 +33,7 @@ Description
 #define pointPatchList_H
 
 #include "pointPatch.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -37,7 +37,7 @@ SourceFiles
 
 #include "fvPatch.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "regionCoupledPolyPatch.H"
 #include "regionCoupledBaseFvPatch.H"
 

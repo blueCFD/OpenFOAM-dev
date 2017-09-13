@@ -35,7 +35,7 @@ SourceFiles
 #ifndef shortEdgeFilter2D_H
 #define shortEdgeFilter2D_H
 
-#include "MeshedSurfaces.H"
+#include "MeshedSurfaces.T.H"
 #include "CV2D.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

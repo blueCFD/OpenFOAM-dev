@@ -25,7 +25,7 @@ License
 
 #include "sampledTriSurfaceMesh.H"
 #include "meshSearch.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "globalIndex.H"
 #include "treeDataCell.H"
 #include "treeDataFace.H"

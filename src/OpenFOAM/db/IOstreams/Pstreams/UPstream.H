@@ -40,12 +40,12 @@ SourceFiles
 #define UPstream_H
 
 #include "labelList.H"
-#include "DynamicList.H"
-#include "HashTable.H"
-#include "string.H"
-#include "NamedEnum.H"
-#include "ListOps.H"
-#include "LIFOStack.H"
+#include "DynamicList.T.H"
+#include "HashTable.T.H"
+#include "string.T.H"
+#include "NamedEnum.T.H"
+#include "ListOps.T.H"
+#include "LIFOStack.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

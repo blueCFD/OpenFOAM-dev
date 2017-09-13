@@ -8,7 +8,7 @@ set -x
 export COMPILE_FLAGS=''
 export LINK_FLAGS=''
 
-if [ -f "${FOAM_LIBBIN}/libSloanRenumber.so" ]
+if [ -f "${FOAM_LIBBIN}/libSloanRenumber.so" -o -f "${FOAM_LIBBIN}/libSloanRenumber.dll" ]
 then
     echo "Found libSloanRenumber.so  --  enabling Sloan renumbering support."
     export LINK_FLAGS="${LINK_FLAGS} -lSloanRenumber"

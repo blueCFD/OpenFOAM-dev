@@ -6,6 +6,7 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+ 2016-08-01 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -32,6 +33,7 @@ Modifications
     Modifications made:
       - Derived from the patches for blueCFD 2.1 and 2.2.
       - Changed how the tolerance is handled in 32bit Windows.
+      - Extended how the tolerance is handled to 64-bit Windows.
 
 Application
     snappyHexMesh
@@ -42,7 +44,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "fvMesh.H"
 #include "snappyRefineDriver.H"
 #include "snappySnapDriver.H"
@@ -65,8 +67,8 @@ Description
 #include "cellModeller.H"
 #include "uindirectPrimitivePatch.H"
 #include "surfZoneIdentifierList.H"
-#include "UnsortedMeshedSurface.H"
-#include "MeshedSurface.H"
+#include "UnsortedMeshedSurface.T.H"
+#include "MeshedSurface.T.H"
 #include "globalIndex.H"
 #include "IOmanip.H"
 #include "fvMeshTools.H"
@@ -566,7 +568,7 @@ scalar getMergeDistance(const polyMesh& mesh, const scalar mergeTol)
             -scalar(IOstream::defaultPrecision())
         );
 
-        #ifdef WIN32
+        #if defined(WIN32) || defined(WIN64)
         //this was necessary due to some crazy bug...
         writeTol -= SMALL;
         #endif

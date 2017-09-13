@@ -48,6 +48,12 @@ Class
 #include "OSspecific.H"
 #include "IOstreams.H"
 
+// We need to unset the strict ANSI marker, so that we can use the special
+// signal functions
+#ifdef __STRICT_ANSI__
+#undef __STRICT_ANSI__
+#endif
+
 #include <float.h> // *fp functions
 #include <limits>
 

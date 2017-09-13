@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "LimitedScheme.H"
+#include "LimitedScheme.T.H"
 #include "filteredLinear2.H"
 #include "filteredLinear2V.H"
 

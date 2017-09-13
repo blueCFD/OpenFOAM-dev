@@ -77,7 +77,7 @@ SourceFiles
 #define motionSmootherAlgo_H
 
 #include "pointFields.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "PackedBoolList.H"
 #include "indirectPrimitivePatch.H"
 #include "className.H"

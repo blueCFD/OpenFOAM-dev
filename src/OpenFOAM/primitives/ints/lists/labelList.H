@@ -45,7 +45,7 @@ Description
 #define labelList_H
 
 #include "label.H"
-#include "List.H"
+#include "List.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

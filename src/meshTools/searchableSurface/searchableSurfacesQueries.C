@@ -24,10 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "searchableSurfacesQueries.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "OFstream.H"
 #include "meshTools.H"
-#include "DynamicField.H"
+#include "DynamicField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

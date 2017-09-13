@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "scalarRanges.H"
-#include "DynamicList.H"
-#include "ListOps.H"
+#include "DynamicList.T.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

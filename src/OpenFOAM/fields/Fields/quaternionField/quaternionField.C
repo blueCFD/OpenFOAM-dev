@@ -26,7 +26,7 @@ License
 #include "quaternionField.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.C"
+#include "FieldFunctionsM.T.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

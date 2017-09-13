@@ -35,11 +35,11 @@ SourceFiles
 #ifndef triadField_H
 #define triadField_H
 
-#include "Field.H"
+#include "Field.T.H"
 #include "triad.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.H"
+#include "FieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

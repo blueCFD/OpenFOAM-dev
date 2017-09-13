@@ -28,9 +28,9 @@ License
 #include "faceSet.H"
 #include "mappedPatchBase.H"
 #include "indirectPrimitivePatch.H"
-#include "PatchTools.H"
+#include "PatchTools.T.H"
 #include "addToRunTimeSelectionTable.H"
-#include "PatchEdgeFaceWave.H"
+#include "PatchEdgeFaceWave.T.H"
 #include "patchEdgeFaceRegion.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

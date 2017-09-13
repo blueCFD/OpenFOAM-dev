@@ -25,7 +25,7 @@ License
 
 #include "uniformSet.H"
 #include "meshSearch.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "polyMesh.H"
 
 #include "addToRunTimeSelectionTable.H"

@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "sammMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

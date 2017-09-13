@@ -31,7 +31,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "triSurface.H"
 #include "triSurfaceSearch.H"

@@ -29,7 +29,7 @@ Description
 #include "diagTensorField.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.C"
+#include "FieldFunctionsM.T.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

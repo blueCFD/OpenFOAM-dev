@@ -35,7 +35,7 @@ SourceFiles
 #ifndef tetOverlapVolume_H
 #define tetOverlapVolume_H
 
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "labelList.H"
 #include "treeBoundBox.H"
 

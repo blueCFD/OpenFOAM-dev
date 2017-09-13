@@ -6,8 +6,10 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2016-08-03 blueCAPE Lda: Added -jobs and usage information
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -31,6 +33,69 @@
 #
 #------------------------------------------------------------------------------
 
+usage()
+{
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    cat<<USAGE
+
+usage: ${0##*/} [OPTIONS]
+
+options:
+  -test             meant to be used for warning Allrun scripts that it's meant
+                    to run in test mode
+  -skipFirst        skip the Allrun script in the current folder
+  -nonParallel      run only cases that are configured to run in serial
+  -parallel         run only cases that are configured to run in parallel
+  -jobs N           for running multiple cases in parallel with N cores
+  -help             print the usage
+
+Runs the tutorial(s), depending on an existing Allrun script or by running
+blockMesh followed by the application defined in system/controlDict.
+
+When running multiple cases in parallel with '-jobs', keep in mind that this
+does not take into account how many cores each case will need to run; therefore
+it's advisable to use it along with the option '-nonParallel'.
+
+USAGE
+    exit 1
+}
+
+checkIfAllrunCanBeExecuted()
+{
+    if $serialOnly || $parallelOnly
+    then
+        # Check both inside Allrun and Allrun.*, given that Allrun-* are
+        # optional
+        if grep -ve "^#" Allrun Allrun.* | grep -qe "runParallel"
+        then
+            hasGotRunParallel=true
+        else
+            hasGotRunParallel=false
+        fi
+
+        if $serialOnly && $hasGotRunParallel
+        then
+            echo "Skipping case '$PWD', which is meant to run in parallel."
+            exit 0
+        elif $parallelOnly && ! $hasGotRunParallel
+        then
+            echo "Skipping case '$PWD', which is meant to run in serial."
+            exit 0
+        fi
+    fi
+}
+
+checkIfDefaultRunCanBeExecuted()
+{
+    if $parallelOnly
+    then
+        echo "Skipping case '$PWD', which is meant to run in serial."
+        exit 0
+    fi
+}
+
+#------------------------------------------------------------------------------
+
 # Normally use standard "make"
 make="make"
 
@@ -44,6 +109,8 @@ then
 fi
 
 skipFirst=false
+serialOnly=false
+parallelOnly=false
 
 # Parse options
 while [ "$#" -gt 0 ]
@@ -57,19 +124,54 @@ do
         skipFirst=true
         shift
         ;;
+    -n | -nonParallel)
+        serialOnly=true
+        shift
+        ;;
+    -p | -parallel)
+        parallelOnly=true
+        shift
+        ;;
+    -j | -jobs)
+        if test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1
+        then
+            make="${make} -j $2"
+            echo "Running multiple cases enabled on $2 cores"
+            shift 2
+        else
+            usage "Error: Missing number of jobs"
+        fi
+        ;;
+    -h | -help)
+        usage
+        ;;
+    -*)
+        usage "unknown option: '$*'"
+        ;;
     *)
         break
         ;;
     esac
 done
 
+if $serialOnly && $parallelOnly
+then
+    usage "Cannot use -parallel and -nonParallel options at the same time."
+fi
+
 # If an argument is supplied do not execute ./Allrun to avoid recursion
 if ! $skipFirst && [ -f "./Allrun" ]
 then
+    # Need to assess if this case can be executed in serial or parallel
+    checkIfAllrunCanBeExecuted
+
     # Run specialised Allrun script.
     ./Allrun $passArgs
 elif [ -d system ]
 then
+    # Need to assess if this case can be executed in serial or parallel
+    checkIfDefaultRunCanBeExecuted
+
     # Run normal case.
     parentDir=`dirname $PWD`
     application=`getApplication`

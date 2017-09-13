@@ -26,7 +26,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "string.H"
+#include "string.T.H"
 #include "stringOps.H"
 #include "dictionary.H"
 #include "IOstreams.H"

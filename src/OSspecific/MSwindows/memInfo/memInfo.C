@@ -37,6 +37,10 @@ Modifications
 
 #include "memInfo.H"
 
+// Undefine DebugInfo, because we don't use it here and it collides with a
+// macro in windows.h
+#undef DebugInfo
+
 #include <windows.h>
 #include <stdio.h>
 #include <psapi.h>

@@ -34,8 +34,8 @@ Description
 #include "IStringStream.H"
 #include "scalar.H"
 #include "vector.H"
-#include "ListOps.H"
-#include "Pstream.H"
+#include "ListOps.T.H"
+#include "Pstream.T.H"
 #include "argList.H"
 
 using namespace Foam;

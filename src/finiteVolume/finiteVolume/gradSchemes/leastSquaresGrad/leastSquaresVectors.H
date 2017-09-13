@@ -35,7 +35,7 @@ SourceFiles
 #ifndef leastSquaresVectors_H
 #define leastSquaresVectors_H
 
-#include "MeshObject.H"
+#include "MeshObject.T.H"
 #include "fvMesh.H"
 #include "surfaceFields.H"
 

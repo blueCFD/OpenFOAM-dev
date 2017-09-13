@@ -36,7 +36,7 @@ SourceFiles
 #ifndef timeControl_H
 #define timeControl_H
 
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

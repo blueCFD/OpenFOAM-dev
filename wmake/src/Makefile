@@ -75,7 +75,9 @@ EXE_EXTENSION ?=
 # Targets
 #------------------------------------------------------------------------------
 
-all:  $(WMAKE_BIN)/dirToString$(EXE_EXTENSION) $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION) $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION)
+all:  $(WMAKE_BIN)/dirToString$(EXE_EXTENSION) \
+      $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION) \
+      $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION)
 
 clean:
 	rm -f $(WMAKE_BIN)/* 2>/dev/null

@@ -32,7 +32,7 @@ Description
 #include "argList.H"
 #include "OFstream.H"
 
-#include "MeshedSurfaces.H"
+#include "MeshedSurfaces.T.H"
 
 using namespace Foam;
 

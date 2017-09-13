@@ -33,8 +33,8 @@ Description
 #define cellShapeList_H
 
 #include "cellShape.H"
-#include "List.H"
-#include "PtrList.H"
+#include "List.T.H"
+#include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -48,7 +48,7 @@ SourceFiles
 #define messageStream_H
 
 #include "label.H"
-#include "string.H"
+#include "string.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

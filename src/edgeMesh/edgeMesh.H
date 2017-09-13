@@ -46,7 +46,7 @@ SourceFiles
 #include "edgeMeshFormatsCore.H"
 #include "runTimeSelectionTables.H"
 #include "memberFunctionSelectionTables.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -25,7 +25,7 @@ License
 
 #include "patchInjectionBase.H"
 #include "polyMesh.H"
-#include "SubField.H"
+#include "SubField.T.H"
 #include "cachedRandom.H"
 #include "triPointRef.H"
 

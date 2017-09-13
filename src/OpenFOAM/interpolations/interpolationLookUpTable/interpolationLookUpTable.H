@@ -40,10 +40,10 @@ SourceFiles
 #ifndef interpolationLookUpTable_H
 #define interpolationLookUpTable_H
 
-#include "List.H"
-#include "ListOps.H"
+#include "List.T.H"
+#include "ListOps.T.H"
 #include "scalarField.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "IOdictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -41,7 +41,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "IStringStream.H"
 #include "cellSet.H"
@@ -50,7 +50,7 @@ Description
 #include "OFstream.H"
 #include "IFstream.H"
 #include "IOobjectList.H"
-#include "SortableList.H"
+#include "SortableList.T.H"
 #include "timeSelector.H"
 
 using namespace Foam;

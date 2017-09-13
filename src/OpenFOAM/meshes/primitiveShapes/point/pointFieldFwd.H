@@ -32,7 +32,7 @@ Description
 #ifndef pointFieldFwd_H
 #define pointFieldFwd_H
 
-#include "point.H"
+#include "point.T.H"
 #include "primitiveFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

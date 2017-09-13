@@ -44,8 +44,8 @@ SourceFiles
 #include "labelList.H"
 #include "floatScalar.H"
 #include "OFstream.H"
-#include "DynamicList.H"
-#include "point.H"
+#include "DynamicList.T.H"
+#include "point.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

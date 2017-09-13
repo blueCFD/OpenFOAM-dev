@@ -45,7 +45,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "syncTools.H"
 #include "faceSet.H"
 #include "pointSet.H"
@@ -57,7 +57,7 @@ Description
 #include "processorPolyPatch.H"
 #include "localPointRegion.H"
 #include "duplicatePoints.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 

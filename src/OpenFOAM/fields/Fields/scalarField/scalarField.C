@@ -30,7 +30,7 @@ Description
 #include "unitConversion.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.C"
+#include "FieldFunctionsM.T.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

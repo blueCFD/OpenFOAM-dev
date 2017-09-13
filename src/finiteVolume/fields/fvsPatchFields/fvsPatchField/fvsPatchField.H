@@ -45,7 +45,7 @@ SourceFiles
 #define fvsPatchField_H
 
 #include "fvPatch.H"
-#include "DimensionedField.H"
+#include "DimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

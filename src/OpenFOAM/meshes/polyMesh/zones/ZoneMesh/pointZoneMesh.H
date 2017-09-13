@@ -29,7 +29,7 @@ Description
 #ifndef pointZoneMesh_H
 #define pointZoneMesh_H
 
-#include "ZoneMesh.H"
+#include "ZoneMesh.T.H"
 #include "pointZone.H"
 #include "pointZoneMeshFwd.H"
 

@@ -2,6 +2,7 @@ EXE_DEBUG = -DFULLDEBUG -g -O0
 EXE_NDEBUG = -DNDEBUG
 
 include $(GENERAL_RULES)/CGAL
+sinclude $(RULES)/CGAL
 
 #if ! (defined( WIN32 ) || defined( WIN64 ))
 
@@ -23,8 +24,7 @@ EXE_INC = \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)/fileFormats/lnInclude \
-    -I$(LIB_SRC)/mesh/snappyHexMesh/lnInclude \
-    -I/usr/include
+    -I$(LIB_SRC)/mesh/snappyHexMesh/lnInclude
 
 EXE_LIBS = \
     $(CGAL_LIBS) \
@@ -62,7 +62,7 @@ EXE_INC = \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)/fileFormats/lnInclude \
-    -I$(LIB_SRC)/mesh/autoMesh/lnInclude
+    -I$(LIB_SRC)/mesh/snappyHexMesh/lnInclude
 
 EXE_LIBS = \
     $(CGAL_LIBS) \
@@ -77,9 +77,10 @@ EXE_LIBS = \
     -ltriSurface \
     -ldynamicMesh \
     -ldecompositionMethods \
-    -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp \
+    -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp \
     -lsampling \
     -lfileFormats \
-    -lboost_thread-mt
+    -lboost_thread-mt \
+    -lboost_system-mt
 
 #endif

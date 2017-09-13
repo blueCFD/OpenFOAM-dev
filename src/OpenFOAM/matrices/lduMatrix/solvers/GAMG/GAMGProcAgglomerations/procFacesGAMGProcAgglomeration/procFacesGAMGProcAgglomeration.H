@@ -41,7 +41,7 @@ SourceFiles
 #define procFacesGAMGProcAgglomeration_H
 
 #include "GAMGProcAgglomeration.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 #include "labelField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

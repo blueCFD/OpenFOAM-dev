@@ -38,7 +38,7 @@ SourceFiles
 #ifndef patchEdgeFaceRegion_H
 #define patchEdgeFaceRegion_H
 
-#include "point.H"
+#include "point.T.H"
 #include "label.H"
 #include "scalar.H"
 #include "tensor.H"

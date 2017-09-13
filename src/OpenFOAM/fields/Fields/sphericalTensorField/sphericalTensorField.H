@@ -39,7 +39,7 @@ SourceFiles
 #include "sphericalTensor.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.H"
+#include "FieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

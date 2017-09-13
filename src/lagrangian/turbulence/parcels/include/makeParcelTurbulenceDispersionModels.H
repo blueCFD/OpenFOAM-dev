@@ -28,8 +28,8 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "GradientDispersionRAS.H"
-#include "StochasticDispersionRAS.H"
+#include "GradientDispersionRAS.T.H"
+#include "StochasticDispersionRAS.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

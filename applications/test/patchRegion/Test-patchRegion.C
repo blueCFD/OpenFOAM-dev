@@ -27,11 +27,11 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "PatchTools.H"
-#include "Time.H"
+#include "PatchTools.T.H"
+#include "Time.T.H"
 #include "polyMesh.H"
 #include "patchEdgeFaceRegions.H"
-#include "PatchEdgeFaceWave.H"
+#include "PatchEdgeFaceWave.T.H"
 #include "globalIndex.H"
 #include "syncTools.H"
 

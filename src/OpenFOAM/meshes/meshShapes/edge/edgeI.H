@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "IOstreams.H"
-#include "Swap.H"
+#include "Swap.T.H"
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 

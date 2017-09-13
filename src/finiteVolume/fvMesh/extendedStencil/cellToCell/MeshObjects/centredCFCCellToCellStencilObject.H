@@ -35,7 +35,7 @@ SourceFiles
 
 #include "extendedCentredCellToCellStencil.H"
 #include "CFCCellToCellStencil.H"
-#include "MeshObject.H"
+#include "MeshObject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

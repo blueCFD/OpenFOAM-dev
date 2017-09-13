@@ -39,7 +39,7 @@ SourceFiles
 
 #include "fvPatchFields.H"
 #include "fixedValueFvPatchFields.H"
-#include "Function1.H"
+#include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -25,7 +25,7 @@ License
 
 #include "cachedRandom.H"
 #include "OSspecific.H"
-#include "PstreamReduceOps.H"
+#include "PstreamReduceOps.T.H"
 
 // * * * * * * * * * * * * * private Member Functions  * * * * * * * * * * * //
 

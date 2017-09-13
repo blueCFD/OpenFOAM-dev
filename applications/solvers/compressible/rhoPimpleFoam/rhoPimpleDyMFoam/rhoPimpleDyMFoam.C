@@ -42,7 +42,7 @@ Description
 #include "turbulentFluidThermoModel.H"
 #include "bound.H"
 #include "pimpleControl.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 #include "fvOptions.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"

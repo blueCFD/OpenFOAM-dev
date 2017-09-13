@@ -25,9 +25,9 @@ License
 
 #include "inverseFaceDistanceDiffusivity.H"
 #include "addToRunTimeSelectionTable.H"
-#include "HashSet.H"
+#include "HashSet.T.H"
 #include "wallPoint.H"
-#include "MeshWave.H"
+#include "MeshWave.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

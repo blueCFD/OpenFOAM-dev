@@ -53,7 +53,7 @@ SourceFiles
 #ifndef engineTime_H
 #define engineTime_H
 
-#include "Time.H"
+#include "Time.T.H"
 #include "dictionary.H"
 #include "dimensionedScalar.H"
 

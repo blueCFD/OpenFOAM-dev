@@ -36,7 +36,7 @@ SourceFiles
 #ifndef pointEdgeCollapse_H
 #define pointEdgeCollapse_H
 
-#include "point.H"
+#include "point.T.H"
 #include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

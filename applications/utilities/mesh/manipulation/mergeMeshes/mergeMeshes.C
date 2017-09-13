@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "mergePolyMesh.H"
 
 using namespace Foam;

@@ -35,11 +35,11 @@ SourceFiles
 #ifndef scalarField_H
 #define scalarField_H
 
-#include "Field.H"
+#include "Field.T.H"
 #include "scalar.H"
 
 #define TEMPLATE
-#include "FieldFunctionsM.H"
+#include "FieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

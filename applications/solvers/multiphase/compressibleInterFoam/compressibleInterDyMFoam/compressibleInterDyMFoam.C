@@ -39,14 +39,14 @@ Description
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
-#include "MULES.H"
+#include "MULES.T.H"
 #include "subCycle.H"
 #include "interfaceProperties.H"
 #include "twoPhaseMixture.H"
 #include "twoPhaseMixtureThermo.H"
 #include "turbulentFluidThermoModel.H"
 #include "pimpleControl.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

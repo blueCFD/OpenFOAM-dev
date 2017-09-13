@@ -7,6 +7,8 @@
 -------------------------------------------------------------------------------
  2011 Symscape: Added math definitions for 'j0f' and so on.
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+ 2016-07-27 blueCAPE Lda: Workaround Strict ANSI for still including
+                          transcendental functions, such as jnf
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -38,9 +40,18 @@ Modifications
 #include "label.H"
 #include "products.H"
 
+#if (defined( WIN32 ) || defined( WIN64 )) && defined(__STRICT_ANSI__)
+#undef __STRICT_ANSI__
+#define REDEFINE_SA__
+#endif
+
 #include <cmath>
 
 #if defined( WIN32 ) || defined( WIN64 )
+#ifdef REDEFINE_SA__
+#define __STRICT_ANSI__ 1
+#endif
+
 #define j0f _j0
 #define j1f _j1
 #define jnf _jn

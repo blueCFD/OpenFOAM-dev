@@ -31,9 +31,9 @@ Description
 
 #include "scalar.H"
 #include "IOstreams.H"
-#include "PtrList.H"
+#include "PtrList.T.H"
 #include "plane.H"
-#include "DynamicList.H"
+#include "DynamicList.T.H"
 
 using namespace Foam;
 

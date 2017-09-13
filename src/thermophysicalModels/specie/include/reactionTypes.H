@@ -33,7 +33,7 @@ Description
 #define reactionTypes_H
 
 #include "thermoPhysicsTypes.H"
-#include "Reaction.H"
+#include "Reaction.T.H"
 
 #include "icoPolynomial.H"
 #include "hPolynomialThermo.H"

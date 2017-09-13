@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "word.H"
-#include "debug.H"
+#include "debug.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

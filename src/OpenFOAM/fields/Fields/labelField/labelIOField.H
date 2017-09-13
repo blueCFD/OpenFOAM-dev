@@ -33,7 +33,7 @@ Description
 #define labelIOField_H
 
 #include "primitiveFields.H"
-#include "IOField.H"
+#include "IOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

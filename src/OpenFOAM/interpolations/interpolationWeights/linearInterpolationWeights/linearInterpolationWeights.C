@@ -25,8 +25,8 @@ License
 
 #include "linearInterpolationWeights.H"
 #include "addToRunTimeSelectionTable.H"
-#include "ListOps.H"
-#include "Pair.H"
+#include "ListOps.T.H"
+#include "Pair.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

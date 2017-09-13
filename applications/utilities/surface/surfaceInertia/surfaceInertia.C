@@ -32,14 +32,14 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 #include "triSurface.H"
 #include "OFstream.H"
 #include "meshTools.H"
 #include "Random.H"
 #include "transform.H"
 #include "IOmanip.H"
-#include "Pair.H"
+#include "Pair.T.H"
 #include "momentOfInertia.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

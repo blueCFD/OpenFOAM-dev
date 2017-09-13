@@ -25,7 +25,7 @@ License
 
 #include "setUpdater.H"
 #include "polyMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "mapPolyMesh.H"
 #include "IOobjectList.H"
 

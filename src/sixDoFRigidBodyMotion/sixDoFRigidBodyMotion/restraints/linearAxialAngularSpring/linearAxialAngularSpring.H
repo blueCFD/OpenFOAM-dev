@@ -36,7 +36,7 @@ SourceFiles
 #define linearAxialAngularSpring_H
 
 #include "sixDoFRigidBodyMotionRestraint.H"
-#include "point.H"
+#include "point.T.H"
 #include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

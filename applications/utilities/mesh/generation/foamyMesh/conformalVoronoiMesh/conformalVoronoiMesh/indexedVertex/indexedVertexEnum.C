@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "indexedVertexEnum.H"
-#include "Pstream.H"
+#include "Pstream.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

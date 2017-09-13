@@ -29,7 +29,7 @@ License
 #include "OStringStream.H"
 #include "dynamicCode.H"
 #include "dynamicCodeContext.H"
-#include "Time.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

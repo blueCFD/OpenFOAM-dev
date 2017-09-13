@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 # 2016-07-26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -37,6 +38,8 @@
 #          after all of OpenFOAM's own binaries.
 #        - Used these new functions for replacing the default way how the paths
 #          were added to the respective global environment variables.
+#        - Using the environment variable FOAM_ITS_A_CLEAN_SHELL to trim
+#          down the time it takes to start up the environment.
 #
 # File
 #     etc/config.sh/paraview
@@ -50,6 +53,11 @@
 #     are required for building plugins
 #------------------------------------------------------------------------------
 
+    # blueCFD-Core: Speed up check
+    if [ -z "$FOAM_ITS_A_CLEAN_SHELL" ]
+    then
+    # ----
+
 # Clean the PATH
 cleaned=$($WM_PROJECT_DIR/bin/foamCleanPath "$PATH" \
         "$ParaView_DIR \
@@ -57,6 +65,10 @@ cleaned=$($WM_PROJECT_DIR/bin/foamCleanPath "$PATH" \
          $WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/paraview-" \
         ) \
         && PATH="$cleaned"
+
+    # ----
+    fi
+    # ----
 
 # prefix to system, i.e. append to OpenFOAM's PATH
 _foamAppendPath()

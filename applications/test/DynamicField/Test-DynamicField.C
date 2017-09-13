@@ -25,8 +25,8 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "point.H"
-#include "DynamicField.H"
+#include "point.T.H"
+#include "DynamicField.T.H"
 #include "IOstreams.H"
 
 using namespace Foam;

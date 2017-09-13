@@ -38,7 +38,7 @@ SourceFiles
 
 #include "regionCoupledBase.H"
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "polyPatch.H"
 #include "regionCoupledLduInterface.H"
 

@@ -33,7 +33,7 @@ Description
 #define labelIOList_H
 
 #include "label.H"
-#include "IOList.H"
+#include "IOList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

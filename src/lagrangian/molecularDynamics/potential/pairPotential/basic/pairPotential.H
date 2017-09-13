@@ -39,8 +39,8 @@ SourceFiles
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
 #include "autoPtr.H"
-#include "List.H"
-#include "Pair.H"
+#include "List.T.H"
+#include "Pair.T.H"
 #include "Switch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

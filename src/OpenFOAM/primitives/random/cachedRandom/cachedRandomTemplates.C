@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cachedRandom.H"
-#include "Pstream.H"
+#include "Pstream.T.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

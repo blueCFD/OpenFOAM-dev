@@ -30,13 +30,13 @@ Description
 #include "timeSelector.H"
 
 #include "fvMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "volMesh.H"
 #include "surfaceMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "pointFields.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 #include "interpolationWeights.H"
 #include "uniformInterpolate.H"
 

@@ -29,7 +29,7 @@ Description
 #ifndef cellZoneMesh_H
 #define cellZoneMesh_H
 
-#include "ZoneMesh.H"
+#include "ZoneMesh.T.H"
 #include "cellZone.H"
 #include "cellZoneMeshFwd.H"
 

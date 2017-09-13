@@ -44,7 +44,7 @@ Modifications
 
 #include "lagrangianWriter.H"
 #include "writeFuns.H"
-#include "Cloud.H"
+#include "Cloud.T.H"
 #include "passiveParticle.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

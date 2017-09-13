@@ -1,6 +1,6 @@
 // code taken more-or-less from Paul Hsieh's tests
 
-#include "Hasher.H"
+#include "Hasher.T.H"
 #include "int.H"
 
 #include <stdio.h>

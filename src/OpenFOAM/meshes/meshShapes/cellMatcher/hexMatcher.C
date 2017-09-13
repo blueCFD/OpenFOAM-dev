@@ -25,7 +25,7 @@ License
 
 #include "hexMatcher.H"
 #include "primitiveMesh.H"
-#include "ListOps.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

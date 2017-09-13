@@ -35,7 +35,7 @@ SourceFiles
 #ifndef processorGAMGInterface_H
 #define processorGAMGInterface_H
 
-#include "GAMGInterface.H"
+#include "GAMGInterface.T.H"
 #include "processorLduInterface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -25,8 +25,8 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "HashSet.H"
-#include "Map.H"
+#include "HashSet.T.H"
+#include "Map.T.H"
 
 using namespace Foam;
 

@@ -42,7 +42,7 @@ SourceFiles
 
 #include "label.H"
 #include "vector.H"
-#include "Tuple2.H"
+#include "Tuple2.T.H"
 #include "transform.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
