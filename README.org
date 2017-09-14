@@ -1,11 +1,11 @@
 #                            -*- mode: org; -*-
 #
-#+TITLE:          blueCFD-Core README for port of OpenFOAM 4.x
-#+AUTHOR:                      blueCAPE Lda
-#+DATE:                       2nd August 2016
+#+TITLE:          blueCFD-Core README for port of OpenFOAM 5.x
+#+AUTHOR:                     FSD blueCAPE Lda
+#+DATE:                       15th August 2017
 #+LINK:                    http://bluecfd.com/Core
 #+OPTIONS: author:nil ^:{}
-# Copyright (c) 2013-2016 blueCAPE Lda.
+# Copyright (c) 2013-2017 blueCAPE Lda.
 
 * About blueCFD-Core
   blueCFD®-Core is an open source project provided by blueCAPE Lda. It
@@ -41,8 +41,6 @@
   blueCFD® is a registered trade mark of blueCAPE Lda:
       [[http://bluecfd.com/trademark]]
 
-  blueCAPE Lda is in no way associated with OpenCFD (ESI Group), nor holds any
-  copyrights over OpenFOAM®.
   This offering is not approved or endorsed by OpenCFD (ESI Group), the
   producer of the OpenFOAM+ software and owner of the OPENFOAM® and OpenCFD®
   trade marks.
