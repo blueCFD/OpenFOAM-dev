@@ -28,22 +28,22 @@ Group
     grpFieldFunctionObjects
 
 Description
-    This function object provides a differencing option between two 'field
-    value' function objects.
+    Provides a differencing option between two 'field value' function objects.
 
     Example of function object specification:
     \verbatim
     fieldValueDelta1
     {
         type            fieldValueDelta;
-        libs ("libfieldFunctionObjects.so");
+        libs            ("libfieldFunctionObjects.so");
         operation       subtract;
 
-        fieldValue1
+        region1
         {
             ...
         }
-        fieldValue2
+
+        region2
         {
             ...
         }
@@ -66,7 +66,10 @@ Usage
     \endplaintable
 
 See also
-    Foam::fieldValue
+    Foam::functionObject
+    Foam::functionObject::fieldValue
+    Foam::functionObjects::regionFunctionObject
+    Foam::functionObjects::logFiles
 
 SourceFiles
     fieldValueDelta.C
@@ -76,7 +79,8 @@ SourceFiles
 #ifndef functionObjects_fieldValueDelta_H
 #define functionObjects_fieldValueDelta_H
 
-#include "writeFiles.H"
+#include "regionFunctionObject.H"
+#include "logFiles.H"
 #include "fieldValue.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -94,7 +98,8 @@ namespace fieldValues
 
 class fieldValueDelta
 :
-    public writeFiles
+    public regionFunctionObject,
+    public logFiles
 {
 public:
         //- Operation type enumeration

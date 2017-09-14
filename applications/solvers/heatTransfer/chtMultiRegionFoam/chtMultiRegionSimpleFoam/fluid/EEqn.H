@@ -12,7 +12,7 @@
       - fvm::laplacian(turb.alphaEff(), he)
      ==
         rho*(U&g)
-      + rad.Sh(thermo)
+      + rad.Sh(thermo, he)
       + fvOptions(rho, he)
     );
 
@@ -20,7 +20,7 @@
 
     fvOptions.constrain(EEqn);
 
-    EEqn.solve();
+    solvPerfE = EEqn.solve();
 
     fvOptions.correct(he);
 

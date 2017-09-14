@@ -1,4 +1,4 @@
-#-------------------------------*- makefile -*---------------------------------
+#----------------------------*- makefile-gmake -*------------------------------
 
 AR         = ar
 ARFLAGS    = cr
@@ -17,6 +17,12 @@ COMPILER_TYPE   = $(shell echo $(WM_COMPILER) | tr -d [:digit:])
 DEFAULT_RULES   = $(WM_DIR)/rules/$(WM_ARCH)$(COMPILER_TYPE)
 RULES           = $(WM_DIR)/rules/$(WM_ARCH)$(WM_COMPILER)
 WMAKE_BIN       = $(WM_DIR)/platforms/$(WM_ARCH)$(WM_COMPILER)
+
+ifeq ($(WM_SCHEDULER),)
+    AND = &&
+else
+    AND = '&&'
+endif
 
 include $(DEFAULT_RULES)/general
 include $(DEFAULT_RULES)/$(WM_LINK_LANGUAGE)

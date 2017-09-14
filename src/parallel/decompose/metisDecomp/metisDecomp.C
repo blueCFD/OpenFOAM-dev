@@ -67,7 +67,7 @@ Foam::label Foam::metisDecomp::decompose
 
     // Processor weights initialised with no size, only used if specified in
     // a file
-    Field<scalar> processorWeights;
+    Field<real_t> processorWeights;
 
     // Cell weights (so on the vertices of the dual)
     List<label> cellWeights;
@@ -175,11 +175,11 @@ Foam::label Foam::metisDecomp::decompose
             const_cast<List<label>&>(xadj).begin(),   // indexing into adjncy
             const_cast<List<label>&>(adjncy).begin(), // neighbour info
             cellWeights.begin(),// vertexweights
-            NULL,               // vsize: total communication vol
+            nullptr,               // vsize: total communication vol
             faceWeights.begin(),// edgeweights
             &nProcs,            // nParts
             processorWeights.begin(),   // tpwgts
-            NULL,               // ubvec: processor imbalance (default)
+            nullptr,               // ubvec: processor imbalance (default)
             options.begin(),
             &edgeCut,
             finalDecomp.begin()
@@ -194,11 +194,11 @@ Foam::label Foam::metisDecomp::decompose
             const_cast<List<label>&>(xadj).begin(),   // indexing into adjncy
             const_cast<List<label>&>(adjncy).begin(), // neighbour info
             cellWeights.begin(),// vertexweights
-            NULL,               // vsize: total communication vol
+            nullptr,               // vsize: total communication vol
             faceWeights.begin(),// edgeweights
             &nProcs,            // nParts
             processorWeights.begin(),   // tpwgts
-            NULL,               // ubvec: processor imbalance (default)
+            nullptr,               // ubvec: processor imbalance (default)
             options.begin(),
             &edgeCut,
             finalDecomp.begin()
@@ -291,7 +291,7 @@ Foam::labelList Foam::metisDecomp::decompose
         fineDistribution[i] = finalDecomp[agglom[i]];
     }
 
-    return finalDecomp;
+    return fineDistribution;
 }
 
 

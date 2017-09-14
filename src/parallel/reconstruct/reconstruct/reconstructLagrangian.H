@@ -37,7 +37,7 @@ SourceFiles
 
 #include "cloud.H"
 #include "polyMesh.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "CompactIOField.T.H"
 #include "fvMesh.H"
 

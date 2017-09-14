@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # License
@@ -33,38 +33,86 @@
 #
 #------------------------------------------------------------------------------
 usage() {
-    exec 1>&2
-    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
     cat<<USAGE
 
-Usage: ${0##*/} [OPTION] <sourceCase> <targetCase>
+Usage: ${0##*/} [OPTION] <source case> <target name>
 options:
-  -l | -latestTime    clone the latest time directory
-  -h | -help          print the usage
+  -help          print the usage
+  -latestTime    clone the latest time directory
+  -no-orig       do not copy 0.orig directory
+  -no-scripts    do not copy shell scripts
+  -template      search for source case directory in template directory paths
 
 Create a new <targetCase> case directory that includes time, system and constant
-directories of <sourceCase> directory.
-The time directory is the first time directory by default.
+directories, and shell scripts, of <sourceCase> directory.
+The time directory is the first time directory by default.  If no time directory
+exists, or it is 0, an exitsting 0.orig directory is copied by default.
 
+Template directory paths are:
 USAGE
+    for _tp in $TEMPLATE_DIRS ; do echo "    $_tp" ; done
+    echo ""
+}
+
+error() {
+    exec 1>&2
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    usage
     exit 1
 }
 
-TIME_OPTION="head -1"
+cpIfPresent() {
+    [ -e "$1" ] && echo "... ${1##*/}" && cp -r "$1" "$2"
+}
+
+ver=$WM_PROJECT_VERSION
+tmp_dir=templates
+TEMPLATE_DIRS="
+    ${HOME}/.OpenFOAM/appTemplates/$ver
+    ${HOME}/.OpenFOAM/$ver/$tmp_dir
+    ${HOME}/.OpenFOAM/$tmp_dir
+    ${WM_PROJECT_SITE:-$WM_PROJECT_INST_DIR/site}/$ver/$tmp_dir
+    ${WM_PROJECT_SITE:-$WM_PROJECT_INST_DIR/site}/$tmp_dir
+    $WM_PROJECT_DIR/etc/$tmp_dir"
+
+templateDir() {
+    for t in $TEMPLATE_DIRS
+    do
+        [ -d "$t/$1" ] && echo "$t/$1"  && exit 0
+    done
+    exit 1
+}
+
+time_option="head -1"
+no_orig=""
+no_scripts=""
+template=""
 
 # parse options
 while [ "$#" -gt 0 ]
 do
     case "$1" in
     -h | -help)
-        usage
+        usage && exit 0
         ;;
     -l | -latestTime)
-        TIME_OPTION="tail -1"
+        time_option="tail -1"
+        shift 1
+        ;;
+    -no-orig)
+        no_orig="true"
+        shift 1
+        ;;
+    -no-scripts)
+        no_scripts="true"
+        shift 1
+        ;;
+    -template)
+        template="true"
         shift 1
         ;;
     -*)
-        usage "unknown option: '$*'"
+        error "unknown option: '$*'"
         ;;
     *)
         break
@@ -72,19 +120,39 @@ do
     esac
 done
 
-[ $# -eq 2 ] || usage "Incorrect arguments specified"
-if [ "$(foamListTimes -case $1 2>&1 >/dev/null | grep 'FOAM FATAL ERROR')" ]
-then
-    usage "$1 is not does not a valid case directory"
-fi
-! [ -e $2 ] || usage "$2 file/directory already exists, delete and re-run"
+[ $# -eq 2 ] || error "Incorrect arguments specified"
 
-echo "Making $2 case directory"
-mkdir $2
+srcDir="$1"
+[ -z "$template" ] || \
+    srcDir="$(templateDir "$1")" || \
+    error "'$1' not found in template directories"
 
-TIME_DIR="$(foamListTimes -withZero -case $1 | $TIME_OPTION)"
+foamListTimes -case "$srcDir" >/dev/null 2>&1 || \
+    error "'$srcDir' is not a valid case directory"
 
-echo "Copying case directories from $1 to $2"
-cp -r $1/system $1/constant $1/${TIME_DIR} $2
+tgtDir=$2
+
+[ -e "$tgtDir" ] && \
+    error "'$tgtDir' file/directory already exists, delete and re-run"
+
+echo "Making $tgtDir case directory"
+mkdir "$tgtDir"
+
+echo "Copying directories from $srcDir to $tgtDir:"
+cpIfPresent "$srcDir/system" "$tgtDir"
+cpIfPresent "$srcDir/constant" "$tgtDir"
+
+time_dir="$(foamListTimes -withZero -case "$srcDir" | $time_option)"
+cpIfPresent "$srcDir/${time_dir}" "$tgtDir"
+
+[ "${time_dir}" = "0" -o -z "${time_dir}" ] && [ -z "$no_orig" ] && \
+cpIfPresent "$srcDir/0.orig" "$tgtDir"
+
+[ "$no_scripts" ] || \
+    scripts="$(find "$srcDir" -maxdepth 1 -type f -exec file {} \; | \
+               grep "shell script" | \
+               cut -d: -f1)"
+[ "$scripts" ] && echo "Copying scripts from $srcDir to $tgtDir:" && \
+    for s in $scripts ; do cpIfPresent "$s" "$tgtDir" ; done
 
 #------------------------------------------------------------------------------

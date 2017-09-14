@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "CollidingCloud.T.H"
 #include "CollisionModel.T.H"
+#include "NoCollision.T.H"
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
@@ -93,15 +94,8 @@ Foam::CollidingCloud<CloudType>::CollidingCloud
 :
     CloudType(cloudName, rho, U, mu, g, false),
     constProps_(this->particleProperties()),
-    collisionModel_(NULL)
+    collisionModel_(nullptr)
 {
-    if (this->solution().steadyState())
-    {
-        FatalErrorInFunction
-            << "Collision modelling not currently available for steady state "
-            << "calculations" << exit(FatalError);
-    }
-
     if (this->solution().active())
     {
         setModels();
@@ -109,6 +103,18 @@ Foam::CollidingCloud<CloudType>::CollidingCloud
         if (readFields)
         {
             parcelType::readFields(*this);
+            this->deleteLostParticles();
+        }
+
+        if
+        (
+            this->solution().steadyState()
+         && !isType<NoCollision<CollidingCloud<CloudType>>>(collisionModel_())
+        )
+        {
+            FatalErrorInFunction
+                << "Collision modelling not currently available "
+                << "for steady state calculations" << exit(FatalError);
         }
     }
 }
@@ -135,7 +141,7 @@ Foam::CollidingCloud<CloudType>::CollidingCloud
 )
 :
     CloudType(mesh, name, c),
-    collisionModel_(NULL)
+    collisionModel_(nullptr)
 {}
 
 

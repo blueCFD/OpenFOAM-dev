@@ -88,7 +88,7 @@ class functionObjectList
 
         //- Remove and return the function object pointer by name,
         //  and returns the old index via the parameter.
-        //  Returns a NULL pointer (and index -1) if it didn't exist
+        //  Returns a nullptr (and index -1) if it didn't exist
         functionObject* remove(const word&, label& oldIndex);
 
         //- Search the specified directory for functionObject
@@ -218,7 +218,8 @@ public:
         (
             const string& funcNameArgs0,
             dictionary& functionsDict,
-            HashSet<word>& requiredFields
+            HashSet<word>& requiredFields,
+            const word& region = word::null
         );
 
         //- Read and set the function objects if their data have changed

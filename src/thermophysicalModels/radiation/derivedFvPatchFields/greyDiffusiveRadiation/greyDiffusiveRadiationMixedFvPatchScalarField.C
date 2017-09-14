@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -185,22 +185,22 @@ updateCoeffs()
 
     const scalarField nAve(n & ray.dAve());
 
-    ray.Qr().boundaryFieldRef()[patchi] += Iw*nAve;
+    ray.qr().boundaryFieldRef()[patchi] += Iw*nAve;
 
     const scalarField temissivity = emissivity();
 
-    scalarField& Qem = ray.Qem().boundaryFieldRef()[patchi];
-    scalarField& Qin = ray.Qin().boundaryFieldRef()[patchi];
+    scalarField& qem = ray.qem().boundaryFieldRef()[patchi];
+    scalarField& qin = ray.qin().boundaryFieldRef()[patchi];
 
     const vector& myRayId = dom.IRay(rayId).d();
 
     // Use updated Ir while iterating over rays
-    // avoids to used lagged Qin
-    scalarField Ir = dom.IRay(0).Qin().boundaryField()[patchi];
+    // avoids to used lagged qin
+    scalarField Ir = dom.IRay(0).qin().boundaryField()[patchi];
 
     for (label rayI=1; rayI < dom.nRay(); rayI++)
     {
-        Ir += dom.IRay(rayI).Qin().boundaryField()[patchi];
+        Ir += dom.IRay(rayI).qin().boundaryField()[patchi];
     }
 
     forAll(Iw, facei)
@@ -212,13 +212,13 @@ updateCoeffs()
             valueFraction()[facei] = 1.0;
             refValue()[facei] =
                 (
-                    Ir[facei]*(scalar(1.0) - temissivity[facei])
+                    Ir[facei]*(scalar(1) - temissivity[facei])
                   + temissivity[facei]*physicoChemical::sigma.value()
                   * pow4(Tp[facei])
                 )/pi;
 
             // Emmited heat flux from this ray direction
-            Qem[facei] = refValue()[facei]*nAve[facei];
+            qem[facei] = refValue()[facei]*nAve[facei];
         }
         else
         {
@@ -228,7 +228,7 @@ updateCoeffs()
             refValue()[facei] = 0.0; //not used
 
             // Incident heat flux on this ray direction
-            Qin[facei] = Iw[facei]*nAve[facei];
+            qin[facei] = Iw[facei]*nAve[facei];
         }
     }
 

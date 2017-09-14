@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,6 +47,39 @@ Foam::processorCyclicFvPatchField<Type>::processorCyclicFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
+    const dictionary& dict
+)
+:
+    processorFvPatchField<Type>(p, iF, dict),
+    procPatch_(refCast<const processorCyclicFvPatch>(p))
+{
+    if (!isType<processorCyclicFvPatch>(p))
+    {
+        FatalIOErrorInFunction
+        (
+            dict
+        )   << "\n    patch type '" << p.type()
+            << "' not constraint type '" << typeName << "'"
+            << "\n    for patch " << p.name()
+            << " of field " << this->internalField().name()
+            << " in file " << this->internalField().objectPath()
+            << exit(FatalIOError);
+    }
+
+    if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
+    {
+        WarningInFunction
+            << "Scheduled communication with split cyclics not supported."
+            << endl;
+    }
+}
+
+
+template<class Type>
+Foam::processorCyclicFvPatchField<Type>::processorCyclicFvPatchField
+(
+    const fvPatch& p,
+    const DimensionedField<Type, volMesh>& iF,
     const Field<Type>& f
 )
 :
@@ -75,39 +108,6 @@ Foam::processorCyclicFvPatchField<Type>::processorCyclicFvPatchField
             << " of field " << this->internalField().name()
             << " in file " << this->internalField().objectPath()
             << exit(FatalIOError);
-    }
-}
-
-
-template<class Type>
-Foam::processorCyclicFvPatchField<Type>::processorCyclicFvPatchField
-(
-    const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
-    const dictionary& dict
-)
-:
-    processorFvPatchField<Type>(p, iF, dict),
-    procPatch_(refCast<const processorCyclicFvPatch>(p))
-{
-    if (!isType<processorCyclicFvPatch>(p))
-    {
-        FatalIOErrorInFunction
-        (
-            dict
-        )   << "\n    patch type '" << p.type()
-            << "' not constraint type '" << typeName << "'"
-            << "\n    for patch " << p.name()
-            << " of field " << this->internalField().name()
-            << " in file " << this->internalField().objectPath()
-            << exit(FatalIOError);
-    }
-
-    if (Pstream::defaultCommsType == Pstream::scheduled)
-    {
-        WarningInFunction
-            << "Scheduled communication with split cyclics not supported."
-            << endl;
     }
 }
 

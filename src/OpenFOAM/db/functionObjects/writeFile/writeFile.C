@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,6 @@ License
 #include "writeFile.H"
 #include "Time.T.H"
 #include "polyMesh.H"
-#include "IOmanip.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -49,7 +48,7 @@ void Foam::functionObjects::writeFile::initStream(Ostream& os) const
 
 Foam::fileName Foam::functionObjects::writeFile::baseFileDir() const
 {
-    fileName baseDir = obr_.time().path();
+    fileName baseDir = fileObr_.time().path();
 
     if (Pstream::parRun())
     {
@@ -63,14 +62,17 @@ Foam::fileName Foam::functionObjects::writeFile::baseFileDir() const
     }
 
     // Append mesh name if not default region
-    if (isA<polyMesh>(obr_))
+    if (isA<polyMesh>(fileObr_))
     {
-        const polyMesh& mesh = refCast<const polyMesh>(obr_);
+        const polyMesh& mesh = refCast<const polyMesh>(fileObr_);
         if (mesh.name() != polyMesh::defaultRegion)
         {
             baseDir = baseDir/mesh.name();
         }
     }
+
+    // Remove any ".."
+    baseDir.clean();
 
     return baseDir;
 }
@@ -78,12 +80,8 @@ Foam::fileName Foam::functionObjects::writeFile::baseFileDir() const
 
 Foam::fileName Foam::functionObjects::writeFile::baseTimeDir() const
 {
-    return baseFileDir()/prefix_/obr_.time().timeName();
+    return baseFileDir()/prefix_/fileObr_.time().timeName();
 }
-
-
-void Foam::functionObjects::writeFile::writeFileHeader(const label i)
-{}
 
 
 Foam::Omanip<int> Foam::functionObjects::writeFile::valueWidth
@@ -99,26 +97,11 @@ Foam::Omanip<int> Foam::functionObjects::writeFile::valueWidth
 
 Foam::functionObjects::writeFile::writeFile
 (
-    const word& name,
-    const Time& runTime,
-    const dictionary& dict,
-    const word& prefix
-)
-:
-    regionFunctionObject(name, runTime, dict),
-    prefix_(prefix)
-{}
-
-
-Foam::functionObjects::writeFile::writeFile
-(
-    const word& name,
     const objectRegistry& obr,
-    const dictionary& dict,
     const word& prefix
 )
 :
-    regionFunctionObject(name, obr, dict),
+    fileObr_(obr),
     prefix_(prefix)
 {}
 
@@ -144,7 +127,7 @@ void Foam::functionObjects::writeFile::writeCommented
 ) const
 {
     os  << setw(1) << "#" << setw(1) << ' '
-        << setw(charWidth() - 2) << str.c_str();
+        << setf(ios_base::left) << setw(charWidth() - 2) << str.c_str();
 }
 
 
@@ -171,7 +154,7 @@ void Foam::functionObjects::writeFile::writeHeader
 
 void Foam::functionObjects::writeFile::writeTime(Ostream& os) const
 {
-    os  << setw(charWidth()) << obr_.time().timeName();
+    os  << setw(charWidth()) << fileObr_.time().timeName();
 }
 
 

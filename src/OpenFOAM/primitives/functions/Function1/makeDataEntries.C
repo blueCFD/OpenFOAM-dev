@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,12 +24,16 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "Constant.T.H"
+#include "Uniform.T.H"
+#include "ZeroConstant.T.H"
+#include "OneConstant.T.H"
 #include "PolynomialEntry.T.H"
 #include "Sine.T.H"
 #include "Square.T.H"
 #include "CSV.T.H"
 #include "Table.T.H"
 #include "TableFile.T.H"
+#include "Scale.T.H"
 
 #include "fieldTypes.H"
 
@@ -38,12 +42,16 @@ License
 #define makeFunction1s(Type)                                                   \
     makeFunction1(Type);                                                       \
     makeFunction1Type(Constant, Type);                                         \
+    makeFunction1Type(Uniform, Type);                                          \
+    makeFunction1Type(ZeroConstant, Type);                                     \
+    makeFunction1Type(OneConstant, Type);                                      \
     makeFunction1Type(Polynomial, Type);                                       \
     makeFunction1Type(Sine, Type);                                             \
     makeFunction1Type(Square, Type);                                           \
     makeFunction1Type(CSV, Type);                                              \
     makeFunction1Type(Table, Type);                                            \
-    makeFunction1Type(TableFile, Type);
+    makeFunction1Type(TableFile, Type);                                        \
+    makeFunction1Type(Scale, Type);
 
 namespace Foam
 {

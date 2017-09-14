@@ -33,3 +33,6 @@
     const dimensionedVector& g = gFluid[i];
     const volScalarField& gh = ghFluid[i];
     const surfaceScalarField& ghf = ghfFluid[i];
+
+    bool& resReachedFluid = residualReachedFluid[i];
+    bool& residualControlUsed = residualControlUsedFluid[i];

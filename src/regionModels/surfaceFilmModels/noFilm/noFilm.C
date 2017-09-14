@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,9 +89,7 @@ void noFilm::addSources
     const scalar,
     const scalar
 )
-{
-    // do nothing
-}
+{}
 
 
 const volScalarField& noFilm::delta() const
@@ -175,6 +173,15 @@ const volScalarField& noFilm::Tw() const
 }
 
 
+const volScalarField& noFilm::hs() const
+{
+    FatalErrorInFunction
+        << "hs field not available for " << type() << abort(FatalError);
+
+    return volScalarField::null();
+}
+
+
 const volScalarField& noFilm::Cp() const
 {
     FatalErrorInFunction
@@ -244,11 +251,11 @@ const volScalarField& noFilm::cloudDiameterTrans() const
 }
 
 
-tmp<DimensionedField<scalar, volMesh>> noFilm::Srho() const
+tmp<volScalarField::Internal> noFilm::Srho() const
 {
-    return tmp<DimensionedField<scalar, volMesh>>
+    return tmp<volScalarField::Internal>
     (
-        new DimensionedField<scalar, volMesh>
+        new volScalarField::Internal
         (
             IOobject
             (
@@ -266,11 +273,11 @@ tmp<DimensionedField<scalar, volMesh>> noFilm::Srho() const
 }
 
 
-tmp<DimensionedField<scalar, volMesh>> noFilm::Srho(const label i) const
+tmp<volScalarField::Internal> noFilm::Srho(const label i) const
 {
-    return tmp<DimensionedField<scalar, volMesh>>
+    return tmp<volScalarField::Internal>
     (
-        new DimensionedField<scalar, volMesh>
+        new volScalarField::Internal
         (
             IOobject
             (
@@ -288,11 +295,11 @@ tmp<DimensionedField<scalar, volMesh>> noFilm::Srho(const label i) const
 }
 
 
-tmp<DimensionedField<scalar, volMesh>> noFilm::Sh() const
+tmp<volScalarField::Internal> noFilm::Sh() const
 {
-    return tmp<DimensionedField<scalar, volMesh>>
+    return tmp<volScalarField::Internal>
     (
-        new DimensionedField<scalar, volMesh>
+        new volScalarField::Internal
         (
             IOobject
             (

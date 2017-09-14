@@ -43,7 +43,7 @@ namespace Foam
 }
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::GAMGAgglomeration::compactLevels(const label nCreatedLevels)
 {
@@ -206,13 +206,20 @@ void Foam::GAMGAgglomeration::compactLevels(const label nCreatedLevels)
 
 bool Foam::GAMGAgglomeration::continueAgglomerating
 (
+    const label nFineCells,
     const label nCoarseCells
 ) const
 {
-    // Check the need for further agglomeration on all processors
-    bool contAgg = nCoarseCells >= nCellsInCoarsestLevel_;
-    mesh().reduce(contAgg, andOp<bool>());
-    return contAgg;
+    const label nTotalCoarseCells = returnReduce(nCoarseCells, sumOp<label>());
+    if (nTotalCoarseCells < Pstream::nProcs()*nCellsInCoarsestLevel_)
+    {
+        return false;
+    }
+    else
+    {
+        const label nTotalFineCells = returnReduce(nFineCells, sumOp<label>());
+        return nTotalCoarseCells < nTotalFineCells;
+    }
 }
 
 
@@ -245,7 +252,7 @@ Foam::GAMGAgglomeration::GAMGAgglomeration
             *this,
             controlDict
         )
-      : autoPtr<GAMGProcAgglomeration>(NULL)
+      : autoPtr<GAMGProcAgglomeration>(nullptr)
     ),
 
     nCells_(maxLevels_),
@@ -481,17 +488,17 @@ void Foam::GAMGAgglomeration::clearLevel(const label i)
 {
     if (hasMeshLevel(i))
     {
-        meshLevels_.set(i - 1, NULL);
+        meshLevels_.set(i - 1, nullptr);
 
         if (i < nCells_.size())
         {
             nCells_[i] = -555;
-            restrictAddressing_.set(i, NULL);
+            restrictAddressing_.set(i, nullptr);
             nFaces_[i] = -666;
-            faceRestrictAddressing_.set(i, NULL);
-            faceFlipMap_.set(i, NULL);
-            nPatchFaces_.set(i, NULL);
-            patchFaceRestrictAddressing_.set(i, NULL);
+            faceRestrictAddressing_.set(i, nullptr);
+            faceFlipMap_.set(i, nullptr);
+            nPatchFaces_.set(i, nullptr);
+            patchFaceRestrictAddressing_.set(i, nullptr);
         }
     }
 }

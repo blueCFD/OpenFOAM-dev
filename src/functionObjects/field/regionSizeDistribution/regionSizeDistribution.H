@@ -28,8 +28,8 @@ Group
     grpFieldFunctionObjects
 
 Description
-    This function object creates a size distribution via interrogating a
-    continuous phase fraction field.
+    Creates a size distribution via interrogating a continuous phase fraction
+    field.
 
     Looks up a phase-fraction (alpha) field and splits the mesh into regions
     based on where the field is below the threshold value.  These
@@ -59,7 +59,7 @@ Description
     regionSizeDistribution1
     {
         type            regionSizeDistribution;
-        libs ("libfieldFunctionObjects.so");
+        libs            ("libfieldFunctionObjects.so");
         ...
         field           alpha;
         patches         (inlet);
@@ -96,6 +96,7 @@ Usage
 
 See also
     Foam::functionObject
+    Foam::functionObjects::fvMeshFunctionObject
     Foam::functionObjects::writeFile
 
 SourceFiles
@@ -106,6 +107,7 @@ SourceFiles
 #ifndef functionObjects_regionSizeDistribution_H
 #define functionObjects_regionSizeDistribution_H
 
+#include "fvMeshFunctionObject.H"
 #include "writeFile.H"
 #include "writer.H"
 #include "Map.T.H"
@@ -130,9 +132,11 @@ namespace functionObjects
 
 class regionSizeDistribution
 :
-    public writeFile
+    public fvMeshFunctionObject
 {
     // Private data
+
+        writeFile file_;
 
         //- Name of field
         word alphaName_;
@@ -190,7 +194,7 @@ class regionSizeDistribution
         ) const;
 
         //- Mark all regions starting at patches
-        Map<label> findPatchRegions(const polyMesh&, const regionSplit&) const;
+        Map<label> findPatchRegions(const regionSplit&) const;
 
         //- Helper: divide if denom != 0
         static tmp<scalarField> divide(const scalarField&, const scalarField&);

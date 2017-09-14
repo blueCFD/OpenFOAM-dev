@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,10 +31,11 @@ Foam::combustionModels::rhoChemistryCombustion::rhoChemistryCombustion
 (
     const word& modelType,
     const fvMesh& mesh,
+    const word& combustionProperties,
     const word& phaseName
 )
 :
-    rhoCombustionModel(modelType, mesh, phaseName),
+    rhoCombustionModel(modelType, mesh, combustionProperties, phaseName),
     chemistryPtr_(rhoChemistryModel::New(mesh, phaseName))
 {}
 
@@ -58,13 +59,6 @@ const Foam::rhoReactionThermo&
 Foam::combustionModels::rhoChemistryCombustion::thermo() const
 {
     return chemistryPtr_->thermo();
-}
-
-
-Foam::tmp<Foam::volScalarField>
-Foam::combustionModels::rhoChemistryCombustion::rho() const
-{
-    return chemistryPtr_->thermo().rho();
 }
 
 

@@ -6,6 +6,9 @@
     PtrList<volScalarField> betavSolid(solidRegions.size());
     PtrList<volSymmTensorField> aniAlphas(solidRegions.size());
 
+    List<bool> residualReachedSolid(solidRegions.size(), true);
+    List<bool> residualControlUsedSolid(solidRegions.size(), false);
+
     // Populate solid field pointer lists
     forAll(solidRegions, i)
     {
@@ -76,7 +79,7 @@
             IOobject::AUTO_WRITE
         );
 
-        if (betavSolidIO.headerOk())
+        if (betavSolidIO.typeHeaderOk<volScalarField>(true))
         {
             betavSolid.set
             (
@@ -100,7 +103,7 @@
                         IOobject::NO_WRITE
                     ),
                     solidRegions[i],
-                    dimensionedScalar("1", dimless, scalar(1.0))
+                    dimensionedScalar("1", dimless, scalar(1))
                 )
             );
         }

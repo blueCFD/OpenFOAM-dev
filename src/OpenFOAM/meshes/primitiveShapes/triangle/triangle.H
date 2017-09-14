@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,6 +44,7 @@ SourceFiles
 #include "FixedList.T.H"
 #include "UList.T.H"
 #include "linePointRef.H"
+#include "barycentric2D.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -167,13 +168,18 @@ public:
             //  distribution
             inline Point randomPoint(cachedRandom& rndGen) const;
 
-            //- Calculate the barycentric coordinates of the given
-            //  point, in the same order as a, b, c.  Returns the
-            //  determinant of the solution.
-            inline scalar barycentric
+            //- Calculate the point from the given barycentric coordinates.
+            inline Point barycentricToPoint(const barycentric2D& bary) const;
+
+            //- Calculate the barycentric coordinates from the given point
+            inline barycentric2D pointToBarycentric(const point& pt) const;
+
+            //- Calculate the barycentric coordinates from the given point.
+            //  Returns the determinant.
+            inline scalar pointToBarycentric
             (
                 const point& pt,
-                List<scalar>& bary
+                barycentric2D& bary
             ) const;
 
             //- Return point intersection with a ray.

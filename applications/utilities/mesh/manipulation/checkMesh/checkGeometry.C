@@ -1,3 +1,4 @@
+#include "PatchTools.T.H"
 #include "checkGeometry.H"
 #include "polyMesh.H"
 #include "cellSet.H"
@@ -7,9 +8,13 @@
 #include "wedgePolyPatch.H"
 #include "unitConversion.H"
 #include "polyMeshTetDecomposition.H"
-#include "surfaceWriter.H"
-#include "checkTools.H"
 
+#include "vtkSurfaceWriter.H"
+#include "writer.H"
+
+#include "checkTools.H"
+#include "cyclicAMIPolyPatch.H"
+#include "Time.T.H"
 
 // Find wedge with opposite orientation. Note: does not actually check that
 // it is opposite, only that it has opposite normal and same axis
@@ -478,7 +483,8 @@ Foam::label Foam::checkGeometry
 (
     const polyMesh& mesh,
     const bool allGeometry,
-    const autoPtr<surfaceWriter>& writer
+    const autoPtr<surfaceWriter>& surfWriter,
+    const autoPtr<writer<scalar>>& setWriter
 )
 {
     label noFailedChecks = 0;
@@ -535,6 +541,10 @@ Foam::label Foam::checkGeometry
                     << nonAlignedPoints.name() << endl;
                 nonAlignedPoints.instance() = mesh.pointsInstance();
                 nonAlignedPoints.write();
+                if (setWriter.valid())
+                {
+                    mergeAndWrite(setWriter, nonAlignedPoints);
+                }
             }
         }
     }
@@ -565,9 +575,9 @@ Foam::label Foam::checkGeometry
                     << " non closed cells to set " << cells.name() << endl;
                 cells.instance() = mesh.pointsInstance();
                 cells.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), cells);
+                    mergeAndWrite(surfWriter(), cells);
                 }
             }
         }
@@ -581,9 +591,9 @@ Foam::label Foam::checkGeometry
                 << aspectCells.name() << endl;
             aspectCells.instance() = mesh.pointsInstance();
             aspectCells.write();
-            if (writer.valid())
+            if (surfWriter.valid())
             {
-                mergeAndWrite(writer(), aspectCells);
+                mergeAndWrite(surfWriter(), aspectCells);
             }
         }
     }
@@ -602,9 +612,9 @@ Foam::label Foam::checkGeometry
                     << " zero area faces to set " << faces.name() << endl;
                 faces.instance() = mesh.pointsInstance();
                 faces.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), faces);
+                    mergeAndWrite(surfWriter(), faces);
                 }
             }
         }
@@ -624,9 +634,9 @@ Foam::label Foam::checkGeometry
                     << " zero volume cells to set " << cells.name() << endl;
                 cells.instance() = mesh.pointsInstance();
                 cells.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), cells);
+                    mergeAndWrite(surfWriter(), cells);
                 }
             }
         }
@@ -647,9 +657,9 @@ Foam::label Foam::checkGeometry
                 << " non-orthogonal faces to set " << faces.name() << endl;
             faces.instance() = mesh.pointsInstance();
             faces.write();
-            if (writer.valid())
+            if (surfWriter.valid())
             {
-                mergeAndWrite(writer(), faces);
+                mergeAndWrite(surfWriter(), faces);
             }
         }
     }
@@ -669,9 +679,9 @@ Foam::label Foam::checkGeometry
                     << faces.name() << endl;
                 faces.instance() = mesh.pointsInstance();
                 faces.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), faces);
+                    mergeAndWrite(surfWriter(), faces);
                 }
             }
         }
@@ -691,9 +701,9 @@ Foam::label Foam::checkGeometry
                     << " skew faces to set " << faces.name() << endl;
                 faces.instance() = mesh.pointsInstance();
                 faces.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), faces);
+                    mergeAndWrite(surfWriter(), faces);
                 }
             }
         }
@@ -715,9 +725,9 @@ Foam::label Foam::checkGeometry
                     << faces.name() << endl;
                 faces.instance() = mesh.pointsInstance();
                 faces.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), faces);
+                    mergeAndWrite(surfWriter(), faces);
                 }
             }
         }
@@ -748,9 +758,9 @@ Foam::label Foam::checkGeometry
                     << "decomposition tets to set " << faces.name() << endl;
                 faces.instance() = mesh.pointsInstance();
                 faces.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), faces);
+                    mergeAndWrite(surfWriter(), faces);
                 }
             }
         }
@@ -773,6 +783,10 @@ Foam::label Foam::checkGeometry
                     << endl;
                 points.instance() = mesh.pointsInstance();
                 points.write();
+                if (setWriter.valid())
+                {
+                    mergeAndWrite(setWriter, points);
+                }
             }
         }
 
@@ -792,6 +806,10 @@ Foam::label Foam::checkGeometry
                     << " apart) points to set " << nearPoints.name() << endl;
                 nearPoints.instance() = mesh.pointsInstance();
                 nearPoints.write();
+                if (setWriter.valid())
+                {
+                    mergeAndWrite(setWriter, nearPoints);
+                }
             }
         }
     }
@@ -812,9 +830,9 @@ Foam::label Foam::checkGeometry
                     << endl;
                 faces.instance() = mesh.pointsInstance();
                 faces.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), faces);
+                    mergeAndWrite(surfWriter(), faces);
                 }
             }
         }
@@ -835,9 +853,9 @@ Foam::label Foam::checkGeometry
                     << " warped faces to set " << faces.name() << endl;
                 faces.instance() = mesh.pointsInstance();
                 faces.write();
-                if (writer.valid())
+                if (surfWriter.valid())
                 {
-                    mergeAndWrite(writer(), faces);
+                    mergeAndWrite(surfWriter(), faces);
                 }
             }
         }
@@ -856,9 +874,9 @@ Foam::label Foam::checkGeometry
                 << " under-determined cells to set " << cells.name() << endl;
             cells.instance() = mesh.pointsInstance();
             cells.write();
-            if (writer.valid())
+            if (surfWriter.valid())
             {
-                mergeAndWrite(writer(), cells);
+                mergeAndWrite(surfWriter(), cells);
             }
         }
     }
@@ -876,9 +894,9 @@ Foam::label Foam::checkGeometry
                 << " concave cells to set " << cells.name() << endl;
             cells.instance() = mesh.pointsInstance();
             cells.write();
-            if (writer.valid())
+            if (surfWriter.valid())
             {
-                mergeAndWrite(writer(), cells);
+                mergeAndWrite(surfWriter(), cells);
             }
         }
     }
@@ -897,9 +915,9 @@ Foam::label Foam::checkGeometry
                 << faces.name() << endl;
             faces.instance() = mesh.pointsInstance();
             faces.write();
-            if (writer.valid())
+            if (surfWriter.valid())
             {
-                mergeAndWrite(writer(), faces);
+                mergeAndWrite(surfWriter(), faces);
             }
         }
     }
@@ -918,9 +936,143 @@ Foam::label Foam::checkGeometry
                 << faces.name() << endl;
             faces.instance() = mesh.pointsInstance();
             faces.write();
-            if (writer.valid())
+            if (surfWriter.valid())
             {
-                mergeAndWrite(writer(), faces);
+                mergeAndWrite(surfWriter(), faces);
+            }
+        }
+    }
+
+    if (allGeometry)
+    {
+        const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+
+        const word tmName(mesh.time().timeName());
+        const word procAndTime(Foam::name(Pstream::myProcNo()) + "_" + tmName);
+
+        autoPtr<surfaceWriter> patchWriter;
+        if (!surfWriter.valid())
+        {
+            patchWriter.reset(new vtkSurfaceWriter());
+        }
+        const surfaceWriter& wr =
+        (
+            surfWriter.valid()
+          ? surfWriter()
+          : patchWriter()
+        );
+
+        forAll(pbm, patchi)
+        {
+            if (isA<cyclicAMIPolyPatch>(pbm[patchi]))
+            {
+                const cyclicAMIPolyPatch& cpp =
+                    refCast<const cyclicAMIPolyPatch>(pbm[patchi]);
+
+                if (cpp.owner())
+                {
+                    Info<< "Calculating AMI weights between owner patch: "
+                        << cpp.name() << " and neighbour patch: "
+                        << cpp.neighbPatch().name() << endl;
+
+                    const AMIPatchToPatchInterpolation& ami =
+                        cpp.AMI();
+
+                    {
+                        // Collect geometry
+                        labelList pointToGlobal;
+                        labelList uniqueMeshPointLabels;
+                        autoPtr<globalIndex> globalPoints;
+                        autoPtr<globalIndex> globalFaces;
+                        faceList mergedFaces;
+                        pointField mergedPoints;
+                        Foam::PatchTools::gatherAndMerge
+                        (
+                            mesh,
+                            cpp.localFaces(),
+                            cpp.meshPoints(),
+                            cpp.meshPointMap(),
+
+                            pointToGlobal,
+                            uniqueMeshPointLabels,
+                            globalPoints,
+                            globalFaces,
+
+                            mergedFaces,
+                            mergedPoints
+                        );
+                        // Collect field
+                        scalarField mergedWeights;
+                        globalFaces().gather
+                        (
+                            UPstream::worldComm,
+                            labelList(UPstream::procID(UPstream::worldComm)),
+                            ami.srcWeightsSum(),
+                            mergedWeights
+                        );
+
+                        if (Pstream::master())
+                        {
+                            wr.write
+                            (
+                                "postProcessing",
+                                "src_" + tmName,
+                                mergedPoints,
+                                mergedFaces,
+                                "weightsSum",
+                                mergedWeights,
+                                false
+                            );
+                        }
+                    }
+                    {
+                        // Collect geometry
+                        labelList pointToGlobal;
+                        labelList uniqueMeshPointLabels;
+                        autoPtr<globalIndex> globalPoints;
+                        autoPtr<globalIndex> globalFaces;
+                        faceList mergedFaces;
+                        pointField mergedPoints;
+                        Foam::PatchTools::gatherAndMerge
+                        (
+                            mesh,
+                            cpp.neighbPatch().localFaces(),
+                            cpp.neighbPatch().meshPoints(),
+                            cpp.neighbPatch().meshPointMap(),
+
+                            pointToGlobal,
+                            uniqueMeshPointLabels,
+                            globalPoints,
+                            globalFaces,
+
+                            mergedFaces,
+                            mergedPoints
+                        );
+                        // Collect field
+                        scalarField mergedWeights;
+                        globalFaces().gather
+                        (
+                            UPstream::worldComm,
+                            labelList(UPstream::procID(UPstream::worldComm)),
+                            ami.tgtWeightsSum(),
+                            mergedWeights
+                        );
+
+                        if (Pstream::master())
+                        {
+                            wr.write
+                            (
+                                "postProcessing",
+                                "tgt_" + tmName,
+                                mergedPoints,
+                                mergedFaces,
+                                "weightsSum",
+                                mergedWeights,
+                                false
+                            );
+                        }
+                    }
+                }
             }
         }
     }

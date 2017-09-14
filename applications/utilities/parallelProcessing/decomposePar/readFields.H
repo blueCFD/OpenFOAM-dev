@@ -34,7 +34,7 @@ SourceFiles
 #ifndef readFields_H
 #define readFields_H
 
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "PtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -47,7 +47,7 @@ namespace Foam
     (
         const typename GeoMesh::Mesh& mesh,
         const IOobjectList& objects,
-        PtrList<GeometricField<Type, PatchField, GeoMesh> >& fields,
+        PtrList<GeometricField<Type, PatchField, GeoMesh>>& fields,
         const bool readOldTime
     );
 

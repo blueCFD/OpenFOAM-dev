@@ -32,7 +32,7 @@ Description
 #include "fvCFD.H"
 #include "writeFluentFields.H"
 #include "OFstream.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

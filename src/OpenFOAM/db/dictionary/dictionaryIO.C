@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "dictionary.H"
-#include "IFstream.H"
 #include "inputModeEntry.H"
 #include "regExp.H"
 
@@ -137,7 +136,7 @@ bool Foam::dictionary::substituteKeyword(const word& keyword)
     const entry* ePtr = lookupEntryPtr(varName, true, true);
 
     // if defined insert its entries into this dictionary
-    if (ePtr != NULL)
+    if (ePtr != nullptr)
     {
         const dictionary& addDict = ePtr->dict();
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -279,7 +279,7 @@ void Foam::GAMGAgglomeration::agglomerateLduAddressing
         {
             fineInterfaces[inti].initInternalFieldTransfer
             (
-                Pstream::nonBlocking,
+                Pstream::commsTypes::nonBlocking,
                 restrictMap
             );
         }
@@ -322,7 +322,7 @@ void Foam::GAMGAgglomeration::agglomerateLduAddressing
                     fineInterfaces[inti].interfaceInternalField(restrictMap),
                     fineInterfaces[inti].internalFieldTransfer
                     (
-                        Pstream::nonBlocking,
+                        Pstream::commsTypes::nonBlocking,
                         restrictMap
                     ),
                     fineLevelIndex,
@@ -488,7 +488,7 @@ void Foam::GAMGAgglomeration::procAgglomerateRestrictAddressing
         procRestrictAddressing,
 
         UPstream::msgType(),
-        Pstream::nonBlocking    //Pstream::scheduled
+        Pstream::commsTypes::nonBlocking    //Pstream::commsTypes::scheduled
     );
 
 
@@ -561,8 +561,8 @@ void Foam::GAMGAgglomeration::combineLevels(const label curLevel)
     }
 
     // Delete the restrictAddressing for the coarser level
-    faceRestrictAddressing_.set(curLevel, NULL);
-    faceFlipMap_.set(curLevel, NULL);
+    faceRestrictAddressing_.set(curLevel, nullptr);
+    faceFlipMap_.set(curLevel, nullptr);
 
     forAll(prevResAddr, i)
     {
@@ -586,7 +586,7 @@ void Foam::GAMGAgglomeration::combineLevels(const label curLevel)
     }
 
     // Delete the restrictAddressing for the coarser level
-    restrictAddressing_.set(curLevel, NULL);
+    restrictAddressing_.set(curLevel, nullptr);
 
     // Patch faces
     nPatchFaces_[prevLevel] = nPatchFaces_[curLevel];
@@ -620,7 +620,7 @@ void Foam::GAMGAgglomeration::combineLevels(const label curLevel)
 
     // Delete the matrix addressing and coefficients from the previous level
     // and replace with the corresponding entry from the coarser level
-    meshLevels_.set(prevLevel, meshLevels_.set(curLevel, NULL));
+    meshLevels_.set(prevLevel, meshLevels_.set(curLevel, nullptr));
 }
 
 
@@ -645,7 +645,7 @@ void Foam::GAMGAgglomeration::combineLevels(const label curLevel)
 //            label& slaveVal = vals[i];
 //            IPstream::read
 //            (
-//                Pstream::scheduled,
+//                Pstream::commsTypes::scheduled,
 //                procIDs[i],
 //                reinterpret_cast<char*>(&slaveVal),
 //                sizeof(slaveVal),
@@ -658,7 +658,7 @@ void Foam::GAMGAgglomeration::combineLevels(const label curLevel)
 //    {
 //        OPstream::write
 //        (
-//            Pstream::scheduled,
+//            Pstream::commsTypes::scheduled,
 //            procIDs[0],
 //            reinterpret_cast<const char*>(&myVal),
 //            sizeof(myVal),

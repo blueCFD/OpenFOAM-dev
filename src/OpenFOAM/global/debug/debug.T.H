@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,9 +74,18 @@ namespace debug
     //- Lookup optimisation switch or add default value.
     int optimisationSwitch(const char* name, const int defaultValue=0);
 
+    //- Lookup optimisation switch or add default value.
+    float floatOptimisationSwitch
+    (
+        const char* name,
+        const float defaultValue=0
+    );
+
     //- Internal function to lookup a sub-dictionary from controlDict.
     dictionary& switchSet(const char* subDictName, dictionary*& subDictPtr);
 
+    //- List debug switches
+    void listSwitches(const bool unset);
 
 
     // Registered debug switches
@@ -111,6 +120,9 @@ namespace debug
 
         //- Get access to registered dimensionedConstant switch objects
         simpleObjectRegistry& dimensionedConstantObjects();
+
+        //- List registered debug switches
+        void listRegisteredSwitches(const bool unset);
 
 } // End namespace debug
 

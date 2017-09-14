@@ -54,7 +54,7 @@ SourceFiles
 #define helpBoundary_H
 
 #include "helpType.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

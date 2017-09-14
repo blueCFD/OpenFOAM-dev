@@ -23,14 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "IncompressibleTurbulenceModel.T.H"
-#include "incompressible/transportModel/transportModel.H"
-#include "addToRunTimeSelectionTable.H"
-#include "makeTurbulenceModel.H"
-
-#include "laminar.H"
-#include "RASModel.T.H"
-#include "LESModel.T.H"
+#include "turbulentTransportModels.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -43,13 +36,16 @@ makeBaseTurbulenceModel
     transportModel
 );
 
-#define makeRASModel(Type)                                                     \
-    makeTemplatedTurbulenceModel                                               \
-    (transportModelIncompressibleTurbulenceModel, RAS, Type)
 
-#define makeLESModel(Type)                                                     \
-    makeTemplatedTurbulenceModel                                               \
-    (transportModelIncompressibleTurbulenceModel, LES, Type)
+// -------------------------------------------------------------------------- //
+// Laminar models
+// -------------------------------------------------------------------------- //
+
+#include "Stokes.T.H"
+makeLaminarModel(Stokes);
+
+#include "Maxwell.T.H"
+makeLaminarModel(Maxwell);
 
 
 // -------------------------------------------------------------------------- //
@@ -79,6 +75,9 @@ makeRASModel(kOmegaSST);
 
 #include "kOmegaSSTSAS.H"
 makeRASModel(kOmegaSSTSAS);
+
+#include "kOmegaSSTLM.H"
+makeRASModel(kOmegaSSTLM);
 
 #include "v2f.H"
 makeRASModel(v2f);

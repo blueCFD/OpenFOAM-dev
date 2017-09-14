@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "dictionary.H"
 #include "fvMesh.H"
 #include "fvPatchFieldMapper.H"

@@ -44,6 +44,7 @@ SourceFiles
 #define turbulentTransportModel_H
 
 #include "IncompressibleTurbulenceModel.T.H"
+#include "laminarModel.H"
 #include "RASModel.T.H"
 #include "LESModel.T.H"
 #include "incompressible/transportModel/transportModel.H"
@@ -56,6 +57,7 @@ namespace Foam
     {
         typedef IncompressibleTurbulenceModel<transportModel> turbulenceModel;
 
+        typedef laminarModel<turbulenceModel> laminarModel;
         typedef RASModel<turbulenceModel> RASModel;
         typedef LESModel<turbulenceModel> LESModel;
 

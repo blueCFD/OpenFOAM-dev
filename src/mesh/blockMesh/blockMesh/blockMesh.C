@@ -24,11 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "blockMesh.H"
-#include "Switch.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-bool Foam::blockMesh::blockMesh::verboseOutput(false);
 
 namespace Foam
 {
@@ -40,15 +38,38 @@ namespace Foam
 
 Foam::blockMesh::blockMesh(const IOdictionary& dict, const word& regionName)
 :
-    blockPointField_(dict.lookup("vertices")),
+    meshDict_(dict),
+    verboseOutput(meshDict_.lookupOrDefault<Switch>("verbose", true)),
+    geometry_
+    (
+        IOobject
+        (
+            "geometry",                 // dummy name
+            meshDict_.time().constant(),     // instance
+            "geometry",                 // local
+            meshDict_.time(),                // registry
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        ),
+        meshDict_.found("geometry")
+      ? meshDict_.subDict("geometry")
+      : dictionary(),
+        true
+    ),
     scaleFactor_(1.0),
-    topologyPtr_(createTopology(dict, regionName))
+    blockVertices_
+    (
+        meshDict_.lookup("vertices"),
+        blockVertex::iNew(meshDict_, geometry_)
+    ),
+    vertices_(Foam::vertices(blockVertices_)),
+    topologyPtr_(createTopology(meshDict_, regionName))
 {
-    Switch fastMerge(dict.lookupOrDefault<Switch>("fastMerge", false));
+    Switch fastMerge(meshDict_.lookupOrDefault<Switch>("fastMerge", false));
 
     if (fastMerge)
     {
-         calcMergeInfoFast();
+        calcMergeInfoFast();
     }
     else
     {
@@ -73,9 +94,9 @@ void Foam::blockMesh::verbose(const bool on)
 }
 
 
-const Foam::pointField& Foam::blockMesh::blockPointField() const
+const Foam::pointField& Foam::blockMesh::vertices() const
 {
-    return blockPointField_;
+    return vertices_;
 }
 
 
@@ -170,9 +191,9 @@ Foam::label Foam::blockMesh::numZonedBlocks() const
 {
     label num = 0;
 
-    forAll(*this, blockI)
+    forAll(*this, blocki)
     {
-        if (operator[](blockI).zoneName().size())
+        if (operator[](blocki).zoneName().size())
         {
             num++;
         }

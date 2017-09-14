@@ -14,6 +14,7 @@ diffusion/diffusions.C
 infinitelyFastChemistry/infinitelyFastChemistrys.C
 
 PaSR/PaSRs.T.C
+EDC/EDCs.T.C
 
 laminar/laminars.C
 
@@ -23,6 +24,8 @@ FSD/reactionRateFlameAreaModels/reactionRateFlameArea/reactionRateFlameAreaNew.C
 FSD/reactionRateFlameAreaModels/relaxation/relaxation.C
 
 FSD/FSDs.T.C
+
+zoneCombustion/zoneCombustions.C
 
 noCombustion/noCombustions.C
 

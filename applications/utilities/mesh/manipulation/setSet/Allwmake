@@ -19,12 +19,12 @@ then
 
 elif onWin && [ -f /mingw64/include/readline/readline.h ]
 then
-    echo "Found <readline/readline.h>  --  enabling readline support."
+    echo "    found <readline/readline.h>  --  enabling readline support."
     export COMP_FLAGS="-DHAS_READLINE"
     export LINK_FLAGS="-lreadline"
 
 fi
 
-wmake
+wmake $targetType
 
 #------------------------------------------------------------------------------

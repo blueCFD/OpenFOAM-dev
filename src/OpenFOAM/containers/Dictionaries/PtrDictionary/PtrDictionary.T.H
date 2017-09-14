@@ -39,7 +39,7 @@ SourceFiles
 #define PtrDictionary_H
 
 #include "DictionaryBase.T.H"
-#include "DLPtrList.T.H"
+#include "DLPtrList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

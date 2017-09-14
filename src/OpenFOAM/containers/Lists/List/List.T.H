@@ -43,6 +43,7 @@ SourceFiles
 #include "UList.T.H"
 #include "autoPtr.H"
 #include "Xfer.T.H"
+#include <initializer_list>
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,7 +62,11 @@ template<class T> Istream& operator>>(Istream&, List<T>&);
 
 template<class T, unsigned Size> class FixedList;
 template<class T> class PtrList;
-template<class T> class SLList;
+
+class SLListBase;
+template<class LListBase, class T> class LList;
+template<class T>
+using SLList = LList<SLListBase, T>;
 
 template<class T, unsigned SizeInc, unsigned SizeMult, unsigned SizeDiv>
 class DynamicList;
@@ -82,6 +87,26 @@ class List
 :
     public UList<T>
 {
+    // Private member functions
+
+        //- Allocate list storage
+        inline void alloc();
+
+        //- Reallocate list storage to the given size
+        inline void reAlloc(const label s);
+
+        //- Copy list of given type
+        template<class List2>
+        inline void copyList(const List2&);
+
+        //- Allocate storage and copy list of given type
+        template<class List2>
+        inline void allocCopyList(const List2&);
+
+        //- Construct given start and end iterators and number of elements
+        template<class InputIterator>
+        inline List(InputIterator first, InputIterator last, const label s);
+
 
 protected:
 
@@ -96,6 +121,7 @@ public:
 
         //- Return a null List
         inline static const List<T>& null();
+
 
     // Constructors
 
@@ -114,6 +140,10 @@ public:
         //- Copy constructor
         List(const List<T>&);
 
+        //- Copy constructor from list containing another type
+        template<class T2>
+        explicit List(const List<T2>&);
+
         //- Construct by transferring the parameter contents
         List(const Xfer<List<T>>&);
 
@@ -122,6 +152,10 @@ public:
 
         //- Construct as subset
         List(const UList<T>&, const labelUList& mapAddressing);
+
+        //- Construct given start and end iterators
+        template<class InputIterator>
+        List(InputIterator first, InputIterator last);
 
         //- Construct as copy of FixedList<T, Size>
         template<unsigned Size>
@@ -138,6 +172,9 @@ public:
 
         //- Construct as copy of BiIndirectList<T>
         explicit List(const BiIndirectList<T>&);
+
+        //- Construct from an initializer list
+        List(std::initializer_list<T>);
 
         //- Construct from Istream
         List(Istream&);
@@ -177,7 +214,7 @@ public:
             void setSize(const label, const T&);
 
             //- Clear the list, i.e. set size to zero
-            void clear();
+            inline void clear();
 
             //- Append an element at the end of the list
             inline void append(const T&);
@@ -214,20 +251,23 @@ public:
 
     // Member operators
 
-        //- Assignment from UList operator. Takes linear time
+        //- Assignment to UList operator. Takes linear time
         void operator=(const UList<T>&);
 
         //- Assignment operator. Takes linear time
         void operator=(const List<T>&);
 
-        //- Assignment from SLList operator. Takes linear time
+        //- Assignment to SLList operator. Takes linear time
         void operator=(const SLList<T>&);
 
-        //- Assignment from UIndirectList operator. Takes linear time
+        //- Assignment to UIndirectList operator. Takes linear time
         void operator=(const UIndirectList<T>&);
 
-        //- Assignment from BiIndirectList operator. Takes linear time
+        //- Assignment to BiIndirectList operator. Takes linear time
         void operator=(const BiIndirectList<T>&);
+
+        //- Assignment to an initializer list
+        void operator=(std::initializer_list<T>);
 
         //- Assignment of all entries to the given value
         inline void operator=(const T&);

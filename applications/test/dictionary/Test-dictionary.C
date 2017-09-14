@@ -30,7 +30,7 @@ Description
 
 #include "argList.H"
 #include "IOstreams.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "IFstream.H"
 #include "dictionary.H"
 #include "stringOps.H"

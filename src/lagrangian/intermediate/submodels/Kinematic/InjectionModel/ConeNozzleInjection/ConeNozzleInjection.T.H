@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -131,7 +131,7 @@ private:
         label tetFacei_;
 
         //- Index of tet point for injector cell
-        label tetPtI_;
+        label tetPti_;
 
         //- Injector direction []
         vector direction_;
@@ -149,7 +149,7 @@ private:
         const TimeFunction1<scalar> thetaOuter_;
 
         //- Parcel size PDF model
-        const autoPtr<distributionModels::distributionModel> sizeDistribution_;
+        const autoPtr<distributionModel> sizeDistribution_;
 
 
         // Tangential vectors to the direction vector
@@ -244,7 +244,7 @@ public:
                 vector& position,
                 label& cellOwner,
                 label& tetFacei,
-                label& tetPtI
+                label& tetPti
             );
 
             //- Set the parcel properties

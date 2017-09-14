@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,9 @@ License
 #include "faceZoneSet.H"
 #include "mapPolyMesh.H"
 #include "polyMesh.H"
+#include "setToFaceZone.H"
+#include "setsToFaceZone.H"
+#include "syncTools.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -322,7 +325,132 @@ void faceZoneSet::deleteSet(const topoSet& set)
 
 
 void faceZoneSet::sync(const polyMesh& mesh)
-{}
+{
+    // Make sure that the faceZone is consistent with the faceSet
+    {
+        const labelHashSet zoneSet(addressing_);
+
+        // Get elements that are in zone but not faceSet
+        labelHashSet badSet(zoneSet);
+        badSet -= *this;
+
+        // Add elements that are in faceSet but not in zone
+        labelHashSet fSet(*this);
+        fSet -= zoneSet;
+
+        badSet += fSet;
+
+        label nBad = returnReduce(badSet.size(), sumOp<label>());
+
+        if (nBad)
+        {
+            WarningInFunction << "Detected " << nBad
+                << " faces that are in the faceZone but not"
+                << " in the faceSet or vice versa."
+                << " The faceZoneSet should only be manipulated"
+                << " using " << setsToFaceZone::typeName
+                << " or " << setToFaceZone::typeName << endl;
+        }
+    }
+
+
+    // Make sure that on coupled faces orientation is opposite. Pushes
+    // master orientation to slave in case of conflict.
+
+
+    // 0 : not in faceZone
+    // 1 : in faceZone and unflipped
+    //-1 : in faceZone and flipped
+    const label UNFLIPPED = 1;
+    const label FLIPPED = -1;
+    labelList myZoneFace(mesh.nFaces()-mesh.nInternalFaces(), 0);
+
+    forAll(addressing_, i)
+    {
+        label bFacei = addressing_[i]-mesh.nInternalFaces();
+
+        if (bFacei >= 0)
+        {
+            if (flipMap_[i])
+            {
+                myZoneFace[bFacei] = FLIPPED;
+            }
+            else
+            {
+                myZoneFace[bFacei] = UNFLIPPED;
+            }
+        }
+    }
+
+    labelList neiZoneFace(myZoneFace);
+    syncTools::swapBoundaryFaceList(mesh, neiZoneFace);
+
+
+    const PackedBoolList isMasterFace(syncTools::getMasterFaces(mesh));
+
+
+    // Rebuild faceZone addressing and flipMap
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    DynamicList<label> newAddressing(addressing_.size());
+    DynamicList<bool> newFlipMap(flipMap_.size());
+
+    forAll(addressing_, i)
+    {
+        label facei = addressing_[i];
+        if (facei < mesh.nInternalFaces())
+        {
+            newAddressing.append(facei);
+            newFlipMap.append(flipMap_[i]);
+        }
+    }
+
+    for (label facei = mesh.nInternalFaces(); facei < mesh.nFaces(); facei++)
+    {
+        label myStat = myZoneFace[facei-mesh.nInternalFaces()];
+        label neiStat = neiZoneFace[facei-mesh.nInternalFaces()];
+
+        if (myStat == 0)
+        {
+            if (neiStat == UNFLIPPED)
+            {
+                // Neighbour is unflipped so I am flipped
+                newAddressing.append(facei);
+                newFlipMap.append(true);
+            }
+            else if (neiStat == FLIPPED)
+            {
+                newAddressing.append(facei);
+                newFlipMap.append(false);
+            }
+        }
+        else
+        {
+            if (myStat == neiStat)
+            {
+                // Conflict. masterFace wins
+                newAddressing.append(facei);
+                if (isMasterFace[facei])
+                {
+                    newFlipMap.append(myStat == FLIPPED);
+                }
+                else
+                {
+                    newFlipMap.append(neiStat == UNFLIPPED);
+                }
+            }
+            else
+            {
+                newAddressing.append(facei);
+                newFlipMap.append(myStat == FLIPPED);
+            }
+        }
+    }
+
+    addressing_.transfer(newAddressing);
+    flipMap_.transfer(newFlipMap);
+    updateSet();
+}
 
 
 label faceZoneSet::maxSize(const polyMesh& mesh) const
@@ -335,13 +463,14 @@ bool faceZoneSet::writeObject
 (
     IOstream::streamFormat s,
     IOstream::versionNumber v,
-    IOstream::compressionType c
+    IOstream::compressionType c,
+    const bool valid
 ) const
 {
     // Write shadow faceSet
     word oldTypeName = typeName;
     const_cast<word&>(type()) = faceSet::typeName;
-    bool ok = faceSet::writeObject(s, v, c);
+    bool ok = faceSet::writeObject(s, v, c, valid);
     const_cast<word&>(type()) = oldTypeName;
 
     // Modify faceZone
@@ -372,7 +501,7 @@ bool faceZoneSet::writeObject
     }
     faceZones.clearAddressing();
 
-    return ok && faceZones.write();
+    return ok && faceZones.write(valid);
 }
 
 

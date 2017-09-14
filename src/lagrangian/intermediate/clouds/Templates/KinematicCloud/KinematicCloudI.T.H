@@ -356,7 +356,7 @@ inline Foam::scalar Foam::KinematicCloud<CloudType>::Dmax() const
 
 
 template<class CloudType>
-inline Foam::cachedRandom& Foam::KinematicCloud<CloudType>::rndGen()
+inline Foam::cachedRandom& Foam::KinematicCloud<CloudType>::rndGen() const
 {
     return rndGen_;
 }
@@ -431,7 +431,7 @@ Foam::KinematicCloud<CloudType>::SU(volVectorField& U) const
     {
         if (solution_.semiImplicit("U"))
         {
-            const DimensionedField<scalar, volMesh>
+            const volScalarField::Internal
                 Vdt(mesh_.V()*this->db().time().deltaT());
 
             return UTrans()/Vdt - fvm::Sp(UCoeff()/Vdt, U) + UCoeff()/Vdt*U;

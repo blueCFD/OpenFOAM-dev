@@ -29,18 +29,19 @@ Group
 
 Description
     This boundary condition provides a wave transmissive outflow condition,
-    based onsolving DDt(psi, U) = 0 at the boundary.
+    based on solving DDt(W, field) = 0 at the boundary \c W is the wave velocity
+    and \c field is the field to which this boundary condition is applied.
 
     The wave speed is calculated using:
 
         \f[
-            x_p = \frac{\phi_p}{|Sf|} + \sqrt{\frac{\gamma}{\psi_p}}
+            w_p = \frac{\phi_p}{|Sf|} + \sqrt{\frac{\gamma}{\psi_p}}
         \f]
 
     where
 
     \vartable
-        x_p     | patch values
+        w_p     | patch wave speed
         \phi_p  | patch face flux
         \psi_p  | patch compressibility
         Sf      | patch face area vector
@@ -52,7 +53,7 @@ Usage
         Property     | Description             | Required    | Default value
         phi          | flux field name         | no          | phi
         rho          | density field name      | no          | rho
-        psi          | compressibility field name | no       | psi
+        psi          | compressibility field name | no       | thermo:psi
         gamma        | ratio of specific heats (Cp/Cv) | yes |
     \endtable
 

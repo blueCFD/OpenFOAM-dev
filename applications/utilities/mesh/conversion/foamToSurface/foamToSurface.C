@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ Usage
 #include "timeSelector.H"
 #include "Time.T.H"
 #include "polyMesh.H"
-
+#include "IOdictionary.H"
 #include "MeshedSurfaces.T.H"
 
 using namespace Foam;
@@ -54,7 +54,7 @@ using namespace Foam;
 int main(int argc, char *argv[])
 {
     argList::noParallel();
-    argList::validArgs.append("outputFile.ext");
+    argList::validArgs.append("output surface file");
     timeSelector::addOptions();
 
     argList::addOption

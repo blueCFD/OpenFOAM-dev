@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,11 +76,37 @@ int main(int argc, char *argv[])
         "blockTopology",
         "write block edges and centres as .obj files"
     );
+    argList::addBoolOption
+    (
+        "noClean",
+        "keep the existing files in the polyMesh"
+    );
     argList::addOption
     (
         "dict",
         "file",
         "specify alternative dictionary for the blockMesh description"
+    );
+
+    argList::addNote
+    (
+        "Block description\n"
+        "\n"
+        "  For a given block, the correspondence between the ordering of\n"
+        "  vertex labels and face labels is shown below.\n"
+        "  For vertex numbering in the sequence 0 to 7 (block, centre):\n"
+        "    faces 0 (f0) and 1 are left and right, respectively;\n"
+        "    faces 2 and 3 are bottom and top;\n"
+        "    and faces 4 and 5 are front the back:\n"
+        "\n"
+        "           4 ---- 5\n"
+        "      f3   |\\     |\\   f5\n"
+        "      |    | 7 ---- 6   \\\n"
+        "      |    0 |--- 1 |    \\\n"
+        "      |     \\|     \\|    f4\n"
+        "      f2     3 ---- 2\n"
+        "\n"
+        "            f0 ----- f1\n"
     );
 
     #include "addRegionOption.H"
@@ -135,6 +161,30 @@ int main(int argc, char *argv[])
         dictPath = runTime.system()/regionPath/dictName;
     }
 
+    if (!args.optionFound("noClean"))
+    {
+        fileName polyMeshPath
+        (
+            runTime.path()/runTime.constant()/regionPath/polyMesh::meshSubDir
+        );
+
+        if (exists(polyMeshPath))
+        {
+            if (exists(polyMeshPath/dictName))
+            {
+                Info<< "Not deleting polyMesh directory " << nl
+                    << "    " << polyMeshPath << nl
+                    << "    because it contains " << dictName << endl;
+            }
+            else
+            {
+                Info<< "Deleting polyMesh directory" << nl
+                    << "    " << polyMeshPath << endl;
+                rmDir(polyMeshPath);
+            }
+        }
+    }
+
     IOobject meshDictIO
     (
         dictPath,
@@ -144,7 +194,7 @@ int main(int argc, char *argv[])
         false
     );
 
-    if (!meshDictIO.headerOk())
+    if (!meshDictIO.typeHeaderOk<IOdictionary>(true))
     {
         FatalErrorInFunction
             << meshDictIO.objectPath()
@@ -154,8 +204,6 @@ int main(int argc, char *argv[])
 
     Info<< "Creating block mesh from\n    "
         << meshDictIO.objectPath() << endl;
-
-    blockMesh::verbose(true);
 
     IOdictionary meshDict(meshDictIO);
     blockMesh blocks(meshDict, regionName);
@@ -265,8 +313,8 @@ int main(int argc, char *argv[])
         forAll(blocks, blockI)
         {
             const block& b = blocks[blockI];
-            const labelListList& blockCells = b.cells();
-            const word& zoneName = b.blockDef().zoneName();
+            const List<FixedList<label, 8>> blockCells = b.cells();
+            const word& zoneName = b.zoneName();
 
             if (zoneName.size())
             {

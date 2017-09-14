@@ -24,7 +24,7 @@
             false
         );
 
-        if (io.headerOk())
+        if (io.typeHeaderOk<IOdictionary>(true))
         {
             io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
             IOdictionary timeObject(io);
@@ -40,4 +40,3 @@
 
     timeIndices.insert(timeIndex, timeDirs[timeI].value());
     Info<< "\nTime [" << timeIndex << "] = " << runTime.timeName() << nl;
-

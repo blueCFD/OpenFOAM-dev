@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ Description
     (around Z, around X' and around Y'').
     The order of the parameter arguments matches this rotation order.
 
-    - the rotation angles are in degrees, unless otherwise explictly specified:
+    - the rotation angles are in degrees, unless otherwise explicitly specified:
 
     \verbatim
     coordinateRotation
@@ -131,9 +131,7 @@ public:
 
         //- Update the rotation for a list of cells
         virtual void updateCells(const polyMesh&, const labelList&)
-        {
-            // do nothing
-        }
+        {}
 
         //- Return local-to-global transformation tensor
         virtual const tensor& R() const

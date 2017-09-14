@@ -32,10 +32,10 @@ surfaceScalarField rAUf1
     IOobject::groupName("rAUf", phase1.name()),
     1.0
    /(
-        (alphaRhof10 + Vmf)/runTime.deltaT()
+        byDt(alphaRhof10 + Vmf)
       + fvc::interpolate(U1Eqn.A())
       + Kdf
-   )
+    )
 );
 
 surfaceScalarField rAUf2
@@ -43,10 +43,10 @@ surfaceScalarField rAUf2
     IOobject::groupName("rAUf", phase2.name()),
     1.0
    /(
-        (alphaRhof20 + Vmf)/runTime.deltaT()
+        byDt(alphaRhof20 + Vmf)
       + fvc::interpolate(U2Eqn.A())
       + Kdf
-   )
+    )
 );
 
 
@@ -93,9 +93,6 @@ tmp<surfaceScalarField> Ff2;
 
 while (pimple.correct())
 {
-    // Update continuity errors due to temperature changes
-    fluid.correct();
-
     volScalarField rho("rho", fluid.rho());
 
     // Correct p_rgh for consistency with p and the updated densities
@@ -160,9 +157,9 @@ while (pimple.correct())
         rAUf1
        *(
             (alphaRhof10 + Vmf)
-           *MRF.absolute(phi1.oldTime())/runTime.deltaT()
+           *byDt(MRF.absolute(phi1.oldTime()))
           + fvc::flux(U1Eqn.H())
-          + Vmf*ddtPhi2
+          + Vmf*tddtPhi2()
           + Kdf*MRF.absolute(phi2)
           - Ff1()
         );
@@ -178,9 +175,9 @@ while (pimple.correct())
         rAUf2
        *(
             (alphaRhof20 + Vmf)
-           *MRF.absolute(phi2.oldTime())/runTime.deltaT()
+           *byDt(MRF.absolute(phi2.oldTime()))
           + fvc::flux(U2Eqn.H())
-          + Vmf*ddtPhi1
+          + Vmf*tddtPhi1()
           + Kdf*MRF.absolute(phi1)
           - Ff2()
        );
@@ -218,78 +215,90 @@ while (pimple.correct())
     tmp<fvScalarMatrix> pEqnComp1;
     tmp<fvScalarMatrix> pEqnComp2;
 
-    if (pimple.transonic())
-    {
-        surfaceScalarField phid1
-        (
-            IOobject::groupName("phid", phase1.name()),
-            fvc::interpolate(psi1)*phi1
-        );
-        surfaceScalarField phid2
-        (
-            IOobject::groupName("phid", phase2.name()),
-            fvc::interpolate(psi2)*phi2
-        );
+    // Construct the compressibility parts of the pressure equation
 
-        if (phase1.compressible())
+    if (phase1.compressible())
+    {
+        if (pimple.transonic())
         {
-            pEqnComp1 =
+            surfaceScalarField phid1
             (
-                phase1.continuityError()
-              - fvc::Sp(fvc::ddt(alpha1) + fvc::div(alphaPhi1), rho1)
-            )/rho1
-          + correction
-            (
-                (alpha1/rho1)*
-                (
-                    psi1*fvm::ddt(p_rgh)
-                  + fvm::div(phid1, p_rgh) - fvm::Sp(fvc::div(phid1), p_rgh)
-                )
+                IOobject::groupName("phid", phase1.name()),
+                fvc::interpolate(psi1)*phi1
             );
+
+            pEqnComp1 =
+                (
+                    phase1.continuityError()
+                  - fvc::Sp(fvc::ddt(alpha1) + fvc::div(alphaPhi1), rho1)
+                )/rho1
+              + correction
+                (
+                    (alpha1/rho1)*
+                    (
+                        psi1*fvm::ddt(p_rgh)
+                      + fvm::div(phid1, p_rgh) - fvm::Sp(fvc::div(phid1), p_rgh)
+                    )
+                );
+
             deleteDemandDrivenData(pEqnComp1.ref().faceFluxCorrectionPtr());
             pEqnComp1.ref().relax();
         }
-
-        if (phase2.compressible())
+        else
         {
-            pEqnComp2 =
-            (
-                phase2.continuityError()
-              - fvc::Sp(fvc::ddt(alpha2) + fvc::div(alphaPhi2), rho2)
-            )/rho2
-          + correction
-            (
-                (alpha2/rho2)*
+            pEqnComp1 =
                 (
-                    psi2*fvm::ddt(p_rgh)
-                  + fvm::div(phid2, p_rgh) - fvm::Sp(fvc::div(phid2), p_rgh)
-                )
-            );
-            deleteDemandDrivenData(pEqnComp2.ref().faceFluxCorrectionPtr());
-            pEqnComp2.ref().relax();
+                    phase1.continuityError()
+                  - fvc::Sp(fvc::ddt(alpha1) + fvc::div(alphaPhi1), rho1)
+                )/rho1
+              + (alpha1*psi1/rho1)*correction(fvm::ddt(p_rgh));
         }
     }
     else
     {
-        if (phase1.compressible())
-        {
-            pEqnComp1 =
-            (
-                phase1.continuityError()
-              - fvc::Sp(fvc::ddt(alpha1) + fvc::div(alphaPhi1), rho1)
-            )/rho1
-          + (alpha1*psi1/rho1)*correction(fvm::ddt(p_rgh));
-        }
+        pEqnComp1 = fvm::Su(-(fvOptions(alpha1, rho1)&rho1)/rho1, p_rgh);
+    }
 
-        if (phase2.compressible())
+    if (phase2.compressible())
+    {
+        if (pimple.transonic())
+        {
+            surfaceScalarField phid2
+            (
+                IOobject::groupName("phid", phase2.name()),
+                fvc::interpolate(psi2)*phi2
+            );
+
+            pEqnComp2 =
+                (
+                    phase2.continuityError()
+                  - fvc::Sp(fvc::ddt(alpha2) + fvc::div(alphaPhi2), rho2)
+                )/rho2
+              + correction
+                (
+                    (alpha2/rho2)*
+                    (
+                        psi2*fvm::ddt(p_rgh)
+                      + fvm::div(phid2, p_rgh) - fvm::Sp(fvc::div(phid2), p_rgh)
+                    )
+                );
+
+            deleteDemandDrivenData(pEqnComp2.ref().faceFluxCorrectionPtr());
+            pEqnComp2.ref().relax();
+        }
+        else
         {
             pEqnComp2 =
-            (
-                phase2.continuityError()
-              - fvc::Sp(fvc::ddt(alpha2) + fvc::div(alphaPhi2), rho2)
-            )/rho2
-          + (alpha2*psi2/rho2)*correction(fvm::ddt(p_rgh));
+                (
+                    phase2.continuityError()
+                  - fvc::Sp(fvc::ddt(alpha2) + fvc::div(alphaPhi2), rho2)
+                )/rho2
+              + (alpha2*psi2/rho2)*correction(fvm::ddt(p_rgh));
         }
+    }
+    else
+    {
+        pEqnComp2 = fvm::Su(-(fvOptions(alpha2, rho2)&rho2)/rho2, p_rgh);
     }
 
     if (fluid.transfersMass())

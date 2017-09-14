@@ -25,7 +25,7 @@ License
 
 #include "polyMeshAdder.H"
 #include "mapAddedPolyMesh.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "faceCoupleInfo.H"
 #include "processorPolyPatch.H"
 #include "SortableList.T.H"

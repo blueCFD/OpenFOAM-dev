@@ -45,6 +45,80 @@ namespace functionObjects
 }
 }
 
+template<>
+const char* Foam::NamedEnum
+<
+    Foam::functionObjects::writeObjects::writeOption,
+    3
+>::names[] =
+{
+    "autoWrite",
+    "noWrite",
+    "anyWrite"
+};
+
+const Foam::NamedEnum
+<
+    Foam::functionObjects::writeObjects::writeOption,
+    3
+> Foam::functionObjects::writeObjects::writeOptionNames_;
+
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+void Foam::functionObjects::writeObjects::writeObject
+(
+    const regIOobject& obj
+)
+{
+    switch (writeOption_)
+    {
+        case AUTO_WRITE:
+        {
+            if(obj.writeOpt() != IOobject::AUTO_WRITE)
+            {
+                return;
+            }
+
+            break;
+        }
+        case NO_WRITE:
+        {
+            if(obj.writeOpt() != IOobject::NO_WRITE)
+            {
+                return;
+            }
+
+            break;
+        }
+        case ANY_WRITE:
+        {
+            break;
+        }
+        default:
+        {
+            FatalErrorInFunction
+                << "Unknown writeOption "
+                << writeOptionNames_[writeOption_]
+                << ". Valid writeOption types are" << writeOptionNames_
+                << exit(FatalError);
+        }
+    }
+
+    if
+    (
+        obj.writeOpt() == IOobject::AUTO_WRITE
+     && writeObr_.time().writeTime()
+    )
+    {
+        Log << "    automatically written object " << obj.name() << endl;
+    }
+    else
+    {
+        writeObjectsBase::writeObject(obj);
+    }
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -56,15 +130,15 @@ Foam::functionObjects::writeObjects::writeObjects
 )
 :
     functionObject(name),
-    obr_
+    writeObjectsBase
     (
         runTime.lookupObject<objectRegistry>
         (
             dict.lookupOrDefault("region", polyMesh::defaultRegion)
-        )
+        ),
+        log
     ),
-    exclusiveWriting_(false),
-    objectNames_()
+    writeOption_(ANY_WRITE)
 {
     read(dict);
 }
@@ -82,21 +156,28 @@ bool Foam::functionObjects::writeObjects::read(const dictionary& dict)
 {
     if (dict.found("field"))
     {
-        objectNames_.setSize(1);
-        dict.lookup("field") >> objectNames_[0];
+        writeObjectNames_.setSize(1);
+        dict.lookup("field") >> writeObjectNames_[0];
     }
     else if (dict.found("fields"))
     {
-        dict.lookup("fields") >> objectNames_;
+        dict.lookup("fields") >> writeObjectNames_;
     }
     else
     {
-        dict.lookup("objects") >> objectNames_;
+        writeObjectsBase::read(dict);
     }
 
-    dict.readIfPresent("exclusiveWriting", exclusiveWriting_);
+    if (dict.found("writeOption"))
+    {
+        writeOption_ = writeOptionNames_.read(dict.lookup("writeOption"));
+    }
+    else
+    {
+        writeOption_ = ANY_WRITE;
+    }
 
-    return true;
+    return functionObject::read(dict);
 }
 
 
@@ -110,46 +191,9 @@ bool Foam::functionObjects::writeObjects::write()
 {
     Info<< type() << " " << name() << " write:" << nl;
 
-    if (!obr_.time().writeTime())
-    {
-        obr_.time().writeTimeDict();
-    }
+    writeObjectsBase::write();
 
-    DynamicList<word> allNames(obr_.toc().size());
-    forAll(objectNames_, i)
-    {
-        wordList names(obr_.names<regIOobject>(objectNames_[i]));
-
-        if (names.size())
-        {
-            allNames.append(names);
-        }
-        else
-        {
-            WarningInFunction
-                << "Object " << objectNames_[i] << " not found in "
-                << "database. Available objects:" << nl << obr_.sortedToc()
-                << endl;
-        }
-    }
-
-    forAll(allNames, i)
-    {
-        regIOobject& obj = const_cast<regIOobject&>
-        (
-            obr_.lookupObject<regIOobject>(allNames[i])
-        );
-
-        if (exclusiveWriting_)
-        {
-            // Switch off automatic writing to prevent double write
-            obj.writeOpt() = IOobject::NO_WRITE;
-        }
-
-        Info<< "    writing object " << obj.name() << endl;
-
-        obj.write();
-    }
+    Log << endl;
 
     return true;
 }

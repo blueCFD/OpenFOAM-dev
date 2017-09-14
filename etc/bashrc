@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -70,8 +70,8 @@ fi
 #
 # Please set to the appropriate path if the default is not correct.
 #
-[ $BASH_SOURCE ] && \
-export FOAM_INST_DIR=${BASH_SOURCE%/*/*/*} || \
+[ ${BASH_SOURCE:-$0} ] && \
+export FOAM_INST_DIR=$(cd $(dirname ${BASH_SOURCE:-$0})/../.. && pwd -P) || \
 export FOAM_INST_DIR=$HOME/$WM_PROJECT
 # export FOAM_INST_DIR=~$WM_PROJECT
 # export FOAM_INST_DIR=/opt/$WM_PROJECT
@@ -92,7 +92,7 @@ export FOAMY_HEX_MESH=yes
 export WM_COMPILER_TYPE=system
 
 #- Compiler:
-#    WM_COMPILER = Gcc | Gcc45 | Gcc46 | Gcc47 | Gcc48 | Gcc49| Clang | Icc
+#    WM_COMPILER = Gcc | Gcc48 ... Gcc62 | Clang | Icc
 #- On Windows (MSYS2) = 
 #       mingw-w32  - custom build of the 32bit Gcc+mingw-w64
 #       mingw-w64  - custom build of the 64bit Gcc+mingw-w64
@@ -126,7 +126,7 @@ export WM_COMPILE_OPTION=Opt
 
 #- MPI implementation:
 #    WM_MPLIB = SYSTEMOPENMPI | OPENMPI | SYSTEMMPI | MPICH | MPICH-GM | HPMPI
-#               | MPI | QSMPI | SGIMPI
+#               | MPI | FJMPI | QSMPI | SGIMPI | INTELMPI
 export WM_MPLIB=SYSTEMOPENMPI
 
 #- Operating System:
@@ -145,7 +145,8 @@ export FOAM_SIGFPE=1
 ################################################################################
 
 # The old dirs to be cleaned from the environment variables
-foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR $HOME/$WM_PROJECT/$USER \
+foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR \
+    $HOME/$WM_PROJECT/$USER $FOAM_USER_APPBIN $FOAM_USER_LIBBIN \
     $WM_PROJECT_SITE $FOAM_SITE_APPBIN $FOAM_SITE_LIBBIN"
 
 # Location of installation
@@ -275,5 +276,9 @@ unset FOAM_ITS_A_CLEAN_SHELL
 # Unload initialization functions:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 . $WM_PROJECT_DIR/etc/config.sh/functions
+
+# Source the bash completion file:
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+. $WM_PROJECT_DIR/etc/config.sh/bash_completion
 
 #------------------------------------------------------------------------------

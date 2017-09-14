@@ -7,9 +7,9 @@ IOobject phiBHeader
 );
 
 
-surfaceScalarField* phiBPtr = NULL;
+surfaceScalarField* phiBPtr = nullptr;
 
-if (phiBHeader.headerOk())
+if (phiBHeader.typeHeaderOk<surfaceScalarField>(true))
 {
     Info<< "Reading face flux ";
 

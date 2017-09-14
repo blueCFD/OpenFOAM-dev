@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,9 +39,7 @@ void Foam::functionObjects::fieldAverage::addMeanFieldType(const label fieldi)
     Log << "    Reading/initialising field " << meanFieldName << endl;
 
     if (obr_.foundObject<Type>(meanFieldName))
-    {
-       // do nothing
-    }
+    {}
     else if (obr_.found(meanFieldName))
     {
         Log << "    Cannot allocate average field " << meanFieldName
@@ -114,9 +112,7 @@ void Foam::functionObjects::fieldAverage::addPrime2MeanFieldType
     Log << "    Reading/initialising field " << prime2MeanFieldName << nl;
 
     if (obr_.foundObject<Type2>(prime2MeanFieldName))
-    {
-        // do nothing
-    }
+    {}
     else if (obr_.found(prime2MeanFieldName))
     {
         Log << "    Cannot allocate average field " << prime2MeanFieldName
@@ -200,21 +196,18 @@ void Foam::functionObjects::fieldAverage::calculateMeanFieldType
     {
         const Type& baseField = obr_.lookupObject<Type>(fieldName);
 
-        Type& meanField = const_cast<Type&>
-        (
-            obr_.lookupObject<Type>(faItems_[fieldi].meanFieldName())
-        );
+        Type& meanField =
+            obr_.lookupObjectRef<Type>(faItems_[fieldi].meanFieldName());
 
         scalar dt = obr_.time().deltaTValue();
         scalar Dt = totalTime_[fieldi];
 
         if (faItems_[fieldi].iterBase())
         {
-            dt = 1.0;
+            dt = 1;
             Dt = scalar(totalIter_[fieldi]);
         }
 
-        scalar alpha = (Dt - dt)/Dt;
         scalar beta = dt/Dt;
 
         if (faItems_[fieldi].window() > 0)
@@ -223,12 +216,11 @@ void Foam::functionObjects::fieldAverage::calculateMeanFieldType
 
             if (Dt - dt >= w)
             {
-                alpha = (w - dt)/w;
                 beta = dt/w;
             }
         }
 
-        meanField = alpha*meanField + beta*baseField;
+        meanField = (1 - beta)*meanField + beta*baseField;
     }
 }
 
@@ -264,21 +256,18 @@ void Foam::functionObjects::fieldAverage::calculatePrime2MeanFieldType
         const Type1& meanField =
             obr_.lookupObject<Type1>(faItems_[fieldi].meanFieldName());
 
-        Type2& prime2MeanField = const_cast<Type2&>
-        (
-            obr_.lookupObject<Type2>(faItems_[fieldi].prime2MeanFieldName())
-        );
+        Type2& prime2MeanField =
+            obr_.lookupObjectRef<Type2>(faItems_[fieldi].prime2MeanFieldName());
 
         scalar dt = obr_.time().deltaTValue();
         scalar Dt = totalTime_[fieldi];
 
         if (faItems_[fieldi].iterBase())
         {
-            dt = 1.0;
+            dt = 1;
             Dt = scalar(totalIter_[fieldi]);
         }
 
-        scalar alpha = (Dt - dt)/Dt;
         scalar beta = dt/Dt;
 
         if (faItems_[fieldi].window() > 0)
@@ -287,13 +276,12 @@ void Foam::functionObjects::fieldAverage::calculatePrime2MeanFieldType
 
             if (Dt - dt >= w)
             {
-                alpha = (w - dt)/w;
                 beta = dt/w;
             }
         }
 
         prime2MeanField =
-            alpha*prime2MeanField
+            (1 - beta)*prime2MeanField
           + beta*sqr(baseField)
           - sqr(meanField);
     }
@@ -313,11 +301,7 @@ void Foam::functionObjects::fieldAverage::calculatePrime2MeanFields() const
     {
         if (faItems_[i].prime2Mean())
         {
-            calculatePrime2MeanFieldType<VolFieldType1, VolFieldType2>
-            (
-                i
-            );
-
+            calculatePrime2MeanFieldType<VolFieldType1, VolFieldType2>(i);
             calculatePrime2MeanFieldType<SurfaceFieldType1, SurfaceFieldType2>
             (
                 i
@@ -340,10 +324,8 @@ void Foam::functionObjects::fieldAverage::addMeanSqrToPrime2MeanType
         const Type1& meanField =
             obr_.lookupObject<Type1>(faItems_[fieldi].meanFieldName());
 
-        Type2& prime2MeanField = const_cast<Type2&>
-        (
-            obr_.lookupObject<Type2>(faItems_[fieldi].prime2MeanFieldName())
-        );
+        Type2& prime2MeanField =
+            obr_.lookupObjectRef<Type2>(faItems_[fieldi].prime2MeanFieldName());
 
         prime2MeanField += sqr(meanField);
     }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -1334,7 +1334,6 @@ Foam::distributedTriSurfaceMesh::distributedTriSurfaceMesh
 
 Foam::distributedTriSurfaceMesh::distributedTriSurfaceMesh(const IOobject& io)
 :
-    //triSurfaceMesh(io),
     triSurfaceMesh
     (
         IOobject
@@ -1346,7 +1345,8 @@ Foam::distributedTriSurfaceMesh::distributedTriSurfaceMesh(const IOobject& io)
             io.readOpt(),
             io.writeOpt(),
             io.registerObject()
-        )
+        ),
+        false
     ),
     dict_
     (
@@ -1429,7 +1429,8 @@ Foam::distributedTriSurfaceMesh::distributedTriSurfaceMesh
             io.writeOpt(),
             io.registerObject()
         ),
-        dict
+        dict,
+        false
     ),
     dict_
     (
@@ -2241,7 +2242,7 @@ void Foam::distributedTriSurfaceMesh::distribute
         {
             if (faceSendSizes[Pstream::myProcNo()][proci] > 0)
             {
-                OPstream str(Pstream::blocking, proci);
+                OPstream str(Pstream::commsTypes::blocking, proci);
 
                 labelList pointMap;
                 triSurface subSurface
@@ -2277,7 +2278,7 @@ void Foam::distributedTriSurfaceMesh::distribute
         {
             if (faceSendSizes[proci][Pstream::myProcNo()] > 0)
             {
-                IPstream str(Pstream::blocking, proci);
+                IPstream str(Pstream::commsTypes::blocking, proci);
 
                 // Receive
                 triSurface subSurface(str);
@@ -2376,7 +2377,8 @@ bool Foam::distributedTriSurfaceMesh::writeObject
 (
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
-    IOstream::compressionType cmp
+    IOstream::compressionType cmp,
+    const bool valid
 ) const
 {
     // Make sure dictionary goes to same directory as surface
@@ -2403,7 +2405,7 @@ bool Foam::distributedTriSurfaceMesh::writeObject
     }
 
     // Dictionary needs to be written in ascii - binary output not supported.
-    return dict_.writeObject(IOstream::ASCII, ver, cmp);
+    return dict_.writeObject(IOstream::ASCII, ver, cmp, true);
 }
 
 

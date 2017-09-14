@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ void Foam::KinematicParcel<ParcelType>::setCellValues
 {
     tetIndices tetIs = this->currentTetIndices();
 
-    rhoc_ = td.rhoInterp().interpolate(this->position(), tetIs);
+    rhoc_ = td.rhoInterp().interpolate(this->coordinates(), tetIs);
 
     if (rhoc_ < td.cloud().constProps().rhoMin())
     {
@@ -61,9 +61,9 @@ void Foam::KinematicParcel<ParcelType>::setCellValues
         rhoc_ = td.cloud().constProps().rhoMin();
     }
 
-    Uc_ = td.UInterp().interpolate(this->position(), tetIs);
+    Uc_ = td.UInterp().interpolate(this->coordinates(), tetIs);
 
-    muc_ = td.muInterp().interpolate(this->position(), tetIs);
+    muc_ = td.muInterp().interpolate(this->coordinates(), tetIs);
 
     // Apply dispersion components to carrier phase velocity
     Uc_ = td.cloud().dispersion().update
@@ -267,74 +267,48 @@ bool Foam::KinematicParcel<ParcelType>::move
     const scalarField& cellLengthScale = td.cloud().cellLengthScale();
     const scalar maxCo = td.cloud().solution().maxCo();
 
-    scalar tEnd = (1.0 - p.stepFraction())*trackTime;
-    scalar dtMax = trackTime;
-    if (td.cloud().solution().transient())
-    {
-        dtMax *= maxCo;
-    }
-
-    bool tracking = true;
-    label nTrackingStalled = 0;
-
-    while (td.keepParticle && !td.switchProcessor && tEnd > ROOTVSMALL)
+    while (td.keepParticle && !td.switchProcessor && p.stepFraction() < 1)
     {
         // Apply correction to position for reduced-D cases
-        meshTools::constrainToMeshCentre(mesh, p.position());
+        p.constrainToMeshCentre();
 
-        const point start(p.position());
-
-        // Set the Lagrangian time-step
-        scalar dt = min(dtMax, tEnd);
-
-        // Cache the parcel current cell as this will change if a face is hit
+        // Cache the current position, cell and step-fraction
+        const point start = p.position();
         const label celli = p.cell();
+        const scalar sfrac = p.stepFraction();
 
-        const scalar magU = mag(U_);
-        if (p.active() && tracking && (magU > ROOTVSMALL))
+        // Total displacement over the time-step
+        const vector s = trackTime*U_;
+
+        // Cell length scale
+        const scalar l = cellLengthScale[p.cell()];
+
+        // Fraction of the displacement to track in this loop. This is limited
+        // to ensure that the both the time and distance tracked is less than
+        // maxCo times the total value.
+        scalar f = 1 - p.stepFraction();
+        f = min(f, maxCo);
+        f = min(f, maxCo*l/max(SMALL*l, mag(s)));
+        if (p.active())
         {
-            const scalar d = dt*magU;
-            const scalar dCorr = min(d, maxCo*cellLengthScale[celli]);
-            dt *=
-                dCorr/d
-               *p.trackToFace(p.position() + dCorr*U_/magU, td);
+            // Track to the next face
+            p.trackToFace(f*s, f, td);
+        }
+        else
+        {
+            // At present the only thing that sets active_ to false is a stick
+            // wall interaction. We want the position of the particle to remain
+            // the same relative to the face that it is on. The local
+            // coordinates therefore do not change. We still advance in time and
+            // perform the relevant interactions with the fixed particle.
+            p.stepFraction() += f;
         }
 
-        tEnd -= dt;
 
-        scalar newStepFraction = 1.0 - tEnd/trackTime;
-
-        if (tracking)
-        {
-            if
-            (
-                mag(p.stepFraction() - newStepFraction)
-              < particle::minStepFractionTol
-            )
-            {
-                nTrackingStalled++;
-
-                if (nTrackingStalled > maxTrackAttempts)
-                {
-                    tracking = false;
-                }
-            }
-            else
-            {
-                nTrackingStalled = 0;
-            }
-        }
-
-        p.stepFraction() = newStepFraction;
-
-        bool calcParcel = true;
-        if (!tracking && td.cloud().solution().steadyState())
-        {
-            calcParcel = false;
-        }
+        const scalar dt = (p.stepFraction() - sfrac)*trackTime;
 
         // Avoid problems with extremely small timesteps
-        if ((dt > ROOTVSMALL) && calcParcel)
+        if (dt > ROOTVSMALL)
         {
             // Update cell based properties
             p.setCellValues(td, dt, celli);
@@ -347,9 +321,9 @@ bool Foam::KinematicParcel<ParcelType>::move
             p.calc(td, dt, celli);
         }
 
-        if (p.onBoundary() && td.keepParticle)
+        if (p.onBoundaryFace() && td.keepParticle)
         {
-            if (isA<processorPolyPatch>(pbMesh[p.patch(p.face())]))
+            if (isA<processorPolyPatch>(pbMesh[p.patch()]))
             {
                 td.switchProcessor = true;
             }
@@ -409,6 +383,11 @@ bool Foam::KinematicParcel<ParcelType>::hitPatch
     {
         // All interactions done
         return true;
+    }
+    else if (pp.coupled())
+    {
+        // Don't apply the patchInteraction models to coupled boundaries
+        return false;
     }
     else
     {

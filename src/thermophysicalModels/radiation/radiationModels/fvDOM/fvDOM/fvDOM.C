@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -190,31 +190,6 @@ void Foam::radiation::fvDOM::initialise()
     Info<< "fvDOM : Allocated " << IRay_.size()
         << " rays with average orientation:" << nl;
 
-    if (cacheDiv_)
-    {
-        Info<< "Caching div fvMatrix..."<< endl;
-        for (label lambdaI = 0; lambdaI < nLambda_; lambdaI++)
-        {
-            fvRayDiv_[lambdaI].setSize(nRay_);
-
-            forAll(IRay_, rayId)
-            {
-                const surfaceScalarField Ji(IRay_[rayId].dAve() & mesh_.Sf());
-                const volScalarField& iRayLambdaI =
-                    IRay_[rayId].ILambda(lambdaI);
-
-                fvRayDiv_[lambdaI].set
-                (
-                    rayId,
-                    new fvScalarMatrix
-                    (
-                        fvm::div(Ji, iRayLambdaI, "div(Ji,Ii_h)")
-                    )
-                );
-            }
-        }
-    }
-
     forAll(IRay_, rayId)
     {
         if (omegaMax_ <  IRay_[rayId].omega())
@@ -247,44 +222,44 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
         mesh_,
         dimensionedScalar("G", dimMass/pow3(dimTime), 0.0)
     ),
-    Qr_
+    qr_
     (
         IOobject
         (
-            "Qr",
+            "qr",
             mesh_.time().timeName(),
             mesh_,
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("Qr", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qr", dimMass/pow3(dimTime), 0.0)
     ),
-    Qem_
+    qem_
     (
         IOobject
         (
-            "Qem",
+            "qem",
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar("Qem", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qem", dimMass/pow3(dimTime), 0.0)
     ),
-    Qin_
+    qin_
     (
         IOobject
         (
-            "Qin",
+            "qin",
             mesh_.time().timeName(),
             mesh_,
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("Qin", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qin", dimMass/pow3(dimTime), 0.0)
     ),
     a_
     (
@@ -306,10 +281,13 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
     aLambda_(nLambda_),
     blackBody_(nLambda_, T),
     IRay_(0),
-    convergence_(coeffs_.lookupOrDefault<scalar>("convergence", 0.0)),
+    tolerance_
+    (
+        coeffs_.found("convergence")
+      ? readScalar(coeffs_.lookup("convergence"))
+      : coeffs_.lookupOrDefault<scalar>("tolerance", 0.0)
+    ),
     maxIter_(coeffs_.lookupOrDefault<label>("maxIter", 50)),
-    fvRayDiv_(nLambda_),
-    cacheDiv_(coeffs_.lookupOrDefault<bool>("cacheDiv", false)),
     omegaMax_(0)
 {
     initialise();
@@ -336,44 +314,44 @@ Foam::radiation::fvDOM::fvDOM
         mesh_,
         dimensionedScalar("G", dimMass/pow3(dimTime), 0.0)
     ),
-    Qr_
+    qr_
     (
         IOobject
         (
-            "Qr",
+            "qr",
             mesh_.time().timeName(),
             mesh_,
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("Qr", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qr", dimMass/pow3(dimTime), 0.0)
     ),
-    Qem_
+    qem_
     (
         IOobject
         (
-            "Qem",
+            "qem",
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar("Qem", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qem", dimMass/pow3(dimTime), 0.0)
     ),
-    Qin_
+    qin_
     (
         IOobject
         (
-            "Qin",
+            "qin",
             mesh_.time().timeName(),
             mesh_,
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("Qin", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qin", dimMass/pow3(dimTime), 0.0)
     ),
     a_
     (
@@ -395,10 +373,13 @@ Foam::radiation::fvDOM::fvDOM
     aLambda_(nLambda_),
     blackBody_(nLambda_, T),
     IRay_(0),
-    convergence_(coeffs_.lookupOrDefault<scalar>("convergence", 0.0)),
+    tolerance_
+    (
+        coeffs_.found("convergence")
+      ? readScalar(coeffs_.lookup("convergence"))
+      : coeffs_.lookupOrDefault<scalar>("tolerance", 0.0)
+    ),
     maxIter_(coeffs_.lookupOrDefault<label>("maxIter", 50)),
-    fvRayDiv_(nLambda_),
-    cacheDiv_(coeffs_.lookupOrDefault<bool>("cacheDiv", false)),
     omegaMax_(0)
 {
     initialise();
@@ -418,7 +399,12 @@ bool Foam::radiation::fvDOM::read()
     if (radiationModel::read())
     {
         // Only reading solution parameters - not changing ray geometry
-        coeffs_.readIfPresent("convergence", convergence_);
+
+        // For backward-compatibility
+        coeffs_.readIfPresent("convergence", tolerance_);
+
+        coeffs_.readIfPresent("tolerance", tolerance_);
+
         coeffs_.readIfPresent("maxIter", maxIter_);
 
         return true;
@@ -436,7 +422,7 @@ void Foam::radiation::fvDOM::calculate()
 
     updateBlackBodyEmission();
 
-    // Set rays convergence false
+    // Set rays converged false
     List<bool> rayIdConv(nRay_, false);
 
     scalar maxResidual = 0.0;
@@ -454,14 +440,14 @@ void Foam::radiation::fvDOM::calculate()
                 scalar maxBandResidual = IRay_[rayI].correct();
                 maxResidual = max(maxBandResidual, maxResidual);
 
-                if (maxBandResidual < convergence_)
+                if (maxBandResidual < tolerance_)
                 {
                     rayIdConv[rayI] = true;
                 }
             }
         }
 
-    } while (maxResidual > convergence_ && radIter < maxIter_);
+    } while (maxResidual > tolerance_ && radIter < maxIter_);
 
     updateG();
 }
@@ -493,14 +479,14 @@ Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
 Foam::radiation::fvDOM::Ru() const
 {
 
-    const DimensionedField<scalar, volMesh>& G =
+    const volScalarField::Internal& G =
         G_();
 
-    const DimensionedField<scalar, volMesh> E =
+    const volScalarField::Internal E =
         absorptionEmission_->ECont()()();
 
     // Only include continuous phase absorption
-    const DimensionedField<scalar, volMesh> a =
+    const volScalarField::Internal a =
         absorptionEmission_->aCont()()();
 
     return a*G - E;
@@ -519,17 +505,17 @@ void Foam::radiation::fvDOM::updateBlackBodyEmission()
 void Foam::radiation::fvDOM::updateG()
 {
     G_ = dimensionedScalar("zero",dimMass/pow3(dimTime), 0.0);
-    Qr_ = dimensionedScalar("zero",dimMass/pow3(dimTime), 0.0);
-    Qem_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0.0);
-    Qin_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0.0);
+    qr_ = dimensionedScalar("zero",dimMass/pow3(dimTime), 0.0);
+    qem_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0.0);
+    qin_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0.0);
 
     forAll(IRay_, rayI)
     {
         IRay_[rayI].addIntensity();
         G_ += IRay_[rayI].I()*IRay_[rayI].omega();
-        Qr_.boundaryFieldRef() += IRay_[rayI].Qr().boundaryField();
-        Qem_.boundaryFieldRef() += IRay_[rayI].Qem().boundaryField();
-        Qin_.boundaryFieldRef() += IRay_[rayI].Qin().boundaryField();
+        qr_.boundaryFieldRef() += IRay_[rayI].qr().boundaryField();
+        qem_.boundaryFieldRef() += IRay_[rayI].qem().boundaryField();
+        qin_.boundaryFieldRef() += IRay_[rayI].qin().boundaryField();
     }
 }
 

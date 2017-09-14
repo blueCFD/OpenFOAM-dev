@@ -36,7 +36,7 @@ Description
 #include "cloud.H"
 #include "GeometricField.T.H"
 #include "meshToMesh.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "CompactIOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

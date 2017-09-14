@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -965,14 +965,7 @@ void Foam::InteractionLists<ParticleType>::prepareParticleToBeReferred
         globalTransforms.transformIndex(ciat)
     );
 
-    particle->position() = transform.invTransformPosition(particle->position());
-
-    particle->transformProperties(-transform.t());
-
-    if (transform.hasR())
-    {
-        particle->transformProperties(transform.R().T());
-    }
+    particle->prepareForInteractionListReferral(transform);
 }
 
 
@@ -1095,7 +1088,7 @@ template<class ParticleType>
 Foam::InteractionLists<ParticleType>::InteractionLists(const polyMesh& mesh)
 :
     mesh_(mesh),
-    cloud_(mesh_, "NULL_Cloud", IDLList<ParticleType>()),
+    cloud_(mesh_, "nullptr_Cloud", IDLList<ParticleType>()),
     writeCloud_(false),
     cellMapPtr_(),
     wallFaceMapPtr_(),
@@ -1227,6 +1220,15 @@ void Foam::InteractionLists<ParticleType>::receiveReferredData
                     typename ParticleType::iNew(mesh_)
                 );
             }
+        }
+    }
+
+    forAll(referredParticles_, refCelli)
+    {
+        IDLList<ParticleType>& refCell = referredParticles_[refCelli];
+        forAllIter(typename IDLList<ParticleType>, refCell, iter)
+        {
+            iter().correctAfterInteractionListReferral(ril_[refCelli][0]);
         }
     }
 

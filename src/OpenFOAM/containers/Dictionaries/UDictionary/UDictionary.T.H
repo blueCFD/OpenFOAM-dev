@@ -40,7 +40,7 @@ SourceFiles
 #define UDictionary_H
 
 #include "DictionaryBase.T.H"
-#include "UIDLList.T.H"
+#include "UIDLList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -121,7 +121,7 @@ Foam::phaseModel::phaseModel
         IOobject::NO_READ
     );
 
-    if (phiHeader.headerOk())
+    if (phiHeader.typeHeaderOk<surfaceScalarField>(true))
     {
         Info<< "Reading face flux field " << phiName << endl;
 
@@ -245,6 +245,24 @@ bool Foam::phaseModel::read(const dictionary& phaseProperties)
 {
     phaseDict_ = phaseProperties.subDict(name_);
     return dPtr_->read(phaseDict_);
+}
+
+
+void Foam::phaseModel::correctInflowOutflow(surfaceScalarField& alphaPhi) const
+{
+    surfaceScalarField::Boundary& alphaPhiBf = alphaPhi.boundaryFieldRef();
+    const volScalarField::Boundary& alphaBf = boundaryField();
+    const surfaceScalarField::Boundary& phiBf = phi().boundaryField();
+
+    forAll(alphaPhiBf, patchi)
+    {
+        fvsPatchScalarField& alphaPhip = alphaPhiBf[patchi];
+
+        if (!alphaPhip.coupled())
+        {
+            alphaPhip = phiBf[patchi]*alphaBf[patchi];
+        }
+    }
 }
 
 

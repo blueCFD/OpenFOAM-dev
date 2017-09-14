@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,7 +71,7 @@ filmPyrolysisVelocityCoupledFvPatchVectorField
     const dictionary& dict
 )
 :
-    fixedValueFvPatchVectorField(p, iF),
+    fixedValueFvPatchVectorField(p, iF, dict),
     filmRegionName_
     (
         dict.lookupOrDefault<word>("filmRegion", "surfaceFilmProperties")
@@ -82,9 +82,7 @@ filmPyrolysisVelocityCoupledFvPatchVectorField
     ),
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
     rhoName_(dict.lookupOrDefault<word>("rho", "rho"))
-{
-    fvPatchVectorField::operator=(vectorField("value", dict, p.size()));
-}
+{}
 
 
 Foam::filmPyrolysisVelocityCoupledFvPatchVectorField::
@@ -140,7 +138,7 @@ void Foam::filmPyrolysisVelocityCoupledFvPatchVectorField::updateCoeffs()
 
     if (!foundFilm || !foundPyrolysis)
     {
-        // do nothing on construction - film model doesn't exist yet
+        // Do nothing on construction - film model doesn't exist yet
         return;
     }
 
@@ -174,9 +172,7 @@ void Foam::filmPyrolysisVelocityCoupledFvPatchVectorField::updateCoeffs()
         db().lookupObject<surfaceScalarField>(phiName_);
 
     if (phi.dimensions() == dimVelocity*dimArea)
-    {
-        // do nothing
-    }
+    {}
     else if (phi.dimensions() == dimDensity*dimVelocity*dimArea)
     {
         const fvPatchField<scalar>& rhop =

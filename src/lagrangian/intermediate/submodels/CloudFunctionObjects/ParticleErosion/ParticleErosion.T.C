@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,7 +71,7 @@ Foam::ParticleErosion<CloudType>::ParticleErosion
 )
 :
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
-    QPtr_(NULL),
+    QPtr_(nullptr),
     patchIDs_(),
     p_(readScalar(this->coeffDict().lookup("p"))),
     psi_(this->coeffDict().template lookupOrDefault<scalar>("psi", 2.0)),
@@ -109,7 +109,7 @@ Foam::ParticleErosion<CloudType>::ParticleErosion
 )
 :
     CloudFunctionObject<CloudType>(pe),
-    QPtr_(NULL),
+    QPtr_(nullptr),
     patchIDs_(pe.patchIDs_),
     p_(pe.p_),
     psi_(pe.psi_),
@@ -177,7 +177,7 @@ void Foam::ParticleErosion<CloudType>::postPatch
         vector Up;
 
         // patch-normal direction
-        this->owner().patchData(p, pp, trackFraction, tetIs, nw, Up);
+        this->owner().patchData(p, pp, nw, Up);
 
         // particle velocity reletive to patch
         const vector& U = p.U() - Up;

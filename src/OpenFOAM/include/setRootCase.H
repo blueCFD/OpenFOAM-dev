@@ -1,3 +1,5 @@
+#include "listOptions.H"
+
 Foam::argList args(argc, argv);
 if (!args.checkRootCase())
 {
@@ -6,3 +8,5 @@ if (!args.checkRootCase())
 
 //Hack by blueCAPE Lda 2009
 #include "forceLoadLibraries.H"
+
+#include "listOutput.H"

@@ -1,4 +1,4 @@
-#-------------------------------*- makefile -*---------------------------------
+#----------------------------*- makefile-gmake -*------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
@@ -122,7 +122,7 @@ include $(GENERAL_RULES)/general
 #------------------------------------------------------------------------------
 # Include PROJECT directory tree file and
 # source, object and dependency list files.
-# These are constructed by MakefileFiles
+# These are constructed by makefiles/files
 #------------------------------------------------------------------------------
 
 include $(OBJECTS_DIR)/options
@@ -158,20 +158,30 @@ LIB_HEADER_DIRS = \
 # Define link statements for executables
 #------------------------------------------------------------------------------
 
+.PHONY: all
+all: $(EXE)
+	@:
+
+.PHONY: silent
+silent:
+	@:
+
 $(EXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
 	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
       $(OBJECTS)
-	$(LINKEXE) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
+	$(call QUIET_MESSAGE,ld,$(EXE)$(EXE_EXT))
+	$E $(LINKEXE) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
 	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
 
-exe:    $(SEXE)$(EXE_EXT)
-	@echo \'$(SEXE)$(EXE_EXT)\' is up to date.
+.PHONY: exe
+exe: $(SEXE)$(EXE_EXT) | silent
 
 $(SEXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)$(EXE_EXT)
-	$(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
+	$(call QUIET_MESSAGE,ld,$(SEXE)$(EXE_EXT))
+	$E $(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
 	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)$(EXE_EXT)
 
 
@@ -179,34 +189,39 @@ $(SEXE)$(EXE_EXT): $(OBJECTS)
 # Define link statements for libraries
 #------------------------------------------------------------------------------
 
-objects: $(OBJECTS)
+.PHONY: objects
+objects: $(OBJECTS) | silent
 
-libso:  $(LIB).$(SO)
-	@echo \'$(LIB).$(SO)\' is up to date.
+.PHONY: libso
+libso: $(LIB).$(SO) | silent
 
 $(LIB).$(SO): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
 	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
       $(OBJECTS)
-	$(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
+	$(call QUIET_MESSAGE,ld,$(LIB).$(SO))
+	$E $(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 
-lib:    $(LIB).a
-	@echo \'$(LIB).a\' is up to date.
+.PHONY: lib
+lib: $(LIB).a | silent
 
 $(LIB).a: $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
 	@rm -f $(LIB).a
-	$(AR) $(ARFLAGS) $(LIB).a $(OBJECTS)
-	$(RANLIB) $(LIB).a
+	$(call QUIET_MESSAGE,ar,$(LIB))
+	$E $(AR) $(ARFLAGS) $(LIB).a $(OBJECTS)
+	$(call QUIET_MESSAGE,ranlib,$(notdir $(LIB)))
+	$E $(RANLIB) $(LIB).a
 
-libo:   $(LIB).o
-	@echo \'$(LIB).o\' is up to date.
+.PHONY: libo
+libo: $(LIB).o | silent
 
 $(LIB).o: $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
 	@rm -f $(LIB).o
-	$(LD) -r -o $(LIB).o $(OBJECTS)
+	$(call QUIET_MESSAGE,ld,$(LIB).o)
+	$E $(LD) -r -o $(LIB).o $(OBJECTS)
 
 
 #------------------------------------------------------------------------------
@@ -221,7 +236,7 @@ lnInclude: $(MAKE_DIR)/files $(MAKE_DIR)/options
 # Declare all object files depend on $(OBJECTS_DIR)/options
 #------------------------------------------------------------------------------
 
-$(OBJECTS) : $(OBJECTS_DIR)/options
+$(OBJECTS): $(OBJECTS_DIR)/options
 
 ifdef LFN_WORKAROUND
 $(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(shell basename -a $(basename $S)).o : $(OBJECTS_DIR)/$S.dep))
@@ -267,4 +282,4 @@ ifeq ($(findstring lnInclude,$(MAKECMDGOALS))$(findstring updatedep,$(MAKECMDGOA
 endif
 
 
-#------------------------------------------------------------------------------
+#----------------------------- vim: set ft=make: ------------------------------

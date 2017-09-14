@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 blueCAPE Lda 2016-07-28: Added in hack to workaround issues with ANSI strict.
@@ -122,6 +122,7 @@ SourceFiles
 
 // Include uint.H before CGAL headers to define __STDC_LIMIT_MACROS
 #include "uint.H"
+
 #include "CGALTriangulation2Ddefs.H"
 #include "Time.T.H"
 #include "point2DFieldFwd.H"

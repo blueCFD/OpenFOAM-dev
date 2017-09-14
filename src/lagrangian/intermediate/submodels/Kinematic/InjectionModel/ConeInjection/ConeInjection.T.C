@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,7 +88,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
     ),
     sizeDistribution_
     (
-        distributionModels::distributionModel::New
+        distributionModel::New
         (
             this->coeffDict().subDict("sizeDistribution"), owner.rndGen()
         )
@@ -241,7 +241,7 @@ void Foam::ConeInjection<CloudType>::setPositionAndCell
     vector& position,
     label& cellOwner,
     label& tetFacei,
-    label& tetPtI
+    label& tetPti
 )
 {
     const label i = parcelI % positionAxis_.size();
@@ -249,7 +249,7 @@ void Foam::ConeInjection<CloudType>::setPositionAndCell
     position = positionAxis_[i].first();
     cellOwner = injectorCells_[i];
     tetFacei = injectorTetFaces_[i];
-    tetPtI = injectorTetPts_[i];
+    tetPti = injectorTetPts_[i];
 }
 
 

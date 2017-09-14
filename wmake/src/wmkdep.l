@@ -161,7 +161,7 @@ const char* bufferPaths[FILE_STACK_SIZE];
 int main(int argc, char* argv[])
 {
     char *basePos, *dotPos;
-    int i;
+    int i, silent;
 
     if (argc == 1)
     {
@@ -174,8 +174,6 @@ int main(int argc, char* argv[])
 #endif
 
     sourceFile = strdup(argv[argc-1]);
-    fprintf(stderr, "Making dependency list for source file %s\n", sourceFile);
-
 
     if ((basePos = strrchr(sourceFile, '/')) == NULL)
     {

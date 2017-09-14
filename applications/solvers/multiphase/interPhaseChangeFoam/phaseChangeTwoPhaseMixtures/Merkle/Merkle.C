@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,10 +47,10 @@ Foam::phaseChangeTwoPhaseMixtures::Merkle::Merkle
 :
     phaseChangeTwoPhaseMixture(typeName, U, phi),
 
-    UInf_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("UInf")),
-    tInf_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("tInf")),
-    Cc_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("Cc")),
-    Cv_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("Cv")),
+    UInf_("UInf", dimVelocity, phaseChangeTwoPhaseMixtureCoeffs_),
+    tInf_("tInf", dimTime, phaseChangeTwoPhaseMixtureCoeffs_),
+    Cc_("Cc", dimless, phaseChangeTwoPhaseMixtureCoeffs_),
+    Cv_("Cv", dimless, phaseChangeTwoPhaseMixtureCoeffs_),
 
     p0_("0", pSat().dimensions(), 0.0),
 
@@ -83,7 +83,7 @@ Foam::phaseChangeTwoPhaseMixtures::Merkle::mDotP() const
 
     return Pair<tmp<volScalarField>>
     (
-        mcCoeff_*(1.0 - limitedAlpha1)*pos(p - pSat()),
+        mcCoeff_*(1.0 - limitedAlpha1)*pos0(p - pSat()),
         (-mvCoeff_)*limitedAlpha1*neg(p - pSat())
     );
 }
@@ -97,7 +97,7 @@ bool Foam::phaseChangeTwoPhaseMixtures::Merkle::read()
 {
     if (phaseChangeTwoPhaseMixture::read())
     {
-        phaseChangeTwoPhaseMixtureCoeffs_ = subDict(type() + "Coeffs");
+        phaseChangeTwoPhaseMixtureCoeffs_ = optionalSubDict(type() + "Coeffs");
 
         phaseChangeTwoPhaseMixtureCoeffs_.lookup("UInf") >> UInf_;
         phaseChangeTwoPhaseMixtureCoeffs_.lookup("tInf") >> tInf_;

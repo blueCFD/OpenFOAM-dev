@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,7 +48,7 @@ Usage
 #include "IOPtrList.T.H"
 #include "cyclicPolyPatch.H"
 #include "dictionaryEntry.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "volFields.H"
 #include "pointFields.H"
 #include "surfaceFields.H"
@@ -74,7 +74,8 @@ void rewriteBoundary
     HashTable<word>& nbrNames
 )
 {
-    Info<< "Reading boundary from " << io.filePath() << endl;
+    Info<< "Reading boundary from " << typeFilePath<IOPtrList<entry>>(io)
+        << endl;
 
     // Read PtrList of dictionary.
     const word oldTypeName = IOPtrList<entry>::typeName;
@@ -133,7 +134,7 @@ void rewriteBoundary
 
             if (patchDict.found("neighbourPatch"))
             {
-                patches.set(patchi, oldPatches.set(patchi, NULL));
+                patches.set(patchi, oldPatches.set(patchi, nullptr));
                 oldToNew[patchi] = newPatchi++;
 
                 // Check if patches come from automatic conversion
@@ -181,7 +182,7 @@ void rewriteBoundary
                 const dictionary patchDict(patches[patchi].dict());
 
                 // Change entry on this side
-                patches.set(patchi, oldPatches.set(patchi, NULL));
+                patches.set(patchi, oldPatches.set(patchi, nullptr));
                 oldToNew[patchi] = newPatchi++;
                 dictionary& thisPatchDict = patches[patchi].dict();
                 thisPatchDict.add("neighbourPatch", nbrName);
@@ -226,7 +227,7 @@ void rewriteBoundary
         }
         else
         {
-            patches.set(patchi, oldPatches.set(patchi, NULL));
+            patches.set(patchi, oldPatches.set(patchi, nullptr));
             oldToNew[patchi] = newPatchi++;
         }
     }
@@ -446,7 +447,7 @@ int main(int argc, char *argv[])
         false
     );
 
-    if (io.headerOk())
+    if (io.typeHeaderOk<IOPtrList<entry>>(false))
     {
         rewriteBoundary
         (
@@ -480,7 +481,7 @@ int main(int argc, char *argv[])
             false
         );
 
-        if (io.headerOk())
+        if (io.typeHeaderOk<IOPtrList<entry>>(false))
         {
             rewriteBoundary
             (

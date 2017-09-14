@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) YEAR OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,9 +36,9 @@ Description
         const label fieldi
     )
 
-    setValue
+    constrain
     (
-         fvMatrix<Type}>& eqn,
+        fvMatrix<Type}>& eqn,
         const label fieldi
     )
 
@@ -105,7 +105,7 @@ SourceFiles
 #ifndef codedFvOptionTemplate_H
 #define codedFvOptionTemplate_H
 
-#include "fvOption.H"
+#include "cellSetOption.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -121,7 +121,7 @@ namespace fv
 
 class ${typeName}FvOption${SourceType}
 :
-    public option
+    public cellSetOption
 {
 public:
 
@@ -172,7 +172,7 @@ public:
             );
 
             //- Set value
-            virtual void setValue
+            virtual void constrain
             (
                 fvMatrix<${TemplateType}>& eqn,
                 const label fieldi

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,7 +21,7 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
+Alias
     Foam::DLList
 
 Description
@@ -33,48 +33,15 @@ Description
 #define DLList_H
 
 #include "LList.T.H"
-#include "DLListBase.T.H"
+#include "DLListBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-/*---------------------------------------------------------------------------*\
-                           Class DLList Declaration
-\*---------------------------------------------------------------------------*/
-
-template<class T>
-class DLList
-:
-    public LList<DLListBase, T>
-{
-
-public:
-
-    // Constructors
-
-        //- Null construct
-        DLList()
-        {}
-
-        //- Construct given initial T
-        DLList(T a)
-        :
-            LList<DLListBase, T>(a)
-        {}
-
-        //- Construct from Istream
-        DLList(Istream& is)
-        :
-            LList<DLListBase, T>(is)
-        {}
-};
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
+    template<class T>
+    using DLList = LList<DLListBase, T>;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

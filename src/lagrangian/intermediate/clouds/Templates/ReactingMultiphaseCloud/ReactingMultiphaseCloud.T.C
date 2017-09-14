@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,10 +84,10 @@ Foam::ReactingMultiphaseCloud<CloudType>::ReactingMultiphaseCloud
 :
     CloudType(cloudName, rho, U, g, thermo, false),
     reactingMultiphaseCloud(),
-    cloudCopyPtr_(NULL),
+    cloudCopyPtr_(nullptr),
     constProps_(this->particleProperties()),
-    devolatilisationModel_(NULL),
-    surfaceReactionModel_(NULL),
+    devolatilisationModel_(nullptr),
+    surfaceReactionModel_(nullptr),
     dMassDevolatilisation_(0.0),
     dMassSurfaceReaction_(0.0)
 {
@@ -98,6 +98,7 @@ Foam::ReactingMultiphaseCloud<CloudType>::ReactingMultiphaseCloud
         if (readFields)
         {
             parcelType::readFields(*this, this->composition());
+            this->deleteLostParticles();
         }
     }
 
@@ -117,7 +118,7 @@ Foam::ReactingMultiphaseCloud<CloudType>::ReactingMultiphaseCloud
 :
     CloudType(c, name),
     reactingMultiphaseCloud(),
-    cloudCopyPtr_(NULL),
+    cloudCopyPtr_(nullptr),
     constProps_(c.constProps_),
     devolatilisationModel_(c.devolatilisationModel_->clone()),
     surfaceReactionModel_(c.surfaceReactionModel_->clone()),
@@ -136,10 +137,10 @@ Foam::ReactingMultiphaseCloud<CloudType>::ReactingMultiphaseCloud
 :
     CloudType(mesh, name, c),
     reactingMultiphaseCloud(),
-    cloudCopyPtr_(NULL),
+    cloudCopyPtr_(nullptr),
     constProps_(),
-    devolatilisationModel_(NULL),
-    surfaceReactionModel_(NULL),
+    devolatilisationModel_(nullptr),
+    surfaceReactionModel_(nullptr),
     dMassDevolatilisation_(0.0),
     dMassSurfaceReaction_(0.0)
 {}
@@ -258,12 +259,7 @@ void Foam::ReactingMultiphaseCloud<CloudType>::autoMap
     const mapPolyMesh& mapper
 )
 {
-    typedef typename particle::TrackingData<ReactingMultiphaseCloud<CloudType>>
-        tdType;
-
-    tdType td(*this);
-
-    Cloud<parcelType>::template autoMap<tdType>(td, mapper);
+    Cloud<parcelType>::autoMap(mapper);
 
     this->updateMesh();
 }
@@ -282,7 +278,7 @@ void Foam::ReactingMultiphaseCloud<CloudType>::info()
 template<class CloudType>
 void Foam::ReactingMultiphaseCloud<CloudType>::writeFields() const
 {
-    if (this->size())
+    if (this->compositionModel_.valid())
     {
         CloudType::particleType::writeFields(*this, this->composition());
     }

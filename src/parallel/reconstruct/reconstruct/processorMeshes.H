@@ -37,7 +37,7 @@ SourceFiles
 
 #include "PtrList.T.H"
 #include "fvMesh.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "labelIOList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

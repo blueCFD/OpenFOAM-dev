@@ -46,6 +46,7 @@ SourceFiles
 #include "CompressibleTurbulenceModel.T.H"
 #include "ThermalDiffusivity.T.H"
 #include "EddyDiffusivity.T.H"
+#include "laminarModel.H"
 #include "RASModel.T.H"
 #include "LESModel.T.H"
 #include "fluidThermo.H"
@@ -59,6 +60,7 @@ namespace Foam
         typedef ThermalDiffusivity<CompressibleTurbulenceModel<fluidThermo>>
             turbulenceModel;
 
+        typedef laminarModel<turbulenceModel> laminarModel;
         typedef RASModel<EddyDiffusivity<turbulenceModel>> RASModel;
         typedef LESModel<EddyDiffusivity<turbulenceModel>> LESModel;
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,11 +28,12 @@ License
 #include "mapPolyMesh.H"
 #include "argList.H"
 #include "timeControlFunctionObject.H"
-#include "IFstream.H"
+//#include "IFstream.H"
 #include "dictionaryEntry.H"
 #include "stringOps.H"
 #include "Tuple2.T.H"
 #include "etcFiles.H"
+#include "IOdictionary.H"
 
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
 
@@ -80,7 +81,7 @@ void Foam::functionObjectList::listDir
 {
     // Search specified directory for functionObject configuration files
     {
-        fileNameList foFiles(readDir(dir));
+        fileNameList foFiles(fileHandler().readDir(dir));
         forAll(foFiles, f)
         {
             if (foFiles[f].ext().empty())
@@ -92,7 +93,7 @@ void Foam::functionObjectList::listDir
 
     // Recurse into sub-directories
     {
-        fileNameList foDirs(readDir(dir, fileName::DIRECTORY));
+        fileNameList foDirs(fileHandler().readDir(dir, fileName::DIRECTORY));
         forAll(foDirs, fd)
         {
             listDir(dir/foDirs[fd], foMap);
@@ -151,7 +152,8 @@ bool Foam::functionObjectList::readFunctionObject
 (
     const string& funcNameArgs,
     dictionary& functionsDict,
-    HashSet<word>& requiredFields
+    HashSet<word>& requiredFields,
+    const word& region
 )
 {
     // Parse the optional functionObject arguments:
@@ -247,7 +249,10 @@ bool Foam::functionObjectList::readFunctionObject
     }
 
     // Read the functionObject dictionary
-    IFstream fileStream(path);
+    //IFstream fileStream(path);
+    autoPtr<ISstream> fileStreamPtr(fileHandler().NewIFstream(path));
+    ISstream& fileStream = fileStreamPtr();
+
     dictionary funcsDict(fileStream);
     dictionary* funcDictPtr = &funcsDict;
 
@@ -289,6 +294,12 @@ bool Foam::functionObjectList::readFunctionObject
             namedArgs[i].first() + ' ' + namedArgs[i].second() + ';'
         );
         funcDict.set(entry::New(entryStream).ptr());
+    }
+
+    // Insert the region name if specified
+    if (region != word::null)
+    {
+        funcDict.set("region", region);
     }
 
     // Merge this functionObject dictionary into functionsDict
@@ -352,6 +363,14 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
 
     dictionary& functionsDict = controlDict.subDict("functions");
 
+    word region = word::null;
+
+    // Set the region name if specified
+    if (args.optionFound("region"))
+    {
+        region = args["region"];
+    }
+
     if
     (
         args.optionFound("dict")
@@ -377,7 +396,13 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
 
         if (args.optionFound("func"))
         {
-            readFunctionObject(args["func"], functionsDict, requiredFields);
+            readFunctionObject
+            (
+                args["func"],
+                functionsDict,
+                requiredFields,
+                region
+            );
         }
 
         if (args.optionFound("funcs"))
@@ -386,7 +411,13 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
 
             forAll(funcs, i)
             {
-                readFunctionObject(funcs[i], functionsDict, requiredFields);
+                readFunctionObject
+                (
+                    funcs[i],
+                    functionsDict,
+                    requiredFields,
+                    region
+                );
             }
         }
 
@@ -606,7 +637,7 @@ bool Foam::functionObjectList::read()
                 {
                     // Delete the disabled functionObject
                     delete objPtr;
-                    objPtr = NULL;
+                    objPtr = nullptr;
                     continue;
                 }
             }

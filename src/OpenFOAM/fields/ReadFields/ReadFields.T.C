@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "ReadFields.T.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "objectRegistry.H"
 
 // * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -223,8 +223,8 @@ void Foam::polyBoundaryMesh::calcGeometry()
 
     if
     (
-        Pstream::defaultCommsType == Pstream::blocking
-     || Pstream::defaultCommsType == Pstream::nonBlocking
+        Pstream::defaultCommsType == Pstream::commsTypes::blocking
+     || Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
     )
     {
         forAll(*this, patchi)
@@ -239,7 +239,7 @@ void Foam::polyBoundaryMesh::calcGeometry()
             operator[](patchi).calcGeometry(pBufs);
         }
     }
-    else if (Pstream::defaultCommsType == Pstream::scheduled)
+    else if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
     {
         const lduSchedule& patchSchedule = mesh().globalData().patchSchedule();
 
@@ -443,16 +443,6 @@ Foam::polyBoundaryMesh::groupPatchIDs() const
             {
                 const word& name = groups[i];
 
-                if (findPatchID(name) != -1)
-                {
-                    WarningInFunction
-                        << "Patch " << bm[patchi].name()
-                        << " specifies a group " << name
-                        << " which is also a patch name."
-                        << " This might give problems later on." << endl;
-                }
-
-
                 HashTable<labelList, word>::iterator iter = groupPatchIDs.find
                 (
                     name
@@ -468,7 +458,21 @@ Foam::polyBoundaryMesh::groupPatchIDs() const
                 }
             }
         }
+
+        // Remove patch names from patchGroups
+        forAll(bm, patchi)
+        {
+            if (groupPatchIDs.erase(bm[patchi].name()))
+            {
+                WarningInFunction
+                    << "Removing patchGroup '" << bm[patchi].name()
+                    << "' which clashes with patch " << patchi
+                    << " of the same name."
+                    << endl;
+            }
+        }
     }
+
     return groupPatchIDsPtr_();
 }
 
@@ -1006,8 +1010,8 @@ void Foam::polyBoundaryMesh::movePoints(const pointField& p)
 
     if
     (
-        Pstream::defaultCommsType == Pstream::blocking
-     || Pstream::defaultCommsType == Pstream::nonBlocking
+        Pstream::defaultCommsType == Pstream::commsTypes::blocking
+     || Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
     )
     {
         forAll(*this, patchi)
@@ -1022,7 +1026,7 @@ void Foam::polyBoundaryMesh::movePoints(const pointField& p)
             operator[](patchi).movePoints(pBufs, p);
         }
     }
-    else if (Pstream::defaultCommsType == Pstream::scheduled)
+    else if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
     {
         const lduSchedule& patchSchedule = mesh().globalData().patchSchedule();
 
@@ -1056,8 +1060,8 @@ void Foam::polyBoundaryMesh::updateMesh()
 
     if
     (
-        Pstream::defaultCommsType == Pstream::blocking
-     || Pstream::defaultCommsType == Pstream::nonBlocking
+        Pstream::defaultCommsType == Pstream::commsTypes::blocking
+     || Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
     )
     {
         forAll(*this, patchi)
@@ -1072,7 +1076,7 @@ void Foam::polyBoundaryMesh::updateMesh()
             operator[](patchi).updateMesh(pBufs);
         }
     }
-    else if (Pstream::defaultCommsType == Pstream::scheduled)
+    else if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
     {
         const lduSchedule& patchSchedule = mesh().globalData().patchSchedule();
 
@@ -1147,10 +1151,11 @@ bool Foam::polyBoundaryMesh::writeObject
 (
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
-    IOstream::compressionType cmp
+    IOstream::compressionType cmp,
+    const bool valid
 ) const
 {
-    return regIOobject::writeObject(fmt, ver, IOstream::UNCOMPRESSED);
+    return regIOobject::writeObject(fmt, ver, IOstream::UNCOMPRESSED, valid);
 }
 
 // * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,8 +35,8 @@ Foam::DampingModels::Relaxation<CloudType>::Relaxation
 )
 :
     DampingModel<CloudType>(dict, owner, typeName),
-    uAverage_(NULL),
-    oneByTimeScaleAverage_(NULL)
+    uAverage_(nullptr),
+    oneByTimeScaleAverage_(nullptr)
 {}
 
 
@@ -47,7 +47,7 @@ Foam::DampingModels::Relaxation<CloudType>::Relaxation
 )
 :
     DampingModel<CloudType>(cm),
-    uAverage_(NULL),
+    uAverage_(nullptr),
     oneByTimeScaleAverage_(cm.oneByTimeScaleAverage_->clone())
 {}
 
@@ -126,7 +126,7 @@ void Foam::DampingModels::Relaxation<CloudType>::cacheFields(const bool store)
     }
     else
     {
-        uAverage_ = NULL;
+        uAverage_ = nullptr;
         oneByTimeScaleAverage_.clear();
     }
 }
@@ -139,13 +139,12 @@ Foam::vector Foam::DampingModels::Relaxation<CloudType>::velocityCorrection
     const scalar deltaT
 ) const
 {
-    const tetIndices
-        tetIs(p.cell(), p.tetFace(), p.tetPt(), this->owner().mesh());
+    const tetIndices tetIs(p.currentTetIndices());
 
     const scalar x =
-        deltaT*oneByTimeScaleAverage_->interpolate(p.position(), tetIs);
+        deltaT*oneByTimeScaleAverage_->interpolate(p.coordinates(), tetIs);
 
-    const vector u = uAverage_->interpolate(p.position(), tetIs);
+    const vector u = uAverage_->interpolate(p.coordinates(), tetIs);
 
     return (u - p.U())*x/(x + 2.0);
 }

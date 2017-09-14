@@ -34,7 +34,7 @@ Description
 #include "volFields.H"
 #include "pointFields.H"
 #include "Time.T.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 
 using namespace Foam;
 

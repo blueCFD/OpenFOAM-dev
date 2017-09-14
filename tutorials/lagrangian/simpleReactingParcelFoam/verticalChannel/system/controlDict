@@ -48,10 +48,10 @@ runTimeModifiable yes;
 
 functions
 {
-    surfaceRegion1
+    surfaceFieldValue1
     {
-        type            surfaceRegion;
-        libs ("libfieldFunctionObjects.so");
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
         enabled         yes;
         writeControl    writeTime;
         log             yes;

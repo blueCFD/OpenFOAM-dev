@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,7 +79,7 @@ Foam::FieldActivatedInjection<CloudType>::FieldActivatedInjection
     diameters_(positions_.size()),
     sizeDistribution_
     (
-        distributionModels::distributionModel::New
+        distributionModel::New
         (
             this->coeffDict().subDict("sizeDistribution"),
             owner.rndGen()
@@ -201,13 +201,13 @@ void Foam::FieldActivatedInjection<CloudType>::setPositionAndCell
     vector& position,
     label& cellOwner,
     label& tetFacei,
-    label& tetPtI
+    label& tetPti
 )
 {
     position = positions_[parcelI];
     cellOwner = injectorCells_[parcelI];
     tetFacei = injectorTetFaces_[parcelI];
-    tetPtI = injectorTetPts_[parcelI];
+    tetPti = injectorTetPts_[parcelI];
 }
 
 

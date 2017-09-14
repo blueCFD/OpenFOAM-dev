@@ -15,22 +15,18 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dynamicFvMesh   solidBodyMotionFvMesh;
+dynamicFvMesh   dynamicMotionSolverFvMesh;
 
-motionSolverLibs ( "libfvMotionSolvers.so" );
+motionSolverLibs ("libfvMotionSolvers.so");
 
-solidBodyMotionFvMeshCoeffs
-{
-    cellZone        innerCylinderSmall;
+motionSolver    solidBody;
 
-    solidBodyMotionFunction  rotatingMotion;
-    rotatingMotionCoeffs
-    {
-        origin      (0 0 0);
-        axis        (0 1 0);
-        omega       158; // rad/s
-    }
-}
+cellZone        innerCylinderSmall;
 
+solidBodyMotionFunction  rotatingMotion;
+
+origin      (0 0 0);
+axis        (0 1 0);
+omega       158; // rad/s
 
 // ************************************************************************* //

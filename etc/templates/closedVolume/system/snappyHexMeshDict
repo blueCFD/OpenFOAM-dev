@@ -22,10 +22,10 @@ addLayers       off;
 
 geometry
 {
-    CAD.obj
+    CAD
     {
         type triSurfaceMesh;
-        name CAD;
+        file "CAD.obj";
         regions
         {
             <CADregionName> { name <patchName>; }
@@ -60,6 +60,7 @@ castellatedMeshControls
 
     locationInMesh (1e-5 1e-5 1e-5); // Offset from (0 0 0) to avoid
                                      // coinciding with face or edge
+    nCellsBetweenLevels 3;
 }
 
 snapControls

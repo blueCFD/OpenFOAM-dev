@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,7 +65,7 @@ Foam::plenumPressureFvPatchScalarField::plenumPressureFvPatchScalarField
     const dictionary& dict
 )
 :
-    fixedValueFvPatchScalarField(p, iF),
+    fixedValueFvPatchScalarField(p, iF, dict),
     gamma_(readScalar(dict.lookup("gamma"))),
     R_(readScalar(dict.lookup("R"))),
     supplyMassFlowRate_(readScalar(dict.lookup("supplyMassFlowRate"))),
@@ -87,8 +87,6 @@ Foam::plenumPressureFvPatchScalarField::plenumPressureFvPatchScalarField
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
     UName_(dict.lookupOrDefault<word>("U", "U"))
 {
-    fvPatchScalarField::operator=(scalarField("value", dict, p.size()));
-
     if (dict.found("rho"))
     {
         rho_ = readScalar(dict.lookup("rho"));
@@ -286,7 +284,7 @@ void Foam::plenumPressureFvPatchScalarField::updateCoeffs()
     // Limit to prevent outflow
     const scalarField p_new
     (
-        (1.0 - pos(phi))*t*plenumPressure + pos(phi)*max(p, plenumPressure)
+        (1.0 - pos0(phi))*t*plenumPressure + pos0(phi)*max(p, plenumPressure)
     );
 
     // Relaxation fraction

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,7 +97,7 @@ Foam::LUscalarMatrix::LUscalarMatrix
                     (
                         IPstream
                         (
-                            Pstream::scheduled,
+                            Pstream::commsTypes::scheduled,
                             slave,
                             0,          // bufSize
                             Pstream::msgType(),
@@ -111,7 +111,7 @@ Foam::LUscalarMatrix::LUscalarMatrix
         {
             OPstream toMaster
             (
-                Pstream::scheduled,
+                Pstream::commsTypes::scheduled,
                 Pstream::masterNo(),
                 0,              // bufSize
                 Pstream::msgType(),
@@ -409,6 +409,23 @@ void Foam::LUscalarMatrix::decompose(const scalarSquareMatrix& M)
     scalarSquareMatrix::operator=(M);
     pivotIndices_.setSize(m());
     LUDecompose(*this, pivotIndices_);
+}
+
+
+void Foam::LUscalarMatrix::inv(scalarSquareMatrix& M) const
+{
+    scalarField source(m());
+
+    for (label j=0; j<m(); j++)
+    {
+        source = Zero;
+        source[j] = 1;
+        LUBacksubstitute(*this, pivotIndices_, source);
+        for (label i=0; i<m(); i++)
+        {
+            M(i, j) = source[i];
+        }
+    }
 }
 
 

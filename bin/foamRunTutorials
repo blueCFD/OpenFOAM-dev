@@ -3,10 +3,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added -jobs and usage information
+# 2017-09-13 blueCAPE Lda: Adapted to OpenFOAM 5.x
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -32,6 +33,15 @@
 #     and all its subdirectories.
 #
 #------------------------------------------------------------------------------
+Script=$0
+[ "/${Script#/}" != "$Script" ] && Script="$PWD/$Script"
+
+
+# Normally use standard "make"
+make="make"
+
+# Source tutorial run functions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
 
 usage()
 {
@@ -39,18 +49,15 @@ usage()
     cat<<USAGE
 
 usage: ${0##*/} [OPTIONS]
-
 options:
-  -test             meant to be used for warning Allrun scripts that it's meant
-                    to run in test mode
-  -skipFirst        skip the Allrun script in the current folder
-  -nonParallel      run only cases that are configured to run in serial
-  -parallel         run only cases that are configured to run in parallel
-  -jobs N           for running multiple cases in parallel with N cores
-  -help             print the usage
+  -help      | -h     print the usage
+  -skipFirst | -s     do not execute the first Allrun script
+  -test      | -t     run test loop
+  -jobs N    | -j          for running multiple cases in parallel with N cores
+  -parallel  | -p       run only cases that are configured to run in parallel
+  -nonParallel | -n   run only cases that are configured to run in serial
 
-Runs the tutorial(s), depending on an existing Allrun script or by running
-blockMesh followed by the application defined in system/controlDict.
+Helper script used by the Allrun scripts in the OpenFOAM tutorials
 
 When running multiple cases in parallel with '-jobs', keep in mind that this
 does not take into account how many cores each case will need to run; therefore
@@ -96,18 +103,6 @@ checkIfDefaultRunCanBeExecuted()
 
 #------------------------------------------------------------------------------
 
-# Normally use standard "make"
-make="make"
-
-# Source tutorial run functions
-. $WM_PROJECT_DIR/bin/tools/RunFunctions
-
-thisScript=$0
-if [ "/${thisScript#/}" != "$thisScript" ]
-then
-    thisScript="$PWD/$thisScript"
-fi
-
 skipFirst=false
 serialOnly=false
 parallelOnly=false
@@ -116,12 +111,15 @@ parallelOnly=false
 while [ "$#" -gt 0 ]
 do
     case "$1" in
-    -t | -test)
-        passArgs="-test"
-        shift
+    -h | -help)
+        usage && exit 0
         ;;
     -s | -skipFirst)
         skipFirst=true
+        shift
+        ;;
+    -t | -test)
+        passArgs="-test"
         shift
         ;;
     -n | -nonParallel)
@@ -173,25 +171,24 @@ then
     checkIfDefaultRunCanBeExecuted
 
     # Run normal case.
-    parentDir=`dirname $PWD`
-    application=`getApplication`
+    application=$(getApplication)
     runApplication blockMesh
-    runApplication $application
+    runApplication "$application"
 else
     # Loop over sub-directories and compile any applications
     for caseName in *
     do
-        if [ -d $caseName -a -d "$caseName/Make" ]
+        if [ -d "$caseName" -a -d "$caseName/Make" ]
         then
-            ( compileApplication $caseName )
+            ( compileApplication "$caseName" )
         fi
     done
     FOAM_TARGETS=$(for d in *; do [ -d "$d" ] && echo "$d"; done | xargs)
 
     # Run all cases which have not already been run
-    $make -k -f $WM_PROJECT_DIR/bin/tools/MakefileDirs \
+    $make -k -f "$WM_PROJECT_DIR/bin/tools/MakefileDirs" \
           FOAM_TARGETS="$FOAM_TARGETS" \
-          FOAM_APP="$thisScript" FOAM_ARGS="$passArgs"
+          FOAM_APP="$Script" FOAM_ARGS="$passArgs"
 fi
 
 #------------------------------------------------------------------------------

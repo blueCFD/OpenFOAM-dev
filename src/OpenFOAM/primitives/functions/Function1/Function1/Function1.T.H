@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,10 +105,7 @@ public:
         Function1(const Function1<Type>& de);
 
         //- Construct and return a clone
-        virtual tmp<Function1<Type>> clone() const
-        {
-            return tmp<Function1<Type>>(new Function1<Type>(*this));
-        }
+        virtual tmp<Function1<Type>> clone() const = 0;
 
 
     //- Selector
@@ -162,7 +159,7 @@ public:
             friend Ostream& operator<< <Type>
             (
                 Ostream& os,
-                const Function1<Type>& de
+                const Function1<Type>& func
             );
 
             //- Write in dictionary format
@@ -193,6 +190,14 @@ public:
                                                                                \
     Function1<Type>::adddictionaryConstructorToTable<Function1Types::SS<Type>> \
         add##SS##Type##ConstructorToTable_;
+
+
+#define makeScalarFunction1(SS)                                                \
+                                                                               \
+    defineTypeNameAndDebug(SS, 0);                                             \
+                                                                               \
+    Function1<scalar>::adddictionaryConstructorToTable<SS>                     \
+        add##SS##ConstructorToTable_;
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

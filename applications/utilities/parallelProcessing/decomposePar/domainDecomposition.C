@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ License
 #include "Map.T.H"
 #include "DynamicList.T.H"
 #include "fvFieldDecomposer.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "cellSet.H"
 #include "faceSet.H"
 #include "pointSet.H"
@@ -69,7 +69,11 @@ void Foam::domainDecomposition::mark
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::domainDecomposition::domainDecomposition(const IOobject& io)
+Foam::domainDecomposition::domainDecomposition
+(
+    const IOobject& io,
+    const fileName& dictFile
+)
 :
     fvMesh(io),
     facesInstancePointsPtr_
@@ -88,7 +92,7 @@ Foam::domainDecomposition::domainDecomposition(const IOobject& io)
                 false
             )
         )
-      : NULL
+      : nullptr
     ),
     nProcs_
     (
@@ -96,7 +100,8 @@ Foam::domainDecomposition::domainDecomposition(const IOobject& io)
         (
             decompositionModel::New
             (
-                *this
+                *this,
+                dictFile
             ).lookup("numberOfSubdomains")
         )
     ),
@@ -115,7 +120,8 @@ Foam::domainDecomposition::domainDecomposition(const IOobject& io)
 {
     decompositionModel::New
     (
-        *this
+        *this,
+        dictFile
     ).readIfPresent("distributed", distributed_);
 }
 
@@ -308,9 +314,6 @@ bool Foam::domainDecomposition::writeDecomposition(const bool decomposeSets)
         (
             time().caseName()/fileName(word("processor") + Foam::name(proci))
         );
-
-        // make the processor directory
-        mkDir(time().rootPath()/processorCasePath);
 
         // create a database
         Time processorDb

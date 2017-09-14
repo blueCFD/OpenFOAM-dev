@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,18 +42,17 @@ Foam::lagrangianFieldDecomposer::lagrangianFieldDecomposer
 )
 :
     procMesh_(procMesh),
-    positions_(procMesh, cloudName, false),
+    positions_(procMesh, cloudName, IDLList<passiveParticle>()),
     particleIndices_(lagrangianPositions.size())
 {
     label pi = 0;
 
-    // faceProcAddressing not required currently
-    // labelList decodedProcFaceAddressing(faceProcAddressing.size());
+    labelList decodedProcFaceAddressing(faceProcAddressing.size());
 
-    // forAll(faceProcAddressing, i)
-    // {
-    //     decodedProcFaceAddressing[i] = mag(faceProcAddressing[i]) - 1;
-    // }
+    forAll(faceProcAddressing, i)
+    {
+        decodedProcFaceAddressing[i] = mag(faceProcAddressing[i]) - 1;
+    }
 
     forAll(cellProcAddressing, procCelli)
     {
@@ -68,27 +67,28 @@ Foam::lagrangianFieldDecomposer::lagrangianFieldDecomposer
                 const indexedParticle& ppi = *iter();
                 particleIndices_[pi++] = ppi.index();
 
-                // label mappedTetFace = findIndex
-                // (
-                //     decodedProcFaceAddressing,
-                //     ppi.tetFace()
-                // );
+                label mappedTetFace = findIndex
+                (
+                    decodedProcFaceAddressing,
+                    ppi.tetFace()
+                );
 
-                // if (mappedTetFace == -1)
-                // {
-                //     FatalErrorInFunction
-                //         << "Face lookup failure." << nl
-                //         << abort(FatalError);
-                // }
+                if (mappedTetFace == -1)
+                {
+                    FatalErrorInFunction
+                        << "Face lookup failure." << nl
+                        << abort(FatalError);
+                }
 
                 positions_.append
                 (
                     new passiveParticle
                     (
                         procMesh,
-                        ppi.position(),
+                        ppi.coordinates(),
                         procCelli,
-                        false
+                        mappedTetFace,
+                        ppi.procTetPt(procMesh, procCelli, mappedTetFace)
                     )
                 );
             }

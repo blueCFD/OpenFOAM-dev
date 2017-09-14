@@ -1,8 +1,8 @@
-/*--------------------------------------------------------------------r-------*\
+/*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -175,7 +175,7 @@ inline T* Foam::tmpNrc<T>::ptr() const
     }
     else
     {
-        return new T(*ptr_);
+        return ptr_->clone().ptr();
     }
 }
 
@@ -298,22 +298,6 @@ inline void Foam::tmpNrc<T>::operator=(const tmpNrc<T>& t)
             << " of type " << typeid(T).name()
             << abort(FatalError);
     }
-}
-
-
-//- Return the const reference of the non-const reference argument
-template<class T>
-inline const T& Const(T& t)
-{
-    return t;
-}
-
-
-//- Return the const reference of the non-const rvalue reference argument
-template<class T>
-inline const T& Const(T&& t)
-{
-    return t;
 }
 
 

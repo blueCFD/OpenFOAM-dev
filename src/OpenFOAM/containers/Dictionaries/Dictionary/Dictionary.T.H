@@ -40,7 +40,7 @@ SourceFiles
 #define Dictionary_H
 
 #include "DictionaryBase.T.H"
-#include "IDLList.T.H"
+#include "IDLList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.x                                   |
+|  \\    /   O peration     | Version:  dev                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -18,16 +18,12 @@ FoamFile
 source1
 {
     type            fixedTemperatureConstraint;
-    active          yes;
 
-    fixedTemperatureConstraintCoeffs
-    {
-        selectionMode   cellZone;
-        cellZone        porosity;
+    selectionMode   cellZone;
+    cellZone        porosity;
 
-        mode            uniform;
-        temperature     350;
-    }
+    mode            uniform;
+    temperature     350;
 }
 
 

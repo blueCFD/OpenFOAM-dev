@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,6 +51,11 @@ Foam::word Foam::PatchInteractionModel<CloudType>::interactionTypeToWord
 
     switch (itEnum)
     {
+        case itNone:
+        {
+            it = "none";
+            break;
+        }
         case itRebound:
         {
             it = "rebound";
@@ -82,6 +87,10 @@ Foam::PatchInteractionModel<CloudType>::wordToInteractionType
     const word& itWord
 )
 {
+    if (itWord == "none")
+    {
+        return itNone;
+    }
     if (itWord == "rebound")
     {
         return itRebound;
@@ -156,9 +165,7 @@ const Foam::word& Foam::PatchInteractionModel<CloudType>::UName() const
 
 template<class CloudType>
 void Foam::PatchInteractionModel<CloudType>::info(Ostream& os)
-{
-    // do nothing
-}
+{}
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

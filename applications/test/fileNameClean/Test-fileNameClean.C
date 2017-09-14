@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,7 @@ Description
 #include "argList.H"
 #include "fileName.H"
 #include "SubList.T.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "IOstreams.H"
 #include "OSspecific.H"
 
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     argList::noBanner();
     argList::noParallel();
     argList::validArgs.insert("fileName .. fileNameN");
-    argList::addOption("istream", "fileName", "test Istream values");
+    argList::addOption("istream", "file", "test Istream values");
 
     argList args(argc, argv, false, true);
 

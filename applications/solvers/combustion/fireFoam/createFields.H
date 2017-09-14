@@ -19,6 +19,13 @@ basicMultiComponentMixture& composition = thermo.composition();
 PtrList<volScalarField>& Y = composition.Y();
 
 const word inertSpecie(thermo.lookup("inertSpecie"));
+if (!composition.species().found(inertSpecie))
+{
+    FatalIOErrorIn(args.executable().c_str(), thermo)
+        << "Inert specie " << inertSpecie << " not found in available species "
+        << composition.species()
+        << exit(FatalIOError);
+}
 
 Info<< "Creating field rho\n" << endl;
 volScalarField rho
@@ -124,18 +131,18 @@ Switch solvePyrolysisRegion
     additionalControlsDict.lookupOrDefault<bool>("solvePyrolysisRegion", true)
 );
 
-volScalarField dQ
+volScalarField Qdot
 (
     IOobject
     (
-        "dQ",
+        "Qdot",
         runTime.timeName(),
         mesh,
-        IOobject::NO_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::AUTO_WRITE
     ),
     mesh,
-    dimensionedScalar("dQ", dimEnergy/dimTime, 0.0)
+    dimensionedScalar("Qdot", dimEnergy/dimVolume/dimTime, 0.0)
 );
 
 

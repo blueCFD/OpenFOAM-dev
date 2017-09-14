@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,31 +28,26 @@ Group
     grpFieldFunctionObjects
 
 Description
-    This function object calculates average quantities for a user-specified
-    selection of volumetric and surface fields.  Fields are entered as a list
-    of sub-dictionaries, which indicate the type of averages to perform, and
-    can be updated during the calculation.  The current options include:
-    - \c mean: arithmetic mean:
-        \f[
-            \overline{x} = \frac{1}{N}\displaystyle\sum\limits_{i=0}^N x_i
-        \f]
+    Calculates average quantities for a user-specified selection of volumetric
+    and surface fields.
+
+    Fields are entered as a list of sub-dictionaries, which indicate the type of
+    averages to perform, and can be updated during the calculation.  The current
+    options include:
+    - \c mean: arithmetic mean
     - \c prime2Mean: prime-squared mean
-        \f[
-            \overline{x'}^2 = \frac{1}{N}\displaystyle\sum\limits_{i=0}^N
-            (x_i - \overline{x})^2
-        \f]
-    - base: average over 'time', or 'iteration' (\f$N\f$ in the above)
-    - window: optional averaging window, specified in 'base' units
+    - \c base: average over 'time', or 'iteration'
+    - \c window: optional averaging window, specified in 'base' units
 
     Average field names are constructed by concatenating the base field with
     the averaging type, e.g. when averaging field 'U', the resultant fields
     are:
-    - arithmetic mean field, UMean
-    - prime-squared field, UPrime2Mean
+    - arithmetic mean field, \c UMean
+    - prime-squared field, \c UPrime2Mean
 
     Information regarding the number of averaging steps, and total averaging
-    time are written on a per-field basis to the
-    \c "<functionObject name>Properties" dictionary, located in \<time\>/uniform
+    time are written on a per-field basis to the \c "<functionObject
+    name>Properties" dictionary, located in \<time\>/uniform
 
     When restarting form a previous calculation, the averaging is continuous or
     may be restarted using the \c restartOnRestart option.
@@ -66,13 +61,16 @@ Description
     \verbatim
     fieldAverage1
     {
-        type fieldAverage;
-        libs ("libfieldFunctionObjects.so");
-        ...
+        type                fieldAverage;
+        libs                ("libfieldFunctionObjects.so");
+
+        writeControl    writeTime;
+
         restartOnRestart    false;
         restartOnOutput     false;
         periodicRestart     false;
         restartPeriod       0.002;
+
         fields
         (
             U
@@ -95,13 +93,13 @@ Description
 
 Usage
     \table
-        Property        | Description           | Required    | Default value
-        type            | type name: fieldAverage | yes |
-        restartOnRestart  | Restart the averaging on restart | no | no
-        restartOnOutput   | Restart the averaging on output | no | no
-        periodicRestart | Periodically restart the averaging | no | no
-        restartPeriod   | Periodic restart period | conditional |
-        fields          | list of fields and averaging options | yes |
+        Property          | Description               | Required | Default
+        type              | type name: fieldAverage              | yes |
+        restartOnRestart  | Restart the averaging on restart     | no  | no
+        restartOnOutput   | Restart the averaging on output      | no  | no
+        periodicRestart   | Periodically restart the averaging   | no  | no
+        restartPeriod     | Periodic restart period              | conditional |
+        fields            | list of fields and averaging options | yes |
     \endtable
 
 
@@ -180,7 +178,7 @@ protected:
             label periodIndex_;
 
 
-    // Private Member Functions
+    // Protected Member Functions
 
         // Initialisation routines
 

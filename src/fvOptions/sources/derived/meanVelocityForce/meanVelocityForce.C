@@ -47,7 +47,7 @@ namespace fv
 }
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::fv::meanVelocityForce::writeProps
 (
@@ -91,7 +91,7 @@ Foam::fv::meanVelocityForce::meanVelocityForce
     dGradP_(0.0),
     flowDir_(Ubar_/mag(Ubar_)),
     relaxation_(coeffs_.lookupOrDefault<scalar>("relaxation", 1.0)),
-    rAPtr_(NULL)
+    rAPtr_(nullptr)
 {
     coeffs_.lookup("fields") >> fieldNames_;
 
@@ -193,7 +193,7 @@ void Foam::fv::meanVelocityForce::addSup
     const label fieldi
 )
 {
-    DimensionedField<vector, volMesh> Su
+    volVectorField::Internal Su
     (
         IOobject
         (

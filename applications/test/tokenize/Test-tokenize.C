@@ -28,7 +28,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "IOstreams.H"
 #include "IFstream.H"
 #include "IStringStream.H"

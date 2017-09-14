@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,10 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    rhoPimpleFoam
-
-Group
-    grpCompressibleSolvers grpMovingMeshSolvers
+    rhoPimpleDyMFoam
 
 Description
     Transient solver for turbulent flow of compressible fluids for HVAC and
@@ -38,10 +35,11 @@ Description
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
-#include "psiThermo.H"
+#include "fluidThermo.H"
 #include "turbulentFluidThermoModel.H"
 #include "bound.H"
 #include "pimpleControl.H"
+#include "pressureControl.H"
 #include "CorrectPhi.T.H"
 #include "fvOptions.H"
 #include "localEulerDdtScheme.H"
@@ -57,7 +55,6 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
     #include "createControl.H"
-    #include "createRDeltaT.H"
     #include "initContinuityErrs.H"
     #include "createFields.H"
     #include "createFieldRefs.H"

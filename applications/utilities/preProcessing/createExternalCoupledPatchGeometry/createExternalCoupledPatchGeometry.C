@@ -48,7 +48,7 @@ See also
 
 #include "fvCFD.H"
 #include "createExternalCoupledPatchGeometryTemplates.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

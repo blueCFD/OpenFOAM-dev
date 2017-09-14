@@ -25,7 +25,7 @@ License
 
 #include "interpolationWeights.H"
 #include "ListOps.T.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "HashSet.T.H"
 #include "objectRegistry.H"
 

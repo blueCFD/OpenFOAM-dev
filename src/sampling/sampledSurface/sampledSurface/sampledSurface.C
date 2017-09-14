@@ -39,15 +39,6 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::sampledSurface::clearGeom() const
-{
-    deleteDemandDrivenData(SfPtr_);
-    deleteDemandDrivenData(magSfPtr_);
-    deleteDemandDrivenData(CfPtr_);
-    area_ = -1;
-}
-
-
 void Foam::sampledSurface::makeSf() const
 {
     // It is an error to recalculate if the pointer is already set
@@ -111,6 +102,17 @@ void Foam::sampledSurface::makeCf() const
 }
 
 
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+void Foam::sampledSurface::clearGeom() const
+{
+    deleteDemandDrivenData(SfPtr_);
+    deleteDemandDrivenData(magSfPtr_);
+    deleteDemandDrivenData(CfPtr_);
+    area_ = -1;
+}
+
+
 // * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * //
 
 Foam::autoPtr<Foam::sampledSurface> Foam::sampledSurface::New
@@ -156,9 +158,9 @@ Foam::sampledSurface::sampledSurface
     name_(name),
     mesh_(mesh),
     interpolate_(interpolate),
-    SfPtr_(NULL),
-    magSfPtr_(NULL),
-    CfPtr_(NULL),
+    SfPtr_(nullptr),
+    magSfPtr_(nullptr),
+    CfPtr_(nullptr),
     area_(-1)
 {}
 
@@ -173,9 +175,9 @@ Foam::sampledSurface::sampledSurface
     name_(name),
     mesh_(mesh),
     interpolate_(dict.lookupOrDefault("interpolate", false)),
-    SfPtr_(NULL),
-    magSfPtr_(NULL),
-    CfPtr_(NULL),
+    SfPtr_(nullptr),
+    magSfPtr_(nullptr),
+    CfPtr_(nullptr),
     area_(-1)
 {
     dict.readIfPresent("name", name_);
@@ -243,7 +245,7 @@ Foam::tmp<Foam::scalarField> Foam::sampledSurface::sample
 ) const
 {
     NotImplemented;
-    return tmp<scalarField>(NULL);
+    return tmp<scalarField>(nullptr);
 }
 
 
@@ -253,7 +255,7 @@ Foam::tmp<Foam::vectorField> Foam::sampledSurface::sample
 ) const
 {
     NotImplemented;
-    return tmp<vectorField>(NULL);
+    return tmp<vectorField>(nullptr);
 }
 
 
@@ -263,7 +265,7 @@ Foam::tmp<Foam::sphericalTensorField> Foam::sampledSurface::sample
 ) const
 {
     NotImplemented;
-    return tmp<sphericalTensorField>(NULL);
+    return tmp<sphericalTensorField>(nullptr);
 }
 
 
@@ -273,7 +275,7 @@ Foam::tmp<Foam::symmTensorField> Foam::sampledSurface::sample
 ) const
 {
     NotImplemented;
-    return tmp<symmTensorField>(NULL);
+    return tmp<symmTensorField>(nullptr);
 }
 
 
@@ -283,7 +285,7 @@ Foam::tmp<Foam::tensorField> Foam::sampledSurface::sample
 ) const
 {
     NotImplemented;
-    return tmp<tensorField>(NULL);
+    return tmp<tensorField>(nullptr);
 }
 
 

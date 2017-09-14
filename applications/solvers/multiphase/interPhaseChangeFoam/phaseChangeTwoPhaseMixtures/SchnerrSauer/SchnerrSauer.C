@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,10 +54,10 @@ Foam::phaseChangeTwoPhaseMixtures::SchnerrSauer::SchnerrSauer
 :
     phaseChangeTwoPhaseMixture(typeName, U, phi),
 
-    n_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("n")),
-    dNuc_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("dNuc")),
-    Cc_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("Cc")),
-    Cv_(phaseChangeTwoPhaseMixtureCoeffs_.lookup("Cv")),
+    n_("n", dimless/dimVolume, phaseChangeTwoPhaseMixtureCoeffs_),
+    dNuc_("dNuc", dimLength, phaseChangeTwoPhaseMixtureCoeffs_),
+    Cc_("Cc", dimless, phaseChangeTwoPhaseMixtureCoeffs_),
+    Cv_("Cv", dimless, phaseChangeTwoPhaseMixtureCoeffs_),
 
     p0_("0", pSat().dimensions(), 0.0)
 {
@@ -136,7 +136,7 @@ Foam::phaseChangeTwoPhaseMixtures::SchnerrSauer::mDotP() const
 
     return Pair<tmp<volScalarField>>
     (
-        Cc_*(1.0 - limitedAlpha1)*pos(p - pSat())*apCoeff,
+        Cc_*(1.0 - limitedAlpha1)*pos0(p - pSat())*apCoeff,
 
         (-Cv_)*(1.0 + alphaNuc() - limitedAlpha1)*neg(p - pSat())*apCoeff
     );
@@ -151,7 +151,7 @@ bool Foam::phaseChangeTwoPhaseMixtures::SchnerrSauer::read()
 {
     if (phaseChangeTwoPhaseMixture::read())
     {
-        phaseChangeTwoPhaseMixtureCoeffs_ = subDict(type() + "Coeffs");
+        phaseChangeTwoPhaseMixtureCoeffs_ = optionalSubDict(type() + "Coeffs");
 
         phaseChangeTwoPhaseMixtureCoeffs_.lookup("n") >> n_;
         phaseChangeTwoPhaseMixtureCoeffs_.lookup("dNuc") >> dNuc_;

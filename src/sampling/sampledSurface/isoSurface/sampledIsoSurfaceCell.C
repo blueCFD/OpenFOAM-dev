@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,7 @@ bool Foam::sampledIsoSurfaceCell::updateGeometry() const
 
     // 1. see if field in database
     // 2. see if field can be read
-    const volScalarField* cellFldPtr = NULL;
+    const volScalarField* cellFldPtr = nullptr;
     if (fvm.foundObject<volScalarField>(isoField_))
     {
         if (debug)
@@ -121,7 +121,7 @@ bool Foam::sampledIsoSurfaceCell::updateGeometry() const
     if (average_)
     {
         //- From point field and interpolated cell.
-        scalarField cellAvg(fvm.nCells(), scalar(0.0));
+        scalarField cellAvg(fvm.nCells(), scalar(0));
         labelField nPointCells(fvm.nCells(), 0);
         {
             for (label pointi = 0; pointi < fvm.nPoints(); pointi++)
@@ -209,7 +209,7 @@ Foam::sampledIsoSurfaceCell::sampledIsoSurfaceCell
     regularise_(dict.lookupOrDefault("regularise", true)),
     average_(dict.lookupOrDefault("average", true)),
     zoneKey_(keyType::null),
-    facesPtr_(NULL),
+    facesPtr_(nullptr),
     prevTimeIndex_(-1),
     meshCells_(0)
 {}

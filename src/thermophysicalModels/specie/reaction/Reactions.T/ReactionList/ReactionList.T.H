@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ SourceFiles
 #define ReactionList_H
 
 #include "PtrList.T.H"
-#include "SLPtrList.T.H"
+#include "SLPtrList.H"
 #include "speciesTable.H"
 #include "HashPtrTable.T.H"
 #include "Reaction.T.H"
@@ -91,14 +91,6 @@ public:
             const speciesTable& species,
             const HashPtrTable<ThermoType>& thermoDatabase,
             const dictionary& dict
-        );
-
-        //- Construct from file using (Istream)
-        ReactionList
-        (
-            const speciesTable& species,
-            const HashPtrTable<ThermoType>& thermoDatabase,
-            const fileName& fName
         );
 
         //- Construct copy

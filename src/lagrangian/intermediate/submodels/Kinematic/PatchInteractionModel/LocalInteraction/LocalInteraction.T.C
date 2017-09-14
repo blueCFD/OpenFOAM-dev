@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,8 +41,8 @@ Foam::LocalInteraction<CloudType>::LocalInteraction
     nStick_(patchData_.size(), 0),
     massStick_(patchData_.size(), 0.0),
     writeFields_(this->coeffDict().lookupOrDefault("writeFields", false)),
-    massEscapePtr_(NULL),
-    massStickPtr_(NULL)
+    massEscapePtr_(nullptr),
+    massStickPtr_(nullptr)
 {
     if (writeFields_)
     {
@@ -94,8 +94,8 @@ Foam::LocalInteraction<CloudType>::LocalInteraction
     nStick_(pim.nStick_),
     massStick_(pim.massStick_),
     writeFields_(pim.writeFields_),
-    massEscapePtr_(NULL),
-    massStickPtr_(NULL)
+    massEscapePtr_(nullptr),
+    massStickPtr_(nullptr)
 {}
 
 
@@ -191,6 +191,10 @@ bool Foam::LocalInteraction<CloudType>::correct
 
         switch (it)
         {
+            case PatchInteractionModel<CloudType>::itNone:
+            {
+                return false;
+            }
             case PatchInteractionModel<CloudType>::itEscape:
             {
                 scalar dm = p.mass()*p.nParticle();
@@ -233,7 +237,7 @@ bool Foam::LocalInteraction<CloudType>::correct
                 vector nw;
                 vector Up;
 
-                this->owner().patchData(p, pp, trackFraction, tetIs, nw, Up);
+                this->owner().patchData(p, pp, nw, Up);
 
                 // Calculate motion relative to patch velocity
                 U -= Up;

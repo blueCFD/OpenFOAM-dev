@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,18 +59,19 @@ void Foam::functionObjects::wallShearStress::writeFileHeader(const label i)
 
 void Foam::functionObjects::wallShearStress::calcShearStress
 (
-    const fvMesh& mesh,
     const volSymmTensorField& Reff,
     volVectorField& shearStress
 )
 {
+    shearStress.dimensions().reset(Reff.dimensions());
+
     forAllConstIter(labelHashSet, patchSet_, iter)
     {
         label patchi = iter.key();
 
         vectorField& ssp = shearStress.boundaryFieldRef()[patchi];
-        const vectorField& Sfp = mesh.Sf().boundaryField()[patchi];
-        const scalarField& magSfp = mesh.magSf().boundaryField()[patchi];
+        const vectorField& Sfp = mesh_.Sf().boundaryField()[patchi];
+        const scalarField& magSfp = mesh_.magSf().boundaryField()[patchi];
         const symmTensorField& Reffp = Reff.boundaryField()[patchi];
 
         ssp = (-Sfp/magSfp) & Reffp;
@@ -87,17 +88,11 @@ Foam::functionObjects::wallShearStress::wallShearStress
     const dictionary& dict
 )
 :
-    writeFiles(name, runTime, dict, name),
+    fvMeshFunctionObject(name, runTime, dict),
+    logFiles(obr_, name),
+    writeLocalObjects(obr_, log),
     patchSet_()
 {
-    if (!isA<fvMesh>(obr_))
-    {
-        FatalErrorInFunction
-            << "objectRegistry is not an fvMesh" << exit(FatalError);
-    }
-
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-
     volVectorField* wallShearStressPtr
     (
         new volVectorField
@@ -105,12 +100,12 @@ Foam::functionObjects::wallShearStress::wallShearStress
             IOobject
             (
                 type(),
-                mesh.time().timeName(),
-                mesh,
+                mesh_.time().timeName(),
+                mesh_,
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            mesh,
+            mesh_,
             dimensionedVector
             (
                 "0",
@@ -120,10 +115,11 @@ Foam::functionObjects::wallShearStress::wallShearStress
         )
     );
 
-    mesh.objectRegistry::store(wallShearStressPtr);
+    mesh_.objectRegistry::store(wallShearStressPtr);
 
     read(dict);
     resetName(typeName);
+    resetLocalObjectName(typeName);
 }
 
 
@@ -137,13 +133,13 @@ Foam::functionObjects::wallShearStress::~wallShearStress()
 
 bool Foam::functionObjects::wallShearStress::read(const dictionary& dict)
 {
-    writeFiles::read(dict);
+    fvMeshFunctionObject::read(dict);
+    writeLocalObjects::read(dict);
 
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
 
     patchSet_ =
-        mesh.boundaryMesh().patchSet
+        mesh_.boundaryMesh().patchSet
         (
             wordReList(dict.lookupOrDefault("patches", wordReList()))
         );
@@ -196,26 +192,21 @@ bool Foam::functionObjects::wallShearStress::execute()
     typedef compressible::turbulenceModel cmpModel;
     typedef incompressible::turbulenceModel icoModel;
 
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-
     volVectorField& wallShearStress =
-        const_cast<volVectorField&>
-        (
-            mesh.lookupObject<volVectorField>(type())
-        );
+        mesh_.lookupObjectRef<volVectorField>(type());
 
     tmp<volSymmTensorField> Reff;
-    if (mesh.foundObject<cmpModel>(turbulenceModel::propertiesName))
+    if (mesh_.foundObject<cmpModel>(turbulenceModel::propertiesName))
     {
         const cmpModel& model =
-            mesh.lookupObject<cmpModel>(turbulenceModel::propertiesName);
+            mesh_.lookupObject<cmpModel>(turbulenceModel::propertiesName);
 
         Reff = model.devRhoReff();
     }
-    else if (mesh.foundObject<icoModel>(turbulenceModel::propertiesName))
+    else if (mesh_.foundObject<icoModel>(turbulenceModel::propertiesName))
     {
         const icoModel& model =
-            mesh.lookupObject<icoModel>(turbulenceModel::propertiesName);
+            mesh_.lookupObject<icoModel>(turbulenceModel::propertiesName);
 
         Reff = model.devReff();
     }
@@ -226,7 +217,7 @@ bool Foam::functionObjects::wallShearStress::execute()
             << "database" << exit(FatalError);
     }
 
-    calcShearStress(mesh, Reff(), wallShearStress);
+    calcShearStress(Reff(), wallShearStress);
 
     return true;
 }
@@ -234,18 +225,16 @@ bool Foam::functionObjects::wallShearStress::execute()
 
 bool Foam::functionObjects::wallShearStress::write()
 {
-    writeFiles::write();
+    Log << type() << " " << name() << " write:" << nl;
+
+    writeLocalObjects::write();
+
+    logFiles::write();
 
     const volVectorField& wallShearStress =
         obr_.lookupObject<volVectorField>(type());
 
-    Log << type() << " " << name() << " write:" << nl
-        << "    writing field " << wallShearStress.name() << endl;
-
-    wallShearStress.write();
-
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-    const fvPatchList& patches = mesh.boundary();
+    const fvPatchList& patches = mesh_.boundary();
 
     forAllConstIter(labelHashSet, patchSet_, iter)
     {
@@ -259,7 +248,7 @@ bool Foam::functionObjects::wallShearStress::write()
 
         if (Pstream::master())
         {
-            file() << mesh.time().value()
+            file() << mesh_.time().value()
                 << token::TAB << pp.name()
                 << token::TAB << minSsp
                 << token::TAB << maxSsp
@@ -269,6 +258,8 @@ bool Foam::functionObjects::wallShearStress::write()
         Log << "    min/max(" << pp.name() << ") = "
             << minSsp << ", " << maxSsp << endl;
     }
+
+    Log << endl;
 
     return true;
 }

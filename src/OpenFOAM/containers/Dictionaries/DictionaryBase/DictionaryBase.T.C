@@ -25,7 +25,7 @@ License
 
 #include "DictionaryBase.T.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 template<class IDLListType, class T>
 void Foam::DictionaryBase<IDLListType, T>::addEntries()
@@ -109,7 +109,7 @@ const T* Foam::DictionaryBase<IDLListType, T>::lookupPtr
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -125,7 +125,7 @@ T* Foam::DictionaryBase<IDLListType, T>::lookupPtr(const word& keyword)
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -220,7 +220,7 @@ T* Foam::DictionaryBase<IDLListType, T>::remove(const word& keyword)
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 

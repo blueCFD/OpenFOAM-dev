@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,6 +46,7 @@ SourceFiles
 
 #include "fvPatch.H"
 #include "DimensionedField.T.H"
+#include "fieldTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -200,7 +201,7 @@ public:
             const fvPatch&,
             const DimensionedField<Type, volMesh>&,
             const dictionary&,
-            const bool valueRequired=false
+            const bool valueRequired=true
         );
 
         //- Construct by mapping the given fvPatchField onto a new patch
@@ -438,14 +439,16 @@ public:
             //- Initialise the evaluation of the patch field
             virtual void initEvaluate
             (
-                const Pstream::commsTypes commsType=Pstream::blocking
+                const Pstream::commsTypes commsType =
+                    Pstream::commsTypes::blocking
             )
             {}
 
             //- Evaluate the patch field, sets Updated to false
             virtual void evaluate
             (
-                const Pstream::commsTypes commsType=Pstream::blocking
+                const Pstream::commsTypes commsType =
+                    Pstream::commsTypes::blocking
             );
 
 
@@ -628,7 +631,7 @@ defineTemplateRunTimeSelectionTable(fvPatchTypeField, dictionary);
     );
 
 
-// use with caution
+// Use with caution
 #define addRemovableToPatchFieldRunTimeSelection\
 (PatchTypeField, typePatchTypeField)                                           \
                                                                                \
@@ -652,67 +655,48 @@ defineTemplateRunTimeSelectionTable(fvPatchTypeField, dictionary);
     );
 
 
-// for non-templated patch fields
+// For non-templated patch fields
 #define makePatchTypeField(PatchTypeField, typePatchTypeField)                 \
     defineTypeNameAndDebug(typePatchTypeField, 0);                             \
     addToPatchFieldRunTimeSelection(PatchTypeField, typePatchTypeField)
 
-// for non-templated patch fields - use with caution
+// For non-templated patch fields - use with caution
 #define makeRemovablePatchTypeField(PatchTypeField, typePatchTypeField)        \
     defineTypeNameAndDebug(typePatchTypeField, 0);                             \
     addRemovableToPatchFieldRunTimeSelection(PatchTypeField, typePatchTypeField)
 
-
-// for templated patch fields
-#define makeTemplatePatchTypeField(PatchTypeField, typePatchTypeField)         \
-    defineNamedTemplateTypeNameAndDebug(typePatchTypeField, 0);                \
-    addToPatchFieldRunTimeSelection(PatchTypeField, typePatchTypeField)
-
+// For templated patch fields
+#define makeTemplatePatchTypeField(fieldType, type)                            \
+    defineNamedTemplateTypeNameAndDebug                                        \
+    (                                                                          \
+        CAT4(type, FvPatch, CAPITALIZE(fieldType), Field),                     \
+        0                                                                      \
+    );                                                                         \
+    addToPatchFieldRunTimeSelection                                            \
+    (                                                                          \
+        CAT3(fvPatch, CAPITALIZE(fieldType), Field),                           \
+        CAT4(type, FvPatch, CAPITALIZE(fieldType), Field)                      \
+    )
 
 #define makePatchFields(type)                                                  \
-    makeTemplatePatchTypeField                                                 \
+    FOR_ALL_FIELD_TYPES(makeTemplatePatchTypeField, type)
+
+#define makePatchFieldTypeName(fieldType, type)                                \
+    defineNamedTemplateTypeNameAndDebug                                        \
     (                                                                          \
-        fvPatchScalarField,                                                    \
-        type##FvPatchScalarField                                               \
-    );                                                                         \
-    makeTemplatePatchTypeField                                                 \
-    (                                                                          \
-        fvPatchVectorField,                                                    \
-        type##FvPatchVectorField                                               \
-    );                                                                         \
-    makeTemplatePatchTypeField                                                 \
-    (                                                                          \
-        fvPatchSphericalTensorField,                                           \
-        type##FvPatchSphericalTensorField                                      \
-    );                                                                         \
-    makeTemplatePatchTypeField                                                 \
-    (                                                                          \
-        fvPatchSymmTensorField,                                                \
-        type##FvPatchSymmTensorField                                           \
-    );                                                                         \
-    makeTemplatePatchTypeField                                                 \
-    (                                                                          \
-        fvPatchTensorField,                                                    \
-        type##FvPatchTensorField                                               \
+        CAT4(type, FvPatch, CAPITALIZE(fieldType), Field),                     \
+        0                                                                      \
     );
 
+#define makePatchFieldTypeNames(type)                                          \
+    FOR_ALL_FIELD_TYPES(makePatchFieldTypeName, type)
 
-#define makePatchFieldsTypeName(type)                                          \
-    defineNamedTemplateTypeNameAndDebug(type##FvPatchScalarField, 0);          \
-    defineNamedTemplateTypeNameAndDebug(type##FvPatchVectorField, 0);          \
-    defineNamedTemplateTypeNameAndDebug(type##FvPatchSphericalTensorField, 0);\
-    defineNamedTemplateTypeNameAndDebug(type##FvPatchSymmTensorField, 0);      \
-    defineNamedTemplateTypeNameAndDebug(type##FvPatchTensorField, 0)
-
+#define makePatchTypeFieldTypedef(fieldType, type)                             \
+    typedef type##FvPatchField<fieldType>                                      \
+        CAT4(type, FvPatch, CAPITALIZE(fieldType), Field);
 
 #define makePatchTypeFieldTypedefs(type)                                       \
-    typedef type##FvPatchField<scalar> type##FvPatchScalarField;               \
-    typedef type##FvPatchField<vector> type##FvPatchVectorField;               \
-    typedef type##FvPatchField<sphericalTensor>                                \
-        type##FvPatchSphericalTensorField;                                     \
-    typedef type##FvPatchField<symmTensor> type##FvPatchSymmTensorField;       \
-    typedef type##FvPatchField<tensor> type##FvPatchTensorField;
-
+    FOR_ALL_FIELD_TYPES(makePatchTypeFieldTypedef, type)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

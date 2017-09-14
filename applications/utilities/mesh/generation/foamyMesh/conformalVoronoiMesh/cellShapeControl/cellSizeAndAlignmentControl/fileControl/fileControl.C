@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "fileControl.H"
 #include "addToRunTimeSelectionTable.H"
-#include "tetrahedron.H"
+#include "tetPointRef.H"
 #include "scalarList.H"
 #include "vectorTools.H"
 #include "pointIOField.H"
@@ -94,7 +94,7 @@ Foam::fileControl::~fileControl()
 //
 //Foam::scalar Foam::fileControl::cellSize(const point& pt) const
 //{
-//    scalarList bary;
+//    FixedList<scalar, 4> bary;
 //    Cell_handle ch;
 //
 //    triangulatedMesh_.barycentricCoords(pt, bary, ch);
@@ -112,7 +112,7 @@ Foam::fileControl::~fileControl()
 ////- Return the cell alignment at the given location
 //Foam::tensor Foam::fileControl::cellAlignment(const point& pt) const
 //{
-//    scalarList bary;
+//    FixedList<scalar, 4> bary;
 //    Cell_handle ch;
 //
 //    triangulatedMesh_.barycentricCoords(pt, bary, ch);
@@ -144,7 +144,7 @@ Foam::fileControl::~fileControl()
 //    tensor& alignment
 //) const
 //{
-//    scalarList bary;
+//    FixedList<scalar, 4> bary;
 //    Cell_handle ch;
 //
 //    triangulatedMesh_.barycentricCoords(pt, bary, ch);

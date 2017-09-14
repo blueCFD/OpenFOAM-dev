@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -96,7 +96,7 @@ static void get_vertex_list(void *data, int sizeGID, int sizeLID,
    */
 
     wgt_dim = 0;
-    obj_wgts = NULL;
+    obj_wgts = nullptr;
 
     for (Foam::label i=0; i<mesh.nCells(); i++)
     {
@@ -261,7 +261,7 @@ static void get_geom_list
 Foam::zoltanRenumber::zoltanRenumber(const dictionary& renumberDict)
 :
     renumberMethod(renumberDict),
-    coeffsDict_(renumberDict.subDict(typeName+"Coeffs"))
+    coeffsDict_(renumberDict.optionalSubDict(typeName+"Coeffs"))
 {}
 
 

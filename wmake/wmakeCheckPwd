@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # License
@@ -37,15 +37,13 @@ Script=${0##*/}
 unset quietOpt
 
 usage() {
-    [ "$quietOpt" = true ] && exit 1
-    exec 1>&2
-    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
     cat<<USAGE
 
 Usage: $Script [OPTION] dirName
 
 options:
-  -q | -quiet   suppress all normal output
+  -quiet | -q   suppress all normal output
+  -help  | -h   print the usage
 
   Check that the current working directory is the directory <dir>
 
@@ -53,6 +51,13 @@ options:
   Exit status 1 on error
 
 USAGE
+}
+
+error() {
+    [ "$quietOpt" = true ] && exit 1
+    exec 1>&2
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    usage
     exit 1
 }
 
@@ -65,14 +70,14 @@ while [ "$#" -gt 0 ]
 do
     case "$1" in
     -h | -help)
-        usage
+        usage && exit 0
         ;;
     -q | -quiet)
         quietOpt=true
         shift
         ;;
     -*)
-        usage "unknown option: '$*'"
+        error "unknown option: '$*'"
         ;;
     *)
         break
@@ -81,7 +86,7 @@ do
 done
 
 
-[ "$#" -eq 1 ] || usage
+[ "$#" -eq 1 ] || error
 
 # Set dirName to <dir>
 dirName="$1"
@@ -89,7 +94,7 @@ dirName="$1"
 # Simple check against $PWD
 [ "$PWD" = "$dirName" ] && exit 0
 
-# Check existance of <dir>
+# Check existence of <dir>
 [ -d "$dirName" ] || {
     [ "$quietOpt" = true ] || {
         echo "$Script error: Directory does not exist $dirName"
@@ -115,7 +120,7 @@ exit 1
 # Cleanup local variables and functions
 #------------------------------------------------------------------------------
 
-unset Script usage
+unset Script usage error
 
 
 #------------------------------------------------------------------------------

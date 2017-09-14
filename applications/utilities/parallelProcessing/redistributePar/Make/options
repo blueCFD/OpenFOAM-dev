@@ -19,6 +19,6 @@ EXE_LIBS += \
 #else
 
 EXE_LIBS += \
-    -L$(FOAM_LIBBIN)/dummy -lptscotchDecomp
+    -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp
 
 #endif

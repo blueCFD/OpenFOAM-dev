@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -172,7 +172,8 @@ void Foam::meshReader::writeMesh
     (
         fmt,
         IOstream::currentVersion,
-        IOstream::UNCOMPRESSED
+        IOstream::UNCOMPRESSED,
+        true
     );
     writeAux(mesh);
 }
@@ -197,7 +198,7 @@ Foam::meshReader::meshReader
     const scalar scaleFactor
 )
     :
-    pointCellsPtr_(NULL),
+    pointCellsPtr_(nullptr),
     nInternalFaces_(0),
     patchStarts_(0),
     patchSizes_(0),

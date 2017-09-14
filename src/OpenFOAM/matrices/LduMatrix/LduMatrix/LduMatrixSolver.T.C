@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -108,7 +108,10 @@ Foam::LduMatrix<Type, DType, LUType>::solver::New
                "no diagonal or off-diagonal coefficient"
             << exit(FatalIOError);
 
-        return autoPtr<typename LduMatrix<Type, DType, LUType>::solver>(NULL);
+        return autoPtr<typename LduMatrix<Type, DType, LUType>::solver>
+        (
+            nullptr
+        );
     }
 }
 
@@ -128,7 +131,7 @@ Foam::LduMatrix<Type, DType, LUType>::solver::solver
 
     controlDict_(solverDict),
 
-    maxIter_(1000),
+    maxIter_(defaultMaxIter_),
     minIter_(0),
     tolerance_(1e-6*pTraits<Type>::one),
     relTol_(Zero)

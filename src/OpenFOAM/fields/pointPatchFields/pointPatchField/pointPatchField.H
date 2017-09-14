@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -418,19 +418,34 @@ public:
             //- Initialise evaluation of the patch field (do nothing)
             virtual void initEvaluate
             (
-                const Pstream::commsTypes commsType=Pstream::blocking
+                const Pstream::commsTypes commsType =
+                    Pstream::commsTypes::blocking
             )
             {}
 
             //- Evaluate the patch field
             virtual void evaluate
             (
-                const Pstream::commsTypes commsType=Pstream::blocking
+                const Pstream::commsTypes commsType =
+                    Pstream::commsTypes::blocking
             );
 
 
-        //- Write
-        virtual void write(Ostream&) const;
+        // I-O
+
+            //- Write
+            virtual void write(Ostream&) const;
+
+            //- Helper function to write the keyword and entry only if the
+            //  values are not equal. The value is then output as value2
+            template<class EntryType>
+            void writeEntryIfDifferent
+            (
+                Ostream& os,
+                const word& entryName,
+                const EntryType& value1,
+                const EntryType& value2
+            ) const;
 
 
     // Member operators

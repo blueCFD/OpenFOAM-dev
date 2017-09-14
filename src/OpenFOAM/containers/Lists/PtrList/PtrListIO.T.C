@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "PtrList.T.H"
-#include "SLList.T.H"
+#include "SLList.H"
 #include "Istream.T.H"
 #include "Ostream.H"
 #include "INew.T.H"

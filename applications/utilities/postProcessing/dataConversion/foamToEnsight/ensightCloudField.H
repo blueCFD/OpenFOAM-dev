@@ -35,7 +35,7 @@ SourceFiles
 #define ensightCloudField_H
 
 #include "Cloud.T.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

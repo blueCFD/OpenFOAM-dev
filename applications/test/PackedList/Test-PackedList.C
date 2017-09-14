@@ -29,7 +29,7 @@ Description
 
 #include "argList.H"
 #include "uLabel.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "IOstreams.H"
 #include "IFstream.H"
 #include "PackedBoolList.H"

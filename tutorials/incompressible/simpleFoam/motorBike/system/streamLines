@@ -9,7 +9,7 @@
 streamLines
 {
     // Where to load it from
-    libs ("libfieldFunctionObjects.so");
+    libs            ("libfieldFunctionObjects.so");
 
     type            streamLine;
 
@@ -42,9 +42,7 @@ streamLines
     cloudName       particleTracks;
 
     // Seeding method.
-    seedSampleSet   uniform;  //cloud; //triSurfaceMeshPointSet;
-
-    uniformCoeffs
+    seedSampleSet
     {
         type        uniform;
         axis        x;  //distance;

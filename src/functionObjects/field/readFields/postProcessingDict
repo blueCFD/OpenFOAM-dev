@@ -19,7 +19,7 @@ functions
     readFields1
     {
         type            readFields;
-        libs ("libfieldFunctionObjects.so");
+        libs            ("libfieldFunctionObjects.so");
         enabled         true;
         writeControl    timeStep;
         writeInterval   1;
@@ -32,8 +32,8 @@ functions
 
     faceObj2
     {
-        type            surfaceRegion;
-        libs ("libfieldFunctionObjects.so");
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
         enabled         true;
         writeControl    timeStep;
         writeInterval   1;

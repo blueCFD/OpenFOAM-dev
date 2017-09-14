@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ Note
 
 #include "argList.H"
 #include "timeSelector.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "IOmanip.H"
 #include "OFstream.H"
 
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 
     const word prepend = args.globalCaseName() + '.';
 
-    OFstream *ensightCaseFilePtr = NULL;
+    OFstream *ensightCaseFilePtr = nullptr;
     if (Pstream::master())
     {
         fileName caseFileName = prepend + "case";
@@ -584,7 +584,10 @@ int main(int argc, char *argv[])
                     IOobject::MUST_READ
                 );
 
-                bool fieldExists = fieldObject.headerOk();
+                bool fieldExists = fieldObject.typeHeaderOk<IOField<scalar>>
+                (
+                    false
+                );
                 if (fieldType == scalarIOField::typeName)
                 {
                     ensightCloudField<scalar>

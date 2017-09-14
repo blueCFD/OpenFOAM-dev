@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,10 +42,8 @@ namespace Foam
     addToRunTimeSelectionTable(dynamicFvMesh, dynamicRefineFvMesh, IOobject);
 }
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-// the PackedBoolList::count method would probably be faster
-// since we are only checking for 'true' anyhow
 Foam::label Foam::dynamicRefineFvMesh::count
 (
     const PackedBoolList& l,
@@ -193,7 +191,7 @@ void Foam::dynamicRefineFvMesh::readDict()
                 IOobject::NO_WRITE,
                 false
             )
-        ).subDict(typeName + "Coeffs")
+        ).optionalSubDict(typeName + "Coeffs")
     );
 
     List<Pair<word>> fluxVelocities = List<Pair<word>>
@@ -250,10 +248,10 @@ Foam::dynamicRefineFvMesh::refine
         }
     }
 
-//    // Remove the stored tet base points
-//    tetBasePtIsPtr_.clear();
-//    // Remove the cell tree
-//    cellTreePtr_.clear();
+    //    // Remove the stored tet base points
+    //    tetBasePtIsPtr_.clear();
+    //    // Remove the cell tree
+    //    cellTreePtr_.clear();
 
     // Update fields
     updateMesh(map);
@@ -463,8 +461,6 @@ Foam::dynamicRefineFvMesh::refine
 }
 
 
-// Combines previously split cells, maps fields and recalculates
-// (an approximate) flux
 Foam::autoPtr<Foam::mapPolyMesh>
 Foam::dynamicRefineFvMesh::unrefine
 (
@@ -646,7 +642,6 @@ Foam::dynamicRefineFvMesh::unrefine
 }
 
 
-// Get max of connected point
 Foam::scalarField
 Foam::dynamicRefineFvMesh::maxPointField(const scalarField& pFld) const
 {
@@ -665,7 +660,6 @@ Foam::dynamicRefineFvMesh::maxPointField(const scalarField& pFld) const
 }
 
 
-// Get max of connected cell
 Foam::scalarField
 Foam::dynamicRefineFvMesh::maxCellField(const volScalarField& vFld) const
 {
@@ -684,7 +678,6 @@ Foam::dynamicRefineFvMesh::maxCellField(const volScalarField& vFld) const
 }
 
 
-// Simple (non-parallel) interpolation by averaging.
 Foam::scalarField
 Foam::dynamicRefineFvMesh::cellToPoint(const scalarField& vFld) const
 {
@@ -705,7 +698,6 @@ Foam::dynamicRefineFvMesh::cellToPoint(const scalarField& vFld) const
 }
 
 
-// Calculate error. Is < 0 or distance to minLevel, maxLevel
 Foam::scalarField Foam::dynamicRefineFvMesh::error
 (
     const scalarField& fld,
@@ -1210,7 +1202,7 @@ bool Foam::dynamicRefineFvMesh::update()
                 IOobject::NO_WRITE,
                 false
             )
-        ).subDict(typeName + "Coeffs")
+        ).optionalSubDict(typeName + "Coeffs")
     );
 
     label refineInterval = readLabel(refineDict.lookup("refineInterval"));
@@ -1407,7 +1399,8 @@ bool Foam::dynamicRefineFvMesh::writeObject
 (
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
-    IOstream::compressionType cmp
+    IOstream::compressionType cmp,
+    const bool valid
 ) const
 {
     // Force refinement data to go to the current time directory.
@@ -1415,8 +1408,8 @@ bool Foam::dynamicRefineFvMesh::writeObject
 
     bool writeOk =
     (
-        dynamicFvMesh::writeObjects(fmt, ver, cmp)
-     && meshCutter_.write()
+        dynamicFvMesh::writeObject(fmt, ver, cmp, valid)
+     && meshCutter_.write(valid)
     );
 
     if (dumpLevel_)

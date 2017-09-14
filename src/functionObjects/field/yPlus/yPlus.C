@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,11 +65,10 @@ void Foam::functionObjects::yPlus::writeFileHeader(const label i)
 void Foam::functionObjects::yPlus::calcYPlus
 (
     const turbulenceModel& turbModel,
-    const fvMesh& mesh,
     volScalarField& yPlus
 )
 {
-    volScalarField::Boundary d = nearWallDist(mesh).y();
+    volScalarField::Boundary d = nearWallDist(mesh_).y();
 
     const volScalarField::Boundary nutBf =
         turbModel.nut()().boundaryField();
@@ -80,7 +79,7 @@ void Foam::functionObjects::yPlus::calcYPlus
     const volScalarField::Boundary nuBf =
         turbModel.nu()().boundaryField();
 
-    const fvPatchList& patches = mesh.boundary();
+    const fvPatchList& patches = mesh_.boundary();
 
     volScalarField::Boundary& yPlusBf = yPlus.boundaryFieldRef();
 
@@ -121,16 +120,10 @@ Foam::functionObjects::yPlus::yPlus
     const dictionary& dict
 )
 :
-    writeFiles(name, runTime, dict, name)
+    fvMeshFunctionObject(name, runTime, dict),
+    logFiles(obr_, name),
+    writeLocalObjects(obr_, log)
 {
-    if (!isA<fvMesh>(obr_))
-    {
-        FatalErrorInFunction
-            << "objectRegistry is not an fvMesh" << exit(FatalError);
-    }
-
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-
     volScalarField* yPlusPtr
     (
         new volScalarField
@@ -138,19 +131,21 @@ Foam::functionObjects::yPlus::yPlus
             IOobject
             (
                 type(),
-                mesh.time().timeName(),
-                mesh,
+                mesh_.time().timeName(),
+                mesh_,
                 IOobject::NO_READ,
-                IOobject::AUTO_WRITE
+                IOobject::NO_WRITE
             ),
-            mesh,
+            mesh_,
             dimensionedScalar("0", dimless, 0.0)
         )
     );
 
-    mesh.objectRegistry::store(yPlusPtr);
+    mesh_.objectRegistry::store(yPlusPtr);
 
+    read(dict);
     resetName(typeName);
+    resetLocalObjectName(typeName);
 }
 
 
@@ -164,7 +159,8 @@ Foam::functionObjects::yPlus::~yPlus()
 
 bool Foam::functionObjects::yPlus::read(const dictionary& dict)
 {
-    writeFiles::read(dict);
+    fvMeshFunctionObject::read(dict);
+    writeLocalObjects::read(dict);
 
     return true;
 }
@@ -172,20 +168,17 @@ bool Foam::functionObjects::yPlus::read(const dictionary& dict)
 
 bool Foam::functionObjects::yPlus::execute()
 {
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-
     volScalarField& yPlus =
-        const_cast<volScalarField&>
+        mesh_.lookupObjectRef<volScalarField>(type());
+
+    if (mesh_.foundObject<turbulenceModel>(turbulenceModel::propertiesName))
+    {
+        const turbulenceModel& model = mesh_.lookupObject<turbulenceModel>
         (
-            mesh.lookupObject<volScalarField>(type())
+            turbulenceModel::propertiesName
         );
 
-    if (mesh.foundObject<turbulenceModel>(turbulenceModel::propertiesName))
-    {
-        const turbulenceModel& model =
-            mesh.lookupObject<turbulenceModel>(turbulenceModel::propertiesName);
-
-        calcYPlus(model, mesh, yPlus);
+        calcYPlus(model, yPlus);
     }
     else
     {
@@ -200,20 +193,17 @@ bool Foam::functionObjects::yPlus::execute()
 
 bool Foam::functionObjects::yPlus::write()
 {
+    Log << type() << " " << name() << " write:" << nl;
+
+    writeLocalObjects::write();
+
+    logFiles::write();
+
     const volScalarField& yPlus =
-        obr_.lookupObject<volScalarField>(type());
-
-    Log << type() << " " << name() << " write:" << nl
-        << "    writing field " << yPlus.name() << endl;
-
-    yPlus.write();
-
-    writeFiles::write();
+        mesh_.lookupObject<volScalarField>(type());
 
     const volScalarField::Boundary& yPlusBf = yPlus.boundaryField();
-
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-    const fvPatchList& patches = mesh.boundary();
+    const fvPatchList& patches = mesh_.boundary();
 
     forAll(patches, patchi)
     {
@@ -235,7 +225,7 @@ bool Foam::functionObjects::yPlus::write()
 
                 writeTime(file());
                 file()
-                << token::TAB << patch.name()
+                    << token::TAB << patch.name()
                     << token::TAB << minYplus
                     << token::TAB << maxYplus
                     << token::TAB << avgYplus
@@ -243,6 +233,8 @@ bool Foam::functionObjects::yPlus::write()
             }
         }
     }
+
+    Log << endl;
 
     return true;
 }

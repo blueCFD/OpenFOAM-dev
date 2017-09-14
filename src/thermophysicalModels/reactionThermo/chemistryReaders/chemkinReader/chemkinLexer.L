@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -68,9 +68,6 @@ int yyFlexLexer::yywrap()
 Foam::string foamSpecieString(const char* YYText)
 {
     Foam::string specieString(YYText);
-    // Transforming parentheses is no longer necessary
-    //specieString.replaceAll('(', '<');
-    //specieString.replaceAll(')', '>');
     return specieString;
 }
 
@@ -124,7 +121,7 @@ startIsotopeMolW      {space}"/"{space}
 isotopeMolW           {space}{floatNum}{space}"/"{space}
 
 specieName            {space}[A-Za-z](([A-Za-z0-9)*+-])|("("[^+]))*{space}
-nMoles                {space}{floatNum}{space}
+Y                {space}{floatNum}{space}
 
 thermoTemp            .{10}
 
@@ -483,9 +480,9 @@ bool finishReaction = false;
             if (elementName.size() && nAtoms)
             {
                 correctElementName(elementName);
-                currentSpecieComposition[nSpecieElements].elementName =
+                currentSpecieComposition[nSpecieElements].name() =
                     elementName;
-                currentSpecieComposition[nSpecieElements++].nAtoms = nAtoms;
+                currentSpecieComposition[nSpecieElements++].nAtoms() = nAtoms;
             }
         }
 
@@ -540,24 +537,24 @@ bool finishReaction = false;
         )
         {
             correctElementName(elementName);
-            currentSpecieComposition[nSpecieElements].elementName =
+            currentSpecieComposition[nSpecieElements].name() =
                 elementName;
-            currentSpecieComposition[nSpecieElements++].nAtoms = nAtoms;
+            currentSpecieComposition[nSpecieElements++].nAtoms() = nAtoms;
         }
 
         currentSpecieComposition.setSize(nSpecieElements);
 
-        HashTable<List<specieElement>>::iterator specieCompositionIter
+        speciesCompositionTable::iterator specieCompositionIter
         (
-            specieComposition_.find(currentSpecieName)
+            speciesComposition_.find(currentSpecieName)
         );
 
-        if (specieCompositionIter != specieComposition_.end())
+        if (specieCompositionIter != speciesComposition_.end())
         {
-            specieComposition_.erase(specieCompositionIter);
+            speciesComposition_.erase(specieCompositionIter);
         }
 
-        specieComposition_.insert
+        speciesComposition_.insert
         (
             currentSpecieName,
             currentSpecieComposition
@@ -643,7 +640,8 @@ bool finishReaction = false;
                     currentHighT,
                     currentCommonT,
                     highCpCoeffs,
-                    lowCpCoeffs
+                    lowCpCoeffs,
+                    true
                 ),
                 transportDict_.subDict(currentSpecieName)
             )
@@ -690,7 +688,7 @@ bool finishReaction = false;
         BEGIN(readReactionKeyword);
     }
 
-<readReactionKeyword>{nMoles} {
+<readReactionKeyword>{Y} {
         currentSpecieCoeff.stoichCoeff = atof(YYText());
         currentSpecieCoeff.exponent = currentSpecieCoeff.stoichCoeff;
     }

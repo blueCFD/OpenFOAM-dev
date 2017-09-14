@@ -48,7 +48,7 @@ namespace Foam
 
 Foam::IFstreamAllocator::IFstreamAllocator(const fileName& pathname)
 :
-    ifPtr_(NULL),
+    ifPtr_(nullptr),
     compression_(IOstream::UNCOMPRESSED)
 {
     if (pathname.empty())

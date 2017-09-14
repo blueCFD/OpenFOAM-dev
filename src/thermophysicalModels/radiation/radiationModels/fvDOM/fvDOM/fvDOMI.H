@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,20 +86,20 @@ inline const Foam::volScalarField& Foam::radiation::fvDOM::G() const
 }
 
 
-inline const Foam::volScalarField& Foam::radiation::fvDOM::Qr() const
+inline const Foam::volScalarField& Foam::radiation::fvDOM::qr() const
 {
-    return Qr_;
+    return qr_;
 }
 
-inline const Foam::volScalarField& Foam::radiation::fvDOM::Qin() const
+inline const Foam::volScalarField& Foam::radiation::fvDOM::qin() const
 {
-    return Qin_;
+    return qin_;
 }
 
 
-inline const Foam::volScalarField& Foam::radiation::fvDOM::Qem() const
+inline const Foam::volScalarField& Foam::radiation::fvDOM::qem() const
 {
-    return Qem_;
+    return qem_;
 }
 
 
@@ -107,22 +107,6 @@ inline const Foam::radiation::blackBodyEmission&
 Foam::radiation::fvDOM::blackBody() const
 {
     return blackBody_;
-}
-
-
-inline const Foam::fvScalarMatrix& Foam::radiation::fvDOM::fvRayDiv
-(
-    const label rayId,
-    const label lambdaI
-) const
-{
-    return fvRayDiv_[lambdaI][rayId];
-}
-
-
-inline bool Foam::radiation::fvDOM::cacheDiv() const
-{
-    return cacheDiv_;
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ Foam::tmp<Foam::volScalarField> Foam::functionObjects::scalarTransport::D
             turbulenceModel::propertiesName
         );
 
-        return model.nuEff();
+        return alphaD_*model.nu() + alphaDt_*model.nut();
     }
     else if (mesh_.foundObject<cmpModel>(turbulenceModel::propertiesName))
     {
@@ -98,7 +98,7 @@ Foam::tmp<Foam::volScalarField> Foam::functionObjects::scalarTransport::D
             turbulenceModel::propertiesName
         );
 
-        return model.muEff();
+        return alphaD_*model.mu() + alphaDt_*model.mut();
     }
     else
     {
@@ -169,11 +169,9 @@ bool Foam::functionObjects::scalarTransport::read(const dictionary& dict)
     rhoName_ = dict.lookupOrDefault<word>("rho", "rho");
     schemesField_ = dict.lookupOrDefault<word>("schemesField", fieldName_);
 
-    constantD_ = false;
-    if (dict.readIfPresent("D", D_))
-    {
-        constantD_ = true;
-    }
+    constantD_ = dict.readIfPresent("D", D_);
+    alphaD_ = dict.lookupOrDefault("alphaD", 1.0);
+    alphaDt_ = dict.lookupOrDefault("alphaDt", 1.0);
 
     dict.readIfPresent("nCorr", nCorr_);
 
@@ -254,7 +252,7 @@ bool Foam::functionObjects::scalarTransport::execute()
         FatalErrorInFunction
             << "Incompatible dimensions for phi: " << phi.dimensions() << nl
             << "Dimensions should be " << dimMass/dimTime << " or "
-            << dimVolume/dimTime << endl;
+            << dimVolume/dimTime << exit(FatalError);
     }
 
     Info<< endl;

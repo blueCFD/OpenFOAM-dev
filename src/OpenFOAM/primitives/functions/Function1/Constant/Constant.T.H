@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,9 +25,9 @@ Class
     Foam::Function1Types::Constant
 
 Description
-    Templated basic entry that holds a constant value.
+    Templated function that returns a constant value.
 
-    Usage - for entry \<entryName\> having the value <value>:
+    Usage - for entry \<entryName\> returning the value <value>:
     \verbatim
         <entryName>    constant  <value>
     \endverbatim
@@ -77,6 +77,9 @@ public:
 
 
     // Constructors
+
+        //- Construct from entry name and value
+        Constant(const word& entryName, const Type& val);
 
         //- Construct from entry name and dictionary
         Constant(const word& entryName, const dictionary& dict);

@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
@@ -62,24 +62,39 @@
 #         wdep -h
 #
 # See also
-#     wmakeLnInclude, wmakeLnIncludeAll, wdep, wrmdep, wrmo,
+#     wmakeLnInclude, wmakeLnIncludeAll, wmakeCollect, wdep, wrmdep, wrmo,
 #     wclean, wcleanPlatform, wcleanLnIncludeAll
 #
 #------------------------------------------------------------------------------
 Script=${0##*/}
 
-usage() {
+# Source the wmake functions
+. ${0%/*}/scripts/wmakeFunctions
+
+error() {
     exec 1>&2
     while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    usage
+    exit 1
+}
+
+usage() {
     cat<<USAGE
 
 Usage: $Script [OPTION] [dir]
        $Script [OPTION] target [dir [MakeDir]]
 
 options:
-  -s | -silent      Run make in 'silent' mode (do not echo commands)
-  -a | -all         Run wmake in all subdirectories
-  -h | -help        Print the usage
+  -silent   | -s    Quiet mode (does not echo commands)
+  -all      | -a    wmake all sub-directories, running Allwmake if present
+  -queue    | -q    wmakeCollect all sub-directories, running Allwmake if present
+  -non-stop | -k    Compile without stopping when errors occur
+  -j                Compile using all local cores/hyperthreads
+  -j <N>    | -j<N> Compile using N cores/hyperthreads
+  -no-scheduler     Compile without wmakeScheduler
+  -update           Update lnInclude directories, dep files, remove deprecated
+                    files and directories
+  -help     | -h    Print the usage
 
 
 A general, easy-to-use make system for multi-platform development
@@ -89,16 +104,17 @@ The 'target' is a Makefile target:
   e.g., platforms/linux64GccDPOpt/.../fvMesh.o
 
 or a special target:
-  all               wmake all subdirectories, running Allwmake files if present
+  all               wmake all sub-directories, running Allwmake if present
+  queue             wmakeCollect all sub-directories, running Allwmake if present
   exe               Compile statically linked executable
   lib               Compile statically linked archive lib (.a)
   libo              Compile statically linked lib (.o)
   libso             Compile dynamically linked lib (.so)
   dep               Compile lnInclude and dependencies only
   updatedep         Compile dependencies only (in case of broken dependencies)
+  objects           Compile but not link
 
 USAGE
-    exit 1
 }
 
 
@@ -107,33 +123,88 @@ make="make"
 
 
 #------------------------------------------------------------------------------
+# Set WM_NCOMPPROCS to number of cores on local machine
+#------------------------------------------------------------------------------
+
+useAllCores()
+{
+    if [ -r /proc/cpuinfo ]
+    then
+        WM_NCOMPPROCS=$(egrep "^processor" /proc/cpuinfo | wc -l)
+    else
+        WM_NCOMPPROCS=1
+    fi
+
+    export WM_NCOMPPROCS
+}
+
+
+#------------------------------------------------------------------------------
 # Parse arguments and options
 #------------------------------------------------------------------------------
 
 # Default to compiling the local target only
 all=
+update=
 
 while [ "$#" -gt 0 ]
 do
     case "$1" in
-    -h | -help)
-        usage
-        ;;
-    -s | -silent)
-        make="$make -s"
-        shift
-        ;;
-    -a | -all | all)
-        all="all"
-        shift
-        ;;
-    -*)
-        usage "unknown option: '$*'"
-        ;;
-    *)
-        break
-        ;;
+        # Print help
+        -h | -help)
+            usage && exit 0
+            ;;
+        -s | -silent)
+            export WM_QUIET=1
+            ;;
+        -a | -all | all)
+            all="all"
+            ;;
+        -q | -queue | queue)
+            all="queue"
+            ;;
+        # Parallel compilation on all cores of local machine
+        -j)
+            useAllCores
+            test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1 \
+                && shift && export WM_NCOMPPROCS=$1
+            echo "Compiling enabled on $WM_NCOMPPROCS cores"
+            ;;
+        # Parallel compilation on specified number of cores
+        -j*)
+            export WM_NCOMPPROCS=${1#-j}
+            echo "Compiling enabled on $WM_NCOMPPROCS cores"
+            ;;
+        # Non-stop compilation, ignoring errors
+        -k | -non-stop)
+            export WM_CONTINUE_ON_ERROR=1
+            ;;
+        # Disable scheduled parallel compilation
+        -no-scheduler)
+            unset WM_SCHEDULER
+            ;;
+        # Meant to be used following a pull, this will:
+        # - remove dep files that depend on deleted files;
+        # - remove stale dep files;
+        # - update lnInclude directories;
+        # - remove empty directories, along with deprecated object directories
+        #   and respective binaries.
+        -update)
+            update="true"
+            [ -z "$all" ] && all="all"
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            error "unknown option: '$*'"
+            ;;
+        *)
+            break
+            ;;
     esac
+    shift
 done
 
 
@@ -141,14 +212,7 @@ done
 # Check environment variables
 #------------------------------------------------------------------------------
 
-for envar in WM_OPTIONS WM_LINK_LANGUAGE WM_DIR
-do
-    eval test "\$$envar" || {
-        echo "$Script error: environment variable \$$envar not set" 1>&2
-        exit 1
-    }
-done
-
+checkEnv
 
 # When compiling anything but a standalone exe WM_PROJECT and WM_PROJECT_DIR
 # must be set
@@ -174,6 +238,8 @@ fi
 
 if [ "$WM_NCOMPPROCS" ]
 then
+    parOpt="-j $WM_NCOMPPROCS"
+
     if [ "$WM_NCOMPPROCS" -gt 1 -a ! "$MAKEFLAGS" ]
     then
         lockDir=$HOME/.$WM_PROJECT/.wmake
@@ -185,7 +251,7 @@ then
             mkdir -p $lockDir
         fi
 
-        make="$make --no-print-directory -j "$WM_NCOMPPROCS
+        make="$make --no-print-directory $parOpt"
     fi
 fi
 
@@ -219,6 +285,24 @@ then
             exit 1
         }
     fi
+
+    # Print command
+    [ -z "$targetType" ] || targetSpace=" "
+    echo "$Script $targetType$targetSpace${dir:-.}"
+fi
+
+
+#------------------------------------------------------------------------------
+# Recurse the source tree to compile "all" targets
+#------------------------------------------------------------------------------
+
+if [ -n "$update" ]
+then
+    wrmdep -update
+    wrmdep -old
+    wmakeLnIncludeAll -update $parOpt
+    wclean empty
+    export WM_UPDATE_DEPENDENCIES=yes
 fi
 
 
@@ -230,7 +314,7 @@ if [ "$all" = "all" ]
 then
     if [ -e Allwmake ]
     then
-        ./Allwmake
+        ./Allwmake -fromWmake $targetType
         exit $?
     else
         # Have to keep track of the main exit code for the call to "make"
@@ -265,61 +349,31 @@ fi
 
 
 #------------------------------------------------------------------------------
-# Search up the directory tree for the Make sub-directory,
-# check the existance of the 'files' file and build there if present
+# Recurse the source tree to compile "all" targets using wmakeCollect
 #------------------------------------------------------------------------------
 
-unset dir
-
-expandPath()
-{
-    dir=$(dirname $1)
-    cwd=$PWD
-    cd $dir
-    exPath=$PWD
-    cd $cwd
-}
-
-findTarget()
-{
-    expandPath $1
-
-    if [ "$exPath" = "$WM_PROJECT_DIR" \
-                   -o "$exPath" = "$HOME" \
-                   -o "$exPath" = "/" \
-       ]
-    then
-        echo "$Script error: could not find Make directory" 1>&2
-    elif [ -d "$1/Make" ]; then
-        echo "    Found target directory " $1
-        dir=$1
-    else
-        findTarget "$1/.."
-    fi
-}
-
-if [ ! -d $MakeDir ]
+if [ "$all" = "queue" ]
 then
-    echo "$Script: '$MakeDir' directory does not exist in $PWD" 1>&2
-    echo "    Searching up directories tree for Make directory"
+    [ -n "$update" ] || wmakeLnIncludeAll $parOpt
 
-    findTarget .
-    targetType=
-
-    if [ "$dir" ]
-    then
-        cd $dir 2>/dev/null || {
-            echo "$Script error: could not change to directory '$dir'" 1>&2
-            exit 1
-        }
-    fi
+    (
+        export WM_COLLECT_DIR=$WM_PROJECT_DIR/platforms/${WM_OPTIONS}/${PWD////_}
+        export WM_SCHEDULER=wmakeCollect
+        trap '$WM_SCHEDULER -kill' TERM INT
+        $WM_SCHEDULER -clean                                                   \
+     && wmake -all objects                                                     \
+     && $WM_SCHEDULER
+    ) && wmake -all
+    exit $?
 fi
 
 
-[ -r $MakeDir/files ] || {
-    echo "$Script error: file '$MakeDir/files' does not exist in $PWD" 1>&2
-    exit 1
-}
+#------------------------------------------------------------------------------
+# Search up the directory tree for the Make sub-directory,
+# check the existence of the 'files' file and build there if present
+#------------------------------------------------------------------------------
+
+cdSource
 
 
 #------------------------------------------------------------------------------
@@ -335,6 +389,15 @@ then
     then
         targetType=libso
     fi
+elif grep -e '^ *EXE *=' "$MakeDir/files" >/dev/null 2>&1
+then
+    # Application. Remove any nonsense targetType
+    case "$targetType" in
+      lib*)
+        unset targetType
+        break
+        ;;
+    esac
 fi
 
 
@@ -344,7 +407,7 @@ fi
 #------------------------------------------------------------------------------
 
 objectsDir=$MakeDir/$WM_OPTIONS
-if echo $PWD | grep "$WM_PROJECT_DIR"
+if [ $(echo $PWD | grep "$WM_PROJECT_DIR") ]
 then
     platformPath=$WM_PROJECT_DIR/platforms/${WM_OPTIONS}
     objectsDir=$platformPath$(echo $PWD | sed s%$WM_PROJECT_DIR%% )
@@ -447,7 +510,7 @@ exec $make -f $WM_DIR/makefiles/general MAKE_DIR=$MakeDir \
 # Cleanup local variables and functions
 #------------------------------------------------------------------------------
 
-unset Script usage expandPath findTarget
+unset Script usage error useAllCores update expandPath findTarget
 
 
 #------------------------------------------------------------------------------

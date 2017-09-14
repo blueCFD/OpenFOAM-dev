@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,6 +88,9 @@ int main(int argc, char *argv[])
             // Store momentum to set rhoUf for introduced faces.
             volVectorField rhoU("rhoU", rho*U);
 
+            // Store the particle positions
+            parcels.storeGlobalPositions();
+
             // Do any mesh changes
             mesh.update();
 
@@ -135,7 +138,7 @@ int main(int argc, char *argv[])
 
         if (runTime.write())
         {
-            combustion->dQ()().write();
+            combustion->Qdot()().write();
         }
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

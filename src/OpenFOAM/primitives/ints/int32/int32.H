@@ -36,18 +36,13 @@ SourceFiles
 #ifndef int32_H
 #define int32_H
 
-#define __STDC_LIMIT_MACROS
-#include <stdint.h>
+#include <cstdint>
 #include <climits>
 #include <cstdlib>
 
 #include "word.H"
 #include "pTraits.H"
 #include "direction.H"
-
-#ifndef UINT32_MIN
-#define UINT32_MIN 0
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

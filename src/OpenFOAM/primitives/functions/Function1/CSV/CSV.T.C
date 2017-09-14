@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "CSV.T.H"
 #include "DynamicList.T.H"
-#include "IFstream.H"
+//#include "IFstream.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -92,7 +92,9 @@ template<class Type>
 void Foam::Function1Types::CSV<Type>::read()
 {
     fileName expandedFile(fName_);
-    IFstream is(expandedFile.expand());
+    //IFstream is(expandedFile.expand());
+    autoPtr<ISstream> isPtr(fileHandler().NewIFstream(expandedFile.expand()));
+    ISstream& is = isPtr();
 
     if (!is.good())
     {
@@ -203,18 +205,16 @@ template<class Type>
 Foam::Function1Types::CSV<Type>::CSV
 (
     const word& entryName,
-    const dictionary& dict,
-    const word& ext
+    const dictionary& dict
 )
 :
-    TableBase<Type>(entryName, dict.subDict(entryName + ext)),
-    coeffs_(dict.subDict(entryName + ext)),
-    nHeaderLine_(readLabel(coeffs_.lookup("nHeaderLine"))),
-    refColumn_(readLabel(coeffs_.lookup("refColumn"))),
-    componentColumns_(coeffs_.lookup("componentColumns")),
-    separator_(coeffs_.lookupOrDefault<string>("separator", string(","))[0]),
-    mergeSeparators_(readBool(coeffs_.lookup("mergeSeparators"))),
-    fName_(coeffs_.lookup("fileName"))
+    TableBase<Type>(entryName, dict),
+    nHeaderLine_(readLabel(dict.lookup("nHeaderLine"))),
+    refColumn_(readLabel(dict.lookup("refColumn"))),
+    componentColumns_(dict.lookup("componentColumns")),
+    separator_(dict.lookupOrDefault<string>("separator", string(","))[0]),
+    mergeSeparators_(readBool(dict.lookup("mergeSeparators"))),
+    fName_(dict.lookup("file"))
 {
     if (componentColumns_.size() != pTraits<Type>::nComponents)
     {
@@ -293,7 +293,7 @@ void Foam::Function1Types::CSV<Type>::writeData(Ostream& os) const
         << token::END_STATEMENT << nl;
     os.writeKeyword("mergeSeparators") << mergeSeparators_
         << token::END_STATEMENT << nl;
-    os.writeKeyword("fileName") << fName_ << token::END_STATEMENT << nl;
+    os.writeKeyword("file") << fName_ << token::END_STATEMENT << nl;
     os  << decrIndent << indent << token::END_BLOCK << endl;
 }
 

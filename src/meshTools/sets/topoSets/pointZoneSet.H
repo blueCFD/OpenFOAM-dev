@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,8 @@ Class
     Foam::pointZoneSet
 
 Description
-    Like pointSet but updates pointZone when writing.
+    Like pointSet but -reads data from pointZone -updates pointZone when
+    writing.
 
 SourceFiles
     pointZone.C
@@ -145,7 +146,8 @@ public:
         (
             IOstream::streamFormat,
             IOstream::versionNumber,
-            IOstream::compressionType
+            IOstream::compressionType,
+            const bool valid
         ) const;
 
         //- Update any stored data for new labels
@@ -153,10 +155,6 @@ public:
 
         //- Return max index+1.
         virtual label maxSize(const polyMesh& mesh) const;
-
-
-
-
 };
 
 

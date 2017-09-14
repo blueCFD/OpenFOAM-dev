@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,18 +29,15 @@ Description
 
     References:
     \verbatim
-        "A variable order Runge-Kutta method for initial value problems
-         with rapidly varying right-hand sides"
-        Cash, J.R.,
-        Karp, A.H.
-        ACM Transactions on Mathematical Software, vol. 16, 1990, pp. 201–222.
+        Cash, J. R., & Karp, A. H. (1990).
+        A variable order Runge-Kutta method for initial value problems
+        with rapidly varying right-hand sides.
+        ACM Transactions on Mathematical Software (TOMS), 16(3), 201-222.
 
-        "Solving Ordinary Differential Equations I: Nonstiff Problems,
-         second edition",
-        Hairer, E.,
-        Nørsett, S.,
-        Wanner, G.,
-        Springer-Verlag, Berlin. 1993, ISBN 3-540-56670-8.
+        Hairer, E., Nørsett, S. P., & Wanner, G. (1993).
+        Solving Ordinary Differential Equations I: Nonstiff Problems,
+        second edition.
+        Springer-Verlag, Berlin.
     \endverbatim
 
 SourceFiles
@@ -98,8 +95,13 @@ public:
 
     // Constructors
 
-        //- Construct from ODE
+        //- Construct from ODESystem
         RKCK45(const ODESystem& ode, const dictionary& dict);
+
+
+    //- Destructor
+    virtual ~RKCK45()
+    {}
 
 
     // Member Functions
@@ -107,8 +109,11 @@ public:
         //- Inherit solve from ODESolver
         using ODESolver::solve;
 
+        //- Resize the ODE solver
+        virtual bool resize();
+
         //- Solve a single step dx and return the error
-        scalar solve
+        virtual scalar solve
         (
             const scalar x0,
             const scalarField& y0,
@@ -118,7 +123,7 @@ public:
         ) const;
 
         //- Solve the ODE system and the update the state
-        void solve
+        virtual void solve
         (
             scalar& x,
             scalarField& y,

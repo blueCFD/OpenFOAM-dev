@@ -50,7 +50,7 @@ void Foam::functionObjects::histogram::writeGraph
 {
     const wordList fieldNames(1, fieldName);
 
-    fileName outputPath = baseTimeDir();
+    fileName outputPath = file_.baseTimeDir();
     mkDir(outputPath);
     OFstream graphFile
     (
@@ -75,14 +75,9 @@ Foam::functionObjects::histogram::histogram
     const dictionary& dict
 )
 :
-    writeFile(name, runTime, dict, name)
+    fvMeshFunctionObject(name, runTime, dict),
+    file_(obr_, name)
 {
-    if (!isA<fvMesh>(obr_))
-    {
-        FatalErrorInFunction
-            << "objectRegistry is not an fvMesh" << exit(FatalError);
-    }
-
     read(dict);
 }
 
@@ -119,8 +114,6 @@ bool Foam::functionObjects::histogram::write()
 {
     Log << type() << " " << name() << " write:" << nl;
 
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-
     autoPtr<volScalarField> fieldPtr;
     if (obr_.foundObject<volScalarField>(fieldName_))
     {
@@ -136,12 +129,12 @@ bool Foam::functionObjects::histogram::write()
                 IOobject
                 (
                     fieldName_,
-                    mesh.time().timeName(),
-                    mesh,
+                    mesh_.time().timeName(),
+                    mesh_,
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE
                 ),
-                mesh
+                mesh_
             )
         );
     }
@@ -165,7 +158,7 @@ bool Foam::functionObjects::histogram::write()
     }
 
     scalarField volFrac(nBins_, 0);
-    const scalarField& V = mesh.V();
+    const scalarField& V = mesh_.V();
 
     forAll(field, celli)
     {

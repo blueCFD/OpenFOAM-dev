@@ -28,7 +28,7 @@ int USERD_set_filenames
         // remove the last '/' from rootDir
         if (the_path[lRoot-1] == '/')
         {
-            the_path[lRoot-1] = char(NULL);
+            the_path[lRoot-1] = '\0';
         }
         else
         {
@@ -151,7 +151,7 @@ int USERD_set_filenames
     {
         runTime.setTime(timeDirs[n+1], n+1);
 
-        Cloud<passiveParticle> lagrangian(*meshPtr);
+        Cloud<passiveParticle> lagrangian(*meshPtr, cloud::defaultName);
 
         n++;
         if (lagrangian.size())
@@ -171,13 +171,13 @@ int USERD_set_filenames
         false
     );
 
-    if (sprayHeader.headerOk())
+    if (sprayHeader.typeHeaderOk<Cloud<passiveParticle>>(false))
     {
         Info<< "[Found lagrangian]" << endl;
 
         delete sprayPtr;
 
-        sprayPtr = new Cloud<passiveParticle>(*meshPtr);
+        sprayPtr = new Cloud<passiveParticle>(*meshPtr, cloud::defaultName);
 
         IOobjectList objects(*meshPtr, runTime.timeName(), cloud::prefix);
 

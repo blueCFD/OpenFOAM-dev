@@ -1,9 +1,2 @@
-    ddtPhi1 =
-    (
-        (phi1 - phi1.oldTime())/runTime.deltaT()
-    );
-
-    ddtPhi2 =
-    (
-        (phi2 - phi2.oldTime())/runTime.deltaT()
-    );
+tddtPhi1 = fvc::ddt(phi1);
+tddtPhi2 = fvc::ddt(phi2);

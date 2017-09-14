@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -250,6 +250,13 @@ public:
                 const GeometricField&
             ) const;
 
+            //- Return the corresponding patchField reference of the named field
+            template<class GeometricField, class Type>
+            typename GeometricField::Patch& patchField
+            (
+                GeometricField&
+            ) const;
+
             //- Lookup and return the patchField of the named field from the
             //  local objectRegistry.
             //  N.B.  The dummy pointer arguments are used if this function is
@@ -259,8 +266,8 @@ public:
             const typename GeometricField::Patch& lookupPatchField
             (
                 const word& name,
-                const GeometricField* = NULL,
-                const Type* = NULL
+                const GeometricField* = nullptr,
+                const Type* = nullptr
             ) const;
 };
 

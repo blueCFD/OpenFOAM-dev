@@ -47,7 +47,7 @@ Description
 #include "fvMeshSubset.H"
 #include "argList.H"
 #include "cellSet.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "volFields.H"
 #include "mapPolyMesh.H"
 #include "faceSet.H"

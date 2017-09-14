@@ -19,7 +19,7 @@
             false
         );
 
-        if (io.headerOk())
+        if (io.typeHeaderOk<IOdictionary>(true))
         {
             IOdictionary timeObject
             (
@@ -48,4 +48,3 @@
     }
 
     Info<< "\nTime [" << timeName << "] = " << runTime.timeName() << nl;
-

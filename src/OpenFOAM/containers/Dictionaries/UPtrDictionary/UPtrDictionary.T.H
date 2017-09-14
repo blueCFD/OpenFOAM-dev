@@ -40,7 +40,7 @@ SourceFiles
 #define UPtrDictionary_H
 
 #include "DictionaryBase.T.H"
-#include "DLList.T.H"
+#include "DLList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -53,15 +53,10 @@ Foam::functionObjects::residuals::residuals
     const dictionary& dict
 )
 :
-    writeFiles(name, runTime, dict, name),
+    fvMeshFunctionObject(name, runTime, dict),
+    logFiles(obr_, name),
     fieldSet_()
 {
-    if (!isA<fvMesh>(obr_))
-    {
-        FatalErrorInFunction
-            << "objectRegistry is not an fvMesh" << exit(FatalError);
-    }
-
     read(dict);
     resetName(typeName);
 }
@@ -77,6 +72,8 @@ Foam::functionObjects::residuals::~residuals()
 
 bool Foam::functionObjects::residuals::read(const dictionary& dict)
 {
+    fvMeshFunctionObject::read(dict);
+
     dict.lookup("fields") >> fieldSet_;
 
     return true;
@@ -114,7 +111,7 @@ bool Foam::functionObjects::residuals::execute()
 
 bool Foam::functionObjects::residuals::write()
 {
-    writeFiles::write();
+    logFiles::write();
 
     if (Pstream::master())
     {

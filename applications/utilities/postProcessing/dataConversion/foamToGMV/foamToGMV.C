@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
 #include "fvCFD.H"
 #include "OFstream.H"
 #include "instantList.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "itoa.H"
 #include "Cloud.T.H"
 #include "passiveParticle.H"
@@ -97,4 +97,3 @@ int main(int argc, char *argv[])
 
 
 // ************************************************************************* //
-

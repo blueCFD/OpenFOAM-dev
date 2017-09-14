@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ Foam::LiftForce<CloudType>::LiftForce
 :
     ParticleForce<CloudType>(owner, mesh, dict, forceType, true),
     UName_(this->coeffs().template lookupOrDefault<word>("U", "U")),
-    curlUcInterpPtr_(NULL)
+    curlUcInterpPtr_(nullptr)
 {}
 
 
@@ -64,7 +64,7 @@ Foam::LiftForce<CloudType>::LiftForce(const LiftForce& lf)
 :
     ParticleForce<CloudType>(lf),
     UName_(lf.UName_),
-    curlUcInterpPtr_(NULL)
+    curlUcInterpPtr_(nullptr)
 {}
 
 
@@ -137,7 +137,7 @@ Foam::forceSuSp Foam::LiftForce<CloudType>::calcCoupled
     forceSuSp value(Zero, 0.0);
 
     vector curlUc =
-        curlUcInterp().interpolate(p.position(), p.currentTetIndices());
+        curlUcInterp().interpolate(p.coordinates(), p.currentTetIndices());
 
     scalar Cl = this->Cl(p, curlUc, Re, muc);
 

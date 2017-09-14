@@ -6,10 +6,8 @@
 #   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2016-08-03 blueCAPE Lda: Added -target and -jobs
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -42,16 +40,10 @@ usage: ${0##*/} [OPTION]
 
 options:
   -root <dir>       specify root directory to run tests from
-  -target <dir>     specify directory where the tests are executed in
   -default          sets up a default scheme on all schemes
-  -jobs N           for running multiple serial cases in parallel with N cores
   -help             print the usage
 
 * quickly tests the tutorials and writes out the scheme/solver information
-
-Currently defined paths:
-  root:    $(realpath $TUTORIALS_DIR)
-  target:  $(realpath $TEST_RUN_DIR)
 
 USAGE
     exit 1
@@ -61,9 +53,7 @@ USAGE
 
 unset DEFAULT_SCHEMES
 
-TUTORIALS_DIR="./"
-TEST_RUN_DIR="../tutorialsTest"
-RUN_ARGUMENTS=""
+ROOT="./"
 
 # parse options
 while [ "$#" -gt 0 ]
@@ -71,28 +61,14 @@ do
     case "$1" in
     -r | -root)
         [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
-        TUTORIALS_DIR="$2"
+        ROOT="$2"
         shift
-        ;;
-    -t | -target)
-        [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
-        TEST_RUN_DIR="$2"
-        shift
-        ;;
-    -d | -default)
-        DEFAULT_SCHEMES=true
-        ;;
-    -j | -jobs)
-        if test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1
-        then
-            RUN_ARGUMENTS="${RUN_ARGUMENTS} -jobs $2"
-            shift
-        else
-            usage "Error: Missing number of jobs"
-        fi
         ;;
     -h | -help)
         usage
+        ;;
+    -d | -default)
+        DEFAULT_SCHEMES=true
         ;;
     -*)
         usage "unknown option: '$*'"
@@ -154,6 +130,8 @@ done
 [ -f "$MAIN_CONTROL_DICT" ] || usage "main controlDict not found"
 
 
+TUTORIALS_DIR=$ROOT
+TEST_RUN_DIR=../tutorialsTest
 FV_SCHEMES=\
 " \
     gradScheme \
@@ -196,7 +174,7 @@ sed \
 ${MAIN_CONTROL_DICT}.orig > ${MAIN_CONTROL_DICT}
 
 echo "Copying the tutorials"
-cp -r ${TUTORIALS_DIR} ${TEST_RUN_DIR}
+cp -a ${TUTORIALS_DIR} ${TEST_RUN_DIR}
 
 echo "Modifying the controlDicts to run only one time step"
 cd ${TEST_RUN_DIR} || exit 1
@@ -227,7 +205,7 @@ then
 fi
 
 cp -f $FOAM_TUTORIALS/Allrun .
-./Allrun $RUN_ARGUMENTS
+./Allrun
 
 
 sed -e :a -e '/\\$/N; s/\\\n//; ta' Allrun > temp

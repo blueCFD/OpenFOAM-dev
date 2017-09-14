@@ -25,12 +25,13 @@ License
 
 #include "Istream.T.H"
 #include "cell.H"
+#include "cellModeller.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 inline Foam::cellShape::cellShape()
 :
-    m(NULL)
+    m(nullptr)
 {}
 
 
@@ -43,6 +44,23 @@ inline Foam::cellShape::cellShape
 :
     labelList(l),
     m(&M)
+{
+    if (doCollapse)
+    {
+        collapse();
+    }
+}
+
+
+inline Foam::cellShape::cellShape
+(
+    const word& model,
+    const labelList& l,
+    const bool doCollapse
+)
+:
+    labelList(l),
+    m(cellModeller::lookup(model))
 {
     if (doCollapse)
     {

@@ -8,11 +8,12 @@
         fvc::flux(HbyA)
       + fvc::interpolate(rho*rAU)*fvc::ddtCorr(U, Uf)
     );
+    MRF.makeRelative(phiHbyA);
 
     surfaceScalarField phig
     (
         (
-            interface.surfaceTensionForce()
+            mixture.surfaceTensionForce()
           - ghf*fvc::snGrad(rho)
         )*rAUf*mesh.magSf()
     );
@@ -20,7 +21,7 @@
     phiHbyA += phig;
 
     // Update the pressure BCs to ensure flux consistency
-    constrainPressure(p_rgh, U, phiHbyA, rAUf);
+    constrainPressure(p_rgh, U, phiHbyA, rAUf, MRF);
 
     // Make the fluxes relative to the mesh motion
     fvc::makeRelative(phiHbyA, U);
@@ -55,13 +56,29 @@
     }
     else
     {
+        #include "rhofs.H"
+
         p_rghEqnComp1 =
-            fvc::ddt(rho1) + psi1*correction(fvm::ddt(p_rgh))
-          + fvc::div(phi, rho1) - fvc::Sp(fvc::div(phi), rho1);
+            pos(alpha1)
+           *(
+                (
+                    fvc::ddt(alpha1, rho1) + fvc::div(alphaPhi1*rho1f)
+                  - (fvOptions(alpha1, mixture.thermo1().rho())&rho1)
+                )/rho1
+              - fvc::ddt(alpha1) - fvc::div(alphaPhi1)
+              + (alpha1*psi1/rho1)*correction(fvm::ddt(p_rgh))
+            );
 
         p_rghEqnComp2 =
-            fvc::ddt(rho2) + psi2*correction(fvm::ddt(p_rgh))
-          + fvc::div(phi, rho2) - fvc::Sp(fvc::div(phi), rho2);
+            pos(alpha2)
+           *(
+               (
+                   fvc::ddt(alpha2, rho2) + fvc::div(alphaPhi2*rho2f)
+                 - (fvOptions(alpha2, mixture.thermo2().rho())&rho2)
+               )/rho2
+             - fvc::ddt(alpha2) - fvc::div(alphaPhi2)
+             + (alpha2*psi2/rho2)*correction(fvm::ddt(p_rgh))
+            );
     }
 
     // Cache p_rgh prior to solve for density update
@@ -77,11 +94,7 @@
 
         solve
         (
-            (
-                (max(alpha1, scalar(0))/rho1)*p_rghEqnComp1()
-              + (max(alpha2, scalar(0))/rho2)*p_rghEqnComp2()
-            )
-          + p_rghEqnIncomp,
+            p_rghEqnComp1() + p_rghEqnComp2() + p_rghEqnIncomp,
             mesh.solver(p_rgh.select(pimple.finalInnerIter()))
         );
 
@@ -92,8 +105,8 @@
 
             dgdt =
             (
-                pos(alpha2)*(p_rghEqnComp2 & p_rgh)/rho2
-              - pos(alpha1)*(p_rghEqnComp1 & p_rgh)/rho1
+                alpha1*(p_rghEqnComp2 & p_rgh)
+              - alpha2*(p_rghEqnComp1 & p_rgh)
             );
 
             phi = phiHbyA + p_rghEqnIncomp.flux();
@@ -101,6 +114,7 @@
             U = HbyA
               + rAU*fvc::reconstruct((phig + p_rghEqnIncomp.flux())/rAUf);
             U.correctBoundaryConditions();
+            fvOptions.correct(U);
         }
     }
 
@@ -111,8 +125,8 @@
     }
 
     // Update densities from change in p_rgh
-    rho1 += psi1*(p_rgh - p_rgh_0);
-    rho2 += psi2*(p_rgh - p_rgh_0);
+    mixture.thermo1().correctRho(psi1*(p_rgh - p_rgh_0));
+    mixture.thermo2().correctRho(psi2*(p_rgh - p_rgh_0));
 
     rho = alpha1*rho1 + alpha2*rho2;
 
@@ -121,7 +135,4 @@
     p_rgh.correctBoundaryConditions();
 
     K = 0.5*magSqr(U);
-
-    Info<< "max(U) " << max(mag(U)).value() << endl;
-    Info<< "min(p_rgh) " << min(p_rgh).value() << endl;
 }

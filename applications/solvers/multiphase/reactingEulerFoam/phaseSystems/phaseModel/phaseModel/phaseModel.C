@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,7 +77,7 @@ Foam::phaseModel::phaseModel
 Foam::autoPtr<Foam::phaseModel> Foam::phaseModel::clone() const
 {
     NotImplemented;
-    return autoPtr<phaseModel>(NULL);
+    return autoPtr<phaseModel>(nullptr);
 }
 
 
@@ -165,10 +165,28 @@ bool Foam::phaseModel::compressible() const
 }
 
 
+void Foam::phaseModel::correctInflowOutflow(surfaceScalarField& alphaPhi) const
+{
+    surfaceScalarField::Boundary& alphaPhiBf = alphaPhi.boundaryFieldRef();
+    const volScalarField::Boundary& alphaBf = boundaryField();
+    const surfaceScalarField::Boundary& phiBf = phi()().boundaryField();
+
+    forAll(alphaPhiBf, patchi)
+    {
+        fvsPatchScalarField& alphaPhip = alphaPhiBf[patchi];
+
+        if (!alphaPhip.coupled())
+        {
+            alphaPhip = phiBf[patchi]*alphaBf[patchi];
+        }
+    }
+}
+
+
 const Foam::tmp<Foam::volScalarField>& Foam::phaseModel::divU() const
 {
     NotImplemented;
-    static tmp<Foam::volScalarField> divU_(NULL);
+    static tmp<Foam::volScalarField> divU_(nullptr);
     return divU_;
 }
 

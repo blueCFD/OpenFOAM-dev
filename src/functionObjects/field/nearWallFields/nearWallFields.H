@@ -28,7 +28,7 @@ Group
     grpFieldFunctionObjects
 
 Description
-    This function object samples near-patch volume fields
+    Samples near-patch volume fields.
 
     Fields are stored
     - every time step the field is updated with new values
@@ -43,10 +43,18 @@ Description
     nearWallFields1
     {
         type        nearWallFields;
-        libs ("libfieldFunctionObjects.so");
-        ...
-        fields      ((p pNear)(U UNear));
+        libs        ("libfieldFunctionObjects.so");
+
+        writeControl writeTime;
+
+        fields
+        (
+            (p pNear)
+            (U UNear)
+        );
+
         patches     (movingWall);
+
         distance    0.13;
     }
     \endverbatim

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,6 +39,8 @@ namespace surfaceFilmModels
 
 defineTypeNameAndDebug(surfaceFilmModel, 0);
 defineRunTimeSelectionTable(surfaceFilmModel, mesh);
+
+const dimensionedScalar surfaceFilmModel::Tref("Tref", dimTemperature, 298.15);
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
@@ -89,28 +91,28 @@ Foam::scalar surfaceFilmModel::CourantNumber() const
 }
 
 
-tmp<DimensionedField<scalar, volMesh>> surfaceFilmModel::Srho() const
+tmp<volScalarField::Internal> surfaceFilmModel::Srho() const
 {
     NotImplemented;
 
-    return tmp<DimensionedField<scalar, volMesh>>(NULL);
+    return tmp<volScalarField::Internal>(nullptr);
 }
 
 
-tmp<DimensionedField<scalar, volMesh>>
+tmp<volScalarField::Internal>
 surfaceFilmModel::Srho(const label) const
 {
     NotImplemented;
 
-    return tmp<DimensionedField<scalar, volMesh>>(NULL);
+    return tmp<volScalarField::Internal>(nullptr);
 }
 
 
-tmp<DimensionedField<scalar, volMesh>> surfaceFilmModel::Sh() const
+tmp<volScalarField::Internal> surfaceFilmModel::Sh() const
 {
     NotImplemented;
 
-    return tmp<DimensionedField<scalar, volMesh>>(NULL);
+    return tmp<volScalarField::Internal>(nullptr);
 }
 
 

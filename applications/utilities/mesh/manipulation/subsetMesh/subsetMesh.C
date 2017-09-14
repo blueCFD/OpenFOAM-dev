@@ -39,7 +39,7 @@ Description
 #include "fvMeshSubset.H"
 #include "argList.H"
 #include "cellSet.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "volFields.H"
 
 using namespace Foam;
@@ -155,7 +155,7 @@ void subsetDimensionedFields
 (
     const fvMeshSubset& subsetter,
     const wordList& fieldNames,
-    PtrList<DimensionedField<Type, volMesh> >& subFields
+    PtrList<DimensionedField<Type, volMesh>>& subFields
 )
 {
     const fvMesh& baseMesh = subsetter.baseMesh();

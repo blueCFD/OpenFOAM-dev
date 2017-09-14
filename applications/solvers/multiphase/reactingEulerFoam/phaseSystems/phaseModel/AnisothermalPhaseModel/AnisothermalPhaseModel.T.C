@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,6 +61,13 @@ Foam::AnisothermalPhaseModel<BasePhaseModel>::~AnisothermalPhaseModel()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class BasePhaseModel>
+bool Foam::AnisothermalPhaseModel<BasePhaseModel>::compressible() const
+{
+    return !this->thermo().incompressible();
+}
+
+
+template<class BasePhaseModel>
 void Foam::AnisothermalPhaseModel<BasePhaseModel>::correctKinematics()
 {
     BasePhaseModel::correctKinematics();
@@ -78,10 +85,38 @@ void Foam::AnisothermalPhaseModel<BasePhaseModel>::correctThermo()
 
 
 template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::AnisothermalPhaseModel<BasePhaseModel>::filterPressureWork
+(
+    const tmp<volScalarField>& pressureWork
+) const
+{
+    const volScalarField& alpha = *this;
+
+    scalar pressureWorkAlphaLimit =
+        this->thermo_->lookupOrDefault("pressureWorkAlphaLimit", 0.0);
+
+    if (pressureWorkAlphaLimit > 0)
+    {
+        return
+        (
+            max(alpha - pressureWorkAlphaLimit, scalar(0))
+           /max(alpha - pressureWorkAlphaLimit, pressureWorkAlphaLimit)
+        )*pressureWork;
+    }
+    else
+    {
+        return pressureWork;
+    }
+}
+
+
+template<class BasePhaseModel>
 Foam::tmp<Foam::fvScalarMatrix>
 Foam::AnisothermalPhaseModel<BasePhaseModel>::heEqn()
 {
     const volScalarField& alpha = *this;
+    const volVectorField& U = this->U();
     const surfaceScalarField& alphaPhi = this->alphaPhi();
     const surfaceScalarField& alphaRhoPhi = this->alphaRhoPhi();
 
@@ -93,7 +128,8 @@ Foam::AnisothermalPhaseModel<BasePhaseModel>::heEqn()
 
     tmp<fvScalarMatrix> tEEqn
     (
-        fvm::ddt(alpha, this->rho(), he) + fvm::div(alphaRhoPhi, he)
+        fvm::ddt(alpha, this->rho(), he)
+      + fvm::div(alphaRhoPhi, he)
       - fvm::Sp(contErr, he)
 
       + fvc::ddt(alpha, this->rho(), K_) + fvc::div(alphaRhoPhi, K_)
@@ -106,29 +142,24 @@ Foam::AnisothermalPhaseModel<BasePhaseModel>::heEqn()
             he
         )
      ==
-        this->Sh()
+        alpha*this->Qdot()
     );
 
     // Add the appropriate pressure-work term
     if (he.name() == this->thermo_->phasePropertyName("e"))
     {
-        tEEqn.ref() +=
-            fvc::ddt(alpha)*this->thermo().p()
-          + fvc::div(alphaPhi, this->thermo().p());
+        tEEqn.ref() += filterPressureWork
+        (
+            fvc::div(fvc::absolute(alphaPhi, alpha, U), this->thermo().p())
+          + this->thermo().p()*fvc::ddt(alpha)
+        );
     }
     else if (this->thermo_->dpdt())
     {
-        tEEqn.ref() -= alpha*this->fluid().dpdt();
+        tEEqn.ref() -= filterPressureWork(alpha*this->fluid().dpdt());
     }
 
     return tEEqn;
-}
-
-
-template<class BasePhaseModel>
-bool Foam::AnisothermalPhaseModel<BasePhaseModel>::compressible() const
-{
-    return !this->thermo().incompressible();
 }
 
 

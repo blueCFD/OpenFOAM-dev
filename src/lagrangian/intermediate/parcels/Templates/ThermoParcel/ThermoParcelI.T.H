@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,13 +74,13 @@ template<class ParcelType>
 inline Foam::ThermoParcel<ParcelType>::ThermoParcel
 (
     const polyMesh& mesh,
-    const vector& position,
+    const barycentric& coordinates,
     const label celli,
     const label tetFacei,
-    const label tetPtI
+    const label tetPti
 )
 :
-    ParcelType(mesh, position, celli, tetFacei, tetPtI),
+    ParcelType(mesh, coordinates, celli, tetFacei, tetPti),
     T_(0.0),
     Cp_(0.0),
     Tc_(0.0),
@@ -93,9 +93,25 @@ inline Foam::ThermoParcel<ParcelType>::ThermoParcel
 (
     const polyMesh& mesh,
     const vector& position,
+    const label celli
+)
+:
+    ParcelType(mesh, position, celli),
+    T_(0.0),
+    Cp_(0.0),
+    Tc_(0.0),
+    Cpc_(0.0)
+{}
+
+
+template<class ParcelType>
+inline Foam::ThermoParcel<ParcelType>::ThermoParcel
+(
+    const polyMesh& mesh,
+    const barycentric& coordinates,
     const label celli,
     const label tetFacei,
-    const label tetPtI,
+    const label tetPti,
     const label typeId,
     const scalar nParticle0,
     const scalar d0,
@@ -110,10 +126,10 @@ inline Foam::ThermoParcel<ParcelType>::ThermoParcel
     ParcelType
     (
         mesh,
-        position,
+        coordinates,
         celli,
         tetFacei,
-        tetPtI,
+        tetPti,
         typeId,
         nParticle0,
         d0,

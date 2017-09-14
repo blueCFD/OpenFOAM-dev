@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,8 +57,8 @@ Foam::displacementSBRStressFvMotionSolver::displacementSBRStressFvMotionSolver
     const IOdictionary& dict
 )
 :
-    displacementMotionSolver(mesh, dict, dict.lookup("solver")),
-    fvMotionSolverCore(mesh),
+    displacementMotionSolver(mesh, dict, typeName),
+    fvMotionSolver(mesh),
     cellDisplacement_
     (
         IOobject
@@ -187,7 +187,7 @@ void Foam::displacementSBRStressFvMotionSolver::updateMesh
 
     // Update diffusivity. Note two stage to make sure old one is de-registered
     // before creating/registering new one.
-    diffusivityPtr_.reset(NULL);
+    diffusivityPtr_.reset(nullptr);
     diffusivityPtr_ = motionDiffusivity::New
     (
         fvMesh_,

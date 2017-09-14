@@ -34,7 +34,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "fvMesh.H"
 #include "polyTopoChange.H"
 #include "ReadFields.T.H"

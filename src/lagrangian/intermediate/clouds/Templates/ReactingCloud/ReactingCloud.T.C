@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,10 +98,10 @@ Foam::ReactingCloud<CloudType>::ReactingCloud
 :
     CloudType(cloudName, rho, U, g, thermo, false),
     reactingCloud(),
-    cloudCopyPtr_(NULL),
+    cloudCopyPtr_(nullptr),
     constProps_(this->particleProperties()),
-    compositionModel_(NULL),
-    phaseChangeModel_(NULL),
+    compositionModel_(nullptr),
+    phaseChangeModel_(nullptr),
     rhoTrans_(thermo.carrier().species().size())
 {
     if (this->solution().active())
@@ -111,6 +111,7 @@ Foam::ReactingCloud<CloudType>::ReactingCloud
         if (readFields)
         {
             parcelType::readFields(*this, this->composition());
+            this->deleteLostParticles();
         }
     }
 
@@ -121,7 +122,7 @@ Foam::ReactingCloud<CloudType>::ReactingCloud
         rhoTrans_.set
         (
             i,
-            new DimensionedField<scalar, volMesh>
+            new volScalarField::Internal
             (
                 IOobject
                 (
@@ -153,7 +154,7 @@ Foam::ReactingCloud<CloudType>::ReactingCloud
 :
     CloudType(c, name),
     reactingCloud(),
-    cloudCopyPtr_(NULL),
+    cloudCopyPtr_(nullptr),
     constProps_(c.constProps_),
     compositionModel_(c.compositionModel_->clone()),
     phaseChangeModel_(c.phaseChangeModel_->clone()),
@@ -165,7 +166,7 @@ Foam::ReactingCloud<CloudType>::ReactingCloud
         rhoTrans_.set
         (
             i,
-            new DimensionedField<scalar, volMesh>
+            new volScalarField::Internal
             (
                 IOobject
                 (
@@ -193,11 +194,11 @@ Foam::ReactingCloud<CloudType>::ReactingCloud
 :
     CloudType(mesh, name, c),
     reactingCloud(),
-    cloudCopyPtr_(NULL),
+    cloudCopyPtr_(nullptr),
     constProps_(),
     compositionModel_(c.compositionModel_->clone()),
-//    compositionModel_(NULL),
-    phaseChangeModel_(NULL),
+//    compositionModel_(nullptr),
+    phaseChangeModel_(nullptr),
     rhoTrans_(0)
 {}
 
@@ -290,7 +291,7 @@ void Foam::ReactingCloud<CloudType>::relaxSources
 {
     CloudType::relaxSources(cloudOldTime);
 
-    typedef DimensionedField<scalar, volMesh> dsfType;
+    typedef volScalarField::Internal dsfType;
 
     forAll(rhoTrans_, fieldi)
     {
@@ -306,7 +307,7 @@ void Foam::ReactingCloud<CloudType>::scaleSources()
 {
     CloudType::scaleSources();
 
-    typedef DimensionedField<scalar, volMesh> dsfType;
+    typedef volScalarField::Internal dsfType;
 
     forAll(rhoTrans_, fieldi)
     {
@@ -332,11 +333,7 @@ void Foam::ReactingCloud<CloudType>::evolve()
 template<class CloudType>
 void Foam::ReactingCloud<CloudType>::autoMap(const mapPolyMesh& mapper)
 {
-    typedef typename particle::TrackingData<ReactingCloud<CloudType>> tdType;
-
-    tdType td(*this);
-
-    Cloud<parcelType>::template autoMap<tdType>(td, mapper);
+    Cloud<parcelType>::autoMap(mapper);
 
     this->updateMesh();
 }
@@ -354,7 +351,7 @@ void Foam::ReactingCloud<CloudType>::info()
 template<class CloudType>
 void Foam::ReactingCloud<CloudType>::writeFields() const
 {
-    if (this->size())
+    if (compositionModel_.valid())
     {
         CloudType::particleType::writeFields(*this, this->composition());
     }

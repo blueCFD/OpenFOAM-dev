@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -96,31 +96,6 @@ template<class ParticleType>
 Foam::Cloud<ParticleType>::Cloud
 (
     const polyMesh& pMesh,
-    const IDLList<ParticleType>& particles
-)
-:
-    cloud(pMesh),
-    IDLList<ParticleType>(),
-    polyMesh_(pMesh),
-    labels_(),
-    nTrackingRescues_(),
-    cellWallFacesPtr_()
-{
-    checkPatches();
-
-    // Ask for the tetBasePtIs to trigger all processors to build
-    // them, otherwise, if some processors have no particles then
-    // there is a comms mismatch.
-    polyMesh_.tetBasePtIs();
-
-    IDLList<ParticleType>::operator=(particles);
-}
-
-
-template<class ParticleType>
-Foam::Cloud<ParticleType>::Cloud
-(
-    const polyMesh& pMesh,
     const word& cloudName,
     const IDLList<ParticleType>& particles
 )
@@ -130,7 +105,8 @@ Foam::Cloud<ParticleType>::Cloud
     polyMesh_(pMesh),
     labels_(),
     nTrackingRescues_(),
-    cellWallFacesPtr_()
+    cellWallFacesPtr_(),
+    globalPositionsPtr_()
 {
     checkPatches();
 
@@ -139,7 +115,10 @@ Foam::Cloud<ParticleType>::Cloud
     // there is a comms mismatch.
     polyMesh_.tetBasePtIs();
 
-    IDLList<ParticleType>::operator=(particles);
+    if (particles.size())
+    {
+        IDLList<ParticleType>::operator=(particles);
+    }
 }
 
 
@@ -169,6 +148,25 @@ template<class ParticleType>
 void Foam::Cloud<ParticleType>::deleteParticle(ParticleType& p)
 {
     delete(this->remove(&p));
+}
+
+
+template<class ParticleType>
+void Foam::Cloud<ParticleType>::deleteLostParticles()
+{
+    forAllIter(typename Cloud<ParticleType>, *this, pIter)
+    {
+        ParticleType& p = pIter();
+
+        if (p.cell() == -1)
+        {
+            WarningInFunction
+                << "deleting lost particle at position " << p.position()
+                << endl;
+
+            deleteParticle(p);
+        }
+    }
 }
 
 
@@ -235,8 +233,10 @@ void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
     );
 
     // Allocate transfer buffers
-    PstreamBuffers pBufs(Pstream::nonBlocking);
+    PstreamBuffers pBufs(Pstream::commsTypes::nonBlocking);
 
+    // Clear the global positions as there are about to change
+    globalPositionsPtr_.clear();
 
     // While there are particles to transfer
     while (true)
@@ -261,7 +261,12 @@ void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
             {
                 // If we are running in parallel and the particle is on a
                 // boundary face
-                if (Pstream::parRun() && p.face() >= pMesh().nInternalFaces())
+                if
+                (
+                    Pstream::parRun()
+                 && td.switchProcessor
+                 && p.face() >= pMesh().nInternalFaces()
+                )
                 {
                     label patchi = pbm.whichPatch(p.face());
 
@@ -391,20 +396,15 @@ void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
 
 
 template<class ParticleType>
-template<class TrackData>
-void Foam::Cloud<ParticleType>::autoMap
-(
-    TrackData& td,
-    const mapPolyMesh& mapper
-)
+void Foam::Cloud<ParticleType>::autoMap(const mapPolyMesh& mapper)
 {
-    if (cloud::debug)
+    if (!globalPositionsPtr_.valid())
     {
-        InfoInFunction << "for lagrangian cloud " << cloud::name() << endl;
+        FatalErrorInFunction
+            << "Global positions are not available. "
+            << "Cloud::storeGlobalPositions has not been called."
+            << exit(FatalError);
     }
-
-    const labelList& reverseCellMap = mapper.reverseCellMap();
-    const labelList& reverseFaceMap = mapper.reverseFaceMap();
 
     // Reset stored data that relies on the mesh
     //    polyMesh_.clearCellTree();
@@ -415,51 +415,13 @@ void Foam::Cloud<ParticleType>::autoMap
     // there is a comms mismatch.
     polyMesh_.tetBasePtIs();
 
+    const vectorField& positions = globalPositionsPtr_();
 
-    forAllIter(typename Cloud<ParticleType>, *this, pIter)
+    label i = 0;
+    forAllIter(typename Cloud<ParticleType>, *this, iter)
     {
-        ParticleType& p = pIter();
-
-        if (reverseCellMap[p.cell()] >= 0)
-        {
-            p.cell() = reverseCellMap[p.cell()];
-
-            if (p.face() >= 0 && reverseFaceMap[p.face()] >= 0)
-            {
-                p.face() = reverseFaceMap[p.face()];
-            }
-            else
-            {
-                p.face() = -1;
-            }
-
-            p.initCellFacePt();
-        }
-        else
-        {
-            label trackStartCell = mapper.mergedCell(p.cell());
-
-            if (trackStartCell < 0)
-            {
-                trackStartCell = 0;
-                p.cell() = 0;
-            }
-            else
-            {
-                p.cell() = trackStartCell;
-            }
-
-            vector pos = p.position();
-
-            const_cast<vector&>(p.position()) =
-                polyMesh_.cellCentres()[trackStartCell];
-
-            p.stepFraction() = 0;
-
-            p.initCellFacePt();
-
-            p.track(pos, td);
-        }
+        iter().autoMap(positions[i], mapper);
+        ++ i;
     }
 }
 
@@ -480,6 +442,27 @@ void Foam::Cloud<ParticleType>::writePositions() const
     }
 
     pObj.flush();
+}
+
+
+template<class ParticleType>
+void Foam::Cloud<ParticleType>::storeGlobalPositions() const
+{
+    // Store the global positions for later use by autoMap. It would be
+    // preferable not to need this. If the mapPolyMesh object passed to autoMap
+    // had a copy of the old mesh then the global positions could be recovered
+    // within autoMap, and this pre-processing would not be necessary.
+
+    globalPositionsPtr_.reset(new vectorField(this->size()));
+
+    vectorField& positions = globalPositionsPtr_();
+
+    label i = 0;
+    forAllConstIter(typename Cloud<ParticleType>, *this, iter)
+    {
+        positions[i] = iter().position();
+        ++ i;
+    }
 }
 
 

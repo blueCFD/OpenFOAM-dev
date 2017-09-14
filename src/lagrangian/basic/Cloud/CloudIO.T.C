@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "Cloud.T.H"
 #include "Time.T.H"
 #include "IOPosition.T.H"
+#include "IOdictionary.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -49,7 +50,7 @@ void Foam::Cloud<ParticleType>::readCloudUniformProperties()
         false
     );
 
-    if (dictObj.headerOk())
+    if (dictObj.typeHeaderOk<IOdictionary>(true))
     {
         const IOdictionary uniformPropsDict(dictObj);
 
@@ -101,7 +102,8 @@ void Foam::Cloud<ParticleType>::writeCloudUniformProperties() const
     (
         IOstream::ASCII,
         IOstream::currentVersion,
-        time().writeCompression()
+        time().writeCompression(),
+        true
     );
 }
 
@@ -113,60 +115,29 @@ void Foam::Cloud<ParticleType>::initCloud(const bool checkClass)
 
     IOPosition<Cloud<ParticleType>> ioP(*this);
 
-    if (ioP.headerOk())
+    bool valid = ioP.headerOk();
+    Istream& is = ioP.readStream(checkClass ? typeName : "", valid);
+    if (valid)
     {
-        ioP.readData(*this, checkClass);
+        ioP.readData(is, *this);
         ioP.close();
-
-        if (this->size())
-        {
-            readFields();
-        }
     }
-    else
+
+    if (!valid && debug)
     {
-        if (debug)
-        {
-            Pout<< "Cannot read particle positions file:" << nl
-                << "    " << ioP.objectPath() << nl
-                << "Assuming the initial cloud contains 0 particles." << endl;
-        }
+        Pout<< "Cannot read particle positions file:" << nl
+            << "    " << ioP.objectPath() << nl
+            << "Assuming the initial cloud contains 0 particles." << endl;
     }
 
     // Ask for the tetBasePtIs to trigger all processors to build
     // them, otherwise, if some processors have no particles then
     // there is a comms mismatch.
     polyMesh_.tetBasePtIs();
-
-    forAllIter(typename Cloud<ParticleType>, *this, pIter)
-    {
-        ParticleType& p = pIter();
-
-        p.initCellFacePt();
-    }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-template<class ParticleType>
-Foam::Cloud<ParticleType>::Cloud
-(
-    const polyMesh& pMesh,
-    const bool checkClass
-)
-:
-    cloud(pMesh),
-    polyMesh_(pMesh),
-    labels_(),
-    nTrackingRescues_(),
-    cellWallFacesPtr_()
-{
-    checkPatches();
-
-    initCloud(checkClass);
-}
-
 
 template<class ParticleType>
 Foam::Cloud<ParticleType>::Cloud
@@ -248,17 +219,9 @@ void Foam::Cloud<ParticleType>::checkFieldFieldIOobject
 
 
 template<class ParticleType>
-void Foam::Cloud<ParticleType>::readFields()
-{}
-
-
-template<class ParticleType>
 void Foam::Cloud<ParticleType>::writeFields() const
 {
-    if (this->size())
-    {
-        ParticleType::writeFields(*this);
-    }
+    ParticleType::writeFields(*this);
 }
 
 
@@ -267,20 +230,14 @@ bool Foam::Cloud<ParticleType>::writeObject
 (
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
-    IOstream::compressionType cmp
+    IOstream::compressionType cmp,
+    const bool
 ) const
 {
     writeCloudUniformProperties();
 
-    if (this->size())
-    {
-        writeFields();
-        return cloud::writeObject(fmt, ver, cmp);
-    }
-    else
-    {
-        return true;
-    }
+    writeFields();
+    return cloud::writeObject(fmt, ver, cmp, this->size());
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,7 +117,7 @@ Foam::fanFvPatchField<Foam::scalar>::fanFvPatchField
     }
     else
     {
-        this->evaluate(Pstream::blocking);
+        this->evaluate(Pstream::commsTypes::blocking);
     }
 }
 
@@ -126,11 +126,7 @@ Foam::fanFvPatchField<Foam::scalar>::fanFvPatchField
 
 namespace Foam
 {
-    makeTemplatePatchTypeField
-    (
-        fvPatchScalarField,
-        fanFvPatchScalarField
-    );
+    makeTemplatePatchTypeField(scalar, fan);
 }
 
 

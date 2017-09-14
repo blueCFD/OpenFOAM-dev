@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -136,7 +136,7 @@ inline Foam::tmp<Foam::fvScalarMatrix> Foam::ReactingCloud<CloudType>::SYi
 
             return
                 fvm::Sp(neg(sourceField)*sourceField/(Yi + YiSMALL), Yi)
-              + pos(sourceField)*sourceField;
+              + pos0(sourceField)*sourceField;
         }
         else
         {
@@ -157,9 +157,9 @@ template<class CloudType>
 inline Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
 Foam::ReactingCloud<CloudType>::Srho(const label i) const
 {
-    tmp<DimensionedField<scalar, volMesh>> tRhoi
+    tmp<volScalarField::Internal> tRhoi
     (
-        new DimensionedField<scalar, volMesh>
+        new volScalarField::Internal
         (
             IOobject
             (
@@ -194,9 +194,9 @@ template<class CloudType>
 inline Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
 Foam::ReactingCloud<CloudType>::Srho() const
 {
-    tmp<DimensionedField<scalar, volMesh>> trhoTrans
+    tmp<volScalarField::Internal> trhoTrans
     (
-        new DimensionedField<scalar, volMesh>
+        new volScalarField::Internal
         (
             IOobject
             (

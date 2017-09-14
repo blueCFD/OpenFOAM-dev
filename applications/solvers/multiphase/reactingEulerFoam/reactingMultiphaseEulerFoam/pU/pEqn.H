@@ -89,9 +89,6 @@ PtrList<surfaceScalarField> phiFs(phases.size());
 // --- Pressure corrector loop
 while (pimple.correct())
 {
-    // Update continuity errors due to temperature changes
-    fluid.correct();
-
     volScalarField rho("rho", fluid.rho());
 
     // Correct p_rgh for consistency with p and the updated densities
@@ -182,7 +179,7 @@ while (pimple.correct())
         (
             fvc::interpolate(fvc::average(alphafs[phasei]))
         );
-        surfaceScalarField phiCorrCoeff(pos(alphafBar - 0.99));
+        surfaceScalarField phiCorrCoeff(pos0(alphafBar - 0.99));
 
         surfaceScalarField::Boundary& phiCorrCoeffBf =
             phiCorrCoeff.boundaryFieldRef();
@@ -297,12 +294,11 @@ while (pimple.correct())
     forAll(phases, phasei)
     {
         phaseModel& phase = phases[phasei];
+        const volScalarField& alpha = phase;
+        volScalarField& rho = phase.thermo().rho();
 
         if (phase.compressible())
         {
-            const volScalarField& alpha = phase;
-            const volScalarField& rho = phase.rho();
-
             if (pimple.transonic())
             {
                 surfaceScalarField phid
@@ -360,21 +356,29 @@ while (pimple.correct())
                     ).ptr()
                 );
             }
+        }
+        else
+        {
+            pEqnComps.set
+            (
+                phasei,
+                fvm::Su(-(fvOptions(alpha, rho)&rho)/rho, p_rgh).ptr()
+            );
+        }
 
-            if (fluid.transfersMass(phase))
+        if (fluid.transfersMass(phase))
+        {
+            if (pEqnComps.set(phasei))
             {
-                if (pEqnComps.set(phasei))
-                {
-                    pEqnComps[phasei] -= fluid.dmdt(phase)/rho;
-                }
-                else
-                {
-                    pEqnComps.set
-                    (
-                        phasei,
-                        fvm::Su(-fluid.dmdt(phase)/rho, p_rgh)
-                    );
-                }
+                pEqnComps[phasei] -= fluid.dmdt(phase)/rho;
+            }
+            else
+            {
+                pEqnComps.set
+                (
+                    phasei,
+                    fvm::Su(-fluid.dmdt(phase)/rho, p_rgh)
+                );
             }
         }
     }
@@ -424,7 +428,7 @@ while (pimple.correct())
                 phase.phi() = phiHbyAs[phasei] + alpharAUfs[phasei]*mSfGradp;
 
                 // Set the phase dilatation rates
-                if (phase.compressible())
+                if (pEqnComps.set(phasei))
                 {
                     phase.divU(-pEqnComps[phasei] & p_rgh);
                 }

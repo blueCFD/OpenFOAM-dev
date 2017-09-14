@@ -72,12 +72,12 @@ void Foam::functionObjects::fieldValues::fieldValueDelta::writeFileHeader
     const wordList& fields2 = region2Ptr_->fields();
 
     DynamicList<word> commonFields(fields1.size());
-    forAll(fields1, i)
+    forAll(fields1, fieldi)
     {
-        label index = findIndex(fields2, fields1[i]);
+        label index = findIndex(fields2, fields1[fieldi]);
         if (index != -1)
         {
-            commonFields.append(fields1[i]);
+            commonFields.append(fields1[fieldi]);
         }
     }
 
@@ -106,17 +106,12 @@ Foam::functionObjects::fieldValues::fieldValueDelta::fieldValueDelta
     const dictionary& dict
 )
 :
-    writeFiles(name, runTime, dict, name),
+    regionFunctionObject(name, runTime, dict),
+    logFiles(obr_, name),
     operation_(opSubtract),
-    region1Ptr_(NULL),
-    region2Ptr_(NULL)
+    region1Ptr_(nullptr),
+    region2Ptr_(nullptr)
 {
-    if (!isA<fvMesh>(obr_))
-    {
-        FatalErrorInFunction
-            << "objectRegistry is not an fvMesh" << exit(FatalError);
-    }
-
     read(dict);
     resetName(typeName);
 }
@@ -135,7 +130,7 @@ bool Foam::functionObjects::fieldValues::fieldValueDelta::read
     const dictionary& dict
 )
 {
-    writeFiles::read(dict);
+    regionFunctionObject::read(dict);
 
     region1Ptr_.reset
     (
@@ -166,7 +161,7 @@ bool Foam::functionObjects::fieldValues::fieldValueDelta::read
 
 bool Foam::functionObjects::fieldValues::fieldValueDelta::write()
 {
-    writeFiles::write();
+    logFiles::write();
 
     region1Ptr_->write();
     region2Ptr_->write();

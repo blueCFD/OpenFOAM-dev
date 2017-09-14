@@ -35,7 +35,7 @@ SourceFiles
 #include "ensightFile.H"
 #include "Cloud.T.H"
 #include "polyMesh.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 
 namespace Foam
 {

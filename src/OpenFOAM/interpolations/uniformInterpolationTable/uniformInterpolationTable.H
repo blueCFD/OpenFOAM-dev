@@ -55,7 +55,7 @@ SourceFiles
 
 #include "List.T.H"
 #include "Switch.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "objectRegistry.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

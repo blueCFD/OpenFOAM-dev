@@ -1,8 +1,8 @@
 {
     fvScalarMatrix TEqn
     (
-        fvm::ddt(rho, T)
-      + fvm::div(rhoPhi, T)
+        fvm::ddt(rho, T) + fvm::div(rhoPhi, T)
+      - fvm::Sp(contErr, T)
       - fvm::laplacian(mixture.alphaEff(turbulence->mut()), T)
       + (
             fvc::div(fvc::absolute(phi, U), p)
@@ -12,12 +12,18 @@
            alpha1/mixture.thermo1().Cv()
          + alpha2/mixture.thermo2().Cv()
         )
+     ==
+        fvOptions(rho, T)
     );
 
     TEqn.relax();
+
+    fvOptions.constrain(TEqn);
+
     TEqn.solve();
 
-    mixture.correct();
+    fvOptions.correct(T);
 
-    Info<< "min(T) " << min(T).value() << endl;
+    mixture.correctThermo();
+    mixture.correct();
 }

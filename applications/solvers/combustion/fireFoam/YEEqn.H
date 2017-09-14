@@ -11,13 +11,12 @@ tmp<fv::convectionScheme<scalar>> mvConvection
 {
     radiation->correct();
     combustion->correct();
-    dQ = combustion->dQ();
-    label inertIndex = -1;
+    Qdot = combustion->Qdot();
     volScalarField Yt(0.0*Y[0]);
 
     forAll(Y, i)
     {
-        if (Y[i].name() != inertSpecie)
+        if (i != inertIndex && composition.active(i))
         {
             volScalarField& Yi = Y[i];
 
@@ -44,10 +43,6 @@ tmp<fv::convectionScheme<scalar>> mvConvection
             Yi.max(0.0);
             Yt += Yi;
         }
-        else
-        {
-            inertIndex = i;
-        }
     }
 
     Y[inertIndex] = scalar(1) - Yt;
@@ -71,8 +66,8 @@ tmp<fv::convectionScheme<scalar>> mvConvection
         )
       - fvm::laplacian(turbulence->alphaEff(), he)
      ==
-        combustion->Sh()
-      + radiation->Sh(thermo)
+        Qdot
+      + radiation->Sh(thermo, he)
       + parcels.Sh(he)
       + surfaceFilm.Sh()
       + fvOptions(rho, he)

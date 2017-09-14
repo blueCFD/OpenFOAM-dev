@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -182,7 +182,7 @@ void Foam::PatchTools::gatherAndMerge
             // Receive slave ones
             for (int slave=1; slave<Pstream::nProcs(); slave++)
             {
-                IPstream fromSlave(Pstream::scheduled, slave);
+                IPstream fromSlave(Pstream::commsTypes::scheduled, slave);
 
                 pointField slavePoints(fromSlave);
                 List<FaceType> slaveFaces(fromSlave);
@@ -210,7 +210,7 @@ void Foam::PatchTools::gatherAndMerge
             // be improved.
             OPstream toMaster
             (
-                Pstream::scheduled,
+                Pstream::commsTypes::scheduled,
                 Pstream::masterNo(),
                 myPoints.byteSize() + 4*sizeof(label)*myFaces.size()
             );
@@ -219,6 +219,12 @@ void Foam::PatchTools::gatherAndMerge
     }
     else
     {
+        pointToGlobal = identity(meshPoints.size());
+        uniqueMeshPointLabels = pointToGlobal;
+
+        globalPointsPtr.reset(new globalIndex(meshPoints.size()));
+        globalFacesPtr.reset(new globalIndex(localFaces.size()));
+
         mergedFaces = localFaces;
         mergedPoints = pointField(mesh.points(), meshPoints);
     }

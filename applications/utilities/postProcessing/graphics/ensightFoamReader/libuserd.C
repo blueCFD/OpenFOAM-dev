@@ -39,7 +39,7 @@ Description
 #include <stdio.h>
 
 #include "fvCFD.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "Cloud.T.H"
 #include "passiveParticle.H"
 #include "fvMesh.H"

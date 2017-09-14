@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -160,7 +160,7 @@ protected:
         const dictionary subModelProperties_;
 
         //- Random number generator - used by some injection routines
-        cachedRandom rndGen_;
+        mutable cachedRandom rndGen_;
 
         //- Cell occupancy information for each parcel, (demand driven)
         autoPtr<List<DynamicList<parcelType*>>> cellOccupancyPtr_;
@@ -228,10 +228,10 @@ protected:
         // Sources
 
             //- Momentum
-            autoPtr<DimensionedField<vector, volMesh>> UTrans_;
+            autoPtr<volVectorField::Internal> UTrans_;
 
             //- Coefficient for carrier phase U equation
-            autoPtr<DimensionedField<scalar, volMesh>> UCoeff_;
+            autoPtr<volScalarField::Internal> UCoeff_;
 
 
         // Initialisation
@@ -326,7 +326,7 @@ public:
 
             //- Switch to specify if particles of the cloud can return
             //  non-zero wall distance values - true for kinematic parcels
-            virtual bool hasWallImpactDistance() const;
+            bool hasWallImpactDistance() const;
 
 
             // References to the mesh and databases
@@ -363,7 +363,7 @@ public:
             // Cloud data
 
                 //- Return reference to the random object
-                inline cachedRandom& rndGen();
+                inline cachedRandom& rndGen() const;
 
                 //- Return the cell occupancy information for each
                 //  parcel, non-const access, the caller is
@@ -464,17 +464,17 @@ public:
                 // Momentum
 
                     //- Return reference to momentum source
-                    inline DimensionedField<vector, volMesh>& UTrans();
+                    inline volVectorField::Internal& UTrans();
 
                     //- Return const reference to momentum source
-                    inline const DimensionedField<vector, volMesh>&
+                    inline const volVectorField::Internal&
                         UTrans() const;
 
                      //- Return coefficient for carrier phase U equation
-                    inline DimensionedField<scalar, volMesh>& UCoeff();
+                    inline volScalarField::Internal& UCoeff();
 
                     //- Return const coefficient for carrier phase U equation
-                    inline const DimensionedField<scalar, volMesh>&
+                    inline const volScalarField::Internal&
                         UCoeff() const;
 
                     //- Return tmp momentum source term
@@ -588,8 +588,6 @@ public:
             (
                 const parcelType& p,
                 const polyPatch& pp,
-                const scalar trackFraction,
-                const tetIndices& tetIs,
                 vector& normal,
                 vector& Up
             ) const;

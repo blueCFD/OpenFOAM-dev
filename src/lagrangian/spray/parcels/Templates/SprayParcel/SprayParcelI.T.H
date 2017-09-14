@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -107,15 +107,15 @@ template<class ParcelType>
 inline Foam::SprayParcel<ParcelType>::SprayParcel
 (
     const polyMesh& mesh,
-    const vector& position,
+    const barycentric& coordinates,
     const label celli,
     const label tetFacei,
-    const label tetPtI
+    const label tetPti
 )
 :
-    ParcelType(mesh, position, celli, tetFacei, tetPtI),
+    ParcelType(mesh, coordinates, celli, tetFacei, tetPti),
     d0_(this->d()),
-    position0_(position),
+    position0_(this->position()),
     sigma_(0.0),
     mu_(0.0),
     liquidCore_(0.0),
@@ -135,9 +135,34 @@ inline Foam::SprayParcel<ParcelType>::SprayParcel
 (
     const polyMesh& mesh,
     const vector& position,
+    const label celli
+)
+:
+    ParcelType(mesh, position, celli),
+    d0_(this->d()),
+    position0_(this->position()),
+    sigma_(0.0),
+    mu_(0.0),
+    liquidCore_(0.0),
+    KHindex_(0.0),
+    y_(0.0),
+    yDot_(0.0),
+    tc_(0.0),
+    ms_(0.0),
+    injector_(1.0),
+    tMom_(GREAT),
+    user_(0.0)
+{}
+
+
+template<class ParcelType>
+inline Foam::SprayParcel<ParcelType>::SprayParcel
+(
+    const polyMesh& mesh,
+    const barycentric& coordinates,
     const label celli,
     const label tetFacei,
-    const label tetPtI,
+    const label tetPti,
     const label typeId,
     const scalar nParticle0,
     const scalar d0,
@@ -162,10 +187,10 @@ inline Foam::SprayParcel<ParcelType>::SprayParcel
     ParcelType
     (
         mesh,
-        position,
+        coordinates,
         celli,
         tetFacei,
-        tetPtI,
+        tetPti,
         typeId,
         nParticle0,
         d0,
@@ -178,7 +203,7 @@ inline Foam::SprayParcel<ParcelType>::SprayParcel
         constProps
     ),
     d0_(d0),
-    position0_(position),
+    position0_(this->position()),
     sigma_(constProps.sigma0()),
     mu_(constProps.mu0()),
     liquidCore_(liquidCore),

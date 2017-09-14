@@ -28,9 +28,8 @@ Group
     grpForcesFunctionObjects
 
 Description
-    This function object evaluates and outputs the shear stress at wall
-    patches.  The result is written as a volVectorField to time directories as
-    field 'wallShearStress'
+    Calculates and write the shear-stress at wall patches as
+    the volVectorField field 'wallShearStress'.
 
         \f[
             Stress = R \dot n
@@ -42,16 +41,16 @@ Description
         n       | patch normal vector (into the domain)
     \endvartable
 
-    The shear stress (symmetrical) tensor field is retrieved from the
-    turbulence model.  All wall patches are included by default; to restrict
-    the calculation to certain patches, use the optional 'patches' entry.
+    The shear-stress symmetric tensor field is retrieved from the turbulence
+    model.  All wall patches are included by default; to restrict the
+    calculation to certain patches, use the optional 'patches' entry.
 
     Example of function object specification:
     \verbatim
     wallShearStress1
     {
         type        wallShearStress;
-        libs ("libfieldFunctionObjects.so");
+        libs        ("libfieldFunctionObjects.so");
         ...
         patches     (".*Wall");
     }
@@ -64,9 +63,15 @@ Usage
         patches  | list of patches to process | no         | all wall patches
     \endtable
 
+Note
+    Writing field 'wallShearStress' is done by default, but it can be overridden
+    by defining an empty \c objects list. For details see writeLocalObjects.
+
 See also
     Foam::functionObject
-    Foam::functionObjects::writeFiles
+    Foam::functionObjects::fvMeshFunctionObject
+    Foam::functionObjects::logFiles
+    Foam::functionObjects::writeLocalObjects
     Foam::functionObjects::pressureTools
     Foam::functionObjects::timeControl
 
@@ -78,7 +83,9 @@ SourceFiles
 #ifndef functionObjects_wallShearStress_H
 #define functionObjects_wallShearStress_H
 
-#include "writeFiles.H"
+#include "fvMeshFunctionObject.H"
+#include "logFiles.H"
+#include "writeLocalObjects.H"
 #include "volFieldsFwd.H"
 #include "HashSet.T.H"
 
@@ -86,10 +93,6 @@ SourceFiles
 
 namespace Foam
 {
-
-// Forward declaration of classes
-class fvMesh;
-
 namespace functionObjects
 {
 
@@ -99,8 +102,11 @@ namespace functionObjects
 
 class wallShearStress
 :
-    public writeFiles
+    public fvMeshFunctionObject,
+    public logFiles,
+    public writeLocalObjects
 {
+
 protected:
 
     // Protected data
@@ -114,10 +120,9 @@ protected:
         //- File header information
         virtual void writeFileHeader(const label i);
 
-        //- Calculate the shear stress
+        //- Calculate the shear-stress
         void calcShearStress
         (
-            const fvMesh& mesh,
             const volSymmTensorField& Reff,
             volVectorField& shearStress
         );

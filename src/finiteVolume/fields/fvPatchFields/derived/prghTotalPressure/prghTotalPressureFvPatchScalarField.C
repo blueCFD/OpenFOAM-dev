@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ prghTotalPressureFvPatchScalarField
     const dictionary& dict
 )
 :
-    fixedValueFvPatchScalarField(p, iF),
+    fixedValueFvPatchScalarField(p, iF, dict, false),
     UName_(dict.lookupOrDefault<word>("U", "U")),
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
     rhoName_(dict.lookupOrDefault<word>("rho", "rho")),
@@ -180,7 +180,7 @@ void Foam::prghTotalPressureFvPatchScalarField::updateCoeffs()
     operator==
     (
         p0_
-      - 0.5*rhop*(1.0 - pos(phip))*magSqr(Up)
+      - 0.5*rhop*(1.0 - pos0(phip))*magSqr(Up)
       - rhop*((g.value() & patch().Cf()) - ghRef.value())
     );
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ const Foam::NamedEnum
 > Foam::functionObjects::fieldMinMax::modeTypeNames_;
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::functionObjects::fieldMinMax::writeFileHeader(const label i)
 {
@@ -103,17 +103,12 @@ Foam::functionObjects::fieldMinMax::fieldMinMax
     const dictionary& dict
 )
 :
-    writeFiles(name, runTime, dict, name),
+    fvMeshFunctionObject(name, runTime, dict),
+    logFiles(obr_, name),
     location_(true),
     mode_(mdMag),
     fieldSet_()
 {
-    if (!isA<fvMesh>(obr_))
-    {
-        FatalErrorInFunction
-            << "objectRegistry is not an fvMesh" << exit(FatalError);
-    }
-
     read(dict);
     resetName(typeName);
 }
@@ -129,7 +124,7 @@ Foam::functionObjects::fieldMinMax::~fieldMinMax()
 
 bool Foam::functionObjects::fieldMinMax::read(const dictionary& dict)
 {
-    writeFiles::read(dict);
+    fvMeshFunctionObject::read(dict);
 
     location_ = dict.lookupOrDefault<Switch>("location", true);
 
@@ -148,9 +143,9 @@ bool Foam::functionObjects::fieldMinMax::execute()
 
 bool Foam::functionObjects::fieldMinMax::write()
 {
-    writeFiles::write();
+    logFiles::write();
 
-    if (!location_) writeTime(file());
+    if (Pstream::master() && !location_) writeTime(file());
     Log << type() << " " << name() <<  " write:" << nl;
 
     forAll(fieldSet_, fieldi)
@@ -162,7 +157,7 @@ bool Foam::functionObjects::fieldMinMax::write()
         calcMinMaxFields<tensor>(fieldSet_[fieldi], mode_);
     }
 
-    if (!location_) file()<< endl;
+    if (Pstream::master() && !location_) file() << endl;
     Log << endl;
 
     return true;

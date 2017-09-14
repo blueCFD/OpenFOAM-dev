@@ -36,7 +36,7 @@ Description
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "transformGeometricField.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 
 using namespace Foam;
 

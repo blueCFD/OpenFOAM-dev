@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: Reinterpret path in 'getRootCase()'.
@@ -37,11 +37,13 @@ Modifications
 #include "clock.H"
 #include "IFstream.H"
 #include "dictionary.H"
-#include "IOobject.H"
+#include "IOobject.T.H"
 #include "JobInfo.H"
 #include "labelList.H"
 #include "regIOobject.H"
 #include "dynamicCode.H"
+#include "uncollatedFileOperation.H"
+#include "masterUncollatedFileOperation.H"
 
 #include <cctype>
 
@@ -591,12 +593,42 @@ void Foam::argList::parse
         }
     }
 
+
+    // Set fileHandler. In increasing order of priority:
+    // 1. default = uncollated
+    // 2. environment var FOAM_FILEHANDLER
+    // 3. etc/controlDict optimisationSwitches 'fileHandler'
+    // 4. system/controlDict 'fileHandler' (not handled here; done in TimeIO.C)
+
+    {
+        word handlerType(getEnv("FOAM_FILEHANDLER"));
+        HashTable<string>::const_iterator iter = options_.find("fileHandler");
+        if (iter != options_.end())
+        {
+            handlerType = iter();
+        }
+
+        if (handlerType.empty())
+        {
+            handlerType = fileOperation::defaultFileHandler;
+        }
+
+        autoPtr<fileOperation> handler
+        (
+            fileOperation::New
+            (
+                handlerType,
+                bannerEnabled
+            )
+        );
+        Foam::fileHandler(handler);
+    }
+
     // Case is a single processor run unless it is running parallel
     int nProcs = 1;
 
     // Roots if running distributed
     fileNameList roots;
-
 
     // If this actually is a parallel run
     if (parRunControl_.parRun())
@@ -712,7 +744,7 @@ void Foam::argList::parse
                 {
                     options_.set("case", roots[slave-1]/globalCase_);
 
-                    OPstream toSlave(Pstream::scheduled, slave);
+                    OPstream toSlave(Pstream::commsTypes::scheduled, slave);
                     toSlave << args_ << options_;
                 }
                 options_.erase("case");
@@ -759,7 +791,7 @@ void Foam::argList::parse
                     slave++
                 )
                 {
-                    OPstream toSlave(Pstream::scheduled, slave);
+                    OPstream toSlave(Pstream::commsTypes::scheduled, slave);
                     toSlave << args_ << options_;
                 }
             }
@@ -767,7 +799,11 @@ void Foam::argList::parse
         else
         {
             // Collect the master's argument list
-            IPstream fromMaster(Pstream::scheduled, Pstream::masterNo());
+            IPstream fromMaster
+            (
+                Pstream::commsTypes::scheduled,
+                Pstream::masterNo()
+            );
             fromMaster >> args_ >> options_;
 
             // Establish rootPath_/globalCase_/case_ for slave
@@ -801,7 +837,7 @@ void Foam::argList::parse
                 slave++
             )
             {
-                IPstream fromSlave(Pstream::scheduled, slave);
+                IPstream fromSlave(Pstream::commsTypes::scheduled, slave);
 
                 string slaveBuild;
                 string slaveMachine;
@@ -824,7 +860,11 @@ void Foam::argList::parse
         }
         else
         {
-            OPstream toMaster(Pstream::scheduled, Pstream::masterNo());
+            OPstream toMaster
+            (
+                Pstream::commsTypes::scheduled,
+                Pstream::masterNo()
+            );
             toMaster << string(Foam::FOAMbuild) << hostName() << pid();
         }
     }
@@ -881,8 +921,23 @@ void Foam::argList::parse
                 << regIOobject::fileCheckTypesNames
                     [
                         regIOobject::fileModificationChecking
-                    ]
-                << endl;
+                    ];
+            if
+            (
+                (
+                    regIOobject::fileModificationChecking
+                 == regIOobject::timeStamp
+                )
+             || (
+                    regIOobject::fileModificationChecking
+                 == regIOobject::timeStampMaster
+                )
+            )
+            {
+                Info<< " (fileModificationSkew "
+                    << regIOobject::fileModificationSkew << ")";
+            }
+            Info<< endl;
 
             Info<< "allowSystemOperations : ";
             if (dynamicCode::allowSystemOperations)
@@ -910,6 +965,10 @@ void Foam::argList::parse
 Foam::argList::~argList()
 {
     jobInfo.end();
+
+    // Delete file handler to flush any remaining IO
+    autoPtr<fileOperation> dummy(nullptr);
+    fileHandler(dummy);
 }
 
 
@@ -1120,48 +1179,65 @@ void Foam::argList::displayDoc(bool source) const
 {
     const dictionary& docDict = debug::controlDict().subDict("Documentation");
     List<fileName> docDirs(docDict.lookup("doxyDocDirs"));
-    List<fileName> docExts(docDict.lookup("doxySourceFileExts"));
+    fileName docExt(docDict.lookup("doxySourceFileExt"));
 
     // For source code: change foo_8C.html to foo_8C_source.html
     if (source)
     {
-        forAll(docExts, extI)
-        {
-            docExts[extI].replace(".", "_source.");
-        }
+        docExt.replace(".", "_source.");
     }
 
     fileName docFile;
+    fileName httpServer;
     bool found = false;
 
     forAll(docDirs, dirI)
     {
-        forAll(docExts, extI)
+        // An HTTP server is treated as a special case ...
+        if (docDirs[dirI].component(0) == "http:")
         {
-            docFile = docDirs[dirI]/executable_ + docExts[extI];
+            httpServer = docDirs[dirI]/executable_ + docExt;
+        }
+        else
+        {
+            // ... all other entries are treated as local directories
+
+            // Remove the optional "file://"
+            if (docDirs[dirI].component(0) == "file:")
+            {
+                docDirs[dirI].replace("file://", string::null);
+            }
+
+
+            // Expand the file name
+            docFile = docDirs[dirI]/executable_ + docExt;
             docFile.expand();
 
+            // Check the existence of the file
             if (isFile(docFile))
             {
                 found = true;
                 break;
             }
         }
-        if (found)
-        {
-            break;
-        }
     }
 
-    if (found)
+    if (found || httpServer != fileName::null)
     {
         string docBrowser = getEnv("FOAM_DOC_BROWSER");
         if (docBrowser.empty())
         {
             docDict.lookup("docBrowser") >> docBrowser;
         }
-        // Can use FOAM_DOC_BROWSER='application file://%f' if required
-        docBrowser.replaceAll("%f", docFile);
+
+        if (found)
+        {
+            docBrowser += " file://" + docFile;
+        }
+        else
+        {
+            docBrowser += " " + httpServer;
+        }
 
         Info<< "Show documentation: " << docBrowser.c_str() << endl;
 
@@ -1219,7 +1295,7 @@ bool Foam::argList::check(bool checkArgs, bool checkOpts) const
 
 bool Foam::argList::checkRootCase() const
 {
-    if (!isDir(rootPath()))
+    if (!fileHandler().isDir(rootPath()))
     {
         FatalError
             << executable_
@@ -1229,9 +1305,12 @@ bool Foam::argList::checkRootCase() const
         return false;
     }
 
-    if (!isDir(path()) && Pstream::master())
+    fileName pathDir(fileHandler().filePath(path()));
+
+    if (pathDir.empty() && Pstream::master())
     {
         // Allow slaves on non-existing processor directories, created later
+        // (e.g. redistributePar)
         FatalError
             << executable_
             << ": cannot open case directory " << path()

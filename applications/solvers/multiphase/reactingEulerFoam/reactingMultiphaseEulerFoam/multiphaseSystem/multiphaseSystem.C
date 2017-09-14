@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,14 +71,16 @@ void Foam::multiphaseSystem::solveAlphas()
 {
     bool LTS = fv::localEulerDdt::enabled(mesh_);
 
+    forAll(phases(), phasei)
+    {
+        phases()[phasei].correctBoundaryConditions();
+    }
+
     PtrList<surfaceScalarField> alphaPhiCorrs(phases().size());
     forAll(phases(), phasei)
     {
         phaseModel& phase = phases()[phasei];
         volScalarField& alpha1 = phase;
-
-        phase.alphaPhi() =
-            dimensionedScalar("0", dimensionSet(0, 3, -1, 0, 0), 0);
 
         alphaPhiCorrs.set
         (
@@ -134,28 +136,7 @@ void Foam::multiphaseSystem::solveAlphas()
             );
         }
 
-        surfaceScalarField::Boundary& alphaPhiCorrBf =
-            alphaPhiCorr.boundaryFieldRef();
-
-        // Ensure that the flux at inflow BCs is preserved
-        forAll(alphaPhiCorr.boundaryField(), patchi)
-        {
-            fvsPatchScalarField& alphaPhiCorrp = alphaPhiCorrBf[patchi];
-
-            if (!alphaPhiCorrp.coupled())
-            {
-                const scalarField& phi1p = phase.phi().boundaryField()[patchi];
-                const scalarField& alpha1p = alpha1.boundaryField()[patchi];
-
-                forAll(alphaPhiCorrp, facei)
-                {
-                    if (phi1p[facei] < 0)
-                    {
-                        alphaPhiCorrp[facei] = alpha1p[facei]*phi1p[facei];
-                    }
-                }
-            }
-        }
+        phase.correctInflowOutflow(alphaPhiCorr);
 
         if (LTS)
         {
@@ -215,8 +196,9 @@ void Foam::multiphaseSystem::solveAlphas()
         phaseModel& phase = phases()[phasei];
         volScalarField& alpha = phase;
 
-        surfaceScalarField& alphaPhic = alphaPhiCorrs[phasei];
-        alphaPhic += upwind<scalar>(mesh_, phi_).flux(phase);
+        surfaceScalarField& alphaPhi = alphaPhiCorrs[phasei];
+        alphaPhi += upwind<scalar>(mesh_, phi_).flux(phase);
+        phase.correctInflowOutflow(alphaPhi);
 
         volScalarField::Internal Sp
         (
@@ -298,12 +280,12 @@ void Foam::multiphaseSystem::solveAlphas()
         (
             geometricOneField(),
             alpha,
-            alphaPhic,
+            alphaPhi,
             Sp,
             Su
         );
 
-        phase.alphaPhi() += alphaPhic;
+        phase.alphaPhi() = alphaPhi;
 
         Info<< phase.name() << " volume fraction, min, max = "
             << phase.weightedAverage(mesh_.V()).value()
@@ -319,6 +301,14 @@ void Foam::multiphaseSystem::solveAlphas()
         << ' ' << min(sumAlpha).value()
         << ' ' << max(sumAlpha).value()
         << endl;
+
+    // Correct the sum of the phase-fractions to avoid 'drift'
+    volScalarField sumCorr(1.0 - sumAlpha);
+    forAll(phases(), phasei)
+    {
+        volScalarField& alpha = phases()[phasei];
+        alpha += alpha*sumCorr;
+    }
 }
 
 
@@ -607,7 +597,7 @@ Foam::multiphaseSystem::nearInterface() const
         tnearInt.ref() = max
         (
             tnearInt(),
-            pos(phases()[phasei] - 0.01)*pos(0.99 - phases()[phasei])
+            pos0(phases()[phasei] - 0.01)*pos0(0.99 - phases()[phasei])
         );
     }
 
@@ -708,6 +698,9 @@ void Foam::multiphaseSystem::solve()
     {
         phaseModel& phase = phases()[phasei];
         phase.alphaRhoPhi() = fvc::interpolate(phase.rho())*phase.alphaPhi();
+
+        // Ensure the phase-fractions are bounded
+        phase.maxMin(0, 1);
     }
 
     calcAlphas();

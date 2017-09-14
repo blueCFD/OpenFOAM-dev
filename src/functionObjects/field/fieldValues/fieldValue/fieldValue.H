@@ -30,6 +30,11 @@ Group
 Description
     Base class for field value -based function objects.
 
+See also
+    Foam::functionObject
+    Foam::functionObjects::fvMeshFunctionObject
+    Foam::functionObjects::logFiles
+
 SourceFiles
     fieldValue.C
 
@@ -38,7 +43,8 @@ SourceFiles
 #ifndef functionObjects_fieldValue_H
 #define functionObjects_fieldValue_H
 
-#include "writeFiles.H"
+#include "fvMeshFunctionObject.H"
+#include "logFiles.H"
 #include "Switch.H"
 #include "Field.T.H"
 
@@ -59,7 +65,8 @@ namespace functionObjects
 
 class fieldValue
 :
-    public writeFiles
+    public fvMeshFunctionObject,
+    public logFiles
 {
 
 protected:
@@ -162,9 +169,6 @@ public:
         //- Return the output field values flag
         inline const Switch& writeFields() const;
 
-        //- Helper function to return the reference to the mesh
-        inline const fvMesh& mesh() const;
-
         //- Return access to the latest set of results
         inline const dictionary& resultDict() const;
 
@@ -174,7 +178,7 @@ public:
         //- Execute
         virtual bool execute();
 
-        //- Write to screen/file
+        //- Write
         virtual bool write();
 };
 

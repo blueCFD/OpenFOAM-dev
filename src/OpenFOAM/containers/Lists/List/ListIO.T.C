@@ -26,7 +26,7 @@ License
 #include "List.T.H"
 #include "Istream.T.H"
 #include "token.T.H"
-#include "SLList.T.H"
+#include "SLList.H"
 #include "contiguous.H"
 
 // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
@@ -34,7 +34,7 @@ License
 template<class T>
 Foam::List<T>::List(Istream& is)
 :
-    UList<T>(NULL, 0)
+    UList<T>(nullptr, 0)
 {
     operator>>(is, *this);
 }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,11 +70,11 @@ scalar standardPhaseChange::Sh
 
 standardPhaseChange::standardPhaseChange
 (
-    surfaceFilmModel& owner,
+    surfaceFilmModel& film,
     const dictionary& dict
 )
 :
-    phaseChangeModel(typeName, owner, dict),
+    phaseChangeModel(typeName, film, dict),
     deltaMin_(readScalar(coeffDict_.lookup("deltaMin"))),
     L_(readScalar(coeffDict_.lookup("L"))),
     TbFactor_(coeffDict_.lookupOrDefault<scalar>("TbFactor", 1.1))
@@ -109,6 +109,7 @@ void standardPhaseChange::correctModel
     const scalarField& YInf = film.YPrimary()[vapId];
     const scalarField& pInf = film.pPrimary();
     const scalarField& T = film.T();
+    const scalarField& hs = film.hs();
     const scalarField& rho = film.rho();
     const scalarField& rhoInf = film.rhoPrimary();
     const scalarField& muInf = film.muPrimary();
@@ -116,11 +117,13 @@ void standardPhaseChange::correctModel
     const vectorField dU(film.UPrimary() - film.Us());
     const scalarField limMass
     (
-        max(scalar(0.0), availableMass - deltaMin_*rho*magSf)
+        max(scalar(0), availableMass - deltaMin_*rho*magSf)
     );
 
     forAll(dMass, celli)
     {
+        scalar dm = 0;
+
         if (delta[celli] > deltaMin_)
         {
             // cell pressure [Pa]
@@ -145,7 +148,7 @@ void standardPhaseChange::correctModel
                 const scalar Cp = filmThermo.Cp(pc, Tloc);
                 const scalar Tcorr = max(0.0, T[celli] - Tb);
                 const scalar qCorr = limMass[celli]*Cp*(Tcorr);
-                dMass[celli] = qCorr/hVap;
+                dm = qCorr/hVap;
             }
             else
             {
@@ -180,12 +183,15 @@ void standardPhaseChange::correctModel
                 const scalar hm = Sh*Dab/(L_ + ROOTVSMALL);
 
                 // add mass contribution to source
-                dMass[celli] =
-                    dt*magSf[celli]*rhoInfc*hm*(Ys - YInf[celli])/(1.0 - Ys);
+                dm = dt*magSf[celli]*rhoInfc*hm*(Ys - YInf[celli])/(1.0 - Ys);
             }
 
-            dMass[celli] = min(limMass[celli], max(0.0, dMass[celli]));
-            dEnergy[celli] = dMass[celli]*hVap;
+            dMass[celli] += min(limMass[celli], max(dm, 0));
+
+            // Heat is assumed to be removed by heat-transfer to the wall
+            // so the energy remains unchanged by the phase-change.
+            dEnergy[celli] += dm*hs[celli];
+            // dEnergy[celli] += dm*(hs[celli] + hVap);
         }
     }
 }

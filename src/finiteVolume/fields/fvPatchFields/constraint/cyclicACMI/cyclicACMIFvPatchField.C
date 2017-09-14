@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,6 +44,38 @@ Foam::cyclicACMIFvPatchField<Type>::cyclicACMIFvPatchField
 template<class Type>
 Foam::cyclicACMIFvPatchField<Type>::cyclicACMIFvPatchField
 (
+    const fvPatch& p,
+    const DimensionedField<Type, volMesh>& iF,
+    const dictionary& dict
+)
+:
+    cyclicACMILduInterfaceField(),
+    coupledFvPatchField<Type>(p, iF, dict, dict.found("value")),
+    cyclicACMIPatch_(refCast<const cyclicACMIFvPatch>(p))
+{
+    if (!isA<cyclicACMIFvPatch>(p))
+    {
+        FatalIOErrorInFunction
+        (
+            dict
+        )   << "    patch type '" << p.type()
+            << "' not constraint type '" << typeName << "'"
+            << "\n    for patch " << p.name()
+            << " of field " << this->internalField().name()
+            << " in file " << this->internalField().objectPath()
+            << exit(FatalIOError);
+    }
+
+    if (!dict.found("value") && this->coupled())
+    {
+        this->evaluate(Pstream::commsTypes::blocking);
+    }
+}
+
+
+template<class Type>
+Foam::cyclicACMIFvPatchField<Type>::cyclicACMIFvPatchField
+(
     const cyclicACMIFvPatchField<Type>& ptf,
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
@@ -65,37 +97,6 @@ Foam::cyclicACMIFvPatchField<Type>::cyclicACMIFvPatchField
     }
 }
 
-
-template<class Type>
-Foam::cyclicACMIFvPatchField<Type>::cyclicACMIFvPatchField
-(
-    const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
-    const dictionary& dict
-)
-:
-    cyclicACMILduInterfaceField(),
-    coupledFvPatchField<Type>(p, iF, dict),
-    cyclicACMIPatch_(refCast<const cyclicACMIFvPatch>(p))
-{
-    if (!isA<cyclicACMIFvPatch>(p))
-    {
-        FatalIOErrorInFunction
-        (
-            dict
-        )   << "    patch type '" << p.type()
-            << "' not constraint type '" << typeName << "'"
-            << "\n    for patch " << p.name()
-            << " of field " << this->internalField().name()
-            << " in file " << this->internalField().objectPath()
-            << exit(FatalIOError);
-    }
-
-    if (!dict.found("value") && this->coupled())
-    {
-        this->evaluate(Pstream::blocking);
-    }
-}
 
 
 template<class Type>

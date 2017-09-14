@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,6 +71,20 @@ int main(int argc, char *argv[])
     Info<< "list: " << list << nl
         << "list2: " << list2 << endl;
 
+    List<label> list3{0, 1, 2, 3};
+    FixedList<label, 4> list4(list3.begin(), list3.end());
+    Info<< "list3: " << list3 << nl
+        << "list4: " << list4 << endl;
+
+    list4 = {1, 2, 3, 5};
+    Info<< "list4: " << list4 << nl;
+
+    FixedList<label, 5> list5{0, 1, 2, 3, 4};
+    Info<< "list5: " << list5 << endl;
+
+    List<FixedList<label, 2>> list6{{0, 1}, {2, 3}};
+    Info<< "list6: " << list6 << endl;
+
     if (Pstream::parRun())
     {
         if (Pstream::myProcNo() != Pstream::masterNo())
@@ -78,7 +92,11 @@ int main(int argc, char *argv[])
             Serr<< "slave sending to master "
                 << Pstream::masterNo() << endl;
 
-            OPstream toMaster(Pstream::blocking, Pstream::masterNo());
+            OPstream toMaster
+            (
+                Pstream::commsTypes::blocking,
+                Pstream::masterNo()
+            );
 
             FixedList<label, 2> list3;
             list3[0] = 0;
@@ -95,7 +113,7 @@ int main(int argc, char *argv[])
             )
             {
                 Serr << "master receiving from slave " << slave << endl;
-                IPstream fromSlave(Pstream::blocking, slave);
+                IPstream fromSlave(Pstream::commsTypes::blocking, slave);
                 FixedList<label, 2> list3(fromSlave);
 
                 Serr<< list3 << endl;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "Time.T.H"
 #include "PstreamReduceOps.T.H"
 #include "argList.H"
+#include "IOdictionary.H"
 
 #include <sstream>
 
@@ -78,7 +79,7 @@ const int Foam::Time::maxPrecision_(3 - log10(SMALL));
 Foam::word Foam::Time::controlDictName("controlDict");
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::Time::adjustDeltaT()
 {
@@ -179,11 +180,12 @@ void Foam::Time::setControls()
 
     // Check if time directory exists
     // If not increase time precision to see if it is formatted differently.
-    if (!exists(timePath(), false))
+    if (!fileHandler().exists(timePath(), false))
     {
         int oldPrecision = precision_;
         int requiredPrecision = -1;
         bool found = false;
+        word oldTime(timeName());
         for
         (
             precision_ = maxPrecision_;
@@ -194,8 +196,15 @@ void Foam::Time::setControls()
             // Update the time formatting
             setTime(startTime_, 0);
 
+            word newTime(timeName());
+            if (newTime == oldTime)
+            {
+                break;
+            }
+            oldTime = newTime;
+
             // Check the existence of the time directory with the new format
-            found = exists(timePath(), false);
+            found = fileHandler().exists(timePath(), false);
 
             if (found)
             {
@@ -387,28 +396,12 @@ Foam::Time::Time
     // Time objects not registered so do like objectRegistry::checkIn ourselves.
     if (runTimeModifiable_)
     {
-        monitorPtr_.reset
-        (
-            new fileMonitor
-            (
-                regIOobject::fileModificationChecking == inotify
-             || regIOobject::fileModificationChecking == inotifyMaster
-            )
-        );
-
-        // File might not exist yet.
-        fileName f(controlDict_.filePath());
-
-        if (!f.size())
-        {
-            // We don't have this file but would like to re-read it.
-            // Possibly if in master-only reading mode. Use a non-existing
-            // file to keep fileMonitor synced.
-            f = controlDict_.objectPath();
-        }
-
-        controlDict_.watchIndex() = addWatch(f);
+        // Monitor all files that controlDict depends on
+        fileHandler().addWatches(controlDict_, controlDict_.files());
     }
+
+    // Clear dependent files
+    controlDict_.files().clear();
 }
 
 
@@ -485,28 +478,12 @@ Foam::Time::Time
     // Time objects not registered so do like objectRegistry::checkIn ourselves.
     if (runTimeModifiable_)
     {
-        monitorPtr_.reset
-        (
-            new fileMonitor
-            (
-                regIOobject::fileModificationChecking == inotify
-             || regIOobject::fileModificationChecking == inotifyMaster
-            )
-        );
-
-        // File might not exist yet.
-        fileName f(controlDict_.filePath());
-
-        if (!f.size())
-        {
-            // We don't have this file but would like to re-read it.
-            // Possibly if in master-only reading mode. Use a non-existing
-            // file to keep fileMonitor synced.
-            f = controlDict_.objectPath();
-        }
-
-        controlDict_.watchIndex() = addWatch(f);
+        // Monitor all files that controlDict depends on
+        fileHandler().addWatches(controlDict_, controlDict_.files());
     }
+
+    // Clear dependent files since not needed
+    controlDict_.files().clear();
 }
 
 
@@ -582,28 +559,12 @@ Foam::Time::Time
     // Time objects not registered so do like objectRegistry::checkIn ourselves.
     if (runTimeModifiable_)
     {
-        monitorPtr_.reset
-        (
-            new fileMonitor
-            (
-                regIOobject::fileModificationChecking == inotify
-             || regIOobject::fileModificationChecking == inotifyMaster
-            )
-        );
-
-        // File might not exist yet.
-        fileName f(controlDict_.filePath());
-
-        if (!f.size())
-        {
-            // We don't have this file but would like to re-read it.
-            // Possibly if in master-only reading mode. Use a non-existing
-            // file to keep fileMonitor synced.
-            f = controlDict_.objectPath();
-        }
-
-        controlDict_.watchIndex() = addWatch(f);
+        // Monitor all files that controlDict depends on
+        fileHandler().addWatches(controlDict_, controlDict_.files());
     }
+
+    // Clear dependent files since not needed
+    controlDict_.files().clear();
 }
 
 
@@ -668,9 +629,9 @@ Foam::Time::Time
 
 Foam::Time::~Time()
 {
-    if (controlDict_.watchIndex() != -1)
+    forAllReverse(controlDict_.watchIndices(), i)
     {
-        removeWatch(controlDict_.watchIndex());
+        fileHandler().removeWatch(controlDict_.watchIndices()[i]);
     }
 
     // Destroy function objects first
@@ -679,38 +640,6 @@ Foam::Time::~Time()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-Foam::label Foam::Time::addWatch(const fileName& fName) const
-{
-    return monitorPtr_().addWatch(fName);
-}
-
-
-bool Foam::Time::removeWatch(const label watchIndex) const
-{
-    return monitorPtr_().removeWatch(watchIndex);
-}
-
-const Foam::fileName& Foam::Time::getFile(const label watchIndex) const
-{
-    return monitorPtr_().getFile(watchIndex);
-}
-
-
-Foam::fileMonitor::fileState Foam::Time::getState
-(
-    const label watchFd
-) const
-{
-    return monitorPtr_().getState(watchFd);
-}
-
-
-void Foam::Time::setUnmodified(const label watchFd) const
-{
-    monitorPtr_().setUnmodified(watchFd);
-}
-
 
 Foam::word Foam::Time::timeName(const scalar t, const int precision)
 {
@@ -734,33 +663,38 @@ Foam::instantList Foam::Time::times() const
 }
 
 
-Foam::word Foam::Time::findInstancePath(const instant& t) const
+Foam::word Foam::Time::findInstancePath
+(
+    const fileName& directory,
+    const instant& t
+) const
 {
-    const fileName directory = path();
-    const word& constantName = constant();
+    // Simplified version: use findTimes (readDir + sort). The expensive
+    // bit is the readDir, not the sorting. Tbd: avoid calling findInstancePath
+    // from filePath.
 
-    // Read directory entries into a list
-    fileNameList dirEntries(readDir(directory, fileName::DIRECTORY));
+    instantList timeDirs = findTimes(path(), constant());
+    // Note:
+    // - times will include constant (with value 0) as first element.
+    //   For backwards compatibility make sure to find 0 in preference
+    //   to constant.
+    // - list is sorted so could use binary search
 
-    forAll(dirEntries, i)
+    forAllReverse(timeDirs, i)
     {
-        scalar timeValue;
-        if (readScalar(dirEntries[i].c_str(), timeValue) && t.equal(timeValue))
+        if (t.equal(timeDirs[i].value()))
         {
-            return dirEntries[i];
-        }
-    }
-
-    if (t.equal(0.0))
-    {
-        // Looking for 0 or constant. 0 already checked above.
-        if (isDir(directory/constantName))
-        {
-            return constantName;
+            return timeDirs[i].name();
         }
     }
 
     return word::null;
+}
+
+
+Foam::word Foam::Time::findInstancePath(const instant& t) const
+{
+    return findInstancePath(path(), t);
 }
 
 
@@ -850,11 +784,9 @@ bool Foam::Time::run() const
 
     if (!subCycling_)
     {
-        // only execute when the condition is no longer true
-        // ie, when exiting the control loop
         if (!running && timeIndex_ != startTimeIndex_)
         {
-            // Note, end() also calls an indirect start() as required
+            functionObjects_.execute();
             functionObjects_.end();
         }
     }
@@ -926,6 +858,7 @@ void Foam::Time::setTime(const Time& t)
     value() = t.value();
     dimensionedScalar::name() = t.dimensionedScalar::name();
     timeIndex_ = t.timeIndex_;
+    fileHandler().setTime(*this);
 }
 
 
@@ -952,6 +885,7 @@ void Foam::Time::setTime(const instant& inst, const label newIndex)
     timeDict.readIfPresent("deltaT", deltaT_);
     timeDict.readIfPresent("deltaT0", deltaT0_);
     timeDict.readIfPresent("index", timeIndex_);
+    fileHandler().setTime(*this);
 }
 
 
@@ -966,6 +900,7 @@ void Foam::Time::setTime(const scalar newTime, const label newIndex)
     value() = newTime;
     dimensionedScalar::name() = timeName(timeToUserTime(newTime));
     timeIndex_ = newIndex;
+    fileHandler().setTime(*this);
 }
 
 

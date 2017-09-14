@@ -29,14 +29,14 @@ License
 #include "token.T.H"
 #include "contiguous.H"
 
-// * * * * * * * * * * * * * * * Ostream Operator *  * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<class Form, class Type>
 Foam::Matrix<Form, Type>::Matrix(Istream& is)
 :
     mRows_(0),
     nCols_(0),
-    v_(NULL)
+    v_(nullptr)
 {
     operator>>(is, *this);
 }

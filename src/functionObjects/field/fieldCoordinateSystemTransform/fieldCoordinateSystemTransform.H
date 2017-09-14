@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,16 +28,16 @@ Group
     grpFieldFunctionObjects
 
 Description
-    This function object transforms a user-specified selection of fields from
-    global Cartesian co-ordinates to a local co-ordinate system.  The fields
-    are run-time modifiable.
+    Transforms a user-specified selection of fields from global Cartesian
+    co-ordinates to a local co-ordinate system.  The fields are run-time
+    modifiable.
 
     Example of function object specification:
     \verbatim
     fieldCoordinateSystemTransform1
     {
         type        fieldCoordinateSystemTransform;
-        libs ("libfieldFunctionObjects.so");
+        libs        ("libfieldFunctionObjects.so");
         ...
         fields
         (
@@ -45,11 +45,16 @@ Description
             UMean
             UPrime2Mean
         );
+
         coordinateSystem
         {
-            origin  (0.001  0       0);
-            e1      (1      0.15    0);
-            e3      (0      0      -1);
+            origin  (0.001 0 0);
+            coordinateRotation
+            {
+                type        axesRotation;
+                e1      (1      0.15    0);
+                e3      (0      0      -1);
+            }
         }
     }
     \endverbatim

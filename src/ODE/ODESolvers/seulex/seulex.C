@@ -211,6 +211,31 @@ void Foam::seulex::extrapolate
 }
 
 
+bool Foam::seulex::resize()
+{
+    if (ODESolver::resize())
+    {
+        table_.shallowResize(kMaxx_, n_);
+        resizeField(dfdx_);
+        resizeMatrix(dfdy_);
+        resizeMatrix(a_);
+        resizeField(pivotIndices_);
+        resizeField(y0_);
+        resizeField(ySequence_);
+        resizeField(scale_);
+        resizeField(dy_);
+        resizeField(yTemp_);
+        resizeField(dydx_);
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
 void Foam::seulex::solve
 (
     scalar& x,
@@ -306,7 +331,7 @@ void Foam::seulex::solve
                     break;
                 }
                 errOld = min(4*err, 1);
-                scalar expo = 1/(k + 1);
+                scalar expo = 1.0/(k + 1);
                 scalar facmin = pow(stepFactor3_, expo);
                 scalar fac;
                 if (err == 0)

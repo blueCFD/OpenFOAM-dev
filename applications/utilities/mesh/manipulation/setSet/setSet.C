@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,11 +43,12 @@ Description
 #include "demandDrivenData.H"
 #include "writePatch.H"
 #include "writePointSet.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "cellZoneSet.H"
 #include "faceZoneSet.H"
 #include "pointZoneSet.H"
 #include "timeSelector.H"
+#include "collatedFileOperation.H"
 
 #include <stdio.h>
 
@@ -805,6 +806,11 @@ commandStatus parseAction(const word& actionName)
 
 int main(int argc, char *argv[])
 {
+    // Specific to topoSet/setSet: quite often we want to block upon writing
+    // a set so we can immediately re-read it. So avoid use of threading
+    // for set writing.
+    fileOperations::collatedFileOperation::maxThreadFileBufferSize = 0;
+
     timeSelector::addOptions(true, false);
     #include "addRegionOption.H"
     argList::addBoolOption("noVTK", "do not write VTK files");
@@ -871,7 +877,7 @@ int main(int argc, char *argv[])
         // Main command read & execute loop
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        autoPtr<IFstream> fileStreamPtr(NULL);
+        autoPtr<IFstream> fileStreamPtr(nullptr);
 
         if (batch)
         {

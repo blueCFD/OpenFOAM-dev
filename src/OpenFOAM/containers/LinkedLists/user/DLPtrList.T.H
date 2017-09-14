@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,7 +21,7 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
+Alias
     Foam::DLPtrList
 
 Description
@@ -33,49 +33,15 @@ Description
 #define DLPtrList_H
 
 #include "LPtrList.T.H"
-#include "DLListBase.T.H"
+#include "DLListBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-/*---------------------------------------------------------------------------*\
-                           Class DLPtrList Declaration
-\*---------------------------------------------------------------------------*/
-
-template<class T>
-class DLPtrList
-:
-    public LPtrList<DLListBase, T>
-{
-
-public:
-
-    // Constructors
-
-        //- Null construct
-        DLPtrList()
-        {}
-
-        //- Construct from Istream using given Istream constructor class
-        template<class INew>
-        DLPtrList(Istream& is, const INew& inewt)
-        :
-            LPtrList<DLListBase, T>(is, inewt)
-        {}
-
-        //- Construct from Istream
-        DLPtrList(Istream& is)
-        :
-            LPtrList<DLListBase, T>(is)
-        {}
-};
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
+    template<class T>
+    using DLPtrList = LPtrList<DLListBase, T>;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

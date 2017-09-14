@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,9 +56,12 @@ Foam::reactionRateFlameAreaModels::relaxation::relaxation
 )
 :
     reactionRateFlameArea(modelType, dict, mesh, combModel),
-    correlation_(dict.subDict(typeName + "Coeffs").subDict(fuel_)),
-    C_(readScalar(dict.subDict(typeName + "Coeffs").lookup("C"))),
-    alpha_(readScalar(dict.subDict(typeName + "Coeffs").lookup("alpha")))
+    correlation_(dict.optionalSubDict(typeName + "Coeffs").subDict(fuel_)),
+    C_(readScalar(dict.optionalSubDict(typeName + "Coeffs").lookup("C"))),
+    alpha_
+    (
+        readScalar(dict.optionalSubDict(typeName + "Coeffs").lookup("alpha"))
+    )
 {}
 
 
@@ -123,13 +126,14 @@ void Foam::reactionRateFlameAreaModels::relaxation::correct
        /(sqr(omega0 - omegaInf) + sqr(omegaMin))
     );
 
-    const volScalarField rho(combModel_.rho());
-    const surfaceScalarField phi(combModel_.phi());
+    const volScalarField& rho = combModel_.rho();
+    const tmp<surfaceScalarField> tphi = combModel_.phi();
+    const surfaceScalarField& phi = tphi();
 
     solve
     (
          fvm::ddt(rho, omega_)
-       + fvm::div(phi, omega_, "div(phi,omega)")
+       + fvm::div(phi, omega_)
       ==
          rho*Rc*omega0
        - fvm::SuSp(rho*(tau + Rc), omega_)
@@ -147,7 +151,7 @@ bool  Foam::reactionRateFlameAreaModels::relaxation::read
 {
     if (reactionRateFlameArea::read(dict))
     {
-        coeffDict_ = dict.subDict(typeName + "Coeffs");
+        coeffDict_ = dict.optionalSubDict(typeName + "Coeffs");
         coeffDict_.lookup("C") >> C_;
         coeffDict_.lookup("alpha") >> alpha_;
         correlation_.read

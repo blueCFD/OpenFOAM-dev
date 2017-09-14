@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -64,7 +64,7 @@ Description
 #include "fvCFD.H"
 #include "fvMeshDistribute.H"
 #include "mapDistributePolyMesh.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "globalIndex.H"
 #include "loadOrCreateMesh.H"
 
@@ -322,7 +322,7 @@ void readFields
                 {
                     if (!haveMesh[proci])
                     {
-                        OPstream toProc(Pstream::blocking, proci);
+                        OPstream toProc(Pstream::commsTypes::blocking, proci);
                         toProc<< tsubfld();
                     }
                 }
@@ -338,7 +338,11 @@ void readFields
             const word& name = masterNames[i];
 
             // Receive field
-            IPstream fromMaster(Pstream::blocking, Pstream::masterNo());
+            IPstream fromMaster
+            (
+                Pstream::commsTypes::blocking,
+                Pstream::masterNo()
+            );
             dictionary fieldDict(fromMaster);
 
             fields.set

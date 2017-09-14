@@ -28,8 +28,8 @@ Group
     grpForcesFunctionObjects
 
 Description
-    This function object calculates the forces and moments by integrating the
-    pressure and skin-friction forces over a given list of patches.
+    Calculates the forces and moments by integrating the pressure and
+    skin-friction forces over a given list of patches.
 
     Member function forces::write() calculates the forces/moments and
     writes the forces/moments into the file \<timeDir\>/forces.dat and bin
@@ -40,7 +40,7 @@ Description
     forces1
     {
         type        forces;
-        libs ("libforces.so");
+        libs        ("libforces.so");
         ...
         log         yes;
         patches     (walls);
@@ -101,7 +101,8 @@ Note
 
 See also
     Foam::functionObject
-    Foam::functionObjects::writeFiles
+    Foam::functionObjects::fvMeshFunctionObject
+    Foam::functionObjects::logFiles
     Foam::functionObjects::timeControl
     Foam::forceCoeffs
 
@@ -113,7 +114,8 @@ SourceFiles
 #ifndef functionObjects_forces_H
 #define functionObjects_forces_H
 
-#include "writeFiles.H"
+#include "fvMeshFunctionObject.H"
+#include "logFiles.H"
 #include "coordinateSystem.H"
 #include "volFieldsFwd.H"
 #include "HashSet.T.H"
@@ -131,11 +133,20 @@ namespace functionObjects
 
 class forces
 :
-    public writeFiles
+    public fvMeshFunctionObject,
+    public logFiles
 {
+
 protected:
 
     // Protected data
+
+        //- Enumeration for ensuring the right file is accessed
+        enum fileID
+        {
+            MAIN_FILE = 0,
+            BINS_FILE = 1
+        };
 
         //- Pressure, viscous and porous force per bin
         List<Field<vector>> force_;

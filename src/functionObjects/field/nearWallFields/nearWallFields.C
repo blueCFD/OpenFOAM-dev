@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ namespace functionObjects
 }
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::functionObjects::nearWallFields::calcAddressing()
 {
@@ -60,7 +60,12 @@ void Foam::functionObjects::nearWallFields::calcAddressing()
     DebugInFunction << "nPatchFaces: " << globalWalls.size() << endl;
 
     // Construct cloud
-    Cloud<findCellParticle> cloud(mesh_, IDLList<findCellParticle>());
+    Cloud<findCellParticle> cloud
+    (
+        mesh_,
+        cloud::defaultName,
+        IDLList<findCellParticle>()
+    );
 
     // Add particles to track to sample locations
     nPatchFaces = 0;
@@ -103,24 +108,16 @@ void Foam::functionObjects::nearWallFields::calcAddressing()
 
             const point end = start-distance_*nf[patchFacei];
 
-            // Find tet for starting location
-            label celli = -1;
-            label tetFacei = -1;
-            label tetPtI = -1;
-            mesh_.findCellFacePt(start, celli, tetFacei, tetPtI);
-
-            // Add to cloud. Add originating face as passive data
+            // Add a particle to the cloud with originating face as passive data
             cloud.addParticle
             (
                 new findCellParticle
                 (
                     mesh_,
                     start,
-                    celli,
-                    tetFacei,
-                    tetPtI,
+                    -1,
                     end,
-                    globalWalls.toGlobal(nPatchFaces)    // passive data
+                    globalWalls.toGlobal(nPatchFaces) // passive data
                 )
             );
 
@@ -354,8 +351,6 @@ bool Foam::functionObjects::nearWallFields::write()
     {
         vtf_[i].write();
     }
-
-    Log << endl;
 
     return true;
 }

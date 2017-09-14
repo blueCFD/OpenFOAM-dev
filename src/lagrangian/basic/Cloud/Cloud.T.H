@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ SourceFiles
 #define Cloud_H
 
 #include "cloud.H"
-#include "IDLList.T.H"
+#include "IDLList.H"
 #include "IOField.T.H"
 #include "CompactIOField.T.H"
 #include "polyMesh.H"
@@ -87,6 +87,9 @@ class Cloud
         //- Does the cell have wall faces
         mutable autoPtr<PackedBoolList> cellWallFacesPtr_;
 
+        //- Temporary storage for the global particle positions
+        mutable autoPtr<vectorField> globalPositionsPtr_;
+
 
     // Private Member Functions
 
@@ -133,25 +136,9 @@ public:
         Cloud
         (
             const polyMesh& mesh,
-            const IDLList<ParticleType>& particles
-        );
-
-        //- Construct from mesh, cloud name, and a list of particles
-        Cloud
-        (
-            const polyMesh& mesh,
             const word& cloudName,
             const IDLList<ParticleType>& particles
         );
-
-        //- Construct from mesh by reading from file
-        //  Optionally disable checking of class name for post-processing
-        Cloud
-        (
-            const polyMesh& mesh,
-            const bool checkClass = true
-        );
-
 
         //- Construct from mesh by reading from file with given cloud instance
         //  Optionally disable checking of class name for post-processing
@@ -178,7 +165,7 @@ public:
                 return IDLList<ParticleType>::size();
             };
 
-            DynamicList<label>& labels()
+            DynamicList<label>& labels() const
             {
                 return labels_;
             }
@@ -207,7 +194,7 @@ public:
             //  non-zero wall distance values.  By default, assume
             //  that they can't (default for wallImpactDistance in
             //  particle is 0.0).
-            virtual bool hasWallImpactDistance() const
+            bool hasWallImpactDistance() const
             {
                 return false;
             }
@@ -259,6 +246,9 @@ public:
             //- Remove particle from cloud and delete
             void deleteParticle(ParticleType&);
 
+            //- Remove lost particles from cloud and delete
+            void deleteLostParticles();
+
             //- Reset the particles
             void cloudReset(const Cloud<ParticleType>& c);
 
@@ -269,8 +259,7 @@ public:
 
             //- Remap the cells of particles corresponding to the
             //  mesh topology change
-            template<class TrackData>
-            void autoMap(TrackData& td, const mapPolyMesh&);
+            void autoMap(const mapPolyMesh&);
 
 
         // Read
@@ -298,10 +287,6 @@ public:
                 const CompactIOField<Field<DataType>, DataType>& data
             ) const;
 
-            //- Read the field data for the cloud of particles. Dummy at
-            //  this level.
-            virtual void readFields();
-
 
         // Write
 
@@ -315,11 +300,16 @@ public:
             (
                 IOstream::streamFormat fmt,
                 IOstream::versionNumber ver,
-                IOstream::compressionType cmp
+                IOstream::compressionType cmp,
+                const bool valid
             ) const;
 
             //- Write positions to \<cloudName\>_positions.obj file
             void writePositions() const;
+
+            //- Call this before a topology change. Stores the particles global
+            //  positions in the database for use during mapping.
+            void storeGlobalPositions() const;
 
 
     // Ostream Operator

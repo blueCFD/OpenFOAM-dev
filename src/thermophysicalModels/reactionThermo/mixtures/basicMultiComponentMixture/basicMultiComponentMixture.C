@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,6 @@ namespace Foam
     defineTypeNameAndDebug(basicMultiComponentMixture, 0);
 }
 
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::basicMultiComponentMixture::basicMultiComponentMixture
@@ -44,8 +43,11 @@ Foam::basicMultiComponentMixture::basicMultiComponentMixture
 )
 :
     species_(specieNames),
+    active_(species_.size(), true),
     Y_(species_.size())
 {
+    tmp<volScalarField> tYdefault;
+
     forAll(species_, i)
     {
         IOobject header
@@ -56,8 +58,8 @@ Foam::basicMultiComponentMixture::basicMultiComponentMixture
             IOobject::NO_READ
         );
 
-        // Check if field exists and can be read
-        if (header.headerOk())
+        // check if field exists and can be read
+        if (header.typeHeaderOk<volScalarField>(true))
         {
             Y_.set
             (
@@ -78,18 +80,51 @@ Foam::basicMultiComponentMixture::basicMultiComponentMixture
         }
         else
         {
-            volScalarField Ydefault
-            (
-                IOobject
+            // Read Ydefault if not already read
+            if (!tYdefault.valid())
+            {
+                word YdefaultName(IOobject::groupName("Ydefault", phaseName));
+
+                IOobject timeIO
                 (
-                    "Ydefault",
+                    YdefaultName,
                     mesh.time().timeName(),
                     mesh,
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE
-                ),
-                mesh
-            );
+                );
+
+                IOobject constantIO
+                (
+                    YdefaultName,
+                    mesh.time().constant(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                );
+
+                IOobject time0IO
+                (
+                    YdefaultName,
+                    Time::timeName(0),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                );
+
+                if (timeIO.typeHeaderOk<volScalarField>(true))
+                {
+                    tYdefault = new volScalarField(timeIO, mesh);
+                }
+                else if (constantIO.typeHeaderOk<volScalarField>(true))
+                {
+                    tYdefault = new volScalarField(constantIO, mesh);
+                }
+                else
+                {
+                    tYdefault = new volScalarField(time0IO, mesh);
+                }
+            }
 
             Y_.set
             (
@@ -104,7 +139,7 @@ Foam::basicMultiComponentMixture::basicMultiComponentMixture
                         IOobject::NO_READ,
                         IOobject::AUTO_WRITE
                     ),
-                    Ydefault
+                    tYdefault()
                 )
             );
         }

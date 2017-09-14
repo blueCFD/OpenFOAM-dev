@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,7 +49,7 @@ void Foam::ConeNozzleInjection<CloudType>::setInjectionMethod()
         (
             injectorCell_,
             tetFacei_,
-            tetPtI_,
+            tetPti_,
             position_,
             false
         );
@@ -111,7 +111,7 @@ Foam::ConeNozzleInjection<CloudType>::ConeNozzleInjection
     position_(this->coeffDict().lookup("position")),
     injectorCell_(-1),
     tetFacei_(-1),
-    tetPtI_(-1),
+    tetPti_(-1),
     direction_(this->coeffDict().lookup("direction")),
     parcelsPerSecond_
     (
@@ -146,7 +146,7 @@ Foam::ConeNozzleInjection<CloudType>::ConeNozzleInjection
     ),
     sizeDistribution_
     (
-        distributionModels::distributionModel::New
+        distributionModel::New
         (
             this->coeffDict().subDict("sizeDistribution"),
             owner.rndGen()
@@ -215,7 +215,7 @@ Foam::ConeNozzleInjection<CloudType>::ConeNozzleInjection
     position_(im.position_),
     injectorCell_(im.injectorCell_),
     tetFacei_(im.tetFacei_),
-    tetPtI_(im.tetPtI_),
+    tetPti_(im.tetPti_),
     direction_(im.direction_),
     parcelsPerSecond_(im.parcelsPerSecond_),
     flowRateProfile_(im.flowRateProfile_),
@@ -252,14 +252,12 @@ void Foam::ConeNozzleInjection<CloudType>::updateMesh()
             (
                 injectorCell_,
                 tetFacei_,
-                tetPtI_,
+                tetPti_,
                 position_
             );
         }
         default:
-        {
-            // do nothing
-        }
+        {}
     }
 }
 
@@ -316,7 +314,7 @@ void Foam::ConeNozzleInjection<CloudType>::setPositionAndCell
     vector& position,
     label& cellOwner,
     label& tetFacei,
-    label& tetPtI
+    label& tetPti
 )
 {
     cachedRandom& rndGen = this->owner().rndGen();
@@ -331,7 +329,7 @@ void Foam::ConeNozzleInjection<CloudType>::setPositionAndCell
             position = position_;
             cellOwner = injectorCell_;
             tetFacei = tetFacei_;
-            tetPtI = tetPtI_;
+            tetPti = tetPti_;
 
             break;
         }
@@ -346,7 +344,7 @@ void Foam::ConeNozzleInjection<CloudType>::setPositionAndCell
             (
                 cellOwner,
                 tetFacei,
-                tetPtI,
+                tetPti,
                 position,
                 false
             );

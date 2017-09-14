@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,12 @@ Foam::ReactingPhaseModel<BasePhaseModel, ReactionType>::ReactingPhaseModel
     BasePhaseModel(fluid, phaseName, index, false),
     reaction_
     (
-        ReactionType::New(fluid.mesh(), this->name())
+        ReactionType::New
+        (
+            fluid.mesh(),
+            combustionModel::combustionPropertiesName,
+            this->name()
+        )
     )
 {
     this->thermo_ = &reaction_->thermo();
@@ -100,9 +105,9 @@ Foam::ReactingPhaseModel<BasePhaseModel, ReactionType>::R
 
 template<class BasePhaseModel, class ReactionType>
 Foam::tmp<Foam::volScalarField>
-Foam::ReactingPhaseModel<BasePhaseModel, ReactionType>::Sh() const
+Foam::ReactingPhaseModel<BasePhaseModel, ReactionType>::Qdot() const
 {
-    return reaction_->Sh();
+    return reaction_->Qdot();
 }
 
 

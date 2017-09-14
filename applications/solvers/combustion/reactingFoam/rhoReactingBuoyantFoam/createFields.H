@@ -1,3 +1,5 @@
+#include "createRDeltaT.H"
+
 Info<< "Creating reaction model\n" << endl;
 
 autoPtr<combustionModels::rhoCombustionModel> reaction
@@ -11,7 +13,14 @@ thermo.validate(args.executable(), "h", "e");
 basicMultiComponentMixture& composition = thermo.composition();
 PtrList<volScalarField>& Y = composition.Y();
 
-word inertSpecie(thermo.lookup("inertSpecie"));
+const word inertSpecie(thermo.lookup("inertSpecie"));
+if (!composition.species().found(inertSpecie))
+{
+    FatalIOErrorIn(args.executable().c_str(), thermo)
+        << "Inert specie " << inertSpecie << " not found in available species "
+        << composition.species()
+        << exit(FatalIOError);
+}
 
 volScalarField rho
 (
@@ -108,18 +117,18 @@ forAll(Y, i)
 }
 fields.add(thermo.he());
 
-volScalarField dQ
+volScalarField Qdot
 (
     IOobject
     (
-        "dQ",
+        "Qdot",
         runTime.timeName(),
         mesh,
-        IOobject::NO_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::AUTO_WRITE
     ),
     mesh,
-    dimensionedScalar("dQ", dimEnergy/dimTime, 0.0)
+    dimensionedScalar("Qdot", dimEnergy/dimVolume/dimTime, 0.0)
 );
 
 #include "createMRF.H"

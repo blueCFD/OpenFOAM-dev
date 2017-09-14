@@ -52,7 +52,7 @@ const int Foam::meshReaders::STARCD::starToFoamFaceAddr[4][6] =
 };
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::meshReaders::STARCD::readToNewline(IFstream& is)
 {
@@ -92,8 +92,6 @@ bool Foam::meshReaders::STARCD::readHeader(IFstream& is, word fileSignature)
     return true;
 }
 
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 void Foam::meshReaders::STARCD::readAux(const objectRegistry& registry)
 {
@@ -411,7 +409,7 @@ void Foam::meshReaders::STARCD::readCells(const fileName& inputName)
             }
 
             // determine the foam cell shape
-            const cellModel* curModelPtr = NULL;
+            const cellModel* curModelPtr = nullptr;
 
             // fluid/solid cells
             switch (shapeId)

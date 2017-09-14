@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -230,7 +230,13 @@ void pointZoneSet::deleteSet(const topoSet& set)
 
 
 void pointZoneSet::sync(const polyMesh& mesh)
-{}
+{
+    pointSet::sync(mesh);
+
+    // Take over contents of pointSet into addressing.
+    addressing_ = sortedToc();
+    updateSet();
+}
 
 
 label pointZoneSet::maxSize(const polyMesh& mesh) const
@@ -243,13 +249,14 @@ bool pointZoneSet::writeObject
 (
     IOstream::streamFormat s,
     IOstream::versionNumber v,
-    IOstream::compressionType c
+    IOstream::compressionType c,
+    const bool valid
 ) const
 {
     // Write shadow pointSet
     word oldTypeName = typeName;
     const_cast<word&>(type()) = pointSet::typeName;
-    bool ok = pointSet::writeObject(s, v, c);
+    bool ok = pointSet::writeObject(s, v, c, valid);
     const_cast<word&>(type()) = oldTypeName;
 
     // Modify pointZone
@@ -279,7 +286,7 @@ bool pointZoneSet::writeObject
     }
     pointZones.clearAddressing();
 
-    return ok && pointZones.write();
+    return ok && pointZones.write(valid);
 }
 
 

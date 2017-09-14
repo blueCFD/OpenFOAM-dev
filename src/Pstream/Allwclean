@@ -1,0 +1,26 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Define how an mpi-versioned library is created
+# clean the qualified directory
+wcleanMpiLib()
+{
+    for libName
+    do
+    (
+        WM_OPTIONS="$WM_OPTIONS$WM_MPLIB"
+        wclean $libName
+    )
+    done
+}
+
+wclean dummy
+
+case "$WM_MPLIB" in
+*MPI*)
+    wcleanMpiLib mpi
+    ;;
+esac
+
+
+#------------------------------------------------------------------------------

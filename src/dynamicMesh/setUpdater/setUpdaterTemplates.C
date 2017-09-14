@@ -27,7 +27,7 @@ License
 #include "polyMesh.H"
 #include "Time.T.H"
 #include "mapPolyMesh.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

@@ -126,7 +126,7 @@ namespace Foam
         // For stat
 
             //- From watch descriptor to modified time
-            DynamicList<time_t> lastMod_;
+            DynamicList<double> lastMod_;
 
 
 
@@ -261,7 +261,7 @@ namespace Foam
                         << abort(FatalError);
                 }
 
-                lastMod_(watchFd) = lastModified(fName);
+                lastMod_(watchFd) = highResLastModified(fName);
             }
 
             return true;
@@ -313,8 +313,8 @@ void Foam::fileMonitor::checkFiles() const
             (
                 watcher_->inotifyFd_+1,     // num filedescriptors in fdSet
                 &fdSet,             // fdSet with only inotifyFd
-                NULL,               // No writefds
-                NULL,               // No errorfds
+                nullptr,               // No writefds
+                nullptr,               // No errorfds
                 &zeroTimeout        // eNo timeout
             );
 
@@ -395,12 +395,12 @@ void Foam::fileMonitor::checkFiles() const
     {
         forAll(watcher_->lastMod_, watchFd)
         {
-            time_t oldTime = watcher_->lastMod_[watchFd];
+            double oldTime = watcher_->lastMod_[watchFd];
 
             if (oldTime != 0)
             {
                 const fileName& fName = watchFile_[watchFd];
-                time_t newTime = lastModified(fName);
+                double newTime = highResLastModified(fName);
 
                 if (newTime == 0)
                 {
@@ -615,7 +615,7 @@ void Foam::fileMonitor::setUnmodified(const label watchFd)
 
     if (!useInotify_)
     {
-        watcher_->lastMod_[watchFd] = lastModified(watchFile_[watchFd]);
+        watcher_->lastMod_[watchFd] = highResLastModified(watchFile_[watchFd]);
     }
 }
 

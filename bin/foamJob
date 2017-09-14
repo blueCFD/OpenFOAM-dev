@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -48,8 +48,6 @@
 #
 #------------------------------------------------------------------------------
 usage() {
-    exec 1>&2
-    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
     cat<<USAGE
 
 Usage: ${0##*/} [OPTION] <application> ...
@@ -66,6 +64,12 @@ options:
   Redirects the output to 'log' in the case directory
 
 USAGE
+}
+
+error() {
+    exec 1>&2
+    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    usage
     exit 1
 }
 
@@ -75,14 +79,14 @@ echoArgs() {
 
     for stringItem in "$@"; do
 
-        echo -n "${addSpace}"
+        printf "%s" "${addSpace}"
 
         if [ "${stringItem##* }" = "$stringItem" ]
         then
-            echo -n "$stringItem"
+            printf "%s" "$stringItem"
             addSpace=" "
         else
-            echo -n "'$stringItem'"
+            printf "%s" "'$stringItem'"
             addSpace=" "
         fi
 
@@ -93,34 +97,9 @@ echoArgs() {
 
 unset version
 
-# Replacement for possibly buggy 'which'
 findExec() {
-    case "$1" in
-    */*)
-        if [ -x "$1" ]
-        then
-            echo "$1"
-            return 0
-        fi
-        ;;
-    esac
-
-    oldIFS=$IFS
-    IFS=':'
-    for d in $PATH
-    do
-        # echo "testing: $d/$1" 1>&2
-        if [ -x "$d/$1" -a ! -d "$d/$1" ]
-        then
-            # echo "Found exec: $d/$1" 1>&2
-            IFS=$oldIFS
-            echo "$d/$1"
-            return 0
-        fi
-     done
-     IFS=$oldIFS
-     echo ""
-     return 1
+    which "$1" 2>/dev/null
+    command -v "$1" >/dev/null 2>&1
 }
 
 #find mpirun or mpiexec, by checking if MPI_ARCH_PATH matches the path for each
@@ -163,11 +142,11 @@ while [ "$#" -gt 0 ]
 do
    case "$1" in
    -h | -help)
-      usage
+      usage && exit 0
       ;;
    -case)
-      [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
-      cd "$2" 2>/dev/null || usage "directory does not exist:  '$2'"
+      [ "$#" -ge 2 ] || error "'$1' option requires an argument"
+      cd "$2" 2>/dev/null || error "directory does not exist:  '$2'"
       shift 2
       ;;
    -p | -parallel)
@@ -187,7 +166,7 @@ do
       shift
       ;;
    -v | -version)
-      [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
+      [ "$#" -ge 2 ] || error "'$1' option requires an argument"
       version="$2"
       shift 2
       ;;
@@ -196,7 +175,7 @@ do
       break
       ;;
    -*)
-      usage "invalid option '$1'"
+      error "invalid option '$1'"
       ;;
    *)
       break
@@ -204,7 +183,7 @@ do
    esac
 done
 
-[ "$#" -ge 1 ] || usage "No application specified"
+[ "$#" -ge 1 ] || error "No application specified"
 ORIGAPPLICATION=$1
 
 
@@ -215,11 +194,11 @@ then
     # When possible, determine if application even exists
     if [ -z "$version" ]
     then
-        findExec $1 >/dev/null || usage "Application '$1' not found"
+        findExec "$1" >/dev/null || error "Application '$1' not found"
     fi
 
     # Use foamExec for dispatching
-    APPLICATION=`findExec foamExec` || usage "'foamExec' not found"
+    APPLICATION=$(findExec foamExec) || error "'foamExec' not found"
 
     [ -n "$version" ] && APPLICATION="$APPLICATION -version $version"
 
@@ -230,7 +209,7 @@ then
     fi
 
 else
-    APPLICATION=`findExec $1` || usage "Application '$1' not found"
+    APPLICATION=$(findExec "$1") || error "Application '$1' not found"
     echo "Application : $1"
     shift
 fi
@@ -244,9 +223,9 @@ then
     #
     # Check if the case decomposed
     #
-    if [ -r "processor0" ]
+    if [ -r "processor0" -o -r "processors" ]
     then
-        NPROCS="`/bin/ls -1d processor* | wc -l`"
+        NPROCS="$(foamDictionary -entry numberOfSubdomains -value system/decomposeParDict)"
     else
         echo "Case is not currently decomposed"
         if [ -r system/decomposeParDict ]
@@ -264,7 +243,7 @@ then
     #
     # Find mpirun
     #
-    mpirun=`findMpirun` || usage "'mpirun' not found"
+    mpirun=`findMpirun` || error "'mpirun' not found"
     mpiopts="-np $NPROCS"
 
     #

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ using namespace Foam;
 int main(int argc, char *argv[])
 {
     argList::noParallel();
-    argList::validArgs.append("surfaceFile");
+    argList::validArgs.append("surface file");
     argList::addOption("x", "X", "The point x-coordinate (if non-zero)");
     argList::addOption("y", "Y", "The point y-coordinate (if non-zero)");
     argList::addOption("z", "Z", "The point y-coordinate (if non-zero)");
@@ -81,10 +81,10 @@ int main(int argc, char *argv[])
     }
 
     Info<< "Nearest vertex:" << nl
-        << "    index      :" << minIndex << " (in localPoints)" << nl
-        << "    index      :" << surf1.meshPoints()[minIndex]
+        << "    index      : " << minIndex << " (in localPoints)" << nl
+        << "    index      : " << surf1.meshPoints()[minIndex]
         << " (in points)" << nl
-        << "    coordinates:" << localPoints[minIndex] << nl
+        << "    coordinates: " << localPoints[minIndex] << nl
         << endl;
 
     //
@@ -111,14 +111,25 @@ int main(int argc, char *argv[])
     const face& f = surf1[minIndex];
 
     Info<< "Face with nearest centre:" << nl
-        << "    index        :" << minIndex << nl
-        << "    centre       :" << f.centre(points) << nl
-        << "    face         :" << f << nl
-        << "    vertex coords:\n";
+        << "    index        : " << minIndex << nl
+        << "    centre       : " << f.centre(points) << nl
+        << "    face         : " << f << nl
+        << "    vertex coords:" << endl;
     forAll(f, fp)
     {
-        Info<< "        " << points[f[fp]] << "\n";
+        Info<< "        " << points[f[fp]] << nl;
     }
+
+    const List<surfZone>& surfZones = surf1.surfZones();
+    label surfZone = -1;
+    forAll(surfZones, zonei)
+    {
+        if (minIndex >= surfZones[zonei].start())
+        {
+            surfZone = zonei;
+        }
+    }
+    Info<< "    zone/region  : " << surfZone << endl;
 
     Info<< endl;
 

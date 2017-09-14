@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,7 +72,7 @@ Foam::InflationInjection<CloudType>::InflationInjection
     dSeed_(SMALL),
     sizeDistribution_
     (
-        distributionModels::distributionModel::New
+        distributionModel::New
         (
             this->coeffDict().subDict("sizeDistribution"),
             owner.rndGen()
@@ -155,9 +155,7 @@ Foam::InflationInjection<CloudType>::~InflationInjection()
 
 template<class CloudType>
 void Foam::InflationInjection<CloudType>::updateMesh()
-{
-    // do nothing
-}
+{}
 
 
 template<class CloudType>
@@ -189,7 +187,7 @@ Foam::label Foam::InflationInjection<CloudType>::parcelsToInject
     {
         label cI = inflationCells_[iCI];
 
-        typename CloudType::parcelType* pPtr = NULL;
+        typename CloudType::parcelType* pPtr = nullptr;
 
         forAll(cellOccupancy[cI], cPI)
         {
@@ -281,10 +279,10 @@ Foam::label Foam::InflationInjection<CloudType>::parcelsToInject
             label cPI = rnd.position(label(0), cellOccupancy[cI].size() - 1);
 
             // This has to be a reference to the pointer so that it
-            // can be set to NULL when the particle is deleted.
+            // can be set to nullptr when the particle is deleted.
             typename CloudType::parcelType*& pPtr = cellOccupancy[cI][cPI];
 
-            if (pPtr != NULL)
+            if (pPtr != nullptr)
             {
                 scalar pD = pPtr->d();
 
@@ -378,7 +376,7 @@ Foam::label Foam::InflationInjection<CloudType>::parcelsToInject
 
                 this->owner().deleteParticle(*pPtr);
 
-                pPtr = NULL;
+                pPtr = nullptr;
             }
         }
 
@@ -446,7 +444,7 @@ void Foam::InflationInjection<CloudType>::setPositionAndCell
     vector& position,
     label& cellOwner,
     label& tetFacei,
-    label& tetPtI
+    label& tetPti
 )
 {
     position = newParticles_[parcelI].first().first();
@@ -455,7 +453,7 @@ void Foam::InflationInjection<CloudType>::setPositionAndCell
     (
         cellOwner,
         tetFacei,
-        tetPtI,
+        tetPti,
         position,
         false
     );

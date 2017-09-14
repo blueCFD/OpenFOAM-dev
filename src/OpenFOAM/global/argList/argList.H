@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,7 +78,7 @@ SourceFiles
 
 #include "stringList.H"
 #include "SubList.T.H"
-#include "SLList.T.H"
+#include "SLList.H"
 #include "HashTable.T.H"
 #include "word.H"
 #include "fileName.H"

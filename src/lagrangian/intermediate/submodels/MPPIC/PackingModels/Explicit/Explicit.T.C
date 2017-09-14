@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Foam::PackingModels::Explicit<CloudType>::Explicit
 )
 :
     PackingModel<CloudType>(dict, owner, typeName),
-    stressAverage_(NULL),
+    stressAverage_(nullptr),
     correctionLimiting_
     (
         CorrectionLimitingMethod::New
@@ -129,8 +129,8 @@ void Foam::PackingModels::Explicit<CloudType>::cacheFields(const bool store)
     }
     else
     {
-        volumeAverage_ = NULL;
-        uAverage_ = NULL;
+        volumeAverage_ = nullptr;
+        uAverage_ = nullptr;
         stressAverage_.clear();
     }
 }
@@ -143,20 +143,19 @@ Foam::vector Foam::PackingModels::Explicit<CloudType>::velocityCorrection
     const scalar deltaT
 ) const
 {
-    const fvMesh& mesh = this->owner().mesh();
-    const tetIndices tetIs(p.cell(), p.tetFace(), p.tetPt(), mesh);
+    const tetIndices tetIs(p.currentTetIndices());
 
     // interpolated quantities
     const scalar alpha =
-        this->volumeAverage_->interpolate(p.position(), tetIs);
+        this->volumeAverage_->interpolate(p.coordinates(), tetIs);
     const vector alphaGrad =
-        this->volumeAverage_->interpolateGrad(p.position(), tetIs);
+        this->volumeAverage_->interpolateGrad(p.coordinates(), tetIs);
     const vector uMean =
-        this->uAverage_->interpolate(p.position(), tetIs);
+        this->uAverage_->interpolate(p.coordinates(), tetIs);
 
     // stress gradient
     const vector tauGrad =
-        stressAverage_->interpolateGrad(p.position(), tetIs);
+        stressAverage_->interpolateGrad(p.coordinates(), tetIs);
 
     // parcel relative velocity
     const vector uRelative = p.U() - uMean;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,8 +56,8 @@ Foam::PackingModels::Implicit<CloudType>::Implicit
         dimensionedScalar("zero", dimless, 0.0),
         zeroGradientFvPatchScalarField::typeName
     ),
-    phiCorrect_(NULL),
-    uCorrect_(NULL),
+    phiCorrect_(nullptr),
+    uCorrect_(nullptr),
     applyLimiting_(this->coeffDict().lookup("applyLimiting")),
     applyGravity_(this->coeffDict().lookup("applyGravity")),
     alphaMin_(readScalar(this->coeffDict().lookup("alphaMin"))),
@@ -116,7 +116,7 @@ void Foam::PackingModels::Implicit<CloudType>::cacheFields(const bool store)
                 cloudName + ":rhoAverage"
             );
         const AveragingMethod<vector>& uAverage =
-            mesh.lookupObject<AveragingMethod<vector> >
+            mesh.lookupObject<AveragingMethod<vector>>
             (
                 cloudName + ":uAverage"
             );
@@ -339,9 +339,6 @@ Foam::vector Foam::PackingModels::Implicit<CloudType>::velocityCorrection
     // containing tetrahedron and parcel coordinates within
     const label celli = p.cell();
     const label facei = p.tetFace();
-    const tetIndices tetIs(celli, facei, p.tetPt(), mesh);
-    List<scalar> tetCoordinates(4);
-    tetIs.tet(mesh).barycentric(p.position(), tetCoordinates);
 
     // cell velocity
     const vector U = uCorrect_()[celli];
@@ -368,7 +365,7 @@ Foam::vector Foam::PackingModels::Implicit<CloudType>::velocityCorrection
     }
 
     // interpolant equal to 1 at the cell centre and 0 at the face
-    const scalar t = tetCoordinates[0];
+    const scalar t = p.coordinates()[0];
 
     // the normal component of the velocity correction is interpolated linearly
     // the tangential component is equal to that at the cell centre

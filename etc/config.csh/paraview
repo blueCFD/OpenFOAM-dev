@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # License
@@ -34,6 +34,8 @@
 #
 #------------------------------------------------------------------------------
 
+if ( ! $?ParaView_DIR ) setenv ParaView_DIR
+
 # Clean the PATH
 set cleaned=`$WM_PROJECT_DIR/bin/foamCleanPath "$PATH" "$ParaView_DIR $WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/cmake- $WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/paraview-"`
 if ( $status == 0 ) setenv PATH $cleaned
@@ -56,7 +58,8 @@ end
 #setenv ParaView_VERSION 4.3.1
 #setenv ParaView_VERSION 4.4.0
 #setenv ParaView_VERSION 5.0.0
-setenv ParaView_VERSION 5.0.1
+#setenv ParaView_VERSION 5.0.1
+setenv ParaView_VERSION 5.4.0
 setenv ParaView_MAJOR detect
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -109,10 +109,10 @@ bool Foam::triSurfaceSearch::checkUniqueHit
                             surface().faceNormals()[edgeFacei];
 
                         const label signCurrHit =
-                            pos(currHitNormal & lineVec);
+                            pos0(currHitNormal & lineVec);
 
                         const label signExistingHit =
-                            pos(existingHitNormal & lineVec);
+                            pos0(existingHitNormal & lineVec);
 
                         if (signCurrHit == signExistingHit)
                         {
@@ -135,7 +135,7 @@ Foam::triSurfaceSearch::triSurfaceSearch(const triSurface& surface)
     surface_(surface),
     tolerance_(indexedOctree<treeDataTriSurface>::perturbTol()),
     maxTreeDepth_(10),
-    treePtr_(NULL)
+    treePtr_(nullptr)
 {}
 
 
@@ -148,7 +148,7 @@ Foam::triSurfaceSearch::triSurfaceSearch
     surface_(surface),
     tolerance_(indexedOctree<treeDataTriSurface>::perturbTol()),
     maxTreeDepth_(10),
-    treePtr_(NULL)
+    treePtr_(nullptr)
 {
     // Have optional non-standard search tolerance for gappy surfaces.
     if (dict.readIfPresent("tolerance", tolerance_) && tolerance_ > 0)
@@ -174,7 +174,7 @@ Foam::triSurfaceSearch::triSurfaceSearch
     surface_(surface),
     tolerance_(tolerance),
     maxTreeDepth_(maxTreeDepth),
-    treePtr_(NULL)
+    treePtr_(nullptr)
 {}
 
 

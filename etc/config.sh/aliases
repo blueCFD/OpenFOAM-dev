@@ -121,6 +121,25 @@ wmRefresh()
 }
 
 
+# Refresh the environment
+# ~~~~~~~~~~~~~~~~~~~~~~~
+# For backward-compatibility unalias wmRefresh if it is defined as an alias
+if declare -f wmRefresh > /dev/null
+then
+    unset wmRefresh
+else
+    unalias wmRefresh 2> /dev/null
+fi
+
+wmRefresh()
+{
+    wmProjectDir=$WM_PROJECT_DIR
+    foamSettings=$FOAM_SETTINGS
+    wmUnset
+    . $wmProjectDir/etc/bashrc $foamSettings
+}
+
+
 # Change OpenFOAM version
 # ~~~~~~~~~~~~~~~~~~~~~~~
 unset foamVersion

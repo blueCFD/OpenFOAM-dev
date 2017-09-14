@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: Added 'inline' to 'initInterfaceMatrixUpdate' and
@@ -55,7 +55,11 @@ void processorFvPatchField<scalar>::initInterfaceMatrixUpdate
 {
     this->patch().patchInternalField(psiInternal, scalarSendBuf_);
 
-    if (commsType == Pstream::nonBlocking && !Pstream::floatTransfer)
+    if
+    (
+        commsType == Pstream::commsTypes::nonBlocking
+     && !Pstream::floatTransfer
+    )
     {
         // Fast path.
         if (debug && !this->ready())
@@ -71,7 +75,7 @@ void processorFvPatchField<scalar>::initInterfaceMatrixUpdate
         outstandingRecvRequest_ = UPstream::nRequests();
         UIPstream::read
         (
-            Pstream::nonBlocking,
+            Pstream::commsTypes::nonBlocking,
             procPatch_.neighbProcNo(),
             reinterpret_cast<char*>(scalarReceiveBuf_.begin()),
             scalarReceiveBuf_.byteSize(),
@@ -82,7 +86,7 @@ void processorFvPatchField<scalar>::initInterfaceMatrixUpdate
         outstandingSendRequest_ = UPstream::nRequests();
         UOPstream::write
         (
-            Pstream::nonBlocking,
+            Pstream::commsTypes::nonBlocking,
             procPatch_.neighbProcNo(),
             reinterpret_cast<const char*>(scalarSendBuf_.begin()),
             scalarSendBuf_.byteSize(),
@@ -117,7 +121,11 @@ void processorFvPatchField<scalar>::updateInterfaceMatrix
 
     const labelUList& faceCells = this->patch().faceCells();
 
-    if (commsType == Pstream::nonBlocking && !Pstream::floatTransfer)
+    if
+    (
+        commsType == Pstream::commsTypes::nonBlocking
+     && !Pstream::floatTransfer
+    )
     {
         // Fast path.
         if

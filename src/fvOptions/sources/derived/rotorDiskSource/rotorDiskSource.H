@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,9 +33,7 @@ Description
 Usage
     Example usage:
     \verbatim
-    rotorDiskSourceCoeffs
-    {
-        fieldNames      (U);    // names of fields on which to apply source
+        fields          (U);    // names of fields on which to apply source
         nBlades         3;      // number of blades
         tipEffect       0.96;   // normalised radius above which lift = 0
 
@@ -73,7 +71,6 @@ Usage
                 ...
             }
         }
-    }
     \endverbatim
 
     Where:

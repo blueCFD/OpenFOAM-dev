@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,7 +65,11 @@ Foam::dlLibraryTable::~dlLibraryTable()
                     << "Closing " << libNames_[i]
                     << " with handle " << uintptr_t(libPtrs_[i]) << endl;
             }
-            dlClose(libPtrs_[i]);
+            if (!dlClose(libPtrs_[i]))
+            {
+                WarningInFunction<< "Failed closing " << libNames_[i]
+                    << " with handle " << uintptr_t(libPtrs_[i]) << endl;
+            }
         }
     }
 }
@@ -81,7 +85,11 @@ bool Foam::dlLibraryTable::open
 {
     if (functionLibName.size())
     {
-        void* functionLibPtr = dlOpen(functionLibName, verbose);
+        void* functionLibPtr = dlOpen
+        (
+            fileName(functionLibName).expand(),
+            verbose
+        );
 
         if (debug)
         {
@@ -142,7 +150,7 @@ bool Foam::dlLibraryTable::close
 
         bool ok = dlClose(libPtrs_[index]);
 
-        libPtrs_[index] = NULL;
+        libPtrs_[index] = nullptr;
         libNames_[index] = fileName::null;
 
         if (!ok)
@@ -179,7 +187,7 @@ void* Foam::dlLibraryTable::findLibrary(const fileName& functionLibName)
     {
         return libPtrs_[index];
     }
-    return NULL;
+    return nullptr;
 }
 
 

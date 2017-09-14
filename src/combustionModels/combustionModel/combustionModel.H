@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,6 +88,9 @@ public:
     //- Runtime type information
     TypeName("combustionModel");
 
+    //- Default combustionProperties dictionary name
+    static const word combustionPropertiesName;
+
 
     // Constructors
 
@@ -96,6 +99,7 @@ public:
         (
             const word& modelType,
             const fvMesh& mesh,
+            const word& combustionProperties=combustionPropertiesName,
             const word& phaseName=word::null
         );
 
@@ -106,34 +110,26 @@ public:
 
     // Member Functions
 
-        // Access
+        //- Return const access to the mesh database
+        inline const fvMesh& mesh() const;
 
-            //- Return const access to the mesh database
-            inline const fvMesh& mesh() const;
+        //- Set turbulence
+        inline void setTurbulence(compressibleTurbulenceModel& turbModel);
 
-            //- Return const access to phi
-            inline const surfaceScalarField& phi() const;
+        //- Return access to turbulence
+        inline const compressibleTurbulenceModel& turbulence() const;
 
-            //- Return const access to rho
-            virtual tmp<volScalarField> rho() const = 0;
+        //- Return const access to rho
+        inline const volScalarField& rho() const;
 
-            //- Return access to turbulence
-            inline const compressibleTurbulenceModel& turbulence() const;
+        //- Return const access to phi
+        inline tmp<surfaceScalarField> phi() const;
 
-            //- Set turbulence
-            inline void setTurbulence
-            (
-                compressibleTurbulenceModel& turbModel
-            );
+        //- Is combustion active?
+        inline const Switch& active() const;
 
-            //- Is combustion active?
-            inline const Switch& active() const;
-
-            //- Return const dictionary of the model
-            inline const dictionary& coeffs() const;
-
-
-    // Evolution
+        //- Return const dictionary of the model
+        inline const dictionary& coeffs() const;
 
         //- Correct combustion rate
         virtual void correct() = 0;
@@ -141,14 +137,8 @@ public:
         //- Fuel consumption rate matrix, i.e. source term for fuel equation
         virtual tmp<fvScalarMatrix> R(volScalarField& Y) const = 0;
 
-        //- Heat release rate calculated from fuel consumption rate matrix
-        virtual tmp<volScalarField> dQ() const = 0;
-
-        //-  Return source for enthalpy equation [kg/m/s3]
-        virtual tmp<volScalarField> Sh() const;
-
-
-    // IO
+        //- Heat release rate [kg/m/s3]
+        virtual tmp<volScalarField> Qdot() const = 0;
 
         //- Update properties from given dictionary
         virtual bool read();

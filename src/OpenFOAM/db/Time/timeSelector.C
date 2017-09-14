@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -135,8 +135,12 @@ void Foam::timeSelector::addOptions
     argList::addBoolOption
     (
         "noZero",
-        "exclude the '0/' dir from the times list, "
-        "has precedence over the -withZero option"
+        string("exclude the '0/' dir from the times list")
+      + (
+            withZero
+          ? ", has precedence over the -withZero option"
+          : ""
+        )
     );
     argList::addBoolOption
     (
@@ -321,7 +325,12 @@ Foam::instantList Foam::timeSelector::select
         forAll(timeDirs, timeI)
         {
             selectTimes[timeI] =
-                !exists(runTime.path()/timeDirs[timeI].name()/fName);
+               !fileHandler().exists
+                (
+                    runTime.path()
+                   /timeDirs[timeI].name()
+                   /fName
+                );
         }
 
         return subset(selectTimes, timeDirs);

@@ -1,9 +1,7 @@
-    surfaceScalarField ddtPhi1
-    (
-        (phi1 - phi1.oldTime())/runTime.deltaT()
-    );
+tmp<surfaceScalarField> tddtPhi1;
+tmp<surfaceScalarField> tddtPhi2;
 
-    surfaceScalarField ddtPhi2
-    (
-        (phi2 - phi2.oldTime())/runTime.deltaT()
-    );
+if (faceMomentum)
+{
+    #include "pUf/DDtU.H"
+}

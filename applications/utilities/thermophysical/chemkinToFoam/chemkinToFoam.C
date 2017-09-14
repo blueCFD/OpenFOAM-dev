@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,6 +33,8 @@ Description
 #include "argList.H"
 #include "chemkinReader.H"
 #include "OFstream.H"
+#include "OStringStream.H"
+#include "IStringStream.H"
 
 using namespace Foam;
 
@@ -40,11 +42,14 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    argList::validArgs.append("CHEMKINFile");
-    argList::validArgs.append("CHEMKINThermodynamicsFile");
-    argList::validArgs.append("CHEMKINTransport");
-    argList::validArgs.append("FOAMChemistryFile");
-    argList::validArgs.append("FOAMThermodynamicsFile");
+    // Increase the precision of the output for JANAF coefficients
+    Ostream::defaultPrecision(10);
+
+    argList::validArgs.append("CHEMKIN file");
+    argList::validArgs.append("CHEMKIN thermodynamics file");
+    argList::validArgs.append("CHEMKIN transport file");
+    argList::validArgs.append("OpenFOAM chemistry file");
+    argList::validArgs.append("OpenFOAM thermodynamics file");
 
     argList::addBoolOption
     (
@@ -60,15 +65,42 @@ int main(int argc, char *argv[])
 
     chemkinReader cr(species, args[1], args[3], args[2], newFormat);
 
+
     OFstream reactionsFile(args[4]);
     reactionsFile
+        << "elements" << cr.elementNames() << token::END_STATEMENT << nl << nl;
+    reactionsFile
         << "species" << cr.species() << token::END_STATEMENT << nl << nl;
-
     cr.reactions().write(reactionsFile);
 
 
-    OFstream thermoFile(args[5]);
-    cr.speciesThermo().write(thermoFile);
+    // Temporary hack to splice the specie composition data into the thermo file
+    // pending complete integration into the thermodynamics structure
+
+    OStringStream os;
+    cr.speciesThermo().write(os);
+    dictionary thermoDict(IStringStream(os.str())());
+
+    wordList speciesList(thermoDict.toc());
+
+    // Add elements
+    forAll(speciesList, si)
+    {
+        dictionary elementsDict("elements");
+        forAll(cr.specieComposition()[speciesList[si]], ei)
+        {
+            elementsDict.add
+            (
+                cr.specieComposition()[speciesList[si]][ei].name(),
+                cr.specieComposition()[speciesList[si]][ei].nAtoms()
+            );
+        }
+
+        thermoDict.subDict(speciesList[si]).add("elements", elementsDict);
+    }
+
+    thermoDict.write(OFstream(args[5])(), false);
+
 
     Info<< "End\n" << endl;
 

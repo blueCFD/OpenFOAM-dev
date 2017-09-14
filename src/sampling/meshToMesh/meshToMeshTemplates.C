@@ -375,7 +375,7 @@ void Foam::meshToMesh::mapSrcToTgt
                     (
                         AMIList[i].singlePatchProc() == -1
                       ? &AMIList[i].srcMap()
-                      : NULL
+                      : nullptr
                     ),
                     AMIList[i].tgtAddress(),
                     AMIList[i].tgtWeights()
@@ -554,7 +554,7 @@ void Foam::meshToMesh::mapTgtToSrc
     GeometricField<Type, fvPatchField, volMesh>& result
 ) const
 {
-    mapTgtToSrc(field, cop, result.primitiveField());
+    mapTgtToSrc(field, cop, result.primitiveFieldRef());
 
     const PtrList<AMIPatchToPatchInterpolation>& AMIList = patchAMIs();
 
@@ -563,7 +563,7 @@ void Foam::meshToMesh::mapTgtToSrc
         label srcPatchi = srcPatchID_[i];
         label tgtPatchi = tgtPatchID_[i];
 
-        fvPatchField<Type>& srcField = result.boundaryField()[srcPatchi];
+        fvPatchField<Type>& srcField = result.boundaryFieldRef()[srcPatchi];
         const fvPatchField<Type>& tgtField = field.boundaryField()[tgtPatchi];
 
 
@@ -581,7 +581,7 @@ void Foam::meshToMesh::mapTgtToSrc
                     (
                         AMIList[i].singlePatchProc() == -1
                       ? &AMIList[i].tgtMap()
-                      : NULL
+                      : nullptr
                     ),
                     AMIList[i].srcAddress(),
                     AMIList[i].srcWeights()
@@ -602,7 +602,7 @@ void Foam::meshToMesh::mapTgtToSrc
     forAll(cuttingPatches_, i)
     {
         label patchi = cuttingPatches_[i];
-        fvPatchField<Type>& pf = result.boundaryField()[patchi];
+        fvPatchField<Type>& pf = result.boundaryFieldRef()[patchi];
         pf == pf.patchInternalField();
     }
 }

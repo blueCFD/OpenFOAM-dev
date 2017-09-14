@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -229,7 +229,13 @@ void cellZoneSet::deleteSet(const topoSet& set)
 
 
 void cellZoneSet::sync(const polyMesh& mesh)
-{}
+{
+    cellSet::sync(mesh);
+
+    // Take over contents of cellSet into addressing.
+    addressing_ = sortedToc();
+    updateSet();
+}
 
 
 label cellZoneSet::maxSize(const polyMesh& mesh) const
@@ -242,13 +248,14 @@ bool cellZoneSet::writeObject
 (
     IOstream::streamFormat s,
     IOstream::versionNumber v,
-    IOstream::compressionType c
+    IOstream::compressionType c,
+    const bool valid
 ) const
 {
     // Write shadow cellSet
     word oldTypeName = typeName;
     const_cast<word&>(type()) = cellSet::typeName;
-    bool ok = cellSet::writeObject(s, v, c);
+    bool ok = cellSet::writeObject(s, v, c, valid);
     const_cast<word&>(type()) = oldTypeName;
 
     // Modify cellZone
@@ -278,7 +285,7 @@ bool cellZoneSet::writeObject
     }
     cellZones.clearAddressing();
 
-    return ok && cellZones.write();
+    return ok && cellZones.write(valid);
 }
 
 

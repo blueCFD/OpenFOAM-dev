@@ -114,6 +114,53 @@ void Foam::RBD::rigidBodyModel::addRestraints
 }
 
 
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+Foam::label Foam::RBD::rigidBodyModel::join_
+(
+    const label parentID,
+    const spatialTransform& XT,
+    autoPtr<joint> jointPtr,
+    autoPtr<rigidBody> bodyPtr
+)
+{
+    // Append the body
+    const rigidBody& body = bodyPtr();
+    bodies_.append(bodyPtr);
+    const label bodyID = nBodies()-1;
+    bodyIDs_.insert(body.name(), bodyID);
+
+    // If the parentID refers to a merged body find the parent into which it has
+    // been merged and set lambda and XT accordingly
+    if (merged(parentID))
+    {
+        const subBody& sBody = mergedBody(parentID);
+        lambda_.append(sBody.masterID());
+        XT_.append(XT & sBody.masterXT());
+    }
+    else
+    {
+        lambda_.append(parentID);
+        XT_.append(XT);
+    }
+
+    // Append the joint
+    const joint& prevJoint = joints_[joints_.size() - 1];
+    joints_.append(jointPtr);
+    joint& curJoint = joints_[joints_.size() - 1];
+    curJoint.index() = joints_.size() - 1;
+    curJoint.qIndex() = prevJoint.qIndex() + prevJoint.nDoF();
+
+    // Increment the degrees of freedom
+    nDoF_ += curJoint.nDoF();
+    unitQuaternions_ = unitQuaternions_ || curJoint.unitQuaternion();
+
+    resizeState();
+
+    return bodyID;
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors * * * * * * * * * * * * * * * //
 
 Foam::RBD::rigidBodyModel::rigidBodyModel()
@@ -168,52 +215,7 @@ Foam::RBD::rigidBodyModel::~rigidBodyModel()
 {}
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-Foam::label Foam::RBD::rigidBodyModel::join_
-(
-    const label parentID,
-    const spatialTransform& XT,
-    autoPtr<joint> jointPtr,
-    autoPtr<rigidBody> bodyPtr
-)
-{
-    // Append the body
-    const rigidBody& body = bodyPtr();
-    bodies_.append(bodyPtr);
-    const label bodyID = nBodies()-1;
-    bodyIDs_.insert(body.name(), bodyID);
-
-    // If the parentID refers to a merged body find the parent into which it has
-    // been merged and set lambda and XT accordingly
-    if (merged(parentID))
-    {
-        const subBody& sBody = mergedBody(parentID);
-        lambda_.append(sBody.masterID());
-        XT_.append(XT & sBody.masterXT());
-    }
-    else
-    {
-        lambda_.append(parentID);
-        XT_.append(XT);
-    }
-
-    // Append the joint
-    const joint& prevJoint = joints_[joints_.size() - 1];
-    joints_.append(jointPtr);
-    joint& curJoint = joints_[joints_.size() - 1];
-    curJoint.index() = joints_.size() - 1;
-    curJoint.qIndex() = prevJoint.qIndex() + prevJoint.nDoF();
-
-    // Increment the degrees of freedom
-    nDoF_ += curJoint.nDoF();
-    unitQuaternions_ = unitQuaternions_ || curJoint.unitQuaternion();
-
-    resizeState();
-
-    return bodyID;
-}
-
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::label Foam::RBD::rigidBodyModel::join
 (
@@ -295,7 +297,7 @@ void Foam::RBD::rigidBodyModel::makeComposite(const label bodyID)
     if (!isA<compositeBody>(bodies_[bodyID]))
     {
         // Retrieve the un-merged body
-        autoPtr<rigidBody> bodyPtr = bodies_.set(bodyID, NULL);
+        autoPtr<rigidBody> bodyPtr = bodies_.set(bodyID, nullptr);
 
         // Insert the compositeBody containing the original body
         bodies_.set

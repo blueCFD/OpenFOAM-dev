@@ -28,12 +28,34 @@ Group
     grpFieldFunctionObjects
 
 Description
-    Evaluates and outputs turbulence y+ for  models.  Values written to
-    time directories as field 'yPlus'
+    Evaluates and outputs turbulence y+ for models. Values written to
+    time directories as field 'yPlus'.
+
+    Example of function object specification:
+    \verbatim
+    yPlus1
+    {
+        type        yPlus;
+        libs        ("libfieldFunctionObjects.so");
+        ...
+    }
+    \endverbatim
+
+Usage
+    \table
+        Property | Description                | Required   | Default value
+        type     | type name: yPlus           | yes        |
+    \endtable
+
+Note
+    Writing field 'yPlus' is done by default, but it can be overridden by
+    defining an empty \c objects list. For details see writeLocalObjects.
 
 See also
     Foam::functionObject
-    Foam::functionObjects::writeFiles
+    Foam::functionObjects::fvMeshFunctionObject
+    Foam::functionObjects::logFiles
+    Foam::functionObjects::writeLocalObjects
     Foam::functionObjects::timeControl
 
 SourceFiles
@@ -44,7 +66,9 @@ SourceFiles
 #ifndef functionObjects_yPlus_H
 #define functionObjects_yPlus_H
 
-#include "writeFiles.H"
+#include "fvMeshFunctionObject.H"
+#include "logFiles.H"
+#include "writeLocalObjects.H"
 #include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -53,7 +77,6 @@ namespace Foam
 {
 
 // Forward declaration of classes
-class fvMesh;
 class turbulenceModel;
 
 namespace functionObjects
@@ -65,7 +88,9 @@ namespace functionObjects
 
 class yPlus
 :
-    public writeFiles
+    public fvMeshFunctionObject,
+    public logFiles,
+    public writeLocalObjects
 {
     // Private Member Functions
 
@@ -76,7 +101,6 @@ class yPlus
         void calcYPlus
         (
             const turbulenceModel& turbModel,
-            const fvMesh& mesh,
             volScalarField& yPlus
         );
 

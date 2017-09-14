@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -109,6 +109,40 @@ public:
 word name(const Scalar);
 
 
+// Standard C++ transcendental functions
+transFunc(sqrt)
+
+transFunc(cbrt)
+transFunc(exp)
+transFunc(log)
+transFunc(log10)
+transFunc(sin)
+transFunc(cos)
+transFunc(tan)
+transFunc(asin)
+transFunc(acos)
+transFunc(atan)
+transFunc(sinh)
+transFunc(cosh)
+transFunc(tanh)
+transFunc(asinh)
+transFunc(acosh)
+transFunc(atanh)
+
+// Standard ANSI-C (but not in <cmath>) transcendental functions
+
+transFunc(erf)
+transFunc(erfc)
+transFunc(lgamma)
+transFunc(tgamma)
+
+transFunc(j0)
+transFunc(j1)
+
+transFunc(y0)
+transFunc(y1)
+
+
 inline Scalar& setComponent(Scalar& s, const direction)
 {
     return s;
@@ -121,21 +155,38 @@ inline Scalar component(const Scalar s, const direction)
 }
 
 
+//- Return 1 if s is positive or 0 otherwise -1
 inline Scalar sign(const Scalar s)
 {
     return (s >= 0)? 1: -1;
 }
 
 
+//- Return 1 if s is positive but not 0
 inline Scalar pos(const Scalar s)
+{
+    return (s > 0)? 1: 0;
+}
+
+
+//- Return 1 if s is positive or 0
+inline Scalar pos0(const Scalar s)
 {
     return (s >= 0)? 1: 0;
 }
 
 
+//- Return 1 if s is negative but not 0
 inline Scalar neg(const Scalar s)
 {
     return (s < 0)? 1: 0;
+}
+
+
+//- Return 1 if s is negative or 0
+inline Scalar neg0(const Scalar s)
+{
+    return (s <= 0)? 1: 0;
 }
 
 
@@ -188,22 +239,6 @@ inline Scalar magSqr(const Scalar s)
 inline Scalar sqr(const Scalar s)
 {
     return s*s;
-}
-
-
-inline Scalar sqrtSumSqr(const Scalar a, const Scalar b)
-{
-    Scalar maga = mag(a);
-    Scalar magb = mag(b);
-
-    if (maga > magb)
-    {
-        return maga*sqrt(1.0 + sqr(magb/maga));
-    }
-    else
-    {
-        return magb < ScalarVSMALL ? 0.0 : magb*sqrt(1.0 + sqr(maga/magb));
-    }
 }
 
 
@@ -285,45 +320,35 @@ inline Scalar cmptAv(const Scalar s)
 }
 
 
+inline Scalar cmptSqr(const Scalar s)
+{
+    return sqr(s);
+}
+
+
 inline Scalar cmptMag(const Scalar s)
 {
     return mag(s);
 }
 
 
-// Standard C++ transcendental functions
-transFunc(sqrt)
-transFunc(cbrt)
-transFunc(exp)
-transFunc(log)
-transFunc(log10)
-transFunc(sin)
-transFunc(cos)
-transFunc(tan)
-transFunc(asin)
-transFunc(acos)
-transFunc(atan)
-transFunc(sinh)
-transFunc(cosh)
-transFunc(tanh)
-transFunc(asinh)
-transFunc(acosh)
-transFunc(atanh)
+inline Scalar sqrtSumSqr(const Scalar a, const Scalar b)
+{
+    Scalar maga = mag(a);
+    Scalar magb = mag(b);
 
-// Standard ANSI-C (but not in <cmath>) transcendental functions
-
-transFunc(erf)
-transFunc(erfc)
-transFunc(lgamma)
-
-transFunc(j0)
-transFunc(j1)
-
-transFunc(y0)
-transFunc(y1)
+    if (maga > magb)
+    {
+        return maga*sqrt(1.0 + sqr(magb/maga));
+    }
+    else
+    {
+        return magb < ScalarVSMALL ? 0.0 : magb*sqrt(1.0 + sqr(maga/magb));
+    }
+}
 
 
-// Stabilisation around zero for division
+//- Stabilisation around zero for division
 inline Scalar stabilise(const Scalar s, const Scalar small)
 {
     if (s >= 0)

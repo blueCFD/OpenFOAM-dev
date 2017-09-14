@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ Foam::PressureGradientForce<CloudType>::PressureGradientForce
 :
     ParticleForce<CloudType>(owner, mesh, dict, forceType, true),
     UName_(this->coeffs().template lookupOrDefault<word>("U", "U")),
-    DUcDtInterpPtr_(NULL)
+    DUcDtInterpPtr_(nullptr)
 {}
 
 
@@ -52,7 +52,7 @@ Foam::PressureGradientForce<CloudType>::PressureGradientForce
 :
     ParticleForce<CloudType>(pgf),
     UName_(pgf.UName_),
-    DUcDtInterpPtr_(NULL)
+    DUcDtInterpPtr_(nullptr)
 {}
 
 
@@ -128,7 +128,7 @@ Foam::forceSuSp Foam::PressureGradientForce<CloudType>::calcCoupled
     forceSuSp value(Zero, 0.0);
 
     vector DUcDt =
-        DUcDtInterp().interpolate(p.position(), p.currentTetIndices());
+        DUcDtInterp().interpolate(p.coordinates(), p.currentTetIndices());
 
     value.Su() = mass*p.rhoc()/p.rho()*DUcDt;
 

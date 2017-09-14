@@ -48,7 +48,8 @@ foamClean=$WM_PROJECT_DIR/bin/foamCleanPath
 [ -f "$foamClean" -a -x "$foamClean" ] || unset foamClean
 
 # The old dirs to be cleaned from the environment variables
-foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR $HOME/$WM_PROJECT/$USER \
+foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR \
+    $HOME/$WM_PROJECT/$USER $FOAM_USER_APPBIN $FOAM_USER_LIBBIN \
     $WM_PROJECT_SITE $FOAM_SITE_APPBIN $FOAM_SITE_LIBBIN $ParaView_DIR"
 
 # Auto unload other packages files present in the global config.d/unset
@@ -103,8 +104,9 @@ unset WM_CONTINUE_ON_ERROR
 
 unset FOAM_APPBIN
 unset FOAM_APP
-unset FOAM_EXT_LIBBIN
 unset FOAM_CODE_TEMPLATES
+unset FOAM_ETC
+unset FOAM_EXT_LIBBIN
 unset FOAM_INST_DIR
 unset FOAM_JOB_DIR
 unset FOAM_LIBBIN
@@ -128,8 +130,13 @@ unset FOAM_UTILITIES
 
 unset MPI_ARCH_PATH
 unset MPI_BUFFER_SIZE
-unset OPAL_PREFIX
 unset MPI_ACCESSORY_OPTIONS
+
+# Undefine OPAL_PREFIX if set to one of the paths on foamOldDirs
+if [ -z "$($foamClean "$OPAL_PREFIX" "$foamOldDirs")" ]
+then
+    unset OPAL_PREFIX
+fi
 
 
 #------------------------------------------------------------------------------
@@ -145,9 +152,11 @@ unset PV_PLUGIN_PATH
 
 
 #------------------------------------------------------------------------------
-# Unset CGAL-related environment variables
+# Unset foamyHexMesh-related environment variables
 
+unset BOOST_ARCH_PATH
 unset CGAL_ARCH_PATH
+unset FOAMY_HEX_MESH
 
 
 #------------------------------------------------------------------------------
@@ -179,7 +188,6 @@ unalias wm32
 unalias wmSP
 unalias wmDP
 
-unalias wmRefresh
 unalias wmUnset
 
 unalias wmSchedOn
@@ -202,6 +210,7 @@ unalias tut
 unalias run
 unalias user
 
+unset wmRefresh
 unset foamVersion
 unset foamPV
 

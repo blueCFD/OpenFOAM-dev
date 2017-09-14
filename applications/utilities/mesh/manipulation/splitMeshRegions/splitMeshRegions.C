@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -92,7 +92,7 @@ Description
 #include "argList.H"
 #include "regionSplit.H"
 #include "fvMeshSubset.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "volFields.H"
 #include "faceSet.H"
 #include "cellSet.H"
@@ -394,7 +394,7 @@ void getInterfaceSizes
                 slave++
             )
             {
-                IPstream fromSlave(Pstream::blocking, slave);
+                IPstream fromSlave(Pstream::commsTypes::blocking, slave);
 
                 EdgeMap<Map<label>> slaveSizes(fromSlave);
 
@@ -439,7 +439,11 @@ void getInterfaceSizes
         {
             // Send to master
             {
-                OPstream toMaster(Pstream::blocking, Pstream::masterNo());
+                OPstream toMaster
+                (
+                    Pstream::commsTypes::blocking,
+                    Pstream::masterNo()
+                );
                 toMaster << regionsToSize;
             }
         }
@@ -599,7 +603,7 @@ autoPtr<mapPolyMesh> createRegionMesh
 
         Info<< "Testing:" << io.objectPath() << endl;
 
-        if (!io.headerOk())
+        if (!io.typeHeaderOk<IOdictionary>(true))
         // if (!exists(io.objectPath()))
         {
             Info<< "Writing dummy " << regionName/io.name() << endl;
@@ -626,7 +630,7 @@ autoPtr<mapPolyMesh> createRegionMesh
             false
         );
 
-        if (!io.headerOk())
+        if (!io.typeHeaderOk<IOdictionary>(true))
         //if (!exists(io.objectPath()))
         {
             Info<< "Writing dummy " << regionName/io.name() << endl;

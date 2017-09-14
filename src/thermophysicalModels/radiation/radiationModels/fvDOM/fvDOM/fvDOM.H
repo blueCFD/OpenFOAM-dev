@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,9 +44,6 @@ Description
             convergence 1e-3;       // convergence criteria for radiation
                                     //iteration
             maxIter     4;          // maximum number of iterations
-            cacheDiv    true;       // cache the div of the RTE equation.
-            //NOTE: Caching div is "only" accurate if the upwind scheme is used
-            //in div(Ji,Ii_h)
         }
 
         solverFreq   1; // Number of flow iterations per radiation iteration
@@ -92,13 +89,13 @@ class fvDOM
         volScalarField G_;
 
         //- Total radiative heat flux [W/m2]
-        volScalarField Qr_;
+        volScalarField qr_;
 
          //- Emmited radiative heat flux [W/m2]
-        volScalarField Qem_;
+        volScalarField qem_;
 
         //- Incidet radiative heat flux [W/m2]
-        volScalarField Qin_;
+        volScalarField qin_;
 
         //- Total absorption coefficient [1/m]
         volScalarField a_;
@@ -124,17 +121,11 @@ class fvDOM
         //- List of pointers to radiative intensity rays
         PtrList<radiativeIntensityRay> IRay_;
 
-        //- Convergence criterion
-        scalar convergence_;
+        //- Convergence tolerance
+        scalar tolerance_;
 
         //- Maximum number of iterations
         label maxIter_;
-
-        //- List of cached fvMatrices for rays
-        List<PtrList<fvScalarMatrix>>fvRayDiv_;
-
-        //- Cache convection div matrix
-        bool cacheDiv_;
 
         //- Maximum omega weight
         scalar omegaMax_;
@@ -200,7 +191,7 @@ public:
             virtual tmp<volScalarField> Rp() const;
 
             //- Source term component (constant)
-            virtual tmp<DimensionedField<scalar, volMesh>> Ru() const;
+            virtual tmp<volScalarField::Internal> Ru() const;
 
 
         // Access
@@ -237,26 +228,16 @@ public:
             inline const volScalarField& G() const;
 
             //- Const access to total radiative heat flux field
-            inline const volScalarField& Qr() const;
+            inline const volScalarField& qr() const;
 
             //- Const access to incident radiative heat flux field
-            inline const volScalarField& Qin() const;
+            inline const volScalarField& qin() const;
 
             //- Const access to emitted radiative heat flux field
-            inline const volScalarField& Qem() const;
+            inline const volScalarField& qem() const;
 
             //- Const access to black body
             inline const blackBodyEmission& blackBody() const;
-
-            //- Const access to cached fvMatrix
-            inline const fvScalarMatrix& fvRayDiv
-            (
-                const label lambdaI,
-                const label rayId
-            ) const;
-
-            //- Caching div(Ji, Ilamda)
-            inline bool cacheDiv() const;
 
             //- Return omegaMax
             inline scalar omegaMax() const;

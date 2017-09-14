@@ -80,17 +80,17 @@ all:  $(WMAKE_BIN)/dirToString$(EXE_EXTENSION) \
       $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION)
 
 clean:
-	rm -f $(WMAKE_BIN)/* 2>/dev/null
-
+	@E rm -f $(WMAKE_BIN)/* 2>/dev/null
 
 $(WMAKE_BIN)/dirToString$(EXE_EXTENSION): dirToString.c
 	@mkdir -p $(WMAKE_BIN)
-	$(cc) $(cFLAGS) dirToString.c -o $(WMAKE_BIN)/dirToString$(EXE_EXTENSION)
-
+	$(call QUIET_MESSAGE,compile,$<)
+	$E $(cc) $(cFLAGS) dirToString.c -o $(WMAKE_BIN)/dirToString$(EXE_EXTENSION)
 
 $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION): wmkdep.l
 	@mkdir -p $(WMAKE_BIN)
-	flex wmkdep.l
+	$(call QUIET_MESSAGE,lex,$<)
+	$E flex wmkdep.l; \
 	$(cc) $(cFLAGS) lex.yy.c -o $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION)
 	@rm -f lex.yy.c 2>/dev/null
 

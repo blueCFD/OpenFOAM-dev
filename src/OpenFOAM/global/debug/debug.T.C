@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,6 +33,8 @@ Description
 #include "Ostream.H"
 #include "demandDrivenData.H"
 #include "simpleObjectRegistry.H"
+#include "IOobject.T.H"
+#include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -44,17 +46,17 @@ namespace debug
 //! \cond ignoreDocumentation
 //- Skip documentation : local scope only
 
-dictionary* controlDictPtr_(NULL);
-dictionary* debugSwitchesPtr_(NULL);
-dictionary* infoSwitchesPtr_(NULL);
-dictionary* optimisationSwitchesPtr_(NULL);
+dictionary* controlDictPtr_(nullptr);
+dictionary* debugSwitchesPtr_(nullptr);
+dictionary* infoSwitchesPtr_(nullptr);
+dictionary* optimisationSwitchesPtr_(nullptr);
 
 // Debug switch read and write callback tables.
-simpleObjectRegistry* debugObjectsPtr_(NULL);
-simpleObjectRegistry* infoObjectsPtr_(NULL);
-simpleObjectRegistry* optimisationObjectsPtr_(NULL);
-simpleObjectRegistry* dimensionSetObjectsPtr_(NULL);
-simpleObjectRegistry* dimensionedConstantObjectsPtr_(NULL);
+simpleObjectRegistry* debugObjectsPtr_(nullptr);
+simpleObjectRegistry* infoObjectsPtr_(nullptr);
+simpleObjectRegistry* optimisationObjectsPtr_(nullptr);
+simpleObjectRegistry* dimensionSetObjectsPtr_(nullptr);
+simpleObjectRegistry* dimensionedConstantObjectsPtr_(nullptr);
 
 
 // To ensure controlDictPtr_ is deleted at the end of the run
@@ -73,9 +75,9 @@ public:
         deleteDemandDrivenData(dimensionSetObjectsPtr_);
         deleteDemandDrivenData(dimensionedConstantObjectsPtr_);
 
-        debugSwitchesPtr_ = NULL;
-        infoSwitchesPtr_ = NULL;
-        optimisationSwitchesPtr_ = NULL;
+        debugSwitchesPtr_ = nullptr;
+        infoSwitchesPtr_ = nullptr;
+        optimisationSwitchesPtr_ = nullptr;
         deleteDemandDrivenData(controlDictPtr_);
     }
 };
@@ -182,6 +184,19 @@ int Foam::debug::infoSwitch(const char* name, const int defaultValue)
 
 
 int Foam::debug::optimisationSwitch(const char* name, const int defaultValue)
+{
+    return optimisationSwitches().lookupOrAddDefault
+    (
+        name, defaultValue, false, false
+    );
+}
+
+
+float Foam::debug::floatOptimisationSwitch
+(
+    const char* name,
+    const float defaultValue
+)
 {
     return optimisationSwitches().lookupOrAddDefault
     (
@@ -362,6 +377,93 @@ Foam::simpleObjectRegistry& Foam::debug::dimensionedConstantObjects()
     }
 
     return *dimensionedConstantObjectsPtr_;
+}
+
+
+namespace Foam
+{
+
+void listSwitches
+(
+    const wordList& debugSwitches,
+    const wordList& infoSwitches,
+    const wordList& optSwitches,
+    const bool unset
+)
+{
+    if (unset)
+    {
+        fileNameList controlDictFiles = findEtcFiles("controlDict", true);
+        dictionary controlDict;
+        forAllReverse(controlDictFiles, cdfi)
+        {
+            controlDict.merge(dictionary(IFstream(controlDictFiles[cdfi])()));
+        }
+
+        wordHashSet controlDictDebug
+        (
+            controlDict.subDict("DebugSwitches").sortedToc()
+        );
+
+        wordHashSet controlDictInfo
+        (
+            controlDict.subDict("InfoSwitches").sortedToc()
+        );
+
+        wordHashSet controlDictOpt
+        (
+            controlDict.subDict("OptimisationSwitches").sortedToc()
+        );
+
+
+        IOobject::writeDivider(Info);
+
+        wordHashSet hashset;
+        hashset = debugSwitches;
+        hashset -= controlDictDebug;
+        Info<< "Unset DebugSwitches" << hashset.sortedToc() << endl;
+
+        hashset = infoSwitches;
+        hashset -= controlDictInfo;
+        Info<< "Unset InfoSwitches" << hashset.sortedToc() << endl;
+
+        hashset = optSwitches;
+        hashset -= controlDictOpt;
+        Info<< "Unset OptimisationSwitches" << hashset.sortedToc() << endl;
+    }
+    else
+    {
+        IOobject::writeDivider(Info);
+        Info<< "DebugSwitches" << debugSwitches << endl;
+        Info<< "InfoSwitches" << infoSwitches << endl;
+        Info<< "OptimisationSwitches" << optSwitches << endl;
+    }
+}
+
+}
+
+
+void Foam::debug::listSwitches(const bool unset)
+{
+    listSwitches
+    (
+        debug::debugSwitches().sortedToc(),
+        debug::infoSwitches().sortedToc(),
+        debug::optimisationSwitches().sortedToc(),
+        unset
+    );
+}
+
+
+void Foam::debug::listRegisteredSwitches(const bool unset)
+{
+    listSwitches
+    (
+        debug::debugObjects().sortedToc(),
+        debug::infoObjects().sortedToc(),
+        debug::optimisationObjects().sortedToc(),
+        unset
+    );
 }
 
 

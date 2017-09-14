@@ -38,7 +38,7 @@ SourceFiles
 #include "pointMesh.H"
 #include "pointFields.H"
 #include "pointPatchFieldMapperPatchRef.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

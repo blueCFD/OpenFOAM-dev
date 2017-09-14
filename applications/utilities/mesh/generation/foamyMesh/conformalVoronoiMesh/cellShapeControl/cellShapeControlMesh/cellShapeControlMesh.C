@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,7 @@ License
 #include "pointIOField.H"
 #include "scalarIOField.H"
 #include "triadIOField.H"
-#include "tetrahedron.H"
+#include "tetPointRef.H"
 #include "plane.H"
 #include "transform.H"
 #include "meshTools.H"
@@ -452,7 +452,7 @@ Foam::cellShapeControlMesh::~cellShapeControlMesh()
 void Foam::cellShapeControlMesh::barycentricCoords
 (
     const Foam::point& pt,
-    scalarList& bary,
+    barycentric& bary,
     Cell_handle& ch
 ) const
 {
@@ -472,7 +472,7 @@ void Foam::cellShapeControlMesh::barycentricCoords
             topoint(ch->vertex(3)->point())
         );
 
-        tet.barycentric(pt, bary);
+        bary = tet.pointToBarycentric(pt);
     }
 }
 

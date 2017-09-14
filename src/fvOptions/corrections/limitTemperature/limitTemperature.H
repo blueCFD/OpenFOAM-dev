@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,15 +26,21 @@ Class
 
 Description
     Correction for temperature to apply limits between minimum and maximum
-    values
+    values.
 
-    Constraint described by:
+Usage
+    Example usage:
+    \verbatim
+    limitT
+    {
+        type            limitTemperature;
+        active          yes;
 
-        limitTemperatureCoeffs
-        {
-            minimum     200;
-            maximum     500;
-        }
+        selectionMode   all;
+        min             200;
+        max             500;
+    }
+    \endverbatim
 
 SourceFiles
     limitTemperature.C
@@ -109,16 +115,11 @@ public:
 
     // Member Functions
 
-        // Evaluate
+        //- Read dictionary
+        virtual bool read(const dictionary& dict);
 
-            //- Correct the energy field
-            virtual void correct(volScalarField& he);
-
-
-        // IO
-
-            //- Read dictionary
-            virtual bool read(const dictionary& dict);
+        //- Correct the energy field
+        virtual void correct(volScalarField& he);
 };
 
 

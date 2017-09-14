@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,6 +47,7 @@ SourceFiles
 #include "InjectionModel.T.H"
 #include "distributionModel.H"
 #include "Switch.H"
+#include "GlobalIOField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,7 +69,7 @@ class ManualInjection
         const word positionsFile_;
 
         //- Field of parcel positions
-        vectorIOField positions_;
+        GlobalIOField<vector> positions_;
 
         //- Field of parcel diameters
         scalarList diameters_;
@@ -86,7 +87,7 @@ class ManualInjection
         const vector U0_;
 
         //- Parcel size distribution model
-        const autoPtr<distributionModels::distributionModel> sizeDistribution_;
+        const autoPtr<distributionModel> sizeDistribution_;
 
         //- Flag to suppress errors if particle injection site is out-of-bounds
         Switch ignoreOutOfBounds_;
@@ -151,7 +152,7 @@ public:
                 vector& position,
                 label& cellOwner,
                 label& tetFacei,
-                label& tetPtI
+                label& tetPti
             );
 
             //- Set the parcel properties

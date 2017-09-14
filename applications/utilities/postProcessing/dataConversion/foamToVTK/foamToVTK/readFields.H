@@ -36,7 +36,7 @@ SourceFiles
 
 #include "fvMesh.H"
 #include "PtrList.T.H"
-#include "IOobjectList.H"
+#include "IOobjectList.T.H"
 #include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

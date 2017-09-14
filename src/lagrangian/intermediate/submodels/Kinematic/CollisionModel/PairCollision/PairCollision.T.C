@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ void Foam::PairCollision<CloudType>::preInteraction()
 template<class CloudType>
 void Foam::PairCollision<CloudType>::parcelInteraction()
 {
-    PstreamBuffers pBufs(Pstream::nonBlocking);
+    PstreamBuffers pBufs(Pstream::commsTypes::nonBlocking);
 
     label startOfRequests = Pstream::nRequests();
 
@@ -77,8 +77,8 @@ void Foam::PairCollision<CloudType>::realRealInteraction()
     // Direct interaction list (dil)
     const labelListList& dil = il_.dil();
 
-    typename CloudType::parcelType* pA_ptr = NULL;
-    typename CloudType::parcelType* pB_ptr = NULL;
+    typename CloudType::parcelType* pA_ptr = nullptr;
+    typename CloudType::parcelType* pB_ptr = nullptr;
 
     List<DynamicList<typename CloudType::parcelType*>>& cellOccupancy =
         this->owner().cellOccupancy();
@@ -603,8 +603,8 @@ Foam::PairCollision<CloudType>::PairCollision
 )
 :
     CollisionModel<CloudType>(cm),
-    pairModel_(NULL),
-    wallModel_(NULL),
+    pairModel_(nullptr),
+    wallModel_(nullptr),
     il_(cm.owner().mesh())
 {
     // Need to clone to PairModel and WallModel

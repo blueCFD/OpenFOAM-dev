@@ -67,44 +67,6 @@ Foam::vector Foam::cyclicAMIPolyPatch::findFaceNormalMaxRadius
 }
 
 
-// * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * * //
-
-void Foam::cyclicAMIPolyPatch::calcTransforms()
-{
-    const cyclicAMIPolyPatch& half0 = *this;
-    vectorField half0Areas(half0.size());
-    forAll(half0, facei)
-    {
-        half0Areas[facei] = half0[facei].normal(half0.points());
-    }
-
-    const cyclicAMIPolyPatch& half1 = neighbPatch();
-    vectorField half1Areas(half1.size());
-    forAll(half1, facei)
-    {
-        half1Areas[facei] = half1[facei].normal(half1.points());
-    }
-
-    calcTransforms
-    (
-        half0,
-        half0.faceCentres(),
-        half0Areas,
-        half1.faceCentres(),
-        half1Areas
-    );
-
-    if (debug)
-    {
-        Pout<< "calcTransforms() : patch: " << name() << nl
-            << "    forwardT = " << forwardT() << nl
-            << "    reverseT = " << reverseT() << nl
-            << "    separation = " << separation() << nl
-            << "    collocated = " << collocated() << nl << endl;
-    }
-}
-
-
 void Foam::cyclicAMIPolyPatch::calcTransforms
 (
     const primitivePatch& half0,
@@ -319,7 +281,7 @@ void Foam::cyclicAMIPolyPatch::calcTransforms
 }
 
 
-// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * * //
 
 void Foam::cyclicAMIPolyPatch::resetAMI
 (
@@ -391,6 +353,42 @@ void Foam::cyclicAMIPolyPatch::resetAMI
                 << "    " << "tgAddress :" << AMIPtr_().tgtAddress().size()
                 << nl << endl;
         }
+    }
+}
+
+
+void Foam::cyclicAMIPolyPatch::calcTransforms()
+{
+    const cyclicAMIPolyPatch& half0 = *this;
+    vectorField half0Areas(half0.size());
+    forAll(half0, facei)
+    {
+        half0Areas[facei] = half0[facei].normal(half0.points());
+    }
+
+    const cyclicAMIPolyPatch& half1 = neighbPatch();
+    vectorField half1Areas(half1.size());
+    forAll(half1, facei)
+    {
+        half1Areas[facei] = half1[facei].normal(half1.points());
+    }
+
+    calcTransforms
+    (
+        half0,
+        half0.faceCentres(),
+        half0Areas,
+        half1.faceCentres(),
+        half1Areas
+    );
+
+    if (debug)
+    {
+        Pout<< "calcTransforms() : patch: " << name() << nl
+            << "    forwardT = " << forwardT() << nl
+            << "    reverseT = " << reverseT() << nl
+            << "    separation = " << separation() << nl
+            << "    collocated = " << collocated() << nl << endl;
     }
 }
 
@@ -490,11 +488,11 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     rotationAngleDefined_(false),
     rotationAngle_(0.0),
     separationVector_(Zero),
-    AMIPtr_(NULL),
+    AMIPtr_(nullptr),
     AMIReverse_(false),
     AMIRequireMatch_(true),
     AMILowWeightCorrection_(-1.0),
-    surfPtr_(NULL),
+    surfPtr_(nullptr),
     surfDict_(fileName("surface"))
 {
     // Neighbour patch might not be valid yet so no transformation
@@ -520,11 +518,11 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     rotationAngleDefined_(false),
     rotationAngle_(0.0),
     separationVector_(Zero),
-    AMIPtr_(NULL),
+    AMIPtr_(nullptr),
     AMIReverse_(dict.lookupOrDefault<bool>("flipNormals", false)),
     AMIRequireMatch_(true),
     AMILowWeightCorrection_(dict.lookupOrDefault("lowWeightCorrection", -1.0)),
-    surfPtr_(NULL),
+    surfPtr_(nullptr),
     surfDict_(dict.subOrEmptyDict("surface"))
 {
     if (nbrPatchName_ == word::null && !coupleGroup_.valid())
@@ -609,11 +607,11 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     rotationAngleDefined_(pp.rotationAngleDefined_),
     rotationAngle_(pp.rotationAngle_),
     separationVector_(pp.separationVector_),
-    AMIPtr_(NULL),
+    AMIPtr_(nullptr),
     AMIReverse_(pp.AMIReverse_),
     AMIRequireMatch_(pp.AMIRequireMatch_),
     AMILowWeightCorrection_(pp.AMILowWeightCorrection_),
-    surfPtr_(NULL),
+    surfPtr_(nullptr),
     surfDict_(pp.surfDict_)
 {
     // Neighbour patch might not be valid yet so no transformation
@@ -640,11 +638,11 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     rotationAngleDefined_(pp.rotationAngleDefined_),
     rotationAngle_(pp.rotationAngle_),
     separationVector_(pp.separationVector_),
-    AMIPtr_(NULL),
+    AMIPtr_(nullptr),
     AMIReverse_(pp.AMIReverse_),
     AMIRequireMatch_(pp.AMIRequireMatch_),
     AMILowWeightCorrection_(pp.AMILowWeightCorrection_),
-    surfPtr_(NULL),
+    surfPtr_(nullptr),
     surfDict_(pp.surfDict_)
 {
     if (nbrPatchName_ == name())
@@ -678,11 +676,11 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     rotationAngleDefined_(pp.rotationAngleDefined_),
     rotationAngle_(pp.rotationAngle_),
     separationVector_(pp.separationVector_),
-    AMIPtr_(NULL),
+    AMIPtr_(nullptr),
     AMIReverse_(pp.AMIReverse_),
     AMIRequireMatch_(pp.AMIRequireMatch_),
     AMILowWeightCorrection_(pp.AMILowWeightCorrection_),
-    surfPtr_(NULL),
+    surfPtr_(nullptr),
     surfDict_(pp.surfDict_)
 {}
 

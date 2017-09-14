@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: Added hack for 'isAbsolute()' to properly detect absolute
@@ -39,6 +39,7 @@ Modifications
 #include "wordList.H"
 #include "DynamicList.T.H"
 #include "OSspecific.H"
+#include "fileOperation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -66,9 +67,9 @@ void Foam::fileName::toUnixPath()
 }
 
 
-Foam::fileName::Type Foam::fileName::type() const
+Foam::fileName::Type Foam::fileName::type(const bool followLink) const
 {
-    return ::Foam::type(*this);
+    return ::Foam::type(*this, followLink);
 }
 
 
@@ -456,7 +457,7 @@ Foam::fileName Foam::operator/(const string& a, const string& b)
 Foam::fileName Foam::search(const word& file, const fileName& directory)
 {
     // Search the current directory for the file
-    fileNameList files(readDir(directory));
+    fileNameList files(fileHandler().readDir(directory));
     forAll(files, i)
     {
         if (files[i] == file)
@@ -466,7 +467,7 @@ Foam::fileName Foam::search(const word& file, const fileName& directory)
     }
 
     // If not found search each of the sub-directories
-    fileNameList dirs(readDir(directory, fileName::DIRECTORY));
+    fileNameList dirs(fileHandler().readDir(directory, fileName::DIRECTORY));
     forAll(dirs, i)
     {
         fileName path = search(file, directory/dirs[i]);

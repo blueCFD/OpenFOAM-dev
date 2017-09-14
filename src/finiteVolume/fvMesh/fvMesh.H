@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -359,15 +359,16 @@ public:
         // Write
 
             //- Write the underlying polyMesh and other data
-            virtual bool writeObjects
+            virtual bool writeObject
             (
                 IOstream::streamFormat fmt,
                 IOstream::versionNumber ver,
-                IOstream::compressionType cmp
+                IOstream::compressionType cmp,
+                const bool valid
             ) const;
 
             //- Write mesh using IO settings from time
-            virtual bool write() const;
+            virtual bool write(const bool valid = true) const;
 
 
     // Member Operators
