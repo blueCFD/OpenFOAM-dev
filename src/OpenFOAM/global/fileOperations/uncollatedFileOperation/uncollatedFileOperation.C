@@ -5,8 +5,10 @@
     \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2017-09-xx FSD blueCFD Lda: Modifications for blueCFD-Core 2017-1
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -20,6 +22,19 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
+
+    Modifications made:
+      - These changes are based on Symscape's own patches for Windows,
+        circa 2009.
+      - The adaptation derived from the patches for blueCFD-Core 4.x (2016).
+      - Further adaptation was done for re-adapting to OpenFOAM 5 collated file
+        management.
 
 \*---------------------------------------------------------------------------*/
 
@@ -53,9 +68,11 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
     const IOobject& io
 ) const
 {
+    const word & diskFileName = io.uniqueFileName();
+
     if (io.instance().isAbsolute())
     {
-        fileName objectPath = io.instance()/io.name();
+        fileName objectPath = io.instance()/diskFileName;
 
         if (isFileOrDir(isFile, objectPath))
         {
@@ -69,7 +86,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
     else
     {
         fileName path = io.path();
-        fileName objectPath = path/io.name();
+        fileName objectPath = path/diskFileName;
 
         if (isFileOrDir(isFile, objectPath))
         {
@@ -91,7 +108,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
 
                 fileName parentObjectPath =
                     io.rootPath()/io.time().globalCaseName()
-                   /io.instance()/io.db().dbDir()/io.local()/io.name();
+                   /io.instance()/io.db().dbDir()/io.local()/diskFileName;
 
                 if (isFileOrDir(isFile, parentObjectPath))
                 {
@@ -108,7 +125,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
                     io,
                     io.instance()
                 );
-                fileName objectPath = path/io.name();
+                fileName objectPath = path/diskFileName;
 
                 if (isFileOrDir(isFile, objectPath))
                 {
@@ -131,7 +148,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
                     fileName fName
                     (
                         io.rootPath()/io.caseName()
-                       /newInstancePath/io.db().dbDir()/io.local()/io.name()
+                       /newInstancePath/io.db().dbDir()/io.local()/diskFileName
                     );
 
                     if (isFileOrDir(isFile, fName))
