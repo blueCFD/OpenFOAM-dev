@@ -166,9 +166,11 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
     procsDir = word::null;
     newInstancePath = word::null;
 
+    const word & diskFileName = io.uniqueFileName();
+
     if (io.instance().isAbsolute())
     {
-        fileName objPath = io.instance()/io.name();
+        fileName objPath = io.instance()/diskFileName;
 
         if (isFileOrDir(isFile, objPath))
         {
@@ -201,7 +203,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
                 const fileName& pDir = pDirs()[i].first();
                 fileName objPath =
                     processorsPath(io, io.instance(), pDir)
-                   /io.name();
+                   /diskFileName;
                 if (objPath != writePath && isFileOrDir(isFile, objPath))
                 {
                     searchType = pDirs()[i].second().first();
@@ -280,7 +282,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
                     fileName fName
                     (
                         processorsPath(io, newInstancePath, pDir)
-                       /io.name()
+                       /diskFileName
                     );
                     if (isFileOrDir(isFile, fName))
                     {
@@ -315,7 +317,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
                 fileName fName
                 (
                    io.rootPath()/io.caseName()
-                  /newInstancePath/io.db().dbDir()/io.local()/io.name()
+                  /newInstancePath/io.db().dbDir()/io.local()/diskFileName
                 );
                 if (isFileOrDir(isFile, fName))
                 {
@@ -383,7 +385,7 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
                       : procDir
                     )
                 )
-               /io.name();
+               /diskFileName;
         }
         break;
 
@@ -392,7 +394,7 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
             // Collated, e.g. processors4
             return
                 processorsPath(io, io.instance(), procDir)
-               /io.name();
+               /diskFileName;
         }
         break;
 
@@ -401,7 +403,7 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
             // Processors directory locally provided by the fileHandler itself
             return
                 processorsPath(io, io.instance(), processorsDir(io))
-               /io.name();
+               /diskFileName;
         }
         break;
 
@@ -440,7 +442,7 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
                       : procDir
                     )
                 )
-               /io.name();
+               /diskFileName;
         }
         break;
 
@@ -449,7 +451,7 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
             // Collated, e.g. processors4
             return
                 processorsPath(io, instancePath, procDir)
-               /io.name();
+               /diskFileName;
         }
         break;
 
@@ -458,7 +460,7 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
             // Processors directory locally provided by the fileHandler itself
             return
                 processorsPath(io, instancePath, processorsDir(io))
-               /io.name();
+               /diskFileName;
         }
         break;
 

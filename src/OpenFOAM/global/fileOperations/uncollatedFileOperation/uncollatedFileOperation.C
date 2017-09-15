@@ -137,7 +137,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
                     const fileName& pDir = pDirs()[i].first();
                     fileName objPath =
                         processorsPath(io, io.instance(), pDir)
-                       /io.name();
+                       /diskFileName;
                     if (objPath != objectPath && isFileOrDir(isFile, objPath))
                     {
                         return objPath;
