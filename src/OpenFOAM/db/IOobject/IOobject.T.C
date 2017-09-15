@@ -6,6 +6,7 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+ 2017-09-xx FSD blueCFD Lda: Modifications for blueCFD-Core 2017-1
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -34,6 +35,8 @@ Modifications
         circa 2009.
       - The adaptation derived from the patches for blueCFD 2.1, adjusted to
         OpenFOAM 2.2.
+      - Further adaptation was done for re-adapting to OpenFOAM 5 collated file
+        management.
 
 \*---------------------------------------------------------------------------*/
 

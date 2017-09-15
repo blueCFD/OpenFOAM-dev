@@ -99,11 +99,13 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
     word& newInstancePath
 ) const
 {
+    const word & diskFileName = io.uniqueFileName();
+
     newInstancePath = word::null;
 
     if (io.instance().isAbsolute())
     {
-        fileName objectPath = io.instance()/io.name();
+        fileName objectPath = io.instance()/diskFileName;
 
         if (isFileOrDir(isFile, objectPath))
         {
@@ -121,7 +123,9 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
         // 1. Check processors/
         if (io.time().processorCase())
         {
-            fileName objectPath = processorsPath(io, io.instance())/io.name();
+            fileName objectPath =
+                processorsPath(io, io.instance())/diskFileName;
+
             if (isFileOrDir(isFile, objectPath))
             {
                 searchType = fileOperation::PROCESSORSOBJECT;
@@ -154,7 +158,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
         {
             fileName parentObjectPath =
                 io.rootPath()/io.time().globalCaseName()
-               /io.instance()/io.db().dbDir()/io.local()/io.name();
+               /io.instance()/io.db().dbDir()/io.local()/diskFileName;
 
             if (isFileOrDir(isFile, parentObjectPath))
             {
@@ -186,7 +190,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
 
                fileName fName =
                    processorsPath(io, newInstancePath)
-                  /io.name();
+                  /diskFileName;
                if (isFileOrDir(isFile, fName))
                {
                    searchType = fileOperation::PROCESSORSFINDINSTANCE;
@@ -195,7 +199,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
 
                fName =
                    io.rootPath()/io.caseName()
-                  /newInstancePath/io.db().dbDir()/io.local()/io.name();
+                  /newInstancePath/io.db().dbDir()/io.local()/diskFileName;
 
                if (isFileOrDir(isFile, fName))
                {
@@ -322,23 +326,25 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::objectPath
 {
     // Replacement for IOobject::objectPath()
 
+    const word & diskFileName = io.uniqueFileName();
+
     switch (searchType)
     {
         case fileOperation::ABSOLUTE:
         {
-            return io.instance()/io.name();
+            return io.instance()/diskFileName;
         }
         break;
 
         case fileOperation::OBJECT:
         {
-            return io.path()/io.name();
+            return io.path()/diskFileName;
         }
         break;
 
         case fileOperation::PROCESSORSOBJECT:
         {
-            return processorsPath(io, io.instance())/io.name();
+            return processorsPath(io, io.instance())/diskFileName;
         }
         break;
 
@@ -346,7 +352,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::objectPath
         {
             return
                 io.rootPath()/io.time().globalCaseName()
-               /io.instance()/io.db().dbDir()/io.local()/io.name();
+               /io.instance()/io.db().dbDir()/io.local()/diskFileName;
         }
         break;
 
@@ -354,13 +360,13 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::objectPath
         {
             return
                 io.rootPath()/io.caseName()
-               /instancePath/io.db().dbDir()/io.local()/io.name();
+               /instancePath/io.db().dbDir()/io.local()/diskFileName;
         }
         break;
 
         case fileOperation::PROCESSORSFINDINSTANCE:
         {
-            return processorsPath(io, instancePath)/io.name();
+            return processorsPath(io, instancePath)/diskFileName;
         }
         break;
 
