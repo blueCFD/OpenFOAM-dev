@@ -1254,19 +1254,7 @@ fileNameList dlLoaded()
 //- Random functions
 void osRandomSeed(const label seed)
 {
-    srandom((unsigned int)seed);
-}
-
-int osRandomBit()
-{
-    if (random() > INT_MAX/2)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    srandom(unsigned int(seed));
 }
 
 label osRandomInteger()
@@ -1276,7 +1264,7 @@ label osRandomInteger()
 
 scalar osRandomDouble()
 {
-    return (scalar)random() / (scalar)INT_MAX;
+    return scalar(random()) / scalar(INT_MAX);
 }
 
 string toUnixPath(const string & path)
@@ -1287,6 +1275,179 @@ string toUnixPath(const string & path)
 
     return unixPath;
 }
+
+
+// Thread handling: Using std::thread and std::mutex
+
+#include <thread>
+#include <mutex>
+
+static DynamicList<autoPtr<std::thread>> threads_;
+static DynamicList<autoPtr<std::mutex>> mutexes_;
+
+
+label allocateThread()
+{
+    forAll(threads_, i)
+    {
+        if (!threads_[i].valid())
+        {
+            if (MSWindows::debug)
+            {
+                Pout<< "allocateThread : reusing index:" << i << endl;
+            }
+            // Reuse entry
+            threads_[i].reset(new std::thread());
+            return i;
+        }
+    }
+
+    label index = threads_.size();
+    if (MSWindows::debug)
+    {
+        Pout<< "allocateThread : new index:" << index << endl;
+    }
+    threads_.append(autoPtr<std::thread>(new std::thread()));
+
+    return index;
+}
+
+
+void createThread
+(
+    const label index,
+    void *(*start_routine) (void *),
+    void *arg
+)
+{
+    if (MSWindows::debug)
+    {
+        Pout<< "createThread : index:" << index << endl;
+    }
+
+    try
+    {
+        threads_[index].reset(std::thread(start_routine, arg));
+    }
+    catch(...)
+    {
+        FatalErrorInFunction
+            << "Failed starting thread " << index << exit(FatalError);
+    }
+}
+
+
+void joinThread(const label index)
+{
+    if (MSWindows::debug)
+    {
+        Pout<< "joinThread : join:" << index << endl;
+    }
+
+    if (!threads_[index]().joinable())
+    {
+        FatalErrorInFunction << "Failed freeing thread " << index
+            << exit(FatalError);
+    }
+    else
+    {
+        try
+        {
+            threads_[index]().join();
+        }
+        catch(...)
+        {
+            FatalErrorInFunction << "Failed freeing thread " << index
+                << exit(FatalError);
+        }
+    }
+}
+
+
+void freeThread(const label index)
+{
+    if (MSWindows::debug)
+    {
+        Pout<< "freeThread : index:" << index << endl;
+    }
+    threads_[index].clear();
+}
+
+
+label allocateMutex()
+{
+    forAll(mutexes_, i)
+    {
+        if (!mutexes_[i].valid())
+        {
+            if (MSWindows::debug)
+            {
+                Pout<< "allocateMutex : reusing index:" << i << endl;
+            }
+            // Reuse entry
+            mutexes_[i].reset(new std::mutex());
+            return i;
+        }
+    }
+
+    label index = mutexes_.size();
+
+    if (MSWindows::debug)
+    {
+        Pout<< "allocateMutex : new index:" << index << endl;
+    }
+    mutexes_.append(autoPtr<std::mutex>(new std::mutex()));
+    return index;
+}
+
+
+void lockMutex(const label index)
+{
+    if (MSWindows::debug)
+    {
+        Pout<< "lockMutex : index:" << index << endl;
+    }
+
+    try
+    {
+        mutexes_[index]().lock();
+    }
+    catch(...)
+    {
+        FatalErrorInFunction << "Failed locking mutex " << index
+            << exit(FatalError);
+    }
+}
+
+
+void unlockMutex(const label index)
+{
+    if (MSWindows::debug)
+    {
+        Pout<< "unlockMutex : index:" << index << endl;
+    }
+
+    try
+    {
+        mutexes_[index]().unlock();
+    }
+    catch(...)
+    {
+        FatalErrorInFunction << "Failed unlocking mutex " << index
+            << exit(FatalError);
+    }
+}
+
+
+void freeMutex(const label index)
+{
+    if (MSWindows::debug)
+    {
+        Pout<< "freeMutex : index:" << index << endl;
+    }
+    mutexes_[index].clear();
+}
+
 
 } // namespace Foam
 // ************************************************************************* //

@@ -1422,7 +1422,7 @@ void Foam::joinThread(const label index)
 {
     if (POSIX::debug)
     {
-        Pout<< "freeThread : join:" << index << endl;
+        Pout<< "joinThread : join:" << index << endl;
     }
     if (pthread_join(threads_[index](), nullptr))
     {
