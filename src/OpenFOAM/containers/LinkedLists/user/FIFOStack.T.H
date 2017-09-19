@@ -37,7 +37,7 @@ SourceFiles
 #ifndef FIFOStack_H
 #define FIFOStack_H
 
-#include "SLList.T.H"
+#include "SLList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

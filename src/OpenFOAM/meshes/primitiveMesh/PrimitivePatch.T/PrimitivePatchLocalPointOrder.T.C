@@ -26,7 +26,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "SLList.T.H"
+#include "SLList.H"
 #include "boolList.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

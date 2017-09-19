@@ -25,7 +25,7 @@ License
 
 #include "ReactionList.T.H"
 #include "IFstream.H"
-#include "SLPtrList.T.H"
+#include "SLPtrList.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

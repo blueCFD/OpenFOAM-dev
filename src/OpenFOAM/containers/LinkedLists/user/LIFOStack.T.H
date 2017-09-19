@@ -37,7 +37,7 @@ SourceFiles
 #ifndef LIFOStack_H
 #define LIFOStack_H
 
-#include "SLList.T.H"
+#include "SLList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

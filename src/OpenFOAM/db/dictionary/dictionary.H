@@ -51,8 +51,8 @@ SourceFiles
 #define dictionary_H
 
 #include "entry.H"
-#include "IDLList.T.H"
-#include "DLList.T.H"
+#include "IDLList.H"
+#include "DLList.H"
 #include "fileName.H"
 #include "ITstream.H"
 #include "HashTable.T.H"

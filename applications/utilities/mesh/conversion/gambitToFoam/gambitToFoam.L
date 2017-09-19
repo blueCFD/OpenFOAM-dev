@@ -64,8 +64,8 @@ using namespace Foam;
 #include "preservePatchTypes.H"
 #include "cellModeller.H"
 #include "cellShape.H"
-#include "SLList.T.H"
-#include "SLPtrList.T.H"
+#include "SLList.H"
+#include "SLPtrList.H"
 
 label nPoints = 0;
 label nCells = 0;

@@ -66,8 +66,8 @@ using namespace Foam;
 #include "preservePatchTypes.H"
 #include "cellShape.H"
 #include "cellModeller.H"
-#include "SLList.T.H"
-#include "SLPtrList.T.H"
+#include "SLList.H"
+#include "SLPtrList.H"
 
 SLList<point> slPoints;
 SLList<label> slPointMap;
