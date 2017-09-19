@@ -218,9 +218,6 @@ fileNameList dlLoaded();
 //- Seed random number generator.
 void osRandomSeed(const label seed);
 
-//- Return random bit (uniform distribution of 0 and 1)
-int osRandomBit();
-
 //- Return random integer (uniform distribution between 0 and 2^31)
 label osRandomInteger();
 
