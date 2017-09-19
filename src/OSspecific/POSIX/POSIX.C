@@ -6,6 +6,7 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+ 2017-09-15 FSD blueCAPE Lda: Modifications for blueCFD-Core 2017-1
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -30,7 +31,7 @@ Modifications
         http://bluecfd.com/Core
 
     Modifications made:
-      - Derived from the patches for blueCFD 2.1 and 2.2.
+      - Derived from the patches for blueCFD-Core 2016.
       - Changes based on Symscape's patches, circa 2009.
 
 Description
@@ -1340,6 +1341,7 @@ void Foam::osRandomSeed(const label seed)
     #endif
 }
 
+
 Foam::label Foam::osRandomInteger()
 {
     #ifdef USE_RANDOM
@@ -1364,6 +1366,7 @@ Foam::string Foam::toUnixPath(const string & path)
 {
   return path;
 }
+
 
 static Foam::DynamicList<Foam::autoPtr<pthread_t>> threads_;
 static Foam::DynamicList<Foam::autoPtr<pthread_mutex_t>> mutexes_;
