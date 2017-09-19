@@ -42,7 +42,7 @@ SourceFiles
 #define entry_H
 
 #include "keyType.H"
-#include "IDLList.T.H"
+#include "IDLList.H"
 #include "fileName.H"
 #include "autoPtr.H"
 

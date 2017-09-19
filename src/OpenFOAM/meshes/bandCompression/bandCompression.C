@@ -31,7 +31,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "bandCompression.H"
-#include "SLList.T.H"
+#include "SLList.H"
 #include "IOstreams.H"
 #include "DynamicList.T.H"
 #include "ListOps.T.H"

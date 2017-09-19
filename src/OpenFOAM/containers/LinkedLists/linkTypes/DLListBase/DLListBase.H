@@ -22,18 +22,18 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SLListBase
+    Foam::DLListBase
 
 Description
-    Base singly-linked list.
+    Base doubly-linked list.
 
 SourceFiles
-    SLListBase.C
+    DLListBase.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef SLListBase_H
-#define SLListBase_H
+#ifndef DLListBase_H
+#define DLListBase_H
 
 #include "bool.H"
 #include "label.H"
@@ -45,10 +45,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SLListBase Declaration
+                           Class DLListBase Declaration
 \*---------------------------------------------------------------------------*/
 
-class SLListBase
+class DLListBase
 {
 
 public:
@@ -57,13 +57,16 @@ public:
     struct link
     {
         //- Pointer to next entry in list
-        link* next_;
+        link *prev_, *next_;
 
         //- Null construct
         inline link();
 
-        //- Construct given pointer to another link
-        inline link(link* p);
+        //- Check if the link is registered with the DLListBase
+        inline bool registered() const;
+
+        //- Deregister the link after removal
+        inline void deregister();
     };
 
 
@@ -71,20 +74,20 @@ private:
 
     // Private data
 
-       //- last_ points to last element
-       //  last_->next_ points to first element, i.e. circular storage
-       link* last_;
+       //- first_ points to first element and last_ points to last element.
+       link *first_, *last_;
 
        //- Number of elements in in list
        label nElmts_;
 
+
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        SLListBase(const SLListBase&);
+        DLListBase(const DLListBase&);
 
         //- Disallow default bitwise assignment
-        void operator=(const SLListBase&);
+        void operator=(const DLListBase&);
 
 
 public:
@@ -97,18 +100,21 @@ public:
         class const_iterator;
         friend class const_iterator;
 
+        class const_reverse_iterator;
+        friend class const_reverse_iterator;
+
 
     // Constructors
 
         //- Null construct
-        inline SLListBase();
+        inline DLListBase();
 
         //- Construct given initial entry
-        inline SLListBase(link*);
+        inline DLListBase(link*);
 
 
     //- Destructor
-    ~SLListBase();
+    ~DLListBase();
 
 
     // Member Functions
@@ -142,34 +148,46 @@ public:
             //- Add at tail of list
             void append(link*);
 
+            //- Swap this element with the one above unless it is at the top
+            bool swapUp(link*);
+
+            //- Swap this element with the one below unless it is at the bottom
+            bool swapDown(link*);
+
             //- Remove and return head
             link* removeHead();
 
-            // Remove and return element
+            //- Remove and return element
             link* remove(link*);
 
             // Remove and return element specified by iterator
             inline link* remove(iterator&);
+
+            //- Replace oldLink with newLink and return element
+            link* replace(link* oldLink, link* newLink);
+
+            //- Replace oldIter with newLink and return element
+            inline link* replace(iterator& oldIter, link* newLink);
 
             //- Clear the list
             inline void clear();
 
             //- Transfer the contents of the argument into this List
             //  and annul the argument list.
-            inline void transfer(SLListBase&);
+            inline void transfer(DLListBase&);
 
     // STL iterator
 
         //- An STL-conforming iterator
         class iterator
         {
-            friend class SLListBase;
+            friend class DLListBase;
             friend class const_iterator;
 
             // Private data
 
                 //- Reference to the list this is an iterator for
-                SLListBase& curList_;
+                DLListBase& curList_;
 
                 //- Current element
                 link* curElmt_;
@@ -181,12 +199,12 @@ public:
 
             //- Construct for a given SLListBase with nullptr element and link.
             //  Only used to create endIter
-            inline iterator(SLListBase&);
+            inline iterator(DLListBase&);
 
         public:
 
-            //- Construct for a given SLListBase and link
-            inline iterator(SLListBase&, link*);
+            //- Construct for a given DLListBase and link
+            inline iterator(DLListBase&, link*);
 
             // Member operators
 
@@ -213,19 +231,18 @@ public:
             // Private data
 
                 //- Reference to the list this is an iterator for
-                const SLListBase& curList_;
+                const DLListBase& curList_;
 
                 //- Current element
                 const link* curElmt_;
 
         public:
 
-            //- Construct for a given SLListBase and link
-            inline const_iterator(const SLListBase&, const link*);
+            //- Construct for a given DLListBase and link
+            inline const_iterator(const DLListBase&, const link*);
 
             //- Construct from a non-const iterator
             inline const_iterator(const iterator&);
-
 
             // Member operators
 
@@ -247,6 +264,44 @@ public:
         inline const const_iterator& end() const;
 
 
+    // STL const_reverse_iterator
+
+        //- An STL-conforming const_reverse_iterator
+        class const_reverse_iterator
+        {
+            // Private data
+
+                //- Reference to the list this is an reverse_iterator for
+                const DLListBase& curList_;
+
+                //- Current element
+                const link* curElmt_;
+
+        public:
+
+            //- Construct for a given DLListBase and link
+            inline const_reverse_iterator(const DLListBase&, const link*);
+
+            // Member operators
+
+                inline void operator=(const const_reverse_iterator&);
+
+                inline bool operator==(const const_reverse_iterator&) const;
+                inline bool operator!=(const const_reverse_iterator&) const;
+
+                inline const link& operator*();
+
+                inline const_reverse_iterator& operator++();
+                inline const_reverse_iterator operator++(int);
+        };
+
+        inline const_reverse_iterator crbegin() const;
+        inline const const_reverse_iterator& crend() const;
+
+        inline const_reverse_iterator rbegin() const;
+        inline const const_reverse_iterator& rend() const;
+
+
 private:
 
         //- Iterator returned by end()
@@ -254,6 +309,9 @@ private:
 
         //- const_iterator returned by end()
         static const_iterator endConstIter_;
+
+        //- const_reverse_iterator returned by end()
+        static const_reverse_iterator endConstRevIter_;
 };
 
 
@@ -263,7 +321,7 @@ private:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "SLListBaseI.T.H"
+#include "DLListBaseI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

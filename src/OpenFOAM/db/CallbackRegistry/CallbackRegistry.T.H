@@ -38,7 +38,7 @@ SourceFiles
 #ifndef CallbackRegistry_H
 #define CallbackRegistry_H
 
-#include "UIDLList.T.H"
+#include "UIDLList.H"
 #include "className.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

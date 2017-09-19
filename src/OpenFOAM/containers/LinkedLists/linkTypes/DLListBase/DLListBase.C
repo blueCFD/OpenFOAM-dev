@@ -25,7 +25,7 @@ License
 
 #include "error.H"
 
-#include "DLListBase.T.H"
+#include "DLListBase.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
