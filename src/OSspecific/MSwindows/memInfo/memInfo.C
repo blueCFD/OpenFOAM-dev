@@ -51,7 +51,12 @@ Modifications
 #include <psapi.h>
 
 // Define type for using the function GetProcessMemoryInfo
-typedef BOOL (*GetProcessMemoryInfoType)(HANDLE, PPROCESS_MEMORY_COUNTERS, DWORD);
+typedef BOOL (*GetProcessMemoryInfoType)
+(
+    HANDLE,
+    PPROCESS_MEMORY_COUNTERS,
+    DWORD
+);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -62,11 +67,10 @@ Foam::memInfo::memInfo()
     rss_(-1),
     GetProcessMemoryInfo_(NULL)
 {
-  GetProcessMemoryInfo_ = (void *)(GetProcAddress(
-                                            LoadLibrary("Psapi.dll"),
-                                            "GetProcessMemoryInfo"
-                                                 )
-                                  );
+  GetProcessMemoryInfo_ =
+        (void *)(
+        GetProcAddress(LoadLibrary("Psapi.dll"), "GetProcessMemoryInfo")
+        );
 
   update();
 }
@@ -96,7 +100,15 @@ const Foam::memInfo& Foam::memInfo::update()
     {
         if(GetProcessMemoryInfo_!=NULL)
         {
-            if ( (GetProcessMemoryInfoType(GetProcessMemoryInfo_))(hProcess, &pmc, sizeof(pmc)) )
+            if
+            (
+                (GetProcessMemoryInfoType(GetProcessMemoryInfo_))
+                (
+                    hProcess,
+                    &pmc,
+                    sizeof(pmc)
+                )
+            )
             {
                 peak_ = pmc.PeakWorkingSetSize;
                 size_ = pmc.WorkingSetSize;

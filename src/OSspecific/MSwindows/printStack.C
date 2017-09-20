@@ -51,6 +51,9 @@ void error::safePrintStack(std::ostream& os)
     os << "We're sorry, but the application crashed and safe stack tracing"
           " isn't available in this current implementation of blueCFD-Core"
           " patches for OpenFOAM."
+       << std::endl
+       << "For more details on when this is fixed, please visit: "
+       << "https://github.com/blueCFD/Core/issues/7"
        << std::endl;
 }
 
@@ -59,6 +62,9 @@ void error::printStack(Ostream& os)
     os << "We're sorry, but the application crashed and safe stack tracing"
           " isn't available in this current implementation of blueCFD-Core"
           " patches for OpenFOAM."
+       << nl
+       << "For more details on when this is fixed, please visit: "
+       << "https://github.com/blueCFD/Core/issues/7"
        << endl;
 }
 
