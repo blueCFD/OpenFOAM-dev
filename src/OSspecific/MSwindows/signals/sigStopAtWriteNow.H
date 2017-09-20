@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -40,7 +45,7 @@ Class
     Foam::sigStopAtWriteNow
 
 Description
-    Signal handler for interupt defined by
+    Signal handler for interrupt defined by
         OptimisationSwitches::stopAtWriteNowSignal
 
     Write and stop the job.
@@ -70,8 +75,11 @@ class sigStopAtWriteNow
 {
     // Private data
 
-        //- number of signal to use
+        //- Number of signal to use
         static int signal_;
+
+        //- Pointer to Time
+        static Time const* runTimePtr_;
 
         //- Saved old signal trapping setting
         static __p_sig_fn_t oldAction_;
@@ -82,6 +90,10 @@ class sigStopAtWriteNow
 
 
 public:
+
+    //- wip. Have setter have access to signal_
+    friend class addstopAtWriteNowSignalToOpt;
+
 
     // Constructors
 
@@ -97,6 +109,9 @@ public:
 
 
     // Member functions
+
+        //- (re)set signal catcher
+        static void set(const bool verbose);
 
         //- Is active?
         bool active() const;

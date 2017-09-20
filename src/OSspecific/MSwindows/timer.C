@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -37,8 +42,6 @@ Modifications
       - Derived from the patches for blueCFD 2.1 and 2.2.
       - Adjusted the code to OpenFOAM 2.2.
 
-Description
-
 \*---------------------------------------------------------------------------*/
 
 #include "error.H"
@@ -67,19 +70,20 @@ Description
 
 namespace Foam
 {
-  defineTypeNameAndDebug(timer, 0);
-}
+defineTypeNameAndDebug(timer, 0);
 
-jmp_buf Foam::timer::envAlarm;
+jmp_buf timer::envAlarm;
 
-__p_sig_fn_t Foam::timer::oldAction_ = SIG_DFL;
+__p_sig_fn_t timer::oldAction_ = SIG_DFL;
 
 static HANDLE hTimer_ = NULL;
+}
+
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
 void Foam::timer::signalHandler(int)
-{     
+{
     if (debug)
     {
         Info<< "Foam::timer::signalHandler(int sig) : "
@@ -201,5 +205,6 @@ Foam::timer::~timer()
         }
     }
 }
+
 
 // ************************************************************************* //

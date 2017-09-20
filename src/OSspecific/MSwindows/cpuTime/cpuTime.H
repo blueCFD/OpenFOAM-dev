@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -37,10 +42,13 @@ Modifications
       - Derived from the patches for blueCFD 2.1 and 2.2.
 
 Class
-    cpuTime
+    Foam::cpuTime
 
 Description
     Starts timing CPU usage and return elapsed time from start.
+
+See also
+    clockTime
 
 SourceFiles
     cpuTime.C

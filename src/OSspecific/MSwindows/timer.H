@@ -1,4 +1,10 @@
 /*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -36,21 +42,24 @@ Modifications
       - Derived from the patches for blueCFD 2.1 and 2.2.
 
 Class
-    timer
+    Foam::timer
 
 Description
-    Implements a timeout mechanism. Usage is as following:
+    Implements a timeout mechanism via sigalarm.
 
-    timer myTimer(5);     // 5 sec
-    ..
-    if (timedOut(myTimer))
-    {
-        // timed out
-    }
-    else
-    {
-        // do something possible blocking
-    }
+    Example usage:
+    \code
+        timer myTimer(5);     // 5 sec
+        ..
+        if (timedOut(myTimer))
+        {
+            // timed out
+        }
+        else
+        {
+            // do something possible blocking
+        }
+    \endcode
 
     Constructor set signal handler on sigalarm and alarm(). Destructor
     clears these.
@@ -58,7 +67,8 @@ Description
     timedOut is macro because setjmp can't be in member function of timer.
     ?something to do with stack frames.
 
-    WARNING: setjmp restores complete register state so including local vars
+Warning
+    The setjmp restores complete register state so including local vars
     held in regs. So if in blocking part something gets calced in a stack
     based variable make sure it is declared 'volatile'.
 
@@ -77,7 +87,8 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// keep setjmp in same stack frame so no function calls
+//- Check it a timeout has occured
+//  keep setjmp in same stack frame so no function calls
 #define timedOut(x) \
     (((x).newTimeOut_ > 0) ? setjmp(Foam::timer::envAlarm) : false)
 
@@ -109,13 +120,13 @@ public:
 
     // Public data
 
-        //- Declare name of the class and it's debug switch
+        //- Declare name of the class and its debug switch
         ClassName("timer");
 
-        //- current time out value. Needed by macro timedOut
+        //- Current time out value. Needed by macro timedOut
         unsigned int newTimeOut_;
 
-        //- state for setjmp. Needed by macro timedOut
+        //- State for setjmp. Needed by macro timedOut
         static jmp_buf envAlarm;
 
 
@@ -126,9 +137,8 @@ public:
         timer(const unsigned int newTimeOut);
 
 
-    // Destructor
-
-        ~timer();
+    //- Destructor
+    ~timer();
 };
 
 

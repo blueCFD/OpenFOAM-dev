@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -46,14 +51,52 @@ Modifications
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+namespace Foam
+{
+
 // Signal number to catch
-int Foam::sigStopAtWriteNow::signal_
+int sigStopAtWriteNow::signal_
 (
     debug::optimisationSwitch("stopAtWriteNowSignal", -1)
 );
 
-static Foam::Time const* runTimePtr_ = NULL;
+// Register re-reader
+class addstopAtWriteNowSignalToOpt
+:
+    public ::Foam::simpleRegIOobject
+{
 
+public:
+
+    addstopAtWriteNowSignalToOpt(const char* name)
+    :
+        ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
+    {}
+
+    virtual ~addstopAtWriteNowSignalToOpt()
+    {}
+
+    virtual void readData(Foam::Istream& is)
+    {
+        sigStopAtWriteNow::signal_ = readLabel(is);
+        sigStopAtWriteNow::set(true);
+    }
+
+    virtual void writeData(Foam::Ostream& os) const
+    {
+        os << sigStopAtWriteNow::signal_;
+    }
+};
+
+addstopAtWriteNowSignalToOpt addstopAtWriteNowSignalToOpt_
+(
+    "stopAtWriteNowSignal"
+);
+
+}
+
+
+Foam::Time const* Foam::sigStopAtWriteNow::runTimePtr_ = nullptr;
 
 __p_sig_fn_t Foam::sigStopAtWriteNow::oldAction_ = SIG_DFL;
 
@@ -68,10 +111,8 @@ void Foam::sigStopAtWriteNow::sigHandler(int)
     
     if (SIG_ERR == success)
     {
-        FatalErrorIn
-        (
-            "Foam::sigStopAtWriteNow::sigHandler(int)"
-        )   << "Cannot reset " << signal_ << " trapping"
+        FatalErrorInFunction
+            << "Cannot reset " << signal_ << " trapping"
             << abort(FatalError);
     }
 
@@ -99,39 +140,56 @@ Foam::sigStopAtWriteNow::sigStopAtWriteNow
     const Time& runTime
 )
 {
+    // Store runTime
+    runTimePtr_ = &runTime;
+
+    set(verbose);
+}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::sigStopAtWriteNow::~sigStopAtWriteNow()
+{
+    // Reset old handling
+    if (signal_ > 0)
+    {
+        const __p_sig_fn_t success = ::signal(signal_, oldAction_);
+        oldAction_ = SIG_DFL;
+
+        if (SIG_ERR == success)
+        {
+            FatalErrorInFunction
+                << "Cannot reset " << signal_ << " trapping"
+                << abort(FatalError);
+        }
+    }
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::sigStopAtWriteNow::set(const bool verbose)
+{
     if (signal_ > 0)
     {
         // Check that the signal is different from the writeNowSignal
         if (sigWriteNow::signal_ == signal_)
         {
-            FatalErrorIn
-            (
-                "Foam::sigStopAtWriteNow::sigStopAtWriteNow"
-                "(const bool, const Time&)"
-            )   << "stopAtWriteNowSignal : " << signal_
+            FatalErrorInFunction
+                << "stopAtWriteNowSignal : " << signal_
                 << " cannot be the same as the writeNowSignal."
-<<<<<<< HEAD
-                << " Please change this in the controlDict ("
-                << findEtcFile("controlDict", false) << ")."
-=======
-                << " Please change this in the controlDict."
->>>>>>> a8c5233... Cumulative commits for the release of blueCFD-Core 2016-1.
+                << " Please change this in the etc/controlDict."
                 << exit(FatalError);
         }
 
 
-        // Store runTime
-        runTimePtr_ = &runTime;
+        oldAction_ = ::signal(signal_, &Foam::sigWriteNow::sigHandler);        
 
-	oldAction_ = ::signal(signal_, &Foam::sigWriteNow::sigHandler);        
-
-	if (SIG_ERR == oldAction_)
+        if (SIG_ERR == oldAction_)
         {
-            FatalErrorIn
-            (
-                "Foam::sigStopAtWriteNow::sigStopAtWriteNow"
-                "(const bool, const Time&)"
-            )   << "Cannot set " << signal_ << " trapping"
+            FatalErrorInFunction
+                << "Cannot set " << signal_ << " trapping"
                 << abort(FatalError);
         }
 
@@ -144,30 +202,6 @@ Foam::sigStopAtWriteNow::sigStopAtWriteNow
     }
 }
 
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::sigStopAtWriteNow::~sigStopAtWriteNow()
-{
-    // Reset old handling
-    if (signal_ > 0)
-    {
-        const __p_sig_fn_t success = ::signal(signal_, oldAction_);
-	oldAction_ = SIG_DFL;
-
-	if (SIG_ERR == success)
-        {
-            FatalErrorIn
-            (
-                "Foam::sigStopAtWriteNow::~sigStopAtWriteNow()"
-            )   << "Cannot reset " << signal_ << " trapping"
-                << abort(FatalError);
-        }
-    }
-}
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::sigStopAtWriteNow::active() const
 {
