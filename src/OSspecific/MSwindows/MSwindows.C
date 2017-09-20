@@ -337,7 +337,8 @@ pid_t ppid()
 
     if (MSwindows::debug)
     {
-        std::cout<< "ppid not supported under MSwindows" << std::endl;
+        InfoInFunction
+            << "ppid not supported under MSwindows" << std::endl;
     }
 
     return 0;
@@ -350,7 +351,8 @@ pid_t pgid()
 
     if (MSwindows::debug)
     {
-        std::cout<< "pgid not supported under MSwindows" << std::endl;
+        InfoInFunction
+            << "pgid not supported under MSwindows" << std::endl;
     }
 
     return 0;
@@ -864,9 +866,8 @@ fileNameList readDir
     }
     else if (MSwindows::debug)
     {
-        std::cout<< "readDir(const fileName&, const fileType, "
-               "const bool filtergz) : cannot open directory "
-            << directory << std::endl;
+        InfoInFunction
+            "cannot open directory " << directory << std::endl;
     }
 
     // Reset the length of the entries list
@@ -980,7 +981,8 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
         {
             if (MSwindows::debug)
             {
-                std::cout<< "Copying : " << src/contents[i] 
+                InfoInFunction
+                    << "Copying : " << src/contents[i] 
                     << " to " << destFile/contents[i] << std::endl;
             }
 
@@ -994,7 +996,8 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
         {
             if (MSwindows::debug)
             {
-                std::cout<< "Copying : " << src/subdirs[i]
+                InfoInFunction
+                    << "Copying : " << src/subdirs[i]
                     << " to " << destFile << std::endl;
             }
 
@@ -1026,7 +1029,8 @@ bool ln(const fileName& src, const fileName& dest)
 
     if (MSwindows::debug)
     {
-        std::cout<< "MSwindows does not support ln - softlinking" << std::endl;
+        InfoInFunction
+            << "MSwindows does not support ln - softlinking" << std::endl;
     }
 
     return false;
@@ -1235,7 +1239,8 @@ bool ping
 
     if (MSwindows::debug)
     {
-        std::cout<< "MSwindows does not support ping" << std::endl;
+        InfoInFunction
+            << "MSwindows does not support ping" << std::endl;
     }
 
     return false;
@@ -1274,73 +1279,75 @@ void* dlOpen(const fileName& libName, const bool check)
     //NOTE: should only be used for "force loading libraries"
     if (libName.find_first_of(',')!=Foam::string::npos)
     {
-      void *moduleh=NULL;
-      string libsToLoad=libName;
-      libsToLoad.removeTrailing(' '); //removes spaces from both ends
-      libsToLoad.removeRepeated(',');
-      libsToLoad += ',';
+        void *moduleh=NULL;
+        string libsToLoad=libName;
+        libsToLoad.removeTrailing(' '); //removes spaces from both ends
+        libsToLoad.removeRepeated(',');
+        libsToLoad += ',';
 
-      if (MSwindows::debug)
-      {
-          std::cout<< "Libraries to be loaded: " <<  libsToLoad << std::endl;
-      }
+        if (MSwindows::debug)
+        {
+            InfoInFunction
+                << "Libraries to be loaded: " <<  libsToLoad << std::endl;
+        }
 
-      //generate the word list
-      size_t stposstr=0, found=libsToLoad.find_first_of(',');
-      while (found!=string::npos)
-      {
-          string libToLoad = libsToLoad.substr(stposstr,found-stposstr);
-          moduleh = dlOpen(libToLoad);
-          stposstr=found+1; found=libsToLoad.find_first_of(',',stposstr);
-      }
+        //generate the word list
+        size_t stposstr=0, found=libsToLoad.find_first_of(',');
+        while (found!=string::npos)
+        {
+            string libToLoad = libsToLoad.substr(stposstr,found-stposstr);
+            moduleh = dlOpen(libToLoad);
+            stposstr=found+1; found=libsToLoad.find_first_of(',',stposstr);
+        }
 
-      return moduleh;
+        return moduleh;
     }
     else
     {
-      if (MSwindows::debug)
-      {
-          std::cout<< "dlOpen(const fileName&)"
-              << " : LoadLibrary of " << libName << std::endl;
-      }
+        if (MSwindows::debug)
+        {
+            InfoInFunction
+                << " : LoadLibrary of " << libName << std::endl;
+        }
 
-      const char* dllExt = ".dll";
+        const char* dllExt = ".dll";
 
-      // Assume libName is of the form, lib<name>.so
-      Foam::string winLibName(libName);
-      winLibName.replace(".so", dllExt);
-      void* libHandle = ::LoadLibrary(winLibName.c_str());
+        // Assume libName is of the form, lib<name>.so
+        Foam::string winLibName(libName);
+        winLibName.replace(".so", dllExt);
+        void* libHandle = ::LoadLibrary(winLibName.c_str());
 
-      if (NULL == libHandle)
-      {
-          // Assumes libName = name
-          winLibName = "lib";
-          winLibName += libName;
-          winLibName += dllExt;
-        
-          libHandle = ::LoadLibrary(winLibName.c_str());
-      }
-      
-      if (NULL == libHandle && check)
-      {
-          WarningIn("dlOpen(const fileName&)")
-            << "LoadLibrary failed. "
-            << MSwindows::getLastError()
-            << endl;
-      }
-      else
-      {
-          getLoadedLibs()[libHandle] = libName;
-      }
-      
-      if (MSwindows::debug)
-      {
-          std::cout<< "Library " <<  libName << " loaded "
-              << (libHandle != NULL ? "with success!" : "without success.")
-              << std::endl;
-      }
+        if (NULL == libHandle)
+        {
+            // Assumes libName = name
+            winLibName = "lib";
+            winLibName += libName;
+            winLibName += dllExt;
 
-      return libHandle;
+            libHandle = ::LoadLibrary(winLibName.c_str());
+        }
+
+        if (NULL == libHandle && check)
+        {
+            WarningInFunction
+                << "LoadLibrary failed. "
+                << MSwindows::getLastError()
+                << endl;
+        }
+        else
+        {
+            getLoadedLibs()[libHandle] = libName;
+        }
+
+        if (MSwindows::debug)
+        {
+            InfoInFunction
+                << "Library " <<  libName << " loaded "
+                << (libHandle != NULL ? "with success!" : "without success.")
+                << std::endl;
+        }
+
+        return libHandle;
     }
 }
 
@@ -1349,8 +1356,8 @@ bool dlClose(void* libHandle)
 {
     if (MSwindows::debug)
     {
-        std::cout<< "dlClose(void*)"
-            << " : FreeLibrary of handle " << libHandle << std::endl;
+        InfoInFunction
+            << "FreeLibrary of handle " << libHandle << std::endl;
     }
 
     const bool success = 
@@ -1376,8 +1383,8 @@ void* dlSym(void* handle, const std::string& symbol)
 {
     if (MSwindows::debug)
     {
-        std::cout<< "dlSym(void*, const std::string&)"
-            << " : dlsym of " << symbol << std::endl;
+        InfoInFunction
+            << "dlsym of " << symbol << std::endl;
     }
 
     // get address of symbol
@@ -1404,8 +1411,8 @@ bool dlSymFound(void* handle, const std::string& symbol)
     {
         if (MSwindows::debug)
         {
-            std::cout<< "dlSymFound(void*, const std::string&)"
-                << " : dlSym of " << symbol << std::endl;
+            InfoInFunction
+                << "dlSym of " << symbol << std::endl;
         }
 
         // symbol can be found if there was no error
@@ -1432,8 +1439,8 @@ fileNameList dlLoaded()
 
     if (MSwindows::debug)
     {
-        std::cout<< "dlLoaded()"
-            << " : determined loaded libraries :" << libs.size() << std::endl;
+        InfoInFunction
+            << "determined loaded libraries :" << libs.size() << std::endl;
     }
     return libs;
 }
