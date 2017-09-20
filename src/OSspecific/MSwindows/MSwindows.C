@@ -488,7 +488,7 @@ fileName cwd()
     }
     else 
     {
-        FatalErrorIn("cwd()")
+        FatalErrorInFunction
             << "Couldn't get the current working directory"
             << exit(FatalError);
     }
@@ -553,7 +553,7 @@ bool mkDir(const fileName& pathName, const mode_t mode)
 
         if (!success) 
         {
-            FatalErrorIn("mkDir(const fileName&, mode_t)")
+            FatalErrorInFunction
               << "Couldn't create directory: " << pathName
               << " " << MSwindows::getLastError()
               << exit(FatalError);
@@ -1168,7 +1168,7 @@ bool rmDir(const fileName& directory)
 
                   if (!success)
                   {
-                      WarningIn("rmdir(const fileName&)")
+                      WarningInFunction
                         << "failed to remove directory " << fName
                         << " while removing directory " << directory
                         << endl;
@@ -1180,7 +1180,7 @@ bool rmDir(const fileName& directory)
 
                   if (!success)
                   {
-                      WarningIn("rmdir(const fileName&)")
+                      WarningInFunction
                         << "failed to remove file " << fName
                         << " while removing directory " << directory
                         << endl;
@@ -1196,7 +1196,7 @@ bool rmDir(const fileName& directory)
 
         if (!success) 
         {
-            WarningIn("rmdir(const fileName&)")
+            WarningInFunction
                 << "failed to remove directory " << directory << endl;
         }
     }
@@ -1365,7 +1365,7 @@ bool dlClose(void* libHandle)
   
     if (!success) 
     {
-        WarningIn("closeLibrary(void* const libHandle)")
+        WarningInFunction
             << "FreeLibrary failed. " 
             << MSwindows::getLastError()
             << endl;
@@ -1395,7 +1395,7 @@ void* dlSym(void* handle, const std::string& symbol)
 
     if(fun == NULL)
     {
-        WarningIn("dlSym(void*, const std::string&)")
+        WarningInFunction
             << "Cannot lookup symbol " << symbol << " : "
             << MSwindows::getLastError()
             << endl;
