@@ -86,8 +86,8 @@ void Foam::timer::signalHandler(int)
 {
     if (debug)
     {
-        Info<< "Foam::timer::signalHandler(int sig) : "
-            << " timed out. Jumping."
+        InfoInFunction
+            << "timed out. Jumping."
             << endl;
     }
     ::longjmp(envAlarm, 1);
@@ -114,10 +114,8 @@ Foam::timer::timer(const unsigned int newTimeOut)
         // Is singleton since handler is static function
         if (NULL != hTimer_)
         {
-            FatalErrorIn
-            (
-                "Foam::timer::timer(const unsigned int)"
-            )   << "timer already used."
+            FatalErrorInFunction
+                << "timer already used."
                 << abort(FatalError);    
         }
 
@@ -128,10 +126,8 @@ Foam::timer::timer(const unsigned int newTimeOut)
         {
             oldAction_ = SIG_DFL;
 
-            FatalErrorIn
-            (
-                "Foam::timer::timer(const unsigned int)"
-            )   << "sigaction(SIGALRM) error"
+            FatalErrorInFunction
+                << "sigaction(SIGALRM) error"
                 << abort(FatalError);    
         }
 
@@ -145,7 +141,7 @@ Foam::timer::timer(const unsigned int newTimeOut)
         const bool success = 
           ::CreateTimerQueueTimer(&hTimer_, 
                                   NULL, 
-                                  (WAITORTIMERCALLBACK)timerExpired,
+                                  WAITORTIMERCALLBACK(timerExpired),
                                   NULL , 
                                   newTimeOut * 1000, 
                                   0, 0);
@@ -153,10 +149,8 @@ Foam::timer::timer(const unsigned int newTimeOut)
         if (!success) 
         {
             hTimer_ = NULL;
-            FatalErrorIn
-            (
-                "Foam::timer::timer(const unsigned int)"
-            )   << "CreateTimerQueueTimer, "
+            FatalErrorInFunction
+                << "CreateTimerQueueTimer, "
                 << MSwindows::getLastError()
                 << abort(FatalError);    
         }
@@ -177,18 +171,16 @@ Foam::timer::~timer()
 
         if (!timerSuccess) 
         {
-            FatalErrorIn
-            (
-                "Foam::timer::~timer() "
-            )   << "DeleteTimerQueueTimer, "
+            FatalErrorInFunction
+                << "DeleteTimerQueueTimer, "
                 << MSwindows::getLastError()
                 << abort(FatalError);    
         }
 
         if (debug)
         {
-            Info<< "Foam::timer::~timer() timeOut="
-                << int(newTimeOut_) << endl;
+            InfoInFunction
+                << "timeOut=" << int(newTimeOut_) << endl;
         }
 
         const __p_sig_fn_t signalSuccess = signal(SIGALRM, oldAction_);
@@ -197,10 +189,8 @@ Foam::timer::~timer()
         // Restore signal handler
         if (SIG_ERR == signalSuccess)
         {
-            FatalErrorIn
-            (
-                "Foam::timer::~timer()"
-            )   << "sigaction(SIGALRM) error"
+            FatalErrorInFunction
+                << "sigaction(SIGALRM) error"
                 << abort(FatalError);    
         }
     }
