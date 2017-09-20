@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -37,16 +42,18 @@ Modifications
       - Derived from the patches for blueCFD 2.1 and 2.2.
 
 Class
-    sigFpe
+    Foam::sigFpe
 
 Description
-    Sets up trapping for floating point exceptions (sigfpe).
+    Set up trapping for floating point exceptions (signal FPE).
 
     Controlled by two env vars:
-    FOAM_SIGFPE : exception trapping
-    FOAM_SETNAN : initialization of all malloced memory to NaN. If also
-                  FOAM_SIGFPE set this will cause usage of uninitialized scalars
-                  to trigger an abort.
+      - \par FOAM_SIGFPE
+        Exception trapping
+      - \par FOAM_SETNAN
+        Initialization of all malloced memory to NaN. If FOAM_SIGFPE
+        also set, this will cause usage of uninitialized scalars to trigger
+        an abort.
 
 SourceFiles
     sigFpe.C

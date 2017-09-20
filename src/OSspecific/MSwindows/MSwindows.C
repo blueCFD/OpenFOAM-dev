@@ -71,6 +71,10 @@ Details
 #include <windows.h>
 #include <signal.h>
 
+// For C++11 std::thread and std::mutex
+#include <thread>
+#include <mutex>
+
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -124,7 +128,7 @@ string MSwindows::getLastError()
         NULL,
         dw,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (LPTSTR) &lpMsgBuf,
+        LPTSTR(&lpMsgBuf),
         0, NULL );
 
     lpDisplayBuf = LocalAlloc(LMEM_ZEROINIT, 
@@ -338,7 +342,7 @@ pid_t ppid()
     if (MSwindows::debug)
     {
         InfoInFunction
-            << "ppid not supported under MSwindows" << std::endl;
+            << "ppid not supported under MSwindows" << endl;
     }
 
     return 0;
@@ -352,7 +356,7 @@ pid_t pgid()
     if (MSwindows::debug)
     {
         InfoInFunction
-            << "pgid not supported under MSwindows" << std::endl;
+            << "pgid not supported under MSwindows" << endl;
     }
 
     return 0;
@@ -867,7 +871,7 @@ fileNameList readDir
     else if (MSwindows::debug)
     {
         InfoInFunction
-            "cannot open directory " << directory << std::endl;
+            << "cannot open directory " << directory << endl;
     }
 
     // Reset the length of the entries list
@@ -983,7 +987,7 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
             {
                 InfoInFunction
                     << "Copying : " << src/contents[i] 
-                    << " to " << destFile/contents[i] << std::endl;
+                    << " to " << destFile/contents[i] << endl;
             }
 
             // File to file.
@@ -998,7 +1002,7 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
             {
                 InfoInFunction
                     << "Copying : " << src/subdirs[i]
-                    << " to " << destFile << std::endl;
+                    << " to " << destFile << endl;
             }
 
             // Dir to Dir.
@@ -1030,7 +1034,7 @@ bool ln(const fileName& src, const fileName& dest)
     if (MSwindows::debug)
     {
         InfoInFunction
-            << "MSwindows does not support ln - softlinking" << std::endl;
+            << "MSwindows does not support ln - softlinking" << endl;
     }
 
     return false;
@@ -1240,7 +1244,7 @@ bool ping
     if (MSwindows::debug)
     {
         InfoInFunction
-            << "MSwindows does not support ping" << std::endl;
+            << "MSwindows does not support ping" << endl;
     }
 
     return false;
@@ -1288,7 +1292,7 @@ void* dlOpen(const fileName& libName, const bool check)
         if (MSwindows::debug)
         {
             InfoInFunction
-                << "Libraries to be loaded: " <<  libsToLoad << std::endl;
+                << "Libraries to be loaded: " <<  libsToLoad << endl;
         }
 
         //generate the word list
@@ -1307,7 +1311,7 @@ void* dlOpen(const fileName& libName, const bool check)
         if (MSwindows::debug)
         {
             InfoInFunction
-                << " : LoadLibrary of " << libName << std::endl;
+                << " : LoadLibrary of " << libName << endl;
         }
 
         const char* dllExt = ".dll";
@@ -1344,7 +1348,7 @@ void* dlOpen(const fileName& libName, const bool check)
             InfoInFunction
                 << "Library " <<  libName << " loaded "
                 << (libHandle != NULL ? "with success!" : "without success.")
-                << std::endl;
+                << endl;
         }
 
         return libHandle;
@@ -1357,7 +1361,7 @@ bool dlClose(void* libHandle)
     if (MSwindows::debug)
     {
         InfoInFunction
-            << "FreeLibrary of handle " << libHandle << std::endl;
+            << "FreeLibrary of handle " << libHandle << endl;
     }
 
     const bool success = 
@@ -1384,7 +1388,7 @@ void* dlSym(void* handle, const std::string& symbol)
     if (MSwindows::debug)
     {
         InfoInFunction
-            << "dlsym of " << symbol << std::endl;
+            << "dlsym of " << symbol << endl;
     }
 
     // get address of symbol
@@ -1412,7 +1416,7 @@ bool dlSymFound(void* handle, const std::string& symbol)
         if (MSwindows::debug)
         {
             InfoInFunction
-                << "dlSym of " << symbol << std::endl;
+                << "dlSym of " << symbol << endl;
         }
 
         // symbol can be found if there was no error
@@ -1440,7 +1444,7 @@ fileNameList dlLoaded()
     if (MSwindows::debug)
     {
         InfoInFunction
-            << "determined loaded libraries :" << libs.size() << std::endl;
+            << "determined loaded libraries :" << libs.size() << endl;
     }
     return libs;
 }
@@ -1452,7 +1456,7 @@ fileNameList dlLoaded()
 
 void osRandomSeed(const label seed)
 {
-    srandom(unsigned int(seed));
+    srandom((unsigned int)(seed));
 }
 
 label osRandomInteger()
@@ -1477,9 +1481,6 @@ string toUnixPath(const string & path)
 
 //- Thread handling: Using std::thread and std::mutex
 
-#include <thread>
-#include <mutex>
-
 static DynamicList<autoPtr<std::thread>> threads_;
 static DynamicList<autoPtr<std::mutex>> mutexes_;
 
@@ -1490,7 +1491,7 @@ label allocateThread()
     {
         if (!threads_[i].valid())
         {
-            if (MSWindows::debug)
+            if (MSwindows::debug)
             {
                 Pout<< "allocateThread : reusing index:" << i << endl;
             }
@@ -1501,7 +1502,7 @@ label allocateThread()
     }
 
     label index = threads_.size();
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "allocateThread : new index:" << index << endl;
     }
@@ -1518,14 +1519,14 @@ void createThread
     void *arg
 )
 {
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "createThread : index:" << index << endl;
     }
 
     try
     {
-        threads_[index].reset(std::thread(start_routine, arg));
+        threads_[index].reset(new std::thread(start_routine, arg));
     }
     catch(...)
     {
@@ -1537,7 +1538,7 @@ void createThread
 
 void joinThread(const label index)
 {
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "joinThread : join:" << index << endl;
     }
@@ -1564,7 +1565,7 @@ void joinThread(const label index)
 
 void freeThread(const label index)
 {
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "freeThread : index:" << index << endl;
     }
@@ -1578,7 +1579,7 @@ label allocateMutex()
     {
         if (!mutexes_[i].valid())
         {
-            if (MSWindows::debug)
+            if (MSwindows::debug)
             {
                 Pout<< "allocateMutex : reusing index:" << i << endl;
             }
@@ -1590,7 +1591,7 @@ label allocateMutex()
 
     label index = mutexes_.size();
 
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "allocateMutex : new index:" << index << endl;
     }
@@ -1601,7 +1602,7 @@ label allocateMutex()
 
 void lockMutex(const label index)
 {
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "lockMutex : index:" << index << endl;
     }
@@ -1620,7 +1621,7 @@ void lockMutex(const label index)
 
 void unlockMutex(const label index)
 {
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "unlockMutex : index:" << index << endl;
     }
@@ -1639,7 +1640,7 @@ void unlockMutex(const label index)
 
 void freeMutex(const label index)
 {
-    if (MSWindows::debug)
+    if (MSwindows::debug)
     {
         Pout<< "freeMutex : index:" << index << endl;
     }

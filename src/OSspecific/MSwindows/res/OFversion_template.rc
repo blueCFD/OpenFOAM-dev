@@ -1,8 +1,8 @@
 #define IDR_VERSION1 1
 
 IDR_VERSION1 VERSIONINFO
-FILEVERSION 4,0,2016,2
-PRODUCTVERSION 4,0,2016,2
+FILEVERSION 4,0,2017,1
+PRODUCTVERSION 4,0,2017,1
 FILEOS 0x00000000
 FILETYPE 0x00000000
 BEGIN
@@ -12,9 +12,9 @@ BEGIN
     BEGIN
       VALUE "FileVersion", "2.0.0.0\0" //do not change this
       VALUE "ProductVersion", "2.0.0.0\0" //do not change this
-      VALUE "FileDescription", "tmpintname - Built for blueCFD(R)-Core, by blueCAPE Lda.\0"
-      VALUE "LegalCopyright", "OpenFOAM is Copyright (C) 2011-16 OpenFOAM Foundation.\0"
-      VALUE "LegalTrademarks", "OpenFOAM is a trade mark of OpenCFD (ESI Group). blueCFD is a trade mark of blueCAPE Lda.\0"
+      VALUE "FileDescription", "tmpintname - Built for blueCFD(R)-Core, by FSD blueCAPE Lda.\0"
+      VALUE "LegalCopyright", "OpenFOAM is Copyright (C) 2011-17 OpenFOAM Foundation.\0"
+      VALUE "LegalTrademarks", "OpenFOAM is a trade mark of OpenCFD (ESI Group). blueCFD is a trade mark of FSD blueCAPE Lda.\0"
       VALUE "ProductName", "Unofficial port of OpenFOAM. Port website: http://bluecfd.github.io/Core/\0"
       VALUE "InternalName", "tmpintname\0"
       VALUE "OriginalFilename", "tmporigname\0"

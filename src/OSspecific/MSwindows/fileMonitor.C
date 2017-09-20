@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -48,16 +53,13 @@ Class
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-namespace Foam
-{
-  defineTypeNameAndDebug(fileMonitor, 0);
-}
-
 const Foam::NamedEnum<Foam::fileMonitor::fileState, 3>
     Foam::fileMonitor::fileStateNames_;
 
 namespace Foam
 {
+    defineTypeNameAndDebug(fileMonitor, 0);
+
     template<>
     const char* Foam::NamedEnum
     <
@@ -132,7 +134,7 @@ namespace Foam
         // For stat
 
             //- From watch descriptor to modified time
-            DynamicList<time_t> lastMod_;
+            DynamicList<double> lastMod_;
 
 
 
@@ -180,7 +182,7 @@ namespace Foam
                         << abort(FatalError);
                 }
 
-                lastMod_(watchFd) = lastModified(fName);
+                lastMod_(watchFd) = highResLastModified(fName);
             }
 
             return true;
@@ -216,12 +218,12 @@ void Foam::fileMonitor::checkFiles() const
     {
         forAll(watcher_->lastMod_, watchFd)
         {
-            time_t oldTime = watcher_->lastMod_[watchFd];
+            double oldTime = watcher_->lastMod_[watchFd];
 
             if (oldTime != 0)
             {
                 const fileName& fName = watchFile_[watchFd];
-                time_t newTime = lastModified(fName);
+                double newTime = highResLastModified(fName);
 
                 if (newTime == 0)
                 {
@@ -439,7 +441,7 @@ void Foam::fileMonitor::setUnmodified(const label watchFd)
 
     if (!useInotify_)
     {
-        watcher_->lastMod_[watchFd] = lastModified(watchFile_[watchFd]);
+        watcher_->lastMod_[watchFd] = highResLastModified(watchFile_[watchFd]);
     }
 }
 

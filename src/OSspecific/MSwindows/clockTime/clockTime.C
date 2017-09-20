@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -24,53 +29,36 @@ Modifications
     This file is based on the original version for POSIX:
         OpenFOAM/src/OSspecific/POSIX/
 
-    This file was developed for Windows by:
-        Copyright            : (C) 2011 Symscape
-        Website              : www.symscape.com
-
     This copy of this file has been created by blueCAPE's unofficial mingw
     patches for OpenFOAM.
     For more information about these patches, visit:
         http://bluecfd.com/Core
 
     Modifications made:
-      - Derived from the patches for blueCFD 2.1 and 2.2.
+      - Used NULL instead of 0.
 
 \*---------------------------------------------------------------------------*/
 
 #include "clockTime.H"
-
 #include <sys/time.h>
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
-// * * * * * * * * * * * * * * * Static Members  * * * * * * * * * * * * * * //
-
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void clockTime::getTime(struct timeval& t)
+void Foam::clockTime::getTime(timeType& t)
 {
     gettimeofday(&t, NULL);
 }
 
 
-double clockTime::timeDifference
-(
-    const struct timeval& start,
-    const struct timeval& end
-)
+double Foam::clockTime::timeDifference(const timeType& beg, const timeType& end)
 {
-    return end.tv_sec - start.tv_sec + 1E-6*(end.tv_usec - start.tv_usec);
+    return end.tv_sec - beg.tv_sec + 1e-6*(end.tv_usec - beg.tv_usec);
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-clockTime::clockTime()
+Foam::clockTime::clockTime()
 {
     getTime(startTime_);
     lastTime_ = startTime_;
@@ -80,23 +68,19 @@ clockTime::clockTime()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-double clockTime::elapsedTime() const
+double Foam::clockTime::elapsedTime() const
 {
     getTime(newTime_);
     return timeDifference(startTime_, newTime_);
 }
 
 
-double clockTime::timeIncrement() const
+double Foam::clockTime::timeIncrement() const
 {
     lastTime_ = newTime_;
     getTime(newTime_);
     return timeDifference(lastTime_, newTime_);
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

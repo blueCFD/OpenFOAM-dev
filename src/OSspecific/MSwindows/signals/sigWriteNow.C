@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -46,13 +51,49 @@ Modifications
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+namespace Foam
+{
+
 // Signal number to catch
-int Foam::sigWriteNow::signal_
+int sigWriteNow::signal_
 (
     debug::optimisationSwitch("writeNowSignal", -1)
 );
 
-static Foam::Time* runTimePtr_ = NULL;
+// Register re-reader
+class addwriteNowSignalToOpt
+:
+    public ::Foam::simpleRegIOobject
+{
+
+public:
+
+    addwriteNowSignalToOpt(const char* name)
+    :
+        ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
+    {}
+
+    virtual ~addwriteNowSignalToOpt()
+    {}
+
+    virtual void readData(Foam::Istream& is)
+    {
+        sigWriteNow::signal_ = readLabel(is);
+        sigWriteNow::set(true);
+    }
+
+    virtual void writeData(Foam::Ostream& os) const
+    {
+        os << sigWriteNow::signal_;
+    }
+};
+
+addwriteNowSignalToOpt addwriteNowSignalToOpt_("writeNowSignal");
+
+}
+
+
+Foam::Time* Foam::sigWriteNow::runTimePtr_ = nullptr;
 
 
 __p_sig_fn_t Foam::sigWriteNow::oldAction_ = SIG_DFL;
@@ -92,15 +133,45 @@ Foam::sigWriteNow::sigWriteNow()
 
 Foam::sigWriteNow::sigWriteNow(const bool verbose, Time& runTime)
 {
+    // Store runTime
+    runTimePtr_ = &runTime;
+
+    set(verbose);
+}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::sigWriteNow::~sigWriteNow()
+{
+    // Reset old handling
+    if (signal_ > 0)
+    {
+        const __p_sig_fn_t success = ::signal(signal_, oldAction_);
+        oldAction_ = SIG_DFL;
+
+        if (SIG_ERR == success)
+        {
+            FatalErrorIn
+            (
+                "Foam::sigWriteNow::~sigWriteNow()"
+            )   << "Cannot reset " << signal_ << " trapping"
+                << abort(FatalError);
+        }
+    }
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::sigWriteNow::set(const bool verbose)
+{
     if (signal_ >= 0)
     {
-        // Store runTime
-        runTimePtr_ = &runTime;
+        oldAction_ = ::signal(signal_, &Foam::sigWriteNow::sigHandler);        
 
-	oldAction_ = ::signal(signal_, &Foam::sigWriteNow::sigHandler);        
-
-	if (SIG_ERR == oldAction_)
-	{
+        if (SIG_ERR == oldAction_)
+        {
             FatalErrorIn
             (
                 "Foam::sigWriteNow::sigWriteNow(const bool, const Time&)"
@@ -117,30 +188,6 @@ Foam::sigWriteNow::sigWriteNow(const bool verbose, Time& runTime)
     }
 }
 
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::sigWriteNow::~sigWriteNow()
-{
-    // Reset old handling
-    if (signal_ > 0)
-    {
-        const __p_sig_fn_t success = ::signal(signal_, oldAction_);
-	oldAction_ = SIG_DFL;
-
-	if (SIG_ERR == success)
-        {
-            FatalErrorIn
-            (
-                "Foam::sigWriteNow::~sigWriteNow()"
-            )   << "Cannot reset " << signal_ << " trapping"
-                << abort(FatalError);
-        }
-    }
-}
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::sigWriteNow::active() const
 {

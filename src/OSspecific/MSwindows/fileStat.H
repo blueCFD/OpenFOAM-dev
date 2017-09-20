@@ -1,5 +1,10 @@
 /*---------------------------------------------------------------------------*\
-
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
 License
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -33,14 +38,15 @@ Modifications
       - Derived from the patches for blueCFD 2.1 and 2.2.
 
 Class
-    fileStat
+    Foam::fileStat
 
 Description
     Wrapper for stat() system call.
 
-    WARNING: on Linux (an maybe on others) a stat() of an nfs mounted (remote)
-    file does never timeout and cannot be interrupted! So e.g. Foam::ping first
-    and hope nfs is running.
+Warning
+    on Linux (an maybe on others) a stat() of an nfs mounted (remote)
+    file does never timeout and cannot be interrupted!
+    So e.g. Foam::ping first and hope nfs is running.
 
 SourceFiles
     fileStat.C
@@ -61,6 +67,18 @@ SourceFiles
 namespace Foam
 {
 
+// Forward declaration of friend functions and operators
+
+class fileStat;
+
+Istream& operator>>(Istream&, fileStat&);
+Ostream& operator<<(Ostream&, const fileStat&);
+
+struct stat_extended : stat
+{
+    timespec st_atim;
+};
+
 /*---------------------------------------------------------------------------*\
                            Class fileStat Declaration
 \*---------------------------------------------------------------------------*/
@@ -69,7 +87,7 @@ class fileStat
 {
     // Private data
 
-        struct stat status_;
+        struct stat_extended status_;
 
         bool isValid_;
 
@@ -81,8 +99,15 @@ public:
         //- Empty constructor
         fileStat();
 
-        //- Construct from components
-        fileStat(const fileName& fName, const unsigned int maxTime=0);
+        //- Construct from components.
+        //  followLink : in case of link get status of pointed-to file
+        //  maxTime    : time out
+        fileStat
+        (
+            const fileName& fName,
+            const bool followLink = true,
+            const unsigned int maxTime = 0
+        );
 
         //- Construct from Istream
         fileStat(Istream&);
@@ -93,7 +118,7 @@ public:
         // Access
 
             //- Raw status
-            const struct stat& status() const
+            const struct stat_extended& status() const
             {
                 return status_;
             }
@@ -107,13 +132,13 @@ public:
 
         // Check
 
-            //- compare two fileStats for same device
+            //- Compare two fileStats for same device
             bool sameDevice(const fileStat& stat2) const;
 
-            //- compare two fileStats for same Inode
+            //- Compare two fileStats for same Inode
             bool sameINode(const fileStat& stat2) const;
 
-            //- compare state against inode
+            //- Compare state against inode
             bool sameINode(const label iNode) const;
 
 
