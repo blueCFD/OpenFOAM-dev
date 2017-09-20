@@ -3,8 +3,11 @@ License
     Copyright            : (C) 2011 Symscape
     Website              : www.symscape.com
 
-    Copyright            : (C) 2011-2013 blueCAPE Lda
+    Copyright            : (C) 2011-2017 FSD blueCAPE Lda
     Website              : www.bluecape.com.pt
+
+    Copyright            : (C) 2011-2017 OpenFOAM Foundation
+    Website              : www.openfoam.org
 
     This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
     For more information about these patches, visit:
@@ -37,8 +40,8 @@ Details
     Details on how this file was created:
       - This file was originally based on Symscape's own work on patching 
         OpenFOAM for working on Windows, circa 2009.
-      - Further changes were made by blueCAPE, culminating in the patches
-        by blueCAPE for blueCFD 2.1, now adjusted here to OpenFOAM 2.2.
+      - Further changes were made by blueCAPE over the years.
+      - Includes code from POSIX.C where applicable.
 
 
 \*---------------------------------------------------------------------------*/
@@ -51,6 +54,8 @@ Details
 #include "timer.H"
 #include "IFstream.H"
 #include "DynamicList.T.H"
+#include "IOstreams.H"
+#include "Pstream.T.H"
 
 // Undefine DebugInfo, because we don't need it and it collides with a macro
 // in windows.h
@@ -414,6 +419,7 @@ string domainName()
     // FIXME: this should be implemented for completion.
     // Could use ::gethostname and ::gethostbyname like POSIX.C, but would
     // then need to link against ws_32. Prefer to minimize dependencies.
+    // See task https://github.com/blueCFD/Core/issues/61
 
     return string::null;
 }
@@ -434,9 +440,12 @@ string userName()
 
 bool isAdministrator()
 {
-    //FIXME: This is going to be needed as well... for building dynamic code.
-    //Going to assume to be false, so this way it's possible to build dynamic code!
-    //Besides, in Windows XP the usual default is to be the administrator...
+    // FIXME: This is going to be needed as well... for building dynamic code.
+    // Going to assume to be false, so this way it's possible to build dynamic
+    // code!
+    // Besides, in Windows XP the usual default is to be the administrator...
+    // See task https://github.com/blueCFD/Core/issues/62
+
     return false;
 }
 
@@ -495,14 +504,22 @@ bool chDir(const fileName& dir)
 
 bool mkDir(const fileName& pathName, const mode_t mode)
 {
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : pathName:" << pathName << " mode:" << mode
+            << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
+
     if (pathName.empty())
     {
         return false;
     }
 
-
     bool success = ::CreateDirectory(pathName.c_str(), NULL);
-
     if (success)
     {
         chMod(pathName, mode);
@@ -545,36 +562,54 @@ bool mkDir(const fileName& pathName, const mode_t mode)
 }
 
 
-// Set the file mode
 bool chMod(const fileName& name, const mode_t m)
 {
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
+
     const int success = _chmod(name.c_str(), m);
     return success;
 }
 
 
-// Return the file mode
-mode_t mode(const fileName& name)
+mode_t mode(const fileName& name, const bool followLink)
 {
-    fileStat fileStatus(name);
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+    }
 
-    const mode_t m = fileStatus.isValid() ?
-      fileStatus.status().st_mode : 0;
-    return m;
+    fileStat fileStatus(name, followLink);
+    if (fileStatus.isValid())
+    {
+        return fileStatus.status().st_mode;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
-// Return the file type: FILE or DIRECTORY
-fileName::Type type(const fileName& name)
+fileName::Type type(const fileName& name, const bool followLink)
 {
+    //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
+    //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
+
     fileName::Type fileType = fileName::UNDEFINED;
     const DWORD attrs = ::GetFileAttributes(name.c_str());
 
     if (attrs != INVALID_FILE_ATTRIBUTES) 
     {
         fileType = (attrs & FILE_ATTRIBUTE_DIRECTORY) ?
-	  fileName::DIRECTORY :
-	  fileName::FILE;
+            fileName::DIRECTORY :
+            fileName::FILE;
     }
 
     return fileType;
@@ -594,9 +629,27 @@ isGzFile(const fileName& name)
 }
 
 
-// Does the name exist in the filing system?
-bool exists(const fileName& name, const bool checkGzip)
+bool exists
+(
+    const fileName& name,
+    const bool checkGzip,
+    const bool followLink
+)
 {
+    //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
+    //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
+
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name
+            << " checkGzip:" << checkGzip
+            << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
+
     const DWORD attrs = ::GetFileAttributes(name.c_str());
     const bool success = (attrs != INVALID_FILE_ATTRIBUTES) || 
                          (checkGzip && isGzFile(name));
@@ -605,9 +658,20 @@ bool exists(const fileName& name, const bool checkGzip)
 }
 
 
-// Does the directory exist
-bool isDir(const fileName& name)
+bool isDir(const fileName& name, const bool followLink)
 {
+    //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
+    //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
+
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
+
     const DWORD attrs = ::GetFileAttributes(name.c_str());
     bool success = (attrs != INVALID_FILE_ATTRIBUTES) &&
                    (attrs & FILE_ATTRIBUTE_DIRECTORY);
@@ -616,46 +680,119 @@ bool isDir(const fileName& name)
 }
 
 
-// Does the file exist
-bool isFile(const fileName& name, const bool checkGzip)
+bool isFile
+(
+    const fileName& name,
+    const bool checkGzip,
+    const bool followLink
+)
 {
+    //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
+    //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
+
+   if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name
+            << " checkGzip:" << checkGzip
+            << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
+
     const DWORD attrs = ::GetFileAttributes(name.c_str());
-    const bool success = ((attrs != INVALID_FILE_ATTRIBUTES) && 
-			  !(attrs & FILE_ATTRIBUTE_DIRECTORY)) || 
-                         (checkGzip && isGzFile(name));
+    const bool success =
+    (
+        (attrs != INVALID_FILE_ATTRIBUTES) && 
+        !(attrs & FILE_ATTRIBUTE_DIRECTORY)
+    )
+     ||
+    (
+        checkGzip && isGzFile(name)
+    );
 
     return success;
 }
 
 
-// Return size of file
-off64_t fileSize(const fileName& name)
+off64_t fileSize(const fileName& name, const bool followLink)
 {
-    fileStat fileStatus(name);
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
 
-    const off64_t fileSize = fileStatus.isValid() ?
-      fileStatus.status().st_size : -1;
-    return fileSize;
+    fileStat fileStatus(name, followLink);
+
+    if (fileStatus.isValid())
+    {
+        return fileStatus.status().st_size;
+    }
+    else
+    {
+        return off64_t(-1);
+    }
 }
 
 
-// Return time of last file modification
-time_t lastModified(const fileName& name)
+time_t lastModified(const fileName& name, const bool followLink)
 {
-    fileStat fileStatus(name);
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
 
-    const time_t modifiedTime = fileStatus.isValid() ?
-      fileStatus.status().st_mtime : 0;
-    return modifiedTime;
+    fileStat fileStatus(name, followLink);
+    if (fileStatus.isValid())
+    {
+        return fileStatus.status().st_mtime;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
-// Read a directory and return the entries as a string list
+double highResLastModified(const fileName& name, const bool followLink)
+{
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
+    fileStat fileStatus(name, followLink);
+    if (fileStatus.isValid())
+    {
+        return
+            fileStatus.status().st_mtime
+          + 1e-9*fileStatus.status().st_atim.tv_nsec;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+
 fileNameList readDir
 (
     const fileName& directory,
     const fileName::Type type,
-    const bool filtergz
+    const bool filtergz,
+    const bool followLink
 )
 {
     // Initial filename list size
@@ -664,8 +801,12 @@ fileNameList readDir
 
     if (MSwindows::debug)
     {
-        std::cout<< "readDir(const fileName&, const fileType, const bool filtergz)"
-            << " : reading directory " << directory << std::endl;
+        //InfoInFunction
+        Pout<< FUNCTION_NAME << " : reading directory " << directory << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
     }
 
     // Setup empty string list MAXTVALUES long
@@ -701,7 +842,7 @@ fileNameList readDir
                     )
                 )
                 {
-                    if ((directory/fName).type() == type)
+                    if ((directory/fName).type(followLink) == type)
                     {
                         if (nEntries >= dirEntries.size())
                         {
@@ -735,19 +876,29 @@ fileNameList readDir
 }
 
 
-// Copy, recursively if necessary, the source top the destination
-bool cp(const fileName& src, const fileName& dest)
+bool cp(const fileName& src, const fileName& dest, const bool followLink)
 {
+    if (MSwindows::debug)
+    {
+        Pout<< FUNCTION_NAME << " : src:" << src << " dest:" << dest << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
+
     // Make sure source exists.
     if (!exists(src))
     {
         return false;
     }
 
+    const fileName::Type srcType = src.type(followLink);
+
     fileName destFile(dest);
 
     // Check type of source file.
-    if (src.type() == fileName::FILE)
+    if (srcType == fileName::FILE)
     {
         // If dest is a directory, create the destination file name.
         if (destFile.type() == fileName::DIRECTORY)
@@ -793,7 +944,23 @@ bool cp(const fileName& src, const fileName& dest)
             return false;
         }
     }
-    else if (src.type() == fileName::DIRECTORY)
+    else if (srcType == fileName::LINK)
+    {
+        // If dest is a directory, create the destination file name.
+        if (destFile.type() == fileName::DIRECTORY)
+        {
+            destFile = destFile/src.name();
+        }
+
+        // Make sure the destination directory exists.
+        if (!isDir(destFile.path()) && !mkDir(destFile.path()))
+        {
+            return false;
+        }
+
+        ln(src, destFile);
+    }
+    else if (srcType == fileName::DIRECTORY)
     {
         // If dest is a directory, create the destination file name.
         if (destFile.type() == fileName::DIRECTORY)
@@ -840,12 +1007,22 @@ bool cp(const fileName& src, const fileName& dest)
 }
 
 
-// Create a softlink. destFile should not exist. Returns true if successful.
 bool ln(const fileName& src, const fileName& dest)
 {
-    // Seems that prior to Vista softlinking was poorly supported.
-    // Vista does a better job, but requires adminstrator privileges.
-    // Skip for now.
+    // FIXME: Seems that prior to Vista softlinking was poorly supported.
+    // Vista does a better job, but requires administrator privileges.
+    // Task for this feature: https://github.com/blueCFD/Core/issues/63
+
+    if (MSwindows::debug)
+    {
+        //InfoInFunction
+        Pout<< FUNCTION_NAME
+            << " : Create softlink from : " << src << " to " << dest << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
+    }
 
     if (MSwindows::debug)
     {
@@ -856,34 +1033,46 @@ bool ln(const fileName& src, const fileName& dest)
 }
 
 
-// Rename srcFile destFile
-bool mv(const fileName& srcFile, const fileName& destFile)
+bool mv(const fileName& src, const fileName& dst, const bool followLink)
 {
     if (MSwindows::debug)
     {
-        std::cout<< "Move : " << srcFile << " to " << destFile << std::endl;
+        //InfoInFunction
+        Pout<< FUNCTION_NAME << " : Move : " << src << " to " << dst << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
     }
 
-    const fileName destName = 
-      ((destFile.type() == fileName::DIRECTORY)
-       && (srcFile.type() != fileName::DIRECTORY)) ?
-      destFile/srcFile.name() :
-      destFile;
+    if
+    (
+        dst.type() == fileName::DIRECTORY
+     && src.type(followLink) != fileName::DIRECTORY
+    )
+    {
+        const fileName dstName(dst/src.name());
 
-    const bool success = 
-      (0 == std::rename(srcFile.c_str(), destName.c_str()));
-
-    return success;
+        return std::rename(src.c_str(), dstName.c_str()) == 0;
+    }
+    else
+    {
+        return std::rename(src.c_str(), dst.c_str()) == 0;
+    }
 }
 
 
-//- Rename to a corresponding backup file
-//  If the backup file already exists, attempt with "01" .. "99" index
 bool mvBak(const fileName& src, const std::string& ext)
 {
     if (MSwindows::debug)
     {
-        std::cout<< "mvBak : " << src << " to extension " << ext << std::endl;
+        //InfoInFunction
+        Pout<< FUNCTION_NAME
+            << " : moving : " << src << " to extension " << ext << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
     }
 
     if (exists(src, false))
@@ -920,7 +1109,12 @@ bool rm(const fileName& file)
 {
     if (MSwindows::debug)
     {
-        std::cout<< "Removing : " << file << std::endl;
+        //InfoInFunction
+        Pout<< FUNCTION_NAME << " : Removing : " << file << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
     }
 
     bool success = (0 == std::remove(file.c_str()));
@@ -941,8 +1135,12 @@ bool rmDir(const fileName& directory)
 {
     if (MSwindows::debug)
     {
-        std::cout<< "rmdir(const fileName&) : "
-            << "removing directory " << directory << std::endl;
+        //InfoInFunction
+        Pout<< FUNCTION_NAME << " : removing directory " << directory << endl;
+        if ((MSwindows::debug & 2) && !Pstream::master())
+        {
+            error::printStack(Pout);
+        }
     }
 
     bool success = true;
@@ -1003,7 +1201,6 @@ bool rmDir(const fileName& directory)
 }
 
 
-//- Sleep for the specified number of seconds
 unsigned int sleep(const unsigned int s)
 {
     const DWORD milliseconds = s * 1000;
@@ -1020,16 +1217,13 @@ void fdClose(const int fd)
 
     if (0 != result)
     {
-        FatalErrorIn
-        (
-            "Foam::fdClose(const int fd)"
-        )   << "close error on " << fd << endl
-            << abort(FatalError);    
+        FatalErrorInFunction
+            << "close error on " << fd << endl
+            << abort(FatalError);
     }
 }
 
 
-//- Check if machine is up by pinging given port
 bool ping
 (
     const word& destName,
@@ -1037,8 +1231,7 @@ bool ping
     const label timeOut
 )
 {
-    // Appears that socket calls require adminstrator privileges.
-    // Skip for now.
+    // FIXME: Task for this: https://github.com/blueCFD/Core/issues/64
 
     if (MSwindows::debug)
     {
@@ -1049,7 +1242,6 @@ bool ping
 }
 
 
-//- Check if machine is up by ping port 22 = ssh and 222 = rsh
 bool ping(const word& hostname, const label timeOut)
 {
     return ping(hostname, 222, timeOut) || ping(hostname, 22, timeOut);
@@ -1063,8 +1255,7 @@ int system(const std::string& command)
 
 
 // Explicitly track loaded libraries, rather than use
-// EnumerateLoadedModules64 and have to link against 
-// Dbghelp.dll
+// EnumerateLoadedModules64 and have to link against Dbghelp.dll
 // Details at http://msdn.microsoft.com/en-us/library/ms679316(v=vs.85).aspx
 typedef std::map<void*, std::string> OfLoadedLibs;
 
@@ -1077,7 +1268,6 @@ getLoadedLibs()
 }
 
 
-//- Open shared library
 void* dlOpen(const fileName& libName, const bool check)
 {
     //Lets check if this is a list of libraries to be loaded
@@ -1100,7 +1290,7 @@ void* dlOpen(const fileName& libName, const bool check)
       while (found!=string::npos)
       {
           string libToLoad = libsToLoad.substr(stposstr,found-stposstr);
-          moduleh = dlOpen(libToLoad); //FIX: module handle is ignored and maybe it shouldn't
+          moduleh = dlOpen(libToLoad);
           stposstr=found+1; found=libsToLoad.find_first_of(',',stposstr);
       }
 
@@ -1155,7 +1345,6 @@ void* dlOpen(const fileName& libName, const bool check)
 }
 
 
-//- Close shared library
 bool dlClose(void* libHandle)
 {
     if (MSwindows::debug)
@@ -1183,7 +1372,6 @@ bool dlClose(void* libHandle)
 }
 
 
-//- Lookup a symbol in a dlopened library using handle to library
 void* dlSym(void* handle, const std::string& symbol)
 {
     if (MSwindows::debug)
@@ -1193,12 +1381,16 @@ void* dlSym(void* handle, const std::string& symbol)
     }
 
     // get address of symbol
-    void* fun = (void *)(::GetProcAddress(static_cast<HMODULE>(handle), symbol.c_str()));
+    void* fun = (void *)
+    (
+        ::GetProcAddress(static_cast<HMODULE>(handle), symbol.c_str())
+    );
 
     if(fun == NULL)
     {
         WarningIn("dlSym(void*, const std::string&)")
-            << "Cannot lookup symbol " << symbol << " : " << MSwindows::getLastError()
+            << "Cannot lookup symbol " << symbol << " : "
+            << MSwindows::getLastError()
             << endl;
     }
 
@@ -1206,7 +1398,6 @@ void* dlSym(void* handle, const std::string& symbol)
 }
 
 
-//- Report if symbol in a dlopened library could be found
 bool dlSymFound(void* handle, const std::string& symbol)
 {
     if (handle && !symbol.empty())
@@ -1227,7 +1418,6 @@ bool dlSymFound(void* handle, const std::string& symbol)
 }
 
 
-//- Return all loaded libraries
 fileNameList dlLoaded()
 {
     fileNameList libs;
@@ -1248,10 +1438,11 @@ fileNameList dlLoaded()
     return libs;
 }
 
+//- Random functions
+
 //It's easier to include it here...
 #include "random.c"
 
-//- Random functions
 void osRandomSeed(const label seed)
 {
     srandom(unsigned int(seed));
@@ -1277,7 +1468,7 @@ string toUnixPath(const string & path)
 }
 
 
-// Thread handling: Using std::thread and std::mutex
+//- Thread handling: Using std::thread and std::mutex
 
 #include <thread>
 #include <mutex>
