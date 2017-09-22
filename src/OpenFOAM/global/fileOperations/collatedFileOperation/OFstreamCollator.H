@@ -88,7 +88,7 @@ class OFstreamCollator
 
     // Private data
 
-        const off64_t maxBufferSize_;
+        const off_t maxBufferSize_;
 
         //pthread_mutex_t mutex_;
         label mutex_;
@@ -132,7 +132,7 @@ public:
     // Constructors
 
         //- Construct from buffer size. 0 = do not use thread
-        OFstreamCollator(const off64_t maxBufferSize);
+        OFstreamCollator(const off_t maxBufferSize);
 
 
     //- Destructor

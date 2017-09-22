@@ -258,7 +258,7 @@ bool Foam::fileOperations::uncollatedFileOperation::isFile
 }
 
 
-off64_t Foam::fileOperations::uncollatedFileOperation::fileSize
+off_t Foam::fileOperations::uncollatedFileOperation::fileSize
 (
     const fileName& fName,
     const bool followLink

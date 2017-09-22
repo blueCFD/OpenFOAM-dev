@@ -189,7 +189,7 @@ void* Foam::OFstreamCollator::writeAll(void *threadarg)
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::OFstreamCollator::OFstreamCollator(const off64_t maxBufferSize)
+Foam::OFstreamCollator::OFstreamCollator(const off_t maxBufferSize)
 :
     maxBufferSize_(maxBufferSize),
     //mutex_(PTHREAD_MUTEX_INITIALIZER),
@@ -264,7 +264,7 @@ bool Foam::OFstreamCollator::write
         while (true)
         {
             // Count files to be written
-            off64_t totalSize = 0;
+            off_t totalSize = 0;
             //pthread_mutex_lock(&mutex_);
             lockMutex(mutex_);
             forAllConstIter(FIFOStack<writeData*>, objects_, iter)
@@ -277,7 +277,7 @@ bool Foam::OFstreamCollator::write
             if
             (
                 totalSize == 0
-             || (totalSize+off64_t(data.size()) < maxBufferSize_)
+             || (totalSize+off_t(data.size()) < maxBufferSize_)
             )
             {
                 break;

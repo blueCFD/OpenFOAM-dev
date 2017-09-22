@@ -141,7 +141,7 @@ bool isFile
 );
 
 //- Return size of file
-off64_t fileSize(const fileName&, const bool followLink = true);
+off_t fileSize(const fileName&, const bool followLink = true);
 
 //- Return time of last file modification
 time_t lastModified(const fileName&, const bool followLink = true);

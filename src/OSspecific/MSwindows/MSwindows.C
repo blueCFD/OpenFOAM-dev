@@ -722,7 +722,7 @@ bool isFile
 }
 
 
-off64_t fileSize(const fileName& name, const bool followLink)
+off_t fileSize(const fileName& name, const bool followLink)
 {
     if (MSwindows::debug)
     {
@@ -741,7 +741,7 @@ off64_t fileSize(const fileName& name, const bool followLink)
     }
     else
     {
-        return off64_t(-1);
+        return off_t(-1);
     }
 }
 
