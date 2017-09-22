@@ -433,7 +433,7 @@ void Foam::fileOperations::masterUncollatedFileOperation::readAndSend
     }
     else
     {
-        off_t count(Foam::fileSize(filePath));
+        off64_t count(Foam::fileSize(filePath));
         IFstream is(filePath, IOstream::streamFormat::BINARY);
 
         if (debug)
@@ -576,13 +576,13 @@ bool Foam::fileOperations::masterUncollatedFileOperation::isFile
 }
 
 
-off_t Foam::fileOperations::masterUncollatedFileOperation::fileSize
+off64_t Foam::fileOperations::masterUncollatedFileOperation::fileSize
 (
     const fileName& fName,
     const bool followLink
 ) const
 {
-    return masterOp<off_t, fileSizeOp>(fName, fileSizeOp(followLink));
+    return masterOp<off64_t, fileSizeOp>(fName, fileSizeOp(followLink));
 }
 
 
@@ -1119,7 +1119,7 @@ Foam::fileOperations::masterUncollatedFileOperation::readStream
         else
         {
             // Get size of file (on master, scatter to slaves)
-            off_t sz = fileSize(fName);
+            off64_t sz = fileSize(fName);
 
             // Read my data
             return decomposedBlockData::readBlocks
@@ -1129,7 +1129,7 @@ Foam::fileOperations::masterUncollatedFileOperation::readStream
                 isPtr,
                 io,
                 (
-                    sz > off_t(maxMasterFileBufferSize)
+                    sz > off64_t(maxMasterFileBufferSize)
                   ? UPstream::commsTypes::scheduled
                   : UPstream::commsTypes::nonBlocking
                 )
