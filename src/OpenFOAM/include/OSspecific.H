@@ -52,6 +52,10 @@ SourceFiles
 
 #include "fileNameList.H"
 
+#if defined(WIN32) || defined(WIN64)
+#include "hacks_on_mingw.h"
+#endif
+
 #include <sys/types.h>
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
