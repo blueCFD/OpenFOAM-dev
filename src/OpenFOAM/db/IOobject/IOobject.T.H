@@ -182,21 +182,12 @@ private:
         //- IOobject state
         objectState objState_;
 
-private:
-
-    // Private member functions
-
-        //- Unique on disk file name.
-        const word& uniqueFileName() const;
-
-
 protected:
 
     // Protected Member Functions
 
         //- Set the object state to bad
         void setBad(const string&);
-
 
 public:
 
@@ -314,6 +305,9 @@ public:
             {
                 return name_;
             }
+
+            //- Unique on disk file name.
+            const word& uniqueFileName() const;
 
             //- Return name of the class name read from header
             const word& headerClassName() const

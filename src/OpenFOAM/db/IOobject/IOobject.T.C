@@ -51,7 +51,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(IOobject, 0);
 
-	static StaticHashTable<Foam::word> replacedFileNames_;
+    static StaticHashTable<Foam::word> replacedFileNames_;
 
     template<>
     const char* NamedEnum
