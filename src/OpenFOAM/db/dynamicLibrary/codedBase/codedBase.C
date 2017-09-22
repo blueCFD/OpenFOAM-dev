@@ -219,8 +219,8 @@ void Foam::codedBase::createLibrary
 
         const fileName libPath = dynCode.libPath();
 
-        off64_t mySize = Foam::fileSize(libPath);
-        off64_t masterSize = mySize;
+        off_t mySize = Foam::fileSize(libPath);
+        off_t masterSize = mySize;
         Pstream::scatter(masterSize);
 
         if (debug)

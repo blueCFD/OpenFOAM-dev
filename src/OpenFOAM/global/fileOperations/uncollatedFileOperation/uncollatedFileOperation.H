@@ -129,7 +129,7 @@ public:
             ) const;
 
             //- Return size of file
-            virtual off64_t fileSize
+            virtual off_t fileSize
             (
                 const fileName&,
                 const bool followLink = true

@@ -9,7 +9,7 @@ CC          = $$($(WM_DIR)/scripts/makeReinterpretExePath $(WM_CXX)) -std=c++11
 
 include $(DEFAULT_RULES)/c++$(WM_COMPILE_OPTION)
 
-ptFLAGS     = -DNoRepository -ftemplate-depth-100
+ptFLAGS     = -DNoRepository -ftemplate-depth-100 -D_FILE_OFFSET_BITS=64
 
 c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) $(LIB_HEADER_DIRS)
 

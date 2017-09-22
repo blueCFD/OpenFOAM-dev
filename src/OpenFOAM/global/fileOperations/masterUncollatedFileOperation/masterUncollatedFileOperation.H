@@ -185,7 +185,7 @@ protected:
             {}
 
         public:
-            off64_t operator()(const fileName& fName) const
+            off_t operator()(const fileName& fName) const
             {
                 return Foam::fileSize(fName, followLink_);
             }
@@ -470,7 +470,7 @@ public:
             ) const;
 
             //- Return size of file
-            virtual off64_t fileSize
+            virtual off_t fileSize
             (
                 const fileName&,
                 const bool followLink = true
