@@ -1,7 +1,7 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
 # License
-#    Copyright (C) 2011-2014 blueCAPE Lda
+#    Copyright (C) 2011-2017 blueCAPE Lda
 #
 #    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
 #    For more information about these patches, visit:
@@ -49,26 +49,11 @@ USAGE
 
 
 #argument: bashrc options
-removeContribBuilds()
-{
-  (
-    . etc/bashrc $*
-
-    if [ -n "${FOAM_USER_LIBBIN}" -a -d "${FOAM_USER_LIBBIN}" ]; then
-      echo "Removing the contribsExtend builds for $WM_OPTIONS ..."
-      rm -rf "${FOAM_USER_LIBBIN}"
-      echo "... done."
-    fi
-
-  )
-}
-
-#argument: bashrc options
 buildIt()
 {
   (
     if bin/onWin; then
-      export OFVERSION=2.3
+      export OFVERSION=5.x
       export FOAM_INST_DIR=$HOME/blueCFD
       export WM_PROJECT_USER_DIR=$FOAM_INST_DIR/$USER-$OFVERSION
     fi
@@ -82,17 +67,6 @@ buildIt()
     time ./Allwmake -j > $logFile 2>&1 && \
     time tutorials/Allwmake -j >> $logFile 2>&1 || \
     echo "There seems to have been some problems with this build. Check the log: $logFile"
-
-    if isMinGW; then
-      fixPatchExeNames >> $logFile 2>&1
-    fi
-
-    if [ -e "$WM_PROJECT_USER_DIR/contribsExtend" -a ! -d "$FOAM_USER_LIBBIN" ]; then
-      echo "... along with contribsExtend ..."
-      $WM_PROJECT_USER_DIR/contribsExtend/Allwclean >> $logFile 2>&1
-      time $WM_PROJECT_USER_DIR/contribsExtend/Allwmake -j >> $logFile 2>&1 || \
-      echo "There seems to have been some problems with building contribsExtend. Check the log: $logFile"
-    fi
   )
 }
 
@@ -106,7 +80,7 @@ buildDoxyDoc()
     logFile="$BUILD_LOG_FOLDER/docs_${WM_OPTIONS}_${timeStamp}.log"
 
     echo "Building Doxygen Documentation for $WM_OPTIONS with $WM_MPLIB ..."
-    time doc/Allwmake > $logFile 2>&1 || \
+    time doc/Doxygen/Allwmake > $logFile 2>&1 || \
     echo "There seems to have been some problems with building the docs. Check the log: $logFile"
   )
 }
@@ -127,58 +101,18 @@ fi
 if [ "x$1" != "x--sourceonly" ]
 then
 
-  #uncomment the next lines for forcing the contribsExtend package to be built
-  # removeContribBuilds prefs-mingw32.sh
 
-  # removeContribBuilds prefs-mingw-w32.sh
-  # removeContribBuilds prefs-mingw-w32.sh WM_PRECISION_OPTION=SP
-  #removeContribBuilds prefs-mingw-w64.sh
-  # removeContribBuilds prefs-mingw-w64.sh WM_PRECISION_OPTION=SP
+  #build with MS-MPI 7.1 ------------------------------------------------
+  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI71
+  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI71 WM_PRECISION_OPTION=SP
+  buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI71
+  # buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI71 WM_PRECISION_OPTION=SP
 
-  # removeContribBuilds prefs-mingw-w32.sh WM_COMPILE_OPTION=Debug
-  # removeContribBuilds prefs-mingw-w32.sh WM_PRECISION_OPTION=SP WM_COMPILE_OPTION=Debug
-  # removeContribBuilds prefs-mingw-w64.sh WM_COMPILE_OPTION=Debug
-  # removeContribBuilds prefs-mingw-w64.sh WM_PRECISION_OPTION=SP WM_COMPILE_OPTION=Debug
-
-  #build with Open-MPI ------------------------------------------------
-  # buildIt prefs-mingw32.sh
-
-  # buildIt prefs-mingw-w32.sh
-  # buildIt prefs-mingw-w32.sh WM_PRECISION_OPTION=SP
-  buildIt prefs-mingw-w64.sh
-  # buildIt prefs-mingw-w64.sh WM_PRECISION_OPTION=SP
-
-  # buildIt prefs-mingw-w32.sh WM_COMPILE_OPTION=Debug
-  # buildIt prefs-mingw-w32.sh WM_PRECISION_OPTION=SP WM_COMPILE_OPTION=Debug
-  # buildIt prefs-mingw-w64.sh WM_COMPILE_OPTION=Debug
-  # buildIt prefs-mingw-w64.sh WM_PRECISION_OPTION=SP WM_COMPILE_OPTION=Debug
-
-  #buildDoxyDoc prefs-mingw-w64.sh
-
-
-  #build with MPICH2 ------------------------------------------------
-  # buildIt prefs-mingw32.sh WM_MPLIB=MPICH
-
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MPICH
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MPICH WM_PRECISION_OPTION=SP
-  # buildIt prefs-mingw-w64.sh WM_MPLIB=MPICH
-  # buildIt prefs-mingw-w64.sh WM_MPLIB=MPICH WM_PRECISION_OPTION=SP
-
-  #build with MSMPI 2008 ------------------------------------------------
-  # buildIt prefs-mingw32.sh WM_MPLIB=MSMPI2008
-
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI2008
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI2008 WM_PRECISION_OPTION=SP
-  buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI2008
-  # buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI2008 WM_PRECISION_OPTION=SP
-
-  #build with MSMPI 2012 ------------------------------------------------
-  # buildIt prefs-mingw32.sh WM_MPLIB=MSMPI2012
-
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI2012
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI2012 WM_PRECISION_OPTION=SP
-  buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI2012
-  # buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI2012 WM_PRECISION_OPTION=SP
+  #build with MS-MPI 8.1 ------------------------------------------------
+  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI81
+  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI81 WM_PRECISION_OPTION=SP
+  buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI81
+  # buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI81 WM_PRECISION_OPTION=SP
 
   #Linux builds ----------------------------------------------------
   # buildIt prefs-custom-gcc48.sh WM_ARCH_OPTION=32 
