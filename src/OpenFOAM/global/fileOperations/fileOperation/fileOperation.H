@@ -37,6 +37,10 @@ Class
 #include "fileMonitor.H"
 #include "labelList.H"
 
+#if defined(WIN32) || defined(WIN64)
+#include "hacks_on_mingw.h"
+#endif
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
