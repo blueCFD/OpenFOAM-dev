@@ -36,7 +36,5 @@ EXE_LIBS = \
     -ldynamicMesh \
     -lsampling
 
-#if defined( WIN32 ) || defined( WIN64 )
 EXE_LIBS += \
-    -lboost_system-mt
-#endif
+    -lfiniteVolume
