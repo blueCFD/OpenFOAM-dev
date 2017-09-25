@@ -5,8 +5,10 @@
     \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+ 2017-09-XX blueCAPE Lda: Modifications for blueCFD-Core 2017-1
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -20,6 +22,12 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Modifications
+    This file has been modified by blueCAPE's unofficial mingw patches for
+    OpenFOAM.
+    For more information about these patches, visit:
+        http://bluecfd.com/Core
 
 Class
     Foam::fileOperation
