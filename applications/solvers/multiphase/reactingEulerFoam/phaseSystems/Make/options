@@ -15,16 +15,3 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lcombustionModels
-
-LIB_LIBS += \
-    -lreactingEulerianInterfacialModels \
-    -lreactingEulerianInterfacialCompositionModels \
-    -lcompressibleTransportModels \
-    -lcompressibleTurbulenceModels \
-    -lturbulenceModels \
-    -lchemistryModel \
-    -lfiniteVolume \
-    -lfluidThermophysicalModels \
-    -lspecie \
-    -lreactionThermophysicalModels \
-    -lthermophysicalFunctions

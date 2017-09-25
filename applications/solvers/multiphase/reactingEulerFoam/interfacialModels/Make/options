@@ -13,7 +13,3 @@ LIB_LIBS = \
     -lcompressibleTransportModels \
     -lfluidThermophysicalModels \
     -lspecie
-
-LIB_LIBS += \
-    -lreactingPhaseSystem \
-    -lfiniteVolume
