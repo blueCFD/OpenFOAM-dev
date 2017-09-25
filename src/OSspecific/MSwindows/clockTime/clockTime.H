@@ -53,7 +53,7 @@ SourceFiles
 #ifndef clockTime_H
 #define clockTime_H
 
-#include <winsock2.h> // timeval definition
+#include <time.h> // timeval definition
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
