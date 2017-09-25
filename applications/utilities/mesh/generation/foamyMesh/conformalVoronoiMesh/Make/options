@@ -7,8 +7,6 @@ CGAL_INEXACT = -DCGAL_INEXACT
 include $(GENERAL_RULES)/CGAL
 sinclude $(RULES)/CGAL
 
-#if ! (defined( WIN32 ) || defined( WIN64 ))
-
 EXE_INC = \
     ${ROUNDING_MATH} \
     ${EXE_NDEBUG} \
@@ -37,42 +35,6 @@ LIB_LIBS = \
     -lsampling \
     -lsnappyHexMesh
 
-#else
-
-EXE_INC = \
-    ${EXE_FROUNDING_MATH} \
-    ${EXE_NDEBUG} \
-    ${CGAL_EXACT} \
-    ${CGAL_INEXACT} \
-    ${CGAL_INC} \
-    ${c++CGALWARN} \
-    -I$(LIB_SRC)/finiteVolume/lnInclude \
-    -I$(LIB_SRC)/meshTools/lnInclude \
-    -I$(LIB_SRC)/parallel/decompose/decompositionMethods/lnInclude \
-    -I$(LIB_SRC)/edgeMesh/lnInclude \
-    -I$(LIB_SRC)/fileFormats/lnInclude \
-    -I$(LIB_SRC)/dynamicMesh/lnInclude \
-    -I$(LIB_SRC)/surfMesh/lnInclude \
-    -I$(LIB_SRC)/triSurface/lnInclude \
-    -I$(LIB_SRC)/sampling/lnInclude \
-    -I$(LIB_SRC)/mesh/snappyHexMesh/lnInclude \
-    -IPrintTable \
-    -I../vectorTools
-
-LIB_LIBS = \
-    ${CGAL_LIBS} \
-    -lgmp \
+LIB_LIBS += \
     -lfiniteVolume \
-    -ldecompositionMethods \
-    -lmeshTools \
-    -ledgeMesh \
-    -lfileFormats \
-    -ltriSurface \
-    -ldynamicMesh \
-    -lsurfMesh \
-    -lsampling \
-    -lsnappyHexMesh \
-    -lboost_thread-mt \
-    -lboost_system-mt
-
-#endif
+    -ldecompositionMethods
