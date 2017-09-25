@@ -52,4 +52,4 @@ EXE_LIBS = \
 
 EXE_LIBS += \
     -llagrangian \
-    -lliquidMixtureProperties
+    -lthermophysicalProperties
