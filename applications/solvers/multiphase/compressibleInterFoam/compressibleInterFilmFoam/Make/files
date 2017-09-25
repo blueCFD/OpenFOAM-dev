@@ -1,6 +1,6 @@
 VoFPatchTransfer/VoFPatchTransfer.C
-VoFSolidificationMeltingSource/VoFSolidificationMeltingSource.C
-VoFSolidificationMeltingSource/VoFSolidificationMeltingSourceIO.C
+VoFSolidificationMeltingSource/VoFSolidificationMeltingSource.T.C
+VoFSolidificationMeltingSource/VoFSolidificationMeltingSourceIO.T.C
 compressibleInterFilmFoam.C
 
 EXE = $(FOAM_APPBIN)/compressibleInterFilmFoam
