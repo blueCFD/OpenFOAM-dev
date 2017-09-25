@@ -11,3 +11,6 @@ EXE_LIBS = \
     -lsampling \
     -lsurfMesh \
     -ldynamicMesh
+
+EXE_LIBS += \
+    -lfileFormats
