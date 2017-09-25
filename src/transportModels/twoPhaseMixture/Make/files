@@ -1,4 +1,3 @@
 twoPhaseMixture/twoPhaseMixture.C
-alphaContactAngle/alphaContactAngle/alphaContactAngleFvPatchScalarField.C
 
 LIB = $(FOAM_LIBBIN)/libtwoPhaseMixture
