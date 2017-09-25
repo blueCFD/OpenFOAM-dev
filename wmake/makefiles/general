@@ -166,6 +166,11 @@ all: $(EXE)
 silent:
 	@:
 
+# Add additional dependency regarding executable names
+ifneq ($(strip $(EXE_EXT)),)
+$(EXE) : $(EXE)$(EXE_EXT)
+endif
+
 $(EXE)$(EXE_EXT): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
 	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
