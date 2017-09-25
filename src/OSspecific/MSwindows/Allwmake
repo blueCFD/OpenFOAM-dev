@@ -1,10 +1,13 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
+
+# Parse arguments for library compilation
+targetType=lib
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments $*
 
 unset COMP_FLAGS LINK_FLAGS
 
-# make static library, instead of object library
-wmake lib
+# make library (static by default)
+wmake $targetType
 
 # ----------------------------------------------------------------- end-of-file
