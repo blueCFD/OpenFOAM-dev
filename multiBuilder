@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #------------------------------------------------------------------------------
 # License
 #    Copyright (C) 2011-2017 blueCAPE Lda
@@ -103,16 +103,16 @@ then
 
 
   #build with MS-MPI 7.1 ------------------------------------------------
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI71
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI71 WM_PRECISION_OPTION=SP
-  buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI71
-  # buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI71 WM_PRECISION_OPTION=SP
+  # buildIt prefs-mingw_w32.sh WM_MPLIB=MSMPI71
+  # buildIt prefs-mingw_w32.sh WM_MPLIB=MSMPI71 WM_PRECISION_OPTION=SP
+  buildIt prefs-mingw_w64.sh WM_MPLIB=MSMPI71
+  # buildIt prefs-mingw_w64.sh WM_MPLIB=MSMPI71 WM_PRECISION_OPTION=SP
 
   #build with MS-MPI 8.1 ------------------------------------------------
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI81
-  # buildIt prefs-mingw-w32.sh WM_MPLIB=MSMPI81 WM_PRECISION_OPTION=SP
-  buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI81
-  # buildIt prefs-mingw-w64.sh WM_MPLIB=MSMPI81 WM_PRECISION_OPTION=SP
+  # buildIt prefs-mingw_w32.sh WM_MPLIB=MSMPI81
+  # buildIt prefs-mingw_w32.sh WM_MPLIB=MSMPI81 WM_PRECISION_OPTION=SP
+  buildIt prefs-mingw_w64.sh WM_MPLIB=MSMPI81
+  # buildIt prefs-mingw_w64.sh WM_MPLIB=MSMPI81 WM_PRECISION_OPTION=SP
 
   #Linux builds ----------------------------------------------------
   # buildIt prefs-custom-gcc48.sh WM_ARCH_OPTION=32 
