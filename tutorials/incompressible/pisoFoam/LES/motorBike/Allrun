@@ -23,7 +23,7 @@ cloneParallelCase()
 
 
 # Do the Spalart-Allmaras steady-state case
-(cd motorBike && foamRunTutorials)
+(cd motorBike && foamRunTutorials $@)
 
 if ! isTest $@
 then
@@ -32,7 +32,7 @@ then
 
     # Do the LES case
     cp lesFiles/Allrun motorBikeLES/
-    (cd motorBikeLES && foamRunTutorials)
+    (cd motorBikeLES && foamRunTutorials $@)
 fi
 
 #------------------------------------------------------------------------------

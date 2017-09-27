@@ -8,6 +8,7 @@
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added -jobs and usage information
 # 2017-09-13 blueCAPE Lda: Adapted to OpenFOAM 5.x
+# 2017-09-26 blueCAPE Lda: Fixed how the arguments are passed onwards
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -53,8 +54,8 @@ options:
   -help      | -h     print the usage
   -skipFirst | -s     do not execute the first Allrun script
   -test      | -t     run test loop
-  -jobs N    | -j          for running multiple cases in parallel with N cores
-  -parallel  | -p       run only cases that are configured to run in parallel
+  -jobs N    | -j     for running multiple cases in parallel with N cores
+  -parallel  | -p     run only cases that are configured to run in parallel
   -nonParallel | -n   run only cases that are configured to run in serial
 
 Helper script used by the Allrun scripts in the OpenFOAM tutorials
@@ -73,7 +74,7 @@ checkIfAllrunCanBeExecuted()
     then
         # Check both inside Allrun and Allrun.*, given that Allrun-* are
         # optional
-        if grep -ve "^#" Allrun Allrun.* | grep -qe "runParallel"
+        if grep -sve "^#" Allrun Allrun.* | grep -qe "runParallel"
         then
             hasGotRunParallel=true
         else
@@ -119,15 +120,17 @@ do
         shift
         ;;
     -t | -test)
-        passArgs="-test"
+        passArgs="${passArgs} -test"
         shift
         ;;
     -n | -nonParallel)
         serialOnly=true
+        passArgs="${passArgs} $1"
         shift
         ;;
     -p | -parallel)
         parallelOnly=true
+        passArgs="${passArgs} $1"
         shift
         ;;
     -j | -jobs)
