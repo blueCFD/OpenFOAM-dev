@@ -2,7 +2,7 @@
 #
 # License
 #
-#     Copyright (C) 2011-2016 blueCAPE Lda
+#     Copyright (C) 2011-2017 blueCAPE Lda
 #     blueCFD(R) is a registered trade mark of blueCAPE Lda
 #     OpenFOAM(R) is a registered trade mark of ESI-OpenCFD
 #
@@ -40,7 +40,7 @@
 #
 #------------------------------------------------------------------------------
 
-#- Operating System:
+# Operating System:
 #    WM_OSTYPE = POSIX | MSwindows
 export WM_OSTYPE=MSwindows
 
@@ -52,17 +52,21 @@ foamCompiler=ThirdParty
 # ~~~~~~~~~~~~~~~~~~~~~~
 export WM_MPLIB=OPENMPI
 
-#- Target architecture (e.g. for cross-compiling): WM_TARGET_ARCH = 
+# Target architecture (e.g. for cross-compiling): WM_TARGET_ARCH = 
 #       mingw_w32  - 32-bit Gcc+mingw-w32 (cross-)compiler
 #       mingw_w64  - 64-bit Gcc+mingw-w64 (cross-)compiler
 export WM_TARGET_ARCH=mingw_w64
 unset WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
 
-#- Architecture:
+# Architecture:
 #    WM_ARCH_OPTION = 32 | 64
 export WM_ARCH_OPTION=64
 
-#Build foamyMesh stack
+# Build foamyMesh stack
 export FOAMY_HEX_MESH=1
+
+# Add path for the cv2pdb utility, but don't add it to PATH, since this is
+# strictly used on Windows only.
+export CV2PDB_PATH=$WM_THIRD_PARTY_DIR/cv2pdb
 
 # ----------------------------------------------------------------- end-of-file
