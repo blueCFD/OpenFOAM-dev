@@ -12,7 +12,7 @@ LIB_LIBS = \
     -L$(FOAM_LIBBIN)/dummy -lPstream \
     -lz \
     -lregex \
-    -lstack_trace
+    -L$(FOAM_EXT_LIBBIN) -lstack_trace
 
 #else
 
