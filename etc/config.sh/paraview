@@ -33,7 +33,7 @@
 #
 #     Modifications made:
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
-#        - Added the functions _foamAppendPath() and _foamAppendLib(), for 
+#        - Added the functions _foamAppendPath() and _foamAppendLib(), for
 #          appending in the PATH's and LD_LIBRARY_PATH's, but only appending
 #          after all of OpenFOAM's own binaries.
 #        - Used these new functions for replacing the default way how the paths
