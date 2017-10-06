@@ -179,6 +179,10 @@ $(EXE)$(EXE_EXT): $(OBJECTS)
 	$E $(LINKEXE) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
 	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
+ifneq ($(CV2PDB_PATH),)
+	$(call QUIET_MESSAGE,cv2pdb,$(EXE)$(EXE_EXT))
+	$E $(CV2PDB_PATH)/cv2pdb.exe $(EXE)$(EXE_EXT)
+endif
 
 .PHONY: exe
 exe: $(SEXE)$(EXE_EXT) | silent
@@ -207,6 +211,10 @@ $(LIB).$(SO): $(OBJECTS)
 	$(call QUIET_MESSAGE,ld,$(LIB).$(SO))
 	$E $(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
+ifneq ($(CV2PDB_PATH),)
+	$(call QUIET_MESSAGE,cv2pdb,$(LIB).$(SO))
+	$E $(CV2PDB_PATH)/cv2pdb.exe $(LIB).$(SO)
+endif
 
 .PHONY: lib
 lib: $(LIB).a | silent
