@@ -95,31 +95,6 @@ alias tut='cd $FOAM_TUTORIALS'
 alias run='cd $FOAM_RUN'
 alias user='cd $WM_PROJECT_USER_DIR'
 
-# Refresh the environment
-# ~~~~~~~~~~~~~~~~~~~~~~~
-# For backward-compatibility unalias wmRefresh if it is defined as an alias
-[ "$(type -t wmRefresh)" = "alias" ] && unalias wmRefresh || unset wmRefresh
-wmRefresh()
-{
-    wmProjectDir=$WM_PROJECT_DIR
-    foamSettings=$FOAM_SETTINGS
-    wmUnset
-    . $wmProjectDir/etc/bashrc $foamSettings
-}
-
-
-# Refresh the environment
-# ~~~~~~~~~~~~~~~~~~~~~~~
-# For backward-compatibility unalias wmRefresh if it is defined as an alias
-[ "$(type -t wmRefresh)" = "alias" ] && unalias wmRefresh || unset wmRefresh
-wmRefresh()
-{
-    wmProjectDir=$WM_PROJECT_DIR
-    foamSettings=$FOAM_SETTINGS
-    wmUnset
-    . $wmProjectDir/etc/bashrc $foamSettings
-}
-
 
 # Refresh the environment
 # ~~~~~~~~~~~~~~~~~~~~~~~
