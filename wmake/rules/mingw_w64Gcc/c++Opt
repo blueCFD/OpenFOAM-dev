@@ -1,4 +1,7 @@
 c++DBUG     = 
-c++OPT      = -O2 -DNDEBUG -Wl,--strip-all
+c++OPT      = -O2 -DNDEBUG -gdwarf
+
+# This had to be removed, because using it will disable proper stack tracing:
+# -Wl,--strip-all
 
 ROUNDING_MATH = -frounding-math

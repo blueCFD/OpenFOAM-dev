@@ -1,2 +1,5 @@
 cDBUG       = 
-cOPT        = -O2 -DNDEBUG -Wl,--strip-all
+cOPT        = -O2 -DNDEBUG -gdwarf
+
+# This had to be removed, because using it will disable proper stack tracing:
+#-Wl,--strip-all
