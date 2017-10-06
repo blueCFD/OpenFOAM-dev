@@ -11,7 +11,8 @@ LIB_LIBS = \
     -Wl,-whole-archive -lOSspecific -Wl,-no-whole-archive \
     -L$(FOAM_LIBBIN)/dummy -lPstream \
     -lz \
-    -lregex
+    -lregex \
+    -lstack_trace
 
 #else
 
