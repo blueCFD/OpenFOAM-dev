@@ -31,12 +31,17 @@ Modifications
 
     Modifications made:
       - Derived from the patches for blueCFD 2.1 and 2.2.
-      - Adapted to OpenFOAM 2.2.
+      - Adapted for blueCFD-Core 2017.
 
 \*---------------------------------------------------------------------------*/
 
 #include "error.H"
 #include "OSspecific.H"
+
+//Undefine this macro, otherwise it will collide with Windows' definitions
+#undef DebugInfo
+
+#include "stack_trace.h"
 #include <sstream>
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -48,24 +53,60 @@ namespace Foam
 
 void error::safePrintStack(std::ostream& os)
 {
-    os << "We're sorry, but the application crashed and safe stack tracing"
-          " isn't available in this current implementation of blueCFD-Core"
-          " patches for OpenFOAM."
-       << std::endl
-       << "For more details on when this is fixed, please visit: "
-       << "https://github.com/blueCFD/Core/issues/7"
-       << std::endl;
+    std::stringstream callstacktext
+    (
+        std::stringstream::in | std::stringstream::out
+    );
+
+    os << "Generating stack trace..." << std::endl;
+
+    StackTrace *traceUs = new StackTrace();
+
+    if(traceUs!=NULL)
+    {
+        traceUs->OutputToStream(&callstacktext);
+
+        delete traceUs;
+        traceUs=NULL;
+
+        os << callstacktext.str().data();
+    }
+    else
+    {
+        os
+            << "We are sorry, but the application crashed and stack tracing"
+            << " did not work in this specific situation."
+            << std::endl;
+    }
 }
 
 void error::printStack(Ostream& os)
 {
-    os << "We're sorry, but the application crashed and safe stack tracing"
-          " isn't available in this current implementation of blueCFD-Core"
-          " patches for OpenFOAM."
-       << nl
-       << "For more details on when this is fixed, please visit: "
-       << "https://github.com/blueCFD/Core/issues/7"
-       << endl;
+    std::stringstream callstacktext
+    (
+        std::stringstream::in | std::stringstream::out
+    );
+
+    os << "Generating stack trace..." << endl;
+
+    StackTrace *traceUs = new StackTrace();
+
+    if(traceUs!=NULL)
+    {
+        traceUs->OutputToStream(&callstacktext);
+
+        delete traceUs;
+        traceUs=NULL;
+
+        os << callstacktext.str().data();
+    }
+    else
+    {
+        os
+            << "We are sorry, but the application crashed and stack tracing"
+            << " did not work in this specific situation."
+            << endl;
+    }
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
