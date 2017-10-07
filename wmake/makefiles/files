@@ -88,6 +88,9 @@ localHeaderPaths : $(LOCAL_PATHS_INCLUDE)
 
 $(OPTIONS) : $(MAKE_DIR)/options
 	@$(CPP) $(GFLAGS) $(MAKE_DIR)/options | sed -e 's@   *@ @g' > $(OPTIONS)
+ifneq ($(WM_TARGET_ARCH),)
+	$(WM_SCRIPTS)/wmakeAddForceLoadDependencies $(OPTIONS) $(MAKE_DIR)/files
+endif
 
 $(SFILES): $(MAKE_DIR)/files
 	@$(CPP) $(GFLAGS) $(MAKE_DIR)/files | sed -e 's@   *@ @g' > $(FILES)
