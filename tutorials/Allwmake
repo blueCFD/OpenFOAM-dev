@@ -41,8 +41,4 @@ while read makeFolder; do
 
   wmake -all $makeFolder
 
-  if isMinGW; then
-    wmakeVerifyExeDependencies $makeFolder || wmake -all $makeFolder
-  fi
-
 done

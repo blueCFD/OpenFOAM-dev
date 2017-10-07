@@ -1,0 +1,100 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2011-2017 blueCAPE Lda
+#
+#    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#    For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     wmakeAddForceLoadDependencies
+#
+# Description
+#     Script for forcefully closing dependencies of application binaries 
+#   built for OpenFOAM:
+#       - This way it will no longer require the user to do this step manually.
+#       - The downside is that it will add an extra layer that is useless in
+#         some cases.
+#   NOTE: this script was partially based on the wmake script.
+#
+# Usage
+#     wmakeAddForceLoadDependencies <finalOptionsFullPath> <originalMakeFiles>
+#
+#------------------------------------------------------------------------------
+Script=${0##*/}
+
+if [ "$#" -eq 0 ]
+then
+    exit 1
+fi
+
+#
+# Check environment variables
+#
+for check in WM_OPTIONS WM_LINK_LANGUAGE WM_DIR WM_PROJECT WM_PROJECT_DIR
+do
+    eval test "\$$check" || {
+        echo "$Script error: environment variable \$$check not set" 1>&2
+        exit 1
+    }
+done
+
+opFile=$1
+fiFile=$2
+
+# Retrieve the name of the binary application
+exeName=$(grep -e "EXE.*=" $fiFile | sed 's=.*/==')
+
+# If it didn't find anything, then cancel search for this one
+if [ -z "$exeName" ]; then return; fi
+
+EXE_LIBS=$(grep -e "EXE_LIBS.*=" $opFile | sed 's=EXE\_LIBS.*\=[ ]*==')
+LIBSTOLOAD=$(echo $EXE_LIBS | \
+             sed -e "s/\-l\([a-zA-Z0-9]*\ *\)/\1/g" | \
+             sed -e 's=[ ]=\n=g' | \
+             sed -e "s/\-L.*//g" -e 's/\$.*\.o//g' -e 's/^\$.*)$//g' | \
+             grep -v -e "=" -e "EXE_LIBS")
+
+# Use only the libraries that we can find
+LIBSMUSTLOAD=""
+for librariesToCheck in $LIBSTOLOAD
+do
+    if [ -e "$FOAM_LIBBIN/lib${librariesToCheck}.dll" -o \
+         -e "$FOAM_USER_LIBBIN/lib${librariesToCheck}.dll" -o \
+         -e "$FOAM_LIBBIN/$FOAM_MPI/lib${librariesToCheck}.dll" ]
+    then
+        LIBSMUSTLOAD="$LIBSMUSTLOAD $librariesToCheck"
+    fi
+done
+
+# Remove leading spaces
+LIBSMUSTLOAD=$(echo $LIBSMUSTLOAD | sed -e 's=^[ ]*==g')
+
+# Convert spaces to commas
+LIBSMUSTLOAD=$(echo $LIBSMUSTLOAD | sed -e 's=\ =,=g')
+
+# Now if there is anything to still link to  
+if [ $(echo $LIBSMUSTLOAD | sed 's=,=\n=g' | wc -l) -gt 0 \
+     -a -n "$LIBSMUSTLOAD" ]
+then
+  echo 'EXE_INC += -DLIBS_TO_LOAD="\"'$LIBSMUSTLOAD'\""' >> $opFile
+
+  echo "Forced DLL loading dependencies added to: $exeName"
+fi

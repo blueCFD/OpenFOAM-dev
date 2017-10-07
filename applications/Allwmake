@@ -23,14 +23,10 @@ wmake -all $targetType utilities
 
 if isMinGW; then
 
-  # Test-parallel, because MPi on Windows can be rather finicky
+  # Test-parallel, because MPI on Windows can be rather finicky
   wmake -all test/parallel
+  wmake -all test/parallelMin
 
-  wmakeVerifyExeDependencies solvers || wmake -all solvers
-  wmakeVerifyExeDependencies utilities || wmake -all utilities
-
-  # Redo Test-parallel, to sort out for missing dependencies
-  wmakeVerifyExeDependencies test/parallel || wmake -all test/parallel
 fi
 
 #------------------------------------------------------------------------------
