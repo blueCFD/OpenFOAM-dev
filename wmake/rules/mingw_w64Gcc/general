@@ -18,6 +18,3 @@ GFLAGS  += -DWIN64 -DLITTLE_ENDIAN
 
 # For including the local folder paths
 LOCAL_INCLUDE = @$(OBJECTS_DIR)/includeHeaderPaths
-
-# Must define this for using the workaround for object short-paths
-LFN_WORKAROUND = yes

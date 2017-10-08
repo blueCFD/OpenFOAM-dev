@@ -8,6 +8,7 @@
 #-------------------------------------------------------------------------------
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
 # 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2017-10-07 FSD blueCAPE Lda: Modifications for blueCFD-Core 2017-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -34,6 +35,7 @@
 #     Modifications made:
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
 #        - Added binary versioning of libraries and executables.
+#        - Embedded workaround for figuring out how to handle long file paths
 #
 # Script
 #     wmake
@@ -260,7 +262,7 @@ fi
 # Check arguments and change to the directory in which to run wmake
 #------------------------------------------------------------------------------
 
-unset dir targetType
+unset dir targetType ADDITIONAL_WMAKE_ARGS
 MakeDir=Make
 
 if [ $# -ge 1 ]
@@ -422,6 +424,10 @@ then
     mkdir -p $TMP
 fi
 
+# If on Windows, check if we need to activate the workaround
+onWin && figureOutIfLongFileNameSupportIsNeeded
+
+
 (
     unset MAKEFLAGS
     mkdir -p $objectsDir
@@ -472,7 +478,7 @@ case "$targetType" in
         if grep -e '^ *LIB *=' "$MakeDir/files" >/dev/null 2>&1
         then
             $make -s -f $WM_DIR/makefiles/general MAKE_DIR=$MakeDir \
-                  OBJECTS_DIR=$objectsDir lnInclude
+                  OBJECTS_DIR=$objectsDir lnInclude ${ADDITIONAL_WMAKE_ARGS}
         fi
         ;;
 esac
@@ -486,7 +492,7 @@ if [ -n "$WM_UPDATE_DEPENDENCIES" ]
 then
 
     $make -f $WM_DIR/makefiles/general MAKE_DIR=$MakeDir \
-        OBJECTS_DIR=$objectsDir updatedep
+        OBJECTS_DIR=$objectsDir updatedep ${ADDITIONAL_WMAKE_ARGS}
     makeExitCode=$?
 
     if [ $makeExitCode -ne 0 ]
@@ -503,7 +509,7 @@ fi
 #------------------------------------------------------------------------------
 
 exec $make -f $WM_DIR/makefiles/general MAKE_DIR=$MakeDir \
-     OBJECTS_DIR=$objectsDir $targetType
+     OBJECTS_DIR=$objectsDir $targetType ${ADDITIONAL_WMAKE_ARGS}
 
 
 #------------------------------------------------------------------------------

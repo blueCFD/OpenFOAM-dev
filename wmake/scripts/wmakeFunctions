@@ -7,6 +7,7 @@
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
+# 2017-10-07 FSD blueCAPE Lda: Modifications for blueCFD-Core 2017-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -33,6 +34,7 @@
 #     Modifications made:
 #        - Added shell function fromDepToSource, for retrieving the original
 #          file name directly from the .dep file.
+#        - Embedded workaround for figuring out how to handle long file paths
 #
 # Script
 #     wmakeFunctions
@@ -165,6 +167,18 @@ fromDepToSource()
 {
     sourceFileDirect=$(head -n 1 $depFile | \
         sed -e 's=.*:\s*==' -e 's=$(OBJECTS_DIR)='$(dirname $depFile)'=')
+}
+
+
+figureOutIfLongFileNameSupportIsNeeded()
+{
+    objectPathSize=$(cygpath -w -m ${objectsDir} | wc -c)
+    longestRelativeFilePath=$(find . -type f | wc -L)
+    totalMaximumPath=$(expr $objectPathSize + $longestRelativeFilePath)
+    if [ $totalMaximumPath -gt 259 ]
+    then
+        export ADDITIONAL_WMAKE_ARGS="LFN_WORKAROUND=yes"
+    fi
 }
 
 #------------------------------------------------------------------------------

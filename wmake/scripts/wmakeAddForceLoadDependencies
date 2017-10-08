@@ -63,7 +63,10 @@ fiFile=$2
 exeName=$(grep -e "EXE.*=" $fiFile | sed 's=.*/==')
 
 # If it didn't find anything, then cancel search for this one
-if [ -z "$exeName" ]; then return; fi
+if [ -z "$exeName" ]
+then
+    exit 0
+fi
 
 EXE_LIBS=$(grep -e "EXE_LIBS.*=" $opFile | sed 's=EXE\_LIBS.*\=[ ]*==')
 LIBSTOLOAD=$(echo $EXE_LIBS | \
