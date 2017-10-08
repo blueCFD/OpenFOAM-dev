@@ -101,13 +101,6 @@ int main(int argc, char* argv[])
 
     std::string sourceFile(argv[argc-1]);
 
-    fwprintf
-    (
-        stderr,
-        L"Making dependency list for source file %s\n",
-        sourceFile.c_str()
-    );
-
     std::string::size_type basePos = sourceFile.rfind('/');
     if (basePos == std::string::npos)
     {
