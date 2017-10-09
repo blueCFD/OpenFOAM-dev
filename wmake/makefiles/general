@@ -213,7 +213,9 @@ $(LIB).$(SO): $(OBJECTS)
 	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 ifneq ($(CV2PDB_PATH),)
 	$(call QUIET_MESSAGE,cv2pdb,$(LIB).$(SO))
-	$E $(CV2PDB_PATH)/cv2pdb.exe $(LIB).$(SO)
+	$E $(CV2PDB_PATH)/cv2pdb.exe $(LIB).$(SO) || \
+		(strip --strip-unneeded $(LIB).$(SO); \
+		echo "Failed to run cv2pdb")
 endif
 
 .PHONY: lib
