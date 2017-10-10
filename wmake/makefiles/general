@@ -215,7 +215,7 @@ ifneq ($(CV2PDB_PATH),)
 	$(call QUIET_MESSAGE,cv2pdb,$(LIB).$(SO))
 	$E $(CV2PDB_PATH)/cv2pdb.exe $(LIB).$(SO) || \
 		(strip --strip-unneeded $(LIB).$(SO); \
-		echo "Failed to run cv2pdb")
+		echo "Error occurred with cv2pdb, have stripped DLL as a workaround.")
 endif
 
 .PHONY: lib
