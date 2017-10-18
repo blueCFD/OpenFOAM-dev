@@ -1,0 +1,39 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# 2017-10-18 FSD blueCAPE Lda: Added for blueCFD-Core 2017-1
+#------------------------------------------------------------------------------
+# License
+#     This file is a derivative work of OpenFOAM.
+#
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been created by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+# Script
+#     warnAboutCV2PDBFailing
+#
+# Description
+#     It's a workaround for issuing an error message if cv2pdb failed to work
+#     and a workaround have to be used. This way the message doesn't appear in
+#     the 'make' output, when it shows the script code being executed.
+#
+#------------------------------------------------------------------------------
+
+echo "Error occurred with cv2pdb, have stripped DLL as a workaround."
+
+#------------------------------------------------------------------------------
