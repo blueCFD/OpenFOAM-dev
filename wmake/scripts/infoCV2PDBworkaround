@@ -25,7 +25,7 @@
 #         http://bluecfd.com/Core
 #
 # Script
-#     warnAboutCV2PDBFailing
+#     infoCV2PDBworkaround
 #
 # Description
 #     It's a workaround for issuing an error message if cv2pdb failed to work

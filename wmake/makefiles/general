@@ -215,7 +215,7 @@ ifneq ($(CV2PDB_PATH),)
 	$(call QUIET_MESSAGE,cv2pdb,$(LIB).$(SO))
 	$E $(CV2PDB_PATH)/cv2pdb.exe $(LIB).$(SO) || \
 		(strip --strip-unneeded $(LIB).$(SO); \
-		@$(WM_SCRIPTS)/warnAboutCV2PDBFailing)
+		$(WM_SCRIPTS)/infoCV2PDBworkaround)
 endif
 
 .PHONY: lib
