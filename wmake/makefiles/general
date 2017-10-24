@@ -7,7 +7,8 @@
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 # 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
-# 2016-09-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-2
+# 2017-09-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-2
+# 2017-10-xx blueCAPE Lda: Modifications for blueCFD-Core 2017-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -181,7 +182,9 @@ $(EXE)$(EXE_EXT): $(OBJECTS)
 	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
 ifneq ($(CV2PDB_PATH),)
 	$(call QUIET_MESSAGE,cv2pdb,$(EXE)$(EXE_EXT))
-	$E $(CV2PDB_PATH)/cv2pdb.exe $(EXE)$(EXE_EXT)
+	$E $(CV2PDB_PATH)/cv2pdb.exe $(EXE)$(EXE_EXT) || \
+		(strip --strip-unneeded $(EXE)$(EXE_EXT); \
+		$(WM_SCRIPTS)/infoCV2PDBworkaround)
 endif
 
 .PHONY: exe

@@ -34,6 +34,6 @@
 #
 #------------------------------------------------------------------------------
 
-echo "Error occurred with cv2pdb, have stripped DLL as a workaround."
+echo "Error occurred with cv2pdb, have stripped binary as a workaround."
 
 #------------------------------------------------------------------------------
