@@ -61,7 +61,7 @@ error() {
 
 plotFileHeader() {
     cat<<EOF
-set term x11 1 font "helvetica,17" linewidth 1.5 persist noraise
+set term wxt 1 font "helvetica,17" linewidth 1.5
 $logscale
 $yrange
 set title "Data Monitoring"
