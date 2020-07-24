@@ -11,6 +11,3 @@ LIB_LIBS = \
     -lthermophysicalProperties \
     -lfiniteVolume \
     -lmeshTools
-
-LIB_LIBS += \
-    -lspecie
