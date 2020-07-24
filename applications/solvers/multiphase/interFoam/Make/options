@@ -21,7 +21,6 @@ EXE_LIBS = \
     -lsampling
 
 EXE_LIBS += \
-    -limmiscibleIncompressibleTwoPhaseMixture \
     -ltwoPhaseMixture \
     -lincompressibleTransportModels \
     -linterfaceProperties \

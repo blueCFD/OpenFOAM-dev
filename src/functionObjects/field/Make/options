@@ -26,5 +26,4 @@ LIB_LIBS = \
     -lsurfMesh \
     -llagrangian \
     -lfileFormats \
-    -lsampling \
-    -lsurfMesh
+    -lsampling

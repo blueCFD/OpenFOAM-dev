@@ -11,5 +11,4 @@ LIB_LIBS = \
 
 LIB_LIBS += \
     -lfiniteVolume \
-    -lgenericPatchFields \
     -lmeshTools
