@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,8 +25,8 @@ License
 
 #include "makeCombustionTypes.H"
 
-#include "psiChemistryCombustion.H"
-#include "rhoChemistryCombustion.H"
+#include "psiReactionThermo.H"
+#include "rhoReactionThermo.H"
 #include "EDC.T.H"
 
 // * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * * //
@@ -55,7 +55,12 @@ Foam::combustionModels::EDCdefaultVersion
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makeCombustionTypes(EDC, psiChemistryCombustion, psiCombustionModel);
-makeCombustionTypes(EDC, rhoChemistryCombustion, rhoCombustionModel);
+namespace Foam
+{
+
+makeCombustionTypes(EDC, psiReactionThermo);
+makeCombustionTypes(EDC, rhoReactionThermo);
+
+}
 
 // ************************************************************************* //

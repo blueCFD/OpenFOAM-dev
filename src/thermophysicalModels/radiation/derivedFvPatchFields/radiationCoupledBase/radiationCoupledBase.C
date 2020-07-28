@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,6 +28,7 @@ License
 #include "mappedPatchBase.H"
 #include "fvPatchFieldMapper.H"
 #include "radiationModel.H"
+#include "opaqueSolid.H"
 #include "absorptionEmissionModel.H"
 
 // * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * * //
@@ -35,11 +36,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(radiationCoupledBase, 0);
-}
 
-
-namespace Foam
-{
     template<>
     const char* Foam::NamedEnum
     <
@@ -51,7 +48,6 @@ namespace Foam
         "lookup"
     };
 }
-
 
 const Foam::NamedEnum<Foam::radiationCoupledBase::emissivityMethodType, 2>
     Foam::radiationCoupledBase::emissivityMethodTypeNames_;
@@ -155,19 +151,20 @@ Foam::scalarField Foam::radiationCoupledBase::emissivity() const
 
             const polyMesh& nbrMesh = mpp.sampleMesh();
 
-            const radiation::radiationModel& radiation =
-                nbrMesh.lookupObject<radiation::radiationModel>
+            const radiation::opaqueSolid& radiation =
+                nbrMesh.lookupObject<radiation::opaqueSolid>
                 (
                     "radiationProperties"
                 );
-
 
             const fvMesh& nbrFvMesh = refCast<const fvMesh>(nbrMesh);
 
             const fvPatch& nbrPatch =
                 nbrFvMesh.boundary()[mpp.samplePolyPatch().index()];
 
-
+            // NOTE: for an opaqueSolid the absorptionEmission model returns the
+            // emissivity of the surface rather than the emission coefficient
+            // and the input specification MUST correspond to this.
             scalarField emissivity
             (
                 radiation.absorptionEmission().e()().boundaryField()

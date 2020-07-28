@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,8 +90,8 @@ Foam::searchableExtrudedCircle::searchableExtrudedCircle
 
     // Slightly extended bb. Slightly off-centred just so on symmetric
     // geometry there are less face/edge aligned items.
-    bb.min() -= point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-    bb.max() += point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
+    bb.min() -= point(rootVSmall, rootVSmall, rootVSmall);
+    bb.max() += point(rootVSmall, rootVSmall, rootVSmall);
 
     edgeTree_.reset
     (
@@ -154,7 +154,7 @@ void Foam::searchableExtrudedCircle::boundingSpheres
     radiusSqr.setSize(centres.size());
     radiusSqr = Foam::sqr(radius_);
     // Add a bit to make sure all points are tested inside
-    radiusSqr += Foam::sqr(SMALL);
+    radiusSqr += Foam::sqr(small);
 }
 
 
@@ -244,7 +244,7 @@ void Foam::searchableExtrudedCircle::findParametricNearest
         label otherPointi = startE.otherVertex(pointi);
         curveLambdas[otherPointi] = -mag(points[otherPointi]-curvePoints[0]);
 
-        //Pout<< "for point:" << points[pointi] << " have distance "
+        // Pout<< "for point:" << points[pointi] << " have distance "
         //    << curveLambdas[pointi] << endl;
 
 
@@ -277,7 +277,7 @@ void Foam::searchableExtrudedCircle::findParametricNearest
             {
                 endDistance = curveLambdas[pointi] + mag(end-points[pointi]);
 
-                //Pout<< "Found end edge:" << edges[edgei].centre(points)
+                // Pout<< "Found end edge:" << edges[edgei].centre(points)
                 //    << " endPt:" << end
                 //    << " point before:" << points[pointi]
                 //    << " accumulated length:" << endDistance << endl;
@@ -346,7 +346,7 @@ void Foam::searchableExtrudedCircle::findParametricNearest
     info.setSize(lambdas.size());
     info = pointIndexHit();
 
-    // Given the current lambdas interpolate radial direction inbetween
+    // Given the current lambdas interpolate radial direction in between
     // endpoints (all projected onto the starting coordinate system)
     quaternion qStart;
     vector radialStart;

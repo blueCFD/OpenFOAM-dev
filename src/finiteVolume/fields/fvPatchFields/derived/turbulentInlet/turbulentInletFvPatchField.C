@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -166,7 +166,7 @@ void Foam::turbulentInletFvPatchField<Type>::updateCoeffs()
 
         forAll(patchField, facei)
         {
-            ranGen_.randomise(randomField[facei]);
+            randomField[facei] = ranGen_.sample01<Type>();
         }
 
         // Correction-factor to compensate for the loss of RMS fluctuation

@@ -1,8 +1,8 @@
 #----------------------------------*-sh-*--------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-#  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2016-07-26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
@@ -163,6 +163,14 @@ MPICH-GM)
     _foamAddLib     $MPI_ARCH_PATH/lib
 
     _foamAddLib     $GM_LIB_PATH
+    ;;
+
+MVAPICH2)
+    export FOAM_MPI=mvapich2
+    libDir=`mpicc -show -cc= | sed -e 's/.*-L\([^ ]*\).*/\1/'`
+    export MPI_ARCH_PATH="${libDir%/*}"
+    _foamAddLib $libDir
+    unset libDir
     ;;
 
 HPMPI)

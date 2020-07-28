@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,7 +103,7 @@ void Foam::conformationSurfaces::hasBoundedVolume
                  != extendedFeatureEdgeMesh::BOTH
                 )
                 {
-                    sum += triSurf[sI].normal(surfPts);
+                    sum += triSurf[sI].area(surfPts);
                 }
                 else
                 {
@@ -120,8 +120,8 @@ void Foam::conformationSurfaces::hasBoundedVolume
     Info<< "    Sum of all the surface normals (if near zero, surface is"
         << " probably closed):" << nl
         << "    Note: Does not include baffle surfaces in calculation" << nl
-        << "        Sum = " << sum/(totalTriangles + SMALL) << nl
-        << "        mag(Sum) = " << mag(sum)/(totalTriangles + SMALL)
+        << "        Sum = " << sum/(totalTriangles + small) << nl
+        << "        mag(Sum) = " << mag(sum)/(totalTriangles + small)
         << endl;
 }
 
@@ -443,7 +443,11 @@ Foam::conformationSurfaces::conformationSurfaces
                                  regionDict.lookupOrDefault<word>
                                  (
                                      "meshableSide",
-                                     "inside"
+                                     extendedFeatureEdgeMesh::
+                                     sideVolumeTypeNames_
+                                     [
+                                        globalVolumeTypes[surfI]
+                                     ]
                                  )
                             ]
                         );
@@ -554,10 +558,7 @@ Foam::conformationSurfaces::conformationSurfaces
 
     // Extend the global bounds to stop the bound box sitting on the surfaces
     // to be conformed to
-    //globalBounds_ = globalBounds_.extend(rndGen_, 1e-4);
-
     vector newSpan = 1e-4*globalBounds_.span();
-
     globalBounds_.min() -= newSpan;
     globalBounds_.max() += newSpan;
 
@@ -648,7 +649,7 @@ bool Foam::conformationSurfaces::outside
 ) const
 {
     return wellOutside(pointField(1, samplePt), scalarField(1, 0))[0];
-    //return !inside(samplePt);
+    // return !inside(samplePt);
 }
 
 
@@ -689,7 +690,7 @@ Foam::Field<bool> Foam::conformationSurfaces::wellInOutSide
     // Assume that the point is wellInside until demonstrated otherwise.
     Field<bool> insideOutsidePoint(samplePts.size(), testForInside);
 
-    //Check if the points are inside the surface by the given distance squared
+    // Check if the points are inside the surface by the given distance squared
 
     labelList hitSurfaces;
     List<pointIndexHit> hitInfo;
@@ -734,13 +735,13 @@ Foam::Field<bool> Foam::conformationSurfaces::wellInOutSide
             )
             {
                 pointField sample(1, samplePts[i]);
-                scalarField nearestDistSqr(1, GREAT);
+                scalarField nearestDistSqr(1, great);
                 List<pointIndexHit> info;
 
                 surface.findNearest(sample, nearestDistSqr, info);
 
                 vector hitDir = info[0].rawPoint() - samplePts[i];
-                hitDir /= mag(hitDir) + SMALL;
+                hitDir /= mag(hitDir) + small;
 
                 pointIndexHit surfHit;
                 label hitSurface;
@@ -1178,9 +1179,9 @@ void Foam::conformationSurfaces::findAllNearestEdges
 ) const
 {
     // Initialise
-    //featuresHit.setSize(features_.size());
-    //featuresHit = -1;
-    //edgeHitsByFeature.setSize(features_.size());
+    // featuresHit.setSize(features_.size());
+    // featuresHit = -1;
+    // edgeHitsByFeature.setSize(features_.size());
 
     // Work arrays
     List<pointIndexHit> hitInfo(extendedFeatureEdgeMesh::nEdgeTypes);
@@ -1260,7 +1261,7 @@ Foam::label Foam::conformationSurfaces::findPatch(const point& pt) const
     pointIndexHit surfHit;
     label hitSurface;
 
-    findSurfaceNearest(pt, sqr(GREAT), surfHit, hitSurface);
+    findSurfaceNearest(pt, sqr(great), surfHit, hitSurface);
 
     return getPatchID(hitSurface, surfHit);
 }

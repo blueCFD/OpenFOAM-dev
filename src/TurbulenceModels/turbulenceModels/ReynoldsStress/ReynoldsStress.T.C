@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,8 +46,8 @@ void Foam::ReynoldsStress<BasicTurbulenceModel>::boundNormalStress
             R.dimensions(),
             symmTensor
             (
-                kMin, -GREAT, -GREAT,
-                kMin, -GREAT,
+                kMin, -great, -great,
+                kMin, -great,
                 kMin
             )
         )
@@ -143,7 +143,7 @@ Foam::ReynoldsStress<BasicTurbulenceModel>::ReynoldsStress
     (
         IOobject
         (
-            IOobject::groupName("R", U.group()),
+            IOobject::groupName("R", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -156,7 +156,7 @@ Foam::ReynoldsStress<BasicTurbulenceModel>::ReynoldsStress
     (
         IOobject
         (
-            IOobject::groupName("nut", U.group()),
+            IOobject::groupName("nut", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -212,7 +212,7 @@ Foam::ReynoldsStress<BasicTurbulenceModel>::devRhoReff() const
         (
             IOobject
             (
-                IOobject::groupName("devRhoReff", this->U_.group()),
+                IOobject::groupName("devRhoReff", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,14 +24,14 @@ License
 \*---------------------------------------------------------------------------*/
 
 template<class ParcelType>
-template<class CloudType>
-inline Foam::ReactingParcel<ParcelType>::TrackingData<CloudType>::TrackingData
+template<class TrackCloudType>
+inline Foam::ReactingParcel<ParcelType>::trackingData::trackingData
 (
-    CloudType& cloud,
+    const TrackCloudType& cloud,
     trackPart part
 )
 :
-    ParcelType::template TrackingData<CloudType>(cloud, part),
+    ParcelType::trackingData(cloud, part),
     pInterp_
     (
         interpolation<scalar>::New
@@ -39,16 +39,30 @@ inline Foam::ReactingParcel<ParcelType>::TrackingData<CloudType>::TrackingData
             cloud.solution().interpolationSchemes(),
             cloud.p()
         )
-    )
+    ),
+    pc_(Zero)
 {}
 
 
 template<class ParcelType>
-template<class CloudType>
 inline const Foam::interpolation<Foam::scalar>&
-Foam::ReactingParcel<ParcelType>::TrackingData<CloudType>::pInterp() const
+Foam::ReactingParcel<ParcelType>::trackingData::pInterp() const
 {
     return pInterp_();
+}
+
+
+template<class ParcelType>
+inline Foam::scalar Foam::ReactingParcel<ParcelType>::trackingData::pc() const
+{
+    return pc_;
+}
+
+
+template<class ParcelType>
+inline Foam::scalar& Foam::ReactingParcel<ParcelType>::trackingData::pc()
+{
+    return pc_;
 }
 
 

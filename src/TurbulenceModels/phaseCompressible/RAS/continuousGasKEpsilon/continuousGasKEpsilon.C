@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "continuousGasKEpsilon.H"
 #include "fvOptions.H"
 #include "twoPhaseSystem.H"
+#include "dragModel.H"
 #include "virtualMassModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -68,7 +69,7 @@ continuousGasKEpsilon<BasicTurbulenceModel>::continuousGasKEpsilon
     (
         IOobject
         (
-            IOobject::groupName("nutEff", U.group()),
+            IOobject::groupName("nutEff", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::READ_IF_PRESENT,
@@ -122,8 +123,11 @@ void continuousGasKEpsilon<BasicTurbulenceModel>::correctNut()
     const twoPhaseSystem& fluid = refCast<const twoPhaseSystem>(gas.fluid());
     const transportModel& liquid = fluid.otherPhase(gas);
 
+    const virtualMassModel& virtualMass =
+        fluid.lookupSubModel<virtualMassModel>(gas, liquid);
+
     volScalarField thetal(liquidTurbulence.k()/liquidTurbulence.epsilon());
-    volScalarField rhodv(gas.rho() + fluid.virtualMass(gas).Cvm()*liquid.rho());
+    volScalarField rhodv(gas.rho() + virtualMass.Cvm()*liquid.rho());
     volScalarField thetag((rhodv/(18*liquid.rho()*liquid.nu()))*sqr(gas.d()));
     volScalarField expThetar
     (
@@ -189,7 +193,7 @@ continuousGasKEpsilon<BasicTurbulenceModel>::nuEff() const
     (
         new volScalarField
         (
-            IOobject::groupName("nuEff", this->U_.group()),
+            IOobject::groupName("nuEff", this->alphaRhoPhi_.group()),
             blend*this->nut_
           + (1.0 - blend)*rhoEff()*nutEff_/this->transport().rho()
           + this->nu()
@@ -206,12 +210,15 @@ continuousGasKEpsilon<BasicTurbulenceModel>::rhoEff() const
     const twoPhaseSystem& fluid = refCast<const twoPhaseSystem>(gas.fluid());
     const transportModel& liquid = fluid.otherPhase(gas);
 
+    const virtualMassModel& virtualMass =
+        fluid.lookupSubModel<virtualMassModel>(gas, liquid);
+
     return tmp<volScalarField>
     (
         new volScalarField
         (
-            IOobject::groupName("rhoEff", this->U_.group()),
-            gas.rho() + (fluid.virtualMass(gas).Cvm() + 3.0/20.0)*liquid.rho()
+            IOobject::groupName("rhoEff", this->alphaRhoPhi_.group()),
+            gas.rho() + (virtualMass.Cvm() + 3.0/20.0)*liquid.rho()
         )
     );
 }
@@ -278,7 +285,7 @@ continuousGasKEpsilon<BasicTurbulenceModel>::R() const
         (
             IOobject
             (
-                IOobject::groupName("R", this->U_.group()),
+                IOobject::groupName("R", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,

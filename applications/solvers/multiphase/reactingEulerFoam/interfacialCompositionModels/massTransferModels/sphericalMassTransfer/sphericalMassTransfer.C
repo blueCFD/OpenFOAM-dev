@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -68,7 +68,7 @@ Foam::massTransferModels::sphericalMassTransfer::~sphericalMassTransfer()
 Foam::tmp<Foam::volScalarField>
 Foam::massTransferModels::sphericalMassTransfer::K() const
 {
-    return 60.0*pair_.dispersed()/sqr(pair_.dispersed().d());
+    return 60*pair_.dispersed()/sqr(pair_.dispersed().d());
 }
 
 

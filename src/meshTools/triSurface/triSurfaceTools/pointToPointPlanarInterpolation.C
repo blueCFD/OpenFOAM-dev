@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ Foam::pointToPointPlanarInterpolation::calcCoordinateSystem
     // Find furthest away point
     vector e1;
     label index1 = -1;
-    scalar maxDist = -GREAT;
+    scalar maxDist = -great;
 
     for (label i = 1; i < points.size(); i++)
     {
@@ -81,7 +81,7 @@ Foam::pointToPointPlanarInterpolation::calcCoordinateSystem
     const point& p1 = points[index1];
 
     label index2 = -1;
-    maxDist = -GREAT;
+    maxDist = -great;
     for (label i = 1; i < points.size(); i++)
     {
         if (i != index1)
@@ -141,7 +141,7 @@ void Foam::pointToPointPlanarInterpolation::calcWeights
         (
             destPoints,
             sourcePoints,
-            scalarField(destPoints.size(), GREAT),
+            scalarField(destPoints.size(), great),
             true,       // verbose
             destToSource
         );
@@ -216,7 +216,7 @@ void Foam::pointToPointPlanarInterpolation::calcWeights
         {
             localVertices[i] +=
                 perturb_
-               *(rndGen.position(bb.min(), bb.max())-bbMid);
+               *(rndGen.sampleAB<vector>(bb.min(), bb.max()) - bbMid);
         }
 
         // Determine triangulation
@@ -384,7 +384,7 @@ bool Foam::pointToPointPlanarInterpolation::findTime
 
     if (lo == -1)
     {
-        //FatalErrorInFunction
+        // FatalErrorInFunction
         //    << "Cannot find starting sampling values for current time "
         //    << timeVal << nl
         //    << "Have sampling values for times "
@@ -409,7 +409,7 @@ bool Foam::pointToPointPlanarInterpolation::findTime
         }
         else
         {
-            Pout<< "findTime : Found time " << timeVal << " inbetween"
+            Pout<< "findTime : Found time " << timeVal << " in between"
                 << " index:" << lo << " time:" << times[lo].value()
                 << " and index:" << hi << " time:" << times[hi].value()
                 << endl;

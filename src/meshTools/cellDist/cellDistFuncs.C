@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,7 +90,7 @@ Foam::scalar Foam::cellDistFuncs::smallestDist
 {
     const pointField& points = patch.points();
 
-    scalar minDist = GREAT;
+    scalar minDist = great;
     minFacei = -1;
 
     for (label wallFacei = 0; wallFacei < nWallFaces; wallFacei++)
@@ -206,7 +206,7 @@ Foam::label Foam::cellDistFuncs::getPointNeighbours
 
                 FatalErrorInFunction
                     << "Problem: fast pointNeighbours routine included " << nb
-                    << " which is not in proper neigbour list " << nbs.toc()
+                    << " which is not in proper neighbour list " << nbs.toc()
                     << abort(FatalError);
             }
             nbs.erase(nb);

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,7 +58,7 @@ Foam::nonlinearEddyViscosity<BasicTurbulenceModel>::nonlinearEddyViscosity
     (
         IOobject
         (
-            IOobject::groupName("nonlinearStress", U.group()),
+            IOobject::groupName("nonlinearStress", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_
         ),

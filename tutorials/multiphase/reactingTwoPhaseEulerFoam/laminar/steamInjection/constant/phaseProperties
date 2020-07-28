@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -19,13 +19,11 @@ type thermalPhaseChangeTwoPhaseSystem;
 
 phases (steam water);
 
-volatile    "water";
-
-massTransfer on;
+phaseChange on;
 
 steam
 {
-    type            multiComponentPhaseModel;
+    type            purePhaseModel;
     diameterModel   isothermal;
     isothermalCoeffs
     {
@@ -39,7 +37,7 @@ steam
 
 water
 {
-    type            multiComponentPhaseModel;
+    type            purePhaseModel;
     diameterModel   constant;
     constantCoeffs
     {
@@ -110,15 +108,6 @@ virtualMass
 interfaceComposition
 ();
 
-heatTransfer
-(
-    (steam in water)
-    {
-        type spherical;
-        residualAlpha 1e-4;
-    }
-);
-
 heatTransfer.steam
 (
     (steam in water)
@@ -137,10 +126,7 @@ heatTransfer.water
     }
 );
 
-massTransfer.steam
-();
-
-massTransfer.water
+phaseTransfer
 ();
 
 lift

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -127,24 +127,8 @@ public:
     };
 
 
-    //- Class used to pass kinematic tracking data to the trackToFace function
-    class trackingData
-    :
-        public particle::TrackingData<DSMCCloud<DSMCParcel<ParcelType>>>
-    {
-    public:
-
-        // Constructors
-
-            //- Construct from components
-            trackingData(DSMCCloud<DSMCParcel<ParcelType>>& cloud)
-            :
-                particle::TrackingData<DSMCCloud<DSMCParcel<ParcelType>>>
-                (
-                    cloud
-                )
-            {}
-    };
+    //- Use base tracking data
+    typedef typename ParcelType::trackingData trackingData;
 
 
 protected:
@@ -264,49 +248,30 @@ public:
             // Tracking
 
                 //- Move the parcel
-                template<class TrackData>
-                bool move(TrackData& td, const scalar trackTime);
+                template<class TrackCloudType>
+                bool move
+                (
+                    TrackCloudType& cloud,
+                    trackingData& td,
+                    const scalar trackTime
+                );
 
 
         // Patch interactions
 
             //- Overridable function to handle the particle hitting a patch
             //  Executed before other patch-hitting functions
-            template<class TrackData>
-            bool hitPatch
-            (
-                const polyPatch&,
-                TrackData& td,
-                const label patchi,
-                const scalar trackFraction,
-                const tetIndices& tetIs
-            );
+            template<class TrackCloudType>
+            bool hitPatch(TrackCloudType&, trackingData&);
 
             //- Overridable function to handle the particle hitting a
             //  processorPatch
-            template<class TrackData>
-            void hitProcessorPatch
-            (
-                const processorPolyPatch&,
-                TrackData& td
-            );
+            template<class TrackCloudType>
+            void hitProcessorPatch(TrackCloudType&, trackingData&);
 
             //- Overridable function to handle the particle hitting a wallPatch
-            template<class TrackData>
-            void hitWallPatch
-            (
-                const wallPolyPatch&,
-                TrackData& td,
-                const tetIndices&
-            );
-
-            //- Overridable function to handle the particle hitting a polyPatch
-            template<class TrackData>
-            void hitPatch
-            (
-                const polyPatch&,
-                TrackData& td
-            );
+            template<class TrackCloudType>
+            void hitWallPatch(TrackCloudType&, trackingData&);
 
             //- Transform the physical properties of the particle
             //  according to the given transformation tensor

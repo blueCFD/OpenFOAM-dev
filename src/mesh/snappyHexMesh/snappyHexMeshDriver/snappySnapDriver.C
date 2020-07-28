@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 Description
     All to do with snapping to the surface
 
-\*----------------------------------------------------------------------------*/
+\*---------------------------------------------------------------------------*/
 
 #include "snappySnapDriver.H"
 #include "motionSmoother.H"
@@ -125,7 +125,7 @@ Foam::pointField Foam::snappySnapDriver::smoothPatchDisplacement
     PackedBoolList nonManifoldPoint(pp.nPoints());
     label nNonManifoldPoints = getCollocatedPoints
     (
-        SMALL,
+        small,
         pp.localPoints(),
         nonManifoldPoint
     );
@@ -538,7 +538,7 @@ bool Foam::snappySnapDriver::outwardsDisplacement
 
         scalar magDisp = mag(disp);
 
-        if (magDisp > SMALL)
+        if (magDisp > small)
         {
             disp /= magDisp;
 
@@ -619,7 +619,7 @@ Foam::scalarField Foam::snappySnapDriver::calcSnapDistance
     const labelListList& pointEdges = pp.pointEdges();
     const pointField& localPoints = pp.localPoints();
 
-    scalarField maxEdgeLen(localPoints.size(), -GREAT);
+    scalarField maxEdgeLen(localPoints.size(), -great);
 
     forAll(pointEdges, pointi)
     {
@@ -641,7 +641,7 @@ Foam::scalarField Foam::snappySnapDriver::calcSnapDistance
         pp.meshPoints(),
         maxEdgeLen,
         maxEqOp<scalar>(),  // combine op
-        -GREAT              // null value
+        -great              // null value
     );
 
     return scalarField(snapParams.snapTol()*maxEdgeLen);
@@ -677,7 +677,7 @@ void Foam::snappySnapDriver::preSmoothPatch
         }
 
         pointField patchDisp(smoothPatchDisplacement(meshMover, baffles));
-        //pointField patchDisp
+        // pointField patchDisp
         //(
         //  smoothLambdaMuPatchDisplacement(meshMover, baffles)
         //);
@@ -865,7 +865,7 @@ void Foam::snappySnapDriver::detectNearSurfaces
     const fvMesh& mesh = meshRefiner_.mesh();
 
     //// Get local edge length based on refinement level
-    //const scalarField edgeLen(calcEdgeLen(pp));
+    // const scalarField edgeLen(calcEdgeLen(pp));
     //
     //// Generate rays for every surface point
     //// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1226,7 +1226,7 @@ void Foam::snappySnapDriver::detectNearSurfaces
 
             bool override = false;
 
-            //if (hit1[pointi].hit())
+            // if (hit1[pointi].hit())
             //{
             //    if
             //    (
@@ -1244,7 +1244,7 @@ void Foam::snappySnapDriver::detectNearSurfaces
             //        override = true;
             //    }
             //}
-            //if (hit2[pointi].hit())
+            // if (hit2[pointi].hit())
             //{
             //    if
             //    (
@@ -1368,7 +1368,7 @@ void Foam::snappySnapDriver::detectNearSurfaces
 
                 bool override = false;
 
-                //if (hit1[i].hit())
+                // if (hit1[i].hit())
                 //{
                 //    if
                 //    (
@@ -1386,7 +1386,7 @@ void Foam::snappySnapDriver::detectNearSurfaces
                 //        override = true;
                 //    }
                 //}
-                //if (hit2[i].hit())
+                // if (hit2[i].hit())
                 //{
                 //    if
                 //    (
@@ -1690,7 +1690,7 @@ Foam::vectorField Foam::snappySnapDriver::calcNearestSurface
         pp.meshPoints(),
         patchDisp,
         minMagSqrEqOp<point>(),         // combine op
-        vector(GREAT, GREAT, GREAT)     // null value (note: cannot use VGREAT)
+        vector(great, great, great)     // null value (note: cannot use vGreat)
     );
 
     return patchDisp;
@@ -1709,9 +1709,9 @@ void Foam::snappySnapDriver::smoothDisplacement
     Info<< "Smoothing displacement ..." << endl;
 
     // Set edge diffusivity as inverse of distance to patch
-    scalarField edgeGamma(1.0/(edgePatchDist(meshMover.pMesh(), pp) + SMALL));
-    //scalarField edgeGamma(mesh.nEdges(), 1.0);
-    //scalarField edgeGamma(wallGamma(mesh, pp, 10, 1));
+    scalarField edgeGamma(1.0/(edgePatchDist(meshMover.pMesh(), pp) + small));
+    // scalarField edgeGamma(mesh.nEdges(), 1.0);
+    // scalarField edgeGamma(wallGamma(mesh, pp, 10, 1));
 
     // Get displacement field
     pointVectorField& disp = meshMover.displacement();
@@ -1893,7 +1893,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::snappySnapDriver::repatchToSurface
     labelList closestPatch(pp.size(), -1);
     {
         // face snap distance as max of point snap distance
-        scalarField faceSnapDist(pp.size(), -GREAT);
+        scalarField faceSnapDist(pp.size(), -great);
         {
             // Distance to attract to nearest feature on surface
             const scalarField snapDist
@@ -2032,7 +2032,7 @@ void Foam::snappySnapDriver::detectWarpedFaces
             // biggish normal angle
 
             labelPair minDiag(-1, -1);
-            scalar minCos(GREAT);
+            scalar minCos(great);
 
             for (label startFp = 0; startFp < f.size()-2; startFp++)
             {
@@ -2060,15 +2060,15 @@ void Foam::snappySnapDriver::detectWarpedFaces
                     }
                     f1[i1++] = f[startFp];
 
-                    //Info<< "Splitting face:" << f << " into f0:" << f0
+                    // Info<< "Splitting face:" << f << " into f0:" << f0
                     //    << " f1:" << f1 << endl;
 
-                    vector n0 = f0.normal(localPoints);
-                    scalar n0Mag = mag(n0);
-                    vector n1 = f1.normal(localPoints);
-                    scalar n1Mag = mag(n1);
+                    const vector n0 = f0.area(localPoints);
+                    const scalar n0Mag = mag(n0);
+                    const vector n1 = f1.area(localPoints);
+                    const scalar n1Mag = mag(n1);
 
-                    if (n0Mag > ROOTVSMALL && n1Mag > ROOTVSMALL)
+                    if (n0Mag > rootVSmall && n1Mag > rootVSmall)
                     {
                         scalar cosAngle = (n0/n0Mag) & (n1/n1Mag);
                         if (cosAngle < minCos)
@@ -2343,7 +2343,7 @@ void Foam::snappySnapDriver::doSnap
 
         if (newBaffles.size() < baffles.size())
         {
-            //Info<< "Splitting baffles into" << nl
+            // Info<< "Splitting baffles into" << nl
             //    << "    internal : " << newBaffles.size() << nl
             //    << "    baffle   : " << baffles.size()-newBaffles.size()
             //    << nl << endl;
@@ -2442,7 +2442,7 @@ void Foam::snappySnapDriver::doSnap
 
         for (label iter = 0; iter < nFeatIter; iter++)
         {
-            //if (doFeatures && (iter == 0 || iter == nFeatIter/2))
+            // if (doFeatures && (iter == 0 || iter == nFeatIter/2))
             //{
             //    Info<< "Splitting diagonal attractions" << endl;
             //
@@ -2583,8 +2583,8 @@ void Foam::snappySnapDriver::doSnap
             //        );
             //    }
             //}
-            //else
-            //if
+            // else
+            // if
             //(
             //    doFeatures
             // && (iter == 1 || iter == nFeatIter/2+1 || iter == nFeatIter-1)
@@ -2762,7 +2762,7 @@ void Foam::snappySnapDriver::doSnap
             if (!meshOk)
             {
                 WarningInFunction
-                    << "Did not succesfully snap mesh."
+                    << "Did not successfully snap mesh."
                     << " Continuing to snap to resolve easy" << nl
                     << "    surfaces but the"
                     << " resulting mesh will not satisfy your quality"

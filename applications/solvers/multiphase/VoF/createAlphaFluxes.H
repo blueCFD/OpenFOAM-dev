@@ -1,6 +1,6 @@
 IOobject alphaPhi10Header
 (
-    "alphaPhi10",
+    IOobject::groupName("alphaPhi0", alpha1.group()),
     runTime.timeName(),
     mesh,
     IOobject::READ_IF_PRESENT,
@@ -8,6 +8,11 @@ IOobject alphaPhi10Header
 );
 
 const bool alphaRestart = alphaPhi10Header.typeHeaderOk<surfaceScalarField>();
+
+if (alphaRestart)
+{
+    Info << "Restarting alpha" << endl;
+}
 
 // MULES flux from previous time-step
 surfaceScalarField alphaPhi10

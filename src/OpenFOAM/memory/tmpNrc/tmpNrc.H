@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -151,7 +151,7 @@ public:
         //- Assignment to pointer changing this tmpNrc to a temporary T
         inline void operator=(T*);
 
-        //- Assignment transfering the temporary T to this tmpNrc
+        //- Assignment transferring the temporary T to this tmpNrc
         inline void operator=(const tmpNrc<T>&);
 };
 

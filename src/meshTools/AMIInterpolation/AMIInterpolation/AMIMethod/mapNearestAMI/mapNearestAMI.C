@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ void Foam::mapNearestAMI<SourcePatch, TargetPatch>::findNearestFace
 
     DynamicList<label> visitedFaces(10);
 
-    scalar d = GREAT;
+    scalar d = great;
 
     do
     {
@@ -324,15 +324,13 @@ void Foam::mapNearestAMI<SourcePatch, TargetPatch>::calculate
     // transfer data to persistent storage
     forAll(srcAddr, i)
     {
-        scalar magSf = this->srcMagSf_[i];
         srcAddress[i].transfer(srcAddr[i]);
-        srcWeights[i] = scalarList(1, magSf);
+        srcWeights[i] = scalarList(1, 1.0);
     }
     forAll(tgtAddr, i)
     {
-        scalar magSf = this->tgtMagSf_[i];
         tgtAddress[i].transfer(tgtAddr[i]);
-        tgtWeights[i] = scalarList(1, magSf);
+        tgtWeights[i] = scalarList(1, 1.0);
     }
 }
 

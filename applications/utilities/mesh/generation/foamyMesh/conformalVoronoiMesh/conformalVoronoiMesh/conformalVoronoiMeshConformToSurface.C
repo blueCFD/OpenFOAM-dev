@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -389,7 +389,7 @@ void Foam::conformalVoronoiMesh::buildSurfaceConformation()
         // Re-index the point pairs
         ptPairs_.reIndex(oldToNewIndices);
 
-        //writePointPairs("pointPairs_initial.obj");
+        // writePointPairs("pointPairs_initial.obj");
 
         // Remove location from surface/edge tree
 
@@ -630,7 +630,7 @@ void Foam::conformalVoronoiMesh::buildSurfaceConformation()
             // Reindex the point pairs
             ptPairs_.reIndex(oldToNewIndices);
 
-            //writePointPairs("pointPairs_" + name(iterationNo) + ".obj");
+            // writePointPairs("pointPairs_" + name(iterationNo) + ".obj");
 
             if (Pstream::parRun())
             {
@@ -1955,8 +1955,8 @@ bool Foam::conformalVoronoiMesh::nearFeatureEdgeLocation
              && (mag(lineBetweenPoints) > pointPairDistance(pt))
             )
             {
-                //pt = edgeHit.hitPoint();
-                //pHit.setPoint(pt);
+                // pt = edgeHit.hitPoint();
+                // pHit.setPoint(pt);
                 closeToFeatureEdge = false;
             }
             else
@@ -1978,11 +1978,8 @@ void Foam::conformalVoronoiMesh::buildEdgeLocationTree
 {
     treeBoundBox overallBb
     (
-        geometryToConformTo_.globalBounds().extend(rndGen_, 1e-4)
+        geometryToConformTo_.globalBounds().extend(1e-4)
     );
-
-    overallBb.min() -= Foam::point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-    overallBb.max() += Foam::point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
 
     edgeLocationTreePtr_.reset
     (
@@ -2005,11 +2002,8 @@ void Foam::conformalVoronoiMesh::buildSurfacePtLocationTree
 {
     treeBoundBox overallBb
     (
-        geometryToConformTo_.globalBounds().extend(rndGen_, 1e-4)
+        geometryToConformTo_.globalBounds().extend(1e-4)
     );
-
-    overallBb.min() -= Foam::point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-    overallBb.max() += Foam::point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
 
     surfacePtLocationTreePtr_.reset
     (

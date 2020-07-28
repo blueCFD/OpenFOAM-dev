@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -128,7 +128,7 @@ Foam::tmp<Foam::volScalarField> Foam::blendingMethods::linear::f1
             max
             (
                 (phase1 - maxFullAlpha)
-               /(maxPartAlpha - maxFullAlpha + SMALL),
+               /(maxPartAlpha - maxFullAlpha + small),
                 scalar(0)
             ),
             scalar(1)
@@ -153,7 +153,7 @@ Foam::tmp<Foam::volScalarField> Foam::blendingMethods::linear::f2
             max
             (
                 (maxPartAlpha - phase2)
-               /(maxPartAlpha - maxFullAlpha + SMALL),
+               /(maxPartAlpha - maxFullAlpha + small),
                 scalar(0)
             ),
             scalar(1)

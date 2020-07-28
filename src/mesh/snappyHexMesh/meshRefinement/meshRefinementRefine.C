@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -483,7 +483,7 @@ void Foam::meshRefinement::markFeatureCellLevel
             << " particles over distance " << maxTrackLen
             << " to find the starting cell" << endl;
     }
-    startPointCloud.move(td, maxTrackLen);
+    startPointCloud.move(startPointCloud, td, maxTrackLen);
 
 
     // Reset levels
@@ -561,7 +561,7 @@ void Foam::meshRefinement::markFeatureCellLevel
                 << " particles over distance " << maxTrackLen
                 << " to mark cells" << endl;
         }
-        cloud.move(td, maxTrackLen);
+        cloud.move(cloud, td, maxTrackLen);
 
         // Make particle follow edge.
         forAllIter(Cloud<trackedParticle>, cloud, iter)
@@ -622,7 +622,7 @@ void Foam::meshRefinement::markFeatureCellLevel
 
 
 
-    //if (debug&meshRefinement::FEATURESEEDS)
+    // if (debug&meshRefinement::FEATURESEEDS)
     //{
     //    forAll(maxFeatureLevel, celli)
     //    {
@@ -954,7 +954,7 @@ Foam::label Foam::meshRefinement::markSurfaceRefinement
 
     // Extend segments a bit
     {
-        const vectorField smallVec(ROOTSMALL*(end-start));
+        const vectorField smallVec(rootSmall*(end-start));
         start -= smallVec;
         end += smallVec;
     }
@@ -1148,7 +1148,7 @@ Foam::label Foam::meshRefinement::markSurfaceCurvatureRefinement
 
     // Extend segments a bit
     {
-        const vectorField smallVec(ROOTSMALL*(end-start));
+        const vectorField smallVec(rootSmall*(end-start));
         start -= smallVec;
         end += smallVec;
     }
@@ -1669,7 +1669,7 @@ bool Foam::meshRefinement::checkProximity
 
             if (closeSurfaces)
             {
-                //Pout<< "Found gap:" << nl
+                // Pout<< "Found gap:" << nl
                 //    << "    location:" << surfaceLocation
                 //    << "\tnormal  :" << surfaceNormal << nl
                 ///    << "    location:" << cellMaxLocation
@@ -1751,7 +1751,7 @@ Foam::label Foam::meshRefinement::markProximityRefinement
 
     // Extend segments a bit
     {
-        const vectorField smallVec(ROOTSMALL*(end-start));
+        const vectorField smallVec(rootSmall*(end-start));
         start -= smallVec;
         end += smallVec;
     }
@@ -1790,7 +1790,7 @@ Foam::label Foam::meshRefinement::markProximityRefinement
         minLevel.clear();
 
         //// Extract per cell information on the surface with the highest max
-        //OBJstream str
+        // OBJstream str
         //(
         //    mesh_.time().path()
         //  / "findAllHigherIntersections_"
@@ -1798,7 +1798,7 @@ Foam::label Foam::meshRefinement::markProximityRefinement
         //  + ".obj"
         //);
         //// All intersections
-        //OBJstream str2
+        // OBJstream str2
         //(
         //    mesh_.time().path()
         //  / "findAllHigherIntersections2_"
@@ -2054,12 +2054,12 @@ Foam::labelList Foam::meshRefinement::refineCandidates
         // lots of reduces to keep count of the total number of cells selected
         // for refinement.
 
-        //scalar fraction = scalar(mesh_.nCells())/totNCells;
-        //label myMaxCells = label(maxGlobalCells*fraction);
-        //label nAllowRefine = (myMaxCells - mesh_.nCells())/7;
+        // scalar fraction = scalar(mesh_.nCells())/totNCells;
+        // label myMaxCells = label(maxGlobalCells*fraction);
+        // label nAllowRefine = (myMaxCells - mesh_.nCells())/7;
         ////label nAllowRefine = (maxLocalCells - mesh_.nCells())/7;
         //
-        //Pout<< "refineCandidates:" << nl
+        // Pout<< "refineCandidates:" << nl
         //    << "    total cells:" << totNCells << nl
         //    << "    local cells:" << mesh_.nCells() << nl
         //    << "    local fraction:" << fraction << nl
@@ -2327,8 +2327,8 @@ Foam::meshRefinement::refineAndBalance
 
             distMap = balance
             (
-                false,  //keepZoneFaces
-                false,  //keepBaffles
+                false,  // keepZoneFaces
+                false,  // keepBaffles
                 cellWeights,
                 decomposer,
                 distributor
@@ -2435,8 +2435,8 @@ Foam::meshRefinement::balanceAndRefine
 
             distMap = balance
             (
-                false,  //keepZoneFaces
-                false,  //keepBaffles
+                false,  // keepZoneFaces
+                false,  // keepBaffles
                 cellWeights,
                 decomposer,
                 distributor

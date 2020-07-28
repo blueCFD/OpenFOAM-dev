@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,9 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::surfaceInterpolate
-
-Group grpFieldFunctionObjects
+    Foam::functionObjects::surfaceInterpolate
 
 Description
     Linearly interpolates volume fields to generate surface fields.
@@ -52,7 +50,7 @@ Usage
     \table
         Property | Description               | Required    | Default value
         type     | type name: nearWallFields | yes         |
-        fields   | list of fields with correspoding output field names | yes |
+        fields   | list of fields with corresponding output field names | yes |
     \endtable
 
 

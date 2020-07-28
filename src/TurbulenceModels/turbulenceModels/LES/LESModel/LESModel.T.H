@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -186,7 +186,7 @@ public:
                 return coeffDict_;
             }
 
-            //- Return the lower allowable limit for k (default: SMALL)
+            //- Return the lower allowable limit for k (default: small)
             const dimensionedScalar& kMin() const
             {
                 return kMin_;
@@ -212,7 +212,7 @@ public:
             (
                 new volScalarField
                 (
-                    IOobject::groupName("nuEff", this->U_.group()),
+                    IOobject::groupName("nuEff", this->alphaRhoPhi_.group()),
                     this->nut() + this->nu()
                 )
             );

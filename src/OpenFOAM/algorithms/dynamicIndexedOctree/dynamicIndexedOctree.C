@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ License
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::scalar Foam::dynamicIndexedOctree<Type>::perturbTol_ = 10*SMALL;
+Foam::scalar Foam::dynamicIndexedOctree<Type>::perturbTol_ = 10*small;
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -653,13 +653,13 @@ Foam::point Foam::dynamicIndexedOctree<Type>::pushPoint
             if (mag(pt[dir]-bb.min()[dir]) < mag(perturbVec[dir]))
             {
                 // Close to 'left' side. Push well beyond left side.
-                scalar perturbDist = perturbVec[dir] + ROOTVSMALL;
+                scalar perturbDist = perturbVec[dir] + rootVSmall;
                 perturbedPt[dir] = bb.min()[dir] + perturbDist;
             }
             else if (mag(pt[dir]-bb.max()[dir]) < mag(perturbVec[dir]))
             {
                 // Close to 'right' side. Push well beyond right side.
-                scalar perturbDist = perturbVec[dir] + ROOTVSMALL;
+                scalar perturbDist = perturbVec[dir] + rootVSmall;
                 perturbedPt[dir] = bb.max()[dir] - perturbDist;
             }
         }
@@ -670,12 +670,12 @@ Foam::point Foam::dynamicIndexedOctree<Type>::pushPoint
         {
             if (mag(pt[dir]-bb.min()[dir]) < mag(perturbVec[dir]))
             {
-                scalar perturbDist = perturbVec[dir] + ROOTVSMALL;
+                scalar perturbDist = perturbVec[dir] + rootVSmall;
                 perturbedPt[dir] = bb.min()[dir] - perturbDist;
             }
             else if (mag(pt[dir]-bb.max()[dir]) < mag(perturbVec[dir]))
             {
-                scalar perturbDist = perturbVec[dir] + ROOTVSMALL;
+                scalar perturbDist = perturbVec[dir] + rootVSmall;
                 perturbedPt[dir] = bb.max()[dir] + perturbDist;
             }
         }
@@ -729,22 +729,22 @@ Foam::point Foam::dynamicIndexedOctree<Type>::pushPoint
     {
         if (pushInside)
         {
-            perturbedPt[0] = bb.min()[0] + (perturbVec[0] + ROOTVSMALL);
+            perturbedPt[0] = bb.min()[0] + (perturbVec[0] + rootVSmall);
         }
         else
         {
-            perturbedPt[0] = bb.min()[0] - (perturbVec[0] + ROOTVSMALL);
+            perturbedPt[0] = bb.min()[0] - (perturbVec[0] + rootVSmall);
         }
     }
     else if (faceID & treeBoundBox::RIGHTBIT)
     {
         if (pushInside)
         {
-            perturbedPt[0] = bb.max()[0] - (perturbVec[0] + ROOTVSMALL);
+            perturbedPt[0] = bb.max()[0] - (perturbVec[0] + rootVSmall);
         }
         else
         {
-            perturbedPt[0] = bb.max()[0] + (perturbVec[0] + ROOTVSMALL);
+            perturbedPt[0] = bb.max()[0] + (perturbVec[0] + rootVSmall);
         }
     }
 
@@ -752,22 +752,22 @@ Foam::point Foam::dynamicIndexedOctree<Type>::pushPoint
     {
         if (pushInside)
         {
-            perturbedPt[1] = bb.min()[1] + (perturbVec[1] + ROOTVSMALL);
+            perturbedPt[1] = bb.min()[1] + (perturbVec[1] + rootVSmall);
         }
         else
         {
-            perturbedPt[1] = bb.min()[1] - (perturbVec[1] + ROOTVSMALL);
+            perturbedPt[1] = bb.min()[1] - (perturbVec[1] + rootVSmall);
         }
     }
     else if (faceID & treeBoundBox::TOPBIT)
     {
         if (pushInside)
         {
-            perturbedPt[1] = bb.max()[1] - (perturbVec[1] + ROOTVSMALL);
+            perturbedPt[1] = bb.max()[1] - (perturbVec[1] + rootVSmall);
         }
         else
         {
-            perturbedPt[1] = bb.max()[1] + (perturbVec[1] + ROOTVSMALL);
+            perturbedPt[1] = bb.max()[1] + (perturbVec[1] + rootVSmall);
         }
     }
 
@@ -775,22 +775,22 @@ Foam::point Foam::dynamicIndexedOctree<Type>::pushPoint
     {
         if (pushInside)
         {
-            perturbedPt[2] = bb.min()[2] + (perturbVec[2] + ROOTVSMALL);
+            perturbedPt[2] = bb.min()[2] + (perturbVec[2] + rootVSmall);
         }
         else
         {
-            perturbedPt[2] = bb.min()[2] - (perturbVec[2] + ROOTVSMALL);
+            perturbedPt[2] = bb.min()[2] - (perturbVec[2] + rootVSmall);
         }
     }
     else if (faceID & treeBoundBox::FRONTBIT)
     {
         if (pushInside)
         {
-            perturbedPt[2] = bb.max()[2] - (perturbVec[2] + ROOTVSMALL);
+            perturbedPt[2] = bb.max()[2] - (perturbVec[2] + rootVSmall);
         }
         else
         {
-            perturbedPt[2] = bb.max()[2] + (perturbVec[2] + ROOTVSMALL);
+            perturbedPt[2] = bb.max()[2] + (perturbVec[2] + rootVSmall);
         }
     }
 
@@ -1102,7 +1102,7 @@ bool Foam::dynamicIndexedOctree<Type>::walkToNeighbour
     // - the checked bits have to be  : wantedValue = ?01
     */
 
-    //Pout<< "For point " << facePoint << endl;
+    // Pout<< "For point " << facePoint << endl;
 
     // Go up until we have chance to cross to the wanted direction
     while (wantedValue != (octant & octantMask))
@@ -1176,13 +1176,13 @@ bool Foam::dynamicIndexedOctree<Type>::walkToNeighbour
             return false;
         }
 
-        //Pout<< "    walked from node:" << nodeI << " octant:" << octant
+        // Pout<< "    walked from node:" << nodeI << " octant:" << octant
         //    << " bb:" << nodes_[nodeI].bb_.subBbox(octant) << endl
         //    << "    to:" << parentNodeI << " octant:" << parentOctant
         //    << " bb:" << nodes_[parentNodeI].bb_.subBbox(parentOctant)
         //    << endl;
         //
-        //Pout<< "    octantMask:" << octantMask
+        // Pout<< "    octantMask:" << octantMask
         //    << " wantedValue:" << wantedValue << endl;
 
         nodeI = parentNodeI;
@@ -1194,7 +1194,7 @@ bool Foam::dynamicIndexedOctree<Type>::walkToNeighbour
     // right half we now jump to the left half.
     octant ^= octantMask;
 
-    //Pout<< "    to node:" << nodeI << " octant:" << octant
+    // Pout<< "    to node:" << nodeI << " octant:" << octant
     //    << " subBb:" <<subBbox(nodeI, octant) << endl;
 
 
@@ -1425,8 +1425,8 @@ void Foam::dynamicIndexedOctree<Type>::traverseNode
     point pt;
     bool intersected = octantBb.intersects
     (
-        end,            //treeStart,
-        (start-end),    //treeVec,
+        end,            // treeStart,
+        (start-end),    // treeVec,
 
         end,
         start,
@@ -1496,7 +1496,7 @@ Foam::pointIndexHit Foam::dynamicIndexedOctree<Type>::findLine
     // Current position. Initialize to miss
     pointIndexHit hitInfo(false, treeStart, -1);
 
-    //while (true)
+    // while (true)
     label i = 0;
     for (; i < 100000; i++)
     {
@@ -1629,7 +1629,7 @@ Foam::pointIndexHit Foam::dynamicIndexedOctree<Type>::findLine
                 treeEnd,
                 startNodeI,
                 startOctant,
-                true            //verbose
+                true            // verbose
             );
         }
         if (debug)
@@ -2697,7 +2697,7 @@ void Foam::dynamicIndexedOctree<Type>::print
         {
             const labelList& indices = contents_[getContent(index)];
 
-            if (false) //debug)
+            if (false) // debug)
             {
                 writeOBJ(nodeI, octant);
             }
@@ -2718,7 +2718,7 @@ void Foam::dynamicIndexedOctree<Type>::print
         }
         else
         {
-            if (false) //debug)
+            if (false) // debug)
             {
                 writeOBJ(nodeI, octant);
             }

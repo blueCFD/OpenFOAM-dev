@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,7 @@ Class
 Description
     Class black body emission
 
-    Table of black body emissive power taken from:
+    Table of black body emissive power from:
         Modest, "Radiative Heat Transfer", pp.775-777, 1993
 
 SourceFiles
@@ -35,8 +35,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef blackModyEmission_H
-#define blackModyEmission_H
+#ifndef blackBodyEmission_H
+#define blackBodyEmission_H
 
 #include "volFields.H"
 #include "dimensionedScalar.H"
@@ -123,13 +123,19 @@ public:
                 return (C1_/(pow5(lambda)*(exp(C2_/(lambda*T)) - 1.0)));
             }
 
+            //- Proportion of total energy at T from lambda1 to lambda2
+            tmp<Foam::volScalarField> deltaLambdaT
+            (
+                const volScalarField& T,
+                const Vector2D<scalar>& band
+            ) const;
+
             //- Integral energy at T from lambda1 to lambda2
             tmp<Foam::volScalarField> EbDeltaLambdaT
             (
                 const volScalarField& T,
                 const Vector2D<scalar>& band
             ) const;
-
 
     // Edit
 

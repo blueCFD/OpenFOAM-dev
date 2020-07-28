@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -245,10 +245,9 @@ void Foam::ReactingMultiphaseCloud<CloudType>::evolve()
 {
     if (this->solution().canEvolve())
     {
-        typename parcelType::template
-            TrackingData<ReactingMultiphaseCloud<CloudType>> td(*this);
+        typename parcelType::trackingData td(*this);
 
-        this->solve(td);
+        this->solve(*this, td);
     }
 }
 

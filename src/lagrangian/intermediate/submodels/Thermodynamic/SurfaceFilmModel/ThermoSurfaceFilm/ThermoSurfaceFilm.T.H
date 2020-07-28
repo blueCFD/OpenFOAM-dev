@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,7 +98,7 @@ protected:
         typedef typename CloudType::parcelType parcelType;
 
         //- Reference to the cloud random number generator
-        cachedRandom& rndGen_;
+        Random& rndGen_;
 
         //- Reference to the cloud thermo package
         const SLGThermo& thermo_;
@@ -168,7 +168,7 @@ protected:
             //- Absorb parcel into film
             void absorbInteraction
             (
-                regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+                regionModels::surfaceFilmModels::surfaceFilmRegionModel&,
                 const parcelType& p,
                 const polyPatch& pp,
                 const label facei,
@@ -188,7 +188,7 @@ protected:
             //- Parcel interaction with dry surface
             void drySplashInteraction
             (
-                regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+                regionModels::surfaceFilmModels::surfaceFilmRegionModel&,
                 const parcelType& p,
                 const polyPatch& pp,
                 const label facei,
@@ -198,7 +198,7 @@ protected:
             //- Parcel interaction with wetted surface
             void wetSplashInteraction
             (
-                regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+                regionModels::surfaceFilmModels::surfaceFilmRegionModel&,
                 parcelType& p,
                 const polyPatch& pp,
                 const label facei,
@@ -208,7 +208,7 @@ protected:
             //- Bai parcel splash interaction model
             void splashInteraction
             (
-                regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+                regionModels::surfaceFilmModels::surfaceFilmRegionModel&,
                 const parcelType& p,
                 const polyPatch& pp,
                 const label facei,
@@ -227,7 +227,7 @@ protected:
             (
                 const label filmPatchi,
                 const label primaryPatchi,
-                const regionModels::surfaceFilmModels::surfaceFilmModel&
+                const regionModels::surfaceFilmModels::surfaceFilmRegionModel&
                     filmModel
             );
 

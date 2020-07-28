@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,6 @@ License
 #include "mapPolyMesh.H"
 #include "argList.H"
 #include "timeControlFunctionObject.H"
-//#include "IFstream.H"
 #include "dictionaryEntry.H"
 #include "stringOps.H"
 #include "Tuple2.T.H"
@@ -120,11 +119,18 @@ void Foam::functionObjectList::list()
 }
 
 
-Foam::fileName Foam::functionObjectList::findDict(const word& funcName)
+Foam::fileName Foam::functionObjectList::findRegionDict
+(
+    const word& funcName,
+    const word& region
+)
 {
     // First check if there is a functionObject dictionary file in the
     // case system directory
-    fileName dictFile = stringOps::expand("$FOAM_CASE")/"system"/funcName;
+    fileName dictFile
+    (
+        stringOps::expand("$FOAM_CASE")/"system"/region/funcName
+    );
 
     if (isFile(dictFile))
     {
@@ -145,6 +151,32 @@ Foam::fileName Foam::functionObjectList::findDict(const word& funcName)
     }
 
     return fileName::null;
+}
+
+
+Foam::fileName Foam::functionObjectList::findDict
+(
+    const word& funcName,
+    const word& region
+)
+{
+    if (region == word::null)
+    {
+        return findRegionDict(funcName);
+    }
+    else
+    {
+        fileName dictFile(findRegionDict(funcName, region));
+
+        if (dictFile != fileName::null)
+        {
+            return dictFile;
+        }
+        else
+        {
+            return findRegionDict(funcName);
+        }
+    }
 }
 
 
@@ -239,7 +271,7 @@ bool Foam::functionObjectList::readFunctionObject
     }
 
     // Search for the functionObject dictionary
-    fileName path = findDict(funcName);
+    fileName path = findDict(funcName, region);
 
     if (path == fileName::null)
     {
@@ -249,7 +281,7 @@ bool Foam::functionObjectList::readFunctionObject
     }
 
     // Read the functionObject dictionary
-    //IFstream fileStream(path);
+    // IFstream fileStream(path);
     autoPtr<ISstream> fileStreamPtr(fileHandler().NewIFstream(path));
     ISstream& fileStream = fileStreamPtr();
 
@@ -303,9 +335,11 @@ bool Foam::functionObjectList::readFunctionObject
     }
 
     // Merge this functionObject dictionary into functionsDict
+    const word funcNameArgsWord = string::validate<word>(funcNameArgs);
     dictionary funcArgsDict;
-    funcArgsDict.add(string::validate<word>(funcNameArgs), funcDict);
+    funcArgsDict.add(funcNameArgsWord, funcDict);
     functionsDict.merge(funcArgsDict);
+    functionsDict.subDict(funcNameArgsWord).name() = funcDict.name();
 
     return true;
 }
@@ -533,9 +567,46 @@ bool Foam::functionObjectList::end()
 }
 
 
-bool Foam::functionObjectList::adjustTimeStep()
+bool Foam::functionObjectList::setTimeStep()
 {
-    bool ok = true;
+    bool set = true;
+
+    if (execution_)
+    {
+        if (!updated_)
+        {
+            read();
+        }
+
+        wordList names;
+
+        forAll(*this, objectI)
+        {
+            if (operator[](objectI).setTimeStep())
+            {
+                names.append(operator[](objectI).name());
+                set = true;
+            }
+        }
+
+        if (names.size() > 1)
+        {
+            WarningInFunction << "Multiple function objects (" << names[0];
+            for (label i = 1; i < names.size(); ++ i)
+            {
+                WarningInFunction << ", " << names[i];
+            }
+            WarningInFunction << ") are setting the time step." << endl;
+        }
+    }
+
+    return set;
+}
+
+
+Foam::scalar Foam::functionObjectList::timeToNextWrite()
+{
+    scalar result = vGreat;
 
     if (execution_)
     {
@@ -546,11 +617,11 @@ bool Foam::functionObjectList::adjustTimeStep()
 
         forAll(*this, objectI)
         {
-            ok = operator[](objectI).adjustTimeStep() && ok;
+            result = min(result, operator[](objectI).timeToNextWrite());
         }
     }
 
-    return ok;
+    return result;
 }
 
 

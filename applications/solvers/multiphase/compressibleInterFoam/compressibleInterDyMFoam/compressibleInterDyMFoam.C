@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,9 +44,7 @@ Description
 #include "localEulerDdtScheme.H"
 #include "CrankNicolsonDdtScheme.T.H"
 #include "subCycle.H"
-#include "twoPhaseMixture.H"
-#include "twoPhaseMixtureThermo.H"
-#include "turbulentFluidThermoModel.H"
+#include "compressibleInterPhaseTransportModel.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
 #include "CorrectPhi.T.H"
@@ -58,16 +56,13 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
     #include "initContinuityErrs.H"
-    #include "createControl.H"
+    #include "createDyMControls.H"
     #include "createFields.H"
-    #include "createAlphaFluxes.H"
-    #include "createFvOptions.H"
     #include "createUf.H"
-    #include "createControls.H"
     #include "CourantNo.H"
     #include "setInitialDeltaT.H"
 
@@ -76,14 +71,12 @@ int main(int argc, char *argv[])
     const volScalarField& psi1 = mixture.thermo1().psi();
     const volScalarField& psi2 = mixture.thermo2().psi();
 
-    turbulence->validate();
-
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     Info<< "\nStarting time loop\n" << endl;
 
     while (runTime.run())
     {
-        #include "readControls.H"
+        #include "readDyMControls.H"
 
         // Store divU from the previous mesh so that it can be mapped
         // and used in correctPhi to ensure the corrected phi has the
@@ -116,35 +109,41 @@ int main(int argc, char *argv[])
 
                 if (mesh.changing())
                 {
+
+                    MRF.update();
+
                     Info<< "Execution time for mesh.update() = "
                         << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
                         << " s" << endl;
 
                     gh = (g & mesh.C()) - ghRef;
                     ghf = (g & mesh.Cf()) - ghRef;
-                }
 
-                if (mesh.changing() && correctPhi)
-                {
-                    // Calculate absolute flux from the mapped surface velocity
-                    phi = mesh.Sf() & Uf;
+                    if (correctPhi)
+                    {
+                        // Calculate absolute flux
+                        // from the mapped surface velocity
+                        phi = mesh.Sf() & Uf;
 
-                    #include "correctPhi.H"
+                        #include "correctPhi.H"
 
-                    // Make the fluxes relative to the mesh motion
-                    fvc::makeRelative(phi, U);
+                        // Make the fluxes relative to the mesh motion
+                        fvc::makeRelative(phi, U);
 
-                    mixture.correct();
-                }
+                        mixture.correct();
+                    }
 
-                if (mesh.changing() && checkMeshCourantNo)
-                {
-                    #include "meshCourantNo.H"
+                    if (checkMeshCourantNo)
+                    {
+                        #include "meshCourantNo.H"
+                    }
                 }
             }
 
             #include "alphaControls.H"
             #include "compressibleAlphaEqnSubCycle.H"
+
+            turbulence.correctPhasePhi();
 
             #include "UEqn.H"
             #include "TEqn.H"
@@ -157,7 +156,7 @@ int main(int argc, char *argv[])
 
             if (pimple.turbCorr())
             {
-                turbulence->correct();
+                turbulence.correct();
             }
         }
 

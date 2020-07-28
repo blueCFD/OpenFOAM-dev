@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -135,13 +135,13 @@ scalar pyrolysisModel::addMassSources
 
 scalar pyrolysisModel::solidRegionDiffNo() const
 {
-    return -GREAT;
+    return -great;
 }
 
 
 scalar pyrolysisModel::maxDiff() const
 {
-    return GREAT;
+    return great;
 }
 
 

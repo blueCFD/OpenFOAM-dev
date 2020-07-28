@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::cyclicAMIFvPatchField
-
-Group
-    grpCoupledBoundaryConditions
 
 Description
     This boundary condition enforces a cyclic condition between a pair of
@@ -73,23 +70,13 @@ namespace Foam
 template<class Type>
 class cyclicAMIFvPatchField
 :
-    virtual public cyclicAMILduInterfaceField,
-    public coupledFvPatchField<Type>
+    public coupledFvPatchField<Type>,
+    public cyclicAMILduInterfaceField
 {
     // Private data
 
         //- Local reference cast into the cyclic patch
         const cyclicAMIFvPatch& cyclicAMIPatch_;
-
-
-    // Private Member Functions
-
-        //- Return neighbour side field given internal fields
-        template<class Type2>
-        tmp<Field<Type2>> neighbourSideField
-        (
-            const Field<Type2>&
-        ) const;
 
 
 public:

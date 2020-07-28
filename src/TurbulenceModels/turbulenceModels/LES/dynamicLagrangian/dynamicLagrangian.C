@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,7 +87,7 @@ dynamicLagrangian<BasicTurbulenceModel>::dynamicLagrangian
     (
         IOobject
         (
-            IOobject::groupName("flm", this->U_.group()),
+            IOobject::groupName("flm", this->alphaRhoPhi_.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -99,7 +99,7 @@ dynamicLagrangian<BasicTurbulenceModel>::dynamicLagrangian
     (
         IOobject
         (
-            IOobject::groupName("fmm", this->U_.group()),
+            IOobject::groupName("fmm", this->alphaRhoPhi_.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -122,7 +122,7 @@ dynamicLagrangian<BasicTurbulenceModel>::dynamicLagrangian
     filter_(filterPtr_()),
 
     flm0_("flm0", flm_.dimensions(), 0.0),
-    fmm0_("fmm0", fmm_.dimensions(), VSMALL)
+    fmm0_("fmm0", fmm_.dimensions(), vSmall)
 {
     if (type == typeName)
     {

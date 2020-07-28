@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::omegaWallFunctionFvPatchScalarField
-
-Group
-    grpWallFunctions
 
 Description
     This boundary condition provides a wall constraint on turbulnce specific
@@ -126,7 +123,7 @@ protected:
         //- beta1 coefficient
         scalar beta1_;
 
-        //- beta1 coefficient
+        //- Blending switch (defaults to false)
         Switch blended_;
 
         //- y+ at the edge of the laminar sublayer
@@ -193,6 +190,8 @@ protected:
         {
             return master_;
         }
+
+        typedef DimensionedField<scalar, volMesh> FieldType;
 
 
 public:

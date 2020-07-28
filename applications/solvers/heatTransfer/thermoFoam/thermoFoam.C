@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,6 @@ Description
 #include "fvCFD.H"
 #include "rhoThermo.H"
 #include "turbulentFluidThermoModel.H"
-#include "turbulentFluidThermoModel.H"
 #include "LESModel.T.H"
 #include "radiationModel.H"
 #include "fvOptions.H"
@@ -46,11 +45,10 @@ int main(int argc, char *argv[])
     #define NO_CONTROL
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
-    #include "createFvOptions.H"
 
     const volScalarField& alphaEff = talphaEff();
 
@@ -62,7 +60,7 @@ int main(int argc, char *argv[])
     {
         simpleControl simple(mesh);
 
-        while (simple.loop())
+        while (simple.loop(runTime))
         {
             Info<< "Time = " << runTime.timeName() << nl << endl;
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ Foam::jumpCyclicAMIFvPatchField<Type>::jumpCyclicAMIFvPatchField
     cyclicAMIFvPatchField<Type>(p, iF, dict)
 {
     // Call this evaluation in derived classes
-    //this->evaluate(Pstream::commsTypes::blocking);
+    // this->evaluate(Pstream::commsTypes::blocking);
 }
 
 

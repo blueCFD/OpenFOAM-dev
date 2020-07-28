@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,6 +30,26 @@ Description
     vertical motions of an interface in the region approaching an outlet so that
     no reflections are generated.
 
+    Damping is achieved by applying a force to the momentum equation
+    proportional to the momentum of the flow in the direction of gravity. The
+    constant of proportionality is given by a coefficient \f$\lambda\f$ which
+    has units of inverse-time. In the absence of any other forces this would
+    generate an exponential decay of the vertical velocity.
+
+        \f[
+            \frac{d (m u_z)}{d t} = - \lambda m u_z
+        \f]
+        \f[
+            u_z = u_{z0} e^{- \lambda t}
+        \f]
+
+    The coefficient \f$\lambda\f$ should be set based on the desired level of
+    damping and the residence time of a perturbation through the damping zone.
+    For example, if waves moving at 2 [m/s] are travelling through a damping
+    zone 8 [m] in length, then the residence time is 4 [s]. If it is deemed
+    necessary to damp for 5 time-scales, then \f$\lambda\f$ should be set to
+    equal 5/(4 [s]) = 1.2 [1/s].
+
 Usage
     Example usage:
     \verbatim
@@ -39,6 +59,36 @@ Usage
 
         selectionMode   cellZone;
         cellZone        nearOutlet;
+
+        lambda          [0 0 -1 0 0 0 0] 1; // Damping coefficient
+
+        timeStart       0;
+        duration        1e6;
+    }
+    \endverbatim
+
+    Example usage with graduated onset:
+    \verbatim
+    verticalDamping1
+    {
+        type            verticalDamping;
+
+        selectionMode   all;
+
+        // Define the line along which to apply the graduation
+        origin          (1200 0 0);
+        direction       (1 0 0);
+
+        // Or, define multiple lines
+        // origins         ((1200 0 0) (1200 -300 0) (1200 300 0));
+        // directions      ((1 0 0) (0 -1 0) (0 1 0));
+
+        ramp
+        {
+            type        halfCosineRamp;
+            start       0;
+            duration    600;
+        }
 
         lambda          [0 0 -1 0 0 0 0] 1; // Damping coefficient
 
@@ -61,6 +111,9 @@ SourceFiles
 
 namespace Foam
 {
+
+template<class Type> class Function1;
+
 namespace fv
 {
 
@@ -78,6 +131,15 @@ private:
 
         //- Damping coefficient [1/s]
         dimensionedScalar lambda_;
+
+        //- The ramping function
+        autoPtr<Function1<scalar>> ramp_;
+
+        //- Origins of the ramping coordinate
+        vectorField origins_;
+
+        //- Directions of increasing ramping coordinate
+        vectorField directions_;
 
 
     // Private Member Functions

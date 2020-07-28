@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,6 @@ License
 Class
     Foam::energyJumpFvPatchScalarField
 
-Group
-    grpThermoBoundaryConditions grpCoupledBoundaryConditions
-
 Description
     This boundary condition provides an energy jump condition across a pair
     of coupled patches.  It is not applied directly, but is employed on-the-fly
@@ -44,7 +41,6 @@ SourceFiles
 #define energyJumpFvPatchScalarField_H
 
 #include "fixedJumpFvPatchField.H"
-#include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

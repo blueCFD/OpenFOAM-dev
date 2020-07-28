@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,13 +38,12 @@ inline void Foam::fileFormats::STLsurfaceFormat<Face>::writeShell
 )
 {
     // calculate the normal ourselves, for flexibility and speed
-    vector norm = triPointRef
+    const vector norm = triPointRef
     (
         pointLst[f[0]],
         pointLst[f[1]],
         pointLst[f[2]]
     ).normal();
-    norm /= mag(norm) + VSMALL;
 
     // simple triangulation about f[0].
     // better triangulation should have been done before
@@ -79,13 +78,12 @@ inline void Foam::fileFormats::STLsurfaceFormat<Face>::writeShell
 )
 {
     // calculate the normal ourselves, for flexibility and speed
-    vector norm = triPointRef
+    const vector norm = triPointRef
     (
         pointLst[f[0]],
         pointLst[f[1]],
         pointLst[f[2]]
     ).normal();
-    norm /= mag(norm) + VSMALL;
 
     // simple triangulation about f[0].
     // better triangulation should have been done before
@@ -181,7 +179,7 @@ bool Foam::fileFormats::STLsurfaceFormat<Face>::read
         this->addZones(sizes);
     }
 
-    this->stitchFaces(SMALL);
+    this->stitchFaces(small);
     return true;
 }
 

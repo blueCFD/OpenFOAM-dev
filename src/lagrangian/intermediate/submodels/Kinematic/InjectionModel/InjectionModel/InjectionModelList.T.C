@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -112,7 +112,7 @@ Foam::InjectionModelList<CloudType>::~InjectionModelList()
 template<class CloudType>
 Foam::scalar Foam::InjectionModelList<CloudType>::timeStart() const
 {
-    scalar minTime = GREAT;
+    scalar minTime = great;
     forAll(*this, i)
     {
         minTime = min(minTime, this->operator[](i).timeStart());
@@ -125,7 +125,7 @@ Foam::scalar Foam::InjectionModelList<CloudType>::timeStart() const
 template<class CloudType>
 Foam::scalar Foam::InjectionModelList<CloudType>::timeEnd() const
 {
-    scalar maxTime = -GREAT;
+    scalar maxTime = -great;
     forAll(*this, i)
     {
         maxTime = max(maxTime, this->operator[](i).timeEnd());
@@ -179,27 +179,32 @@ void Foam::InjectionModelList<CloudType>::updateMesh()
 
 
 template<class CloudType>
-template<class TrackData>
-void Foam::InjectionModelList<CloudType>::inject(TrackData& td)
+template<class TrackCloudType>
+void Foam::InjectionModelList<CloudType>::inject
+(
+    TrackCloudType& cloud,
+    typename CloudType::parcelType::trackingData& td
+)
 {
     forAll(*this, i)
     {
-        this->operator[](i).inject(td);
+        this->operator[](i).inject(cloud, td);
     }
 }
 
 
 template<class CloudType>
-template<class TrackData>
+template<class TrackCloudType>
 void Foam::InjectionModelList<CloudType>::injectSteadyState
 (
-    TrackData& td,
+    TrackCloudType& cloud,
+    typename CloudType::parcelType::trackingData& td,
     const scalar trackTime
 )
 {
     forAll(*this, i)
     {
-        this->operator[](i).injectSteadyState(td, trackTime);
+        this->operator[](i).injectSteadyState(cloud, td, trackTime);
     }
 }
 

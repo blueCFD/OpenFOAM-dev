@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -332,11 +332,11 @@ bool Foam::featurePointConformer::createSpecialisedFeaturePoint
                     {
                         convexEdgePlaneDNormal = convexNormal;
 
-                        plane planeD(featPt, convexEdgePlaneDNormal);
+                        plane planned(featPt, convexEdgePlaneDNormal);
 
                         externalPtE =
                             internalPtB
-                          + 2.0*planeD.distance(internalPtB)
+                          + 2.0*planned.distance(internalPtB)
                            *convexEdgePlaneDNormal;
 
                         pts.append
@@ -394,7 +394,7 @@ bool Foam::featurePointConformer::createSpecialisedFeaturePoint
         if (totalAngle > foamyHexMeshControls_.maxQuadAngle())
         {
             // Add additional mitreing points
-            //scalar angleSign = 1.0;
+            // scalar angleSign = 1.0;
 
 
             vector convexEdgesPlaneNormal =
@@ -768,11 +768,11 @@ bool Foam::featurePointConformer::createSpecialisedFeaturePoint
                     {
                         concaveEdgePlaneDNormal = concaveNormal;
 
-                        plane planeD(featPt, concaveEdgePlaneDNormal);
+                        plane planned(featPt, concaveEdgePlaneDNormal);
 
                         externalPtE =
                             internalPtB
-                          - 2.0*planeD.distance(internalPtB)
+                          - 2.0*planned.distance(internalPtB)
                            *concaveEdgePlaneDNormal;
 
                         pts.append
@@ -828,7 +828,7 @@ bool Foam::featurePointConformer::createSpecialisedFeaturePoint
         if (totalAngle > foamyHexMeshControls_.maxQuadAngle())
         {
             // Add additional mitreing points
-            //scalar angleSign = 1.0;
+            // scalar angleSign = 1.0;
 
 
             vector convexEdgesPlaneNormal =

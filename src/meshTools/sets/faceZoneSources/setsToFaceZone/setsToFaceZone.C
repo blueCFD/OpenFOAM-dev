@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,6 @@ Foam::topoSetSource::addToUsageTable Foam::setsToFaceZone::usage_
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::setsToFaceZone::setsToFaceZone
 (
     const polyMesh& mesh,
@@ -67,7 +66,6 @@ Foam::setsToFaceZone::setsToFaceZone
 {}
 
 
-// Construct from dictionary
 Foam::setsToFaceZone::setsToFaceZone
 (
     const polyMesh& mesh,
@@ -81,7 +79,6 @@ Foam::setsToFaceZone::setsToFaceZone
 {}
 
 
-// Construct from Istream
 Foam::setsToFaceZone::setsToFaceZone
 (
     const polyMesh& mesh,

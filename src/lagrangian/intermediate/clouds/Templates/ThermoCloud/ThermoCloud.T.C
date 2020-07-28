@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ void Foam::ThermoCloud<CloudType>::setModels()
 
     TIntegrator_.reset
     (
-        scalarIntegrationScheme::New
+        integrationScheme::New
         (
             "T",
             this->solution().integrationSchemes()
@@ -472,10 +472,9 @@ void Foam::ThermoCloud<CloudType>::evolve()
 {
     if (this->solution().canEvolve())
     {
-        typename parcelType::template
-            TrackingData<ThermoCloud<CloudType>> td(*this);
+        typename parcelType::trackingData td(*this);
 
-        this->solve(td);
+        this->solve(*this, td);
     }
 }
 

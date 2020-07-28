@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ Foam::string Foam::KinematicParcel<ParcelType>::propertyList_ =
 template<class ParcelType>
 const std::size_t Foam::KinematicParcel<ParcelType>::sizeofFields_
 (
-    offsetof(KinematicParcel<ParcelType>, rhoc_)
+    sizeof(KinematicParcel<ParcelType>)
   - offsetof(KinematicParcel<ParcelType>, active_)
 );
 
@@ -62,10 +62,7 @@ Foam::KinematicParcel<ParcelType>::KinematicParcel
     rho_(0.0),
     age_(0.0),
     tTurb_(0.0),
-    UTurb_(Zero),
-    rhoc_(0.0),
-    Uc_(Zero),
-    muc_(0.0)
+    UTurb_(Zero)
 {
     if (readFields)
     {

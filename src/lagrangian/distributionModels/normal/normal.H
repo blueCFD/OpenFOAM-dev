@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::normal
+    Foam::distributionModels::normal
 
 Description
     A normal distribution model
@@ -85,7 +85,7 @@ public:
     // Constructors
 
         //- Construct from components
-        normal(const dictionary& dict, cachedRandom& rndGen);
+        normal(const dictionary& dict, Random& rndGen);
 
         //- Construct copy
         normal(const normal& p);

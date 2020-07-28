@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,6 @@ License
 
 #include "faceZoneToCell.H"
 #include "polyMesh.H"
-
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -109,7 +108,6 @@ void Foam::faceZoneToCell::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::faceZoneToCell::faceZoneToCell
 (
     const polyMesh& mesh,
@@ -123,7 +121,6 @@ Foam::faceZoneToCell::faceZoneToCell
 {}
 
 
-// Construct from dictionary
 Foam::faceZoneToCell::faceZoneToCell
 (
     const polyMesh& mesh,
@@ -136,7 +133,6 @@ Foam::faceZoneToCell::faceZoneToCell
 {}
 
 
-// Construct from Istream
 Foam::faceZoneToCell::faceZoneToCell
 (
     const polyMesh& mesh,

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::standardPhaseChange
+    Foam::regionModels::surfaceFilmModels::standardPhaseChange
 
 Description
     Standard phase change model with modification for boiling
@@ -79,11 +79,24 @@ protected:
         //  Used to set max limit on temperature to Tb*TbFactor
         const scalar TbFactor_;
 
+        //- Switch to treat YInf as zero
+        Switch YInfZero_;
+
 
     // Protected member functions
 
         //- Return Sherwood number as a function of Reynolds and Schmidt numbers
         scalar Sh(const scalar Re, const scalar Sc) const;
+
+        template<class YInfType>
+        void correctModel
+        (
+            const scalar dt,
+            scalarField& availableMass,
+            scalarField& dMass,
+            scalarField& dEnergy,
+            YInfType YInf
+        );
 
 
 public:
@@ -97,7 +110,7 @@ public:
         //- Construct from surface film model
         standardPhaseChange
         (
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 

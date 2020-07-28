@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,7 @@ License
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-// Defined as static to be able to dynamicly change it during simulations
+// Defined as static to be able to dynamically change it during simulations
 // (all chemPoints refer to the same object)
 template<class CompType, class ThermoType>
 Foam::scalar Foam::chemPointISAT<CompType, ThermoType>::tolerance_;
@@ -512,12 +512,12 @@ bool Foam::chemPointISAT<CompType, ThermoType>::inEOA(const scalarField& phiq)
             }
             else
             {
-                propName = chemistry_.Y()[maxIndex].name();
+                propName = chemistry_.Y()[maxIndex].member();
             }
             Info<< "Direction maximum impact to error in ellipsoid: "
                 << propName << endl;
             Info<< "Proportion to the total error on the retrieve: "
-                << max/(epsTemp+SMALL) << endl;
+                << max/(epsTemp+small) << endl;
         }
         return false;
     }

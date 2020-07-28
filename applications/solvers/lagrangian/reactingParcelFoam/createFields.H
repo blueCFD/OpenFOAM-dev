@@ -1,15 +1,8 @@
 #include "createRDeltaT.H"
 
-#include "readGravitationalAcceleration.H"
-
-Info<< "Creating combustion model\n" << endl;
-
-autoPtr<combustionModels::rhoCombustionModel> combustion
-(
-    combustionModels::rhoCombustionModel::New(mesh)
-);
-
-rhoReactionThermo& thermo = combustion->thermo();
+Info<< "Reading thermophysical properties\n" << endl;
+autoPtr<rhoReactionThermo> pThermo(rhoReactionThermo::New(mesh));
+rhoReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "h", "e");
 
 SLGThermo slgThermo(mesh, thermo);
@@ -26,8 +19,7 @@ if (!composition.species().found(inertSpecie))
         << exit(FatalIOError);
 }
 
-volScalarField& p = thermo.p();
-
+Info<< "Creating field rho\n" << endl;
 volScalarField rho
 (
     IOobject
@@ -40,6 +32,8 @@ volScalarField rho
     ),
     thermo.rho()
 );
+
+volScalarField& p = thermo.p();
 
 Info<< "\nReading field U\n" << endl;
 volVectorField U
@@ -57,30 +51,6 @@ volVectorField U
 
 #include "compressibleCreatePhi.H"
 
-mesh.setFluxRequired(p.name());
-
-dimensionedScalar rhoMax
-(
-    dimensionedScalar::lookupOrDefault
-    (
-        "rhoMax",
-        pimple.dict(),
-        dimDensity,
-        GREAT
-    )
-);
-
-dimensionedScalar rhoMin
-(
-    dimensionedScalar::lookupOrDefault
-    (
-        "rhoMin",
-        pimple.dict(),
-        dimDensity,
-        0
-    )
-);
-
 Info<< "Creating turbulence model\n" << endl;
 autoPtr<compressible::turbulenceModel> turbulence
 (
@@ -93,8 +63,11 @@ autoPtr<compressible::turbulenceModel> turbulence
     )
 );
 
-// Set the turbulence into the combustion model
-combustion->setTurbulence(turbulence());
+Info<< "Creating combustion model\n" << endl;
+autoPtr<CombustionModel<rhoReactionThermo>> combustion
+(
+    CombustionModel<rhoReactionThermo>::New(thermo, turbulence())
+);
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt
@@ -112,7 +85,32 @@ volScalarField dpdt
 Info<< "Creating field kinetic energy K\n" << endl;
 volScalarField K("K", 0.5*magSqr(U));
 
-Info<< "Creating multi-variate interpolation scheme\n" << endl;
+
+#include "readGravitationalAcceleration.H"
+#include "readhRef.H"
+#include "gh.H"
+
+
+volScalarField p_rgh
+(
+    IOobject
+    (
+        "p_rgh",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+// Force p_rgh to be consistent with p
+p_rgh = p - rho*gh;
+
+pressureControl pressureControl(p, rho, pimple.dict(), false);
+
+mesh.setFluxRequired(p_rgh.name());
+
 multivariateSurfaceInterpolationScheme<scalar>::fieldTable fields;
 
 forAll(Y, i)
@@ -138,3 +136,5 @@ volScalarField Qdot
 #include "createMRF.H"
 #include "createRadiationModel.H"
 #include "createClouds.H"
+#include "createSurfaceFilmModel.H"
+#include "createFvOptions.H"

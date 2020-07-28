@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -185,7 +185,7 @@ void Foam::shellSurfaces::orient()
     {
         const point outsidePt = overallBb.max() + overallBb.span();
 
-        //Info<< "Using point " << outsidePt << " to orient shells" << endl;
+        // Info<< "Using point " << outsidePt << " to orient shells" << endl;
 
         forAll(shells_, shellI)
         {
@@ -291,7 +291,7 @@ void Foam::shellSurfaces::findHigherLevel
 
                 label pointi = candidateMap[candidateI];
 
-                // pt is inbetween shell[minDistI] and shell[minDistI+1]
+                // pt is in between shell[minDistI] and shell[minDistI+1]
                 maxLevel[pointi] = levels[minDistI+1];
             }
         }
@@ -356,7 +356,7 @@ Foam::shellSurfaces::shellSurfaces
 :
     allGeometry_(allGeometry)
 {
-    // Wilcard specification : loop over all surfaces and try to find a match.
+    // Wildcard specification : loop over all surfaces and try to find a match.
 
     // Count number of shells.
     label shellI = 0;

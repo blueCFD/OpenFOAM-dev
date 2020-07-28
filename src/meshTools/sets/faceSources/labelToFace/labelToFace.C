@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,20 +25,15 @@ License
 
 #include "labelToFace.H"
 #include "polyMesh.H"
-
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(labelToFace, 0);
-
-addToRunTimeSelectionTable(topoSetSource, labelToFace, word);
-
-addToRunTimeSelectionTable(topoSetSource, labelToFace, istream);
-
+    defineTypeNameAndDebug(labelToFace, 0);
+    addToRunTimeSelectionTable(topoSetSource, labelToFace, word);
+    addToRunTimeSelectionTable(topoSetSource, labelToFace, istream);
 }
 
 
@@ -63,7 +58,6 @@ void Foam::labelToFace::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::labelToFace::labelToFace
 (
     const polyMesh& mesh,
@@ -75,7 +69,6 @@ Foam::labelToFace::labelToFace
 {}
 
 
-// Construct from dictionary
 Foam::labelToFace::labelToFace
 (
     const polyMesh& mesh,
@@ -87,7 +80,6 @@ Foam::labelToFace::labelToFace
 {}
 
 
-// Construct from Istream
 Foam::labelToFace::labelToFace
 (
     const polyMesh& mesh,

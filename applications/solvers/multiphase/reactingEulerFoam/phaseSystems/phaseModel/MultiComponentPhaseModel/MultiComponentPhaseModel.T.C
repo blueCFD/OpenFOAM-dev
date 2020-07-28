@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,6 +69,18 @@ Foam::MultiComponentPhaseModel<BasePhaseModel>::MultiComponentPhaseModel
     {
         inertIndex_ = this->thermo_->composition().species()[inertSpecie];
     }
+
+    PtrList<volScalarField>& Y = this->thermo_->composition().Y();
+
+    forAll(Y, i)
+    {
+        if (i != inertIndex_ && this->thermo_->composition().active(i))
+        {
+            const label j = YActive_.size();
+            YActive_.resize(j + 1);
+            YActive_.set(j, &Y[i]);
+        }
+    }
 }
 
 
@@ -96,7 +108,7 @@ void Foam::MultiComponentPhaseModel<BasePhaseModel>::correctThermo()
         dimensionedScalar("zero", dimless, 0)
     );
 
-    PtrList<volScalarField>& Yi = Y();
+    PtrList<volScalarField>& Yi = YRef();
 
     forAll(Yi, i)
     {
@@ -125,50 +137,29 @@ void Foam::MultiComponentPhaseModel<BasePhaseModel>::correctThermo()
 
 
 template<class BasePhaseModel>
-Foam::tmp<Foam::fvScalarMatrix>
-Foam::MultiComponentPhaseModel<BasePhaseModel>::YiEqn
-(
-    volScalarField& Yi
-)
+bool Foam::MultiComponentPhaseModel<BasePhaseModel>::pure() const
 {
-    if
-    (
-        (inertIndex_ != -1)
-     && (
-            (
-                Yi.name()
-             == IOobject::groupName
-                (
-                    this->thermo_->composition().species()[inertIndex_],
-                    this->name()
-                )
-            )
-         || (
-               !this->thermo_->composition().active
-                (
-                    this->thermo_->composition().species()[Yi.member()]
-                )
-            )
-        )
-    )
-    {
-        return tmp<fvScalarMatrix>();
-    }
+    return false;
+}
 
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::fvScalarMatrix>
+Foam::MultiComponentPhaseModel<BasePhaseModel>::YiEqn(volScalarField& Yi)
+{
     const volScalarField& alpha = *this;
-    const surfaceScalarField& alphaRhoPhi = this->alphaRhoPhi();
-    const volScalarField& rho = this->rho();
+    const surfaceScalarField alphaRhoPhi(this->alphaRhoPhi());
+    const volScalarField& rho = this->thermo().rho();
 
     return
     (
         fvm::ddt(alpha, rho, Yi)
       + fvm::div(alphaRhoPhi, Yi, "div(" + alphaRhoPhi.name() + ",Yi)")
-      - fvm::Sp(this->continuityError(), Yi)
 
       - fvm::laplacian
         (
             fvc::interpolate(alpha)
-           *fvc::interpolate(this->turbulence().nut()*rho/Sc_),
+           *fvc::interpolate(this->muEff()/Sc_),
             Yi
         )
      ==
@@ -189,10 +180,34 @@ Foam::MultiComponentPhaseModel<BasePhaseModel>::Y() const
 
 
 template<class BasePhaseModel>
+const Foam::volScalarField&
+Foam::MultiComponentPhaseModel<BasePhaseModel>::Y(const word& name) const
+{
+    return this->thermo_->composition().Y(name);
+}
+
+
+template<class BasePhaseModel>
 Foam::PtrList<Foam::volScalarField>&
-Foam::MultiComponentPhaseModel<BasePhaseModel>::Y()
+Foam::MultiComponentPhaseModel<BasePhaseModel>::YRef()
 {
     return this->thermo_->composition().Y();
+}
+
+
+template<class BasePhaseModel>
+const Foam::UPtrList<Foam::volScalarField>&
+Foam::MultiComponentPhaseModel<BasePhaseModel>::YActive() const
+{
+    return YActive_;
+}
+
+
+template<class BasePhaseModel>
+Foam::UPtrList<Foam::volScalarField>&
+Foam::MultiComponentPhaseModel<BasePhaseModel>::YActiveRef()
+{
+    return YActive_;
 }
 
 

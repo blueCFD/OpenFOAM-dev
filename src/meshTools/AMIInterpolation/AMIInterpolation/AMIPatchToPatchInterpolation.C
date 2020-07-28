@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,6 +29,8 @@ License
 #include "mapNearestAMI.H"
 #include "faceAreaWeightAMI.H"
 #include "partialFaceAreaWeightAMI.H"
+#include "sweptFaceAreaWeightAMI.H"
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -40,6 +42,7 @@ namespace Foam
     makeAMIMethodType(AMIPatchToPatchInterpolation, mapNearestAMI);
     makeAMIMethodType(AMIPatchToPatchInterpolation, faceAreaWeightAMI);
     makeAMIMethodType(AMIPatchToPatchInterpolation, partialFaceAreaWeightAMI);
+    makeAMIMethodType(AMIPatchToPatchInterpolation, sweptFaceAreaWeightAMI);
 }
 
 

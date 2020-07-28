@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ void Foam::extrude2DMesh::check2D() const
 
 //void Foam::extrude2DMesh::findExtrudeDirection()
 //{
-//    scalar minRange = GREAT;
+//    scalar minRange = great;
 
 //    for (direction dir = 0; dir < 3; dir++)
 //    {
@@ -88,7 +88,7 @@ Foam::extrude2DMesh::extrude2DMesh
 :
     mesh_(mesh),
     dict_(dict),
-    //patchDict_(dict.subDict("patchInfo")),
+    // patchDict_(dict.subDict("patchInfo")),
     model_(model),
     modelType_(dict.lookup("extrudeModel")),
     patchType_(dict.lookup("patchType")),
@@ -209,11 +209,11 @@ void Foam::extrude2DMesh::setRefinement
         {
             meshMod.addCell
             (
-                -1,     //masterPointID,
-                -1,     //masterEdgeID,
-                -1,     //masterFaceID,
-                celli + offset,  //masterCellID,
-                mesh_.cellZones().whichZone(celli)  //zoneID
+                -1,     // masterPointID,
+                -1,     // masterEdgeID,
+                -1,     // masterFaceID,
+                celli + offset,  // masterCellID,
+                mesh_.cellZones().whichZone(celli)  // zoneID
             );
         }
     }

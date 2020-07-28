@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,7 +90,7 @@ Foam::ParticleStressModels::Lun::tau
       / max
         (
             1.0 - pow(alpha/alphaPacked_,1.0/3.0),
-            max(eps_*(1.0 - alpha), SMALL)
+            max(eps_*(1.0 - alpha), small)
         )
     );
 

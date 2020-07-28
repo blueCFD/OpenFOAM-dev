@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,18 +71,18 @@ Foam::vector Foam::StochasticDispersionRAS<CloudType>::update
     scalar& tTurb
 )
 {
-    cachedRandom& rnd = this->owner().rndGen();
+    Random& rnd = this->owner().rndGen();
 
     const scalar cps = 0.16432;
 
     const scalar k = this->kPtr_->primitiveField()[celli];
     const scalar epsilon =
-        this->epsilonPtr_->primitiveField()[celli] + ROOTVSMALL;
+        this->epsilonPtr_->primitiveField()[celli] + rootVSmall;
 
     const scalar UrelMag = mag(U - Uc - UTurb);
 
     const scalar tTurbLoc =
-        min(k/epsilon, cps*pow(k, 1.5)/epsilon/(UrelMag + SMALL));
+        min(k/epsilon, cps*pow(k, 1.5)/epsilon/(UrelMag + small));
 
 
     // Parcel is perturbed by the turbulence
@@ -99,18 +99,18 @@ Foam::vector Foam::StochasticDispersionRAS<CloudType>::update
             // Calculate a random direction dir distributed uniformly
             // in spherical coordinates
 
-            const scalar theta = rnd.sample01<scalar>()*twoPi;
-            const scalar u = 2*rnd.sample01<scalar>() - 1;
+            const scalar theta = rnd.scalar01()*twoPi;
+            const scalar u = 2*rnd.scalar01() - 1;
 
             const scalar a = sqrt(1 - sqr(u));
             const vector dir(a*cos(theta), a*sin(theta), u);
 
-            UTurb = sigma*mag(rnd.GaussNormal<scalar>())*dir;
+            UTurb = sigma*mag(rnd.scalarNormal())*dir;
         }
     }
     else
     {
-        tTurb = GREAT;
+        tTurb = great;
         UTurb = Zero;
     }
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,7 +43,7 @@ Foam::chemistryReductionMethods::PFA<CompType, ThermoType>::PFA
 
     for (label i=0; i<chemistry.nSpecie(); i++)
     {
-        if (initSet.found(chemistry.Y()[i].name()))
+        if (initSet.found(chemistry.Y()[i].member()))
         {
             searchInitSet_[j++] = i;
         }
@@ -53,7 +53,7 @@ Foam::chemistryReductionMethods::PFA<CompType, ThermoType>::PFA
     {
         FatalErrorInFunction
             << searchInitSet_.size()-j
-            << " species in the intial set is not in the mechanism "
+            << " species in the initial set is not in the mechanism "
             << initSet
             << abort(FatalError);
     }
@@ -274,7 +274,7 @@ void Foam::chemistryReductionMethods::PFA<CompType, ThermoType>::reduceMechanism
         {
             label ri = rABOtherSpec(A, i);
             scalar maxPACA = max(PA[ri],CA[ri]);
-            if (maxPACA > VSMALL)
+            if (maxPACA > vSmall)
             {
                 for (int j=0; j<NbrABInit[ri]; j++)
                 {

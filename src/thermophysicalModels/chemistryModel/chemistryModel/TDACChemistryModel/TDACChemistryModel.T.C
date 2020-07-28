@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,18 +30,21 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class CompType, class ThermoType>
-Foam::TDACChemistryModel<CompType, ThermoType>::TDACChemistryModel
+template<class ReactionThermo, class ThermoType>
+Foam::TDACChemistryModel<ReactionThermo, ThermoType>::TDACChemistryModel
 (
-    const fvMesh& mesh,
-    const word& phaseName
+    ReactionThermo& thermo
 )
 :
-    chemistryModel<CompType, ThermoType>(mesh, phaseName),
+    StandardChemistryModel<ReactionThermo, ThermoType>(thermo),
     variableTimeStep_
     (
-        mesh.time().controlDict().lookupOrDefault("adjustTimeStep", false)
-     || fv::localEulerDdt::enabled(mesh)
+        this->mesh().time().controlDict().lookupOrDefault
+        (
+            "adjustTimeStep",
+            false
+        )
+     || fv::localEulerDdt::enabled(this->mesh())
     ),
     timeSteps_(0),
     NsDAC_(this->nSpecie_),
@@ -54,17 +57,17 @@ Foam::TDACChemistryModel<CompType, ThermoType>::TDACChemistryModel
     (
         IOobject
         (
-            "TabulationResults",
+            thermo.phasePropertyName("TabulationResults"),
             this->time().timeName(),
             this->mesh(),
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        mesh,
+        this->mesh(),
         scalar(0)
     )
 {
-    basicMultiComponentMixture& composition = this->thermo().composition();
+    basicSpecieMixture& composition = this->thermo().composition();
 
     // Store the species composition according to the species index
     speciesTable speciesTab = composition.species();
@@ -75,10 +78,10 @@ Foam::TDACChemistryModel<CompType, ThermoType>::TDACChemistryModel
 
     forAll(specieComp_, i)
     {
-        specieComp_[i] = specComp[this->Y()[i].name()];
+        specieComp_[i] = specComp[this->Y()[i].member()];
     }
 
-    mechRed_ = chemistryReductionMethod<CompType, ThermoType>::New
+    mechRed_ = chemistryReductionMethod<ReactionThermo, ThermoType>::New
     (
         *this,
         *this
@@ -93,8 +96,8 @@ Foam::TDACChemistryModel<CompType, ThermoType>::TDACChemistryModel
             IOobject header
             (
                 this->Y()[i].name(),
-                mesh.time().timeName(),
-                mesh,
+                this->mesh().time().timeName(),
+                this->mesh(),
                 IOobject::NO_READ
             );
 
@@ -108,7 +111,7 @@ Foam::TDACChemistryModel<CompType, ThermoType>::TDACChemistryModel
         }
     }
 
-    tabulation_ = chemistryTabulationMethod<CompType, ThermoType>::New
+    tabulation_ = chemistryTabulationMethod<ReactionThermo, ThermoType>::New
     (
         *this,
         *this
@@ -136,15 +139,15 @@ Foam::TDACChemistryModel<CompType, ThermoType>::TDACChemistryModel
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-template<class CompType, class ThermoType>
-Foam::TDACChemistryModel<CompType, ThermoType>::~TDACChemistryModel()
+template<class ReactionThermo, class ThermoType>
+Foam::TDACChemistryModel<ReactionThermo, ThermoType>::~TDACChemistryModel()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class CompType, class ThermoType>
-void Foam::TDACChemistryModel<CompType, ThermoType>::omega
+template<class ReactionThermo, class ThermoType>
+void Foam::TDACChemistryModel<ReactionThermo, ThermoType>::omega
 (
     const scalarField& c, // Contains all species even when mechRed is active
     const scalar T,
@@ -165,9 +168,9 @@ void Foam::TDACChemistryModel<CompType, ThermoType>::omega
         {
             const Reaction<ThermoType>& R = this->reactions_[i];
 
-            scalar omegai = omega
+            scalar omegai = R.omega
             (
-                R, c, T, p, pf, cf, lRef, pr, cr, rRef
+                p, T, c, pf, cf, lRef, pr, cr, rRef
             );
 
             forAll(R.lhs(), s)
@@ -197,8 +200,8 @@ void Foam::TDACChemistryModel<CompType, ThermoType>::omega
 }
 
 
-template<class CompType, class ThermoType>
-Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::omega
+template<class ReactionThermo, class ThermoType>
+Foam::scalar Foam::TDACChemistryModel<ReactionThermo, ThermoType>::omega
 (
     const Reaction<ThermoType>& R,
     const scalarField& c, // Contains all species even when mechRed is active
@@ -229,23 +232,23 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::omega
         if (c[si] < c[lRef])
         {
             const scalar exp = R.lhs()[slRef].exponent;
-            pf *= pow(max(0.0, c[lRef]), exp);
+            pf *= pow(max(c[lRef], 0), exp);
             lRef = si;
             slRef = s;
         }
         else
         {
             const scalar exp = R.lhs()[s].exponent;
-            pf *= pow(max(0.0, c[si]), exp);
+            pf *= pow(max(c[si], 0), exp);
         }
     }
-    cf = max(0.0, c[lRef]);
+    cf = max(c[lRef], 0);
 
     {
         const scalar exp = R.lhs()[slRef].exponent;
         if (exp < 1)
         {
-            if (cf > SMALL)
+            if (cf > small)
             {
                 pf *= pow(cf, exp - 1);
             }
@@ -271,23 +274,23 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::omega
         if (c[si] < c[rRef])
         {
             const scalar exp = R.rhs()[srRef].exponent;
-            pr *= pow(max(0.0, c[rRef]), exp);
+            pr *= pow(max(c[rRef], 0), exp);
             rRef = si;
             srRef = s;
         }
         else
         {
             const scalar exp = R.rhs()[s].exponent;
-            pr *= pow(max(0.0, c[si]), exp);
+            pr *= pow(max(c[si], 0), exp);
         }
     }
-    cr = max(0.0, c[rRef]);
+    cr = max(c[rRef], 0);
 
     {
         const scalar exp = R.rhs()[srRef].exponent;
         if (exp < 1)
         {
-            if (cr>SMALL)
+            if (cr > small)
             {
                 pr *= pow(cr, exp - 1);
             }
@@ -306,8 +309,8 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::omega
 }
 
 
-template<class CompType, class ThermoType>
-void Foam::TDACChemistryModel<CompType, ThermoType>::derivatives
+template<class ReactionThermo, class ThermoType>
+void Foam::TDACChemistryModel<ReactionThermo, ThermoType>::derivatives
 (
     const scalar time,
     const scalarField& c,
@@ -331,14 +334,14 @@ void Foam::TDACChemistryModel<CompType, ThermoType>::derivatives
         // efficiencies
         for (label i=0; i<NsDAC_; i++)
         {
-            this->c_[simplifiedToCompleteIndex_[i]] = max(0.0, c[i]);
+            this->c_[simplifiedToCompleteIndex_[i]] = max(c[i], 0);
         }
     }
     else
     {
         for (label i=0; i<this->nSpecie(); i++)
         {
-            this->c_[i] = max(0.0, c[i]);
+            this->c_[i] = max(c[i], 0);
         }
     }
 
@@ -390,19 +393,20 @@ void Foam::TDACChemistryModel<CompType, ThermoType>::derivatives
 }
 
 
-template<class CompType, class ThermoType>
-void Foam::TDACChemistryModel<CompType, ThermoType>::jacobian
+template<class ReactionThermo, class ThermoType>
+void Foam::TDACChemistryModel<ReactionThermo, ThermoType>::jacobian
 (
     const scalar t,
     const scalarField& c,
-    scalarSquareMatrix& dfdc
+    scalarField& dcdt,
+    scalarSquareMatrix& J
 ) const
 {
     const bool reduced = mechRed_->active();
 
     // If the mechanism reduction is active, the computed Jacobian
     // is compact (size of the reduced set of species)
-    // but according to the informations of the complete set
+    // but according to the information of the complete set
     // (i.e. for the third-body efficiencies)
 
     const scalar T = c[this->nSpecie_];
@@ -413,189 +417,125 @@ void Foam::TDACChemistryModel<CompType, ThermoType>::jacobian
         this->c_ = completeC_;
         for (label i=0; i<NsDAC_; i++)
         {
-            this->c_[simplifiedToCompleteIndex_[i]] = max(0.0, c[i]);
+            this->c_[simplifiedToCompleteIndex_[i]] = max(c[i], 0);
         }
     }
     else
     {
         forAll(this->c_, i)
         {
-            this->c_[i] = max(c[i], 0.0);
+            this->c_[i] = max(c[i], 0);
         }
     }
 
-    dfdc = Zero;
+    J = Zero;
+    dcdt = Zero;
+    scalarField hi(this->c_.size());
+    scalarField cpi(this->c_.size());
+    forAll(hi, i)
+    {
+        hi[i] = this->specieThermo_[i].ha(p, T);
+        cpi[i] = this->specieThermo_[i].cp(p, T);
+    }
+
+    scalar omegaI = 0;
 
     forAll(this->reactions_, ri)
     {
         if (!reactionsDisabled_[ri])
         {
             const Reaction<ThermoType>& R = this->reactions_[ri];
-
-            const scalar kf0 = R.kf(p, T, this->c_);
-            const scalar kr0 = R.kr(kf0, p, T, this->c_);
-
-            forAll(R.lhs(), j)
-            {
-                label sj = R.lhs()[j].index;
-                if (reduced)
-                {
-                    sj = completeToSimplifiedIndex_[sj];
-                }
-                scalar kf = kf0;
-                forAll(R.lhs(), i)
-                {
-                    const label si = R.lhs()[i].index;
-                    const scalar el = R.lhs()[i].exponent;
-                    if (i == j)
-                    {
-                        if (el < 1)
-                        {
-                            if (this->c_[si] > SMALL)
-                            {
-                                kf *= el*pow(this->c_[si] + VSMALL, el - 1);
-                            }
-                            else
-                            {
-                                kf = 0;
-                            }
-                        }
-                        else
-                        {
-                            kf *= el*pow(this->c_[si], el - 1);
-                        }
-                    }
-                    else
-                    {
-                        kf *= pow(this->c_[si], el);
-                    }
-                }
-
-                forAll(R.lhs(), i)
-                {
-                    label si = R.lhs()[i].index;
-                    if (reduced)
-                    {
-                        si = completeToSimplifiedIndex_[si];
-                    }
-                    const scalar sl = R.lhs()[i].stoichCoeff;
-                    dfdc(si, sj) -= sl*kf;
-                }
-                forAll(R.rhs(), i)
-                {
-                    label si = R.rhs()[i].index;
-                    if (reduced)
-                    {
-                        si = completeToSimplifiedIndex_[si];
-                    }
-                    const scalar sr = R.rhs()[i].stoichCoeff;
-                    dfdc(si, sj) += sr*kf;
-                }
-            }
-
-            forAll(R.rhs(), j)
-            {
-                label sj = R.rhs()[j].index;
-                if (reduced)
-                {
-                    sj = completeToSimplifiedIndex_[sj];
-                }
-                scalar kr = kr0;
-                forAll(R.rhs(), i)
-                {
-                    const label si = R.rhs()[i].index;
-                    const scalar er = R.rhs()[i].exponent;
-                    if (i == j)
-                    {
-                        if (er < 1)
-                        {
-                            if (this->c_[si] > SMALL)
-                            {
-                                kr *= er*pow(this->c_[si] + VSMALL, er - 1);
-                            }
-                            else
-                            {
-                                kr = 0;
-                            }
-                        }
-                        else
-                        {
-                            kr *= er*pow(this->c_[si], er - 1);
-                        }
-                    }
-                    else
-                    {
-                        kr *= pow(this->c_[si], er);
-                    }
-                }
-
-                forAll(R.lhs(), i)
-                {
-                    label si = R.lhs()[i].index;
-                    if (reduced)
-                    {
-                        si = completeToSimplifiedIndex_[si];
-                    }
-                    const scalar sl = R.lhs()[i].stoichCoeff;
-                    dfdc(si, sj) += sl*kr;
-                }
-                forAll(R.rhs(), i)
-                {
-                    label si = R.rhs()[i].index;
-                    if (reduced)
-                    {
-                        si = completeToSimplifiedIndex_[si];
-                    }
-                    const scalar sr = R.rhs()[i].stoichCoeff;
-                    dfdc(si, sj) -= sr*kr;
-                }
-            }
+            scalar kfwd, kbwd;
+            R.dwdc
+            (
+                p,
+                T,
+                this->c_,
+                J,
+                dcdt,
+                omegaI,
+                kfwd,
+                kbwd,
+                reduced,
+                completeToSimplifiedIndex_
+            );
+            R.dwdT
+            (
+                p,
+                T,
+                this->c_,
+                omegaI,
+                kfwd,
+                kbwd,
+                J,
+                reduced,
+                completeToSimplifiedIndex_,
+                this->nSpecie_
+            );
         }
     }
 
-    // Calculate the dcdT elements numerically
-    const scalar delta = 1e-3;
-
-    omega(this->c_, T + delta, p, this->dcdt_);
-    for (label i=0; i<this->nSpecie_; i++)
+    // The species derivatives of the temperature term are partially computed
+    // while computing dwdc, they are completed hereunder:
+    scalar cpMean = 0;
+    scalar dcpdTMean = 0;
+    forAll(this->c_, i)
     {
-        dfdc(i, this->nSpecie_) = this->dcdt_[i];
+        cpMean += this->c_[i]*cpi[i]; // J/(m3.K)
+        // Already multiplied by rho
+        dcpdTMean += this->c_[i]*this->specieThermo_[i].dcpdT(p, T);
     }
 
-    omega(this->c_, T - delta, p, this->dcdt_);
-    for (label i=0; i<this->nSpecie_; i++)
+    scalar dTdt = 0;
+    forAll(hi, i)
     {
-        dfdc(i, this->nSpecie_) =
-            0.5*(dfdc(i, this->nSpecie_) - this->dcdt_[i])/delta;
+        if (reduced)
+        {
+            const label si = completeToSimplifiedIndex_[i];
+            if (si != -1)
+            {
+                dTdt += hi[i]*dcdt[si]; // J/(m3.s)
+            }
+        }
+        else
+        {
+            dTdt += hi[i]*dcdt[i]; // J/(m3.s)
+        }
+    }
+    dTdt /= -cpMean; // K/s
+    dcdt[this->nSpecie_] = dTdt;
+
+    for (label i = 0; i < this->nSpecie_; i++)
+    {
+        J(this->nSpecie_, i) = 0;
+        for (label j = 0; j < this->nSpecie_; j++)
+        {
+            const label sj = reduced ? simplifiedToCompleteIndex_[j] : j;
+            J(this->nSpecie_, i) += hi[sj]*J(j, i);
+        }
+        const label si = reduced ? simplifiedToCompleteIndex_[i] : i;
+        J(this->nSpecie_, i) += cpi[si]*dTdt; // J/(mol.s)
+        J(this->nSpecie_, i) /= -cpMean;    // K/s / (mol/m3)
     }
 
-    dfdc(this->nSpecie_, this->nSpecie_) = 0;
-    dfdc(this->nSpecie_ + 1, this->nSpecie_) = 0;
+    // ddT of dTdt
+    J(this->nSpecie_, this->nSpecie_) = 0;
+    for (label i = 0; i < this->nSpecie_; i++)
+    {
+        const label si = reduced ? simplifiedToCompleteIndex_[i] : i;
+        J(this->nSpecie_, this->nSpecie_) +=
+            cpi[si]*dcdt[i]
+          + hi[si]*J(i, this->nSpecie_);
+    }
+    J(this->nSpecie_, this->nSpecie_) += dTdt*dcpdTMean;
+    J(this->nSpecie_, this->nSpecie_) /= -cpMean;
+    J(this->nSpecie_, this->nSpecie_) += dTdt/T;
 }
 
 
-template<class CompType, class ThermoType>
-void Foam::TDACChemistryModel<CompType, ThermoType>::jacobian
-(
-    const scalar t,
-    const scalarField& c,
-    scalarField& dcdt,
-    scalarSquareMatrix& dfdc
-) const
-{
-    jacobian(t, c, dfdc);
-
-    const scalar T = c[this->nSpecie_];
-    const scalar p = c[this->nSpecie_ + 1];
-
-    // Note: Uses the c_ field initialized by the call to jacobian above
-    omega(this->c_, T, p, dcdt);
-}
-
-
-template<class CompType, class ThermoType>
+template<class ReactionThermo, class ThermoType>
 template<class DeltaTType>
-Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
+Foam::scalar Foam::TDACChemistryModel<ReactionThermo, ThermoType>::solve
 (
     const DeltaTType& deltaT
 )
@@ -607,7 +547,7 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
 
     label nAdditionalEqn = (tabulation_->variableTimeStep() ? 1 : 0);
 
-    basicMultiComponentMixture& composition = this->thermo().composition();
+    basicSpecieMixture& composition = this->thermo().composition();
 
     // CPU time analysis
     const clockTime clockTime_= clockTime();
@@ -624,9 +564,9 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
     scalar nActiveSpecies = 0;
     scalar nAvg = 0;
 
-    CompType::correct();
+    BasicChemistryModel<ReactionThermo>::correct();
 
-    scalar deltaTMin = GREAT;
+    scalar deltaTMin = great;
 
     if (!this->chemistry_)
     {
@@ -720,7 +660,7 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
             }
 
             // Calculate the chemical source terms
-            while (timeLeft > SMALL)
+            while (timeLeft > small)
             {
                 scalar dt = timeLeft;
                 if (reduced)
@@ -794,6 +734,9 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
                 this->nSpecie_ = mechRed_->nSpecie();
             }
             deltaTMin = min(this->deltaTChem_[celli], deltaTMin);
+
+            this->deltaTChem_[celli] =
+                min(this->deltaTChem_[celli], this->deltaTChemMax_);
         }
 
         // Set the RR vector (used in the solver)
@@ -877,8 +820,8 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
 }
 
 
-template<class CompType, class ThermoType>
-Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
+template<class ReactionThermo, class ThermoType>
+Foam::scalar Foam::TDACChemistryModel<ReactionThermo, ThermoType>::solve
 (
     const scalar deltaT
 )
@@ -892,8 +835,8 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
 }
 
 
-template<class CompType, class ThermoType>
-Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
+template<class ReactionThermo, class ThermoType>
+Foam::scalar Foam::TDACChemistryModel<ReactionThermo, ThermoType>::solve
 (
     const scalarField& deltaT
 )
@@ -902,34 +845,33 @@ Foam::scalar Foam::TDACChemistryModel<CompType, ThermoType>::solve
 }
 
 
-template<class CompType, class ThermoType>
-void Foam::TDACChemistryModel<CompType, ThermoType>::setTabulationResultsAdd
+template<class ReactionThermo, class ThermoType>
+void Foam::TDACChemistryModel<ReactionThermo, ThermoType>::
+setTabulationResultsAdd
 (
     const label celli
 )
 {
-    tabulationResults_[celli] = 0.0;
+    tabulationResults_[celli] = 0;
 }
 
 
-template<class CompType, class ThermoType>
-void Foam::TDACChemistryModel<CompType, ThermoType>::setTabulationResultsGrow
-(
-    const label celli
-)
+template<class ReactionThermo, class ThermoType>
+void Foam::TDACChemistryModel<ReactionThermo, ThermoType>::
+setTabulationResultsGrow(const label celli)
 {
-    tabulationResults_[celli] = 1.0;
+    tabulationResults_[celli] = 1;
 }
 
 
-template<class CompType, class ThermoType>
-void Foam::TDACChemistryModel<CompType, ThermoType>::
+template<class ReactionThermo, class ThermoType>
+void Foam::TDACChemistryModel<ReactionThermo, ThermoType>::
 setTabulationResultsRetrieve
 (
     const label celli
 )
 {
-    tabulationResults_[celli] = 2.0;
+    tabulationResults_[celli] = 2;
 }
 
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -144,7 +144,7 @@ void Foam::MGridGenGAMGAgglomeration::detectSharedFaces
     sharedFaces.clear();
     sharedFaces.resize(addr.lowerAddr().size()/100);
 
-    // Detect any faces inbetween same value
+    // Detect any faces in between same value
     forAll(lower, facei)
     {
         label lowerData = value[lower[facei]];
@@ -258,14 +258,14 @@ Foam::MGridGenGAMGAgglomeration::MGridGenGAMGAgglomeration
             getNbrAgglom(addr, interfaces, nbrGlobalAgglom, cellToNbrAgglom);
 
 
-            // Mark all faces inbetween cells with same nbragglomeration
+            // Mark all faces in between cells with same nbragglomeration
             labelHashSet sharedFaces(addr.size()/100);
             detectSharedFaces(mesh, cellToNbrAgglom, sharedFaces);
 
 
             //- Note: in-place update of weights is more effective it seems?
             //        Should not be. fluke?
-            //scalarField weights(*faceWeightsPtr);
+            // scalarField weights(*faceWeightsPtr);
             scalarField weights = *magSfPtr;
             forAllConstIter(labelHashSet, sharedFaces, iter)
             {

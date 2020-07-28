@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,6 +54,13 @@ class phaseChange
 :
     public IATEsource
 {
+    // Private data
+
+        //- Phase pair name
+        word pairName_;
+
+        //- Pointer to the corresponding iDmdt field
+        mutable const volScalarField* iDmdtPtr_;
 
 public:
 

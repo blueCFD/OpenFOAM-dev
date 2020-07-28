@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -446,15 +446,15 @@ int main(int argc, char *argv[])
     ReadFields(mesh, objects, volTensorFields);
 
     //- Uncomment if you want to interpolate surface fields (usually bad idea)
-    //Info<< "Reading all current surfaceFields" << endl;
-    //PtrList<surfaceScalarField> surfaceScalarFields;
-    //ReadFields(mesh, objects, surfaceScalarFields);
+    // Info<< "Reading all current surfaceFields" << endl;
+    // PtrList<surfaceScalarField> surfaceScalarFields;
+    // ReadFields(mesh, objects, surfaceScalarFields);
     //
-    //PtrList<surfaceVectorField> surfaceVectorFields;
-    //ReadFields(mesh, objects, surfaceVectorFields);
+    // PtrList<surfaceVectorField> surfaceVectorFields;
+    // ReadFields(mesh, objects, surfaceVectorFields);
     //
-    //PtrList<surfaceTensorField> surfaceTensorFields;
-    //ReadFields(mesh, objects, surfaceTensorFields);
+    // PtrList<surfaceTensorField> surfaceTensorFields;
+    // ReadFields(mesh, objects, surfaceTensorFields);
 
     if (!overwrite)
     {
@@ -471,6 +471,7 @@ int main(int argc, char *argv[])
     {
         mesh.setInstance(oldInstance);
         stitcher.instance() = oldInstance;
+        stitcher.writeOpt() = IOobject::NO_WRITE;
     }
     Info<< nl << "Writing polyMesh to time " << runTime.timeName() << endl;
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ void Foam::directAMI<SourcePatch, TargetPatch>::appendToDirectSeeds
             const face& srcF = this->srcPatch_[srcI];
             const point& srcC = srcCf[srcI];
 
-            scalar tol = GREAT;
+            scalar tol = great;
             forAll(srcF, fpI)
             {
                 const point& p = srcPoints[srcF[fpI]];
@@ -66,7 +66,7 @@ void Foam::directAMI<SourcePatch, TargetPatch>::appendToDirectSeeds
                     tol = d2;
                 }
             }
-            tol = max(SMALL, 0.0001*sqrt(tol));
+            tol = max(small, 0.0001*sqrt(tol));
 
             bool found = false;
             forAll(tgtNbr, j)
@@ -90,7 +90,7 @@ void Foam::directAMI<SourcePatch, TargetPatch>::appendToDirectSeeds
             // second attempt: match by shooting a ray into the tgt face
             if (!found)
             {
-                const vector srcN = srcF.normal(srcPoints);
+                const vector srcN = srcF.area(srcPoints);
 
                 forAll(tgtNbr, j)
                 {
@@ -121,7 +121,7 @@ void Foam::directAMI<SourcePatch, TargetPatch>::appendToDirectSeeds
                 {
                     Pout<< "source face not found: id=" << srcI
                         << " centre=" << srcCf[srcI]
-                        << " normal=" << srcF.normal(srcPoints)
+                        << " area=" << srcF.area(srcPoints)
                         << " points=" << srcF.points(srcPoints)
                         << endl;
 
@@ -133,7 +133,7 @@ void Foam::directAMI<SourcePatch, TargetPatch>::appendToDirectSeeds
 
                         Pout<< "face id: " << tgtI
                             << " centre=" << tgtF.centre(tgtPoints)
-                            << " normal=" << tgtF.normal(tgtPoints)
+                            << " area=" << tgtF.area(tgtPoints)
                             << " points=" << tgtF.points(tgtPoints)
                             << endl;
                     }
@@ -309,15 +309,13 @@ void Foam::directAMI<SourcePatch, TargetPatch>::calculate
     // transfer data to persistent storage
     forAll(srcAddr, i)
     {
-        scalar magSf = this->srcMagSf_[i];
         srcAddress[i].transfer(srcAddr[i]);
-        srcWeights[i] = scalarList(1, magSf);
+        srcWeights[i] = scalarList(1, 1.0);
     }
     forAll(tgtAddr, i)
     {
-        scalar magSf = this->tgtMagSf_[i];
         tgtAddress[i].transfer(tgtAddr[i]);
-        tgtWeights[i] = scalarList(1, magSf);
+        tgtWeights[i] = scalarList(1, 1.0);
     }
 }
 

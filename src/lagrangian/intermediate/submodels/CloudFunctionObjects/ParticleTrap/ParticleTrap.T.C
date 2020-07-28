@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -104,15 +104,14 @@ template<class CloudType>
 void Foam::ParticleTrap<CloudType>::postMove
 (
     parcelType& p,
-    const label celli,
     const scalar,
     const point&,
     bool&
 )
 {
-    if (alphaPtr_->primitiveField()[celli] < threshold_)
+    if (alphaPtr_->primitiveField()[p.cell()] < threshold_)
     {
-        const vector& gradAlpha = gradAlphaPtr_()[celli];
+        const vector& gradAlpha = gradAlphaPtr_()[p.cell()];
         vector nHat = gradAlpha/mag(gradAlpha);
         scalar nHatU = nHat & p.U();
 

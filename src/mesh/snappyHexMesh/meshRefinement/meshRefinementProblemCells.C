@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -92,7 +92,7 @@ void Foam::meshRefinement::findNearest
     (
         allSurfaces,
         fc,
-        scalarField(fc.size(), sqr(GREAT)),    // sqr of attraction
+        scalarField(fc.size(), sqr(great)),    // sqr of attraction
         nearestSurface,
         nearestInfo
     );
@@ -296,8 +296,8 @@ bool Foam::meshRefinement::isCollapsedFace
     const scalar severeNonorthogonalityThreshold =
         ::cos(degToRad(maxNonOrtho));
 
-    vector s = mesh_.faces()[facei].normal(points);
-    scalar magS = mag(s);
+    const vector s = mesh_.faces()[facei].area(points);
+    const scalar magS = mag(s);
 
     // Check face area
     if (magS < minFaceArea)
@@ -313,7 +313,7 @@ bool Foam::meshRefinement::isCollapsedFace
         label nei = mesh_.faceNeighbour()[facei];
         vector d = mesh_.cellCentres()[nei] - ownCc;
 
-        scalar dDotS = (d & s)/(mag(d)*magS + VSMALL);
+        scalar dDotS = (d & s)/(mag(d)*magS + vSmall);
 
         if (dDotS < severeNonorthogonalityThreshold)
         {
@@ -332,7 +332,7 @@ bool Foam::meshRefinement::isCollapsedFace
         {
             vector d = neiCc[facei-mesh_.nInternalFaces()] - ownCc;
 
-            scalar dDotS = (d & s)/(mag(d)*magS + VSMALL);
+            scalar dDotS = (d & s)/(mag(d)*magS + vSmall);
 
             if (dDotS < severeNonorthogonalityThreshold)
             {
@@ -664,7 +664,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
         (
             surfaceZonesInfo::getUnnamedSurfaces(surfaces_.surfZones()),
             localPoints,
-            scalarField(localPoints.size(), sqr(GREAT)),    // sqr of attraction
+            scalarField(localPoints.size(), sqr(great)),    // sqr of attraction
             hitSurface,
             hitInfo
         );
@@ -772,7 +772,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
             // cell sticking out which would get flattened.
 
             // Eugene: delete cell no matter what.
-            //if (nBfaces > 1)
+            // if (nBfaces > 1)
             {
                 if
                 (
@@ -781,7 +781,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
                 )
                 {
                     nPrevented++;
-                    //Pout<< "Preventing baffling/removal of 8 anchor point"
+                    // Pout<< "Preventing baffling/removal of 8 anchor point"
                     //    << " cell "
                     //    << celli << " at " << mesh_.cellCentres()[celli]
                     //    << " since new volume "
@@ -866,7 +866,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
                     )
                     {
                         nPrevented++;
-                        //Pout<< "Preventing baffling of 7 anchor cell "
+                        // Pout<< "Preventing baffling of 7 anchor cell "
                         //    << celli
                         //    << " at " << mesh_.cellCentres()[celli]
                         //    << " since new volume "
@@ -968,7 +968,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
                 )
                 {
                     nPrevented++;
-                    //Pout<< "Preventing baffling (to avoid collapse) of face "
+                    // Pout<< "Preventing baffling (to avoid collapse) of face "
                     //    << facei
                     //    << " with all boundary edges "
                     //    << " at " << mesh_.faceCentres()[facei]
@@ -1025,7 +1025,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
                         )
                         {
                             nPrevented++;
-                            //Pout<< "Preventing baffling of coupled face "
+                            // Pout<< "Preventing baffling of coupled face "
                             //    << facei
                             //    << " with all boundary edges "
                             //    << " at " << mesh_.faceCentres()[facei]
@@ -1052,7 +1052,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
 
 
     // Because of isCollapsedFace one side can decide not to baffle whereas
-    // the other side does so sync. Baffling is prefered over not baffling.
+    // the other side does so sync. Baffling is preferred over not baffling.
     if (checkCollapse)  // Or always?
     {
         syncTools::syncFaceList
@@ -1152,7 +1152,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             *this,
             snapParams,
             nInitErrors,
-            List<labelPair>(0), //baffles
+            List<labelPair>(0), // baffles
             meshMover
         );
 
@@ -1183,7 +1183,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             mesh_,
             newPoints,
             minMagSqrEqOp<point>(),     // combine op
-            vector(GREAT, GREAT, GREAT) // null value (note: cannot use VGREAT)
+            vector(great, great, great) // null value (note: cannot use vGreat)
         );
 
         mesh_.movePoints(newPoints);
@@ -1202,7 +1202,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
     {
         faceSet wrongFaces(mesh_, "wrongFaces", 100);
         {
-            //motionSmoother::checkMesh(false, mesh_, motionDict, wrongFaces);
+            // motionSmoother::checkMesh(false, mesh_, motionDict, wrongFaces);
 
             // Just check the errors from squashing
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1210,8 +1210,8 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             const labelList allFaces(identity(mesh_.nFaces()));
             label nWrongFaces = 0;
 
-            //const scalar minV(readScalar(motionDict.lookup("minVol", true)));
-            //if (minV > -GREAT)
+            // const scalar minV(readScalar(motionDict.lookup("minVol", true)));
+            // if (minV > -great)
             //{
             //    polyMeshGeometry::checkFacePyramids
             //    (
@@ -1240,7 +1240,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             //}
 
             scalar minArea(readScalar(motionDict.lookup("minArea")));
-            if (minArea > -SMALL)
+            if (minArea > -small)
             {
                 polyMeshGeometry::checkFaceArea
                 (
@@ -1304,7 +1304,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
                 facePatch[iter.key()] = nearestAdaptPatch[iter.key()];
                 nBaffleFaces++;
 
-                //Pout<< "    " << iter.key()
+                // Pout<< "    " << iter.key()
                 //    //<< " on patch " << mesh_.boundaryMesh()[patchi].name()
                 //    << " is destined for patch " << facePatch[iter.key()]
                 //    << endl;

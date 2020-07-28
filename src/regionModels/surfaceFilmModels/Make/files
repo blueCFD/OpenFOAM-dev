@@ -1,6 +1,7 @@
 /* Surface film models */
 surfaceFilmModel/surfaceFilmModel.C
 surfaceFilmModel/surfaceFilmModelNew.C
+surfaceFilmRegionModel/surfaceFilmRegionModel.C
 noFilm/noFilm.C
 kinematicSingleLayer/kinematicSingleLayer.C
 thermoSingleLayer/thermoSingleLayer.C
@@ -46,6 +47,7 @@ $(THERMOMODELS)/phaseChangeModel/phaseChangeModel/phaseChangeModelNew.C
 $(THERMOMODELS)/phaseChangeModel/noPhaseChange/noPhaseChange.C
 $(THERMOMODELS)/phaseChangeModel/standardPhaseChange/standardPhaseChange.C
 $(THERMOMODELS)/phaseChangeModel/solidification/solidification.C
+$(THERMOMODELS)/phaseChangeModel/waxSolventEvaporation/waxSolventEvaporation.C
 
 $(THERMOMODELS)/heatTransferModel/heatTransferModel/heatTransferModel.C
 $(THERMOMODELS)/heatTransferModel/heatTransferModel/heatTransferModelNew.C
@@ -65,6 +67,8 @@ $(THERMOMODELS)/filmViscosityModel/constantViscosity/constantViscosity.C
 $(THERMOMODELS)/filmViscosityModel/liquidViscosity/liquidViscosity.C
 $(THERMOMODELS)/filmViscosityModel/thixotropicViscosity/thixotropicViscosity.C
 $(THERMOMODELS)/filmViscosityModel/ArrheniusViscosity/ArrheniusViscosity.C
+$(THERMOMODELS)/filmViscosityModel/function1Viscosity/function1Viscosity.C
+$(THERMOMODELS)/filmViscosityModel/waxSolventViscosity/waxSolventViscosity.C
 
 
 /* Boundary conditions */

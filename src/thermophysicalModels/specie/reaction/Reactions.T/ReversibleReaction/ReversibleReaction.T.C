@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -125,16 +125,7 @@ Foam::scalar Foam::ReversibleReaction
     const scalarField& c
 ) const
 {
-    scalar Kc = this->Kc(p, T);
-
-    if (mag(Kc) > VSMALL)
-    {
-        return kfwd/Kc;
-    }
-    else
-    {
-        return 0;
-    }
+    return kfwd/max(this->Kc(p, T), rootSmall);
 }
 
 
@@ -157,6 +148,117 @@ Foam::scalar Foam::ReversibleReaction
 ) const
 {
     return kr(kf(p, T, c), p, T, c);
+}
+
+
+template
+<
+    template<class> class ReactionType,
+    class ReactionThermo,
+    class ReactionRate
+>
+Foam::scalar Foam::ReversibleReaction
+<
+    ReactionType,
+    ReactionThermo,
+    ReactionRate
+>::dkfdT
+(
+    const scalar p,
+    const scalar T,
+    const scalarField& c
+) const
+{
+    return k_.ddT(p, T, c);
+}
+
+
+template
+<
+    template<class> class ReactionType,
+    class ReactionThermo,
+    class ReactionRate
+>
+Foam::scalar Foam::ReversibleReaction
+<
+    ReactionType,
+    ReactionThermo,
+    ReactionRate
+>::dkrdT
+(
+    const scalar p,
+    const scalar T,
+    const scalarField& c,
+    const scalar dkfdT,
+    const scalar kr
+) const
+{
+    scalar Kc = max(this->Kc(p, T), rootSmall);
+
+    return dkfdT/Kc - kr*this->dKcdTbyKc(p, T);
+}
+
+
+template
+<
+    template<class> class ReactionType,
+    class ReactionThermo,
+    class ReactionRate
+>
+const Foam::List<Foam::Tuple2<Foam::label, Foam::scalar>>&
+Foam::ReversibleReaction
+<
+    ReactionType,
+    ReactionThermo,
+    ReactionRate
+>::beta() const
+{
+    return k_.beta();
+}
+
+
+template
+<
+    template<class> class ReactionType,
+    class ReactionThermo,
+    class ReactionRate
+>
+void Foam::ReversibleReaction
+<
+    ReactionType,
+    ReactionThermo,
+    ReactionRate
+>::dcidc
+(
+    const scalar p,
+    const scalar T,
+    const scalarField& c,
+    scalarField& dcidc
+) const
+{
+    k_.dcidc(p, T, c, dcidc);
+}
+
+
+template
+<
+    template<class> class ReactionType,
+    class ReactionThermo,
+    class ReactionRate
+>
+Foam::scalar Foam::ReversibleReaction
+<
+    ReactionType,
+    ReactionThermo,
+    ReactionRate
+>::dcidT
+(
+    const scalar p,
+    const scalar T,
+    const scalarField& c
+) const
+{
+    return k_.dcidT(p, T, c);
 }
 
 

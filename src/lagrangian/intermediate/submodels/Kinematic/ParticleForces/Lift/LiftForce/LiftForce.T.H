@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,6 +71,7 @@ protected:
         virtual scalar Cl
         (
             const typename CloudType::parcelType& p,
+            const typename CloudType::parcelType::trackingData& td,
             const vector& curlUc,
             const scalar Re,
             const scalar muc
@@ -124,6 +125,7 @@ public:
             virtual forceSuSp calcCoupled
             (
                 const typename CloudType::parcelType& p,
+                const typename CloudType::parcelType::trackingData& td,
                 const scalar dt,
                 const scalar mass,
                 const scalar Re,

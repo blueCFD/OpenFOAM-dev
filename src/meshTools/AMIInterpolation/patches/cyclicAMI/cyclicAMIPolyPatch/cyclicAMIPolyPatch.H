@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,17 +105,23 @@ protected:
                 vector separationVector_;
 
 
-        //- AMI interpolation class
-        mutable autoPtr<AMIPatchToPatchInterpolation> AMIPtr_;
+        //- AMI interpolation classes
+        mutable PtrList<AMIPatchToPatchInterpolation> AMIs_;
+
+        //- AMI transforms (from source to target)
+        mutable List<vectorTensorTransform> AMITransforms_;
 
         //- Flag to indicate that slave patch should be reversed for AMI
         const bool AMIReverse_;
 
         //- Flag to indicate that patches should match/overlap
-        bool AMIRequireMatch_;
+        const bool AMIRequireMatch_;
 
         //- Low weight correction threshold for AMI
         const scalar AMILowWeightCorrection_;
+
+        //- AMI Method
+        const AMIPatchToPatchInterpolation::interpolationMethod AMIMethod_;
 
         //- Projection surface
         mutable autoPtr<searchableSurface> surfPtr_;
@@ -127,11 +133,7 @@ protected:
     // Protected Member Functions
 
         //- Reset the AMI interpolator
-        virtual void resetAMI
-        (
-            const AMIPatchToPatchInterpolation::interpolationMethod& AMIMethod =
-                AMIPatchToPatchInterpolation::imFaceAreaWeight
-        ) const;
+        virtual void resetAMI() const;
 
         //- Recalculate the transformation tensors
         virtual void calcTransforms();
@@ -175,7 +177,10 @@ public:
             const label index,
             const polyBoundaryMesh& bm,
             const word& patchType,
-            const transformType transform = UNKNOWN
+            const transformType transform = UNKNOWN,
+            const bool AMIRequireMatch = true,
+            const AMIPatchToPatchInterpolation::interpolationMethod AMIMethod =
+                AMIPatchToPatchInterpolation::imFaceAreaWeight
         );
 
         //- Construct from dictionary
@@ -185,7 +190,10 @@ public:
             const dictionary& dict,
             const label index,
             const polyBoundaryMesh& bm,
-            const word& patchType
+            const word& patchType,
+            const bool AMIRequireMatch = true,
+            const AMIPatchToPatchInterpolation::interpolationMethod AMIMethod =
+                AMIPatchToPatchInterpolation::imFaceAreaWeight
         );
 
         //- Construct as copy, resetting the boundary mesh
@@ -298,11 +306,21 @@ public:
             //- Return a reference to the projection surface
             const autoPtr<searchableSurface>& surfPtr() const;
 
-            //- Return a reference to the AMI interpolator
-            const AMIPatchToPatchInterpolation& AMI() const;
+            //- Return a reference to the AMI interpolators
+            const PtrList<AMIPatchToPatchInterpolation>& AMIs() const;
+
+            //- Return a reference to the AMI transforms
+            const List<vectorTensorTransform>& AMITransforms() const;
 
             //- Return true if applying the low weight correction
             bool applyLowWeightCorrection() const;
+
+            //- Return the weights sum for this patch
+            virtual const scalarField& weightsSum() const;
+
+            //- Return the weights sum for the neighbour patch
+            virtual const scalarField& neighbWeightsSum() const;
+
 
 
             // Transformations
@@ -359,14 +377,13 @@ public:
                     const UList<Type>& defaultValues = UList<Type>()
                 ) const;
 
-                //- Low-level interpolate List
-                template<class Type, class CombineOp>
-                void interpolate
+                //- Interpolate field component
+                tmp<scalarField> interpolate
                 (
-                    const UList<Type>& fld,
-                    const CombineOp& cop,
-                    List<Type>& result,
-                    const UList<Type>& defaultValues = UList<Type>()
+                    const scalarField& field,
+                    const direction cmpt,
+                    const direction rank,
+                    const scalarUList& defaultValues = scalarUList()
                 ) const;
 
 
@@ -403,14 +420,18 @@ public:
             labelList& rotation
         ) const;
 
-        //- Return face index on neighbour patch which shares point p
-        //  following trajectory vector n
-        label pointFace
+        //- Return the transform and face indices on neighbour patch which
+        //  shares point p following trajectory vector n
+        labelPair pointAMIAndFace
         (
             const label facei,
             const vector& n,
             point& p
         ) const;
+
+        //- Index of processor that holds all of both sides, or -1 if
+        //  distributed
+        label singlePatchProc() const;
 
         //- Write the polyPatch data as a dictionary
         virtual void write(Ostream&) const;

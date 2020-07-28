@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
- =========                   |
- \\      /   F ield          | OpenFOAM: The Open Source CFD Toolbox
-  \\    /    O peration      |
-   \\  /     A nd            | Copyright (C) 2012-2016 OpenFOAM Foundation
-    \\/      M anipulation   |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     (
         "Re-sample surfaces used in foamyHexMesh operation"
     );
-    //argList::validArgs.append("inputFile");
+    // argList::validArgs.append("inputFile");
     argList::validArgs.append("(nx ny nz)");
     argList::validArgs.append("outputName");
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
         geometry,
         surfaces,
         points,
-        scalarField(points.size(), sqr(GREAT)),
+        scalarField(points.size(), sqr(great)),
         searchableSurface::OUTSIDE,     // for non-closed surfaces treat as
                                         // outside
         nearestSurfaces,
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
             geometryToConformTo.findSurfaceNearest
             (
                 s.faceCentres(),
-                scalarField(s.size(), sqr(GREAT)),
+                scalarField(s.size(), sqr(great)),
                 hitInfo,
                 hitSurfaces
             );

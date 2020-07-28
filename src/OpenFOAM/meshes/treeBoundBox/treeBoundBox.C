@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,22 +25,23 @@ License
 
 #include "treeBoundBox.H"
 #include "ListOps.T.H"
+#include "OFstream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-const Foam::scalar Foam::treeBoundBox::great(GREAT);
+const Foam::scalar Foam::treeBoundBox::great(great);
 
 const Foam::treeBoundBox Foam::treeBoundBox::greatBox
 (
-    vector(-GREAT, -GREAT, -GREAT),
-    vector(GREAT, GREAT, GREAT)
+    vector(-great, -great, -great),
+    vector(great, great, great)
 );
 
 
 const Foam::treeBoundBox Foam::treeBoundBox::invertedBox
 (
-    vector(GREAT, GREAT, GREAT),
-    vector(-GREAT, -GREAT, -GREAT)
+    vector(great, great, great),
+    vector(-great, -great, -great)
 );
 
 
@@ -86,7 +87,7 @@ const Foam::label edgesArray[12][2] =
 
 const Foam::edgeList Foam::treeBoundBox::edges
 (
-    //initListList<edge, label, 12, 2>(edgesArray)
+    // initListList<edge, label, 12, 2>(edgesArray)
     calcEdges(edgesArray)
 );
 
@@ -282,7 +283,7 @@ bool Foam::treeBoundBox::intersects
         if (ptBits & LEFTBIT)
         {
             // Intersect with plane V=min, n=-1,0,0
-            if (Foam::mag(overallVec.x()) > VSMALL)
+            if (Foam::mag(overallVec.x()) > vSmall)
             {
                 scalar s = (min().x() - overallStart.x())/overallVec.x();
                 pt.x() = min().x();
@@ -299,7 +300,7 @@ bool Foam::treeBoundBox::intersects
         else if (ptBits & RIGHTBIT)
         {
             // Intersect with plane V=max, n=1,0,0
-            if (Foam::mag(overallVec.x()) > VSMALL)
+            if (Foam::mag(overallVec.x()) > vSmall)
             {
                 scalar s = (max().x() - overallStart.x())/overallVec.x();
                 pt.x() = max().x();
@@ -314,7 +315,7 @@ bool Foam::treeBoundBox::intersects
         else if (ptBits & BOTTOMBIT)
         {
             // Intersect with plane V=min, n=0,-1,0
-            if (Foam::mag(overallVec.y()) > VSMALL)
+            if (Foam::mag(overallVec.y()) > vSmall)
             {
                 scalar s = (min().y() - overallStart.y())/overallVec.y();
                 pt.x() = overallStart.x() + overallVec.x()*s;
@@ -329,7 +330,7 @@ bool Foam::treeBoundBox::intersects
         else if (ptBits & TOPBIT)
         {
             // Intersect with plane V=max, n=0,1,0
-            if (Foam::mag(overallVec.y()) > VSMALL)
+            if (Foam::mag(overallVec.y()) > vSmall)
             {
                 scalar s = (max().y() - overallStart.y())/overallVec.y();
                 pt.x() = overallStart.x() + overallVec.x()*s;
@@ -344,7 +345,7 @@ bool Foam::treeBoundBox::intersects
         else if (ptBits & BACKBIT)
         {
             // Intersect with plane V=min, n=0,0,-1
-            if (Foam::mag(overallVec.z()) > VSMALL)
+            if (Foam::mag(overallVec.z()) > vSmall)
             {
                 scalar s = (min().z() - overallStart.z())/overallVec.z();
                 pt.x() = overallStart.x() + overallVec.x()*s;
@@ -359,7 +360,7 @@ bool Foam::treeBoundBox::intersects
         else if (ptBits & FRONTBIT)
         {
             // Intersect with plane V=max, n=0,0,1
-            if (Foam::mag(overallVec.z()) > VSMALL)
+            if (Foam::mag(overallVec.z()) > vSmall)
             {
                 scalar s = (max().z() - overallStart.z())/overallVec.z();
                 pt.x() = overallStart.x() + overallVec.x()*s;
@@ -611,6 +612,31 @@ Foam::label Foam::treeBoundBox::distanceCmp
     {
         // Mixed bag
         return 0;
+    }
+}
+
+
+void Foam::treeBoundBox::writeOBJ(const fileName& fName) const
+{
+    OFstream str(fName);
+
+    Info<< "Dumping bounding box " << *this << " as lines to obj file "
+        << str.name() << endl;
+
+    pointField bbPoints(points());
+
+    forAll(bbPoints, i)
+    {
+        const point& pt = bbPoints[i];
+
+        str<< "v " << pt.x() << ' ' << pt.y() << ' ' << pt.z() << endl;
+    }
+
+    forAll(treeBoundBox::edges, i)
+    {
+        const edge& e = treeBoundBox::edges[i];
+
+        str<< "l " << e[0]+1 <<  ' ' << e[1]+1 << nl;
     }
 }
 

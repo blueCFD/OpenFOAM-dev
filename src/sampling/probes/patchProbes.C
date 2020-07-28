@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,10 +78,7 @@ void Foam::patchProbes::findElements(const fvMesh& mesh)
         }
 
         treeBoundBox overallBb(pp.points());
-        Random rndGen(123456);
-        overallBb = overallBb.extend(rndGen, 1e-4);
-        overallBb.min() -= point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-        overallBb.max() += point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
+        overallBb = overallBb.extend(1e-4);
 
         const indexedOctree<treeDataFace> boundaryTree
         (
@@ -115,7 +112,7 @@ void Foam::patchProbes::findElements(const fvMesh& mesh)
                 info = boundaryTree.findNearest
                 (
                     sample,
-                    Foam::sqr(GREAT)
+                    Foam::sqr(great)
                 );
             }
 

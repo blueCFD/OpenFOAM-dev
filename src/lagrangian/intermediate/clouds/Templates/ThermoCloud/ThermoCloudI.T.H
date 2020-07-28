@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,7 +83,7 @@ Foam::ThermoCloud<CloudType>::heatTransfer() const
 
 
 template<class CloudType>
-inline const Foam::scalarIntegrationScheme&
+inline const Foam::integrationScheme&
 Foam::ThermoCloud<CloudType>::TIntegrator() const
 {
     return TIntegrator_;
@@ -372,7 +372,7 @@ Foam::ThermoCloud<CloudType>::sigmap() const
 template<class CloudType>
 inline Foam::scalar Foam::ThermoCloud<CloudType>::Tmax() const
 {
-    scalar T = -GREAT;
+    scalar T = -great;
     scalar n = 0;
     forAllConstIter(typename ThermoCloud<CloudType>, *this, iter)
     {
@@ -398,7 +398,7 @@ inline Foam::scalar Foam::ThermoCloud<CloudType>::Tmax() const
 template<class CloudType>
 inline Foam::scalar Foam::ThermoCloud<CloudType>::Tmin() const
 {
-    scalar T = GREAT;
+    scalar T = great;
     scalar n = 0;
     forAllConstIter(typename ThermoCloud<CloudType>, *this, iter)
     {

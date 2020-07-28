@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,12 +65,17 @@ Foam::tensor Foam::molecule::rotationTensorZ(scalar phi) const
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::molecule::move(molecule::trackingData& td, const scalar trackTime)
+bool Foam::molecule::move
+(
+    moleculeCloud& cloud,
+    trackingData& td,
+    const scalar trackTime
+)
 {
     td.switchProcessor = false;
     td.keepParticle = true;
 
-    const constantProperties& constProps(td.cloud().constProps(id_));
+    const constantProperties& constProps(cloud.constProps(id_));
 
     if (td.part() == 0)
     {
@@ -88,7 +93,7 @@ bool Foam::molecule::move(molecule::trackingData& td, const scalar trackTime)
         while (td.keepParticle && !td.switchProcessor && stepFraction() < 1)
         {
             const scalar f = 1 - stepFraction();
-            trackToFace(f*trackTime*v_, f, td);
+            trackToAndHitFace(f*trackTime*v_, f, cloud, td);
         }
     }
     else if (td.part() == 2)
@@ -230,58 +235,28 @@ void Foam::molecule::setSiteSizes(label size)
 }
 
 
-bool Foam::molecule::hitPatch
-(
-    const polyPatch&,
-    trackingData&,
-    const label,
-    const scalar,
-    const tetIndices&
-)
+bool Foam::molecule::hitPatch(moleculeCloud&, trackingData&)
 {
     return false;
 }
 
 
-void Foam::molecule::hitProcessorPatch
-(
-    const processorPolyPatch&,
-    trackingData& td
-)
+void Foam::molecule::hitProcessorPatch(moleculeCloud&, trackingData& td)
 {
     td.switchProcessor = true;
 }
 
 
-void Foam::molecule::hitWallPatch
-(
-    const wallPolyPatch& wpp,
-    trackingData& td,
-    const tetIndices& tetIs
-)
+void Foam::molecule::hitWallPatch(moleculeCloud&, trackingData&)
 {
-    // Use of the normal from tetIs is not required as
-    // hasWallImpactDistance for a moleculeCloud is false.
-    vector nw = normal();
-    nw /= mag(nw);
-
-    scalar vn = v_ & nw;
+    const vector nw = normal();
+    const scalar vn = v_ & nw;
 
     // Specular reflection
     if (vn > 0)
     {
         v_ -= 2*vn*nw;
     }
-}
-
-
-void Foam::molecule::hitPatch
-(
-    const polyPatch&,
-    trackingData& td
-)
-{
-    td.keepParticle = false;
 }
 
 

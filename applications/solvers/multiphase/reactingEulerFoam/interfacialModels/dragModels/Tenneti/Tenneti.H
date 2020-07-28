@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
         Drag law for monodisperse gas–solid systems using particle-resolved
         direct numerical simulation of flow past fixed assemblies of spheres.
         International Journal of Multiphase Flow, 37(9), 1072–1092.
-    \verbatim
+    \endverbatim
 
 SourceFiles
     Tenneti.C

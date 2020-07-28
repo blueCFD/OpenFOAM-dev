@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ Foam::viscosityModels::powerLaw::calcNu() const
                 max
                 (
                     dimensionedScalar("one", dimTime, 1.0)*strainRate(),
-                    dimensionedScalar("VSMALL", dimless, VSMALL)
+                    dimensionedScalar("small", dimless, small)
                 ),
                 n_.value() - scalar(1)
             )

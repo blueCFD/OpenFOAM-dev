@@ -1,34 +1,31 @@
-if (finalIter)
-{
-    mesh.data::add("finalIteration", true);
-}
-
-if (frozenFlow)
+if (pimple.frozenFlow())
 {
     #include "EEqn.H"
 }
 else
 {
-    if (oCorr == 0)
+    if (!mesh.steady() && pimples.nCorrPimple() <= 1)
     {
         #include "rhoEqn.H"
     }
 
     #include "UEqn.H"
+    #include "YEqn.H"
     #include "EEqn.H"
 
     // --- PISO loop
-    for (int corr=0; corr<nCorr; corr++)
+    while (pimple.correct())
     {
         #include "pEqn.H"
     }
 
-    turb.correct();
+    if (pimples.pimpleTurbCorr(i))
+    {
+        turbulence.correct();
+    }
 
-    rho = thermo.rho();
-}
-
-if (finalIter)
-{
-    mesh.data::remove("finalIteration");
+    if (!mesh.steady() && pimples.finalIter())
+    {
+        rho = thermo.rho();
+    }
 }

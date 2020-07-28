@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -173,9 +173,9 @@ Foam::radiation::blackBodyEmission::blackBodyEmission
                     IOobject::NO_WRITE
                 ),
                 physicoChemical::sigma*pow4(T)
+
             )
         );
-
     }
 }
 
@@ -193,7 +193,45 @@ Foam::scalar Foam::radiation::blackBodyEmission::fLambdaT
     const scalar lambdaT
 ) const
 {
-    return  table_(lambdaT*1.0e6);
+    return table_(1e6*lambdaT);
+}
+
+
+Foam::tmp<Foam::volScalarField>
+Foam::radiation::blackBodyEmission::deltaLambdaT
+(
+    const volScalarField& T,
+    const Vector2D<scalar>& band
+) const
+{
+    tmp<volScalarField> deltaLambdaT
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "deltaLambdaT",
+                T.mesh().time().timeName(),
+                T.mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            T.mesh(),
+            dimensionedScalar("deltaLambdaT", dimless, 1.0)
+        )
+    );
+
+    if (band != Vector2D<scalar>::one)
+    {
+        scalarField& deltaLambdaTf = deltaLambdaT.ref();
+
+        forAll(T, i)
+        {
+            deltaLambdaTf[i] = fLambdaT(band[1]*T[i]) - fLambdaT(band[0]*T[i]);
+        }
+    }
+
+    return deltaLambdaT;
 }
 
 
@@ -220,24 +258,37 @@ Foam::radiation::blackBodyEmission::EbDeltaLambdaT
         )
     );
 
-
-    if (band == Vector2D<scalar>::one)
-    {
-        return Eb;
-    }
-    else
+    if (band != Vector2D<scalar>::one)
     {
         scalarField& Ebif = Eb.ref();
 
         forAll(T, i)
         {
-            scalar T1 = fLambdaT(band[1]*T[i]);
-            scalar T2 = fLambdaT(band[0]*T[i]);
-            Ebif[i] *= T1 - T2;
+            Ebif[i] *= fLambdaT(band[1]*T[i]) - fLambdaT(band[0]*T[i]);
         }
 
-        return Eb;
+        volScalarField::Boundary& EbBf = Eb.ref().boundaryFieldRef();
+
+        forAll(EbBf, patchi)
+        {
+            fvPatchScalarField& EbPf = EbBf[patchi];
+
+            if (!EbPf.coupled())
+            {
+                const scalarField& Tpf = T.boundaryField()[patchi];
+
+                forAll(EbPf, facei)
+                {
+                    const scalar T1 = fLambdaT(band[1]*Tpf[facei]);
+                    const scalar T2 = fLambdaT(band[0]*Tpf[facei]);
+
+                    EbPf[facei] *= T1 - T2;
+                }
+            }
+        }
     }
+
+    return Eb;
 }
 
 

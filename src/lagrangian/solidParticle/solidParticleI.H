@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,14 +27,14 @@ License
 
 inline Foam::solidParticle::trackingData::trackingData
 (
-    solidParticleCloud& spc,
+    const solidParticleCloud& spc,
     const interpolationCellPoint<scalar>& rhoInterp,
     const interpolationCellPoint<vector>& UInterp,
     const interpolationCellPoint<scalar>& nuInterp,
     const vector& g
 )
 :
-    particle::TrackingData<solidParticleCloud>(spc),
+    particle::trackingData(spc),
     rhoInterp_(rhoInterp),
     UInterp_(UInterp),
     nuInterp_(nuInterp),

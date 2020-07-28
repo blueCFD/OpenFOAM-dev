@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -430,9 +430,9 @@ bool finishReaction = false;
 
 <readThermoAll>{thermoTemp}{thermoTemp}{thermoTemp} {
         string temperaturesString(YYText());
-        //scalar lowestT(stringToScalar(temperaturesString(0, 10)));
+        // scalar lowestT(stringToScalar(temperaturesString(0, 10)));
         allCommonT = stringToScalar(temperaturesString(10, 10));
-        //scalar highestT(stringToScalar(temperaturesString(20, 10)));
+        // scalar highestT(stringToScalar(temperaturesString(20, 10)));
         BEGIN(readThermoSpecieName);
     }
 
@@ -651,6 +651,18 @@ bool finishReaction = false;
     }
 
 <readThermoSpecieName>{end} {
+        Reaction<gasHThermoPhysics>::TlowDefault = max
+        (
+            Reaction<gasHThermoPhysics>::TlowDefault,
+            currentLowT
+        );
+
+        Reaction<gasHThermoPhysics>::ThighDefault = min
+        (
+            Reaction<gasHThermoPhysics>::ThighDefault,
+            currentHighT
+        );
+
         BEGIN(INITIAL);
     }
 
@@ -1052,7 +1064,7 @@ bool finishReaction = false;
                         FatalErrorInFunction
                             << "Reverse reaction Arrhenius coefficients not"
                                " given for reverse LandauTeller reaction."
-                               " Please reorder 'REV' keyword to preceed 'RLT'"
+                               " Please reorder 'REV' keyword to precede 'RLT'"
                             << " on line " << lineNo_
                             << exit(FatalError);
                     }
@@ -1113,7 +1125,7 @@ bool finishReaction = false;
                         << "Radiation activated reaction on line "
                         << lineNo_ << "not yet supported"
                         << exit(FatalError);
-                    //reactionCoeffsName = reactionRateTypeNames[rrType];
+                    // reactionCoeffsName = reactionRateTypeNames[rrType];
                     BEGIN(readReactionCoeffs);
                     break;
                 }
@@ -1124,7 +1136,7 @@ bool finishReaction = false;
                         << "Energy loss in reaction on line "
                         << lineNo_ << "not yet supported"
                         << exit(FatalError);
-                    //reactionCoeffsName = reactionRateTypeNames[rrType];
+                    // reactionCoeffsName = reactionRateTypeNames[rrType];
                     BEGIN(readReactionCoeffs);
                     break;
                 }

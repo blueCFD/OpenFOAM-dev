@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -108,6 +108,38 @@ Foam::tmp<Foam::vectorField> Foam::waveSuperposition::velocity
 }
 
 
+Foam::tmp<Foam::scalarField> Foam::waveSuperposition::pressure
+(
+    const scalar t,
+    const vectorField& xyz
+) const
+{
+    scalarField result(xyz.size(), 0);
+
+    forAll(waveModels_, wavei)
+    {
+        const vector2D d(cos(waveAngles_[wavei]), sin(waveAngles_[wavei]));
+        const vector2DField xz
+        (
+            zip
+            (
+                d & zip(xyz.component(0), xyz.component(1)),
+                tmp<scalarField>(xyz.component(2))
+            )
+        );
+        const vector2DField uw
+        (
+            waveModels_[wavei].velocity(t, d.x()*speed_, xz)
+        );
+        result += waveModels_[wavei].pressure(t, d.x()*speed_, xz);
+    }
+
+    tmp<scalarField> s = scale(zip(xyz.component(0), xyz.component(1)));
+
+    return s*result;
+}
+
+
 Foam::tmp<Foam::scalarField> Foam::waveSuperposition::scale
 (
     const vector2DField& xy
@@ -148,8 +180,10 @@ Foam::waveSuperposition::waveSuperposition(const objectRegistry& db)
     speed_(0),
     waveModels_(),
     waveAngles_(),
+    ramp_(),
     scale_(),
-    crossScale_()
+    crossScale_(),
+    heightAboveWave_(false)
 {}
 
 
@@ -161,8 +195,10 @@ Foam::waveSuperposition::waveSuperposition(const waveSuperposition& waves)
     speed_(waves.speed_),
     waveModels_(waves.waveModels_),
     waveAngles_(waves.waveAngles_),
+    ramp_(waves.ramp_, false),
     scale_(waves.scale_, false),
-    crossScale_(waves.crossScale_, false)
+    crossScale_(waves.crossScale_, false),
+    heightAboveWave_(waves.heightAboveWave_)
 {}
 
 
@@ -178,6 +214,12 @@ Foam::waveSuperposition::waveSuperposition
     speed_(readScalar(dict.lookup("speed"))),
     waveModels_(),
     waveAngles_(),
+    ramp_
+    (
+        dict.found("ramp")
+      ? Function1<scalar>::New("ramp", dict)
+      : autoPtr<Function1<scalar>>()
+    ),
     scale_
     (
         dict.found("scale")
@@ -189,7 +231,8 @@ Foam::waveSuperposition::waveSuperposition
         dict.found("crossScale")
       ? Function1<scalar>::New("crossScale", dict)
       : autoPtr<Function1<scalar>>()
-    )
+    ),
+    heightAboveWave_(dict.lookupOrDefault<Switch>("heightAboveWave", false))
 {
     const PtrList<entry> waveEntries(dict.lookup("waves"));
 
@@ -245,7 +288,12 @@ Foam::tmp<Foam::vectorField> Foam::waveSuperposition::ULiquid
     vectorField xyz(p.size());
     transformation(p, axes, u, xyz);
 
-    return UMean() + (velocity(t, xyz) & axes);
+    if (heightAboveWave_)
+    {
+        xyz.replace(2, height(t, p));
+    }
+
+    return UMean(t) + (velocity(t, xyz) & axes);
 }
 
 
@@ -262,7 +310,42 @@ Foam::tmp<Foam::vectorField> Foam::waveSuperposition::UGas
 
     axes = tensor(- axes.x(), - axes.y(), axes.z());
 
-    return UMean() + (velocity(t, xyz) & axes);
+    if (heightAboveWave_)
+    {
+        xyz.replace(2, height(t, p));
+    }
+
+    return UMean(t) + (velocity(t, xyz) & axes);
+}
+
+
+Foam::tmp<Foam::scalarField> Foam::waveSuperposition::pLiquid
+(
+    const scalar t,
+    const vectorField& p
+) const
+{
+    tensor axes;
+    scalar u;
+    vectorField xyz(p.size());
+    transformation(p, axes, u, xyz);
+
+    if (heightAboveWave_)
+    {
+        xyz.replace(2, height(t, p));
+    }
+
+    return pressure(t, xyz);
+}
+
+
+Foam::tmp<Foam::scalarField> Foam::waveSuperposition::pGas
+(
+    const scalar t,
+    const vectorField& p
+) const
+{
+    return - pLiquid(t, p);
 }
 
 
@@ -281,6 +364,10 @@ void Foam::waveSuperposition::write(Ostream& os) const
             << nl << decrIndent << indent << token::END_BLOCK << nl;
     }
     os  << decrIndent << token::END_LIST << token::END_STATEMENT << nl;
+    if (ramp_.valid())
+    {
+        ramp_->writeData(os);
+    }
     if (scale_.valid())
     {
         scale_->writeData(os);
@@ -288,6 +375,11 @@ void Foam::waveSuperposition::write(Ostream& os) const
     if (crossScale_.valid())
     {
         crossScale_->writeData(os);
+    }
+    if (heightAboveWave_)
+    {
+        os.writeKeyword("heightAboveWave") << heightAboveWave_
+            << token::END_STATEMENT << nl;
     }
 }
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -198,11 +198,16 @@ Foam::basicThermo::basicThermo
             phasePropertyName("thermo:alpha"),
             mesh.time().timeName(),
             mesh,
-            IOobject::NO_READ,
+            IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionSet(1, -1, -1, 0, 0)
+        dimensionedScalar
+        (
+            "zero",
+            dimensionSet(1, -1, -1, 0, 0),
+            Zero
+        )
     ),
 
     dpdt_(lookupOrDefault<Switch>("dpdt", true))
@@ -253,11 +258,16 @@ Foam::basicThermo::basicThermo
             phasePropertyName("thermo:alpha"),
             mesh.time().timeName(),
             mesh,
-            IOobject::NO_READ,
+            IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionSet(1, -1, -1, 0, 0)
+        dimensionedScalar
+        (
+            "zero",
+            dimensionSet(1, -1, -1, 0, 0),
+            Zero
+        )
     )
 {}
 
@@ -451,7 +461,7 @@ Foam::wordList Foam::basicThermo::splitThermoName
             // is greater than nCmpt return an empty list
             if (i == nCmpt)
             {
-                return wordList::null();
+                return wordList();
             }
         }
         beg = end + 1;
@@ -461,7 +471,7 @@ Foam::wordList Foam::basicThermo::splitThermoName
     // return an empty list
     if (i + 1 != nCmpt)
     {
-        return wordList::null();
+        return wordList();
     }
 
     if (beg < thermoName.size())

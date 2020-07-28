@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,13 +65,6 @@ Foam::Function1Types::Scale<Type>::~Scale()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-template<class Type>
-Type Foam::Function1Types::Scale<Type>::value(const scalar t) const
-{
-    return scale_->value(t)*value_->value(t);
-}
-
 
 template<class Type>
 void Foam::Function1Types::Scale<Type>::writeData(Ostream& os) const

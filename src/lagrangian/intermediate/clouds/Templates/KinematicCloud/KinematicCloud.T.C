@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "KinematicCloud.T.H"
-#include "IntegrationScheme.T.H"
+#include "integrationScheme.H"
 #include "interpolation.H"
 #include "subCycleTime.H"
 
@@ -77,7 +77,7 @@ void Foam::KinematicCloud<CloudType>::setModels()
 
     UIntegrator_.reset
     (
-        vectorIntegrationScheme::New
+        integrationScheme::New
         (
             "U",
             solution_.integrationSchemes()
@@ -87,41 +87,45 @@ void Foam::KinematicCloud<CloudType>::setModels()
 
 
 template<class CloudType>
-template<class TrackData>
-void Foam::KinematicCloud<CloudType>::solve(TrackData& td)
+template<class TrackCloudType>
+void Foam::KinematicCloud<CloudType>::solve
+(
+    TrackCloudType& cloud,
+    typename parcelType::trackingData& td
+)
 {
     if (solution_.steadyState())
     {
-        td.cloud().storeState();
+        cloud.storeState();
 
-        td.cloud().preEvolve();
+        cloud.preEvolve();
 
-        evolveCloud(td);
+        evolveCloud(cloud, td);
 
         if (solution_.coupled())
         {
-            td.cloud().relaxSources(td.cloud().cloudCopy());
+            cloud.relaxSources(cloud.cloudCopy());
         }
     }
     else
     {
-        td.cloud().preEvolve();
+        cloud.preEvolve();
 
-        evolveCloud(td);
+        evolveCloud(cloud, td);
 
         if (solution_.coupled())
         {
-            td.cloud().scaleSources();
+            cloud.scaleSources();
         }
     }
 
-    td.cloud().info();
+    cloud.info();
 
-    td.cloud().postEvolve();
+    cloud.postEvolve();
 
     if (solution_.steadyState())
     {
-        td.cloud().restoreState();
+        cloud.restoreState();
     }
 }
 
@@ -172,19 +176,23 @@ void Foam::KinematicCloud<CloudType>::updateCellOccupancy()
 
 
 template<class CloudType>
-template<class TrackData>
-void Foam::KinematicCloud<CloudType>::evolveCloud(TrackData& td)
+template<class TrackCloudType>
+void Foam::KinematicCloud<CloudType>::evolveCloud
+(
+    TrackCloudType& cloud,
+    typename parcelType::trackingData& td
+)
 {
     if (solution_.coupled())
     {
-        td.cloud().resetSourceTerms();
+        cloud.resetSourceTerms();
     }
 
     if (solution_.transient())
     {
         label preInjectionSize = this->size();
 
-        this->surfaceFilm().inject(td);
+        this->surfaceFilm().inject(cloud);
 
         // Update the cellOccupancy if the size of the cloud has changed
         // during the injection.
@@ -194,23 +202,23 @@ void Foam::KinematicCloud<CloudType>::evolveCloud(TrackData& td)
             preInjectionSize = this->size();
         }
 
-        injectors_.inject(td);
+        injectors_.inject(cloud, td);
 
 
         // Assume that motion will update the cellOccupancy as necessary
         // before it is required.
-        td.cloud().motion(td);
+        cloud.motion(cloud, td);
 
-        stochasticCollision().update(solution_.trackTime());
+        stochasticCollision().update(td, solution_.trackTime());
     }
     else
     {
-//        this->surfaceFilm().injectSteadyState(td);
+//        this->surfaceFilm().injectSteadyState(cloud);
 
-        injectors_.injectSteadyState(td, solution_.trackTime());
+        injectors_.injectSteadyState(cloud, td, solution_.trackTime());
 
-        td.part() = TrackData::tpLinearTrack;
-        CloudType::move(td,  solution_.trackTime());
+        td.part() = parcelType::trackingData::tpLinearTrack;
+        CloudType::move(cloud, td, solution_.trackTime());
     }
 }
 
@@ -314,13 +322,7 @@ Foam::KinematicCloud<CloudType>::KinematicCloud
     (
         particleProperties_.subOrEmptyDict("subModels", solution_.active())
     ),
-    rndGen_
-    (
-        label(0),
-        solution_.steadyState() ?
-        particleProperties_.lookupOrDefault<label>("randomSampleSize", 100000)
-      : -1
-    ),
+    rndGen_(0),
     cellOccupancyPtr_(),
     cellLengthScale_(mag(cbrt(mesh_.V()))),
     rho_(rho),
@@ -422,7 +424,7 @@ Foam::KinematicCloud<CloudType>::KinematicCloud
     solution_(c.solution_),
     constProps_(c.constProps_),
     subModelProperties_(c.subModelProperties_),
-    rndGen_(c.rndGen_, true),
+    rndGen_(c.rndGen_),
     cellOccupancyPtr_(nullptr),
     cellLengthScale_(c.cellLengthScale_),
     rho_(c.rho_),
@@ -513,7 +515,7 @@ Foam::KinematicCloud<CloudType>::KinematicCloud
     solution_(mesh),
     constProps_(),
     subModelProperties_(dictionary::null),
-    rndGen_(0, 0),
+    rndGen_(0),
     cellOccupancyPtr_(nullptr),
     cellLengthScale_(c.cellLengthScale_),
     rho_(c.rho_),
@@ -542,13 +544,6 @@ Foam::KinematicCloud<CloudType>::~KinematicCloud()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-template<class CloudType>
-bool Foam::KinematicCloud<CloudType>::hasWallImpactDistance() const
-{
-    return true;
-}
-
 
 template<class CloudType>
 void Foam::KinematicCloud<CloudType>::setParcelThermoProperties
@@ -679,20 +674,23 @@ void Foam::KinematicCloud<CloudType>::evolve()
 {
     if (solution_.canEvolve())
     {
-        typename parcelType::template
-            TrackingData<KinematicCloud<CloudType>> td(*this);
+        typename parcelType::trackingData td(*this);
 
-        solve(td);
+        solve(*this, td);
     }
 }
 
 
 template<class CloudType>
-template<class TrackData>
-void Foam::KinematicCloud<CloudType>::motion(TrackData& td)
+template<class TrackCloudType>
+void Foam::KinematicCloud<CloudType>::motion
+(
+    TrackCloudType& cloud,
+    typename parcelType::trackingData& td
+)
 {
-    td.part() = TrackData::tpLinearTrack;
-    CloudType::move(td,  solution_.trackTime());
+    td.part() = parcelType::trackingData::tpLinearTrack;
+    CloudType::move(cloud, td, solution_.trackTime());
 
     updateCellOccupancy();
 }

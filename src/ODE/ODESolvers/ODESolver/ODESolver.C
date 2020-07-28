@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,9 +62,9 @@ Foam::ODESolver::ODESolver(const ODESystem& ode, const dictionary& dict)
     odes_(ode),
     maxN_(ode.nEqns()),
     n_(ode.nEqns()),
-    absTol_(n_, dict.lookupOrDefault<scalar>("absTol", SMALL)),
+    absTol_(n_, dict.lookupOrDefault<scalar>("absTol", small)),
     relTol_(n_, dict.lookupOrDefault<scalar>("relTol", 1e-4)),
-    maxSteps_(10000)
+    maxSteps_(dict.lookupOrDefault<scalar>("maxSteps", 10000))
 {}
 
 
@@ -189,9 +189,10 @@ void Foam::ODESolver::solve
     }
 
     FatalErrorInFunction
-        << "Integration steps greater than maximum " << maxSteps_
-        << "xStart = " << xStart << ", xEnd = " << xEnd
-        << ", x = " << x << ", dxDid = " << step.dxDid
+        << "Integration steps greater than maximum " << maxSteps_ << nl
+        << "    xStart = " << xStart << ", xEnd = " << xEnd
+        << ", x = " << x << ", dxDid = " << step.dxDid << nl
+        << "    y = " << y
         << exit(FatalError);
 }
 

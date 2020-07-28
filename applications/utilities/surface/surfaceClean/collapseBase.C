@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,7 +97,7 @@ static void splitTri
     DynamicList<labelledTri>& tris
 )
 {
-    //label oldNTris = tris.size();
+    // label oldNTris = tris.size();
 
     label fp = findIndex(f, e[0]);
     label fp1 = f.fcIndex(fp);
@@ -183,10 +183,10 @@ static void splitTri
             << abort(FatalError);
     }
 
-    //Pout<< "Split face " << f << " along edge " << e
+    // Pout<< "Split face " << f << " along edge " << e
     //    << " into triangles:" << endl;
     //
-    //for (label i = oldNTris; i < tris.size(); i++)
+    // for (label i = oldNTris; i < tris.size(); i++)
     //{
     //    Pout<< "   " << tris[i] << nl;
     //}
@@ -226,7 +226,7 @@ static bool insertSorted
     {
         scalar w = sortedWeights[sortedI];
 
-        if (mag(w - weight) < SMALL)
+        if (mag(w - weight) < small)
         {
             WarningInFunction
                 << "Trying to insert weight " << weight << " which is close to"
@@ -309,7 +309,7 @@ bool isSliver
         // Remove facei and split all other faces using this
         // edge. This is done by 'replacing' the edgeI with the
         // opposite0 vertex
-        //Pout<< "Splitting face " << facei << " since distance "
+        // Pout<< "Splitting face " << facei << " since distance "
         //    << pHit.distance()
         //    << " from vertex " << opposite0
         //    << " to edge " << edgeI
@@ -450,7 +450,7 @@ static label markRegions
     {
         if (collapseRegion[facei] == -1 && faceToEdge[facei] != -1)
         {
-            //Pout<< "markRegions : Marking region:" << regionI
+            // Pout<< "markRegions : Marking region:" << regionI
             //    << " starting from face " << facei << endl;
 
             // Collapsed face. Mark connected region with current region number
@@ -462,9 +462,9 @@ static label markRegions
 
 
 // Type of region.
-// -1  : edge inbetween uncollapsed faces.
-// -2  : edge inbetween collapsed faces
-// >=0 : edge inbetween uncollapsed and collapsed region. Returns region.
+// -1  : edge in between uncollapsed faces.
+// -2  : edge in between collapsed faces
+// >=0 : edge in between uncollapsed and collapsed region. Returns region.
 static label edgeType
 (
     const triSurface& surf,
@@ -474,7 +474,7 @@ static label edgeType
 {
     const labelList& eFaces = surf.edgeFaces()[edgeI];
 
-    // Detect if edge is inbetween collapseRegion and non-collapse face
+    // Detect if edge is in between collapseRegion and non-collapse face
     bool usesUncollapsed = false;
     label usesRegion = -1;
 
@@ -545,7 +545,7 @@ static labelListList getOutsideVerts
 
     forAll(edgeFaces, edgeI)
     {
-        // Detect if edge is inbetween collapseRegion and non-collapse face
+        // Detect if edge is in between collapseRegion and non-collapse face
         label regionI = edgeType(surf, collapseRegion, edgeI);
 
         if (regionI >= 0)
@@ -585,7 +585,7 @@ static labelPair getSpanPoints
 {
     const pointField& localPoints = surf.localPoints();
 
-    scalar maxDist = -GREAT;
+    scalar maxDist = -great;
     labelPair maxPair;
 
     forAll(outsideVerts, i)
@@ -681,7 +681,7 @@ static void getSplitVerts
         }
         else
         {
-            // Copy upto (but not including) e[1]
+            // Copy up to (but not including) e[1]
             label i1 = findIndex(orderedVerts, e[1]);
             splitVerts = SubList<label>(orderedVerts, i1, 0);
             splitWeights = SubList<scalar>(orderedWeights, i1, 0);
@@ -714,7 +714,7 @@ static void getSplitVerts
     {
         // Reverse.
 
-        // Copy upto (but not including) e[0]
+        // Copy up to (but not including) e[0]
 
         label i0 = findIndex(orderedVerts, e[0]);
         splitVerts = SubList<label>(orderedVerts, i0, 0);
@@ -798,7 +798,7 @@ label collapseBase
 
         label nRegions = markRegions(surf, faceToEdge, collapseRegion);
 
-        //Pout<< "Detected " << nRegions << " regions of faces to be collapsed"
+        // Pout<< "Detected " << nRegions << " regions of faces to be collapsed"
         //    << nl << endl;
 
         // Pick up all vertices on outside of region
@@ -816,7 +816,7 @@ label collapseBase
         {
             spanPoints[regionI] = getSpanPoints(surf, outsideVerts[regionI]);
 
-            //Pout<< "For region " << regionI << " found extrema at points "
+            // Pout<< "For region " << regionI << " found extrema at points "
             //    << surf.localPoints()[spanPoints[regionI][0]]
             //    << surf.localPoints()[spanPoints[regionI][1]]
             //    << endl;
@@ -831,13 +831,13 @@ label collapseBase
                 orderedWeights[regionI]
             );
 
-            //Pout<< "For region:" << regionI
+            // Pout<< "For region:" << regionI
             //    << " span:" << spanPoints[regionI]
             //    << " orderedVerts:" << orderedVertices[regionI]
             //    << " orderedWeights:" << orderedWeights[regionI]
             //    << endl;
 
-            //writeRegionOBJ
+            // writeRegionOBJ
             //(
             //    surf,
             //    regionI,
@@ -845,7 +845,7 @@ label collapseBase
             //    outsideVerts[regionI]
             //);
 
-            //Pout<< endl;
+            // Pout<< endl;
         }
 
 
@@ -870,16 +870,16 @@ label collapseBase
         {
             const edge& e = edges[edgeI];
 
-            // Detect if edge is inbetween collapseRegion and non-collapse face
+            // Detect if edge is in between collapseRegion and non-collapse face
             label regionI = edgeType(surf, collapseRegion, edgeI);
 
             if (regionI == -2)
             {
-                // inbetween collapsed faces. nothing needs to be done.
+                // in between collapsed faces. nothing needs to be done.
             }
             else if (regionI == -1)
             {
-                // edge inbetween uncollapsed faces. Handle these later on.
+                // edge in between uncollapsed faces. Handle these later on.
             }
             else
             {
@@ -971,7 +971,7 @@ label collapseBase
         // Pack the triangles
         newTris.shrink();
 
-        //Pout<< "Resetting surface from " << surf.size() << " to "
+        // Pout<< "Resetting surface from " << surf.size() << " to "
         //    << newTris.size() << " triangles" << endl;
         surf = triSurface(newTris, surf.patches(), surf.localPoints());
 

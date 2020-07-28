@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -138,11 +138,6 @@ addLayersControls
 //  firstLayerThickness 0.01;
 
 //  maxThicknessToMedialRatio 0.6;
-}
-
-meshQualityControls
-{
-//    minTetQuality -1e+30;
 }
 
 writeFlags

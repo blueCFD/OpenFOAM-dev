@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,8 +44,8 @@ Usage
         Normally only constructs a single face between two cells. This single
         face might be too distorted. splitAllFaces will create a single face for
         every original cell the face passes through. The mesh will thus have
-        multiple faces inbetween two cells! (so is not strictly upper-triangular
-        anymore - checkMesh will complain)
+        multiple faces in between two cells! (so is not strictly
+        upper-triangular anymore - checkMesh will complain)
 
       - \par -doNotPreserveFaceZones:
         By default all faceZones are preserved by marking all faces, edges and
@@ -156,7 +156,7 @@ void simpleMarkFeatures
         {
             const edge& e = allBoundary.edges()[edgeI];
 
-            //Info<< "Detected non-manifold boundary edge:" << edgeI
+            // Info<< "Detected non-manifold boundary edge:" << edgeI
             //    << " coords:"
             //    << allBoundary.points()[meshPoints[e[0]]]
             //    << allBoundary.points()[meshPoints[e[1]]] << endl;
@@ -197,7 +197,7 @@ void simpleMarkFeatures
                   - allBoundary[f0].centre(allBoundary.points())
                 );
 
-                if (concaveMultiCells && (c1c0 & n0) > SMALL)
+                if (concaveMultiCells && (c1c0 & n0) > small)
                 {
                     // Found concave edge. Make into multiCell features
                     Info<< "Detected concave feature edge:" << edgeI
@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
     argList::addBoolOption
     (
         "splitAllFaces",
-        "have multiple faces inbetween cells"
+        "have multiple faces in between cells"
     );
     argList::addBoolOption
     (
@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
     (
         "doNotPreserveFaceZones",
         "disable the default behaviour of preserving faceZones by having"
-        " multiple faces inbetween cells"
+        " multiple faces in between cells"
     );
 
     #include "setRootCase.H"

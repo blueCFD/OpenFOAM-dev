@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -565,14 +565,14 @@ bool Foam::backgroundMeshDecomposition::refineCell
 //        geometry.findSurfaceNearest
 //        (
 //            samplePoints,
-//            scalarField(samplePoints.size(), sqr(GREAT)),
+//            scalarField(samplePoints.size(), sqr(great)),
 //            hitInfo,
 //            hitSurfaces
 //        );
 //
 //        // weightEstimate = 0.0;
 //
-//        scalar minCellSize = GREAT;
+//        scalar minCellSize = great;
 //
 //        forAll(samplePoints, i)
 //        {
@@ -692,8 +692,6 @@ void Foam::backgroundMeshDecomposition::buildPatchAndTree()
     // Overall bb
     treeBoundBox overallBb(boundaryFacesPtr_().localPoints());
 
-    Random& rnd = rndGen_;
-
     bFTreePtr_.reset
     (
         new indexedOctree<treeDataBPatch>
@@ -704,7 +702,7 @@ void Foam::backgroundMeshDecomposition::buildPatchAndTree()
                 boundaryFacesPtr_(),
                 indexedOctree<treeDataBPatch>::perturbTol()
             ),
-            overallBb.extend(rnd, 1e-4),
+            overallBb.extend(1e-4),
             10, // maxLevel
             10, // leafSize
             3.0 // duplicity
@@ -717,8 +715,8 @@ void Foam::backgroundMeshDecomposition::buildPatchAndTree()
     Pstream::gatherList(allBackgroundMeshBounds_);
     Pstream::scatterList(allBackgroundMeshBounds_);
 
-    point bbMin(GREAT, GREAT, GREAT);
-    point bbMax(-GREAT, -GREAT, -GREAT);
+    point bbMin(great, great, great);
+    point bbMax(-great, -great, -great);
 
     forAll(allBackgroundMeshBounds_, proci)
     {
@@ -882,7 +880,7 @@ Foam::backgroundMeshDecomposition::distribute
 
         forAll(icellWeights, cI)
         {
-            if (icellWeights[cI] > 1 - SMALL)
+            if (icellWeights[cI] > 1 - small)
             {
                 nOccupiedCells++;
             }
@@ -1074,7 +1072,7 @@ bool Foam::backgroundMeshDecomposition::overlapsThisProcessor
     const scalar radiusSqr
 ) const
 {
-    //return bFTreePtr_().findAnyOverlap(centre, radiusSqr);
+    // return bFTreePtr_().findAnyOverlap(centre, radiusSqr);
 
     return bFTreePtr_().findNearest(centre, radiusSqr).hit();
 }
@@ -1122,7 +1120,7 @@ Foam::labelList Foam::backgroundMeshDecomposition::processorNearestPosition
         {
             // Candidate points may lie just outside a processor box, increase
             // test range by using overlaps rather than contains
-            if (allBackgroundMeshBounds_[proci].overlaps(pt, sqr(SMALL*100)))
+            if (allBackgroundMeshBounds_[proci].overlaps(pt, sqr(small*100)))
             {
                 toCandidateProc.append(proci);
                 testPoints.append(pt);
@@ -1144,7 +1142,7 @@ Foam::labelList Foam::backgroundMeshDecomposition::processorNearestPosition
 
     map().distribute(testPoints);
 
-    List<scalar> distanceSqrToCandidate(testPoints.size(), sqr(GREAT));
+    List<scalar> distanceSqrToCandidate(testPoints.size(), sqr(great));
 
     // Test candidate points on candidate processors
     forAll(testPoints, tPI)
@@ -1152,7 +1150,7 @@ Foam::labelList Foam::backgroundMeshDecomposition::processorNearestPosition
         pointIndexHit info = bFTreePtr_().findNearest
         (
             testPoints[tPI],
-            sqr(GREAT)
+            sqr(great)
         );
 
         if (info.hit())
@@ -1183,7 +1181,7 @@ Foam::labelList Foam::backgroundMeshDecomposition::processorNearestPosition
             ptBlockStart[pI]
         );
 
-        scalar nearestProcDistSqr = GREAT;
+        scalar nearestProcDistSqr = great;
 
         forAll(ptNearestProcResults, pPRI)
         {
@@ -1448,7 +1446,7 @@ Foam::labelList Foam::backgroundMeshDecomposition::overlapProcessors
 ////
 ////        if (flagOverlap)
 ////        {
-////            //if (vertexOctree.findAnyOverlap(c, rSqr))
+////            // if (vertexOctree.findAnyOverlap(c, rSqr))
 //////            if (vertexOctree.findNearest(c, rSqr*1.001).hit())
 //////            {
 //////                sphereOverlapsCandidate[sI] = true;
@@ -1565,7 +1563,7 @@ Foam::labelList Foam::backgroundMeshDecomposition::overlapProcessors
 //
 //        if (flagOverlap)
 //        {
-//            //if (vertexOctree.findAnyOverlap(c, rSqr))
+//            // if (vertexOctree.findAnyOverlap(c, rSqr))
 ////            if (vertexOctree.findNearest(c, rSqr*1.001).hit())
 ////            {
 ////                sphereOverlapsCandidate[sI] = true;

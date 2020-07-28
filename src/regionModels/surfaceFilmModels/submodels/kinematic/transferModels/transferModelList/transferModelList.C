@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ namespace surfaceFilmModels
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-transferModelList::transferModelList(surfaceFilmModel& film)
+transferModelList::transferModelList(surfaceFilmRegionModel& film)
 :
     PtrList<transferModel>(),
     filmSubModelBase(film)
@@ -45,7 +45,7 @@ transferModelList::transferModelList(surfaceFilmModel& film)
 
 transferModelList::transferModelList
 (
-    surfaceFilmModel& film,
+    surfaceFilmRegionModel& film,
     const dictionary& dict
 )
 :
@@ -175,7 +175,7 @@ void transferModelList::info(Ostream& os)
 
     forAll(patchTransferredMasses, patchi)
     {
-        if (mag(patchTransferredMasses[patchi]) > VSMALL)
+        if (mag(patchTransferredMasses[patchi]) > vSmall)
         {
             os  << indent << indent << "from patch " << pbm[patchi].name()
                 << " = " << patchTransferredMasses[patchi] << nl;

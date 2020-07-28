@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,24 +26,52 @@ Class
 
 Description
     This source is designed to model the effect of solidification and melting
-    processes, e.g. windhield defrosting.  The phase change occurs at the
-    melting temperature, \c Tmelt.
+    processes, e.g. windhield defrosting.
+
+    The isotherm phase change occurs at the melting temperature, \c Tsol (= \c
+    Tliq). The not isotherm phase change occurs between solidus and liquidus
+    temperature, \c Tsol < \c Tliq respectively, as long as the melt fraction is
+    greater than the max eutectic melt fraction, \c alpha1e (0 = pure_substance,
+    1 = eutectic_mixture is not permitted), where a linear eutectic melt
+    fraction to temperature relation is considered; e.g. given a specific
+    quantity of a binary system, \c alpha1 is its melt fraction and \c alpha0 is
+    its solid fraction, such that \c alpha0 = 1 - \c alpha1 therefore, assuming
+    infinite solute diffusion, the quantity of a component in solid phase is (1
+    - \c alpha1) * \c CS where \c CS is the solid concentration of the
+    considered component and the quantity of a component in liquid phase is \c
+    alpha1 * \c CL where \c CL is the melt concentration of the considered
+    component; considering that the total quantity of a component must be equal
+    to the sum of the quantities of the considered component in the liquid and
+    solid phases, if \c C0 is the initial concentration of the considered
+    component before the phase change, then:
+    \c C0 = (1 - \c alpha1) * \c CS + \c alpha1 * \c CL      (lever rule)
+    from which: \c alpha1 = (\c C0 - \c CS) / (\c CL - \c CS)
+    and thus:
+    - for a miscible binary system \c alpha1e = 0;
+    - for a binary system not miscible at solid state
+      \c alpha1e = \c C0 / \c CLE where \c CLE is eutectic melt concentration;
+    - for a binary system partially-miscible at solid state
+      \c alpha1e = (\c C0 - \c CSE) / (\c CLE - \c CSE) where CSE is eutectic
+      solid concentration of the relative solid solution.
 
     The presence of the solid phase in the flow field is incorporated into the
     model as a momentum porosity contribution; the energy associated with the
     phase change is added as an enthalpy contribution.
 
-    Based on the references:
+    References:
+    \verbatim
+        Voller, V. R., & Prakash, C. (1987).
+        A fixed grid numerical modelling methodology for convection-diffusion
+        mushy region phase-change problems.
+        International Journal of Heat and Mass Transfer, 30(8), 1709-1719.
 
-      1. V.R. Voller and C. Prakash, A fixed grid numerical modelling
-         methodology for convection-diffusion mushy phase-change problems,
-         Int. J. Heat Mass Transfer 30(8):17091719, 1987.
-      2. C.R. Swaminathan. and V.R. Voller, A general enthalpy model for
-         modeling solidification processes, Metallurgical Transactions
-         23B:651664, 1992.
+        Swaminathan, C. R., & Voller, V. R. (1992).
+        A general enthalpy method for modeling solidification processes.
+        Metallurgical transactions B, 23(5), 651-664.
+    \endverbatim
 
-    The model generates a field \c \<name\>:alpha1 which can be visualised to
-    to show the melt distribution as a fraction [0-1]
+    The model generates the field \c \<name\>:alpha1 which can be visualised to
+    to show the melt distribution as a fraction [0-1].
 
 Usage
     Example usage:
@@ -56,7 +84,7 @@ Usage
         selectionMode   cellZone;
         cellZone        iceZone;
 
-        Tmelt           273;
+        Tsol            273;
         L               334000;
         thermoMode      thermo;
         beta            50e-6;
@@ -66,21 +94,23 @@ Usage
 
     Where:
     \table
-        Property     | Description             | Required    | Default value
-        Tmelt        | Melting temperature [K] | yes         |
-        L            | Latent heat of fusion [J/kg] | yes    |
-        relax        | Relaxation coefficient [0-1] | no     | 0.9
-        thermoMode   | Thermo mode [thermo|lookup] | yes     |
-        rhoRef       | Reference (solid) density | yes       |
-        rho          | Name of density field   | no          | rho
-        T            | Name of temperature field | no        | T
-        Cp           | Name of specific heat capacity field | no | Cp
-        U            | Name of velocity field  | no          | U
-        phi          | Name of flux field      | no          | phi
-        Cu           | Model coefficient       | no          | 100000
-        q            | Model coefficient       | no          | 0.001
-        beta         | Thermal expansion coefficient [1/K] | yes |
-        g            | Accelerartion due to gravity | no     |
+        Property   | Description                     | Required | Default value
+        Tsol       | Solidus temperature [K]             | yes      |
+        Tliq       | Liquidus temperature [K]            | no       | Tsol
+        alpha1e    | Max eutectic melt fraction [0-1[    | no       | 0
+        L          | Latent heat of fusion [J/kg]        | yes      |
+        relax      | Relaxation coefficient [0-1]        | no       | 0.9
+        thermoMode | Thermo mode [thermo|lookup]         | yes      |
+        rhoRef     | Reference (solid) density [kg/m^3]  | yes      |
+        rho        | Name of density field               | no       | rho
+        T          | Name of temperature field           | no       | T
+        Cp         | Name of specific heat field         | no       | Cp
+        U          | Name of velocity field              | no       | U
+        phi        | Name of flux field                  | no       | phi
+        Cu         | Model coefficient [1/s]             | no       | 100000
+        q          | Model coefficient                   | no       | 0.001
+        beta       | Thermal expansion coefficient [1/K] | yes      |
+        g          | Accelerartion due to gravity        | no       |
     \endtable
 
 SourceFiles
@@ -127,8 +157,17 @@ private:
 
     // Private data
 
-        //- Temperature at which melting occurs [K]
-        scalar Tmelt_;
+        //- Temperature at which isotherm melting occurs
+        //  and not isotherm melting starts e.g. eutectic [K]
+        scalar Tsol_;
+
+        //- Temperature at which not isotherm melting stops (Tliq > Tsol) [K]
+        scalar Tliq_;
+
+        //- Max eutectic melt fraction [0-1[
+        //  where 0 = pure substance is default value,
+        //        1 = eutectic mixture is not permitted
+        scalar alpha1e_;
 
         //- Latent heat of fusion [J/kg]
         scalar L_;

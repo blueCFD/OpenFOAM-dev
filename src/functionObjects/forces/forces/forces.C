@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -261,7 +261,12 @@ Foam::functionObjects::forces::devRhoReff() const
         const dictionary& transportProperties =
              obr_.lookupObject<dictionary>("transportProperties");
 
-        dimensionedScalar nu(transportProperties.lookup("nu"));
+        dimensionedScalar nu
+        (
+            "nu",
+            dimViscosity,
+            transportProperties.lookup("nu")
+        );
 
         const volVectorField& U = obr_.lookupObject<volVectorField>(UName_);
 
@@ -419,14 +424,14 @@ void Foam::functionObjects::forces::writeForces()
         << endl;
 
     writeTime(file(MAIN_FILE));
+
     file(MAIN_FILE) << tab << setw(1) << '('
         << sum(force_[0]) << setw(1) << ' '
         << sum(force_[1]) << setw(1) << ' '
         << sum(force_[2]) << setw(3) << ") ("
         << sum(moment_[0]) << setw(1) << ' '
         << sum(moment_[1]) << setw(1) << ' '
-        << sum(moment_[2]) << setw(1) << ')'
-        << endl;
+        << sum(moment_[2]) << setw(1) << ')';
 
     if (localSystem_)
     {
@@ -437,16 +442,16 @@ void Foam::functionObjects::forces::writeForces()
         vectorField localMomentT(coordSys_.localVector(moment_[1]));
         vectorField localMomentP(coordSys_.localVector(moment_[2]));
 
-        writeTime(file(MAIN_FILE));
         file(MAIN_FILE) << tab << setw(1) << '('
             << sum(localForceN) << setw(1) << ' '
             << sum(localForceT) << setw(1) << ' '
             << sum(localForceP) << setw(3) << ") ("
             << sum(localMomentN) << setw(1) << ' '
             << sum(localMomentT) << setw(1) << ' '
-            << sum(localMomentP) << setw(1) << ')'
-            << endl;
+            << sum(localMomentP) << setw(1) << ')';
     }
+
+    file(MAIN_FILE) << endl;
 }
 
 
@@ -548,7 +553,7 @@ Foam::functionObjects::forces::forces
     rhoName_(word::null),
     directForceDensity_(false),
     fDName_(""),
-    rhoRef_(VGREAT),
+    rhoRef_(vGreat),
     pRef_(0),
     coordSys_(),
     localSystem_(false),
@@ -556,7 +561,7 @@ Foam::functionObjects::forces::forces
     nBin_(1),
     binDir_(Zero),
     binDx_(0.0),
-    binMin_(GREAT),
+    binMin_(great),
     binPoints_(),
     binCumulative_(true),
     initialised_(false)
@@ -583,7 +588,7 @@ Foam::functionObjects::forces::forces
     rhoName_(word::null),
     directForceDensity_(false),
     fDName_(""),
-    rhoRef_(VGREAT),
+    rhoRef_(vGreat),
     pRef_(0),
     coordSys_(),
     localSystem_(false),
@@ -591,7 +596,7 @@ Foam::functionObjects::forces::forces
     nBin_(1),
     binDir_(Zero),
     binDx_(0.0),
-    binMin_(GREAT),
+    binMin_(great),
     binPoints_(),
     binCumulative_(true),
     initialised_(false)
@@ -691,8 +696,8 @@ bool Foam::functionObjects::forces::read(const dictionary& dict)
             binDict.lookup("direction") >> binDir_;
             binDir_ /= mag(binDir_);
 
-            binMin_ = GREAT;
-            scalar binMax = -GREAT;
+            binMin_ = great;
+            scalar binMax = -great;
             forAllConstIter(labelHashSet, patchSet_, iter)
             {
                 label patchi = iter.key();

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,7 +41,7 @@ Foam::chemistryReductionMethods::DRG<CompType, ThermoType>::DRG
     dictionary initSet = this->coeffsDict_.subDict("initialSet");
     for (label i=0; i<chemistry.nSpecie(); i++)
     {
-        if (initSet.found(chemistry.Y()[i].name()))
+        if (initSet.found(chemistry.Y()[i].member()))
         {
             searchInitSet_[j++] = i;
         }
@@ -50,7 +50,7 @@ Foam::chemistryReductionMethods::DRG<CompType, ThermoType>::DRG
     {
         FatalErrorInFunction
             << searchInitSet_.size()-j
-            << " species in the intial set is not in the mechanism "
+            << " species in the initial set is not in the mechanism "
             << initSet
             << exit(FatalError);
     }
@@ -246,18 +246,15 @@ void Foam::chemistryReductionMethods::DRG<CompType, ThermoType>::reduceMechanism
         label u = Q.pop();
         scalar Den = rABDen[u];
 
-        if (Den > VSMALL)
+        if (Den > vSmall)
         {
             for (label v=0; v<NbrABInit[u]; v++)
             {
                 label otherSpec = rABOtherSpec(u, v);
                 scalar rAB = rABNum(u, v)/Den;
 
-                if (rAB>1)
+                if (rAB > 1)
                 {
-                    Info<< "Badly Conditioned rAB : " << rAB
-                        << "species involved : " << u << "," << otherSpec
-                        << endl;
                     rAB = 1;
                 }
 

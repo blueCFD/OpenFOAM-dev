@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,7 +71,7 @@ void Foam::searchableSurfacesQueries::mergeHits
         if (index >= 0)
         {
             // Same. Do not count.
-            //Pout<< "point:" << surfHits[i].hitPoint()
+            // Pout<< "point:" << surfHits[i].hitPoint()
             //    << " considered same as:" << allInfo[index].hitPoint()
             //    << " within tol:" << mergeDist
             //    << endl;
@@ -83,7 +83,7 @@ void Foam::searchableSurfacesQueries::mergeHits
 
             if (next < allDistSqr.size())
             {
-                //Pout<< "point:" << surfHits[i].hitPoint()
+                // Pout<< "point:" << surfHits[i].hitPoint()
                 //    << " considered same as:" << allInfo[next].hitPoint()
                 //    << " within tol:" << mergeDist
                 //    << endl;
@@ -565,7 +565,7 @@ void Foam::searchableSurfacesQueries::signedDistance
 {
     // Initialise
     distance.setSize(samples.size());
-    distance = -GREAT;
+    distance = -great;
 
     // Find nearest
     List<pointIndexHit> nearestInfo;

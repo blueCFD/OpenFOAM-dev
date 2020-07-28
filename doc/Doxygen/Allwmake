@@ -13,7 +13,7 @@ usage() {
     while [ "$#" -ge 1 ]; do echo "$1"; shift; done
     cat<<USAGE
 
-usage: ${0##*/} [OPTION]
+usage: ${0##*/} [OPTION] <path-1> <path-2> ...
 options:
   -online    use the links to the Github repositories instead of the local source code
   -help
@@ -25,11 +25,11 @@ USAGE
 defineURL() {
 
   case "$WM_PROJECT_VERSION" in
-  [0-9].[0-9].x)
+  [0-9].x)
     FOAM_BRANCH_NAME="master"
     FOAM_REPO_VERSION="$WM_PROJECT-$WM_PROJECT_VERSION"
     ;;
-  [0-9].[0-9].[0-9])
+  [0-9].[0-9])
     FOAM_BRANCH_NAME="version-$WM_PROJECT_VERSION"
     FOAM_REPO_VERSION="$WM_PROJECT-${WM_PROJECT_VERSION%.*}.x"
     ;;
@@ -54,8 +54,12 @@ do
         defineURL
         shift
         ;;
-    *)
+    -*)
         usage "unknown option/argument: '$*'"
+        ;;
+    *)
+        inputDirs="$inputDirs $1"
+        shift
         ;;
     esac
 done
@@ -71,6 +75,9 @@ for folder in html latex man qt_qch; do
     rm -rf ${folder}-stagedRemove$$ >/dev/null 2>&1 &
   fi
 done
+
+# format the input directories
+[ -z "$inputDirs" ] || inputDirs="INPUT=$inputDirs"
 
 # ensure that created files are readable by everyone
 umask 22
@@ -88,7 +95,7 @@ if isMinGW; then
 
 else
 
-doxygen
+(cat Doxyfile; echo "$inputDirs") | doxygen -
 
 fi
 

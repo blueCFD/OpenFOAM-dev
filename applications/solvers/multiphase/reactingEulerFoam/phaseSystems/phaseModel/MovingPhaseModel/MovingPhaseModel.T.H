@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,17 +26,15 @@ Class
 
 Description
     Class which represents a moving fluid phase. Holds the velocity, fluxes and
-    turbulence model. Provides access to the turbulent quantities.
+    turbulence model and can generate the momentum equation. The interface is
+    quite restrictive as it also has to support an equivalent stationary model,
+    which does not store motion fields or a turbulence model.
 
     Possible future extensions include separating the turbulent fuctionality
-    into another layer. It should also be possible to replace this layer with a
-    stationary phase model, in order to model packed beds or simple porous
-    media. This would probably require extra functionality, such as returning
-    the inputs into the general pressure equation (A, HbyA, etc ...).
+    into another layer.
 
-    Note that this class does not return the turbulence model, it just provides
-    indirect access to the turbulent data. This is so a layer without
-    turbulence modelling (such as a stationary model) could be substituted.
+See also
+    StationaryPhaseModel
 
 SourceFiles
     MovingPhaseModel.C
@@ -55,7 +53,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class phaseModel Declaration
+                       Class MovingPhaseModel Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class BasePhaseModel>
@@ -63,7 +61,9 @@ class MovingPhaseModel
 :
     public BasePhaseModel
 {
-    // Private data
+protected:
+
+    // Protected data
 
         //- Velocity field
         volVectorField U_;
@@ -78,7 +78,10 @@ class MovingPhaseModel
         surfaceScalarField alphaRhoPhi_;
 
         //- Lagrangian acceleration field (needed for virtual-mass)
-        volVectorField DUDt_;
+        mutable tmp<volVectorField> DUDt_;
+
+        //- Lagrangian acceleration field on the faces (needed for virtual-mass)
+        mutable tmp<surfaceScalarField> DUDtf_;
 
         //- Dilatation rate
         tmp<volScalarField> divU_;
@@ -86,13 +89,17 @@ class MovingPhaseModel
         //- Turbulence model
         autoPtr<phaseCompressibleTurbulenceModel> turbulence_;
 
-        //- Continuity error
-        volScalarField continuityError_;
+        //- Continuity error due to the flow
+        volScalarField continuityErrorFlow_;
 
-        //- Phase diffusivity divided by the momentum coefficient.
-        //  Used for implicit treatment of the phase pressure and dispersion
-        tmp<surfaceScalarField> DbyA_;
+        //- Continuity error due to any sources
+        volScalarField continuityErrorSources_;
 
+        //- Kinetic Energy
+        mutable tmp<volScalarField> K_;
+
+
+private:
 
     // Private static member functions
 
@@ -130,62 +137,112 @@ public:
         //- Correct the energy transport e.g. alphat
         virtual void correctEnergyTransport();
 
-        //- Return the momentum equation
-        virtual tmp<fvVectorMatrix> UEqn();
-
-
-        // Implicit phase pressure and dispersion support
-
-            //- Return the phase diffusivity divided by the momentum coefficient
-            virtual const surfaceScalarField& DbyA() const;
-
-            //- Set the phase diffusivity divided by the momentum coefficient
-            virtual void DbyA(const tmp<surfaceScalarField>& DbyA);
-
 
         // Momentum
 
-            //- Constant access the velocity
+            //- Return whether the phase is stationary
+            virtual bool stationary() const;
+
+            //- Return the momentum equation
+            virtual tmp<fvVectorMatrix> UEqn();
+
+            //- Return the momentum equation for the face-based algorithm
+            virtual tmp<fvVectorMatrix> UfEqn();
+
+            //- Return the velocity
             virtual tmp<volVectorField> U() const;
 
             //- Access the velocity
-            virtual volVectorField& U();
+            virtual volVectorField& URef();
+
+            //- Return the volumetric flux
+            virtual tmp<surfaceScalarField> phi() const;
+
+            //- Access the volumetric flux
+            virtual surfaceScalarField& phiRef();
+
+            //- Return the volumetric flux of the phase
+            virtual tmp<surfaceScalarField> alphaPhi() const;
+
+            //- Access the volumetric flux of the phase
+            virtual surfaceScalarField& alphaPhiRef();
+
+            //- Return the mass flux of the phase
+            virtual tmp<surfaceScalarField> alphaRhoPhi() const;
+
+            //- Access the mass flux of the phase
+            virtual surfaceScalarField& alphaRhoPhiRef();
 
             //- Return the substantive acceleration
             virtual tmp<volVectorField> DUDt() const;
 
-            //- Return the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
-            virtual const tmp<volScalarField>& divU() const;
+            //- Return the substantive acceleration on the faces
+            virtual tmp<surfaceScalarField> DUDtf() const;
 
-            //- Set the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
-            virtual void divU(const tmp<volScalarField>& divU);
-
-            //- Constant access the continuity error
+            //- Return the continuity error
             virtual tmp<volScalarField> continuityError() const;
 
-            //- Constant access the volumetric flux
-            virtual tmp<surfaceScalarField> phi() const;
+            //- Return the continuity error due to the flow field
+            virtual tmp<volScalarField> continuityErrorFlow() const;
 
-            //- Access the volumetric flux
-            virtual surfaceScalarField& phi();
+            //- Return the continuity error due to any sources
+            virtual tmp<volScalarField> continuityErrorSources() const;
 
-            //- Constant access the volumetric flux of the phase
-            virtual tmp<surfaceScalarField> alphaPhi() const;
+            //- Return the phase kinetic energy
+            virtual tmp<volScalarField> K() const;
 
-            //- Access the volumetric flux of the phase
-            virtual surfaceScalarField& alphaPhi();
 
-            //- Constant access the mass flux of the phase
-            virtual tmp<surfaceScalarField> alphaRhoPhi() const;
+        // Compressibility (variable density)
 
-            //- Access the mass flux of the phase
-            virtual surfaceScalarField& alphaRhoPhi();
+            //- Return the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
+            virtual tmp<volScalarField> divU() const;
+
+            //- Set the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
+            virtual void divU(tmp<volScalarField> divU);
+
+
+        // Transport (prevents compiler warnings)
+
+            //- Return the effective thermal conductivity
+            using BasePhaseModel::kappaEff;
+
+            //- Return the effective thermal conductivity for enthalpy
+            using BasePhaseModel::alphaEff;
 
 
         // Turbulence
 
-            //- Return the turbulence model
-            virtual const phaseCompressibleTurbulenceModel& turbulence() const;
+            //- Return the turbulent dynamic viscosity
+            virtual tmp<volScalarField> mut() const;
+
+            //- Return the effective dynamic viscosity
+            virtual tmp<volScalarField> muEff() const;
+
+            //- Return the turbulent kinematic viscosity
+            virtual tmp<volScalarField> nut() const;
+
+            //- Return the effective kinematic viscosity
+            virtual tmp<volScalarField> nuEff() const;
+
+            //- Return the effective thermal conductivity
+            virtual tmp<volScalarField> kappaEff() const;
+
+            //- Return the effective thermal conductivity on a patch
+            virtual tmp<scalarField> kappaEff(const label patchi) const;
+
+            //- Return the effective thermal diffusivity for enthalpy
+            virtual tmp<volScalarField> alphaEff() const;
+
+            //- Return the effective thermal conductivity for enthalpy on a
+            //  patch
+            virtual tmp<scalarField> alphaEff(const label patchi) const;
+
+            //- Return the turbulent kinetic energy
+            virtual tmp<volScalarField> k() const;
+
+            //- Return the phase-pressure'
+            //  (derivative of phase-pressure w.r.t. phase-fraction)
+            virtual tmp<volScalarField> pPrime() const;
 };
 
 

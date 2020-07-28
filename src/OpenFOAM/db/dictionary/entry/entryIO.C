@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -139,7 +139,7 @@ bool Foam::entry::New(dictionary& parentDict, Istream& is)
             // Otherwise the token is invalid
             cerr<< "--> FOAM Warning : " << std::endl
                 << "    From function "
-                << "entry::getKeyword(keyType&, Istream&)" << std::endl
+                << "entry::New(dictionary&, Istream&)" << std::endl
                 << "    in file " << __FILE__
                 << " at line " << __LINE__ << std::endl
                 << "    Reading " << is.name().c_str() << std::endl

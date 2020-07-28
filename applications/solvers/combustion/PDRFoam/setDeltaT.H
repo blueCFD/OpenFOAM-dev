@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,14 +26,14 @@ Global
 
 Description
     Reset the timestep to maintain a constant maximum courant Number.
-    Reduction of time-step is imediate but increase is damped to avoid
+    Reduction of time-step is immediate but increase is damped to avoid
     unstable oscillations.
 
 \*---------------------------------------------------------------------------*/
 
 if (adjustTimeStep)
 {
-    scalar maxDeltaTFact = maxCo/(CoNum + StCoNum + SMALL);
+    scalar maxDeltaTFact = maxCo/(CoNum + StCoNum + small);
     scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
 
     runTime.setDeltaT

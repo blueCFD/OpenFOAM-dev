@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -107,20 +107,8 @@ Foam::ConeInjection<CloudType>::ConeInjection
 
         axis /= mag(axis);
 
-        vector tangent = Zero;
-        scalar magTangent = 0.0;
-
-        cachedRandom& rnd = this->owner().rndGen();
-        while (magTangent < SMALL)
-        {
-            vector v = rnd.sample01<vector>();
-
-            tangent = v - (v & axis)*axis;
-            magTangent = mag(tangent);
-        }
-
-        tanVec1_[i] = tangent/magTangent;
-        tanVec2_[i] = axis^tanVec1_[i];
+        tanVec1_[i] = normalised(perpendicular(axis));
+        tanVec2_[i] = normalised(axis^tanVec1_[i]);
     }
 
     // Set total volume to inject
@@ -262,7 +250,7 @@ void Foam::ConeInjection<CloudType>::setProperties
     typename CloudType::parcelType& parcel
 )
 {
-    cachedRandom& rnd = this->owner().rndGen();
+    Random& rnd = this->owner().rndGen();
 
     // set particle velocity
     const label i = parcelI % positionAxis_.size();
@@ -270,7 +258,7 @@ void Foam::ConeInjection<CloudType>::setProperties
     scalar t = time - this->SOI_;
     scalar ti = thetaInner_.value(t);
     scalar to = thetaOuter_.value(t);
-    scalar coneAngle = degToRad(rnd.position<scalar>(ti, to));
+    scalar coneAngle = degToRad(rnd.scalarAB(ti, to));
 
     scalar alpha = sin(coneAngle);
     scalar dcorr = cos(coneAngle);

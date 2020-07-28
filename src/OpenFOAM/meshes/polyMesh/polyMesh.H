@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,7 +85,7 @@ public:
         //- Enumeration defining the state of the mesh after a read update.
         //  Used for post-processing applications, where the mesh
         //  needs to update based on the files written in time
-        //  directores
+        //  directories
         enum readUpdateState
         {
             UNCHANGED,
@@ -492,6 +492,12 @@ public:
 
 
         // Mesh motion
+
+            //- Is mesh dynamic
+            virtual bool dynamic() const
+            {
+                return false;
+            }
 
             //- Is mesh moving
             bool moving() const

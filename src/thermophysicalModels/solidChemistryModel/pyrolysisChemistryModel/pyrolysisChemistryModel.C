@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "pyrolysisChemistryModel.H"
-#include "solidReaction.H"
+#include "SolidReaction.T.H"
 #include "basicThermo.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -33,12 +33,17 @@ template<class CompType, class SolidThermo, class GasThermo>
 Foam::pyrolysisChemistryModel<CompType, SolidThermo, GasThermo>::
 pyrolysisChemistryModel
 (
-    const fvMesh& mesh,
-    const word& phaseName
+    typename CompType::reactionThermo& thermo
 )
 :
-    solidChemistryModel<CompType, SolidThermo>(mesh, phaseName),
-    pyrolisisGases_(this->reactions_[0].gasSpecies()),
+    solidChemistryModel<CompType, SolidThermo>(thermo),
+    pyrolisisGases_
+    (
+        dynamic_cast<const SolidReaction<SolidThermo>&>
+        (
+            this->reactions_[0]
+        ).gasSpecies()
+    ),
     gasThermo_(pyrolisisGases_.size()),
     nGases_(pyrolisisGases_.size()),
     nSpecie_(this->Ys_.size() + nGases_),
@@ -52,8 +57,8 @@ pyrolysisChemistryModel
         IOobject header
         (
             this->Ys_[fieldi].name() + "0",
-            mesh.time().timeName(),
-            mesh,
+            this->mesh().time().timeName(),
+            this->mesh(),
             IOobject::NO_READ
         );
 
@@ -68,12 +73,12 @@ pyrolysisChemistryModel
                     IOobject
                     (
                         this->Ys_[fieldi].name() + "0",
-                        mesh.time().timeName(),
-                        mesh,
+                        this->mesh().time().timeName(),
+                        this->mesh(),
                         IOobject::MUST_READ,
                         IOobject::AUTO_WRITE
                     ),
-                    mesh
+                    this->mesh()
                 )
             );
         }
@@ -84,12 +89,12 @@ pyrolysisChemistryModel
                 IOobject
                 (
                     "Y0Default",
-                    mesh.time().timeName(),
-                    mesh,
+                    this->mesh().time().timeName(),
+                    this->mesh(),
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE
                 ),
-                mesh
+                this->mesh()
             );
 
             Ys0_.set
@@ -100,8 +105,8 @@ pyrolysisChemistryModel
                     IOobject
                     (
                         this->Ys_[fieldi].name() + "0",
-                        mesh.time().timeName(),
-                        mesh,
+                        this->mesh().time().timeName(),
+                        this->mesh(),
                         IOobject::NO_READ,
                         IOobject::AUTO_WRITE
                     ),
@@ -109,10 +114,10 @@ pyrolysisChemistryModel
                 )
             );
 
-            // Calculate inital values of Ysi0 = rho*delta*Yi
+            // Calculate initial values of Ysi0 = rho*delta*Yi
             Ys0_[fieldi].primitiveFieldRef() =
                 this->solidThermo().rho()
-               *max(this->Ys_[fieldi], scalar(0.001))*mesh.V();
+               *max(this->Ys_[fieldi], scalar(0.001))*this->mesh().V();
         }
     }
 
@@ -126,12 +131,12 @@ pyrolysisChemistryModel
                 IOobject
                 (
                     "RRg." + pyrolisisGases_[fieldi],
-                    mesh.time().timeName(),
-                    mesh,
+                    this->mesh().time().timeName(),
+                    this->mesh(),
                     IOobject::NO_READ,
                     IOobject::NO_WRITE
                 ),
-                mesh,
+                this->mesh(),
                 dimensionedScalar("zero", dimMass/dimVolume/dimTime, 0.0)
             )
         );
@@ -140,7 +145,7 @@ pyrolysisChemistryModel
     forAll(gasThermo_, gasI)
     {
         dictionary thermoDict =
-            mesh.lookupObject<dictionary>
+            this->mesh().template lookupObject<dictionary>
             (
                 basicThermo::dictName
             ).subDict(pyrolisisGases_[gasI]);
@@ -157,7 +162,7 @@ pyrolysisChemistryModel
     Info<< indent << "Number of gases = " << nGases_ << nl;
     forAll(this->reactions_, i)
     {
-        Info<< dynamic_cast<const solidReaction<SolidThermo>& >
+        Info<< dynamic_cast<const SolidReaction<SolidThermo>&>
         (
             this->reactions_[i]
         ) << nl;
@@ -194,7 +199,11 @@ pyrolysisChemistryModel<CompType, SolidThermo, GasThermo>::omega
 
     forAll(this->reactions_, i)
     {
-        const Reaction<SolidThermo>& R = this->reactions_[i];
+        const SolidReaction<SolidThermo>& R =
+            dynamic_cast<const SolidReaction<SolidThermo>&>
+            (
+                this->reactions_[i]
+            );
 
         scalar omegai = omega
         (
@@ -313,7 +322,7 @@ derivatives
 
     dcdt = omega(c, T, p);
 
-    //Total mass concentration
+    // Total mass concentration
     scalar cTot = 0.0;
     for (label i=0; i<this->nSolids_; i++)
     {
@@ -388,9 +397,9 @@ jacobian
                 {
                     if (exp < 1.0)
                     {
-                        if (c2[si]>SMALL)
+                        if (c2[si] > small)
                         {
-                            kf *= exp*pow(c2[si] + VSMALL, exp - 1.0);
+                            kf *= exp*pow(c2[si], exp - 1.0);
                         }
                         else
                         {
@@ -519,7 +528,7 @@ Foam::pyrolysisChemistryModel<CompType, SolidThermo, GasThermo>::solve
     const scalar deltaT
 )
 {
-    scalar deltaTMin = GREAT;
+    scalar deltaTMin = great;
 
     if (!this->chemistry_)
     {
@@ -578,7 +587,7 @@ Foam::pyrolysisChemistryModel<CompType, SolidThermo, GasThermo>::solve
             scalar timeLeft = deltaT;
 
             // calculate the chemical source terms
-            while (timeLeft > SMALL)
+            while (timeLeft > small)
             {
                 scalar dt = timeLeft;
                 this->solve(c, Ti, pi, dt, this->deltaTChem_[celli]);

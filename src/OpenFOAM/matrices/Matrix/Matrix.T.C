@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -652,7 +652,7 @@ inline Foam::tmp<Foam::Field<Type>> Foam::operator*
             << abort(FatalError);
     }
 
-    tmp<Field<Type>> tMf(new Field<Type>(f.size(), Zero));
+    tmp<Field<Type>> tMf(new Field<Type>(M.m(), Zero));
     Field<Type>& Mf = tMf.ref();
 
     for (label i=0; i<M.m(); i++)

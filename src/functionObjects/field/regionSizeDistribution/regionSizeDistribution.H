@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::functionObjects::regionSizeDistribution
-
-Group
-    grpFieldFunctionObjects
 
 Description
     Creates a size distribution via interrogating a continuous phase fraction
@@ -153,7 +150,7 @@ class regionSizeDistribution
         //- Minimum droplet diameter
         scalar minDiam_;
 
-        //- Mumber of bins
+        //- Number of bins
         label nBins_;
 
         //- Names of fields to sample on regions

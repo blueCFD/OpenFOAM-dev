@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,11 +56,11 @@ Foam::label Foam::cyclicPolyPatch::findMaxArea
 )
 {
     label maxI = -1;
-    scalar maxAreaSqr = -GREAT;
+    scalar maxAreaSqr = -great;
 
     forAll(faces, facei)
     {
-        scalar areaSqr = magSqr(faces[facei].normal(points));
+        scalar areaSqr = magSqr(faces[facei].area(points));
 
         if (areaSqr > maxAreaSqr)
         {
@@ -81,7 +81,7 @@ void Foam::cyclicPolyPatch::calcTransforms()
         vectorField half0Areas(half0.size());
         forAll(half0, facei)
         {
-            half0Areas[facei] = half0[facei].normal(half0.points());
+            half0Areas[facei] = half0[facei].area(half0.points());
         }
 
         // Half1
@@ -89,7 +89,7 @@ void Foam::cyclicPolyPatch::calcTransforms()
         vectorField half1Areas(half1.size());
         forAll(half1, facei)
         {
-            half1Areas[facei] = half1[facei].normal(half1.points());
+            half1Areas[facei] = half1[facei].area(half1.points());
         }
 
         calcTransforms
@@ -180,7 +180,7 @@ void Foam::cyclicPolyPatch::calcTransforms
         vectorField half0Normals(half0Areas.size());
         vectorField half1Normals(half1Areas.size());
 
-        scalar maxAreaDiff = -GREAT;
+        scalar maxAreaDiff = -great;
         label maxAreaFacei = -1;
 
         forAll(half0, facei)
@@ -189,10 +189,10 @@ void Foam::cyclicPolyPatch::calcTransforms
             scalar nbrMagSf = mag(half1Areas[facei]);
             scalar avSf = (magSf + nbrMagSf)/2.0;
 
-            if (magSf < ROOTVSMALL && nbrMagSf < ROOTVSMALL)
+            if (magSf < rootVSmall && nbrMagSf < rootVSmall)
             {
                 // Undetermined normal. Use dummy normal to force separation
-                // check. (note use of sqrt(VSMALL) since that is how mag
+                // check. (note use of sqrt(vSmall) since that is how mag
                 // scales)
                 half0Normals[facei] = point(1, 0, 0);
                 half1Normals[facei] = half0Normals[facei];
@@ -260,8 +260,8 @@ void Foam::cyclicPolyPatch::calcTransforms
             // use calculated normals.
             vector n0 = findFaceMaxRadius(half0Ctrs);
             vector n1 = -findFaceMaxRadius(half1Ctrs);
-            n0 /= mag(n0) + VSMALL;
-            n1 /= mag(n1) + VSMALL;
+            n0 /= mag(n0) + vSmall;
+            n1 /= mag(n1) + vSmall;
 
             if (debug)
             {
@@ -420,8 +420,8 @@ void Foam::cyclicPolyPatch::getCentresAndAnchors
             {
                 vector n0 = findFaceMaxRadius(half0Ctrs);
                 vector n1 = -findFaceMaxRadius(half1Ctrs);
-                n0 /= mag(n0) + VSMALL;
-                n1 /= mag(n1) + VSMALL;
+                n0 /= mag(n0) + vSmall;
+                n1 /= mag(n1) + vSmall;
 
                 if (debug)
                 {
@@ -498,13 +498,11 @@ void Foam::cyclicPolyPatch::getCentresAndAnchors
 
                 // Determine the face with max area on both halves. These
                 // two faces are used to determine the transformation tensors
-                label max0I = findMaxArea(pp0.points(), pp0);
-                vector n0 = pp0[max0I].normal(pp0.points());
-                n0 /= mag(n0) + VSMALL;
+                const label max0I = findMaxArea(pp0.points(), pp0);
+                const vector n0 = pp0[max0I].normal(pp0.points());
 
-                label max1I = findMaxArea(pp1.points(), pp1);
-                vector n1 = pp1[max1I].normal(pp1.points());
-                n1 /= mag(n1) + VSMALL;
+                const label max1I = findMaxArea(pp1.points(), pp1);
+                const vector n1 = pp1[max1I].normal(pp1.points());
 
                 if (mag(n0 & n1) < 1-matchTolerance())
                 {
@@ -690,7 +688,7 @@ Foam::cyclicPolyPatch::cyclicPolyPatch
             dict.lookup("rotationCentre") >> rotationCentre_;
 
             scalar magRot = mag(rotationAxis_);
-            if (magRot < SMALL)
+            if (magRot < small)
             {
                 FatalIOErrorInFunction(dict)
                     << "Illegal rotationAxis " << rotationAxis_ << endl
@@ -1358,7 +1356,7 @@ bool Foam::cyclicPolyPatch::order
                 << endl;
 
             // Recalculate untransformed face centres
-            //pointField rawHalf0Ctrs =
+            // pointField rawHalf0Ctrs =
             //    calcFaceCentres(half0Faces, pp.points());
             label vertI = 0;
 
@@ -1427,7 +1425,7 @@ bool Foam::cyclicPolyPatch::order
 
         ownerPatchPtr_.clear();
 
-        // Return false if no change neccesary, true otherwise.
+        // Return false if no change necessary, true otherwise.
 
         forAll(faceMap, facei)
         {

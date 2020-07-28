@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -137,6 +137,42 @@ Foam::radiation::radiativeIntensityRay::radiativeIntensityRay
         0.5*deltaPhi*Foam::sin(2.0*theta)*Foam::sin(deltaTheta)
     );
 
+    // Transform directions so that they fall inside the bounds of reduced
+    // dimension cases
+    if (mesh_.nSolutionD() == 2)
+    {
+        vector meshDir(vector::zero);
+        for (direction cmpt=0; cmpt<vector::nComponents; cmpt++)
+        {
+            if (mesh_.geometricD()[cmpt] == -1)
+            {
+                meshDir[cmpt] = 1;
+            }
+        }
+        const vector normal(vector(0, 0, 1));
+
+        const tensor coordRot = rotationTensor(normal, meshDir);
+
+        dAve_ = coordRot & dAve_;
+        d_ = coordRot & d_;
+    }
+    else if (mesh_.nSolutionD() == 1)
+    {
+        vector meshDir(vector::zero);
+        for (direction cmpt=0; cmpt<vector::nComponents; cmpt++)
+        {
+            if (mesh_.geometricD()[cmpt] == 1)
+            {
+                meshDir[cmpt] = 1;
+            }
+        }
+        const vector normal(vector(1, 0, 0));
+
+        dAve_ = (dAve_ & normal)*meshDir;
+        d_ = (d_ & normal)*meshDir;
+    }
+
+
     autoPtr<volScalarField> IDefaultPtr;
 
     forAll(ILambda_, lambdaI)
@@ -208,13 +244,13 @@ Foam::scalar Foam::radiation::radiativeIntensityRay::correct()
     // Reset boundary heat flux to zero
     qr_.boundaryFieldRef() = 0.0;
 
-    scalar maxResidual = -GREAT;
+    scalar maxResidual = -great;
+
+    const surfaceScalarField Ji(dAve_ & mesh_.Sf());
 
     forAll(ILambda_, lambdaI)
     {
         const volScalarField& k = dom_.aLambda(lambdaI);
-
-        const surfaceScalarField Ji(dAve_ & mesh_.Sf());
 
         fvScalarMatrix IiEq
         (

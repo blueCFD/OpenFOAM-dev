@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,7 @@ Class
 Description
     Mesh motion solver for a polyMesh.
 
-    Scales inbetween motion prescribed on faceZones. Works out per point
+    Scales in between motion prescribed on faceZones. Works out per point
     the distance between the bounding face zones (in all three directions)
     at the start and then every time step
     - moves the faceZones based on tables
@@ -44,7 +44,7 @@ SourceFiles
 #ifndef displacementInterpolationMotionSolver_H
 #define displacementInterpolationMotionSolver_H
 
-#include "displacementMotionSolver.H"
+#include "points0MotionSolver.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,7 +57,7 @@ namespace Foam
 
 class displacementInterpolationMotionSolver
 :
-    public displacementMotionSolver
+    public points0MotionSolver
 {
     // Private data
 

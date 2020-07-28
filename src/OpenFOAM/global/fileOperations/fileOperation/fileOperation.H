@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2017-09-XX blueCAPE Lda: Modifications for blueCFD-Core 2017-1
@@ -44,6 +44,9 @@ Class
 #include "instantList.H"
 #include "fileMonitor.H"
 #include "labelList.H"
+#include "Switch.H"
+#include "tmpNrc.H"
+#include "NamedEnum.T.H"
 
 #if defined(WIN32) || defined(WIN64)
 #include "hacks_on_mingw.h"
@@ -65,9 +68,48 @@ class Time;
 
 class fileOperation
 {
+public:
+
+        //- Enumeration for the location of an IOobject
+        enum pathType
+        {
+            NOTFOUND,               // not found
+            ABSOLUTE,               // instance is absolute directory
+            OBJECT,                 // io.objectPath() exists
+            WRITEOBJECT,            // write path exists
+            PROCUNCOLLATED,         // objectPath exists in processor0
+            PROCBASEOBJECT,         // objectPath exists in specified, constant
+                                    // processorsDir (usually 'processorsDDD')
+            PROCOBJECT,             // objectPath exists in locally differing
+                                    // processorsDir (e.g. 'processorsDDD_0-1')
+            PARENTOBJECT,           // parent of object path
+            FINDINSTANCE,           // file found in time directory
+            PROCUNCOLLATEDINSTANCE, // as PROCUNCOLLATED but with instance
+            PROCBASEINSTANCE,       // as PROCBASEOBJECT but with instance
+            PROCINSTANCE            // as PROCOBJECT but with instance
+        };
+
+        static const NamedEnum<pathType, 12> pathTypeNames_;
+
+        //- Description of processor directory naming:
+        //  - processor directory naming
+        //  - whether directory contains a range
+        //    (so differs on different processors)
+        //  - index in range
+        typedef Tuple2<fileName, Tuple2<pathType, label>> dirIndex;
+
+        typedef List<dirIndex> dirIndexList;
+
+
 protected:
 
     // Protected data
+
+        //- Communicator to use
+        const label comm_;
+
+        //- Detected processors directories
+        mutable HashTable<dirIndexList> procsDirs_;
 
         //- file-change monitor for all registered files
         mutable autoPtr<fileMonitor> monitorPtr_;
@@ -80,34 +122,41 @@ protected:
         //- Sort directory entries according to time value
         static instantList sortTimes(const fileNameList&, const word&);
 
+        //- Merge two times
+        static void mergeTimes
+        (
+            const instantList& extraTimes,
+            const word& constantName,
+            instantList& times
+        );
+
         //- Helper: check for file (isFile) or directory (!isFile)
         static bool isFileOrDir(const bool isFile, const fileName&);
+
+        //- Detect presence of processorsDDD
+        void cacheProcessorsPath(const fileName& fName) const;
+
+        //- Lookup name of processorsDDD using cache. Return empty fileName
+        //  if not found
+        tmpNrc<dirIndexList> lookupProcessorsPath(const fileName&) const;
+
+        //- Does ioobject exist. Is either a directory (empty name()) or
+        //  a file
+        bool exists(IOobject& io) const;
+
 
 public:
 
     // Static data
 
         //- Return the processors directory name (usually "processors")
-        static word processorsDir;
+        static word processorsBaseDir;
 
         //- Default fileHandler
         static word defaultFileHandler;
 
 
     // Public data types
-
-        //- Enumeration for the location of an IOobject
-        enum pathType
-        {
-            NOTFOUND,               // not found
-            ABSOLUTE,               // instance is absolute directory
-            OBJECT,                 // objectPath exists
-            PROCESSORSOBJECT,       // objectPath exists in processors/
-            PARENTOBJECT,           // parent of object path
-            FINDINSTANCE,           // file found in time directory
-            PROCESSORSFINDINSTANCE  // as above but in processors/
-        };
-
 
         //- Runtime type information
         TypeName("fileOperation");
@@ -120,7 +169,7 @@ public:
     // Constructors
 
         //- Construct null
-        fileOperation();
+        fileOperation(const label comm);
 
 
     // Declare run-time constructor selection table
@@ -258,16 +307,16 @@ public:
             //- Remove a file, returning true if successful otherwise false
             virtual bool rm(const fileName&) const = 0;
 
-            //- Remove a dirctory and its contents
+            //- Remove a directory and its contents
             virtual bool rmDir(const fileName&) const = 0;
 
-//            //- Open a shared library. Return handle to library. Print error
-//            //  message if library cannot be loaded (check = true)
-//            virtual void* dlOpen
-//            (
-//                const fileName& lib,
-//                const bool check = true
-//            ) const = 0;
+            // //- Open a shared library. Return handle to library. Print error
+            // //  message if library cannot be loaded (check = true)
+            // virtual void* dlOpen
+            // (
+            //     const fileName& lib,
+            //     const bool check = true
+            // ) const = 0;
 
 
         // (reg)IOobject functinality
@@ -405,6 +454,24 @@ public:
 
         // Other
 
+            //- Actual name of processors dir (for use in mode PROCOBJECT,
+            //  PROCINSTANCE)
+            virtual word processorsDir(const IOobject& io) const
+            {
+                return processorsBaseDir;
+            }
+
+            //- Actual name of processors dir (for use in mode PROCOBJECT,
+            //  PROCINSTANCE)
+            virtual word processorsDir(const fileName&) const
+            {
+                return processorsBaseDir;
+            }
+
+            //- Set number of processor directories/results. Only used in
+            //  decomposePar
+            virtual void setNProcs(const label nProcs);
+
             //- Get number of processor directories/results. Used for e.g.
             //  reconstructPar, argList checking
             virtual label nProcs
@@ -416,9 +483,62 @@ public:
             //- Get sorted list of times
             virtual instantList findTimes(const fileName&, const word&) const;
 
+            //- Find instance where IOobject is. Fails if cannot be found
+            //  and readOpt() is MUST_READ/MUST_READ_IF_MODIFIED. Otherwise
+            //  returns stopInstance.
+            virtual IOobject findInstance
+            (
+                const IOobject& io,
+                const scalar startValue,
+                const word& stopInstance
+            ) const;
+
             //- Callback for time change
             virtual void setTime(const Time&) const
             {}
+
+            //- Forcibly wait until all output done. Flush any cached data
+            virtual void flush() const;
+
+            //- Generate path (like io.path) from root+casename with any
+            //  'processorXXX' replaced by procDir (usually 'processsors')
+            fileName processorsCasePath
+            (
+                const IOobject&,
+                const word& procDir
+            ) const;
+
+            //- Generate path (like io.path) with provided instance and any
+            //  'processorXXX' replaced by procDir (usually 'processsors')
+            fileName processorsPath
+            (
+                const IOobject&,
+                const word& instance,
+                const word& procDir
+            ) const;
+
+            //- Operating on fileName: replace processorXXX with procDir
+            fileName processorsPath(const fileName&, const word& procDir) const;
+
+            //- Split fileName into part before 'processor' and part after.
+            //  Returns -1 or processor number and optionally number
+            //  of processors. Use with care.
+            //  - path/"processor"+Foam::name(proci)/local reconstructs input
+            //  - path/"processors"+Foam::name(nProcs)/local reconstructs
+            //    collated processors equivalence
+            static label splitProcessorPath
+            (
+                const fileName&,
+                fileName& path,
+                fileName& procDir,
+                fileName& local,
+                label& groupStart,
+                label& groupSize,
+                label& nProcs
+            );
+
+            //- Detect processor number from '/aa/bb/processorDDD/cc'
+            static label detectProcessorPath(const fileName&);
 };
 
 
@@ -430,6 +550,14 @@ const fileOperation& fileHandler();
 
 //- Reset file handler
 void fileHandler(autoPtr<fileOperation>&);
+
+//- Recursively search the given directory for the file
+//  returning the path relative to the directory or
+//  fileName::null if not found
+fileName search(const word& file, const fileName& directory);
+
+//- Copy all the files from the source to the target directory
+void cpFiles(const fileName& srcDir, const fileName& targetDir);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

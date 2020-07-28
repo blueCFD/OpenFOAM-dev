@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -144,18 +144,13 @@ int main(int argc, char *argv[])
 
     #include "createPolyMesh.H"
 
-    Random rndGen(653213);
-
     // Determine mesh bounding boxes:
     List<List<treeBoundBox>> meshBb(Pstream::nProcs());
     {
         meshBb[Pstream::myProcNo()] = List<treeBoundBox>
         (
             1,
-            treeBoundBox
-            (
-                boundBox(mesh.points(), false)
-            ).extend(rndGen, 1e-3)
+            treeBoundBox(boundBox(mesh.points(), false)).extend(1e-3)
         );
         Pstream::gatherList(meshBb);
         Pstream::scatterList(meshBb);
@@ -164,7 +159,7 @@ int main(int argc, char *argv[])
     IOobject io
     (
         surfFileName,         // name
-        //runTime.findInstance("triSurface", surfFileName),   // instance
+        // runTime.findInstance("triSurface", surfFileName),   // instance
         runTime.constant(),   // instance
         "triSurface",         // local
         runTime,              // registry
@@ -193,7 +188,7 @@ int main(int argc, char *argv[])
         dictionary dict;
         dict.add("bounds", meshBb[Pstream::myProcNo()]);
         dict.add("distributionType", distType);
-        dict.add("mergeDistance", SMALL);
+        dict.add("mergeDistance", small);
 
         localIOdictionary ioDict
         (

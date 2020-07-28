@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -28,7 +28,7 @@ initialChemicalTimeStep 1e-07;
 odeCoeffs
 {
     solver          seulex;
-    absTol          1e-12;
+    absTol          1e-8;
     relTol          0.01;
 }
 

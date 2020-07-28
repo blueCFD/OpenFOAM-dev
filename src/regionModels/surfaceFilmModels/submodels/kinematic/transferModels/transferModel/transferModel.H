@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,7 +98,7 @@ public:
              transferModel,
              dictionary,
              (
-                surfaceFilmModel& film,
+                surfaceFilmRegionModel& film,
                 const dictionary& dict
              ),
              (film, dict)
@@ -108,13 +108,13 @@ public:
     // Constructors
 
         //- Construct for film
-        transferModel(surfaceFilmModel& film);
+        transferModel(surfaceFilmRegionModel& film);
 
         //- Construct from type name, dictionary and surface film model
         transferModel
         (
             const word& modelType,
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 
@@ -124,7 +124,7 @@ public:
         //- Return a reference to the selected injection model
         static autoPtr<transferModel> New
         (
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict,
             const word& modelType
         );

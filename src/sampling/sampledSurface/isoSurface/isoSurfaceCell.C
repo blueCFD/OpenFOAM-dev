@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,7 +49,7 @@ Foam::scalar Foam::isoSurfaceCell::isoFraction
 {
     scalar d = s1-s0;
 
-    if (mag(d) > VSMALL)
+    if (mag(d) > vSmall)
     {
         return (iso_-s0)/d;
     }
@@ -285,10 +285,8 @@ Foam::pointIndexHit Foam::isoSurfaceCell::collapseSurface
 
         if (shared[0] != -1)
         {
-            vector n0 = tri0.normal(localPoints);
-            n0 /= mag(n0);
-            vector n1 = tri1.normal(localPoints);
-            n1 /= mag(n1);
+            const vector n0 = tri0.normal(localPoints);
+            const vector n1 = tri1.normal(localPoints);
 
             if ((n0 & n1) < 0)
             {
@@ -330,7 +328,7 @@ Foam::pointIndexHit Foam::isoSurfaceCell::collapseSurface
         if (nZones == 1)
         {
             // Check that all normals make a decent angle
-            scalar minCos = GREAT;
+            scalar minCos = great;
             const vector& n0 = surf.faceNormals()[0];
             for (label i = 1; i < surf.size(); i++)
             {
@@ -415,7 +413,7 @@ void Foam::isoSurfaceCell::calcSnappedCc
                 snappedCc[celli] = snappedPoints.size();
                 snappedPoints.append(localPoints[0]);
 
-                //Pout<< "cell:" << celli
+                // Pout<< "cell:" << celli
                 //    << " at " << mesh_.cellCentres()[celli]
                 //    << " collapsing " << localPoints
                 //    << " intersections down to "
@@ -427,7 +425,7 @@ void Foam::isoSurfaceCell::calcSnappedCc
                 snappedCc[celli] = snappedPoints.size();
                 snappedPoints.append(0.5*(localPoints[0]+localPoints[1]));
 
-                //Pout<< "cell:" << celli
+                // Pout<< "cell:" << celli
                 //    << " at " << mesh_.cellCentres()[celli]
                 //    << " collapsing " << localPoints
                 //    << " intersections down to "
@@ -515,7 +513,7 @@ void Foam::isoSurfaceCell::calcSnappedCc
                     snappedCc[celli] = snappedPoints.size();
                     snappedPoints.append(info.hitPoint());
 
-                    //Pout<< "cell:" << celli
+                    // Pout<< "cell:" << celli
                     //    << " at " << mesh_.cellCentres()[celli]
                     //    << " collapsing " << surfPoints
                     //    << " intersections down to "
@@ -644,7 +642,7 @@ void Foam::isoSurfaceCell::genPointTris
     label b = f[f.fcIndex(index)];
     label c = f[f.rcIndex(index)];
 
-    //Pout<< " p0:" << pointi << " b:" << b << " c:" << c
+    // Pout<< " p0:" << pointi << " b:" << b << " c:" << c
     //<< " d:" << ccPointi << endl;
 
     // Get fractions for the three edges emanating from point
@@ -714,7 +712,7 @@ void Foam::isoSurfaceCell::calcSnappedPoint
     }
 
 
-    const point greatPoint(GREAT, GREAT, GREAT);
+    const point greatPoint(great, great, great);
 
     pointField collapsedPoint(mesh_.nPoints(), greatPoint);
 
@@ -823,7 +821,7 @@ void Foam::isoSurfaceCell::calcSnappedPoint
             points.transfer(localTriPoints);
             collapsedPoint[pointi] = sum(points)/points.size();
 
-            //Pout<< "    point:" << pointi
+            // Pout<< "    point:" << pointi
             //    << " replacing coord:" << mesh_.points()[pointi]
             //    << " by average:" << collapsedPoint[pointi] << endl;
         }
@@ -855,7 +853,7 @@ void Foam::isoSurfaceCell::calcSnappedPoint
             if (nZones == 1)
             {
                 // Check that all normals make a decent angle
-                scalar minCos = GREAT;
+                scalar minCos = great;
                 const vector& n0 = surf.faceNormals()[0];
                 for (label i = 1; i < surf.size(); i++)
                 {
@@ -1191,7 +1189,7 @@ void Foam::isoSurfaceCell::calcAddressing
         }
         else
         {
-            //WarningInFunction
+            // WarningInFunction
             //    << "Edge " << edgeI << " with centre " << mergedCentres[edgeI]
             //    << " used by more than two triangles: " << edgeFace0[edgeI]
             //    << ", "

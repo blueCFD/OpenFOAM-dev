@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -157,6 +157,13 @@ Foam::sixDoFRigidBodyMotionSolver::~sixDoFRigidBodyMotionSolver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+const Foam::sixDoFRigidBodyMotion&
+Foam::sixDoFRigidBodyMotionSolver::motion() const
+{
+    return motion_;
+}
+
 
 Foam::tmp<Foam::pointField>
 Foam::sixDoFRigidBodyMotionSolver::curPoints() const

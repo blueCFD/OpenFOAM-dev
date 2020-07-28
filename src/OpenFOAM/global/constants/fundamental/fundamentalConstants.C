@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -121,7 +121,7 @@ defineDimensionedConstantWithDefault
     Foam::dimensionedScalar
     (
         "NA",
-        dimensionSet(0, 0, 0, 0, -1), //Foam::dimless/Foam::dimMoles,
+        dimensionSet(0, 0, 0, 0, -1), // Foam::dimless/Foam::dimMoles,
         6.0221417930e+23
     ),
     constantphysicoChemicalNA,

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,18 +24,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "ode.T.H"
-#include "chemistryModel.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class ChemistryModel>
-Foam::ode<ChemistryModel>::ode
-(
-    const fvMesh& mesh,
-    const word& phaseName
-)
+Foam::ode<ChemistryModel>::ode(typename ChemistryModel::reactionThermo& thermo)
 :
-    chemistrySolver<ChemistryModel>(mesh, phaseName),
+    chemistrySolver<ChemistryModel>(thermo),
     coeffsDict_(this->subDict("odeCoeffs")),
     odeSolver_(ODESolver::New(*this, coeffsDict_)),
     cTp_(this->nEqns())

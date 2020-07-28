@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -129,7 +129,7 @@ void Foam::sampledSets::combineSampledSets
                 samplePts.name(),
                 samplePts.axis(),
                 List<point>(UIndirectList<point>(allPts, indexSets[setI])),
-                allCurveDist
+                scalarList(UIndirectList<scalar>(allCurveDist, indexSets[setI]))
             )
         );
     }

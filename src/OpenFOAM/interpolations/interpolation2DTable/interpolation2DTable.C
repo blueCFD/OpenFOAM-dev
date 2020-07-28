@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -148,6 +148,7 @@ Type Foam::interpolation2DTable<Type>::interpolateValue
                     << "    Continuing with the first entry"
                     << endl;
                 // fall-through to 'CLAMP'
+                [[fallthrough]];
             }
             case interpolation2DTable::CLAMP:
             {
@@ -176,6 +177,7 @@ Type Foam::interpolation2DTable<Type>::interpolateValue
                     << "    Continuing with the last entry"
                     << endl;
                 // fall-through to 'CLAMP'
+                [[fallthrough]];
             }
             case interpolation2DTable::CLAMP:
             {
@@ -252,6 +254,7 @@ Foam::label Foam::interpolation2DTable<Type>::Xi
                     << "value (" << valueX << ") out of bounds"
                     << endl;
                 // fall-through to 'CLAMP'
+                [[fallthrough]];
             }
             case interpolation2DTable::CLAMP:
             {

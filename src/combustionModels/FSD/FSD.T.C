@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,21 +36,21 @@ namespace combustionModels
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class CombThermoType, class ThermoType>
-FSD<CombThermoType, ThermoType>::FSD
+template<class ReactionThermo, class ThermoType>
+FSD<ReactionThermo, ThermoType>::FSD
 (
     const word& modelType,
-    const fvMesh& mesh,
-    const word& combustionProperties,
-    const word& phaseName
+    ReactionThermo& thermo,
+    const compressibleTurbulenceModel& turb,
+    const word& combustionProperties
 )
 :
-    singleStepCombustion<CombThermoType, ThermoType>
+    singleStepCombustion<ReactionThermo, ThermoType>
     (
         modelType,
-        mesh,
-        combustionProperties,
-        phaseName
+        thermo,
+        turb,
+        combustionProperties
     ),
     reactionRateFlameArea_
     (
@@ -65,7 +65,7 @@ FSD<CombThermoType, ThermoType>::FSD
     (
         IOobject
         (
-            IOobject::groupName("ft", phaseName),
+            this->thermo().phasePropertyName("ft"),
             this->mesh().time().timeName(),
             this->mesh(),
             IOobject::NO_READ,
@@ -87,23 +87,23 @@ FSD<CombThermoType, ThermoType>::FSD
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-template<class CombThermoType, class ThermoType>
-FSD<CombThermoType, ThermoType>::~FSD()
+template<class ReactionThermo, class ThermoType>
+FSD<ReactionThermo, ThermoType>::~FSD()
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-template<class CombThermoType, class ThermoType>
-void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
+template<class ReactionThermo, class ThermoType>
+void FSD<ReactionThermo, ThermoType>::calculateSourceNorm()
 {
     this->singleMixturePtr_->fresCorrect();
 
     const label fuelI = this->singleMixturePtr_->fuelIndex();
 
-    const volScalarField& YFuel = this->thermoPtr_->composition().Y()[fuelI];
+    const volScalarField& YFuel = this->thermo().composition().Y()[fuelI];
 
-    const volScalarField& YO2 = this->thermoPtr_->composition().Y("O2");
+    const volScalarField& YO2 = this->thermo().composition().Y("O2");
 
     const dimensionedScalar s = this->singleMixturePtr_->s();
 
@@ -121,8 +121,8 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
 
     dimensionedScalar dMgft = 1.0e-3*
         (ft_*cAux*mgft)().weightedAverage(this->mesh().V())
-       /((ft_*cAux)().weightedAverage(this->mesh().V()) + SMALL)
-      + dimensionedScalar("ddMgft", mgft.dimensions(), SMALL);
+       /((ft_*cAux)().weightedAverage(this->mesh().V()) + small)
+      + dimensionedScalar("ddMgft", mgft.dimensions(), small);
 
     mgft += dMgft;
 
@@ -152,7 +152,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
         (
             IOobject
             (
-                IOobject::groupName("Pc", this->phaseName_),
+                this->thermo().phasePropertyName("Pc"),
                 U.time().timeName(),
                 U.db(),
                 IOobject::NO_READ,
@@ -171,7 +171,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
         (
             IOobject
             (
-                IOobject::groupName("omegaFuelBar", this->phaseName_),
+                this->thermo().phasePropertyName("omegaFuelBar"),
                 U.time().timeName(),
                 U.db(),
                 IOobject::NO_READ,
@@ -218,7 +218,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
         {
             scalar ftCell = ft_[celli];
 
-            if (ftVar[celli] > ftVarMin_) //sub-grid beta pdf of ft_
+            if (ftVar[celli] > ftVarMin_) // sub-grid beta pdf of ft_
             {
                 scalar ftVarc = ftVar[celli];
                 scalar a =
@@ -302,7 +302,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
         (
             IOobject
             (
-                IOobject::groupName("products", this->phaseName_),
+                this->thermo().phasePropertyName("products"),
                 U.time().timeName(),
                 U.db(),
                 IOobject::NO_READ,
@@ -318,7 +318,7 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
     forAll(productsIndex, j)
     {
         label specieI = productsIndex[j];
-        const volScalarField& Yp = this->thermoPtr_->composition().Y()[specieI];
+        const volScalarField& Yp = this->thermo().composition().Y()[specieI];
         products += Yp;
     }
 
@@ -335,8 +335,8 @@ void FSD<CombThermoType, ThermoType>::calculateSourceNorm()
 }
 
 
-template<class CombThermoType, class ThermoType>
-void FSD<CombThermoType, ThermoType>::correct()
+template<class ReactionThermo, class ThermoType>
+void FSD<ReactionThermo, ThermoType>::correct()
 {
     this->wFuel_ ==
         dimensionedScalar("zero", dimMass/pow3(dimLength)/dimTime, 0.0);
@@ -348,10 +348,10 @@ void FSD<CombThermoType, ThermoType>::correct()
 }
 
 
-template<class CombThermoType, class ThermoType>
-bool FSD<CombThermoType, ThermoType>::read()
+template<class ReactionThermo, class ThermoType>
+bool FSD<ReactionThermo, ThermoType>::read()
 {
-    if (singleStepCombustion<CombThermoType, ThermoType>::read())
+    if (singleStepCombustion<ReactionThermo, ThermoType>::read())
     {
         this->coeffs().lookup("Cv") >> Cv_ ;
         this->coeffs().lookup("ftVarMin") >> ftVarMin_;

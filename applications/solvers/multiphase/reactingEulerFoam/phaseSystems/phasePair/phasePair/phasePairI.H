@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,9 +37,179 @@ inline const Foam::phaseModel& Foam::phasePair::phase2() const
 }
 
 
+inline bool Foam::phasePair::contains(const phaseModel& phase) const
+{
+    return &phase1_ == &phase || & phase2_ == &phase;
+}
+
+
+inline const Foam::phaseModel& Foam::phasePair::otherPhase
+(
+    const phaseModel& phase
+) const
+{
+    if (&phase1_ == &phase)
+    {
+        return phase2_;
+    }
+    else if (&phase2_ == &phase)
+    {
+        return phase1_;
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "this phasePair does not contain phase " << phase.name()
+            << exit(FatalError);
+
+        return phase;
+    }
+}
+
+
+inline Foam::label Foam::phasePair::index(const phaseModel& phase) const
+{
+    if (&phase1_ == &phase)
+    {
+        return 0;
+    }
+    else if (&phase2_ == &phase)
+    {
+        return 1;
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "this phasePair does not contain phase " << phase.name()
+            << exit(FatalError);
+
+        return -1;
+    }
+}
+
+
 inline const Foam::uniformDimensionedVectorField& Foam::phasePair::g() const
 {
     return g_;
+}
+
+
+// * * * * * * * * * * * * * * * * Iterators * * * * * * * * * * * * * * * * //
+
+inline Foam::phasePair::const_iterator::const_iterator
+(
+    const phasePair& pair,
+    const label index
+)
+:
+    pair_(pair),
+    index_(index)
+{}
+
+
+inline Foam::phasePair::const_iterator::const_iterator(const phasePair& pair)
+:
+    const_iterator(pair, 0)
+{}
+
+
+inline Foam::label Foam::phasePair::const_iterator::index() const
+{
+    return index_;
+}
+
+
+inline bool Foam::phasePair::const_iterator::operator==
+(
+    const const_iterator& iter
+) const
+{
+    return (this->index_ == iter.index_);
+}
+
+
+inline bool Foam::phasePair::const_iterator::operator!=
+(
+    const const_iterator& iter
+) const
+{
+    return !(this->operator==(iter));
+}
+
+
+inline const Foam::phaseModel&
+Foam::phasePair::const_iterator::operator*() const
+{
+    if (index_ == 0)
+    {
+        return pair_.phase1_;
+    }
+    else
+    {
+        return pair_.phase2_;
+    }
+}
+
+
+inline const Foam::phaseModel&
+Foam::phasePair::const_iterator::operator()() const
+{
+    return operator*();
+}
+
+
+inline const Foam::phaseModel&
+Foam::phasePair::const_iterator::otherPhase() const
+{
+    if (index_ == 0)
+    {
+        return pair_.phase2_;
+    }
+    else
+    {
+        return pair_.phase1_;
+    }
+}
+
+
+inline Foam::phasePair::const_iterator&
+Foam::phasePair::const_iterator::operator++()
+{
+    index_++;
+    return *this;
+}
+
+
+inline Foam::phasePair::const_iterator
+Foam::phasePair::const_iterator::operator++(int)
+{
+    const_iterator old = *this;
+    this->operator++();
+    return old;
+}
+
+
+inline Foam::phasePair::const_iterator Foam::phasePair::cbegin() const
+{
+    return const_iterator(*this);
+}
+
+
+inline Foam::phasePair::const_iterator Foam::phasePair::cend() const
+{
+    return const_iterator(*this, 2);
+}
+
+
+inline Foam::phasePair::const_iterator Foam::phasePair::begin() const
+{
+    return const_iterator(*this);
+}
+
+
+inline Foam::phasePair::const_iterator Foam::phasePair::end() const
+{
+    return const_iterator(*this, 2);
 }
 
 

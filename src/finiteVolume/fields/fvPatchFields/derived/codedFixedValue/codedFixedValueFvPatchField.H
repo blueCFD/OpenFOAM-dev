@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,6 @@ License
 Class
     Foam::codedFixedValueFvPatchField
 
-Group
-    grpGenericBoundaryConditions
-
 Description
     Constructs on-the-fly a new boundary condition (derived from
     fixedValueFvPatchField) which is then used to evaluate.
@@ -45,12 +42,12 @@ Usage
             operator==(min(10, 0.1*this->db().time().value()));
         #};
 
-        //codeInclude
+        // codeInclude
         //#{
         //    #include "fvCFD.H"
         //#};
 
-        //codeOptions
+        // codeOptions
         //#{
         //    -I$(LIB_SRC)/finiteVolume/lnInclude
         //#};

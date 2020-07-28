@@ -32,8 +32,10 @@ components/components.C
 randomise/randomise.C
 div/div.C
 grad/grad.C
+ddt/ddt.C
 mag/mag.C
 magSqr/magSqr.C
+scale/scale.C
 vorticity/vorticity.C
 enstrophy/enstrophy.C
 Q/Q.C
@@ -47,8 +49,10 @@ MachNo/MachNo.C
 
 turbulenceFields/turbulenceFields.C
 yPlus/yPlus.C
+turbulenceIntensity/turbulenceIntensity.C
 wallShearStress/wallShearStress.C
 wallHeatFlux/wallHeatFlux.C
+wallHeatTransferCoeff/wallHeatTransferCoeff.C
 
 writeCellCentres/writeCellCentres.C
 writeCellVolumes/writeCellVolumes.C

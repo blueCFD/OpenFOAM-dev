@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 blueCAPE: Avoid defining 'GNU_SOURCE' for MinGW builds.
@@ -143,7 +143,7 @@ Foam::label Foam::scotchDecomp::decompose
                 scalarField nbrWeights(fromSlave);
 
                 // Append.
-                //label procStart = nTotalCells;
+                // label procStart = nTotalCells;
                 forAll(nbrXadj, celli)
                 {
                     allXadj[nTotalCells] = nTotalConnections+nbrXadj[celli];
@@ -284,9 +284,9 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
                 Info<< "scotchDecomp : Using strategy " << strategy << endl;
             }
             SCOTCH_stratGraphMap(&stradat, strategy.c_str());
-            //fprintf(stdout, "S\tStrat=");
-            //SCOTCH_stratSave(&stradat, stdout);
-            //fprintf(stdout, "\n");
+            // fprintf(stdout, "S\tStrat=");
+            // SCOTCH_stratSave(&stradat, stdout);
+            // fprintf(stdout, "\n");
         }
     }
 
@@ -407,23 +407,23 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
         //  numbers!
         //
         ////- Set up variable sizes architecture
-        //check
+        // check
         //(
         //    SCOTCH_archVcmplt(&archdat),
         //    "SCOTCH_archVcmplt"
         //);
         //
         ////- Stategy flags: go for quality or load balance (or leave default)
-        //SCOTCH_Num straval = 0;
+        // SCOTCH_Num straval = 0;
         ////straval |= SCOTCH_STRATQUALITY;
         ////straval |= SCOTCH_STRATQUALITY;
         //
         ////- Number of cells per agglomeration
         ////SCOTCH_Num agglomSize = SCOTCH_archSize(&archdat);
-        //SCOTCH_Num agglomSize = 3;
+        // SCOTCH_Num agglomSize = 3;
         //
         ////- Build strategy for agglomeration
-        //check
+        // check
         //(
         //    SCOTCH_stratGraphClusterBuild
         //    (
@@ -438,10 +438,10 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
     }
 
 
-    //SCOTCH_Mapping mapdat;
-    //SCOTCH_graphMapInit(&grafdat, &mapdat, &archdat, nullptr);
-    //SCOTCH_graphMapCompute(&grafdat, &mapdat, &stradat); /* Perform mapping */
-    //SCOTCH_graphMapExit(&grafdat, &mapdat);
+    // SCOTCH_Mapping mapdat;
+    // SCOTCH_graphMapInit(&grafdat, &mapdat, &archdat, nullptr);
+    // SCOTCH_graphMapCompute(&grafdat, &mapdat, &stradat); // Perform mapping
+    // SCOTCH_graphMapExit(&grafdat, &mapdat);
 
 
     // Hack:switch off fpu error trapping
@@ -474,8 +474,8 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
 
 
 
-    //finalDecomp.setSize(xadj.size()-1);
-    //check
+    // finalDecomp.setSize(xadj.size()-1);
+    // check
     //(
     //    SCOTCH_graphPart
     //    (

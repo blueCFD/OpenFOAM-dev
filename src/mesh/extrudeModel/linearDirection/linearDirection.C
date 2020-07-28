@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,7 +74,7 @@ point linearDirection::operator()
     const label layer
 ) const
 {
-    //scalar d = thickness_*layer/nLayers_;
+    // scalar d = thickness_*layer/nLayers_;
     scalar d = thickness_*sumThickness(layer);
     return surfacePoint + d*direction_;
 }

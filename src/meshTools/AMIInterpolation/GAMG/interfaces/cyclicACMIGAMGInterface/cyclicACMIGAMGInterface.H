@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,8 +35,7 @@ SourceFiles
 #ifndef cyclicACMIGAMGInterface_H
 #define cyclicACMIGAMGInterface_H
 
-#include "GAMGInterface.T.H"
-#include "cyclicACMILduInterface.H"
+#include "cyclicAMIGAMGInterface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,28 +48,8 @@ namespace Foam
 
 class cyclicACMIGAMGInterface
 :
-    public GAMGInterface,
-    virtual public cyclicACMILduInterface
+    public cyclicAMIGAMGInterface
 {
-    // Private data
-
-        //- Reference for the cyclicLduInterface from which this is
-        //  agglomerated
-        const cyclicACMILduInterface& fineCyclicACMIInterface_;
-
-        //- AMI interface
-        autoPtr<AMIPatchToPatchInterpolation> amiPtr_;
-
-
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        cyclicACMIGAMGInterface(const cyclicACMIGAMGInterface&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const cyclicACMIGAMGInterface&);
-
-
 public:
 
     //- Runtime type information
@@ -95,68 +74,6 @@ public:
 
     //- Destructor
     virtual ~cyclicACMIGAMGInterface();
-
-
-    // Member Functions
-
-        // Interface transfer functions
-
-            //- Transfer and return internal field adjacent to the interface
-            virtual tmp<labelField> internalFieldTransfer
-            (
-                const Pstream::commsTypes commsType,
-                const labelUList& iF
-            ) const;
-
-
-        //- Cyclic interface functions
-
-            //- Return neigbour processor number
-            virtual label neighbPatchID() const
-            {
-                return fineCyclicACMIInterface_.neighbPatchID();
-            }
-
-            virtual bool owner() const
-            {
-                return fineCyclicACMIInterface_.owner();
-            }
-
-            virtual const cyclicACMIGAMGInterface& neighbPatch() const
-            {
-                return dynamic_cast<const cyclicACMIGAMGInterface&>
-                (
-                    coarseInterfaces_[neighbPatchID()]
-                );
-            }
-
-            virtual const AMIPatchToPatchInterpolation& AMI() const
-            {
-                return amiPtr_();
-            }
-
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
-            {
-                return fineCyclicACMIInterface_.forwardT();
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return fineCyclicACMIInterface_.reverseT();
-            }
-
-
-        // I/O
-
-            //- Write to stream
-            virtual void write(Ostream&) const
-            {
-                //TBD. How to serialise the AMI such that we can stream
-                // cyclicACMIGAMGInterface.
-                NotImplemented;
-            }
 };
 
 

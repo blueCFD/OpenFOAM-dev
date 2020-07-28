@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,7 +76,7 @@ Foam::LESModel<BasicTurbulenceModel>::LESModel
             "kMin",
             LESDict_,
             sqr(dimVelocity),
-            SMALL
+            small
         )
     ),
 
@@ -87,7 +87,7 @@ Foam::LESModel<BasicTurbulenceModel>::LESModel
             "epsilonMin",
             LESDict_,
             kMin_.dimensions()/dimTime,
-            SMALL
+            small
         )
     ),
 
@@ -98,7 +98,7 @@ Foam::LESModel<BasicTurbulenceModel>::LESModel
             "omegaMin",
             LESDict_,
             dimless/dimTime,
-            SMALL
+            small
         )
     ),
 
@@ -106,7 +106,7 @@ Foam::LESModel<BasicTurbulenceModel>::LESModel
     (
         LESdelta::New
         (
-            IOobject::groupName("delta", U.group()),
+            IOobject::groupName("delta", alphaRhoPhi.group()),
             *this,
             LESDict_
         )
@@ -141,7 +141,7 @@ Foam::LESModel<BasicTurbulenceModel>::New
         (
             IOobject
             (
-                IOobject::groupName(propertiesName, U.group()),
+                IOobject::groupName(propertiesName, alphaRhoPhi.group()),
                 U.time().constant(),
                 U.db(),
                 IOobject::MUST_READ_IF_MODIFIED,

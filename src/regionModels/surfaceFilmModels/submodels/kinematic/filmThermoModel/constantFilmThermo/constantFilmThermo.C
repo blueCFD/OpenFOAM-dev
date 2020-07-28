@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ void constantFilmThermo::init(thermoData& td)
 
 constantFilmThermo::constantFilmThermo
 (
-    surfaceFilmModel& film,
+    surfaceFilmRegionModel& film,
     const dictionary& dict
 )
 :
@@ -72,6 +72,7 @@ constantFilmThermo::constantFilmThermo
     sigma0_("sigma0"),
     Cp0_("Cp0"),
     kappa0_("kappa0"),
+    D0_("D0"),
     hl0_("hl0"),
     pv0_("pv0"),
     W0_("W0"),
@@ -82,6 +83,7 @@ constantFilmThermo::constantFilmThermo
     init(sigma0_);
     init(Cp0_);
     init(kappa0_);
+    init(D0_);
     init(hl0_);
     init(pv0_);
     init(W0_);

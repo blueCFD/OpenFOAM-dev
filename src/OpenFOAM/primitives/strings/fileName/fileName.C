@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: Added hack for 'isAbsolute()' to properly detect absolute
@@ -39,7 +39,6 @@ Modifications
 #include "wordList.H"
 #include "DynamicList.T.H"
 #include "OSspecific.H"
-#include "fileOperation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -449,35 +448,6 @@ Foam::fileName Foam::operator/(const string& a, const string& b)
             return fileName();
         }
     }
-}
-
-
-// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
-
-Foam::fileName Foam::search(const word& file, const fileName& directory)
-{
-    // Search the current directory for the file
-    fileNameList files(fileHandler().readDir(directory));
-    forAll(files, i)
-    {
-        if (files[i] == file)
-        {
-            return directory/file;
-        }
-    }
-
-    // If not found search each of the sub-directories
-    fileNameList dirs(fileHandler().readDir(directory, fileName::DIRECTORY));
-    forAll(dirs, i)
-    {
-        fileName path = search(file, directory/dirs[i]);
-        if (path != fileName::null)
-        {
-            return path;
-        }
-    }
-
-    return fileName::null;
 }
 
 

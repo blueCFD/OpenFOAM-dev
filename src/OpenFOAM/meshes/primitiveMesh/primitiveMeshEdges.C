@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -251,7 +251,7 @@ void Foam::primitiveMesh::calcEdges(const bool doFaceEdges) const
             nInternalEdges_ = es.size()-nExtEdges;
             nInternal1Edges_ = nInternal0Edges_+nInt1Edges;
 
-            //Pout<< "Edge overview:" << nl
+            // Pout<< "Edge overview:" << nl
             //    << "    total number of edges           : " << es.size()
             //    << nl
             //    << "    boundary edges                  : " << nExtEdges
@@ -266,7 +266,7 @@ void Foam::primitiveMesh::calcEdges(const bool doFaceEdges) const
         }
 
 
-        // Like faces sort edges in order of increasing neigbouring point.
+        // Like faces sort edges in order of increasing neighbouring point.
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Automatically if points are sorted into internal and external points
         // the edges will be sorted into
@@ -503,7 +503,7 @@ const Foam::edgeList& Foam::primitiveMesh::edges() const
 {
     if (!edgesPtr_)
     {
-        //calcEdges(true);
+        // calcEdges(true);
         calcEdges(false);
     }
 
@@ -514,7 +514,7 @@ const Foam::labelListList& Foam::primitiveMesh::pointEdges() const
 {
     if (!pePtr_)
     {
-        //calcEdges(true);
+        // calcEdges(true);
         calcEdges(false);
     }
 
@@ -532,7 +532,7 @@ const Foam::labelListList& Foam::primitiveMesh::faceEdges() const
                 << "calculating faceEdges" << endl;
         }
 
-        //calcEdges(true);
+        // calcEdges(true);
         const faceList& fcs = faces();
         const labelListList& pe = pointEdges();
         const edgeList& es = edges();

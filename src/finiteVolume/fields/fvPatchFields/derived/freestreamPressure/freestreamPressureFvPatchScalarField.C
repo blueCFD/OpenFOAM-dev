@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,10 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "freestreamPressureFvPatchScalarField.H"
-#include "freestreamFvPatchFields.H"
-#include "fvPatchFieldMapper.H"
 #include "volFields.H"
-#include "surfaceFields.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -39,10 +36,9 @@ freestreamPressureFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    zeroGradientFvPatchScalarField(p, iF),
+    mixedFvPatchScalarField(p, iF),
     UName_("U"),
-    phiName_("phi"),
-    rhoName_("rho")
+    supersonic_(false)
 {}
 
 
@@ -54,53 +50,69 @@ freestreamPressureFvPatchScalarField
     const dictionary& dict
 )
 :
-    zeroGradientFvPatchScalarField(p, iF, dict),
+    mixedFvPatchScalarField(p, iF),
     UName_(dict.lookupOrDefault<word>("U", "U")),
-    phiName_(dict.lookupOrDefault<word>("phi", "phi")),
-    rhoName_(dict.lookupOrDefault<word>("rho", "rho"))
-{}
+    supersonic_
+    (
+        dict.lookupOrDefault<Switch>("supersonic", false)
+    )
+{
+    freestreamValue() = scalarField("freestreamValue", dict, p.size());
+
+    if (dict.found("value"))
+    {
+        fvPatchScalarField::operator=
+        (
+            scalarField("value", dict, p.size())
+        );
+    }
+    else
+    {
+        fvPatchScalarField::operator=(freestreamValue());
+    }
+
+    refGrad() = Zero;
+    valueFraction() = 0;
+}
 
 
 Foam::freestreamPressureFvPatchScalarField::
 freestreamPressureFvPatchScalarField
 (
-    const freestreamPressureFvPatchScalarField& ptf,
+    const freestreamPressureFvPatchScalarField& psf,
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
 :
-    zeroGradientFvPatchScalarField(ptf, p, iF, mapper),
-    UName_(ptf.UName_),
-    phiName_(ptf.phiName_),
-    rhoName_(ptf.rhoName_)
+    mixedFvPatchScalarField(psf, p, iF, mapper),
+    UName_(psf.UName_),
+    supersonic_(psf.supersonic_)
 {}
 
 
 Foam::freestreamPressureFvPatchScalarField::
 freestreamPressureFvPatchScalarField
 (
-    const freestreamPressureFvPatchScalarField& wbppsf
+    const freestreamPressureFvPatchScalarField& psf
 )
 :
-    zeroGradientFvPatchScalarField(wbppsf),
-    UName_(wbppsf.UName_),
-    phiName_(wbppsf.phiName_),
-    rhoName_(wbppsf.rhoName_)
+    mixedFvPatchScalarField(psf),
+    UName_(psf.UName_),
+    supersonic_(psf.supersonic_)
 {}
 
 
 Foam::freestreamPressureFvPatchScalarField::
 freestreamPressureFvPatchScalarField
 (
-    const freestreamPressureFvPatchScalarField& wbppsf,
+    const freestreamPressureFvPatchScalarField& psf,
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    zeroGradientFvPatchScalarField(wbppsf, iF),
-    UName_(wbppsf.UName_),
-    phiName_(wbppsf.phiName_),
-    rhoName_(wbppsf.rhoName_)
+    mixedFvPatchScalarField(psf, iF),
+    UName_(psf.UName_),
+    supersonic_(psf.supersonic_)
 {}
 
 
@@ -113,40 +125,22 @@ void Foam::freestreamPressureFvPatchScalarField::updateCoeffs()
         return;
     }
 
-    const freestreamFvPatchVectorField& Up =
-        refCast<const freestreamFvPatchVectorField>
+    const Field<vector>& Up =
+        patch().template lookupPatchField<volVectorField, vector>
         (
-            patch().lookupPatchField<volVectorField, vector>(UName_)
+            UName_
         );
 
-    surfaceScalarField& phi =
-        db().lookupObjectRef<surfaceScalarField>(phiName_);
-
-    fvsPatchField<scalar>& phip =
-        patch().patchField<surfaceScalarField, scalar>(phi);
-
-    if (phi.dimensions() == dimVelocity*dimArea)
+    if (supersonic_)
     {
-        phip = patch().Sf() & Up.freestreamValue();
-    }
-    else if (phi.dimensions() == dimDensity*dimVelocity*dimArea)
-    {
-        const fvPatchField<scalar>& rhop =
-            patch().lookupPatchField<volScalarField, scalar>(rhoName_);
-
-        phip = rhop*(patch().Sf() & Up.freestreamValue());
+        valueFraction() = 0.5 - 0.5*(Up & patch().nf())/mag(Up);
     }
     else
     {
-        FatalErrorInFunction
-            << "dimensions of phi are not correct"
-            << "\n    on patch " << this->patch().name()
-            << " of field " << this->internalField().name()
-            << " in file " << this->internalField().objectPath()
-            << exit(FatalError);
+        valueFraction() = 0.5 + 0.5*(Up & patch().nf())/mag(Up);
     }
 
-    zeroGradientFvPatchScalarField::updateCoeffs();
+    mixedFvPatchField<scalar>::updateCoeffs();
 }
 
 
@@ -154,8 +148,8 @@ void Foam::freestreamPressureFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
     writeEntryIfDifferent<word>(os, "U", "U", UName_);
-    writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
-    writeEntryIfDifferent<word>(os, "rho", "rho", rhoName_);
+    freestreamValue().writeEntry("freestreamValue", os);
+    os.writeKeyword("supersonic") << supersonic_ << token::END_STATEMENT << nl;
     writeEntry("value", os);
 }
 

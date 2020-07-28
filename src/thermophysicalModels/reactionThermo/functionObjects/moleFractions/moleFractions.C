@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,11 +36,18 @@ void Foam::moleFractions<ThermoType>::calculateMoleFractions()
 
     const PtrList<volScalarField>& Y = thermo.composition().Y();
 
-    const volScalarField W(thermo.composition().W());
+    const volScalarField W(thermo.W());
 
     forAll(Y, i)
     {
-        X_[i] = W*Y[i]/thermo.composition().W(i);
+        const dimensionedScalar Wi
+        (
+            "W",
+            dimMass/dimMoles,
+            thermo.composition().W(i)
+        );
+
+        X_[i] = W*Y[i]/Wi;
     }
 }
 

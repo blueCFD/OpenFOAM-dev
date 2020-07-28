@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -364,9 +364,17 @@ void createFaces
         {
             const polyPatch& pp = pbm[patchi];
 
-            label newPatchi = newMasterPatches[i];
+            const label newMasterPatchi = newMasterPatches[i];
+            const label newSlavePatchi = newSlavePatches[i];
 
-            if (pp.coupled() && pbm[newPatchi].coupled())
+            if
+            (
+                pp.coupled()
+             && (
+                    pbm[newMasterPatchi].coupled()
+                 || pbm[newSlavePatchi].coupled()
+                )
+            )
             {
                 // Do not allow coupled faces to be moved to different
                 // coupled patches.
@@ -387,12 +395,14 @@ void createFaces
                                 << "Found boundary face (in patch "
                                 << pp.name()
                                 << ") in faceZone " << fZone.name()
-                                << " to convert to baffle patch "
-                                << pbm[newPatchi].name()
+                                << " to convert to baffle patches "
+                                << pbm[newMasterPatchi].name() << "/"
+                                << pbm[newSlavePatchi].name()
                                 << endl
-                                << "    Run with -internalFacesOnly option"
-                                << " if you don't wish to convert"
-                                << " boundary faces." << endl;
+                                << "    Set internalFacesOnly to true in the"
+                                << " createBaffles control dictionary if you"
+                                << " don't wish to convert boundary faces."
+                                << endl;
                         }
 
                         modifyOrAddFace
@@ -402,11 +412,14 @@ void createFaces
                             facei,                      // label of face
                             mesh.faceOwner()[facei],    // owner
                             false,                      // face flip
-                            newPatchi,                  // patch for face
+                            fZone.flipMap()[zoneFacei]
+                          ? newSlavePatchi
+                          : newMasterPatchi,            // patch for face
                             fZone.index(),              // zone for face
                             fZone.flipMap()[zoneFacei], // face flip in zone
                             modifiedFace                // modify or add
                         );
+
                         nModified++;
                     }
                 }
@@ -442,7 +455,7 @@ int main(int argc, char *argv[])
 
     Switch internalFacesOnly(false);
 
-    Switch noFields(false);
+    Switch fields(false);
 
     PtrList<faceSelection> selectors;
     {
@@ -450,7 +463,7 @@ int main(int argc, char *argv[])
         IOdictionary dict(dictIO);
 
         dict.lookup("internalFacesOnly") >> internalFacesOnly;
-        noFields = dict.lookupOrDefault("noFields", false);
+        fields = dict.lookupOrDefault("fields", false);
 
         const dictionary& selectionsDict = dict.subDict("baffles");
 
@@ -487,39 +500,37 @@ int main(int argc, char *argv[])
     // Read objects in time directory
     IOobjectList objects(mesh, runTime.timeName());
 
-    // Read vol fields.
-    Info<< "Reading geometric fields" << nl << endl;
+    if (fields) Info<< "Reading geometric fields" << nl << endl;
+
     PtrList<volScalarField> vsFlds;
-    if (!noFields) ReadFields(mesh, objects, vsFlds);
+    if (fields) ReadFields(mesh, objects, vsFlds);
 
     PtrList<volVectorField> vvFlds;
-    if (!noFields) ReadFields(mesh, objects, vvFlds);
+    if (fields) ReadFields(mesh, objects, vvFlds);
 
     PtrList<volSphericalTensorField> vstFlds;
-    if (!noFields) ReadFields(mesh, objects, vstFlds);
+    if (fields) ReadFields(mesh, objects, vstFlds);
 
     PtrList<volSymmTensorField> vsymtFlds;
-    if (!noFields) ReadFields(mesh, objects, vsymtFlds);
+    if (fields) ReadFields(mesh, objects, vsymtFlds);
 
     PtrList<volTensorField> vtFlds;
-    if (!noFields) ReadFields(mesh, objects, vtFlds);
-
-    // Read surface fields.
+    if (fields) ReadFields(mesh, objects, vtFlds);
 
     PtrList<surfaceScalarField> ssFlds;
-    if (!noFields) ReadFields(mesh, objects, ssFlds);
+    if (fields) ReadFields(mesh, objects, ssFlds);
 
     PtrList<surfaceVectorField> svFlds;
-    if (!noFields) ReadFields(mesh, objects, svFlds);
+    if (fields) ReadFields(mesh, objects, svFlds);
 
     PtrList<surfaceSphericalTensorField> sstFlds;
-    if (!noFields) ReadFields(mesh, objects, sstFlds);
+    if (fields) ReadFields(mesh, objects, sstFlds);
 
     PtrList<surfaceSymmTensorField> ssymtFlds;
-    if (!noFields) ReadFields(mesh, objects, ssymtFlds);
+    if (fields) ReadFields(mesh, objects, ssymtFlds);
 
     PtrList<surfaceTensorField> stFlds;
-    if (!noFields) ReadFields(mesh, objects, stFlds);
+    if (fields) ReadFields(mesh, objects, stFlds);
 
 
 
@@ -650,7 +661,7 @@ int main(int argc, char *argv[])
     // Pass 1: add patches
     // ~~~~~~~~~~~~~~~~~~~
 
-    //HashSet<word> addedPatches;
+    // HashSet<word> addedPatches;
     {
         const polyBoundaryMesh& pbm = mesh.boundaryMesh();
         forAll(selectors, selectorI)
@@ -674,7 +685,7 @@ int main(int argc, char *argv[])
                         // Note: do not set coupleGroup if constructed from
                         //       baffles so you have freedom specifying it
                         //       yourself.
-                        //patchDict.set("coupleGroup", groupName);
+                        // patchDict.set("coupleGroup", groupName);
 
                         addPatch(mesh, patchName, groupName, patchDict);
                     }

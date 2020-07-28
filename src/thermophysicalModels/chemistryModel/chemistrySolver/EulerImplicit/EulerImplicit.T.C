@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,17 +26,17 @@ License
 #include "EulerImplicit.T.H"
 #include "addToRunTimeSelectionTable.H"
 #include "simpleMatrix.H"
+#include "Reaction.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class ChemistryModel>
 Foam::EulerImplicit<ChemistryModel>::EulerImplicit
 (
-    const fvMesh& mesh,
-    const word& phaseName
+    typename ChemistryModel::reactionThermo& thermo
 )
 :
-    chemistrySolver<ChemistryModel>(mesh, phaseName),
+    chemistrySolver<ChemistryModel>(thermo),
     coeffsDict_(this->subDict("EulerImplicitCoeffs")),
     cTauChem_(readScalar(coeffsDict_.lookup("cTauChem"))),
     eqRateLimiter_(coeffsDict_.lookup("equilibriumRateLimiter")),
@@ -144,7 +144,7 @@ void Foam::EulerImplicit<ChemistryModel>::solve
     }
 
     // Calculate the stable/accurate time-step
-    scalar tMin = GREAT;
+    scalar tMin = great;
 
     for (label i=0; i<nSpecie; i++)
     {
@@ -154,13 +154,13 @@ void Foam::EulerImplicit<ChemistryModel>::solve
             d -= RR(i, j)*c[j];
         }
 
-        if (d < -SMALL)
+        if (d < -small)
         {
-            tMin = min(tMin, -(c[i] + SMALL)/d);
+            tMin = min(tMin, -(c[i] + small)/d);
         }
         else
         {
-            d = max(d, SMALL);
+            d = max(d, small);
             const scalar cm = max(cTot - c[i], 1e-5);
             tMin = min(tMin, cm/d);
         }

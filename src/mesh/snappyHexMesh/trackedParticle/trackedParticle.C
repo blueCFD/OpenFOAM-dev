@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,6 +117,7 @@ Foam::trackedParticle::trackedParticle
 
 bool Foam::trackedParticle::move
 (
+    Cloud<trackedParticle>& cloud,
     trackingData& td,
     const scalar trackTime
 )
@@ -125,7 +126,7 @@ bool Foam::trackedParticle::move
 
     scalar tEnd = (1.0 - stepFraction())*trackTime;
 
-    if (tEnd <= SMALL && onBoundaryFace())
+    if (tEnd <= small && onBoundaryFace())
     {
         // This is a hack to handle particles reaching their endpoint
         // on a processor boundary. If the endpoint is on a processor face
@@ -144,7 +145,8 @@ bool Foam::trackedParticle::move
             td.maxLevel_[cell()] = max(td.maxLevel_[cell()], level_);
 
             const scalar f = 1 - stepFraction();
-            trackToFace(f*(end_ - start_), f, td);
+            const vector s = end_ - start_;
+            trackToAndHitFace(f*s, f, cloud, td);
         }
     }
 
@@ -152,14 +154,7 @@ bool Foam::trackedParticle::move
 }
 
 
-bool Foam::trackedParticle::hitPatch
-(
-    const polyPatch&,
-    trackingData& td,
-    const label patchi,
-    const scalar trackFraction,
-    const tetIndices& tetIs
-)
+bool Foam::trackedParticle::hitPatch(Cloud<trackedParticle>&, trackingData&)
 {
     return false;
 }
@@ -167,7 +162,7 @@ bool Foam::trackedParticle::hitPatch
 
 void Foam::trackedParticle::hitWedgePatch
 (
-    const wedgePolyPatch&,
+    Cloud<trackedParticle>&,
     trackingData& td
 )
 {
@@ -178,7 +173,7 @@ void Foam::trackedParticle::hitWedgePatch
 
 void Foam::trackedParticle::hitSymmetryPlanePatch
 (
-    const symmetryPlanePolyPatch&,
+    Cloud<trackedParticle>&,
     trackingData& td
 )
 {
@@ -189,7 +184,7 @@ void Foam::trackedParticle::hitSymmetryPlanePatch
 
 void Foam::trackedParticle::hitSymmetryPatch
 (
-    const symmetryPolyPatch&,
+    Cloud<trackedParticle>&,
     trackingData& td
 )
 {
@@ -200,7 +195,7 @@ void Foam::trackedParticle::hitSymmetryPatch
 
 void Foam::trackedParticle::hitCyclicPatch
 (
-    const cyclicPolyPatch&,
+    Cloud<trackedParticle>&,
     trackingData& td
 )
 {
@@ -211,7 +206,19 @@ void Foam::trackedParticle::hitCyclicPatch
 
 void Foam::trackedParticle::hitCyclicAMIPatch
 (
-    const cyclicAMIPolyPatch&,
+    Cloud<trackedParticle>&,
+    trackingData& td,
+    const vector& direction
+)
+{
+    // Remove particle
+    td.keepParticle = false;
+}
+
+
+void Foam::trackedParticle::hitCyclicACMIPatch
+(
+    Cloud<trackedParticle>&,
     trackingData& td,
     const vector&
 )
@@ -223,7 +230,7 @@ void Foam::trackedParticle::hitCyclicAMIPatch
 
 void Foam::trackedParticle::hitProcessorPatch
 (
-    const processorPolyPatch&,
+    Cloud<trackedParticle>&,
     trackingData& td
 )
 {
@@ -234,19 +241,7 @@ void Foam::trackedParticle::hitProcessorPatch
 
 void Foam::trackedParticle::hitWallPatch
 (
-    const wallPolyPatch& wpp,
-    trackingData& td,
-    const tetIndices&
-)
-{
-    // Remove particle
-    td.keepParticle = false;
-}
-
-
-void Foam::trackedParticle::hitPatch
-(
-    const polyPatch& wpp,
+    Cloud<trackedParticle>&,
     trackingData& td
 )
 {

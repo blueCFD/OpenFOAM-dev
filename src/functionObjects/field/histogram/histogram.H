@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::functionObjects::histogram
-
-Group
-    grpFieldFunctionObjects
 
 Description
     Write the volume-weighted histogram of a volScalarField.
@@ -102,7 +99,7 @@ class histogram
         //- Minimum value
         scalar min_;
 
-        //- Mumber of bins
+        //- Number of bins
         label nBins_;
 
         //- Output formatter to write

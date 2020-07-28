@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,7 +69,7 @@ calcMeshData() const
 
     ////- 1.5 code:
     //// if the point is used, set the mark to 1
-    //forAll(*this, facei)
+    // forAll(*this, facei)
     //{
     //    const Face& curPoints = this->operator[](facei);
     //
@@ -81,14 +81,14 @@ calcMeshData() const
     //
     //// Create the storage and store the meshPoints.  Mesh points are
     //// the ones marked by the usage loop above
-    //meshPointsPtr_ = new labelList(markedPoints.toc());
-    //labelList& pointPatch = *meshPointsPtr_;
+    // meshPointsPtr_ = new labelList(markedPoints.toc());
+    // labelList& pointPatch = *meshPointsPtr_;
     //
     //// Sort the list to preserve compatibility with the old ordering
-    //sort(pointPatch);
+    // sort(pointPatch);
     //
     //// For every point in map give it its label in mesh points
-    //forAll(pointPatch, pointi)
+    // forAll(pointPatch, pointi)
     //{
     //    markedPoints.find(pointPatch[pointi])() = pointi;
     //}
@@ -286,7 +286,7 @@ calcPointNormals() const
             curNormal += faceUnitNormals[curFaces[facei]];
         }
 
-        curNormal /= mag(curNormal) + VSMALL;
+        curNormal /= mag(curNormal) + vSmall;
     }
 
     if (debug)
@@ -381,7 +381,6 @@ calcFaceNormals() const
     forAll(n, facei)
     {
         n[facei] = this->operator[](facei).normal(points_);
-        n[facei] /= mag(n[facei]) + VSMALL;
     }
 
     if (debug)

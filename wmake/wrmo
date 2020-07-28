@@ -2,10 +2,10 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-#  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # License
 #     This file is part of OpenFOAM.
 #
@@ -30,7 +30,7 @@
 #
 # Description
 #     Remove all .o files from the object directory tree corresponding to the
-#     current source derectory or remove only the .o file corresponding to the
+#     current source directory or remove only the .o file corresponding to the
 #     optionally specified [file].  With the -a/-all/all option the .o files
 #     are removed for all platforms rather than just the current platform.
 #
@@ -38,7 +38,8 @@
 Script=${0##*/}
 
 # Source the wmake functions
-. ${0%/*}/scripts/wmakeFunctions
+# shellcheck source=scripts/wmakeFunctions
+. "${0%/*}/scripts/wmakeFunctions"
 
 usage() {
     cat<<USAGE
@@ -100,16 +101,16 @@ findObjectDir .
 # With the -a/-all option replace the current platform with a wildcard
 if [ "$all" = "all" ]
 then
-    objectsDir=$(echo $objectsDir | sed s%$WM_OPTIONS%*% )
+    objectsDir=$(echo "$objectsDir" | sed s%"$WM_OPTIONS"%*% )
 fi
 
 if [ "$#" -eq 0 ]
 then
     echo "removing all .o files ..."
-    find $objectsDir -name '*.o' -print | xargs -t rm 2>/dev/null
+    find "$objectsDir" -name '*.o' -print0 | xargs -0t rm 2>/dev/null
 else
     echo "removing .o files corresponding to $1 ..."
-    rm $objectsDir/${1%%.*}.o
+    rm "$objectsDir/${1%%.*}.o"
 fi
 
 

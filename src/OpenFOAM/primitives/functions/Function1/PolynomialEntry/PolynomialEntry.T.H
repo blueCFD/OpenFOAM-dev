@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::Function1Types::PolynomialEntry
+    Foam::Function1Types::Polynomial
 
 Description
     PolynomialEntry container data entry for scalars. Items are stored in a
@@ -100,12 +100,6 @@ public:
         //- Copy constructor
         Polynomial(const Polynomial& poly);
 
-        //- Construct and return a clone
-        virtual tmp<Function1<Type>> clone() const
-        {
-            return tmp<Function1<Type>>(new Polynomial(*this));
-        }
-
 
     //- Destructor
     virtual ~Polynomial();
@@ -122,10 +116,10 @@ public:
         // Evaluation
 
             //- Return Polynomial value
-            Type value(const scalar x) const;
+            virtual Type value(const scalar x) const;
 
             //- Integrate between two (scalar) values
-            Type integrate(const scalar x1, const scalar x2) const;
+            virtual Type integrate(const scalar x1, const scalar x2) const;
 
 
         //- Write in dictionary format

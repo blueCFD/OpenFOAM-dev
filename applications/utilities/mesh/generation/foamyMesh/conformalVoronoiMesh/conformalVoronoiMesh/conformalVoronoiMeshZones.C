@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -481,8 +481,8 @@ void Foam::conformalVoronoiMesh::calcFaceZones
                     norm
                 );
 
-                vector fN = faces[facei].normal(mesh.points());
-                fN /= mag(fN) + SMALL;
+                vector fN = faces[facei].area(mesh.points());
+                fN /= mag(fN) + small;
 
                 if ((norm[0] & fN) < 0)
                 {

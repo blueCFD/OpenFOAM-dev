@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -100,7 +100,7 @@ class turbulentTemperatureRadCoupledMixedFvPatchScalarField
         //- Name of field on the neighbour region
         const word TnbrName_;
 
-         //- Name of the radiative heat flux in the neighbout region
+         //- Name of the radiative heat flux in the neighbor region
         const word qrNbrName_;
 
         //- Name of the radiative heat flux in local region

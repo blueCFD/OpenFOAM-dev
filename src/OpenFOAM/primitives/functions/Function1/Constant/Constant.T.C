@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,17 +85,20 @@ Foam::Function1Types::Constant<Type>::~Constant()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-Type Foam::Function1Types::Constant<Type>::value(const scalar x) const
+Foam::tmp<Foam::Field<Type>> Foam::Function1Types::Constant<Type>::value
+(
+    const scalarField& x
+) const
 {
-    return value_;
+    return tmp<Field<Type>>(new Field<Type>(x.size(), value_));
 }
 
 
 template<class Type>
-Type Foam::Function1Types::Constant<Type>::integrate
+Foam::tmp<Foam::Field<Type>> Foam::Function1Types::Constant<Type>::integrate
 (
-    const scalar x1,
-    const scalar x2
+    const scalarField& x1,
+    const scalarField& x2
 ) const
 {
     return (x2 - x1)*value_;

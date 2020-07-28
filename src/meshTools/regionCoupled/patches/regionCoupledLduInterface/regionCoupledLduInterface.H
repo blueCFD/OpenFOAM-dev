@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,7 +83,7 @@ public:
             virtual const regionCoupledLduInterface& neighbPatch() const = 0;
 
             //- Return AMI
-            //virtual const AMIPatchToPatchInterpolation& AMI() const = 0;
+            // virtual const AMIPatchToPatchInterpolation& AMI() const = 0;
 
             //- Return nbrMesh
             virtual const polyMesh& nbrMesh() const = 0;

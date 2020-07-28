@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,25 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeChemistryModel(SS, Comp, Thermo)                                   \
+#define makeChemistryModel(Comp)                                               \
+                                                                               \
+    typedef BasicChemistryModel<Comp> BasicChemistryModel##Comp;               \
+                                                                               \
+    defineTemplateTypeNameAndDebugWithName                                     \
+    (                                                                          \
+        BasicChemistryModel##Comp,                                             \
+        "BasicChemistryModel<"#Comp">",                                        \
+        0                                                                      \
+    );                                                                         \
+                                                                               \
+    defineTemplateRunTimeSelectionTable                                        \
+    (                                                                          \
+        BasicChemistryModel##Comp,                                             \
+        thermo                                                                 \
+    );
+
+
+#define makeChemistryModelType(SS, Comp, Thermo)                               \
                                                                                \
     typedef SS<Comp, Thermo> SS##Comp##Thermo;                                 \
                                                                                \

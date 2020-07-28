@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,13 +34,9 @@ License
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(regionToCell, 0);
-
-addToRunTimeSelectionTable(topoSetSource, regionToCell, word);
-
-addToRunTimeSelectionTable(topoSetSource, regionToCell, istream);
-
+    defineTypeNameAndDebug(regionToCell, 0);
+    addToRunTimeSelectionTable(topoSetSource, regionToCell, word);
+    addToRunTimeSelectionTable(topoSetSource, regionToCell, istream);
 }
 
 
@@ -250,8 +246,8 @@ void Foam::regionToCell::erode
     boolList& selectedCell
 ) const
 {
-    //Info<< "Entering shrinkRegions:" << count(selectedCell) << endl;
-    //generateField("selectedCell_before", selectedCell)().write();
+    // Info<< "Entering shrinkRegions:" << count(selectedCell) << endl;
+    // generateField("selectedCell_before", selectedCell)().write();
 
     // Now erode and see which regions get disconnected
     boolList shrunkSelectedCell(selectedCell);
@@ -261,8 +257,8 @@ void Foam::regionToCell::erode
         shrinkRegions(shrunkSelectedCell);
     }
 
-    //Info<< "After shrinking:" << count(shrunkSelectedCell) << endl;
-    //generateField("shrunkSelectedCell", shrunkSelectedCell)().write();
+    // Info<< "After shrinking:" << count(shrunkSelectedCell) << endl;
+    // generateField("shrunkSelectedCell", shrunkSelectedCell)().write();
 
 
 
@@ -287,8 +283,8 @@ void Foam::regionToCell::erode
         }
     }
 
-    //Info<< "removeCell before:" << count(removeCell) << endl;
-    //generateField("removeCell_before", removeCell)().write();
+    // Info<< "removeCell before:" << count(removeCell) << endl;
+    // generateField("removeCell_before", removeCell)().write();
 
 
 
@@ -331,8 +327,8 @@ void Foam::regionToCell::erode
         }
     }
 
-    //Info<< "removeCell after:" << count(removeCell) << endl;
-    //generateField("removeCell_after", removeCell)().write();
+    // Info<< "removeCell after:" << count(removeCell) << endl;
+    // generateField("removeCell_after", removeCell)().write();
 
 
     // Unmark removeCell
@@ -385,7 +381,6 @@ void Foam::regionToCell::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::regionToCell::regionToCell
 (
     const polyMesh& mesh,
@@ -401,7 +396,6 @@ Foam::regionToCell::regionToCell
 {}
 
 
-// Construct from dictionary
 Foam::regionToCell::regionToCell
 (
     const polyMesh& mesh,
@@ -420,7 +414,6 @@ Foam::regionToCell::regionToCell
 {}
 
 
-// Construct from Istream
 Foam::regionToCell::regionToCell
 (
     const polyMesh& mesh,

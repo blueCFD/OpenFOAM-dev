@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -249,7 +249,7 @@ void Foam::surfaceFeatures::classifyFeatureAngles
     const pointField& points = surf_.points();
 
     // Special case: minCos=1
-    bool selectAll = (mag(minCos-1.0) < SMALL);
+    bool selectAll = (mag(minCos-1.0) < small);
 
     forAll(edgeFaces, edgeI)
     {
@@ -433,7 +433,7 @@ Foam::surfaceFeatures::labelScalar Foam::surfaceFeatures::walkSegment
                 << " vertex:" << startPointi << nl
                 << "Returning with large length" << endl;
 
-            return labelScalar(nVisited, GREAT);
+            return labelScalar(nVisited, great);
         }
     }
     while (true);
@@ -590,7 +590,7 @@ Foam::surfaceFeatures::surfaceFeatures
     (
         dynFeatureEdgeFaces,
         edgeStat,
-        GREAT,
+        great,
         geometricTestOnly
     );
 
@@ -611,7 +611,7 @@ Foam::surfaceFeatures::surfaceFeatures
     edgeStat.clear();
     dynFeatEdges.clear();
 
-    setFromStatus(allEdgeStat, GREAT);
+    setFromStatus(allEdgeStat, great);
 }
 
 
@@ -1003,7 +1003,7 @@ Foam::Map<Foam::label> Foam::surfaceFeatures::nearestSamples
 
     scalar maxSearchSqr = max(maxDistSqr);
 
-    //Note: cannot be done one the fly - gcc4.4 compiler bug.
+    // Note: cannot be done one the fly - gcc4.4 compiler bug.
     treeBoundBox bb(samples);
 
     indexedOctree<treeDataPoint> ppTree
@@ -1496,6 +1496,250 @@ void Foam::surfaceFeatures::operator=(const surfaceFeatures& rhs)
     featureEdges_ = rhs.featureEdges();
     externalStart_ = rhs.externalStart();
     internalStart_ = rhs.internalStart();
+}
+
+
+// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
+
+void Foam::selectBox
+(
+    const triSurface& surf,
+    const boundBox& bb,
+    const bool inside,
+    List<surfaceFeatures::edgeStatus>& edgeStat
+)
+{
+    forAll(edgeStat, edgei)
+    {
+        const point eMid = surf.edges()[edgei].centre(surf.localPoints());
+
+        if (!inside ? bb.contains(eMid) : !bb.contains(eMid))
+        {
+            edgeStat[edgei] = surfaceFeatures::NONE;
+        }
+    }
+}
+
+
+void Foam::selectCutEdges
+(
+    const triSurface& surf,
+    const plane& cutPlane,
+    List<surfaceFeatures::edgeStatus>& edgeStat
+)
+{
+    const pointField& points = surf.points();
+    const labelList& meshPoints = surf.meshPoints();
+
+    forAll(edgeStat, edgei)
+    {
+        const edge& e = surf.edges()[edgei];
+        const point& p0 = points[meshPoints[e.start()]];
+        const point& p1 = points[meshPoints[e.end()]];
+        const linePointRef line(p0, p1);
+
+        // If edge does not intersect the plane, delete.
+        const scalar intersect = cutPlane.lineIntersect(line);
+
+        const point featPoint = intersect*(p1 - p0) + p0;
+
+        if (!line.insideBoundBox(featPoint))
+        {
+            edgeStat[edgei] = surfaceFeatures::NONE;
+        }
+    }
+}
+
+
+Foam::surfaceFeatures::edgeStatus Foam::checkNonManifoldEdge
+(
+    const triSurface& surf,
+    const scalar tol,
+    const scalar includedAngle,
+    const label edgei
+)
+{
+    const edge& e = surf.edges()[edgei];
+    const labelList& eFaces = surf.edgeFaces()[edgei];
+
+    // Bin according to normal
+
+    DynamicList<Foam::vector> normals(2);
+    DynamicList<labelList> bins(2);
+
+    forAll(eFaces, eFacei)
+    {
+        const Foam::vector& n = surf.faceNormals()[eFaces[eFacei]];
+
+        // Find the normal in normals
+        label index = -1;
+        forAll(normals, normalI)
+        {
+            if (mag(n&normals[normalI]) > (1-tol))
+            {
+                index = normalI;
+                break;
+            }
+        }
+
+        if (index != -1)
+        {
+            bins[index].append(eFacei);
+        }
+        else if (normals.size() >= 2)
+        {
+            // Would be third normal. Mark as feature.
+            // Pout<< "** at edge:" << surf.localPoints()[e[0]]
+            //    << surf.localPoints()[e[1]]
+            //    << " have normals:" << normals
+            //    << " and " << n << endl;
+            return surfaceFeatures::REGION;
+        }
+        else
+        {
+            normals.append(n);
+            bins.append(labelList(1, eFacei));
+        }
+    }
+
+    // Check resulting number of bins
+    if (bins.size() == 1)
+    {
+        // Note: should check here whether they are two sets of faces
+        // that are planar or indeed 4 faces al coming together at an edge.
+        // Pout<< "** at edge:"
+        //    << surf.localPoints()[e[0]]
+        //    << surf.localPoints()[e[1]]
+        //    << " have single normal:" << normals[0]
+        //    << endl;
+        return surfaceFeatures::NONE;
+    }
+    else
+    {
+        // Two bins. Check if normals make an angle
+
+        // Pout<< "** at edge:"
+        //    << surf.localPoints()[e[0]]
+        //    << surf.localPoints()[e[1]] << nl
+        //    << "    normals:" << normals << nl
+        //    << "    bins   :" << bins << nl
+        //    << endl;
+
+        if (includedAngle >= 0)
+        {
+            scalar minCos = Foam::cos(degToRad(180.0 - includedAngle));
+
+            forAll(eFaces, i)
+            {
+                const Foam::vector& ni = surf.faceNormals()[eFaces[i]];
+                for (label j=i+1; j<eFaces.size(); j++)
+                {
+                    const Foam::vector& nj = surf.faceNormals()[eFaces[j]];
+                    if (mag(ni & nj) < minCos)
+                    {
+                        // Pout<< "have sharp feature between normal:" << ni
+                        //    << " and " << nj << endl;
+
+                        // Is feature. Keep as region or convert to
+                        // feature angle? For now keep as region.
+                        return surfaceFeatures::REGION;
+                    }
+                }
+            }
+        }
+
+
+        // So now we have two normals bins but need to make sure both
+        // bins have the same regions in it.
+
+         // 1. store + or - region number depending
+        //    on orientation of triangle in bins[0]
+        const labelList& bin0 = bins[0];
+        labelList regionAndNormal(bin0.size());
+        forAll(bin0, i)
+        {
+            const labelledTri& t = surf.localFaces()[eFaces[bin0[i]]];
+            int dir = t.edgeDirection(e);
+
+            if (dir > 0)
+            {
+                regionAndNormal[i] = t.region()+1;
+            }
+            else if (dir == 0)
+            {
+                FatalErrorInFunction
+                    << exit(FatalError);
+            }
+            else
+            {
+                regionAndNormal[i] = -(t.region()+1);
+            }
+        }
+
+        // 2. check against bin1
+        const labelList& bin1 = bins[1];
+        labelList regionAndNormal1(bin1.size());
+        forAll(bin1, i)
+        {
+            const labelledTri& t = surf.localFaces()[eFaces[bin1[i]]];
+            int dir = t.edgeDirection(e);
+
+            label myRegionAndNormal;
+            if (dir > 0)
+            {
+                myRegionAndNormal = t.region()+1;
+            }
+            else
+            {
+                myRegionAndNormal = -(t.region()+1);
+            }
+
+            regionAndNormal1[i] = myRegionAndNormal;
+
+            label index = findIndex(regionAndNormal, -myRegionAndNormal);
+            if (index == -1)
+            {
+                // Not found.
+                // Pout<< "cannot find region " << myRegionAndNormal
+                //    << " in regions " << regionAndNormal << endl;
+
+                return surfaceFeatures::REGION;
+            }
+        }
+
+        return surfaceFeatures::NONE;
+    }
+}
+
+
+void Foam::selectManifoldEdges
+(
+    const triSurface& surf,
+    const scalar tol,
+    const scalar includedAngle,
+    List<surfaceFeatures::edgeStatus>& edgeStat
+)
+{
+    forAll(edgeStat, edgei)
+    {
+        const labelList& eFaces = surf.edgeFaces()[edgei];
+
+        if
+        (
+            eFaces.size() > 2
+            && edgeStat[edgei] == surfaceFeatures::REGION
+            && (eFaces.size() % 2) == 0
+        )
+        {
+            edgeStat[edgei] = checkNonManifoldEdge
+            (
+                surf,
+                tol,
+                includedAngle,
+                edgei
+            );
+        }
+    }
 }
 
 

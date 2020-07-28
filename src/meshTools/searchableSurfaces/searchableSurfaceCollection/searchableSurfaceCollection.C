@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ void Foam::searchableSurfaceCollection::findNearest
 
     List<pointIndexHit> hitInfo(samples.size());
 
-    const scalarField localMinDistSqr(samples.size(), GREAT);
+    const scalarField localMinDistSqr(samples.size(), great);
 
     forAll(subGeom_, surfI)
     {
@@ -208,7 +208,7 @@ Foam::searchableSurfaceCollection::searchableSurfaceCollection
             );
 
             const word subGeomName(subDict.lookup("surface"));
-            //Pout<< "Trying to find " << subGeomName << endl;
+            // Pout<< "Trying to find " << subGeomName << endl;
 
             const searchableSurface& s =
                 io.db().lookupObject<searchableSurface>(subGeomName);
@@ -521,7 +521,7 @@ void Foam::searchableSurfaceCollection::findLine
                 vector n(end[pointi] - start[pointi]);
                 scalar magN = mag(n);
 
-                if (magN > SMALL)
+                if (magN > small)
                 {
                     n /= mag(n);
 

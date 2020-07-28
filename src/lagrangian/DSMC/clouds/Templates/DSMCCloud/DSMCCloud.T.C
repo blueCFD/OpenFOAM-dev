@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ void Foam::DSMCCloud<ParcelType>::buildConstProps()
         const dictionary& molDict(moleculeProperties.subDict(id));
 
         constProps_[i] =
-        typename ParcelType::constantProperties::constantProperties(molDict);
+        typename ParcelType::constantProperties(molDict);
     }
 }
 
@@ -273,7 +273,7 @@ void Foam::DSMCCloud<ParcelType>::collisions()
                 // subCell candidate selection procedure
 
                 // Select the first collision candidate
-                label candidateP = rndGen_.integer(0, nC - 1);
+                label candidateP = rndGen_.sampleAB<label>(0, nC);
 
                 // Declare the second collision candidate
                 label candidateQ = -1;
@@ -289,7 +289,7 @@ void Foam::DSMCCloud<ParcelType>::collisions()
 
                     do
                     {
-                        candidateQ = subCellPs[rndGen_.integer(0, nSC - 1)];
+                        candidateQ = subCellPs[rndGen_.sampleAB<label>(0, nSC)];
                     } while (candidateP == candidateQ);
                 }
                 else
@@ -300,7 +300,7 @@ void Foam::DSMCCloud<ParcelType>::collisions()
 
                     do
                     {
-                        candidateQ = rndGen_.integer(0, nC - 1);
+                        candidateQ = rndGen_.sampleAB<label>(0, nC);
                     } while (candidateP == candidateQ);
                 }
 
@@ -308,15 +308,15 @@ void Foam::DSMCCloud<ParcelType>::collisions()
                 // uniform candidate selection procedure
 
                 // // Select the first collision candidate
-                // label candidateP = rndGen_.integer(0, nC-1);
+                // label candidateP = rndGen_.sampleAB<label>(0, nC);
 
                 // // Select a possible second collision candidate
-                // label candidateQ = rndGen_.integer(0, nC-1);
+                // label candidateQ = rndGen_.sampleAB<label>(0, nC);
 
                 // // If the same candidate is chosen, choose again
                 // while (candidateP == candidateQ)
                 // {
-                //     candidateQ = rndGen_.integer(0, nC-1);
+                //     candidateQ = rndGen_.sampleAB<label>(0, nC);
                 // }
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -386,12 +386,12 @@ void Foam::DSMCCloud<ParcelType>::resetFields()
         Zero
     );
 
-    rhoN_ = dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), VSMALL);
-    rhoM_ =  dimensionedScalar("zero",  dimensionSet(1, -3, 0, 0, 0), VSMALL);
+    rhoN_ = dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), vSmall);
+    rhoM_ =  dimensionedScalar("zero",  dimensionSet(1, -3, 0, 0, 0), vSmall);
     dsmcRhoN_ = dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), 0.0);
     linearKE_ = dimensionedScalar("zero",  dimensionSet(1, -1, -2, 0, 0), 0.0);
     internalE_ = dimensionedScalar("zero",  dimensionSet(1, -1, -2, 0, 0), 0.0);
-    iDof_ = dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), VSMALL);
+    iDof_ = dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), vSmall);
 
     momentum_ = dimensionedVector
     (
@@ -791,7 +791,7 @@ Foam::DSMCCloud<ParcelType>::DSMCCloud
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), VSMALL)
+        dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), vSmall)
     ),
     rhoM_
     (
@@ -804,7 +804,7 @@ Foam::DSMCCloud<ParcelType>::DSMCCloud
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar("zero",  dimensionSet(1, -3, 0, 0, 0), VSMALL)
+        dimensionedScalar("zero",  dimensionSet(1, -3, 0, 0, 0), vSmall)
     ),
     dsmcRhoN_
     (
@@ -856,7 +856,7 @@ Foam::DSMCCloud<ParcelType>::DSMCCloud
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), VSMALL)
+        dimensionedScalar("zero",  dimensionSet(0, -3, 0, 0, 0), vSmall)
     ),
     momentum_
     (
@@ -951,7 +951,7 @@ void Foam::DSMCCloud<ParcelType>::evolve()
     this->inflowBoundary().inflow();
 
     // Move the particles ballistically with their current velocities
-    Cloud<ParcelType>::move(td, mesh_.time().deltaTValue());
+    Cloud<ParcelType>::move(*this, td, mesh_.time().deltaTValue());
 
     // Update cell occupancy
     buildCellOccupancy();
@@ -1016,12 +1016,7 @@ Foam::vector Foam::DSMCCloud<ParcelType>::equipartitionLinearVelocity
 {
     return
         sqrt(physicoChemical::k.value()*temperature/mass)
-       *vector
-        (
-            rndGen_.GaussNormal(),
-            rndGen_.GaussNormal(),
-            rndGen_.GaussNormal()
-        );
+       *rndGen_.sampleNormal<vector>();
 }
 
 
@@ -1034,11 +1029,11 @@ Foam::scalar Foam::DSMCCloud<ParcelType>::equipartitionInternalEnergy
 {
     scalar Ei = 0.0;
 
-    if (iDof < SMALL)
+    if (iDof == 0)
     {
         return Ei;
     }
-    else if (iDof < 2.0 + SMALL && iDof > 2.0 - SMALL)
+    else if (iDof == 2)
     {
         // Special case for iDof = 2, i.e. diatomics;
         Ei = -log(rndGen_.scalar01())*physicoChemical::k.value()*temperature;

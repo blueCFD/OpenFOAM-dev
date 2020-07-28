@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,13 +29,14 @@ License
 
 Foam::autoPtr<Foam::blendingMethod> Foam::blendingMethod::New
 (
+    const word& modelName,
     const dictionary& dict,
     const wordList& phaseNames
 )
 {
     word blendingMethodType(dict.lookup("type"));
 
-    Info<< "Selecting " << dict.dictName() << " blending method: "
+    Info<< "Selecting " << modelName << " blending method: "
         << blendingMethodType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

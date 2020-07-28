@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -119,6 +119,7 @@ template<class CloudType>
 Foam::forceSuSp Foam::PressureGradientForce<CloudType>::calcCoupled
 (
     const typename CloudType::parcelType& p,
+    const typename CloudType::parcelType::trackingData& td,
     const scalar dt,
     const scalar mass,
     const scalar Re,
@@ -130,7 +131,7 @@ Foam::forceSuSp Foam::PressureGradientForce<CloudType>::calcCoupled
     vector DUcDt =
         DUcDtInterp().interpolate(p.coordinates(), p.currentTetIndices());
 
-    value.Su() = mass*p.rhoc()/p.rho()*DUcDt;
+    value.Su() = mass*td.rhoc()/p.rho()*DUcDt;
 
     return value;
 }
@@ -140,6 +141,7 @@ template<class CloudType>
 Foam::scalar Foam::PressureGradientForce<CloudType>::massAdd
 (
     const typename CloudType::parcelType&,
+    const typename CloudType::parcelType::trackingData& td,
     const scalar
 ) const
 {

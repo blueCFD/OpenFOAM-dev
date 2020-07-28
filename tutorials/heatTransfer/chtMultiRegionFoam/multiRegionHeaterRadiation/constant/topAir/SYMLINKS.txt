@@ -1,0 +1,4 @@
+The original source for 'g' was '../bottomAir/g'
+The original source for 'radiationProperties' was '../bottomAir/radiationProperties'
+The original source for 'thermophysicalProperties' was '../bottomAir/thermophysicalProperties'
+The original source for 'turbulenceProperties' was '../bottomAir/turbulenceProperties'

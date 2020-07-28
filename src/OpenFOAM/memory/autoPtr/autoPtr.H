@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ public:
     // Constructors
 
         //- Store object pointer
-        inline explicit autoPtr(T* = 0);
+        inline explicit autoPtr(T* = nullptr);
 
         //- Construct as copy by transferring pointer to this autoPtr and
         //  setting the arguments pointer to nullptr
@@ -101,7 +101,7 @@ public:
 
             //- If object pointer already set, delete object and set to given
             //  pointer
-            inline void reset(T* = 0);
+            inline void reset(T* = nullptr);
 
             //- Delete object (if the pointer is valid) and set pointer to
             //  nullptr
@@ -115,6 +115,12 @@ public:
 
             //- Return const reference to the object data
             inline const T& operator()() const;
+
+            //- Return reference to the object data
+            inline T& operator*();
+
+            //- Return const reference to the object data
+            inline const T& operator*() const;
 
             //- Const cast to the underlying type reference
             inline operator const T&() const;

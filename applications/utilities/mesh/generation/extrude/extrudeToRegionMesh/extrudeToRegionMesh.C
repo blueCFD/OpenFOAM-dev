@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
     - if extruding boundary faces:
         - convert boundary faces to mappedWall patches
     - extrude edges of faceZone as a \<zone\>_sidePatch
-    - extrude edges inbetween different faceZones as a
+    - extrude edges in between different faceZones as a
       (nonuniformTransform)cyclic \<zoneA\>_\<zoneB\>
     - extrudes into master direction (i.e. away from the owner cell
       if flipMap is false)
@@ -107,10 +107,10 @@ becomes
 
 
 Notes:
-    - when extruding cyclics with only one cell inbetween it does not
+    - when extruding cyclics with only one cell in between it does not
       detect this as a cyclic since the face is the same face. It will
       only work if the coupled edge extrudes a different face so if there
-      are more than 1 cell inbetween.
+      are more than 1 cell in between.
 
 \endverbatim
 
@@ -641,7 +641,7 @@ void calcEdgeMinMaxZone
 
 // Count the number of faces in patches that need to be created. Calculates:
 //  zoneSidePatch[zoneI]         : the number of side faces to be created
-//  zoneZonePatch[zoneA,zoneB]   : the number of faces inbetween zoneA and B
+//  zoneZonePatch[zoneA,zoneB]   : the number of faces in between zoneA and B
 // Since this only counts we're not taking the processor patches into
 // account.
 void countExtrudePatches
@@ -671,7 +671,7 @@ void countExtrudePatches
 
         if (eFaces.size() == 2)
         {
-            // Internal edge - check if inbetween different zones.
+            // Internal edge - check if in between different zones.
             if (minZoneID[edgeI] != maxZoneID[edgeI])
             {
                 zoneZonePatch[minZoneID[edgeI]*nZones+maxZoneID[edgeI]]++;
@@ -683,7 +683,7 @@ void countExtrudePatches
          && extrudeEdgeGlobalFaces[edgeI].size() == 2
         )
         {
-            // Coupled edge - check if inbetween different zones.
+            // Coupled edge - check if in between different zones.
             if (minZoneID[edgeI] != maxZoneID[edgeI])
             {
                 const edge& e = extrudePatch.edges()[edgeI];
@@ -691,7 +691,7 @@ void countExtrudePatches
                 WarningInFunction
                     << "Edge " << edgeI
                     << "at " << pts[e[0]] << pts[e[1]]
-                    << " is a coupled edge and inbetween two different zones "
+                    << " is a coupled edge and in between two different zones "
                     << minZoneID[edgeI] << " and " << maxZoneID[edgeI] << endl
                     << "    This is currently not supported." << endl;
 
@@ -810,7 +810,7 @@ void addCouplingPatches
                 << '\t' << newPatches[interRegionBottomPatch[zoneI]]->type()
                 << nl;
         }
-        else    //patch using shadow face zones.
+        else    // patch using shadow face zones.
         {
             interRegionTopPatch[zoneI] = addPatch<mappedWallPolyPatch>
             (
@@ -1083,6 +1083,9 @@ void addInterZonePatches
         cyclicPolyPatch::transformTypeNames[cyclicPolyPatch::NOORDERING]
     );
 
+    // Allow arbitrary matching for nonuniformTransformCyclicPolyPatch
+    transformDict.add("matchTolerance", 1e6);
+
     label nOldPatches = newPatches.size();
 
     if (!oneD)
@@ -1256,7 +1259,7 @@ void extrudeGeometricProperties
         )
     );
 
-    //forAll(extrudePatch.edges(), edgeI)
+    // forAll(extrudePatch.edges(), edgeI)
     //{
     //    const edge& e = extrudePatch.edges()[edgeI];
     //    Pout<< "Edge:" << e.centre(extrudePatch.localPoints()) << nl
@@ -1599,49 +1602,49 @@ int main(int argc, char *argv[])
 
 
     //// Read objects in time directory
-    //IOobjectList objects(mesh, runTime.timeName());
+    // IOobjectList objects(mesh, runTime.timeName());
     //
     //// Read vol fields.
     //
-    //PtrList<volScalarField> vsFlds;
-    //ReadFields(mesh, objects, vsFlds);
+    // PtrList<volScalarField> vsFlds;
+    // ReadFields(mesh, objects, vsFlds);
     //
-    //PtrList<volVectorField> vvFlds;
-    //ReadFields(mesh, objects, vvFlds);
+    // PtrList<volVectorField> vvFlds;
+    // ReadFields(mesh, objects, vvFlds);
     //
-    //PtrList<volSphericalTensorField> vstFlds;
-    //ReadFields(mesh, objects, vstFlds);
+    // PtrList<volSphericalTensorField> vstFlds;
+    // ReadFields(mesh, objects, vstFlds);
     //
-    //PtrList<volSymmTensorField> vsymtFlds;
-    //ReadFields(mesh, objects, vsymtFlds);
+    // PtrList<volSymmTensorField> vsymtFlds;
+    // ReadFields(mesh, objects, vsymtFlds);
     //
-    //PtrList<volTensorField> vtFlds;
-    //ReadFields(mesh, objects, vtFlds);
+    // PtrList<volTensorField> vtFlds;
+    // ReadFields(mesh, objects, vtFlds);
     //
     //// Read surface fields.
     //
-    //PtrList<surfaceScalarField> ssFlds;
-    //ReadFields(mesh, objects, ssFlds);
+    // PtrList<surfaceScalarField> ssFlds;
+    // ReadFields(mesh, objects, ssFlds);
     //
-    //PtrList<surfaceVectorField> svFlds;
-    //ReadFields(mesh, objects, svFlds);
+    // PtrList<surfaceVectorField> svFlds;
+    // ReadFields(mesh, objects, svFlds);
     //
-    //PtrList<surfaceSphericalTensorField> sstFlds;
-    //ReadFields(mesh, objects, sstFlds);
+    // PtrList<surfaceSphericalTensorField> sstFlds;
+    // ReadFields(mesh, objects, sstFlds);
     //
-    //PtrList<surfaceSymmTensorField> ssymtFlds;
-    //ReadFields(mesh, objects, ssymtFlds);
+    // PtrList<surfaceSymmTensorField> ssymtFlds;
+    // ReadFields(mesh, objects, ssymtFlds);
     //
-    //PtrList<surfaceTensorField> stFlds;
-    //ReadFields(mesh, objects, stFlds);
+    // PtrList<surfaceTensorField> stFlds;
+    // ReadFields(mesh, objects, stFlds);
     //
     //// Read point fields.
     //
-    //PtrList<pointScalarField> psFlds;
-    //ReadFields(pointMesh::New(mesh), objects, psFlds);
+    // PtrList<pointScalarField> psFlds;
+    // ReadFields(pointMesh::New(mesh), objects, psFlds);
     //
-    //PtrList<pointVectorField> pvFlds;
-    //ReadFields(pointMesh::New(mesh), objects, pvFlds);
+    // PtrList<pointVectorField> pvFlds;
+    // ReadFields(pointMesh::New(mesh), objects, pvFlds);
 
 
 
@@ -2082,7 +2085,7 @@ int main(int argc, char *argv[])
 
     // Now we'll have:
     //  zoneSidePatch[zoneA] : number of faces needed on the side of zoneA
-    //  zoneZonePatch_min[zoneA,zoneB] : number of faces needed inbetween A,B
+    //  zoneZonePatch_min[zoneA,zoneB] : number of faces needed in between A,B
 
 
     // Add the zone-side patches.
@@ -2097,7 +2100,7 @@ int main(int argc, char *argv[])
     );
 
 
-    // Add the patches inbetween zones
+    // Add the patches in between zones
     addInterZonePatches
     (
         mesh,
@@ -2136,12 +2139,12 @@ int main(int argc, char *argv[])
 //                << " name:" << newPatches[patchi]->name()
 //                << endl;
 //        }
-//        //label nOldPatches = mesh.boundary().size();
+//        // label nOldPatches = mesh.boundary().size();
 //        mesh.clearOut();
 //        mesh.removeFvBoundary();
 //        mesh.addFvPatches(newPatches, true);
 //        //// Add calculated fvPatchFields for the added patches
-//        //for
+//        // for
 //        //(
 //        //    label patchi = nOldPatches;
 //        //    patchi < mesh.boundary().size();
@@ -2152,7 +2155,7 @@ int main(int argc, char *argv[])
 //        //        << endl;
 //        //    addCalculatedPatchFields(mesh);
 //        //}
-//        //Pout<< "** Added " << mesh.boundary().size()-nOldPatches
+//        // Pout<< "** Added " << mesh.boundary().size()-nOldPatches
 //        //    << " patches." << endl;
 //    }
 
@@ -2368,7 +2371,7 @@ int main(int argc, char *argv[])
     vectorField firstDisp(localRegionNormals.size());
     forAll(firstDisp, regionI)
     {
-        //const point& regionPt = regionCentres[regionI];
+        // const point& regionPt = regionCentres[regionI];
         const point& regionPt = extrudePatch.points()
         [
             extrudePatch.meshPoints()
@@ -2724,7 +2727,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (zoneShadowNames.size() > 0) //if there is a top faceZone specified
+        if (zoneShadowNames.size() > 0) // if there is a top faceZone specified
         {
             forAll(extrudeMeshFaces, zoneFacei)
             {
@@ -2788,7 +2791,7 @@ int main(int argc, char *argv[])
                             true,                           // flip flux
                             interMeshTopPatch[zoneI],       // patch for face
                             -1,                             // zone for face
-                            false                           //face flip in zone
+                            false                           // face flip in zone
                         );
                     }
                 }

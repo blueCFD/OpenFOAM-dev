@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -221,12 +221,12 @@ void Foam::conformalVoronoiMesh::createEdgePointGroupByCirculating
 
         // Calculate master point
         vector masterPtVec(normalDir + nextNormalDir);
-        masterPtVec /= mag(masterPtVec) + SMALL;
+        masterPtVec /= mag(masterPtVec) + small;
 
         if
         (
-            ((normalDir ^ nextNormalDir) & edDir) < SMALL
-         || mag(masterPtVec) < SMALL
+            ((normalDir ^ nextNormalDir) & edDir) < small
+         || mag(masterPtVec) < small
         )
         {
 //            Info<< "    IGNORE REGION" << endl;
@@ -235,7 +235,7 @@ void Foam::conformalVoronoiMesh::createEdgePointGroupByCirculating
             if
             (
                 circ.size() == 2
-             && mag((normal & nextNormal) - 1) < SMALL
+             && mag((normal & nextNormal) - 1) < small
             )
             {
                 const vector n = 0.5*(normal + nextNormal);
@@ -277,12 +277,12 @@ void Foam::conformalVoronoiMesh::createEdgePointGroupByCirculating
                 masterPtVec
             );
 
-        // Specialise for size = 1 && baffle
-        if (mag((normalDir & nextNormalDir) - 1) < SMALL)
+        // Specialize for size = 1 && baffle
+        if (mag((normalDir & nextNormalDir) - 1) < small)
         {
             if (inside)
             {
-//                Info<< "Specialise for size 1 and baffle" << endl;
+//                Info<< "Specialize for size 1 and baffle" << endl;
 
                 vector s = ppDist*(edDir ^ normal);
 
@@ -513,7 +513,7 @@ void Foam::conformalVoronoiMesh::createExternalEdgePointGroup
     // Convex. So refPt will be inside domain and hence a master point
     Foam::point refPt = edgePt - ppDist*refVec;
 
-    // Insert the master point pairing the the first slave
+    // Insert the master point pairing the first slave
 
     if (!geometryToConformTo_.inside(refPt))
     {
@@ -532,7 +532,7 @@ void Foam::conformalVoronoiMesh::createExternalEdgePointGroup
     );
 
     // Insert the slave points by reflecting refPt in both faces.
-    // with each slave refering to the master
+    // with each slave referring to the master
 
     Foam::point reflectedA = refPt + 2*ppDist*nA;
     pts.append

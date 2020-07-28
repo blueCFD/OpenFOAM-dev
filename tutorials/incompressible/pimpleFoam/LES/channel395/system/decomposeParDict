@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -54,8 +54,8 @@ multiLevelCoeffs
     level0
     {
         numberOfSubdomains  64;
-        //method simple;
-        //simpleCoeffs
+        // method simple;
+        // simpleCoeffs
         //{
         //    n           (2 1 1);
         //    delta       0.001;
@@ -99,15 +99,15 @@ metisCoeffs
 
 scotchCoeffs
 {
-    //processorWeights
+    // processorWeights
     //(
     //    1
     //    1
     //    1
     //    1
     //);
-    //writeGraph  true;
-    //strategy "b";
+    // writeGraph  true;
+    // strategy "b";
 }
 
 manualCoeffs

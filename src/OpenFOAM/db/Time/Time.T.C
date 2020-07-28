@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,7 +74,7 @@ Foam::Time::fmtflags Foam::Time::format_(Foam::Time::general);
 
 int Foam::Time::precision_(6);
 
-const int Foam::Time::maxPrecision_(3 - log10(SMALL));
+const int Foam::Time::maxPrecision_(3 - log10(small));
 
 Foam::word Foam::Time::controlDictName("controlDict");
 
@@ -83,44 +83,26 @@ Foam::word Foam::Time::controlDictName("controlDict");
 
 void Foam::Time::adjustDeltaT()
 {
-    bool adjustTime = false;
-    scalar timeToNextWrite = VGREAT;
-
-    if (writeControl_ == wcAdjustableRunTime)
-    {
-        adjustTime = true;
-        timeToNextWrite = max
+    const scalar timeToNextWrite = min
+    (
+        max
         (
-            0.0,
+            0,
             (writeTimeIndex_ + 1)*writeInterval_ - (value() - startTime_)
-        );
-    }
+        ),
+        functionObjects_.timeToNextWrite()
+    );
 
-    if (adjustTime)
+    const scalar nSteps = timeToNextWrite/deltaT_;
+
+    // Ensure nStepsToNextWrite does not overflow
+    if (nSteps < labelMax)
     {
-        scalar nSteps = timeToNextWrite/deltaT_ - SMALL;
-
-        // For tiny deltaT the label can overflow!
-        if (nSteps < labelMax)
-        {
-            label nStepsToNextWrite = label(nSteps) + 1;
-
-            scalar newDeltaT = timeToNextWrite/nStepsToNextWrite;
-
-            // Control the increase of the time step to within a factor of 2
-            // and the decrease within a factor of 5.
-            if (newDeltaT >= deltaT_)
-            {
-                deltaT_ = min(newDeltaT, 2.0*deltaT_);
-            }
-            else
-            {
-                deltaT_ = max(newDeltaT, 0.2*deltaT_);
-            }
-        }
+        // Allow the time-step to increase by up to 1%
+        // to accommodate the next write time before splitting
+        const label nStepsToNextWrite = label(max(nSteps, 1) + 0.99);
+        deltaT_ = timeToNextWrite/nStepsToNextWrite;
     }
-
-    functionObjects_.adjustTimeStep();
 }
 
 
@@ -370,7 +352,7 @@ Foam::Time::Time
 
     stopAt_(saEndTime),
     writeControl_(wcTimeStep),
-    writeInterval_(GREAT),
+    writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
     subCycling_(false),
@@ -446,7 +428,7 @@ Foam::Time::Time
 
     stopAt_(saEndTime),
     writeControl_(wcTimeStep),
-    writeInterval_(GREAT),
+    writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
     subCycling_(false),
@@ -529,7 +511,7 @@ Foam::Time::Time
 
     stopAt_(saEndTime),
     writeControl_(wcTimeStep),
-    writeInterval_(GREAT),
+    writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
     subCycling_(false),
@@ -608,7 +590,7 @@ Foam::Time::Time
 
     stopAt_(saEndTime),
     writeControl_(wcTimeStep),
-    writeInterval_(GREAT),
+    writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
     subCycling_(false),
@@ -660,6 +642,36 @@ Foam::word Foam::Time::timeName() const
 Foam::instantList Foam::Time::times() const
 {
     return findTimes(path(), constant());
+}
+
+
+Foam::word Foam::Time::findInstance
+(
+    const fileName& dir,
+    const word& name,
+    const IOobject::readOption rOpt,
+    const word& stopInstance
+) const
+{
+    IOobject startIO
+    (
+        name,           // name might be empty!
+        timeName(),
+        dir,
+        *this,
+        rOpt
+    );
+
+    IOobject io
+    (
+        fileHandler().findInstance
+        (
+            startIO,
+            timeOutputValue(),
+            stopInstance
+        )
+    );
+    return io.instance();
 }
 
 
@@ -718,7 +730,7 @@ Foam::instant Foam::Time::findClosestTime(const scalar t) const
     }
 
     label nearestIndex = -1;
-    scalar deltaT = GREAT;
+    scalar deltaT = great;
 
     for (label timei=1; timei < timeDirs.size(); ++timei)
     {
@@ -742,7 +754,7 @@ Foam::label Foam::Time::findClosestTimeIndex
 )
 {
     label nearestIndex = -1;
-    scalar deltaT = GREAT;
+    scalar deltaT = great;
 
     forAll(timeDirs, timei)
     {
@@ -778,9 +790,15 @@ Foam::dimensionedScalar Foam::Time::endTime() const
 }
 
 
+bool Foam::Time::running() const
+{
+    return value() < (endTime_ - 0.5*deltaT_);
+}
+
+
 bool Foam::Time::run() const
 {
-    bool running = value() < (endTime_ - 0.5*deltaT_);
+    bool running = this->running();
 
     if (!subCycling_)
     {
@@ -807,9 +825,8 @@ bool Foam::Time::run() const
             }
         }
 
-        // Update the "running" status following the
-        // possible side-effects from functionObjects
-        running = value() < (endTime_ - 0.5*deltaT_);
+        // Re-evaluate if running in case a function object has changed things
+        running = this->running();
     }
 
     return running;
@@ -847,7 +864,7 @@ bool Foam::Time::stopAt(const stopAtControls sa) const
     }
     else
     {
-        endTime_ = GREAT;
+        endTime_ = great;
     }
     return changed;
 }
@@ -916,25 +933,29 @@ void Foam::Time::setEndTime(const scalar endTime)
 }
 
 
-void Foam::Time::setDeltaT
-(
-    const dimensionedScalar& deltaT,
-    const bool bAdjustDeltaT
-)
+void Foam::Time::setDeltaT(const dimensionedScalar& deltaT)
 {
-    setDeltaT(deltaT.value(), bAdjustDeltaT);
+    setDeltaT(deltaT.value());
 }
 
 
-void Foam::Time::setDeltaT(const scalar deltaT, const bool bAdjustDeltaT)
+void Foam::Time::setDeltaT(const scalar deltaT)
 {
-    deltaT_ = deltaT;
-    deltaTchanged_ = true;
+    setDeltaTNoAdjust(deltaT);
 
-    if (bAdjustDeltaT)
+    functionObjects_.setTimeStep();
+
+    if (writeControl_ == wcAdjustableRunTime)
     {
         adjustDeltaT();
     }
+}
+
+
+void Foam::Time::setDeltaTNoAdjust(const scalar deltaT)
+{
+    deltaT_ = deltaT;
+    deltaTchanged_ = true;
 }
 
 
@@ -993,9 +1014,9 @@ Foam::Time& Foam::Time::operator++()
     if (!subCycling_)
     {
         // If the time is very close to zero reset to zero
-        if (mag(value()) < 10*SMALL*deltaT_)
+        if (mag(value()) < 10*small*deltaT_)
         {
-            setTime(0.0, timeIndex_);
+            setTime(0, timeIndex_);
         }
 
         if (sigStopAtWriteNow_.active() || sigWriteNow_.active())
@@ -1111,13 +1132,13 @@ Foam::Time& Foam::Time::operator++()
         {
             // Tolerance used when testing time equivalence
             const scalar timeTol =
-                max(min(pow(10.0, -precision_), 0.1*deltaT_), SMALL);
+                max(min(pow(10.0, -precision_), 0.1*deltaT_), small);
 
             // User-time equivalent of deltaT
             const scalar userDeltaT = timeToUserTime(deltaT_);
 
             // Time value obtained by reading timeName
-            scalar timeNameValue = -VGREAT;
+            scalar timeNameValue = -vGreat;
 
             // Check that new time representation differs from old one
             // reinterpretation of the word
@@ -1161,7 +1182,7 @@ Foam::Time& Foam::Time::operator++()
                     }
 
                     // Check if round-off error caused time-reversal
-                    scalar oldTimeNameValue = -VGREAT;
+                    scalar oldTimeNameValue = -vGreat;
                     if
                     (
                         readScalar(oldTimeName.c_str(), oldTimeNameValue)

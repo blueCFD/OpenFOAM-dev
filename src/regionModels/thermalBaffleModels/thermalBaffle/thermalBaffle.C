@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,7 +97,7 @@ void thermalBaffle::solveEnergy()
     volScalarField alpha("alpha", thermo_->alpha());
 
 
-    //If region is one-dimension variable thickness
+    // If region is one-dimension variable thickness
     if (oneD_ && !constantThickness_)
     {
         // Scale K and rhoCp and fill Q in the internal baffle region.

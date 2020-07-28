@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,6 +40,7 @@ SourceFiles
 #include "Switch.H"
 #include "scalarField.H"
 #include "volFields.H"
+#include "basicThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -79,6 +80,9 @@ protected:
         //- Initial chemical time step
         const scalar deltaTChemIni_;
 
+        //- Maximum chemical time step
+        const scalar deltaTChemMax_;
+
         //- Latest estimation of integration step
         volScalarField::Internal deltaTChem_;
 
@@ -101,15 +105,18 @@ public:
 
     // Constructors
 
-        //- Construct from mesh
-        basicChemistryModel(const fvMesh& mesh, const word& phaseName);
+        //- Construct from thermo
+        basicChemistryModel(basicThermo& thermo);
 
 
     // Selectors
 
         //- Generic New for each of the related chemistry model
-        template<class Thermo>
-        static autoPtr<Thermo> New(const fvMesh& mesh, const word& phaseName);
+        template<class ChemistryModel>
+        static autoPtr<ChemistryModel> New
+        (
+            typename ChemistryModel::reactionThermo& thermo
+        );
 
 
     //- Destructor

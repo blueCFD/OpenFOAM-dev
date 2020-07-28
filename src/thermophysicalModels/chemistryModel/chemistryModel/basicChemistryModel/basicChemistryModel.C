@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,37 +42,34 @@ void Foam::basicChemistryModel::correct()
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::basicChemistryModel::basicChemistryModel
-(
-    const fvMesh& mesh,
-    const word& phaseName
-)
+Foam::basicChemistryModel::basicChemistryModel(basicThermo& thermo)
 :
     IOdictionary
     (
         IOobject
         (
-            IOobject::groupName("chemistryProperties", phaseName),
-            mesh.time().constant(),
-            mesh,
+            thermo.phasePropertyName("chemistryProperties"),
+            thermo.db().time().constant(),
+            thermo.db(),
             IOobject::MUST_READ_IF_MODIFIED,
             IOobject::NO_WRITE
         )
     ),
-    mesh_(mesh),
+    mesh_(thermo.p().mesh()),
     chemistry_(lookup("chemistry")),
     deltaTChemIni_(readScalar(lookup("initialChemicalTimeStep"))),
+    deltaTChemMax_(lookupOrDefault("maxChemicalTimeStep", great)),
     deltaTChem_
     (
         IOobject
         (
-            IOobject::groupName("deltaTChem", phaseName),
-            mesh.time().constant(),
-            mesh,
+            thermo.phasePropertyName("deltaTChem"),
+            mesh().time().constant(),
+            mesh(),
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        mesh,
+        mesh(),
         dimensionedScalar("deltaTChem0", dimTime, deltaTChemIni_)
     )
 {}

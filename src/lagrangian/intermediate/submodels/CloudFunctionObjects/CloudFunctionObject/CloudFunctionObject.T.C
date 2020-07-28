@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,7 +113,6 @@ template<class CloudType>
 void Foam::CloudFunctionObject<CloudType>::postMove
 (
     typename CloudType::parcelType&,
-    const label,
     const scalar,
     const point&,
     bool&
@@ -126,8 +125,6 @@ void Foam::CloudFunctionObject<CloudType>::postPatch
 (
     const typename CloudType::parcelType&,
     const polyPatch&,
-    const scalar,
-    const tetIndices&,
     bool&
 )
 {}
@@ -137,7 +134,6 @@ template<class CloudType>
 void Foam::CloudFunctionObject<CloudType>::postFace
 (
     const typename CloudType::parcelType&,
-    const label,
     bool&
 )
 {}

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -153,7 +153,13 @@ bool Foam::seulex::seul
 
             LUBacksubstitute(a_, pivotIndices_, dy_);
 
-            const scalar denom = min(1, dy1 + SMALL);
+            // This form from the original paper is unreliable
+            // step size underflow for some cases
+            // const scalar denom = max(1, dy1);
+
+            // This form is reliable but limits how large the step size can be
+            const scalar denom = min(1, dy1 + small);
+
             scalar dy2 = 0;
             for (label i=0; i<n_; i++)
             {
@@ -243,7 +249,7 @@ void Foam::seulex::solve
     stepState& step
 ) const
 {
-    temp_[0] = GREAT;
+    temp_[0] = great;
     scalar dx = step.dxTry;
     y0_ = y;
     dxOpt_[0] = mag(0.1*dx);
@@ -283,10 +289,10 @@ void Foam::seulex::solve
         firstk = false;
         step.reject = false;
 
-        if (mag(dx) <= mag(x)*sqr(SMALL))
+        if (mag(dx) <= mag(x)*sqr(small))
         {
              WarningInFunction
-                    << "step size underflow :"  << dx << endl;
+                 << "step size underflow :"  << dx << endl;
         }
 
         scalar errOld = 0;
@@ -324,7 +330,7 @@ void Foam::seulex::solve
                     err += sqr((y[i] - table_(0, i))/scale_[i]);
                 }
                 err = sqrt(err/n_);
-                if (err > 1/SMALL || (k > 1 && err >= errOld))
+                if (err > 1/small || (k > 1 && err >= errOld))
                 {
                     step.reject = true;
                     dxNew = mag(dx)*stepFactor5_;

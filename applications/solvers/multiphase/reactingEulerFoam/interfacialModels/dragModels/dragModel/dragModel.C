@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,12 +27,14 @@ License
 #include "phasePair.H"
 #include "swarmCorrection.H"
 #include "surfaceInterpolate.H"
+#include "BlendedInterfacialModel.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(dragModel, 0);
+    defineBlendedInterfacialModelTypeNameAndDebug(dragModel, 0);
     defineRunTimeSelectionTable(dragModel, dictionary);
 }
 

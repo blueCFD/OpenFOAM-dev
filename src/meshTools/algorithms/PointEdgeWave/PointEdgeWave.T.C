@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -346,7 +346,7 @@ void Foam::PointEdgeWave<Type, TrackingData>::handleProcPatches()
         // Adapt for leaving domain
         leaveDomain(procPatch, thisPoints, patchInfo);
 
-        //if (debug)
+        // if (debug)
         //{
         //    Pout<< "Processor patch " << patchi << ' ' << procPatch.name()
         //        << " communicating with " << procPatch.neighbProcNo()
@@ -378,7 +378,7 @@ void Foam::PointEdgeWave<Type, TrackingData>::handleProcPatches()
             fromNeighbour >> patchPoints >> patchInfo;
         }
 
-        //if (debug)
+        // if (debug)
         //{
         //    Pout<< "Processor patch " << patchi << ' ' << procPatch.name()
         //        << " communicating with " << procPatch.neighbProcNo()
@@ -477,7 +477,7 @@ void Foam::PointEdgeWave<Type, TrackingData>::handleCyclicPatches()
                 transform(cycPatch, cycPatch.forwardT(), nbrInfo);
             }
 
-            //if (debug)
+            // if (debug)
             //{
             //    Pout<< "Cyclic patch " << patchi << ' ' << patch.name()
             //        << "  Changed : " << nbrInfo.size()
@@ -569,7 +569,7 @@ Foam::label Foam::PointEdgeWave<Type, TrackingData>::handleCollocatedPoints()
 
             // Like updatePoint but bypass Type::updatePoint with its tolerance
             // checking
-            //if (!elem.valid(td_) || !elem.equal(elems[pointi], td_))
+            // if (!elem.valid(td_) || !elem.equal(elems[pointi], td_))
             if (!elem.equal(elems[pointi], td_))
             {
                 nEvals_++;
@@ -782,7 +782,7 @@ Foam::label Foam::PointEdgeWave<Type, TrackingData>::edgeToPoint()
             FatalErrorInFunction
                 << "edge " << edgeI
                 << " not marked as having been changed" << nl
-                << "This might be caused by multiple occurences of the same"
+                << "This might be caused by multiple occurrences of the same"
                 << " seed point." << abort(FatalError);
         }
 
@@ -826,7 +826,7 @@ Foam::label Foam::PointEdgeWave<Type, TrackingData>::edgeToPoint()
         handleProcPatches();
     }
 
-    //if (debug)
+    // if (debug)
     //{
     //    Pout<< "Changed points            : " << nChangedPoints_ << endl;
     //}
@@ -860,7 +860,7 @@ Foam::label Foam::PointEdgeWave<Type, TrackingData>::pointToEdge()
             FatalErrorInFunction
                 << "Point " << pointi
                 << " not marked as having been changed" << nl
-                << "This might be caused by multiple occurences of the same"
+                << "This might be caused by multiple occurrences of the same"
                 << " seed point." << abort(FatalError);
         }
 
@@ -894,7 +894,7 @@ Foam::label Foam::PointEdgeWave<Type, TrackingData>::pointToEdge()
     // Handled all changed points by now
     nChangedPoints_ = 0;
 
-    //if (debug)
+    // if (debug)
     //{
     //    Pout<< "Changed edges             : " << nChangedEdges_ << endl;
     //}

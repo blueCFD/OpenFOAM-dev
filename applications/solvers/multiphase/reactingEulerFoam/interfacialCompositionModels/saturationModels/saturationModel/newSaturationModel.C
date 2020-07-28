@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,7 +29,8 @@ License
 
 Foam::autoPtr<Foam::saturationModel> Foam::saturationModel::New
 (
-    const dictionary& dict
+    const dictionary& dict,
+    const objectRegistry& db
 )
 {
     word saturationModelType(dict.lookup("type"));
@@ -50,7 +51,7 @@ Foam::autoPtr<Foam::saturationModel> Foam::saturationModel::New
             << exit(FatalError);
     }
 
-    return cstrIter()(dict);
+    return cstrIter()(dict, db);
 }
 
 

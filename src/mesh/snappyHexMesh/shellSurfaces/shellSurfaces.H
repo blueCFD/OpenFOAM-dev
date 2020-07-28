@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -125,13 +125,13 @@ public:
 
         // Access
 
-            //const List<scalarField>& distances() const
+            // const List<scalarField>& distances() const
             //{
             //    return distances_;
             //}
             //
             ////- Per shell per distance the refinement level
-            //const labelListList& levels() const
+            // const labelListList& levels() const
             //{
             //    return levels_;
             //}

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ Foam::turbulenceModel::turbulenceModel
     (
         IOobject
         (
-            IOobject::groupName(propertiesName, U.group()),
+            IOobject::groupName(propertiesName, alphaRhoPhi.group()),
             U.time().constant(),
             U.db(),
             IOobject::MUST_READ_IF_MODIFIED,

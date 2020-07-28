@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::cyclicACMIFvPatchField
-
-Group
-    grpCoupledBoundaryConditions
 
 Description
     This boundary condition enforces a cyclic condition between a pair of
@@ -52,8 +49,7 @@ SourceFiles
 #ifndef cyclicACMIFvPatchField_H
 #define cyclicACMIFvPatchField_H
 
-#include "coupledFvPatchField.H"
-#include "cyclicACMILduInterfaceField.H"
+#include "cyclicAMIFvPatchField.H"
 #include "cyclicACMIFvPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -68,25 +64,8 @@ namespace Foam
 template<class Type>
 class cyclicACMIFvPatchField
 :
-    virtual public cyclicACMILduInterfaceField,
-    public coupledFvPatchField<Type>
+    public cyclicAMIFvPatchField<Type>
 {
-    // Private data
-
-        //- Local reference cast into the cyclic patch
-        const cyclicACMIFvPatch& cyclicACMIPatch_;
-
-
-    // Private Member Functions
-
-        //- Return neighbour side field given internal fields
-        template<class Type2>
-        tmp<Field<Type2>> neighbourSideField
-        (
-            const Field<Type2>&
-        ) const;
-
-
 public:
 
     //- Runtime type information
@@ -95,32 +74,8 @@ public:
 
     // Constructors
 
-        //- Construct from patch and internal field
-        cyclicACMIFvPatchField
-        (
-            const fvPatch&,
-            const DimensionedField<Type, volMesh>&
-        );
-
-        //- Construct from patch, internal field and dictionary
-        cyclicACMIFvPatchField
-        (
-            const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
-            const dictionary&
-        );
-
-        //- Construct by mapping given cyclicACMIFvPatchField onto a new patch
-        cyclicACMIFvPatchField
-        (
-            const cyclicACMIFvPatchField<Type>&,
-            const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
-            const fvPatchFieldMapper&
-        );
-
-        //- Construct as copy
-        cyclicACMIFvPatchField(const cyclicACMIFvPatchField<Type>&);
+        //- Inherit parent constructors
+        using cyclicAMIFvPatchField<Type>::cyclicAMIFvPatchField;
 
         //- Construct and return a clone
         virtual tmp<fvPatchField<Type>> clone() const
@@ -130,13 +85,6 @@ public:
                 new cyclicACMIFvPatchField<Type>(*this)
             );
         }
-
-        //- Construct as copy setting internal field reference
-        cyclicACMIFvPatchField
-        (
-            const cyclicACMIFvPatchField<Type>&,
-            const DimensionedField<Type, volMesh>&
-        );
 
         //- Construct and return a clone setting internal field reference
         virtual tmp<fvPatchField<Type>> clone
@@ -155,18 +103,14 @@ public:
 
         // Access
 
-            //- Return local reference cast into the cyclic AMI patch
+            //- Return the fv patch
             const cyclicACMIFvPatch& cyclicACMIPatch() const
             {
-                return cyclicACMIPatch_;
+                return refCast<const cyclicACMIFvPatch>(this->patch());
             }
 
 
         // Evaluation functions
-
-            //- Return true if coupled. Note that the underlying patch
-            //  is not coupled() - the points don't align
-            virtual bool coupled() const;
 
             //- Return true if this patch field fixes a value
             //  Needed to check if a level has to be specified while solving
@@ -174,7 +118,7 @@ public:
             virtual bool fixesValue() const
             {
                 const scalarField& mask =
-                    cyclicACMIPatch_.cyclicACMIPatch().mask();
+                    cyclicACMIPatch().cyclicACMIPatch().mask();
 
                 if (gMax(mask) > 1e-5)
                 {
@@ -188,74 +132,14 @@ public:
                 }
             }
 
-
-            //- Return neighbour coupled internal cell data
-            virtual tmp<Field<Type>> patchNeighbourField() const;
-
-            //- Return reference to neighbour patchField
-            const cyclicACMIFvPatchField<Type>& neighbourPatchField() const;
-
             //- Return reference to non-overlapping patchField
             const fvPatchField<Type>& nonOverlapPatchField() const;
-
-            //- Update result field based on interface functionality
-            virtual void updateInterfaceMatrix
-            (
-                scalarField& result,
-                const scalarField& psiInternal,
-                const scalarField& coeffs,
-                const direction cmpt,
-                const Pstream::commsTypes commsType
-            ) const;
-
-            //- Update result field based on interface functionality
-            virtual void updateInterfaceMatrix
-            (
-                Field<Type>&,
-                const Field<Type>&,
-                const scalarField&,
-                const Pstream::commsTypes commsType
-            ) const;
 
             //- Manipulate matrix
             virtual void manipulateMatrix(fvMatrix<Type>& matrix);
 
             //- Update the coefficients associated with the patch field
             virtual void updateCoeffs();
-
-
-        // Cyclic AMI coupled interface functions
-
-            //- Does the patch field perform the transformation
-            virtual bool doTransform() const
-            {
-                return
-                    !(cyclicACMIPatch_.parallel() || pTraits<Type>::rank == 0);
-            }
-
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
-            {
-                return cyclicACMIPatch_.forwardT();
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return cyclicACMIPatch_.reverseT();
-            }
-
-            //- Return rank of component for transform
-            virtual int rank() const
-            {
-                return pTraits<Type>::rank;
-            }
-
-
-        // I-O
-
-            //- Write
-            virtual void write(Ostream& os) const;
 };
 
 

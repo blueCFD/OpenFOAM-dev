@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ inline Foam::ThermoParcel<ParcelType>::constantProperties::constantProperties()
     ParcelType::constantProperties(),
     T0_(this->dict_, 0.0),
     TMin_(this->dict_, 0.0),
-    TMax_(this->dict_, VGREAT),
+    TMax_(this->dict_, vGreat),
     Cp0_(this->dict_, 0.0),
     epsilon0_(this->dict_, 0.0),
     f0_(this->dict_, 0.0)
@@ -82,9 +82,7 @@ inline Foam::ThermoParcel<ParcelType>::ThermoParcel
 :
     ParcelType(mesh, coordinates, celli, tetFacei, tetPti),
     T_(0.0),
-    Cp_(0.0),
-    Tc_(0.0),
-    Cpc_(0.0)
+    Cp_(0.0)
 {}
 
 
@@ -98,9 +96,7 @@ inline Foam::ThermoParcel<ParcelType>::ThermoParcel
 :
     ParcelType(mesh, position, celli),
     T_(0.0),
-    Cp_(0.0),
-    Tc_(0.0),
-    Cpc_(0.0)
+    Cp_(0.0)
 {}
 
 
@@ -141,9 +137,7 @@ inline Foam::ThermoParcel<ParcelType>::ThermoParcel
         constProps
     ),
     T_(constProps.T0()),
-    Cp_(constProps.Cp0()),
-    Tc_(0.0),
-    Cpc_(0.0)
+    Cp_(constProps.Cp0())
 {}
 
 
@@ -225,20 +219,6 @@ template<class ParcelType>
 inline Foam::scalar Foam::ThermoParcel<ParcelType>::hs() const
 {
     return Cp_*(T_ - 298.15);
-}
-
-
-template<class ParcelType>
-inline Foam::scalar Foam::ThermoParcel<ParcelType>::Tc() const
-{
-    return Tc_;
-}
-
-
-template<class ParcelType>
-inline Foam::scalar Foam::ThermoParcel<ParcelType>::Cpc() const
-{
-    return Cpc_;
 }
 
 

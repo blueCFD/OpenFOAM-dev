@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011-2016 blueCAPE: Avoid defining 'GNU_SOURCE' for MinGW builds.
@@ -39,6 +39,7 @@ Modifications
 #include "OFstream.H"
 #include "globalIndex.H"
 #include "SubField.T.H"
+#include "PstreamGlobals.T.H"
 
 extern "C"
 {
@@ -392,9 +393,9 @@ Foam::label Foam::ptscotchDecomp::decompose
                 Info<< "ptscotchDecomp : Using strategy " << strategy << endl;
             }
             SCOTCH_stratDgraphMap(&stradat, strategy.c_str());
-            //fprintf(stdout, "S\tStrat=");
-            //SCOTCH_stratSave(&stradat, stdout);
-            //fprintf(stdout, "\n");
+            // fprintf(stdout, "S\tStrat=");
+            // SCOTCH_stratSave(&stradat, stdout);
+            // fprintf(stdout, "\n");
         }
     }
 
@@ -478,7 +479,11 @@ Foam::label Foam::ptscotchDecomp::decompose
         Pout<< "SCOTCH_dgraphInit" << endl;
     }
     SCOTCH_Dgraph grafdat;
-    check(SCOTCH_dgraphInit(&grafdat, MPI_COMM_WORLD), "SCOTCH_dgraphInit");
+    check
+    (
+        SCOTCH_dgraphInit(&grafdat, PstreamGlobals::MPI_COMM_FOAM),
+        "SCOTCH_dgraphInit"
+    );
 
 
     if (debug)
@@ -609,8 +614,8 @@ Foam::label Foam::ptscotchDecomp::decompose
 
 
 
-    //finalDecomp.setSize(xadjSize-1);
-    //check
+    // finalDecomp.setSize(xadjSize-1);
+    // check
     //(
     //    SCOTCH_dgraphPart
     //    (

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -312,11 +312,11 @@ void Foam::PackingModels::Implicit<CloudType>::cacheFields(const bool store)
         );
         uCorrect_->correctBoundaryConditions();
 
-        //Info << endl;
-        //Info << "     alpha: " << alpha_.primitiveField() << endl;
-        //Info << "phiCorrect: " << phiCorrect_->primitiveField() << endl;
-        //Info << "  uCorrect: " << uCorrect_->primitiveField() << endl;
-        //Info << endl;
+        // Info << endl;
+        // Info << "     alpha: " << alpha_.primitiveField() << endl;
+        // Info << "phiCorrect: " << phiCorrect_->primitiveField() << endl;
+        // Info << "  uCorrect: " << uCorrect_->primitiveField() << endl;
+        // Info << endl;
     }
     else
     {
@@ -344,7 +344,7 @@ Foam::vector Foam::PackingModels::Implicit<CloudType>::velocityCorrection
     const vector U = uCorrect_()[celli];
 
     // face geometry
-    vector nHat = mesh.faces()[facei].normal(mesh.points());
+    vector nHat = mesh.faces()[facei].area(mesh.points());
     const scalar nMag = mag(nHat);
     nHat /= nMag;
 

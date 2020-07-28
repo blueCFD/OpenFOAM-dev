@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -127,7 +127,7 @@ public:
                 //- Convert a version number into an index
                 int numberToIndex(const scalar num) const
                 {
-                    return int(10*num + SMALL);
+                    return int(10*num + small);
                 }
 
                 //- Return major version
@@ -311,11 +311,11 @@ public:
         // Check
 
             //- Check IOstream status for given operation
-            //  print IOstream state if error has occured
+            //  print IOstream state if error has occurred
             virtual bool check(const char* operation) const;
 
             //- Check IOstream status for given operation
-            //  print IOstream state if error has occured and exit
+            //  print IOstream state if error has occurred and exit
             void fatalCheck(const char* operation) const;
 
             //- Return true if stream has been opened

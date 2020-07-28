@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ class sixDoFRigidBodyMotionSolver
 {
     // Private data
 
-        //- Six dof motion object
+        //- Six DoF motion object
         sixDoFRigidBodyMotion motion_;
 
         wordReList patches_;
@@ -123,6 +123,9 @@ public:
 
 
     // Member Functions
+
+        //- Return the six DoF motion object
+        const sixDoFRigidBodyMotion& motion() const;
 
         //- Return point location obtained from the current motion field
         virtual tmp<pointField> curPoints() const;

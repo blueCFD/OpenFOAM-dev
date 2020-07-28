@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::reactingOneDim
+    Foam::regionModels::pyrolysisModels::reactingOneDim
 
 Description
     Reacting, 1-D pyrolysis model
@@ -75,11 +75,11 @@ protected:
 
     // Protected data
 
+        //- Reference to solid thermo
+        autoPtr<solidReactionThermo> solidThermo_;
+
         //- Reference to the solid chemistry model
         autoPtr<basicSolidChemistryModel> solidChemistry_;
-
-        //- Reference to solid thermo
-        solidReactionThermo& solidThermo_;
 
         //- Pointer to radiation model
         autoPtr<radiation::radiationModel> radiation_;
@@ -125,7 +125,7 @@ protected:
 
             //- Coupled region radiative heat flux [W/m2]
             //  Requires user to input mapping info for coupled patches
-            //volScalarField qrCoupled_;
+            // volScalarField qrCoupled_;
 
             //- In depth radiative heat flux [W/m2]
             volScalarField qr_;

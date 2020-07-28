@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ class regionCoupledBaseGAMGInterface
         const regionCoupledLduInterface& fineRegionCoupledLduInterface_;
 
         //- AMI interface
-        //autoPtr<AMIPatchToPatchInterpolation> amiPtr_;
+        // autoPtr<AMIPatchToPatchInterpolation> amiPtr_;
 
 
     // Private Member Functions
@@ -109,7 +109,7 @@ public:
 
         //- Cyclic interface functions
 
-            //- Return neigbour processor number
+            //- Return neighbour processor number
             virtual label neighbPatchID() const
             {
                 return fineRegionCoupledLduInterface_.neighbPatchID();
@@ -128,7 +128,7 @@ public:
                 );
             }
 
-            //virtual const AMIPatchToPatchInterpolation& AMI() const
+            // virtual const AMIPatchToPatchInterpolation& AMI() const
             //{
             //    return amiPtr_();
             //}

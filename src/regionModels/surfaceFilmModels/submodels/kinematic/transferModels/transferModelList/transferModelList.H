@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::transferModelList
+    Foam::regionModels::surfaceFilmModels::transferModelList
 
 Description
     List container for film transfer models
@@ -77,12 +77,12 @@ public:
     // Constructors
 
         //- Construct null
-        transferModelList(surfaceFilmModel& film);
+        transferModelList(surfaceFilmRegionModel& film);
 
         //- Construct from type name, dictionary and surface film model
         transferModelList
         (
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 

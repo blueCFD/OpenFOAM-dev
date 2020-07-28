@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::turbulentMixingLengthDissipationRateInletFvPatchScalarField
-
-Group
-    grpRASBoundaryConditions grpInletBoundaryConditions
 
 Description
     This boundary condition provides a turbulence dissipation, \f$\epsilon\f$
@@ -74,8 +71,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef turbulentMixingLengthDissipationRateInlet_H
-#define turbulentMixingLengthDissipationRateInlet_H
+#ifndef turbulentMixingLengthDissipationRateInletFvPatchScalarField_H
+#define turbulentMixingLengthDissipationRateInletFvPatchScalarField_H
 
 #include "inletOutletFvPatchFields.H"
 

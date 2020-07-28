@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,12 +25,14 @@ License
 
 #include "heatTransferModel.H"
 #include "phasePair.H"
+#include "BlendedInterfacialModel.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(heatTransferModel, 0);
+    defineBlendedInterfacialModelTypeNameAndDebug(heatTransferModel, 0);
     defineRunTimeSelectionTable(heatTransferModel, dictionary);
 }
 
@@ -53,7 +55,9 @@ Foam::heatTransferModel::heatTransferModel
         dict.lookupOrDefault<scalar>
         (
             "residualAlpha",
-            pair_.dispersed().residualAlpha().value()
+            pair_.ordered()
+          ? pair_.dispersed().residualAlpha().value()
+          : pair_.phase1().residualAlpha().value()
         )
     )
 {}

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,71 +27,99 @@ License
 
 #include "thermoPhysicsTypes.H"
 
-#include "psiChemistryModel.H"
-#include "rhoChemistryModel.H"
+#include "psiReactionThermo.H"
+#include "rhoReactionThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
     // Chemistry solvers based on sensibleEnthalpy
-    makeChemistryReductionMethods(psiChemistryModel, constGasHThermoPhysics);
-    makeChemistryReductionMethods(psiChemistryModel, gasHThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, constGasHThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, gasHThermoPhysics);
     makeChemistryReductionMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         constIncompressibleGasHThermoPhysics
     );
     makeChemistryReductionMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         incompressibleGasHThermoPhysics
     );
-    makeChemistryReductionMethods(psiChemistryModel, icoPoly8HThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, icoPoly8HThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, constFluidHThermoPhysics);
+    makeChemistryReductionMethods
+    (
+        psiReactionThermo,
+        constAdiabaticFluidHThermoPhysics
+    );
+    makeChemistryReductionMethods(psiReactionThermo, constHThermoPhysics);
 
-    makeChemistryReductionMethods(rhoChemistryModel, constGasHThermoPhysics);
-    makeChemistryReductionMethods(rhoChemistryModel, gasHThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, constGasHThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, gasHThermoPhysics);
     makeChemistryReductionMethods
     (
-        rhoChemistryModel,
+        rhoReactionThermo,
         constIncompressibleGasHThermoPhysics
     );
     makeChemistryReductionMethods
     (
-        rhoChemistryModel,
+        rhoReactionThermo,
         incompressibleGasHThermoPhysics
     );
-    makeChemistryReductionMethods(rhoChemistryModel, icoPoly8HThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, icoPoly8HThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, constFluidHThermoPhysics);
+    makeChemistryReductionMethods
+    (
+        rhoReactionThermo,
+        constAdiabaticFluidHThermoPhysics
+    );
+    makeChemistryReductionMethods(rhoReactionThermo, constHThermoPhysics);
 
 
     // Chemistry solvers based on sensibleInternalEnergy
-    makeChemistryReductionMethods(psiChemistryModel, constGasEThermoPhysics);
-    makeChemistryReductionMethods(psiChemistryModel, gasEThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, constGasEThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, gasEThermoPhysics);
     makeChemistryReductionMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         constIncompressibleGasEThermoPhysics
     );
     makeChemistryReductionMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         incompressibleGasEThermoPhysics
     );
-    makeChemistryReductionMethods(psiChemistryModel, icoPoly8EThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, icoPoly8EThermoPhysics);
+    makeChemistryReductionMethods(psiReactionThermo, constFluidEThermoPhysics);
+    makeChemistryReductionMethods
+    (
+        psiReactionThermo,
+        constAdiabaticFluidEThermoPhysics
+    );
+    makeChemistryReductionMethods(psiReactionThermo, constEThermoPhysics);
 
-    makeChemistryReductionMethods(rhoChemistryModel, constGasEThermoPhysics);
-    makeChemistryReductionMethods(rhoChemistryModel, gasEThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, constGasEThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, gasEThermoPhysics);
     makeChemistryReductionMethods
     (
-        rhoChemistryModel,
+        rhoReactionThermo,
         constIncompressibleGasEThermoPhysics
     );
     makeChemistryReductionMethods
     (
-        rhoChemistryModel,
+        rhoReactionThermo,
         incompressibleGasEThermoPhysics
     );
-    makeChemistryReductionMethods(rhoChemistryModel, icoPoly8EThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, icoPoly8EThermoPhysics);
+    makeChemistryReductionMethods(rhoReactionThermo, constFluidEThermoPhysics);
+    makeChemistryReductionMethods
+    (
+        rhoReactionThermo,
+        constAdiabaticFluidEThermoPhysics
+    );
+    makeChemistryReductionMethods(rhoReactionThermo, constEThermoPhysics);
 }
 
 

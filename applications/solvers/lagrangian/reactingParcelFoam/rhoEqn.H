@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,15 +36,13 @@ Description
       + fvc::div(phi)
       ==
         parcels.Srho(rho)
+      + surfaceFilm.Srho()
       + fvOptions(rho)
     );
 
     rhoEqn.solve();
 
     fvOptions.correct(rho);
-
-    Info<< "rho min/max = " << min(rho).value() << ", " << max(rho).value()
-        << endl;
 }
 
 // ************************************************************************* //

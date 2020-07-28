@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -479,7 +479,7 @@ Foam::label Foam::conformalVoronoiMesh::mergeIdenticalDualVertices
 ////                geometryToConformTo_.findSurfaceNearest
 ////                (
 ////                    pt,
-////                    sqr(GREAT),
+////                    sqr(great),
 ////                    surfHit,
 ////                    hitSurface
 ////                );
@@ -643,7 +643,7 @@ Foam::label Foam::conformalVoronoiMesh::mergeIdenticalDualVertices
 //                scalar targetFaceSize = averageAnyCellSize(vA, vB);
 //
 //                // Selecting faces to collapse based on angle to
-//                // surface, so set collapseSizeLimitCoeff to GREAT to
+//                // surface, so set collapseSizeLimitCoeff to great to
 //                // allow collapse of all faces
 //
 //                faceCollapseMode mode = collapseFace
@@ -653,7 +653,7 @@ Foam::label Foam::conformalVoronoiMesh::mergeIdenticalDualVertices
 //                    boundaryPts,
 //                    dualPtIndexMap,
 //                    targetFaceSize,
-//                    GREAT,
+//                    great,
 //                    maxFC
 //                );
 //
@@ -824,7 +824,7 @@ void Foam::conformalVoronoiMesh::checkCellSizing()
     autoPtr<polyMesh> meshPtr = createPolyMeshFromPoints(ptsField);
     const polyMesh& pMesh = meshPtr();
 
-    //pMesh.write();
+    // pMesh.write();
 
     // Find cells with poor quality
     DynamicList<label> checkFaces(identity(pMesh.nFaces()));
@@ -844,7 +844,7 @@ void Foam::conformalVoronoiMesh::checkCellSizing()
 
     label nWrongFaces = 0;
 
-    if (maxNonOrtho < 180.0 - SMALL)
+    if (maxNonOrtho < 180.0 - small)
     {
         polyMeshGeometry::checkFaceDotProduct
         (
@@ -921,7 +921,7 @@ void Foam::conformalVoronoiMesh::checkCellSizing()
         Info<< "    DISABLED: Automatically re-sizing " << cellsToResize.size()
             << " cells that are attached to the bad faces: " << endl;
 
-        //cellSizeControl_.setCellSizes(cellsToResize);
+        // cellSizeControl_.setCellSizes(cellsToResize);
     }
 
     timeCheck("End of Cell Sizing");
@@ -1011,7 +1011,7 @@ Foam::labelHashSet Foam::conformalVoronoiMesh::checkPolyMeshQuality
 
     const vectorField& fAreas = pMesh.faceAreas();
 
-    scalar faceAreaLimit = SMALL;
+    scalar faceAreaLimit = small;
 
     forAll(fAreas, fI)
     {
@@ -1291,9 +1291,9 @@ void Foam::conformalVoronoiMesh::indexDualVertices
         }
     }
 
-    OBJstream snapping1("snapToSurface1.obj");
-    OBJstream snapping2("snapToSurface2.obj");
-    OFstream tetToSnapTo("tetsToSnapTo.obj");
+    // OBJstream snapping1("snapToSurface1.obj");
+    // OBJstream snapping2("snapToSurface2.obj");
+    // OFstream tetToSnapTo("tetsToSnapTo.obj");
 
     for
     (
@@ -1443,7 +1443,7 @@ void Foam::conformalVoronoiMesh::indexDualVertices
 //                        );
 //
 //                        vector snapDir = nearestPointOnTet - dual;
-//                        snapDir /= mag(snapDir) + SMALL;
+//                        snapDir /= mag(snapDir) + small;
 //
 //                        drawDelaunayCell(tetToSnapTo, cit, offset);
 //                        offset += 1;
@@ -1454,7 +1454,7 @@ void Foam::conformalVoronoiMesh::indexDualVertices
 //                            List<pointIndexHit>(1, hitInfo),
 //                            norm
 //                        );
-//                        norm[0] /= mag(norm[0]) + SMALL;
+//                        norm[0] /= mag(norm[0]) + small;
 //
 //                        if
 //                        (
@@ -1490,9 +1490,9 @@ void Foam::conformalVoronoiMesh::indexDualVertices
         }
     }
 
-    //pts.setSize(this->cellCount());
+    // pts.setSize(this->cellCount());
 
-    //boundaryPts.setSize(this->cellCount());
+    // boundaryPts.setSize(this->cellCount());
 }
 
 
@@ -1866,9 +1866,9 @@ void Foam::conformalVoronoiMesh::createFacesOwnerNeighbourAndPatches
 
                         Info<< "    cN " << correctNormal << endl;
 
-                        vector fN = f.normal(pts);
+                        vector fN = f.area(pts);
 
-                        if (mag(fN) < SMALL)
+                        if (mag(fN) < small)
                         {
                             nextCell = vc2;
                             continue;
@@ -2250,47 +2250,52 @@ void Foam::conformalVoronoiMesh::createFacesOwnerNeighbourAndPatches
                 }
                 else
                 {
-//                    if
-//                    (
-//                        ptPairs_.isPointPair(vA, vB)
-//                     || ftPtConformer_.featurePointPairs().isPointPair(vA, vB)
-//                    )
-//                    {
-                        patchIndex = geometryToConformTo_.findPatch(ptA, ptB);
-//                    }
-
-                    if (patchIndex != -1)
+                    if
+                    (
+                        !vA->boundaryPoint()
+                     || !vB->boundaryPoint()
+                     || ptPairs_.isPointPair(vA, vB)
+                     || ftPtConformer_.featurePointPairs().isPointPair(vA, vB)
+                    )
                     {
-//                        if
-//                        (
-//                            vA->boundaryPoint() && vB->boundaryPoint()
-//                         && !ptPairs_.isPointPair(vA, vB)
-//                        )
-//                        {
-//                            indirectPatchFace[patchIndex].append(true);
-//                        }
-//                        else
-//                        {
-//                            indirectPatchFace[patchIndex].append(false);
-//                        }
-//                        patchFaces[patchIndex].append(newDualFace);
-//                        patchOwners[patchIndex].append(own);
-//                        indirectPatchFace[patchIndex].append(false);
-//
-//                        if
-//                        (
-//                            labelPair(vB->index(), vB->procIndex())
-//                          < labelPair(vA->index(), vA->procIndex())
-//                        )
-//                        {
-//                            patchPPSlaves[patchIndex].append(vB->index());
-//                        }
-//                        else
-//                        {
-//                            patchPPSlaves[patchIndex].append(vA->index());
-//                        }
+                        patchIndex = geometryToConformTo_.findPatch(ptA, ptB);
                     }
-//                    else
+
+                    if
+                    (
+                        patchIndex != -1
+                     && geometryToConformTo_.patchInfo().set(patchIndex)
+                    )
+                    {
+                        // baffle faces
+
+                        patchFaces[patchIndex].append(newDualFace);
+                        patchOwners[patchIndex].append(own);
+                        indirectPatchFace[patchIndex].append(false);
+
+                        reverse(newDualFace);
+
+                        patchFaces[patchIndex].append(newDualFace);
+                        patchOwners[patchIndex].append(nei);
+                        indirectPatchFace[patchIndex].append(false);
+
+                        if
+                        (
+                            labelPair(vB->index(), vB->procIndex())
+                          < labelPair(vA->index(), vA->procIndex())
+                        )
+                        {
+                            patchPPSlaves[patchIndex].append(vB->index());
+                            patchPPSlaves[patchIndex].append(vB->index());
+                        }
+                        else
+                        {
+                            patchPPSlaves[patchIndex].append(vA->index());
+                            patchPPSlaves[patchIndex].append(vA->index());
+                        }
+
+                    }
+                    else
                     {
                         // internal face
                         faces[dualFacei] = newDualFace;

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,6 +40,10 @@ Foam::blockMesh::blockMesh(const IOdictionary& dict, const word& regionName)
 :
     meshDict_(dict),
     verboseOutput(meshDict_.lookupOrDefault<Switch>("verbose", true)),
+    checkFaceCorrespondence_
+    (
+        meshDict_.lookupOrDefault<Switch>("checkFaceCorrespondence", true)
+    ),
     geometry_
     (
         IOobject

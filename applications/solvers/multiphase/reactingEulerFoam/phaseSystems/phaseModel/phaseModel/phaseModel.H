@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -180,6 +180,9 @@ public:
         //- Return the Sauter-mean diameter
         tmp<volScalarField> d() const;
 
+        //- Return const-reference to diameterModel of the phase
+        const autoPtr<diameterModel>& dPtr() const;
+
         //- Correct the phase properties
         virtual void correct();
 
@@ -192,17 +195,11 @@ public:
         //- Correct the turbulence
         virtual void correctTurbulence();
 
-        //- Correct the energy transport e.g. alphat
+        //- Correct the energy transport
         virtual void correctEnergyTransport();
 
-        //- Return the momentum equation
-        virtual tmp<fvVectorMatrix> UEqn() = 0;
-
-        //- Return the enthalpy equation
-        virtual tmp<fvScalarMatrix> heEqn() = 0;
-
-        //- Return the species fraction equation
-        virtual tmp<fvScalarMatrix> YiEqn(volScalarField& Yi) = 0;
+        //- Ensure that the flux at inflow/outflow BCs is preserved
+        void correctInflowOutflow(surfaceScalarField& alphaPhi) const;
 
         //- Read phase properties dictionary
         virtual bool read();
@@ -211,80 +208,109 @@ public:
         // Compressibility (variable density)
 
             //- Return true if the phase is compressible otherwise false
-            virtual bool compressible() const;
+            virtual bool compressible() const = 0;
 
             //- Return the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
-            virtual const tmp<volScalarField>& divU() const;
+            virtual tmp<volScalarField> divU() const = 0;
 
             //- Set the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
-            virtual void divU(const tmp<volScalarField>& divU);
-
-            //- Return the phase kinetic energy
-            virtual const volScalarField& K() const;
-
-
-        // Implicit phase pressure and dispersion support
-
-            //- Return the phase diffusivity divided by the momentum coefficient
-            virtual const surfaceScalarField& DbyA() const;
-
-            //- Set the phase diffusivity divided by the momentum coefficient
-            virtual void DbyA(const tmp<surfaceScalarField>& DbyA);
+            virtual void divU(tmp<volScalarField> divU) = 0;
 
 
         // Thermo
 
-            //- Return const access to the thermophysical model
+            //- Return whether the phase is isothermal
+            virtual bool isothermal() const = 0;
+
+            //- Return the enthalpy equation
+            virtual tmp<fvScalarMatrix> heEqn() = 0;
+
+            //- Return the thermophysical model
             virtual const rhoThermo& thermo() const = 0;
 
-            //- Return non-const access to the thermophysical model
-            //  for correction
-            virtual rhoThermo& thermo() = 0;
+            //- Access the thermophysical model
+            virtual rhoThermo& thermoRef() = 0;
 
             //- Return the density field
             virtual tmp<volScalarField> rho() const = 0;
 
-            //- Constant access the species mass fractions
+
+        // Species
+
+            //- Return whether the phase is pure (i.e., not multi-component)
+            virtual bool pure() const = 0;
+
+            //- Return the species fraction equation
+            virtual tmp<fvScalarMatrix> YiEqn(volScalarField& Yi) = 0;
+
+            //- Return the species mass fractions
             virtual const PtrList<volScalarField>& Y() const = 0;
 
+            //- Return a species mass fraction by name
+            virtual const volScalarField& Y(const word& name) const = 0;
+
             //- Access the species mass fractions
-            virtual PtrList<volScalarField>& Y() = 0;
+            virtual PtrList<volScalarField>& YRef() = 0;
+
+            //- Return the active species mass fractions
+            virtual const UPtrList<volScalarField>& YActive() const = 0;
+
+            //- Access the active species mass fractions
+            virtual UPtrList<volScalarField>& YActiveRef() = 0;
 
 
         // Momentum
 
-            //- Constant access the velocity
+            //- Return whether the phase is stationary
+            virtual bool stationary() const = 0;
+
+            //- Return the momentum equation
+            virtual tmp<fvVectorMatrix> UEqn() = 0;
+
+            //- Return the momentum equation for the face-based algorithm
+            virtual tmp<fvVectorMatrix> UfEqn() = 0;
+
+            //- Return the velocity
             virtual tmp<volVectorField> U() const = 0;
 
             //- Access the velocity
-            virtual volVectorField& U() = 0;
+            virtual volVectorField& URef() = 0;
+
+            //- Return the volumetric flux
+            virtual tmp<surfaceScalarField> phi() const = 0;
+
+            //- Access the volumetric flux
+            virtual surfaceScalarField& phiRef() = 0;
+
+            //- Return the volumetric flux of the phase
+            virtual tmp<surfaceScalarField> alphaPhi() const = 0;
+
+            //- Access the volumetric flux of the phase
+            virtual surfaceScalarField& alphaPhiRef() = 0;
+
+            //- Return the mass flux of the phase
+            virtual tmp<surfaceScalarField> alphaRhoPhi() const = 0;
+
+            //- Access the mass flux of the phase
+            virtual surfaceScalarField& alphaRhoPhiRef() = 0;
 
             //- Return the substantive acceleration
             virtual tmp<volVectorField> DUDt() const = 0;
 
-            //- Constant access the continuity error
+            //- Return the substantive acceleration on the faces
+            virtual tmp<surfaceScalarField> DUDtf() const = 0;
+
+            //- Return the continuity error
             virtual tmp<volScalarField> continuityError() const = 0;
 
-            //- Constant access the volumetric flux
-            virtual tmp<surfaceScalarField> phi() const = 0;
+            //- Return the continuity error due to the flow field
+            virtual tmp<volScalarField> continuityErrorFlow() const = 0;
 
-            //- Access the volumetric flux
-            virtual surfaceScalarField& phi() = 0;
+            //- Return the continuity error due to any sources
+            virtual tmp<volScalarField> continuityErrorSources() const = 0;
 
-            //- Constant access the volumetric flux of the phase
-            virtual tmp<surfaceScalarField> alphaPhi() const = 0;
-
-            //- Access the volumetric flux of the phase
-            virtual surfaceScalarField& alphaPhi() = 0;
-
-            //- Constant access the mass flux of the phase
-            virtual tmp<surfaceScalarField> alphaRhoPhi() const = 0;
-
-            //- Access the mass flux of the phase
-            virtual surfaceScalarField& alphaRhoPhi() = 0;
-
-            //- Ensure that the flux at inflow/outflow BCs is preserved
-            void correctInflowOutflow(surfaceScalarField& alphaPhi) const;
+            //- Return the phase kinetic energy
+            virtual tmp<volScalarField> K() const = 0;
 
 
         // Transport
@@ -307,13 +333,15 @@ public:
             //- Return the laminar thermal conductivity on a patch
             virtual tmp<scalarField> kappa(const label patchi) const = 0;
 
-            //- Return the effective thermal conductivity
+            //- Return the effective thermal conductivity, given the turbulent
+            //  thermal diffusivity
             virtual tmp<volScalarField> kappaEff
             (
                 const volScalarField& alphat
             ) const = 0;
 
-            //- Access the effective thermal conductivity
+            //- Return the effective thermal conductivity on a patch, given the
+            //  turbulent thermal diffusivity
             virtual tmp<scalarField> kappaEff
             (
                 const scalarField& alphat,
@@ -326,13 +354,15 @@ public:
             //- Return the laminar thermal diffusivity for enthalpy on a patch
             virtual tmp<scalarField> alpha(const label patchi) const = 0;
 
-            //- Return the effective thermal diffusivity for enthalpy
+            //- Return the effective thermal diffusivity for enthalpy, given the
+            //  turbulent thermal diffusivity
             virtual tmp<volScalarField> alphaEff
             (
                 const volScalarField& alphat
             ) const = 0;
 
-            //- Return the effective thermal diffusivity for enthalpy on a patch
+            //- Return the effective thermal diffusivity for enthalpy on a
+            //  patch, given the turbulent thermal diffusivity
             virtual tmp<scalarField> alphaEff
             (
                 const scalarField& alphat,
@@ -342,9 +372,37 @@ public:
 
         // Turbulence
 
-            //- Return the turbulence model
-            virtual const phaseCompressibleTurbulenceModel&
-                turbulence() const = 0;
+            //- Return the turbulent dynamic viscosity
+            virtual tmp<volScalarField> mut() const = 0;
+
+            //- Return the effective dynamic viscosity
+            virtual tmp<volScalarField> muEff() const = 0;
+
+            //- Return the turbulent kinematic viscosity
+            virtual tmp<volScalarField> nut() const = 0;
+
+            //- Return the effective kinematic viscosity
+            virtual tmp<volScalarField> nuEff() const = 0;
+
+            //- Return the effective thermal conductivity
+            virtual tmp<volScalarField> kappaEff() const = 0;
+
+            //- Return the effective thermal conductivity on a patch
+            virtual tmp<scalarField> kappaEff(const label patchi) const = 0;
+
+            //- Return the effective thermal diffusivity for enthalpy
+            virtual tmp<volScalarField> alphaEff() const = 0;
+
+            //- Return the effective thermal conductivity for enthalpy on a
+            //  patch
+            virtual tmp<scalarField> alphaEff(const label patchi) const = 0;
+
+            //- Return the turbulent kinetic energy
+            virtual tmp<volScalarField> k() const = 0;
+
+            //- Return the phase-pressure'
+            //  (derivative of phase-pressure w.r.t. phase-fraction)
+            virtual tmp<volScalarField> pPrime() const = 0;
 };
 
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -214,7 +214,7 @@ void kLowReWallFunctionFvPatchScalarField::updateCoeffs()
     }
 
     // Limit kw to avoid failure of the turbulence model due to division by kw
-    kw = max(kw, SMALL);
+    kw = max(kw, small);
 
     fixedValueFvPatchField<scalar>::updateCoeffs();
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 blueCAPE Lda 2016-07-28: Added in hack to workaround issues with ANSI strict.
@@ -152,8 +152,8 @@ class CV2D
 :
     public Delaunay
 {
-
-private:
+    //- Use the Foam::point in preference to the CGAL point
+    typedef Foam::point point;
 
     // Private data
 
@@ -163,7 +163,7 @@ private:
         mutable Random rndGen_;
 
         //- The surface to mesh
-        //const querySurface& qSurf_;
+        // const querySurface& qSurf_;
         //- All geometry of the meshing process, including surfaces to be
         //  conformed to and those to be used for refinement
         searchableSurfaces allGeometry_;

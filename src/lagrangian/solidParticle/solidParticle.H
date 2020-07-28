@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,7 +86,7 @@ public:
     //- Class used to pass tracking data to the trackToFace function
     class trackingData
     :
-        public particle::TrackingData<solidParticleCloud>
+        public particle::trackingData
     {
         // Interpolators for continuous phase fields
 
@@ -104,7 +104,7 @@ public:
 
             inline trackingData
             (
-                solidParticleCloud& spc,
+                const solidParticleCloud& spc,
                 const interpolationCellPoint<scalar>& rhoInterp,
                 const interpolationCellPoint<vector>& UInterp,
                 const interpolationCellPoint<scalar>& nuInterp,
@@ -189,44 +189,21 @@ public:
         // Tracking
 
             //- Move
-            bool move(trackingData&, const scalar);
+            bool move(solidParticleCloud&, trackingData&, const scalar);
 
 
         // Patch interactions
 
             //- Overridable function to handle the particle hitting a patch
             //  Executed before other patch-hitting functions
-            bool hitPatch
-            (
-                const polyPatch&,
-                trackingData& td,
-                const label patchi,
-                const scalar trackFraction,
-                const tetIndices& tetIs
-            );
+            bool hitPatch(solidParticleCloud& cloud, trackingData& td);
 
             //- Overridable function to handle the particle hitting a
             //  processorPatch
-            void hitProcessorPatch
-            (
-                const processorPolyPatch&,
-                trackingData& td
-            );
+            void hitProcessorPatch(solidParticleCloud& cloud, trackingData& td);
 
             //- Overridable function to handle the particle hitting a wallPatch
-            void hitWallPatch
-            (
-                const wallPolyPatch&,
-                trackingData& td,
-                const tetIndices&
-            );
-
-            //- Overridable function to handle the particle hitting a polyPatch
-            void hitPatch
-            (
-                const polyPatch&,
-                trackingData& td
-            );
+            void hitWallPatch(solidParticleCloud& cloud, trackingData& td);
 
             //- Transform the physical properties of the particle
             //  according to the given transformation tensor
@@ -235,10 +212,6 @@ public:
             //- Transform the physical properties of the particle
             //  according to the given separation vector
             virtual void transformProperties(const vector& separation);
-
-            //- The nearest distance to a wall that
-            //  the particle can be in the n direction
-            virtual scalar wallImpactDistance(const vector& n) const;
 
 
     // I-O

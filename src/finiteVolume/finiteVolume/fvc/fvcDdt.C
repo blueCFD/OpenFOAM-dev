@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -205,6 +205,31 @@ template<class Type>
 tmp<GeometricField<typename flux<Type>::type, fvsPatchField, surfaceMesh>>
 ddtCorr
 (
+    const GeometricField<Type, fvPatchField, volMesh>& U,
+    const GeometricField
+    <
+        typename flux<Type>::type,
+        fvsPatchField,
+        surfaceMesh
+    >& phi,
+    const autoPtr<GeometricField<Type, fvsPatchField, surfaceMesh>>& Uf
+)
+{
+    if (U.mesh().dynamic())
+    {
+        return ddtCorr(U, Uf());
+    }
+    else
+    {
+        return ddtCorr(U, phi);
+    }
+}
+
+
+template<class Type>
+tmp<GeometricField<typename flux<Type>::type, fvsPatchField, surfaceMesh>>
+ddtCorr
+(
     const volScalarField& rho,
     const GeometricField<Type, fvPatchField, volMesh>& U,
     const GeometricField<Type, fvsPatchField, surfaceMesh>& Uf
@@ -237,6 +262,32 @@ ddtCorr
         U.mesh(),
         U.mesh().ddtScheme("ddt(" + rho.name() + ',' + U.name() + ')')
     ).ref().fvcDdtPhiCorr(rho, U, phi);
+}
+
+
+template<class Type>
+tmp<GeometricField<typename flux<Type>::type, fvsPatchField, surfaceMesh>>
+ddtCorr
+(
+    const volScalarField& rho,
+    const GeometricField<Type, fvPatchField, volMesh>& U,
+    const GeometricField
+    <
+        typename flux<Type>::type,
+        fvsPatchField,
+        surfaceMesh
+    >& phi,
+    const autoPtr<GeometricField<Type, fvsPatchField, surfaceMesh>>& Uf
+)
+{
+    if (U.mesh().dynamic())
+    {
+        return ddtCorr(rho, U, Uf());
+    }
+    else
+    {
+        return ddtCorr(rho, U, phi);
+    }
 }
 
 

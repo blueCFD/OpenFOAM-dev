@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,6 +79,7 @@ template<class CloudType>
 Foam::forceSuSp Foam::ParticleForce<CloudType>::calcCoupled
 (
     const typename CloudType::parcelType&,
+    const typename CloudType::parcelType::trackingData& td,
     const scalar dt,
     const scalar mass,
     const scalar Re,
@@ -97,6 +98,7 @@ template<class CloudType>
 Foam::forceSuSp Foam::ParticleForce<CloudType>::calcNonCoupled
 (
     const typename CloudType::parcelType&,
+    const typename CloudType::parcelType::trackingData& td,
     const scalar dt,
     const scalar mass,
     const scalar Re,
@@ -115,6 +117,7 @@ template<class CloudType>
 Foam::scalar Foam::ParticleForce<CloudType>::massAdd
 (
     const typename CloudType::parcelType& p,
+    const typename CloudType::parcelType::trackingData& td,
     const scalar mass
 ) const
 {

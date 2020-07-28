@@ -1,8 +1,8 @@
 #----------------------------*- makefile-gmake -*------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-#  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -290,14 +290,12 @@ endif
 # Set dependency rule and include dependency lists
 #------------------------------------------------------------------------------
 
-.PHONY: dep updatedep
+.PHONY: dep
 dep: $(DEPENDENCIES)
 
-updatedep: dep
-
-ifeq ($(findstring lnInclude,$(MAKECMDGOALS))$(findstring updatedep,$(MAKECMDGOALS)),)
+ifeq ($(findstring lnInclude,$(MAKECMDGOALS)),)
 -include $(DEPENDENCIES)
 endif
 
 
-#----------------------------- vim: set ft=make: ------------------------------
+#------------------------------------------------------------------------------

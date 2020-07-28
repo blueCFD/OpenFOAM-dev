@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ SourceFiles
 #ifndef InterfaceCompositionPhaseChangePhaseSystem_H
 #define InterfaceCompositionPhaseChangePhaseSystem_H
 
-#include "HeatAndMassTransferPhaseSystem.T.H"
+#include "phaseSystem.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,6 +48,7 @@ namespace Foam
 {
 
 class interfaceCompositionModel;
+class massTransferModel;
 
 /*---------------------------------------------------------------------------*\
                  Class InterfaceCompositionPhaseChangePhaseSystem Declaration
@@ -56,7 +57,7 @@ class interfaceCompositionModel;
 template<class BasePhaseSystem>
 class InterfaceCompositionPhaseChangePhaseSystem
 :
-    public HeatAndMassTransferPhaseSystem<BasePhaseSystem>
+    public BasePhaseSystem
 {
 protected:
 
@@ -69,13 +70,49 @@ protected:
             phasePairKey::hash
         > interfaceCompositionModelTable;
 
+        typedef HashTable
+        <
+            Pair<autoPtr<BlendedInterfacialModel<massTransferModel>>>,
+            phasePairKey,
+            phasePairKey::hash
+        > massTransferModelTable;
+
+        typedef HashPtrTable
+        <
+            HashPtrTable<volScalarField>,
+            phasePairKey,
+            phasePairKey::hash
+        >
+        iDmdtSuSpTable;
+
+        typedef HashPtrTable<volScalarField, phasePairKey, phasePairKey::hash>
+            iDmdtTable;
+
 
     // Protected data
 
         // Sub Models
 
+            //- The number of interface correctors
+            const label nInterfaceCorrectors_;
+
+            //- Mass transfer models
+            massTransferModelTable massTransferModels_;
+
             //- Interface composition models
             interfaceCompositionModelTable interfaceCompositionModels_;
+
+            //- The explicit part of the interfacial mass transfer rates
+            iDmdtSuSpTable iDmdtSu_;
+
+            //- The implicit part of the interfacial mass transfer rates
+            iDmdtSuSpTable iDmdtSp_;
+
+
+    // Protected member functions
+
+        //- Return the interfacial mass transfer rate for a pair for a pair
+        virtual tmp<volScalarField> iDmdt(const phasePairKey& key) const;
 
 
 public:
@@ -92,11 +129,17 @@ public:
 
     // Member Functions
 
+        //- Return the mass transfer rate for a pair
+        virtual tmp<volScalarField> dmdt(const phasePairKey& key) const;
+
+        //- Return the mass transfer rates for each phase
+        virtual Xfer<PtrList<volScalarField>> dmdts() const;
+
         //- Return the mass transfer matrices
         virtual autoPtr<phaseSystem::massTransferTable> massTransfer() const;
 
-        //- Correct the thermodynamics
-        virtual void correctThermo();
+        //- Correct the interface temperatures
+        virtual void correctInterfaceThermo();
 
         //- Read base phaseProperties dictionary
         virtual bool read();

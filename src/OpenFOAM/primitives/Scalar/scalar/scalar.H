@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ Typedef
 
 Description
     Single floating point number identical to float or double depending on
-    whether WM_SP or WM_DP is defined.
+    whether WM_SP, WM_DP or WM_LP is defined.
 
 SourceFiles
     scalar.C
@@ -38,6 +38,7 @@ SourceFiles
 
 #include "floatScalar.H"
 #include "doubleScalar.H"
+#include "longDoubleScalar.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,15 +50,14 @@ namespace Foam
 {
     typedef floatScalar scalar;
 
-    static const scalar GREAT = floatScalarGREAT;
-    static const scalar VGREAT = floatScalarVGREAT;
-    static const scalar ROOTVGREAT = floatScalarROOTVGREAT;
-    static const scalar SMALL = floatScalarSMALL;
-    static const scalar ROOTSMALL = floatScalarROOTSMALL;
-    static const scalar VSMALL = floatScalarVSMALL;
-    static const scalar ROOTVSMALL = floatScalarROOTVSMALL;
-
-    scalar readScalar(Istream& is);
+    static const scalar great = floatScalarGreat;
+    static const scalar rootGreat = floatScalarRootGreat;
+    static const scalar vGreat = floatScalarVGreat;
+    static const scalar rootVGreat = floatScalarRootVGreat;
+    static const scalar small = floatScalarSmall;
+    static const scalar rootSmall = floatScalarRootSmall;
+    static const scalar vSmall = floatScalarVSmall;
+    static const scalar rootVSmall = floatScalarRootVSmall;
 }
 
 #elif defined(WM_DP)
@@ -68,27 +68,65 @@ namespace Foam
 {
     typedef doubleScalar scalar;
 
-    static const scalar GREAT = doubleScalarGREAT;
-    static const scalar VGREAT = doubleScalarVGREAT;
-    static const scalar ROOTVGREAT = doubleScalarROOTVGREAT;
-    static const scalar SMALL = doubleScalarSMALL;
-    static const scalar ROOTSMALL = doubleScalarROOTSMALL;
-    static const scalar VSMALL = doubleScalarVSMALL;
-    static const scalar ROOTVSMALL = doubleScalarROOTVSMALL;
-
-    scalar readScalar(Istream& is);
+    static const scalar great = doubleScalarGreat;
+    static const scalar rootGreat = doubleScalarRootGreat;
+    static const scalar vGreat = doubleScalarVGreat;
+    static const scalar rootVGreat = doubleScalarRootVGreat;
+    static const scalar small = doubleScalarSmall;
+    static const scalar rootSmall = doubleScalarRootSmall;
+    static const scalar vSmall = doubleScalarVSmall;
+    static const scalar rootVSmall = doubleScalarRootVSmall;
 }
 
-#endif
+#elif defined(WM_LP)
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-// Additional transcendental functions
+// Define scalar as a long double
 
 namespace Foam
 {
+    typedef longDoubleScalar scalar;
+
+    static const scalar great = longDoubleScalarGreat;
+    static const scalar rootGreat = longDoubleScalarRootGreat;
+    static const scalar vGreat = longDoubleScalarVGreat;
+    static const scalar rootVGreat = longDoubleScalarRootVGreat;
+    static const scalar small = longDoubleScalarSmall;
+    static const scalar rootSmall = longDoubleScalarRootSmall;
+    static const scalar vSmall = longDoubleScalarVSmall;
+    static const scalar rootVSmall = longDoubleScalarRootVSmall;
+}
+
+#else
+
+    #error "Precision not set, please set either WM_SP, WM_DP or WM_LP"
+
+#endif
+
+//- Deprecated limit constant for backward-compatibility
+namespace Foam
+{
+    static const scalar GREAT = great;
+    static const scalar ROOTGREAT = rootGreat;
+    static const scalar VGREAT = vGreat;
+    static const scalar ROOTVGREAT = rootVGreat;
+    static const scalar SMALL = small;
+    static const scalar ROOTSMALL = rootSmall;
+    static const scalar VSMALL = vSmall;
+    static const scalar ROOTVSMALL = rootVSmall;
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// Additional global and transcendental functions
+
+namespace Foam
+{
+    scalar readScalar(Istream& is);
+
     //- Inverse normalized incomplete gamma function
     scalar invIncGamma(const scalar a, const scalar P);
 }
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

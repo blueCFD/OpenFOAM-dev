@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,9 +69,9 @@ void Foam::automatic::smoothField(triSurfaceScalarField& surf)
                 const scalar faceValue = surf[faceLabel];
                 const scalar distance = mag(faceCentre - fC);
 
-                newValue += faceValue/(distance + SMALL);
+                newValue += faceValue/(distance + small);
 
-                totalDist += 1.0/(distance + SMALL);
+                totalDist += 1.0/(distance + small);
 
                 if (value < faceValue)
                 {
@@ -115,6 +115,10 @@ Foam::automatic::automatic
     featureProximityFile_(coeffsDict_.lookup("featureProximityFile")),
     readInternalCloseness_(Switch(coeffsDict_.lookup("internalCloseness"))),
     internalClosenessFile_(coeffsDict_.lookup("internalClosenessFile")),
+    internalClosenessCellSizeCoeff_
+    (
+        readScalar(coeffsDict_.lookup("internalClosenessCellSizeCoeff"))
+    ),
     curvatureCellSizeCoeff_
     (
         readScalar(coeffsDict_.lookup("curvatureCellSizeCoeff"))
@@ -203,7 +207,7 @@ Foam::tmp<Foam::triSurfacePointScalarField> Foam::automatic::load()
         Info<< indent
             << "Reading internal closeness: " << internalClosenessFile_ << endl;
 
-        triSurfaceScalarField internalCloseness
+        triSurfacePointScalarField internalClosenessPointField
         (
             IOobject
             (
@@ -219,17 +223,13 @@ Foam::tmp<Foam::triSurfacePointScalarField> Foam::automatic::load()
             true
         );
 
-        scalarField internalClosenessPointField
-        (
-            patchInterpolate.faceToPointInterpolate(internalCloseness)
-        );
-
         forAll(pointCellSize, pI)
         {
             pointCellSize[pI] =
                 min
                 (
-                    internalClosenessPointField[meshPointMap[pI]],
+                    (1.0/internalClosenessCellSizeCoeff_)
+                   *internalClosenessPointField[meshPointMap[pI]],
                     pointCellSize[pI]
                 );
         }
@@ -272,7 +272,7 @@ Foam::tmp<Foam::triSurfacePointScalarField> Foam::automatic::load()
         }
     }
 
-    //smoothField(surfaceCellSize);
+    // smoothField(surfaceCellSize);
 
     pointCellSize.write();
 

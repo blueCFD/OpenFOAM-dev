@@ -2,8 +2,8 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-#  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # License
@@ -75,9 +75,9 @@ do
     esac
 done
 
-echo "$version" | grep -Eq '^([0-9]\.[0-9]|dev)$' || \
+echo "$version" | grep -Eq '^([0-9]\.[0-9x]|dev)$' || \
     error "The version number is \"${version}\"." \
-           "The format must be MAJOR.MINOR (e.g. \"4.1\") or \"dev\""
+    "The format must be MAJOR.MINOR (e.g. \"$WM_PROJECT_VERSION\" or \"dev\")"
 
 # constant width for version - default to WM_PROJECT_VERSION
 version=$(printf %-36s "${version:-$WM_PROJECT_VERSION}")
@@ -91,7 +91,7 @@ printHeader()
 | =========                 |                                                 |
 | \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\\\    /   O peration     | Version:  $version  |
-|   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\\\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\\\/     M anipulation  |                                                 |
 \\*---------------------------------------------------------------------------*/
 FoamFile

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::functionObjects::streamLine
-
-Group
-    grpFieldFunctionObjects
 
 Description
     Generates streamline data by sampling a set of user-specified fields along a
@@ -58,7 +55,7 @@ Description
         seedSampleSet
         {
             type        uniform;
-            axis        x;  //distance;
+            axis        x;  // distance;
             start       (-0.0205 0.0001 0.00001);
             end         (-0.0205 0.0005 0.00001);
             nPoints     100;
@@ -112,6 +109,7 @@ SourceFiles
 #include "vectorList.H"
 #include "writer.H"
 #include "indirectPrimitivePatch.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -133,6 +131,24 @@ class streamLine
 :
     public fvMeshFunctionObject
 {
+public:
+
+    // Public data types
+
+        //- Track direction enumerations
+        enum trackDirection
+        {
+            FORWARD,
+            BACKWARD,
+            BOTH
+        };
+
+        //- Track direction enumeration names
+        static const NamedEnum<trackDirection, 3> trackDirectionNames_;
+
+
+private:
+
     // Private data
 
         //- Input dictionary
@@ -147,8 +163,8 @@ class streamLine
         //- Interpolation scheme to use
         word interpolationScheme_;
 
-        //- Whether to use +u or -u
-        bool trackForward_;
+        //- The direction in which to track
+        trackDirection trackDirection_;
 
         //- Maximum lifetime (= number of cells) of particle
         label lifeTime_;

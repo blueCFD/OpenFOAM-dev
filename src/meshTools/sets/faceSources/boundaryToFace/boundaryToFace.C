@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,20 +25,15 @@ License
 
 #include "boundaryToFace.H"
 #include "polyMesh.H"
-
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(boundaryToFace, 0);
-
-addToRunTimeSelectionTable(topoSetSource, boundaryToFace, word);
-
-addToRunTimeSelectionTable(topoSetSource, boundaryToFace, istream);
-
+    defineTypeNameAndDebug(boundaryToFace, 0);
+    addToRunTimeSelectionTable(topoSetSource, boundaryToFace, word);
+    addToRunTimeSelectionTable(topoSetSource, boundaryToFace, istream);
 }
 
 
@@ -68,21 +63,18 @@ void Foam::boundaryToFace::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::boundaryToFace::boundaryToFace(const polyMesh& mesh)
 :
     topoSetSource(mesh)
 {}
 
 
-// Construct from dictionary
 Foam::boundaryToFace::boundaryToFace(const polyMesh& mesh, const dictionary&)
 :
     topoSetSource(mesh)
 {}
 
 
-// Construct from Istream
 Foam::boundaryToFace::boundaryToFace
 (
     const polyMesh& mesh,

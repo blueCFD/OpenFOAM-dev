@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,16 +45,6 @@ template<class Form, class Cmpt, direction Ncmpts>
 inline VectorSpace<Form, Cmpt, Ncmpts>::VectorSpace(const Foam::zero)
 {
     VectorSpaceOps<Ncmpts,0>::eqOpS(*this, Zero, eqOp<Cmpt>());
-}
-
-
-template<class Form, class Cmpt, direction Ncmpts>
-inline VectorSpace<Form, Cmpt, Ncmpts>::VectorSpace
-(
-    const VectorSpace<Form, Cmpt, Ncmpts>& vs
-)
-{
-    VectorSpaceOps<Ncmpts,0>::eqOp(*this, vs, eqOp<Cmpt>());
 }
 
 
@@ -286,16 +276,6 @@ ConstBlock<SubVector, BStart>::operator()
 
 
 template<class Form, class Cmpt, direction Ncmpts>
-inline void VectorSpace<Form, Cmpt, Ncmpts>::operator=
-(
-    const VectorSpace<Form, Cmpt, Ncmpts>& vs
-)
-{
-    VectorSpaceOps<Ncmpts,0>::eqOp(*this, vs, eqOp<Cmpt>());
-}
-
-
-template<class Form, class Cmpt, direction Ncmpts>
 inline void VectorSpace<Form, Cmpt, Ncmpts>::operator+=
 (
     const VectorSpace<Form, Cmpt, Ncmpts>& vs
@@ -425,6 +405,17 @@ inline scalar mag
 )
 {
     return ::sqrt(magSqr(static_cast<const Form&>(vs)));
+}
+
+
+template<class Form, class Cmpt, direction Ncmpts>
+inline VectorSpace<Form, Cmpt, Ncmpts> normalised
+(
+    const VectorSpace<Form, Cmpt, Ncmpts>& vs
+)
+{
+    const scalar magVs = mag(vs);
+    return magVs > 0 ? vs/magVs : Zero;
 }
 
 
@@ -626,6 +617,30 @@ inline typename innerProduct<Form1, Form2>::type dot
 )
 {
     return static_cast<const Form1&>(t1) & static_cast<const Form2&>(t2);
+}
+
+
+template<class Form, class Cmpt, direction Ncmpts>
+inline direction findMax(const VectorSpace<Form, Cmpt, Ncmpts>& vs)
+{
+    direction index = 0;
+    for (direction i=1; i<Ncmpts; ++i)
+    {
+        index = vs[index] > vs[i] ? index : i;
+    }
+    return index;
+}
+
+
+template<class Form, class Cmpt, direction Ncmpts>
+inline direction findMin(const VectorSpace<Form, Cmpt, Ncmpts>& vs)
+{
+    direction index = 0;
+    for (direction i=1; i<Ncmpts; ++i)
+    {
+        index = vs[index] < vs[i] ? index : i;
+    }
+    return index;
 }
 
 

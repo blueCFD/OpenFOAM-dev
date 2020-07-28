@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::externalCoupledTemperatureMixedFvPatchScalarField
-
-Group
-    grpCoupledBoundaryConditions
 
 Description
     This boundary condition provides a temperature interface to an external
@@ -87,7 +84,7 @@ Usage
     \table
         Property     | Description             | Required    | Default value
         commsDir     | communications directory   | yes         |
-        fileName     | transfer file name      | yes         |
+        file         | transfer file name      | yes         |
         waitInterval | interval [s] between file checks | no | 1
         timeOut      | time after which error invoked [s] |no |100*waitInterval
         calcFrequency | calculation frequency  | no          | 1
@@ -100,7 +97,7 @@ Usage
         {
             type            externalCoupledTemperature;
             commsDir        "$FOAM_CASE/comms";
-            fileName        data;
+            file            data;
             calcFrequency   1;
         }
     \endverbatim

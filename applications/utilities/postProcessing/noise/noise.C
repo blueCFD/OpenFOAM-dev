@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,7 +43,7 @@ Usage
 
     pressureData
     {
-        fileName        "pressureData"
+        file                "pressureData";
         nHeaderLine         1;          // number of header lines
         refColumn           0;          // reference column index
         componentColumns    (1);        // component column indices
@@ -104,7 +104,7 @@ Foam::scalar checkUniformTimeStep(const scalarField& t)
                 deltaT = dT;
             }
 
-            if (mag(deltaT - dT) > SMALL)
+            if (mag(deltaT - dT) > small)
             {
                 FatalErrorInFunction
                     << "Unable to process data with a variable time step"
@@ -134,7 +134,11 @@ int main(int argc, char *argv[])
     #include "createFields.H"
 
     Info<< "Reading data file" << endl;
-    Function1Types::CSV<scalar> pData("pressure", dict.subDict("pressureData"));
+    FieldFunction1<Function1Types::CSV<scalar>> pData
+    (
+        "pressure",
+        dict.subDict("pressureData")
+    );
 
     // time history data
     const scalarField t(pData.x());

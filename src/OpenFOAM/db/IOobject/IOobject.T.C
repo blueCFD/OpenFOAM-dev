@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -193,6 +193,36 @@ bool Foam::IOobject::fileNameComponents
 }
 
 
+Foam::word Foam::IOobject::group(const word& name)
+{
+    word::size_type i = name.find_last_of('.');
+
+    if (i == word::npos || i == 0)
+    {
+        return word::null;
+    }
+    else
+    {
+        return name.substr(i+1, word::npos);
+    }
+}
+
+
+Foam::word Foam::IOobject::member(const word& name)
+{
+    word::size_type i = name.find_last_of('.');
+
+    if (i == word::npos || i == 0)
+    {
+        return name;
+    }
+    else
+    {
+        return name.substr(0, i);
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::IOobject::IOobject
@@ -368,31 +398,13 @@ const Foam::fileName& Foam::IOobject::caseName() const
 
 Foam::word Foam::IOobject::group() const
 {
-    word::size_type i = name_.find_last_of('.');
-
-    if (i == word::npos || i == 0)
-    {
-        return word::null;
-    }
-    else
-    {
-        return name_.substr(i+1, word::npos);
-    }
+    return group(name_);
 }
 
 
 Foam::word Foam::IOobject::member() const
 {
-    word::size_type i = name_.find_last_of('.');
-
-    if (i == word::npos || i == 0)
-    {
-        return name_;
-    }
-    else
-    {
-        return name_.substr(0, i);
-    }
+    return member(name_);
 }
 
 

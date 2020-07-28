@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,7 +103,6 @@ namespace Foam
 class argList
 {
     // Private data
-        static bool bannerEnabled;
 
         //- Switch on/off parallel mode. Has to be first to be constructed
         //  so destructor is done last.
@@ -175,14 +174,18 @@ public:
         //- Standard name for the post-processing option
         static word postProcessOptionName;
 
-        //! \cond internalClass
+        // Class to initialize options table
+        // with the standard case related options
         class initValidTables
         {
         public:
 
             initValidTables();
+
+            //- Clear the options table
+            //  for utilities which do not operate on files rather than cases
+            static void clear();
         };
-        //! \endcond
 
 
     // Constructors
@@ -355,9 +358,6 @@ public:
 
             //- Remove option from validOptions and from optionUsage
             static void removeOption(const word& opt);
-
-            //- Disable emitting the banner information
-            static void noBanner();
 
             //- Remove the parallel options
             static void noParallel();

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -161,7 +161,7 @@ class surfaceIntersection
         ////- Given edge (eStart - eEnd) and normal direction construct plane
         ////  and intersect all edges of hitFace with it.
         ////  Return the edge and coordinate of hit.
-        //static pointIndexHit faceEdgeIntersection
+        // static pointIndexHit faceEdgeIntersection
         //(
         //    const triSurface&,
         //    const label hitFacei,

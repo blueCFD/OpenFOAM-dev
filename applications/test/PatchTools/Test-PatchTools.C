@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -189,7 +189,7 @@ using namespace Foam;
 //        }
 //    }
 //
-//    extrudeN /= mag(extrudeN)+VSMALL;
+//    extrudeN /= mag(extrudeN)+vSmall;
 //
 //    return textrudeN;
 //}
@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
         forAll(en, patchEdgeI)
         {
             const edge& patchE = pp.edges()[patchEdgeI];
-            //str.write(pp.localPoints()[pointi], en[pointi]);
+            // str.write(pp.localPoints()[pointi], en[pointi]);
             const point pt = patchE.centre(pp.localPoints());
             str.write(linePointRef(pt, pt + 0.1*en[patchEdgeI]));
         }

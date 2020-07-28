@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,17 +75,8 @@ class Cloud
 {
     // Private data
 
+        //- Reference to the mesh
         const polyMesh& polyMesh_;
-
-        //- Temporary storage for addressing. Used in findTris.
-        mutable DynamicList<label> labels_;
-
-        //- Count of how many tracking rescue corrections have been
-        //  applied
-        mutable label nTrackingRescues_;
-
-        //- Does the cell have wall faces
-        mutable autoPtr<PackedBoolList> cellWallFacesPtr_;
 
         //- Temporary storage for the global particle positions
         mutable autoPtr<vectorField> globalPositionsPtr_;
@@ -98,9 +89,6 @@ class Cloud
 
         //- Initialise cloud on IO constructor
         void initCloud(const bool checkClass);
-
-        //- Find all cells which have wall faces
-        void calcCellWallFaces() const;
 
         //- Read cloud properties dictionary
         void readCloudUniformProperties();
@@ -160,44 +148,11 @@ public:
                 return polyMesh_;
             }
 
+            //- Return the number of particles in the cloud
             label size() const
             {
                 return IDLList<ParticleType>::size();
             };
-
-            DynamicList<label>& labels() const
-            {
-                return labels_;
-            }
-
-            //- Return nTrackingRescues
-            label nTrackingRescues() const
-            {
-                return nTrackingRescues_;
-            }
-
-            //- Increment the nTrackingRescues counter
-            void trackingRescue() const
-            {
-                nTrackingRescues_++;
-                if (cloud::debug && size() && (nTrackingRescues_ % size() == 0))
-                {
-                    Pout<< "    " << nTrackingRescues_
-                        << " tracking rescues " << endl;
-                }
-            }
-
-            //- Whether each cell has any wall faces (demand driven data)
-            const PackedBoolList& cellHasWallFaces() const;
-
-            //- Switch to specify if particles of the cloud can return
-            //  non-zero wall distance values.  By default, assume
-            //  that they can't (default for wallImpactDistance in
-            //  particle is 0.0).
-            bool hasWallImpactDistance() const
-            {
-                return false;
-            }
 
 
             // Iterators
@@ -253,9 +208,13 @@ public:
             void cloudReset(const Cloud<ParticleType>& c);
 
             //- Move the particles
-            //  passing the TrackingData to the track function
-            template<class TrackData>
-            void move(TrackData& td, const scalar trackTime);
+            template<class TrackCloudType>
+            void move
+            (
+                TrackCloudType& cloud,
+                typename ParticleType::trackingData& td,
+                const scalar trackTime
+            );
 
             //- Remap the cells of particles corresponding to the
             //  mesh topology change

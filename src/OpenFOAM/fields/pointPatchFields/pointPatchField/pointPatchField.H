@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -489,8 +489,8 @@ public:
 };
 
 
-// This function is added as a hack to enable simple backward compatability
-// with verions using referenceLevel in GeometicField
+// This function is added as a hack to enable simple backward compatibility
+// with versions using referenceLevel in GeometicField
 template<class Type>
 const pointPatchField<Type>& operator+
 (

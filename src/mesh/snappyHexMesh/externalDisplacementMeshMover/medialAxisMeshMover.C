@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -186,7 +186,7 @@ void Foam::medialAxisMeshMover::smoothPatchNormals
             // full smoothing neighbours + point value
             average[pointi] = 0.5*(normals[pointi]+average[pointi]);
             normals[pointi] = average[pointi];
-            normals[pointi] /= mag(normals[pointi]) + VSMALL;
+            normals[pointi] /= mag(normals[pointi]) + vSmall;
         }
     }
 }
@@ -272,10 +272,10 @@ void Foam::medialAxisMeshMover::smoothNormals
         {
             if (isFixedPoint.get(pointi) == 0)
             {
-                //full smoothing neighbours + point value
+                // full smoothing neighbours + point value
                 average[pointi] = 0.5*(normals[pointi]+average[pointi]);
                 normals[pointi] = average[pointi];
-                normals[pointi] /= mag(normals[pointi]) + VSMALL;
+                normals[pointi] /= mag(normals[pointi]) + vSmall;
             }
         }
     }
@@ -300,7 +300,7 @@ bool Foam::medialAxisMeshMover::isMaxEdge
     vector v0(points[e[0]] - pointWallDist[e[0]].origin());
     scalar magV0(mag(v0));
 
-    if (magV0 < SMALL)
+    if (magV0 < small)
     {
         return false;
     }
@@ -308,22 +308,22 @@ bool Foam::medialAxisMeshMover::isMaxEdge
     vector v1(points[e[1]] - pointWallDist[e[1]].origin());
     scalar magV1(mag(v1));
 
-    if (magV1 < SMALL)
+    if (magV1 < small)
     {
         return false;
     }
 
 
     //- Detect based on vector to nearest point differing for both endpoints
-    //v0 /= magV0;
-    //v1 /= magV1;
+    // v0 /= magV0;
+    // v1 /= magV1;
     //
     //// Test angle.
-    //if ((v0 & v1) < minCos)
+    // if ((v0 & v1) < minCos)
     //{
     //    return true;
     //}
-    //else
+    // else
     //{
     //    return false;
     //}
@@ -572,10 +572,10 @@ void Foam::medialAxisMeshMover::update(const dictionary& coeffDict)
                 // point. Mark both points as medial axis points.
 
                 // Approximate medial axis location on edge.
-                //const point medialAxisPt = e.centre(points);
+                // const point medialAxisPt = e.centre(points);
                 vector eVec = e.vec(points);
                 scalar eMag = mag(eVec);
-                if (eMag > VSMALL)
+                if (eMag > vSmall)
                 {
                     eVec /= eMag;
 
@@ -611,7 +611,7 @@ void Foam::medialAxisMeshMover::update(const dictionary& coeffDict)
                             (
                                 pointData
                                 (
-                                    medialAxisPt,   //points[pointi],
+                                    medialAxisPt,   // points[pointi],
                                     magSqr(points[pointi]-medialAxisPt),//0.0,
                                     pointi,         // passive data
                                     Zero    // passive data
@@ -817,7 +817,7 @@ void Foam::medialAxisMeshMover::update(const dictionary& coeffDict)
             scalar wDist2 = pointWallDist[pointi].distSqr();
             scalar mDist = medialDist_[pointi];
 
-            if (wDist2 < sqr(SMALL) && mDist < SMALL)
+            if (wDist2 < sqr(small) && mDist < small)
             //- Note: maybe less strict:
             //(
             //    wDist2 < sqr(meshRefiner_.mergeDistance())
@@ -922,9 +922,9 @@ void Foam::medialAxisMeshMover::syncPatchDisplacement
             }
         }
 
-        //labelList syncPatchNLayers(patchNLayers);
+        // labelList syncPatchNLayers(patchNLayers);
         //
-        //syncTools::syncPointList
+        // syncTools::syncPointList
         //(
         //    mesh(),
         //    meshPoints,
@@ -935,7 +935,7 @@ void Foam::medialAxisMeshMover::syncPatchDisplacement
         //
         //// Reset if differs
         //// 1. take max
-        //forAll(syncPatchNLayers, i)
+        // forAll(syncPatchNLayers, i)
         //{
         //    if (syncPatchNLayers[i] != patchNLayers[i])
         //    {
@@ -955,7 +955,7 @@ void Foam::medialAxisMeshMover::syncPatchDisplacement
         //    }
         //}
         //
-        //syncTools::syncPointList
+        // syncTools::syncPointList
         //(
         //    mesh(),
         //    meshPoints,
@@ -966,7 +966,7 @@ void Foam::medialAxisMeshMover::syncPatchDisplacement
         //
         //// Reset if differs
         //// 2. take min
-        //forAll(syncPatchNLayers, i)
+        // forAll(syncPatchNLayers, i)
         //{
         //    if (syncPatchNLayers[i] != patchNLayers[i])
         //    {
@@ -994,7 +994,7 @@ void Foam::medialAxisMeshMover::syncPatchDisplacement
         }
     }
 
-    //Info<< "Prevented extrusion on "
+    // Info<< "Prevented extrusion on "
     //    << returnReduce(nChangedTotal, sumOp<label>())
     //    << " coupled patch points during syncPatchDisplacement." << endl;
 }
@@ -1046,7 +1046,7 @@ void Foam::medialAxisMeshMover::minSmoothField
         // Transfer to field
         forAll(field, pointi)
         {
-            //full smoothing neighbours + point value
+            // full smoothing neighbours + point value
             average[pointi] = 0.5*(field[pointi]+average[pointi]);
 
             // perform monotonic smoothing
@@ -1109,7 +1109,7 @@ handleFeatureAngleLayerTerminations
 
 
 
-    //label nOldPointCounter = nPointCounter;
+    // label nOldPointCounter = nPointCounter;
 
     // Detect situation where two featureedge-neighbouring faces are partly or
     // not extruded and the edge itself is extruded. In this case unmark the
@@ -1199,7 +1199,7 @@ handleFeatureAngleLayerTerminations
         }
     }
 
-    //Info<< "Added "
+    // Info<< "Added "
     //    << returnReduce(nPointCounter-nOldPointCounter, sumOp<label>())
     //    << " point not to extrude." << endl;
 }
@@ -1548,7 +1548,7 @@ void Foam::medialAxisMeshMover::smoothLambdaMuDisplacement
 
         forAll(displacement, i)
         {
-            if (medialRatio_[i] > SMALL && medialRatio_[i] < 1-SMALL)
+            if (medialRatio_[i] > small && medialRatio_[i] < 1-small)
             {
                 displacement[i] = (1-lambda)*displacement[i]+lambda*average[i];
             }
@@ -1569,7 +1569,7 @@ void Foam::medialAxisMeshMover::smoothLambdaMuDisplacement
 
         forAll(displacement, i)
         {
-            if (medialRatio_[i] > SMALL && medialRatio_[i] < 1-SMALL)
+            if (medialRatio_[i] > small && medialRatio_[i] < 1-small)
             {
                 displacement[i] = (1-mu)*displacement[i]+mu*average[i];
             }
@@ -1850,15 +1850,15 @@ void Foam::medialAxisMeshMover::calculateDisplacement
             //- Option 1: look only at extrusion thickness v.s. distance
             //  to nearest (medial axis or static) point.
             scalar mDist = medialDist_[pointi];
-            scalar thicknessRatio = thickness[patchPointi]/(mDist+VSMALL);
+            scalar thicknessRatio = thickness[patchPointi]/(mDist+vSmall);
 
             //- Option 2: Look at component in the direction
             //  of nearest (medial axis or static) point.
             vector n =
                 patchDisp[patchPointi]
-              / (mag(patchDisp[patchPointi]) + VSMALL);
+              / (mag(patchDisp[patchPointi]) + vSmall);
             vector mVec = mesh().points()[pointi]-medialVec_[pointi];
-            mVec /= mag(mVec)+VSMALL;
+            mVec /= mag(mVec)+vSmall;
             thicknessRatio *= (n&mVec);
 
             if (thicknessRatio > maxThicknessToMedialRatio)
@@ -2121,7 +2121,7 @@ bool Foam::medialAxisMeshMover::move
     movePoints(mesh().points());
     //
     //// Update any point motion bcs (e.g. timevarying)
-    //pointDisplacement_.boundaryField().updateCoeffs();
+    // pointDisplacement_.boundaryField().updateCoeffs();
 
 
     // Extract out patch-wise displacement
@@ -2153,7 +2153,7 @@ bool Foam::medialAxisMeshMover::move
     );
     forAll(extrudeStatus, pointi)
     {
-        if (mag(patchDisp[pointi]) <= minThickness[pointi]+SMALL)
+        if (mag(patchDisp[pointi]) <= minThickness[pointi]+small)
         {
             extrudeStatus[pointi] = snappyLayerDriver::NOEXTRUDE;
         }

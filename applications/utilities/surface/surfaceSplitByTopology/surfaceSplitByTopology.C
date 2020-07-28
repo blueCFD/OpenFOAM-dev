@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,8 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    argList::noParallel();
+    #include "removeCaseOptions.H"
+
     argList::validOptions.clear();
     argList::validArgs.append("surface file");
     argList::validArgs.append("output surface file");
@@ -205,7 +206,7 @@ int main(int argc, char *argv[])
           + name(z)
           + "." + outExtension;
 
-        Info<< "    Writing mulitple part "
+        Info<< "    Writing multiple part "
             << z << " to " << remainingPartFileName << endl;
 
         zoneSurf.write(remainingPartFileName);

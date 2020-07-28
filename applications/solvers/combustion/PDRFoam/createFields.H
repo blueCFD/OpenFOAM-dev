@@ -14,7 +14,7 @@ autoPtr<psiuReactionThermo> pThermo
 psiuReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "ha", "ea");
 
-basicMultiComponentMixture& composition = thermo.composition();
+basicSpecieMixture& composition = thermo.composition();
 
 volScalarField rho
 (
@@ -235,3 +235,4 @@ fields.add(thermo.heu());
 flameWrinkling->addXi(fields);
 
 #include "createMRF.H"
+#include "createFvOptions.H"

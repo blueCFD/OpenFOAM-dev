@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::massRosinRammler
+    Foam::distributionModels::massRosinRammler
 
 Description
     Mass-based Rosin-Rammler distributionModel.
@@ -93,7 +93,7 @@ public:
     // Constructors
 
         //- Construct from components
-        massRosinRammler(const dictionary& dict, cachedRandom& rndGen);
+        massRosinRammler(const dictionary& dict, Random& rndGen);
 
         //- Construct copy
         massRosinRammler(const massRosinRammler& p);

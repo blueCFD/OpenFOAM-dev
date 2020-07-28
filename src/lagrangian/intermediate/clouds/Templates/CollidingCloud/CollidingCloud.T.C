@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,28 +44,29 @@ void Foam::CollidingCloud<CloudType>::setModels()
 
 
 template<class CloudType>
-template<class TrackData>
-void  Foam::CollidingCloud<CloudType>::moveCollide
+template<class TrackCloudType>
+void Foam::CollidingCloud<CloudType>::moveCollide
 (
-    TrackData& td,
+    TrackCloudType& cloud,
+    typename parcelType::trackingData& td,
     const scalar deltaT
 )
 {
-    td.part() = TrackData::tpVelocityHalfStep;
-    CloudType::move(td,  deltaT);
+    td.part() = parcelType::trackingData::tpVelocityHalfStep;
+    CloudType::move(cloud, td, deltaT);
 
-    td.part() = TrackData::tpLinearTrack;
-    CloudType::move(td,  deltaT);
+    td.part() = parcelType::trackingData::tpLinearTrack;
+    CloudType::move(cloud, td, deltaT);
 
-    // td.part() = TrackData::tpRotationalTrack;
-    // CloudType::move(td);
+    // td.part() = parcelType::trackingData::tpRotationalTrack;
+    // CloudType::move(cloud, td, deltaT);
 
     this->updateCellOccupancy();
 
     this->collision().collide();
 
-    td.part() = TrackData::tpVelocityHalfStep;
-    CloudType::move(td,  deltaT);
+    td.part() = parcelType::trackingData::tpVelocityHalfStep;
+    CloudType::move(cloud, td, deltaT);
 }
 
 
@@ -155,13 +156,6 @@ Foam::CollidingCloud<CloudType>::~CollidingCloud()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CloudType>
-bool Foam::CollidingCloud<CloudType>::hasWallImpactDistance() const
-{
-    return !collision().controlsWallInteraction();
-}
-
-
-template<class CloudType>
 void Foam::CollidingCloud<CloudType>::storeState()
 {
     cloudCopyPtr_.reset
@@ -187,17 +181,20 @@ void Foam::CollidingCloud<CloudType>::evolve()
 {
     if (this->solution().canEvolve())
     {
-        typename parcelType::template
-            TrackingData<CollidingCloud<CloudType>> td(*this);
+        typename parcelType::trackingData td(*this);
 
-        this->solve(td);
+        this->solve(*this, td);
     }
 }
 
 
 template<class CloudType>
-template<class TrackData>
-void  Foam::CollidingCloud<CloudType>::motion(TrackData& td)
+template<class TrackCloudType>
+void  Foam::CollidingCloud<CloudType>::motion
+(
+    TrackCloudType& cloud,
+    typename parcelType::trackingData& td
+)
 {
     // Sympletic leapfrog integration of particle forces:
     // + apply half deltaV with stored force
@@ -219,14 +216,14 @@ void  Foam::CollidingCloud<CloudType>::motion(TrackData& td)
 
         while(!(++moveCollideSubCycle).end())
         {
-            moveCollide(td, this->db().time().deltaTValue());
+            moveCollide(cloud, td, this->db().time().deltaTValue());
         }
 
         moveCollideSubCycle.endSubCycle();
     }
     else
     {
-        moveCollide(td, this->db().time().deltaTValue());
+        moveCollide(cloud, td, this->db().time().deltaTValue());
     }
 }
 

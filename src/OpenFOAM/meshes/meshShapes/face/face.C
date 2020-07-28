@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,7 @@ Foam::face::calcEdges(const pointField& points) const
         point nextPt = points[operator[](ni)];
 
         vector vec(nextPt - thisPt);
-        vec /= Foam::mag(vec) + VSMALL;
+        vec /= Foam::mag(vec) + vSmall;
 
         edges[i] = vec;
     }
@@ -81,10 +81,10 @@ Foam::label Foam::face::mostConcaveAngle
     scalar& maxAngle
 ) const
 {
-    vector n(normal(points));
+    vector a(area(points));
 
     label index = 0;
-    maxAngle = -GREAT;
+    maxAngle = -great;
 
     forAll(edges, i)
     {
@@ -98,7 +98,7 @@ Foam::label Foam::face::mostConcaveAngle
 
         scalar angle;
 
-        if ((edgeNormal & n) > 0)
+        if ((edgeNormal & a) > 0)
         {
             // Concave angle.
             angle = constant::mathematical::pi + edgeAngle;
@@ -220,7 +220,7 @@ Foam::label Foam::face::split
                 points[operator[](index)]
               - points[operator[](startIndex)]
             );
-            splitEdge /= Foam::mag(splitEdge) + VSMALL;
+            splitEdge /= Foam::mag(splitEdge) + vSmall;
 
             const scalar splitCos = splitEdge & rightEdge;
             const scalar splitAngle = acos(max(-1.0, min(1.0, splitCos)));
@@ -538,7 +538,7 @@ Foam::point Foam::face::centre(const pointField& points) const
         sumAc += ta*ttc;
     }
 
-    if (sumA > VSMALL)
+    if (sumA > vSmall)
     {
         return sumAc/(3.0*sumA);
     }
@@ -549,11 +549,11 @@ Foam::point Foam::face::centre(const pointField& points) const
 }
 
 
-Foam::vector Foam::face::normal(const pointField& p) const
+Foam::vector Foam::face::area(const pointField& p) const
 {
     const label nPoints = size();
 
-    // Calculate the normal by summing the face triangle normals.
+    // Calculate the area by summing the face triangle areas.
     // Changed to deal with small concavity by using a central decomposition
     //
 
@@ -567,7 +567,7 @@ Foam::vector Foam::face::normal(const pointField& p) const
             p[operator[](0)],
             p[operator[](1)],
             p[operator[](2)]
-        ).normal();
+        ).area();
     }
 
     label pI;
@@ -579,7 +579,7 @@ Foam::vector Foam::face::normal(const pointField& p) const
     }
     centrePoint /= nPoints;
 
-    vector n = Zero;
+    vector a = Zero;
 
     point nextPoint = centrePoint;
 
@@ -596,15 +596,23 @@ Foam::vector Foam::face::normal(const pointField& p) const
 
         // Note: for best accuracy, centre point always comes last
         //
-        n += triPointRef
+        a += triPointRef
         (
             p[operator[](pI)],
             nextPoint,
             centrePoint
-        ).normal();
+        ).area();
     }
 
-    return n;
+    return a;
+}
+
+
+Foam::vector Foam::face::normal(const pointField& points) const
+{
+    const vector a = area(points);
+    const scalar maga = Foam::mag(a);
+    return maga > 0 ? a/maga : Zero;
 }
 
 
@@ -871,7 +879,7 @@ Foam::label Foam::longestEdge(const face& f, const pointField& pts)
     const edgeList& eds = f.edges();
 
     label longestEdgeI = -1;
-    scalar longestEdgeLength = -SMALL;
+    scalar longestEdgeLength = -small;
 
     forAll(eds, edI)
     {

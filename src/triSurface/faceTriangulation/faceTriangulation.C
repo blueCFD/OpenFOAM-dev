@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ Foam::tmp<Foam::vectorField> Foam::faceTriangulation::calcEdges
         point nextPt = points[f[f.fcIndex(i)]];
 
         vector vec(nextPt - thisPt);
-        vec /= mag(vec) + VSMALL;
+        vec /= mag(vec) + vSmall;
 
         edges[i] = vec;
     }
@@ -87,7 +87,7 @@ void Foam::faceTriangulation::calcHalfAngle
 
     scalar sin = (e0 ^ e1) & normal;
 
-    if (sin < -ROOTVSMALL)
+    if (sin < -rootVSmall)
     {
         // 3rd or 4th quadrant
         cosHalfAngle = - Foam::sqrt(0.5*(1 + cos));
@@ -159,9 +159,9 @@ bool Foam::faceTriangulation::triangleContainsPoint
     const point& pt
 )
 {
-    scalar area01Pt = triPointRef(p0, p1, pt).normal() & n;
-    scalar area12Pt = triPointRef(p1, p2, pt).normal() & n;
-    scalar area20Pt = triPointRef(p2, p0, pt).normal() & n;
+    scalar area01Pt = triPointRef(p0, p1, pt).area() & n;
+    scalar area12Pt = triPointRef(p1, p2, pt).area() & n;
+    scalar area20Pt = triPointRef(p2, p0, pt).area() & n;
 
     if ((area01Pt > 0) && (area12Pt > 0) && (area20Pt > 0))
     {
@@ -199,8 +199,8 @@ void Foam::faceTriangulation::findDiagonal
     const vector leftE = -edges[left(f.size(), startIndex)];
 
     // Construct ray which bisects angle
-    scalar cosHalfAngle = GREAT;
-    scalar sinHalfAngle = GREAT;
+    scalar cosHalfAngle = great;
+    scalar sinHalfAngle = great;
     calcHalfAngle(normal, rightE, leftE, cosHalfAngle, sinHalfAngle);
     vector rayDir
     (
@@ -209,7 +209,7 @@ void Foam::faceTriangulation::findDiagonal
     );
     // rayDir should be normalized already but is not due to rounding errors
     // so normalize.
-    rayDir /= mag(rayDir) + VSMALL;
+    rayDir /= mag(rayDir) + vSmall;
 
 
     //
@@ -218,9 +218,9 @@ void Foam::faceTriangulation::findDiagonal
 
     label faceVertI = f.fcIndex(startIndex);
 
-    pointHit minInter(false, Zero, GREAT, true);
+    pointHit minInter(false, Zero, great, true);
     label minIndex = -1;
-    scalar minPosOnEdge = GREAT;
+    scalar minPosOnEdge = great;
 
     for (label i = 0; i < f.size() - 2; i++)
     {
@@ -249,7 +249,7 @@ void Foam::faceTriangulation::findDiagonal
 
     if (minIndex == -1)
     {
-        //WarningInFunction
+        // WarningInFunction
         //    << "Could not find intersection starting from " << f[startIndex]
         //    << " for face " << f << endl;
 
@@ -292,7 +292,7 @@ void Foam::faceTriangulation::findDiagonal
     const point& rightPt = points[f[rightIndex]];
 
     minIndex = -1;
-    scalar maxCos = -GREAT;
+    scalar maxCos = -great;
 
     // all vertices except for startIndex and ones to left and right of it.
     faceVertI = f.fcIndex(f.fcIndex(startIndex));
@@ -357,7 +357,7 @@ Foam::label Foam::faceTriangulation::findStart
 {
     const label size = f.size();
 
-    scalar minCos = GREAT;
+    scalar minCos = great;
     label minIndex = -1;
 
     forAll(f, fp)
@@ -365,7 +365,7 @@ Foam::label Foam::faceTriangulation::findStart
         const vector& rightEdge = edges[right(size, fp)];
         const vector leftEdge = -edges[left(size, fp)];
 
-        if (((rightEdge ^ leftEdge) & normal) < ROOTVSMALL)
+        if (((rightEdge ^ leftEdge) & normal) < rootVSmall)
         {
             scalar cos = rightEdge & leftEdge;
             if (cos < minCos)
@@ -379,7 +379,7 @@ Foam::label Foam::faceTriangulation::findStart
     if (minIndex == -1)
     {
         // No concave angle found. Get flattest convex angle
-        minCos = GREAT;
+        minCos = great;
 
         forAll(f, fp)
         {
@@ -477,7 +477,7 @@ bool Foam::faceTriangulation::split
                 // Do naive triangulation. Find smallest angle to start
                 // triangulating from.
                 label maxIndex = -1;
-                scalar maxCos = -GREAT;
+                scalar maxCos = -great;
 
                 forAll(f, fp)
                 {
@@ -580,16 +580,16 @@ bool Foam::faceTriangulation::split
         }
 
         // Decompose the split faces
-        //Pout<< "Split face:" << f << " into " << face1 << " and " << face2
+        // Pout<< "Split face:" << f << " into " << face1 << " and " << face2
         //    << endl;
-        //string oldPrefix(Pout.prefix());
-        //Pout.prefix() = "  " + oldPrefix;
+        // string oldPrefix(Pout.prefix());
+        // Pout.prefix() = "  " + oldPrefix;
 
         bool splitOk =
             split(fallBack, points, face1, normal, triI)
          && split(fallBack, points, face2, normal, triI);
 
-        //Pout.prefix() = oldPrefix;
+        // Pout.prefix() = oldPrefix;
 
         return splitOk;
     }
@@ -598,14 +598,12 @@ bool Foam::faceTriangulation::split
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Null constructor
 Foam::faceTriangulation::faceTriangulation()
 :
     triFaceList()
 {}
 
 
-// Construct from components
 Foam::faceTriangulation::faceTriangulation
 (
     const pointField& points,
@@ -615,8 +613,7 @@ Foam::faceTriangulation::faceTriangulation
 :
     triFaceList(f.size()-2)
 {
-    vector avgNormal = f.normal(points);
-    avgNormal /= mag(avgNormal) + VSMALL;
+    const vector avgNormal = f.normal(points);
 
     label triI = 0;
 
@@ -629,7 +626,6 @@ Foam::faceTriangulation::faceTriangulation
 }
 
 
-// Construct from components
 Foam::faceTriangulation::faceTriangulation
 (
     const pointField& points,
@@ -651,7 +647,6 @@ Foam::faceTriangulation::faceTriangulation
 }
 
 
-// Construct from Istream
 Foam::faceTriangulation::faceTriangulation(Istream& is)
 :
     triFaceList(is)

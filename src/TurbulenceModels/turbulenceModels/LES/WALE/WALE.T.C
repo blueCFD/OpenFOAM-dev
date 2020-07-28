@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,7 +59,7 @@ tmp<volScalarField> WALE<BasicTurbulenceModel>::k
         (
             IOobject
             (
-                IOobject::groupName("k", this->U_.group()),
+                IOobject::groupName("k", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_
             ),
@@ -74,9 +74,9 @@ tmp<volScalarField> WALE<BasicTurbulenceModel>::k
                    )
                  + dimensionedScalar
                    (
-                       "SMALL",
+                       "small",
                        dimensionSet(0, 0, -10, 0, 0),
-                       SMALL
+                       small
                    )
                )
             )
@@ -180,7 +180,7 @@ tmp<volScalarField> WALE<BasicTurbulenceModel>::epsilon() const
         (
             IOobject
             (
-                IOobject::groupName("epsilon", this->U_.group()),
+                IOobject::groupName("epsilon", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,

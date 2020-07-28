@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -334,7 +334,7 @@ void Foam::controlMeshRefinement::initialMeshPopulation
                 keep = decomposition().positionOnThisProcessor(pt);
             }
 
-            if (keep && geometryToConformTo_.wellOutside(pt, SMALL))
+            if (keep && geometryToConformTo_.wellOutside(pt, small))
             {
                 keep = false;
             }
@@ -429,7 +429,7 @@ void Foam::controlMeshRefinement::initialMeshPopulation
             }
         }
 
-        //mesh_.rangeInsertWithInfo(vertices.begin(), vertices.end());
+        // mesh_.rangeInsertWithInfo(vertices.begin(), vertices.end());
 
         Info<< "    Inserted "
             << returnReduce
@@ -509,7 +509,7 @@ void Foam::controlMeshRefinement::initialMeshPopulation
                 keep = decomposition().positionOnThisProcessor(pt);
             }
 
-            if (keep && geometryToConformTo_.wellOutside(pt, SMALL))
+            if (keep && geometryToConformTo_.wellOutside(pt, small))
             {
                 keep = false;
             }
@@ -623,7 +623,7 @@ void Foam::controlMeshRefinement::initialMeshPopulation
             }
         }
 
-       //mesh_.rangeInsertWithInfo(vertices.begin(), vertices.end());
+       // mesh_.rangeInsertWithInfo(vertices.begin(), vertices.end());
 
         Info<< "    Inserted extra points "
             << returnReduce

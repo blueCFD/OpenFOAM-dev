@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -160,7 +160,7 @@ void Foam::conformalVoronoiMesh::insertInternalPoints
     Info<< "    " << nInserted << " points inserted"
         << ", failed to insert " << nPoints - nInserted
         << " ("
-        << 100.0*(nPoints - nInserted)/(nInserted + SMALL)
+        << 100.0*(nPoints - nInserted)/(nInserted + small)
         << " %)"<< endl;
 
     for
@@ -530,7 +530,7 @@ void Foam::conformalVoronoiMesh::buildCellSizeAndAlignmentMesh()
     for (label i = 0; i < nMaxIter; ++i)
     {
         label nAdded = meshRefinement.refineMesh(decomposition_);
-        //cellShapeControl_.refineMesh(decomposition_);
+        // cellShapeControl_.refineMesh(decomposition_);
         reduce(nAdded, sumOp<label>());
 
         if (Pstream::parRun())
@@ -572,7 +572,7 @@ void Foam::conformalVoronoiMesh::buildCellSizeAndAlignmentMesh()
 
     if (foamyHexMeshControls().writeCellShapeControlMesh())
     {
-        //cellSizeMesh.writeTriangulation();
+        // cellSizeMesh.writeTriangulation();
         cellSizeMesh.write();
     }
 
@@ -1155,7 +1155,7 @@ void Foam::conformalVoronoiMesh::move()
 
             scalar rABMag = mag(rAB);
 
-            if (rABMag < SMALL)
+            if (rABMag < small)
             {
                 // Removal of close points
 

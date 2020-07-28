@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,20 +65,21 @@ void Foam::functionObjects::wallHeatFlux::calcHeatFlux
     volScalarField& wallHeatFlux
 )
 {
-    surfaceScalarField heatFlux
-    (
-        fvc::interpolate(alpha)*fvc::snGrad(he)
-    );
-
     volScalarField::Boundary& wallHeatFluxBf =
         wallHeatFlux.boundaryFieldRef();
 
-    const surfaceScalarField::Boundary& heatFluxBf =
-        heatFlux.boundaryField();
+    const volScalarField::Boundary& heBf =
+        he.boundaryField();
+
+    const volScalarField::Boundary& alphaBf =
+        alpha.boundaryField();
 
     forAll(wallHeatFluxBf, patchi)
     {
-        wallHeatFluxBf[patchi] = heatFluxBf[patchi];
+        if (!wallHeatFluxBf[patchi].coupled())
+        {
+            wallHeatFluxBf[patchi] = alphaBf[patchi]*heBf[patchi].snGrad();
+        }
     }
 
     if (foundObject<volScalarField>("qr"))
@@ -90,7 +91,10 @@ void Foam::functionObjects::wallHeatFlux::calcHeatFlux
 
         forAll(wallHeatFluxBf, patchi)
         {
-            wallHeatFluxBf[patchi] += radHeatFluxBf[patchi];
+            if (!wallHeatFluxBf[patchi].coupled())
+            {
+                wallHeatFluxBf[patchi] -= radHeatFluxBf[patchi];
+            }
         }
     }
 }
@@ -273,10 +277,10 @@ bool Foam::functionObjects::wallHeatFlux::write()
         {
             file()
                 << mesh_.time().value()
-                << token::TAB << pp.name()
-                << token::TAB << minHfp
-                << token::TAB << maxHfp
-                << token::TAB << integralHfp
+                << tab << pp.name()
+                << tab << minHfp
+                << tab << maxHfp
+                << tab << integralHfp
                 << endl;
         }
 

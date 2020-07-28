@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -293,13 +293,13 @@ void Foam::surfaceInterpolation::makeNonOrthDeltaCoeffs() const
         vector unitArea = Sf[facei]/magSf[facei];
 
         // Standard cell-centre distance form
-        //NonOrthDeltaCoeffs[facei] = (unitArea & delta)/magSqr(delta);
+        // NonOrthDeltaCoeffs[facei] = (unitArea & delta)/magSqr(delta);
 
         // Slightly under-relaxed form
-        //NonOrthDeltaCoeffs[facei] = 1.0/mag(delta);
+        // NonOrthDeltaCoeffs[facei] = 1.0/mag(delta);
 
         // More under-relaxed form
-        //NonOrthDeltaCoeffs[facei] = 1.0/(mag(unitArea & delta) + VSMALL);
+        // NonOrthDeltaCoeffs[facei] = 1.0/(mag(unitArea & delta) + vSmall);
 
         // Stabilised form for bad meshes
         nonOrthDeltaCoeffs[facei] = 1.0/max(unitArea & delta, 0.05*mag(delta));

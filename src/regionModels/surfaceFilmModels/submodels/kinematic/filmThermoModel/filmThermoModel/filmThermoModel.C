@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,7 +43,7 @@ defineRunTimeSelectionTable(filmThermoModel, dictionary);
 
 filmThermoModel::filmThermoModel
 (
-    surfaceFilmModel& film
+    surfaceFilmRegionModel& film
 )
 :
     filmSubModelBase(film)
@@ -53,7 +53,7 @@ filmThermoModel::filmThermoModel
 filmThermoModel::filmThermoModel
 (
     const word& modelType,
-    surfaceFilmModel& film,
+    surfaceFilmRegionModel& film,
     const dictionary& dict
 )
 :

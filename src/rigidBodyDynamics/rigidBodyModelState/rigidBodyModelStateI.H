@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,6 +43,12 @@ inline const Foam::scalarField& Foam::RBD::rigidBodyModelState::qDdot() const
 }
 
 
+inline Foam::scalar Foam::RBD::rigidBodyModelState::t() const
+{
+    return t_;
+}
+
+
 inline Foam::scalar Foam::RBD::rigidBodyModelState::deltaT() const
 {
     return deltaT_;
@@ -70,6 +76,12 @@ inline Foam::scalarField& Foam::RBD::rigidBodyModelState::qDdot()
 inline Foam::scalar& Foam::RBD::rigidBodyModelState::deltaT()
 {
     return deltaT_;
+}
+
+
+inline Foam::scalar& Foam::RBD::rigidBodyModelState::t()
+{
+    return t_;
 }
 
 

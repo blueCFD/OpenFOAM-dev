@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -141,23 +141,28 @@ bool Foam::faceAreaWeightAMI<SourcePatch, TargetPatch>::processSourceFace
         nbrFaces
     );
 
+    const scalar srcArea = this->srcMagSf_[srcFacei];
+
     bool faceProcessed = false;
 
     do
     {
         // process new target face
-        label tgtFacei = nbrFaces.remove();
+        const label tgtFacei = nbrFaces.remove();
         visitedFaces.append(tgtFacei);
-        scalar area = interArea(srcFacei, tgtFacei);
+        const scalar tgtArea = this->tgtMagSf_[tgtFacei];
 
-        // store when intersection fractional area > tolerance
-        if (area/this->srcMagSf_[srcFacei] > faceAreaIntersect::tolerance())
+        // calculate the intersection area
+        const scalar area = interArea(srcFacei, tgtFacei);
+
+        // store when intersection fractional area > min weight
+        if (area/srcArea > minWeight())
         {
             srcAddr[srcFacei].append(tgtFacei);
-            srcWght[srcFacei].append(area);
+            srcWght[srcFacei].append(area/srcArea);
 
             tgtAddr[tgtFacei].append(srcFacei);
-            tgtWght[tgtFacei].append(area);
+            tgtWght[tgtFacei].append(area/tgtArea);
 
             this->appendNbrFaces
             (
@@ -208,7 +213,7 @@ void Foam::faceAreaWeightAMI<SourcePatch, TargetPatch>::setNextFaces
                 scalar areaTotal = this->srcMagSf_[srcFacei];
 
                 // Check that faces have enough overlap for robust walking
-                if (area/areaTotal > faceAreaIntersect::tolerance())
+                if (area/areaTotal > minWeight())
                 {
                     // TODO - throwing area away - re-use in next iteration?
 
@@ -310,7 +315,7 @@ Foam::scalar Foam::faceAreaWeightAMI<SourcePatch, TargetPatch>::interArea
     // quick reject if either face has zero area
     // Note: do not use stored face areas for target patch
     const scalar tgtMag = tgt.mag(tgtPoints);
-    if ((this->srcMagSf_[srcFacei] < ROOTVSMALL) || (tgtMag < ROOTVSMALL))
+    if ((this->srcMagSf_[srcFacei] < rootVSmall) || (tgtMag < rootVSmall))
     {
         return area;
     }
@@ -330,7 +335,7 @@ Foam::scalar Foam::faceAreaWeightAMI<SourcePatch, TargetPatch>::interArea
     }
     scalar magN = mag(n);
 
-    if (magN > ROOTVSMALL)
+    if (magN > rootVSmall)
     {
         area = inter.calc(src, tgt, n/magN, this->triMode_);
     }
@@ -370,10 +375,9 @@ restartUncoveredSourceFace
     labelHashSet lowWeightFaces(100);
     forAll(srcWght, srcFacei)
     {
-        scalar s = sum(srcWght[srcFacei]);
-        scalar t = s/this->srcMagSf_[srcFacei];
+        const scalar s = sum(srcWght[srcFacei]);
 
-        if (t < 0.5)
+        if (s < 0.5)
         {
             lowWeightFaces.insert(srcFacei);
         }
@@ -431,7 +435,7 @@ restartUncoveredSourceFace
             label tgtFacei = this->findTargetFace(srcFacei);
             if (tgtFacei != -1)
             {
-                //bool faceProcessed =
+                // bool faceProcessed =
                 processSourceFace
                 (
                     srcFacei,
@@ -449,6 +453,14 @@ restartUncoveredSourceFace
             }
         }
     }
+}
+
+
+template<class SourcePatch, class TargetPatch>
+Foam::scalar
+Foam::faceAreaWeightAMI<SourcePatch, TargetPatch>::minWeight() const
+{
+    return faceAreaIntersect::tolerance();
 }
 
 

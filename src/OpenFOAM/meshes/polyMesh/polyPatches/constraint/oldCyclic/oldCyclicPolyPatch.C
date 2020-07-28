@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,11 +88,11 @@ Foam::label Foam::oldCyclicPolyPatch::findMaxArea
 )
 {
     label maxI = -1;
-    scalar maxAreaSqr = -GREAT;
+    scalar maxAreaSqr = -great;
 
     forAll(faces, facei)
     {
-        scalar areaSqr = magSqr(faces[facei].normal(points));
+        scalar areaSqr = magSqr(faces[facei].area(points));
 
         if (areaSqr > maxAreaSqr)
         {
@@ -310,8 +310,8 @@ void Foam::oldCyclicPolyPatch::getCentresAndAnchors
 
             vector n0 = ((half0Ctrs[face0] - rotationCentre_) ^ rotationAxis_);
             vector n1 = ((half1Ctrs[face1] - rotationCentre_) ^ -rotationAxis_);
-            n0 /= mag(n0) + VSMALL;
-            n1 /= mag(n1) + VSMALL;
+            n0 /= mag(n0) + vSmall;
+            n1 /= mag(n1) + vSmall;
 
             if (debug)
             {
@@ -336,7 +336,7 @@ void Foam::oldCyclicPolyPatch::getCentresAndAnchors
         }
         //- Problem: usually specified translation is not accurate enough
         //- To get proper match so keep automatic determination over here.
-        //case TRANSLATIONAL:
+        // case TRANSLATIONAL:
         //{
         //    // Transform 0 points.
         //
@@ -358,13 +358,11 @@ void Foam::oldCyclicPolyPatch::getCentresAndAnchors
 
             // Determine the face with max area on both halves. These
             // two faces are used to determine the transformation tensors
-            label max0I = findMaxArea(pp.points(), half0Faces);
-            vector n0 = half0Faces[max0I].normal(pp.points());
-            n0 /= mag(n0) + VSMALL;
+            const label max0I = findMaxArea(pp.points(), half0Faces);
+            const vector n0 = half0Faces[max0I].normal(pp.points());
 
-            label max1I = findMaxArea(pp.points(), half1Faces);
-            vector n1 = half1Faces[max1I].normal(pp.points());
-            n1 /= mag(n1) + VSMALL;
+            const label max1I = findMaxArea(pp.points(), half1Faces);
+            const vector n1 = half1Faces[max1I].normal(pp.points());
 
             if (mag(n0 & n1) < 1-matchTolerance())
             {
@@ -530,8 +528,8 @@ Foam::label Foam::oldCyclicPolyPatch::getConsistentRotationFace
     );
 
     label rotFace = -1;
-    scalar maxMagLenSqr = -GREAT;
-    scalar maxMagRadSqr = -GREAT;
+    scalar maxMagLenSqr = -great;
+    scalar maxMagRadSqr = -great;
     forAll(faceCentres, i)
     {
         if (magLenSqr[i] >= maxMagLenSqr)
@@ -839,16 +837,16 @@ bool Foam::oldCyclicPolyPatch::order
             << endl;
 
         // Recalculate untransformed face centres
-        //pointField rawHalf0Ctrs = calcFaceCentres(half0Faces, pp.points());
+        // pointField rawHalf0Ctrs = calcFaceCentres(half0Faces, pp.points());
         label vertI = 0;
 
         forAll(half1Ctrs, i)
         {
-            //if (from1To0[i] != -1)
+            // if (from1To0[i] != -1)
             {
                 // Write edge between c1 and c0
-                //const point& c0 = rawHalf0Ctrs[from1To0[i]];
-                //const point& c0 = half0Ctrs[from1To0[i]];
+                // const point& c0 = rawHalf0Ctrs[from1To0[i]];
+                // const point& c0 = half0Ctrs[from1To0[i]];
                 const point& c0 = half0Ctrs[i];
                 const point& c1 = half1Ctrs[i];
                 writeOBJ(ccStr, c0, c1, vertI);
@@ -1157,7 +1155,7 @@ bool Foam::oldCyclicPolyPatch::order
             << endl;
 
         // Recalculate untransformed face centres
-        //pointField rawHalf0Ctrs = calcFaceCentres(half0Faces, pp.points());
+        // pointField rawHalf0Ctrs = calcFaceCentres(half0Faces, pp.points());
         label vertI = 0;
 
         forAll(half1Ctrs, i)
@@ -1165,7 +1163,7 @@ bool Foam::oldCyclicPolyPatch::order
             if (from1To0[i] != -1)
             {
                 // Write edge between c1 and c0
-                //const point& c0 = rawHalf0Ctrs[from1To0[i]];
+                // const point& c0 = rawHalf0Ctrs[from1To0[i]];
                 const point& c0 = half0Ctrs[from1To0[i]];
                 const point& c1 = half1Ctrs[i];
                 writeOBJ(ccStr, c0, c1, vertI);
@@ -1204,7 +1202,7 @@ bool Foam::oldCyclicPolyPatch::order
         rotation
     );
 
-    // Return false if no change neccesary, true otherwise.
+    // Return false if no change necessary, true otherwise.
 
     forAll(faceMap, facei)
     {

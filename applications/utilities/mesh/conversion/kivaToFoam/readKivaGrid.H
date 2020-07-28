@@ -134,7 +134,7 @@ for (label i=0; i<nPoints; i++)
 
         forAll(edges, ei)
         {
-            if (edges[ei].mag(points) < SMALL)
+            if (edges[ei].mag(points) < small)
             {
                 label start = pointMap[edges[ei].start()];
                 while (start != pointMap[start])
@@ -325,7 +325,7 @@ if
  && pFaces[CYLINDERHEAD][0].size()
 )
 {
-    scalar minz = GREAT;
+    scalar minz = great;
 
     forAllConstIter(SLList<face>, pFaces[CYLINDERHEAD][0], iter)
     {
@@ -337,7 +337,7 @@ if
         }
     }
 
-    minz += SMALL;
+    minz += small;
 
     SLList<face> newLinerFaces;
 
@@ -345,7 +345,7 @@ if
     {
         const face& pf = iter();
 
-        scalar minfz = GREAT;
+        scalar minfz = great;
         forAll(pf, pfi)
         {
             minfz = min(minfz, points[pf[pfi]].z());
@@ -363,7 +363,7 @@ if
 
     if (pFaces[LINER][0].size() != newLinerFaces.size())
     {
-        Info<< "Transfered " << pFaces[LINER][0].size() - newLinerFaces.size()
+        Info<< "Transferred " << pFaces[LINER][0].size() - newLinerFaces.size()
             << " faces from liner region to cylinder head" << endl;
         pFaces[LINER][0] = newLinerFaces;
     }
@@ -374,7 +374,7 @@ if
     {
         const face& pf = iter();
 
-        scalar minfz = GREAT;
+        scalar minfz = great;
         forAll(pf, pfi)
         {
             minfz = min(minfz, points[pf[pfi]].z());
@@ -392,7 +392,7 @@ if
 
     if (pFaces[CYLINDERHEAD][0].size() != newCylinderHeadFaces.size())
     {
-        Info<< "Transfered faces from cylinder-head region to linder" << endl;
+        Info<< "Transferred faces from cylinder-head region to linder" << endl;
         pFaces[CYLINDERHEAD][0] = newCylinderHeadFaces;
     }
 }

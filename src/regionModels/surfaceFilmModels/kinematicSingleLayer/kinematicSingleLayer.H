@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::kinematicSingleLayer
+    Foam::regionModels::surfaceFilmModels::kinematicSingleLayer
 
 Description
     Kinematic form of single-cell layer surface film model
@@ -35,7 +35,7 @@ SourceFiles
 #ifndef kinematicSingleLayer_H
 #define kinematicSingleLayer_H
 
-#include "surfaceFilmModel.H"
+#include "surfaceFilmRegionModel.H"
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
@@ -64,7 +64,7 @@ class filmThermoModel;
 
 class kinematicSingleLayer
 :
-    public surfaceFilmModel
+    public surfaceFilmRegionModel
 {
 private:
 
@@ -488,9 +488,6 @@ public:
 
             //- Return the current film mass
             inline tmp<volScalarField> mass() const;
-
-            //- Return the net film mass available over the next integration
-            inline tmp<volScalarField> netMass() const;
 
             //- Return the change in film mass due to sources/sinks
             inline tmp<volScalarField> deltaMass() const;

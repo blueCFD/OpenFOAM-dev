@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,9 +75,9 @@ bool Foam::UOPstream::write
             const_cast<char*>(buf),
             bufSize,
             MPI_BYTE,
-            toProcNo,   //procID(toProcNo),
+            toProcNo,   // procID(toProcNo),
             tag,
-            PstreamGlobals::MPICommunicators_[communicator] //MPI_COMM_WORLD
+            PstreamGlobals::MPICommunicators_[communicator]
         );
 
         if (debug)
@@ -95,9 +95,9 @@ bool Foam::UOPstream::write
             const_cast<char*>(buf),
             bufSize,
             MPI_BYTE,
-            toProcNo,   //procID(toProcNo),
+            toProcNo,   // procID(toProcNo),
             tag,
-            PstreamGlobals::MPICommunicators_[communicator] //MPI_COMM_WORLD
+            PstreamGlobals::MPICommunicators_[communicator]
         );
 
         if (debug)
@@ -117,9 +117,9 @@ bool Foam::UOPstream::write
             const_cast<char*>(buf),
             bufSize,
             MPI_BYTE,
-            toProcNo,   //procID(toProcNo),
+            toProcNo,   // procID(toProcNo),
             tag,
-            PstreamGlobals::MPICommunicators_[communicator],//MPI_COMM_WORLD,
+            PstreamGlobals::MPICommunicators_[communicator],
             &request
         );
 
@@ -145,7 +145,5 @@ bool Foam::UOPstream::write
     return !transferFailed;
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // ************************************************************************* //

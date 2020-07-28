@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -21,7 +21,6 @@ defaultFieldValues
     volScalarFieldValue alpha.water 0
     volScalarFieldValue alpha.oil 0
     volScalarFieldValue alpha.mercury 0
-    volVectorFieldValue U (0 0 0)
 );
 
 regions

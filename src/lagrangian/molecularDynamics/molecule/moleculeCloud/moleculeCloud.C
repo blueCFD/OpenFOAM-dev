@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -545,7 +545,7 @@ void Foam::moleculeCloud::initialiseMolecules
                         zoneDict.lookup("numberDensity")
                     );
 
-                    if (numberDensity < VSMALL)
+                    if (numberDensity < vSmall)
                     {
                         WarningInFunction
                             << "numberDensity too small, not filling zone "
@@ -578,7 +578,7 @@ void Foam::moleculeCloud::initialiseMolecules
                         zoneDict.lookup("massDensity")
                     );
 
-                    if (massDensity < VSMALL)
+                    if (massDensity < vSmall)
                     {
                         WarningInFunction
                             << "massDensity too small, not filling zone "
@@ -643,9 +643,9 @@ void Foam::moleculeCloud::initialiseMolecules
                 // mid-point of the zone of cells and snapping to the nearest
                 // lattice location.
 
-                vector zoneMin = VGREAT*vector::one;
+                vector zoneMin = vGreat*vector::one;
 
-                vector zoneMax = -VGREAT*vector::one;
+                vector zoneMax = -vGreat*vector::one;
 
                 forAll(zone, cell)
                 {
@@ -1119,18 +1119,18 @@ Foam::moleculeCloud::moleculeCloud
 void Foam::moleculeCloud::evolve()
 {
     molecule::trackingData td0(*this, 0);
-    Cloud<molecule>::move(td0, mesh_.time().deltaTValue());
+    Cloud<molecule>::move(*this, td0, mesh_.time().deltaTValue());
 
     molecule::trackingData td1(*this, 1);
-    Cloud<molecule>::move(td1, mesh_.time().deltaTValue());
+    Cloud<molecule>::move(*this, td1, mesh_.time().deltaTValue());
 
     molecule::trackingData td2(*this, 2);
-    Cloud<molecule>::move(td2, mesh_.time().deltaTValue());
+    Cloud<molecule>::move(*this, td2, mesh_.time().deltaTValue());
 
     calculateForce();
 
     molecule::trackingData td3(*this, 3);
-    Cloud<molecule>::move(td3, mesh_.time().deltaTValue());
+    Cloud<molecule>::move(*this, td3, mesh_.time().deltaTValue());
 }
 
 
@@ -1163,7 +1163,7 @@ void Foam::moleculeCloud::applyConstraintsAndThermostats
 )
 {
     scalar temperatureCorrectionFactor =
-        sqrt(targetTemperature/max(VSMALL, measuredTemperature));
+        sqrt(targetTemperature/max(vSmall, measuredTemperature));
 
     Info<< "----------------------------------------" << nl
         << "Temperature equilibration" << nl

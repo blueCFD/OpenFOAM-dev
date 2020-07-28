@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,14 +47,12 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
-    #include "createControl.H"
-    #include "createControls.H"
+    #include "createDyMControls.H"
     #include "createFields.H"
     #include "createFieldRefs.H"
-    #include "createFvOptions.H"
     #include "createRhoUf.H"
     #include "compressibleCourantNo.H"
     #include "setInitialDeltaT.H"
@@ -68,7 +66,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "readControls.H"
+        #include "readDyMControls.H"
 
         {
             // Store divrhoU from the previous mesh so that it can be mapped
@@ -93,21 +91,26 @@ int main(int argc, char *argv[])
             // Do any mesh changes
             mesh.update();
 
-            if (mesh.changing() && correctPhi)
+            if (mesh.changing())
             {
-                // Calculate absolute flux from the mapped surface velocity
-                phi = mesh.Sf() & rhoUf;
+                MRF.update();
 
-                #include "correctPhi.H"
+                if (correctPhi)
+                {
+                    // Calculate absolute flux from the mapped surface velocity
+                    phi = mesh.Sf() & rhoUf;
 
-                // Make the fluxes relative to the mesh-motion
-                fvc::makeRelative(phi, rho, U);
+                    #include "correctPhi.H"
+
+                    // Make the fluxes relative to the mesh-motion
+                    fvc::makeRelative(phi, rho, U);
+                }
             }
-        }
 
-        if (mesh.changing() && checkMeshCourantNo)
-        {
-            #include "meshCourantNo.H"
+            if (checkMeshCourantNo)
+            {
+                #include "meshCourantNo.H"
+            }
         }
 
         #include "rhoEqn.H"

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,7 +83,7 @@ public:
              filmTurbulenceModel,
              dictionary,
              (
-                surfaceFilmModel& film,
+                surfaceFilmRegionModel& film,
                 const dictionary& dict
              ),
              (film, dict)
@@ -92,13 +92,13 @@ public:
     // Constructors
 
         //- Construct null
-        filmTurbulenceModel(surfaceFilmModel& film);
+        filmTurbulenceModel(surfaceFilmRegionModel& film);
 
         //- Construct from type name, dictionary and surface film model
         filmTurbulenceModel
         (
             const word& modelType,
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 
@@ -108,7 +108,7 @@ public:
         //- Return a reference to the selected injection model
         static autoPtr<filmTurbulenceModel> New
         (
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 

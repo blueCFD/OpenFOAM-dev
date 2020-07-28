@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,20 +26,15 @@ License
 #include "normalToFace.H"
 #include "polyMesh.H"
 #include "faceSet.H"
-
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(normalToFace, 0);
-
-addToRunTimeSelectionTable(topoSetSource, normalToFace, word);
-
-addToRunTimeSelectionTable(topoSetSource, normalToFace, istream);
-
+    defineTypeNameAndDebug(normalToFace, 0);
+    addToRunTimeSelectionTable(topoSetSource, normalToFace, word);
+    addToRunTimeSelectionTable(topoSetSource, normalToFace, istream);
 }
 
 
@@ -56,7 +51,7 @@ Foam::topoSetSource::addToUsageTable Foam::normalToFace::usage_
 
 void Foam::normalToFace::setNormal()
 {
-    normal_ /= mag(normal_) + VSMALL;
+    normal_ /= mag(normal_) + vSmall;
 
     Info<< "    normalToFace : Normalized vector to " << normal_ << endl;
 
@@ -71,7 +66,6 @@ void Foam::normalToFace::setNormal()
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::normalToFace::normalToFace
 (
     const polyMesh& mesh,
@@ -87,7 +81,6 @@ Foam::normalToFace::normalToFace
 }
 
 
-// Construct from dictionary
 Foam::normalToFace::normalToFace(const polyMesh& mesh, const dictionary& dict)
 :
     topoSetSource(mesh),
@@ -98,7 +91,6 @@ Foam::normalToFace::normalToFace(const polyMesh& mesh, const dictionary& dict)
 }
 
 
-// Construct from Istream
 Foam::normalToFace::normalToFace(const polyMesh& mesh, Istream& is)
 :
     topoSetSource(mesh),
@@ -131,7 +123,7 @@ void Foam::normalToFace::applyToSet
         forAll(mesh_.faceAreas(), facei)
         {
             vector n = mesh_.faceAreas()[facei];
-            n /= mag(n) + VSMALL;
+            n /= mag(n) + vSmall;
 
             if (mag(1 - (n & normal_)) < tol_)
             {
@@ -152,7 +144,7 @@ void Foam::normalToFace::applyToSet
             const label facei = iter.key();
 
             vector n = mesh_.faceAreas()[facei];
-            n /= mag(n) + VSMALL;
+            n /= mag(n) + vSmall;
 
             if (mag(1 - (n & normal_)) < tol_)
             {

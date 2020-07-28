@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -196,7 +196,7 @@ void Foam::meshRefinement::getBafflePatches
 
     // Extend segments a bit
     {
-        const vectorField smallVec(ROOTSMALL*(end-start));
+        const vectorField smallVec(rootSmall*(end-start));
         start -= smallVec;
         end += smallVec;
     }
@@ -775,7 +775,7 @@ Foam::List<Foam::labelPair> Foam::meshRefinement::freeStandingBaffles
 
         // Extend segments a bit
         {
-            const vectorField smallVec(ROOTSMALL*(end-start));
+            const vectorField smallVec(rootSmall*(end-start));
             start -= smallVec;
             end += smallVec;
         }
@@ -810,8 +810,8 @@ Foam::List<Foam::labelPair> Foam::meshRefinement::freeStandingBaffles
             normal2
         );
 
-        //mkDir(mesh_.time().path()/timeName());
-        //OBJstream str
+        // mkDir(mesh_.time().path()/timeName());
+        // OBJstream str
         //(
         //    mesh_.time().path()/timeName()/"flatBaffles.obj"
         //);
@@ -834,7 +834,7 @@ Foam::List<Foam::labelPair> Foam::meshRefinement::freeStandingBaffles
             )
             {
                 // Two different hits. Check angle.
-                //str.write
+                // str.write
                 //(
                 //    linePointRef(hit1[i].hitPoint(), hit2[i].hitPoint()),
                 //    normal1[i],
@@ -846,7 +846,7 @@ Foam::List<Foam::labelPair> Foam::meshRefinement::freeStandingBaffles
                     // Both normals aligned
                     vector n = end[i]-start[i];
                     scalar magN = mag(n);
-                    if (magN > VSMALL)
+                    if (magN > vSmall)
                     {
                         filteredCouples[filterI++] = couple;
                     }
@@ -1089,7 +1089,7 @@ void Foam::meshRefinement::findCellZoneGeometric
             }
             else
             {
-                //const point& neiFc = mesh_.faceCentres()[facei];
+                // const point& neiFc = mesh_.faceCentres()[facei];
                 const point& neiFc = neiCc[facei-mesh_.nInternalFaces()];
 
                 // Perturbed cc
@@ -1229,7 +1229,7 @@ void Foam::meshRefinement::findCellZoneInsideWalk
 {
     // Analyse regions. Reuse regionsplit
     boolList blockedFace(mesh_.nFaces());
-    //selectSeparatedCoupledFaces(blockedFace);
+    // selectSeparatedCoupledFaces(blockedFace);
 
     forAll(namedSurfaceIndex, facei)
     {
@@ -1326,7 +1326,7 @@ bool Foam::meshRefinement::calcRegionToZone
 {
     bool changed = false;
 
-    // Check whether inbetween different regions
+    // Check whether in between different regions
     if (ownRegion != neiRegion)
     {
         // Jump. Change one of the sides to my type.
@@ -1883,7 +1883,7 @@ Foam::label Foam::meshRefinement::markPatchZones
                 nProtected++;
             }
         }
-        //Info<< "Protected from visiting "
+        // Info<< "Protected from visiting "
         //    << returnReduce(nProtected, sumOp<label>())
         //    << " non-manifold edges" << nl << endl;
     }
@@ -1931,7 +1931,7 @@ Foam::label Foam::meshRefinement::markPatchZones
         label proci = globalFaces.whichProcID(globalSeed);
         label seedFacei = globalFaces.toLocal(proci, globalSeed);
 
-        //Info<< "Seeding zone " << currentZoneI
+        // Info<< "Seeding zone " << currentZoneI
         //    << " from processor " << proci << " face " << seedFacei
         //    << endl;
 
@@ -2054,7 +2054,7 @@ void Foam::meshRefinement::consistentOrientation
                 nProtected++;
             }
         }
-        //Info<< "Protected from visiting "
+        // Info<< "Protected from visiting "
         //    << returnReduce(nProtected, sumOp<label>())
         //    << " slaves of coupled faces" << nl << endl;
     }
@@ -2113,7 +2113,7 @@ void Foam::meshRefinement::consistentOrientation
         label proci = globalFaces.whichProcID(globalSeed);
         label seedFacei = globalFaces.toLocal(proci, globalSeed);
 
-        //Info<< "Seeding from processor " << proci << " face " << seedFacei
+        // Info<< "Seeding from processor " << proci << " face " << seedFacei
         //    << endl;
 
         if (proci == Pstream::myProcNo())
@@ -2898,7 +2898,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::zonify
 
         // Extend segments a bit
         {
-            const vectorField smallVec(ROOTSMALL*(end-start));
+            const vectorField smallVec(rootSmall*(end-start));
             start -= smallVec;
             end += smallVec;
         }
@@ -3088,10 +3088,10 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::zonify
     }
 
 
-    // Make sure namedSurfaceIndex is unset inbetween same cell cell zones.
+    // Make sure namedSurfaceIndex is unset in between same cell cell zones.
     if (!allowFreeStandingZoneFaces)
     {
-        Info<< "Only keeping zone faces inbetween different cellZones."
+        Info<< "Only keeping zone faces in between different cellZones."
             << nl << endl;
 
         makeConsistentFaceIndex(cellToZone, namedSurfaceIndex);

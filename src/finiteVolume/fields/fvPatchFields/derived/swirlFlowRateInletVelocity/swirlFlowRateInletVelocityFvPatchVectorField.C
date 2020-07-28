@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,7 +65,9 @@ swirlFlowRateInletVelocityFvPatchVectorField
         dict.lookupOrDefault
         (
             "origin",
-            gSum(patch().Cf()*patch().magSf())/gSum(patch().magSf())
+            patch().size()
+          ? gSum(patch().Cf()*patch().magSf())/gSum(patch().magSf())
+          : Zero
         )
     ),
     axis_
@@ -73,7 +75,9 @@ swirlFlowRateInletVelocityFvPatchVectorField
         dict.lookupOrDefault
         (
             "axis",
-            -gSum(patch().Sf())/gSum(patch().magSf())
+            patch().size()
+          ? -gSum(patch().Sf())/gSum(patch().magSf())
+          : Zero
         )
     ),
     flowRate_(Function1<scalar>::New("flowRate", dict)),

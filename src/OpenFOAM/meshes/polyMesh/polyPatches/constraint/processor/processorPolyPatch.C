@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -238,13 +238,13 @@ void Foam::processorPolyPatch::calcGeometry(PstreamBuffers& pBufs)
 
             // For small face area calculation the results of the area
             // calculation have been found to only be accurate to ~1e-20
-            if (magSf < SMALL || nbrMagSf < SMALL)
+            if (magSf < small || nbrMagSf < small)
             {
                 // Undetermined normal. Use dummy normal to force separation
                 // check.
                 faceNormals[facei] = point(1, 0, 0);
                 nbrFaceNormals[facei] = -faceNormals[facei];
-                tols[facei] = GREAT;
+                tols[facei] = great;
             }
             else if (mag(magSf - nbrMagSf) > matchTolerance()*sqr(tols[facei]))
             {
@@ -637,7 +637,7 @@ Foam::label Foam::processorPolyPatch::matchFace
 
     label matchFp = -1;
 
-    scalar closestMatchDistSqr = sqr(GREAT);
+    scalar closestMatchDistSqr = sqr(great);
 
     ConstCirculator<face> aCirc(a);
     ConstCirculator<face> bCirc(b);
@@ -788,6 +788,12 @@ bool Foam::processorPolyPatch::order
     }
     else
     {
+        // Calculate the absolute matching tolerance
+        scalarField tols
+        (
+            matchTolerance()*calcFaceTol(pp, pp.points(), pp.faceCentres())
+        );
+
         if (transform() == COINCIDENTFULLMATCH)
         {
             vectorField masterPts;
@@ -808,10 +814,10 @@ bool Foam::processorPolyPatch::order
                 const face& localFace = localFaces[lFacei];
                 label faceRotation = -1;
 
-                const scalar absTolSqr = sqr(SMALL);
+                const scalar absTolSqr = sqr(tols[lFacei]);
 
-                scalar closestMatchDistSqr = sqr(GREAT);
-                scalar matchDistSqr = sqr(GREAT);
+                scalar closestMatchDistSqr = sqr(great);
+                scalar matchDistSqr = sqr(great);
                 label closestFaceMatch = -1;
                 label closestFaceRotation = -1;
 
@@ -847,7 +853,11 @@ bool Foam::processorPolyPatch::order
                     }
                 }
 
-                if (closestFaceRotation != -1 && closestMatchDistSqr == 0)
+                if
+                (
+                    closestFaceRotation != -1
+                 && closestMatchDistSqr < absTolSqr
+                )
                 {
                     faceMap[lFacei] = closestFaceMatch;
 
@@ -893,12 +903,6 @@ bool Foam::processorPolyPatch::order
                 fromNeighbour >> masterCtrs >> masterNormals
                               >> masterAnchors >> masterFacePointAverages;
             }
-
-            // Calculate typical distance from face centre
-            scalarField tols
-            (
-                matchTolerance()*calcFaceTol(pp, pp.points(), pp.faceCentres())
-            );
 
             if (debug || masterCtrs.size() != pp.size())
             {

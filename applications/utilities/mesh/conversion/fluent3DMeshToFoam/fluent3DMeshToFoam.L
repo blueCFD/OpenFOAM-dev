@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -666,7 +666,7 @@ endOfSection               {space}")"{space}
     }
 
 <readZoneBlock>{lbrac} {
-        //Warning
+        // Warning
         //    << "Found unknown block in zone: " << YYText() << nl
         //    << "    on line " << lineNo << endl;
         yy_push_state(ignoreBlock);
@@ -916,7 +916,7 @@ int main(int argc, char *argv[])
     //  It is ok if the periodics are already ordered. We should read the
     //  periodic shadow faces section (section 18) to give use the ordering
     //  For now just disable.
-    //fluentToFoamType.insert("periodic", cyclicPolyPatch::typeName);
+    // fluentToFoamType.insert("periodic", cyclicPolyPatch::typeName);
 
 
     // Foam patch type for Fluent zone type
@@ -927,7 +927,7 @@ int main(int argc, char *argv[])
     fluentGroupToFoamPatch.insert("fan");
 
 
-    // Create intial empty polyMesh
+    // Create initial empty polyMesh
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     polyMesh mesh
@@ -1389,13 +1389,13 @@ int main(int argc, char *argv[])
                     faces[facei],
                     owner[facei],
                     neighbour[facei],
-                    -1,                 //masterPointID
-                    -1,                 //masterEdgeID
-                    facei,              //masterFace
-                    false,              //flipFaceFlux
-                    -1,                 //patchID
-                    -1,                 //zoneID
-                    false               //zoneFlip
+                    -1,                 // masterPointID
+                    -1,                 // masterEdgeID
+                    facei,              // masterFace
+                    false,              // flipFaceFlux
+                    -1,                 // patchID
+                    -1,                 // zoneID
+                    false               // zoneFlip
                 );
             }
         }

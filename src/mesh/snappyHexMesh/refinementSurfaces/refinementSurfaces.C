@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,7 +72,7 @@ Foam::refinementSurfaces::refinementSurfaces
     labelList globalMinLevel(surfI, 0);
     labelList globalMaxLevel(surfI, 0);
     labelList globalLevelIncr(surfI, 0);
-    scalarField globalAngle(surfI, -GREAT);
+    scalarField globalAngle(surfI, -great);
     PtrList<dictionary> globalPatchInfo(surfI);
     List<Map<label>> regionMinLevel(surfI);
     List<Map<label>> regionMaxLevel(surfI);
@@ -242,7 +242,7 @@ Foam::refinementSurfaces::refinementSurfaces
     gapLevel_.setSize(nRegions);
     gapLevel_ = -1;
     perpendicularAngle_.setSize(nRegions);
-    perpendicularAngle_ = -GREAT;
+    perpendicularAngle_ = -great;
     patchInfo_.setSize(nRegions);
 
 
@@ -430,7 +430,7 @@ void Foam::refinementSurfaces::setMinLevelFields
                 // From the region get the surface-wise refinement level
                 forAll(minLevelField, i)
                 {
-                    if (info[i].hit()) //Note: should not be necessary
+                    if (info[i].hit()) // Note: should not be necessary
                     {
                         minLevelField[i] = minLevel(surfI, region[i]);
                     }

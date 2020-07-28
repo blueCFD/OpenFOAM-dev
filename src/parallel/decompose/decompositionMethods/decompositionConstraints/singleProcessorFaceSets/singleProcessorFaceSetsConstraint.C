@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -124,7 +124,7 @@ void Foam::decompositionConstraints::singleProcessorFaceSetsConstraint::add
 
     forAll(setNameAndProcs_, setI)
     {
-        //Info<< "Keeping all cells connected to faceSet "
+        // Info<< "Keeping all cells connected to faceSet "
         //    << setNameAndProcs_[setI].first()
         //    << " on processor " << setNameAndProcs_[setI].second() << endl;
 

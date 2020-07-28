@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -190,10 +190,10 @@ bool correctOrientation(const pointField& points, const cellShape& shape)
     {
         const face& f = faces[i];
 
-        vector n(f.normal(points));
+        const vector a(f.area(points));
 
         // Check if vector from any point on face to cc points outwards
-        if (((points[f[0]] - cc) & n) < 0)
+        if (((points[f[0]] - cc) & a) < 0)
         {
             // Incorrectly oriented
             return false;
@@ -1001,7 +1001,7 @@ int main(int argc, char *argv[])
     Info<< endl;
 
 
-    //Get polyMesh to write to constant
+    // Get polyMesh to write to constant
 
     runTime.setTime(instant(runTime.constant()), 0);
 

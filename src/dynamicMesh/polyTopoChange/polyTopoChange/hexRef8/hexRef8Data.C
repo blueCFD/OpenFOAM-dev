@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -305,6 +305,29 @@ void Foam::hexRef8Data::sync(const IOobject& io)
         rio.rename("refinementHistory");
         rio.readOpt() = IOobject::NO_READ;
         refHistoryPtr_.reset(new refinementHistory(rio, mesh.nCells(), true));
+    }
+}
+
+
+void Foam::hexRef8Data::updateMesh(const mapPolyMesh& map)
+{
+    if (cellLevelPtr_.valid())
+    {
+        cellLevelPtr_() = labelList(cellLevelPtr_(), map.cellMap());
+        cellLevelPtr_().instance() = map.mesh().facesInstance();
+    }
+    if (pointLevelPtr_.valid())
+    {
+        pointLevelPtr_() = labelList(pointLevelPtr_(), map.pointMap());
+        pointLevelPtr_().instance() = map.mesh().facesInstance();
+    }
+
+    // No need to distribute the level0Edge
+
+    if (refHistoryPtr_.valid() && refHistoryPtr_().active())
+    {
+        refHistoryPtr_().updateMesh(map);
+        refHistoryPtr_().instance() = map.mesh().facesInstance();
     }
 }
 

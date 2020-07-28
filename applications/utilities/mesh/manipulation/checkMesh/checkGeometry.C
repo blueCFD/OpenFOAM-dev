@@ -143,7 +143,7 @@ bool Foam::checkWedges
                 const point& pt = p[pp.meshPoints()[i]];
                 scalar d = mag((pt - p0) & pp.n());
 
-                if (d > ROOTSMALL)
+                if (d > rootSmall)
                 {
                     if (report)
                     {
@@ -176,7 +176,7 @@ bool Foam::checkWedges
                 vector d(p[p1]-p[p0]);
                 scalar magD = mag(d);
 
-                if (magD > ROOTVSMALL)
+                if (magD > rootVSmall)
                 {
                     d /= magD;
 
@@ -343,7 +343,7 @@ bool Foam::checkCoupledPoints
     const polyBoundaryMesh& patches = mesh.boundaryMesh();
 
     // Zero'th point on coupled faces
-    //pointField nbrZeroPoint(fcs.size()-mesh.nInternalFaces(), vector::max);
+    // pointField nbrZeroPoint(fcs.size()-mesh.nInternalFaces(), vector::max);
     List<pointField> nbrPoints(fcs.size() - mesh.nInternalFaces());
 
     // Exchange zero point
@@ -395,7 +395,7 @@ bool Foam::checkCoupledPoints
                 (
                     cpp.calcFaceTol
                     (
-                        //cpp.matchTolerance(),
+                        // cpp.matchTolerance(),
                         cpp,
                         cpp.points(),
                         cpp.faceCentres()
@@ -475,6 +475,103 @@ bool Foam::checkCoupledPoints
         }
 
         return false;
+    }
+}
+
+
+void Foam::writeAMIWeightsSum
+(
+    const polyMesh& mesh,
+    const primitivePatch& patch,
+    const scalarField& wghtSum,
+    const fileName& file
+)
+{
+    // Collect geometry
+    labelList pointToGlobal;
+    labelList uniqueMeshPointLabels;
+    autoPtr<globalIndex> globalPoints;
+    autoPtr<globalIndex> globalFaces;
+    faceList mergedFaces;
+    pointField mergedPoints;
+    Foam::PatchTools::gatherAndMerge
+    (
+        mesh,
+        patch.localFaces(),
+        patch.meshPoints(),
+        patch.meshPointMap(),
+
+        pointToGlobal,
+        uniqueMeshPointLabels,
+        globalPoints,
+        globalFaces,
+
+        mergedFaces,
+        mergedPoints
+    );
+
+    // Collect field
+    scalarField mergedWeights;
+    globalFaces().gather
+    (
+        UPstream::worldComm,
+        labelList(UPstream::procID(UPstream::worldComm)),
+        wghtSum,
+        mergedWeights
+    );
+
+    // Write the surface
+    if (Pstream::master())
+    {
+        vtkSurfaceWriter().write
+        (
+            file.path(),
+            file.name(),
+            mergedPoints,
+            mergedFaces,
+            "weightsSum",
+            mergedWeights,
+            false
+        );
+    }
+}
+
+
+void Foam::writeAMIWeightsSums(const polyMesh& mesh)
+{
+    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+
+    const word tmName(mesh.time().timeName());
+
+    forAll(pbm, patchi)
+    {
+        if (isA<cyclicAMIPolyPatch>(pbm[patchi]))
+        {
+            const cyclicAMIPolyPatch& cpp =
+                refCast<const cyclicAMIPolyPatch>(pbm[patchi]);
+
+            if (cpp.owner())
+            {
+                Info<< "Calculating AMI weights between owner patch: "
+                    << cpp.name() << " and neighbour patch: "
+                    << cpp.neighbPatch().name() << endl;
+
+                writeAMIWeightsSum
+                (
+                    mesh,
+                    cpp,
+                    cpp.weightsSum(),
+                    fileName("postProcessing") / "src_" + tmName
+                );
+                writeAMIWeightsSum
+                (
+                    mesh,
+                    cpp.neighbPatch(),
+                    cpp.neighbWeightsSum(),
+                    fileName("postProcessing") / "tgt_" + tmName
+                );
+            }
+        }
     }
 }
 
@@ -666,7 +763,7 @@ Foam::label Foam::checkGeometry
 
     {
         faceSet faces(mesh, "wrongOrientedFaces", mesh.nFaces()/100 + 1);
-        if (mesh.checkFacePyramids(true, -SMALL, &faces))
+        if (mesh.checkFacePyramids(true, -small, &faces))
         {
             noFailedChecks++;
 
@@ -772,7 +869,7 @@ Foam::label Foam::checkGeometry
         pointSet points(mesh, "shortEdges", mesh.nPoints()/1000 + 1);
         if (mesh.checkEdgeLength(true, minDistSqr, &points))
         {
-            //noFailedChecks++;
+            // noFailedChecks++;
 
             label nPoints = returnReduce(points.size(), sumOp<label>());
 
@@ -794,7 +891,7 @@ Foam::label Foam::checkGeometry
 
         if (mesh.checkPointNearness(false, minDistSqr, &points))
         {
-            //noFailedChecks++;
+            // noFailedChecks++;
 
             label nPoints = returnReduce(points.size(), sumOp<label>());
 
@@ -819,7 +916,7 @@ Foam::label Foam::checkGeometry
         faceSet faces(mesh, "concaveFaces", mesh.nFaces()/100 + 1);
         if (mesh.checkFaceAngles(true, 10, &faces))
         {
-            //noFailedChecks++;
+            // noFailedChecks++;
 
             label nFaces = returnReduce(faces.size(), sumOp<label>());
 
@@ -843,7 +940,7 @@ Foam::label Foam::checkGeometry
         faceSet faces(mesh, "warpedFaces", mesh.nFaces()/100 + 1);
         if (mesh.checkFaceFlatness(true, 0.8, &faces))
         {
-            //noFailedChecks++;
+            // noFailedChecks++;
 
             label nFaces = returnReduce(faces.size(), sumOp<label>());
 
@@ -945,136 +1042,7 @@ Foam::label Foam::checkGeometry
 
     if (allGeometry)
     {
-        const polyBoundaryMesh& pbm = mesh.boundaryMesh();
-
-        const word tmName(mesh.time().timeName());
-        const word procAndTime(Foam::name(Pstream::myProcNo()) + "_" + tmName);
-
-        autoPtr<surfaceWriter> patchWriter;
-        if (!surfWriter.valid())
-        {
-            patchWriter.reset(new vtkSurfaceWriter());
-        }
-        const surfaceWriter& wr =
-        (
-            surfWriter.valid()
-          ? surfWriter()
-          : patchWriter()
-        );
-
-        forAll(pbm, patchi)
-        {
-            if (isA<cyclicAMIPolyPatch>(pbm[patchi]))
-            {
-                const cyclicAMIPolyPatch& cpp =
-                    refCast<const cyclicAMIPolyPatch>(pbm[patchi]);
-
-                if (cpp.owner())
-                {
-                    Info<< "Calculating AMI weights between owner patch: "
-                        << cpp.name() << " and neighbour patch: "
-                        << cpp.neighbPatch().name() << endl;
-
-                    const AMIPatchToPatchInterpolation& ami =
-                        cpp.AMI();
-
-                    {
-                        // Collect geometry
-                        labelList pointToGlobal;
-                        labelList uniqueMeshPointLabels;
-                        autoPtr<globalIndex> globalPoints;
-                        autoPtr<globalIndex> globalFaces;
-                        faceList mergedFaces;
-                        pointField mergedPoints;
-                        Foam::PatchTools::gatherAndMerge
-                        (
-                            mesh,
-                            cpp.localFaces(),
-                            cpp.meshPoints(),
-                            cpp.meshPointMap(),
-
-                            pointToGlobal,
-                            uniqueMeshPointLabels,
-                            globalPoints,
-                            globalFaces,
-
-                            mergedFaces,
-                            mergedPoints
-                        );
-                        // Collect field
-                        scalarField mergedWeights;
-                        globalFaces().gather
-                        (
-                            UPstream::worldComm,
-                            labelList(UPstream::procID(UPstream::worldComm)),
-                            ami.srcWeightsSum(),
-                            mergedWeights
-                        );
-
-                        if (Pstream::master())
-                        {
-                            wr.write
-                            (
-                                "postProcessing",
-                                "src_" + tmName,
-                                mergedPoints,
-                                mergedFaces,
-                                "weightsSum",
-                                mergedWeights,
-                                false
-                            );
-                        }
-                    }
-                    {
-                        // Collect geometry
-                        labelList pointToGlobal;
-                        labelList uniqueMeshPointLabels;
-                        autoPtr<globalIndex> globalPoints;
-                        autoPtr<globalIndex> globalFaces;
-                        faceList mergedFaces;
-                        pointField mergedPoints;
-                        Foam::PatchTools::gatherAndMerge
-                        (
-                            mesh,
-                            cpp.neighbPatch().localFaces(),
-                            cpp.neighbPatch().meshPoints(),
-                            cpp.neighbPatch().meshPointMap(),
-
-                            pointToGlobal,
-                            uniqueMeshPointLabels,
-                            globalPoints,
-                            globalFaces,
-
-                            mergedFaces,
-                            mergedPoints
-                        );
-                        // Collect field
-                        scalarField mergedWeights;
-                        globalFaces().gather
-                        (
-                            UPstream::worldComm,
-                            labelList(UPstream::procID(UPstream::worldComm)),
-                            ami.tgtWeightsSum(),
-                            mergedWeights
-                        );
-
-                        if (Pstream::master())
-                        {
-                            wr.write
-                            (
-                                "postProcessing",
-                                "tgt_" + tmName,
-                                mergedPoints,
-                                mergedFaces,
-                                "weightsSum",
-                                mergedWeights,
-                                false
-                            );
-                        }
-                    }
-                }
-            }
-        }
+        writeAMIWeightsSums(mesh);
     }
 
     return noFailedChecks;

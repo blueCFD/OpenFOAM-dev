@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,12 +87,12 @@ Foam::tmp<Foam::volScalarField> Foam::diameterModels::IATEsource::Ur() const
 
 Foam::tmp<Foam::volScalarField> Foam::diameterModels::IATEsource::Ut() const
 {
-    return sqrt(2*otherPhase().turbulence().k());
+    return sqrt(2*otherPhase().k());
 }
 
 Foam::tmp<Foam::volScalarField> Foam::diameterModels::IATEsource::Re() const
 {
-    return max(Ur()*phase().d()/otherPhase().nu(), scalar(1.0e-3));
+    return max(Ur()*phase().d()/otherPhase().nu(), scalar(1e-3));
 }
 
 Foam::tmp<Foam::volScalarField> Foam::diameterModels::IATEsource::CD() const

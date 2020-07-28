@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -144,16 +144,10 @@ Foam::triSurfaceRegionSearch::treeByRegion() const
     //                    << endl;
     //            }
 
-                // Random number generator. Bit dodgy since not exactly
-                // random ;-)
-                Random rndGen(65431);
-
                 // Slightly extended bb. Slightly off-centred just so
                 // on symmetric geometry there are fewer face/edge
                 // aligned items.
-                bb = bb.extend(rndGen, 1e-4);
-                bb.min() -= point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-                bb.max() += point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
+                bb = bb.extend(1e-4);
             }
 
             treeByRegion_.set

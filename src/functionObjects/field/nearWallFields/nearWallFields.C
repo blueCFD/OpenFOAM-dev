@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,47 +76,17 @@ void Foam::functionObjects::nearWallFields::calcAddressing()
         const fvPatch& patch = mesh_.boundary()[patchi];
 
         vectorField nf(patch.nf());
-        vectorField faceCellCentres(patch.patch().faceCellCentres());
 
         forAll(patch, patchFacei)
         {
-            label meshFacei = patch.start()+patchFacei;
-
-            // Find starting point on face (since faceCentre might not
-            // be on face-diagonal decomposition)
-            pointIndexHit startInfo
-            (
-                mappedPatchBase::facePoint
-                (
-                    mesh_,
-                    meshFacei,
-                    polyMesh::FACE_DIAG_TRIS
-                )
-            );
-
-
-            point start;
-            if (startInfo.hit())
-            {
-                start = startInfo.hitPoint();
-            }
-            else
-            {
-                // Fallback: start tracking from neighbouring cell centre
-                start = faceCellCentres[patchFacei];
-            }
-
-            const point end = start-distance_*nf[patchFacei];
-
-            // Add a particle to the cloud with originating face as passive data
             cloud.addParticle
             (
                 new findCellParticle
                 (
                     mesh_,
-                    start,
-                    -1,
-                    end,
+                    patch.Cf()[patchFacei],
+                    patch.faceCells()[patchFacei],
+                    - distance_*nf[patchFacei],
                     globalWalls.toGlobal(nPatchFaces) // passive data
                 )
             );
@@ -139,8 +109,8 @@ void Foam::functionObjects::nearWallFields::calcAddressing()
 
         forAllConstIter(Cloud<findCellParticle>, cloud, iter)
         {
-            const findCellParticle& tp = iter();
-            str.write(linePointRef(tp.position(), tp.end()));
+            const vector p = iter().position();
+            str.write(linePointRef(p, p + iter().displacement()));
         }
     }
 
@@ -157,7 +127,7 @@ void Foam::functionObjects::nearWallFields::calcAddressing()
     scalar maxTrackLen = 2.0*mesh_.bounds().mag();
 
 
-    //Debug: collect start points
+    // Debug: collect start points
     pointField start;
     if (debug)
     {
@@ -171,7 +141,7 @@ void Foam::functionObjects::nearWallFields::calcAddressing()
     }
 
 
-    cloud.move(td, maxTrackLen);
+    cloud.move(cloud, td, maxTrackLen);
 
 
     // Rework cell-to-globalpatchface into a map

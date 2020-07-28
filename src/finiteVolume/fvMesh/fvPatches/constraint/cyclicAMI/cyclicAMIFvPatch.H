@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,8 +63,14 @@ protected:
 
     // Protected Member functions
 
+        //- Return the patch-normal component of the deltas
+        tmp<scalarField> deltan() const;
+
+        //- Return the neighbour patch-normal component of the deltas
+        tmp<scalarField> nbrDeltan() const;
+
         //- Make patch weighting factors
-        void makeWeights(scalarField&) const;
+        virtual void makeWeights(scalarField&) const;
 
 
 public:
@@ -94,18 +100,19 @@ public:
                 return cyclicAMIPolyPatch_;
             }
 
-            //- Return neighbour
+            //- Return the neighbour patch ID
             virtual label neighbPatchID() const
             {
                 return cyclicAMIPolyPatch_.neighbPatchID();
             }
 
+            //- Is this side the owner?
             virtual bool owner() const
             {
                 return cyclicAMIPolyPatch_.owner();
             }
 
-            //- Return processor number
+            //- Return the neighbour patch
             virtual const cyclicAMIFvPatch& neighbPatch() const
             {
                 return refCast<const cyclicAMIFvPatch>
@@ -114,10 +121,16 @@ public:
                 );
             }
 
-            //- Return a reference to the AMI interpolator
-            virtual const AMIPatchToPatchInterpolation& AMI() const
+            //- Return a reference to the AMI interpolators
+            virtual const PtrList<AMIPatchToPatchInterpolation>& AMIs() const
             {
-                return cyclicAMIPolyPatch_.AMI();
+                return cyclicAMIPolyPatch_.AMIs();
+            }
+
+            //- Return a reference to the AMI transforms
+            virtual const List<vectorTensorTransform>& AMITransforms() const
+            {
+                return cyclicAMIPolyPatch_.AMITransforms();
             }
 
             //- Return true if applying the low weight correction
@@ -125,7 +138,6 @@ public:
             {
                 return cyclicAMIPolyPatch_.applyLowWeightCorrection();
             }
-
 
             //- Are the cyclic planes parallel
             virtual bool parallel() const

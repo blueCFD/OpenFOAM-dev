@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -23,11 +23,13 @@ boundaryField
     inlet
     {
         type            freestreamPressure;
+        freestreamValue $internalField;
     }
 
     outlet
     {
         type            freestreamPressure;
+        freestreamValue $internalField;
     }
 
     walls

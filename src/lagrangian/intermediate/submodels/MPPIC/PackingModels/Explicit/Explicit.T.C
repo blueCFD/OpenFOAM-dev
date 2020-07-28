@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -164,11 +164,11 @@ Foam::vector Foam::PackingModels::Explicit<CloudType>::velocityCorrection
     vector dU = Zero;
 
     //// existing forces
-    //const scalar Re = p.Re(p.U(), p.d(), p.rhoc(), p.muc());
-    //const typename CloudType::forceType& forces = this->owner().forces();
-    //const forceSuSp F =
-    //    forces.calcCoupled(p, deltaT, p.mass(), Re, p.muc())
-    //  + forces.calcNonCoupled(p, deltaT, p.mass(), Re, p.muc());
+    // const scalar Re = p.Re(td);
+    // const typename CloudType::forceType& forces = this->owner().forces();
+    // const forceSuSp F =
+    //    forces.calcCoupled(p, td, deltaT, p.mass(), Re, td.muc())
+    //  + forces.calcNonCoupled(p, td, deltaT, p.mass(), Re, td.muc());
 
     // correction velocity
     if ((uRelative & alphaGrad) > 0)

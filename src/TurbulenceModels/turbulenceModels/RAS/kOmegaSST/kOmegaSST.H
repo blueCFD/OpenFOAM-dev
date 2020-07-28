@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,8 +24,9 @@ License
 Class
     Foam::RASModels::kOmegaSST
 
-Group
-    grpRASTurbulence
+Description
+    Specialisation for RAS of the generic kOmegaSSTBase base class.
+    For more information, see Description of kOmegaSSTBase.H
 
 See also
     Foam::kOmegaSST

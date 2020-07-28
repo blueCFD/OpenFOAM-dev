@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -127,7 +127,7 @@ void Foam::router::fixWeights
     {
         WarningInFunction
             << "Cannot route from node " << nodeI
-            << " since all neigbours of node "
+            << " since all neighbours of node "
             << "already allocated:" << endl;
 
         forAll(myNeighbours, neighbourI)
@@ -147,7 +147,7 @@ void Foam::router::fixWeights
         // to choose one. Here: smallest angle to vector end-start
         vector n(coords_[endNodeI] - coords_[startNodeI]);
 
-        scalar maxCosAngle = -GREAT;
+        scalar maxCosAngle = -great;
 
         forAll(myNeighbours, neighbourI)
         {
@@ -159,7 +159,7 @@ void Foam::router::fixWeights
 
                 scalar magN2 = mag(n2);
 
-                if (magN2 > SMALL)
+                if (magN2 > small)
                 {
                     n2 /= mag(n2);
 
@@ -309,7 +309,7 @@ bool Foam::router::route(const labelList& path, const label pathValue)
     {
         if (weights_[path[leafI]] == labelMax)
         {
-            //Info<< "Cannot route leaf from " << path[0]
+            // Info<< "Cannot route leaf from " << path[0]
             //    << " to " << path[leafI] << " of path " << path
             //    << " since there is no valid route between them" << endl;
 

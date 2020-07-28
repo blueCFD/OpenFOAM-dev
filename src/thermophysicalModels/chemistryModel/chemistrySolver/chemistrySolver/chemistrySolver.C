@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,11 +30,10 @@ License
 template<class ChemistryModel>
 Foam::chemistrySolver<ChemistryModel>::chemistrySolver
 (
-    const fvMesh& mesh,
-    const word& phaseName
+    typename ChemistryModel::reactionThermo& thermo
 )
 :
-    ChemistryModel(mesh, phaseName)
+    ChemistryModel(thermo)
 {}
 
 

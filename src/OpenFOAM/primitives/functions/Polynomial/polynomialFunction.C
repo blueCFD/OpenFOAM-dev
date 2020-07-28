@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ Foam::polynomialFunction Foam::polynomialFunction::cloneIntegralMinus1
 {
     polynomialFunction newPoly(poly.size()+1);
 
-    if (poly[0] > VSMALL)
+    if (poly[0] > vSmall)
     {
         newPoly.logActive_ = true;
         newPoly.logCoeff_  = poly[0];

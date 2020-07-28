@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,28 +41,18 @@ Foam::ThermoPhaseModel<BasePhaseModel, ThermoType>::ThermoPhaseModel
 (
     const phaseSystem& fluid,
     const word& phaseName,
-    const label index,
-    const bool createThermo
+    const label index
 )
 :
-    BasePhaseModel(fluid, phaseName, index)
+    BasePhaseModel(fluid, phaseName, index),
+    thermo_(ThermoType::New(fluid.mesh(), this->name()))
 {
-    if (createThermo)
-    {
-        thermoPtr_.set
-        (
-            ThermoType::New(fluid.mesh(), this->name()).ptr()
-        );
-
-        thermo_ = thermoPtr_.ptr();
-
-        thermo_->validate
-        (
-            IOobject::groupName(phaseModel::typeName, this->name()),
-            "h",
-            "e"
-        );
-    }
+    thermo_->validate
+    (
+        IOobject::groupName(phaseModel::typeName, this->name()),
+        "h",
+        "e"
+    );
 }
 
 
@@ -76,18 +66,25 @@ Foam::ThermoPhaseModel<BasePhaseModel, ThermoType>::~ThermoPhaseModel()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class BasePhaseModel, class ThermoType>
+bool Foam::ThermoPhaseModel<BasePhaseModel, ThermoType>::compressible() const
+{
+    return !thermo_().incompressible();
+}
+
+
+template<class BasePhaseModel, class ThermoType>
 const Foam::rhoThermo&
 Foam::ThermoPhaseModel<BasePhaseModel, ThermoType>::thermo() const
 {
-    return *thermo_;
+    return thermo_();
 }
 
 
 template<class BasePhaseModel, class ThermoType>
 Foam::rhoThermo&
-Foam::ThermoPhaseModel<BasePhaseModel, ThermoType>::thermo()
+Foam::ThermoPhaseModel<BasePhaseModel, ThermoType>::thermoRef()
 {
-    return *thermo_;
+    return thermo_();
 }
 
 

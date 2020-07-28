@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,8 +30,8 @@ License
 #include "PointEdgeWave.T.H"
 #include "syncTools.H"
 #include "interpolationTable.H"
-#include "mapPolyMesh.H"
 #include "pointConstraints.H"
+#include "mapPolyMesh.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -290,7 +290,7 @@ void Foam::displacementLayeredMotionMotionSolver::cellZoneSolve
     if (patchesDict.size() != 2)
     {
         FatalIOErrorInFunction(*this)
-            << "Two faceZones (patches) must be specifed per cellZone. "
+            << "Two faceZones (patches) must be specified per cellZone. "
             << " cellZone:" << cellZoneI
             << " patches:" << patchesDict.toc()
             << exit(FatalIOError);
@@ -432,7 +432,7 @@ void Foam::displacementLayeredMotionMotionSolver::cellZoneSolve
         {
             scalar d1 = patchDist[0][pointi];
             scalar d2 = patchDist[1][pointi];
-            if (d1 + d2 > SMALL)
+            if (d1 + d2 > small)
             {
                 scalar s = d1/(d1 + d2);
                 distance[pointi] = s;
@@ -466,7 +466,7 @@ void Foam::displacementLayeredMotionMotionSolver::cellZoneSolve
             {
                 scalar d1 = patchDist[0][pointi];
                 scalar d2 = patchDist[1][pointi];
-                scalar s = d1/(d1 + d2 + VSMALL);
+                scalar s = d1/(d1 + d2 + vSmall);
 
                 const vector& pd1 = patchDisp[0][pointi];
                 const vector& pd2 = patchDisp[1][pointi];
@@ -561,13 +561,18 @@ void Foam::displacementLayeredMotionMotionSolver::updateMesh
     const mapPolyMesh& mpm
 )
 {
+    FatalErrorInFunction
+        << "Probably inconsistent with points0MotionSolver" << nl
+        << "    Needs to be updated and tested."
+        << exit(FatalError);
+
     displacementMotionSolver::updateMesh(mpm);
 
     const vectorField displacement(this->newPoints() - points0_);
 
     forAll(points0_, pointi)
     {
-        label oldPointi = mpm.pointMap()[pointi];
+        const label oldPointi = mpm.pointMap()[pointi];
 
         if (oldPointi >= 0)
         {

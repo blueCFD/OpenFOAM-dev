@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,13 +41,13 @@ public:
 
     void operator()(T& x, const T& y) const
     {
-        const T unsetVal(-VGREAT*pTraits<T>::one);
+        const T unsetVal(-vGreat*pTraits<T>::one);
 
         if (x != unsetVal)
         {
             // Keep x.
 
-            // Note:chould check for y != unsetVal but multiple sample cells
+            // Note: should check for y != unsetVal but multiple sample cells
             // already handled in read().
         }
         else
@@ -217,7 +217,7 @@ Foam::probes::sample
     const GeometricField<Type, fvPatchField, volMesh>& vField
 ) const
 {
-    const Type unsetVal(-VGREAT*pTraits<Type>::one);
+    const Type unsetVal(-vGreat*pTraits<Type>::one);
 
     tmp<Field<Type>> tValues
     (
@@ -287,7 +287,7 @@ Foam::probes::sample
     const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
 ) const
 {
-    const Type unsetVal(-VGREAT*pTraits<Type>::one);
+    const Type unsetVal(-vGreat*pTraits<Type>::one);
 
     tmp<Field<Type>> tValues
     (

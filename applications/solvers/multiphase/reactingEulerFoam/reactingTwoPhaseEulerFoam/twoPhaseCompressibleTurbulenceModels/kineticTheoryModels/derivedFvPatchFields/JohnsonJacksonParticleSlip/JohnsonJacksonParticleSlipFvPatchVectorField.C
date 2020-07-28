@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -229,8 +229,8 @@ void Foam::JohnsonJacksonParticleSlipFvPatchVectorField::updateCoeffs()
        *alpha
        *gs0
        *specularityCoefficient_.value()
-       *sqrt(3.0*Theta)
-       /max(6.0*(nu - nuFric)*alphaMax.value(), SMALL)
+       *sqrt(3*Theta)
+       /max(6*(nu - nuFric)*alphaMax.value(), small)
     );
 
     this->valueFraction() = c/(c + patch().deltaCoeffs());

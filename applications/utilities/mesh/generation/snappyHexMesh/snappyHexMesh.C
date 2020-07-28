@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -335,7 +335,7 @@ autoPtr<refinementSurfaces> createRefinementSurfaces
             minLevel,
             maxLevel,
             gapLevel,
-            scalarField(nRegions, -GREAT),  //perpendicularAngle,
+            scalarField(nRegions, -great),  // perpendicularAngle,
             patchInfo
         )
     );
@@ -891,7 +891,7 @@ int main(int argc, char *argv[])
         (
             "abc",                      // dummy name
             mesh.time().constant(),     // instance
-            //mesh.time().findInstance("triSurface", word::null),// instance
+            // mesh.time().findInstance("triSurface", word::null),// instance
             "triSurface",               // local
             mesh.time(),                // registry
             IOobject::MUST_READ,
@@ -941,9 +941,9 @@ int main(int argc, char *argv[])
 
         const scalar initialCellSize = ::pow(meshPtr().V()[0], 1.0/3.0);
 
-        //Info<< "Wanted cell size  = " << defaultCellSize << endl;
-        //Info<< "Current cell size = " << initialCellSize << endl;
-        //Info<< "Fraction          = " << initialCellSize/defaultCellSize
+        // Info<< "Wanted cell size  = " << defaultCellSize << endl;
+        // Info<< "Current cell size = " << initialCellSize << endl;
+        // Info<< "Fraction          = " << initialCellSize/defaultCellSize
         //    << endl;
 
         surfacesPtr =

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,7 @@ Description
     particleTrap1
     {
         type        particleTrap;
-        alphaName   alpha;      // name volume fraction field
+        alpha       alpha;      // name of the volume fraction field
         threshold   0.95;       // alpha value below which model is active
     }
     \endverbatim
@@ -131,7 +131,6 @@ public:
             virtual void postMove
             (
                 typename CloudType::parcelType& p,
-                const label celli,
                 const scalar dt,
                 const point& position0,
                 bool& keepParticle

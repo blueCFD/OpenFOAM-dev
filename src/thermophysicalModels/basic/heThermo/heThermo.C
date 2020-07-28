@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -717,6 +717,54 @@ Foam::tmp<Foam::scalarField> Foam::heThermo<BasicThermo, MixtureType>::THE
     }
 
     return tT;
+}
+
+
+template<class BasicThermo, class MixtureType>
+Foam::tmp<Foam::volScalarField> Foam::heThermo<BasicThermo, MixtureType>::W
+(
+) const
+{
+    const fvMesh& mesh = this->T_.mesh();
+
+    tmp<volScalarField> tW
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "W",
+                mesh.time().timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            mesh,
+            dimMass/dimMoles
+        )
+    );
+
+    volScalarField& W = tW.ref();
+    scalarField& WCells = W.primitiveFieldRef();
+
+    forAll(WCells, celli)
+    {
+        WCells[celli] = this->cellMixture(celli).W();
+    }
+
+    volScalarField::Boundary& WBf = W.boundaryFieldRef();
+
+    forAll(WBf, patchi)
+    {
+        scalarField& Wp = WBf[patchi];
+        forAll(Wp, facei)
+        {
+            Wp[facei] = this->patchFaceMixture(patchi, facei).W();
+        }
+    }
+
+    return tW;
 }
 
 

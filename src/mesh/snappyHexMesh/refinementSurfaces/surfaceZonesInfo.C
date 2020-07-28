@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -369,10 +369,10 @@ Foam::labelList Foam::surfaceZonesInfo::addCellZonesToMesh
                     zoneI,
                     new cellZone
                     (
-                        cellZoneName,   //name
-                        labelList(0),   //addressing
-                        zoneI,          //index
-                        cellZones       //cellZoneMesh
+                        cellZoneName,   // name
+                        labelList(0),   // addressing
+                        zoneI,          // index
+                        cellZones       // cellZoneMesh
                     )
                 );
             }
@@ -432,11 +432,11 @@ Foam::labelList Foam::surfaceZonesInfo::addFaceZonesToMesh
                 zoneI,
                 new faceZone
                 (
-                    faceZoneName,   //name
-                    labelList(0),   //addressing
-                    boolList(0),    //flipmap
-                    zoneI,          //index
-                    faceZones       //faceZoneMesh
+                    faceZoneName,   // name
+                    labelList(0),   // addressing
+                    boolList(0),    // flipmap
+                    zoneI,          // index
+                    faceZones       // faceZoneMesh
                 )
             );
         }

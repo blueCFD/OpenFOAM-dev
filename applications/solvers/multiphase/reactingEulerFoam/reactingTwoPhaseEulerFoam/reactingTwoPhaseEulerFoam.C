@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,41 +40,13 @@ Description
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
-namespace Foam
-{
-    tmp<volScalarField> byDt(const volScalarField& vf)
-    {
-        if (fv::localEulerDdt::enabled(vf.mesh()))
-        {
-            return fv::localEulerDdt::localRDeltaT(vf.mesh())*vf;
-        }
-        else
-        {
-            return vf/vf.mesh().time().deltaT();
-        }
-    }
-
-    tmp<surfaceScalarField> byDt(const surfaceScalarField& sf)
-    {
-        if (fv::localEulerDdt::enabled(sf.mesh()))
-        {
-            return fv::localEulerDdt::localRDeltaTf(sf.mesh())*sf;
-        }
-        else
-        {
-            return sf/sf.mesh().time().deltaT();
-        }
-    }
-}
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createControl.H"
@@ -93,16 +65,7 @@ int main(int argc, char *argv[])
         pimple.dict().lookupOrDefault<Switch>("faceMomentum", false)
     );
 
-    Switch implicitPhasePressure
-    (
-        mesh.solverDict(alpha1.name()).lookupOrDefault<Switch>
-        (
-            "implicitPhasePressure", false
-        )
-    );
-
     #include "pUf/createRDeltaTf.H"
-    #include "pUf/createDDtU.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -147,7 +110,6 @@ int main(int argc, char *argv[])
                 #include "pUf/UEqns.H"
                 #include "EEqns.H"
                 #include "pUf/pEqn.H"
-                #include "pUf/DDtU.H"
             }
             else
             {

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -123,7 +123,7 @@ Foam::autoPtr<Foam::mapDistribute> Foam::meshToMesh::calcProcMap
         procBb[Pstream::myProcNo()] = boundBox(src.points(), false);
 
         // slightly increase size of bounding boxes to allow for cases where
-        // bounding boxes are perfectly alligned
+        // bounding boxes are perfectly aligned
         procBb[Pstream::myProcNo()].inflate(0.01);
     }
     else
@@ -841,7 +841,7 @@ void Foam::meshToMesh::distributeAndMergeCells
         bool hasMerged = mergePoints
         (
             tgtPoints,
-            SMALL,
+            small,
             false,
             oldToNew,
             newTgtPoints

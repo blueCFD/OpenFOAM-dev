@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::functionObjects::wallShearStress
-
-Group
-    grpForcesFunctionObjects
 
 Description
     Calculates and write the shear-stress at wall patches as
@@ -72,7 +69,6 @@ See also
     Foam::functionObjects::fvMeshFunctionObject
     Foam::functionObjects::logFiles
     Foam::functionObjects::writeLocalObjects
-    Foam::functionObjects::pressureTools
     Foam::functionObjects::timeControl
 
 SourceFiles

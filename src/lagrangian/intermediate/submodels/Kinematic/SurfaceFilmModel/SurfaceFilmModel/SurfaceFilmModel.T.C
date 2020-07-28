@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "SurfaceFilmModel.T.H"
-#include "surfaceFilmModel.H"
+#include "surfaceFilmRegionModel.H"
 #include "mathematicalConstants.H"
 
 using namespace Foam::constant;
@@ -100,8 +100,8 @@ Foam::SurfaceFilmModel<CloudType>::~SurfaceFilmModel()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CloudType>
-template<class TrackData>
-void Foam::SurfaceFilmModel<CloudType>::inject(TrackData& td)
+template<class TrackCloudType>
+void Foam::SurfaceFilmModel<CloudType>::inject(TrackCloudType& cloud)
 {
     if (!this->active())
     {
@@ -109,9 +109,9 @@ void Foam::SurfaceFilmModel<CloudType>::inject(TrackData& td)
     }
 
     // Retrieve the film model from the owner database
-    const regionModels::surfaceFilmModels::surfaceFilmModel& filmModel =
+    const regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel =
         this->owner().mesh().time().objectRegistry::template lookupObject
-        <regionModels::surfaceFilmModels::surfaceFilmModel>
+        <regionModels::surfaceFilmModels::surfaceFilmRegionModel>
         (
             "surfaceFilmProperties"
         );
@@ -159,18 +159,18 @@ void Foam::SurfaceFilmModel<CloudType>::inject(TrackData& td)
                     new parcelType(this->owner().pMesh(), pos, celli);
 
                 // Check/set new parcel thermo properties
-                td.cloud().setParcelThermoProperties(*pPtr, 0.0);
+                cloud.setParcelThermoProperties(*pPtr, 0.0);
 
                 setParcelProperties(*pPtr, j);
 
                 if (pPtr->nParticle() > 0.001)
                 {
                     // Check new parcel properties
-    //                td.cloud().checkParcelProperties(*pPtr, 0.0, true);
-                    td.cloud().checkParcelProperties(*pPtr, 0.0, false);
+    //                cloud.checkParcelProperties(*pPtr, 0.0, true);
+                    cloud.checkParcelProperties(*pPtr, 0.0, false);
 
                     // Add the new parcel to the cloud
-                    td.cloud().addParticle(pPtr);
+                    cloud.addParticle(pPtr);
 
                     nParcelsInjected_++;
                 }
@@ -190,7 +190,7 @@ void Foam::SurfaceFilmModel<CloudType>::cacheFilmFields
 (
     const label filmPatchi,
     const label primaryPatchi,
-    const regionModels::surfaceFilmModels::surfaceFilmModel& filmModel
+    const regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel
 )
 {
     massParcelPatch_ = filmModel.cloudMassTrans().boundaryField()[filmPatchi];

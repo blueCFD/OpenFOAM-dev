@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,7 +45,7 @@ addToRunTimeSelectionTable(injectionModel, BrunDrippingInjection, dictionary);
 
 BrunDrippingInjection::BrunDrippingInjection
 (
-    surfaceFilmModel& film,
+    surfaceFilmRegionModel& film,
     const dictionary& dict
 )
 :
@@ -89,7 +89,7 @@ void BrunDrippingInjection::correct
     {
         bool dripping = false;
 
-        if (sinAlpha[celli] > SMALL && delta[celli] > deltaStable_)
+        if (sinAlpha[celli] > small && delta[celli] > deltaStable_)
         {
             const scalar rhoc = rho[celli];
             const scalar lc = sqrt(sigma[celli]/(rhoc*magg));

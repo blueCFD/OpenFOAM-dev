@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(intersectedSurface, 0);
+    defineTypeNameAndDebug(intersectedSurface, 0);
 }
 
 
@@ -360,7 +360,7 @@ Foam::intersectedSurface::calcPointEdgeAddressing
                 << points[e.end()] << endl;
         }
 
-        Pout<< "    Constructed point-edge adressing:" << endl;
+        Pout<< "    Constructed point-edge addressing:" << endl;
         forAllConstIter(Map<DynamicList<label>>, facePointEdges, iter)
         {
             Pout<< "    vertex " << iter.key() << " is connected to edges "
@@ -448,12 +448,12 @@ Foam::label Foam::intersectedSurface::nextEdge
 
     // x-axis of coordinate system
     vector e0 = n ^ (points[prevE.otherVertex(prevVertI)] - points[prevVertI]);
-    e0 /= mag(e0) + VSMALL;
+    e0 /= mag(e0) + vSmall;
 
     // Get y-axis of coordinate system
     vector e1 = n ^ e0;
 
-    if (mag(mag(e1) - 1) > SMALL)
+    if (mag(mag(e1) - 1) > small)
     {
         {
             Pout<< "Writing face:" << facei << " to face.obj" << endl;
@@ -475,7 +475,7 @@ Foam::label Foam::intersectedSurface::nextEdge
     // Determine maximum angle over all connected (unvisited) edges.
     //
 
-    scalar maxAngle = -GREAT;
+    scalar maxAngle = -great;
     label maxEdgeI = -1;
 
     forAll(connectedEdges, connI)
@@ -488,7 +488,7 @@ Foam::label Foam::intersectedSurface::nextEdge
 
             const edge& e = edges[edgeI];
 
-            // Find out whether walk of edge from prevVert would be acceptible.
+            // Find out whether walk of edge from prevVert would be acceptable.
             if
             (
                 stat == UNVISITED
@@ -506,7 +506,7 @@ Foam::label Foam::intersectedSurface::nextEdge
                 vector vec =
                     n ^ (points[e.otherVertex(prevVertI)] - points[prevVertI]);
 
-                vec /= mag(vec) + VSMALL;
+                vec /= mag(vec) + vSmall;
 
                 scalar angle = pseudoAngle(e0, e1, vec);
 
@@ -647,7 +647,7 @@ void Foam::intersectedSurface::findNearestVisited
 )
 {
     minVertI = -1;
-    minDist = GREAT;
+    minDist = great;
 
     forAllConstIter(Map<label>, pointVisited, iter)
     {
@@ -691,7 +691,7 @@ void Foam::intersectedSurface::findNearestVisited
 // other edges in the face. This routine tries to connect the loose
 // edges up to the 'proper' edges by adding two extra edges between a
 // properly connected edge and an unconnected one. Since at this level the
-// adressing is purely in form of points and a cloud of edges this can
+// addressing is purely in form of points and a cloud of edges this can
 // be easily done.
 // (edges are to existing points. Don't want to introduce new vertices here
 // since then also neighbouring face would have to be split)
@@ -784,7 +784,7 @@ Foam::faceList Foam::intersectedSurface::resplitFace
     label unvisitedVert0 = -1;
 
     {
-        scalar minDist = GREAT;
+        scalar minDist = great;
 
         forAllConstIter(Map<DynamicList<label>>, facePointEdges, iter)
         {
@@ -829,7 +829,7 @@ Foam::faceList Foam::intersectedSurface::resplitFace
     label visitedVert1 = -1;
     label unvisitedVert1 = -1;
     {
-        scalar minDist = GREAT;
+        scalar minDist = great;
 
         forAllConstIter(Map<DynamicList<label>>, facePointEdges, iter)
         {
@@ -1018,11 +1018,11 @@ Foam::faceList Foam::intersectedSurface::splitFace
             break;
         }
 
-        //Pout<< "splitFace: starting walk from edge:" << startEdgeI
+        // Pout<< "splitFace: starting walk from edge:" << startEdgeI
         //    << ' ' << edges[startEdgeI] << " vertex:" << startVertI << endl;
 
         //// Print current visited state.
-        //printVisit(eSurf.edges(), fEdges, visited);
+        // printVisit(eSurf.edges(), fEdges, visited);
 
         //{
         //    Pout<< "Writing face:" << facei << " to face.obj" << endl;
@@ -1104,9 +1104,9 @@ Foam::faceList Foam::intersectedSurface::splitFace
     // See if normal needs flipping.
     faces.shrink();
 
-    vector n = faces[0].normal(eSurf.points());
+    vector a = faces[0].area(eSurf.points());
 
-    if ((n & surf.faceNormals()[facei]) < 0)
+    if ((a & surf.faceNormals()[facei]) < 0)
     {
         forAll(faces, i)
         {

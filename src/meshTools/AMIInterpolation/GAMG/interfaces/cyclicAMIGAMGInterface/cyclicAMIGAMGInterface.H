@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,7 +50,7 @@ namespace Foam
 class cyclicAMIGAMGInterface
 :
     public GAMGInterface,
-    virtual public cyclicAMILduInterface
+    public cyclicAMILduInterface
 {
     // Private data
 
@@ -58,8 +58,11 @@ class cyclicAMIGAMGInterface
         //  agglomerated
         const cyclicAMILduInterface& fineCyclicAMIInterface_;
 
-        //- AMI interface
-        autoPtr<AMIPatchToPatchInterpolation> amiPtr_;
+        //- AMI interfaces
+        PtrList<AMIPatchToPatchInterpolation> AMIs_;
+
+        //- AMI transformations
+        List<vectorTensorTransform> AMITransforms_;
 
 
     // Private Member Functions
@@ -117,11 +120,13 @@ public:
                 return fineCyclicAMIInterface_.neighbPatchID();
             }
 
+            //- Does this side own the interface?
             virtual bool owner() const
             {
                 return fineCyclicAMIInterface_.owner();
             }
 
+            //- Return neighbour patch
             virtual const cyclicAMIGAMGInterface& neighbPatch() const
             {
                 return dynamic_cast<const cyclicAMIGAMGInterface&>
@@ -130,9 +135,16 @@ public:
                 );
             }
 
-            virtual const AMIPatchToPatchInterpolation& AMI() const
+            //- Return a reference to the AMI interpolators
+            virtual const PtrList<AMIPatchToPatchInterpolation>& AMIs() const
             {
-                return amiPtr_();
+                return AMIs_;
+            }
+
+            // Return a reference to the AMI transformations
+            virtual const List<vectorTensorTransform>& AMITransforms() const
+            {
+                return AMITransforms_;
             }
 
             //- Return face transformation tensor
@@ -153,7 +165,7 @@ public:
             //- Write to stream
             virtual void write(Ostream&) const
             {
-                //TBD. How to serialise the AMI such that we can stream
+                // TBD. How to serialise the AMI such that we can stream
                 // cyclicAMIGAMGInterface.
                 NotImplemented;
             }

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -104,7 +104,6 @@ Usage
 #include "pointFieldDecomposer.H"
 #include "lagrangianFieldDecomposer.H"
 #include "decompositionModel.H"
-#include "collatedFileOperation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -218,11 +217,7 @@ int main(int argc, char *argv[])
 
     argList::noParallel();
     #include "addRegionOption.H"
-    argList::addBoolOption
-    (
-        "allRegions",
-        "operate on all regions in regionProperties"
-    );
+    #include "addAllRegionsOption.H"
     argList::addBoolOption
     (
         "cellDist",
@@ -272,7 +267,7 @@ int main(int argc, char *argv[])
 
     #include "setRootCase.H"
 
-    bool allRegions              = args.optionFound("allRegions");
+    bool region                  = args.optionFound("region");
     bool writeCellDist           = args.optionFound("cellDist");
     bool copyZero                = args.optionFound("copyZero");
     bool copyUniform             = args.optionFound("copyUniform");
@@ -286,93 +281,139 @@ int main(int argc, char *argv[])
     // Set time from database
     #include "createTime.H"
 
-    fileName dictPath;
-
     // Check if the dictionary is specified on the command-line
+    fileName dictPath = fileName::null;
     if (args.optionFound("dict"))
     {
         dictPath = args["dict"];
 
-        dictPath =
-        (
-            isDir(dictPath)
-          ? dictPath/dictName
-          : dictPath
-        );
-    }
-    else
-    {
-        dictPath = runTime.path()/"system"/dictName;
+        if (!isFile(dictPath))
+        {
+            dictPath = dictPath/dictName;
+        }
+
+        if (!isFile(dictPath))
+        {
+            FatalErrorInFunction
+                << "Specified -dict " << args["dict"] << " but neither "
+                << args["dict"] << " nor " << args["dict"]/dictName
+                << " could be found" << nl << exit(FatalError);
+        }
     }
 
     // Allow override of time
     instantList times = timeSelector::selectIfPresent(runTime, args);
 
-    wordList regionNames;
-    wordList regionDirs;
-    if (allRegions)
+    const wordList regionNames(selectRegionNames(args, runTime));
+
     {
-        Info<< "Decomposing all regions in regionProperties" << nl << endl;
-        regionProperties rp(runTime);
-        forAllConstIter(HashTable<wordList>, rp, iter)
+        // Determine the existing processor count directly
+        label nProcs = fileHandler().nProcs(runTime.path());
+
+        if (forceOverwrite)
         {
-            const wordList& regions = iter();
-            forAll(regions, i)
+            if (region)
             {
-                if (findIndex(regionNames, regions[i]) == -1)
+                FatalErrorInFunction
+                    << "Cannot force the decomposition of a single region"
+                    << exit(FatalError);
+            }
+
+            Info<< "Removing " << nProcs
+                << " existing processor directories" << endl;
+
+            // Remove existing processors directory
+            fileNameList dirs
+            (
+                fileHandler().readDir
+                (
+                    runTime.path(),
+                    fileName::Type::DIRECTORY
+                )
+            );
+            forAllReverse(dirs, diri)
+            {
+                const fileName& d = dirs[diri];
+
+                // Starts with 'processors'
+                if (d.find("processors") == 0)
                 {
-                    regionNames.append(regions[i]);
+                    if (fileHandler().exists(d))
+                    {
+                        fileHandler().rmDir(d);
+                    }
+                }
+
+                // Starts with 'processor'
+                if (d.find("processor") == 0)
+                {
+                    // Check that integer after processor
+                    fileName num(d.substr(9));
+                    label proci = -1;
+                    if (Foam::read(num.c_str(), proci))
+                    {
+                        if (fileHandler().exists(d))
+                        {
+                            fileHandler().rmDir(d);
+                        }
+                    }
                 }
             }
         }
-        regionDirs = regionNames;
-    }
-    else
-    {
-        word regionName;
-        if (args.optionReadIfPresent("region", regionName))
+        else if (nProcs && !region && !decomposeFieldsOnly)
         {
-            regionNames = wordList(1, regionName);
-            regionDirs = regionNames;
-        }
-        else
-        {
-            regionNames = wordList(1, fvMesh::defaultRegion);
-            regionDirs = wordList(1, word::null);
+            FatalErrorInFunction
+                << "Case is already decomposed with " << nProcs
+                << " domains, use the -force option or manually" << nl
+                << "remove processor directories before decomposing. e.g.,"
+                << nl
+                << "    rm -rf " << runTime.path().c_str() << "/processor*"
+                << nl
+                << exit(FatalError);
         }
     }
-
 
 
     forAll(regionNames, regioni)
     {
         const word& regionName = regionNames[regioni];
-        const word& regionDir = regionDirs[regioni];
+        const word& regionDir = Foam::regionDir(regionName);
 
         Info<< "\n\nDecomposing mesh " << regionName << nl << endl;
-
 
         // Determine the existing processor count directly
         label nProcs = fileHandler().nProcs(runTime.path(), regionDir);
 
+        // Get the dictionary IO
+        const IOobject dictIO
+        (
+            dictPath == fileName::null
+          ? IOobject
+            (
+                dictName,
+                runTime.time().system(),
+                regionDir, // use region if non-standard
+                runTime,
+                IOobject::MUST_READ_IF_MODIFIED,
+                IOobject::NO_WRITE,
+                false
+            )
+          : IOobject
+            (
+                dictPath,
+                runTime,
+                IOobject::MUST_READ_IF_MODIFIED,
+                IOobject::NO_WRITE,
+                false
+            )
+        );
         // Get requested numberOfSubdomains. Note: have no mesh yet so
         // cannot use decompositionModel::New
-        const label nDomains = readLabel
-        (
-            IOdictionary
-            (
-                IOobject
-                (
-                    dictName,
-                    runTime.time().system(),
-                    regionDir,          // use region if non-standard
-                    runTime,
-                    IOobject::MUST_READ_IF_MODIFIED,
-                    IOobject::NO_WRITE,
-                    false
-                )
-            ).lookup("numberOfSubdomains")
-        );
+        const label nDomains =
+            readLabel(IOdictionary(dictIO).lookup("numberOfSubdomains"));
+
+        // Give file handler a chance to determine the output directory
+        const_cast<fileOperation&>(fileHandler()).setNProcs(nDomains);
 
         if (decomposeFieldsOnly)
         {
@@ -391,58 +432,11 @@ int main(int argc, char *argv[])
         }
         else if (nProcs)
         {
-            bool procDirsProblem = true;
-
             if (ifRequiredDecomposition && nProcs == nDomains)
             {
-                // we can reuse the decomposition
+                // Reuse the decomposition
                 decomposeFieldsOnly = true;
-                procDirsProblem = false;
-                forceOverwrite = false;
-
                 Info<< "Using existing processor directories" << nl;
-            }
-
-            if (forceOverwrite)
-            {
-                Info<< "Removing " << nProcs
-                    << " existing processor directories" << endl;
-
-                // Remove existing processors directory
-                const fileName procDir(runTime.path()/word("processors"));
-                if (fileHandler().exists(procDir))
-                {
-                    fileHandler().rmDir(procDir);
-                }
-
-                // Remove existing processor directories
-                // reverse order to avoid gaps if someone interrupts the process
-                for (label proci = nProcs-1; proci >= 0; --proci)
-                {
-                    const fileName procDir
-                    (
-                        runTime.path()/(word("processor") + name(proci))
-                    );
-
-                    if (fileHandler().exists(procDir))
-                    {
-                        fileHandler().rmDir(procDir);
-                    }
-                }
-
-                procDirsProblem = false;
-            }
-
-            if (procDirsProblem)
-            {
-                FatalErrorInFunction
-                    << "Case is already decomposed with " << nProcs
-                    << " domains, use the -force option or manually" << nl
-                    << "remove processor directories before decomposing. e.g.,"
-                    << nl
-                    << "    rm -rf " << runTime.path().c_str() << "/processor*"
-                    << nl
-                    << exit(FatalError);
             }
         }
 
@@ -458,19 +452,13 @@ int main(int argc, char *argv[])
                 IOobject::NO_WRITE,
                 false
             ),
-            dictPath
+            dictIO.objectPath()
         );
 
         // Decompose the mesh
         if (!decomposeFieldsOnly)
         {
-            // Disable buffering when writing mesh since we need to read
-            // it later on when decomposing the fields
-            float bufSz =
-                fileOperations::collatedFileOperation::maxThreadFileBufferSize;
-            fileOperations::collatedFileOperation::maxThreadFileBufferSize = 0;
-
-            mesh.decomposeMesh(dictPath);
+            mesh.decomposeMesh(dictIO.objectPath());
 
             mesh.writeDecomposition(decomposeSets);
 
@@ -526,8 +514,7 @@ int main(int argc, char *argv[])
                     << endl;
             }
 
-            fileOperations::collatedFileOperation::maxThreadFileBufferSize =
-                bufSz;
+            fileHandler().flush();
         }
 
 

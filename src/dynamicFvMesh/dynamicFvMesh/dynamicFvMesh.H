@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,8 +37,6 @@ SourceFiles
 #define dynamicFvMesh_H
 
 #include "fvMesh.H"
-#include "autoPtr.H"
-#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -111,7 +109,9 @@ public:
 
     // Selectors
 
-        //- Select null constructed
+        //- Select, construct and return the dynamicFvMesh
+        //  If the constant/dynamicMeshDict does not exist
+        //  a staticFvMesh is returned
         static autoPtr<dynamicFvMesh> New(const IOobject& io);
 
 
@@ -121,10 +121,15 @@ public:
 
     // Member Functions
 
+        //- Is mesh dynamic
+        virtual bool dynamic() const
+        {
+            return true;
+        }
+
         //- Update the mesh for both mesh motion and topology change
         virtual bool update() = 0;
 };
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

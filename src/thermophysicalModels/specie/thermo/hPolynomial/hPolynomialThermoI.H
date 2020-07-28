@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -126,6 +126,36 @@ inline Foam::scalar Foam::hPolynomialThermo<EquationOfState, PolySize>::S
 }
 
 
+template<class EquationOfState, int PolySize>
+inline Foam::scalar Foam::hPolynomialThermo<EquationOfState, PolySize>::dGdT
+(
+    const scalar p,
+    const scalar T
+) const
+{
+    return
+    (
+        hCoeffs_.derivative(T)
+      - T*sCoeffs_.derivative(T)
+      - sCoeffs_.value(T)
+    );
+}
+
+
+template<class EquationOfState, int PolySize>
+inline Foam::scalar Foam::hPolynomialThermo<EquationOfState, PolySize>::dCpdT
+(
+    const scalar p,
+    const scalar T
+) const
+{
+    return
+    (
+        CpCoeffs_.derivative(T)
+    );
+}
+
+
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 template<class EquationOfState, int PolySize>
@@ -154,7 +184,7 @@ inline void Foam::hPolynomialThermo<EquationOfState, PolySize>::operator+=
 
     EquationOfState::operator+=(pt);
 
-    if (mag(this->Y()) > SMALL)
+    if (mag(this->Y()) > small)
     {
         Y1 /= this->Y();
         const scalar Y2 = pt.Y()/this->Y();
@@ -190,7 +220,7 @@ inline Foam::hPolynomialThermo<EquationOfState, PolySize> Foam::operator+
     EquationOfState eofs = pt1;
     eofs += pt2;
 
-    if (mag(eofs.Y()) < SMALL)
+    if (mag(eofs.Y()) < small)
     {
         return hPolynomialThermo<EquationOfState, PolySize>
         (

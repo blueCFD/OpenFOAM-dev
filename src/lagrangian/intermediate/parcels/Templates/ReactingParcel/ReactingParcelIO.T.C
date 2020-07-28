@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,8 +51,7 @@ Foam::ReactingParcel<ParcelType>::ReactingParcel
 :
     ParcelType(mesh, is, readFields),
     mass0_(0.0),
-    Y_(0),
-    pc_(0.0)
+    Y_(0)
 {
     if (readFields)
     {

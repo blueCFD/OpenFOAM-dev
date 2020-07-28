@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -178,9 +178,9 @@ void Foam::ParticleCollector<CloudType>::initConcentricCircles()
         scalar magTangent = 0.0;
 
         Random rnd(1234);
-        while (magTangent < SMALL)
+        while (magTangent < small)
         {
-            vector v = rnd.vector01();
+            vector v = rnd.sample01<vector>();
 
             tangent = v - (v & normal_[0])*normal_[0];
             magTangent = mag(tangent);
@@ -315,13 +315,13 @@ void Foam::ParticleCollector<CloudType>::collectParcelPolygon
         // the face's decomposed triangles does not work due to ambiguity along
         // the diagonals.
         const face& f = faces_[facei];
-        const vector n = f.normal(points_);
+        const vector a = f.area(points_);
         bool inside = true;
         for (label i = 0; i < f.size(); ++ i)
         {
             const label j = f.fcIndex(i);
             const triPointRef t(pIntersect, points_[f[i]], points_[f[j]]);
-            if ((n & t.normal()) < 0)
+            if ((a & t.area()) < 0)
             {
                 inside = false;
                 break;
@@ -575,7 +575,7 @@ Foam::ParticleCollector<CloudType>::ParticleCollector
         {
             polygons[polyI] = polygonAndNormal[polyI].first();
             normal_[polyI] = polygonAndNormal[polyI].second();
-            normal_[polyI] /= mag(normal_[polyI]) + ROOTVSMALL;
+            normal_[polyI] /= mag(normal_[polyI]) + rootVSmall;
         }
 
         initPolygons(polygons);
@@ -647,7 +647,6 @@ template<class CloudType>
 void Foam::ParticleCollector<CloudType>::postMove
 (
     parcelType& p,
-    const label celli,
     const scalar dt,
     const point& position0,
     bool& keepParticle
@@ -701,7 +700,7 @@ void Foam::ParticleCollector<CloudType>::postMove
                 {}
             }
 
-            Uhat /= mag(Uhat) + ROOTVSMALL;
+            Uhat /= mag(Uhat) + rootVSmall;
 
             if (Unormal < 0)
             {

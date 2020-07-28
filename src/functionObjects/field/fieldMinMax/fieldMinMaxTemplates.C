@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,20 +51,20 @@ void Foam::functionObjects::fieldMinMax::output
 
         writeTabbed(file, fieldName);
 
-        file<< token::TAB << minValue
-            << token::TAB << minC;
+        file<< tab << minValue
+            << tab << minC;
 
         if (Pstream::parRun())
         {
-            file<< token::TAB << minProci;
+            file<< tab << minProci;
         }
 
-        file<< token::TAB << maxValue
-            << token::TAB << maxC;
+        file<< tab << maxValue
+            << tab << maxC;
 
         if (Pstream::parRun())
         {
-            file<< token::TAB << maxProci;
+            file<< tab << maxProci;
         }
 
         file<< endl;
@@ -89,7 +89,7 @@ void Foam::functionObjects::fieldMinMax::output
     }
     else
     {
-        file<< token::TAB << minValue << token::TAB << maxValue;
+        file<< tab << minValue << tab << maxValue;
 
         Log << "    min/max(" << outputName << ") = "
             << minValue << ' ' << maxValue;

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -686,10 +686,10 @@ void Foam::polyDualMesh::dualPatch
             //- Either keep in one piece or split face according to feature.
 
             //// Keep face in one piece.
-            //dualFaces.append(face(dualFace));
-            //dualOwner.append(patch.meshPoints()[pointi]);
-            //dualNeighbour.append(-1);
-            //dualRegion.append(patch.index());
+            // dualFaces.append(face(dualFace));
+            // dualOwner.append(patch.meshPoints()[pointi]);
+            // dualNeighbour.append(-1);
+            // dualRegion.append(patch.index());
 
             splitFace
             (
@@ -1009,8 +1009,8 @@ void Foam::polyDualMesh::calcDual
         {
             // Check orientation.
             const face& f = dynDualFaces.last();
-            vector n = f.normal(dualPoints);
-            if (((mesh.points()[owner] - dualPoints[f[0]]) & n) > 0)
+            const vector a = f.area(dualPoints);
+            if (((mesh.points()[owner] - dualPoints[f[0]]) & a) > 0)
             {
                 WarningInFunction
                     << " on boundary edge:" << edgeI
@@ -1124,8 +1124,8 @@ void Foam::polyDualMesh::calcDual
             {
                 // Check orientation.
                 const face& f = dynDualFaces.last();
-                vector n = f.normal(dualPoints);
-                if (((mesh.points()[owner] - dualPoints[f[0]]) & n) > 0)
+                const vector a = f.area(dualPoints);
+                if (((mesh.points()[owner] - dualPoints[f[0]]) & a) > 0)
                 {
                     WarningInFunction
                         << " on internal edge:" << edgeI
@@ -1331,8 +1331,8 @@ void Foam::polyDualMesh::calcDual
         (
             boundaryMesh(),
             patchi,
-            0, //patchSizes[patchi],
-            0  //patchStarts[patchi]
+            0, // patchSizes[patchi],
+            0  // patchStarts[patchi]
         ).ptr();
     }
     addPatches(dualPatches);

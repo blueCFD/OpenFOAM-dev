@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -136,7 +136,7 @@ constTransport
 
 // pureMixture, sensibleEnthalpy:
 
-makeThermo
+makeThermos
 (
     rhoThermo,
     heRhoThermo,
@@ -148,7 +148,7 @@ makeThermo
     specie
 );
 
-makeThermo
+makeThermos
 (
     rhoThermo,
     heRhoThermo,
@@ -160,7 +160,7 @@ makeThermo
     specie
 );
 
-makeThermo
+makeThermos
 (
     rhoThermo,
     heRhoThermo,
@@ -175,7 +175,7 @@ makeThermo
 
 // pureMixture, sensibleInternalEnergy:
 
-makeThermo
+makeThermos
 (
     rhoThermo,
     heRhoThermo,
@@ -187,7 +187,7 @@ makeThermo
     specie
 );
 
-makeThermo
+makeThermos
 (
     rhoThermo,
     heRhoThermo,
@@ -199,7 +199,7 @@ makeThermo
     specie
 );
 
-makeThermo
+makeThermos
 (
     rhoThermo,
     heRhoThermo,
@@ -214,7 +214,7 @@ makeThermo
 
 // multiComponentMixture, sensibleInternalEnergy:
 
-makeReactionMixtureThermo
+makeThermoPhysicsReactionThermos
 (
     rhoThermo,
     rhoReactionThermo,
@@ -223,7 +223,7 @@ makeReactionMixtureThermo
     constRefGasEThermoPhysics
 );
 
-makeReactionMixtureThermo
+makeThermoPhysicsReactionThermos
 (
     rhoThermo,
     rhoReactionThermo,
@@ -232,7 +232,7 @@ makeReactionMixtureThermo
     constRefFluidEThermoPhysics
 );
 
-makeReactionMixtureThermo
+makeThermoPhysicsReactionThermos
 (
     rhoThermo,
     rhoReactionThermo,
@@ -244,7 +244,7 @@ makeReactionMixtureThermo
 
 // multiComponentMixture, sensibleEnthalpy:
 
-makeReactionMixtureThermo
+makeThermoPhysicsReactionThermos
 (
     rhoThermo,
     rhoReactionThermo,
@@ -253,7 +253,7 @@ makeReactionMixtureThermo
     constRefRhoConstHThermoPhysics
 );
 
-makeReactionMixtureThermo
+makeThermoPhysicsReactionThermos
 (
     rhoThermo,
     rhoReactionThermo,
@@ -262,7 +262,7 @@ makeReactionMixtureThermo
     constRefFluidHThermoPhysics
 );
 
-makeReactionMixtureThermo
+makeThermoPhysicsReactionThermos
 (
     rhoThermo,
     rhoReactionThermo,

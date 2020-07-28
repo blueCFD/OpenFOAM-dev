@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -102,7 +102,7 @@ public:
             //- Return const access to the cloud owner
             inline const CloudType& owner() const;
 
-            //- Return refernce to the cloud owner
+            //- Return references to the cloud owner
             inline CloudType& owner();
 
             //- Return the mesh database
@@ -127,6 +127,7 @@ public:
             virtual forceSuSp calcCoupled
             (
                 const typename CloudType::parcelType& p,
+                const typename CloudType::parcelType::trackingData& td,
                 const scalar dt,
                 const scalar mass,
                 const scalar Re,
@@ -137,6 +138,7 @@ public:
             virtual forceSuSp calcNonCoupled
             (
                 const typename CloudType::parcelType& p,
+                const typename CloudType::parcelType::trackingData& td,
                 const scalar dt,
                 const scalar mass,
                 const scalar Re,
@@ -147,6 +149,7 @@ public:
             virtual scalar massEff
             (
                 const typename CloudType::parcelType& p,
+                const typename CloudType::parcelType::trackingData& td,
                 const scalar mass
             ) const;
 };

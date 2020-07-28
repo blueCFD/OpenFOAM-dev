@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -202,7 +202,7 @@ Foam::regionCoupledBaseGAMGInterface::regionCoupledBaseGAMGInterface
 }
 
 
-// * * * * * * * * * * * * * * * * Desstructor * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 Foam::regionCoupledBaseGAMGInterface::~regionCoupledBaseGAMGInterface()
 {}
@@ -218,7 +218,7 @@ internalFieldTransfer
 ) const
 {
     /*
-    //const labelUList& nbrFaceCells = neighbPatch().faceCells();
+    // const labelUList& nbrFaceCells = neighbPatch().faceCells();
 
     const labelUList& nbrFaceCells = nbrLduInterface().faceCells();
 

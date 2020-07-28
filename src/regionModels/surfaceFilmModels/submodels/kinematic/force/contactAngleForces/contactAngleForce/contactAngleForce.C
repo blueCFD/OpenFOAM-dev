@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ void contactAngleForce::initialise()
                 false
             ),
             filmModel_.regionMesh(),
-            dimensionedScalar("y", dimLength, GREAT)
+            dimensionedScalar("y", dimLength, great)
         );
         dist.correct(y);
 
@@ -95,7 +95,7 @@ void contactAngleForce::initialise()
 contactAngleForce::contactAngleForce
 (
     const word& typeName,
-    surfaceFilmModel& film,
+    surfaceFilmRegionModel& film,
     const dictionary& dict
 )
 :
@@ -180,7 +180,7 @@ tmp<fvVectorMatrix> contactAngleForce::correct(volVectorField& U)
         {
             const scalar invDx = filmModel_.regionMesh().deltaCoeffs()[facei];
             const vector n =
-                gradAlpha[celli]/(mag(gradAlpha[celli]) + ROOTVSMALL);
+                gradAlpha[celli]/(mag(gradAlpha[celli]) + rootVSmall);
             const scalar cosTheta = cos(degToRad(theta[celli]));
             force[celli] += Ccf_*n*sigma[celli]*(1 - cosTheta)/invDx;
         }
@@ -207,7 +207,7 @@ tmp<fvVectorMatrix> contactAngleForce::correct(volVectorField& U)
                     {
                         const vector n =
                             gradAlpha[cellO]
-                           /(mag(gradAlpha[cellO]) + ROOTVSMALL);
+                           /(mag(gradAlpha[cellO]) + rootVSmall);
                         const scalar cosTheta = cos(degToRad(thetaPf[facei]));
                         force[cellO] +=
                             Ccf_*n*sigmaPf[facei]*(1 - cosTheta)/invDx[facei];

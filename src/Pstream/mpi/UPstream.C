@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -20,6 +20,10 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Note
+    The const_cast used in this file is a temporary hack for to work around
+    bugs in OpenMPI for versions < 1.7.4
 
 \*---------------------------------------------------------------------------*/
 
@@ -40,6 +44,8 @@ License
     #define MPI_SCALAR MPI_FLOAT
 #elif defined(WM_DP)
     #define MPI_SCALAR MPI_DOUBLE
+#elif defined(WM_LP)
+    #define MPI_SCALAR MPI_LONG_DOUBLE
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -59,22 +65,41 @@ void Foam::UPstream::addValidParOptions(HashTable<string>& validParOptions)
 }
 
 
-bool Foam::UPstream::init(int& argc, char**& argv)
+bool Foam::UPstream::init(int& argc, char**& argv, const bool needsThread)
 {
-    //MPI_Init(&argc, &argv);
+    // MPI_Init(&argc, &argv);
     int provided_thread_support;
     MPI_Init_thread
     (
         &argc,
         &argv,
-        MPI_THREAD_MULTIPLE,
+        (
+            needsThread
+          ? MPI_THREAD_MULTIPLE
+          : MPI_THREAD_SINGLE
+        ),
         &provided_thread_support
     );
 
+    // int numprocs;
+    // MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    // int myRank;
+    // MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+
+    int myGlobalRank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &myGlobalRank);
+    MPI_Comm_split
+    (
+        MPI_COMM_WORLD,
+        1,
+        myGlobalRank,
+        &PstreamGlobals::MPI_COMM_FOAM
+    );
+
     int numprocs;
-    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_size(PstreamGlobals::MPI_COMM_FOAM, &numprocs);
     int myRank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+    MPI_Comm_rank(PstreamGlobals::MPI_COMM_FOAM, &myRank);
 
     if (debug)
     {
@@ -92,16 +117,7 @@ bool Foam::UPstream::init(int& argc, char**& argv)
 
 
     // Initialise parallel structure
-    setParRun(numprocs);
-
-    if (Pstream::master() && provided_thread_support != MPI_THREAD_MULTIPLE)
-    {
-        WarningInFunction
-            << "mpi does not seem to have thread support."
-            << " There might be issues with e.g. threaded IO"
-            << endl;
-    }
-
+    setParRun(numprocs, provided_thread_support == MPI_THREAD_MULTIPLE);
 
     #ifndef SGIMPI
     string bufferSizeName = getEnv("MPI_BUFFER_SIZE");
@@ -124,12 +140,12 @@ bool Foam::UPstream::init(int& argc, char**& argv)
     }
     #endif
 
-    //int processorNameLen;
-    //char processorName[MPI_MAX_PROCESSOR_NAME];
+    // int processorNameLen;
+    // char processorName[MPI_MAX_PROCESSOR_NAME];
     //
-    //MPI_Get_processor_name(processorName, &processorNameLen);
-    //processorName[processorNameLen] = '\0';
-    //Pout<< "Processor name:" << processorName << endl;
+    // MPI_Get_processor_name(processorName, &processorNameLen);
+    // processorName[processorNameLen] = '\0';
+    // Pout<< "Processor name:" << processorName << endl;
 
     return true;
 }
@@ -178,14 +194,14 @@ void Foam::UPstream::exit(int errnum)
     }
     else
     {
-        MPI_Abort(MPI_COMM_WORLD, errnum);
+        MPI_Abort(PstreamGlobals::MPI_COMM_FOAM, errnum);
     }
 }
 
 
 void Foam::UPstream::abort()
 {
-    MPI_Abort(MPI_COMM_WORLD, 1);
+    MPI_Abort(PstreamGlobals::MPI_COMM_FOAM, 1);
 }
 
 
@@ -290,7 +306,7 @@ void Foam::reduce
         1,
         MPI_SCALAR,
         MPI_SUM,
-        0,              //root
+        0,              // root
         PstreamGlobals::MPICommunicators_[communicator],
         &request
     );
@@ -341,8 +357,6 @@ void Foam::UPstream::allToAll
         (
             MPI_Alltoall
             (
-                // NOTE: const_cast is a temporary hack for
-                // backward-compatibility with versions of OpenMPI < 1.7.4
                 const_cast<label*>(sendData.begin()),
                 sizeof(label),
                 MPI_BYTE,
@@ -356,6 +370,199 @@ void Foam::UPstream::allToAll
             FatalErrorInFunction
                 << "MPI_Alltoall failed for " << sendData
                 << " on communicator " << communicator
+                << Foam::abort(FatalError);
+        }
+    }
+}
+
+
+void Foam::UPstream::allToAll
+(
+    const char* sendData,
+    const UList<int>& sendSizes,
+    const UList<int>& sendOffsets,
+
+    char* recvData,
+    const UList<int>& recvSizes,
+    const UList<int>& recvOffsets,
+
+    const label communicator
+)
+{
+    label np = nProcs(communicator);
+
+    if
+    (
+        sendSizes.size() != np
+     || sendOffsets.size() != np
+     || recvSizes.size() != np
+     || recvOffsets.size() != np
+    )
+    {
+        FatalErrorInFunction
+            << "Size of sendSize " << sendSizes.size()
+            << ", sendOffsets " << sendOffsets.size()
+            << ", recvSizes " << recvSizes.size()
+            << " or recvOffsets " << recvOffsets.size()
+            << " is not equal to the number of processors in the domain "
+            << np
+            << Foam::abort(FatalError);
+    }
+
+    if (!UPstream::parRun())
+    {
+        if (recvSizes[0] != sendSizes[0])
+        {
+            FatalErrorInFunction
+                << "Bytes to send " << sendSizes[0]
+                << " does not equal bytes to receive " << recvSizes[0]
+                << Foam::abort(FatalError);
+        }
+        memmove(recvData, &sendData[sendOffsets[0]], recvSizes[0]);
+    }
+    else
+    {
+        if
+        (
+            MPI_Alltoallv
+            (
+                const_cast<char*>(sendData),
+                const_cast<int*>(sendSizes.begin()),
+                const_cast<int*>(sendOffsets.begin()),
+                MPI_BYTE,
+                recvData,
+                const_cast<int*>(recvSizes.begin()),
+                const_cast<int*>(recvOffsets.begin()),
+                MPI_BYTE,
+                PstreamGlobals::MPICommunicators_[communicator]
+            )
+        )
+        {
+            FatalErrorInFunction
+                << "MPI_Alltoallv failed for sendSizes " << sendSizes
+                << " recvSizes " << recvSizes
+                << " communicator " << communicator
+                << Foam::abort(FatalError);
+        }
+    }
+}
+
+
+void Foam::UPstream::gather
+(
+    const char* sendData,
+    int sendSize,
+
+    char* recvData,
+    const UList<int>& recvSizes,
+    const UList<int>& recvOffsets,
+    const label communicator
+)
+{
+    label np = nProcs(communicator);
+
+    if
+    (
+        UPstream::master(communicator)
+     && (recvSizes.size() != np || recvOffsets.size() < np)
+    )
+    {
+        // Note: allow recvOffsets to be e.g. 1 larger than np so we
+        // can easily loop over the result
+
+        FatalErrorInFunction
+            << "Size of recvSizes " << recvSizes.size()
+            << " or recvOffsets " << recvOffsets.size()
+            << " is not equal to the number of processors in the domain "
+            << np
+            << Foam::abort(FatalError);
+    }
+
+    if (!UPstream::parRun())
+    {
+        memmove(recvData, sendData, sendSize);
+    }
+    else
+    {
+        if
+        (
+            MPI_Gatherv
+            (
+                const_cast<char*>(sendData),
+                sendSize,
+                MPI_BYTE,
+                recvData,
+                const_cast<int*>(recvSizes.begin()),
+                const_cast<int*>(recvOffsets.begin()),
+                MPI_BYTE,
+                0,
+                MPI_Comm(PstreamGlobals::MPICommunicators_[communicator])
+            )
+        )
+        {
+            FatalErrorInFunction
+                << "MPI_Gatherv failed for sendSize " << sendSize
+                << " recvSizes " << recvSizes
+                << " communicator " << communicator
+                << Foam::abort(FatalError);
+        }
+    }
+}
+
+
+void Foam::UPstream::scatter
+(
+    const char* sendData,
+    const UList<int>& sendSizes,
+    const UList<int>& sendOffsets,
+
+    char* recvData,
+    int recvSize,
+    const label communicator
+)
+{
+    label np = nProcs(communicator);
+
+    if
+    (
+        UPstream::master(communicator)
+     && (sendSizes.size() != np || sendOffsets.size() != np)
+    )
+    {
+        FatalErrorInFunction
+            << "Size of sendSizes " << sendSizes.size()
+            << " or sendOffsets " << sendOffsets.size()
+            << " is not equal to the number of processors in the domain "
+            << np
+            << Foam::abort(FatalError);
+    }
+
+    if (!UPstream::parRun())
+    {
+        memmove(recvData, sendData, recvSize);
+    }
+    else
+    {
+        if
+        (
+            MPI_Scatterv
+            (
+                const_cast<char*>(sendData),
+                const_cast<int*>(sendSizes.begin()),
+                const_cast<int*>(sendOffsets.begin()),
+                MPI_BYTE,
+                recvData,
+                recvSize,
+                MPI_BYTE,
+                0,
+                MPI_Comm(PstreamGlobals::MPICommunicators_[communicator])
+            )
+        )
+        {
+            FatalErrorInFunction
+                << "MPI_Scatterv failed for sendSizes " << sendSizes
+                << " sendOffsets " << sendOffsets
+                << " communicator " << communicator
                 << Foam::abort(FatalError);
         }
     }
@@ -395,8 +602,13 @@ void Foam::UPstream::allocatePstreamCommunicator
                 << UPstream::worldComm << Foam::exit(FatalError);
         }
 
-        PstreamGlobals::MPICommunicators_[index] = MPI_COMM_WORLD;
-        MPI_Comm_group(MPI_COMM_WORLD, &PstreamGlobals::MPIGroups_[index]);
+        PstreamGlobals::MPICommunicators_[index] =
+            PstreamGlobals::MPI_COMM_FOAM;
+        MPI_Comm_group
+        (
+            PstreamGlobals::MPI_COMM_FOAM,
+            &PstreamGlobals::MPIGroups_[index]
+        );
         MPI_Comm_rank
         (
             PstreamGlobals::MPICommunicators_[index],
@@ -407,7 +619,7 @@ void Foam::UPstream::allocatePstreamCommunicator
         int numProcs;
         MPI_Comm_size(PstreamGlobals::MPICommunicators_[index], &numProcs);
 
-        //procIDs_[index] = identity(numProcs);
+        // procIDs_[index] = identity(numProcs);
         procIDs_[index].setSize(numProcs);
         forAll(procIDs_[index], i)
         {
@@ -625,7 +837,7 @@ int Foam::UPstream::allocateTag(const char* s)
 
     if (debug)
     {
-        //if (UPstream::lateBlocking > 0)
+        // if (UPstream::lateBlocking > 0)
         //{
         //    string& poutp = Pout.prefix();
         //    poutp[poutp.size()-2*(UPstream::lateBlocking+2)+tag] = 'X';
@@ -654,7 +866,7 @@ int Foam::UPstream::allocateTag(const word& s)
 
     if (debug)
     {
-        //if (UPstream::lateBlocking > 0)
+        // if (UPstream::lateBlocking > 0)
         //{
         //    string& poutp = Pout.prefix();
         //    poutp[poutp.size()-2*(UPstream::lateBlocking+2)+tag] = 'X';
@@ -673,7 +885,7 @@ void Foam::UPstream::freeTag(const char* s, const int tag)
 {
     if (debug)
     {
-        //if (UPstream::lateBlocking > 0)
+        // if (UPstream::lateBlocking > 0)
         //{
         //    string& poutp = Pout.prefix();
         //    poutp[poutp.size()-2*(UPstream::lateBlocking+2)+tag] = ' ';
@@ -689,7 +901,7 @@ void Foam::UPstream::freeTag(const word& s, const int tag)
 {
     if (debug)
     {
-        //if (UPstream::lateBlocking > 0)
+        // if (UPstream::lateBlocking > 0)
         //{
         //    string& poutp = Pout.prefix();
         //    poutp[poutp.size()-2*(UPstream::lateBlocking+2)+tag] = ' ';

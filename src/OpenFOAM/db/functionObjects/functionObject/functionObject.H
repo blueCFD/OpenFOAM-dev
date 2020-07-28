@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -230,8 +230,15 @@ public:
         //  By default it simply calls execute().
         virtual bool end();
 
-        //- Called at the end of Time::adjustDeltaT() if adjustTime is true
-        virtual bool adjustTimeStep();
+        //- Called by Time::setDeltaT(). Allows the function object to override
+        //  the time-step value.
+        //  Returns whether or not the value was overridden.
+        virtual bool setTimeStep();
+
+        //- Called by Time::adjustTimeStep(). Allows the function object to
+        //  insert a write time earlier than that already in use by the run
+        //  time. Returns the write time, or vGreat.
+        virtual scalar timeToNextWrite();
 
         //- Update for changes of mesh
         virtual void updateMesh(const mapPolyMesh& mpm);

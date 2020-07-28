@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,8 +87,8 @@ Foam::TimeScaleModels::equilibrium::oneByTau
 
     return
         a
-       *alpha*sqrt(max(uSqr, scalar(0)))/max(r32, SMALL)
-       *alphaPacked_/max(alphaPacked_ - alpha, SMALL);
+       *alpha*sqrt(max(uSqr, scalar(0)))/max(r32, small)
+       *alphaPacked_/max(alphaPacked_ - alpha, small);
 }
 
 

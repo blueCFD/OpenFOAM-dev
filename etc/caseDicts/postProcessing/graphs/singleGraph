@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Web:      www.OpenFOAM.org
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Website:  https://openfoam.org
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 Description
@@ -19,7 +19,13 @@ fields  (U p);
 #includeEtc "caseDicts/postProcessing/graphs/sampleDict.cfg"
 
 // Override settings here, e.g.
-// setConfig { type midPoint; }
+/*
+setConfig
+{
+    type lineCell;
+    axis x;        // y, z, xyz
+}
+*/
 
 // Must be last entry
 #includeEtc "caseDicts/postProcessing/graphs/graph.cfg"

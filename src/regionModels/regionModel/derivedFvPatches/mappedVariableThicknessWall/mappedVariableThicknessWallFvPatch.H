@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,6 @@ License
 Class
     Foam::mappedVariableThicknessWallFvPatch
 
-Group
-    grpRegionBoundaryConditions
-
 Description
     Take thickness field and number of layers and returns deltaCoeffs
     as 2.0/thickness/nLayers.
@@ -37,8 +34,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef mappedWallFvPatch_H
-#define mappedWallFvPatch_H
+#ifndef mappedVariableThicknessWallFvPatch_H
+#define mappedVariableThicknessWallFvPatch_H
 
 #include "wallFvPatch.H"
 #include "mappedVariableThicknessWallPolyPatch.H"

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,20 +26,15 @@ License
 #include "rotatedBoxToCell.H"
 #include "polyMesh.H"
 #include "cellModeller.H"
-
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(rotatedBoxToCell, 0);
-
-addToRunTimeSelectionTable(topoSetSource, rotatedBoxToCell, word);
-
-addToRunTimeSelectionTable(topoSetSource, rotatedBoxToCell, istream);
-
+    defineTypeNameAndDebug(rotatedBoxToCell, 0);
+    addToRunTimeSelectionTable(topoSetSource, rotatedBoxToCell, word);
+    addToRunTimeSelectionTable(topoSetSource, rotatedBoxToCell, istream);
 }
 
 
@@ -82,10 +77,7 @@ void Foam::rotatedBoxToCell::combine(topoSet& set, const bool add) const
     vectorField boxFaceNormals(boxFaces.size());
     forAll(boxFaces, i)
     {
-        boxFaceNormals[i] = boxFaces[i].normal(boxPoints);
-
-        //Pout<< "Face:" << i << " position:" << boxFaces[i].centre(boxPoints)
-        //    << " normal:" << boxFaceNormals[i] << endl;
+        boxFaceNormals[i] = boxFaces[i].area(boxPoints);
     }
 
     // Check whether cell centre is inside all faces of box.
@@ -117,7 +109,6 @@ void Foam::rotatedBoxToCell::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::rotatedBoxToCell::rotatedBoxToCell
 (
     const polyMesh& mesh,
@@ -135,7 +126,6 @@ Foam::rotatedBoxToCell::rotatedBoxToCell
 {}
 
 
-// Construct from dictionary
 Foam::rotatedBoxToCell::rotatedBoxToCell
 (
     const polyMesh& mesh,
@@ -150,7 +140,6 @@ Foam::rotatedBoxToCell::rotatedBoxToCell
 {}
 
 
-// Construct from Istream
 Foam::rotatedBoxToCell::rotatedBoxToCell(const polyMesh& mesh, Istream& is)
 :
     topoSetSource(mesh),

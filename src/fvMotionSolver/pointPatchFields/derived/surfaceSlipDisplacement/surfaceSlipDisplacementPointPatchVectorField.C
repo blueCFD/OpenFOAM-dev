@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ void surfaceSlipDisplacementPointPatchVectorField::calcProjection
     const pointField& localPoints = patch().localPoints();
     const labelList& meshPoints = patch().meshPoints();
 
-    //const scalar deltaT = mesh.time().deltaTValue();
+    // const scalar deltaT = mesh.time().deltaTValue();
 
     // Construct large enough vector in direction of projectDir so
     // we're guaranteed to hit something.
@@ -158,7 +158,7 @@ void surfaceSlipDisplacementPointPatchVectorField::calcProjection
             surfaces().findNearest
             (
                 start,
-                scalarField(start.size(), sqr(SMALL)),
+                scalarField(start.size(), sqr(small)),
                 nearestSurface,
                 nearest
             );
@@ -421,7 +421,7 @@ void surfaceSlipDisplacementPointPatchVectorField::evaluate
     // Get internal field to insert values into
     Field<vector>& iF = const_cast<Field<vector>&>(this->primitiveField());
 
-    //setInInternalField(iF, motionU);
+    // setInInternalField(iF, motionU);
     setInInternalField(iF, displacement);
 
     pointPatchVectorField::evaluate(commsType);

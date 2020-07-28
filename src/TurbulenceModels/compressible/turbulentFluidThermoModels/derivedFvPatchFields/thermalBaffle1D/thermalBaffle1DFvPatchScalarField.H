@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,13 +24,10 @@ License
 Class
     Foam::compressible::thermalBaffle1DFvPatchScalarField
 
-Group
-    grpThermoBoundaryConditions
-
 Description
     This BC solves a steady 1D thermal baffle.
 
-    The solid properties are specify as dictionary. Optionaly radiative heat
+    The solid properties are specify as dictionary. Optionally radiative heat
     flux (qr) can be incorporated into the balance. Some under-relaxation might
     be needed on qr.  Baffle and solid properties need to be specified on the
     master side of the baffle.

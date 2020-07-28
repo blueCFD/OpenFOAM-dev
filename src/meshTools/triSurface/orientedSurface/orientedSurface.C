@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -272,11 +272,11 @@ void Foam::orientedSurface::findZoneSide
             const scalar magD = mag(d);
 
             // Check if normal different enough to decide upon
-            if (magD > SMALL && (mag(n & d/magD) > 1e-6))
+            if (magD > small && (mag(n & d/magD) > 1e-6))
             {
                 pointField end(1, fc + d);
 
-                //Info<< "Zone " << zoneI << " : Shooting ray"
+                // Info<< "Zone " << zoneI << " : Shooting ray"
                 //    << " from " << outsidePoint
                 //    << " to " << end
                 //    << " to pierce triangle " << facei
@@ -360,7 +360,7 @@ bool Foam::orientedSurface::orientConsistent(triSurface& s)
     bool anyFlipped = false;
 
     // Do initial flipping to make triangles consistent. Otherwise if the
-    // nearest is e.g. on an edge inbetween inconsistent triangles it might
+    // nearest is e.g. on an edge in between inconsistent triangles it might
     // make the wrong decision.
     if (s.size() > 0)
     {
@@ -450,7 +450,7 @@ bool Foam::orientedSurface::orient
 )
 {
     // Do initial flipping to make triangles consistent. Otherwise if the
-    // nearest is e.g. on an edge inbetween inconsistent triangles it might
+    // nearest is e.g. on an edge in between inconsistent triangles it might
     // make the wrong decision.
     bool topoFlipped = orientConsistent(s);
 
@@ -466,7 +466,7 @@ bool Foam::orientedSurface::orient
     {
         // Linear search for nearest unvisited point on surface.
 
-        scalar minDist = GREAT;
+        scalar minDist = great;
         point minPoint;
         label minFacei = -1;
 
@@ -521,7 +521,7 @@ bool Foam::orientedSurface::orient
 )
 {
     // Do initial flipping to make triangles consistent. Otherwise if the
-    // nearest is e.g. on an edge inbetween inconsistent triangles it might
+    // nearest is e.g. on an edge in between inconsistent triangles it might
     // make the wrong decision.
     bool topoFlipped = orientConsistent(s);
 

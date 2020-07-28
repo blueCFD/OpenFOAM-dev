@@ -1,16 +1,11 @@
 #include "createRDeltaT.H"
 
-Info<< "Creating reaction model\n" << endl;
-
-autoPtr<combustionModels::rhoCombustionModel> reaction
-(
-    combustionModels::rhoCombustionModel::New(mesh)
-);
-
-rhoReactionThermo& thermo = reaction->thermo();
+Info<< "Reading thermophysical properties\n" << endl;
+autoPtr<rhoReactionThermo> pThermo(rhoReactionThermo::New(mesh));
+rhoReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "h", "e");
 
-basicMultiComponentMixture& composition = thermo.composition();
+basicSpecieMixture& composition = thermo.composition();
 PtrList<volScalarField>& Y = composition.Y();
 
 const word inertSpecie(thermo.lookup("inertSpecie"));
@@ -67,9 +62,11 @@ autoPtr<compressible::turbulenceModel> turbulence
     )
 );
 
-// Set the turbulence into the reaction model
-reaction->setTurbulence(turbulence());
-
+Info<< "Creating reaction model\n" << endl;
+autoPtr<CombustionModel<rhoReactionThermo>> reaction
+(
+    CombustionModel<rhoReactionThermo>::New(thermo, turbulence())
+);
 
 #include "readGravitationalAcceleration.H"
 #include "readhRef.H"
@@ -132,3 +129,4 @@ volScalarField Qdot
 );
 
 #include "createMRF.H"
+#include "createFvOptions.H"

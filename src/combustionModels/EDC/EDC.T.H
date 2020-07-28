@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ Description
         }
     \endverbatim
 
-    The default version is \c v2015 if the \c version entry is not specified.
+    The default version is \c v2005 if the \c version entry is not specified.
 
     Model versions and references:
     \verbatim
@@ -128,10 +128,10 @@ const scalar EDCexp2[] = {3, 3, 2, 2};
                             Class EDC Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
+template<class ReactionThermo>
 class EDC
 :
-    public laminar<Type>
+    public laminar<ReactionThermo>
 {
     // Private data
 
@@ -170,9 +170,9 @@ public:
         EDC
         (
             const word& modelType,
-            const fvMesh& mesh,
-            const word& combustionProperties,
-            const word& phaseName
+            ReactionThermo& type,
+            const compressibleTurbulenceModel& turb,
+            const word& combustionProperties
         );
 
 

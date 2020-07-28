@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -225,7 +225,7 @@ void Foam::GAMGAgglomeration::agglomerateLduAddressing
             }
             else if (cOwn == rmLowerAddr && cNei == rmUpperAddr)
             {
-                //faceFlipMap[fineFacei] = false;
+                // faceFlipMap[fineFacei] = false;
             }
             else
             {
@@ -374,10 +374,6 @@ void Foam::GAMGAgglomeration::procAgglomerateLduAddressing
     const lduMesh& myMesh = meshLevels_[levelIndex-1];
 
 
-    label oldWarn = UPstream::warnComm;
-    UPstream::warnComm = meshComm;
-
-
     procAgglomMap_.set(levelIndex, new labelList(procAgglomMap));
     agglomProcIDs_.set(levelIndex, new labelList(procIDs));
     procCommunicator_[levelIndex] = allMeshComm;
@@ -435,8 +431,6 @@ void Foam::GAMGAgglomeration::procAgglomerateLduAddressing
     {
         clearLevel(levelIndex);
     }
-
-    UPstream::warnComm = oldWarn;
 }
 
 
@@ -488,7 +482,7 @@ void Foam::GAMGAgglomeration::procAgglomerateRestrictAddressing
         procRestrictAddressing,
 
         UPstream::msgType(),
-        Pstream::commsTypes::nonBlocking    //Pstream::commsTypes::scheduled
+        Pstream::commsTypes::nonBlocking    // Pstream::commsTypes::scheduled
     );
 
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::heatTransferModel
+    Foam::regionModels::surfaceFilmModels::heatTransferModel
 
 Description
     Base class for film heat transfer models
@@ -81,7 +81,7 @@ public:
              heatTransferModel,
              dictionary,
              (
-                 surfaceFilmModel& film,
+                 surfaceFilmRegionModel& film,
                  const dictionary& dict
              ),
              (film, dict)
@@ -90,13 +90,13 @@ public:
     // Constructors
 
         //- Construct null
-        heatTransferModel(surfaceFilmModel& film);
+        heatTransferModel(surfaceFilmRegionModel& film);
 
         //- Construct from type name, dictionary and surface film model
         heatTransferModel
         (
             const word& modelType,
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 
@@ -106,7 +106,7 @@ public:
         //- Return a reference to the selected phase change model
         static autoPtr<heatTransferModel> New
         (
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 

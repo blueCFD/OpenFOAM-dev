@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,6 +89,7 @@ Foam::fileName Foam::triSurfaceMesh::relativeFilePath
     return fName;
 }
 
+
 Foam::fileName Foam::triSurfaceMesh::checkFile
 (
     const regIOobject& io,
@@ -96,15 +97,16 @@ Foam::fileName Foam::triSurfaceMesh::checkFile
     const bool isGlobal
 )
 {
-    fileName fName;
-    if (dict.readIfPresent("file", fName, false, false))
+    fileName dictFName, fName;
+
+    if (dict.readIfPresent("file", dictFName, false, false))
     {
-        fName = relativeFilePath(io, fName, isGlobal);
+        fName = relativeFilePath(io, dictFName, isGlobal);
 
         if (!exists(fName))
         {
             FatalErrorInFunction
-                << "Cannot find triSurfaceMesh at " << fName
+                << "Cannot find triSurfaceMesh at " << io.path(dictFName)
                 << exit(FatalError);
         }
     }
@@ -507,7 +509,7 @@ void Foam::triSurfaceMesh::boundingSpheres
     }
 
     // Add a bit to make sure all points are tested inside
-    radiusSqr += Foam::sqr(SMALL);
+    radiusSqr += Foam::sqr(small);
 }
 
 
@@ -563,15 +565,9 @@ Foam::triSurfaceMesh::edgeTree() const
                 nPoints
             );
 
-            // Random number generator. Bit dodgy since not exactly random ;-)
-            Random rndGen(65431);
-
             // Slightly extended bb. Slightly off-centred just so on symmetric
             // geometry there are less face/edge aligned items.
-
-            bb = bb.extend(rndGen, 1e-4);
-            bb.min() -= point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-            bb.max() += point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
+            bb = bb.extend(1e-4);
         }
 
         scalar oldTol = indexedOctree<treeDataEdge>::perturbTol();
@@ -739,7 +735,7 @@ void Foam::triSurfaceMesh::getNormal
             if (info[i].hit())
             {
                 label facei = info[i].index();
-                normal[i] = s[facei].normal(pts);
+                normal[i] = s[facei].area(pts);
 
                 scalar qual = s[facei].tri(pts).quality();
 
@@ -755,12 +751,12 @@ void Foam::triSurfaceMesh::getNormal
                         if (nbrQual > qual)
                         {
                             qual = nbrQual;
-                            normal[i] = s[nbrI].normal(pts);
+                            normal[i] = s[nbrI].area(pts);
                         }
                     }
                 }
 
-                normal[i] /= mag(normal[i]) + VSMALL;
+                normal[i] /= mag(normal[i]) + vSmall;
             }
             else
             {
@@ -777,11 +773,10 @@ void Foam::triSurfaceMesh::getNormal
             {
                 label facei = info[i].index();
                 // Cached:
-                //normal[i] = faceNormals()[facei];
+                // normal[i] = faceNormals()[facei];
 
                 // Uncached
                 normal[i] = s[facei].normal(pts);
-                normal[i] /= mag(normal[i]) + VSMALL;
             }
             else
             {
@@ -790,6 +785,37 @@ void Foam::triSurfaceMesh::getNormal
             }
         }
     }
+}
+
+
+void Foam::triSurfaceMesh::getVolumeType
+(
+    const pointField& points,
+    List<volumeType>& volType
+) const
+{
+    volType.setSize(points.size());
+
+    scalar oldTol = indexedOctree<treeDataTriSurface>::perturbTol();
+    indexedOctree<treeDataTriSurface>::perturbTol() = tolerance();
+
+    forAll(points, pointi)
+    {
+        const point& pt = points[pointi];
+
+        if (!tree().bb().contains(pt))
+        {
+            // Have to calculate directly as outside the octree
+            volType[pointi] = tree().shapes().getVolumeType(tree(), pt);
+        }
+        else
+        {
+            // - use cached volume type per each tree node
+            volType[pointi] = tree().getVolumeType(pt);
+        }
+    }
+
+    indexedOctree<treeDataTriSurface>::perturbTol() = oldTol;
 }
 
 
@@ -842,37 +868,6 @@ void Foam::triSurfaceMesh::getField
             }
         }
     }
-}
-
-
-void Foam::triSurfaceMesh::getVolumeType
-(
-    const pointField& points,
-    List<volumeType>& volType
-) const
-{
-    volType.setSize(points.size());
-
-    scalar oldTol = indexedOctree<treeDataTriSurface>::perturbTol();
-    indexedOctree<treeDataTriSurface>::perturbTol() = tolerance();
-
-    forAll(points, pointi)
-    {
-        const point& pt = points[pointi];
-
-        if (!tree().bb().contains(pt))
-        {
-            // Have to calculate directly as outside the octree
-            volType[pointi] = tree().shapes().getVolumeType(tree(), pt);
-        }
-        else
-        {
-            // - use cached volume type per each tree node
-            volType[pointi] = tree().getVolumeType(pt);
-        }
-    }
-
-    indexedOctree<treeDataTriSurface>::perturbTol() = oldTol;
 }
 
 

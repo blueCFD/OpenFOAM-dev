@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,15 +54,15 @@ void Foam::radiation::fvDOM::initialise()
     {
         nRay_ = 4*nPhi_*nTheta_;
         IRay_.setSize(nRay_);
-        scalar deltaPhi = pi/(2.0*nPhi_);
-        scalar deltaTheta = pi/nTheta_;
+        const scalar deltaPhi = pi/(2.0*nPhi_);
+        const scalar deltaTheta = pi/nTheta_;
         label i = 0;
         for (label n = 1; n <= nTheta_; n++)
         {
             for (label m = 1; m <= 4*nPhi_; m++)
             {
-                scalar thetai = (2.0*n - 1.0)*deltaTheta/2.0;
-                scalar phii = (2.0*m - 1.0)*deltaPhi/2.0;
+                const scalar thetai = (2*n - 1)*deltaTheta/2.0;
+                const scalar phii = (2*m - 1)*deltaPhi/2.0;
                 IRay_.set
                 (
                     i,
@@ -87,23 +87,15 @@ void Foam::radiation::fvDOM::initialise()
     // 2D
     else if (mesh_.nSolutionD() == 2)
     {
-        // Currently 2D solution is limited to the x-y plane
-        if (mesh_.solutionD()[vector::Z] != -1)
-        {
-            FatalErrorInFunction
-                << "Currently 2D solution is limited to the x-y plane"
-                << exit(FatalError);
-        }
-
-        scalar thetai = piByTwo;
-        scalar deltaTheta = pi;
+        const scalar thetai = piByTwo;
+        const scalar deltaTheta = pi;
         nRay_ = 4*nPhi_;
         IRay_.setSize(nRay_);
-        scalar deltaPhi = pi/(2.0*nPhi_);
+        const scalar deltaPhi = pi/(2.0*nPhi_);
         label i = 0;
         for (label m = 1; m <= 4*nPhi_; m++)
         {
-            scalar phii = (2.0*m - 1.0)*deltaPhi/2.0;
+            const scalar phii = (2*m - 1)*deltaPhi/2.0;
             IRay_.set
             (
                 i,
@@ -127,23 +119,15 @@ void Foam::radiation::fvDOM::initialise()
     // 1D
     else
     {
-        // Currently 1D solution is limited to the x-direction
-        if (mesh_.solutionD()[vector::X] != 1)
-        {
-            FatalErrorInFunction
-                << "Currently 1D solution is limited to the x-direction"
-                << exit(FatalError);
-        }
-
-        scalar thetai = piByTwo;
-        scalar deltaTheta = pi;
+        const scalar thetai = piByTwo;
+        const scalar deltaTheta = pi;
         nRay_ = 2;
         IRay_.setSize(nRay_);
-        scalar deltaPhi = pi;
+        const scalar deltaPhi = pi;
         label i = 0;
         for (label m = 1; m <= 2; m++)
         {
-            scalar phii = (2.0*m - 1.0)*deltaPhi/2.0;
+            const scalar phii = (2*m - 1)*deltaPhi/2.0;
             IRay_.set
             (
                 i,
@@ -187,20 +171,28 @@ void Foam::radiation::fvDOM::initialise()
         );
     }
 
-    Info<< "fvDOM : Allocated " << IRay_.size()
-        << " rays with average orientation:" << nl;
 
+    // Calculate the maximum solid angle
     forAll(IRay_, rayId)
     {
         if (omegaMax_ <  IRay_[rayId].omega())
         {
             omegaMax_ = IRay_[rayId].omega();
         }
-        Info<< '\t' << IRay_[rayId].I().name() << " : " << "omega : "
-            << '\t' << IRay_[rayId].omega() << nl;
     }
 
-    Info<< endl;
+
+    Info<< typeName << ": Created " << IRay_.size() << " rays with average "
+        << "directions (dAve) and solid angles (omega)" << endl;
+    Info<< incrIndent;
+    forAll(IRay_, rayId)
+    {
+        Info<< indent
+            << "Ray " << IRay_[rayId].I().name() << ": "
+            << "dAve = " << IRay_[rayId].dAve() << ", "
+            << "omega = " << IRay_[rayId].omega() << endl;
+    }
+    Info<< decrIndent << endl;
 }
 
 
@@ -220,7 +212,7 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("G", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("G", dimMass/pow3(dimTime), 0)
     ),
     qr_
     (
@@ -233,7 +225,7 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("qr", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qr", dimMass/pow3(dimTime), 0)
     ),
     qem_
     (
@@ -242,11 +234,11 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
             "qem",
             mesh_.time().timeName(),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("qem", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qem", dimMass/pow3(dimTime), 0)
     ),
     qin_
     (
@@ -259,7 +251,7 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("qin", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qin", dimMass/pow3(dimTime), 0)
     ),
     a_
     (
@@ -272,7 +264,7 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("a", dimless/dimLength, 0.0)
+        dimensionedScalar("a", dimless/dimLength, 0)
     ),
     nTheta_(readLabel(coeffs_.lookup("nTheta"))),
     nPhi_(readLabel(coeffs_.lookup("nPhi"))),
@@ -285,7 +277,7 @@ Foam::radiation::fvDOM::fvDOM(const volScalarField& T)
     (
         coeffs_.found("convergence")
       ? readScalar(coeffs_.lookup("convergence"))
-      : coeffs_.lookupOrDefault<scalar>("tolerance", 0.0)
+      : coeffs_.lookupOrDefault<scalar>("tolerance", 0)
     ),
     maxIter_(coeffs_.lookupOrDefault<label>("maxIter", 50)),
     omegaMax_(0)
@@ -312,7 +304,7 @@ Foam::radiation::fvDOM::fvDOM
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("G", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("G", dimMass/pow3(dimTime), 0)
     ),
     qr_
     (
@@ -325,7 +317,7 @@ Foam::radiation::fvDOM::fvDOM
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("qr", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qr", dimMass/pow3(dimTime), 0)
     ),
     qem_
     (
@@ -338,7 +330,7 @@ Foam::radiation::fvDOM::fvDOM
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar("qem", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qem", dimMass/pow3(dimTime), 0)
     ),
     qin_
     (
@@ -351,7 +343,7 @@ Foam::radiation::fvDOM::fvDOM
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("qin", dimMass/pow3(dimTime), 0.0)
+        dimensionedScalar("qin", dimMass/pow3(dimTime), 0)
     ),
     a_
     (
@@ -364,7 +356,7 @@ Foam::radiation::fvDOM::fvDOM
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar("a", dimless/dimLength, 0.0)
+        dimensionedScalar("a", dimless/dimLength, 0)
     ),
     nTheta_(readLabel(coeffs_.lookup("nTheta"))),
     nPhi_(readLabel(coeffs_.lookup("nPhi"))),
@@ -377,7 +369,7 @@ Foam::radiation::fvDOM::fvDOM
     (
         coeffs_.found("convergence")
       ? readScalar(coeffs_.lookup("convergence"))
-      : coeffs_.lookupOrDefault<scalar>("tolerance", 0.0)
+      : coeffs_.lookupOrDefault<scalar>("tolerance", 0)
     ),
     maxIter_(coeffs_.lookupOrDefault<label>("maxIter", 50)),
     omegaMax_(0)
@@ -402,9 +394,7 @@ bool Foam::radiation::fvDOM::read()
 
         // For backward-compatibility
         coeffs_.readIfPresent("convergence", tolerance_);
-
         coeffs_.readIfPresent("tolerance", tolerance_);
-
         coeffs_.readIfPresent("maxIter", maxIter_);
 
         return true;
@@ -425,14 +415,14 @@ void Foam::radiation::fvDOM::calculate()
     // Set rays converged false
     List<bool> rayIdConv(nRay_, false);
 
-    scalar maxResidual = 0.0;
+    scalar maxResidual = 0;
     label radIter = 0;
     do
     {
         Info<< "Radiation solver iter: " << radIter << endl;
 
         radIter++;
-        maxResidual = 0.0;
+        maxResidual = 0;
         forAll(IRay_, rayI)
         {
             if (!rayIdConv[rayI])
@@ -455,7 +445,8 @@ void Foam::radiation::fvDOM::calculate()
 
 Foam::tmp<Foam::volScalarField> Foam::radiation::fvDOM::Rp() const
 {
-    return tmp<volScalarField>
+    // Construct using contribution from first frequency band
+    tmp<volScalarField> tRp
     (
         new volScalarField
         (
@@ -468,28 +459,75 @@ Foam::tmp<Foam::volScalarField> Foam::radiation::fvDOM::Rp() const
                 IOobject::NO_WRITE,
                 false
             ),
-            // Only include continuous phase emission
-            4*absorptionEmission_->aCont()*physicoChemical::sigma
+            (
+                4
+               *physicoChemical::sigma
+               *(aLambda_[0] - absorptionEmission_->aDisp(0)())
+               *blackBody_.deltaLambdaT(T_, absorptionEmission_->bands(0))
+            )
         )
     );
+
+    volScalarField& Rp=tRp.ref();
+
+    // Add contributions over remaining frequency bands
+    for (label j=1; j < nLambda_; j++)
+    {
+        Rp +=
+        (
+            4
+           *physicoChemical::sigma
+           *(aLambda_[j] - absorptionEmission_->aDisp(j)())
+           *blackBody_.deltaLambdaT(T_, absorptionEmission_->bands(j))
+        );
+    }
+
+    return tRp;
 }
 
 
 Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
 Foam::radiation::fvDOM::Ru() const
 {
+    tmp<DimensionedField<scalar, volMesh>> tRu
+    (
+        new DimensionedField<scalar, volMesh>
+        (
+            IOobject
+            (
+                "Ru",
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            mesh_,
+            dimensionedScalar("zero", dimensionSet(1, -1, -3, 0, 0), 0)
+        )
+    );
 
-    const volScalarField::Internal& G =
-        G_();
+    DimensionedField<scalar, volMesh>& Ru=tRu.ref();
 
-    const volScalarField::Internal E =
-        absorptionEmission_->ECont()()();
+    // Sum contributions over all frequency bands
+    for (label j=0; j < nLambda_; j++)
+    {
+        // Compute total incident radiation within frequency band
+        tmp<DimensionedField<scalar, volMesh>> Gj
+        (
+            IRay_[0].ILambda(j)()*IRay_[0].omega()
+        );
 
-    // Only include continuous phase absorption
-    const volScalarField::Internal a =
-        absorptionEmission_->aCont()()();
+        for (label rayI=1; rayI < nRay_; rayI++)
+        {
+            Gj.ref() += IRay_[rayI].ILambda(j)()*IRay_[rayI].omega();
+        }
 
-    return a*G - E;
+        Ru += (aLambda_[j]() - absorptionEmission_->aDisp(j)()())*Gj
+             - absorptionEmission_->ECont(j)()();
+    }
+
+    return tRu;
 }
 
 
@@ -504,10 +542,10 @@ void Foam::radiation::fvDOM::updateBlackBodyEmission()
 
 void Foam::radiation::fvDOM::updateG()
 {
-    G_ = dimensionedScalar("zero",dimMass/pow3(dimTime), 0.0);
-    qr_ = dimensionedScalar("zero",dimMass/pow3(dimTime), 0.0);
-    qem_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0.0);
-    qin_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0.0);
+    G_ = dimensionedScalar("zero",dimMass/pow3(dimTime), 0);
+    qr_ = dimensionedScalar("zero",dimMass/pow3(dimTime), 0);
+    qem_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0);
+    qin_ = dimensionedScalar("zero", dimMass/pow3(dimTime), 0);
 
     forAll(IRay_, rayI)
     {
@@ -527,12 +565,12 @@ void Foam::radiation::fvDOM::setRayIdLambdaId
     label& lambdaId
 ) const
 {
-    // assuming name is in the form: CHARS_rayId_lambdaId
-    size_type i1 = name.find_first_of("_");
-    size_type i2 = name.find_last_of("_");
+    // Assume name is in the form: <name>_<rayId>_<lambdaId>
+    const size_type i1 = name.find_first_of("_");
+    const size_type i2 = name.find_last_of("_");
 
-    rayId = readLabel(IStringStream(name.substr(i1+1, i2-1))());
-    lambdaId = readLabel(IStringStream(name.substr(i2+1, name.size()-1))());
+    rayId = readLabel(IStringStream(name.substr(i1 + 1, i2 - 1))());
+    lambdaId = readLabel(IStringStream(name.substr(i2 + 1, name.size() - 1))());
 }
 
 

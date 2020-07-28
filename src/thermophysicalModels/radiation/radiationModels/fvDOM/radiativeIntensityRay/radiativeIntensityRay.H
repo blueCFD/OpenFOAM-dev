@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ private:
 
     // Private data
 
-        //- Refence to the owner fvDOM object
+        //- Reference to the owner fvDOM object
         const fvDOM& dom_;
 
         //- Reference to the mesh
@@ -184,13 +184,13 @@ public:
             //- Return non-const access to the boundary incident heat flux
             inline volScalarField& qin();
 
-            //- Return non-const access to the boundary emmited heat flux
+            //- Return non-const access to the boundary emitted heat flux
             inline volScalarField& qem();
 
             //- Return const access to the boundary incident heat flux
             inline const volScalarField& qin() const;
 
-            //- Return const access to the boundary emmited heat flux
+            //- Return const access to the boundary emitted heat flux
             inline const volScalarField& qem() const;
 
             //- Return direction

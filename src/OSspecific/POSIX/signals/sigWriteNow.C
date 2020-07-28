@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "sigWriteNow.H"
 #include "error.H"
-#include "JobInfo.H"
+#include "jobInfo.H"
 #include "IOstreams.H"
 #include "Time.T.H"
 
@@ -88,7 +88,7 @@ void Foam::sigWriteNow::sigHandler(int)
     runTimePtr_->writeOnce();
 
     //// Throw signal (to old handler)
-    //raise(signal_);
+    // raise(signal_);
 }
 
 

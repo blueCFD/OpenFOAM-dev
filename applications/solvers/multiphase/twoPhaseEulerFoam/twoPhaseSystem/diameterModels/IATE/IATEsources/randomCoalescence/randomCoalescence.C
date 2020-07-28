@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ Foam::diameterModels::IATEsources::randomCoalescence::R() const
 
     forAll(R, celli)
     {
-        if (alpha[celli] < alphaMax - SMALL)
+        if (alpha[celli] < alphaMax - small)
         {
             scalar cbrtAlphaMaxMAlpha = cbrtAlphaMax - cbrt(alpha[celli]);
 

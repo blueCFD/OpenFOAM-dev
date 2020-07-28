@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,7 +34,8 @@ Description
 #include "dynamicFvMesh.H"
 #include "turbulenceModel.H"
 #include "basicSprayCloud.H"
-#include "psiCombustionModel.H"
+#include "psiReactionThermo.H"
+#include "CombustionModel.T.H"
 #include "radiationModel.H"
 #include "SLGThermo.H"
 #include "pimpleControl.H"
@@ -47,15 +48,13 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
-    #include "createControl.H"
-    #include "createControls.H"
+    #include "createDyMControls.H"
     #include "createFields.H"
     #include "createFieldRefs.H"
     #include "createRhoUf.H"
-    #include "createFvOptions.H"
     #include "compressibleCourantNo.H"
     #include "setInitialDeltaT.H"
     #include "initContinuityErrs.H"
@@ -68,7 +67,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "readControls.H"
+        #include "readDyMControls.H"
 
         {
             // Store divrhoU from the previous time-step/mesh for the correctPhi
@@ -94,21 +93,26 @@ int main(int argc, char *argv[])
             // Do any mesh changes
             mesh.update();
 
-            if (mesh.changing() && correctPhi)
+            if (mesh.changing())
             {
-                // Calculate absolute flux from the mapped surface velocity
-                phi = mesh.Sf() & rhoUf;
+                MRF.update();
 
-                #include "correctPhi.H"
+                if (correctPhi)
+                {
+                    // Calculate absolute flux from the mapped surface velocity
+                    phi = mesh.Sf() & rhoUf;
 
-                // Make the fluxes relative to the mesh-motion
-                fvc::makeRelative(phi, rho, U);
+                    #include "correctPhi.H"
+
+                    // Make the fluxes relative to the mesh-motion
+                    fvc::makeRelative(phi, rho, U);
+                }
+
+                if (checkMeshCourantNo)
+                {
+                    #include "meshCourantNo.H"
+                }
             }
-        }
-
-        if (mesh.changing() && checkMeshCourantNo)
-        {
-            #include "meshCourantNo.H"
         }
 
         parcels.evolve();

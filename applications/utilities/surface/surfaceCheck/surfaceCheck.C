@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -132,11 +132,11 @@ labelList countBins
 
         label index = -1;
 
-        if (Foam::mag(val - min) < SMALL)
+        if (Foam::mag(val - min) < small)
         {
             index = 0;
         }
-        else if (val >= max - SMALL)
+        else if (val >= max - small)
         {
             index = nBins - 1;
         }
@@ -171,7 +171,8 @@ labelList countBins
 
 int main(int argc, char *argv[])
 {
-    argList::noParallel();
+    #include "removeCaseOptions.H"
+
     argList::validArgs.append("surface file");
     argList::addBoolOption
     (
@@ -321,7 +322,7 @@ int main(int argc, char *argv[])
 
             if (f[0] == f[1] || f[0] == f[2] || f[1] == f[2])
             {
-                //WarningIn(args.executable())
+                // WarningIn(args.executable())
                 //    << "Illegal triangle " << facei << " vertices " << f
                 //    << " coords " << f.points(surf.points()) << endl;
             }
@@ -366,7 +367,7 @@ int main(int argc, char *argv[])
             << endl;
 
 
-        if (triQ[minIndex] < SMALL)
+        if (triQ[minIndex] < small)
         {
             WarningInFunction
                 << triQ[minIndex] << ". This might give problems in"
@@ -754,13 +755,13 @@ int main(int argc, char *argv[])
                 << endl;
         }
 
-        //surfaceIntersection inter(querySurf);
+        // surfaceIntersection inter(querySurf);
         //
-        //if (inter.cutEdges().empty() && inter.cutPoints().empty())
+        // if (inter.cutEdges().empty() && inter.cutPoints().empty())
         //{
         //    Info<< "Surface is not self-intersecting" << endl;
         //}
-        //else
+        // else
         //{
         //    Info<< "Surface is self-intersecting" << endl;
         //    Info<< "Writing edges of intersection to selfInter.obj" << endl;

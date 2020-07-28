@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,42 +60,8 @@ class waveModel
         //- Reference to the database
         const objectRegistry& db_;
 
-        //- Peak-to-peak length [m]
-        const scalar length_;
-
         //- Peak-to-mean amplitude [m]
         autoPtr<Function1<scalar>> amplitude_;
-
-        //- Phase offset [rad]
-        const scalar phase_;
-
-        //- Depth [m]
-        const scalar depth_;
-
-
-protected:
-
-    // Protected Member Functions
-
-        //- The angular wavenumber [rad/m]
-        scalar k() const;
-
-        //- The intrinsic angular frequency [rad/s]
-        scalar sigma() const;
-
-        //- The observed angular frequency [rad/s]
-        scalar omega(const scalar u) const;
-
-        //- Angle of the oscillation [rad]
-        tmp<scalarField> angle
-        (
-            const scalar t,
-            const scalar u,
-            const scalarField& x
-        ) const;
-
-        //- Return whether shallow effects are to be included
-        bool shallow() const;
 
 
 public:
@@ -153,29 +119,14 @@ public:
 
         // Access
 
-            //- Get the length
-            scalar length() const
-            {
-                return length_;
-            }
-
             //- Get the amplitude
             scalar amplitude(const scalar t) const
             {
                 return amplitude_->value(t);
             }
 
-            //- Get the phase
-            scalar phase() const
-            {
-                return phase_;
-            }
-
-            //- Get the depth
-            scalar depth() const
-            {
-                return depth_;
-            }
+        //- Get the (scalar) value of gravity.
+        scalar g() const;
 
         //- Get the wave elevation at a given time, mean velocity and local
         //  coordinates. Local x is aligned with the mean velocity.
@@ -190,6 +141,16 @@ public:
         //  coordinates. Local x is aligned with the mean velocity, and z with
         //  negative gravity.
         virtual tmp<vector2DField> velocity
+        (
+            const scalar t,
+            const scalar u,
+            const vector2DField& xz
+        ) const = 0;
+
+        //- Get the wave pressure at a given time, mean velocity and local
+        //  coordinates. Local x is aligned with the mean velocity, and z with
+        //  negative gravity.
+        virtual tmp<scalarField> pressure
         (
             const scalar t,
             const scalar u,

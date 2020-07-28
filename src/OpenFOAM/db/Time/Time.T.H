@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -168,9 +168,6 @@ protected:
 
         //- Read the control dictionary and set the write controls etc.
         virtual void readDict();
-
-        //- Find IOobject in the objectPath
-        static bool exists(IOobject&);
 
 
 private:
@@ -443,6 +440,9 @@ public:
 
         // Check
 
+            //- Return true if run should continue without any side effects
+            virtual bool running() const;
+
             //- Return true if run should continue,
             //  also invokes the functionObjectList::end() method
             //  when the time goes out of range
@@ -513,18 +513,14 @@ public:
             virtual void setEndTime(const scalar);
 
             //- Reset time step
-            virtual void setDeltaT
-            (
-                const dimensionedScalar&,
-                const bool adjustDeltaT = true
-            );
+            virtual void setDeltaT(const dimensionedScalar&);
 
             //- Reset time step
-            virtual void setDeltaT
-            (
-                const scalar,
-                const bool adjustDeltaT = true
-            );
+            virtual void setDeltaT(const scalar);
+
+            //- Reset time step without additional adjustment or modification
+            //  by function objects
+            virtual void setDeltaTNoAdjust(const scalar);
 
             //- Set time to sub-cycle for the given number of steps
             virtual TimeState subCycle(const label nSubCycles);

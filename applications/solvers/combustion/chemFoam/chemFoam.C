@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,13 +32,15 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "psiReactionThermo.H"
-#include "psiChemistryModel.H"
+#include "rhoReactionThermo.H"
+#include "BasicChemistryModel.T.H"
+#include "reactingMixture.H"
 #include "chemistrySolver.H"
 #include "OFstream.H"
 #include "thermoPhysicsTypes.H"
-#include "basicMultiComponentMixture.H"
+#include "basicSpecieMixture.H"
 #include "cellModeller.H"
+#include "thermoTypeFunctions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
     #define NO_CONTROL
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createSingleCellMesh.H"
     #include "createFields.H"

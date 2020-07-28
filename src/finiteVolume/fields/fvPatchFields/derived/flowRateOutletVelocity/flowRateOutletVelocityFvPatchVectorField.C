@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ flowRateOutletVelocityFvPatchVectorField
 )
 :
     fixedValueFvPatchField<vector>(p, iF, dict, false),
-    rhoOutlet_(dict.lookupOrDefault<scalar>("rhoOutlet", -VGREAT))
+    rhoOutlet_(dict.lookupOrDefault<scalar>("rhoOutlet", -vGreat))
 {
     if (dict.found("volumetricFlowRate"))
     {
@@ -229,7 +229,7 @@ void Foam::flowRateOutletVelocityFvPatchVectorField::write(Ostream& os) const
     if (!volumetric_)
     {
         writeEntryIfDifferent<word>(os, "rho", "rho", rhoName_);
-        writeEntryIfDifferent<scalar>(os, "rhoOutlet", -VGREAT, rhoOutlet_);
+        writeEntryIfDifferent<scalar>(os, "rhoOutlet", -vGreat, rhoOutlet_);
     }
     writeEntry("value", os);
 }

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(mergePolyMesh, 1);
+    defineTypeNameAndDebug(mergePolyMesh, 1);
 }
 
 
@@ -378,7 +378,6 @@ void Foam::mergePolyMesh::addMesh(const polyMesh& m)
                 )
             );
     }
-
 }
 
 
@@ -410,7 +409,9 @@ void Foam::mergePolyMesh::merge()
         Info<< "Adding new patches. " << endl;
 
         label endOfLastPatch =
-            oldPatches[patchi - 1].start() + oldPatches[patchi - 1].size();
+            patchi == 0
+          ? 0
+          : oldPatches[patchi - 1].start() + oldPatches[patchi - 1].size();
 
         for (; patchi < patchNames_.size(); patchi++)
         {

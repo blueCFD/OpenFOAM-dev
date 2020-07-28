@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -165,7 +165,7 @@ public:
     //- Class used to pass tracking data to the trackToFace function
     class trackingData
     :
-        public particle::TrackingData<moleculeCloud>
+        public particle::trackingData
     {
         // label specifying which part of the integration algorithm is taking
         label part_;
@@ -177,7 +177,7 @@ public:
 
             trackingData(moleculeCloud& cloud, label part)
             :
-                particle::TrackingData<moleculeCloud>(cloud),
+                particle::trackingData(cloud),
                 part_(part)
             {}
 
@@ -310,7 +310,7 @@ public:
 
         // Tracking
 
-            bool move(trackingData&, const scalar trackTime);
+            bool move(moleculeCloud&, trackingData&, const scalar trackTime);
 
             virtual void transformProperties(const tensor& T);
 
@@ -364,36 +364,13 @@ public:
 
         //- Overridable function to handle the particle hitting a patch
         //  Executed before other patch-hitting functions
-        bool hitPatch
-        (
-            const polyPatch&,
-            trackingData& td,
-            const label patchi,
-            const scalar trackFraction,
-            const tetIndices& tetIs
-        );
+        bool hitPatch(moleculeCloud& cloud, trackingData& td);
 
         //- Overridable function to handle the particle hitting a processorPatch
-        void hitProcessorPatch
-        (
-            const processorPolyPatch&,
-            trackingData& td
-        );
+        void hitProcessorPatch(moleculeCloud& cloud, trackingData& td);
 
         //- Overridable function to handle the particle hitting a wallPatch
-        void hitWallPatch
-        (
-            const wallPolyPatch&,
-            trackingData& td,
-            const tetIndices&
-        );
-
-        //- Overridable function to handle the particle hitting a polyPatch
-        void hitPatch
-        (
-            const polyPatch&,
-            trackingData& td
-        );
+        void hitWallPatch(moleculeCloud& cloud, trackingData& td);
 
 
     // I-O

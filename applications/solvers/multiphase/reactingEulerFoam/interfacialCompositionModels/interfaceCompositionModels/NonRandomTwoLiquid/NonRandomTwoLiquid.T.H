@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::NonRandomTwoLiquid
+    Foam::interfaceCompositionModels::NonRandomTwoLiquid
 
 Description
     Non ideal law for the mixing of two species. A separate composition model
@@ -88,10 +88,10 @@ class NonRandomTwoLiquid
         //- Non-randomness constant parameter for species 2
         dimensionedScalar alpha21_;
 
-        //- Non-randomness linear paramater for species 1
+        //- Non-randomness linear parameter for species 1
         dimensionedScalar beta12_;
 
-        //- Non-randomness linear paramater for species 2
+        //- Non-randomness linear parameter for species 2
         dimensionedScalar beta21_;
 
         //- Interaction parameter model for species 1
@@ -110,7 +110,7 @@ class NonRandomTwoLiquid
 public:
 
     //- Runtime type information
-    TypeName("NonRandomTwoLiquid");
+    TypeName("nonRandomTwoLiquid");
 
     // Constructors
 

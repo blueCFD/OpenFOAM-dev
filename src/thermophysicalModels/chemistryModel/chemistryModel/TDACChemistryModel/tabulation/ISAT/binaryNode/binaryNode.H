@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,8 +32,8 @@ SourceFile
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef BINARY_NODE_H
-#define BINARY_NODE_H
+#ifndef binaryNode_H
+#define binaryNode_H
 
 #include "chemPointISAT.H"
 
@@ -78,7 +78,7 @@ public:
     //  Let E be the ellipsoid which covers the region of accuracy of
     //  the left leaf (previously defined). E is described by
     //  E={phi| ||L^T.(phi-phi0)|| <= 1}, (see chemPoint for more details).
-    //  let E' be the tranformation of E in a space where E' is a hypersphere
+    //  let E' be the transformation of E in a space where E' is a hypersphere
     //  centered at the origin, in this space y=L^T.(phi-phi0) and then
     //  E'={y| ||y||<=1}
     //  let u be the unit vector joining the center of E' and the newly added
@@ -88,7 +88,7 @@ public:
     //  perpendicular bisector of the segment linking 0 to y2
     //      H' = {y| u^T.(y-yh) = 0},
     //  where yh = y2/2.
-    //  In the orginal composition space, the hyperplane H is defined by
+    //  In the original composition space, the hyperplane H is defined by
     //      H = {y| v^T(phi-phih) = 0},
     //  where phih = phi0 + L^-T.yh = (phi0 + phiq) / 2 and v is
     //            L.L^T (phiq-phi0)

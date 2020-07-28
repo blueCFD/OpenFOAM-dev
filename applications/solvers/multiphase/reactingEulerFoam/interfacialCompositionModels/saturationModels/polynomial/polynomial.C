@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,9 +40,13 @@ namespace saturationModels
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::saturationModels::polynomial::polynomial(const dictionary& dict)
+Foam::saturationModels::polynomial::polynomial
+(
+    const dictionary& dict,
+    const objectRegistry& db
+)
 :
-    saturationModel(),
+    saturationModel(db),
     C_(dict.lookup("C<8>"))
 {}
 
@@ -113,7 +117,7 @@ Foam::saturationModels::polynomial::Tsat
 
     volScalarField& Tsat = tTsat.ref();
 
-    forAll(Tsat,celli)
+    forAll(Tsat, celli)
     {
         Tsat[celli] = C_.value(p[celli]);
     }

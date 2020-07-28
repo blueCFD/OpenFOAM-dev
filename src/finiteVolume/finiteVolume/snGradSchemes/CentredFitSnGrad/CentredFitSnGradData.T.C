@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ Foam::CentredFitSnGradData<Polynomial>::CentredFitSnGradData
     if (debug)
     {
         InfoInFunction
-            << "Contructing CentredFitSnGradData<Polynomial>" << endl;
+            << "Constructing CentredFitSnGradData<Polynomial>" << endl;
     }
 
     calcFit();
@@ -133,7 +133,7 @@ void Foam::CentredFitSnGradData<Polynomial>::calcFit
     bool goodFit = false;
     for (int iIt = 0; iIt < 8 && !goodFit; iIt++)
     {
-        SVD svd(B, SMALL);
+        SVD svd(B, small);
         scalarRectangularMatrix invB(svd.VSinvUt());
 
         for (label i=0; i<stencilSize; i++)

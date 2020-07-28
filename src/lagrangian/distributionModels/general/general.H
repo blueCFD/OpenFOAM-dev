@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::general
+    Foam::distributionModels::general
 
 Description
     general distribution model
@@ -80,7 +80,7 @@ public:
     // Constructors
 
         //- Construct from components
-        general(const dictionary& dict, cachedRandom& rndGen);
+        general(const dictionary& dict, Random& rndGen);
 
         //- Construct copy
         general(const general& p);

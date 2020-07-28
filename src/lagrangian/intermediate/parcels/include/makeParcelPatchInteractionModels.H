@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,6 @@ License
 #include "NoInteraction.T.H"
 #include "Rebound.T.H"
 #include "StandardWallInteraction.T.H"
-#include "MultiInteraction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -43,8 +42,7 @@ License
     makePatchInteractionModelType(LocalInteraction, CloudType);                \
     makePatchInteractionModelType(NoInteraction, CloudType);                   \
     makePatchInteractionModelType(Rebound, CloudType);                         \
-    makePatchInteractionModelType(StandardWallInteraction, CloudType);         \
-    makePatchInteractionModelType(MultiInteraction, CloudType);
+    makePatchInteractionModelType(StandardWallInteraction, CloudType);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

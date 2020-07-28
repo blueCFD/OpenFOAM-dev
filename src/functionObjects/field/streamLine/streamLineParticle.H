@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,6 +49,7 @@ namespace Foam
 // Forward declaration of friend functions and operators
 
 class streamLineParticle;
+class streamLineParticleCloud;
 
 Ostream& operator<<(Ostream&, const streamLineParticle&);
 
@@ -64,7 +65,7 @@ public:
 
     class trackingData
     :
-        public particle::TrackingData<Cloud<streamLineParticle>>
+        public particle::trackingData
     {
     public:
 
@@ -76,7 +77,7 @@ public:
 
             const label UIndex_;
 
-            const bool trackForward_;
+            bool trackForward_;
 
             const label nSubCycle_;
 
@@ -94,7 +95,7 @@ public:
             //- Construct from components
             trackingData
             (
-                Cloud<streamLineParticle>& cloud,
+                streamLineParticleCloud& cloud,
                 const PtrList<interpolation<scalar>>& vsInterp,
                 const PtrList<interpolation<vector>>& vvInterp,
                 const label UIndex,
@@ -106,7 +107,7 @@ public:
                 List<DynamicList<vectorList>>& allVectors
             )
             :
-                particle::TrackingData<Cloud<streamLineParticle>>(cloud),
+                particle::trackingData(cloud),
                 vsInterp_(vsInterp),
                 vvInterp_(vvInterp),
                 UIndex_(UIndex),
@@ -206,71 +207,50 @@ public:
         // Tracking
 
             //- Track all particles to their end point
-            bool move(trackingData&, const scalar);
+            bool move(streamLineParticleCloud&, trackingData&, const scalar);
 
             //- Overridable function to handle the particle hitting a patch
             //  Executed before other patch-hitting functions
-            bool hitPatch
-            (
-                const polyPatch&,
-                trackingData& td,
-                const label patchi,
-                const scalar trackFraction,
-                const tetIndices& tetIs
-            );
+            bool hitPatch(streamLineParticleCloud&, trackingData&);
 
             //- Overridable function to handle the particle hitting a wedge
-            void hitWedgePatch
-            (
-                const wedgePolyPatch&,
-                trackingData& td
-            );
+            void hitWedgePatch(streamLineParticleCloud&, trackingData&);
 
             //- Overridable function to handle the particle hitting a
             //  symmetry plane
-            void hitSymmetryPlanePatch
-            (
-                const symmetryPlanePolyPatch&,
-                trackingData& td
-            );
+            void hitSymmetryPlanePatch(streamLineParticleCloud&, trackingData&);
 
             //- Overridable function to handle the particle hitting a
             //  symmetry patch
-            void hitSymmetryPatch
-            (
-                const symmetryPolyPatch&,
-                trackingData& td
-            );
+            void hitSymmetryPatch(streamLineParticleCloud&, trackingData&);
 
             //- Overridable function to handle the particle hitting a cyclic
-            void hitCyclicPatch
+            void hitCyclicPatch(streamLineParticleCloud&, trackingData&);
+
+            //- Overridable function to handle the particle hitting a
+            //  cyclicAMIPatch
+            void hitCyclicAMIPatch
             (
-                const cyclicPolyPatch&,
-                trackingData& td
+                streamLineParticleCloud&,
+                trackingData&,
+                const vector& direction
+            );
+
+            //- Overridable function to handle the particle hitting a
+            //  cyclicACMIPatch
+            void hitCyclicACMIPatch
+            (
+                streamLineParticleCloud&,
+                trackingData&,
+                const vector& direction
             );
 
             //- Overridable function to handle the particle hitting a
             //- processorPatch
-            void hitProcessorPatch
-            (
-                const processorPolyPatch&,
-                trackingData& td
-            );
+            void hitProcessorPatch(streamLineParticleCloud&, trackingData&);
 
             //- Overridable function to handle the particle hitting a wallPatch
-            void hitWallPatch
-            (
-                const wallPolyPatch&,
-                trackingData& td,
-                const tetIndices&
-            );
-
-            //- Overridable function to handle the particle hitting a polyPatch
-            void hitPatch
-            (
-                const polyPatch&,
-                trackingData& td
-            );
+            void hitWallPatch(streamLineParticleCloud&, trackingData&);
 
 
         // I-O

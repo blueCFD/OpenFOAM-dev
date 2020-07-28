@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::externalWallHeatFluxTemperatureFvPatchScalarField
-
-Group
-    grpThermoBoundaryConditions grpWallBoundaryConditions
 
 Description
     This boundary condition applies a heat flux condition to temperature
@@ -98,8 +95,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef solidWallHeatFluxTemperatureFvPatchScalarField_H
-#define solidWallHeatFluxTemperatureFvPatchScalarField_H
+#ifndef externalWallHeatFluxTemperatureFvPatchScalarField_H
+#define externalWallHeatFluxTemperatureFvPatchScalarField_H
 
 #include "mixedFvPatchFields.H"
 #include "temperatureCoupledBase.H"
@@ -245,6 +242,15 @@ public:
 
 
     // Member functions
+
+        // Access
+
+            //- Allow manipulation of the boundary values
+            virtual bool fixesValue() const
+            {
+                return false;
+            }
+
 
         // Mapping functions
 

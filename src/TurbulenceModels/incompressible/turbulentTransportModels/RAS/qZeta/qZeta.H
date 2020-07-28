@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::incompressible::RASModels::qZeta
-
-Group
-    grpIcoRASTurbulence
 
 Description
     Gibson and Dafa'Alla's q-zeta two-equation low-Re turbulence model
@@ -141,13 +138,13 @@ public:
         //- Read RASProperties dictionary
         virtual bool read();
 
-        //- Return the lower allowable limit for q (default: SMALL)
+        //- Return the lower allowable limit for q (default: small)
         const dimensionedScalar& qMin() const
         {
             return qMin_;
         }
 
-        //- Return the lower allowable limit for zeta (default: SMALL)
+        //- Return the lower allowable limit for zeta (default: small)
         const dimensionedScalar& zetaMin() const
         {
             return zetaMin_;

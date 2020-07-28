@@ -1,4 +1,5 @@
 CGAL_INC = \
+    -DCGAL_NO_DEPRECATED_CODE \
     -I$(CGAL_ARCH_PATH)/include \
     -I$(MPFR_ARCH_PATH)/include \
     -I$(GMP_ARCH_PATH)/include \
@@ -9,6 +10,6 @@ CGAL_LIBS = \
     -L$(MPFR_ARCH_PATH)/lib$(WM_COMPILER_LIB_ARCH) \
     -L$(GMP_ARCH_PATH)/lib$(WM_COMPILER_LIB_ARCH) \
     -L$(BOOST_ARCH_PATH)/lib \
-    -L$(CGAL_ARCH_PATH)/lib \
+    -L$(CGAL_ARCH_PATH)/lib$(WM_COMPILER_LIB_ARCH) \
     -lCGAL \
     -lmpfr

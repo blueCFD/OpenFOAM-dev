@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,18 +15,20 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-type sets;
+type            sets;
 libs            ("libsampling.so");
 
+writeControl    writeTime;
 interpolationScheme cellPointFace;
-
 setFormat       raw;
+
+fields          ( p wallHeatFlux );
 
 sets
 (
     cone25
     {
-        type    face;
+        type    lineFace;
         axis    x;
         start   (0 0 0);
         end     (0.09208087 0.042939 0);
@@ -34,7 +36,7 @@ sets
     }
     cone55
     {
-        type    face;
+        type    lineFace;
         axis    x;
         start   (0.09208087 0.042939 0);
         end     (0.153683 0.13092 0);
@@ -42,15 +44,12 @@ sets
     }
     base
     {
-        type    face;
+        type    lineFace;
         axis    x;
         start   (0.153683 0.13092 0);
         end     (0.193675 0.13092 0);
         nPoints 40;
     }
 );
-
-fields          ( p wallHeatTransRate );
-
 
 // ************************************************************************* //

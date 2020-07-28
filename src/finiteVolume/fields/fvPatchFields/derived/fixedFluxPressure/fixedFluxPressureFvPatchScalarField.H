@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::fixedFluxPressureFvPatchScalarField
-
-Group
-    grpInletBoundaryConditions grpWallBoundaryConditions
 
 Description
     This boundary condition sets the pressure gradient to the provided value
@@ -48,8 +45,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fixedFluxPressureFvPatchScalarFields_H
-#define fixedFluxPressureFvPatchScalarFields_H
+#ifndef fixedFluxPressureFvPatchScalarField_H
+#define fixedFluxPressureFvPatchScalarField_H
 
 #include "fvPatchFields.H"
 #include "fixedGradientFvPatchFields.H"

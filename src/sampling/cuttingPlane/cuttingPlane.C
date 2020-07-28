@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,8 +33,8 @@ License
 // Set values for what is close to zero and what is considered to
 // be positive (and not just rounding noise)
 //! \cond localScope
-const Foam::scalar zeroish  = Foam::SMALL;
-const Foam::scalar positive = Foam::SMALL * 1E3;
+const Foam::scalar zeroish  = Foam::small;
+const Foam::scalar positive = Foam::small * 1E3;
 //! \endcond
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -184,7 +184,7 @@ bool Foam::cuttingPlane::walkCell
 
         label nextEdgeI = -1;
 
-        //Note: here is where we should check for whether there are more
+        // Note: here is where we should check for whether there are more
         // than 2 intersections with the face (warped/non-convex face).
         // If so should e.g. decompose the cells on both faces and redo
         // the calculation.
@@ -307,7 +307,7 @@ void Foam::cuttingPlane::walkCellCuts
             face f(faceVerts);
 
             // Orient face to point in the same direction as the plane normal
-            if ((f.normal(cutPoints) & normal()) < 0)
+            if ((f.area(cutPoints) & normal()) < 0)
             {
                 f.flip();
             }

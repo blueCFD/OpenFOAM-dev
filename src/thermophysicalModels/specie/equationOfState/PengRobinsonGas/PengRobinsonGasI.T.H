@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,9 +59,9 @@ inline Foam::PengRobinsonGas<Specie>::PengRobinsonGas
 :
     Specie(name, pg),
     Tc_(pg.Tc_),
-    Pc_(pg.Pc_),
     Vc_(pg.Vc_),
     Zc_(pg.Zc_),
+    Pc_(pg.Pc_),
     omega_(pg.omega_)
 {}
 
@@ -297,7 +297,7 @@ inline void Foam::PengRobinsonGas<Specie>::operator+=
     scalar Y1 = this->Y();
     Specie::operator+=(pg);
 
-    if (mag(this->Y()) > SMALL)
+    if (mag(this->Y()) > small)
     {
         Y1 /= this->Y();
         const scalar Y2 = pg.Y()/this->Y();
@@ -334,7 +334,7 @@ Foam::PengRobinsonGas<Specie> Foam::operator+
       + static_cast<const Specie&>(pg2)
     );
 
-    if (mag(sp.Y()) < SMALL)
+    if (mag(sp.Y()) < small)
     {
         return PengRobinsonGas<Specie>
         (

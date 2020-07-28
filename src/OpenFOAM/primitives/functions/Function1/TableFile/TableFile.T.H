@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,7 @@ Description
         <entryName> tableFile;
         <entryName>Coeffs
         {
-            fileName            dataFile;    // name of data file
+            file                dataFile;    // name of data file
             outOfBounds         clamp;       // optional out-of-bounds handling
             interpolationScheme linear;      // optional interpolation method
         }
@@ -100,12 +100,6 @@ public:
 
         //- Copy constructor
         TableFile(const TableFile<Type>& tbl);
-
-        //- Construct and return a clone
-        virtual tmp<Function1<Type>> clone() const
-        {
-            return tmp<Function1<Type>>(new TableFile<Type>(*this));
-        }
 
 
     //- Destructor

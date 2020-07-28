@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,7 +48,7 @@ void testPackedList(const polyMesh& mesh, Random& rndGen)
         PackedList<3> bits(mesh.nEdges());
         forAll(bits, i)
         {
-            bits.set(i, rndGen.integer(0,3));
+            bits.set(i, rndGen.sampleAB<label>(0, 4));
         }
 
         labelList edgeValues(mesh.nEdges());
@@ -95,7 +95,7 @@ void testPackedList(const polyMesh& mesh, Random& rndGen)
         PackedList<3> bits(mesh.nPoints());
         forAll(bits, i)
         {
-            bits.set(i, rndGen.integer(0,3));
+            bits.set(i, rndGen.sampleAB<label>(0, 4));
         }
 
         labelList pointValues(mesh.nPoints());
@@ -143,7 +143,7 @@ void testPackedList(const polyMesh& mesh, Random& rndGen)
         PackedList<3> bits(mesh.nFaces());
         forAll(bits, facei)
         {
-            bits.set(facei, rndGen.integer(0,3));
+            bits.set(facei, rndGen.sampleAB<label>(0, 4));
         }
 
         labelList faceValues(mesh.nFaces());
@@ -209,11 +209,11 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
     {
         // Create some data. Use slightly perturbed positions.
         Map<point> sparseData;
-        pointField fullData(mesh.nPoints(), point(GREAT, GREAT, GREAT));
+        pointField fullData(mesh.nPoints(), point(great, great, great));
 
         forAll(localPoints, i)
         {
-            const point pt = localPoints[i] + 1e-4*rndGen.vector01();
+            const point pt = localPoints[i] + 1e-4*rndGen.sample01<vector>();
 
             label meshPointi = allBoundary.meshPoints()[i];
 
@@ -221,7 +221,7 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
             fullData[meshPointi] = pt;
         }
 
-        //Pout<< "sparseData:" << sparseData << endl;
+        // Pout<< "sparseData:" << sparseData << endl;
 
         syncTools::syncPointMap
         (
@@ -235,7 +235,7 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
             mesh,
             fullData,
             minMagSqrEqOp<point>(),
-            point(GREAT, GREAT, GREAT)
+            point(great, great, great)
             // true                    // apply separation
         );
 
@@ -245,7 +245,7 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
         {
             const point& fullPt = fullData[meshPointi];
 
-            if (fullPt != point(GREAT, GREAT, GREAT))
+            if (fullPt != point(great, great, great))
             {
                 const point& sparsePt = sparseData[meshPointi];
 
@@ -285,7 +285,7 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
     {
         // Create some data. Use slightly perturbed positions.
         EdgeMap<point> sparseData;
-        pointField fullData(mesh.nEdges(), point(GREAT, GREAT, GREAT));
+        pointField fullData(mesh.nEdges(), point(great, great, great));
 
         const edgeList& edges = allBoundary.edges();
         const labelList meshEdges = allBoundary.meshEdges
@@ -298,7 +298,8 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
         {
             const edge& e = edges[i];
 
-            const point pt = e.centre(localPoints) + 1e-4*rndGen.vector01();
+            const point pt =
+                e.centre(localPoints) + 1e-4*rndGen.sample01<vector>();
 
             label meshEdgeI = meshEdges[i];
 
@@ -306,7 +307,7 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
             fullData[meshEdgeI] = pt;
         }
 
-        //Pout<< "sparseData:" << sparseData << endl;
+        // Pout<< "sparseData:" << sparseData << endl;
 
         syncTools::syncEdgeMap
         (
@@ -319,7 +320,7 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
             mesh,
             fullData,
             minMagSqrEqOp<point>(),
-            point(GREAT, GREAT, GREAT)
+            point(great, great, great)
         );
 
         // Compare.
@@ -328,7 +329,7 @@ void testSparseData(const polyMesh& mesh, Random& rndGen)
         {
             const point& fullPt = fullData[meshEdgeI];
 
-            if (fullPt != point(GREAT, GREAT, GREAT))
+            if (fullPt != point(great, great, great))
             {
                 const point& sparsePt = sparseData[mesh.edges()[meshEdgeI]];
 
@@ -384,12 +385,12 @@ void testPointSync(const polyMesh& mesh, Random& rndGen)
             mesh,
             syncedPoints,
             minMagSqrEqOp<point>(),
-            point(GREAT, GREAT, GREAT)
+            point(great, great, great)
         );
 
         forAll(syncedPoints, pointi)
         {
-            if (mag(syncedPoints[pointi] - mesh.points()[pointi]) > SMALL)
+            if (mag(syncedPoints[pointi] - mesh.points()[pointi]) > small)
             {
                 FatalErrorInFunction
                     << "Point " << pointi
@@ -458,14 +459,14 @@ void testEdgeSync(const polyMesh& mesh, Random& rndGen)
             mesh,
             syncedMids,
             minMagSqrEqOp<point>(),
-            point(GREAT, GREAT, GREAT)
+            point(great, great, great)
         );
 
         forAll(syncedMids, edgeI)
         {
             point eMid = edges[edgeI].centre(mesh.points());
 
-            if (mag(syncedMids[edgeI] - eMid) > SMALL)
+            if (mag(syncedMids[edgeI] - eMid) > small)
             {
                 FatalErrorInFunction
                     << "Edge " << edgeI
@@ -534,7 +535,7 @@ void testFaceSync(const polyMesh& mesh, Random& rndGen)
 
         forAll(syncedFc, facei)
         {
-            if (mag(syncedFc[facei] - mesh.faceCentres()[facei]) > SMALL)
+            if (mag(syncedFc[facei] - mesh.faceCentres()[facei]) > small)
             {
                 FatalErrorInFunction
                     << "Face " << facei

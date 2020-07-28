@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,7 +94,7 @@ void Foam::fv::limitVelocity::correct(volVectorField& U)
 
         if (magSqrUi > maxSqrU)
         {
-            Uif[celli] *= maxSqrU/magSqrUi;
+            Uif[celli] *= sqrt(maxSqrU/magSqrUi);
         }
     }
 
@@ -115,7 +115,7 @@ void Foam::fv::limitVelocity::correct(volVectorField& U)
 
                     if (magSqrUi > maxSqrU)
                     {
-                        Up[facei] *= maxSqrU/magSqrUi;
+                        Up[facei] *= sqrt(maxSqrU/magSqrUi);
                     }
                 }
             }

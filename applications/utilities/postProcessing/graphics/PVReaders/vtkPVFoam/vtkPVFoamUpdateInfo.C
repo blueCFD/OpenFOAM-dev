@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -192,6 +192,9 @@ void Foam::vtkPVFoam::updateInfoLagrangian
 
     // Generate a list of lagrangian clouds across all times
     HashSet<fileName> cloudDirs;
+
+    // Get times list. Flush first to force refresh.
+    fileHandler().flush();
     instantList times = dbPtr_().times();
     forAll(times, timei)
     {
@@ -226,7 +229,8 @@ void Foam::vtkPVFoam::updateInfoLagrangian
 void Foam::vtkPVFoam::updateInfoPatches
 (
     vtkDataArraySelection* arraySelection,
-    stringList& enabledEntries
+    stringList& enabledEntries,
+    const bool first
 )
 {
     if (debug)
@@ -284,7 +288,11 @@ void Foam::vtkPVFoam::updateInfoPatches
                             const polyPatch& pp = patches[patchIDs[i]];
                             if (pp.size())
                             {
-                                string vtkPatchName = pp.name() + " - patch";
+                                string vtkPatchName
+                                (
+                                    pp.name() + " - " + pp.type()
+                                );
+
                                 enabledEntriesSet.insert(vtkPatchName);
                             }
                         }
@@ -305,11 +313,10 @@ void Foam::vtkPVFoam::updateInfoPatches
 
                 if (pp.size())
                 {
+                    const string vtkPatchName = pp.name() + " - " + pp.type();
+
                     // Add patch to GUI list
-                    arraySelection->AddArray
-                    (
-                        (pp.name() + " - patch").c_str()
-                    );
+                    arraySelection->AddArray(vtkPatchName.c_str());
 
                     ++nPatches;
                 }
@@ -420,8 +427,19 @@ void Foam::vtkPVFoam::updateInfoPatches
                             {
                                 if (sizes[patchIDs[i]])
                                 {
-                                    string vtkPatchName =
-                                        names[patchIDs[i]] + " - patch";
+                                    const word patchType
+                                    (
+                                        patchEntries[patchIDs[i]].dict().lookup
+                                        (
+                                            "type"
+                                        )
+                                    );
+
+                                    string vtkPatchName
+                                    (
+                                        names[patchIDs[i]] + " - " + patchType
+                                    );
+
                                     enabledEntriesSet.insert(vtkPatchName);
                                 }
                             }
@@ -436,15 +454,39 @@ void Foam::vtkPVFoam::updateInfoPatches
 
             if (!reader_->GetShowGroupsOnly())
             {
+                const wordReList defaultPatchTypes
+                (
+                    configDict_.lookupOrDefault
+                    (
+                        "defaultPatchTypes",
+                        wordReList(wordList({"patch", "wall"}))
+                    )
+                );
+
                 forAll(names, patchi)
                 {
                     // Valid patch if nFace > 0 - add patch to GUI list
                     if (sizes[patchi])
                     {
-                        arraySelection->AddArray
+                        const word patchType
                         (
-                            (names[patchi] + " - patch").c_str()
+                            patchEntries[patchi].dict().lookup("type")
                         );
+
+                        const string vtkPatchName
+                        (
+                            names[patchi] + " - " + patchType
+                        );
+
+                        arraySelection->AddArray(vtkPatchName.c_str());
+
+                        if (first)
+                        {
+                            if (findStrings(defaultPatchTypes, patchType))
+                            {
+                                enabledEntriesSet.insert(vtkPatchName);
+                            }
+                        }
 
                         ++nPatches;
                     }
@@ -667,6 +709,8 @@ void Foam::vtkPVFoam::updateInfoLagrangianFields()
     // set. ParaView will display "(partial)" after field names that only apply
     // to some of the clouds.
     const arrayRange& range = arrayRangeLagrangian_;
+
+    fileHandler().flush();
     for (label partId = range.start(); partId < range.end(); ++ partId)
     {
         const instantList times = dbPtr_().times();

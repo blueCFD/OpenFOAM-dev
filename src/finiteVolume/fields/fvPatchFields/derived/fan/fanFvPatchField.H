@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::fanFvPatchField
-
-Group
-    grpCoupledBoundaryConditions
 
 Description
     This boundary condition provides a jump condition, using the \c cyclic
@@ -56,7 +53,7 @@ Usage
             refColumn       0;
             componentColumns 1(1);
             separator       ",";
-            fileName        "$FOAM_CASE/constant/pressureVsU";
+            file           "$FOAM_CASE/constant/pressureVsU";
         }
         value           uniform 0;
     }
@@ -105,7 +102,7 @@ class fanFvPatchField
         word phiName_;
 
         //- Name of the density field used to normalise the mass flux
-        //  if neccessary
+        //  if necessary
         word rhoName_;
 
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -186,7 +186,7 @@ Foam::label Foam::snappyRefineDriver::surfaceOnlyRefine
     const fvMesh& mesh = meshRefiner_.mesh();
 
     // Determine the maximum refinement level over all surfaces. This
-    // determines the minumum number of surface refinement iterations.
+    // determines the minimum number of surface refinement iterations.
     label overallMaxLevel = max(meshRefiner_.surfaces().maxLevel());
 
     label iter;
@@ -306,7 +306,7 @@ Foam::label Foam::snappyRefineDriver::gapOnlyRefine
     const fvMesh& mesh = meshRefiner_.mesh();
 
     // Determine the maximum refinement level over all surfaces. This
-    // determines the minumum number of surface refinement iterations.
+    // determines the minimum number of surface refinement iterations.
 
     label maxIncrement = 0;
     const labelList& maxLevel = meshRefiner_.surfaces().maxLevel();
@@ -737,7 +737,7 @@ Foam::label Foam::snappyRefineDriver::shellRefine
     );
 
     // Determine the maximum refinement level over all volume refinement
-    // regions. This determines the minumum number of shell refinement
+    // regions. This determines the minimum number of shell refinement
     // iterations.
     label overallMaxShellLevel = meshRefiner_.shells().maxLevel();
 
@@ -790,7 +790,7 @@ Foam::label Foam::snappyRefineDriver::shellRefine
             findIndices(meshRefiner_.userFaceData()[0].second(), 0)
         );
 
-        //Info<< "Collected boundary faces : "
+        // Info<< "Collected boundary faces : "
         //    << returnReduce(bFaces.size(), sumOp<label>()) << endl;
 
         labelList cellsToRefine;
@@ -1232,7 +1232,7 @@ void Foam::snappyRefineDriver::doRefine
             << "---------------------" << nl
             << endl;
 
-        //if (debug)
+        // if (debug)
         //{
         //    const_cast<Time&>(mesh.time())++;
         //}

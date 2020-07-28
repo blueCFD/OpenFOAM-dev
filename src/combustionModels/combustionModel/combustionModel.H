@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,16 +59,23 @@ class combustionModel
         //- Disallow default bitwise assignment
         void operator=(const combustionModel&);
 
+        //- Construct the base IO object
+        IOobject createIOobject
+        (
+            basicThermo& thermo,
+            const word& combustionProperties
+        ) const;
+
 
 protected:
 
     // Protected data
 
-        //- Reference to the turbulence model
-        compressibleTurbulenceModel* turbulencePtr_;
-
         //- Reference to the mesh database
         const fvMesh& mesh_;
+
+        //- Reference to the turbulence model
+        const compressibleTurbulenceModel& turb_;
 
         //- Active
         Switch active_;
@@ -78,9 +85,6 @@ protected:
 
         //- Model type
         const word modelType_;
-
-        //- Phase name
-        const word phaseName_;
 
 
 public:
@@ -98,9 +102,21 @@ public:
         combustionModel
         (
             const word& modelType,
-            const fvMesh& mesh,
-            const word& combustionProperties=combustionPropertiesName,
-            const word& phaseName=word::null
+            basicThermo& thermo,
+            const compressibleTurbulenceModel& turb,
+            const word& combustionProperties=combustionPropertiesName
+        );
+
+
+    // Selectors
+
+        //- Generic New for each of the related chemistry model
+        template<class CombustionModel>
+        static autoPtr<CombustionModel> New
+        (
+            typename CombustionModel::reactionThermo& thermo,
+            const compressibleTurbulenceModel& turb,
+            const word& combustionProperties
         );
 
 
@@ -112,9 +128,6 @@ public:
 
         //- Return const access to the mesh database
         inline const fvMesh& mesh() const;
-
-        //- Set turbulence
-        inline void setTurbulence(compressibleTurbulenceModel& turbModel);
 
         //- Return access to turbulence
         inline const compressibleTurbulenceModel& turbulence() const;
@@ -152,6 +165,10 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "combustionModelI.H"
+
+#ifdef NoRepository
+    #include "combustionModelTemplates.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

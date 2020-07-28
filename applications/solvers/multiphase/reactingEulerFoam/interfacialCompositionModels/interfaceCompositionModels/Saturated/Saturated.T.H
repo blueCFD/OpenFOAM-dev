@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::Saturated
+    Foam::interfaceCompositionModels::Saturated
 
 Description
     Model which uses a saturation pressure model for a single species to
@@ -74,7 +74,7 @@ protected:
 
     // Private Member Functions
 
-        //- Constant of propotionality between partial pressure and mass
+        //- Constant of proportionality between partial pressure and mass
         //  fraction
         tmp<volScalarField> wRatioByP() const;
 
@@ -82,7 +82,7 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("Saturated");
+    TypeName("saturated");
 
     // Constructors
 

@@ -6,8 +6,10 @@ if ! onWin; then
 wclean libso phaseSystems
 wclean libso interfacialModels
 wclean libso interfacialCompositionModels
+wclean libso derivedFvPatchFields
 reactingTwoPhaseEulerFoam/Allwclean
 reactingMultiphaseEulerFoam/Allwclean
+wclean libso functionObjects
 
 else
 

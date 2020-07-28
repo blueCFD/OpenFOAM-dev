@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -223,7 +223,7 @@ void Foam::pointConstraints::makePatchPatchAddressing()
 
                 if (iter == patchPatchPointSet.end())
                 {
-                    //Pout<< indent << "on meshpoint:" << meshPointi
+                    // Pout<< indent << "on meshpoint:" << meshPointi
                     //    << " coupled:" << coupledPointi
                     //    << " at:" << mesh.points()[meshPointi]
                     //    << " have new constraint:"
@@ -241,7 +241,7 @@ void Foam::pointConstraints::makePatchPatchAddressing()
                 }
                 else
                 {
-                    //Pout<< indent << "on meshpoint:" << meshPointi
+                    // Pout<< indent << "on meshpoint:" << meshPointi
                     //    << " coupled:" << coupledPointi
                     //    << " at:" << mesh.points()[meshPointi]
                     //    << " have possibly extended constraint:"

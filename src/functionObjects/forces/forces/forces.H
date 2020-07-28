@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::functionObjects::forces
-
-Group
-    grpForcesFunctionObjects
 
 Description
     Calculates the forces and moments by integrating the pressure and
@@ -181,7 +178,7 @@ protected:
             //- Reference pressure
             scalar pRef_;
 
-            //- Coordinate system used when evaluting forces/moments
+            //- Coordinate system used when evaluating forces/moments
             coordinateSystem coordSys_;
 
             //- Flag to indicate whether we are using a local co-ordinate sys

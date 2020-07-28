@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -226,8 +226,6 @@ void readPoints
             (
                 is
             )   << "Points not in order starting at point " << pointi
-                //<< " at line " << is.lineNumber()
-                //<< abort(FatalError);
                 << endl;
         }
 
@@ -478,6 +476,13 @@ void readCells
 
     Info<< "Read " << cellVerts.size() << " cells"
         << " and " << boundaryFaces.size() << " boundary faces." << endl;
+
+    if (!cellVerts.size())
+    {
+        WarningInFunction
+            << "There are no cells in the mesh." << endl
+            << "    Note: 2D meshes are not supported."<< endl;
+    }
 }
 
 
@@ -572,7 +577,7 @@ void readDOFS
     DynamicList<labelList>& dofVertices
 )
 {
-    Info<< "Starting reading contraints at line " << is.lineNumber() << '.'
+    Info<< "Starting reading constraints at line " << is.lineNumber() << '.'
         << endl;
 
     string line;
@@ -678,7 +683,7 @@ int main(int argc, char *argv[])
 
 
     // Switch on additional debug info
-    const bool verbose = false; //true;
+    const bool verbose = false; // true;
 
     // Unit scale factors
     scalar lengthScale = 1;
@@ -937,7 +942,7 @@ int main(int argc, char *argv[])
         Info<< "Using " << dofVertIndices.size()
             << " DOF sets to detect boundary faces."<< endl;
 
-        // Renumber vertex numbers on contraints
+        // Renumber vertex numbers on constraints
         forAll(dofVertIndices, patchi)
         {
             inplaceRenumber(unvToFoam, dofVertIndices[patchi]);
@@ -1222,7 +1227,7 @@ int main(int argc, char *argv[])
                 forAll(indizes, i)
                 {
                     const label old = oldIndizes[i];
-                    label noveau = -1;
+                    label nouveau = -1;
                     label c1 = -1, c2 = -1;
                     if (faceToCell[0].found(old))
                     {
@@ -1246,9 +1251,9 @@ int main(int argc, char *argv[])
                             if (own[j] == c1)
                             {
                                 const face& f = boundaryFaces[old];
-                                if (mag(centers[j]- f.centre(points)) < SMALL)
+                                if (mag(centers[j]- f.centre(points)) < small)
                                 {
-                                    noveau = j;
+                                    nouveau = j;
                                     break;
                                 }
                             }
@@ -1264,13 +1269,13 @@ int main(int argc, char *argv[])
                              || (c2 == own[j] && c1 == nei[j])
                             )
                             {
-                                noveau = j;
+                                nouveau = j;
                                 break;
                             }
                         }
                     }
-                    assert(noveau > -1);
-                    indizes[i] = noveau;
+                    assert(nouveau > -1);
+                    indizes[i] = nouveau;
                 }
                 fZones[cnt] = new faceZone
                 (

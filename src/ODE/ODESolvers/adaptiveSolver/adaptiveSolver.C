@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ void Foam::adaptiveSolver::solve
             scalar scale = max(safeScale_*pow(err, -alphaDec_), minScale_);
             dx *= scale;
 
-            if (dx < VSMALL)
+            if (dx < vSmall)
             {
                 FatalErrorInFunction
                     << "stepsize underflow"

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,8 +72,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef function1_saturationModel_H
-#define function1_saturationModel_H
+#ifndef function1_H
+#define function1_H
 
 #include "saturationModel.H"
 #include "Function1.T.H"
@@ -107,7 +107,7 @@ public:
     // Constructors
 
         //- Construct from a dictionary
-        function1(const dictionary& dict);
+        function1(const dictionary& dict, const objectRegistry& db);
 
 
     //- Destructor

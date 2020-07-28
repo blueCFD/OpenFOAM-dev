@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,12 +32,10 @@ Description
         externalStart_ .. internalStart_-1  : external edges
         internalStart_ .. size-1            : internal edges
 
-
     NOTE: angle is included angle, not feature angle and is in degrees.
     The included angle is the smallest angle between two planes. For coplanar
     faces it is 180, for straight angles it is 90. To pick up straight edges
     only use included angle of 91 degrees
-
 
 SourceFiles
     surfaceFeatures.C
@@ -53,6 +51,8 @@ SourceFiles
 #include "pointIndexHit.H"
 #include "edgeList.H"
 #include "typeInfo.H"
+#include "boundBox.H"
+#include "plane.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -418,9 +418,46 @@ public:
     // Member Operators
 
         void operator=(const surfaceFeatures&);
-
-
 };
+
+
+//- Select edges inside or outside bounding box
+void selectBox
+(
+    const triSurface& surf,
+    const boundBox& bb,
+    const bool removeInside,
+    List<surfaceFeatures::edgeStatus>& edgeStat
+);
+
+//- Select edges that are intersected by the given plane
+void selectCutEdges
+(
+    const triSurface& surf,
+    const plane& cutPlane,
+    List<surfaceFeatures::edgeStatus>& edgeStat
+);
+
+//- Divide into multiple normal bins
+//  - return REGION if != 2 normals
+//  - return REGION if 2 normals that make feature angle
+//  - otherwise return NONE and set normals,bins
+surfaceFeatures::edgeStatus checkNonManifoldEdge
+(
+    const triSurface& surf,
+    const scalar tol,
+    const scalar includedAngle,
+    const label edgei
+);
+
+//- Select manifold edges
+void selectManifoldEdges
+(
+    const triSurface& surf,
+    const scalar tol,
+    const scalar includedAngle,
+    List<surfaceFeatures::edgeStatus>& edgeStat
+);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

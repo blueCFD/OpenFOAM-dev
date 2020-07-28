@@ -7,9 +7,11 @@ global/etcFiles/etcFiles.C
 
 fileOps = global/fileOperations
 $(fileOps)/fileOperation/fileOperation.C
+$(fileOps)/fileOperationInitialise/fileOperationInitialise.C
 $(fileOps)/uncollatedFileOperation/uncollatedFileOperation.C
 $(fileOps)/masterUncollatedFileOperation/masterUncollatedFileOperation.C
 $(fileOps)/collatedFileOperation/collatedFileOperation.C
+$(fileOps)/collatedFileOperation/hostCollatedFileOperation.C
 $(fileOps)/collatedFileOperation/threadedCollatedOFstream.C
 $(fileOps)/collatedFileOperation/OFstreamCollator.C
 
@@ -42,6 +44,7 @@ $(ints)/uLabel/uLabel.C
 $(ints)/lists/labelIOList.C
 $(ints)/lists/labelListIOList.C
 
+primitives/Scalar/longDoubleScalar/longDoubleScalar.C
 primitives/Scalar/doubleScalar/doubleScalar.C
 primitives/Scalar/floatScalar/floatScalar.C
 primitives/Scalar/scalar/scalar.C
@@ -85,7 +88,7 @@ primitives/septernion/septernion.C
 primitives/triad/triad.C
 
 /* Run-time selectable functions */
-primitives/functions/Function1/makeDataEntries.C
+primitives/functions/Function1/makeFunction1s.C
 primitives/functions/Function1/ramp/ramp.C
 primitives/functions/Function1/linearRamp/linearRamp.C
 primitives/functions/Function1/quadraticRamp/quadraticRamp.C
@@ -119,8 +122,7 @@ sha1 = primitives/hashes/SHA1
 $(sha1)/SHA1.C
 $(sha1)/SHA1Digest.C
 
-primitives/random/Random/Random.C
-primitives/random/cachedRandom/cachedRandom.C
+primitives/Random/Random.C
 
 ranges = primitives/ranges
 $(ranges)/labelRange/labelRange.C
@@ -268,7 +270,6 @@ $(Time)/Time.T.C
 $(Time)/TimeIO.T.C
 $(Time)/findTimes.C
 $(Time)/subCycleTime.C
-$(Time)/findInstance.C
 $(Time)/timeSelector.C
 
 $(Time)/instant/instant.C
@@ -404,6 +405,7 @@ primitiveShapes = meshes/primitiveShapes
 $(primitiveShapes)/line/line.C
 $(primitiveShapes)/plane/plane.C
 $(primitiveShapes)/triangle/intersection.C
+$(primitiveShapes)/objectHit/pointIndexHitList.C
 $(primitiveShapes)/objectHit/pointIndexHitIOList.C
 
 meshShapes = meshes/meshShapes

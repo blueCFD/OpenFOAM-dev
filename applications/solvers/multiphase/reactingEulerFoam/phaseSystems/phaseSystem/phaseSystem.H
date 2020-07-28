@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,52 +73,19 @@ public:
 
     // Public typedefs
 
-        typedef
-            HashPtrTable
-            <
-                volScalarField,
-                phasePairKey,
-                phasePairKey::hash
-            >
-            KdTable;
+        typedef HashPtrTable<fvVectorMatrix> momentumTransferTable;
 
-        typedef
-            HashPtrTable
-            <
-                volScalarField,
-                phasePairKey,
-                phasePairKey::hash
-            >
-            VmTable;
+        typedef HashPtrTable<fvScalarMatrix> heatTransferTable;
 
-        typedef
-            HashPtrTable
-            <
-                fvVectorMatrix,
-                word,
-                string::hash
-            >
-            momentumTransferTable;
-
-        typedef
-            HashPtrTable
-            <
-                fvScalarMatrix,
-                word,
-                string::hash
-            >
-            heatTransferTable;
-
-        typedef
-            HashPtrTable
-            <
-                fvScalarMatrix,
-                word,
-                string::hash
-            >
-            massTransferTable;
+        typedef HashPtrTable<fvScalarMatrix> massTransferTable;
 
         typedef PtrListDictionary<phaseModel> phaseModelList;
+
+        typedef UPtrList<phaseModel> phaseModelPartialList;
+
+        typedef
+            HashTable<autoPtr<phasePair>, phasePairKey, phasePairKey::hash>
+            phasePairTable;
 
 
 protected:
@@ -128,10 +95,6 @@ protected:
         typedef
             HashTable<dictionary, phasePairKey, phasePairKey::hash>
             dictTable;
-
-        typedef
-            HashTable<autoPtr<phasePair>, phasePairKey, phasePairKey::hash>
-            phasePairTable;
 
         typedef
             HashTable<autoPtr<blendingMethod>, word, word::hash>
@@ -163,6 +126,18 @@ protected:
 
         //- Phase models
         phaseModelList phaseModels_;
+
+        //- Moving phase models
+        phaseModelPartialList movingPhaseModels_;
+
+        //- Stationary phase models
+        phaseModelPartialList stationaryPhaseModels_;
+
+        //- Anisothermal phase models
+        phaseModelPartialList anisothermalPhaseModels_;
+
+        //- Multi-component phase models
+        phaseModelPartialList multiComponentPhaseModels_;
 
         //- Phase pairs
         phasePairTable phasePairs_;
@@ -239,21 +214,67 @@ protected:
                 autoPtr<BlendedInterfacialModel<modelType>>,
                 phasePairKey,
                 phasePairKey::hash
-            >& models
+            >& models,
+            const bool correctFixedFluxBCs = true
         );
 
-        //- Generate pairs and per-phase sub-model tables
+        //- Generate pairs and two-sided sub-model tables
         template<class modelType>
         void generatePairsAndSubModels
         (
             const word& modelName,
             HashTable
             <
-                HashTable<autoPtr<modelType>>,
+                Pair<autoPtr<modelType>>,
                 phasePairKey,
                 phasePairKey::hash
-            >& models
+            >& models,
+            const bool correctFixedFluxBCs = true
         );
+
+        //- Add the field to a phase-indexed list, with the given name,
+        //  constructing if necessary
+        template<class GeoField>
+        void addField
+        (
+            const phaseModel& phase,
+            const word& fieldName,
+            tmp<GeoField> field,
+            PtrList<GeoField>& fieldList
+        ) const;
+
+        //- Add the field to a phase-indexed list, with the given name,
+        //  constructing if necessary
+        template<class GeoField>
+        void addField
+        (
+            const phaseModel& phase,
+            const word& fieldName,
+            const GeoField& field,
+            PtrList<GeoField>& fieldList
+        ) const;
+
+        //- Add the field to a phase-indexed table, with the given name,
+        //  constructing if necessary
+        template<class GeoField>
+        void addField
+        (
+            const phaseModel& phase,
+            const word& fieldName,
+            tmp<GeoField> field,
+            HashPtrTable<GeoField>& fieldTable
+        ) const;
+
+        //- Add the field to a phase-indexed table, with the given name,
+        //  constructing if necessary
+        template<class GeoField>
+        void addField
+        (
+            const phaseModel& phase,
+            const word& fieldName,
+            const GeoField& field,
+            HashPtrTable<GeoField>& fieldTable
+        ) const;
 
 
 public:
@@ -277,82 +298,242 @@ public:
 
     // Member Functions
 
-        //- Constant access the mesh
-        inline const fvMesh& mesh() const;
+        // Access
 
-        //- Constant access the phase models
-        inline const phaseModelList& phases() const;
+            //- Return the mesh
+            inline const fvMesh& mesh() const;
 
-        //- Access the phase models
-        inline phaseModelList& phases();
+            //- Return the phase models
+            inline const phaseModelList& phases() const;
 
-        //- Constant access the phase pairs
-        inline const phasePairTable& phasePairs() const;
+            //- Access the phase models
+            inline phaseModelList& phases();
 
-        //- Return the mixture density
-        tmp<volScalarField> rho() const;
+            //- Return the models for phases that are moving
+            inline const phaseModelPartialList& movingPhases() const;
 
-        //- Return the mixture velocity
-        tmp<volVectorField> U() const;
+            //- Access the models for phases that are moving
+            inline phaseModelPartialList& movingPhases();
 
-        //- Constant access the mixture flux
-        inline const surfaceScalarField& phi() const;
+            //- Return the models for phases that are stationary
+            inline const phaseModelPartialList& stationaryPhases() const;
 
-        //- Access the mixture flux
-        inline surfaceScalarField& phi();
+            //- Access the models for phases that are stationary
+            inline phaseModelPartialList& stationaryPhases();
 
-        //- Constant access the rate of change of the pressure
-        inline const volScalarField& dpdt() const;
+            //- Return the models for phases that have variable temperature
+            inline const phaseModelPartialList& anisothermalPhases() const;
 
-        //- Access the rate of change of the pressure
-        inline volScalarField& dpdt();
+            //- Access the models for phases that have variable temperature
+            inline phaseModelPartialList& anisothermalPhases();
 
-        //- Return the aspect-ratio
-        tmp<volScalarField> E(const phasePairKey& key) const;
+            //- Return the models for phases that have multiple species
+            inline const phaseModelPartialList& multiComponentPhases() const;
 
-        //- Return the surface tension coefficient
-        tmp<volScalarField> sigma(const phasePairKey& key) const;
+            //- Access the models for phases that have multiple species
+            inline phaseModelPartialList& multiComponentPhases();
 
-        //- Return MRF zones
-        inline const IOMRFZoneList& MRF() const;
+            //- Return the phase pairs
+            inline const phasePairTable& phasePairs() const;
 
-        //- Optional FV-options
-        inline fv::options& fvOptions() const;
+            //- Return the mixture flux
+            inline const surfaceScalarField& phi() const;
 
-        //- Access a sub model between a phase pair
-        template<class modelType>
-        const modelType& lookupSubModel(const phasePair& key) const;
+            //- Access the mixture flux
+            inline surfaceScalarField& phi();
 
-        //- Access a sub model between two phases
-        template<class modelType>
-        const modelType& lookupSubModel
-        (
-            const phaseModel& dispersed,
-            const phaseModel& continuous
-        ) const;
+            //- Return the rate of change of the pressure
+            inline const volScalarField& dpdt() const;
 
-        //- Solve for the phase fractions
-        virtual void solve();
+            //- Access the rate of change of the pressure
+            inline volScalarField& dpdt();
 
-        //- Correct the fluid properties other than the thermo and turbulence
-        virtual void correct();
+            //- Return MRF zones
+            inline const IOMRFZoneList& MRF() const;
 
-        //- Correct the kinematics
-        virtual void correctKinematics();
+            //- Access the fvOptions
+            inline fv::options& fvOptions() const;
 
-        //- Correct the thermodynamics
-        virtual void correctThermo();
 
-        //- Correct the turbulence
-        virtual void correctTurbulence();
+        // Sub-model lookup
 
-        //- Correct the energy transport e.g. alphat
-        virtual void correctEnergyTransport();
+            //- Return a sub model between a phase pair
+            template<class modelType>
+            const modelType& lookupSubModel(const phasePair& key) const;
 
-        //- Read base phaseProperties dictionary
-        virtual bool read();
+            //- Return a sub model between two phases
+            template<class modelType>
+            const modelType& lookupSubModel
+            (
+                const phaseModel& dispersed,
+                const phaseModel& continuous
+            ) const;
+
+            //- Return a blended sub model between a phase pair
+            template<class modelType>
+            const BlendedInterfacialModel<modelType>&
+            lookupBlendedSubModel(const phasePair& key) const;
+
+
+        // Field construction
+
+            //- Fill up gaps in a phase-indexed list of fields with zeros
+            template
+            <
+                class Type,
+                template<class> class PatchField,
+                class GeoMesh
+            >
+            void fillFields
+            (
+                const word& name,
+                const dimensionSet& dims,
+                PtrList<GeometricField<Type, PatchField, GeoMesh>>& fieldList
+            ) const;
+
+            //- Fill up gaps in a phase-indexed table of fields with zeros
+            template
+            <
+                class Type,
+                template<class> class PatchField,
+                class GeoMesh
+            >
+            void fillFields
+            (
+                const word& name,
+                const dimensionSet& dims,
+                HashPtrTable<GeometricField<Type, PatchField, GeoMesh>>&
+                    fieldTable
+            ) const;
+
+
+        // Properties
+
+            //- Return the mixture density
+            tmp<volScalarField> rho() const;
+
+            //- Return the mixture velocity
+            tmp<volVectorField> U() const;
+
+            //- Return the aspect-ratio for a pair
+            tmp<volScalarField> E(const phasePairKey& key) const;
+
+            //- Return the surface tension coefficient for a pair
+            tmp<volScalarField> sigma(const phasePairKey& key) const;
+
+            //- Return the mass transfer rate for a pair
+            virtual tmp<volScalarField> dmdt(const phasePairKey& key) const;
+
+            //- Return the mass transfer rates for each phase
+            virtual Xfer<PtrList<volScalarField>> dmdts() const;
+
+
+        // Transfers
+
+            //- Return the momentum transfer matrices for the cell-based
+            //  algorithm
+            virtual autoPtr<momentumTransferTable> momentumTransfer() = 0;
+
+            //- Return the momentum transfer matrices for the face-based
+            //  algorithm
+            virtual autoPtr<momentumTransferTable> momentumTransferf() = 0;
+
+            //- Return the implicit force coefficients for the face-based
+            //  algorithm
+            virtual Xfer<PtrList<surfaceScalarField>> AFfs() const = 0;
+
+            //- Return the force fluxes for the cell-based algorithm
+            virtual Xfer<PtrList<surfaceScalarField>> phiFs
+            (
+                const PtrList<volScalarField>& rAUs
+            ) = 0;
+
+            //- Return the force fluxes for the face-based algorithm
+            virtual Xfer<PtrList<surfaceScalarField>> phiFfs
+            (
+                const PtrList<surfaceScalarField>& rAUfs
+            ) = 0;
+
+            //- Return the force fluxes for the cell-based algorithm
+            virtual Xfer<PtrList<surfaceScalarField>> phiKdPhis
+            (
+                const PtrList<volScalarField>& rAUs
+            ) const = 0;
+
+            //- Return the force fluxes for the face-based algorithm
+            virtual Xfer<PtrList<surfaceScalarField>> phiKdPhifs
+            (
+                const PtrList<surfaceScalarField>& rAUfs
+            ) const = 0;
+
+            //- Return the explicit part of the drag force
+            virtual Xfer<PtrList<volVectorField>> KdUByAs
+            (
+                const PtrList<volScalarField>& rAUs
+            ) const = 0;
+
+            //- Solve the drag system for the new velocities and fluxes
+            virtual void partialElimination
+            (
+                const PtrList<volScalarField>& rAUs
+            ) = 0;
+
+            //- Solve the drag system for the new fluxes
+            virtual void partialEliminationf
+            (
+                const PtrList<surfaceScalarField>& rAUfs
+            ) = 0;
+
+            //- Return the flux corrections for the cell-based algorithm
+            virtual Xfer<PtrList<surfaceScalarField>> ddtCorrByAs
+            (
+                const PtrList<volScalarField>& rAUs,
+                const bool includeVirtualMass = false
+            ) const = 0;
+
+            //- Return the phase diffusivities divided by the momentum
+            //  coefficients
+            virtual const HashPtrTable<surfaceScalarField>& DByAfs() const = 0;
+
+            //- Return the heat transfer matrices
+            virtual autoPtr<heatTransferTable> heatTransfer() const = 0;
+
+            //- Return the mass transfer matrices
+            virtual autoPtr<massTransferTable> massTransfer() const = 0;
+
+
+        // Evolution
+
+            //- Solve for the phase fractions
+            virtual void solve();
+
+            //- Correct the fluid properties other than those listed below
+            virtual void correct();
+
+            //- Correct the kinematics
+            virtual void correctKinematics();
+
+            //- Correct the thermodynamics
+            virtual void correctThermo();
+
+            //- Correct the turbulence
+            virtual void correctTurbulence();
+
+            //- Correct the energy transport e.g. alphat
+            virtual void correctEnergyTransport();
+
+
+        // IO
+
+            //- Read base phaseProperties dictionary
+            virtual bool read();
 };
 
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+tmp<volScalarField> byDt(const volScalarField& vf);
+tmp<surfaceScalarField> byDt(const surfaceScalarField& sf);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

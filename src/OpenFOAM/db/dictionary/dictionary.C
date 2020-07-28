@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,7 +105,7 @@ const Foam::entry* Foam::dictionary::lookupScopedSubEntryPtr
             const entry* entPtr = lookupScopedSubEntryPtr
             (
                 firstWord,
-                false,          //recursive
+                false,          // recursive
                 patternMatch
             );
 
@@ -126,7 +126,7 @@ const Foam::entry* Foam::dictionary::lookupScopedSubEntryPtr
                     const entry* subEntPtr = lookupEntryPtr
                     (
                         keyword.substr(0, nextDotPos),
-                        false,  //recursive,
+                        false,  // recursive,
                         patternMatch
                     );
                     if (nextDotPos == string::npos)

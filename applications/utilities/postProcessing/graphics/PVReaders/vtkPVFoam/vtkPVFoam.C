@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,6 +31,7 @@ License
 #include "Time.T.H"
 #include "patchZones.H"
 #include "collatedFileOperation.H"
+#include "etcFiles.H"
 
 // VTK includes
 #include "vtkDataArraySelection.h"
@@ -43,7 +44,7 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(vtkPVFoam, 0);
+    defineTypeNameAndDebug(vtkPVFoam, 0);
 }
 
 
@@ -96,7 +97,8 @@ int Foam::vtkPVFoam::setTime(int nRequest, const double requestTimes[])
 {
     Time& runTime = dbPtr_();
 
-    // Get times list
+    // Get times list. Flush first to force refresh.
+    fileHandler().flush();
     instantList Times = runTime.times();
 
     int nearestIndex = timeIndex_;
@@ -217,7 +219,7 @@ void Foam::vtkPVFoam::updateMeshPartsStatus()
 
 Foam::vtkPVFoam::vtkPVFoam
 (
-    const char* const FileName,
+    const char* const vtkFileName,
     vtkPVFoamReader* reader
 )
 :
@@ -241,18 +243,14 @@ Foam::vtkPVFoam::vtkPVFoam
 {
     if (debug)
     {
-        Info<< "Foam::vtkPVFoam::vtkPVFoam - " << FileName << endl;
+        Info<< "Foam::vtkPVFoam::vtkPVFoam - " << vtkFileName << endl;
         printMemory();
     }
 
-    // Make sure not to use the threaded version - it does not like
-    // being loaded as a shared library - static cleanup order is problematic.
-    // For now just disable the threaded writer.
-    fileOperations::collatedFileOperation::maxThreadFileBufferSize = 0;
-
+    fileName FileName(vtkFileName);
 
     // avoid argList and get rootPath/caseName directly from the file
-    fileName fullCasePath(fileName(FileName).path());
+    fileName fullCasePath(FileName.path());
 
     if (!isDir(fullCasePath))
     {
@@ -263,9 +261,21 @@ Foam::vtkPVFoam::vtkPVFoam
         fullCasePath = cwd();
     }
 
-    // Set the case as an environment variable - some BCs might use this
+
+    if (fullCasePath.name().find("processors", 0) == 0)
+    {
+        // FileName e.g. "cavity/processors256/processor1.OpenFOAM
+        // Remove the processors section so it goes into processorDDD
+        // checking below.
+        fullCasePath = fullCasePath.path()/fileName(FileName.name()).lessExt();
+    }
+
+
     if (fullCasePath.name().find("processor", 0) == 0)
     {
+        // Give filehandler opportunity to analyse number of processors
+        (void)fileHandler().filePath(fullCasePath);
+
         const fileName globalCase = fullCasePath.path();
 
         setEnv("FOAM_CASE", globalCase, true);
@@ -280,7 +290,7 @@ Foam::vtkPVFoam::vtkPVFoam
     // look for 'case{region}.OpenFOAM'
     // could be stringent and insist the prefix match the directory name...
     // Note: cannot use fileName::name() due to the embedded '{}'
-    string caseName(fileName(FileName).lessExt());
+    string caseName(FileName.lessExt());
     string::size_type beg = caseName.find_last_of("/{");
     string::size_type end = caseName.find('}', beg);
 
@@ -325,6 +335,12 @@ Foam::vtkPVFoam::vtkPVFoam
 
     dbPtr_().functionObjects().off();
 
+    fileNameList configDictFiles = findEtcFiles("paraFoam", false);
+    forAllReverse(configDictFiles, cdfi)
+    {
+        configDict_.merge(dictionary(IFstream(configDictFiles[cdfi])()));
+    }
+
     updateInfo();
 }
 
@@ -368,7 +384,8 @@ void Foam::vtkPVFoam::updateInfo()
     // enable 'internalMesh' on the first call
     // or preserve the enabled selections
     stringList enabledEntries;
-    if (!partSelection->GetNumberOfArrays() && !meshPtr_)
+    bool first = !partSelection->GetNumberOfArrays() && !meshPtr_;
+    if (first)
     {
         enabledEntries.setSize(1);
         enabledEntries[0] = "internalMesh";
@@ -383,7 +400,7 @@ void Foam::vtkPVFoam::updateInfo()
 
     // Update mesh parts list - add Lagrangian at the bottom
     updateInfoInternalMesh(partSelection);
-    updateInfoPatches(partSelection, enabledEntries);
+    updateInfoPatches(partSelection, enabledEntries, first);
     updateInfoSets(partSelection);
     updateInfoZones(partSelection);
     updateInfoLagrangian(partSelection);
@@ -554,6 +571,8 @@ double* Foam::vtkPVFoam::findTimes(int& nTimeSteps)
     if (dbPtr_.valid())
     {
         Time& runTime = dbPtr_();
+        // Get times list. Flush first to force refresh.
+        fileHandler().flush();
         instantList timeLst = runTime.times();
 
         // find the first time for which this mesh appears to exist
@@ -593,7 +612,7 @@ double* Foam::vtkPVFoam::findTimes(int& nTimeSteps)
         // skip "0/" time if requested and possible
         if (nTimes > 1 && reader_->GetSkipZeroTime())
         {
-            if (mag(timeLst[timeI].value()) < SMALL)
+            if (mag(timeLst[timeI].value()) < small)
             {
                 ++timeI;
                 --nTimes;

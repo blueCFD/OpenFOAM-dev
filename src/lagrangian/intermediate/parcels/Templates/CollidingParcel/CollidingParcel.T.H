@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,6 +117,10 @@ public:
             //- Return const access to Poisson's ratio
             inline scalar poissonsRatio() const;
     };
+
+
+    //- Use base tracking data
+    typedef typename ParcelType::trackingData trackingData;
 
 
 protected:
@@ -286,8 +290,13 @@ public:
         // Tracking
 
             //- Move the parcel
-            template<class TrackData>
-            bool move(TrackData& td, const scalar trackTime);
+            template<class TrackCloudType>
+            bool move
+            (
+                TrackCloudType& cloud,
+                trackingData& td,
+                const scalar trackTime
+            );
 
             //- Transform the physical properties of the particle
             //  according to the given transformation tensor

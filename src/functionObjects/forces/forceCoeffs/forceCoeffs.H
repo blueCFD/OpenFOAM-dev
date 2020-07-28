@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::functionObjects::forceCoeffs
-
-Group
-    grpForcesFunctionObjects
 
 Description
     Extends the forces functionObject by providing lift, drag and moment
@@ -60,7 +57,7 @@ Description
 Usage
     \table
         Property     | Description             | Required    | Default value
-        type         | type name: forces       | yes         |
+        type         | type name: forceCoeffs  | yes         |
         log          | write force data to standard output | no | no
         patches      | patches included in the forces calculation | yes |
         liftDir      | lift direction          | yes         |

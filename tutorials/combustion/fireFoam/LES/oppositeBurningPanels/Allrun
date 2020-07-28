@@ -5,7 +5,7 @@ cd ${0%/*} || exit 1    # Run from this directory
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
 # Set application name
-application=`getApplication`
+application=$(getApplication)
 
 runApplication blockMesh
 
@@ -26,8 +26,6 @@ runApplication -s fBurner \
 
 runApplication createPatch -overwrite
 
-cp 0/ph_rgh.orig 0/ph_rgh
-
 runApplication -s master \
     decomposePar -force
 
@@ -37,7 +35,7 @@ runApplication -s panelRegion \
 runApplication -s fields \
     decomposePar -fields
 
-runParallel `getApplication`
+runParallel $(getApplication)
 
 paraFoam -touch
 paraFoam -touch -region panelRegion

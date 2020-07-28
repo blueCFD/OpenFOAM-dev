@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,7 +58,7 @@ bool Foam::mapNearestMethod::findInitialSeeds
         {
             const point& srcCc = srcCcs[srcI];
             pointIndexHit hit =
-                tgt_.cellTree().findNearest(srcCc, GREAT);
+                tgt_.cellTree().findNearest(srcCc, great);
 
             if (hit.hit())
             {
@@ -219,7 +219,7 @@ void Foam::mapNearestMethod::findNearestCell
 
     DynamicList<label> visitedCells(10);
 
-    scalar d = GREAT;
+    scalar d = great;
 
     do
     {

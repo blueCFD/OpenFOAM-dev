@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,8 +45,8 @@ Foam::treeBoundBox Foam::treeDataCell::calcCellBb(const label celli) const
 
     treeBoundBox cellBb
     (
-        vector(GREAT, GREAT, GREAT),
-        vector(-GREAT, -GREAT, -GREAT)
+        vector(great, great, great),
+        vector(-great, -great, -great)
     );
 
     const cell& cFaces = cells[celli];

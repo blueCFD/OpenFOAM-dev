@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,6 +61,7 @@ template<class CloudType>
 Foam::forceSuSp Foam::GravityForce<CloudType>::calcNonCoupled
 (
     const typename CloudType::parcelType& p,
+    const typename CloudType::parcelType::trackingData& td,
     const scalar dt,
     const scalar mass,
     const scalar Re,
@@ -69,7 +70,7 @@ Foam::forceSuSp Foam::GravityForce<CloudType>::calcNonCoupled
 {
     forceSuSp value(Zero, 0.0);
 
-    value.Su() = mass*g_*(1.0 - p.rhoc()/p.rho());
+    value.Su() = mass*g_*(1.0 - td.rhoc()/p.rho());
 
     return value;
 }

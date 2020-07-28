@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,10 +29,6 @@ Description
     phases according the interfacial temperature approximated by the saturation
     temperature.
 
-    Currently only a single specified specie is considered volatile and changes
-    phase, all other species are considered nonvolatile and do not
-    affect the mass-transfer.
-
 SourceFiles
     ThermalPhaseChangePhaseSystem.C
 
@@ -41,7 +37,7 @@ SourceFiles
 #ifndef ThermalPhaseChangePhaseSystem_H
 #define ThermalPhaseChangePhaseSystem_H
 
-#include "HeatAndMassTransferPhaseSystem.T.H"
+#include "phaseSystem.H"
 #include "saturationModel.H"
 #include "Switch.H"
 
@@ -57,10 +53,22 @@ namespace Foam
 template<class BasePhaseSystem>
 class ThermalPhaseChangePhaseSystem
 :
-    public HeatAndMassTransferPhaseSystem<BasePhaseSystem>
+    public BasePhaseSystem
 {
 
 protected:
+
+    // Protected typedefs
+
+        typedef HashPtrTable<volScalarField, phasePairKey, phasePairKey::hash>
+            iDmdtTable;
+
+        typedef HashPtrTable<volScalarField, phasePairKey, phasePairKey::hash>
+            wDmdtTable;
+
+        typedef HashPtrTable<volScalarField, phasePairKey, phasePairKey::hash>
+            wMDotLTable;
+
 
     // Protected data
 
@@ -70,12 +78,26 @@ protected:
         //- The saturation model used to evaluate Tsat = Tf
         autoPtr<saturationModel> saturationModel_;
 
-        // Mass transfer enabled
-        Switch massTransfer_;
+        // Phase change enabled
+        Switch phaseChange_;
 
         //- Interfacial Mass transfer rate
-        HashPtrTable<volScalarField, phasePairKey, phasePairKey::hash>
-            iDmdt_;
+        iDmdtTable iDmdt_;
+
+        //- Boundary Mass transfer rate
+        wDmdtTable wDmdt_;
+
+        //- Boundary thermal energy transfer rate
+        wMDotLTable wMDotL_;
+
+
+    // Protected member functions
+
+        //- Return the interfacial mass transfer rate for a pair
+        tmp<volScalarField> iDmdt(const phasePairKey& key) const;
+
+        //- Return the boundary mass transfer rate for a pair
+        tmp<volScalarField> wDmdt(const phasePairKey& key) const;
 
 
 public:
@@ -95,20 +117,20 @@ public:
         //- Return the saturationModel
         const saturationModel& saturation() const;
 
+        //- Return the mass transfer rate for a pair
+        virtual tmp<volScalarField> dmdt(const phasePairKey& key) const;
+
+        //- Return the mass transfer rates for each phase
+        virtual Xfer<PtrList<volScalarField>> dmdts() const;
+
         //- Return the heat transfer matrices
         virtual autoPtr<phaseSystem::heatTransferTable> heatTransfer() const;
 
         //- Return the mass transfer matrices
         virtual autoPtr<phaseSystem::massTransferTable> massTransfer() const;
 
-        //- Return the interfacial mass flow rate
-        virtual tmp<volScalarField> iDmdt(const phasePairKey& key) const;
-
-        //- Return the total interfacial mass transfer rate for phase
-        virtual tmp<volScalarField> iDmdt(const phaseModel& phase) const;
-
-        //- Correct the thermodynamics
-        virtual void correctThermo();
+        //- Correct the interface thermodynamics
+        virtual void correctInterfaceThermo();
 
         //- Read base phaseProperties dictionary
         virtual bool read();

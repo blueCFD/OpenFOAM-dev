@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createControl.H"
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
             volScalarField rAB(1.0/BEqn.A());
             surfaceScalarField rABf("rABf", fvc::interpolate(rAB));
 
-            phiB = fvc::flux(B) + rABf*fvc::ddtCorr(B, phiB);
+            phiB = fvc::flux(B);
 
             while (bpiso.correctNonOrthogonal())
             {

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -190,7 +190,7 @@ Foam::point Foam::cell::centre
     // relationship, which is not available on this level. Thus, all the
     // pyramids are believed to be positive with no checking.
 
-    // first calculate the aproximate cell centre as the average of all
+    // first calculate the approximate cell centre as the average of all
     // face centres
     vector cEst = Zero;
     scalar sumArea = 0;
@@ -204,7 +204,7 @@ Foam::point Foam::cell::centre
         sumArea += a;
     }
 
-    cEst /= sumArea + VSMALL;
+    cEst /= sumArea + vSmall;
 
     // Calculate the centre by breaking the cell into pyramids and
     // volume-weighted averaging their centres
@@ -231,7 +231,7 @@ Foam::point Foam::cell::centre
         sumV += pyrVol;
     }
 
-    return sumVc/(sumV + VSMALL);
+    return sumVc/(sumV + vSmall);
 }
 
 
@@ -249,7 +249,7 @@ Foam::scalar Foam::cell::mag
 
     // WARNING! See cell::centre
 
-    // first calculate the aproximate cell centre as the average of all
+    // first calculate the approximate cell centre as the average of all
     // face centres
     vector cEst = Zero;
     scalar nCellFaces = 0;

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,13 +53,21 @@ class multiphaseSystem
 :
     public phaseSystem
 {
-    // Private data
+private:
 
-        volScalarField alphas_;
+    // Private typedefs
 
         typedef HashTable<scalar, phasePairKey, phasePairKey::hash>
             cAlphaTable;
 
+
+    // Private data
+
+        //- The indexed phase-fraction field; e.g., 1 for water, 2 for air, 3
+        //  for oil, etc...
+        volScalarField alphas_;
+
+        //-
         cAlphaTable cAlphas_;
 
         //- Stabilisation for normalisation of the interface normal
@@ -100,25 +108,21 @@ class multiphaseSystem
             const phaseModel& alpha2
         ) const;
 
-
         //- Return the drag coefficient for phase pair
         virtual tmp<volScalarField> Kd(const phasePairKey& key) const = 0;
-
-        //- Return the face drag coefficient for phase pair
-        virtual tmp<surfaceScalarField> Kdf(const phasePairKey& key) const = 0;
 
         //- Return the virtual mass coefficient for phase pair
         virtual tmp<volScalarField> Vm(const phasePairKey& key) const = 0;
 
-        //- Return the face virtual mass coefficient for phase pair
-        virtual tmp<surfaceScalarField> Vmf(const phasePairKey& key) const = 0;
 
-        //- Return the turbulent diffusivity for phase pair
-        //  Multiplies the phase-fraction gradient
-        virtual tmp<volScalarField> D(const phasePairKey& key) const = 0;
+protected:
 
-        //- Return the interfacial mass flow rate for phase pair
-        virtual tmp<volScalarField> dmdt(const phasePairKey& key) const = 0;
+    // Protected data
+
+        //- Flag to indicate that returned lists of fields are "complete"; i.e.,
+        //  that an absence of force is returned as a constructed list of zeros,
+        //  rather than a null pointer
+        static const bool fillFields_ = false;
 
 
 public:
@@ -160,36 +164,10 @@ public:
 
     // Member Functions
 
-        //- Return the drag coefficient for all phase-pairs
-        virtual const phaseSystem::KdTable& Kds() const = 0;
+        using phaseSystem::sigma;
+        using phaseSystem::dmdts;
 
-        //- Return the drag coefficient for phase
-        virtual tmp<volScalarField> Kd(const phaseModel& phase) const = 0;
-
-        //- Return the combined force (lift + wall-lubrication) for phase pair
-        virtual autoPtr<PtrList<Foam::volVectorField>> Fs() const = 0;
-
-        //- Return the turbulent dispersion force on faces for phase pair
-        virtual autoPtr<PtrList<Foam::surfaceScalarField>> phiDs
-        (
-            const PtrList<volScalarField>& rAUs
-        ) const = 0;
-
-        //- Return true if there is mass transfer for phase
-        virtual bool transfersMass(const phaseModel& phase) const = 0;
-
-        //- Return the total interfacial mass transfer rate for phase
-        virtual tmp<volScalarField> dmdt(const phaseModel& phase) const = 0;
-
-        //- Return the momentum transfer matrices
-        virtual autoPtr<momentumTransferTable> momentumTransfer() const = 0;
-
-        //- Return the heat transfer matrices
-        virtual autoPtr<heatTransferTable> heatTransfer() const = 0;
-
-        //- Return the mass transfer matrices
-        virtual autoPtr<massTransferTable> massTransfer() const = 0;
-
+        //- Return the surface tension force
         tmp<surfaceScalarField> surfaceTension(const phaseModel& phase) const;
 
         //- Indicator of the proximity of the interface

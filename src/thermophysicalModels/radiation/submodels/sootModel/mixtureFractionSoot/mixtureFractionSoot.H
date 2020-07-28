@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ Class
     Foam::radiation::mixtureFractionSoot
 
 Description
-    This soot model is purely an state model. The ammount of soot produced is
+    This soot model is purely an state model. The amount of soot produced is
     determined by a single step chemistry as :
 
         nuf Fuel + nuOx Ox = nuP P + nuSoot soot

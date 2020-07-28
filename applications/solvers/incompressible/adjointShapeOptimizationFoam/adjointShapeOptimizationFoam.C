@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,12 +71,11 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createControl.H"
     #include "createFields.H"
-    #include "createFvOptions.H"
     #include "initContinuityErrs.H"
     #include "initAdjointContinuityErrs.H"
 
@@ -86,13 +85,13 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
-    while (simple.loop())
+    while (simple.loop(runTime))
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         laminarTransport.lookup("lambda") >> lambda;
 
-        //alpha +=
+        // alpha +=
         //    mesh.relaxationFactor("alpha")
         //   *(lambda*max(Ua & U, zeroSensitivity) - alpha);
         alpha +=
@@ -100,7 +99,7 @@ int main(int argc, char *argv[])
            *(min(max(alpha + lambda*(Ua & U), zeroAlpha), alphaMax) - alpha);
 
         zeroCells(alpha, inletCells);
-        //zeroCells(alpha, outletCells);
+        // zeroCells(alpha, outletCells);
 
         // Pressure-velocity SIMPLE corrector
         {
@@ -166,7 +165,7 @@ int main(int argc, char *argv[])
             // Adjoint Momentum predictor
 
             volVectorField adjointTransposeConvection((fvc::grad(Ua) & U));
-            //volVectorField adjointTransposeConvection
+            // volVectorField adjointTransposeConvection
             //(
             //    fvc::reconstruct
             //    (

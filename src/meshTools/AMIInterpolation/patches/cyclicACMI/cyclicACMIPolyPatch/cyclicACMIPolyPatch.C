@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,10 +42,7 @@ const Foam::scalar Foam::cyclicACMIPolyPatch::tolerance_ = 1e-10;
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-void Foam::cyclicACMIPolyPatch::resetAMI
-(
-    const AMIPatchToPatchInterpolation::interpolationMethod&
-) const
+void Foam::cyclicACMIPolyPatch::resetAMI() const
 {
     if (owner())
     {
@@ -67,35 +64,21 @@ void Foam::cyclicACMIPolyPatch::resetAMI
                     << endl;
             }
 
-            //WarningInFunction
-            //    << "The mesh already has cellCentres calculated when"
-            //    << " resetting ACMI " << name() << "." << endl
-            //    << "This is a problem since ACMI adapts the face areas"
-            //    << " (to close cells) so this has" << endl
-            //    << "to be done before cell centre calculation." << endl
-            //    << "This can happen if e.g. the cyclicACMI is after"
-            //    << " any processor patches in the boundary." << endl;
             const_cast<polyMesh&>
             (
                 boundaryMesh().mesh()
             ).primitiveMesh::clearGeom();
         }
 
-
         // Trigger re-building of faceAreas
         (void)boundaryMesh().mesh().faceAreas();
-
 
         // Calculate the AMI using partial face-area-weighted. This leaves
         // the weights as fractions of local areas (sum(weights) = 1 means
         // face is fully covered)
-        cyclicAMIPolyPatch::resetAMI
-        (
-            AMIPatchToPatchInterpolation::imPartialFaceAreaWeight
-        );
+        cyclicAMIPolyPatch::resetAMI();
 
-        AMIPatchToPatchInterpolation& AMI =
-            const_cast<AMIPatchToPatchInterpolation&>(this->AMI());
+        AMIPatchToPatchInterpolation& AMI = this->AMIs_[0];
 
         srcMask_ =
             min(scalar(1) - tolerance_, max(tolerance_, AMI.srcWeightsSum()));
@@ -180,25 +163,10 @@ void Foam::cyclicACMIPolyPatch::resetAMI
 
 void Foam::cyclicACMIPolyPatch::initGeometry(PstreamBuffers& pBufs)
 {
-    if (debug)
-    {
-        Pout<< "cyclicACMIPolyPatch::initGeometry : " << name() << endl;
-    }
-
     cyclicAMIPolyPatch::initGeometry(pBufs);
 
     // Initialise the AMI
     resetAMI();
-}
-
-
-void Foam::cyclicACMIPolyPatch::calcGeometry(PstreamBuffers& pBufs)
-{
-    if (debug)
-    {
-        Pout<< "cyclicACMIPolyPatch::calcGeometry : " << name() << endl;
-    }
-    cyclicAMIPolyPatch::calcGeometry(pBufs);
 }
 
 
@@ -208,58 +176,10 @@ void Foam::cyclicACMIPolyPatch::initMovePoints
     const pointField& p
 )
 {
-    if (debug)
-    {
-        Pout<< "cyclicACMIPolyPatch::initMovePoints : " << name() << endl;
-    }
     cyclicAMIPolyPatch::initMovePoints(pBufs, p);
 
     // Initialise the AMI
     resetAMI();
-}
-
-
-void Foam::cyclicACMIPolyPatch::movePoints
-(
-    PstreamBuffers& pBufs,
-    const pointField& p
-)
-{
-    if (debug)
-    {
-        Pout<< "cyclicACMIPolyPatch::movePoints : " << name() << endl;
-    }
-    cyclicAMIPolyPatch::movePoints(pBufs, p);
-}
-
-
-void Foam::cyclicACMIPolyPatch::initUpdateMesh(PstreamBuffers& pBufs)
-{
-    if (debug)
-    {
-        Pout<< "cyclicACMIPolyPatch::initUpdateMesh : " << name() << endl;
-    }
-    cyclicAMIPolyPatch::initUpdateMesh(pBufs);
-}
-
-
-void Foam::cyclicACMIPolyPatch::updateMesh(PstreamBuffers& pBufs)
-{
-    if (debug)
-    {
-        Pout<< "cyclicACMIPolyPatch::updateMesh : " << name() << endl;
-    }
-    cyclicAMIPolyPatch::updateMesh(pBufs);
-}
-
-
-void Foam::cyclicACMIPolyPatch::clearGeom()
-{
-    if (debug)
-    {
-        Pout<< "cyclicACMIPolyPatch::clearGeom : " << name() << endl;
-    }
-    cyclicAMIPolyPatch::clearGeom();
 }
 
 
@@ -288,15 +208,24 @@ Foam::cyclicACMIPolyPatch::cyclicACMIPolyPatch
     const transformType transform
 )
 :
-    cyclicAMIPolyPatch(name, size, start, index, bm, patchType, transform),
+    cyclicAMIPolyPatch
+    (
+        name,
+        size,
+        start,
+        index,
+        bm,
+        patchType,
+        transform,
+        false,
+        AMIPatchToPatchInterpolation::imPartialFaceAreaWeight
+    ),
     nonOverlapPatchName_(word::null),
     nonOverlapPatchID_(-1),
     srcMask_(),
     tgtMask_(),
     updated_(false)
 {
-    AMIRequireMatch_ = false;
-
     // Non-overlapping patch might not be valid yet so cannot determine
     // associated patchID
 }
@@ -311,15 +240,22 @@ Foam::cyclicACMIPolyPatch::cyclicACMIPolyPatch
     const word& patchType
 )
 :
-    cyclicAMIPolyPatch(name, dict, index, bm, patchType),
+    cyclicAMIPolyPatch
+    (
+        name,
+        dict,
+        index,
+        bm,
+        patchType,
+        false,
+        AMIPatchToPatchInterpolation::imPartialFaceAreaWeight
+    ),
     nonOverlapPatchName_(dict.lookup("nonOverlapPatch")),
     nonOverlapPatchID_(-1),
     srcMask_(),
     tgtMask_(),
     updated_(false)
 {
-    AMIRequireMatch_ = false;
-
     if (nonOverlapPatchName_ == name)
     {
         FatalIOErrorInFunction
@@ -348,8 +284,6 @@ Foam::cyclicACMIPolyPatch::cyclicACMIPolyPatch
     tgtMask_(),
     updated_(false)
 {
-    AMIRequireMatch_ = false;
-
     // Non-overlapping patch might not be valid yet so cannot determine
     // associated patchID
 }
@@ -373,8 +307,6 @@ Foam::cyclicACMIPolyPatch::cyclicACMIPolyPatch
     tgtMask_(),
     updated_(false)
 {
-    AMIRequireMatch_ = false;
-
     if (nonOverlapPatchName_ == name())
     {
         FatalErrorInFunction
@@ -404,7 +336,8 @@ Foam::cyclicACMIPolyPatch::cyclicACMIPolyPatch
     tgtMask_(),
     updated_(false)
 {
-    AMIRequireMatch_ = false;
+    // Non-overlapping patch might not be valid yet so cannot determine
+    // associated patchID
 }
 
 
@@ -462,7 +395,7 @@ Foam::label Foam::cyclicACMIPolyPatch::nonOverlapPatchID() const
 
             forAll(magSf, facei)
             {
-                scalar ratio = mag(magSf[facei]/(noMagSf[facei] + ROOTVSMALL));
+                scalar ratio = mag(magSf[facei]/(noMagSf[facei] + rootVSmall));
 
                 if (ratio - 1 > tolerance_)
                 {

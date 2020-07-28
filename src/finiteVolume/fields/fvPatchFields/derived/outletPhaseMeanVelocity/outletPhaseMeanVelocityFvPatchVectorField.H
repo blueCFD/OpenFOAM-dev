@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,6 @@ License
 Class
     Foam::outletPhaseMeanVelocityFvPatchVectorField
 
-Group
-    grpOutletBoundaryConditions
-
 Description
     This boundary condition adjusts the velocity for the given phase to achieve
     the specified mean thus causing the phase-fraction to adjust according to
@@ -39,6 +36,7 @@ Usage
     \table
         Property     | Description             | Required    | Default value
         Umean        | mean velocity normal to the boundary [m/s] | yes |
+        ramp         | ramping function for the mean flow speed | no | None
         alpha        | phase-fraction field    | yes |
     \endtable
 
@@ -66,6 +64,7 @@ SourceFiles
 #define outletPhaseMeanVelocityFvPatchVectorField_H
 
 #include "mixedFvPatchFields.H"
+#include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -83,6 +82,9 @@ class outletPhaseMeanVelocityFvPatchVectorField
 
         //- Inlet integral flow rate
         scalar Umean_;
+
+        //- Ramp for the mean flow rate
+        autoPtr<Function1<scalar>> ramp_;
 
         //- Name of the phase-fraction field
         word alphaName_;
@@ -162,21 +164,6 @@ public:
 
 
     // Member functions
-
-        // Access
-
-            //- Return the flux
-            scalar Umean() const
-            {
-                return Umean_;
-            }
-
-            //- Return reference to the flux to allow adjustment
-            scalar& Umean()
-            {
-                return Umean_;
-            }
-
 
         //- Update the coefficients associated with the patch field
         virtual void updateCoeffs();

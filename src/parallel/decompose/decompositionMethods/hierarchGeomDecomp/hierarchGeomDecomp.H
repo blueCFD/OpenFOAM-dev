@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,7 +90,7 @@ class hierarchGeomDecomp
             scalarField& sortedWeightedSizes
         );
 
-        //- Find index of t in list inbetween indices left and right
+        //- Find index of t in list in between indices left and right
         static label findLower
         (
             const List<scalar>&,
@@ -104,7 +104,7 @@ class hierarchGeomDecomp
         //  wantedSize. Binary search.
         static void findBinary
         (
-            const label sizeTol,        // size difference considered acceptible
+            const label sizeTol,        // size difference considered acceptable
             const List<scalar>&,
             const label leftIndex,      // index of previous value
             const scalar leftValue,     // value at leftIndex
@@ -119,7 +119,7 @@ class hierarchGeomDecomp
         //  wantedSize. Binary search.
         static void findBinary
         (
-            const label sizeTol,        // size difference considered acceptible
+            const label sizeTol,        // size difference considered acceptable
             const List<scalar>& sortedWeightedSizes,
             const List<scalar>&,
             const label leftIndex,      // index of previous value

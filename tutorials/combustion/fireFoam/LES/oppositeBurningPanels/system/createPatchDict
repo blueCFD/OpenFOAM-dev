@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -45,6 +45,9 @@ FoamFile
 //       with transformations (i.e. cyclics).
 pointSync false;
 
+// Optional: Write cyclic matches into .obj format; defaults to false.
+writeCyclicMatch  false;
+
 // Patches to create.
 patches
 (
@@ -62,7 +65,7 @@ patches
         constructFrom set;
 
         // If constructFrom = patches : names of patches. Wildcards allowed.
-        //patches (periodic1);
+        // patches (periodic1);
 
         // If constructFrom = set : name of faceSet
         set fBurner;

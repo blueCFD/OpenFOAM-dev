@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::functionObjects::wallHeatFlux
-
-Group
-    grpForcesFunctionObjects
 
 Description
     Calculates and write the heat-flux at wall patches as the
@@ -63,7 +60,6 @@ See also
     Foam::functionObjects::fvMeshFunctionObject
     Foam::functionObjects::logFiles
     Foam::functionObjects::writeLocalObjects
-    Foam::functionObjects::pressureTools
     Foam::functionObjects::timeControl
 
 SourceFiles
@@ -77,8 +73,8 @@ SourceFiles
 #include "fvMeshFunctionObject.H"
 #include "logFiles.H"
 #include "writeLocalObjects.H"
-#include "volFieldsFwd.H"
 #include "HashSet.T.H"
+#include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

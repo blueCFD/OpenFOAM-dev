@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,6 +55,7 @@ class edge;
 class labelledTri;
 class polyBoundaryMesh;
 class plane;
+class boundBox;
 
 /*---------------------------------------------------------------------------*\
                            Class triSurfaceTools Declaration
@@ -186,7 +187,7 @@ class triSurfaceTools
 
             ////- Checks if edge collapse creates triangles on top of each
             ////  other
-            //static bool collapseCreatesDuplicates
+            // static bool collapseCreatesDuplicates
             //(
             //    const triSurface& surf,
             //    const label edgeI,
@@ -278,7 +279,7 @@ public:
         );
 
         ////- Order vertices consistent with face
-        //static void orderVertices
+        // static void orderVertices
         //(
         //    const labelledTri& f,
         //    const label v1,
@@ -472,6 +473,16 @@ public:
             const labelHashSet& includePatches,
             const bool verbose = false
         );
+
+
+        static triSurface triangulate
+        (
+            const polyBoundaryMesh& bMesh,
+            const labelHashSet& includePatches,
+            const boundBox& bBox,
+            const bool verbose = false
+        );
+
 
         //- Face-centre triangulation of (selected patches of) boundaryMesh.
         //  Needs

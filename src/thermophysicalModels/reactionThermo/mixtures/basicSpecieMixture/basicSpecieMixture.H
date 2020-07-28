@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,9 +84,6 @@ public:
 
             //- Molecular weight of the given specie [kg/kmol]
             virtual scalar W(const label speciei) const = 0;
-
-            //- Molecular weight of the mixture [kg/kmol]
-            tmp<volScalarField> W() const;
 
 
         // Per specie thermo properties

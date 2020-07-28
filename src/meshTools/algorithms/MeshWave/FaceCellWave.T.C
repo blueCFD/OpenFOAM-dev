@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -484,6 +484,26 @@ void Foam::FaceCellWave<Type, TrackingData>::transform
 
 
 template<class Type, class TrackingData>
+void Foam::FaceCellWave<Type, TrackingData>::transform
+(
+    const vectorTensorTransform& trans,
+    const label nFaces,
+    List<Type>& faceInfo
+)
+{
+    // Transform. Implementation referred to Type
+
+    if (trans.hasR())
+    {
+        for (label facei = 0; facei < nFaces; facei++)
+        {
+            faceInfo[facei].transform(mesh_, trans.R(), td_);
+        }
+    }
+}
+
+
+template<class Type, class TrackingData>
 void Foam::FaceCellWave<Type, TrackingData>::offset
 (
     const polyPatch&,
@@ -505,7 +525,7 @@ void Foam::FaceCellWave<Type, TrackingData>::offset
 template<class Type, class TrackingData>
 void Foam::FaceCellWave<Type, TrackingData>::handleProcPatches()
 {
-    // Tranfer all the information to/from neighbouring processors
+    // Transfer all the information to/from neighbouring processors
 
     const globalMeshData& pData = mesh_.globalData();
 
@@ -556,7 +576,7 @@ void Foam::FaceCellWave<Type, TrackingData>::handleProcPatches()
         }
 
         UOPstream toNeighbour(procPatch.neighbProcNo(), pBufs);
-        //writeFaces(nSendFaces, sendFaces, sendFacesInfo, toNeighbour);
+        // writeFaces(nSendFaces, sendFaces, sendFacesInfo, toNeighbour);
         toNeighbour
             << SubList<label>(sendFaces, nSendFaces)
             << SubList<Type>(sendFacesInfo, nSendFaces);
@@ -750,18 +770,51 @@ void Foam::FaceCellWave<Type, TrackingData>::handleAMICyclicPatches()
                 // Transfer sendInfo to cycPatch
                 combine<Type, TrackingData> cmb(*this, cycPatch);
 
+                List<Type> defVals;
                 if (cycPatch.applyLowWeightCorrection())
                 {
-                    List<Type> defVals
-                    (
-                        cycPatch.patchInternalList(allCellInfo_)
-                    );
+                    defVals = cycPatch.patchInternalList(allCellInfo_);
+                }
 
-                    cycPatch.interpolate(sendInfo, cmb, receiveInfo, defVals);
+                if (cycPatch.owner())
+                {
+                    forAll(cycPatch.AMIs(), i)
+                    {
+                        List<Type> sendInfoT(sendInfo);
+                        transform
+                        (
+                            cycPatch.AMITransforms()[i],
+                            sendInfoT.size(),
+                            sendInfoT
+                        );
+                        cycPatch.AMIs()[i].interpolateToSource
+                        (
+                            sendInfoT,
+                            cmb,
+                            receiveInfo,
+                            defVals
+                        );
+                    }
                 }
                 else
                 {
-                    cycPatch.interpolate(sendInfo, cmb, receiveInfo);
+                    forAll(cycPatch.neighbPatch().AMIs(), i)
+                    {
+                        List<Type> sendInfoT(sendInfo);
+                        transform
+                        (
+                            cycPatch.neighbPatch().AMITransforms()[i],
+                            sendInfoT.size(),
+                            sendInfoT
+                        );
+                        cycPatch.neighbPatch().AMIs()[i].interpolateToTarget
+                        (
+                            sendInfoT,
+                            cmb,
+                            receiveInfo,
+                            defVals
+                        );
+                    }
                 }
             }
 

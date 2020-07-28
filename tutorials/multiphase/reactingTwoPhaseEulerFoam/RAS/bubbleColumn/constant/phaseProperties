@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-type    heatAndMomentumTransferTwoPhaseSystem;
+type    basicTwoPhaseSystem;
 
 phases (air water);
 
@@ -47,6 +47,15 @@ water
 blending
 {
     default
+    {
+        type            linear;
+        minFullyContinuousAlpha.air 0.7;
+        minPartlyContinuousAlpha.air 0.3;
+        minFullyContinuousAlpha.water 0.7;
+        minPartlyContinuousAlpha.water 0.3;
+    }
+
+    drag
     {
         type            linear;
         minFullyContinuousAlpha.air 0.7;
@@ -142,6 +151,10 @@ heatTransfer
         type            RanzMarshall;
         residualAlpha   1e-4;
     }
+);
+
+phaseTransfer
+(
 );
 
 lift

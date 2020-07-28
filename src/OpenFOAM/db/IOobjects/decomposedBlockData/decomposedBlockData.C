@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,8 +31,10 @@ License
 #include "IFstream.H"
 #include "IStringStream.H"
 #include "dictionary.H"
-#include <sys/time.h>
 #include "objectRegistry.H"
+#include "SubList.T.H"
+#include "labelPair.H"
+#include "masterUncollatedFileOperation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -579,10 +581,149 @@ Foam::autoPtr<Foam::ISstream> Foam::decomposedBlockData::readBlocks
     headerIO.rename(name);
     Pstream::scatter(headerIO.headerClassName(), Pstream::msgType(), comm);
     Pstream::scatter(headerIO.note(), Pstream::msgType(), comm);
-    //Pstream::scatter(headerIO.instance(), Pstream::msgType(), comm);
-    //Pstream::scatter(headerIO.local(), Pstream::msgType(), comm);
+    // Pstream::scatter(headerIO.instance(), Pstream::msgType(), comm);
+    // Pstream::scatter(headerIO.local(), Pstream::msgType(), comm);
 
     return realIsPtr;
+}
+
+
+void Foam::decomposedBlockData::gather
+(
+    const label comm,
+    const label data,
+    labelList& datas
+)
+{
+    const label nProcs = UPstream::nProcs(comm);
+    datas.setSize(nProcs);
+
+    char* data0Ptr = reinterpret_cast<char*>(datas.begin());
+
+    List<int> recvOffsets;
+    List<int> recvSizes;
+    if (UPstream::master(comm))
+    {
+        recvOffsets.setSize(nProcs);
+        forAll(recvOffsets, proci)
+        {
+            // Note: truncating long int to int since UPstream::gather limited
+            // to ints
+            recvOffsets[proci] =
+                int(reinterpret_cast<char*>(&datas[proci]) - data0Ptr);
+        }
+        recvSizes.setSize(nProcs, sizeof(label));
+    }
+
+    UPstream::gather
+    (
+        reinterpret_cast<const char*>(&data),
+        sizeof(label),
+        data0Ptr,
+        recvSizes,
+        recvOffsets,
+        comm
+    );
+}
+
+
+void Foam::decomposedBlockData::gatherSlaveData
+(
+    const label comm,
+    const UList<char>& data,
+    const labelUList& recvSizes,
+
+    const label startProc,
+    const label nProcs,
+
+    List<int>& sliceOffsets,
+    List<char>& recvData
+)
+{
+    // Calculate master data
+    List<int> sliceSizes;
+    if (UPstream::master(comm))
+    {
+        const label numProcs = UPstream::nProcs(comm);
+
+        sliceSizes.setSize(numProcs, 0);
+        sliceOffsets.setSize(numProcs+1, 0);
+
+        int totalSize = 0;
+        label proci = startProc;
+        for (label i = 0; i < nProcs; i++)
+        {
+            sliceSizes[proci] = int(recvSizes[proci]);
+            sliceOffsets[proci] = totalSize;
+            totalSize += sliceSizes[proci];
+            proci++;
+        }
+        sliceOffsets[proci] = totalSize;
+        recvData.setSize(totalSize);
+    }
+
+    int nSend = 0;
+    if
+    (
+       !UPstream::master(comm)
+     && (UPstream::myProcNo(comm) >= startProc)
+     && (UPstream::myProcNo(comm) < startProc+nProcs)
+    )
+    {
+        // Note: UPstream::gather limited to int
+        nSend = int(data.byteSize());
+    }
+
+    UPstream::gather
+    (
+        data.begin(),
+        nSend,
+
+        recvData.begin(),
+        sliceSizes,
+        sliceOffsets,
+        comm
+    );
+}
+
+
+Foam::label Foam::decomposedBlockData::calcNumProcs
+(
+    const label comm,
+    const off_t maxBufferSize,
+    const labelUList& recvSizes,
+    const label startProci
+)
+{
+    const label nProcs = UPstream::nProcs(comm);
+
+    label nSendProcs = -1;
+    if (UPstream::master(comm))
+    {
+        off_t totalSize = recvSizes[startProci];
+        label proci = startProci+1;
+        while (proci < nProcs && (totalSize+recvSizes[proci] < maxBufferSize))
+        {
+            totalSize += recvSizes[proci];
+            proci++;
+        }
+
+        nSendProcs = proci-startProci;
+    }
+
+    // Scatter nSendProcs
+    label n;
+    UPstream::scatter
+    (
+        reinterpret_cast<const char*>(&nSendProcs),
+        List<int>(nProcs, sizeof(nSendProcs)),
+        List<int>(nProcs, 0),
+        reinterpret_cast<char*>(&n),
+        sizeof(n),
+        comm
+    );
+
+    return n;
 }
 
 
@@ -592,6 +733,10 @@ bool Foam::decomposedBlockData::writeBlocks
     autoPtr<OSstream>& osPtr,
     List<std::streamoff>& start,
     const UList<char>& data,
+
+    const labelUList& recvSizes,
+    const PtrList<SubList<char>>& slaveData,
+
     const UPstream::commsTypes commsType,
     const bool syncReturnState
 )
@@ -601,20 +746,53 @@ bool Foam::decomposedBlockData::writeBlocks
         Pout<< "decomposedBlockData::writeBlocks:"
             << " stream:" << (osPtr.valid() ? osPtr().name() : "invalid")
             << " data:" << data.size()
+            << " (master only) slaveData:" << slaveData.size()
             << " commsType:" << Pstream::commsTypeNames[commsType] << endl;
     }
 
+    const label nProcs = UPstream::nProcs(comm);
+
     bool ok = true;
 
-    labelList recvSizes(Pstream::nProcs(comm));
-    recvSizes[Pstream::myProcNo(comm)] = data.byteSize();
-    Pstream::gatherList(recvSizes, Pstream::msgType(), comm);
+    if (slaveData.size())
+    {
+        // Already have gathered the slave data. communicator only used to
+        // check who is the master
 
-    if (commsType == UPstream::commsTypes::scheduled)
+        if (UPstream::master(comm))
+        {
+            OSstream& os = osPtr();
+
+            start.setSize(nProcs);
+
+            // Write master data
+            {
+                os << nl << "// Processor" << UPstream::masterNo() << nl;
+                start[UPstream::masterNo()] = os.stdStream().tellp();
+                os << data;
+            }
+
+            // Write slaves
+
+            label slaveOffset = 0;
+
+            for (label proci = 1; proci < nProcs; proci++)
+            {
+                os << nl << nl << "// Processor" << proci << nl;
+                start[proci] = os.stdStream().tellp();
+
+                os << slaveData[proci];
+                slaveOffset += recvSizes[proci];
+            }
+
+            ok = os.good();
+        }
+    }
+    else if (commsType == UPstream::commsTypes::scheduled)
     {
         if (UPstream::master(comm))
         {
-            start.setSize(UPstream::nProcs(comm));
+            start.setSize(nProcs);
 
             OSstream& os = osPtr();
 
@@ -626,7 +804,7 @@ bool Foam::decomposedBlockData::writeBlocks
             }
             // Write slaves
             List<char> elems;
-            for (label proci = 1; proci < UPstream::nProcs(comm); proci++)
+            for (label proci = 1; proci < nProcs; proci++)
             {
                 elems.setSize(recvSizes[proci]);
                 IPstream::read
@@ -661,101 +839,94 @@ bool Foam::decomposedBlockData::writeBlocks
     }
     else
     {
-        if (debug)
+        // Write master data
+        if (UPstream::master(comm))
         {
-            struct timeval tv;
-            gettimeofday(&tv, nullptr);
-            Pout<< "Starting sending at:"
-                << 1.0*tv.tv_sec+tv.tv_usec/1e6 << " s"
-                << Foam::endl;
-        }
-
-
-        label startOfRequests = Pstream::nRequests();
-
-        if (!UPstream::master(comm))
-        {
-            UOPstream::write
-            (
-                UPstream::commsTypes::nonBlocking,
-                UPstream::masterNo(),
-                data.begin(),
-                data.byteSize(),
-                Pstream::msgType(),
-                comm
-            );
-            Pstream::waitRequests(startOfRequests);
-        }
-        else
-        {
-            List<List<char>> recvBufs(Pstream::nProcs(comm));
-            for (label proci = 1; proci < UPstream::nProcs(comm); proci++)
-            {
-                recvBufs[proci].setSize(recvSizes[proci]);
-                UIPstream::read
-                (
-                    UPstream::commsTypes::nonBlocking,
-                    proci,
-                    recvBufs[proci].begin(),
-                    recvSizes[proci],
-                    Pstream::msgType(),
-                    comm
-                );
-            }
-
-            if (debug)
-            {
-                struct timeval tv;
-                gettimeofday(&tv, nullptr);
-                Pout<< "Starting master-only writing at:"
-                    << 1.0*tv.tv_sec+tv.tv_usec/1e6 << " s"
-                    << Foam::endl;
-            }
-
-            start.setSize(UPstream::nProcs(comm));
+            start.setSize(nProcs);
 
             OSstream& os = osPtr();
 
-            // Write master data
+            os << nl << "// Processor" << UPstream::masterNo() << nl;
+            start[UPstream::masterNo()] = os.stdStream().tellp();
+            os << data;
+        }
+
+
+        // Find out how many processor can be received into
+        // maxMasterFileBufferSize
+
+        // Starting slave processor and number of processors
+        label startProc = 1;
+        label nSendProcs = nProcs-1;
+
+        while (nSendProcs > 0 && startProc < nProcs)
+        {
+            nSendProcs = calcNumProcs
+            (
+                comm,
+                off_t
+                (
+                    fileOperations::masterUncollatedFileOperation::
+                    maxMasterFileBufferSize
+                ),
+                recvSizes,
+                startProc
+            );
+
+            if (nSendProcs == 0)
             {
-                os << nl << "// Processor" << UPstream::masterNo() << nl;
-                start[UPstream::masterNo()] = os.stdStream().tellp();
-                os << data;
+                break;
             }
 
-            if (debug)
-            {
-                struct timeval tv;
-                gettimeofday(&tv, nullptr);
-                Pout<< "Starting slave writing at:"
-                    << 1.0*tv.tv_sec+tv.tv_usec/1e6 << " s"
-                    << Foam::endl;
-            }
 
-            // Write slaves
-            for (label proci = 1; proci < UPstream::nProcs(comm); proci++)
-            {
-                os << nl << nl << "// Processor" << proci << nl;
-                start[proci] = os.stdStream().tellp();
+            // Gather data from (a slice of) the slaves
+            List<int> sliceOffsets;
+            List<char> recvData;
+            gatherSlaveData
+            (
+                comm,
+                data,
+                recvSizes,
 
-                if (Pstream::finishedRequest(startOfRequests+proci-1))
+                startProc,    // startProc,
+                nSendProcs,    // nProcs,
+
+                sliceOffsets,
+                recvData
+            );
+
+            if (UPstream::master(comm))
+            {
+                OSstream& os = osPtr();
+
+                // Write slaves
+                for
+                (
+                    label proci = startProc;
+                    proci < startProc+nSendProcs;
+                    proci++
+                )
                 {
-                    os << recvBufs[proci];
+                    os << nl << nl << "// Processor" << proci << nl;
+                    start[proci] = os.stdStream().tellp();
+
+                    os <<
+                        SubList<char>
+                        (
+                            recvData,
+                            sliceOffsets[proci+1]-sliceOffsets[proci],
+                            sliceOffsets[proci]
+                        );
                 }
             }
 
-            Pstream::resetRequests(startOfRequests);
-
-            ok = os.good();
+            startProc += nSendProcs;
         }
-    }
-    if (debug)
-    {
-        struct timeval tv;
-        gettimeofday(&tv, nullptr);
-        Pout<< "Finished master-only writing at:"
-            << 1.0*tv.tv_sec+tv.tv_usec/1e6 << " s"
-            << Foam::endl;
+
+        if (UPstream::master(comm))
+        {
+            ok = osPtr().good();
+        }
     }
 
     if (syncReturnState)
@@ -795,7 +966,7 @@ bool Foam::decomposedBlockData::writeData(Ostream& os) const
     );
 
     IOobject io(*this);
-    if (Pstream::master())
+    if (Pstream::master(comm_))
     {
         IStringStream is(name(), str);
         io.readHeader(is);
@@ -805,7 +976,7 @@ bool Foam::decomposedBlockData::writeData(Ostream& os) const
 
     // version
     string versionString(os.version().str());
-    Pstream::scatter(versionString);
+    Pstream::scatter(versionString, Pstream::msgType(), comm_);
 
     // stream
     string formatString;
@@ -813,21 +984,21 @@ bool Foam::decomposedBlockData::writeData(Ostream& os) const
         OStringStream os;
         os << os.format();
         formatString  = os.str();
-        Pstream::scatter(formatString);
+        Pstream::scatter(formatString, Pstream::msgType(), comm_);
     }
 
-    //word masterName(name());
-    //Pstream::scatter(masterName);
+    // word masterName(name());
+    // Pstream::scatter(masterName, Pstream::msgType(), comm_);
 
-    Pstream::scatter(io.headerClassName());
-    Pstream::scatter(io.note());
-    //Pstream::scatter(io.instance(), Pstream::msgType(), comm);
-    //Pstream::scatter(io.local(), Pstream::msgType(), comm);
+    Pstream::scatter(io.headerClassName(), Pstream::msgType(), comm_);
+    Pstream::scatter(io.note(), Pstream::msgType(), comm_);
+    // Pstream::scatter(io.instance(), Pstream::msgType(), comm);
+    // Pstream::scatter(io.local(), Pstream::msgType(), comm);
 
     fileName masterLocation(instance()/db().dbDir()/local());
-    Pstream::scatter(masterLocation);
+    Pstream::scatter(masterLocation, Pstream::msgType(), comm_);
 
-    if (!Pstream::master())
+    if (!Pstream::master(comm_))
     {
         writeHeader
         (
@@ -843,7 +1014,7 @@ bool Foam::decomposedBlockData::writeData(Ostream& os) const
 
     os.writeQuoted(str, false);
 
-    if (!Pstream::master())
+    if (!Pstream::master(comm_))
     {
         IOobject::writeEndDivider(os);
     }
@@ -868,8 +1039,22 @@ bool Foam::decomposedBlockData::writeObject
         osPtr.reset(new OFstream(objectPath(), IOstream::BINARY, ver, cmp));
         IOobject::writeHeader(osPtr());
     }
+
+    labelList recvSizes;
+    gather(comm_, label(this->byteSize()), recvSizes);
+
     List<std::streamoff> start;
-    return writeBlocks(comm_, osPtr, start, *this, commsType_);
+    PtrList<SubList<char>> slaveData;  // dummy slave data
+    return writeBlocks
+    (
+        comm_,
+        osPtr,
+        start,
+        *this,
+        recvSizes,
+        slaveData,
+        commsType_
+    );
 }
 
 

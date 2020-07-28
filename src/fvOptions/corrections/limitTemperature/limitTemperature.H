@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,6 +39,7 @@ Usage
         selectionMode   all;
         min             200;
         max             500;
+        phase           gas; // optional
     }
     \endverbatim
 
@@ -77,6 +78,9 @@ protected:
 
         //- Maximum temperature limit [K]
         scalar Tmax_;
+
+        //- Optional phase name [K]
+        word phase_;
 
 
 private:

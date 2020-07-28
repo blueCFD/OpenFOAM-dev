@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,6 +29,7 @@ License
 
 #include "MULES.T.H"
 #include "subCycle.H"
+#include "UniformField.T.H"
 
 #include "fvcDdt.H"
 #include "fvcDiv.H"
@@ -85,12 +86,6 @@ Foam::twoPhaseSystem::sigma() const
 }
 
 
-const Foam::dragModel& Foam::twoPhaseSystem::drag(const phaseModel& phase) const
-{
-    return lookupSubModel<dragModel>(phase, otherPhase(phase));
-}
-
-
 Foam::tmp<Foam::volScalarField>
 Foam::twoPhaseSystem::Kd() const
 {
@@ -111,73 +106,10 @@ Foam::twoPhaseSystem::Kdf() const
 }
 
 
-const Foam::virtualMassModel&
-Foam::twoPhaseSystem::virtualMass(const phaseModel& phase) const
-{
-    return lookupSubModel<virtualMassModel>(phase, otherPhase(phase));
-}
-
-
 Foam::tmp<Foam::volScalarField>
 Foam::twoPhaseSystem::Vm() const
 {
     return Vm
-    (
-        phasePairKey(phase1().name(), phase2().name())
-    );
-}
-
-
-Foam::tmp<Foam::surfaceScalarField>
-Foam::twoPhaseSystem::Vmf() const
-{
-    return Vmf
-    (
-        phasePairKey(phase1().name(), phase2().name())
-    );
-}
-
-
-Foam::tmp<Foam::volVectorField>
-Foam::twoPhaseSystem::F() const
-{
-    return F
-    (
-        phasePairKey(phase1().name(), phase2().name())
-    );
-}
-
-
-Foam::tmp<Foam::surfaceScalarField>
-Foam::twoPhaseSystem::Ff() const
-{
-    return Ff
-    (
-        phasePairKey(phase1().name(), phase2().name())
-    );
-}
-
-
-Foam::tmp<Foam::volScalarField>
-Foam::twoPhaseSystem::D() const
-{
-    return D
-    (
-        phasePairKey(phase1().name(), phase2().name())
-    );
-}
-
-
-bool Foam::twoPhaseSystem::transfersMass() const
-{
-    return transfersMass(phase1());
-}
-
-
-Foam::tmp<Foam::volScalarField>
-Foam::twoPhaseSystem::dmdt() const
-{
-    return dmdt
     (
         phasePairKey(phase1().name(), phase2().name())
     );
@@ -239,10 +171,12 @@ void Foam::twoPhaseSystem::solve()
     surfaceScalarField phir("phir", phi1 - phi2);
 
     tmp<surfaceScalarField> alphaDbyA;
-
-    if (notNull(phase1_.DbyA()) && notNull(phase2_.DbyA()))
+    if (DByAfs().found(phase1_.name()) && DByAfs().found(phase2_.name()))
     {
-        surfaceScalarField DbyA(phase1_.DbyA() + phase2_.DbyA());
+        surfaceScalarField DbyA
+        (
+            *DByAfs()[phase1_.name()] + *DByAfs()[phase2_.name()]
+        );
 
         alphaDbyA =
             fvc::interpolate(max(alpha1, scalar(0)))
@@ -287,8 +221,8 @@ void Foam::twoPhaseSystem::solve()
             {
                 if (dgdt[celli] > 0.0)
                 {
-                    Sp[celli] -= dgdt[celli]/max(1.0 - alpha1[celli], 1e-4);
-                    Su[celli] += dgdt[celli]/max(1.0 - alpha1[celli], 1e-4);
+                    Sp[celli] -= dgdt[celli]/max(1 - alpha1[celli], 1e-4);
+                    Su[celli] += dgdt[celli]/max(1 - alpha1[celli], 1e-4);
                 }
                 else if (dgdt[celli] < 0.0)
                 {
@@ -341,21 +275,21 @@ void Foam::twoPhaseSystem::solve()
                     alphaPhi10,
                     (alphaSubCycle.index()*Sp)(),
                     (Su - (alphaSubCycle.index() - 1)*Sp*alpha1)(),
-                    phase1_.alphaMax(),
-                    0
+                    UniformField<scalar>(phase1_.alphaMax()),
+                    zeroField()
                 );
 
                 if (alphaSubCycle.index() == 1)
                 {
-                    phase1_.alphaPhi() = alphaPhi10;
+                    phase1_.alphaPhiRef() = alphaPhi10;
                 }
                 else
                 {
-                    phase1_.alphaPhi() += alphaPhi10;
+                    phase1_.alphaPhiRef() += alphaPhi10;
                 }
             }
 
-            phase1_.alphaPhi() /= nAlphaSubCycles;
+            phase1_.alphaPhiRef() /= nAlphaSubCycles;
         }
         else
         {
@@ -367,11 +301,11 @@ void Foam::twoPhaseSystem::solve()
                 alphaPhi1,
                 Sp,
                 Su,
-                phase1_.alphaMax(),
-                0
+                UniformField<scalar>(phase1_.alphaMax()),
+                zeroField()
             );
 
-            phase1_.alphaPhi() = alphaPhi1;
+            phase1_.alphaPhiRef() = alphaPhi1;
         }
 
         if (alphaDbyA.valid())
@@ -385,15 +319,15 @@ void Foam::twoPhaseSystem::solve()
             alpha1Eqn.relax();
             alpha1Eqn.solve();
 
-            phase1_.alphaPhi() += alpha1Eqn.flux();
+            phase1_.alphaPhiRef() += alpha1Eqn.flux();
         }
 
-        phase1_.alphaRhoPhi() =
+        phase1_.alphaRhoPhiRef() =
             fvc::interpolate(phase1_.rho())*phase1_.alphaPhi();
 
-        phase2_.alphaPhi() = phi_ - phase1_.alphaPhi();
-        phase2_.correctInflowOutflow(phase2_.alphaPhi());
-        phase2_.alphaRhoPhi() =
+        phase2_.alphaPhiRef() = phi_ - phase1_.alphaPhi();
+        phase2_.correctInflowOutflow(phase2_.alphaPhiRef());
+        phase2_.alphaRhoPhiRef() =
             fvc::interpolate(phase2_.rho())*phase2_.alphaPhi();
 
         Info<< alpha1.name() << " volume fraction = "

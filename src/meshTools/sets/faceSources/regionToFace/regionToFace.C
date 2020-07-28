@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,13 +37,9 @@ License
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(regionToFace, 0);
-
-addToRunTimeSelectionTable(topoSetSource, regionToFace, word);
-
-addToRunTimeSelectionTable(topoSetSource, regionToFace, istream);
-
+    defineTypeNameAndDebug(regionToFace, 0);
+    addToRunTimeSelectionTable(topoSetSource, regionToFace, word);
+    addToRunTimeSelectionTable(topoSetSource, regionToFace, istream);
 }
 
 
@@ -127,7 +123,7 @@ void Foam::regionToFace::combine(topoSet& set, const bool add) const
         pointIndexHit(false, Zero, -1),
         Tuple2<scalar, label>
         (
-            sqr(GREAT),
+            sqr(great),
             Pstream::myProcNo()
         )
     );
@@ -176,7 +172,6 @@ void Foam::regionToFace::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::regionToFace::regionToFace
 (
     const polyMesh& mesh,
@@ -190,7 +185,6 @@ Foam::regionToFace::regionToFace
 {}
 
 
-// Construct from dictionary
 Foam::regionToFace::regionToFace
 (
     const polyMesh& mesh,
@@ -203,7 +197,6 @@ Foam::regionToFace::regionToFace
 {}
 
 
-// Construct from Istream
 Foam::regionToFace::regionToFace
 (
     const polyMesh& mesh,

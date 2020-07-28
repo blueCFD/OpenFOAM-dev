@@ -2,10 +2,10 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-#  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # License
 #     This file is part of OpenFOAM.
 #
@@ -62,7 +62,7 @@ error() {
 }
 
 cpIfPresent() {
-    [ -e "$1" ] && echo "... ${1##*/}" && cp -r "$1" "$2"
+    [ -e "$1" ] && echo "$1 to ... ${1##*/}" && cp -r "$1" "$2"
 }
 
 ver=$WM_PROJECT_VERSION
@@ -143,6 +143,7 @@ cpIfPresent "$srcDir/system" "$tgtDir"
 cpIfPresent "$srcDir/constant" "$tgtDir"
 
 time_dir="$(foamListTimes -withZero -case "$srcDir" | $time_option)"
+[ -n "${time_dir}" ] && \
 cpIfPresent "$srcDir/${time_dir}" "$tgtDir"
 
 [ "${time_dir}" = "0" -o -z "${time_dir}" ] && [ -z "$no_orig" ] && \

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,7 +95,7 @@ externalWallHeatFluxTemperatureFvPatchScalarField
     temperatureCoupledBase(patch(), dict),
     mode_(operationModeNames.read(dict.lookup("mode"))),
     Q_(0),
-    Ta_(Function1<scalar>::New("Ta", dict)),
+    Ta_(),
     relaxation_(dict.lookupOrDefault<scalar>("relaxation", 1)),
     emissivity_(dict.lookupOrDefault<scalar>("emissivity", 0)),
     qrRelaxation_(dict.lookupOrDefault<scalar>("qrRelaxation", 1)),
@@ -120,6 +120,7 @@ externalWallHeatFluxTemperatureFvPatchScalarField
         case fixedHeatTransferCoeff:
         {
             h_ = scalarField("h", dict, p.size());
+            Ta_ = Function1<scalar>::New("Ta", dict);
 
             if (dict.found("thicknessLayers"))
             {
@@ -191,12 +192,14 @@ externalWallHeatFluxTemperatureFvPatchScalarField
         }
         case fixedHeatFlux:
         {
+            q_.setSize(mapper.size());
             q_.map(ptf.q_, mapper);
 
             break;
         }
         case fixedHeatTransferCoeff:
         {
+            h_.setSize(mapper.size());
             h_.map(ptf.h_, mapper);
 
             break;
@@ -205,6 +208,7 @@ externalWallHeatFluxTemperatureFvPatchScalarField
 
     if (qrName_ != "none")
     {
+        qrPrevious_.setSize(mapper.size());
         qrPrevious_.map(ptf.qrPrevious_, mapper);
     }
 }
@@ -401,14 +405,14 @@ void Foam::externalWallHeatFluxTemperatureFvPatchScalarField::updateCoeffs()
                     scalarField lambdaTa4(pow4((1 - TpLambda)*Ta));
 
                     hp += emissivity_*sigma.value()*(pow4(Ts) - lambdaTa4)/Tp;
-                    hpTa += sigma.value()*(emissivity_*lambdaTa4 + pow4(Ta));
+                    hpTa += emissivity_*sigma.value()*(lambdaTa4 + pow4(Ta));
                 }
                 else
                 {
                     // ... if there is no solid wall thermal resistance use
                     // the current wall temperature
                     hp += emissivity_*sigma.value()*pow3(Tp);
-                    hpTa += sigma.value()*pow4(Ta);
+                    hpTa += emissivity_*sigma.value()*pow4(Ta);
                 }
             }
 

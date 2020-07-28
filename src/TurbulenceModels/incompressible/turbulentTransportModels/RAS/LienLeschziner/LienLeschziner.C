@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,7 +50,7 @@ tmp<volScalarField> LienLeschziner::fMu() const
 
     return
         (scalar(1) - exp(-Anu_*yStar))
-       /((scalar(1) + SMALL) - exp(-Aeps_*yStar));
+       /((scalar(1) + small) - exp(-Aeps_*yStar));
 }
 
 
@@ -67,7 +67,7 @@ tmp<volScalarField> LienLeschziner::E(const volScalarField& f2) const
     const volScalarField yStar(sqrt(k_)*y_/nu());
     const volScalarField le
     (
-        kappa_*y_*((scalar(1) + SMALL) - exp(-Aeps_*yStar))
+        kappa_*y_*((scalar(1) + small) - exp(-Aeps_*yStar))
     );
 
     return
@@ -195,7 +195,7 @@ LienLeschziner::LienLeschziner
     (
         IOobject
         (
-            IOobject::groupName("k", U.group()),
+            IOobject::groupName("k", alphaRhoPhi.group()),
             runTime_.timeName(),
             mesh_,
             IOobject::MUST_READ,
@@ -208,7 +208,7 @@ LienLeschziner::LienLeschziner
     (
         IOobject
         (
-            IOobject::groupName("epsilon", U.group()),
+            IOobject::groupName("epsilon", alphaRhoPhi.group()),
             runTime_.timeName(),
             mesh_,
             IOobject::MUST_READ,

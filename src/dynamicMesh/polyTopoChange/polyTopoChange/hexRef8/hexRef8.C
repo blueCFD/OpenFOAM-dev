@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -248,11 +248,11 @@ Foam::label Foam::hexRef8::addInternalFace
 
         ////- Inflate-from-point:
         //// Check if point has any internal faces we can use.
-        //label masterPointi = -1;
+        // label masterPointi = -1;
         //
-        //const labelList& pFaces = mesh_.pointFaces()[meshPointi];
+        // const labelList& pFaces = mesh_.pointFaces()[meshPointi];
         //
-        //forAll(pFaces, i)
+        // forAll(pFaces, i)
         //{
         //    if (mesh_.isInternalFace(pFaces[i]))
         //    {
@@ -263,7 +263,7 @@ Foam::label Foam::hexRef8::addInternalFace
         //    }
         //}
         //
-        //return meshMod.setAction
+        // return meshMod.setAction
         //(
         //    polyAddFace
         //    (
@@ -363,11 +363,11 @@ Foam::scalar Foam::hexRef8::getLevel0EdgeLength() const
     // Determine minimum edge length per refinement level
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    const scalar GREAT2 = sqr(GREAT);
+    const scalar great2 = sqr(great);
 
     label nLevels = gMax(cellLevel_)+1;
 
-    scalarField typEdgeLenSqr(nLevels, GREAT2);
+    scalarField typEdgeLenSqr(nLevels, great2);
 
 
     // 1. Look only at edges surrounded by cellLevel cells only.
@@ -450,7 +450,7 @@ Foam::scalar Foam::hexRef8::getLevel0EdgeLength() const
     //    edges sized according to highest celllevel)
     //    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    scalarField maxEdgeLenSqr(nLevels, -GREAT2);
+    scalarField maxEdgeLenSqr(nLevels, -great2);
 
     forAll(cellLevel_, celli)
     {
@@ -484,7 +484,7 @@ Foam::scalar Foam::hexRef8::getLevel0EdgeLength() const
 
     forAll(typEdgeLenSqr, levelI)
     {
-        if (typEdgeLenSqr[levelI] == GREAT2 && maxEdgeLenSqr[levelI] >= 0)
+        if (typEdgeLenSqr[levelI] == great2 && maxEdgeLenSqr[levelI] >= 0)
         {
             typEdgeLenSqr[levelI] = maxEdgeLenSqr[levelI];
         }
@@ -504,7 +504,7 @@ Foam::scalar Foam::hexRef8::getLevel0EdgeLength() const
     {
         scalar lenSqr = typEdgeLenSqr[levelI];
 
-        if (lenSqr < GREAT2)
+        if (lenSqr < great2)
         {
             level0Size = Foam::sqrt(lenSqr)*(1<<levelI);
 
@@ -831,14 +831,14 @@ void Foam::hexRef8::checkInternalOrientation
     const face& newFace
 )
 {
-    face compactFace(identity(newFace.size()));
-    pointField compactPoints(meshMod.points(), newFace);
+    const face compactFace(identity(newFace.size()));
+    const pointField compactPoints(meshMod.points(), newFace);
 
-    vector n(compactFace.normal(compactPoints));
+    const vector a(compactFace.area(compactPoints));
 
-    vector dir(neiPt - ownPt);
+    const vector dir(neiPt - ownPt);
 
-    if ((dir & n) < 0)
+    if ((dir & a) < 0)
     {
         FatalErrorInFunction
             << "cell:" << celli << " old face:" << facei
@@ -849,9 +849,9 @@ void Foam::hexRef8::checkInternalOrientation
             << abort(FatalError);
     }
 
-    vector fcToOwn(compactFace.centre(compactPoints) - ownPt);
+    const vector fcToOwn(compactFace.centre(compactPoints) - ownPt);
 
-    scalar s = (fcToOwn&n) / (dir&n);
+    const scalar s = (fcToOwn & a) / (dir & a);
 
     if (s < 0.1 || s > 0.9)
     {
@@ -877,14 +877,14 @@ void Foam::hexRef8::checkBoundaryOrientation
     const face& newFace
 )
 {
-    face compactFace(identity(newFace.size()));
-    pointField compactPoints(meshMod.points(), newFace);
+    const face compactFace(identity(newFace.size()));
+    const pointField compactPoints(meshMod.points(), newFace);
 
-    vector n(compactFace.normal(compactPoints));
+    const vector a(compactFace.area(compactPoints));
 
-    vector dir(boundaryPt - ownPt);
+    const vector dir(boundaryPt - ownPt);
 
-    if ((dir & n) < 0)
+    if ((dir & a) < 0)
     {
         FatalErrorInFunction
             << "cell:" << celli << " old face:" << facei
@@ -895,9 +895,9 @@ void Foam::hexRef8::checkBoundaryOrientation
             << abort(FatalError);
     }
 
-    vector fcToOwn(compactFace.centre(compactPoints) - ownPt);
+    const vector fcToOwn(compactFace.centre(compactPoints) - ownPt);
 
-    scalar s = (fcToOwn&dir) / magSqr(dir);
+    const scalar s = (fcToOwn&dir) / magSqr(dir);
 
     if (s < 0.7 || s > 1.3)
     {
@@ -909,7 +909,6 @@ void Foam::hexRef8::checkBoundaryOrientation
             << " boundaryPt:" << boundaryPt
             << " s:" << s
             << endl;
-            //<< abort(FatalError);
     }
 }
 
@@ -1982,7 +1981,7 @@ Foam::hexRef8::hexRef8(const polyMesh& mesh, const bool readHistory)
         // All cells visible if not read or readHistory = false
         (readHistory ? mesh_.nCells() : 0)
     ),
-    faceRemover_(mesh_, GREAT),     // merge boundary faces wherever possible
+    faceRemover_(mesh_, great),     // merge boundary faces wherever possible
     savedPointLevel_(0),
     savedCellLevel_(0)
 {
@@ -2037,7 +2036,7 @@ Foam::hexRef8::hexRef8(const polyMesh& mesh, const bool readHistory)
 
     // Check initial mesh for consistency
 
-    //if (debug)
+    // if (debug)
     {
         checkMesh();
     }
@@ -2112,7 +2111,7 @@ Foam::hexRef8::hexRef8
         ),
         history
     ),
-    faceRemover_(mesh_, GREAT),     // merge boundary faces wherever possible
+    faceRemover_(mesh_, great),     // merge boundary faces wherever possible
     savedPointLevel_(0),
     savedCellLevel_(0)
 {
@@ -2146,7 +2145,7 @@ Foam::hexRef8::hexRef8
 
     // Check initial mesh for consistency
 
-    //if (debug)
+    // if (debug)
     {
         checkMesh();
     }
@@ -2222,7 +2221,7 @@ Foam::hexRef8::hexRef8
         labelList(0),
         false
     ),
-    faceRemover_(mesh_, GREAT),     // merge boundary faces wherever possible
+    faceRemover_(mesh_, great),     // merge boundary faces wherever possible
     savedPointLevel_(0),
     savedCellLevel_(0)
 {
@@ -2246,7 +2245,7 @@ Foam::hexRef8::hexRef8
 
     // Check initial mesh for consistency
 
-    //if (debug)
+    // if (debug)
     {
         checkMesh();
     }
@@ -2263,7 +2262,7 @@ Foam::labelList Foam::hexRef8::consistentRefinement
 {
     // Loop, modifying cellsToRefine, until no more changes to due to 2:1
     // conflicts.
-    // maxSet = false : unselect cells to refine
+    // maxSet = false : deselect cells to refine
     // maxSet = true  : select cells to refine
 
     // Go to straight boolList.
@@ -2465,7 +2464,7 @@ Foam::labelList Foam::hexRef8::consistentSlowRefinement
     }
 
 
-    // Just seed with all faces inbetween different refinement levels for now
+    // Just seed with all faces in between different refinement levels for now
     // (alternatively only seed faces on cellsToRefine but that gives problems
     //  if no cells to refine)
     forAll(faceNeighbour, facei)
@@ -2993,7 +2992,7 @@ Foam::labelList Foam::hexRef8::consistentSlowRefinement2
 
     // Create some initial seeds to start walking from. This is only if there
     // are no facesToCheck.
-    // Just seed with all faces inbetween different refinement levels for now
+    // Just seed with all faces in between different refinement levels for now
     forAll(faceNeighbour, facei)
     {
         // Check if face already handled in loop above
@@ -3065,7 +3064,7 @@ Foam::labelList Foam::hexRef8::consistentSlowRefinement2
     );
 
 
-    //if (debug)
+    // if (debug)
     //{
     //    // Dump wanted level
     //    volScalarField wantedLevel
@@ -3253,7 +3252,7 @@ Foam::labelListList Foam::hexRef8::setRefinement
         checkMesh();
         // Cannot call checkRefinementlevels since hanging points might
         // get triggered by the mesher after subsetting.
-        //checkRefinementLevels(-1, labelList(0));
+        // checkRefinementLevels(-1, labelList(0));
     }
 
     // Clear any saved point/cell data.
@@ -3390,7 +3389,7 @@ Foam::labelListList Foam::hexRef8::setRefinement
         // This needs doing for if people do not write binary and we slowly
         // get differences.
 
-        pointField edgeMids(mesh_.nEdges(), point(-GREAT, -GREAT, -GREAT));
+        pointField edgeMids(mesh_.nEdges(), point(-great, -great, -great));
 
         forAll(edgeMidPoint, edgeI)
         {
@@ -3405,7 +3404,7 @@ Foam::labelListList Foam::hexRef8::setRefinement
             mesh_,
             edgeMids,
             maxEqOp<vector>(),
-            point(-GREAT, -GREAT, -GREAT)
+            point(-great, -great, -great)
         );
 
 
@@ -3576,7 +3575,7 @@ Foam::labelListList Foam::hexRef8::setRefinement
         pointField bFaceMids
         (
             mesh_.nFaces()-mesh_.nInternalFaces(),
-            point(-GREAT, -GREAT, -GREAT)
+            point(-great, -great, -great)
         );
 
         forAll(bFaceMids, i)
@@ -3907,7 +3906,7 @@ Foam::labelListList Foam::hexRef8::setRefinement
                     // Convert dynamiclist to face.
                     newFace.transfer(faceVerts);
 
-                    //Pout<< "Split face:" << facei << " verts:" << f
+                    // Pout<< "Split face:" << facei << " verts:" << f
                     //    << " into quad:" << newFace << endl;
 
                     // Get new owner/neighbour
@@ -4381,7 +4380,7 @@ void Foam::hexRef8::updateMesh
             cellLevel_[newCelli] = fnd();
         }
 
-        //if (findIndex(cellLevel_, -1) != -1)
+        // if (findIndex(cellLevel_, -1) != -1)
         //{
         //    WarningInFunction
         //        << "Problem : "
@@ -4417,7 +4416,7 @@ void Foam::hexRef8::updateMesh
 
                 if (oldPointi == -1)
                 {
-                    //FatalErrorInFunction
+                    // FatalErrorInFunction
                     //    << "Problem : point " << newPointi
                     //    << " at " << mesh_.points()[newPointi]
                     //    << " does not originate from another point"
@@ -4455,7 +4454,7 @@ void Foam::hexRef8::updateMesh
             pointLevel_[newPointi] = fnd();
         }
 
-        //if (findIndex(pointLevel_, -1) != -1)
+        // if (findIndex(pointLevel_, -1) != -1)
         //{
         //    WarningInFunction
         //        << "Problem : "
@@ -4562,7 +4561,7 @@ void Foam::hexRef8::subset
     setInstance(mesh_.facesInstance());
 
     // Nothing needs doing to faceRemover.
-    //faceRemover_.subset(pointMap, faceMap, cellMap);
+    // faceRemover_.subset(pointMap, faceMap, cellMap);
 
     // Clear cell shapes
     cellShapesPtr_.clear();
@@ -5032,7 +5031,7 @@ void Foam::hexRef8::checkRefinementLevels
     //        false                   // no separation
     //    );
     //
-    //    //OFstream str(mesh_.time().path()/"hangingPoints.obj");
+    //    // OFstream str(mesh_.time().path()/"hangingPoints.obj");
     //
     //    label nHanging = 0;
     //
@@ -5045,7 +5044,7 @@ void Foam::hexRef8::checkRefinementLevels
     //            Pout<< "Hanging boundary point " << pointi
     //                << " at " << mesh_.points()[pointi]
     //                << endl;
-    //            //meshTools::writeOBJ(str, mesh_.points()[pointi]);
+    //            // meshTools::writeOBJ(str, mesh_.points()[pointi]);
     //        }
     //    }
     //
@@ -5149,7 +5148,7 @@ Foam::labelList Foam::hexRef8::getSplitPoints() const
     labelList splitMasterLevel(mesh_.nPoints(), 0);
 
     // Unmark all with not 8 cells
-    //const labelListList& pointCells = mesh_.pointCells();
+    // const labelListList& pointCells = mesh_.pointCells();
 
     for (label pointi = 0; pointi < mesh_.nPoints(); pointi++)
     {
@@ -5344,7 +5343,7 @@ Foam::labelList Foam::hexRef8::consistentUnrefinement
 
     // Loop, modifying pointsToUnrefine, until no more changes to due to 2:1
     // conflicts.
-    // maxSet = false : unselect points to refine
+    // maxSet = false : deselect points to refine
     // maxSet = true: select points to refine
 
     // Maintain boolList for pointsToUnrefine and cellsToUnrefine
@@ -5675,7 +5674,7 @@ void Foam::hexRef8::setUnrefinement
 
         // Check that the lowest numbered pCells is the master of the region
         // (should be guaranteed by directRemoveFaces)
-        //if (debug)
+        // if (debug)
         {
             label masterCelli = min(pCells);
 

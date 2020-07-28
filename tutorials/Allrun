@@ -2,8 +2,8 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-#  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added passing on command line options
@@ -36,8 +36,9 @@ cd ${0%/*} || exit 1    # Run from this directory
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
+
 # logReport <logfile>
-# Extracts useful info from log file.
+# Extracts useful info from log file
 logReport()
 {
     caseName=`dirname $1 | sed s/"\(.*\)\.\/"/""/g`
@@ -53,9 +54,11 @@ logReport()
     if [ "$fatalError" ]
     then
         echo "$appAndCase: ** FOAM FATAL ERROR **"
+        return 1
     elif [ "$UxSS" -a "$UySS" -a "$UzSS" ]
     then
         echo "$appAndCase: ** Solution singularity **"
+        return 1
     elif [ "$completed" ]
     then
         completionTime=`tail -10 $log | grep Execution | cut -d= -f2 | sed 's/^[ \t]*//'`
@@ -64,39 +67,53 @@ logReport()
             completionTime="in $completionTime"
         fi
         echo "$appAndCase: completed $completionTime"
+        return 0
     else
         echo "$appAndCase: unconfirmed completion"
+        return 1
     fi
 }
 
 
-# Recursively run all tutorials
-foamRunTutorials -test -skipFirst $@
-
-
-# Analyse all log files
-echo "Analysing all log files..."
-rm testLoopReport > /dev/null 2>&1 &
-touch testLoopReport
-
-for appDir in *
-do
+# logReportDir <directory>
+# Extracts useful info from all log files in a directory
+logReportDir()
 (
-    [ -d $appDir ] && cd $appDir || exit
+    [ -d $1 ] || return 0
+
+    cd $1 || return 1
 
     logs=`find . -name "log.*"`
-    [ -n "$logs" ] || exit
+    [ -n "$logs" ] || return 0
+
+    retVal=0
 
     for log in `echo $logs | xargs ls -rt`
     do
-        logReport $log >> ../testLoopReport
+        logReport $log >> ../testLoopReport || retVal=1
     done
     echo "" >> ../testLoopReport
+
+    return $retVal
 )
+
+
+# Recursively run all cases
+foamRunTutorials -test -skipFirst
+
+
+# Analyse all log files
+rm -f testLoopReport && touch testLoopReport
+
+retVal=0
+
+for appDir in *
+do
+    logReportDir $appDir || retVal=1
 done
 
 find . -name "log.*" -exec cat {} \; >> logs
 
-echo "Tutorials have been executed and processed."
+exit $retVal
 
 #------------------------------------------------------------------------------

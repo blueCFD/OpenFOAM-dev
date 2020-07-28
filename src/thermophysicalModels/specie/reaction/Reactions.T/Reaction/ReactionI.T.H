@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,16 +33,23 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class ReactionThermo>
-inline word& Reaction<ReactionThermo>::name()
+inline const word& Reaction<ReactionThermo>::name() const
 {
     return name_;
 }
 
 
 template<class ReactionThermo>
-inline const word& Reaction<ReactionThermo>::name() const
+inline scalar Reaction<ReactionThermo>::Tlow() const
 {
-    return name_;
+    return Tlow_;
+}
+
+
+template<class ReactionThermo>
+inline scalar Reaction<ReactionThermo>::Thigh() const
+{
+    return Thigh_;
 }
 
 

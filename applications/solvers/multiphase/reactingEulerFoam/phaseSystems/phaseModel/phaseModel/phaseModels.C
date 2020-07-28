@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,7 @@ License
 #include "rhoThermo.H"
 #include "rhoReactionThermo.H"
 
-#include "rhoCombustionModel.H"
+#include "CombustionModel.T.H"
 
 #include "phaseModel.H"
 #include "ThermoPhaseModel.T.H"
@@ -39,19 +39,20 @@ License
 #include "InertPhaseModel.T.H"
 #include "ReactingPhaseModel.T.H"
 #include "MovingPhaseModel.T.H"
+#include "StationaryPhaseModel.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
     typedef
-        MovingPhaseModel
+        AnisothermalPhaseModel
         <
-            AnisothermalPhaseModel
+            PurePhaseModel
             <
-                PurePhaseModel
+                InertPhaseModel
                 <
-                    InertPhaseModel
+                    MovingPhaseModel
                     <
                         ThermoPhaseModel<phaseModel, rhoThermo>
                     >
@@ -69,13 +70,37 @@ namespace Foam
     );
 
     typedef
-        MovingPhaseModel
+        AnisothermalPhaseModel
         <
-            IsothermalPhaseModel
+            PurePhaseModel
             <
-                PurePhaseModel
+                InertPhaseModel
                 <
-                    InertPhaseModel
+                    StationaryPhaseModel
+                    <
+                        ThermoPhaseModel<phaseModel, rhoThermo>
+                    >
+                >
+            >
+        >
+        pureStationaryPhaseModel;
+
+    addNamedToRunTimeSelectionTable
+    (
+        phaseModel,
+        pureStationaryPhaseModel,
+        phaseSystem,
+        pureStationaryPhaseModel
+    );
+
+    typedef
+        IsothermalPhaseModel
+        <
+            PurePhaseModel
+            <
+                InertPhaseModel
+                <
+                    MovingPhaseModel
                     <
                         ThermoPhaseModel<phaseModel, rhoThermo>
                     >
@@ -93,13 +118,37 @@ namespace Foam
     );
 
     typedef
-        MovingPhaseModel
+        IsothermalPhaseModel
         <
-            AnisothermalPhaseModel
+            PurePhaseModel
             <
-                MultiComponentPhaseModel
+                InertPhaseModel
                 <
-                    InertPhaseModel
+                    StationaryPhaseModel
+                    <
+                        ThermoPhaseModel<phaseModel, rhoThermo>
+                    >
+                >
+            >
+        >
+        pureStationaryIsothermalPhaseModel;
+
+    addNamedToRunTimeSelectionTable
+    (
+        phaseModel,
+        pureStationaryIsothermalPhaseModel,
+        phaseSystem,
+        pureStationaryIsothermalPhaseModel
+    );
+
+    typedef
+        AnisothermalPhaseModel
+        <
+            MultiComponentPhaseModel
+            <
+                InertPhaseModel
+                <
+                    MovingPhaseModel
                     <
                         ThermoPhaseModel<phaseModel, rhoReactionThermo>
                     >
@@ -117,17 +166,17 @@ namespace Foam
     );
 
     typedef
-        MovingPhaseModel
+        AnisothermalPhaseModel
         <
-            AnisothermalPhaseModel
+            MultiComponentPhaseModel
             <
-                MultiComponentPhaseModel
+                ReactingPhaseModel
                 <
-                    ReactingPhaseModel
+                    MovingPhaseModel
                     <
-                        ThermoPhaseModel<phaseModel, rhoReactionThermo>,
-                        combustionModels::rhoCombustionModel
-                    >
+                        ThermoPhaseModel<phaseModel, rhoReactionThermo>
+                    >,
+                    CombustionModel<rhoReactionThermo>
                 >
             >
         >

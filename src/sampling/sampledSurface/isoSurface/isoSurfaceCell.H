@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -109,7 +109,7 @@ class isoSurfaceCell
 
     // Private Member Functions
 
-        //- Get location of iso value as fraction inbetween s0,s1
+        //- Get location of iso value as fraction in between s0,s1
         scalar isoFraction
         (
             const scalar s0,
@@ -146,7 +146,7 @@ class isoSurfaceCell
             const labelledTri&
         );
 
-        //- Caculate centre of surface.
+        //- Calculate centre of surface.
         static point calcCentre(const triSurface&);
 
         //- Replace surface (localPoints, localTris) with single point.

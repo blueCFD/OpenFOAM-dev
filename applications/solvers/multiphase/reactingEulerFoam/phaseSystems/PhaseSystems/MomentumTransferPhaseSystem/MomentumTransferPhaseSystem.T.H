@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,6 +70,34 @@ protected:
 
     // Protected typedefs
 
+        typedef HashPtrTable
+        <
+            volScalarField,
+            phasePairKey,
+            phasePairKey::hash
+        > KdTable;
+
+        typedef HashPtrTable
+        <
+            surfaceScalarField,
+            phasePairKey,
+            phasePairKey::hash
+        > KdfTable;
+
+        typedef HashPtrTable
+        <
+            volScalarField,
+            phasePairKey,
+            phasePairKey::hash
+        > VmTable;
+
+        typedef HashPtrTable
+        <
+            surfaceScalarField,
+            phasePairKey,
+            phasePairKey::hash
+        > VmfTable;
+
         typedef HashTable
         <
             autoPtr<BlendedInterfacialModel<dragModel>>,
@@ -111,10 +139,19 @@ private:
     // Private data
 
         //- Drag coefficients
-        phaseSystem::KdTable Kds_;
+        KdTable Kds_;
+
+        //- Face drag coefficients
+        KdfTable Kdfs_;
 
         //- Virtual mass coefficients
-        phaseSystem::VmTable Vms_;
+        VmTable Vms_;
+
+        //- Face virtual mass coefficients
+        VmfTable Vmfs_;
+
+        //- The phase diffusivities divided by the momentum coefficients
+        HashPtrTable<surfaceScalarField> DByAfs_;
 
         // Sub Models
 
@@ -133,20 +170,23 @@ private:
             //- Turbulent dispersion models
             turbulentDispersionModelTable turbulentDispersionModels_;
 
-            //- Construct element phasei of Fs if not set and return
-            //  Used by Fs()
-            volVectorField& setF
-            (
-                PtrList<volVectorField>& Fs, const label phasei
-            ) const;
 
-            //- Construct element phasei of phiDs if not set and return
-            //  Used by phiDs()
-            surfaceScalarField& setPhiD
-            (
-                PtrList<surfaceScalarField>& phiDs, const label phasei
-            ) const;
+    // Private member functions
 
+        //- Return the drag coefficient for the phase pair
+        virtual tmp<volScalarField> Kd(const phasePairKey& key) const;
+
+        //- Return the face drag coefficient for the phase pair
+        virtual tmp<surfaceScalarField> Kdf(const phasePairKey& key) const;
+
+        //- Return the virtual mass coefficient for the phase pair
+        virtual tmp<volScalarField> Vm(const phasePairKey& key) const;
+
+        //- Add the mass-transfer-based momentum transfer to the equations
+        void addMassTransferMomentumTransfer
+        (
+            phaseSystem::momentumTransferTable& eqns
+        ) const;
 
 public:
 
@@ -162,49 +202,80 @@ public:
 
     // Member Functions
 
-        //- Constant access to drag coefficients
-        virtual const phaseSystem::KdTable& Kds() const
-        {
-            return Kds_;
-        }
+        //- Return the momentum transfer matrices for the cell-based algorithm.
+        //  This includes implicit and explicit forces that add into the cell
+        //  UEqn in the normal way.
+        virtual autoPtr<phaseSystem::momentumTransferTable> momentumTransfer();
 
-        //- Return the drag coefficient
-        virtual tmp<volScalarField> Kd(const phasePairKey& key) const;
+        //- As momentumTransfer, but for the face-based algorithm
+        virtual autoPtr<phaseSystem::momentumTransferTable> momentumTransferf();
 
-        //- Return the face drag coefficient
-        virtual tmp<surfaceScalarField> Kdf(const phasePairKey& key) const;
+        //- Return implicit force coefficients on the faces, for the face-based
+        //  algorithm.
+        virtual Xfer<PtrList<surfaceScalarField>> AFfs() const;
 
-        //- Return the drag coefficient for phase
-        virtual tmp<volScalarField> Kd(const phaseModel& phase) const;
+        //- Return the explicit force fluxes for the cell-based algorithm, that
+        //  do not depend on phase mass/volume fluxes, and can therefore be
+        //  evaluated outside the corrector loop. This includes things like
+        //  lift, turbulent dispersion, and wall lubrication.
+        virtual Xfer<PtrList<surfaceScalarField>> phiFs
+        (
+            const PtrList<volScalarField>& rAUs
+        );
 
-        //- Return the virtual mass coefficient
-        virtual tmp<volScalarField> Vm(const phasePairKey& key) const;
+        //- As phiFs, but for the face-based algorithm
+        virtual Xfer<PtrList<surfaceScalarField>> phiFfs
+        (
+            const PtrList<surfaceScalarField>& rAUfs
+        );
 
-        //- Return the face virtual mass coefficient
-        virtual tmp<surfaceScalarField> Vmf(const phasePairKey& key) const;
-
-        //- Return the combined force (lift + wall-lubrication)
-        virtual tmp<volVectorField> F(const phasePairKey& key) const;
-
-        //- Return the combined force (lift + wall-lubrication)
-        virtual autoPtr<PtrList<volVectorField>> Fs() const;
-
-        //- Return the turbulent dispersion force on faces for phase pair
-        virtual autoPtr<PtrList<surfaceScalarField>> phiDs
+        //- Return the explicit drag force fluxes for the cell-based algorithm.
+        //  These depend on phase mass/volume fluxes, and must therefore be
+        //  evaluated inside the corrector loop.
+        virtual Xfer<PtrList<surfaceScalarField>> phiKdPhis
         (
             const PtrList<volScalarField>& rAUs
         ) const;
 
-        //- Return the combined face-force (lift + wall-lubrication)
-        virtual tmp<surfaceScalarField> Ff(const phasePairKey& key) const;
+        //- As phiKdPhis, but for the face-based algorithm
+        virtual Xfer<PtrList<surfaceScalarField>> phiKdPhifs
+        (
+            const PtrList<surfaceScalarField>& rAUfs
+        ) const;
 
-        //- Return the turbulent diffusivity
-        //  Multiplies the phase-fraction gradient
-        virtual tmp<volScalarField> D(const phasePairKey& key) const;
+        //- Return the explicit part of the drag force for the cell-based
+        //  algorithm. This is the cell-equivalent of phiKdPhis. These depend on
+        //  phase velocities, and must therefore be evaluated inside the
+        //  corrector loop.
+        virtual Xfer<PtrList<volVectorField>> KdUByAs
+        (
+            const PtrList<volScalarField>& rAUs
+        ) const;
 
-        //- Return the momentum transfer matrices
-        virtual autoPtr<phaseSystem::momentumTransferTable>
-            momentumTransfer() const;
+        //- Solve the drag system for the velocities and fluxes
+        virtual void partialElimination
+        (
+            const PtrList<volScalarField>& rAUs
+        );
+
+        //- As partialElimination, but for the face-based algorithm. Only solves
+        //  for the fluxes.
+        virtual void partialEliminationf
+        (
+            const PtrList<surfaceScalarField>& rAUfs
+        );
+
+        //- Return the flux corrections for the cell-based algorithm. These
+        //  depend on phase mass/volume fluxes, and must therefore be evaluated
+        //  inside the corrector loop.
+        virtual Xfer<PtrList<surfaceScalarField>> ddtCorrByAs
+        (
+            const PtrList<volScalarField>& rAUs,
+            const bool includeVirtualMass = false
+        ) const;
+
+        //- Return the phase diffusivities divided by the momentum coefficients
+        virtual const HashPtrTable<surfaceScalarField>& DByAfs() const;
 
         //- Read base phaseProperties dictionary
         virtual bool read();

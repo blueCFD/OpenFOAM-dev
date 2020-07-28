@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,8 @@ Description
 #include "fvCFD.H"
 #include "turbulentFluidThermoModel.H"
 #include "basicSprayCloud.H"
-#include "psiCombustionModel.H"
+#include "psiReactionThermo.H"
+#include "CombustionModel.T.H"
 #include "radiationModel.H"
 #include "SLGThermo.H"
 #include "pimpleControl.H"
@@ -45,14 +46,13 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createControl.H"
     #include "createTimeControls.H"
     #include "createFields.H"
     #include "createFieldRefs.H"
-    #include "createFvOptions.H"
     #include "compressibleCourantNo.H"
     #include "setInitialDeltaT.H"
     #include "initContinuityErrs.H"
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
         parcels.evolve();
 
-        if (pimple.solveFlow())
+        if (!pimple.frozenFlow())
         {
             #include "rhoEqn.H"
 

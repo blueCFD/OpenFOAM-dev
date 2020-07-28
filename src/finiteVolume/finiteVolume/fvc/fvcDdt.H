@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -166,6 +166,28 @@ namespace fvc
     >
     ddtCorr
     (
+        const GeometricField<Type, fvPatchField, volMesh>& U,
+        const GeometricField
+        <
+            typename Foam::flux<Type>::type,
+            fvsPatchField,
+            surfaceMesh
+        >& phi,
+        const autoPtr<GeometricField<Type, fvsPatchField, surfaceMesh>>& Uf
+    );
+
+    template<class Type>
+    tmp
+    <
+        GeometricField
+        <
+            typename Foam::flux<Type>::type,
+            fvsPatchField,
+            surfaceMesh
+        >
+    >
+    ddtCorr
+    (
         const volScalarField& rho,
         const GeometricField<Type, fvPatchField, volMesh>& U,
         const GeometricField<Type, fvsPatchField, surfaceMesh>& Uf
@@ -191,6 +213,29 @@ namespace fvc
             fvsPatchField,
             surfaceMesh
         >& phi
+    );
+
+    template<class Type>
+    tmp
+    <
+        GeometricField
+        <
+            typename Foam::flux<Type>::type,
+            fvsPatchField,
+            surfaceMesh
+        >
+    >
+    ddtCorr
+    (
+        const volScalarField& rho,
+        const GeometricField<Type, fvPatchField, volMesh>& U,
+        const GeometricField
+        <
+            typename Foam::flux<Type>::type,
+            fvsPatchField,
+            surfaceMesh
+        >& phi,
+        const autoPtr<GeometricField<Type, fvsPatchField, surfaceMesh>>& Uf
     );
 }
 

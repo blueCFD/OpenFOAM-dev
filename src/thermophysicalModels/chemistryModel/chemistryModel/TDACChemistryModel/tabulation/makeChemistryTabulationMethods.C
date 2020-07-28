@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,74 +27,99 @@ License
 
 #include "thermoPhysicsTypes.H"
 
-#include "psiChemistryModel.H"
-#include "rhoChemistryModel.H"
+#include "psiReactionThermo.H"
+#include "rhoReactionThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
     // Chemistry solvers based on sensibleEnthalpy
-    makeChemistryTabulationMethods(psiChemistryModel, constGasHThermoPhysics);
-    makeChemistryTabulationMethods(psiChemistryModel, gasHThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, constGasHThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, gasHThermoPhysics);
     makeChemistryTabulationMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         constIncompressibleGasHThermoPhysics
     );
     makeChemistryTabulationMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         incompressibleGasHThermoPhysics
     );
-    makeChemistryTabulationMethods(psiChemistryModel, icoPoly8HThermoPhysics);
-
-    makeChemistryTabulationMethods(rhoChemistryModel, constGasHThermoPhysics);
-
-    makeChemistryTabulationMethods(rhoChemistryModel, gasHThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, icoPoly8HThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, constFluidHThermoPhysics);
     makeChemistryTabulationMethods
     (
-        rhoChemistryModel,
+        psiReactionThermo,
+        constAdiabaticFluidHThermoPhysics
+    );
+    makeChemistryTabulationMethods(psiReactionThermo, constHThermoPhysics);
+
+    makeChemistryTabulationMethods(rhoReactionThermo, constGasHThermoPhysics);
+    makeChemistryTabulationMethods(rhoReactionThermo, gasHThermoPhysics);
+    makeChemistryTabulationMethods
+    (
+        rhoReactionThermo,
         constIncompressibleGasHThermoPhysics
     );
     makeChemistryTabulationMethods
     (
-        rhoChemistryModel,
+        rhoReactionThermo,
         incompressibleGasHThermoPhysics
     );
-    makeChemistryTabulationMethods(rhoChemistryModel, icoPoly8HThermoPhysics);
+    makeChemistryTabulationMethods(rhoReactionThermo, icoPoly8HThermoPhysics);
+    makeChemistryTabulationMethods(rhoReactionThermo, constFluidHThermoPhysics);
+    makeChemistryTabulationMethods
+    (
+        rhoReactionThermo,
+        constAdiabaticFluidHThermoPhysics
+    );
+    makeChemistryTabulationMethods(rhoReactionThermo, constHThermoPhysics);
 
     // Chemistry solvers based on sensibleInternalEnergy
 
-    makeChemistryTabulationMethods(psiChemistryModel, constGasEThermoPhysics);
-
-    makeChemistryTabulationMethods(psiChemistryModel, gasEThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, constGasEThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, gasEThermoPhysics);
     makeChemistryTabulationMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         constIncompressibleGasEThermoPhysics
     );
     makeChemistryTabulationMethods
     (
-        psiChemistryModel,
+        psiReactionThermo,
         incompressibleGasEThermoPhysics
     );
-    makeChemistryTabulationMethods(psiChemistryModel, icoPoly8EThermoPhysics);
-
-    makeChemistryTabulationMethods(rhoChemistryModel, constGasEThermoPhysics);
-
-    makeChemistryTabulationMethods(rhoChemistryModel, gasEThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, icoPoly8EThermoPhysics);
+    makeChemistryTabulationMethods(psiReactionThermo, constFluidEThermoPhysics);
     makeChemistryTabulationMethods
     (
-        rhoChemistryModel,
+        psiReactionThermo,
+        constAdiabaticFluidEThermoPhysics
+    );
+    makeChemistryTabulationMethods(psiReactionThermo, constEThermoPhysics);
+
+    makeChemistryTabulationMethods(rhoReactionThermo, constGasEThermoPhysics);
+    makeChemistryTabulationMethods(rhoReactionThermo, gasEThermoPhysics);
+    makeChemistryTabulationMethods
+    (
+        rhoReactionThermo,
         constIncompressibleGasEThermoPhysics
     );
     makeChemistryTabulationMethods
     (
-        rhoChemistryModel,
+        rhoReactionThermo,
         incompressibleGasEThermoPhysics
     );
-    makeChemistryTabulationMethods(rhoChemistryModel, icoPoly8EThermoPhysics);
+    makeChemistryTabulationMethods(rhoReactionThermo, icoPoly8EThermoPhysics);
+    makeChemistryTabulationMethods(rhoReactionThermo, constFluidEThermoPhysics);
+    makeChemistryTabulationMethods
+    (
+        rhoReactionThermo,
+        constAdiabaticFluidEThermoPhysics
+    );
+    makeChemistryTabulationMethods(rhoReactionThermo, constEThermoPhysics);
 }
 
 

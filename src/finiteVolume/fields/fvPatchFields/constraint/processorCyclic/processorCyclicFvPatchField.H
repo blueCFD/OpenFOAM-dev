@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::processorCyclicFvPatchField
-
-Group
-    grpCoupledBoundaryConditions
 
 Description
     This boundary condition enables processor communication across cyclic
@@ -157,7 +154,7 @@ public:
 
         // Access
 
-            //- Does the patch field perform the transfromation
+            //- Does the patch field perform the transformation
             virtual bool doTransform() const
             {
                 return !(procPatch_.parallel() || pTraits<Type>::rank == 0);

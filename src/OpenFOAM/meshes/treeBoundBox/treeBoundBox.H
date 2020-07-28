@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,10 +105,10 @@ public:
         //- The great value used for greatBox and invertedBox
         static const scalar great;
 
-        //- As per boundBox::greatBox, but with GREAT instead of VGREAT
+        //- As per boundBox::greatBox, but with great instead of vGreat
         static const treeBoundBox greatBox;
 
-        //- As per boundBox::invertedBox, but with GREAT instead of VGREAT
+        //- As per boundBox::invertedBox, but with great instead of vGreat
         static const treeBoundBox invertedBox;
 
         //- Bits used for octant/point coding.
@@ -344,15 +344,20 @@ public:
             //   0 : none of the above.
             label distanceCmp(const point&, const treeBoundBox& other) const;
 
-            //- Return slightly wider bounding box
-            //  Extends all dimensions with s*span*Random::scalar01()
-            //  and guarantees in any direction s*mag(span) minimum width
-            inline treeBoundBox extend(Random&, const scalar s) const;
+            //- Return asymetrically extended bounding box, with guaranteed
+            //  minimum width of s*mag(span) in any direction
+            inline treeBoundBox extend(const scalar s) const;
+
+    // Write
+
+        void writeOBJ(const fileName& fName) const;
+
 
     // Friend Operators
 
         friend bool operator==(const treeBoundBox&, const treeBoundBox&);
         friend bool operator!=(const treeBoundBox&, const treeBoundBox&);
+
 
     // IOstream operator
 

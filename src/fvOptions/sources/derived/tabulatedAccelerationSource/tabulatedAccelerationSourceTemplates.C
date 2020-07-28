@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,12 +51,7 @@ void Foam::fv::tabulatedAccelerationSource::addSup
 
         g = g0_ - dimensionedVector("a", dimAcceleration, acceleration.x());
 
-        dimensionedScalar ghRef
-        (
-            mag(g.value()) > SMALL
-          ? g & (cmptMag(g.value())/mag(g.value()))*hRef
-          : dimensionedScalar("ghRef", g.dimensions()*dimLength, 0)
-        );
+        dimensionedScalar ghRef(- mag(g)*hRef);
 
         mesh_.lookupObjectRef<volScalarField>("gh") = (g & mesh_.C()) - ghRef;
 

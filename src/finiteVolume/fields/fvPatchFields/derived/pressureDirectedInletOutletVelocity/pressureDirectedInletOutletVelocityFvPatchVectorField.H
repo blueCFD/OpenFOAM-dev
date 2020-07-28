@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,12 +24,9 @@ License
 Class
     Foam::pressureDirectedInletOutletVelocityFvPatchVectorField
 
-Group
-    grpInletBoundaryConditions grpOutletBoundaryConditions
-
 Description
     This velocity inlet/outlet boundary condition is applied to pressure
-    boundaries where the pressure is specified.  A zero-gradient condtion is
+    boundaries where the pressure is specified.  A zero-gradient condition is
     applied for outflow (as defined by the flux); for inflow, the velocity
     is obtained from the flux with the specified inlet direction.
 

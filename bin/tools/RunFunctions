@@ -1,8 +1,8 @@
 #---------------------------------*- sh -*-------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-#  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -56,12 +56,12 @@ isTest()
 
 getNumberOfProcessors()
 {
-    foamDictionary -entry numberOfSubdomains -value system/decomposeParDict
+    foamDictionary -disableFunctionEntries -entry numberOfSubdomains -value system/decomposeParDict
 }
 
 getApplication()
 {
-    sed -ne 's/^ *application\s*\([a-zA-Z]*\)\s*;.*$/\1/p' system/controlDict
+    foamDictionary -disableFunctionEntries -entry application -value system/controlDict
 }
 
 runApplication()
@@ -185,6 +185,33 @@ cloneCase()
             cp -r $1/$f $2
         done
     fi
+}
+
+transposeFile()
+{
+    awk '
+    {
+        for (i = 1; i <= NF; i++)
+        {
+            a[NR, i] = $i
+        }
+    }
+
+    NF > p {p = NF}
+
+    END {
+            for (j = 1; j <= p; j++)
+            {
+                str = a[1,j]
+
+                for(i = 2; i <= NR; i++)
+                {
+                    str = str" "a[i,j];
+                }
+
+                print str
+            }
+        }' $1
 }
 
 #Functions bellow this line were copied/adapted from foamJob --------------------------

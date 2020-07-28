@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,6 @@ License
 Class
     Foam::movingWallVelocityFvPatchVectorField
 
-Group
-    grpWallBoundaryConditions
-
 Description
     This boundary condition provides a velocity condition for cases with
     moving walls.
@@ -43,7 +40,6 @@ Usage
 
 See also
     Foam::fixedValueFvPatchVectorField
-    Foam::MRFZone
 
 SourceFiles
     movingWallVelocityFvPatchVectorField.C

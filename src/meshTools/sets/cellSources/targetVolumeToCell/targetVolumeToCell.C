@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,20 +28,15 @@ License
 #include "globalMeshData.H"
 #include "plane.H"
 #include "cellSet.H"
-
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(targetVolumeToCell, 0);
-
-addToRunTimeSelectionTable(topoSetSource, targetVolumeToCell, word);
-
-addToRunTimeSelectionTable(topoSetSource, targetVolumeToCell, istream);
-
+    defineTypeNameAndDebug(targetVolumeToCell, 0);
+    addToRunTimeSelectionTable(topoSetSource, targetVolumeToCell, word);
+    addToRunTimeSelectionTable(topoSetSource, targetVolumeToCell, istream);
 }
 
 
@@ -131,15 +126,15 @@ void Foam::targetVolumeToCell::combine(topoSet& set, const bool add) const
     // Planes all have base (0 0 0) and fixed normal so work only on normal
     // component.
 
-    scalar maxComp = -GREAT;
+    scalar maxComp = -great;
     label maxCells = 0;
-    //scalar maxVol = 0;
-    scalar minComp = GREAT;
+    // scalar maxVol = 0;
+    scalar minComp = great;
     {
         const boundBox& bb = mesh_.bounds();
         pointField points(bb.points());
 
-        //label minPointi = -1;
+        // label minPointi = -1;
         label maxPointi = -1;
         forAll(points, pointi)
         {
@@ -152,13 +147,13 @@ void Foam::targetVolumeToCell::combine(topoSet& set, const bool add) const
             else if (c < minComp)
             {
                 minComp = c;
-                //minPointi = pointi;
+                // minPointi = pointi;
             }
         }
 
         PackedBoolList maxSelected(mesh_.nCells());
         maxCells = selectCells(maxComp, maskSet, maxSelected);
-        //maxVol = volumeOfSet(maxSelected);
+        // maxVol = volumeOfSet(maxSelected);
 
         // Check that maxPoint indeed selects all cells
         if (maxCells != nTotCells)
@@ -179,13 +174,13 @@ void Foam::targetVolumeToCell::combine(topoSet& set, const bool add) const
     PackedBoolList selected(mesh_.nCells());
     label nSelected = -1;
     scalar selectedVol = 0.0;
-    //scalar selectedComp = 0.0;
+    // scalar selectedComp = 0.0;
 
 
     scalar low = minComp;
     scalar high = maxComp;
 
-    const scalar tolerance = SMALL*100*(maxComp-minComp);
+    const scalar tolerance = small*100*(maxComp-minComp);
 
     while ((high-low) > tolerance)
     {
@@ -194,7 +189,7 @@ void Foam::targetVolumeToCell::combine(topoSet& set, const bool add) const
         nSelected = selectCells(mid, maskSet, selected);
         selectedVol = volumeOfSet(selected);
 
-        //Pout<< "High:" << high << " low:" << low << " mid:" << mid << nl
+        // Pout<< "High:" << high << " low:" << low << " mid:" << mid << nl
         //    << "    nSelected:" << nSelected << nl
         //    << "    vol      :" << selectedVol << nl
         //    << endl;
@@ -228,7 +223,7 @@ void Foam::targetVolumeToCell::combine(topoSet& set, const bool add) const
 
     if (selectedVol < vol_)
     {
-        //selectedComp = high;
+        // selectedComp = high;
     }
     else
     {
@@ -237,7 +232,7 @@ void Foam::targetVolumeToCell::combine(topoSet& set, const bool add) const
 
         if (selectedVol < vol_)
         {
-            //selectedComp = low;
+            // selectedComp = low;
         }
         else
         {
@@ -268,7 +263,6 @@ void Foam::targetVolumeToCell::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::targetVolumeToCell::targetVolumeToCell
 (
     const polyMesh& mesh,
@@ -282,7 +276,6 @@ Foam::targetVolumeToCell::targetVolumeToCell
 {}
 
 
-// Construct from dictionary
 Foam::targetVolumeToCell::targetVolumeToCell
 (
     const polyMesh& mesh,
@@ -296,7 +289,6 @@ Foam::targetVolumeToCell::targetVolumeToCell
 {}
 
 
-// Construct from Istream
 Foam::targetVolumeToCell::targetVolumeToCell
 (
     const polyMesh& mesh,

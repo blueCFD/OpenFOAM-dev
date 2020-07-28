@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -114,7 +114,7 @@ private:
 
         //- Couple-decouple operation.
         //  If the interface is coupled, decouple it and vice versa.
-        //  Used in conjuction with automatic mesh motion
+        //  Used in conjunction with automatic mesh motion
         mutable Switch coupleDecouple_;
 
         //- State of the modifier

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,11 @@ using namespace Foam::constant::mathematical;
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
 template<class CloudType>
-void Foam::ORourkeCollision<CloudType>::collide(const scalar dt)
+void Foam::ORourkeCollision<CloudType>::collide
+(
+    typename CloudType::parcelType::trackingData& td,
+    const scalar dt
+)
 {
     // Create the occupancy list for the cells
     labelList occupancy(this->owner().mesh().nCells(), 0);
@@ -74,23 +78,25 @@ void Foam::ORourkeCollision<CloudType>::collide(const scalar dt)
 
                     if (massChanged)
                     {
-                        if (m1 > ROOTVSMALL)
+                        if (m1 > rootVSmall)
                         {
                             const scalarField X(liquids_.X(p1.Y()));
-                            p1.rho() = liquids_.rho(p1.pc(), p1.T(), X);
-                            p1.Cp() = liquids_.Cp(p1.pc(), p1.T(), X);
-                            p1.sigma() = liquids_.sigma(p1.pc(), p1.T(), X);
-                            p1.mu() = liquids_.mu(p1.pc(), p1.T(), X);
+                            p1.setCellValues(this->owner(), td);
+                            p1.rho() = liquids_.rho(td.pc(), p1.T(), X);
+                            p1.Cp() = liquids_.Cp(td.pc(), p1.T(), X);
+                            p1.sigma() = liquids_.sigma(td.pc(), p1.T(), X);
+                            p1.mu() = liquids_.mu(td.pc(), p1.T(), X);
                             p1.d() = cbrt(6.0*m1/(p1.nParticle()*p1.rho()*pi));
                         }
 
-                        if (m2 > ROOTVSMALL)
+                        if (m2 > rootVSmall)
                         {
                             const scalarField X(liquids_.X(p2.Y()));
-                            p2.rho() = liquids_.rho(p2.pc(), p2.T(), X);
-                            p2.Cp() = liquids_.Cp(p2.pc(), p2.T(), X);
-                            p2.sigma() = liquids_.sigma(p2.pc(), p2.T(), X);
-                            p2.mu() = liquids_.mu(p2.pc(), p2.T(), X);
+                            p2.setCellValues(this->owner(), td);
+                            p2.rho() = liquids_.rho(td.pc(), p2.T(), X);
+                            p2.Cp() = liquids_.Cp(td.pc(), p2.T(), X);
+                            p2.sigma() = liquids_.sigma(td.pc(), p2.T(), X);
+                            p2.mu() = liquids_.mu(td.pc(), p2.T(), X);
                             p2.d() = cbrt(6.0*m2/(p2.nParticle()*p2.rho()*pi));
                         }
                     }
@@ -124,7 +130,7 @@ bool Foam::ORourkeCollision<CloudType>::collideParcels
 )
 {
     // Return if parcel masses are ~0
-    if ((m1 < ROOTVSMALL) || (m2 < ROOTVSMALL))
+    if ((m1 < rootVSmall) || (m2 < rootVSmall))
     {
         return false;
     }
@@ -194,7 +200,7 @@ bool Foam::ORourkeCollision<CloudType>::collideSorted
 
     scalar mTot = m1 + m2;
 
-    scalar gamma = d1/max(ROOTVSMALL, d2);
+    scalar gamma = d1/max(rootVSmall, d2);
     scalar f = pow3(gamma) + 2.7*gamma - 2.4*sqr(gamma);
 
     // Mass-averaged temperature
@@ -202,7 +208,7 @@ bool Foam::ORourkeCollision<CloudType>::collideSorted
 
     // Interpolate to find average surface tension
     scalar sigmaAve = sigma1;
-    if (mag(T2 - T1) > SMALL)
+    if (mag(T2 - T1) > small)
     {
         sigmaAve += (sigma2 - sigma1)*(Tave - T1)/(T2 - T1);
     }
@@ -211,9 +217,9 @@ bool Foam::ORourkeCollision<CloudType>::collideSorted
     scalar rhoAve = mTot/Vtot;
 
     scalar dAve = sqrt(d1*d2);
-    scalar WeColl = 0.5*rhoAve*sqr(magURel)*dAve/max(ROOTVSMALL, sigmaAve);
+    scalar WeColl = 0.5*rhoAve*sqr(magURel)*dAve/max(rootVSmall, sigmaAve);
 
-    scalar coalesceProb = min(1.0, 2.4*f/max(ROOTVSMALL, WeColl));
+    scalar coalesceProb = min(1.0, 2.4*f/max(rootVSmall, WeColl));
 
     scalar prob = this->owner().rndGen().template sample01<scalar>();
 

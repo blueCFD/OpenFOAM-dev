@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,6 +81,15 @@ class AMIInterpolation
 {
 public:
 
+    // Public typedefs
+
+        // Typedef to SourcePatch type this AMIInterplation is instantiated on
+        typedef SourcePatch sourcePatchType;
+
+        // Typedef to TargetPatch type this AMIInterplation is instantiated on
+        typedef TargetPatch targetPatchType;
+
+
     // Public data types
 
         //- Enumeration specifying interpolation method
@@ -89,7 +98,8 @@ public:
             imDirect,
             imMapNearest,
             imFaceAreaWeight,
-            imPartialFaceAreaWeight
+            imPartialFaceAreaWeight,
+            imSweptFaceAreaWeight
         };
 
         //- Convert interpolationMethod to word representation
@@ -102,6 +112,14 @@ public:
         static interpolationMethod wordTointerpolationMethod
         (
             const word& method
+        );
+
+        //- Calculate the patch face magnitudes for the given tri-mode
+        template<class Patch>
+        static tmp<scalarField> patchMagSf
+        (
+            const Patch& patch,
+            const faceAreaIntersect::triangulationMode triMode
         );
 
 
@@ -230,23 +248,46 @@ private:
             ) const;
 
 
-        // Evaluation
+        // Manipulation
 
-            //- Normalise the (area) weights - suppresses numerical error in
-            //  weights calculation
-            //  NOTE: if area weights are incorrect by 'a significant amount'
-            //     normalisation may stabilise the solution, but will introduce
-            //     numerical error!
-            static void normaliseWeights
+            //- Sum the weights for each face
+            static void sumWeights
+            (
+                const scalarListList& wght,
+                scalarField& wghtSum
+            );
+
+            //- As above, but for multiple sets of weights
+            static void sumWeights
+            (
+                const UPtrList<scalarListList>& wghts,
+                scalarField& wghtSum
+            );
+
+            //- Print out information relating to the weights sum. Values close
+            //  to one are ideal. This information acts as a measure of the
+            //  quality of the AMI.
+            static void reportSumWeights
             (
                 const scalarField& patchAreas,
                 const word& patchName,
-                const labelListList& addr,
-                scalarListList& wght,
-                scalarField& wghtSum,
-                const bool conformal,
-                const bool output,
+                const scalarField& wghtSum,
                 const scalar lowWeightTol
+            );
+
+            //- Normalise the weights so that they sum to one for each face.
+            //  This may stabilise the solution at the expense of accuracy.
+            static void normaliseWeights
+            (
+                scalarListList& wght,
+                const scalarField& wghtSum
+            );
+
+            //- As above but for multiple sets of weights
+            static void normaliseWeights
+            (
+                UPtrList<scalarListList>& wghts,
+                const scalarField& wghtSum
             );
 
 
@@ -273,7 +314,8 @@ private:
             (
                 const SourcePatch& srcPatch,
                 const TargetPatch& tgtPatch,
-                const autoPtr<searchableSurface>& surfPtr
+                const autoPtr<searchableSurface>& surfPtr,
+                const bool report
             );
 
 public:
@@ -289,7 +331,8 @@ public:
             const bool requireMatch = true,
             const interpolationMethod& method = imFaceAreaWeight,
             const scalar lowWeightCorrection = -1,
-            const bool reverseTarget = false
+            const bool reverseTarget = false,
+            const bool report = true
         );
 
         //- Construct from components
@@ -302,7 +345,8 @@ public:
             const word& methodName =
                 interpolationMethodToWord(imFaceAreaWeight),
             const scalar lowWeightCorrection = -1,
-            const bool reverseTarget = false
+            const bool reverseTarget = false,
+            const bool report = true
         );
 
         //- Construct from components, with projection surface
@@ -315,7 +359,8 @@ public:
             const bool requireMatch = true,
             const interpolationMethod& method = imFaceAreaWeight,
             const scalar lowWeightCorrection = -1,
-            const bool reverseTarget = false
+            const bool reverseTarget = false,
+            const bool report = true
         );
 
         //- Construct from components, with projection surface
@@ -329,7 +374,8 @@ public:
             const word& methodName =
                 interpolationMethodToWord(imFaceAreaWeight),
             const scalar lowWeightCorrection = -1,
-            const bool reverseTarget = false
+            const bool reverseTarget = false,
+            const bool report = true
         );
 
         //- Construct from agglomeration of AMIInterpolation. Agglomeration
@@ -338,18 +384,13 @@ public:
         (
             const AMIInterpolation<SourcePatch, TargetPatch>& fineAMI,
             const labelList& sourceRestrictAddressing,
-            const labelList& neighbourRestrictAddressing
+            const labelList& neighbourRestrictAddressing,
+            const bool report = false
         );
 
 
     //- Destructor
     ~AMIInterpolation();
-
-    // Typedef to SourcePatch type this AMIInterplation is instantiated on
-    typedef SourcePatch sourcePatchType;
-
-    // Typedef to TargetPatch type this AMIInterplation is instantiated on
-    typedef TargetPatch targetPatchType;
 
 
     // Member Functions
@@ -429,7 +470,40 @@ public:
             void update
             (
                 const SourcePatch& srcPatch,
-                const TargetPatch& tgtPatch
+                const TargetPatch& tgtPatch,
+                const bool report
+            );
+
+            //- Sum the weights on both sides of an AMI
+            static void sumWeights
+            (
+                AMIInterpolation<SourcePatch, TargetPatch>& AMI
+            );
+
+            //- As above, but for multiple AMI-s
+            static void sumWeights
+            (
+                PtrList<AMIInterpolation<SourcePatch, TargetPatch>>& AMIs
+            );
+
+            //- Print out information relating to the weights sum. Values close
+            //  to one are ideal. This information acts as a measure of the
+            //  quality of the AMI.
+            static void reportSumWeights
+            (
+                AMIInterpolation<SourcePatch, TargetPatch>& AMI
+            );
+
+            //- Normalise the weights on both sides of an AMI
+            static void normaliseWeights
+            (
+                AMIInterpolation<SourcePatch, TargetPatch>& AMI
+            );
+
+            //- As above, but for multiple AMI-s
+            static void normaliseWeights
+            (
+                UPtrList<AMIInterpolation<SourcePatch, TargetPatch>>& AMIs
             );
 
 

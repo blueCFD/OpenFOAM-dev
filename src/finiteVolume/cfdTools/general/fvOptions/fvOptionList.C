@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -133,6 +133,24 @@ void Foam::fv::optionList::reset(const dictionary& dict)
             );
         }
     }
+}
+
+
+bool Foam::fv::optionList::appliesToField(const word& fieldName) const
+{
+    forAll(*this, i)
+    {
+        const option& source = this->operator[](i);
+
+        label fieldi = source.applyToField(fieldName);
+
+        if (fieldi != -1)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ SourceFiles
 #define BrownianMotionForce_H
 
 #include "ParticleForce.T.H"
-#include "cachedRandom.H"
+#include "Random.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,7 +65,7 @@ class BrownianMotionForce
     // Private data
 
         //- Reference to the cloud random number generator
-        cachedRandom& rndGen_;
+        Random& rndGen_;
 
         //- Molecular free path length [m]
         const scalar lambda_;
@@ -142,6 +142,7 @@ public:
             virtual forceSuSp calcCoupled
             (
                 const typename CloudType::parcelType& p,
+                const typename CloudType::parcelType::trackingData& td,
                 const scalar dt,
                 const scalar mass,
                 const scalar Re,

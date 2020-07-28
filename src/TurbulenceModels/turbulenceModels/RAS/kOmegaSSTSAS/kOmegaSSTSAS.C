@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,9 +56,9 @@ tmp<fvScalarMatrix> kOmegaSSTSAS<BasicTurbulenceModel>::Qsas
                 mag(fvc::laplacian(this->U_))()()
               + dimensionedScalar
                 (
-                    "ROOTVSMALL",
+                    "rootVSmall",
                     dimensionSet(0, -1, -1, 0, 0),
-                    ROOTVSMALL
+                    rootVSmall
                 )
             ),
             Cs_*sqrt(kappa_*zeta2_/(beta/this->betaStar_ - gamma))*delta()()
@@ -166,7 +166,7 @@ kOmegaSSTSAS<BasicTurbulenceModel>::kOmegaSSTSAS
     (
         LESdelta::New
         (
-            IOobject::groupName("delta", U.group()),
+            IOobject::groupName("delta", alphaRhoPhi.group()),
             *this,
             this->coeffDict_
         )

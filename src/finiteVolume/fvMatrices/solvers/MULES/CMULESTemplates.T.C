@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,6 @@ void Foam::MULES::correct
     const RdeltaTType& rDeltaT,
     const RhoType& rho,
     volScalarField& psi,
-    const surfaceScalarField& phi,
     const surfaceScalarField& phiCorr,
     const SpType& Sp,
     const SuType& Su
@@ -74,7 +73,66 @@ void Foam::MULES::correct
 }
 
 
+template<class RhoType>
+void Foam::MULES::correct
+(
+    const RhoType& rho,
+    volScalarField& psi,
+    const surfaceScalarField& phiCorr
+)
+{
+    correct(rho, psi, phiCorr, zeroField(), zeroField());
+}
+
+
 template<class RhoType, class SpType, class SuType>
+void Foam::MULES::correct
+(
+    const RhoType& rho,
+    volScalarField& psi,
+    const surfaceScalarField& phiCorr,
+    const SpType& Sp,
+    const SuType& Su
+)
+{
+    const fvMesh& mesh = psi.mesh();
+
+    if (fv::localEulerDdt::enabled(mesh))
+    {
+        const volScalarField& rDeltaT = fv::localEulerDdt::localRDeltaT(mesh);
+        correct(rDeltaT, rho, psi, phiCorr, Sp, Su);
+    }
+    else
+    {
+        const scalar rDeltaT = 1.0/mesh.time().deltaTValue();
+        correct(rDeltaT, rho, psi, phiCorr, Sp, Su);
+    }
+}
+
+
+template<class RhoType, class PsiMaxType, class PsiMinType>
+void Foam::MULES::correct
+(
+    const RhoType& rho,
+    volScalarField& psi,
+    const surfaceScalarField& phi,
+    surfaceScalarField& phiCorr,
+    const PsiMaxType& psiMax,
+    const PsiMinType& psiMin
+)
+{
+    correct(rho, psi, phi, phiCorr, zeroField(), zeroField(), psiMax, psiMin);
+}
+
+
+template
+<
+    class RhoType,
+    class SpType,
+    class SuType,
+    class PsiMaxType,
+    class PsiMinType
+>
 void Foam::MULES::correct
 (
     const RhoType& rho,
@@ -83,8 +141,8 @@ void Foam::MULES::correct
     surfaceScalarField& phiCorr,
     const SpType& Sp,
     const SuType& Su,
-    const scalar psiMax,
-    const scalar psiMin
+    const PsiMaxType& psiMax,
+    const PsiMinType& psiMin
 )
 {
     const fvMesh& mesh = psi.mesh();
@@ -105,7 +163,8 @@ void Foam::MULES::correct
             psiMax,
             psiMin
         );
-        correct(rDeltaT, rho, psi, phi, phiCorr, Sp, Su);
+
+        correct(rDeltaT, rho, psi, phiCorr, Sp, Su);
     }
     else
     {
@@ -124,12 +183,20 @@ void Foam::MULES::correct
             psiMin
         );
 
-        correct(rDeltaT, rho, psi, phi, phiCorr, Sp, Su);
+        correct(rDeltaT, rho, psi, phiCorr, Sp, Su);
     }
 }
 
 
-template<class RdeltaTType, class RhoType, class SpType, class SuType>
+template
+<
+    class RdeltaTType,
+    class RhoType,
+    class SpType,
+    class SuType,
+    class PsiMaxType,
+    class PsiMinType
+>
 void Foam::MULES::limiterCorr
 (
     scalarField& allLambda,
@@ -140,8 +207,8 @@ void Foam::MULES::limiterCorr
     const surfaceScalarField& phiCorr,
     const SpType& Sp,
     const SuType& Su,
-    const scalar psiMax,
-    const scalar psiMin
+    const PsiMaxType& psiMax,
+    const PsiMinType& psiMin
 )
 {
     const scalarField& psiIf = psi;
@@ -199,8 +266,11 @@ void Foam::MULES::limiterCorr
     surfaceScalarField::Boundary& lambdaBf =
         lambda.boundaryFieldRef();
 
-    scalarField psiMaxn(psiIf.size(), psiMin);
-    scalarField psiMinn(psiIf.size(), psiMax);
+    scalarField psiMaxn(psiIf.size());
+    scalarField psiMinn(psiIf.size());
+
+    psiMaxn = psiMin;
+    psiMinn = psiMax;
 
     scalarField sumPhip(psiIf.size(), 0.0);
     scalarField mSumPhim(psiIf.size(), 0.0);
@@ -265,8 +335,8 @@ void Foam::MULES::limiterCorr
             {
                 const label pfCelli = pFaceCells[pFacei];
 
-                psiMaxn[pfCelli] = max(psiMaxn[pfCelli], psiMax);
-                psiMinn[pfCelli] = min(psiMinn[pfCelli], psiMin);
+                psiMaxn[pfCelli] = max(psiMaxn[pfCelli], psiMax[pfCelli]);
+                psiMinn[pfCelli] = min(psiMinn[pfCelli], psiMin[pfCelli]);
             }
         }
 
@@ -290,7 +360,7 @@ void Foam::MULES::limiterCorr
     psiMaxn = min(psiMaxn + extremaCoeff*(psiMax - psiMin), psiMax);
     psiMinn = max(psiMinn - extremaCoeff*(psiMax - psiMin), psiMin);
 
-    if (smoothLimiter > SMALL)
+    if (smoothLimiter > small)
     {
         psiMaxn =
             min(smoothLimiter*psiIf + (1.0 - smoothLimiter)*psiMaxn, psiMax);
@@ -371,7 +441,7 @@ void Foam::MULES::limiterCorr
                 max(min
                 (
                     (sumlPhip[celli] + psiMaxn[celli])
-                   /(mSumPhim[celli] + ROOTVSMALL),
+                   /(mSumPhim[celli] + rootVSmall),
                     1.0), 0.0
                 );
 
@@ -379,7 +449,7 @@ void Foam::MULES::limiterCorr
                 max(min
                 (
                     (mSumlPhim[celli] + psiMinn[celli])
-                   /(sumPhip[celli] + ROOTVSMALL),
+                   /(sumPhip[celli] + rootVSmall),
                     1.0), 0.0
                 );
         }
@@ -448,7 +518,7 @@ void Foam::MULES::limiterCorr
                 forAll(lambdaPf, pFacei)
                 {
                     // Limit outlet faces only
-                    if ((phiPf[pFacei] + phiCorrfPf[pFacei]) > SMALL*SMALL)
+                    if ((phiPf[pFacei] + phiCorrfPf[pFacei]) > small*small)
                     {
                         const label pfCelli = pFaceCells[pFacei];
 
@@ -472,7 +542,15 @@ void Foam::MULES::limiterCorr
 }
 
 
-template<class RdeltaTType, class RhoType, class SpType, class SuType>
+template
+<
+    class RdeltaTType,
+    class RhoType,
+    class SpType,
+    class SuType,
+    class PsiMaxType,
+    class PsiMinType
+>
 void Foam::MULES::limitCorr
 (
     const RdeltaTType& rDeltaT,
@@ -482,8 +560,8 @@ void Foam::MULES::limitCorr
     surfaceScalarField& phiCorr,
     const SpType& Sp,
     const SuType& Su,
-    const scalar psiMax,
-    const scalar psiMin
+    const PsiMaxType& psiMax,
+    const PsiMinType& psiMin
 )
 {
     const fvMesh& mesh = psi.mesh();

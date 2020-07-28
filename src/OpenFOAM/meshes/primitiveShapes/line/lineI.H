@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -138,7 +138,7 @@ Foam::scalar Foam::line<Point, PointRef>::nearestDist
     Point crossab = a ^ b;
     scalar magCrossSqr = magSqr(crossab);
 
-    if (magCrossSqr > VSMALL)
+    if (magCrossSqr > vSmall)
     {
         scalar s = ((c ^ b) & crossab)/magCrossSqr;
         scalar t = ((c ^ a) & crossab)/magCrossSqr;
@@ -254,6 +254,23 @@ Foam::scalar Foam::line<Point, PointRef>::nearestDist
     }
 
     return Foam::mag(thisPt - edgePt);
+}
+
+
+template<class Point, class PointRef>
+bool Foam::line<Point, PointRef>::insideBoundBox(const Point& p) const
+{
+    if
+    (
+        ( p.x() < min(a_.x(), b_.x()) || p.x() > max(a_.x(), b_.x()) )
+     || ( p.y() < min(a_.y(), b_.y()) || p.y() > max(a_.y(), b_.y()) )
+     || ( p.z() < min(a_.z(), b_.z()) || p.z() > max(a_.z(), b_.z()) )
+    )
+    {
+        return false;
+    }
+
+    return true;
 }
 
 

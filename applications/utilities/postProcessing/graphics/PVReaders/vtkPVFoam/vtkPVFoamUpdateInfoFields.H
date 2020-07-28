@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,23 +45,7 @@ void Foam::vtkPVFoam::updateInfoFields
             << endl;
     }
 
-    stringList enabledEntries;
-    // enable 'p' and 'U' on the first call
-    if (select->GetNumberOfArrays() == 0 && !meshPtr_)
-    {
-        enabledEntries.setSize(2);
-        enabledEntries[0] = "p";
-        enabledEntries[1] = "U";
-    }
-    else
-    {
-        // preserve the enabled selections
-        enabledEntries = getSelectedArrayEntries(select);
-    }
-
-    select->RemoveAllArrays();
-
-    // use the db directly since this might be called without a mesh,
+    // Use the db directly since this might be called without a mesh,
     // but the region must get added back in
     word regionPrefix;
     if (meshRegion_ != polyMesh::defaultRegion)
@@ -69,7 +53,53 @@ void Foam::vtkPVFoam::updateInfoFields
         regionPrefix = meshRegion_;
     }
 
-    instantList times = dbPtr_().times();
+    const instantList times = dbPtr_().times();
+
+    stringList enabledEntries;
+
+    if (select->GetNumberOfArrays() == 0 && !meshPtr_)
+    {
+        const wordReList defaultFieldRes
+        (
+            configDict_.lookupOrDefault
+            (
+                "defaultFields",
+                wordReList(wordList{"p", "U"})
+            )
+        );
+
+        wordHashSet objectNameSet;
+        forAll(times, timei)
+        {
+            // Search for list of objects for this time and mesh region
+            IOobjectList objects(dbPtr_(), times[timei].name(), regionPrefix);
+
+            forAllConstIter(IOobjectList, objects, iter)
+            {
+                objectNameSet.insert(iter.key());
+            }
+        }
+
+        const wordList objectNames(objectNameSet.toc());
+        const labelList defaultFields
+        (
+            findStrings(defaultFieldRes, objectNames)
+        );
+
+        enabledEntries.setSize(defaultFields.size());
+        forAll(defaultFields, i)
+        {
+            enabledEntries[i] = objectNames[defaultFields[i]];
+        }
+    }
+    else
+    {
+        // Preserve the enabled selections
+        enabledEntries = getSelectedArrayEntries(select);
+    }
+
+    select->RemoveAllArrays();
+
     forAll(times, timei)
     {
         // Search for list of objects for this time and mesh region
@@ -103,7 +133,7 @@ void Foam::vtkPVFoam::updateInfoFields
         );
     }
 
-    // restore the enabled selections
+    // Restore the enabled selections
     setSelectedArrayEntries(select, enabledEntries);
 
     if (debug)

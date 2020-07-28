@@ -2,28 +2,27 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version         2.0;
+    version         2;
     format          ascii;
     class           dictionary;
     location        "system";
     object          controlDict;
 }
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 application     reactingFoam;
 
-startFrom       latestTime;
+startFrom       startTime;
 
-startTime       0;
+startTime       1500;
 
 stopAt          endTime;
 
-endTime         6000;
+endTime         5000;
 
 deltaT          1;
 
@@ -37,7 +36,7 @@ writeFormat     binary;
 
 writePrecision  10;
 
-writeCompression no;
+writeCompression off;
 
 timeFormat      general;
 

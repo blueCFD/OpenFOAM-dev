@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::regionModelFunctionObjectList
+    Foam::regionModels::regionModelFunctionObjectList
 
 Description
     List of cloud function objects
@@ -100,7 +100,7 @@ public:
             //- Return const access to the cloud region
             inline const regionModel& region() const;
 
-            //- Return refernce to the cloud region
+            //- Return references to the cloud region
             inline regionModel& region();
 
             //- Return the forces dictionary

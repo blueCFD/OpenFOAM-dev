@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,13 @@ class mirrorFvMesh
         IOdictionary mirrorMeshDict_;
 
         //- Mirrored mesh
-        fvMesh* mirrorMeshPtr_;
+        autoPtr<fvMesh> mirrorMeshPtr_;
+
+        //- Cell map
+        autoPtr<labelList> cellMapPtr_;
+
+        //- Point map
+        autoPtr<labelList> pointMapPtr_;
 
 
     // Private Member Functions
@@ -73,7 +79,7 @@ public:
     // Constructors
 
         //- Construct from IOobject
-        mirrorFvMesh(const IOobject& io);
+        mirrorFvMesh(const IOobject& io, const word& dictName);
 
 
     //- Destructor
@@ -85,7 +91,19 @@ public:
         //- Return reference to mirror mesh
         const fvMesh& mirrorMesh() const
         {
-            return *mirrorMeshPtr_;
+            return mirrorMeshPtr_();
+        }
+
+        //- Mirrored to original cell
+        const labelList& cellMap() const
+        {
+            return cellMapPtr_();
+        }
+
+        //- Mirrored to original point
+        const labelList& pointMap() const
+        {
+            return pointMapPtr_();
         }
 };
 

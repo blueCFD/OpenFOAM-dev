@@ -1,21 +1,11 @@
-Info<< "Creating combustion model\n" << endl;
-
-autoPtr<combustionModels::psiCombustionModel> combustion
-(
-    combustionModels::psiCombustionModel::New
-    (
-        mesh
-    )
-);
-
 Info<< "Reading thermophysical properties\n" << endl;
-
-psiReactionThermo& thermo = combustion->thermo();
+autoPtr<psiReactionThermo> pThermo(psiReactionThermo::New(mesh));
+psiReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "h", "e");
 
 SLGThermo slgThermo(mesh, thermo);
 
-basicMultiComponentMixture& composition = thermo.composition();
+basicSpecieMixture& composition = thermo.composition();
 PtrList<volScalarField>& Y = composition.Y();
 
 const word inertSpecie(thermo.lookup("inertSpecie"));
@@ -74,8 +64,11 @@ autoPtr<compressible::turbulenceModel> turbulence
     )
 );
 
-// Set the turbulence into the combustion model
-combustion->setTurbulence(turbulence());
+Info<< "Creating combustion model\n" << endl;
+autoPtr<CombustionModel<psiReactionThermo>> combustion
+(
+    CombustionModel<psiReactionThermo>::New(thermo, turbulence())
+);
 
 
 #include "readGravitationalAcceleration.H"
@@ -166,3 +159,4 @@ volScalarField K("K", 0.5*magSqr(U));
 #include "createSurfaceFilmModel.H"
 #include "createPyrolysisModel.H"
 #include "createRadiationModel.H"
+#include "createFvOptions.H"

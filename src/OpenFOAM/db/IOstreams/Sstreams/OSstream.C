@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -208,6 +208,14 @@ Foam::Ostream& Foam::OSstream::write(const floatScalar val)
 
 
 Foam::Ostream& Foam::OSstream::write(const doubleScalar val)
+{
+    os_ << val;
+    setState(os_.rdstate());
+    return *this;
+}
+
+
+Foam::Ostream& Foam::OSstream::write(const longDoubleScalar val)
 {
     os_ << val;
     setState(os_.rdstate());

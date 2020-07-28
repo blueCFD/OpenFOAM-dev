@@ -13,10 +13,17 @@ unset COMP_FLAGS LINK_FLAGS
 
 if ! isMinGW && [ -f /usr/include/readline/readline.h ]
 then
-    echo "Found <readline/readline.h>  --  enabling readline support."
+    echo "    found <readline/readline.h>  --  enabling readline support."
     export COMP_FLAGS="-DHAS_READLINE"
-    export LINK_FLAGS="-lreadline"
 
+    # readline may require ncurses
+    if [ -f /usr/include/ncurses/ncurses.h ]
+    then
+        echo "    found <ncurses/ncurses.h>  --  maybe required by readline."
+        export LINK_FLAGS="-lreadline -lncurses"
+    else
+        export LINK_FLAGS="-lreadline"
+    fi
 elif onWin && [ -f /mingw64/include/readline/readline.h ]
 then
     echo "    found <readline/readline.h>  --  enabling readline support."

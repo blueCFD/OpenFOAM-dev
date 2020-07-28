@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ Foam::cylindricalCS Foam::blockEdges::arcEdge::calcAngle()
 
     scalar denom = asqr*bsqr - adotb*adotb;
 
-    if (mag(denom) < VSMALL)
+    if (mag(denom) < vSmall)
     {
         FatalErrorInFunction
             << denom
@@ -72,7 +72,8 @@ Foam::cylindricalCS Foam::blockEdges::arcEdge::calcAngle()
     vector r3(p3_ - centre);
 
     // find angles
-    angle_ = radToDeg(acos((r3 & r1)/(mag(r3) * mag(r1))));
+    const scalar cosAngle = (r3 & r1)/(mag(r3) * mag(r1));
+    angle_ = radToDeg(acos(max(-1, min(cosAngle, 1))));
 
     // check if the vectors define an exterior or an interior arcEdge
     if (((r1 ^ r2) & (r1 ^ r3)) < 0.0)
@@ -142,18 +143,18 @@ Foam::blockEdges::arcEdge::arcEdge
 
 Foam::point Foam::blockEdges::arcEdge::position(const scalar lambda) const
 {
-    if (lambda < -SMALL || lambda > 1 + SMALL)
+    if (lambda < -small || lambda > 1 + small)
     {
         FatalErrorInFunction
             << "Parameter out of range, lambda = " << lambda
             << abort(FatalError);
     }
 
-    if (lambda < SMALL)
+    if (lambda < small)
     {
         return p1_;
     }
-    else if (lambda > 1 - SMALL)
+    else if (lambda > 1 - small)
     {
         return p3_;
     }

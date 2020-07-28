@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -221,7 +221,6 @@ void Foam::ReactingCloud<CloudType>::setParcelThermoProperties
 {
     CloudType::setParcelThermoProperties(parcel, lagrangianDt);
 
-    parcel.pc() = this->thermo().thermo().p()[parcel.cell()];
     parcel.Y() = composition().YMixture0();
 }
 
@@ -322,10 +321,9 @@ void Foam::ReactingCloud<CloudType>::evolve()
 {
     if (this->solution().canEvolve())
     {
-        typename parcelType::template
-            TrackingData<ReactingCloud<CloudType>> td(*this);
+        typename parcelType::trackingData td(*this);
 
-        this->solve(td);
+        this->solve(*this, td);
     }
 }
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ Foam::chemistryReductionMethods::DRGEP<CompType, ThermoType>::DRGEP
     dictionary initSet = this->coeffsDict_.subDict("initialSet");
     for (label i=0; i<chemistry.nSpecie(); i++)
     {
-        if (initSet.found(chemistry.Y()[i].name()))
+        if (initSet.found(chemistry.Y()[i].member()))
         {
             searchInitSet_[j++]=i;
         }
@@ -56,7 +56,7 @@ Foam::chemistryReductionMethods::DRGEP<CompType, ThermoType>::DRGEP
     {
         FatalErrorInFunction
             << searchInitSet_.size()-j
-            << " species in the intial set is not in the mechanism "
+            << " species in the initial set is not in the mechanism "
             << initSet
             << exit(FatalError);
     }
@@ -359,7 +359,7 @@ reduceMechanism
         // compute alpha
         scalar alphaA(0.0);
         // C
-        if (Pa[0] > VSMALL)
+        if (Pa[0] > vSmall)
         {
             scalar alphaTmp = (sC_[q]*mag(PA[q]-CA[q])/Pa[0]);
             if (alphaTmp > alphaA)
@@ -368,7 +368,7 @@ reduceMechanism
             }
         }
         // H
-        if (Pa[1] > VSMALL)
+        if (Pa[1] > vSmall)
         {
             scalar alphaTmp = (sH_[q]*mag(PA[q]-CA[q])/Pa[1]);
             if (alphaTmp > alphaA)
@@ -377,7 +377,7 @@ reduceMechanism
             }
         }
         // O
-        if (Pa[2] > VSMALL)
+        if (Pa[2] > vSmall)
         {
             scalar alphaTmp = (sO_[q]*mag(PA[q]-CA[q])/Pa[2]);
             if (alphaTmp > alphaA)
@@ -386,7 +386,7 @@ reduceMechanism
             }
         }
         // N
-        if (Pa[3] > VSMALL)
+        if (Pa[3] > vSmall)
         {
             scalar alphaTmp = (sN_[q]*mag(PA[q]-CA[q])/Pa[3]);
             if (alphaTmp > alphaA)
@@ -436,17 +436,15 @@ reduceMechanism
     {
         label u = Q.pop();
         scalar Den = max(PA[u],CA[u]);
-        if (Den > VSMALL)
+        if (Den > vSmall)
         {
             for (label v=0; v<NbrABInit[u]; v++)
             {
                 label otherSpec = rABOtherSpec(u, v);
                 scalar rAB = mag(rABNum(u, v))/Den;
-                if (rAB>1)
+                if (rAB > 1)
                 {
-                    Info<< "Badly Conditioned rAB : " << rAB
-                    << "species involved : "<<u << "," << otherSpec << endl;
-                    rAB=1.0;
+                    rAB = 1;
                 }
 
                 scalar Rtemp = Rvalue[u]*rAB;
@@ -647,14 +645,9 @@ reduceMechanism
                     if (!disabledSpecies[otherSpec])
                     {
                         scalar rAB = mag(rABNum(u, v))/Den;
-                        if (rAB>1.0)
+                        if (rAB > 1)
                         {
-                            Info<< "Badly Conditioned rAB : " << rAB
-                            << "species involved : "
-                            <<this->chemistry_.Y()[u].name() << ","
-                            << this->chemistry_.Y()[otherSpec].name()
-                            << endl;
-                            rAB=1.0;
+                            rAB = 1;
                         }
 
                         scalar Rtemp = Rvalue[u]*rAB;

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -159,10 +159,7 @@ updateCoeffs()
     const scalarField& Tp =
         patch().lookupPatchField<volScalarField, scalar>(TName_);
 
-    const radiationModel& radiation =
-        db().lookupObject<radiationModel>("radiationProperties");
-
-    const fvDOM& dom(refCast<const fvDOM>(radiation));
+    const fvDOM& dom = db().lookupObject<fvDOM>("radiationProperties");
 
     label rayId = -1;
     label lambdaId = -1;
@@ -192,7 +189,7 @@ updateCoeffs()
     scalarField& qem = ray.qem().boundaryFieldRef()[patchi];
     scalarField& qin = ray.qin().boundaryFieldRef()[patchi];
 
-    const vector& myRayId = dom.IRay(rayId).d();
+    const vector& myRayId = dom.IRay(rayId).dAve();
 
     // Use updated Ir while iterating over rays
     // avoids to used lagged qin
@@ -217,7 +214,7 @@ updateCoeffs()
                   * pow4(Tp[facei])
                 )/pi;
 
-            // Emmited heat flux from this ray direction
+            // Emitted heat flux from this ray direction
             qem[facei] = refValue()[facei]*nAve[facei];
         }
         else
@@ -225,7 +222,7 @@ updateCoeffs()
             // direction into the wall
             valueFraction()[facei] = 0.0;
             refGrad()[facei] = 0.0;
-            refValue()[facei] = 0.0; //not used
+            refValue()[facei] = 0.0; // not used
 
             // Incident heat flux on this ray direction
             qin[facei] = Iw[facei]*nAve[facei];

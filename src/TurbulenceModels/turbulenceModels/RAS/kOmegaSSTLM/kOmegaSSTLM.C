@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ tmp<volScalarField::Internal> kOmegaSSTLM<BasicTurbulenceModel>::Fthetat
     (
         new volScalarField::Internal
         (
-            IOobject::groupName("Fthetat", this->U_.group()),
+            IOobject::groupName("Fthetat", this->alphaRhoPhi_.group()),
             min
             (
                 max
@@ -114,7 +114,7 @@ kOmegaSSTLM<BasicTurbulenceModel>::ReThetac() const
         (
             IOobject
             (
-                IOobject::groupName("ReThetac", this->U_.group()),
+                IOobject::groupName("ReThetac", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_
             ),
@@ -157,7 +157,7 @@ tmp<volScalarField::Internal> kOmegaSSTLM<BasicTurbulenceModel>::Flength
         (
             IOobject
             (
-                IOobject::groupName("Flength", this->U_.group()),
+                IOobject::groupName("Flength", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_
             ),
@@ -222,7 +222,7 @@ tmp<volScalarField::Internal> kOmegaSSTLM<BasicTurbulenceModel>::ReThetat0
         (
             IOobject
             (
-                IOobject::groupName("ReThetat0", this->U_.group()),
+                IOobject::groupName("ReThetat0", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_
             ),
@@ -343,7 +343,7 @@ tmp<volScalarField::Internal> kOmegaSSTLM<BasicTurbulenceModel>::Fonset
     (
         new volScalarField::Internal
         (
-            IOobject::groupName("Fonset", this->U_.group()),
+            IOobject::groupName("Fonset", this->alphaRhoPhi_.group()),
             max(Fonset2 - Fonset3, scalar(0))
         )
     );
@@ -438,13 +438,13 @@ kOmegaSSTLM<BasicTurbulenceModel>::kOmegaSSTLM
     (
         this->coeffDict_.lookupOrDefault("maxLambdaIter", 10)
     ),
-    deltaU_("deltaU", dimVelocity, SMALL),
+    deltaU_("deltaU", dimVelocity, small),
 
     ReThetat_
     (
         IOobject
         (
-            IOobject::groupName("ReThetat", U.group()),
+            IOobject::groupName("ReThetat", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -457,7 +457,7 @@ kOmegaSSTLM<BasicTurbulenceModel>::kOmegaSSTLM
     (
         IOobject
         (
-            IOobject::groupName("gammaInt", U.group()),
+            IOobject::groupName("gammaInt", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -470,7 +470,7 @@ kOmegaSSTLM<BasicTurbulenceModel>::kOmegaSSTLM
     (
         IOobject
         (
-            IOobject::groupName("gammaIntEff", U.group()),
+            IOobject::groupName("gammaIntEff", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_
         ),

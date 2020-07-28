@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -204,12 +204,12 @@ void ReadVertices
     );
     CCMIOReadMap(&err, mapID, mapData.begin(), offset, offsetPlusSize);
 
-    //CCMIOSize size;
-    //CCMIOEntityDescription(&err, vertices, &size, nullptr);
-    //char *desc = new char[size + 1];
-    //CCMIOEntityDescription(&err, vertices, nullptr, desc);
-    //Pout<< "label: '" << desc << "'" << endl;
-    //delete [] desc;
+    // CCMIOSize size;
+    // CCMIOEntityDescription(&err, vertices, &size, nullptr);
+    // char *desc = new char[size + 1];
+    // CCMIOEntityDescription(&err, vertices, nullptr, desc);
+    // Pout<< "label: '" << desc << "'" << endl;
+    // delete [] desc;
 
     // Convert to foamPoints
     foamPoints.setSize(nVertices);
@@ -336,7 +336,7 @@ void ReadProblem
             }
 
 
-            //foamPatchMap.append(prostarI);
+            // foamPatchMap.append(prostarI);
 
 
             // Read boundary name:
@@ -759,7 +759,7 @@ int main(int argc, char *argv[])
             << endl;
 
         // Create some default patch names/types. These will be overwritten
-        // by any problem desciption (if it is there)
+        // by any problem description (if it is there)
         foamPatchTypes.setSize(foamPatchStarts.size());
         foamPatchNames.setSize(foamPatchStarts.size());
 

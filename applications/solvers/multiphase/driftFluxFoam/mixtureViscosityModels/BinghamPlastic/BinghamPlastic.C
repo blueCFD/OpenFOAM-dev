@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -106,7 +106,7 @@ Foam::mixtureViscosityModels::BinghamPlastic::mu
 
     volScalarField mup(plastic::mu(muc));
 
-    dimensionedScalar tauySmall("tauySmall", tauy.dimensions(), SMALL);
+    dimensionedScalar tauySmall("tauySmall", tauy.dimensions(), small);
 
     return min
     (

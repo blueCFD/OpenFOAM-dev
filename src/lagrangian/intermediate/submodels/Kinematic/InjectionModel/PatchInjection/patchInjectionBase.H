@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::PatchInjectionBase
+    Foam::patchInjectionBase
 
 Description
     Base class for patch-based injection models.
@@ -54,7 +54,7 @@ namespace Foam
 // Forward class declarations
 class polyMesh;
 class fvMesh;
-class cachedRandom;
+class Random;
 
 /*---------------------------------------------------------------------------*\
                      Class patchInjectionBase Declaration
@@ -118,7 +118,7 @@ public:
         virtual void setPositionAndCell
         (
             const fvMesh& mesh,
-            cachedRandom& rnd,
+            Random& rnd,
             vector& position,
             label& cellOwner,
             label& tetFacei,

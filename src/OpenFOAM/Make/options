@@ -1,10 +1,10 @@
+EXE_INC = \
+    -I$(OBJECTS_DIR)
+
+#if defined( WIN32 ) || defined( WIN64 )
 
 /*neutralize unwanted lib includes...*/
 PROJECT_LIBS =
-
-EXE_INC = -I$(OBJECTS_DIR)
-
-#if defined( WIN32 ) || defined( WIN64 )
 
 /* whole-archive is needed to ensure the static library is embedded */ 
 LIB_LIBS = \

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,10 +47,7 @@ void Foam::Cloud<ParticleType>::checkPatches() const
             const cyclicAMIPolyPatch& cami =
                 refCast<const cyclicAMIPolyPatch>(pbm[patchi]);
 
-            if (cami.owner())
-            {
-                ok = ok && (cami.AMI().singlePatchProc() != -1);
-            }
+            ok = ok && cami.singlePatchProc() != -1;
         }
     }
 
@@ -60,32 +57,6 @@ void Foam::Cloud<ParticleType>::checkPatches() const
             << "Particle tracking across AMI patches is only currently "
             << "supported for cases where the AMI patches reside on a "
             << "single processor" << abort(FatalError);
-    }
-}
-
-
-template<class ParticleType>
-void Foam::Cloud<ParticleType>::calcCellWallFaces() const
-{
-    cellWallFacesPtr_.reset(new PackedBoolList(pMesh().nCells(), false));
-
-    PackedBoolList& cellWallFaces = cellWallFacesPtr_();
-
-    const polyBoundaryMesh& patches = polyMesh_.boundaryMesh();
-
-    forAll(patches, patchi)
-    {
-        if (isA<wallPolyPatch>(patches[patchi]))
-        {
-            const polyPatch& patch = patches[patchi];
-
-            const labelList& pFaceCells = patch.faceCells();
-
-            forAll(pFaceCells, pFCI)
-            {
-                cellWallFaces[pFaceCells[pFCI]] = true;
-            }
-        }
     }
 }
 
@@ -103,9 +74,6 @@ Foam::Cloud<ParticleType>::Cloud
     cloud(pMesh, cloudName),
     IDLList<ParticleType>(),
     polyMesh_(pMesh),
-    labels_(),
-    nTrackingRescues_(),
-    cellWallFacesPtr_(),
     globalPositionsPtr_()
 {
     checkPatches();
@@ -123,19 +91,6 @@ Foam::Cloud<ParticleType>::Cloud
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-template<class ParticleType>
-const Foam::PackedBoolList& Foam::Cloud<ParticleType>::cellHasWallFaces()
-const
-{
-    if (!cellWallFacesPtr_.valid())
-    {
-        calcCellWallFaces();
-    }
-
-    return cellWallFacesPtr_();
-}
-
 
 template<class ParticleType>
 void Foam::Cloud<ParticleType>::addParticle(ParticleType* pPtr)
@@ -173,7 +128,7 @@ void Foam::Cloud<ParticleType>::deleteLostParticles()
 template<class ParticleType>
 void Foam::Cloud<ParticleType>::cloudReset(const Cloud<ParticleType>& c)
 {
-    // Reset particle cound and particles only
+    // Reset particle count and particles only
     // - not changing the cloud object registry or reference to the polyMesh
     ParticleType::particleCount_ = 0;
     IDLList<ParticleType>::operator=(c);
@@ -181,17 +136,19 @@ void Foam::Cloud<ParticleType>::cloudReset(const Cloud<ParticleType>& c)
 
 
 template<class ParticleType>
-template<class TrackData>
-void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
+template<class TrackCloudType>
+void Foam::Cloud<ParticleType>::move
+(
+    TrackCloudType& cloud,
+    typename ParticleType::trackingData& td,
+    const scalar trackTime
+)
 {
     const polyBoundaryMesh& pbm = pMesh().boundaryMesh();
     const globalMeshData& pData = polyMesh_.globalData();
 
     // Which patches are processor patches
     const labelList& procPatches = pData.processorPatches();
-
-    // Indexing of patches into the procPatches list
-    const labelList& procPatchIndices = pData.processorPatchIndices();
 
     // Indexing of equivalent patch on neighbour processor into the
     // procPatches list on the neighbour
@@ -214,11 +171,7 @@ void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
         pIter().stepFraction() = 0;
     }
 
-    // Reset nTrackingRescues
-    nTrackingRescues_ = 0;
-
-
-    // List of lists of particles to be transfered for all of the
+    // List of lists of particles to be transferred for all of the
     // neighbour processors
     List<IDLList<ParticleType>> particleTransferLists
     (
@@ -253,44 +206,47 @@ void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
             ParticleType& p = pIter();
 
             // Move the particle
-            bool keepParticle = p.move(td, trackTime);
+            bool keepParticle = p.move(cloud, td, trackTime);
 
             // If the particle is to be kept
             // (i.e. it hasn't passed through an inlet or outlet)
             if (keepParticle)
             {
-                // If we are running in parallel and the particle is on a
-                // boundary face
-                if
-                (
-                    Pstream::parRun()
-                 && td.switchProcessor
-                 && p.face() >= pMesh().nInternalFaces()
-                )
+                if (td.switchProcessor)
                 {
-                    label patchi = pbm.whichPatch(p.face());
-
-                    // ... and the face is on a processor patch
-                    // prepare it for transfer
-                    if (procPatchIndices[patchi] != -1)
+                    #ifdef FULLDEBUG
+                    if
+                    (
+                        !Pstream::parRun()
+                     || !p.onBoundaryFace()
+                     || procPatchNeighbours[p.patch()] < 0
+                    )
                     {
-                        label n = neighbourProcIndices
-                        [
-                            refCast<const processorPolyPatch>
-                            (
-                                pbm[patchi]
-                            ).neighbProcNo()
-                        ];
-
-                        p.prepareForParallelTransfer(patchi, td);
-
-                        particleTransferLists[n].append(this->remove(&p));
-
-                        patchIndexTransferLists[n].append
-                        (
-                            procPatchNeighbours[patchi]
-                        );
+                        FatalErrorInFunction
+                            << "Switch processor flag is true when no parallel "
+                            << "transfer is possible. This is a bug."
+                            << exit(FatalError);
                     }
+                    #endif
+
+                    const label patchi = p.patch();
+
+                    const label n = neighbourProcIndices
+                    [
+                        refCast<const processorPolyPatch>
+                        (
+                            pbm[patchi]
+                        ).neighbProcNo()
+                    ];
+
+                    p.prepareForParallelTransfer();
+
+                    particleTransferLists[n].append(this->remove(&p));
+
+                    patchIndexTransferLists[n].append
+                    (
+                        procPatchNeighbours[patchi]
+                    );
                 }
             }
             else
@@ -331,19 +287,19 @@ void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
         pBufs.finishedSends(allNTrans);
 
 
-        bool transfered = false;
+        bool transferred = false;
 
         forAll(allNTrans, i)
         {
             if (allNTrans[i])
             {
-                transfered = true;
+                transferred = true;
                 break;
             }
         }
-        reduce(transfered, orOp<bool>());
+        reduce(transferred, orOp<bool>());
 
-        if (!transfered)
+        if (!transferred)
         {
             break;
         }
@@ -382,16 +338,6 @@ void Foam::Cloud<ParticleType>::move(TrackData& td, const scalar trackTime)
             }
         }
     }
-
-    if (cloud::debug)
-    {
-        reduce(nTrackingRescues_, sumOp<label>());
-
-        if (nTrackingRescues_ > 0)
-        {
-            Info<< nTrackingRescues_ << " tracking rescue corrections" << endl;
-        }
-    }
 }
 
 
@@ -405,10 +351,6 @@ void Foam::Cloud<ParticleType>::autoMap(const mapPolyMesh& mapper)
             << "Cloud::storeGlobalPositions has not been called."
             << exit(FatalError);
     }
-
-    // Reset stored data that relies on the mesh
-    //    polyMesh_.clearCellTree();
-    cellWallFacesPtr_.clear();
 
     // Ask for the tetBasePtIs to trigger all processors to build
     // them, otherwise, if some processors have no particles then

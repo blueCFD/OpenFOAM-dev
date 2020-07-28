@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,16 +27,16 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class Type>
-Foam::combustionModels::EDC<Type>::EDC
+template<class ReactionThermo>
+Foam::combustionModels::EDC<ReactionThermo>::EDC
 (
     const word& modelType,
-    const fvMesh& mesh,
-    const word& combustionProperties,
-    const word& phaseName
+    ReactionThermo& thermo,
+    const compressibleTurbulenceModel& turb,
+    const word& combustionProperties
 )
 :
-    laminar<Type>(modelType, mesh, combustionProperties, phaseName),
+    laminar<ReactionThermo>(modelType, thermo, turb, combustionProperties),
     version_
     (
         EDCversionNames
@@ -58,13 +58,13 @@ Foam::combustionModels::EDC<Type>::EDC
     (
         IOobject
         (
-            IOobject::groupName(typeName + ":kappa", phaseName),
-            mesh.time().timeName(),
-            mesh,
+            this->thermo().phasePropertyName(typeName + ":kappa"),
+            this->mesh().time().timeName(),
+            this->mesh(),
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        mesh,
+        this->mesh(),
         dimensionedScalar("kappa", dimless, 0)
     )
 {}
@@ -72,15 +72,15 @@ Foam::combustionModels::EDC<Type>::EDC
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-template<class Type>
-Foam::combustionModels::EDC<Type>::~EDC()
+template<class ReactionThermo>
+Foam::combustionModels::EDC<ReactionThermo>::~EDC()
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-template<class Type>
-void Foam::combustionModels::EDC<Type>::correct()
+template<class ReactionThermo>
+void Foam::combustionModels::EDC<ReactionThermo>::correct()
 {
     if (this->active())
     {
@@ -105,21 +105,21 @@ void Foam::combustionModels::EDC<Type>::correct()
 
             forAll(tauStar, i)
             {
-                const scalar nu = mu[i]/(rho[i] + SMALL);
+                const scalar nu = mu[i]/(rho[i] + small);
 
                 const scalar Da =
-                    max(min(sqrt(nu/(epsilon[i] + SMALL))/tc[i], 10), 1e-10);
+                    max(min(sqrt(nu/(epsilon[i] + small))/tc[i], 10), 1e-10);
 
-                const scalar ReT = sqr(k[i])/(nu*epsilon[i] + SMALL);
+                const scalar ReT = sqr(k[i])/(nu*epsilon[i] + small);
                 const scalar CtauI = min(C1_/(Da*sqrt(ReT + 1)), 2.1377);
 
                 const scalar CgammaI =
                     max(min(C2_*sqrt(Da*(ReT + 1)), 5), 0.4082);
 
                 const scalar gammaL =
-                    CgammaI*pow025(nu*epsilon[i]/(sqr(k[i]) + SMALL));
+                    CgammaI*pow025(nu*epsilon[i]/(sqr(k[i]) + small));
 
-                tauStar[i] = CtauI*sqrt(nu/(epsilon[i] + SMALL));
+                tauStar[i] = CtauI*sqrt(nu/(epsilon[i] + small));
 
                 if (gammaL >= 1)
                 {
@@ -144,11 +144,11 @@ void Foam::combustionModels::EDC<Type>::correct()
         {
             forAll(tauStar, i)
             {
-                const scalar nu = mu[i]/(rho[i] + SMALL);
+                const scalar nu = mu[i]/(rho[i] + small);
                 const scalar gammaL =
-                    Cgamma_*pow025(nu*epsilon[i]/(sqr(k[i]) + SMALL));
+                    Cgamma_*pow025(nu*epsilon[i]/(sqr(k[i]) + small));
 
-                tauStar[i] = Ctau_*sqrt(nu/(epsilon[i] + SMALL));
+                tauStar[i] = Ctau_*sqrt(nu/(epsilon[i] + small));
                 if (gammaL >= 1)
                 {
                     kappa_[i] = 1;
@@ -174,17 +174,17 @@ void Foam::combustionModels::EDC<Type>::correct()
 }
 
 
-template<class Type>
+template<class ReactionThermo>
 Foam::tmp<Foam::fvScalarMatrix>
-Foam::combustionModels::EDC<Type>::R(volScalarField& Y) const
+Foam::combustionModels::EDC<ReactionThermo>::R(volScalarField& Y) const
 {
-    return kappa_*laminar<Type>::R(Y);
+    return kappa_*laminar<ReactionThermo>::R(Y);
 }
 
 
-template<class Type>
+template<class ReactionThermo>
 Foam::tmp<Foam::volScalarField>
-Foam::combustionModels::EDC<Type>::Qdot() const
+Foam::combustionModels::EDC<ReactionThermo>::Qdot() const
 {
     tmp<volScalarField> tQdot
     (
@@ -192,7 +192,7 @@ Foam::combustionModels::EDC<Type>::Qdot() const
         (
             IOobject
             (
-                IOobject::groupName(typeName + ":Qdot", this->phaseName_),
+                this->thermo().phasePropertyName(typeName + ":Qdot"),
                 this->mesh().time().timeName(),
                 this->mesh(),
                 IOobject::NO_READ,
@@ -213,10 +213,10 @@ Foam::combustionModels::EDC<Type>::Qdot() const
 }
 
 
-template<class Type>
-bool Foam::combustionModels::EDC<Type>::read()
+template<class ReactionThermo>
+bool Foam::combustionModels::EDC<ReactionThermo>::read()
 {
-    if (Type::read())
+    if (laminar<ReactionThermo>::read())
     {
         version_ =
         (

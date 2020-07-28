@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,25 +54,25 @@ const Foam::sphericalTensor2D Foam::sphericalTensor2D::vsType::one
 template<>
 const Foam::sphericalTensor2D Foam::sphericalTensor2D::vsType::max
 (
-    sphericalTensor2D::uniform(VGREAT)
+    sphericalTensor2D::uniform(vGreat)
 );
 
 template<>
 const Foam::sphericalTensor2D Foam::sphericalTensor2D::vsType::min
 (
-    sphericalTensor2D::uniform(-VGREAT)
+    sphericalTensor2D::uniform(-vGreat)
 );
 
 template<>
 const Foam::sphericalTensor2D Foam::sphericalTensor2D::vsType::rootMax
 (
-    sphericalTensor2D::uniform(ROOTVGREAT)
+    sphericalTensor2D::uniform(rootVGreat)
 );
 
 template<>
 const Foam::sphericalTensor2D Foam::sphericalTensor2D::vsType::rootMin
 (
-    sphericalTensor2D::uniform(-ROOTVGREAT)
+    sphericalTensor2D::uniform(-rootVGreat)
 );
 
 template<>

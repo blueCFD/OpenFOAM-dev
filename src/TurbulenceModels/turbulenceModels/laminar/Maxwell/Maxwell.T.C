@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "Maxwell.T.H"
 #include "fvOptions.H"
+#include "uniformDimensionedFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -84,7 +85,7 @@ Maxwell<BasicTurbulenceModel>::Maxwell
     (
         IOobject
         (
-            IOobject::groupName("sigma", U.group()),
+            IOobject::groupName("sigma", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -135,7 +136,7 @@ Maxwell<BasicTurbulenceModel>::devRhoReff() const
         (
             IOobject
             (
-                IOobject::groupName("devRhoReff", this->U_.group()),
+                IOobject::groupName("devRhoReff", this->alphaRhoPhi_.group()),
                 this->runTime_.timeName(),
                 this->mesh_,
                 IOobject::NO_READ,
@@ -205,7 +206,17 @@ void Maxwell<BasicTurbulenceModel>::correct()
 
     tmp<volTensorField> tgradU(fvc::grad(U));
     const volTensorField& gradU = tgradU();
-    dimensionedScalar rLambda = 1.0/(lambda_);
+
+    uniformDimensionedScalarField rLambda
+    (
+        IOobject
+        (
+            IOobject::groupName("rLambda", this->alphaRhoPhi_.group()),
+            this->runTime_.constant(),
+            this->mesh_
+        ),
+        1.0/(lambda_)
+    );
 
     // Note sigma is positive on lhs of momentum eqn
     volSymmTensorField P
@@ -220,7 +231,7 @@ void Maxwell<BasicTurbulenceModel>::correct()
         fvm::ddt(alpha, rho, sigma)
       + fvm::div(alphaRhoPhi, sigma)
       + fvm::Sp(alpha*rho*rLambda, sigma)
-      ==
+     ==
         alpha*rho*P
       + fvOptions(alpha, rho, sigma)
     );

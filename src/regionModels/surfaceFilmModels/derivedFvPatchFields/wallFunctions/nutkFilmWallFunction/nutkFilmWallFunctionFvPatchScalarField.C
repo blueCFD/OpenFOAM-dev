@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,7 @@ License
 #include "volFields.H"
 #include "turbulentFluidThermoModel.H"
 #include "addToRunTimeSelectionTable.H"
-#include "surfaceFilmModel.H"
+#include "surfaceFilmRegionModel.H"
 #include "mappedWallPolyPatch.H"
 #include "mapDistribute.H"
 
@@ -51,7 +51,7 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::calcUTau
     tmp<scalarField> tuTau(new scalarField(patch().size(), 0.0));
     scalarField& uTau = tuTau.ref();
 
-    typedef regionModels::surfaceFilmModels::surfaceFilmModel modelType;
+    typedef regionModels::surfaceFilmModels::surfaceFilmRegionModel modelType;
 
     bool foundFilm =
         db().time().foundObject<modelType>("surfaceFilmProperties");
@@ -108,12 +108,12 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::calcUTau
         {
             scalar expTerm = exp(min(50.0, B_*mStar));
             scalar powTerm = pow(yPlus, mStar/kappa_);
-            factor = mStar/(expTerm*powTerm - 1.0 + ROOTVSMALL);
+            factor = mStar/(expTerm*powTerm - 1.0 + rootVSmall);
         }
         else
         {
             scalar expTerm = exp(min(50.0, mStar));
-            factor = mStar/(expTerm*yPlus - 1.0 + ROOTVSMALL);
+            factor = mStar/(expTerm*yPlus - 1.0 + rootVSmall);
         }
 
         uTau[facei] = sqrt(max(0, magGradU[facei]*ut*factor));
@@ -144,7 +144,7 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::calcNut() const
     return max
     (
         scalar(0),
-        sqr(calcUTau(magGradU))/(magGradU + ROOTVSMALL) - nuw
+        sqr(calcUTau(magGradU))/(magGradU + rootVSmall) - nuw
     );
 }
 

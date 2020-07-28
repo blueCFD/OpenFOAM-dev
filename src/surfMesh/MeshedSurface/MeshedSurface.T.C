@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -571,7 +571,7 @@ template<class Face>
 void Foam::MeshedSurface<Face>::cleanup(const bool verbose)
 {
     // merge points (already done for STL, TRI)
-    stitchFaces(SMALL, verbose);
+    stitchFaces(small, verbose);
 
     checkFaces(verbose);
     this->checkTopology(verbose);

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -146,19 +146,19 @@ void Foam::LiquidEvaporation<CloudType>::calculate
 ) const
 {
     // immediately evaporate mass that has reached critical condition
-    if ((liquids_.Tc(X) - T) < SMALL)
+    if ((liquids_.Tc(X) - T) < small)
     {
         if (debug)
         {
             WarningInFunction
                 << "Parcel reached critical conditions: "
-                << "evaporating all avaliable mass" << endl;
+                << "evaporating all available mass" << endl;
         }
 
         forAll(activeLiquids_, i)
         {
             const label lid = liqToLiqMap_[i];
-            dMassPC[lid] = GREAT;
+            dMassPC[lid] = great;
         }
 
         return;
@@ -185,13 +185,13 @@ void Foam::LiquidEvaporation<CloudType>::calculate
         const scalar pSat = liquids_.properties()[lid].pv(pc, T);
 
         // Schmidt number
-        const scalar Sc = nu/(Dab + ROOTVSMALL);
+        const scalar Sc = nu/(Dab + rootVSmall);
 
         // Sherwood number
         const scalar Sh = this->Sh(Re, Sc);
 
         // mass transfer coefficient [m/s]
-        const scalar kc = Sh*Dab/(d + ROOTVSMALL);
+        const scalar kc = Sh*Dab/(d + rootVSmall);
 
         // vapour concentration at surface [kmol/m3] at film temperature
         const scalar Cs = pSat/(RR*Ts);

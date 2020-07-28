@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,12 +63,6 @@ Foam::solidParticleCloud::solidParticleCloud
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::solidParticleCloud::hasWallImpactDistance() const
-{
-    return true;
-}
-
-
 void Foam::solidParticleCloud::move(const dimensionedVector& g)
 {
     const volScalarField& rho = mesh_.lookupObject<const volScalarField>("rho");
@@ -82,7 +76,7 @@ void Foam::solidParticleCloud::move(const dimensionedVector& g)
     solidParticle::trackingData
         td(*this, rhoInterp, UInterp, nuInterp, g.value());
 
-    Cloud<solidParticle>::move(td, mesh_.time().deltaTValue());
+    Cloud<solidParticle>::move(*this, td, mesh_.time().deltaTValue());
 }
 
 

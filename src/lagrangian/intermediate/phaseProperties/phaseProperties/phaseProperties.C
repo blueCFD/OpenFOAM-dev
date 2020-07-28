@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -137,7 +137,7 @@ void Foam::phaseProperties::checkTotalMassFraction() const
         total += Y_[speciei];
     }
 
-    if (Y_.size() != 0 && mag(total - 1.0) > SMALL)
+    if (Y_.size() != 0 && mag(total - 1.0) > small)
     {
         FatalErrorInFunction
             << "Specie fractions must total to unity for phase "

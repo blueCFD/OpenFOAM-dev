@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,9 +40,13 @@ namespace saturationModels
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::saturationModels::function1::function1(const dictionary& dict)
+Foam::saturationModels::function1::function1
+(
+    const dictionary& dict,
+    const objectRegistry& db
+)
 :
-    saturationModel(),
+    saturationModel(db),
     function_
     (
         Function1<scalar>::New("function", dict)

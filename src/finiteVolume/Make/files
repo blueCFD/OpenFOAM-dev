@@ -21,6 +21,7 @@ $(constraintFvPatches)/cyclicACMI/cyclicACMIFvPatch.C
 $(constraintFvPatches)/cyclicSlip/cyclicSlipFvPatch.C
 $(constraintFvPatches)/empty/emptyFvPatch.C
 $(constraintFvPatches)/nonuniformTransformCyclic/nonuniformTransformCyclicFvPatch.C
+$(constraintFvPatches)/cyclicRepeatAMI/cyclicRepeatAMIFvPatch.C
 $(constraintFvPatches)/processor/processorFvPatch.C
 $(constraintFvPatches)/processorCyclic/processorCyclicFvPatch.C
 $(constraintFvPatches)/symmetryPlane/symmetryPlaneFvPatch.C
@@ -120,6 +121,7 @@ $(constraintFvPatchFields)/empty/emptyFvPatchFields.C
 $(constraintFvPatchFields)/jumpCyclic/jumpCyclicFvPatchFields.C
 $(constraintFvPatchFields)/jumpCyclicAMI/jumpCyclicAMIFvPatchFields.C
 $(constraintFvPatchFields)/nonuniformTransformCyclic/nonuniformTransformCyclicFvPatchFields.C
+$(constraintFvPatchFields)/cyclicRepeatAMI/cyclicRepeatAMIFvPatchFields.C
 $(constraintFvPatchFields)/processor/processorFvPatchFields.C
 /*
 # This one is included into $(constraintFvPatchFields)/processor/processorFvPatchField.H
@@ -154,6 +156,7 @@ $(derivedFvPatchFields)/flowRateInletVelocity/flowRateInletVelocityFvPatchVector
 $(derivedFvPatchFields)/flowRateOutletVelocity/flowRateOutletVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/fluxCorrectedVelocity/fluxCorrectedVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/freestream/freestreamFvPatchFields.C
+$(derivedFvPatchFields)/freestreamVelocity/freestreamVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/freestreamPressure/freestreamPressureFvPatchScalarField.C
 $(derivedFvPatchFields)/inletOutlet/inletOutletFvPatchFields.C
 $(derivedFvPatchFields)/inletOutletTotalTemperature/inletOutletTotalTemperatureFvPatchScalarField.C
@@ -168,6 +171,7 @@ $(derivedFvPatchFields)/noSlip/noSlipFvPatchVectorField.C
 $(derivedFvPatchFields)/movingWallVelocity/movingWallVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/outletInlet/outletInletFvPatchFields.C
 $(derivedFvPatchFields)/outletMappedUniformInlet/outletMappedUniformInletFvPatchFields.C
+$(derivedFvPatchFields)/fixedMeanOutletInlet/fixedMeanOutletInletFvPatchFields.C
 $(derivedFvPatchFields)/partialSlip/partialSlipFvPatchFields.C
 $(derivedFvPatchFields)/phaseHydrostaticPressure/phaseHydrostaticPressureFvPatchScalarField.C
 $(derivedFvPatchFields)/pressureDirectedInletOutletVelocity/pressureDirectedInletOutletVelocityFvPatchVectorField.C
@@ -206,12 +210,12 @@ $(derivedFvPatchFields)/outletPhaseMeanVelocity/outletPhaseMeanVelocityFvPatchVe
 $(derivedFvPatchFields)/waveTransmissive/waveTransmissiveFvPatchFields.C
 $(derivedFvPatchFields)/waveSurfacePressure/waveSurfacePressureFvPatchScalarField.C
 $(derivedFvPatchFields)/interstitialInletVelocity/interstitialInletVelocityFvPatchVectorField.C
-$(derivedFvPatchFields)/prghPressure/prghPressureFvPatchScalarField.C
-$(derivedFvPatchFields)/prghTotalPressure/prghTotalPressureFvPatchScalarField.C
-$(derivedFvPatchFields)/prghTotalHydrostaticPressure/prghTotalHydrostaticPressureFvPatchScalarField.C
 $(derivedFvPatchFields)/fixedProfile/fixedProfileFvPatchFields.C
 $(derivedFvPatchFields)/plenumPressure/plenumPressureFvPatchScalarField.C
 $(derivedFvPatchFields)/interfaceCompression/interfaceCompressionFvPatchScalarField.C
+$(derivedFvPatchFields)/pressure/pressureFvPatchScalarField.C
+$(derivedFvPatchFields)/PrghPressure/prghPressureFvPatchScalarFields.C
+$(derivedFvPatchFields)/prghTotalHydrostaticPressure/prghTotalHydrostaticPressureFvPatchScalarField.C
 
 fvsPatchFields = fields/fvsPatchFields
 $(fvsPatchFields)/fvsPatchField/fvsPatchFields.C
@@ -229,6 +233,7 @@ $(constraintFvsPatchFields)/cyclicACMI/cyclicACMIFvsPatchFields.C
 $(constraintFvsPatchFields)/cyclicSlip/cyclicSlipFvsPatchFields.C
 $(constraintFvsPatchFields)/empty/emptyFvsPatchFields.C
 $(constraintFvsPatchFields)/nonuniformTransformCyclic/nonuniformTransformCyclicFvsPatchFields.C
+$(constraintFvsPatchFields)/cyclicRepeatAMI/cyclicRepeatAMIFvsPatchFields.C
 $(constraintFvsPatchFields)/processor/processorFvsPatchFields.C
 $(constraintFvsPatchFields)/processorCyclic/processorCyclicFvsPatchFields.C
 $(constraintFvsPatchFields)/symmetryPlane/symmetryPlaneFvsPatchFields.C
@@ -241,7 +246,6 @@ fields/surfaceFields/surfaceFields.C
 fvMatrices/fvMatrices.C
 fvMatrices/fvScalarMatrix/fvScalarMatrix.C
 fvMatrices/solvers/MULES/MULES.T.C
-fvMatrices/solvers/MULES/CMULES.T.C
 fvMatrices/solvers/GAMGSymSolver/GAMGAgglomerations/faceAreaPairGAMGAgglomeration/faceAreaPairGAMGAgglomeration.C
 
 interpolation = interpolation/interpolation
@@ -252,8 +256,6 @@ $(interpolation)/interpolationCellPatchConstrained/makeInterpolationCellPatchCon
 $(interpolation)/interpolationCellPoint/cellPointWeight/cellPointWeight.C
 $(interpolation)/interpolationCellPoint/makeInterpolationCellPoint.C
 $(interpolation)/interpolationCellPointFace/makeInterpolationCellPointFace.C
-$(interpolation)/interpolationCellPointWallModified/cellPointWeightWallModified/cellPointWeightWallModified.C
-$(interpolation)/interpolationCellPointWallModified/makeInterpolationCellPointWallModified.C
 $(interpolation)/interpolationPointMVC/pointMVCWeight.C
 $(interpolation)/interpolationPointMVC/makeInterpolationPointMVC.C
 
@@ -413,10 +415,28 @@ $(general)/pressureControl/pressureControl.C
 $(general)/levelSet/levelSet.C
 
 solutionControl = $(general)/solutionControl
-$(solutionControl)/solutionControl/solutionControl.C
+$(solutionControl)/solutionControl/solutionControl/solutionControl.C
+$(solutionControl)/solutionControl/singleRegionSolutionControl/singleRegionSolutionControl.C
+$(solutionControl)/solutionControl/multiRegionSolutionControl/multiRegionSolutionControl.C
+$(solutionControl)/solutionControl/nonOrthogonalSolutionControl/nonOrthogonalSolutionControl.C
+$(solutionControl)/solutionControl/fluidSolutionControl/fluidSolutionControl.C
 $(solutionControl)/simpleControl/simpleControl.C
-$(solutionControl)/pimpleControl/pimpleControl.C
 $(solutionControl)/pisoControl/pisoControl.C
+
+solidControl = $(solutionControl)/solidControl
+$(solidControl)/solidNoLoopControl/solidNoLoopControl.C
+
+pimpleControl = $(solutionControl)/pimpleControl
+$(pimpleControl)/pimpleControl/pimpleControl.C
+$(pimpleControl)/pimpleNoLoopControl/pimpleNoLoopControl.C
+$(pimpleControl)/pimpleLoop/pimpleLoop.C
+$(pimpleControl)/pimpleMultiRegionControl/pimpleMultiRegionControl.C
+
+convergenceControl = $(solutionControl)/convergenceControl
+$(convergenceControl)/convergenceControl/convergenceControl.C
+$(convergenceControl)/singleRegionConvergenceControl/singleRegionConvergenceControl.C
+$(convergenceControl)/correctorConvergenceControl/correctorConvergenceControl.C
+$(convergenceControl)/singleRegionCorrectorConvergenceControl/singleRegionCorrectorConvergenceControl.C
 
 porosity = $(general)/porosityModel
 $(porosity)/porosityModel/porosityModel.C

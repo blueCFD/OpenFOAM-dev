@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ namespace surfaceFilmModels
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-injectionModelList::injectionModelList(surfaceFilmModel& film)
+injectionModelList::injectionModelList(surfaceFilmRegionModel& film)
 :
     PtrList<injectionModel>(),
     filmSubModelBase(film)
@@ -45,7 +45,7 @@ injectionModelList::injectionModelList(surfaceFilmModel& film)
 
 injectionModelList::injectionModelList
 (
-    surfaceFilmModel& film,
+    surfaceFilmRegionModel& film,
     const dictionary& dict
 )
 :
@@ -147,7 +147,7 @@ void injectionModelList::info(Ostream& os)
 
     forAll(patchInjectedMasses, patchi)
     {
-        if (mag(patchInjectedMasses[patchi]) > VSMALL)
+        if (mag(patchInjectedMasses[patchi]) > vSmall)
         {
             os  << indent << indent << "from patch " << pbm[patchi].name()
                 << " = " << patchInjectedMasses[patchi] << nl;

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,32 +24,30 @@ License
 Class
     Foam::uniformDensityHydrostaticPressureFvPatchScalarField
 
-Group
-    grpGenericBoundaryConditions
-
 Description
     This boundary condition provides a hydrostatic pressure condition,
     calculated as:
 
         \f[
-            p_{hyd} = p_{ref} + \rho g (x - x_{ref})
+            p_{hyd} = p_{ref} + \rho_{ref} g (x - x_{ref})
         \f]
 
     where
     \vartable
-        p_{hyd} | hyrostatic pressure [Pa]
-        p_{ref} | reference pressure [Pa]
-        x_{ref} | reference point in Cartesian co-ordinates
-        \rho    | density (assumed uniform)
-        g       | acceleration due to gravity [m/s2]
+        p_{hyd}    | Hydrostatic pressure [Pa]
+        p_{ref}    | Reference pressure [Pa]
+        x_{ref}    | Reference point in Cartesian co-ordinates
+        \rho_{ref} | Density (assumed uniform)
+        g          | Acceleration due to gravity [m/s2]
     \endtable
 
 Usage
     \table
         Property     | Description             | Required    | Default value
-        rho          | uniform density [kg/m3] | yes         |
-        pRefValue    | reference pressure [Pa] | yes         |
-        pRefPoint    | reference pressure location | yes     |
+        rhoRef       | Uniform density [kg/m3] | yes         |
+        pRef         | Reference pressure [Pa] | yes         |
+        pRefPoint    | Reference pressure location | no      | hRef
+        value        | Initial value           | no          | pRef
     \endtable
 
     Example of the boundary condition specification:
@@ -57,10 +55,9 @@ Usage
     <patchName>
     {
         type            uniformDensityHydrostaticPressure;
-        rho             rho;
-        pRefValue       1e5;
+        rhoRef          1000;
+        pRef            1e5;
         pRefPoint       (0 0 0);
-        value           uniform 0; // optional initial value
     }
     \endverbatim
 
@@ -93,9 +90,12 @@ class uniformDensityHydrostaticPressureFvPatchScalarField
         scalar rho_;
 
         //- Reference pressure
-        scalar pRefValue_;
+        scalar pRef_;
 
-        //- Reference pressure location
+        //- True if the reference pressure location is specified
+        bool pRefPointSpecified_;
+
+        //- Optional reference pressure location
         vector pRefPoint_;
 
 
@@ -189,15 +189,15 @@ public:
             }
 
             //- Return the reference pressure
-            scalar pRefValue() const
+            scalar pRef() const
             {
-                return pRefValue_;
+                return pRef_;
             }
 
             //- Return reference to the reference pressure to allow adjustment
-            scalar& pRefValue()
+            scalar& pRef()
             {
-                return pRefValue_;
+                return pRef_;
             }
 
             //- Return the pressure reference location

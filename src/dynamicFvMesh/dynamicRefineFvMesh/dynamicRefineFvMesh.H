@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,11 +34,11 @@ Description
         refineInterval  1;
         // Field to be refinement on
         field           alpha.water;
-        // Refine field inbetween lower..upper
+        // Refine field in between lower..upper
         lowerRefineLevel 0.001;
         upperRefineLevel 0.999;
-        // If value < unrefineLevel (default=GREAT) unrefine
-        //unrefineLevel   10;
+        // If value < unrefineLevel (default=great) unrefine
+        // unrefineLevel   10;
         // Have slower than 2:1 refinement
         nBufferLayers   1;
         // Refine cells only up to maxRefinement levels
@@ -51,10 +51,10 @@ Description
         // NaN to detect use of mapped variable
         correctFluxes
         (
-            (phi none)  //NaN)   //none)
-            (nHatf none)   //none)
-            (rho*phi none)   //none)
-            (ghf none)  //NaN)   //none)
+            (phi none)  // NaN)   // none)
+            (nHatf none)   // none)
+            (rho*phi none)   // none)
+            (ghf none)  // NaN)   // none)
         );
         // Write the refinement level as a volScalarField
         dumpLevel       true;

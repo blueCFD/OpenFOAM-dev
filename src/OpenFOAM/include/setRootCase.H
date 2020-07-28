@@ -1,5 +1,3 @@
-#include "listOptions.H"
-
 Foam::argList args(argc, argv);
 if (!args.checkRootCase())
 {

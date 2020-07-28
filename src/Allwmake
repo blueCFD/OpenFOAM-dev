@@ -61,9 +61,9 @@ wmake $targetType meshTools
 
 # Decomposition methods needed by dummyThirdParty
 # (dummy metisDecomp, scotchDecomp etc) needed by e.g. meshTools
-parallel/decompose/AllwmakeLnInclude
-
 if isMinGW; then
+  parallel/decompose/AllwmakeLnInclude
+
   # finiteVolume and dynamicMesh are needed by the Decomposition methods
   wmake $targetType finiteVolume
   wmake $targetType mesh/extrudeModel
@@ -74,8 +74,6 @@ if isMinGW; then
 fi
 
 dummyThirdParty/Allwmake $targetType $*
-
-wmakeLnInclude fvOptions
 
 wmake $targetType finiteVolume
 wmake $targetType lagrangian/basic
@@ -113,9 +111,12 @@ wmake $targetType regionCoupled
 functionObjects/Allwmake $targetType $*
 
 wmake $targetType sixDoFRigidBodyMotion
+wmake $targetType sixDoFRigidBodyState
 wmake $targetType rigidBodyDynamics
 wmake $targetType rigidBodyMeshMotion
 wmake $targetType waves
+wmake $targetType semiPermeableBaffle
+wmake $targetType atmosphericModels
 
 
 #------------------------------------------------------------------------------

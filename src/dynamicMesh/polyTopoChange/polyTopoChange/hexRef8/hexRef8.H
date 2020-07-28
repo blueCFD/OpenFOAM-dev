@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -191,7 +191,7 @@ class hexRef8
         ) const;
 
         ////- Print levels of list of points.
-        //void printLevels(Ostream&, const labelList&) const;
+        // void printLevels(Ostream&, const labelList&) const;
 
         //- debug:check orientation of added internal face
         static void checkInternalOrientation
@@ -274,7 +274,7 @@ class hexRef8
             polyTopoChange& meshMod
         ) const;
 
-        //- Store vertices from startFp upto face split point.
+        //- Store vertices from startFp up to face split point.
         //  Used when splitting face into 4.
         void walkFaceToMid
         (
@@ -364,7 +364,7 @@ public:
             const labelList& cellLevel,
             const labelList& pointLevel,
             const refinementHistory& history,
-            const scalar level0Edge = -GREAT
+            const scalar level0Edge = -great
         );
 
         //- Construct from mesh and refinement data and optional size of
@@ -374,7 +374,7 @@ public:
             const polyMesh& mesh,
             const labelList& cellLevel,
             const labelList& pointLevel,
-            const scalar level0Edge = -GREAT
+            const scalar level0Edge = -great
         );
 
 

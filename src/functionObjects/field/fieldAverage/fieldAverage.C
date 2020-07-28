@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -291,7 +291,7 @@ Foam::functionObjects::fieldAverage::fieldAverage
     restartOnRestart_(false),
     restartOnOutput_(false),
     periodicRestart_(false),
-    restartPeriod_(GREAT),
+    restartPeriod_(great),
     initialised_(false),
     faItems_(),
     totalIter_(),

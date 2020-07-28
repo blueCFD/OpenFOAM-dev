@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,12 +40,12 @@ Description
 
 using namespace Foam;
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-    argList::noParallel();
+    #include "removeCaseOptions.H"
+
     argList::validArgs.append("surface file");
     argList::validArgs.append("output surface file");
     argList args(argc, argv);
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     triSurface surf2 = triSurfaceTools::redGreenRefine
     (
         surf1,
-        identity(surf1.size())  //Hack: refine all
+        identity(surf1.size())  // Hack: refine all
     );
 
     Info<< "Original surface:" << endl

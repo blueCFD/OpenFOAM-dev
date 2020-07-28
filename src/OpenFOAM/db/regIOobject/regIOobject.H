@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -138,7 +138,7 @@ public:
         //  if registerCopy is true
         regIOobject(const regIOobject&, bool registerCopy);
 
-        //- Construct as copy with new name, transfering registry registration
+        //- Construct as copy with new name, transferring registry registration
         //  to copy as specified
         regIOobject(const word& newName, const regIOobject&, bool registerCopy);
 

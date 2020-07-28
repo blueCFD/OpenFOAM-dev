@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -257,7 +257,7 @@ void Foam::meshToMesh0::cellAddresses
 
                 // search through all the neighbours.
                 // If the cell is closer, reset current cell and distance
-                if (curDistSqr < (1 - SMALL)*distSqr)
+                if (curDistSqr < (1 - small)*distSqr)
                 {
                     curCell = neighbours[nI];
                     distSqr = curDistSqr;

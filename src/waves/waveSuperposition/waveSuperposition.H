@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,11 +69,18 @@ class waveSuperposition
         //- The angle relative to the mean velocity at which the waves propagate
         scalarList waveAngles_;
 
+        //- Ramp for the mean flow speed
+        const autoPtr<Function1<scalar>> ramp_;
+
         //- Scaling in the flow direction
         const autoPtr<Function1<scalar>> scale_;
 
         //- Scaling perpendicular to the flow direction
         const autoPtr<Function1<scalar>> crossScale_;
+
+        //- Calculate wave properties using the height above the wave (true) or
+        //  the height above the origin (false)?
+        const Switch heightAboveWave_;
 
 
     // Private Member Functions
@@ -99,11 +106,12 @@ class waveSuperposition
         //- Get the wave velocity at a given time, mean velocity and local
         //  coordinates. Local x is aligned with the mean velocity, z with
         //  negative gravity, and y is perpendicular to both.
-        tmp<vectorField> velocity
-        (
-            const scalar t,
-            const vectorField& xyz
-        ) const;
+        tmp<vectorField> velocity(const scalar t, const vectorField& xyz) const;
+
+        //- Get the wave pressure at a given time, mean velocity and local
+        //  coordinates. Local x is aligned with the mean velocity, z with
+        //  negative gravity, and y is perpendicular to both.
+        tmp<scalarField> pressure(const scalar t, const vectorField& xyz) const;
 
         //- Get the scaling factor, calculated from the optional scaling
         //  functions. X and y are the same as for the elevation method.
@@ -139,10 +147,16 @@ public:
         //- Get the gas velocity at a given time and global positions
         tmp<vectorField> UGas(const scalar t, const vectorField& p) const;
 
+        //- Get the liquid pressure at a given time and global positions
+        tmp<scalarField> pLiquid(const scalar t, const vectorField& p) const;
+
+        //- Get the gas pressure at a given time and global positions
+        tmp<scalarField> pGas(const scalar t, const vectorField& p) const;
+
         //- Get the mean flow velocity
-        inline vector UMean() const
+        inline vector UMean(const scalar t) const
         {
-            return direction_*speed_;
+            return (ramp_.valid() ? ramp_->value(t) : 1)*direction_*speed_;
         }
 
         //- Write

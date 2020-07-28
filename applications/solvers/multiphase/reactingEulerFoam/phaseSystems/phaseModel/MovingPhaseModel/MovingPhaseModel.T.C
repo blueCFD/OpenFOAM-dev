@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2015-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -164,17 +164,8 @@ Foam::MovingPhaseModel<BasePhaseModel>::MovingPhaseModel
         fluid.mesh(),
         dimensionedScalar("0", dimensionSet(1, 0, -1, 0, 0), 0)
     ),
-    DUDt_
-    (
-        IOobject
-        (
-            IOobject::groupName("DUDt", this->name()),
-            fluid.mesh().time().timeName(),
-            fluid.mesh()
-        ),
-        fluid.mesh(),
-        dimensionedVector("0", dimAcceleration, Zero)
-    ),
+    DUDt_(nullptr),
+    DUDtf_(nullptr),
     divU_(nullptr),
     turbulence_
     (
@@ -188,19 +179,32 @@ Foam::MovingPhaseModel<BasePhaseModel>::MovingPhaseModel
             *this
         )
     ),
-    continuityError_
+    continuityErrorFlow_
     (
         IOobject
         (
-            IOobject::groupName("continuityError", this->name()),
+            IOobject::groupName("continuityErrorFlow", this->name()),
             fluid.mesh().time().timeName(),
             fluid.mesh()
         ),
         fluid.mesh(),
         dimensionedScalar("0", dimDensity/dimTime, 0)
-    )
+    ),
+    continuityErrorSources_
+    (
+        IOobject
+        (
+            IOobject::groupName("continuityErrorSources", this->name()),
+            fluid.mesh().time().timeName(),
+            fluid.mesh()
+        ),
+        fluid.mesh(),
+        dimensionedScalar("0", dimDensity/dimTime, 0)
+    ),
+    K_(nullptr)
 {
     phi_.writeOpt() = IOobject::AUTO_WRITE;
+
     correctKinematics();
 }
 
@@ -221,11 +225,11 @@ void Foam::MovingPhaseModel<BasePhaseModel>::correct()
 
     this->fluid().MRF().correctBoundaryVelocity(U_);
 
-    volScalarField& rho = this->thermo().rho();
+    volScalarField& rho = this->thermoRef().rho();
 
-    continuityError_ =
-        fvc::ddt(*this, rho) + fvc::div(alphaRhoPhi_)
-      - (this->fluid().fvOptions()(*this, rho)&rho);
+    continuityErrorFlow_ = fvc::ddt(*this, rho) + fvc::div(alphaRhoPhi_);
+
+    continuityErrorSources_ = - (this->fluid().fvOptions()(*this, rho)&rho);
 }
 
 
@@ -234,7 +238,23 @@ void Foam::MovingPhaseModel<BasePhaseModel>::correctKinematics()
 {
     BasePhaseModel::correctKinematics();
 
-    DUDt_ = fvc::ddt(U_) + fvc::div(phi_, U_) - fvc::div(phi_)*U_;
+    if (DUDt_.valid())
+    {
+        DUDt_.clear();
+        DUDt();
+    }
+
+    if (DUDtf_.valid())
+    {
+        DUDtf_.clear();
+        DUDtf();
+    }
+
+    if (K_.valid())
+    {
+        K_.clear();
+        K();
+    }
 }
 
 
@@ -251,7 +271,15 @@ template<class BasePhaseModel>
 void Foam::MovingPhaseModel<BasePhaseModel>::correctEnergyTransport()
 {
     BasePhaseModel::correctEnergyTransport();
+
     turbulence_->correctEnergyTransport();
+}
+
+
+template<class BasePhaseModel>
+bool Foam::MovingPhaseModel<BasePhaseModel>::stationary() const
+{
+    return false;
 }
 
 
@@ -259,39 +287,37 @@ template<class BasePhaseModel>
 Foam::tmp<Foam::fvVectorMatrix>
 Foam::MovingPhaseModel<BasePhaseModel>::UEqn()
 {
+    const volScalarField& alpha = *this;
+    const volScalarField& rho = this->thermo().rho();
+
     return
     (
-        fvm::ddt(*this, this->thermo().rho(), U_)
+        fvm::ddt(alpha, rho, U_)
       + fvm::div(alphaRhoPhi_, U_)
-      - fvm::Sp(continuityError_, U_)
-      + this->fluid().MRF().DDt(*this*this->thermo().rho(), U_)
+      + fvm::SuSp(- this->continuityError(), U_)
+      + this->fluid().MRF().DDt(alpha*rho, U_)
       + turbulence_->divDevRhoReff(U_)
     );
 }
 
 
 template<class BasePhaseModel>
-const Foam::surfaceScalarField&
-Foam::MovingPhaseModel<BasePhaseModel>::DbyA() const
+Foam::tmp<Foam::fvVectorMatrix>
+Foam::MovingPhaseModel<BasePhaseModel>::UfEqn()
 {
-    if (DbyA_.valid())
-    {
-        return DbyA_;
-    }
-    else
-    {
-        return surfaceScalarField::null();
-    }
-}
+    // As the "normal" U-eqn but without the ddt terms
 
+    const volScalarField& alpha = *this;
+    const volScalarField& rho = this->thermo().rho();
 
-template<class BasePhaseModel>
-void Foam::MovingPhaseModel<BasePhaseModel>::DbyA
-(
-    const tmp<surfaceScalarField>& DbyA
-)
-{
-    DbyA_ = DbyA;
+    return
+    (
+        fvm::div(alphaRhoPhi_, U_)
+      - fvm::Sp(fvc::div(alphaRhoPhi_), U_)
+      + fvm::SuSp(- this->continuityErrorSources(), U_)
+      + this->fluid().MRF().DDt(alpha*rho, U_)
+      + turbulence_->divDevRhoReff(U_)
+    );
 }
 
 
@@ -305,44 +331,9 @@ Foam::MovingPhaseModel<BasePhaseModel>::U() const
 
 template<class BasePhaseModel>
 Foam::volVectorField&
-Foam::MovingPhaseModel<BasePhaseModel>::U()
+Foam::MovingPhaseModel<BasePhaseModel>::URef()
 {
     return U_;
-}
-
-
-template<class BasePhaseModel>
-Foam::tmp<Foam::volVectorField>
-Foam::MovingPhaseModel<BasePhaseModel>::DUDt() const
-{
-    return DUDt_;
-}
-
-
-template<class BasePhaseModel>
-const Foam::tmp<Foam::volScalarField>&
-Foam::MovingPhaseModel<BasePhaseModel>::divU() const
-{
-    return divU_;
-}
-
-
-template<class BasePhaseModel>
-void
-Foam::MovingPhaseModel<BasePhaseModel>::divU
-(
-    const tmp<volScalarField>& divU
-)
-{
-    divU_ = divU;
-}
-
-
-template<class BasePhaseModel>
-Foam::tmp<Foam::volScalarField>
-Foam::MovingPhaseModel<BasePhaseModel>::continuityError() const
-{
-    return continuityError_;
 }
 
 
@@ -356,7 +347,7 @@ Foam::MovingPhaseModel<BasePhaseModel>::phi() const
 
 template<class BasePhaseModel>
 Foam::surfaceScalarField&
-Foam::MovingPhaseModel<BasePhaseModel>::phi()
+Foam::MovingPhaseModel<BasePhaseModel>::phiRef()
 {
     return phi_;
 }
@@ -372,7 +363,7 @@ Foam::MovingPhaseModel<BasePhaseModel>::alphaPhi() const
 
 template<class BasePhaseModel>
 Foam::surfaceScalarField&
-Foam::MovingPhaseModel<BasePhaseModel>::alphaPhi()
+Foam::MovingPhaseModel<BasePhaseModel>::alphaPhiRef()
 {
     return alphaPhi_;
 }
@@ -388,17 +379,172 @@ Foam::MovingPhaseModel<BasePhaseModel>::alphaRhoPhi() const
 
 template<class BasePhaseModel>
 Foam::surfaceScalarField&
-Foam::MovingPhaseModel<BasePhaseModel>::alphaRhoPhi()
+Foam::MovingPhaseModel<BasePhaseModel>::alphaRhoPhiRef()
 {
     return alphaRhoPhi_;
 }
 
 
 template<class BasePhaseModel>
-const Foam::phaseCompressibleTurbulenceModel&
-Foam::MovingPhaseModel<BasePhaseModel>::turbulence() const
+Foam::tmp<Foam::volVectorField>
+Foam::MovingPhaseModel<BasePhaseModel>::DUDt() const
 {
-    return turbulence_;
+    if (!DUDt_.valid())
+    {
+        DUDt_ = fvc::ddt(U_) + fvc::div(phi_, U_) - fvc::div(phi_)*U_;
+    }
+
+    return tmp<volVectorField>(DUDt_());
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::surfaceScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::DUDtf() const
+{
+    if (!DUDtf_.valid())
+    {
+        DUDtf_ = byDt(phi_ - phi_.oldTime());
+    }
+
+    return tmp<surfaceScalarField>(DUDtf_());
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::continuityError() const
+{
+    return continuityErrorFlow_ + continuityErrorSources_;
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::continuityErrorFlow() const
+{
+    return continuityErrorFlow_;
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::continuityErrorSources() const
+{
+    return continuityErrorSources_;
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::K() const
+{
+    if (!K_.valid())
+    {
+        K_ =
+            new volScalarField
+            (
+                IOobject::groupName("K", this->name()),
+                0.5*magSqr(this->U())
+            );
+    }
+
+    return tmp<volScalarField>(K_());
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::divU() const
+{
+    return divU_.valid() ? tmp<volScalarField>(divU_()) : tmp<volScalarField>();
+}
+
+
+template<class BasePhaseModel>
+void Foam::MovingPhaseModel<BasePhaseModel>::divU(tmp<volScalarField> divU)
+{
+    divU_ = divU;
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::mut() const
+{
+    return turbulence_->mut();
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::muEff() const
+{
+    return turbulence_->muEff();
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::nut() const
+{
+    return turbulence_->nut();
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::nuEff() const
+{
+    return turbulence_->nuEff();
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::kappaEff() const
+{
+    return turbulence_->kappaEff();
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::scalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::kappaEff(const label patchi) const
+{
+    return turbulence_->kappaEff(patchi);
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::alphaEff() const
+{
+    return turbulence_->alphaEff();
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::scalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::alphaEff(const label patchi) const
+{
+    return turbulence_->alphaEff(patchi);
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::k() const
+{
+    return turbulence_->k();
+}
+
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::volScalarField>
+Foam::MovingPhaseModel<BasePhaseModel>::pPrime() const
+{
+    return turbulence_->pPrime();
 }
 
 

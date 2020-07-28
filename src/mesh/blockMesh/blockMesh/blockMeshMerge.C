@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -110,15 +110,15 @@ void Foam::blockMesh::calcMergeInfo()
         // point to point distance on the block face.
         // At the same time merge collated points on the block's faces
         // (removes boundary poles etc.)
-        // Collated points detected by initally taking a constant factor of
+        // Collated points detected by initially taking a constant factor of
         // the size of the block.
 
         boundBox bb(blockCells[blockPlabel].points(blockFaces, blockPoints));
-        const scalar mergeSqrDist = magSqr(10*SMALL*bb.span());
+        const scalar mergeSqrDist = magSqr(10*small*bb.span());
 
         // This is an N^2 algorithm
 
-        scalar sqrMergeTol = GREAT;
+        scalar sqrMergeTol = great;
 
         forAll(blockPfaceFaces, blockPfaceFaceLabel)
         {
@@ -212,7 +212,11 @@ void Foam::blockMesh::calcMergeInfo()
         const List<FixedList<label, 4>>& blockNfaceFaces =
             blocks[blockNlabel].boundaryPatches()[blockNfaceLabel];
 
-        if (blockPfaceFaces.size() != blockNfaceFaces.size())
+        if
+        (
+            checkFaceCorrespondence_
+         && blockPfaceFaces.size() != blockNfaceFaces.size()
+        )
         {
             FatalErrorInFunction
                 << "Inconsistent number of faces between block pair "

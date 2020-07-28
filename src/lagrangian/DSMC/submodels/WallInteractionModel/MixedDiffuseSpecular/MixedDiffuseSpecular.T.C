@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,8 +51,7 @@ Foam::MixedDiffuseSpecular<CloudType>::~MixedDiffuseSpecular()
 template<class CloudType>
 void Foam::MixedDiffuseSpecular<CloudType>::correct
 (
-    typename CloudType::parcelType& p,
-    const wallPolyPatch& wpp
+    typename CloudType::parcelType& p
 )
 {
     vector& U = p.U();
@@ -61,12 +60,13 @@ void Foam::MixedDiffuseSpecular<CloudType>::correct
 
     label typeId = p.typeId();
 
-    label wppIndex = wpp.index();
+    const label wppIndex = p.patch();
+
+    const polyPatch& wpp = p.mesh().boundaryMesh()[wppIndex];
 
     label wppLocalFace = wpp.whichFace(p.face());
 
-    vector nw = p.normal();
-    nw /= mag(nw);
+    const vector nw = p.normal();
 
     // Normal velocity magnitude
     scalar U_dot_nw = U & nw;
@@ -82,7 +82,7 @@ void Foam::MixedDiffuseSpecular<CloudType>::correct
         // Wall tangential velocity (flow direction)
         vector Ut = U - U_dot_nw*nw;
 
-        while (mag(Ut) < SMALL)
+        while (mag(Ut) < small)
         {
             // If the incident velocity is parallel to the face normal, no
             // tangential direction can be chosen.  Add a perturbation to the
@@ -115,9 +115,9 @@ void Foam::MixedDiffuseSpecular<CloudType>::correct
         U =
             sqrt(physicoChemical::k.value()*T/mass)
            *(
-                rndGen.GaussNormal()*tw1
-              + rndGen.GaussNormal()*tw2
-              - sqrt(-2.0*log(max(1 - rndGen.scalar01(), VSMALL)))*nw
+                rndGen.scalarNormal()*tw1
+              + rndGen.scalarNormal()*tw2
+              - sqrt(-2.0*log(max(1 - rndGen.scalar01(), vSmall)))*nw
             );
 
         U += cloud.boundaryU().boundaryField()[wppIndex][wppLocalFace];

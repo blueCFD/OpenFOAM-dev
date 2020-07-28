@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fixedValue
+    Foam::distributionModels::fixedValue
 
 Description
     Returns a fixed value
@@ -32,8 +32,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef distributionModelFixedValue_H
-#define distributionModelFixedValue_H
+#ifndef fixedValue_H
+#define fixedValue_H
 
 #include "distributionModel.H"
 
@@ -66,7 +66,7 @@ public:
     // Constructors
 
         //- Construct from components
-        fixedValue(const dictionary& dict, cachedRandom& rndGen);
+        fixedValue(const dictionary& dict, Random& rndGen);
 
         //- Construct copy
         fixedValue(const fixedValue& p);

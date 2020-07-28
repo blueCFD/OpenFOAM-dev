@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,18 +26,21 @@ Application
 
 Description
     Transient solver for compressible, turbulent flow with a reacting,
-    multiphase particle cloud, and optional sources/constraints.
+    multiphase particle cloud, and surface film modelling.
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
 #include "turbulentFluidThermoModel.H"
 #include "basicReactingMultiphaseCloud.H"
-#include "rhoCombustionModel.H"
+#include "surfaceFilmModel.H"
+#include "rhoReactionThermo.H"
+#include "CombustionModel.T.H"
 #include "radiationModel.H"
-#include "fvOptions.H"
 #include "SLGThermo.H"
+#include "fvOptions.H"
 #include "pimpleControl.H"
+#include "pressureControl.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
@@ -47,14 +50,13 @@ int main(int argc, char *argv[])
 {
     #include "postProcess.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createControl.H"
     #include "createTimeControls.H"
     #include "createFields.H"
     #include "createFieldRefs.H"
-    #include "createFvOptions.H"
     #include "initContinuityErrs.H"
 
     turbulence->validate();
@@ -73,10 +75,14 @@ int main(int argc, char *argv[])
     {
         #include "readTimeControls.H"
 
-        if (!LTS)
+        if (LTS)
+        {
+            #include "setRDeltaT.H"
+        }
+        else
         {
             #include "compressibleCourantNo.H"
-            #include "setDeltaT.H"
+            #include "setMultiRegionDeltaT.H"
         }
 
         runTime++;
@@ -84,34 +90,36 @@ int main(int argc, char *argv[])
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         parcels.evolve();
+        surfaceFilm.evolve();
 
-        if (LTS)
+        if (solvePrimaryRegion)
         {
-            #include "setRDeltaT.H"
-        }
-
-        #include "rhoEqn.H"
-
-        // --- Pressure-velocity PIMPLE corrector loop
-        while (pimple.loop())
-        {
-            #include "UEqn.H"
-            #include "YEqn.H"
-            #include "EEqn.H"
-
-            // --- Pressure corrector loop
-            while (pimple.correct())
+            if (pimple.nCorrPimple() <= 1)
             {
-                #include "pEqn.H"
+                #include "rhoEqn.H"
             }
 
-            if (pimple.turbCorr())
+            // --- PIMPLE loop
+            while (pimple.loop())
             {
-                turbulence->correct();
-            }
-        }
+                #include "UEqn.H"
+                #include "YEqn.H"
+                #include "EEqn.H"
 
-        rho = thermo.rho();
+                // --- Pressure corrector loop
+                while (pimple.correct())
+                {
+                    #include "pEqn.H"
+                }
+
+                if (pimple.turbCorr())
+                {
+                    turbulence->correct();
+                }
+            }
+
+            rho = thermo.rho();
+        }
 
         runTime.write();
 
@@ -120,7 +128,7 @@ int main(int argc, char *argv[])
             << nl << endl;
     }
 
-    Info<< "End\n" << endl;
+    Info<< "End" << endl;
 
     return 0;
 }

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::compressible::alphatWallFunctionFvPatchScalarField
-
-Group
-    grpCmpWallFunctions
 
 Description
     This boundary condition provides a turbulent thermal diffusivity conditon
@@ -72,8 +69,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef compressibleAlphatWallFunctionFvPatchScalarField_H
-#define compressibleAlphatWallFunctionFvPatchScalarField_H
+#ifndef alphatWallFunctionFvPatchScalarField_H
+#define alphatWallFunctionFvPatchScalarField_H
 
 #include "fixedValueFvPatchFields.H"
 

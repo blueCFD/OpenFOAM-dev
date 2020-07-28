@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,9 @@ License
     defineTemplateTypeNameAndDebugWithName                                     \
     (                                                                          \
         chemistryTabulationMethod##CompChemModel##Thermo,                      \
-        "chemistryTabulationMethod<"#CompChemModel","#Thermo">",               \
+        (word(chemistryTabulationMethod##CompChemModel##Thermo::typeName_()) + \
+        '<' + word(CompChemModel::typeName_()) + "," + Thermo::typeName() + '>'\
+        ).c_str(),                                                             \
         0                                                                      \
     );                                                                         \
                                                                                \

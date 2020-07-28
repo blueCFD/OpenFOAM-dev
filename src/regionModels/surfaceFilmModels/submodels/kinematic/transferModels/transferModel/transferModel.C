@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,7 +49,7 @@ void transferModel::addToTransferredMass(const scalar dMass)
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-transferModel::transferModel(surfaceFilmModel& film)
+transferModel::transferModel(surfaceFilmRegionModel& film)
 :
     filmSubModelBase(film),
     transferredMass_(0.0)
@@ -59,7 +59,7 @@ transferModel::transferModel(surfaceFilmModel& film)
 transferModel::transferModel
 (
     const word& modelType,
-    surfaceFilmModel& film,
+    surfaceFilmRegionModel& film,
     const dictionary& dict
 )
 :

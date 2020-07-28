@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,14 +52,12 @@ Foam::SpecularReflection<CloudType>::~SpecularReflection()
 template<class CloudType>
 void Foam::SpecularReflection<CloudType>::correct
 (
-    typename CloudType::parcelType& p,
-    const wallPolyPatch& wpp
+    typename CloudType::parcelType& p
 )
 {
     vector& U = p.U();
 
-    vector nw = p.normal();
-    nw /= mag(nw);
+    const vector nw = p.normal();
 
     scalar U_dot_nw = U & nw;
 

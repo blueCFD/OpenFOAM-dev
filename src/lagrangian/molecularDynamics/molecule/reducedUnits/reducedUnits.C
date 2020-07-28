@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,9 +36,9 @@ void Foam::reducedUnits::calcRefValues()
 {
     if
     (
-        refTime_ < VSMALL
-     || refLength_ < VSMALL
-     || refMass_ < VSMALL
+        refTime_ < vSmall
+     || refLength_ < vSmall
+     || refMass_ < vSmall
     )
     {
         FatalErrorInFunction

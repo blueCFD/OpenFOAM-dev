@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,8 +37,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef functionObjects_timeControl_H
-#define functionObjects_timeControl_H
+#ifndef timeControlFunctionObject_H
+#define timeControlFunctionObject_H
 
 #include "functionObject.H"
 #include "dictionary.H"
@@ -70,10 +70,10 @@ class timeControl
 
         // Optional user inputs
 
-            //- Activation time - defaults to -VGREAT
+            //- Activation time - defaults to -vGreat
             scalar timeStart_;
 
-            //- De-activation time - defaults to VGREAT
+            //- De-activation time - defaults to vGreat
             scalar timeEnd_;
 
             //- Number of steps before the dump-time during which deltaT
@@ -158,8 +158,8 @@ public:
             //- Called when Time::run() determines that the time-loop exits
             virtual bool end();
 
-            //- Called at the end of Time::adjustDeltaT() if adjustTime is true
-            virtual bool adjustTimeStep();
+            //- Return the time to the next write
+            virtual scalar timeToNextWrite();
 
             //- Read and set the function object if its data have changed
             virtual bool read(const dictionary&);

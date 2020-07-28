@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 Description
     Shrinking mesh (part of adding cell layers)
 
-\*----------------------------------------------------------------------------*/
+\*---------------------------------------------------------------------------*/
 
 #include "snappyLayerDriver.H"
 #include "fvMesh.H"
@@ -59,12 +59,12 @@ void Foam::snappyLayerDriver::sumWeights
         if (isMasterEdge.get(meshEdges[edgeI]) == 1)
         {
             const edge& e = edges[edgeI];
-            //scalar eWeight = edgeWeights[edgeI];
-            //scalar eWeight = 1.0;
+            // scalar eWeight = edgeWeights[edgeI];
+            // scalar eWeight = 1.0;
 
             scalar eMag = max
             (
-                VSMALL,
+                vSmall,
                 mag
                 (
                     pts[meshPoints[e[1]]]
@@ -146,7 +146,7 @@ void Foam::snappyLayerDriver::smoothField
         // Transfer to field
         forAll(field, pointi)
         {
-            //full smoothing neighbours + point value
+            // full smoothing neighbours + point value
             average[pointi] = 0.5*(field[pointi]+average[pointi]);
 
             // perform monotonic smoothing
@@ -330,7 +330,7 @@ void Foam::snappyLayerDriver::smoothPatchNormals
             // full smoothing neighbours + point value
             average[pointi] = 0.5*(normals[pointi]+average[pointi]);
             normals[pointi] = average[pointi];
-            normals[pointi] /= mag(normals[pointi]) + VSMALL;
+            normals[pointi] /= mag(normals[pointi]) + vSmall;
         }
     }
 }
@@ -416,10 +416,10 @@ void Foam::snappyLayerDriver::smoothNormals
         {
             if (isFixedPoint.get(pointi) == 0)
             {
-                //full smoothing neighbours + point value
+                // full smoothing neighbours + point value
                 average[pointi] = 0.5*(normals[pointi]+average[pointi]);
                 normals[pointi] = average[pointi];
-                normals[pointi] /= mag(normals[pointi]) + VSMALL;
+                normals[pointi] /= mag(normals[pointi]) + vSmall;
             }
         }
     }
@@ -445,7 +445,7 @@ bool Foam::snappyLayerDriver::isMaxEdge
     vector v0(points[e[0]] - pointWallDist[e[0]].origin());
     scalar magV0(mag(v0));
 
-    if (magV0 < SMALL)
+    if (magV0 < small)
     {
         return false;
     }
@@ -453,22 +453,22 @@ bool Foam::snappyLayerDriver::isMaxEdge
     vector v1(points[e[1]] - pointWallDist[e[1]].origin());
     scalar magV1(mag(v1));
 
-    if (magV1 < SMALL)
+    if (magV1 < small)
     {
         return false;
     }
 
 
     //- Detect based on vector to nearest point differing for both endpoints
-    //v0 /= magV0;
-    //v1 /= magV1;
+    // v0 /= magV0;
+    // v1 /= magV1;
     //
     //// Test angle.
-    //if ((v0 & v1) < minCos)
+    // if ((v0 & v1) < minCos)
     //{
     //    return true;
     //}
-    //else
+    // else
     //{
     //    return false;
     //}
@@ -524,7 +524,7 @@ void Foam::snappyLayerDriver::handleFeatureAngleLayerTerminations
 
 
 
-    //label nOldPointCounter = nPointCounter;
+    // label nOldPointCounter = nPointCounter;
 
     // Detect situation where two featureedge-neighbouring faces are partly or
     // not extruded and the edge itself is extruded. In this case unmark the
@@ -633,7 +633,7 @@ void Foam::snappyLayerDriver::handleFeatureAngleLayerTerminations
         }
     }
 
-    //Info<< "Added "
+    // Info<< "Added "
     //    << returnReduce(nPointCounter-nOldPointCounter, sumOp<label>())
     //    << " point not to extrude." << endl;
 }
@@ -1007,18 +1007,18 @@ void Foam::snappyLayerDriver::medialAxisSmoothingInfo
     {
         pointField origin(pointWallDist.size());
         scalarField distSqr(pointWallDist.size());
-        //NA scalarField passiveS(pointWallDist.size());
+        // NA scalarField passiveS(pointWallDist.size());
         pointField passiveV(pointWallDist.size());
         forAll(pointWallDist, pointi)
         {
             origin[pointi] = pointWallDist[pointi].origin();
             distSqr[pointi] = pointWallDist[pointi].distSqr();
-            //passiveS[pointi] = pointWallDist[pointi].s();
+            // passiveS[pointi] = pointWallDist[pointi].s();
             passiveV[pointi] = pointWallDist[pointi].v();
         }
         meshRefinement::testSyncPointList("origin", mesh, origin);
         meshRefinement::testSyncPointList("distSqr", mesh, distSqr);
-        //meshRefinement::testSyncPointList("passiveS", mesh, passiveS);
+        // meshRefinement::testSyncPointList("passiveS", mesh, passiveS);
         meshRefinement::testSyncPointList("passiveV", mesh, passiveV);
     }
 
@@ -1055,10 +1055,10 @@ void Foam::snappyLayerDriver::medialAxisSmoothingInfo
                 // point. Mark both points as medial axis points.
 
                 // Approximate medial axis location on edge.
-                //const point medialAxisPt = e.centre(points);
+                // const point medialAxisPt = e.centre(points);
                 vector eVec = e.vec(points);
                 scalar eMag = mag(eVec);
-                if (eMag > VSMALL)
+                if (eMag > vSmall)
                 {
                     eVec /= eMag;
 
@@ -1094,7 +1094,7 @@ void Foam::snappyLayerDriver::medialAxisSmoothingInfo
                             (
                                 pointData
                                 (
-                                    medialAxisPt,   //points[pointi],
+                                    medialAxisPt,   // points[pointi],
                                     magSqr(points[pointi]-medialAxisPt),//0.0,
                                     pointi,         // passive data
                                     Zero    // passive data
@@ -1290,7 +1290,7 @@ void Foam::snappyLayerDriver::medialAxisSmoothingInfo
             scalar wDist2 = pointWallDist[pointi].distSqr();
             scalar mDist = medialDist[pointi];
 
-            if (wDist2 < sqr(SMALL) && mDist < SMALL)
+            if (wDist2 < sqr(small) && mDist < small)
             //- Note: maybe less strict:
             //(
             //    wDist2 < sqr(meshRefiner_.mergeDistance())
@@ -1452,15 +1452,15 @@ void Foam::snappyLayerDriver::shrinkMeshMedialDistance
             //- Option 1: look only at extrusion thickness v.s. distance
             //  to nearest (medial axis or static) point.
             scalar mDist = medialDist[pointi];
-            scalar thicknessRatio = thickness[patchPointi]/(mDist+VSMALL);
+            scalar thicknessRatio = thickness[patchPointi]/(mDist+vSmall);
 
             //- Option 2: Look at component in the direction
             //  of nearest (medial axis or static) point.
             vector n =
                 patchDisp[patchPointi]
-              / (mag(patchDisp[patchPointi]) + VSMALL);
+              / (mag(patchDisp[patchPointi]) + vSmall);
             vector mVec = mesh.points()[pointi]-medialVec[pointi];
-            mVec /= mag(mVec)+VSMALL;
+            mVec /= mag(mVec)+vSmall;
             thicknessRatio *= (n&mVec);
 
             if (thicknessRatio > maxThicknessToMedialRatio)
@@ -1654,9 +1654,9 @@ void Foam::snappyLayerDriver::shrinkMeshMedialDistance
             (
                 mesh,
                 isMasterEdge,
-                identity(mesh.nEdges()),    //meshEdges,
-                identity(mesh.nPoints()),   //meshPoints,
-                mesh.edges(),               //edges,
+                identity(mesh.nEdges()),    // meshEdges,
+                identity(mesh.nPoints()),   // meshPoints,
+                mesh.edges(),               // edges,
                 invSumWeight,
                 displacement,
                 average
@@ -1664,7 +1664,7 @@ void Foam::snappyLayerDriver::shrinkMeshMedialDistance
 
             forAll(displacement, i)
             {
-                if (medialRatio[i] > SMALL && medialRatio[i] < 1-SMALL)
+                if (medialRatio[i] > small && medialRatio[i] < 1-small)
                 {
                     displacement[i] =
                         (1-lambda)*displacement[i]
@@ -1678,9 +1678,9 @@ void Foam::snappyLayerDriver::shrinkMeshMedialDistance
             (
                 mesh,
                 isMasterEdge,
-                identity(mesh.nEdges()),    //meshEdges,
-                identity(mesh.nPoints()),   //meshPoints,
-                mesh.edges(),               //edges,
+                identity(mesh.nEdges()),    // meshEdges,
+                identity(mesh.nPoints()),   // meshPoints,
+                mesh.edges(),               // edges,
                 invSumWeight,
                 displacement,
                 average
@@ -1688,7 +1688,7 @@ void Foam::snappyLayerDriver::shrinkMeshMedialDistance
 
             forAll(displacement, i)
             {
-                if (medialRatio[i] > SMALL && medialRatio[i] < 1-SMALL)
+                if (medialRatio[i] > small && medialRatio[i] < 1-small)
                 {
                     displacement[i] = (1-mu)*displacement[i]+mu*average[i];
                 }

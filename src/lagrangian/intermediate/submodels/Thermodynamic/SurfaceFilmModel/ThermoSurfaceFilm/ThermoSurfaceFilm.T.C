@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -92,7 +92,7 @@ Foam::vector Foam::ThermoSurfaceFilm<CloudType>::tangentVector
     vector tangent = Zero;
     scalar magTangent = 0.0;
 
-    while (magTangent < SMALL)
+    while (magTangent < small)
     {
         vector vTest = rndGen_.sample01<vector>();
         tangent = vTest - (vTest & v)*v;
@@ -131,7 +131,7 @@ Foam::vector Foam::ThermoSurfaceFilm<CloudType>::splashDirection
 template<class CloudType>
 void Foam::ThermoSurfaceFilm<CloudType>::absorbInteraction
 (
-    regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+    regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel,
     const parcelType& p,
     const polyPatch& pp,
     const label facei,
@@ -208,7 +208,7 @@ void Foam::ThermoSurfaceFilm<CloudType>::bounceInteraction
 template<class CloudType>
 void Foam::ThermoSurfaceFilm<CloudType>::drySplashInteraction
 (
-    regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+    regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel,
     const parcelType& p,
     const polyPatch& pp,
     const label facei,
@@ -264,7 +264,7 @@ void Foam::ThermoSurfaceFilm<CloudType>::drySplashInteraction
 template<class CloudType>
 void Foam::ThermoSurfaceFilm<CloudType>::wetSplashInteraction
 (
-    regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+    regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel,
     parcelType& p,
     const polyPatch& pp,
     const label facei,
@@ -341,7 +341,7 @@ void Foam::ThermoSurfaceFilm<CloudType>::wetSplashInteraction
 template<class CloudType>
 void Foam::ThermoSurfaceFilm<CloudType>::splashInteraction
 (
-    regionModels::surfaceFilmModels::surfaceFilmModel& filmModel,
+    regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel,
     const parcelType& p,
     const polyPatch& pp,
     const label facei,
@@ -378,7 +378,7 @@ void Foam::ThermoSurfaceFilm<CloudType>::splashInteraction
     const scalar Ns = 5.0*(We/Wec - 1.0);
 
     // Average diameter of splashed particles
-    const scalar dBarSplash = 1/cbrt(6.0)*cbrt(mRatio/Ns)*d + ROOTVSMALL;
+    const scalar dBarSplash = 1/cbrt(6.0)*cbrt(mRatio/Ns)*d + rootVSmall;
 
     // Cumulative diameter splash distribution
     const scalar dMax = 0.9*cbrt(mRatio)*d;
@@ -400,7 +400,7 @@ void Foam::ThermoSurfaceFilm<CloudType>::splashInteraction
     }
 
     // Incident kinetic energy [J]
-    const scalar EKIn = 0.5*m*magSqr(Urel);
+    const scalar EKIn = 0.5*m*magSqr(Un);
 
     // Incident surface energy [J]
     const scalar ESigmaIn = np*sigma*p.areaS(d);
@@ -420,7 +420,7 @@ void Foam::ThermoSurfaceFilm<CloudType>::splashInteraction
 
     // Helper variables to calculate magUns0
     const scalar logD = log(d);
-    const scalar coeff2 = log(dNew[0]) - logD + ROOTVSMALL;
+    const scalar coeff2 = log(dNew[0]) - logD + rootVSmall;
     scalar coeff1 = 0.0;
     forAll(dNew, i)
     {
@@ -559,11 +559,12 @@ bool Foam::ThermoSurfaceFilm<CloudType>::transferParcel
 )
 {
     // Retrieve the film model from the owner database
-    regionModels::surfaceFilmModels::surfaceFilmModel& filmModel =
-        const_cast<regionModels::surfaceFilmModels::surfaceFilmModel&>
+    regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel =
+        const_cast<regionModels::surfaceFilmModels::surfaceFilmRegionModel&>
         (
             this->owner().db().time().objectRegistry::template
-                lookupObject<regionModels::surfaceFilmModels::surfaceFilmModel>
+                lookupObject
+                <regionModels::surfaceFilmModels::surfaceFilmRegionModel>
                 (
                     "surfaceFilmProperties"
                 )
@@ -627,7 +628,7 @@ void Foam::ThermoSurfaceFilm<CloudType>::cacheFilmFields
 (
     const label filmPatchi,
     const label primaryPatchi,
-    const regionModels::surfaceFilmModels::surfaceFilmModel& filmModel
+    const regionModels::surfaceFilmModels::surfaceFilmRegionModel& filmModel
 )
 {
     SurfaceFilmModel<CloudType>::cacheFilmFields

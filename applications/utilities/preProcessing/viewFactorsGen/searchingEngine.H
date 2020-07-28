@@ -7,7 +7,7 @@ List<treeBoundBox> meshBb
     treeBoundBox
     (
         boundBox(coarseMesh.points(), false)
-    ).extend(rndGen, 1e-3)
+    ).extend(1e-3)
 );
 
 // Dummy bounds dictionary
@@ -21,7 +21,7 @@ dict.add
         distributedTriSurfaceMesh::FROZEN
     ]
 );
-dict.add("mergeDistance", SMALL);
+dict.add("mergeDistance", small);
 
 labelHashSet includePatches;
 forAll(patches, patchi)

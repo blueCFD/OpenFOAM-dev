@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,10 +59,10 @@ void Foam::blockDescriptor::check(const Istream& is)
     forAll(faces, i)
     {
         point faceCentre(faces[i].centre(vertices_));
-        vector faceNormal(faces[i].normal(vertices_));
-        if (mag(faceNormal) > SMALL)
+        vector faceArea(faces[i].area(vertices_));
+        if (mag(faceArea) > small)
         {
-            if (((faceCentre - blockCentre) & faceNormal) > 0)
+            if (((faceCentre - blockCentre) & faceArea) > 0)
             {
                 outwardFaceCount++;
             }

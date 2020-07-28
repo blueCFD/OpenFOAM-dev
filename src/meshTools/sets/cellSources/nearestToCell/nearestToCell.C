@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,13 +31,9 @@ License
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(nearestToCell, 0);
-
-addToRunTimeSelectionTable(topoSetSource, nearestToCell, word);
-
-addToRunTimeSelectionTable(topoSetSource, nearestToCell, istream);
-
+    defineTypeNameAndDebug(nearestToCell, 0);
+    addToRunTimeSelectionTable(topoSetSource, nearestToCell, word);
+    addToRunTimeSelectionTable(topoSetSource, nearestToCell, istream);
 }
 
 
@@ -62,7 +58,6 @@ void Foam::nearestToCell::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from components
 Foam::nearestToCell::nearestToCell
 (
     const polyMesh& mesh,
@@ -74,7 +69,6 @@ Foam::nearestToCell::nearestToCell
 {}
 
 
-// Construct from dictionary
 Foam::nearestToCell::nearestToCell
 (
     const polyMesh& mesh,
@@ -86,7 +80,6 @@ Foam::nearestToCell::nearestToCell
 {}
 
 
-// Construct from Istream
 Foam::nearestToCell::nearestToCell
 (
     const polyMesh& mesh,

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -876,14 +876,6 @@ Foam::polyMesh::cellTree() const
 {
     if (cellTreePtr_.empty())
     {
-        treeBoundBox overallBb(points());
-
-        Random rndGen(261782);
-
-        overallBb = overallBb.extend(rndGen, 1e-4);
-        overallBb.min() -= point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-        overallBb.max() += point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-
         cellTreePtr_.reset
         (
             new indexedOctree<treeDataCell>
@@ -894,7 +886,7 @@ Foam::polyMesh::cellTree() const
                     *this,
                     CELL_TETS   // use tet-decomposition for any inside test
                 ),
-                overallBb,
+                treeBoundBox(points()).extend(1e-4),
                 8,              // maxLevel
                 10,             // leafsize
                 5.0             // duplicity
@@ -933,7 +925,7 @@ void Foam::polyMesh::addPatches
 
     // parallelData depends on the processorPatch ordering so force
     // recalculation. Problem: should really be done in removeBoundary but
-    // there is some info in parallelData which might be interesting inbetween
+    // there is some info in parallelData which might be interesting in between
     // removeBoundary and addPatches.
     globalMeshDataPtr_.clear();
 
@@ -1333,7 +1325,7 @@ bool Foam::polyMesh::pointInCell
 
                     vector proj = p - faceTri.centre();
 
-                    if ((faceTri.normal() & proj) > 0)
+                    if ((faceTri.area() & proj) > 0)
                     {
                         return false;
                     }
@@ -1363,7 +1355,7 @@ bool Foam::polyMesh::pointInCell
 
                     vector proj = p - faceTri.centre();
 
-                    if ((faceTri.normal() & proj) > 0)
+                    if ((faceTri.area() & proj) > 0)
                     {
                         return false;
                     }

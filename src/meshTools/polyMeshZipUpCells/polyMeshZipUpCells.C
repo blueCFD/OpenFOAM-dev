@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -461,7 +461,7 @@ bool Foam::polyMeshZipUpCells(polyMesh& mesh)
                 forAll(orderedEdge, epI)
                 {
                     label nextPoint = -1;
-                    scalar minDist = GREAT;
+                    scalar minDist = great;
 
                     forAll(dist, i)
                     {
@@ -549,7 +549,7 @@ bool Foam::polyMeshZipUpCells(polyMesh& mesh)
                     if (faceChanges)
                     {
                         nChangedFacesInMesh++;
-                        // In order to avoid loosing point from multiple
+                        // In order to avoid losing point from multiple
                         // insertions into the same face, the new face
                         // will be change incrementally.
                         // 1) Check if all the internal points of the edge

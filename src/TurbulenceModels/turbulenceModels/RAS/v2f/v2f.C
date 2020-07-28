@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -186,7 +186,7 @@ v2f<BasicTurbulenceModel>::v2f
     (
         IOobject
         (
-            IOobject::groupName("k", U.group()),
+            IOobject::groupName("k", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -198,7 +198,7 @@ v2f<BasicTurbulenceModel>::v2f
     (
         IOobject
         (
-            IOobject::groupName("epsilon", U.group()),
+            IOobject::groupName("epsilon", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -210,7 +210,7 @@ v2f<BasicTurbulenceModel>::v2f
     (
         IOobject
         (
-            IOobject::groupName("v2", U.group()),
+            IOobject::groupName("v2", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -222,7 +222,7 @@ v2f<BasicTurbulenceModel>::v2f
     (
         IOobject
         (
-            IOobject::groupName("f", U.group()),
+            IOobject::groupName("f", alphaRhoPhi.group()),
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -230,7 +230,7 @@ v2f<BasicTurbulenceModel>::v2f
         ),
         this->mesh_
     ),
-    v2Min_(dimensionedScalar("v2Min", v2_.dimensions(), SMALL)),
+    v2Min_(dimensionedScalar("v2Min", v2_.dimensions(), small)),
     fMin_(dimensionedScalar("fMin", f_.dimensions(), 0.0))
 {
     bound(k_, this->kMin_);

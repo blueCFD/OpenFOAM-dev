@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "streamLineParticle.H"
+#include "streamLineParticleCloud.H"
 #include "vectorFieldIOField.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -145,6 +146,7 @@ Foam::streamLineParticle::streamLineParticle
 
 bool Foam::streamLineParticle::move
 (
+    streamLineParticleCloud& cloud,
     trackingData& td,
     const scalar
 )
@@ -176,7 +178,7 @@ bool Foam::streamLineParticle::move
 
             scalar magU = mag(U);
 
-            if (magU < SMALL)
+            if (magU < small)
             {
                 // Stagnant particle. Might as well stop
                 lifeTime_ = 0;
@@ -185,7 +187,7 @@ bool Foam::streamLineParticle::move
 
             U /= magU;
 
-            if (td.trackLength_ < GREAT)
+            if (td.trackLength_ < great)
             {
                 // No sub-cycling. Track a set length on each step.
                 dt = td.trackLength_;
@@ -203,7 +205,7 @@ bool Foam::streamLineParticle::move
                 dt = maxDt;
             }
 
-            trackToFace(dt*U, 0, td);
+            trackToAndHitFace(dt*U, 0, cloud, td);
 
             if
             (
@@ -268,14 +270,7 @@ bool Foam::streamLineParticle::move
 }
 
 
-bool Foam::streamLineParticle::hitPatch
-(
-    const polyPatch&,
-    trackingData& td,
-    const label patchi,
-    const scalar trackFraction,
-    const tetIndices& tetIs
-)
+bool Foam::streamLineParticle::hitPatch(streamLineParticleCloud&, trackingData&)
 {
     // Disable generic patch interaction
     return false;
@@ -284,7 +279,7 @@ bool Foam::streamLineParticle::hitPatch
 
 void Foam::streamLineParticle::hitWedgePatch
 (
-    const wedgePolyPatch& pp,
+    streamLineParticleCloud&,
     trackingData& td
 )
 {
@@ -295,7 +290,7 @@ void Foam::streamLineParticle::hitWedgePatch
 
 void Foam::streamLineParticle::hitSymmetryPlanePatch
 (
-    const symmetryPlanePolyPatch& pp,
+    streamLineParticleCloud&,
     trackingData& td
 )
 {
@@ -306,7 +301,7 @@ void Foam::streamLineParticle::hitSymmetryPlanePatch
 
 void Foam::streamLineParticle::hitSymmetryPatch
 (
-    const symmetryPolyPatch& pp,
+    streamLineParticleCloud&,
     trackingData& td
 )
 {
@@ -317,8 +312,32 @@ void Foam::streamLineParticle::hitSymmetryPatch
 
 void Foam::streamLineParticle::hitCyclicPatch
 (
-    const cyclicPolyPatch& pp,
+    streamLineParticleCloud&,
     trackingData& td
+)
+{
+    // Remove particle
+    td.keepParticle = false;
+}
+
+
+void Foam::streamLineParticle::hitCyclicAMIPatch
+(
+    streamLineParticleCloud&,
+    trackingData& td,
+    const vector&
+)
+{
+    // Remove particle
+    td.keepParticle = false;
+}
+
+
+void Foam::streamLineParticle::hitCyclicACMIPatch
+(
+    streamLineParticleCloud&,
+    trackingData& td,
+    const vector&
 )
 {
     // Remove particle
@@ -328,7 +347,7 @@ void Foam::streamLineParticle::hitCyclicPatch
 
 void Foam::streamLineParticle::hitProcessorPatch
 (
-    const processorPolyPatch&,
+    streamLineParticleCloud&,
     trackingData& td
 )
 {
@@ -339,19 +358,7 @@ void Foam::streamLineParticle::hitProcessorPatch
 
 void Foam::streamLineParticle::hitWallPatch
 (
-    const wallPolyPatch& wpp,
-    trackingData& td,
-    const tetIndices&
-)
-{
-    // Remove particle
-    td.keepParticle = false;
-}
-
-
-void Foam::streamLineParticle::hitPatch
-(
-    const polyPatch& wpp,
+    streamLineParticleCloud&,
     trackingData& td
 )
 {

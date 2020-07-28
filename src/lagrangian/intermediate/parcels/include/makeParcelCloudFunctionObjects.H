@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,6 +33,7 @@ License
 #include "ParticleErosion.T.H"
 #include "ParticleTracks.T.H"
 #include "ParticleTrap.T.H"
+#include "PatchCollisionDensity.T.H"
 #include "PatchPostProcessing.T.H"
 #include "VoidFraction.T.H"
 
@@ -47,6 +48,7 @@ License
     makeCloudFunctionObjectType(ParticleErosion, CloudType);                   \
     makeCloudFunctionObjectType(ParticleTracks, CloudType);                    \
     makeCloudFunctionObjectType(ParticleTrap, CloudType);                      \
+    makeCloudFunctionObjectType(PatchCollisionDensity, CloudType);             \
     makeCloudFunctionObjectType(PatchPostProcessing, CloudType);               \
     makeCloudFunctionObjectType(VoidFraction, CloudType);
 

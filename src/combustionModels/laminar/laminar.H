@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,6 +35,8 @@ SourceFiles
 #ifndef laminar_H
 #define laminar_H
 
+#include "ChemistryCombustion.T.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -46,10 +48,10 @@ namespace combustionModels
                             Class laminar Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
+template<class ReactionThermo>
 class laminar
 :
-    public Type
+    public ChemistryCombustion<ReactionThermo>
 {
     // Private data
 
@@ -87,9 +89,9 @@ public:
         laminar
         (
             const word& modelType,
-            const fvMesh& mesh,
-            const word& combustionProperties,
-            const word& phaseName
+            ReactionThermo& thermo,
+            const compressibleTurbulenceModel& turb,
+            const word& combustionProperties
         );
 
 

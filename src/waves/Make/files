@@ -2,10 +2,13 @@ waveModels/waveModel/waveModel.C
 waveModels/waveModel/newWaveModel.C
 waveModels/Airy/Airy.C
 waveModels/Stokes2/Stokes2.T.C
+waveModels/Stokes5/Stokes5.T.C
+waveModels/solitary/solitary.C
 
 waveSuperposition/waveSuperposition.C
 
 derivedFvPatchFields/waveAlpha/waveAlphaFvPatchScalarField.C
 derivedFvPatchFields/waveVelocity/waveVelocityFvPatchVectorField.C
+derivedFvPatchFields/wavePressure/wavePressureFvPatchScalarField.C
 
 LIB = $(FOAM_LIBBIN)/libwaves

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -112,6 +112,9 @@ public:
 
         //- Update mixture properties
         virtual void correct();
+
+        //- Return the name of the thermo physics
+        virtual word thermoName() const;
 
         //- Return true if the equation of state is incompressible
         //  i.e. rho != f(p)
@@ -241,6 +244,9 @@ public:
                 const scalarField& T,
                 const label patchi
             ) const;
+
+            //- Molecular weight [kg/kmol]
+            virtual tmp<volScalarField> W() const;
 
 
         // Fields derived from transport state variables

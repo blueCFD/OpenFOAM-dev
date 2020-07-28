@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,6 @@ License
 
 Class
     Foam::compressible::RASModels::nutkFilmWallFunctionFvPatchScalarField
-
-Group
-    grpSurfaceFilmBoundaryConditions grpCmpWallFunctions
 
 Description
     This boundary condition provides a turbulent viscosity condition when
@@ -50,8 +47,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef compressibleNutSpalartAllmarasWallFunctionFvPatchScalarField_H
-#define compressibleNutSpalartAllmarasWallFunctionFvPatchScalarField_H
+#ifndef nutkFilmWallFunctionFvPatchScalarField_H
+#define nutkFilmWallFunctionFvPatchScalarField_H
 
 #include "nutkWallFunctionFvPatchScalarField.H"
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Calulate the face centres and areas.
+    Calculate the face centres and areas.
 
     Calculate the centre by breaking the face into triangles using the face
     centre and area-weighted averaging their centres.  This method copes with
@@ -120,7 +120,7 @@ void Foam::primitiveMesh::makeFaceCentresAndAreas
 
             // This is to deal with zero-area faces. Mark very small faces
             // to be detected in e.g., processorPolyPatch.
-            if (sumA < ROOTVSMALL)
+            if (sumA < rootVSmall)
             {
                 fCtrs[facei] = fCentre;
                 fAreas[facei] = Zero;

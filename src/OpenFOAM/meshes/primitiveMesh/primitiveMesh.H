@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -151,7 +151,7 @@ class primitiveMesh
             mutable labelListList* cpPtr_;
 
 
-        // On-the-fly edge addresing storage
+        // On-the-fly edge addressing storage
 
             //- Temporary storage for addressing.
             mutable DynamicList<label> labels_;
@@ -516,7 +516,7 @@ public:
                 //- Return faces
                 virtual const faceList& faces() const = 0;
 
-                //- Face face-owner addresing
+                //- Face face-owner addressing
                 virtual const labelList& faceOwner() const = 0;
 
                 //- Face face-neighbour addressing
@@ -678,7 +678,7 @@ public:
                 virtual bool checkFacePyramids
                 (
                     const bool report = false,
-                    const scalar minPyrVol = -SMALL,
+                    const scalar minPyrVol = -small,
                     labelHashSet* setPtr = nullptr
                 ) const;
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::filmRadiationModel
+    Foam::regionModels::surfaceFilmModels::filmRadiationModel
 
 Description
     Base class for film radiation models
@@ -81,7 +81,7 @@ public:
              filmRadiationModel,
              dictionary,
              (
-                 surfaceFilmModel& film,
+                 surfaceFilmRegionModel& film,
                  const dictionary& dict
              ),
              (film, dict)
@@ -90,13 +90,13 @@ public:
     // Constructors
 
         //- Construct null
-        filmRadiationModel(surfaceFilmModel& film);
+        filmRadiationModel(surfaceFilmRegionModel& film);
 
         //- Construct from type name, dictionary and surface film model
         filmRadiationModel
         (
             const word& modelType,
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 
@@ -106,7 +106,7 @@ public:
         //- Return a reference to the selected phase change model
         static autoPtr<filmRadiationModel> New
         (
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict
         );
 

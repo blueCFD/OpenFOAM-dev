@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -256,7 +256,7 @@ public:
     // Member Functions
 
         //- Move mesh using current pointDisplacement boundary values.
-        //  Return true if succesful (errors on checkFaces less than
+        //  Return true if successful (errors on checkFaces less than
         //  allowable). Updates pointDisplacement.
         virtual bool move
         (

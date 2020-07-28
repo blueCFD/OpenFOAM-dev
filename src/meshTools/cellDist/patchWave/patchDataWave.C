@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,7 +105,7 @@ Foam::label Foam::patchDataWave<TransferType>::getValues
 
             distance_[celli] = mag(dist);
 
-            //cellData_[celli] = point::max;
+            // cellData_[celli] = point::max;
             cellData_[celli] = cellInfo[celli].data();
 
             nIllegal++;
@@ -140,9 +140,9 @@ Foam::label Foam::patchDataWave<TransferType>::getValues
 
             if (faceInfo[meshFacei].valid(waveInfo.data()))
             {
-                // Adding SMALL to avoid problems with /0 in the turbulence
+                // Adding small to avoid problems with /0 in the turbulence
                 // models
-                patchField[patchFacei] = Foam::sqrt(dist) + SMALL;
+                patchField[patchFacei] = Foam::sqrt(dist) + small;
 
                 patchDataField[patchFacei] = faceInfo[meshFacei].data();
             }
@@ -152,7 +152,7 @@ Foam::label Foam::patchDataWave<TransferType>::getValues
 
                 patchField[patchFacei] = mag(dist);
 
-                //patchDataField[patchFacei] = point::max;
+                // patchDataField[patchFacei] = point::max;
                 patchDataField[patchFacei] = faceInfo[meshFacei].data();
 
                 nIllegal++;

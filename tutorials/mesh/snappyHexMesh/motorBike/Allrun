@@ -6,11 +6,9 @@ cd ${0%/*} || exit 1    # Run from this directory
 
 # Copy motorbike surface from resources directory
 cp $FOAM_TUTORIALS/resources/geometry/motorBike.obj.gz constant/triSurface/
-runApplication surfaceFeatureExtract
+runApplication surfaceFeatures
 
 runApplication blockMesh
-
-[ ! -d 0 ] && cp -r 0.orig 0
 
 runApplication decomposePar -copyZero
 runParallel snappyHexMesh -overwrite

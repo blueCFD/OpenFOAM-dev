@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "cloudSolution.H"
 #include "Time.T.H"
+#include "localEulerDdtScheme.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -41,10 +42,10 @@ Foam::cloudSolution::cloudSolution
     calcFrequency_(1),
     maxCo_(0.3),
     iter_(1),
-    trackTime_(0.0),
+    trackTime_(0),
     coupled_(false),
     cellValueSourceCorrection_(false),
-    maxTrackTime_(0.0),
+    maxTrackTime_(0),
     resetSourcesOnStartup_(true),
     schemes_()
 {
@@ -86,12 +87,12 @@ Foam::cloudSolution::cloudSolution
     active_(false),
     transient_(false),
     calcFrequency_(0),
-    maxCo_(GREAT),
+    maxCo_(great),
     iter_(0),
-    trackTime_(0.0),
+    trackTime_(0),
     coupled_(false),
     cellValueSourceCorrection_(false),
-    maxTrackTime_(0.0),
+    maxTrackTime_(0),
     resetSourcesOnStartup_(false),
     schemes_()
 {}
@@ -107,7 +108,31 @@ Foam::cloudSolution::~cloudSolution()
 
 void Foam::cloudSolution::read()
 {
-    dict_.lookup("transient") >> transient_;
+    // For transient runs the Lagrangian tracking may be transient or steady
+    transient_ = dict_.lookupOrDefault("transient", false);
+
+    // For LTS and steady-state runs the Lagrangian tracking cannot be transient
+    if (transient_)
+    {
+        if (fv::localEulerDdt::enabled(mesh_))
+        {
+            IOWarningInFunction(dict_)
+                << "Transient tracking is not supported for LTS"
+                   " simulations, switching to steady state tracking."
+                << endl;
+            transient_ = false;
+        }
+
+        if (mesh_.steady())
+        {
+            IOWarningInFunction(dict_)
+                << "Transient tracking is not supported for steady-state"
+                   " simulations, switching to steady state tracking."
+                << endl;
+            transient_ = false;
+        }
+    }
+
     dict_.lookup("coupled") >> coupled_;
     dict_.lookup("cellValueSourceCorrection") >> cellValueSourceCorrection_;
     dict_.readIfPresent("maxCo", maxCo_);
@@ -175,7 +200,7 @@ Foam::scalar Foam::cloudSolution::relaxCoeff(const word& fieldName) const
         << "Field name " << fieldName << " not found in schemes"
         << abort(FatalError);
 
-    return 1.0;
+    return 1;
 }
 
 
@@ -199,12 +224,7 @@ bool Foam::cloudSolution::semiImplicit(const word& fieldName) const
 
 bool Foam::cloudSolution::solveThisStep() const
 {
-    return
-        active_
-     && (
-            mesh_.time().writeTime()
-         || (mesh_.time().timeIndex() % calcFrequency_ == 0)
-        );
+    return active_ && (mesh_.time().timeIndex() % calcFrequency_ == 0);
 }
 
 

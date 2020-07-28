@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -100,19 +100,19 @@ Foam::vector Foam::GradientDispersionRAS<CloudType>::update
     scalar& tTurb
 )
 {
-    cachedRandom& rnd = this->owner().rndGen();
+    Random& rnd = this->owner().rndGen();
 
     const scalar cps = 0.16432;
 
     const scalar k = this->kPtr_->primitiveField()[celli];
     const scalar epsilon =
-        this->epsilonPtr_->primitiveField()[celli] + ROOTVSMALL;
+        this->epsilonPtr_->primitiveField()[celli] + rootVSmall;
     const vector& gradk = this->gradkPtr_->primitiveField()[celli];
 
     const scalar UrelMag = mag(U - Uc - UTurb);
 
     const scalar tTurbLoc =
-        min(k/epsilon, cps*pow(k, 1.5)/epsilon/(UrelMag + SMALL));
+        min(k/epsilon, cps*pow(k, 1.5)/epsilon/(UrelMag + small));
 
 
     // Parcel is perturbed by the turbulence
@@ -125,7 +125,7 @@ Foam::vector Foam::GradientDispersionRAS<CloudType>::update
             tTurb = 0.0;
 
             const scalar sigma = sqrt(2.0*k/3.0);
-            const vector dir = -gradk/(mag(gradk) + SMALL);
+            const vector dir = -gradk/(mag(gradk) + small);
 
             scalar fac = 0.0;
 
@@ -135,11 +135,11 @@ Foam::vector Foam::GradientDispersionRAS<CloudType>::update
             // prevent this we let fac be both negative/positive
             if (this->owner().mesh().nSolutionD() == 2)
             {
-                fac = rnd.GaussNormal<scalar>();
+                fac = rnd.scalarNormal();
             }
             else
             {
-                fac = mag(rnd.GaussNormal<scalar>());
+                fac = mag(rnd.scalarNormal());
             }
 
             UTurb = sigma*fac*dir;
@@ -147,7 +147,7 @@ Foam::vector Foam::GradientDispersionRAS<CloudType>::update
     }
     else
     {
-        tTurb = GREAT;
+        tTurb = great;
         UTurb = Zero;
     }
 

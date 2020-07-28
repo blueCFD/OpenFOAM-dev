@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,6 +45,7 @@ License
 #include "fixedValueFvsPatchFields.H"
 #include "blendingMethod.H"
 #include "HashPtrTable.T.H"
+#include "UniformField.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -183,7 +184,7 @@ Foam::twoPhaseSystem::twoPhaseSystem
             pair_,
             pair1In2_,
             pair2In1_,
-            false // Do not zero drag coefficent at fixed-flux BCs
+            false // Do not zero drag coefficient at fixed-flux BCs
         )
     );
 
@@ -464,8 +465,8 @@ void Foam::twoPhaseSystem::solve()
                     alphaPhic10,
                     (alphaSubCycle.index()*Sp)(),
                     (Su - (alphaSubCycle.index() - 1)*Sp*alpha1)(),
-                    phase1_.alphaMax(),
-                    0
+                    UniformField<scalar>(phase1_.alphaMax()),
+                    zeroField()
                 );
 
                 if (alphaSubCycle.index() == 1)
@@ -490,8 +491,8 @@ void Foam::twoPhaseSystem::solve()
                 alphaPhic1,
                 Sp,
                 Su,
-                phase1_.alphaMax(),
-                0
+                UniformField<scalar>(phase1_.alphaMax()),
+                zeroField()
             );
 
             phase1_.alphaPhi() = alphaPhic1;
@@ -565,19 +566,6 @@ bool Foam::twoPhaseSystem::read()
     {
         return false;
     }
-}
-
-
-const Foam::dragModel& Foam::twoPhaseSystem::drag(const phaseModel& phase) const
-{
-    return drag_->phaseModel(phase);
-}
-
-
-const Foam::virtualMassModel&
-Foam::twoPhaseSystem::virtualMass(const phaseModel& phase) const
-{
-    return virtualMass_->phaseModel(phase);
 }
 
 

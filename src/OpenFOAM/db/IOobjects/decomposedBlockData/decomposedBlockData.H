@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,6 +65,16 @@ protected:
 
 
     // Protected member functions
+
+        //- Helper: determine number of processors whose recvSizes fits
+        //  ito maxBufferSize
+        static label calcNumProcs
+        (
+            const label comm,
+            const off_t maxBufferSize,
+            const labelUList& recvSizes,
+            const label startProci
+        );
 
         //- Read data into *this. ISstream is only valid on master.
         static bool readBlocks
@@ -169,6 +179,32 @@ public:
             const UPstream::commsTypes commsType
         );
 
+        //- Helper: gather single label. Note: using native Pstream.
+        //  datas sized with num procs but undefined contents on
+        //  slaves
+        static void gather
+        (
+            const label comm,
+            const label data,
+            labelList& datas
+        );
+
+        //- Helper: gather data from (subset of) slaves. Returns
+        //  recvData : received data
+        //  recvOffsets : offset in data. recvOffsets is nProcs+1
+        static void gatherSlaveData
+        (
+            const label comm,
+            const UList<char>& data,
+            const labelUList& recvSizes,
+
+            const label startProc,
+            const label nProcs,
+
+            List<int>& recvOffsets,
+            List<char>& recvData
+        );
+
         //- Write *this. Ostream only valid on master. Returns starts of
         //  processor blocks
         static bool writeBlocks
@@ -176,7 +212,13 @@ public:
             const label comm,
             autoPtr<OSstream>& osPtr,
             List<std::streamoff>& start,
-            const UList<char>&,
+            const UList<char>& masterData,
+
+            const labelUList& recvSizes,
+
+            // optional slave data (on master)
+            const PtrList<SubList<char>>& slaveData,
+
             const UPstream::commsTypes,
             const bool syncReturnState = true
         );

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,24 +46,6 @@ Foam::Function1Types::ZeroConstant<Type>::~ZeroConstant()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-template<class Type>
-Type Foam::Function1Types::ZeroConstant<Type>::value(const scalar x) const
-{
-    return pTraits<Type>::zero;
-}
-
-
-template<class Type>
-Type Foam::Function1Types::ZeroConstant<Type>::integrate
-(
-    const scalar x1,
-    const scalar x2
-) const
-{
-    return pTraits<Type>::zero;
-}
-
 
 template<class Type>
 void Foam::Function1Types::ZeroConstant<Type>::writeData(Ostream& os) const

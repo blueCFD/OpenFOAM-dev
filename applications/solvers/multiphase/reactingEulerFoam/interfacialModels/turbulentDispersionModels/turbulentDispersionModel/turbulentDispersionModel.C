@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,12 +28,15 @@ License
 #include "fvcGrad.H"
 #include "surfaceInterpolate.H"
 #include "fvcSnGrad.H"
+#include "phaseCompressibleTurbulenceModel.H"
+#include "BlendedInterfacialModel.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(turbulentDispersionModel, 0);
+    defineBlendedInterfacialModelTypeNameAndDebug(turbulentDispersionModel, 0);
     defineRunTimeSelectionTable(turbulentDispersionModel, dictionary);
 }
 
@@ -60,6 +63,21 @@ Foam::turbulentDispersionModel::~turbulentDispersionModel()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+const Foam::phaseCompressibleTurbulenceModel&
+Foam::turbulentDispersionModel::continuousTurbulence() const
+{
+    return
+        pair_.phase1().mesh().lookupObject<phaseCompressibleTurbulenceModel>
+        (
+            IOobject::groupName
+            (
+                turbulenceModel::propertiesName,
+                pair_.continuous().name()
+            )
+        );
+}
+
 
 Foam::tmp<Foam::volVectorField>
 Foam::turbulentDispersionModel::F() const

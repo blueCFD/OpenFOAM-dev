@@ -2,7 +2,7 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -44,6 +44,7 @@ boundaryField
     wall2
     {
         type            compressible::alphatWallBoilingWallFunction;
+        otherPhase      gas;
         phaseType       liquid;
         Prt             0.85;
         Cmu             0.09;

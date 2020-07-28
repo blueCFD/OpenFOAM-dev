@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "surfaceFields.H"
 #include "pyrolysisModel.H"
-#include "surfaceFilmModel.H"
+#include "surfaceFilmRegionModel.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -123,7 +123,9 @@ void Foam::filmPyrolysisVelocityCoupledFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    typedef regionModels::surfaceFilmModels::surfaceFilmModel filmModelType;
+    typedef regionModels::surfaceFilmModels::surfaceFilmRegionModel
+        filmModelType;
+
     typedef regionModels::pyrolysisModels::pyrolysisModel pyrModelType;
 
     // Since we're inside initEvaluate/evaluate there might be processor

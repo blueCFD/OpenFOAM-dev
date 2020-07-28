@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -123,8 +123,8 @@ void Foam::refinementFeatures::read
                     oldToNew[pointi] = newPoints.size();
                     newPoints.append(eMesh.points()[pointi]);
                 }
-                //else if (pointEdges[pointi].size() == 2)
-                //MEJ: do something based on a feature angle?
+                // else if (pointEdges[pointi].size() == 2)
+                // MEJ: do something based on a feature angle?
             }
             label nFeatures = newPoints.size();
             forAll(oldToNew, pointi)
@@ -174,10 +174,10 @@ void Foam::refinementFeatures::read
                 identity(newEdges.size())   // regionEdges
             );
 
-            //Info<< "Constructed extendedFeatureEdgeMesh " << featObj.name()
+            // Info<< "Constructed extendedFeatureEdgeMesh " << featObj.name()
             //    << nl << incrIndent;
-            //eeMesh.writeStats(Info);
-            //Info<< decrIndent << endl;
+            // eeMesh.writeStats(Info);
+            // Info<< decrIndent << endl;
 
             set(featI, new extendedFeatureEdgeMesh(featObj, eeMesh));
         }
@@ -253,14 +253,9 @@ void Foam::refinementFeatures::buildTrees(const label featI)
     // Calculate bb of all points
     treeBoundBox bb(points);
 
-    // Random number generator. Bit dodgy since not exactly random ;-)
-    Random rndGen(65431);
-
     // Slightly extended bb. Slightly off-centred just so on symmetric
     // geometry there are less face/edge aligned items.
-    bb = bb.extend(rndGen, 1e-4);
-    bb.min() -= point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-    bb.max() += point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
+    bb = bb.extend(1e-4);
 
     edgeTrees_.set
     (
@@ -365,7 +360,7 @@ void Foam::refinementFeatures::findHigherLevel
 
             label pointi = candidateMap[candidateI];
 
-            // pt is inbetween shell[minDistI] and shell[minDistI+1]
+            // pt is in between shell[minDistI] and shell[minDistI+1]
             maxLevel[pointi] = levels[minDistI+1];
         }
     }
@@ -394,14 +389,9 @@ Foam::refinementFeatures::regionEdgeTrees() const
             // Calculate bb of all points
             treeBoundBox bb(points);
 
-            // Random number generator. Bit dodgy since not exactly random ;-)
-            Random rndGen(65431);
-
             // Slightly extended bb. Slightly off-centred just so on symmetric
             // geometry there are less face/edge aligned items.
-            bb = bb.extend(rndGen, 1e-4);
-            bb.min() -= point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
-            bb.max() += point(ROOTVSMALL, ROOTVSMALL, ROOTVSMALL);
+            bb = bb.extend(1e-4);
 
             trees.set
             (
@@ -502,8 +492,8 @@ Foam::refinementFeatures::refinementFeatures
 //
 //                if
 //                (
-//                    v0Mag > SMALL
-//                 && v1Mag > SMALL
+//                    v0Mag > small
+//                 && v1Mag > small
 //                 && ((v0/v0Mag & v1/v1Mag) < minCos)
 //                )
 //                {
@@ -514,7 +504,7 @@ Foam::refinementFeatures::refinementFeatures
 //
 //        Info<< "Detected " << featurePoints.size()
 //            << " featurePoints out of " << points.size()
-//            << " points on feature " << i   //eMesh.name()
+//            << " points on feature " << i   // eMesh.name()
 //            << " when using feature cos " << minCos << endl;
 //
 //        buildTrees(i, featurePoints);
@@ -575,7 +565,7 @@ void Foam::refinementFeatures::findNearestEdge
                     const treeDataEdge& td = tree.shapes();
                     const edge& e = td.edges()[nearInfo[sampleI].index()];
                     nearNormal[sampleI] =  e.vec(td.points());
-                    nearNormal[sampleI] /= mag(nearNormal[sampleI])+VSMALL;
+                    nearNormal[sampleI] /= mag(nearNormal[sampleI])+vSmall;
                 }
             }
         }
@@ -638,7 +628,7 @@ void Foam::refinementFeatures::findNearestRegionEdge
 
                 const edge& e = td.edges()[nearInfo[sampleI].index()];
                 nearNormal[sampleI] =  e.vec(td.points());
-                nearNormal[sampleI] /= mag(nearNormal[sampleI])+VSMALL;
+                nearNormal[sampleI] /= mag(nearNormal[sampleI])+vSmall;
             }
         }
     }
@@ -768,7 +758,7 @@ void Foam::refinementFeatures::findHigherLevel
 
 Foam::scalar Foam::refinementFeatures::maxDistance() const
 {
-    scalar overallMax = -GREAT;
+    scalar overallMax = -great;
     forAll(distances_, featI)
     {
         overallMax = max(overallMax, max(distances_[featI]));

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,49 +30,48 @@ License
 // * * * * * * * * * * *  Protected Member Functions * * * * * * * * * * * * //
 
 template<class ParcelType>
-template<class TrackData>
+template<class TrackCloudType>
 void Foam::SprayParcel<ParcelType>::setCellValues
 (
-    TrackData& td,
-    const scalar dt,
-    const label celli
+    TrackCloudType& cloud,
+    trackingData& td
 )
 {
-    ParcelType::setCellValues(td, dt, celli);
+    ParcelType::setCellValues(cloud, td);
 }
 
 
 template<class ParcelType>
-template<class TrackData>
+template<class TrackCloudType>
 void Foam::SprayParcel<ParcelType>::cellValueSourceCorrection
 (
-    TrackData& td,
-    const scalar dt,
-    const label celli
+    TrackCloudType& cloud,
+    trackingData& td,
+    const scalar dt
 )
 {
-    ParcelType::cellValueSourceCorrection(td, dt, celli);
+    ParcelType::cellValueSourceCorrection(cloud, td, dt);
 }
 
 
 template<class ParcelType>
-template<class TrackData>
+template<class TrackCloudType>
 void Foam::SprayParcel<ParcelType>::calc
 (
-    TrackData& td,
-    const scalar dt,
-    const label celli
+    TrackCloudType& cloud,
+    trackingData& td,
+    const scalar dt
 )
 {
-    typedef typename TrackData::cloudType::reactingCloudType reactingCloudType;
+    typedef typename TrackCloudType::reactingCloudType reactingCloudType;
     const CompositionModel<reactingCloudType>& composition =
-        td.cloud().composition();
+        cloud.composition();
 
     // Check if parcel belongs to liquid core
     if (liquidCore() > 0.5)
     {
         // Liquid core parcels should not experience coupled forces
-        td.cloud().forces().setCalcCoupled(false);
+        cloud.forces().setCalcCoupled(false);
     }
 
     // Get old mixture composition
@@ -81,7 +80,7 @@ void Foam::SprayParcel<ParcelType>::calc
     // Check if we have critical or boiling conditions
     scalar TMax = composition.liquids().Tc(X0);
     const scalar T0 = this->T();
-    const scalar pc0 = this->pc_;
+    const scalar pc0 = td.pc();
     if (composition.liquids().pv(pc0, T0, X0) >= pc0*0.999)
     {
         // Set TMax to boiling temperature
@@ -89,7 +88,7 @@ void Foam::SprayParcel<ParcelType>::calc
     }
 
     // Set the maximum temperature limit
-    td.cloud().constProps().setTMax(TMax);
+    cloud.constProps().setTMax(TMax);
 
     // Store the parcel properties
     this->Cp() = composition.liquids().Cp(pc0, T0, X0);
@@ -99,7 +98,7 @@ void Foam::SprayParcel<ParcelType>::calc
     const scalar mass0 = this->mass();
     mu_ = composition.liquids().mu(pc0, T0, X0);
 
-    ParcelType::calc(td, dt, celli);
+    ParcelType::calc(cloud,td, dt);
 
     if (td.keepParticle)
     {
@@ -112,21 +111,21 @@ void Foam::SprayParcel<ParcelType>::calc
         scalar T1 = this->T();
         scalarField X1(composition.liquids().X(this->Y()));
 
-        this->Cp() = composition.liquids().Cp(this->pc_, T1, X1);
+        this->Cp() = composition.liquids().Cp(td.pc(), T1, X1);
 
-        sigma_ = composition.liquids().sigma(this->pc_, T1, X1);
+        sigma_ = composition.liquids().sigma(td.pc(), T1, X1);
 
-        scalar rho1 = composition.liquids().rho(this->pc_, T1, X1);
+        scalar rho1 = composition.liquids().rho(td.pc(), T1, X1);
         this->rho() = rho1;
 
-        mu_ = composition.liquids().mu(this->pc_, T1, X1);
+        mu_ = composition.liquids().mu(td.pc(), T1, X1);
 
         scalar d1 = this->d()*cbrt(rho0/rho1);
         this->d() = d1;
 
         if (liquidCore() > 0.5)
         {
-            calcAtomization(td, dt, celli);
+            calcAtomization(cloud, td, dt);
 
             // Preserve the total mass/volume by increasing the number of
             // particles in parcels due to breakup
@@ -135,59 +134,59 @@ void Foam::SprayParcel<ParcelType>::calc
         }
         else
         {
-            calcBreakup(td, dt, celli);
+            calcBreakup(cloud, td, dt);
         }
     }
 
     // Restore coupled forces
-    td.cloud().forces().setCalcCoupled(true);
+    cloud.forces().setCalcCoupled(true);
 }
 
 
 template<class ParcelType>
-template<class TrackData>
+template<class TrackCloudType>
 void Foam::SprayParcel<ParcelType>::calcAtomization
 (
-    TrackData& td,
-    const scalar dt,
-    const label celli
+    TrackCloudType& cloud,
+    trackingData& td,
+    const scalar dt
 )
 {
-    typedef typename TrackData::cloudType::reactingCloudType reactingCloudType;
+    typedef typename TrackCloudType::reactingCloudType reactingCloudType;
     const CompositionModel<reactingCloudType>& composition =
-        td.cloud().composition();
+        cloud.composition();
 
-    typedef typename TrackData::cloudType::sprayCloudType sprayCloudType;
+    typedef typename TrackCloudType::sprayCloudType sprayCloudType;
     const AtomizationModel<sprayCloudType>& atomization =
-        td.cloud().atomization();
+        cloud.atomization();
 
     // Average molecular weight of carrier mix - assumes perfect gas
-    scalar Wc = this->rhoc_*RR*this->Tc()/this->pc();
+    scalar Wc = td.rhoc()*RR*td.Tc()/td.pc();
     scalar R = RR/Wc;
-    scalar Tav = atomization.Taverage(this->T(), this->Tc());
+    scalar Tav = atomization.Taverage(this->T(), td.Tc());
 
     // Calculate average gas density based on average temperature
-    scalar rhoAv = this->pc()/(R*Tav);
+    scalar rhoAv = td.pc()/(R*Tav);
 
-    scalar soi = td.cloud().injectors().timeStart();
-    scalar currentTime = td.cloud().db().time().value();
+    scalar soi = cloud.injectors().timeStart();
+    scalar currentTime = cloud.db().time().value();
     const vector& pos = this->position();
     const vector& injectionPos = this->position0();
 
-    // Disregard the continous phase when calculating the relative velocity
+    // Disregard the continuous phase when calculating the relative velocity
     // (in line with the deactivated coupled assumption)
     scalar Urel = mag(this->U());
 
     scalar t0 = max(0.0, currentTime - this->age() - soi);
-    scalar t1 = min(t0 + dt, td.cloud().injectors().timeEnd() - soi);
+    scalar t1 = min(t0 + dt, cloud.injectors().timeEnd() - soi);
 
     // This should be the vol flow rate from when the parcel was injected
-    scalar volFlowRate = td.cloud().injectors().volumeToInject(t0, t1)/dt;
+    scalar volFlowRate = cloud.injectors().volumeToInject(t0, t1)/dt;
 
     scalar chi = 0.0;
     if (atomization.calcChi())
     {
-        chi = this->chi(td, composition.liquids().X(this->Y()));
+        chi = this->chi(cloud, td, composition.liquids().X(this->Y()));
     }
 
     atomization.update
@@ -204,58 +203,58 @@ void Foam::SprayParcel<ParcelType>::calcAtomization
         Urel,
         pos,
         injectionPos,
-        td.cloud().pAmbient(),
+        cloud.pAmbient(),
         chi,
-        td.cloud().rndGen()
+        cloud.rndGen()
     );
 }
 
 
 template<class ParcelType>
-template<class TrackData>
+template<class TrackCloudType>
 void Foam::SprayParcel<ParcelType>::calcBreakup
 (
-    TrackData& td,
-    const scalar dt,
-    const label celli
+    TrackCloudType& cloud,
+    trackingData& td,
+    const scalar dt
 )
 {
-    typedef typename TrackData::cloudType cloudType;
-    typedef typename cloudType::parcelType parcelType;
-    typedef typename cloudType::forceType forceType;
+    const typename TrackCloudType::parcelType& p =
+        static_cast<const typename TrackCloudType::parcelType&>(*this);
+    typename TrackCloudType::parcelType::trackingData& ttd =
+        static_cast<typename TrackCloudType::parcelType::trackingData&>(td);
 
-    const parcelType& p = static_cast<const parcelType&>(*this);
-    const forceType& forces = td.cloud().forces();
+    const typename TrackCloudType::forceType& forces = cloud.forces();
 
-    if (td.cloud().breakup().solveOscillationEq())
+    if (cloud.breakup().solveOscillationEq())
     {
-        solveTABEq(td, dt);
+        solveTABEq(cloud, td, dt);
     }
 
     // Average molecular weight of carrier mix - assumes perfect gas
-    scalar Wc = this->rhoc()*RR*this->Tc()/this->pc();
+    scalar Wc = td.rhoc()*RR*td.Tc()/td.pc();
     scalar R = RR/Wc;
-    scalar Tav = td.cloud().atomization().Taverage(this->T(), this->Tc());
+    scalar Tav = cloud.atomization().Taverage(this->T(), td.Tc());
 
     // Calculate average gas density based on average temperature
-    scalar rhoAv = this->pc()/(R*Tav);
-    scalar muAv = this->muc();
-    vector Urel = this->U() - this->Uc();
+    scalar rhoAv = td.pc()/(R*Tav);
+    scalar muAv = td.muc();
+    vector Urel = this->U() - td.Uc();
     scalar Urmag = mag(Urel);
-    scalar Re = this->Re(this->U(), this->d(), rhoAv, muAv);
+    scalar Re = this->Re(rhoAv, this->U(), td.Uc(), this->d(), muAv);
 
     const scalar mass = p.mass();
-    const forceSuSp Fcp = forces.calcCoupled(p, dt, mass, Re, muAv);
-    const forceSuSp Fncp = forces.calcNonCoupled(p, dt, mass, Re, muAv);
+    const forceSuSp Fcp = forces.calcCoupled(p, ttd, dt, mass, Re, muAv);
+    const forceSuSp Fncp = forces.calcNonCoupled(p, ttd, dt, mass, Re, muAv);
     this->tMom() = mass/(Fcp.Sp() + Fncp.Sp());
 
-    const vector g = td.cloud().g().value();
+    const vector g = cloud.g().value();
 
     scalar parcelMassChild = 0.0;
     scalar dChild = 0.0;
     if
     (
-        td.cloud().breakup().update
+        cloud.breakup().update
         (
             dt,
             g,
@@ -293,45 +292,46 @@ void Foam::SprayParcel<ParcelType>::calcBreakup
         child->nParticle() = parcelMassChild/massChild;
 
         const forceSuSp Fcp =
-            forces.calcCoupled(*child, dt, massChild, Re, muAv);
+            forces.calcCoupled(*child, ttd, dt, massChild, Re, muAv);
         const forceSuSp Fncp =
-            forces.calcNonCoupled(*child, dt, massChild, Re, muAv);
+            forces.calcNonCoupled(*child, ttd, dt, massChild, Re, muAv);
 
         child->age() = 0.0;
         child->liquidCore() = 0.0;
         child->KHindex() = 1.0;
-        child->y() = td.cloud().breakup().y0();
-        child->yDot() = td.cloud().breakup().yDot0();
+        child->y() = cloud.breakup().y0();
+        child->yDot() = cloud.breakup().yDot0();
         child->tc() = 0.0;
-        child->ms() = -GREAT;
+        child->ms() = -great;
         child->injector() = this->injector();
         child->tMom() = massChild/(Fcp.Sp() + Fncp.Sp());
         child->user() = 0.0;
-        child->setCellValues(td, dt, celli);
+        child->calcDispersion(cloud, td, dt);
 
-        td.cloud().addParticle(child);
+        cloud.addParticle(child);
     }
 }
 
 
 template<class ParcelType>
-template<class TrackData>
+template<class TrackCloudType>
 Foam::scalar Foam::SprayParcel<ParcelType>::chi
 (
-    TrackData& td,
+    TrackCloudType& cloud,
+    trackingData& td,
     const scalarField& X
 ) const
 {
     // Modifications to take account of the flash boiling on primary break-up
 
-    typedef typename TrackData::cloudType::reactingCloudType reactingCloudType;
+    typedef typename TrackCloudType::reactingCloudType reactingCloudType;
     const CompositionModel<reactingCloudType>& composition =
-        td.cloud().composition();
+        cloud.composition();
 
     scalar chi = 0.0;
     scalar T0 = this->T();
-    scalar p0 = this->pc();
-    scalar pAmb = td.cloud().pAmbient();
+    scalar p0 = td.pc();
+    scalar pAmb = cloud.pAmbient();
 
     scalar pv = composition.liquids().pv(p0, T0, X);
 
@@ -359,16 +359,17 @@ Foam::scalar Foam::SprayParcel<ParcelType>::chi
 
 
 template<class ParcelType>
-template<class TrackData>
+template<class TrackCloudType>
 void Foam::SprayParcel<ParcelType>::solveTABEq
 (
-    TrackData& td,
+    TrackCloudType& cloud,
+    trackingData& td,
     const scalar dt
 )
 {
-    const scalar& TABCmu = td.cloud().breakup().TABCmu();
-    const scalar& TABtwoWeCrit = td.cloud().breakup().TABtwoWeCrit();
-    const scalar& TABComega = td.cloud().breakup().TABComega();
+    const scalar& TABCmu = cloud.breakup().TABCmu();
+    const scalar& TABtwoWeCrit = cloud.breakup().TABtwoWeCrit();
+    const scalar& TABComega = cloud.breakup().TABComega();
 
     scalar r = 0.5*this->d();
     scalar r2 = r*r;
@@ -383,8 +384,8 @@ void Foam::SprayParcel<ParcelType>::solveTABEq
     if (omega2 > 0)
     {
         scalar omega = sqrt(omega2);
-        scalar rhoc = this->rhoc();
-        scalar We = this->We(this->U(), r, rhoc, sigma_)/TABtwoWeCrit;
+        scalar We =
+            this->We(td.rhoc(), this->U(), td.Uc(), r, sigma_)/TABtwoWeCrit;
 
         // Initial values for y and yDot
         scalar y0 = this->y() - We;

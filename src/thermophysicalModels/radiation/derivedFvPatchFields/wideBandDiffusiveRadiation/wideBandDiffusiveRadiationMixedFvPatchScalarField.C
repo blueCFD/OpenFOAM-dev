@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -222,7 +222,7 @@ updateCoeffs()
                   + temissivity[facei]*Eb[facei]
                 )/pi;
 
-            // Emmited heat flux from this ray direction
+            // Emitted heat flux from this ray direction
             qem[facei] = refValue()[facei]*nAve[facei];
         }
         else
@@ -230,7 +230,7 @@ updateCoeffs()
             // direction into the wall
             valueFraction()[facei] = 0.0;
             refGrad()[facei] = 0.0;
-            refValue()[facei] = 0.0; //not used
+            refValue()[facei] = 0.0; // not used
 
             // Incident heat flux on this ray direction
             qin[facei] = Iw[facei]*nAve[facei];

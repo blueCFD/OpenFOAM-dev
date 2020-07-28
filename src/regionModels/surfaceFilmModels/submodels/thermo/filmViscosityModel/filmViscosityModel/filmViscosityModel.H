@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::filmViscosityModel
+    Foam::regionModels::surfaceFilmModels::filmViscosityModel
 
 Description
     Base class for surface film viscosity models
@@ -90,7 +90,7 @@ public:
              filmViscosityModel,
              dictionary,
              (
-                surfaceFilmModel& film,
+                surfaceFilmRegionModel& film,
                 const dictionary& dict,
                 volScalarField& mu
              ),
@@ -103,7 +103,7 @@ public:
         filmViscosityModel
         (
             const word& modelType,
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict,
             volScalarField& mu
         );
@@ -114,7 +114,7 @@ public:
         //- Return a reference to the selected phase change model
         static autoPtr<filmViscosityModel> New
         (
-            surfaceFilmModel& film,
+            surfaceFilmRegionModel& film,
             const dictionary& dict,
             volScalarField& mu
         );

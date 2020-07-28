@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "phasePair.H"
+#include "phaseSystem.H"
 #include "surfaceTensionModel.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -93,6 +94,14 @@ Foam::word Foam::phasePair::name() const
 }
 
 
+Foam::word Foam::phasePair::otherName() const
+{
+    word name1(first());
+    name1[0] = toupper(name1[0]);
+    return second() + "And" + name1;
+}
+
+
 Foam::tmp<Foam::volScalarField> Foam::phasePair::rho() const
 {
     return phase1()*phase1().rho() + phase2()*phase2().rho();
@@ -158,13 +167,9 @@ Foam::tmp<Foam::volScalarField> Foam::phasePair::EoH2() const
 Foam::tmp<Foam::volScalarField> Foam::phasePair::sigma() const
 {
     return
-        phase1().mesh().lookupObject<surfaceTensionModel>
+        phase1().fluid().lookupSubModel<surfaceTensionModel>
         (
-            IOobject::groupName
-            (
-                surfaceTensionModel::typeName,
-                phasePair::name()
-            )
+            phasePair(phase1(), phase2())
         ).sigma();
 }
 
