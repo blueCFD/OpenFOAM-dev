@@ -1,11 +1,11 @@
 #                            -*- mode: org; -*-
 #
-#+TITLE:          blueCFD-Core README for port of OpenFOAM 5.x
+#+TITLE:          blueCFD-Core README for port of OpenFOAM 6
 #+AUTHOR:                     FSD blueCAPE Lda
-#+DATE:                       15th August 2017
+#+DATE:                       28th July 2020
 #+LINK:                    http://bluecfd.com/Core
 #+OPTIONS: author:nil ^:{}
-# Copyright (c) 2013-2017 blueCAPE Lda.
+# Copyright (c) 2013-2020 blueCAPE Lda.
 
 * About blueCFD-Core
   blueCFD®-Core is an open source project provided by blueCAPE Lda. It
@@ -26,6 +26,9 @@
   More information about OpenFOAM is provided in the file =README.OpenFOAM.org=
 
 * Information
+  This port is not yet fully tested and was done only as an intermediate step to
+  go all the way up to OpenFOAM 8.
+
   This source code is a patched version of the original OpenFOAM source code.
   The modifications made are tracked at the blueCFD project at Github:
       [[http://github.com/blueCFD]]
@@ -42,13 +45,14 @@
       [[http://bluecfd.com/trademark]]
 
   This offering is not approved or endorsed by OpenCFD (ESI Group), the
-  producer of the OpenFOAM+ software and owner of the OPENFOAM® and OpenCFD®
+  producer of the OpenFOAM software and owner of the OPENFOAM® and OpenCFD®
   trade marks.
 
   blueCAPE Lda is a contributor to the OpenFOAM Foundation, but the majority of
   the modifications present in the source code herein will not be accepted in
   the official releases of OpenFOAM, mostly due to the maintenance overhead
-  associated to supporting closed-source operating systems.
+  associated to supporting closed-source operating systems and/or due to the
+  hack'ish nature of some of the modifications done here.
 
 * Project page
   [[http://bluecfd.github.io/Core/]]
