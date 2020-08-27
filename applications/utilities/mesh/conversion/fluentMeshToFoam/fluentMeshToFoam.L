@@ -5,8 +5,6 @@
     \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -23,26 +21,6 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-<<<<<<< HEAD
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - Always open the files in binary mode, because of how things work on 
-        Windows.
-
-Application
-    fluentMeshToFoam
-
-Description
-    Converts a Fluent mesh to OpenFOAM format
-    including multiple region and region boundary handling.
-
-=======
->>>>>>> blueCFD-Core-7
 \*---------------------------------------------------------------------------*/
 
 %{
@@ -129,7 +107,6 @@ int yyFlexLexer::yywrap()
 one_space                  [ \t\f]
 space                      {one_space}*
 some_space                 {one_space}+
-comma                      ","
 cspace                     ","{space}
 spaceNl                    ({space}|\n|\r)*
 
@@ -145,7 +122,7 @@ quote                      \"
 dash                       "-"
 dotColonDash               [.:-]
 
-schemeSpecialInitial       [!$%&*/:<=>?~_^#.]
+schemeSpecialInitial       [!$%&*/:;<=>?~_^#.]
 schemeSpecialSubsequent    [.+-]
 schemeSymbol               (({some_space}|{alpha}|{quote}|{schemeSpecialInitial})({alpha}|{quote}|{digit}|{schemeSpecialInitial}|{schemeSpecialSubsequent})*)
 
@@ -832,10 +809,6 @@ endOfSection               {space}")"{space}
 <unknownBlock,embeddedUnknownBlock>{spaceNl}{text} {
     }
 
- /* ------              Ignore commas. (Symscape, circa 2009)         ------  */
-
-<*>{comma} {
-    }
 
  /* ------ Ignore remaining space and \n s.  Any other characters are errors. */
 
@@ -923,11 +896,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
 
     const fileName fluentFile = args[1];
-
-    // Use binary mode in case we read binary.
-    // Causes windows reading to fail if we don't.
-    std::ifstream fluentStream(fluentFile.c_str(),
-                               ios_base::in|ios_base::binary);
+    std::ifstream fluentStream(fluentFile.c_str());
 
     if (!fluentStream)
     {

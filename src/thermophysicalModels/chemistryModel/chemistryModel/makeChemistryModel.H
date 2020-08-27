@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,10 +21,6 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Description
-    Macros for instantiating chemistry models based on compressibility and
-    transport types
-
 \*---------------------------------------------------------------------------*/
 
 #ifndef makeChemistryModel_H
@@ -39,35 +35,25 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeChemistryModel(Comp)                                               \
+#define defineChemistryModel(Model, ReactionThermo)                            \
                                                                                \
-    typedef BasicChemistryModel<Comp> BasicChemistryModel##Comp;               \
+    typedef Model<ReactionThermo> Model##ReactionThermo;                       \
                                                                                \
     defineTemplateTypeNameAndDebugWithName                                     \
     (                                                                          \
-        BasicChemistryModel##Comp,                                             \
-        "BasicChemistryModel<"#Comp">",                                        \
+        Model##ReactionThermo,                                                 \
+        (                                                                      \
+            word(Model##ReactionThermo::typeName_()) + "<"                     \
+          + ReactionThermo::typeName + ">"                                     \
+        ).c_str(),                                                             \
         0                                                                      \
     );                                                                         \
                                                                                \
     defineTemplateRunTimeSelectionTable                                        \
     (                                                                          \
-        BasicChemistryModel##Comp,                                             \
+        Model##ReactionThermo,                                                 \
         thermo                                                                 \
     );
-
-
-#define makeChemistryModelType(SS, Comp, Thermo)                               \
-                                                                               \
-    typedef SS<Comp, Thermo> SS##Comp##Thermo;                                 \
-                                                                               \
-    defineTemplateTypeNameAndDebugWithName                                     \
-    (                                                                          \
-        SS##Comp##Thermo,                                                      \
-        (#SS"<"#Comp"," + Thermo::typeName() + ">").c_str(),                   \
-        0                                                                      \
-    );
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

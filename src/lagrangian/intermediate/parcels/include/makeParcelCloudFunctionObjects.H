@@ -28,7 +28,6 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<<<<<<< HEAD
 #include "FacePostProcessing.T.H"
 #include "ParticleCollector.T.H"
 #include "ParticleErosion.T.H"
@@ -36,18 +35,8 @@ License
 #include "ParticleTrap.T.H"
 #include "PatchCollisionDensity.T.H"
 #include "PatchPostProcessing.T.H"
+#include "RelativeVelocity.T.H"
 #include "VoidFraction.T.H"
-=======
-#include "FacePostProcessing.H"
-#include "ParticleCollector.H"
-#include "ParticleErosion.H"
-#include "ParticleTracks.H"
-#include "ParticleTrap.H"
-#include "PatchCollisionDensity.H"
-#include "PatchPostProcessing.H"
-#include "RelativeVelocity.H"
-#include "VoidFraction.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

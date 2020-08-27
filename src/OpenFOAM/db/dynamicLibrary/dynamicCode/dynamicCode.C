@@ -5,10 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-2018-02-26 blueCAPE Lda: Modifications for blueCFD-Core 2017-2
-------------------------------------------------------------------------------
 License
-    This file is derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -49,7 +47,7 @@ const Foam::fileName Foam::dynamicCode::codeTemplateDirName
     = "codeTemplates/dynamicCode";
 
 const char* const Foam::dynamicCode::libTargetRoot =
-    "LIB = $(abspath $(PWD)/../platforms/$(WM_OPTIONS)/lib/lib";
+    "LIB = $(PWD)/../platforms/$(WM_OPTIONS)/lib/lib";
 
 const char* const Foam::dynamicCode::topDirName = "dynamicCode";
 
@@ -231,7 +229,7 @@ bool Foam::dynamicCode::createMakeFiles() const
     }
 
     os  << nl
-        << libTargetRoot << codeName_.c_str() << ")" << nl;
+        << libTargetRoot << codeName_.c_str() << nl;
 
     return true;
 }

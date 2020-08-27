@@ -19,16 +19,20 @@ options
 {
     energySource
     {
-        type            scalarSemiImplicitSource;
+        type            semiImplicitSource;
 
         timeStart       0;
         duration        1e6;
         selectionMode   all;
         volumeMode      specific;
 
-        injectionRateSuSp
+        sources
         {
-            h          (1e7 0); // W/m^3 == kg/m/s^3
+            e
+            {
+                explicit    1e7; // W/m^3 == kg/m/s^3
+                implicit    0;
+            }
         }
     }
 }

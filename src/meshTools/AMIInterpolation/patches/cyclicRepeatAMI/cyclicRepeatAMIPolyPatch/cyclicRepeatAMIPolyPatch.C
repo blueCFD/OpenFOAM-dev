@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,52 +83,30 @@ void Foam::cyclicRepeatAMIPolyPatch::resetAMI() const
 
     Info<< indent << typeName <<" : Creating addressing and weights between "
         << returnReduce(this->size(), sumOp<label>()) << " source faces and "
-        << returnReduce(neighbPatch().size(), sumOp<label>()) << " target faces"
+        << returnReduce(nbrPatch().size(), sumOp<label>()) << " target faces"
         << endl;
 
     // Get the transform associated with the transform patch
-    vectorTensorTransform t;
+    transformer t;
     {
         const coupledPolyPatch& transformPatch = this->transformPatch();
 
-        if (transformPatch.name() != neighbPatch().transformPatch().name())
+        if (transformPatch.name() != nbrPatch().transformPatch().name())
         {
             FatalErrorInFunction
                 << "Transform patch " << transformPatch.name() << " for "
                 << typeName << " patch " << name() << " is not the same as for "
-                << "the neighbour patch " << neighbPatch().name() << ". "
+                << "the neighbour patch " << nbrPatch().name() << ". "
                 << "This is not allowed." << exit(FatalError);
         }
 
-        if
-        (
-            transformPatch.separation().size() > 1
-         || transformPatch.forwardT().size() > 1
-        )
-        {
-            FatalErrorInFunction
-                << "Transform patch " << transformPatch.name() << " for "
-                << typeName << " patch " << name() << " has a non-uniform "
-                << "transformation. This is not allowed."
-                << exit(FatalError);
-        }
-
-        Tuple2<bool, vectorTensorTransform> bt
+        Tuple2<bool, transformer> bt
         (
             transformPatch.size(),
-            vectorTensorTransform
-            (
-                transformPatch.separation().size() > 0
-              ? transformPatch.separation()[0]
-              : vector::zero,
-                transformPatch.forwardT().size() > 0
-              ? transformPatch.forwardT()[0]
-              : tensor::zero,
-                transformPatch.forwardT().size() > 0
-            )
+            transformPatch.transform()
         );
 
-        reduce(bt, keepIfTrueOp<vectorTensorTransform>());
+        reduce(bt, keepIfTrueOp<transformer>());
 
         if (!bt.first())
         {
@@ -143,19 +121,19 @@ void Foam::cyclicRepeatAMIPolyPatch::resetAMI() const
 
         t = bt.second();
     }
-    const vectorTensorTransform tInv(inv(t));
+    const transformer tInv(inv(t));
 
     // Work out the number of repetitions of the transform that separate this
     // patch from its neighbour
     label n = 0;
     {
-        const scalarField thisMagAreas(mag(this->faceAreas()));
-        const scalarField nbrMagAreas(mag(neighbPatch().faceAreas()));
+        const scalarField thisMagAreas(this->magFaceAreas());
+        const scalarField nbrMagAreas(nbrPatch().magFaceAreas());
 
         vector thisCentre =
             gSum(this->faceCentres()*thisMagAreas)/gSum(thisMagAreas);
         vector nbrCentre =
-            gSum(neighbPatch().faceCentres()*nbrMagAreas)/gSum(nbrMagAreas);
+            gSum(nbrPatch().faceCentres()*nbrMagAreas)/gSum(nbrMagAreas);
 
         scalar dLeft = mag(t.transformPosition(thisCentre) - nbrCentre);
         scalar d = mag(thisCentre - nbrCentre);
@@ -185,7 +163,7 @@ void Foam::cyclicRepeatAMIPolyPatch::resetAMI() const
     }
 
     // Generate the full transformations
-    vectorTensorTransform TLeft(t), T(vectorTensorTransform::I), TRight(tInv);
+    transformer TLeft(t), T(transformer::I), TRight(tInv);
     if (n > 0)
     {
         for (label i = 0; i < n - 1; ++ i)
@@ -211,7 +189,7 @@ void Foam::cyclicRepeatAMIPolyPatch::resetAMI() const
 
     // Create copies of this patch and the neighbour patch's points
     pointField thisPoints(localPoints());
-    const pointField nbrPoints(neighbPatch().localPoints());
+    const pointField nbrPoints(nbrPatch().localPoints());
 
     // Create primitive patches
     primitivePatch thisPatch
@@ -221,7 +199,7 @@ void Foam::cyclicRepeatAMIPolyPatch::resetAMI() const
     );
     primitivePatch nbrPatch
     (
-        SubList<face>(neighbPatch().localFaces(), neighbPatch().size()),
+        SubList<face>(this->nbrPatch().localFaces(), this->nbrPatch().size()),
         nbrPoints
     );
 
@@ -307,6 +285,21 @@ void Foam::cyclicRepeatAMIPolyPatch::resetAMI() const
 }
 
 
+void Foam::cyclicRepeatAMIPolyPatch::calcGeometry(PstreamBuffers& pBufs)
+{
+    static_cast<cyclicTransform&>(*this) =
+        cyclicTransform
+        (
+            name(),
+            faceAreas(),
+            *this,
+            nbrPatchName(),
+            nbrPatch(),
+            matchTolerance()
+        );
+}
+
+
 // * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * //
 
 Foam::cyclicRepeatAMIPolyPatch::cyclicRepeatAMIPolyPatch
@@ -316,8 +309,7 @@ Foam::cyclicRepeatAMIPolyPatch::cyclicRepeatAMIPolyPatch
     const label start,
     const label index,
     const polyBoundaryMesh& bm,
-    const word& patchType,
-    const transformType transform
+    const word& patchType
 )
 :
     cyclicAMIPolyPatch
@@ -328,7 +320,6 @@ Foam::cyclicRepeatAMIPolyPatch::cyclicRepeatAMIPolyPatch
         index,
         bm,
         patchType,
-        transform,
         false,
         AMIInterpolation::imFaceAreaWeight
     ),
@@ -428,9 +419,9 @@ Foam::cyclicRepeatAMIPolyPatch::~cyclicRepeatAMIPolyPatch()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 const Foam::cyclicRepeatAMIPolyPatch&
-Foam::cyclicRepeatAMIPolyPatch::neighbPatch() const
+Foam::cyclicRepeatAMIPolyPatch::nbrPatch() const
 {
-    const polyPatch& pp = this->boundaryMesh()[neighbPatchID()];
+    const polyPatch& pp = this->boundaryMesh()[nbrPatchID()];
 
     return refCast<const cyclicRepeatAMIPolyPatch>(pp);
 }
@@ -477,11 +468,11 @@ const Foam::scalarField& Foam::cyclicRepeatAMIPolyPatch::weightsSum() const
 
 
 const Foam::scalarField&
-Foam::cyclicRepeatAMIPolyPatch::neighbWeightsSum() const
+Foam::cyclicRepeatAMIPolyPatch::nbrWeightsSum() const
 {
     // See above.
 
-    return cyclicAMIPolyPatch::neighbWeightsSum();
+    return cyclicAMIPolyPatch::nbrWeightsSum();
 }
 
 

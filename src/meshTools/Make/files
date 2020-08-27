@@ -59,14 +59,13 @@ $(csys)/cartesianCS.C
 $(csys)/coordinateRotation/axesRotation.C
 $(csys)/coordinateRotation/coordinateRotation.C
 $(csys)/coordinateRotation/coordinateRotationNew.C
-$(csys)/coordinateRotation/EulerCoordinateRotation.T.C
+$(csys)/coordinateRotation/EulerCoordinateRotation.C
 $(csys)/coordinateRotation/STARCDCoordinateRotation.C
 $(csys)/coordinateRotation/cylindrical.C
 
 edgeFaceCirculator/edgeFaceCirculator.C
 
 polyMeshZipUpCells/polyMeshZipUpCells.C
-primitiveMeshGeometry/primitiveMeshGeometry.C
 
 meshSearch/meshSearch.C
 meshSearch/meshSearchFACE_CENTRE_TRISMeshObject.C
@@ -179,6 +178,7 @@ $(faceZoneSources)/setsToFaceZone/setsToFaceZone.C
 $(faceZoneSources)/setToFaceZone/setToFaceZone.C
 $(faceZoneSources)/setAndNormalToFaceZone/setAndNormalToFaceZone.C
 $(faceZoneSources)/searchableSurfaceToFaceZone/searchableSurfaceToFaceZone.C
+$(faceZoneSources)/planeToFaceZone/planeToFaceZone.C
 
 cellZoneSources = sets/cellZoneSources
 $(cellZoneSources)/setToCellZone/setToCellZone.C
@@ -218,13 +218,8 @@ triSurface/triSurfaceTools/pointToPointPlanarInterpolation.C
 twoDPointCorrector/twoDPointCorrector.C
 
 AMI=AMIInterpolation
-<<<<<<< HEAD
-$(AMI)/AMIInterpolation/AMIInterpolationName.T.C
-$(AMI)/AMIInterpolation/AMIPatchToPatchInterpolation.C
-=======
-$(AMI)/AMIInterpolation/AMIInterpolation.C
-$(AMI)/AMIInterpolation/AMIInterpolationParallelOps.C
->>>>>>> blueCFD-Core-7
+$(AMI)/AMIInterpolation/AMIInterpolation.T.C
+$(AMI)/AMIInterpolation/AMIInterpolationParallelOps.T.C
 $(AMI)/faceAreaIntersect/faceAreaIntersect.C
 
 AMIGAMG=$(AMI)/GAMG

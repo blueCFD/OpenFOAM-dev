@@ -28,20 +28,12 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<<<<<<< HEAD
 #include "SphereDragForce.T.H"
 #include "NonSphereDragForce.T.H"
+#include "SchillerNaumannDragForce.T.H"
 #include "WenYuDragForce.T.H"
 #include "ErgunWenYuDragForce.T.H"
 #include "PlessisMasliyahDragForce.T.H"
-=======
-#include "SphereDragForce.H"
-#include "NonSphereDragForce.H"
-#include "SchillerNaumannDragForce.H"
-#include "WenYuDragForce.H"
-#include "ErgunWenYuDragForce.H"
-#include "PlessisMasliyahDragForce.H"
->>>>>>> blueCFD-Core-7
 
 #include "SaffmanMeiLiftForce.T.H"
 #include "TomiyamaLiftForce.T.H"
@@ -53,7 +45,7 @@ License
 #include "SRFForce.T.H"
 #include "VirtualMassForce.T.H"
 
-#include "ScaledForce.H"
+#include "ScaledForce.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

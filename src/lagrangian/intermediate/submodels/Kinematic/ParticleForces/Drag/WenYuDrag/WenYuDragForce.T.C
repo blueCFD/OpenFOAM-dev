@@ -23,13 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/WenYuDrag/WenYuDragForce.T.C
 #include "WenYuDragForce.T.H"
-#include "volFields.H"
-=======
-#include "WenYuDragForce.H"
-#include "SchillerNaumannDragForce.H"
->>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/WenYuDrag/WenYuDragForce.C
+#include "SchillerNaumannDragForce.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

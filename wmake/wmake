@@ -5,13 +5,9 @@
 #  \\    /   O peration     | Website:  https://openfoam.org
 #   \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
 #    \\/     M anipulation  |
-#-------------------------------------------------------------------------------
-# 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
-# 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
-# 2017-10-07 FSD blueCAPE Lda: Modifications for blueCFD-Core 2017-1
 #------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -25,17 +21,6 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Modifications
-#     This file has been modified by blueCAPE's unofficial mingw patches for
-#     OpenFOAM.
-#     For more information about these patches, visit:
-#         http://bluecfd.com/Core
-#
-#     Modifications made:
-#        - Derived from the patches for blueCFD 2.1 and 2.2.
-#        - Added binary versioning of libraries and executables.
-#        - Embedded workaround for figuring out how to handle long file paths
 #
 # Script
 #     wmake
@@ -261,7 +246,7 @@ fi
 # Check arguments and change to the directory in which to run wmake
 #------------------------------------------------------------------------------
 
-unset dir targetType ADDITIONAL_WMAKE_ARGS
+unset dir targetType
 MakeDir=Make
 
 if [ $# -ge 1 ]
@@ -417,19 +402,6 @@ then
     objectsDir=$platformPath${exPath//$WM_PROJECT_DIR/}
 fi
 
-# Need to override the temporary folder on Windows
-# See https://github.com/blueCFD/Core/issues/35 for more details.
-if onWin
-then
-    export TEMP=$objectsDir/tempDir
-    export TMP=$objectsDir/tempDir
-    mkdir -p $TMP
-fi
-
-# If on Windows, check if we need to activate the workaround
-onWin && figureOutIfLongFileNameSupportIsNeeded
-
-
 (
     unset MAKEFLAGS
     mkdir -p "$objectsDir"
@@ -441,20 +413,6 @@ onWin && figureOutIfLongFileNameSupportIsNeeded
 
     $make -s -f "$WM_DIR/makefiles/files" MAKE_DIR="$MakeDir" \
           OBJECTS_DIR="$objectsDir"
-
-    if isMinGW && \
-       [ "$targetType" = "libso" -o "$targetType" = "all" -o \
-         "$targetType" = "dep" -o -z "$targetType" ]
-    then
-        make -s -f $WM_DIR/makefiles/files versioning MAKE_DIR="$MakeDir" \
-            OBJECTS_DIR="$objectsDir"
-    fi
-
-    if isMinGW
-    then
-        make -s -f $WM_DIR/makefiles/files localHeaderPaths MAKE_DIR="$MakeDir" \
-            OBJECTS_DIR="$objectsDir"
-    fi
 )
 
 
@@ -480,7 +438,7 @@ case "$targetType" in
         if grep -e '^ *LIB *=' "$MakeDir/files" >/dev/null 2>&1
         then
             $make -s -f "$WM_DIR/makefiles/general" MAKE_DIR="$MakeDir" \
-                  OBJECTS_DIR="$objectsDir" lnInclude ${ADDITIONAL_WMAKE_ARGS}
+                  OBJECTS_DIR="$objectsDir" lnInclude
         fi
         ;;
 esac
@@ -494,7 +452,7 @@ if [ -n "$WM_UPDATE_DEPENDENCIES" ]
 then
 
     $make -f "$WM_DIR"/makefiles/general MAKE_DIR="$MakeDir" \
-        OBJECTS_DIR="$objectsDir" dep ${ADDITIONAL_WMAKE_ARGS}
+        OBJECTS_DIR="$objectsDir" dep
     makeExitCode=$?
 
     if [ $makeExitCode -ne 0 ]
@@ -512,7 +470,7 @@ fi
 
 # shellcheck disable=SC2093,SC2086
 exec $make -f "$WM_DIR/makefiles/general" MAKE_DIR="$MakeDir" \
-     OBJECTS_DIR="$objectsDir" $targetType ${ADDITIONAL_WMAKE_ARGS}
+     OBJECTS_DIR="$objectsDir" $targetType
 
 
 #------------------------------------------------------------------------------

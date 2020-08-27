@@ -21,8 +21,6 @@ solvers
     {
         nAlphaCorr      3;
         nAlphaSubCycles 1;
-        cAlpha          1;
-        icAlpha         0;
 
         MULESCorr       yes;
         nLimiterIter    15;
@@ -38,7 +36,6 @@ solvers
     "pcorr.*"
     {
         solver          GAMG;
-
         smoother        DIC;
 
         tolerance       1e-3;
@@ -48,7 +45,6 @@ solvers
     p_rgh
     {
         solver          GAMG;
-
         smoother        DIC;
 
         tolerance       5e-8;
@@ -64,10 +60,9 @@ solvers
     "(U|k|omega).*"
     {
         solver          smoothSolver;
-
         smoother        symGaussSeidel;
-        nSweeps         1;
 
+        nSweeps         1;
         tolerance       1e-7;
         relTol          0;
         minIter         1;

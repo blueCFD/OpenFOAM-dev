@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,14 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/InjectionModel/ConeInjection/ConeInjection.T.C
 #include "ConeInjection.T.H"
 #include "TimeFunction1.T.H"
-=======
-#include "ConeInjection.H"
-#include "TimeFunction1.H"
-#include "Constant.H"
->>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/InjectionModel/ConeInjection/ConeInjection.C
+#include "Constant.T.H"
 #include "mathematicalConstants.H"
 #include "unitConversion.H"
 
@@ -133,7 +128,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
             this->coeffDict()
         )
     ),
-    positionIsConstant_(isA<Function1Types::Constant<vector>>(position_)),
+    positionIsConstant_(isA<Function1s::Constant<vector>>(position_)),
     direction_
     (
         TimeFunction1<vector>
@@ -146,10 +141,10 @@ Foam::ConeInjection<CloudType>::ConeInjection
     injectorCell_(-1),
     injectorTetFace_(-1),
     injectorTetPt_(-1),
-    duration_(readScalar(this->coeffDict().lookup("duration"))),
+    duration_(this->coeffDict().template lookup<scalar>("duration")),
     parcelsPerSecond_
     (
-        readScalar(this->coeffDict().lookup("parcelsPerSecond"))
+        this->coeffDict().template lookup<scalar>("parcelsPerSecond")
     ),
     flowRateProfile_
     (

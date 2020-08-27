@@ -63,20 +63,12 @@ Description
 #include "argList.H"
 #include "polyTopoChanger.H"
 #include "mapPolyMesh.H"
-<<<<<<< HEAD
-#include "ListOps.T.H"
 #include "slidingInterface.H"
 #include "perfectInterface.H"
-#include "IOobjectList.T.H"
 #include "ReadFields.T.H"
-=======
-#include "slidingInterface.H"
-#include "perfectInterface.H"
-#include "ReadFields.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "pointFields.H"
->>>>>>> blueCFD-Core-7
 
 using namespace Foam;
 

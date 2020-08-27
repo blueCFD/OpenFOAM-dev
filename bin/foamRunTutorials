@@ -6,12 +6,8 @@
 #   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2016-08-03 blueCAPE Lda: Added -jobs and usage information
-# 2017-09-13 blueCAPE Lda: Adapted to OpenFOAM 5.x
-# 2017-09-26 blueCAPE Lda: Fixed how the arguments are passed onwards
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -37,76 +33,26 @@
 Script=$0
 [ "/${Script#/}" != "$Script" ] && Script="$PWD/$Script"
 
-
 # Normally use standard "make"
 make="make"
 
 # Source tutorial run functions
 . "$WM_PROJECT_DIR/bin/tools/RunFunctions"
 
-usage()
-{
-    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+usage() {
     cat<<USAGE
 
-usage: ${0##*/} [OPTIONS]
+Usage: ${0##*/} [OPTIONS]
 options:
   -help      | -h     print the usage
   -skipFirst | -s     do not execute the first Allrun script
   -test      | -t     run test loop
-  -jobs N    | -j     for running multiple cases in parallel with N cores
-  -parallel  | -p     run only cases that are configured to run in parallel
-  -nonParallel | -n   run only cases that are configured to run in serial
 
 Helper script used by the Allrun scripts in the OpenFOAM tutorials
-
-When running multiple cases in parallel with '-jobs', keep in mind that this
-does not take into account how many cores each case will need to run; therefore
-it's advisable to use it along with the option '-nonParallel'.
-
 USAGE
-    exit 1
 }
-
-checkIfAllrunCanBeExecuted()
-{
-    if $serialOnly || $parallelOnly
-    then
-        # Check both inside Allrun and Allrun.*, given that Allrun-* are
-        # optional
-        if grep -sve "^#" Allrun Allrun.* | grep -qe "runParallel"
-        then
-            hasGotRunParallel=true
-        else
-            hasGotRunParallel=false
-        fi
-
-        if $serialOnly && $hasGotRunParallel
-        then
-            echo "Skipping case '$PWD', which is meant to run in parallel."
-            exit 0
-        elif $parallelOnly && ! $hasGotRunParallel
-        then
-            echo "Skipping case '$PWD', which is meant to run in serial."
-            exit 0
-        fi
-    fi
-}
-
-checkIfDefaultRunCanBeExecuted()
-{
-    if $parallelOnly
-    then
-        echo "Skipping case '$PWD', which is meant to run in serial."
-        exit 0
-    fi
-}
-
-#------------------------------------------------------------------------------
 
 skipFirst=false
-serialOnly=false
-parallelOnly=false
 
 # Parse options
 while [ "$#" -gt 0 ]
@@ -120,34 +66,8 @@ do
         shift
         ;;
     -t | -test)
-        passArgs="${passArgs} -test"
+        passArgs="-test"
         shift
-        ;;
-    -n | -nonParallel)
-        serialOnly=true
-        passArgs="${passArgs} $1"
-        shift
-        ;;
-    -p | -parallel)
-        parallelOnly=true
-        passArgs="${passArgs} $1"
-        shift
-        ;;
-    -j | -jobs)
-        if test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1
-        then
-            make="${make} -j $2"
-            echo "Running multiple cases enabled on $2 cores"
-            shift 2
-        else
-            usage "Error: Missing number of jobs"
-        fi
-        ;;
-    -h | -help)
-        usage
-        ;;
-    -*)
-        usage "unknown option: '$*'"
         ;;
     *)
         break
@@ -155,24 +75,13 @@ do
     esac
 done
 
-if $serialOnly && $parallelOnly
-then
-    usage "Cannot use -parallel and -nonParallel options at the same time."
-fi
-
 # If an argument is supplied do not execute ./Allrun to avoid recursion
 if ! $skipFirst && [ -f "./Allrun" ]
 then
-    # Need to assess if this case can be executed in serial or parallel
-    checkIfAllrunCanBeExecuted
-
     # Run specialised Allrun script.
     ./Allrun $passArgs
 elif [ -d system ]
 then
-    # Need to assess if this case can be executed in serial or parallel
-    checkIfDefaultRunCanBeExecuted
-
     # Run normal case.
     application=$(getApplication)
     runApplication blockMesh

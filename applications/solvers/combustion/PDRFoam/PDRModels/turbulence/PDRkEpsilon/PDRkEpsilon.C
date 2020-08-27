@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,11 +51,10 @@ PDRkEpsilon::PDRkEpsilon
     const surfaceScalarField& alphaRhoPhi,
     const surfaceScalarField& phi,
     const fluidThermo& thermophysicalModel,
-    const word& turbulenceModelName,
     const word& modelName
 )
 :
-    Foam::RASModels::kEpsilon<EddyDiffusivity<compressible::turbulenceModel>>
+    Foam::RASModels::kEpsilon<compressible::momentumTransportModel>
     (
         geometricOneField(),
         rho,
@@ -63,7 +62,6 @@ PDRkEpsilon::PDRkEpsilon
         phi,
         phi,
         thermophysicalModel,
-        turbulenceModelName,
         modelName
     ),
 
@@ -129,7 +127,7 @@ void PDRkEpsilon::correct()
     volScalarField G(GName(), rho_*nut_*(tgradU() && dev(twoSymm(tgradU()))));
     tgradU.clear();
 
-    // Update espsilon and G at the wall
+    // Update epsilon and G at the wall
     epsilon_.boundaryFieldRef().updateCoeffs();
 
     // Add the blockage generation term so that it is included consistently

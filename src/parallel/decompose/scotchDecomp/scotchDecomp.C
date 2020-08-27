@@ -2,13 +2,9 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2011 blueCAPE: Avoid defining 'GNU_SOURCE' for MinGW builds.
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
- 2016-07-26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
-------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -24,12 +20,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
 
 \*---------------------------------------------------------------------------*/
 
@@ -49,7 +39,7 @@ extern "C"
 
 // Hack: scotch generates floating point errors so need to switch of error
 //       trapping!
-#if defined(__GLIBC__) && (!defined(WIN32) && !defined(WIN64))
+#ifdef __GLIBC__
     #ifndef _GNU_SOURCE
         #define _GNU_SOURCE
     #endif
@@ -385,7 +375,7 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
     {
         if (debug)
         {
-            Info<< "scotchDecomp : Using procesor weights " << processorWeights
+            Info<< "scotchDecomp : Using processor weights " << processorWeights
                 << endl;
         }
         check

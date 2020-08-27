@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,10 +75,6 @@ class Time
     public TimeState
 {
     // Private Data
-
-        //- Any loaded dynamic libraries. Make sure to construct before
-        //  reading controlDict.
-        dlLibraryTable libs_;
 
         //- The controlDict
         unwatchedIOdictionary controlDict_;
@@ -186,6 +182,9 @@ private:
 
         //- Is runtime modification of dictionaries allowed?
         Switch runTimeModifiable_;
+
+        //- Is temporary object cache enabled
+        mutable bool cacheTemporaryObjects_;
 
         //- Function objects executed at start and on ++, +=
         mutable functionObjectList functionObjects_;
@@ -411,18 +410,6 @@ public:
             const functionObjectList& functionObjects() const
             {
                 return functionObjects_;
-            }
-
-            //- External access to the loaded libraries
-            const dlLibraryTable& libs() const
-            {
-                return libs_;
-            }
-
-            //- External access to the loaded libraries
-            dlLibraryTable& libs()
-            {
-                return libs_;
             }
 
             //- Return true if time currently being sub-cycled, otherwise false

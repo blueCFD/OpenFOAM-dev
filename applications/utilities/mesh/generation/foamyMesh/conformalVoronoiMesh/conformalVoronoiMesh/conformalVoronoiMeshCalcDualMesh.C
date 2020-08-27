@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "conformalVoronoiMesh.H"
 #include "motionSmoother.H"
 #include "backgroundMeshDecomposition.H"
-#include "polyMeshGeometry.H"
+#include "polyMeshCheck.H"
 #include "indexedCellChecks.H"
 #include "OBJstream.H"
 #include "indexedCellOps.H"
@@ -754,7 +754,7 @@ Foam::conformalVoronoiMesh::createPolyMeshFromPoints
 
     forAll(patches, p)
     {
-        label totalPatchSize = readLabel(patchDicts[p].lookup("nFaces"));
+        label totalPatchSize = patchDicts[p].lookup<label>("nFaces");
 
         if
         (
@@ -840,13 +840,13 @@ void Foam::conformalVoronoiMesh::checkCellSizing()
         = dict.subDict("meshQualityControls");
 
     const scalar maxNonOrtho =
-        readScalar(meshQualityDict.lookup("maxNonOrtho", true));
+        meshQualityDict.lookup<scalar>("maxNonOrtho", true);
 
     label nWrongFaces = 0;
 
     if (maxNonOrtho < 180.0 - small)
     {
-        polyMeshGeometry::checkFaceDotProduct
+        polyMeshCheck::checkFaceDotProduct
         (
             false,
             maxNonOrtho,
@@ -1741,7 +1741,7 @@ void Foam::conformalVoronoiMesh::createFacesOwnerNeighbourAndPatches
             procNeighbours[patchi] =
             (
                 patchDicts[patchi].found("neighbProcNo")
-              ? readLabel(patchDicts[patchi].lookup("neighbProcNo"))
+              ? patchDicts[patchi].lookup<label>("neighbProcNo")
               : -1
             );
         }
@@ -2368,7 +2368,7 @@ void Foam::conformalVoronoiMesh::createFacesOwnerNeighbourAndPatches
                 const label neighbour =
                 (
                     patchDicts[nbI].found("neighbProcNo")
-                  ? readLabel(patchDicts[nbI].lookup("neighbProcNo"))
+                  ? patchDicts[nbI].lookup<label>("neighbProcNo")
                   : -1
                 );
 

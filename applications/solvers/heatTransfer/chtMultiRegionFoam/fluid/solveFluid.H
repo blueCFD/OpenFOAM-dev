@@ -4,7 +4,7 @@ if (pimple.frozenFlow())
 }
 else
 {
-    if (!mesh.steady() && pimples.nCorrPimple() <= 1)
+    if (!mesh.steady() && pimples.firstPimpleIter())
     {
         #include "rhoEqn.H"
     }
@@ -16,12 +16,13 @@ else
     // --- PISO loop
     while (pimple.correct())
     {
-        #include "pEqn.H"
+        #include "../../buoyantPimpleFoam/pEqn.H"
     }
 
     if (pimples.pimpleTurbCorr(i))
     {
         turbulence.correct();
+        thermophysicalTransport.correct();
     }
 
     if (!mesh.steady() && pimples.finalPimpleIter())

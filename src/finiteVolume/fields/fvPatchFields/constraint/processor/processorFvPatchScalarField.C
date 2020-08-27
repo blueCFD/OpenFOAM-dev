@@ -5,12 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2011 Symscape: Added 'inline' to 'initInterfaceMatrixUpdate' and
-                'updateInterfaceMatrix'.
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -25,12 +21,6 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
 \*---------------------------------------------------------------------------*/
 
 #include "processorFvPatchScalarField.H"
@@ -43,7 +33,6 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<>
-inline
 void processorFvPatchField<scalar>::initInterfaceMatrixUpdate
 (
     scalarField&,
@@ -104,7 +93,6 @@ void processorFvPatchField<scalar>::initInterfaceMatrixUpdate
 
 
 template<>
-inline
 void processorFvPatchField<scalar>::updateInterfaceMatrix
 (
     scalarField& result,

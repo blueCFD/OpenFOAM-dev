@@ -5,7 +5,6 @@ CGAL_EXACT = /*-DCGAL_DONT_USE_LAZY_KERNEL*/
 CGAL_INEXACT = -DCGAL_INEXACT
 
 include $(GENERAL_RULES)/CGAL
-sinclude $(RULES)/CGAL
 
 EXE_INC = \
     ${ROUNDING_MATH} \
@@ -35,6 +34,3 @@ EXE_LIBS = \
     -ltriSurface \
     -ldynamicMesh \
     -lsampling
-
-EXE_LIBS += \
-    -lfiniteVolume

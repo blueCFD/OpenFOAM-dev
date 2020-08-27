@@ -6,11 +6,8 @@
 #   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2016-08-03 blueCAPE Lda: Added -target and -jobs
-# 2017-09-26 FSD blueCAPE Lda: Added more verbosity
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -42,21 +39,11 @@ usage()
 usage: ${0##*/} [OPTION]
 
 options:
-  -root <dir>   | -r <dir>
-                      specify root directory to run tests from
-  -target <dir> | -t <dir>
-                      specify directory where the tests are executed in
-  -default   | -d     sets up a default scheme on all schemes
-  -help      | -h     print the usage
-  -jobs N    | -j     for running multiple cases in parallel with N cores
-  -parallel  | -p     run only cases that are configured to run in parallel
-  -nonParallel | -n   run only cases that are configured to run in serial
+  -root <dir>       specify root directory to run tests from
+  -default          sets up a default scheme on all schemes
+  -help             print the usage
 
 * quickly tests the tutorials and writes out the scheme/solver information
-
-Currently defined paths:
-  root:    $(realpath $TUTORIALS_DIR)
-  target:  $(realpath $TEST_RUN_DIR)
 
 USAGE
     exit 1
@@ -66,12 +53,7 @@ USAGE
 
 unset DEFAULT_SCHEMES
 
-TUTORIALS_DIR="./"
-TEST_RUN_DIR="../tutorialsTest"
-RUN_ARGUMENTS=""
-
-serialOnly=false
-parallelOnly=false
+ROOT="./"
 
 # parse options
 while [ "$#" -gt 0 ]
@@ -79,38 +61,14 @@ do
     case "$1" in
     -r | -root)
         [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
-        TUTORIALS_DIR="$2"
+        ROOT="$2"
         shift
-        ;;
-    -t | -target)
-        [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
-        TEST_RUN_DIR="$2"
-        shift
-        ;;
-    -d | -default)
-        DEFAULT_SCHEMES=true
-        ;;
-    -j | -jobs)
-        if test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1
-        then
-            RUN_ARGUMENTS="${RUN_ARGUMENTS} $1 $2"
-            shift
-        else
-            usage "Error: Missing number of jobs"
-        fi
-        ;;
-    -n | -nonParallel)
-        serialOnly=true
-        RUN_ARGUMENTS="${RUN_ARGUMENTS} $1"
-        echo "NOTE: Will only run cases in serial mode."
-        ;;
-    -p | -parallel)
-        parallelOnly=true
-        RUN_ARGUMENTS="${RUN_ARGUMENTS} $1"
-        echo "NOTE: Will only run cases in parallel mode."
         ;;
     -h | -help)
         usage
+        ;;
+    -d | -default)
+        DEFAULT_SCHEMES=true
         ;;
     -*)
         usage "unknown option: '$*'"
@@ -121,12 +79,6 @@ do
     esac
     shift
 done
-
-
-if $serialOnly && $parallelOnly
-then
-    usage "Cannot use -parallel and -nonParallel options at the same time."
-fi
 
 
 setDefaultFvSchemes()
@@ -178,6 +130,8 @@ done
 [ -f "$MAIN_CONTROL_DICT" ] || usage "main controlDict not found"
 
 
+TUTORIALS_DIR=$ROOT
+TEST_RUN_DIR=../tutorialsTest
 FV_SCHEMES=\
 " \
     gradScheme \
@@ -220,7 +174,7 @@ sed \
 ${MAIN_CONTROL_DICT}.orig > ${MAIN_CONTROL_DICT}
 
 echo "Copying the tutorials"
-cp -r ${TUTORIALS_DIR} ${TEST_RUN_DIR}
+cp -a ${TUTORIALS_DIR} ${TEST_RUN_DIR}
 
 echo "Modifying the controlDicts to run only one time step"
 cd ${TEST_RUN_DIR} || exit 1
@@ -251,7 +205,7 @@ then
 fi
 
 cp -f $FOAM_TUTORIALS/Allrun .
-./Allrun $RUN_ARGUMENTS || retVal=1
+./Allrun || retVal=1
 
 sed -e :a -e '/\\$/N; s/\\\n//; ta' Allrun > temp
 APPLICATIONS=\

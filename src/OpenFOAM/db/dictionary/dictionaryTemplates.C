@@ -29,7 +29,7 @@ License
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class T>
-T Foam::dictionary::lookupType
+T Foam::dictionary::lookup
 (
     const word& keyword,
     bool recursive,
@@ -168,7 +168,7 @@ void Foam::writeEntry
     const EntryType& value
 )
 {
-    os.writeKeyword(entryName);
+    writeKeyword(os, entryName);
     writeEntry(os, value);
     os << token::END_STATEMENT << endl;
 }

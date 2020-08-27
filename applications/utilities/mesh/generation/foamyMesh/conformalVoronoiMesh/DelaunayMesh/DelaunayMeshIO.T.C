@@ -308,7 +308,7 @@ void Foam::DelaunayMesh<Triangulation>::printVertexInfo(Ostream& os) const
     {
         WarningInFunction
             << nTotalVertices << " does not equal "
-            << label(Triangulation::number_of_vertices())
+            << Triangulation::number_of_vertices()
             << endl;
     }
 

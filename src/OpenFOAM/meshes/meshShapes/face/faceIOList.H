@@ -32,14 +32,9 @@ Description
 #ifndef faceIOList_H
 #define faceIOList_H
 
-<<<<<<< HEAD
 #include "face.T.H"
+#include "IOList.T.H"
 #include "CompactIOList.T.H"
-=======
-#include "face.H"
-#include "IOList.H"
-#include "CompactIOList.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

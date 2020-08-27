@@ -40,12 +40,7 @@ Description
 #ifndef PlessisMasliyahDragForce_H
 #define PlessisMasliyahDragForce_H
 
-<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/PlessisMasliyahDrag/PlessisMasliyahDragForce.T.H
-#include "ParticleForce.T.H"
-#include "volFieldsFwd.H"
-=======
-#include "DenseDragForce.H"
->>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/PlessisMasliyahDrag/PlessisMasliyahDragForce.H
+#include "DenseDragForce.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

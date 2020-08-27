@@ -33,14 +33,8 @@ Description
 #ifndef bMesh_H
 #define bMesh_H
 
-<<<<<<< HEAD
 #include "PrimitivePatch.T.H"
-#include "face.T.H"
-#include "List.T.H"
-=======
-#include "PrimitivePatch.H"
 #include "faceList.H"
->>>>>>> blueCFD-Core-7
 #include "pointField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

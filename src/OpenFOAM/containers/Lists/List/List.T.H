@@ -42,10 +42,6 @@ SourceFiles
 
 #include "UList.T.H"
 #include "autoPtr.H"
-<<<<<<< HEAD:src/OpenFOAM/containers/Lists/List/List.T.H
-#include "Xfer.T.H"
-=======
->>>>>>> blueCFD-Core-7:src/OpenFOAM/containers/Lists/List/List.H
 #include <initializer_list>
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

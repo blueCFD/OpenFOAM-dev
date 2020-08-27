@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -112,7 +112,7 @@ public:
 
             void checkSiteListSizes() const;
 
-            void setInteracionSiteBools
+            void setInteractionSiteBools
             (
                 const List<word>& siteIds,
                 const List<word>& pairPotSiteIds
@@ -167,23 +167,46 @@ public:
     :
         public particle::trackingData
     {
-        // label specifying which part of the integration algorithm is taking
-        label part_;
+    public:
+
+        enum trackPart
+        {
+            tpVelocityHalfStep0,
+            tpLinearTrack,
+            tpRotationalTrack,
+            tpVelocityHalfStep1
+        };
+
+
+    private:
+
+        // Private Data
+
+            //- Which part of the integration algorithm is taking place
+            trackPart part_;
 
 
     public:
 
         // Constructors
 
-            trackingData(moleculeCloud& cloud, label part)
+            //- Construct from components
+            trackingData(const moleculeCloud& cloud)
             :
-                particle::trackingData(cloud),
-                part_(part)
+                particle::trackingData(cloud)
             {}
+
 
         // Member Functions
 
-            inline label part() const
+            //- Return the part of the tracking operation taking place
+            inline trackPart part() const
+            {
+                return part_;
+            }
+
+            //- Access to the part of the tracking operation taking place
+            inline trackPart& part()
             {
                 return part_;
             }
@@ -312,9 +335,7 @@ public:
 
             bool move(moleculeCloud&, trackingData&, const scalar trackTime);
 
-            virtual void transformProperties(const tensor& T);
-
-            virtual void transformProperties(const vector& separation);
+            virtual void transformProperties(const transformer&);
 
             void setSitePositions(const constantProperties& constProps);
 

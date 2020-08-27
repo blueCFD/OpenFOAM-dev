@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,7 @@ Description
 
 SourceFiles
     dragModel.C
-    newDragModel.C
+    dragModelNew.C
 
 \*---------------------------------------------------------------------------*/
 
@@ -37,28 +37,34 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include "volFields.H"
 #include "dictionary.H"
-#include "phaseModel.H"
 #include "runTimeSelectionTables.H"
 
 namespace Foam
 {
+
+class phasePair;
+class swarmCorrection;
 
 /*---------------------------------------------------------------------------*\
                            Class dragModel Declaration
 \*---------------------------------------------------------------------------*/
 
 class dragModel
+:
+    public regIOobject
 {
 protected:
 
     // Protected data
 
-        const dictionary& interfaceDict_;
-        const phaseModel& phase1_;
-        const phaseModel& phase2_;
-        dimensionedScalar residualPhaseFraction_;
-        dimensionedScalar residualSlip_;
+        //- Phase pair
+        const phasePair& pair_;
+
+        //- Swarm correction
+        autoPtr<swarmCorrection> swarmCorrection_;
+
 
 public:
 
@@ -74,21 +80,35 @@ public:
             dragModel,
             dictionary,
             (
-                const dictionary& interfaceDict,
-                const phaseModel& phase1,
-                const phaseModel& phase2
+                const dictionary& dict,
+                const phasePair& pair,
+                const bool registerObject
             ),
-            (interfaceDict, phase1, phase2)
+            (dict, pair, registerObject)
         );
+
+
+    // Static Data Members
+
+        //- Coefficient dimensions
+        static const dimensionSet dimK;
 
 
     // Constructors
 
+        // Construct without residual constants
         dragModel
         (
-            const dictionary& interfaceDict,
-            const phaseModel& phase1,
-            const phaseModel& phase2
+            const phasePair& pair,
+            const bool registerObject
+        );
+
+        // Construct with residual constants
+        dragModel
+        (
+            const dictionary& dict,
+            const phasePair& pair,
+            const bool registerObject
         );
 
 
@@ -100,44 +120,34 @@ public:
 
         static autoPtr<dragModel> New
         (
-            const dictionary& interfaceDict,
-            const phaseModel& phase1,
-            const phaseModel& phase2
+            const dictionary& dict,
+            const phasePair& pair
         );
 
 
     // Member Functions
 
-        const phaseModel& phase1() const
-        {
-            return phase1_;
-        }
+        //- Drag coefficient
+        virtual tmp<volScalarField> CdRe() const = 0;
 
-        const phaseModel& phase2() const
-        {
-            return phase2_;
-        }
+        //- Return the phase-intensive drag coefficient Ki
+        //  used in the momentum equations
+        //    ddt(alpha1*rho1*U1) + ... = ... alphad*K*(U1-U2)
+        //    ddt(alpha2*rho2*U2) + ... = ... alphad*K*(U2-U1)
+        virtual tmp<volScalarField> Ki() const;
 
-        const dimensionedScalar& residualPhaseFraction() const
-        {
-            return residualPhaseFraction_;
-        }
+        //- Return the drag coefficient K
+        //  used in the momentum equations
+        //    ddt(alpha1*rho1*U1) + ... = ... K*(U1-U2)
+        //    ddt(alpha2*rho2*U2) + ... = ... K*(U2-U1)
+        virtual tmp<volScalarField> K() const;
 
-        const dimensionedScalar& residualSlip() const
-        {
-            return residualSlip_;
-        }
+        //- Return the drag coefficient Kf
+        //  used in the face-momentum equations
+        virtual tmp<surfaceScalarField> Kf() const;
 
-        //- The dragfunction K used in the momentum eq.
-        //    ddt(alpha1*rho1*U1) + ... = ... alpha1*alpha2*K*(U1-U2)
-        //    ddt(alpha2*rho2*U2) + ...  = ... alpha1*alpha2*K*(U2-U1)
-        // ********************************** NB! *****************************
-        // for numerical reasons alpha1 and alpha2 has been
-        // extracted from the dragFunction K,
-        // so you MUST divide K by alpha1*alpha2 when implemnting the drag
-        // function
-        // ********************************** NB! *****************************
-        virtual tmp<volScalarField> K(const volScalarField& Ur) const = 0;
+        //- Dummy write for regIOobject
+        bool writeData(Ostream& os) const;
 };
 
 

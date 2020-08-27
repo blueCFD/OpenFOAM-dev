@@ -32,8 +32,8 @@ inline Foam::MichaelisMentenReactionRate::MichaelisMentenReactionRate
 )
 :
     species_(st),
-    Vmax_(readScalar(dict.lookup("Vmax"))),
-    Km_(readScalar(dict.lookup("Km"))),
+    Vmax_(dict.lookup<scalar>("Vmax")),
+    Km_(dict.lookup<scalar>("Km")),
     s_(st[dict.lookup("S")])
 {
     beta_.append(Tuple2<label, scalar>(s_, 1.0));
@@ -46,7 +46,8 @@ inline Foam::scalar Foam::MichaelisMentenReactionRate::operator()
 (
     const scalar p,
     const scalar T,
-    const scalarField& c
+    const scalarField& c,
+    const label li
 ) const
 {
     return Vmax_/(Km_ + c[s_]);
@@ -57,7 +58,8 @@ inline Foam::scalar Foam::MichaelisMentenReactionRate::ddT
 (
     const scalar p,
     const scalar T,
-    const scalarField& c
+    const scalarField& c,
+    const label li
 ) const
 {
     return 0;
@@ -76,6 +78,7 @@ inline void Foam::MichaelisMentenReactionRate::dcidc
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     scalarField& dcidc
 ) const
 {
@@ -87,7 +90,8 @@ inline Foam::scalar Foam::MichaelisMentenReactionRate::dcidT
 (
     const scalar p,
     const scalar T,
-    const scalarField& c
+    const scalarField& c,
+    const label li
 ) const
 {
     return 0;

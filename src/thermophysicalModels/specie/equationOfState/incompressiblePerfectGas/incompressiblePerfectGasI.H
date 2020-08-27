@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -134,7 +134,18 @@ inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::Cv
 
 
 template<class Specie>
-inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::S
+inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::Sp
+(
+    scalar p,
+    scalar T
+) const
+{
+    return 0;
+}
+
+
+template<class Specie>
+inline Foam::scalar Foam::incompressiblePerfectGas<Specie>::Sv
 (
     scalar p,
     scalar T
@@ -185,16 +196,17 @@ inline void Foam::incompressiblePerfectGas<Specie>::operator+=
     const incompressiblePerfectGas<Specie>& ipg
 )
 {
-    scalar Y1 = this->Y();
-    Specie::operator+=(ipg);
-
-    if (mag(this->Y()) > small)
+    if (notEqual(pRef_, ipg.pRef_))
     {
-        Y1 /= this->Y();
-        const scalar Y2 = ipg.Y()/this->Y();
-
-        pRef_ = Y1*pRef_ + Y2*ipg.pRef_;
+        FatalErrorInFunction
+            << "pRef " << pRef_ << " for "
+            << (this->name().size() ? this->name() : "others")
+            << " != " << ipg.pRef_ << " for "
+            << (ipg.name().size() ? ipg.name() : "others")
+            << exit(FatalError);
     }
+
+    Specie::operator+=(ipg);
 }
 
 
@@ -214,31 +226,21 @@ inline Foam::incompressiblePerfectGas<Specie> Foam::operator+
     const incompressiblePerfectGas<Specie>& ipg2
 )
 {
-    Specie sp
+    if (notEqual(ipg1.pRef_, ipg2.pRef_))
+    {
+        FatalErrorInFunction
+            << "pRef " << ipg1.pRef_ << " for "
+            << (ipg1.name().size() ? ipg1.name() : "others")
+            << " != " << ipg2.pRef_ << " for "
+            << (ipg2.name().size() ? ipg2.name() : "others")
+            << exit(FatalError);
+    }
+
+    return incompressiblePerfectGas<Specie>
     (
-        static_cast<const Specie&>(ipg1)
-      + static_cast<const Specie&>(ipg2)
+        static_cast<const Specie&>(ipg1) + static_cast<const Specie&>(ipg2),
+        ipg1.pRef_
     );
-
-    if (mag(sp.Y()) < small)
-    {
-        return incompressiblePerfectGas<Specie>
-        (
-            sp,
-            ipg1.pRef_
-        );
-    }
-    else
-    {
-        const scalar Y1 = ipg1.Y()/sp.Y();
-        const scalar Y2 = ipg2.Y()/sp.Y();
-
-        return incompressiblePerfectGas<Specie>
-        (
-            sp,
-            Y1*ipg1.pRef_ + Y2*ipg2.pRef_
-        );
-    }
 }
 
 
@@ -264,19 +266,10 @@ inline Foam::incompressiblePerfectGas<Specie> Foam::operator==
     const incompressiblePerfectGas<Specie>& ipg2
 )
 {
-    Specie sp
-    (
-        static_cast<const Specie&>(ipg1)
-     == static_cast<const Specie&>(ipg2)
-    );
-
-    const scalar Y1 = ipg1.Y()/sp.Y();
-    const scalar Y2 = ipg2.Y()/sp.Y();
-
     return incompressiblePerfectGas<Specie>
     (
-        sp,
-        Y2*ipg2.pRef_ - Y1*ipg1.pRef_
+        static_cast<const Specie&>(ipg1) == static_cast<const Specie&>(ipg2),
+        NaN
     );
 }
 

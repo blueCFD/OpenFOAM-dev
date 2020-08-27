@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,8 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "turbulentFluidThermoModel.H"
+#include "fluidThermoMomentumTransportModel.H"
+#include "rhoReactionThermophysicalTransportModel.H"
 #include "basicReactingMultiphaseCloud.H"
 #include "rhoReactionThermo.H"
 #include "CombustionModel.T.H"
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
         }
 
         turbulence->correct();
+        thermophysicalTransport->correct();
 
         runTime.write();
 

@@ -2,13 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -22,18 +20,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - These changes are technically from Symscape's own patches for Windows,
-        circa 2009.
-      - The adaptation derived from the patches for blueCFD 2.1, adjusted to
-        OpenFOAM 2.2.
 
 Class
     Foam::IOobject
@@ -109,6 +95,9 @@ class IOobject
 
 public:
 
+    //- Keyword for the FoamFile header sub-dictionary
+    static constexpr const char* foamFile = "FoamFile";
+
     // Public data types
 
         //- Enumeration defining the valid states of an IOobject
@@ -179,12 +168,14 @@ private:
         //- IOobject state
         objectState objState_;
 
+
 protected:
 
     // Protected Member Functions
 
         //- Set the object state to bad
         void setBad(const string&);
+
 
 public:
 
@@ -219,6 +210,11 @@ public:
 
         //- Return member (name without the extension)
         static word member(const word& name);
+
+        //- Return the name of the object within the given model
+        //  as <model>:<name>
+        template<class Name>
+        static inline word modelName(Name name, const word& model);
 
         //- Type of file modification checking
         static fileCheckTypes fileModificationChecking;
@@ -310,9 +306,6 @@ public:
                 return name_;
             }
 
-            //- Unique on disk file name.
-            const word& uniqueFileName() const;
-
             //- Return name of the class name read from header
             const word& headerClassName() const
             {
@@ -387,6 +380,10 @@ public:
             //- Return member (name without the extension)
             word member() const;
 
+            //- Return the name of the object within this model
+            //  as <model>:<name>
+            inline word modelName(const char* name) const;
+
             const fileName& rootPath() const;
 
             const fileName& caseName() const;
@@ -416,10 +413,19 @@ public:
                 const fileName& local = ""
             ) const;
 
+            //- Return the path relative to the case
+            fileName localPath() const;
+
             //- Return complete path + object name
             fileName objectPath() const
             {
-                return path()/uniqueFileName();
+                return path()/name();
+            }
+
+            //- Return complete localPath + object name
+            fileName localObjectPath() const
+            {
+                return localPath()/name();
             }
 
             //- Helper for filePath that searches locally.
@@ -491,13 +497,6 @@ public:
     // Member Operators
 
         void operator=(const IOobject&);
-
-
-    // Static functions
-
-        //- Set unique on disk file name 
-        //- e.g., b -> b_ to avoid upper/lowercase clash with B
-        static void replaceFileName(const word& from, const word& to);
 };
 
 

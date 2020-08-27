@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,8 +78,8 @@ public:
         PaSR
         (
             const word& modelType,
-            ReactionThermo& thermo,
-            const compressibleTurbulenceModel& turb,
+            const ReactionThermo& thermo,
+            const compressibleMomentumTransportModel& turb,
             const word& combustionProperties
         );
 

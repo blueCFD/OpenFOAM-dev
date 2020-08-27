@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "AMIInterpolation.T.H"
-#include "AMIMethod.T.H"
+#include "AMIMethod.H"
 #include "meshTools.H"
 #include "mapDistribute.H"
 #include "flipOp.H"

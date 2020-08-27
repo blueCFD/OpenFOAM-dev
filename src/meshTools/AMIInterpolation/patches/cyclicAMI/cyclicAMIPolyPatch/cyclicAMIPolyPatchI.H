@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-inline const Foam::word& Foam::cyclicAMIPolyPatch::neighbPatchName() const
+inline const Foam::word& Foam::cyclicAMIPolyPatch::nbrPatchName() const
 {
     if (nbrPatchName_.empty())
     {
@@ -35,24 +35,6 @@ inline const Foam::word& Foam::cyclicAMIPolyPatch::neighbPatchName() const
         nbrPatchName_ = boundaryMesh()[patchID].name();
     }
     return nbrPatchName_;
-}
-
-
-inline const Foam::vector& Foam::cyclicAMIPolyPatch::rotationAxis() const
-{
-    return rotationAxis_;
-}
-
-
-inline const Foam::point& Foam::cyclicAMIPolyPatch::rotationCentre() const
-{
-    return rotationCentre_;
-}
-
-
-inline const Foam::vector& Foam::cyclicAMIPolyPatch::separationVector() const
-{
-    return separationVector_;
 }
 
 

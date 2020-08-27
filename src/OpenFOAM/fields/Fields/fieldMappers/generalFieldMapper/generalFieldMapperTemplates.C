@@ -23,13 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD:src/OpenFOAM/meshes/data/dataTemplates.C
-#include "data.H"
-#include "Time.T.H"
-#include "solverPerformance.H"
-=======
 #include "generalFieldMapper.H"
->>>>>>> blueCFD-Core-7:src/OpenFOAM/fields/Fields/fieldMappers/generalFieldMapper/generalFieldMapperTemplates.C
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

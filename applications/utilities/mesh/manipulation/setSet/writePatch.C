@@ -2,11 +2,9 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -23,31 +21,16 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - Always open the files in binary mode, because of how things work on 
-        Windows.
-
 \*---------------------------------------------------------------------------*/
 
 #include "writePatch.H"
 #include "OFstream.H"
-#include "writeFuns.H"
+#include "vtkWriteOps.H"
 #include "primitiveFacePatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-
-// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
-
-void writePatch
+void Foam::vtkWriteOps::writePatch
 (
     const bool binary,
     const word& setName,
@@ -57,10 +40,7 @@ void writePatch
     const fileName& fileName
 )
 {
-    // Use binary mode in case we write binary.
-    // Causes windows reading to fail if we don't
-    std::ofstream pStream(fileName.c_str(), 
-                       ios_base::out|ios_base::binary);
+    std::ofstream pStream(fileName.c_str());
 
     pStream
         << "# vtk DataFile Version 2.0" << std::endl
@@ -89,9 +69,9 @@ void writePatch
 
     DynamicList<floatScalar> ptField(3*fp.nPoints());
 
-    writeFuns::insert(fp.localPoints(), ptField);
+    vtkWriteOps::insert(fp.localPoints(), ptField);
 
-    writeFuns::write(pStream, binary, ptField);
+    vtkWriteOps::write(pStream, binary, ptField);
 
 
     label nFaceVerts = 0;
@@ -112,9 +92,9 @@ void writePatch
 
         vertLabels.append(f.size());
 
-        writeFuns::insert(f, vertLabels);
+        vtkWriteOps::insert(f, vertLabels);
     }
-    writeFuns::write(pStream, binary, vertLabels);
+    vtkWriteOps::write(pStream, binary, vertLabels);
 
 
     //-----------------------------------------------------------------
@@ -132,11 +112,8 @@ void writePatch
     // Cell ids first
     pStream << fieldName << " 1 " << fp.size() << " int" << std::endl;
 
-    writeFuns::write(pStream, binary, fieldValues);
+    vtkWriteOps::write(pStream, binary, fieldValues);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

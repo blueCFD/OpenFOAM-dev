@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "timeVaryingMappedFvPatchField.H"
-#include "Time.H"
-#include "AverageField.H"
+#include "Time.T.H"
+#include "AverageField.T.H"
 #include "IFstream.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

@@ -27,7 +27,7 @@ License
 #include "pointFields.H"
 #include "interpolationWeights.H"
 #include "uniformInterpolate.H"
-#include "ReadFields.H"
+#include "ReadFields.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

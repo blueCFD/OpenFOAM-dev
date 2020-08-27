@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -106,22 +106,11 @@ Foam::jumpCyclicFvPatchField<Type>::patchNeighbourField() const
         jf *= -1.0;
     }
 
-    if (this->doTransform())
+    forAll(*this, facei)
     {
-        forAll(*this, facei)
-        {
-            pnf[facei] = transform
-            (
-                this->forwardT()[0], iField[nbrFaceCells[facei]]
-            ) - jf[facei];
-        }
-    }
-    else
-    {
-        forAll(*this, facei)
-        {
-            pnf[facei] = iField[nbrFaceCells[facei]] - jf[facei];
-        }
+        pnf[facei] =
+            this->transform().transform(iField[nbrFaceCells[facei]])
+          - jf[facei];
     }
 
     return tpnf;

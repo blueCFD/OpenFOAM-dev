@@ -89,7 +89,7 @@ activeBaffleVelocityFvPatchVectorField
     pName_(dict.lookupOrDefault<word>("p", "p")),
     cyclicPatchName_(dict.lookup("cyclicPatch")),
     cyclicPatchLabel_(p.patch().boundaryMesh().findPatchID(cyclicPatchName_)),
-    orientation_(readLabel(dict.lookup("orientation"))),
+    orientation_(dict.lookup<label>("orientation")),
     initWallSf_(p.Sf()),
     initCyclicSf_(p.boundaryMesh()[cyclicPatchLabel_].Sf()),
     nbrCyclicSf_
@@ -99,9 +99,9 @@ activeBaffleVelocityFvPatchVectorField
             p.boundaryMesh()[cyclicPatchLabel_]
         ).neighbFvPatch().Sf()
     ),
-    openFraction_(readScalar(dict.lookup("openFraction"))),
-    openingTime_(readScalar(dict.lookup("openingTime"))),
-    maxOpenFractionDelta_(readScalar(dict.lookup("maxOpenFractionDelta"))),
+    openFraction_(dict.lookup<scalar>("openFraction")),
+    openingTime_(dict.lookup<scalar>("openingTime")),
+    maxOpenFractionDelta_(dict.lookup<scalar>("maxOpenFractionDelta")),
     curTimeIndex_(-1)
 {
     fvPatchVectorField::operator=(Zero);

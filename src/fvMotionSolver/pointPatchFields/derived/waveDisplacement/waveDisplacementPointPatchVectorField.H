@@ -80,7 +80,7 @@ SourceFiles
 #define waveDisplacementPointPatchVectorField_H
 
 #include "fixedValuePointPatchField.H"
-#include "Function1.H"
+#include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -23,11 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD:applications/test/StaticHashTable/Test-staticHashTable.C
-#include "StaticHashTable.T.H"
-=======
-#include "ListHashTable.H"
->>>>>>> blueCFD-Core-7:applications/test/ListHashTable/Test-ListHashTable.C
+#include "ListHashTable.T.H"
 #include "IOstreams.H"
 #include "IStringStream.H"
 #include "OStringStream.H"

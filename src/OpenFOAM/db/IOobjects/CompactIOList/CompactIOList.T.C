@@ -23,13 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD:src/OpenFOAM/db/IOobjects/CompactIOList/CompactIOList.T.C
 #include "CompactIOList.T.H"
-#include "labelList.H"
-=======
-#include "CompactIOList.H"
-#include "IOList.H"
->>>>>>> blueCFD-Core-7:src/OpenFOAM/db/IOobjects/CompactIOList/CompactIOList.C
+#include "IOList.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

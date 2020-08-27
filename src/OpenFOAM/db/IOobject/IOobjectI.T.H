@@ -2,16 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2011 Symscape: Appended message to the output header.
- 2011 blueCAPE: Adapted Symscape's output header to convey the message of the
-                current port and based on which port.
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -25,12 +20,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
 
 \*---------------------------------------------------------------------------*/
 
@@ -49,6 +38,26 @@ inline Foam::word Foam::IOobject::groupName(Name name, const word& group)
     {
         return name;
     }
+}
+
+
+template<class Name>
+inline Foam::word Foam::IOobject::modelName(Name name, const word& model)
+{
+    if (model != word::null)
+    {
+        return name + (':' + model);
+    }
+    else
+    {
+        return name;
+    }
+}
+
+
+inline Foam::word Foam::IOobject::modelName(const char* name) const
+{
+    return type() + ':' + name;
 }
 
 
@@ -88,26 +97,6 @@ inline Stream& Foam::IOobject::writeBanner(Stream& os, bool noHint)
     }
 
     os  <<
-<<<<<<< HEAD:src/OpenFOAM/db/IOobject/IOobjectI.T.H
-        "| =========                 |"
-        "                                                 |\n"
-        "| \\\\      /  F ield         |"
-        " OpenFOAM: The Open Source CFD Toolbox           |\n"
-        "|  \\\\    /   O peration     |"
-        " Version:  " << FOAMversion << spaces << "|\n"
-        "|   \\\\  /    A nd           |"
-        " Website:  https://openfoam.org                  |\n"
-        "|    \\\\/     M anipulation  |"
-        "                                                 |\n"
-        "\\*-----------------------------------------"
-        "----------------------------------*/\n";
-#if defined( WIN32 ) || defined( WIN64 )
-    os <<
-        "/*   Windows 32 and 64 bit porting by blueCAPE: http://www.bluecape.com.pt   *\\\n"
-        "|  Based on Windows porting (2.0.x v4) by Symscape: http://www.symscape.com   |\n"
-        "\\*---------------------------------------------------------------------------*/\n";
-#endif
-=======
     "  =========                 |\n"
     "  \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox\n"
     "   \\\\    /   O peration     | Website:  https://openfoam.org\n"
@@ -115,7 +104,6 @@ inline Stream& Foam::IOobject::writeBanner(Stream& os, bool noHint)
     "     \\\\/     M anipulation  |\n"
     "\\*-----------------------------------------"
     "----------------------------------*/\n";
->>>>>>> blueCFD-Core-7:src/OpenFOAM/db/IOobject/IOobjectI.H
 
     return os;
 }

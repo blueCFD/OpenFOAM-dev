@@ -40,12 +40,7 @@ Description
 #ifndef ErgunWenYuDragForce_H
 #define ErgunWenYuDragForce_H
 
-<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/ErgunWenYuDrag/ErgunWenYuDragForce.T.H
-#include "ParticleForce.T.H"
-#include "volFieldsFwd.H"
-=======
-#include "WenYuDragForce.H"
->>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/ErgunWenYuDrag/ErgunWenYuDragForce.H
+#include "WenYuDragForce.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

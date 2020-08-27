@@ -636,7 +636,7 @@ bool Foam::autoDensity::fillBox
         }
 
         // Using the sampledPoints as the first test locations as they are
-        // randomly shuffled, but unfiormly sampling space and have wellInside
+        // randomly shuffled, but uniformly sampling space and have wellInside
         // and size data already
 
         maxDensity = 1/pow3(max(minCellSize, small));
@@ -884,9 +884,9 @@ autoDensity::autoDensity
     (
         detailsDict().lookupOrDefault<scalar>("minCellSizeLimit", 0.0)
     ),
-    minLevels_(readLabel(detailsDict().lookup("minLevels"))),
-    maxSizeRatio_(readScalar(detailsDict().lookup("maxSizeRatio"))),
-    volRes_(readLabel(detailsDict().lookup("sampleResolution"))),
+    minLevels_(detailsDict().lookup<label>("minLevels")),
+    maxSizeRatio_(detailsDict().lookup<scalar>("maxSizeRatio")),
+    volRes_(detailsDict().lookup<label>("sampleResolution")),
     surfRes_
     (
         detailsDict().lookupOrDefault<label>("surfaceSampleResolution", volRes_)

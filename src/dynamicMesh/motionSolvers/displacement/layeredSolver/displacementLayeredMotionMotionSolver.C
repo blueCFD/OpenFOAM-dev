@@ -29,7 +29,7 @@ License
 #include "pointFields.H"
 #include "PointEdgeWave.T.H"
 #include "syncTools.H"
-#include "interpolationTable.H"
+#include "TableFile.T.H"
 #include "pointConstraints.H"
 #include "mapPolyMesh.H"
 
@@ -233,9 +233,9 @@ Foam::displacementLayeredMotionMotionSolver::faceZoneEvaluate
     }
     else if (type == "timeVaryingUniformFixedValue")
     {
-        interpolationTable<vector> timeSeries(dict);
+        Function1s::TableFile<vector> timeSeries(word::null, dict);
 
-        fld = timeSeries(mesh().time().timeOutputValue());
+        fld = timeSeries.value(mesh().time().timeOutputValue());
     }
     else if (type == "slip")
     {
@@ -255,7 +255,7 @@ Foam::displacementLayeredMotionMotionSolver::faceZoneEvaluate
     }
     else if (type == "uniformFollow")
     {
-        // Reads name of name of patch. Then get average point dislacement on
+        // Reads name of name of patch. Then get average point displacement on
         // patch. That becomes the value of fld.
         const word patchName(dict.lookup("patch"));
         label patchID = mesh().boundaryMesh().findPatchID(patchName);

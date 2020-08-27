@@ -1,10 +1,16 @@
 chemistryModel/basicChemistryModel/basicChemistryModel.C
 chemistryModel/BasicChemistryModel/BasicChemistryModels.T.C
 
-chemistryModel/TDACChemistryModel/reduction/makeChemistryReductionMethods.C
-chemistryModel/TDACChemistryModel/tabulation/makeChemistryTabulationMethods.C
+chemistrySolver/chemistrySolver/chemistrySolvers.C
+chemistryModel/TDACChemistryModel/reduction/chemistryReductionMethod/chemistryReductionMethods.C
+chemistryModel/TDACChemistryModel/tabulation/chemistryTabulationMethod/chemistryTabulationMethods.C
 
-chemistrySolver/chemistrySolver/makeChemistrySolvers.C
+reactions/makeReactions.C
+
+reactions/makeLangmuirHinshelwoodReactions.C
+reactions/makeMichaelisMentenReactions.C
+reactions/fluxLimitedLangmuirHinshelwood/makefluxLimitedLangmuirHinshelwoodReactions.C
+reactions/surfaceArrheniusReactionRate/makesurfaceArrheniusReactions.C
 
 functionObjects/specieReactionRates/specieReactionRates.C
 

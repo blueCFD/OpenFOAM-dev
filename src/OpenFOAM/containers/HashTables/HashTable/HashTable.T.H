@@ -47,10 +47,6 @@ SourceFiles
 #include "label.H"
 #include "uLabel.H"
 #include "word.H"
-<<<<<<< HEAD:src/OpenFOAM/containers/HashTables/HashTable/HashTable.T.H
-#include "Xfer.T.H"
-=======
->>>>>>> blueCFD-Core-7:src/OpenFOAM/containers/HashTables/HashTable/HashTable.H
 #include "className.H"
 #include <initializer_list>
 
@@ -213,7 +209,7 @@ public:
         //- Copy constructor
         HashTable(const HashTable<T, Key, Hash>&);
 
-        //- More Constructor
+        //- Move constructor
         HashTable(HashTable<T, Key, Hash>&&);
 
         //- Construct from an initializer list

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,21 +41,16 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-<<<<<<< HEAD
+#include "dynamicFvMesh.H"
 #include "CMULES.T.H"
 #include "EulerDdtScheme.T.H"
-=======
-#include "dynamicFvMesh.H"
-#include "CMULES.H"
-#include "EulerDdtScheme.H"
->>>>>>> blueCFD-Core-7
 #include "localEulerDdtScheme.H"
 #include "CrankNicolsonDdtScheme.T.H"
 #include "subCycle.H"
 #include "compressibleInterPhaseTransportModel.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 #include "fvcSmooth.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -82,7 +77,7 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     Info<< "\nStarting time loop\n" << endl;
 
-    while (runTime.run())
+    while (pimple.run(runTime))
     {
         #include "readDyMControls.H"
 

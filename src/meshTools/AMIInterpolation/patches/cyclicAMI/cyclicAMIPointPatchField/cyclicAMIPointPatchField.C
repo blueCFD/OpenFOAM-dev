@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -132,7 +132,7 @@ void Foam::cyclicAMIPointPatchField<Type>::swapAddSeparated
         // all swaps on the side that gets evaluated first.
 
         // Get neighbouring pointPatch
-        const cyclicAMIPointPatch& nbrPatch = cyclicAMIPatch_.neighbPatch();
+        const cyclicAMIPointPatch& nbrPatch = cyclicAMIPatch_.nbrPatch();
 
         // Get neighbouring pointPatchField
         const GeometricField<Type, pointPatchField, pointMesh>& fld =
@@ -151,15 +151,8 @@ void Foam::cyclicAMIPointPatchField<Type>::swapAddSeparated
         Field<Type> ptFld(this->patchInternalField(pField));
         Field<Type> nbrPtFld(nbr.patchInternalField(pField));
 
-
-        if (doTransform())
-        {
-            const tensor& forwardT = this->forwardT()[0];
-            const tensor& reverseT = this->reverseT()[0];
-
-            transform(ptFld, reverseT, ptFld);
-            transform(nbrPtFld, forwardT, nbrPtFld);
-        }
+        transform().invTransform(ptFld, ptFld);
+        transform().transform(nbrPtFld, nbrPtFld);
 
         // convert point field to face field, AMI interpolate, then
         // face back to point
@@ -203,7 +196,7 @@ void Foam::cyclicAMIPointPatchField<Type>::swapAddSeparated
                 Field<Type> nbrFcFld(nbrPpi().pointToFaceInterpolate(nbrPtFld));
 
                 fcFld =
-                    cyclicAMIPatch_.cyclicAMIPatch().neighbPatch().interpolate
+                    cyclicAMIPatch_.cyclicAMIPatch().nbrPatch().interpolate
                     (
                         fcFld,
                         nbrFcFld
@@ -212,7 +205,7 @@ void Foam::cyclicAMIPointPatchField<Type>::swapAddSeparated
             else
             {
                 fcFld =
-                    cyclicAMIPatch_.cyclicAMIPatch().neighbPatch().interpolate
+                    cyclicAMIPatch_.cyclicAMIPatch().nbrPatch().interpolate
                     (
                         fcFld
                     );

@@ -36,12 +36,7 @@ SourceFiles
 #define motionSolver_H
 
 #include "pointField.H"
-<<<<<<< HEAD
-
 #include "Time.T.H"
-=======
-#include "Time.H"
->>>>>>> blueCFD-Core-7
 #include "polyMesh.H"
 #include "dictionaryEntry.H"
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,8 +26,8 @@ License
 #include "forces.H"
 #include "fvcGrad.H"
 #include "porosityModel.H"
-#include "turbulentTransportModel.H"
-#include "turbulentFluidThermoModel.H"
+#include "kinematicMomentumTransportModel.H"
+#include "fluidThermoMomentumTransportModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -60,7 +60,7 @@ Foam::wordList Foam::functionObjects::forces::createFileNames
     if (dict.found("binData"))
     {
         const dictionary& binDict(dict.subDict("binData"));
-        label nb = readLabel(binDict.lookup("nBin"));
+        label nb = binDict.lookup<label>("nBin");
         if (nb > 0)
         {
             // Name for file(fileID::binsFile=1)
@@ -216,24 +216,24 @@ void Foam::functionObjects::forces::initialise()
 
 
 Foam::tmp<Foam::volSymmTensorField>
-Foam::functionObjects::forces::devRhoReff() const
+Foam::functionObjects::forces::devTau() const
 {
-    typedef compressible::turbulenceModel cmpTurbModel;
-    typedef incompressible::turbulenceModel icoTurbModel;
+    typedef compressible::momentumTransportModel cmpTurbModel;
+    typedef incompressible::momentumTransportModel icoTurbModel;
 
-    if (obr_.foundObject<cmpTurbModel>(cmpTurbModel::propertiesName))
+    if (obr_.foundObject<cmpTurbModel>(momentumTransportModel::typeName))
     {
         const cmpTurbModel& turb =
-            obr_.lookupObject<cmpTurbModel>(cmpTurbModel::propertiesName);
+            obr_.lookupObject<cmpTurbModel>(momentumTransportModel::typeName);
 
-        return turb.devRhoReff();
+        return turb.devTau();
     }
-    else if (obr_.foundObject<icoTurbModel>(icoTurbModel::propertiesName))
+    else if (obr_.foundObject<icoTurbModel>(momentumTransportModel::typeName))
     {
-        const incompressible::turbulenceModel& turb =
-            obr_.lookupObject<icoTurbModel>(icoTurbModel::propertiesName);
+        const incompressible::momentumTransportModel& turb =
+            obr_.lookupObject<icoTurbModel>(momentumTransportModel::typeName);
 
-        return rho()*turb.devReff();
+        return rho()*turb.devSigma();
     }
     else if (obr_.foundObject<fluidThermo>(fluidThermo::dictName))
     {
@@ -795,9 +795,9 @@ void Foam::functionObjects::forces::calcForcesMoment()
         const surfaceVectorField::Boundary& Sfb =
             mesh_.Sf().boundaryField();
 
-        tmp<volSymmTensorField> tdevRhoReff = devRhoReff();
-        const volSymmTensorField::Boundary& devRhoReffb
-            = tdevRhoReff().boundaryField();
+        tmp<volSymmTensorField> tdevTau = devTau();
+        const volSymmTensorField::Boundary& devTaub
+            = tdevTau().boundaryField();
 
         // Scale pRef by density for incompressible simulations
         scalar pRef = pRef_/rho(p);
@@ -816,7 +816,7 @@ void Foam::functionObjects::forces::calcForcesMoment()
                 rho(p)*Sfb[patchi]*(p.boundaryField()[patchi] - pRef)
             );
 
-            vectorField fT(Sfb[patchi] & devRhoReffb[patchi]);
+            vectorField fT(Sfb[patchi] & devTaub[patchi]);
 
             vectorField fP(Md.size(), Zero);
 

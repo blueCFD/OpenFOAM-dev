@@ -85,7 +85,7 @@ SourceFiles
 #include "pointField.H"
 #include "Tuple2.T.H"
 #include "pointIndexHit.H"
-#include "AMIInterpolation.H"
+#include "AMIInterpolation.T.H"
 #include "coupleGroupIdentifier.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

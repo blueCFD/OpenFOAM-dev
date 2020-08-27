@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,10 +25,13 @@ Class
     Foam::dragModels::Ergun
 
 Description
-    H, Enwald, E. Peirano, A-E Almstedt
-    'Eulerian Two-Phase Flow Theory Applied to Fluidization'
-    Int. J. Multiphase Flow, Vol. 22, Suppl, pp. 21-66 (1996)
-    Eq. 104, p. 42
+
+    Reference:
+    \verbatim
+        Enwald, H., Peirano, E., & Almstedt, A. E. (1996).
+        Eulerian two-phase flow theory applied to fluidization.
+        International Journal of Multiphase Flow, 22, 21-66.
+    \endverbatim
 
 SourceFiles
     Ergun.C
@@ -55,7 +58,6 @@ class Ergun
 :
     public dragModel
 {
-
 public:
 
     //- Runtime type information
@@ -64,12 +66,12 @@ public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from a dictionary and a phase pair
         Ergun
         (
-            const dictionary& interfaceDict,
-            const phaseModel& phase1,
-            const phaseModel& phase2
+            const dictionary& dict,
+            const phasePair& pair,
+            const bool registerObject
         );
 
 
@@ -79,7 +81,8 @@ public:
 
     // Member Functions
 
-        tmp<volScalarField> K(const volScalarField& Ur) const;
+        //- Drag coefficient
+        virtual tmp<volScalarField> CdRe() const;
 };
 
 

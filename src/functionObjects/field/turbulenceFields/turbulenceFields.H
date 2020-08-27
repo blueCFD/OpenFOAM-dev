@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,10 +28,10 @@ Description
     Stores turbulence fields on the mesh database for further manipulation.
 
     Fields are stored as copies of the original, with the prefix
-    "tubulenceModel:", e.g.:
+    "momentumTransportModel:", e.g.:
 
     \verbatim
-    turbulenceModel:R
+    momentumTransportModel:R
     \endverbatim
 
     Example of function object specification:
@@ -44,7 +44,7 @@ Description
         fields
         (
             R
-            devRhoReff
+            devTau
         );
     }
     \endverbatim
@@ -69,8 +69,8 @@ Usage
         alphat      | turbulence thermal diffusivity (compressible)
         alphaEff    | effective turbulence thermal diffusivity (compressible)
         R           | Reynolds stress tensor
-        devReff     | Deviatoric part of the effective Reynolds stress
-        devRhoReff  | Divergence of the Reynolds stress
+        devSigma     | Deviatoric part of the effective Reynolds stress
+        devTau  | Divergence of the Reynolds stress
     \endplaintable
 
 See also
@@ -114,12 +114,11 @@ public:
         omega,
         mut,
         muEff,
-        alphat,
         alphaEff,
         R,
-        devRhoReff
+        devTau
     };
-    static const NamedEnum<compressibleField, 9> compressibleFieldNames_;
+    static const NamedEnum<compressibleField, 8> compressibleFieldNames_;
 
     enum class incompressibleField
     {
@@ -129,7 +128,7 @@ public:
         nut,
         nuEff,
         R,
-        devReff
+        devSigma
     };
     static const NamedEnum<incompressibleField, 7> incompressibleFieldNames_;
 

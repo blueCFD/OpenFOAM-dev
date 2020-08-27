@@ -24,13 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "thresholdCellFaces.H"
-<<<<<<< HEAD
-
-#include "polyMesh.H"
-#include "DynamicList.T.H"
-
-=======
->>>>>>> blueCFD-Core-7
 #include "emptyPolyPatch.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

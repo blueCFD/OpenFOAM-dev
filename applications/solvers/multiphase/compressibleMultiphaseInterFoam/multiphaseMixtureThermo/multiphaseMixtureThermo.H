@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -144,9 +144,6 @@ private:
         //- Stabilisation for normalisation of the interface normal
         const dimensionedScalar deltaN_;
 
-        //- Conversion factor for degrees into radians
-        static const scalar convertToRad;
-
 
     // Private Member Functions
 
@@ -278,7 +275,6 @@ public:
             //- Enthalpy/Internal energy for cell-set [J/kg]
             virtual tmp<scalarField> he
             (
-                const scalarField& p,
                 const scalarField& T,
                 const labelList& cells
             ) const;
@@ -286,19 +282,67 @@ public:
             //- Enthalpy/Internal energy for patch [J/kg]
             virtual tmp<scalarField> he
             (
-                const scalarField& p,
                 const scalarField& T,
                 const label patchi
             ) const;
 
-            //- Chemical enthalpy [J/kg]
+            //- Sensible enthalpy [J/kg]
+            virtual tmp<volScalarField> hs() const;
+
+            //- Sensible enthalpy
+            //  for given pressure and temperature [J/kg]
+            virtual tmp<volScalarField> hs
+            (
+                const volScalarField& p,
+                const volScalarField& T
+            ) const;
+
+            //- Sensible enthalpy for cell-set [J/kg]
+            virtual tmp<scalarField> hs
+            (
+                const scalarField& T,
+                const labelList& cells
+            ) const;
+
+            //- Sensible enthalpy for patch [J/kg]
+            virtual tmp<scalarField> hs
+            (
+                const scalarField& T,
+                const label patchi
+            ) const;
+
+            //- Absolute enthalpy [J/kg]
+            virtual tmp<volScalarField> ha() const;
+
+            //- Absolute enthalpy
+            //  for given pressure and temperature [J/kg]
+            virtual tmp<volScalarField> ha
+            (
+                const volScalarField& p,
+                const volScalarField& T
+            ) const;
+
+            //- Absolute enthalpy for cell-set [J/kg]
+            virtual tmp<scalarField> ha
+            (
+                const scalarField& T,
+                const labelList& cells
+            ) const;
+
+            //- Absolute enthalpy for patch [J/kg]
+            virtual tmp<scalarField> ha
+            (
+                const scalarField& T,
+                const label patchi
+            ) const;
+
+            //- Enthalpy of formation [J/kg]
             virtual tmp<volScalarField> hc() const;
 
             //- Temperature from enthalpy/internal energy for cell-set
             virtual tmp<scalarField> THE
             (
                 const scalarField& h,
-                const scalarField& p,
                 const scalarField& T0,      // starting temperature
                 const labelList& cells
             ) const;
@@ -307,7 +351,6 @@ public:
             virtual tmp<scalarField> THE
             (
                 const scalarField& h,
-                const scalarField& p,
                 const scalarField& T0,      // starting temperature
                 const label patchi
             ) const;
@@ -327,7 +370,6 @@ public:
             //- Heat capacity at constant pressure for patch [J/kg/K]
             virtual tmp<scalarField> Cp
             (
-                const scalarField& p,
                 const scalarField& T,
                 const label patchi
             ) const;
@@ -338,7 +380,6 @@ public:
             //- Heat capacity at constant volume for patch [J/kg/K]
             virtual tmp<scalarField> Cv
             (
-                const scalarField& p,
                 const scalarField& T,
                 const label patchi
             ) const;
@@ -349,7 +390,6 @@ public:
             //- Gamma = Cp/Cv for patch []
             virtual tmp<scalarField> gamma
             (
-                const scalarField& p,
                 const scalarField& T,
                 const label patchi
             ) const;
@@ -360,7 +400,6 @@ public:
             //- Heat capacity at constant pressure/volume for patch [J/kg/K]
             virtual tmp<scalarField> Cpv
             (
-                const scalarField& p,
                 const scalarField& T,
                 const label patchi
             ) const;
@@ -371,7 +410,6 @@ public:
             //- Heat capacity ratio for patch []
             virtual tmp<scalarField> CpByCpv
             (
-                const scalarField& p,
                 const scalarField& T,
                 const label patchi
             ) const;

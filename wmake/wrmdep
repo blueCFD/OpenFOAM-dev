@@ -3,13 +3,11 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -23,16 +21,6 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Modifications
-#     This file has been modified by blueCAPE's unofficial mingw patches for
-#     OpenFOAM.
-#     For more information about these patches, visit:
-#         http://bluecfd.com/Core
-#
-#     Modifications made:
-#        - -old option now uses the shell function fromDepToSource as well, for
-#          retrieving the original file name directly from the .dep file.
 #
 # Script wrmdep
 #
@@ -226,11 +214,8 @@ oldFolders)
         do
             depToSource "$depFile"
 
-            # Also check inside the file dep itself
-            fromDepToSource "$depFile"
-
             # Check C++ or Flex source file exists
-            if [ ! -r "$sourceFile" -a ! -r "$sourceFileDirect" ];
+            if [ ! -r "$sourceFile" ];
             then
                 echo "    rm $depFile"
                 rm -f "$depFile" 2>/dev/null
@@ -242,11 +227,15 @@ oldFolders)
 
 updateMode)
 
-    if [ "$PWD" != "$WM_PROJECT_DIR" ]
+    expandPath "$PWD"
+    if [ "$exPath" != "$WM_PROJECT_DIR" ]
     then
         echo "Cannot 'update', not in the project top-level directory"
         exit 1
     fi
+
+    # Go into the real path
+    cd "$exPath"
 
     echo "Removing dep files corresponding to source files that no longer exist..."
     fileNameList=$(find -L src applications -name '*.[CHL]' -type l)

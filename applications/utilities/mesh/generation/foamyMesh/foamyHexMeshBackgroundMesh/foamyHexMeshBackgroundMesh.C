@@ -40,13 +40,8 @@ Description
 #include "backgroundMeshDecomposition.H"
 #include "cellShape.H"
 #include "cellModeller.H"
-<<<<<<< HEAD
 #include "DynamicField.T.H"
-#include "isoSurfaceCell.H"
-=======
-#include "DynamicField.H"
 #include "isoSurface.H"
->>>>>>> blueCFD-Core-7
 #include "vtkSurfaceWriter.H"
 #include "syncTools.H"
 

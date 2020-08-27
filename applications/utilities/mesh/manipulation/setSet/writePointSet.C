@@ -2,11 +2,9 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
 
@@ -23,30 +21,15 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - Always open the files in binary mode, because of how things work on 
-        Windows.
-
 \*---------------------------------------------------------------------------*/
 
 #include "writePointSet.H"
 #include "OFstream.H"
-#include "writeFuns.H"
+#include "vtkWriteOps.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-
-// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
-
-void writePointSet
+void Foam::vtkWriteOps::writePointSet
 (
     const bool binary,
     const primitiveMesh& mesh,
@@ -54,10 +37,7 @@ void writePointSet
     const fileName& fileName
 )
 {
-    // Use binary mode in case we write binary.
-    // Causes windows reading to fail if we don't
-    std::ofstream pStream(fileName.c_str(), 
-                       ios_base::out|ios_base::binary);
+    std::ofstream pStream(fileName.c_str());
 
     pStream
         << "# vtk DataFile Version 2.0" << std::endl
@@ -90,9 +70,9 @@ void writePointSet
 
     DynamicList<floatScalar> ptField(3*pointLabels.size());
 
-    writeFuns::insert(setPoints, ptField);
+    vtkWriteOps::insert(setPoints, ptField);
 
-    writeFuns::write(pStream, binary, ptField);
+    vtkWriteOps::write(pStream, binary, ptField);
 
 
     //-----------------------------------------------------------------
@@ -110,11 +90,8 @@ void writePointSet
     // Cell ids first
     pStream << "pointID 1 " << pointLabels.size() << " int" << std::endl;
 
-    writeFuns::write(pStream, binary, pointLabels);
+    vtkWriteOps::write(pStream, binary, pointLabels);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

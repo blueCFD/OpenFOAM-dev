@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,6 +33,8 @@ SourceFiles
 
 #ifndef EFA_H
 #define EFA_H
+
+#include "chemistryReductionMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -80,9 +82,10 @@ public:
         //- Reduce the mechanism
         virtual void reduceMechanism
         (
-            const scalarField &c,
+            const scalar p,
             const scalar T,
-            const scalar p
+            const scalarField& c,
+            const label li
         );
 };
 

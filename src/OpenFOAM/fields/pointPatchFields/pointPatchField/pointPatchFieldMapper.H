@@ -33,11 +33,7 @@ Description
 #define pointPatchFieldMapper_H
 
 #include "primitiveFields.H"
-<<<<<<< HEAD
-#include "FieldMapper.T.H"
-=======
 #include "generalFieldMapper.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

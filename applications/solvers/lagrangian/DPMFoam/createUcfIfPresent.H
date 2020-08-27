@@ -28,15 +28,7 @@ Description
     Creates and initialises the continuous phase face velocity field Ufc
     if required.
 
-<<<<<<< HEAD:src/meshTools/AMIInterpolation/AMIInterpolation/AMIPatchToPatchInterpolation.H
-#include "AMIInterpolation.T.H"
-#include "PrimitivePatch.T.H"
-#include "face.T.H"
-#include "SubList.T.H"
-#include "pointField.H"
-=======
 \*---------------------------------------------------------------------------*/
->>>>>>> blueCFD-Core-7:applications/solvers/lagrangian/DPMFoam/createUcfIfPresent.H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

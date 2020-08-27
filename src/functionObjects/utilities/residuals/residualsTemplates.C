@@ -25,12 +25,8 @@ License
 
 #include "residuals.H"
 #include "volFields.H"
-<<<<<<< HEAD
+#include "Residuals.T.H"
 #include "ListOps.T.H"
-=======
-#include "Residuals.H"
-#include "ListOps.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

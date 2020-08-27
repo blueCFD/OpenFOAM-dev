@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,14 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD
-#include "motionSolver.H"
-#include "Time.T.H"
-#include "polyMesh.H"
-#include "dlLibraryTable.H"
-=======
 #include "motionSolverList.H"
->>>>>>> blueCFD-Core-7
 #include "twoDPointCorrector.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -86,7 +79,7 @@ Foam::autoPtr<Foam::motionSolver> Foam::motionSolver::New
 
         Info<< "Selecting motion solver: " << solverTypeName << endl;
 
-        const_cast<Time&>(mesh.time()).libs().open
+        libs.open
         (
             solverDict,
             "motionSolverLibs",

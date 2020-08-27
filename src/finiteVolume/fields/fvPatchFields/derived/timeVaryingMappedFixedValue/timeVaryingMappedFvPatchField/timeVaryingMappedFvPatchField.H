@@ -72,7 +72,7 @@ Usage
 
 See also
     Foam::timeVaryingMappedFixedValueFvPatchField
-    Foam::Function1Types
+    Foam::Function1s
 
 SourceFiles
     timeVaryingMappedFvPatchField.C
@@ -83,10 +83,10 @@ SourceFiles
 #define timeVaryingMappedFvPatchField_H
 
 #include "fvPatchField.H"
-#include "FixedList.H"
+#include "FixedList.T.H"
 #include "instantList.H"
 #include "pointToPointPlanarInterpolation.H"
-#include "Function1.H"
+#include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

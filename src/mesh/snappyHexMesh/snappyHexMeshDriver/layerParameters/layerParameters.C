@@ -112,34 +112,34 @@ Foam::layerParameters::layerParameters
     minThickness_
     (
         boundaryMesh.size(),
-        readScalar(dict.lookup("minThickness"))
+        dict.lookup<scalar>("minThickness")
     ),
     mergeFaces_
     (
         boundaryMesh.size(),
         dict.found("mergeFaces")
       ? (
-            dict.lookupType<bool>("mergeFaces")
+            dict.lookup<bool>("mergeFaces")
           ? mergeFace::yes
           : mergeFace::no
         )
       : mergeFace::ifOnMeshedPatch
     ),
-    featureAngle_(readScalar(dict.lookup("featureAngle"))),
+    featureAngle_(dict.lookup<scalar>("featureAngle")),
     concaveAngle_
     (
         dict.lookupOrDefault("concaveAngle", defaultConcaveAngle)
     ),
-    nGrow_(readLabel(dict.lookup("nGrow"))),
+    nGrow_(dict.lookup<label>("nGrow")),
     maxFaceThicknessRatio_
     (
-        readScalar(dict.lookup("maxFaceThicknessRatio"))
+        dict.lookup<scalar>("maxFaceThicknessRatio")
     ),
     nBufferCellsNoExtrude_
     (
-        readLabel(dict.lookup("nBufferCellsNoExtrude"))
+        dict.lookup<label>("nBufferCellsNoExtrude")
     ),
-    nLayerIter_(readLabel(dict.lookup("nLayerIter"))),
+    nLayerIter_(dict.lookup<label>("nLayerIter")),
     nRelaxedIter_(labelMax),
     additionalReporting_(dict.lookupOrDefault("additionalReporting", false)),
     meshShrinker_
@@ -161,7 +161,7 @@ Foam::layerParameters::layerParameters
         firstLayerThickness_ = scalarField
         (
             boundaryMesh.size(),
-            readScalar(dict.lookup("firstLayerThickness"))
+            dict.lookup<scalar>("firstLayerThickness")
         );
         nSpec++;
     }
@@ -171,7 +171,7 @@ Foam::layerParameters::layerParameters
         finalLayerThickness_ = scalarField
         (
             boundaryMesh.size(),
-            readScalar(dict.lookup("finalLayerThickness"))
+            dict.lookup<scalar>("finalLayerThickness")
         );
         nSpec++;
     }
@@ -181,7 +181,7 @@ Foam::layerParameters::layerParameters
         thickness_ = scalarField
         (
             boundaryMesh.size(),
-            readScalar(dict.lookup("thickness"))
+            dict.lookup<scalar>("thickness")
         );
         nSpec++;
     }
@@ -191,7 +191,7 @@ Foam::layerParameters::layerParameters
         expansionRatio_ = scalarField
         (
             boundaryMesh.size(),
-            readScalar(dict.lookup("expansionRatio"))
+            dict.lookup<scalar>("expansionRatio")
         );
         nSpec++;
     }
@@ -290,7 +290,7 @@ Foam::layerParameters::layerParameters
                     const label patchi = patchiter.key();
 
                     numLayers_[patchi] =
-                        readLabel(layerDict.lookup("nSurfaceLayers"));
+                        layerDict.lookup<label>("nSurfaceLayers");
 
                     switch (layerSpec_)
                     {
@@ -376,7 +376,7 @@ Foam::layerParameters::layerParameters
                     if (layerDict.found("mergeFaces"))
                     {
                         mergeFaces_[patchi] =
-                            layerDict.lookupType<bool>("mergeFaces")
+                            layerDict.lookup<bool>("mergeFaces")
                           ? mergeFace::yes
                           : mergeFace::no;
                     }
@@ -392,8 +392,8 @@ Foam::layerParameters::layerParameters
 Foam::scalar Foam::layerParameters::layerThickness
 (
     const label nLayers,
-    const scalar firstLayerThickess,
-    const scalar finalLayerThickess,
+    const scalar firstLayerThickness,
+    const scalar finalLayerThickness,
     const scalar totalThickness,
     const scalar expansionRatio
 ) const
@@ -412,11 +412,11 @@ Foam::scalar Foam::layerParameters::layerThickness
         {
             if (mag(expansionRatio-1) < small)
             {
-                return firstLayerThickess * nLayers;
+                return firstLayerThickness * nLayers;
             }
             else
             {
-                return firstLayerThickess
+                return firstLayerThickness
                    *(1 - pow(expansionRatio, nLayers))
                    /(1 - expansionRatio);
             }
@@ -427,13 +427,13 @@ Foam::scalar Foam::layerParameters::layerThickness
         {
             if (mag(expansionRatio-1) < small)
             {
-                return finalLayerThickess * nLayers;
+                return finalLayerThickness * nLayers;
             }
             else
             {
                 const scalar invExpansion = 1.0/expansionRatio;
 
-                return finalLayerThickess
+                return finalLayerThickness
                    *(1 - pow(invExpansion, nLayers))
                    /(1 - invExpansion);
             }
@@ -453,8 +453,8 @@ Foam::scalar Foam::layerParameters::layerThickness
 Foam::scalar Foam::layerParameters::layerExpansionRatio
 (
     const label nLayers,
-    const scalar firstLayerThickess,
-    const scalar finalLayerThickess,
+    const scalar firstLayerThickness,
+    const scalar finalLayerThickness,
     const scalar totalThickness,
     const scalar expansionRatio
 ) const
@@ -474,7 +474,7 @@ Foam::scalar Foam::layerParameters::layerExpansionRatio
             return layerExpansionRatio
             (
                 nLayers,
-                totalThickness/firstLayerThickess
+                totalThickness/firstLayerThickness
             );
         }
         break;
@@ -486,7 +486,7 @@ Foam::scalar Foam::layerParameters::layerExpansionRatio
                /layerExpansionRatio
                 (
                     nLayers,
-                    totalThickness/finalLayerThickess
+                    totalThickness/finalLayerThickness
                 );
         }
         break;
@@ -504,8 +504,8 @@ Foam::scalar Foam::layerParameters::layerExpansionRatio
 Foam::scalar Foam::layerParameters::firstLayerThickness
 (
     const label nLayers,
-    const scalar firstLayerThickess,
-    const scalar finalLayerThickess,
+    const scalar firstLayerThickness,
+    const scalar finalLayerThickness,
     const scalar totalThickness,
     const scalar expansionRatio
 ) const
@@ -515,12 +515,12 @@ Foam::scalar Foam::layerParameters::firstLayerThickness
         case FIRST_AND_EXPANSION:
         case FIRST_AND_TOTAL:
         {
-            return firstLayerThickess;
+            return firstLayerThickness;
         }
 
         case FINAL_AND_EXPANSION:
         {
-            return finalLayerThickess*pow(1.0/expansionRatio, nLayers-1);
+            return finalLayerThickness*pow(1.0/expansionRatio, nLayers-1);
         }
         break;
 
@@ -529,13 +529,13 @@ Foam::scalar Foam::layerParameters::firstLayerThickness
             const scalar r = layerExpansionRatio
             (
                 nLayers,
-                firstLayerThickess,
-                finalLayerThickess,
+                firstLayerThickness,
+                finalLayerThickness,
                 totalThickness,
                 expansionRatio
             );
 
-            return finalLayerThickess/pow(r, nLayers-1);
+            return finalLayerThickness/pow(r, nLayers-1);
         }
         break;
 

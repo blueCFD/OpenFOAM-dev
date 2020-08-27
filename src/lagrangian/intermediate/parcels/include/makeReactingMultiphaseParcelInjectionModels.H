@@ -28,26 +28,14 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<<<<<<< HEAD
 #include "CellZoneInjection.T.H"
 #include "ConeInjection.T.H"
-#include "ConeNozzleInjection.T.H"
 #include "FieldActivatedInjection.T.H"
 #include "ManualInjection.T.H"
 #include "NoInjection.T.H"
 #include "PatchInjection.T.H"
 #include "PatchFlowRateInjection.T.H"
 #include "ReactingMultiphaseLookupTableInjection.T.H"
-=======
-#include "CellZoneInjection.H"
-#include "ConeInjection.H"
-#include "FieldActivatedInjection.H"
-#include "ManualInjection.H"
-#include "NoInjection.H"
-#include "PatchInjection.H"
-#include "PatchFlowRateInjection.H"
-#include "ReactingMultiphaseLookupTableInjection.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

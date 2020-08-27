@@ -1,11 +1,3 @@
-
-// This hack was developped by Symscape, circa 2009 -------
-#if defined( WIN32 ) || defined( WIN64 )
-// Rename K to k_ to prevent name clashes on Windows with k
-IOobject::replaceFileName("K", "K_");
-#endif
-// End of hack --------------------------------------------
-
 // Initialise fluid field pointer lists
 PtrList<rhoReactionThermo> thermoFluid(fluidRegions.size());
 PtrList<volScalarField> rhoFluid(fluidRegions.size());
@@ -13,9 +5,13 @@ PtrList<volVectorField> UFluid(fluidRegions.size());
 PtrList<surfaceScalarField> phiFluid(fluidRegions.size());
 PtrList<uniformDimensionedVectorField> gFluid(fluidRegions.size());
 PtrList<uniformDimensionedScalarField> hRefFluid(fluidRegions.size());
+PtrList<uniformDimensionedScalarField> pRefFluid(fluidRegions.size());
 PtrList<volScalarField> ghFluid(fluidRegions.size());
 PtrList<surfaceScalarField> ghfFluid(fluidRegions.size());
-PtrList<compressible::turbulenceModel> turbulenceFluid(fluidRegions.size());
+PtrList<compressible::momentumTransportModel>
+    turbulenceFluid(fluidRegions.size());
+PtrList<rhoReactionThermophysicalTransportModel>
+    thermophysicalTransportFluid(fluidRegions.size());
 PtrList<CombustionModel<rhoReactionThermo>> reactionFluid(fluidRegions.size());
 PtrList<volScalarField> p_rghFluid(fluidRegions.size());
 PtrList<radiationModel> radiation(fluidRegions.size());
@@ -128,6 +124,24 @@ forAll(fluidRegions, i)
         )
     );
 
+    Info<< "    Adding to pRefFluid\n" << endl;
+    pRefFluid.set
+    (
+        i,
+        new uniformDimensionedScalarField
+        (
+            IOobject
+            (
+                "pRef",
+                runTime.constant(),
+                fluidRegions[i],
+                IOobject::READ_IF_PRESENT,
+                IOobject::NO_WRITE
+            ),
+            dimensionedScalar(dimPressure, 0)
+        )
+    );
+
     dimensionedScalar ghRef(- mag(gFluid[i])*hRefFluid[i]);
 
     Info<< "    Adding to ghFluid\n" << endl;
@@ -156,11 +170,22 @@ forAll(fluidRegions, i)
     turbulenceFluid.set
     (
         i,
-        compressible::turbulenceModel::New
+        compressible::momentumTransportModel::New
         (
             rhoFluid[i],
             UFluid[i],
             phiFluid[i],
+            thermoFluid[i]
+        ).ptr()
+    );
+
+    Info<< "    Adding to thermophysicalTransport\n" << endl;
+    thermophysicalTransportFluid.set
+    (
+        i,
+        rhoReactionThermophysicalTransportModel::New
+        (
+            turbulenceFluid[i],
             thermoFluid[i]
         ).ptr()
     );
@@ -194,7 +219,7 @@ forAll(fluidRegions, i)
     );
 
     // Force p_rgh to be consistent with p
-    p_rghFluid[i] = thermoFluid[i].p() - rhoFluid[i]*ghFluid[i];
+    p_rghFluid[i] = thermoFluid[i].p() - rhoFluid[i]*ghFluid[i] - pRefFluid[i];
 
     fluidRegions[i].setFluxRequired(p_rghFluid[i].name());
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,14 +32,16 @@ Description
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
-#include "turbulenceModel.H"
+#include "momentumTransportModel.H"
+#include "fluidThermophysicalTransportModel.H"
+#include "psiReactionThermophysicalTransportModel.H"
 #include "basicSprayCloud.H"
 #include "psiReactionThermo.H"
 #include "CombustionModel.T.H"
 #include "radiationModel.H"
 #include "SLGThermo.H"
 #include "pimpleControl.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 #include "fvOptions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
-    while (runTime.run())
+    while (pimple.run(runTime))
     {
         #include "readDyMControls.H"
 
@@ -143,6 +145,7 @@ int main(int argc, char *argv[])
             if (pimple.turbCorr())
             {
                 turbulence->correct();
+                thermophysicalTransport->correct();
             }
         }
 

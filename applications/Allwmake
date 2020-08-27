@@ -21,12 +21,4 @@ wmakeCheckPwd "$WM_PROJECT_DIR/applications" || {
 wmake -all $targetType solvers
 wmake -all $targetType utilities
 
-if isMinGW; then
-
-  # Test-parallel, because MPI on Windows can be rather finicky
-  wmake -all test/parallel
-  wmake -all test/parallelMin
-
-fi
-
 #------------------------------------------------------------------------------

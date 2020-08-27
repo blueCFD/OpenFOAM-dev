@@ -25,11 +25,6 @@ License
 
 #include "sampledTriSurfaceMesh.H"
 #include "meshSearch.H"
-<<<<<<< HEAD
-#include "Tuple2.T.H"
-#include "globalIndex.H"
-=======
->>>>>>> blueCFD-Core-7
 #include "treeDataCell.H"
 #include "treeDataFace.H"
 #include "meshTools.H"

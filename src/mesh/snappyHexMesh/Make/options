@@ -17,5 +17,3 @@ LIB_LIBS = \
     -lsurfMesh \
     -ltriSurface \
     -ldistributed
-
-LIB_LIBS += -ldecompositionMethods

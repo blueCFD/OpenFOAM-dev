@@ -90,7 +90,7 @@ Usage
 See also
     Foam::fixedValueFvPatchField
     Foam::timeVaryingMappedFvPatchField
-    Foam::Function1Types
+    Foam::Function1s
 
 SourceFiles
     timeVaryingMappedFixedValueFvPatchField.C
@@ -101,14 +101,7 @@ SourceFiles
 #define timeVaryingMappedFixedValueFvPatchField_H
 
 #include "fixedValueFvPatchFields.H"
-<<<<<<< HEAD
-#include "FixedList.T.H"
-#include "instantList.H"
-#include "pointToPointPlanarInterpolation.H"
-#include "Function1.T.H"
-=======
 #include "timeVaryingMappedFvPatchField.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

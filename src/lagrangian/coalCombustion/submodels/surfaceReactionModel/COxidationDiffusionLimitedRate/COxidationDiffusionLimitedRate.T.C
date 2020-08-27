@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,8 +38,8 @@ Foam::COxidationDiffusionLimitedRate<CloudType>::COxidationDiffusionLimitedRate
 )
 :
     SurfaceReactionModel<CloudType>(dict, owner, typeName),
-    Sb_(readScalar(this->coeffDict().lookup("Sb"))),
-    D_(readScalar(this->coeffDict().lookup("D"))),
+    Sb_(this->coeffDict().template lookup<scalar>("Sb")),
+    D_(this->coeffDict().template lookup<scalar>("D")),
     CsLocalId_(-1),
     O2GlobalId_(owner.composition().carrierId("O2")),
     CO2GlobalId_(owner.composition().carrierId("CO2")),
@@ -56,7 +56,7 @@ Foam::COxidationDiffusionLimitedRate<CloudType>::COxidationDiffusionLimitedRate
     const scalar WCO2 = owner.thermo().carrier().Wi(CO2GlobalId_);
     WC_ = WCO2 - WO2_;
 
-    HcCO2_ = owner.thermo().carrier().Hc(CO2GlobalId_);
+    HcCO2_ = owner.thermo().carrier().Hf(CO2GlobalId_);
 
     if (Sb_ < 0)
     {

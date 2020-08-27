@@ -5,16 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2011 Symscape: Added method 'toUnixPath' and hacks for the 'pid_t' type, as
-                well as adjust the methods 'p*id()' accordingly.
- 2011 blueCAPE: Returned the methods 'p*id()' back to the original source code.
-                Added different hack, which defines a macro for the word
-                'pid_t'.
-                Added the method 'osRandomBit()'.
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -28,12 +20,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
 
 InNamespace
     Foam
@@ -51,10 +37,6 @@ SourceFiles
 #define OSspecific_H
 
 #include "fileNameList.H"
-
-#if defined(WIN32) || defined(WIN64)
-#include "hacks_on_mingw.h"
-#endif
 
 #include <sys/types.h>
 

@@ -19,15 +19,15 @@ EXE_INC = \
     -IPDRModels/XiGModels/basicXiSubG \
     -IPDRModels/turbulence/PDRkEpsilon \
     -IlaminarFlameSpeed/SCOPE \
-    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/engine/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
-    -I$(LIB_SRC)/transportModels/compressible/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
-    -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude \
-    -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/laminarFlameSpeed/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
     -I$(LIB_SRC)/dynamicMesh/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
@@ -36,12 +36,12 @@ EXE_INC = \
 EXE_LIBS = \
     -lengine \
     -lmeshTools \
-    -lturbulenceModels \
-    -lcompressibleTurbulenceModels \
-    -lcompressibleTransportModels \
     -lfluidThermophysicalModels \
     -lreactionThermophysicalModels \
     -lspecie \
+    -lmomentumTransportModels \
+    -lfluidThermoMomentumTransportModels \
+    -lthermophysicalTransportModels \
     -llaminarFlameSpeedModels \
     -lfiniteVolume \
     -ldynamicFvMesh \

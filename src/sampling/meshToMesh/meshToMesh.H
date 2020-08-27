@@ -46,13 +46,8 @@ SourceFiles
 #include "boundBox.H"
 #include "mapDistribute.H"
 #include "volFieldsFwd.H"
-<<<<<<< HEAD
 #include "NamedEnum.T.H"
-#include "AMIPatchToPatchInterpolation.H"
-=======
-#include "NamedEnum.H"
-#include "AMIInterpolation.H"
->>>>>>> blueCFD-Core-7
+#include "AMIInterpolation.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -108,7 +103,7 @@ private:
         //- Target to source cell addressing
         labelListList tgtToSrcCellAddr_;
 
-        //- Source to target cell interplation weights
+        //- Source to target cell interpolation weights
         scalarListList srcToTgtCellWght_;
 
         //- Target to source cell interpolation weights
@@ -244,7 +239,7 @@ private:
                 List<labelList>& procLocalFaceIDs
             ) const;
 
-            //- Collect pieces of tgt mesh from other procssors and restructure
+            //- Collect pieces of tgt mesh from other processors and restructure
             void distributeAndMergeCells
             (
                 const mapDistribute& map,

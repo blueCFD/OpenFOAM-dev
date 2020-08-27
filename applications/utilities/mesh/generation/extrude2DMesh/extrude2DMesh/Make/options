@@ -10,6 +10,3 @@ LIB_LIBS = \
     -ldynamicMesh \
     -lsurfMesh \
     -lfiniteVolume
-
-LIB_LIBS += \
-    -lextrudeModel

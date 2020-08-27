@@ -23,31 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/DistortedSphereDrag/DistortedSphereDragForce.T.C
 #include "DistortedSphereDragForce.T.H"
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-template<class CloudType>
-Foam::scalar Foam::DistortedSphereDragForce<CloudType>::CdRe
-(
-    const scalar Re
-) const
-{
-    if (Re > 1000.0)
-    {
-        return 0.424*Re;
-    }
-    else
-    {
-        return 24.0*(1.0 + (1.0/6.0)*pow(Re, 2.0/3.0));
-    }
-}
-
-=======
-#include "DistortedSphereDragForce.H"
-#include "SphereDragForce.H"
->>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/DistortedSphereDrag/DistortedSphereDragForce.C
+#include "SphereDragForce.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

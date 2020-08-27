@@ -23,31 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/ErgunWenYuDrag/ErgunWenYuDragForce.T.C
 #include "ErgunWenYuDragForce.T.H"
-#include "volFields.H"
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-template<class CloudType>
-Foam::scalar Foam::ErgunWenYuDragForce<CloudType>::CdRe
-(
-    const scalar Re
-) const
-{
-    if (Re > 1000.0)
-    {
-        return 0.44*Re;
-    }
-    else
-    {
-        return 24.0*(1.0 + 0.15*pow(Re, 0.687));
-    }
-}
-
-=======
-#include "ErgunWenYuDragForce.H"
->>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/ErgunWenYuDrag/ErgunWenYuDragForce.C
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

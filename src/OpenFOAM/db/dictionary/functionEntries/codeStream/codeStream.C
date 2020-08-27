@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,11 +70,7 @@ Foam::dlLibraryTable& Foam::functionEntries::codeStream::libs
     const dictionary& dict
 )
 {
-    const baseIOdictionary& d = static_cast<const baseIOdictionary&>
-    (
-        dict.topDict()
-    );
-    return const_cast<Time&>(d.time()).libs();
+    return Foam::libs;
 }
 
 
@@ -362,12 +358,9 @@ Foam::functionEntries::codeStream::getFunction
 }
 
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool Foam::functionEntries::codeStream::execute
+Foam::string Foam::functionEntries::codeStream::run
 (
     const dictionary& parentDict,
-    primitiveEntry& entry,
     Istream& is
 )
 {
@@ -390,13 +383,12 @@ bool Foam::functionEntries::codeStream::execute
     OStringStream os(is.format());
     (*function)(os, parentDict);
 
-    // get the entry from this stream
-    IStringStream resultStream(os.str());
-    entry.read(parentDict, resultStream);
-
-    return true;
+    // Return the string containing the results of the code execution
+    return os.str();
 }
 
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::functionEntries::codeStream::execute
 (
@@ -404,30 +396,18 @@ bool Foam::functionEntries::codeStream::execute
     Istream& is
 )
 {
-    Info<< "Using #codeStream at line " << is.lineNumber()
-        << " in file " <<  parentDict.name() << endl;
+    return insert(parentDict, run(parentDict, is));
+}
 
-    dynamicCode::checkSecurity
-    (
-        "functionEntries::codeStream::execute(..)",
-        parentDict
-    );
 
-    // get code dictionary
-    // must reference parent for stringOps::expand to work nicely
-    dictionary codeDict("#codeStream", parentDict, is);
-
-    streamingFunctionType function = getFunction(parentDict, codeDict);
-
-    // use function to write stream
-    OStringStream os(is.format());
-    (*function)(os, parentDict);
-
-    // get the entry from this stream
-    IStringStream resultStream(os.str());
-    parentDict.read(resultStream);
-
-    return true;
+bool Foam::functionEntries::codeStream::execute
+(
+    const dictionary& parentDict,
+    primitiveEntry& thisEntry,
+    Istream& is
+)
+{
+    return insert(parentDict, thisEntry, run(parentDict, is));
 }
 
 

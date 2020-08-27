@@ -5,10 +5,8 @@
     \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-blueCAPE Lda 2016-07-28: Added in hack to workaround issues with ANSI strict.
--------------------------------------------------------------------------------
 License
-    This file is derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -39,8 +37,6 @@ Description
 #define CGALTriangulation3Ddefs_H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "workaroundMathAndANSIStrict.H"
 
 #include "CGALTriangulation3DKernel.H"
 

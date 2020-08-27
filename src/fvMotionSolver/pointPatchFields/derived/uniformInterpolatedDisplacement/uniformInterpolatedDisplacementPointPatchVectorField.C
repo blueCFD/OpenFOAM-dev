@@ -26,19 +26,6 @@ License
 #include "uniformInterpolatedDisplacementPointPatchVectorField.H"
 #include "pointFields.H"
 #include "addToRunTimeSelectionTable.H"
-<<<<<<< HEAD
-#include "Time.T.H"
-#include "polyMesh.H"
-#include "interpolationWeights.H"
-#include "uniformInterpolate.H"
-#include "ReadFields.T.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-=======
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

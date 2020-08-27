@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ Class
 
 Description
     A sampledSurface defined by a plane which 'cuts' the mesh using the
-    cuttingPlane alorithm.  The plane is triangulated by default.
+    cuttingPlane algorithm.  The plane is triangulated by default.
 
 Note
     Does not actually cut until update() called.
@@ -91,16 +91,6 @@ public:
 
 
     // Constructors
-
-        //- Construct from components
-        plane
-        (
-            const word& name,
-            const polyMesh& mesh,
-            const plane& planeDesc,
-            const keyType& zoneKey = word::null,
-            const bool triangulate = true
-        );
 
         //- Construct from dictionary
         plane

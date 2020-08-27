@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -19,7 +19,7 @@ thermoType
 {
     type            heRhoThermo;
     mixture         pureMixture;
-    transport       sutherland;
+    transport       const;
     thermo          hConst;
     equationOfState perfectGas;
     specie          specie;
@@ -39,8 +39,8 @@ mixture
     }
     transport
     {
-        As          1.4792e-06;
-        Ts          116;
+        mu          1.82e-05;
+        Pr          0.71;
     }
 }
 

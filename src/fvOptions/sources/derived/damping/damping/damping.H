@@ -40,7 +40,7 @@ SourceFiles
 #define damping_H
 
 #include "cellSetOption.H"
-#include "Function1.H"
+#include "Function1.T.H"
 #include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

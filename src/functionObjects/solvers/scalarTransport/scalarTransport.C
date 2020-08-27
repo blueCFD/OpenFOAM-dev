@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,8 +29,8 @@ License
 #include "fvmDiv.H"
 #include "fvmLaplacian.H"
 #include "fvmSup.H"
-#include "turbulentTransportModel.H"
-#include "turbulentFluidThermoModel.H"
+#include "kinematicMomentumTransportModel.H"
+#include "fluidThermoMomentumTransportModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -58,8 +58,8 @@ Foam::tmp<Foam::volScalarField> Foam::functionObjects::scalarTransport::D
     const surfaceScalarField& phi
 ) const
 {
-    typedef incompressible::turbulenceModel icoModel;
-    typedef compressible::turbulenceModel cmpModel;
+    typedef incompressible::momentumTransportModel icoModel;
+    typedef compressible::momentumTransportModel cmpModel;
 
     word Dname("D" + s_.name());
 
@@ -72,20 +72,20 @@ Foam::tmp<Foam::volScalarField> Foam::functionObjects::scalarTransport::D
             dimensionedScalar(Dname, phi.dimensions()/dimLength, D_)
         );
     }
-    else if (mesh_.foundObject<icoModel>(turbulenceModel::propertiesName))
+    else if (mesh_.foundObject<icoModel>(momentumTransportModel::typeName))
     {
         const icoModel& model = mesh_.lookupObject<icoModel>
         (
-            turbulenceModel::propertiesName
+            momentumTransportModel::typeName
         );
 
         return alphaD_*model.nu() + alphaDt_*model.nut();
     }
-    else if (mesh_.foundObject<cmpModel>(turbulenceModel::propertiesName))
+    else if (mesh_.foundObject<cmpModel>(momentumTransportModel::typeName))
     {
         const cmpModel& model = mesh_.lookupObject<cmpModel>
         (
-            turbulenceModel::propertiesName
+            momentumTransportModel::typeName
         );
 
         return alphaD_*model.mu() + alphaDt_*model.mut();
@@ -172,7 +172,7 @@ bool Foam::functionObjects::scalarTransport::execute()
         mesh_.lookupObject<surfaceScalarField>(phiName_);
 
     // Calculate the diffusivity
-    volScalarField D(this->D(phi));
+    volScalarField D("D" + s_.name(), this->D(phi));
 
     word divScheme("div(phi," + schemesField_ + ")");
     word laplacianScheme("laplacian(" + D.name() + "," + schemesField_ + ")");
@@ -189,7 +189,7 @@ bool Foam::functionObjects::scalarTransport::execute()
         const volScalarField& rho =
             mesh_.lookupObject<volScalarField>(rhoName_);
 
-        for (label i = 0; i <= nCorr_; i++)
+        for (int i=0; i<=nCorr_; i++)
         {
             fvScalarMatrix sEqn
             (
@@ -209,7 +209,7 @@ bool Foam::functionObjects::scalarTransport::execute()
     }
     else if (phi.dimensions() == dimVolume/dimTime)
     {
-        for (label i = 0; i <= nCorr_; i++)
+        for (int i=0; i<=nCorr_; i++)
         {
             fvScalarMatrix sEqn
             (

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,8 +25,15 @@ Class
     Foam::dragModels::GidaspowErgunWenYu
 
 Description
-    D. Gidaspow, Multiphase flow and fluidization,
-        Academic Press, New York, 1994.
+    Gidaspow, Ergun, Wen and Yu drag model
+
+    Reference:
+    \verbatim
+        Gidaspow, D. (1994).
+        Multiphase flow and fluidization: continuum and kinetic theory
+        descriptions.
+        Academic press, New York.
+    \endverbatim
 
 SourceFiles
     GidaspowErgunWenYu.C
@@ -45,6 +52,9 @@ namespace Foam
 namespace dragModels
 {
 
+class Ergun;
+class WenYu;
+
 /*---------------------------------------------------------------------------*\
                            Class GidaspowErgunWenYu Declaration
 \*---------------------------------------------------------------------------*/
@@ -53,6 +63,14 @@ class GidaspowErgunWenYu
 :
     public dragModel
 {
+    // Private Data
+
+        //- Ergun drag model
+        autoPtr<Ergun> Ergun_;
+
+        //- Wen Yu drag model
+        autoPtr<WenYu> WenYu_;
+
 
 public:
 
@@ -62,12 +80,12 @@ public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from a dictionary and an ordered phase pair
         GidaspowErgunWenYu
         (
             const dictionary& interfaceDict,
-            const phaseModel& phase1,
-            const phaseModel& phase2
+            const phasePair& pair,
+            const bool registerObject
         );
 
 
@@ -77,7 +95,8 @@ public:
 
     // Member Functions
 
-        tmp<volScalarField> K(const volScalarField& Ur) const;
+        //- Drag coefficient
+        virtual tmp<volScalarField> CdRe() const;
 };
 
 

@@ -8,8 +8,6 @@ EXE_INC = \
     -I/usr/include/scotch \
     -I../decompositionMethods/lnInclude
 
-#if !defined( WIN32 ) && !defined( WIN64 )
-
 LIB_LIBS = \
     -L$(SCOTCH_ARCH_PATH)/lib \
     -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
@@ -17,23 +15,3 @@ LIB_LIBS = \
     -lptscotcherrexit \
     -lscotch \
     -lrt
-
-#else
-
-PROJECT_LIBS = \
-    -L$(FOAM_LIBBIN)  -l$(WM_PROJECT)  \
-    -L$(FOAM_LIBBIN)/$(FOAM_MPI)  -lPstream
-
-EXE_INC += \
-    $(GFLAGS) -DSCOTCH_PTSCOTCH
-
-LIB_LIBS = \
-    -L$(SCOTCH_ROOT)/lib \
-    -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
-    -lptscotch \
-    -lptscotcherrexit \
-    -lscotch \
-    -ldecompositionMethods \
-    $(PLIBS)
-
-#endif

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,17 +25,11 @@ License
 
 #include "threePhaseInterfaceProperties.H"
 #include "alphaContactAngleFvPatchScalarField.H"
-#include "mathematicalConstants.H"
+#include "unitConversion.H"
 #include "surfaceInterpolate.H"
 #include "fvcDiv.H"
 #include "fvcGrad.H"
 #include "fvcSnGrad.H"
-
-// * * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * //
-
-const Foam::scalar Foam::threePhaseInterfaceProperties::convertToRad =
-    Foam::constant::mathematical::pi/180.0;
-
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -83,8 +77,8 @@ void Foam::threePhaseInterfaceProperties::correctContactAngle
 
             scalarField theta
             (
-                convertToRad
-              * (
+                degToRad
+                (
                    twoPhaseAlpha2*(180 - a2cap.theta(U[patchi], nHatp))
                  + twoPhaseAlpha3*(180 - a3cap.theta(U[patchi], nHatp))
                 )
@@ -160,13 +154,10 @@ Foam::threePhaseInterfaceProperties::threePhaseInterfaceProperties
     mixture_(mixture),
     cAlpha_
     (
-        readScalar
+        mixture.U().mesh().solverDict
         (
-            mixture.U().mesh().solverDict
-            (
-                mixture_.alpha1().name()
-            ).lookup("cAlpha")
-        )
+            mixture_.alpha1().name()
+        ).lookup<scalar>("cAlpha")
     ),
     sigma12_("sigma12", dimensionSet(1, 0, -2, 0, 0), mixture),
     sigma13_("sigma13", dimensionSet(1, 0, -2, 0, 0), mixture),

@@ -5,12 +5,8 @@
 #   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-# 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
-# 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -24,19 +20,6 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Modifications
-#     This file has been modified by blueCAPE's unofficial mingw patches for
-#     OpenFOAM.
-#     For more information about these patches, visit:
-#         http://bluecfd.com/Core
-#
-#     Modifications made:
-#        - Support the ability to add version object files on Windows.
-#        - Paths to header files for the local source code folder are now
-#          collected inside a file and included when needed.
-#        - Version file now also depends on the main .build file, so that all
-#          binaries are updated according to the latest complete build tag.
 #
 # File
 #     wmake/makefiles/files
@@ -60,17 +43,7 @@ FILES           = $(OBJECTS_DIR)/files
 VARS            = $(OBJECTS_DIR)/variables
 SFILES          = $(OBJECTS_DIR)/sourceFiles
 
-VERSIONFILE = $(OBJECTS_DIR)/version_of_build.rc
-LOCAL_PATHS_INCLUDE = $(OBJECTS_DIR)/includeHeaderPaths
-
 -include $(OPTIONS)
-
-
-#------------------------------------------------------------------------------
-# Set the directory containing the wmake scripts
-#------------------------------------------------------------------------------
-
-WM_SCRIPTS   = $(WM_DIR)/scripts
 
 
 #------------------------------------------------------------------------------
@@ -78,19 +51,10 @@ WM_SCRIPTS   = $(WM_DIR)/scripts
 # Causes all derived files to be remade if any are changed or missing
 #------------------------------------------------------------------------------
 
-.PHONY: reviseSourceFilesListWithVersion
-
 all : $(OPTIONS) $(SFILES) $(VARS)
-
-versioning : $(VERSIONFILE) reviseSourceFilesListWithVersion $(VERSIONFILE).dep
-
-localHeaderPaths : $(LOCAL_PATHS_INCLUDE)
 
 $(OPTIONS) : $(MAKE_DIR)/options
 	@$(CPP) $(GFLAGS) $(MAKE_DIR)/options | sed -e 's@   *@ @g' > $(OPTIONS)
-ifneq ($(WM_TARGET_ARCH),)
-	$(WM_SCRIPTS)/wmakeAddForceLoadDependencies $(OPTIONS) $(MAKE_DIR)/files
-endif
 
 $(SFILES): $(MAKE_DIR)/files
 	@$(CPP) $(GFLAGS) $(MAKE_DIR)/files | sed -e 's@   *@ @g' > $(FILES)
@@ -109,19 +73,5 @@ $(SFILES): $(MAKE_DIR)/files
 
 $(VARS): $(SFILES)
 
-$(VERSIONFILE): $(MAKE_DIR)/files $(WM_PROJECT_DIR)/.build
-	$(WM_SCRIPTS)/makeVersionResourceFile $(OBJECTS_DIR) $(VERSIONFILE) \
-		$(VARS)
-
-reviseSourceFilesListWithVersion: $(VERSIONFILE)
-	$(WM_SCRIPTS)/makeVersionResourceSListFile $(OBJECTS_DIR) $(VERSIONFILE) \
-		$(SFILES)
-
-$(VERSIONFILE).dep: $(VERSIONFILE)
-	$(WM_SCRIPTS)/makeVersionResourceDepFile $(OBJECTS_DIR) $(VERSIONFILE) \
-		$(VERSIONFILE).dep
-
-$(LOCAL_PATHS_INCLUDE): $(MAKE_DIR)/files
-	$(WM_SCRIPTS)/makeLocalHeaderPathsFile $(LOCAL_PATHS_INCLUDE)
 
 #------------------------------------------------------------------------------

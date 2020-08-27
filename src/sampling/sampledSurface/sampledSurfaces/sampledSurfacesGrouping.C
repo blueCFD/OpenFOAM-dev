@@ -24,12 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "sampledSurfaces.H"
-<<<<<<< HEAD
-#include "volFields.H"
-#include "IOobjectList.T.H"
-#include "stringListOps.H"
-=======
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

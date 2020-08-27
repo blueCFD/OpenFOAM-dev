@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,7 +72,10 @@ Foam::processorGAMGInterface::processorGAMGInterface
     (
         refCast<const processorLduInterface>(fineInterface).neighbProcNo()
     ),
-    forwardT_(refCast<const processorLduInterface>(fineInterface).forwardT()),
+    transform_
+    (
+        refCast<const processorLduInterface>(fineInterface).transform()
+    ),
     tag_(refCast<const processorLduInterface>(fineInterface).tag())
 {
     // From coarse face to coarse cell
@@ -142,11 +145,11 @@ Foam::processorGAMGInterface::processorGAMGInterface
     const label index,
     const lduInterfacePtrsList& coarseInterfaces,
     const labelUList& faceCells,
-    const labelUList& faceRestrictAddresssing,
+    const labelUList& faceRestrictAddressing,
     const label coarseComm,
     const label myProcNo,
     const label neighbProcNo,
-    const tensorField& forwardT,
+    const transformer& transform,
     const int tag
 )
 :
@@ -155,12 +158,12 @@ Foam::processorGAMGInterface::processorGAMGInterface
         index,
         coarseInterfaces,
         faceCells,
-        faceRestrictAddresssing
+        faceRestrictAddressing
     ),
     comm_(coarseComm),
     myProcNo_(myProcNo),
     neighbProcNo_(neighbProcNo),
-    forwardT_(forwardT),
+    transform_(transform),
     tag_(tag)
 {}
 
@@ -176,7 +179,7 @@ Foam::processorGAMGInterface::processorGAMGInterface
     comm_(readLabel(is)),
     myProcNo_(readLabel(is)),
     neighbProcNo_(readLabel(is)),
-    forwardT_(is),
+    transform_(is),
     tag_(readLabel(is))
 {}
 
@@ -217,7 +220,7 @@ void Foam::processorGAMGInterface::write(Ostream& os) const
     os  << token::SPACE << comm_
         << token::SPACE << myProcNo_
         << token::SPACE << neighbProcNo_
-        << token::SPACE << forwardT_
+        << token::SPACE << transform_
         << token::SPACE << tag_;
 }
 

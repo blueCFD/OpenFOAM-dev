@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ Class
 
 Description
     Evaluates and outputs turbulence y+ for models. Values written to
-    time directories as field 'yPlus'.
+    time directories as field 'yPlus' or 'yPlus.phase'.
 
     Example of function object specification:
     \verbatim
@@ -42,6 +42,7 @@ Usage
     \table
         Property | Description                | Required   | Default value
         type     | type name: yPlus           | yes        |
+        phase    | phase name                 | no         | none
     \endtable
 
 Note
@@ -74,7 +75,7 @@ namespace Foam
 {
 
 // Forward declaration of classes
-class turbulenceModel;
+class momentumTransportModel;
 
 namespace functionObjects
 {
@@ -89,6 +90,16 @@ class yPlus
     public logFiles,
     public writeLocalObjects
 {
+protected:
+
+    // Protected data
+
+        //- Optional phase name
+        word phaseName_;
+
+
+private:
+
     // Private Member Functions
 
         //- File header information
@@ -97,7 +108,7 @@ class yPlus
         //- Calculate y+
         tmp<volScalarField> calcYPlus
         (
-            const turbulenceModel& turbModel
+            const momentumTransportModel& turbModel
         );
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "GidaspowErgunWenYu.H"
+#include "phasePair.H"
+#include "Ergun.H"
+#include "WenYu.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -33,13 +36,7 @@ namespace Foam
 namespace dragModels
 {
     defineTypeNameAndDebug(GidaspowErgunWenYu, 0);
-
-    addToRunTimeSelectionTable
-    (
-        dragModel,
-        GidaspowErgunWenYu,
-        dictionary
-    );
+    addToRunTimeSelectionTable(dragModel, GidaspowErgunWenYu, dictionary);
 }
 }
 
@@ -48,12 +45,30 @@ namespace dragModels
 
 Foam::dragModels::GidaspowErgunWenYu::GidaspowErgunWenYu
 (
-    const dictionary& interfaceDict,
-    const phaseModel& phase1,
-    const phaseModel& phase2
+    const dictionary& dict,
+    const phasePair& pair,
+    const bool registerObject
 )
 :
-    dragModel(interfaceDict, phase1, phase2)
+    dragModel(dict, pair, registerObject),
+    Ergun_
+    (
+        new Ergun
+        (
+            dict,
+            pair,
+            false
+        )
+    ),
+    WenYu_
+    (
+        new WenYu
+        (
+            dict,
+            pair,
+            false
+        )
+    )
 {}
 
 
@@ -65,33 +80,12 @@ Foam::dragModels::GidaspowErgunWenYu::~GidaspowErgunWenYu()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::dragModels::GidaspowErgunWenYu::K
-(
-    const volScalarField& Ur
-) const
+Foam::tmp<Foam::volScalarField>
+Foam::dragModels::GidaspowErgunWenYu::CdRe() const
 {
-    volScalarField alpha2(max(phase2_, scalar(1.0e-6)));
-    volScalarField d(phase1_.d());
-    volScalarField bp(pow(alpha2, -2.65));
-    volScalarField Re(max(Ur*d/phase2_.nu(), scalar(1.0e-3)));
-
-    volScalarField Cds
-    (
-        neg(Re - 1000)*(24.0*(1.0 + 0.15*pow(Re, 0.687))/Re)
-      + pos0(Re - 1000)*0.44
-    );
-
-    // Wen and Yu (1966)
     return
-    (
-        pos0(alpha2 - 0.8)
-       *(0.75*Cds*phase2_.rho()*Ur*bp/d)
-      + neg(alpha2 - 0.8)
-       *(
-           150.0*phase1_*phase2_.nu()*phase2_.rho()/(sqr(alpha2*d))
-         + 1.75*phase2_.rho()*Ur/(alpha2*d)
-        )
-    );
+        pos0(pair_.continuous() - 0.8)*WenYu_->CdRe()
+      + neg(pair_.continuous() - 0.8)*Ergun_->CdRe();
 }
 
 

@@ -55,7 +55,7 @@ class adaptiveSolver
         //- Cache for dydx at the initial time
         mutable scalarField dydx0_;
 
-        //- Temprorary for the test-step solution
+        //- Temporary for the test-step solution
         mutable scalarField yTemp_;
 
 
@@ -82,6 +82,7 @@ public:
         (
             const scalar x0,
             const scalarField& y0,
+            const label li,
             const scalarField& dydx0,
             const scalar dx,
             scalarField& y
@@ -93,6 +94,7 @@ public:
             const ODESystem& ode,
             scalar& x,
             scalarField& y,
+            const label li,
             scalar& dxTry
         ) const;
 };

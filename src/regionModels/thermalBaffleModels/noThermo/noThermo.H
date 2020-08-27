@@ -25,7 +25,7 @@ Class
     Foam::regionModels::thermalBaffleModels::noThermo
 
 Description
-    Dummy surface pyrolysis model for 'none'
+    Dummy surface model for 'none'
 
 SourceFiles
     noThermo.C
@@ -104,7 +104,7 @@ public:
             //- Return the film specific heat capacity [J/kg/K]
             virtual const tmp<volScalarField> Cp() const;
 
-            //- Return solid absortivity [1/m]
+            //- Return solid absorptivity [1/m]
             virtual const volScalarField& kappaRad() const;
 
             //- Return the film mean temperature [K]

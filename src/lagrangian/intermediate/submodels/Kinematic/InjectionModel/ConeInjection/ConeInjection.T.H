@@ -142,12 +142,7 @@ SourceFiles
 
 #include "InjectionModel.T.H"
 #include "distributionModel.H"
-<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/InjectionModel/ConeInjection/ConeInjection.T.H
-#include "vectorList.H"
 #include "TimeFunction1.T.H"
-=======
-#include "TimeFunction1.H"
->>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/InjectionModel/ConeInjection/ConeInjection.H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

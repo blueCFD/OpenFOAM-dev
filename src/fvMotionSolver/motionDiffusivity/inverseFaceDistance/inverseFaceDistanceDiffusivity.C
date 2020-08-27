@@ -24,18 +24,11 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "inverseFaceDistanceDiffusivity.H"
-<<<<<<< HEAD
-#include "addToRunTimeSelectionTable.H"
+#include "surfaceFields.H"
 #include "HashSet.T.H"
 #include "wallPoint.H"
 #include "MeshWave.T.H"
-=======
-#include "surfaceFields.H"
-#include "HashSet.H"
-#include "wallPoint.H"
-#include "MeshWave.H"
 #include "addToRunTimeSelectionTable.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

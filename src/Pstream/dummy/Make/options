@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-#if defined( WIN32 ) || defined( WIN64 )
-PROJECT_LIBS = -l$(WM_PROJECT)
-#else
-PROJECT_LIBS =
-#endif
-=======
 -include $(GENERAL_RULES)/mplibDummy
 
 EXE_INC  = $(PFLAGS) $(PINC)
 LIB_LIBS = $(PLIBS)
->>>>>>> blueCFD-Core-7

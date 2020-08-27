@@ -2,14 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2011 Symscape: Reinterpret path in 'getRootCase()'.
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -23,12 +20,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
 
 \*---------------------------------------------------------------------------*/
 
@@ -45,6 +36,7 @@ Modifications
 #include "fileOperation.H"
 #include "fileOperationInitialise.H"
 #include "stringListOps.H"
+#include "dlLibraryTable.H"
 
 #include <cctype>
 
@@ -315,14 +307,14 @@ bool Foam::argList::regroupArgv(int& argc, char**& argv)
 
     // Note: we also re-write directly into args_
     // and use a second pass to sort out args/options
-    for (int argI = 0; argI < argc; ++argI)
+    for (int argi=0; argi<argc; argi++)
     {
-        if (strcmp(argv[argI], "(") == 0)
+        if (strcmp(argv[argi], "(") == 0)
         {
             ++listDepth;
             tmpString += "(";
         }
-        else if (strcmp(argv[argI], ")") == 0)
+        else if (strcmp(argv[argi], ")") == 0)
         {
             if (listDepth)
             {
@@ -336,19 +328,19 @@ bool Foam::argList::regroupArgv(int& argc, char**& argv)
             }
             else
             {
-                args_[nArgs++] = argv[argI];
+                args_[nArgs++] = argv[argi];
             }
         }
         else if (listDepth)
         {
             // Quote each string element
             tmpString += "\"";
-            tmpString += argv[argI];
+            tmpString += argv[argi];
             tmpString += "\"";
         }
         else
         {
-            args_[nArgs++] = argv[argI];
+            args_[nArgs++] = argv[argi];
         }
     }
 
@@ -372,7 +364,7 @@ void Foam::argList::getRootCase()
 
     if (iter != options_.end())
     {
-        casePath = toUnixPath(iter());
+        casePath = iter();
         casePath.clean();
 
         if (casePath.empty() || casePath == ".")
@@ -432,34 +424,22 @@ Foam::argList::argList
     args_(argc),
     options_(argc)
 {
-    // Pre-load any libraries. Note that we cannot use dlLibraryTable here
+    // Pre-load any libraries
     {
         const string libsString(getEnv("FOAM_LIBS"));
         if (!libsString.empty())
         {
-            IStringStream is(libsString);
-            const fileNameList libNames(is);
-            //Info<< "Loading libraries " << libNames << endl;
-            forAll(libNames, i)
-            {
-                dlOpen(libNames[i]);
-            }
+            libs.open(fileNameList((IStringStream(libsString))()));
         }
-        for (int argI = 0; argI < argc; ++argI)
+
+        for (int argi=0; argi<argc; argi++)
         {
-            if (argv[argI][0] == '-')
+            if (argv[argi][0] == '-')
             {
-                const char *optionName = &argv[argI][1];
+                const char *optionName = &argv[argi][1];
                 if (string(optionName) == "libs")
                 {
-                    const string libsString(argv[argI+1]);
-                    IStringStream is(libsString);
-                    const fileNameList libNames(is);
-                    //Info<< "Loading libraries " << libNames << endl;
-                    forAll(libNames, i)
-                    {
-                        dlOpen(libNames[i]);
-                    }
+                    libs.open(fileNameList((IStringStream(argv[argi+1]))()));
                     break;
                 }
             }
@@ -468,14 +448,14 @@ Foam::argList::argList
 
     // Check for fileHandler
     word handlerType(getEnv("FOAM_FILEHANDLER"));
-    for (int argI = 0; argI < argc; ++argI)
+    for (int argi=0; argi<argc; argi++)
     {
-        if (argv[argI][0] == '-')
+        if (argv[argi][0] == '-')
         {
-            const char *optionName = &argv[argI][1];
+            const char *optionName = &argv[argi][1];
             if (string(optionName) == "fileHandler")
             {
-                handlerType = argv[argI+1];
+                handlerType = argv[argi+1];
                 break;
             }
         }
@@ -496,11 +476,11 @@ Foam::argList::argList
 
     // Check if this run is a parallel run by searching for any parallel option
     // If found call runPar which might filter argv
-    for (int argI = 0; argI < argc; ++argI)
+    for (int argi=0; argi<argc; argi++)
     {
-        if (argv[argI][0] == '-')
+        if (argv[argi][0] == '-')
         {
-            const char *optionName = &argv[argI][1];
+            const char *optionName = &argv[argi][1];
 
             if (validParOptions.found(optionName))
             {
@@ -522,14 +502,14 @@ Foam::argList::argList
     int nArgs = 1;
     argListStr_ = args_[0];
 
-    for (int argI = 1; argI < args_.size(); ++argI)
+    for (int argi=1; argi<args_.size(); argi++)
     {
         argListStr_ += ' ';
-        argListStr_ += args_[argI];
+        argListStr_ += args_[argi];
 
-        if (args_[argI][0] == '-')
+        if (args_[argi][0] == '-')
         {
-            const char *optionName = &args_[argI][1];
+            const char *optionName = &args_[argi][1];
 
             if
             (
@@ -543,8 +523,8 @@ Foam::argList::argList
                 )
             )
             {
-                ++argI;
-                if (argI >= args_.size())
+                ++argi;
+                if (argi >= args_.size())
                 {
                     FatalError
                         <<"Option '-" << optionName
@@ -554,8 +534,8 @@ Foam::argList::argList
                 }
 
                 argListStr_ += ' ';
-                argListStr_ += args_[argI];
-                options_.insert(optionName, args_[argI]);
+                argListStr_ += args_[argi];
+                options_.insert(optionName, args_[argi]);
             }
             else
             {
@@ -564,9 +544,9 @@ Foam::argList::argList
         }
         else
         {
-            if (nArgs != argI)
+            if (nArgs != argi)
             {
-                args_[nArgs] = args_[argI];
+                args_[nArgs] = args_[argi];
             }
             ++nArgs;
         }
@@ -855,10 +835,7 @@ void Foam::argList::parse
                 {
                     dictionary decompDict(decompDictStream);
 
-                    dictNProcs = readLabel
-                    (
-                        decompDict.lookup("numberOfSubdomains")
-                    );
+                    dictNProcs = decompDict.lookup<label>("numberOfSubdomains");
 
                     if (decompDict.lookupOrDefault("distributed", false))
                     {

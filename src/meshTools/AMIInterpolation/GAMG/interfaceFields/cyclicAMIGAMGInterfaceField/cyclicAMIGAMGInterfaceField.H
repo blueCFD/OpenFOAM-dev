@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,9 +58,6 @@ class cyclicAMIGAMGInterfaceField
         //- Local reference cast into the cyclic interface
         const cyclicAMIGAMGInterface& cyclicAMIInterface_;
 
-        //- Is the transform required
-        bool doTransform_;
-
         //- Rank of component for transformation
         int rank_;
 
@@ -84,7 +81,6 @@ public:
         cyclicAMIGAMGInterfaceField
         (
             const GAMGInterface& GAMGCp,
-            const bool doTransform,
             const int rank
         );
 
@@ -125,22 +121,10 @@ public:
 
         //- Cyclic interface functions
 
-            //- Does the interface field perform the transformation
-            virtual bool doTransform() const
+            //- Return transformation between the coupled patches
+            virtual const transformer& transform() const
             {
-                return doTransform_;
-            }
-
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
-            {
-                return cyclicAMIInterface_.forwardT();
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return cyclicAMIInterface_.reverseT();
+                return cyclicAMIInterface_.transform();
             }
 
             //- Return rank of component for transform

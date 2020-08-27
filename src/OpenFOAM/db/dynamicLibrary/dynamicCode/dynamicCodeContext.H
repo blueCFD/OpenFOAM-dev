@@ -36,7 +36,7 @@ SourceFiles
 #define dynamicCodeContext_H
 
 #include "dictionary.H"
-#include "HashTable.H"
+#include "HashTable.T.H"
 #include "SHA1Digest.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

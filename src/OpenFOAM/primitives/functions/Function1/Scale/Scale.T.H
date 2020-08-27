@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::Function1Types::Scale
+    Foam::Function1s::Scale
 
 Description
     Function1 which scales a given 'value' function by a 'scale' scalar function
@@ -107,6 +107,10 @@ Description
         xScale   | 'x' scaling function of type Function1<scalar> | no
     \endtable
 
+See also
+    Foam::Function1s::ramp
+    Foam::Function1s::reverseRamp
+
 SourceFiles
     Scale.C
 
@@ -121,7 +125,7 @@ SourceFiles
 
 namespace Foam
 {
-namespace Function1Types
+namespace Function1s
 {
 
 /*---------------------------------------------------------------------------*\
@@ -131,18 +135,24 @@ namespace Function1Types
 template<class Type>
 class Scale
 :
-    public Function1<Type>
+    public FieldFunction1<Type, Scale<Type>>
 {
     // Private Data
-
-        //- Argument scaling function
-        autoPtr<Function1<scalar>> xScale_;
 
         //- Scalar scaling function
         autoPtr<Function1<scalar>> scale_;
 
+        //- Argument scaling function
+        autoPtr<Function1<scalar>> xScale_;
+
         //- Value function
         autoPtr<Function1<Type>> value_;
+
+        //- Is this function integrable?
+        bool integrableScale_;
+
+        //- Is this function integrable?
+        bool integrableValue_;
 
 
     // Private Member Functions
@@ -176,11 +186,14 @@ public:
 
     // Member Functions
 
-        //- Return value for time t
-        virtual inline Type value(const scalar t) const;
-
         //- Write in dictionary format
         virtual void writeData(Ostream& os) const;
+
+        //- Return value
+        virtual inline Type value(const scalar x) const;
+
+        //- Integrate between two values
+        virtual inline Type integrate(const scalar x1, const scalar x2) const;
 
 
     // Member Operators
@@ -192,7 +205,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Function1Types
+} // End namespace Function1s
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

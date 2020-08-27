@@ -25,6 +25,7 @@ License
 
 #include "DimensionedField.T.H"
 #include "dimensionedType.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -282,7 +283,7 @@ DimensionedField<Type, GeoMesh>::New
                 mesh,
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                mesh.cacheTemporaryObject(name)
             ),
             mesh,
             ds,
@@ -312,7 +313,7 @@ DimensionedField<Type, GeoMesh>::New
                 mesh,
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                mesh.cacheTemporaryObject(name)
             ),
             mesh,
             dt,
@@ -342,7 +343,7 @@ DimensionedField<Type, GeoMesh>::New
                 df.db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                df.db().cacheTemporaryObject(newName)
             ),
             df
         )
@@ -370,7 +371,7 @@ DimensionedField<Type, GeoMesh>::New
                 tdf().db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                tdf().db().cacheTemporaryObject(newName)
             ),
             tdf
         )
@@ -382,7 +383,9 @@ DimensionedField<Type, GeoMesh>::New
 
 template<class Type, class GeoMesh>
 DimensionedField<Type, GeoMesh>::~DimensionedField()
-{}
+{
+    db().cacheTemporaryObject(*this);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

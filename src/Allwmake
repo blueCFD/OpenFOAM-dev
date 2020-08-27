@@ -21,38 +21,10 @@ wmakeCheckPwd "$WM_PROJECT_DIR/src" || {
 # Update OpenFOAM version strings if required
 wmakePrintBuild -check || wrmo OpenFOAM/global/global.o 2>/dev/null
 
-wmakeLnInclude OpenFOAM
-wmakeLnInclude OSspecific/${WM_OSTYPE:-POSIX}
 Pstream/Allwmake $targetType $*
-
-# Generate version tag, after OpenFOAM/lnInclude has been created
-wmakeVersionTag
 
 OSspecific/${WM_OSTYPE:-POSIX}/Allwmake $targetType $*
 wmake $targetType OpenFOAM
-
-# In case direct linking isn't to be used, then setup settings for using
-# Pstream library
-if isMinGW; then
-    export WM_PSTREAMLINK="LINKTOPSTREAM"
-
-    #build all Pstream libraries
-    (cd Pstream && ./Allwmake)
-
-    rm -f $FOAM_LIBBIN/libOpenFOAM.*
-
-    wmake $targetType OpenFOAM
-
-    unset WM_PSTREAMLINK
-
-    # mingw excludes default compiler path so copy
-    # missing /usr/include/FlexLexer.h for flex
-    cp /usr/include/FlexLexer.h "$FOAM_SRC/OpenFOAM/lnInclude/"
-
-    #Build the stub library
-    wmake libso OSspecific/${WM_OSTYPE:-POSIX}/stubLibrary
-fi
-
 
 wmake $targetType fileFormats
 wmake $targetType surfMesh
@@ -61,18 +33,6 @@ wmake $targetType meshTools
 
 # Decomposition methods needed by dummyThirdParty
 # (dummy metisDecomp, scotchDecomp etc) needed by e.g. meshTools
-if isMinGW; then
-  parallel/decompose/AllwmakeLnInclude
-
-  # finiteVolume and dynamicMesh are needed by the Decomposition methods
-  wmake $targetType finiteVolume
-  wmake $targetType mesh/extrudeModel
-  wmake $targetType dynamicMesh
-
-  # Decomposition methods are needed for dummyThirdParty
-  wmake $targetType parallel/decompose/decompositionMethods
-fi
-
 dummyThirdParty/Allwmake $targetType $*
 
 wmake $targetType finiteVolume
@@ -80,12 +40,12 @@ wmake $targetType lagrangian/basic
 wmake $targetType lagrangian/distributionModels
 wmake $targetType genericPatchFields
 
-wmake $targetType conversion
 wmake $targetType mesh/extrudeModel
 wmake $targetType dynamicMesh
-wmake $targetType sampling
 wmake $targetType dynamicFvMesh
 wmake $targetType topoChangerFvMesh
+wmake $targetType conversion
+wmake $targetType sampling
 
 # Compile scotchDecomp, metisDecomp etc.
 parallel/Allwmake $targetType $*
@@ -93,9 +53,11 @@ parallel/Allwmake $targetType $*
 wmake $targetType ODE
 wmake $targetType randomProcesses
 
-transportModels/Allwmake $targetType $*
+wmake $targetType transportModels
+twoPhaseModels/Allwmake $targetType $*
 thermophysicalModels/Allwmake $targetType $*
-TurbulenceModels/Allwmake $targetType $*
+MomentumTransportModels/Allwmake $targetType $*
+ThermophysicalTransportModels/Allwmake $targetType $*
 wmake $targetType radiationModels
 wmake $targetType combustionModels
 regionModels/Allwmake $targetType $*
@@ -107,7 +69,6 @@ fvAgglomerationMethods/Allwmake $targetType $*
 wmake $targetType fvMotionSolver
 wmake $targetType engine
 wmake $targetType fvOptions
-wmake $targetType regionCoupled
 
 functionObjects/Allwmake $targetType $*
 
@@ -116,7 +77,7 @@ wmake $targetType sixDoFRigidBodyState
 wmake $targetType rigidBodyDynamics
 wmake $targetType rigidBodyMeshMotion
 wmake $targetType rigidBodyState
-wmake $targetType semiPermeableBaffle
+wmake $targetType specieTransfer
 wmake $targetType atmosphericModels
 wmake $targetType waves
 

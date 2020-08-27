@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,6 +33,8 @@ License
 #include "Tuple2.T.H"
 #include "etcFiles.H"
 #include "IOdictionary.H"
+#include "wordAndDictionary.H"
+
 
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
 
@@ -119,30 +121,49 @@ void Foam::functionObjectList::list()
 }
 
 
-Foam::fileName Foam::functionObjectList::findRegionDict
+Foam::fileName Foam::functionObjectList::findDict
 (
     const word& funcName,
     const word& region
 )
 {
     // First check if there is a functionObject dictionary file in the
-    // case system directory
-    fileName dictFile
-    (
-        stringOps::expand("$FOAM_CASE")/"system"/region/funcName
-    );
+    // region system directory
+    {
+        const fileName dictFile
+        (
+            stringOps::expand("$FOAM_CASE")/"system"/region/funcName
+        );
 
-    if (isFile(dictFile))
-    {
-        return dictFile;
+        if (isFile(dictFile))
+        {
+            return dictFile;
+        }
     }
-    else
+
+    // Next, if the region is specified, check if there is a functionObject
+    // dictionary file in the global system directory
+    if (region != word::null)
     {
-        fileNameList etcDirs(findEtcDirs(functionObjectDictPath));
+        const fileName dictFile
+        (
+            stringOps::expand("$FOAM_CASE")/"system"/funcName
+        );
+
+        if (isFile(dictFile))
+        {
+            return dictFile;
+        }
+    }
+
+    // Finally, check etc directories
+    {
+        const fileNameList etcDirs(findEtcDirs(functionObjectDictPath));
 
         forAll(etcDirs, i)
         {
-            dictFile = search(funcName, etcDirs[i]);
+            const fileName dictFile(search(funcName, etcDirs[i]));
+
             if (!dictFile.empty())
             {
                 return dictFile;
@@ -154,27 +175,45 @@ Foam::fileName Foam::functionObjectList::findRegionDict
 }
 
 
-Foam::fileName Foam::functionObjectList::findDict
+void Foam::functionObjectList::checkUnsetEntries
 (
-    const word& funcName,
-    const word& region
+    const string& funcCall,
+    const dictionary& funcArgsDict,
+    const dictionary& funcDict,
+    const string& context
 )
 {
-    if (region == word::null)
-    {
-        return findRegionDict(funcName);
-    }
-    else
-    {
-        fileName dictFile(findRegionDict(funcName, region));
+    const wordRe unset("<.*>");
+    unset.compile();
 
-        if (dictFile != fileName::null)
+    forAllConstIter(IDLList<entry>, funcArgsDict, iter)
+    {
+        if (iter().isStream())
         {
-            return dictFile;
+            ITstream& tokens = iter().stream();
+
+            forAll(tokens, i)
+            {
+                if (tokens[i].isWord())
+                {
+                    if (unset.match(tokens[i].wordToken()))
+                    {
+                        FatalIOErrorInFunction(funcDict)
+                            << "Essential value for keyword '"
+                            << iter().keyword()
+                            << "' not set in function entry" << nl
+                            << "    " << funcCall.c_str() << nl
+                            << "    in " << context.c_str() << nl
+                            << "    Placeholder value is "
+                            << tokens[i].wordToken()
+                            << exit(FatalIOError);
+                    }
+                }
+            }
         }
         else
         {
-            return findRegionDict(funcName);
+            checkUnsetEntries(funcCall, iter().dict(), funcDict, context);
         }
     }
 }
@@ -182,23 +221,17 @@ Foam::fileName Foam::functionObjectList::findDict
 
 bool Foam::functionObjectList::readFunctionObject
 (
-    const string& funcNameArgs,
+    const string& funcCall,
     dictionary& functionsDict,
+    const string& context,
     HashSet<word>& requiredFields,
     const word& region
 )
 {
-    // Parse the optional functionObject arguments:
-    //     'Q(U)' -> funcName = Q; args = (U); field = U
-    //
-    // Supports named arguments:
-    //     'patchAverage(patch=inlet, p)' -> funcName = patchAverage;
-    //         args = (patch=inlet, p); field = p
-
-    word funcName(funcNameArgs);
+    word funcName(funcCall);
 
     int argLevel = 0;
-    wordList args;
+    wordReList args;
 
     List<Tuple2<word, string>> namedArgs;
     bool namedArg = false;
@@ -209,8 +242,8 @@ bool Foam::functionObjectList::readFunctionObject
 
     for
     (
-        word::const_iterator iter = funcNameArgs.begin();
-        iter != funcNameArgs.end();
+        word::const_iterator iter = funcCall.begin();
+        iter != funcCall.end();
         ++iter
     )
     {
@@ -220,7 +253,7 @@ bool Foam::functionObjectList::readFunctionObject
         {
             if (argLevel == 0)
             {
-                funcName = funcNameArgs(start, i - start);
+                funcName = funcCall(start, i - start);
                 start = i+1;
             }
             ++argLevel;
@@ -236,17 +269,14 @@ bool Foam::functionObjectList::readFunctionObject
                         Tuple2<word, string>
                         (
                             argName,
-                            funcNameArgs(start, i - start)
+                            funcCall(start, i - start)
                         )
                     );
                     namedArg = false;
                 }
                 else
                 {
-                    args.append
-                    (
-                        string::validate<word>(funcNameArgs(start, i - start))
-                    );
+                    args.append(wordRe(funcCall(start, i - start)));
                 }
                 start = i+1;
             }
@@ -262,13 +292,16 @@ bool Foam::functionObjectList::readFunctionObject
         }
         else if (c == '=')
         {
-            argName = string::validate<word>(funcNameArgs(start, i - start));
+            argName = string::validate<word>(funcCall(start, i - start));
             start = i+1;
             namedArg = true;
         }
 
         ++i;
     }
+
+    // Strip whitespace from the function name
+    string::stripInvalid<word>(funcName);
 
     // Search for the functionObject dictionary
     fileName path = findDict(funcName, region);
@@ -285,7 +318,12 @@ bool Foam::functionObjectList::readFunctionObject
     autoPtr<ISstream> fileStreamPtr(fileHandler().NewIFstream(path));
     ISstream& fileStream = fileStreamPtr();
 
-    dictionary funcsDict(fileStream);
+    // Delay processing the functionEntries
+    // until after the function argument entries have been added
+    entry::disableFunctionEntries = true;
+    dictionary funcsDict(funcName, functionsDict, fileStream);
+    entry::disableFunctionEntries = false;
+
     dictionary* funcDictPtr = &funcsDict;
 
     if (funcsDict.found(funcName) && funcsDict.isDict(funcName))
@@ -295,37 +333,60 @@ bool Foam::functionObjectList::readFunctionObject
 
     dictionary& funcDict = *funcDictPtr;
 
-    // Insert the 'field' and/or 'fields' entry corresponding to the optional
-    // arguments or read the 'field' or 'fields' entry and add the required
-    // fields to requiredFields
-    if (args.size() == 1)
-    {
-        funcDict.set("field", args[0]);
-        funcDict.set("fields", args);
-        requiredFields.insert(args[0]);
-    }
-    else if (args.size() > 1)
-    {
-        funcDict.set("fields", args);
-        requiredFields.insert(args);
-    }
-    else if (funcDict.found("field"))
-    {
-        requiredFields.insert(word(funcDict.lookup("field")));
-    }
-    else if (funcDict.found("fields"))
-    {
-        requiredFields.insert(wordList(funcDict.lookup("fields")));
-    }
+    // Store the funcDict as read for error reporting context
+    const dictionary funcDict0(funcDict);
 
-    // Insert named arguments
+    // Insert the 'field' and/or 'fields' and 'objects' entries corresponding
+    // to both the arguments and the named arguments
+    DynamicList<wordAndDictionary> fieldArgs;
+    forAll(args, i)
+    {
+        fieldArgs.append(wordAndDictionary(args[i], dictionary::null));
+    }
     forAll(namedArgs, i)
     {
-        IStringStream entryStream
+        if (namedArgs[i].first() == "field")
+        {
+            IStringStream iss(namedArgs[i].second());
+            fieldArgs.append(wordAndDictionary(iss));
+        }
+        if
         (
-            namedArgs[i].first() + ' ' + namedArgs[i].second() + ';'
-        );
-        funcDict.set(entry::New(entryStream).ptr());
+            namedArgs[i].first() == "fields"
+         || namedArgs[i].first() == "objects"
+        )
+        {
+            IStringStream iss(namedArgs[i].second());
+            fieldArgs.append(List<wordAndDictionary>(iss));
+        }
+    }
+    if (fieldArgs.size() == 1)
+    {
+        funcDict.set("field", fieldArgs[0].first());
+        funcDict.merge(fieldArgs[0].second());
+    }
+    if (fieldArgs.size() >= 1)
+    {
+        funcDict.set("fields", fieldArgs);
+        funcDict.set("objects", fieldArgs);
+    }
+
+    // Insert non-field arguments
+    forAll(namedArgs, i)
+    {
+        if
+        (
+            namedArgs[i].first() != "field"
+         && namedArgs[i].first() != "fields"
+         && namedArgs[i].first() != "objects"
+        )
+        {
+            IStringStream entryStream
+            (
+                namedArgs[i].first() + ' ' + namedArgs[i].second() + ';'
+            );
+            funcDict.set(entry::New(entryStream).ptr());
+        }
     }
 
     // Insert the region name if specified
@@ -334,12 +395,60 @@ bool Foam::functionObjectList::readFunctionObject
         funcDict.set("region", region);
     }
 
-    // Merge this functionObject dictionary into functionsDict
-    const word funcNameArgsWord = string::validate<word>(funcNameArgs);
+    const word funcCallKeyword = string::validate<word>(funcCall);
     dictionary funcArgsDict;
-    funcArgsDict.add(funcNameArgsWord, funcDict);
+    funcArgsDict.add(funcCallKeyword, funcDict);
+
+    // Re-parse the funcDict to execute the functionEntries
+    // now that the function argument entries have been added
+    {
+        OStringStream os;
+        funcArgsDict.write(os);
+        funcArgsDict = dictionary
+        (
+            funcName,
+            functionsDict,
+            IStringStream(os.str())()
+        );
+    }
+
+    // Check for anything in the configuration that has not been set
+    checkUnsetEntries(funcCall, funcArgsDict, funcDict0, context);
+
+    // Lookup the field, fields and objects entries from the now expanded
+    // funcDict and insert into the requiredFields
+    dictionary& expandedFuncDict = funcArgsDict.subDict(funcCallKeyword);
+    if (functionObject::debug)
+    {
+        InfoInFunction
+            << nl << incrIndent << indent
+            << funcCall << expandedFuncDict
+            << decrIndent << endl;
+    }
+    if (expandedFuncDict.found("field"))
+    {
+        requiredFields.insert(word(expandedFuncDict.lookup("field")));
+    }
+    if (expandedFuncDict.found("fields"))
+    {
+        List<wordAndDictionary> fields(expandedFuncDict.lookup("fields"));
+        forAll(fields, i)
+        {
+            requiredFields.insert(fields[i].first());
+        }
+    }
+    if (expandedFuncDict.found("objects"))
+    {
+        List<wordAndDictionary> objects(expandedFuncDict.lookup("objects"));
+        forAll(objects, i)
+        {
+            requiredFields.insert(objects[i].first());
+        }
+    }
+
+    // Merge this functionObject dictionary into functionsDict
     functionsDict.merge(funcArgsDict);
-    functionsDict.subDict(funcNameArgsWord).name() = funcDict.name();
+    functionsDict.subDict(funcCallKeyword).name() = funcDict.name();
 
     return true;
 }
@@ -434,6 +543,7 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
             (
                 args["func"],
                 functionsDict,
+                "command line " + args.commandLine(),
                 requiredFields,
                 region
             );
@@ -449,6 +559,7 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
                 (
                     funcs[i],
                     functionsDict,
+                    "command line " + args.commandLine(),
                     requiredFields,
                     region
                 );
@@ -462,7 +573,7 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
         functionsPtr.reset(new functionObjectList(runTime));
     }
 
-    functionsPtr->start();
+    functionsPtr->read();
 
     return functionsPtr;
 }
@@ -487,11 +598,11 @@ void Foam::functionObjectList::clear()
 
 Foam::label Foam::functionObjectList::findObjectID(const word& name) const
 {
-    forAll(*this, objectI)
+    forAll(*this, oi)
     {
-        if (operator[](objectI).name() == name)
+        if (operator[](oi).name() == name)
         {
-            return objectI;
+            return oi;
         }
     }
 
@@ -520,7 +631,21 @@ bool Foam::functionObjectList::status() const
 
 bool Foam::functionObjectList::start()
 {
-    return read();
+    bool ok = read();
+
+    if (execution_)
+    {
+        forAll(*this, oi)
+        {
+            if (operator[](oi).executeAtStart())
+            {
+                ok = operator[](oi).execute() && ok;
+                ok = operator[](oi).write() && ok;
+            }
+        }
+    }
+
+    return ok;
 }
 
 
@@ -535,10 +660,10 @@ bool Foam::functionObjectList::execute()
             read();
         }
 
-        forAll(*this, objectI)
+        forAll(*this, oi)
         {
-            ok = operator[](objectI).execute() && ok;
-            ok = operator[](objectI).write() && ok;
+            ok = operator[](oi).execute() && ok;
+            ok = operator[](oi).write() && ok;
         }
     }
 
@@ -557,9 +682,9 @@ bool Foam::functionObjectList::end()
             read();
         }
 
-        forAll(*this, objectI)
+        forAll(*this, oi)
         {
-            ok = operator[](objectI).end() && ok;
+            ok = operator[](oi).end() && ok;
         }
     }
 
@@ -580,11 +705,11 @@ bool Foam::functionObjectList::setTimeStep()
 
         wordList names;
 
-        forAll(*this, objectI)
+        forAll(*this, oi)
         {
-            if (operator[](objectI).setTimeStep())
+            if (operator[](oi).setTimeStep())
             {
-                names.append(operator[](objectI).name());
+                names.append(operator[](oi).name());
                 set = true;
             }
         }
@@ -615,9 +740,9 @@ Foam::scalar Foam::functionObjectList::timeToNextWrite()
             read();
         }
 
-        forAll(*this, objectI)
+        forAll(*this, oi)
         {
-            result = min(result, operator[](objectI).timeToNextWrite());
+            result = min(result, operator[](oi).timeToNextWrite());
         }
     }
 
@@ -661,7 +786,7 @@ bool Foam::functionObjectList::read()
 
         const dictionary& functionsDict = entryPtr->dict();
 
-        const_cast<Time&>(time_).libs().open
+        libs.open
         (
             functionsDict,
             "libs",
@@ -792,9 +917,9 @@ void Foam::functionObjectList::updateMesh(const mapPolyMesh& mpm)
 {
     if (execution_)
     {
-        forAll(*this, objectI)
+        forAll(*this, oi)
         {
-            operator[](objectI).updateMesh(mpm);
+            operator[](oi).updateMesh(mpm);
         }
     }
 }
@@ -804,9 +929,9 @@ void Foam::functionObjectList::movePoints(const polyMesh& mesh)
 {
     if (execution_)
     {
-        forAll(*this, objectI)
+        forAll(*this, oi)
         {
-            operator[](objectI).movePoints(mesh);
+            operator[](oi).movePoints(mesh);
         }
     }
 }

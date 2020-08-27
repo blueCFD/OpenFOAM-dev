@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -748,6 +748,35 @@ Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
 Foam::GeometricField<Type, PatchField, GeoMesh>::New
 (
     const word& name,
+    const Internal& diField,
+    const PtrList<PatchField<Type>>& ptfl
+)
+{
+    return tmp<GeometricField<Type, PatchField, GeoMesh>>
+    (
+        new GeometricField<Type, PatchField, GeoMesh>
+        (
+            IOobject
+            (
+                name,
+                diField.mesh().thisDb().time().timeName(),
+                diField.mesh().thisDb(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                diField.mesh().thisDb().cacheTemporaryObject(name)
+            ),
+            diField,
+            ptfl
+        )
+    );
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
+Foam::GeometricField<Type, PatchField, GeoMesh>::New
+(
+    const word& name,
     const Mesh& mesh,
     const dimensionSet& ds,
     const word& patchFieldType
@@ -764,7 +793,7 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::New
                 mesh.thisDb(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                mesh.thisDb().cacheTemporaryObject(name)
             ),
             mesh,
             ds,
@@ -795,7 +824,7 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::New
                 mesh.thisDb(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                mesh.thisDb().cacheTemporaryObject(name)
             ),
             mesh,
             dt,
@@ -828,7 +857,7 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::New
                 mesh.thisDb(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                mesh.thisDb().cacheTemporaryObject(name)
             ),
             mesh,
             dt,
@@ -859,9 +888,39 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::New
                 tgf().db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                tgf().db().cacheTemporaryObject(newName)
             ),
             tgf
+        )
+    );
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
+Foam::GeometricField<Type, PatchField, GeoMesh>::New
+(
+    const word& newName,
+    const tmp<GeometricField<Type, PatchField, GeoMesh>>& tgf,
+    const word& patchFieldType
+)
+{
+    return tmp<GeometricField<Type, PatchField, GeoMesh>>
+    (
+        new GeometricField<Type, PatchField, GeoMesh>
+        (
+            IOobject
+            (
+                newName,
+                tgf().instance(),
+                tgf().local(),
+                tgf().db(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                tgf().db().cacheTemporaryObject(newName)
+            ),
+            tgf,
+            patchFieldType
         )
     );
 }
@@ -889,7 +948,7 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::New
                 tgf().db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
-                false
+                tgf().db().cacheTemporaryObject(newName)
             ),
             tgf,
             patchFieldTypes,
@@ -904,6 +963,8 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::New
 template<class Type, template<class> class PatchField, class GeoMesh>
 Foam::GeometricField<Type, PatchField, GeoMesh>::~GeometricField()
 {
+    this->db().cacheTemporaryObject(*this);
+
     deleteDemandDrivenData(field0Ptr_);
     deleteDemandDrivenData(fieldPrevIterPtr_);
 }

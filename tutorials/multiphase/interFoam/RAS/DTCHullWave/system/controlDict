@@ -47,8 +47,8 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
-maxCo           20;
-maxAlphaCo      15;
+maxCo           10;
+maxAlphaCo      5;
 maxDeltaT       0.01;
 
 libs            ("libwaves.so");
@@ -66,6 +66,7 @@ functions
         startTime       10;
 
         surfaceFormat   vtk;
+        writeFormat     binary;
         fields          (p_rgh U);
 
         interpolationScheme cellPoint;

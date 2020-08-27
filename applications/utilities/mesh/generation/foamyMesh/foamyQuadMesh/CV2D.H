@@ -2,13 +2,12 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-blueCAPE Lda 2016-07-28: Added in hack to workaround issues with ANSI strict.
--------------------------------------------------------------------------------
- License
-    This file is derivative work of OpenFOAM.
+License
+    This file is part of OpenFOAM.
+
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -69,7 +68,7 @@ Description
     randomiseInitialGrid yes;
 
     // Perturbation fraction, 1 = cell-size.
-    randomPurturbation   0.1;
+    randomPerturbation   0.1;
 
     // Number of relaxation iterations.
     nIterations      5;
@@ -117,11 +116,6 @@ SourceFiles
 
 #define CGAL_INEXACT
 #define CGAL_HIERARCHY
-
-#include "workaroundMathAndANSIStrict.H"
-
-// Include uint.H before CGAL headers to define __STDC_LIMIT_MACROS
-#include "uint.H"
 
 #include "CGALTriangulation2Ddefs.H"
 #include "Time.T.H"
@@ -200,7 +194,6 @@ class CV2D
         //- Temporary storage for a dual-cell
         static const label maxNvert = 20;
         mutable point2D vertices[maxNvert+1];
-        mutable vector2D edges[maxNvert+1];
 
 
     // Private Member Functions

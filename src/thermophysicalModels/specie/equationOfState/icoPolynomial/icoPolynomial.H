@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,6 +28,9 @@ Description
     Incompressible, polynomial form of equation of state, using a polynomial
     function for density.
 
+    Coefficient mixing is very inaccurate and not supported,
+    so this equation of state is not applicable to mixtures.
+
 Usage
     \table
         Property     | Description
@@ -47,9 +50,6 @@ Usage
         \f[
             \rho = 1000 - 0.05 T + 0.003 T^2
         \f]
-
-Note
-    Input in [kg/m^3], but internally uses [kg/m3/kmol].
 
 SourceFiles
     icoPolynomialI.H
@@ -116,7 +116,7 @@ class icoPolynomial
 {
     // Private Data
 
-        //- Density polynomial coefficients
+        //- Density polynomial coefficients [kg/m^3/K^i]
         Polynomial<PolySize> rhoCoeffs_;
 
 
@@ -164,22 +164,25 @@ public:
             //- Return density [kg/m^3]
             inline scalar rho(scalar p, scalar T) const;
 
-            //- Return enthalpy departure [J/kg]
+            //- Return enthalpy contribution [J/kg]
             inline scalar H(const scalar p, const scalar T) const;
 
-            //- Return Cp departure [J/(kg K]
+            //- Return Cp contribution [J/(kg K]
             inline scalar Cp(scalar p, scalar T) const;
 
-            //- Return internal energy departure [J/kg]
+            //- Return internal energy contribution [J/kg]
             inline scalar E(const scalar p, const scalar T) const;
 
-            //- Return Cv departure [J/(kg K]
+            //- Return Cv contribution [J/(kg K]
             inline scalar Cv(scalar p, scalar T) const;
 
-            //- Return entropy [J/kg/K]
-            inline scalar S(const scalar p, const scalar T) const;
+            //- Return entropy contribution to the integral of Cp/T [J/kg/K]
+            inline scalar Sp(const scalar p, const scalar T) const;
 
-            //- Return compressibility rho/p [s^2/m^2]
+            //- Return entropy contribution to the integral of Cv/T [J/kg/K]
+            inline scalar Sv(const scalar p, const scalar T) const;
+
+            //- Return compressibility [s^2/m^2]
             inline scalar psi(scalar p, scalar T) const;
 
             //- Return compression factor []
@@ -235,17 +238,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#define makeIcoPolynomial(PolySize)                                            \
-                                                                               \
-defineTemplateTypeNameAndDebugWithName                                         \
-(                                                                              \
-    icoPolynomial<Specie, PolySize>,                                           \
-    "icoPolynomial<"#PolySize">",                                              \
-    0                                                                          \
-);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

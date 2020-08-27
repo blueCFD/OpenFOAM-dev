@@ -25,13 +25,6 @@ License
 
 #include "damping.H"
 #include "fvMatrix.H"
-<<<<<<< HEAD:src/fvOptions/sources/derived/verticalDamping/verticalDamping.C
-#include "geometricOneField.H"
-#include "meshTools.H"
-#include "Function1.T.H"
-#include "uniformDimensionedFields.H"
-=======
->>>>>>> blueCFD-Core-7:src/fvOptions/sources/derived/damping/damping/damping.C
 #include "zeroGradientFvPatchField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

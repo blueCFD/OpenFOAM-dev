@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,16 +55,13 @@ class cyclicGAMGInterface
     // Private Data
 
         //- Neighbour patch number
-        label neighbPatchID_;
+        label nbrPatchID_;
 
         //- Am I owner?
         bool owner_;
 
-        //- Transformation tensor
-        tensorField forwardT_;
-
-        //- Transformation tensor
-        tensorField reverseT_;
+        //- Transformation
+        transformer transform_;
 
 
 public:
@@ -119,9 +116,9 @@ public:
         //- Cyclic interface functions
 
             //- Return neighbour processor number
-            virtual label neighbPatchID() const
+            virtual label nbrPatchID() const
             {
-                return neighbPatchID_;
+                return nbrPatchID_;
             }
 
             virtual bool owner() const
@@ -129,24 +126,18 @@ public:
                 return owner_;
             }
 
-            virtual const cyclicGAMGInterface& neighbPatch() const
+            virtual const cyclicGAMGInterface& nbrPatch() const
             {
                 return dynamic_cast<const cyclicGAMGInterface&>
                 (
-                    coarseInterfaces_[neighbPatchID()]
+                    coarseInterfaces_[nbrPatchID()]
                 );
             }
 
             //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
+            virtual const transformer& transform() const
             {
-                return forwardT_;
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return reverseT_;
+                return transform_;
             }
 
 

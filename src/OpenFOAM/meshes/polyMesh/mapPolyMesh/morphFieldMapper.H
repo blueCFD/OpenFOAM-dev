@@ -32,13 +32,8 @@ Description
 #ifndef morphFieldMapper_H
 #define morphFieldMapper_H
 
-<<<<<<< HEAD
-#include "Field.T.H"
-#include "Map.T.H"
-=======
 #include "generalFieldMapper.H"
-#include "Map.H"
->>>>>>> blueCFD-Core-7
+#include "Map.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -24,18 +24,11 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "inversePointDistanceDiffusivity.H"
-<<<<<<< HEAD
-#include "addToRunTimeSelectionTable.H"
+#include "surfaceFields.H"
 #include "HashSet.T.H"
 #include "pointEdgePoint.H"
 #include "PointEdgeWave.T.H"
-=======
-#include "surfaceFields.H"
-#include "HashSet.H"
-#include "pointEdgePoint.H"
-#include "PointEdgeWave.H"
 #include "addToRunTimeSelectionTable.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,11 +61,12 @@ Foam::waveModels::Stokes5::~Stokes5()
 Foam::tmp<Foam::scalarField> Foam::waveModels::Stokes5::elevation
 (
     const scalar t,
-    const scalar u,
     const scalarField& x
 ) const
 {
-    const scalar kd = k()*depth(), ka = k()*amplitude(t);
+    static const scalar kdGreat = log(great);
+    const scalar kd = min(max(k()*depth(), - kdGreat), kdGreat);
+    const scalar ka = k()*amplitude(t);
 
     const scalar S = deep() ? 0 : 1/cosh(2*kd), T = deep() ? 1 : tanh(kd);
 
@@ -110,10 +111,10 @@ Foam::tmp<Foam::scalarField> Foam::waveModels::Stokes5::elevation
             << "B55 = " << B55 << endl;
     }
 
-    const scalarField phi(angle(t, u, x));
+    const scalarField phi(angle(t, x));
 
     return
-        Stokes2::elevation(t, u, x)
+        Stokes2::elevation(t, x)
       + (1/k())
        *(
            pow3(ka)*B31*(cos(phi) - cos(3*phi))
@@ -126,11 +127,12 @@ Foam::tmp<Foam::scalarField> Foam::waveModels::Stokes5::elevation
 Foam::tmp<Foam::vector2DField> Foam::waveModels::Stokes5::velocity
 (
     const scalar t,
-    const scalar u,
     const vector2DField& xz
 ) const
 {
-    const scalar kd = k()*depth(), ka = k()*amplitude(t);
+    static const scalar kdGreat = log(great);
+    const scalar kd = min(max(k()*depth(), - kdGreat), kdGreat);
+    const scalar ka = k()*amplitude(t);
 
     const scalar S = deep() ? 0 : 1/cosh(2*kd);
     const scalar SByA11 = deep() ? 0 : S*sinh(kd);
@@ -192,15 +194,15 @@ Foam::tmp<Foam::vector2DField> Foam::waveModels::Stokes5::velocity
             << "A55 = " << A55ByA11*A11 << endl;
     }
 
-    const vector2DField v1(vi(1, t, u, xz)), v3(vi(3, t, u, xz));
+    const vector2DField v1(vi(1, t, xz)), v3(vi(3, t, xz));
 
     return
-        Stokes2::velocity(t, u, xz)
+        Stokes2::velocity(t, xz)
       + celerity()
        *(
             pow3(ka)*(A31ByA11*v1 + A33ByA11*v3)
-          + pow4(ka)*(A42ByA11*vi(2, t, u, xz) + A44ByA11*vi(4, t, u, xz))
-          + pow5(ka)*(A51ByA11*v1 + A53ByA11*v3 + A55ByA11*vi(5, t, u, xz))
+          + pow4(ka)*(A42ByA11*vi(2, t, xz) + A44ByA11*vi(4, t, xz))
+          + pow5(ka)*(A51ByA11*v1 + A53ByA11*v3 + A55ByA11*vi(5, t, xz))
         );
 }
 

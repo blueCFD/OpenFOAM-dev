@@ -310,7 +310,7 @@ namespace Foam
 
                 // Now ptsAtIndex will have for every face either zero or
                 // the position of the i'th vertex. Transform.
-                cpp.transformPosition(ptsAtIndex);
+                cpp.transform().transformPosition(ptsAtIndex, ptsAtIndex);
 
                 // Extract back from ptsAtIndex into newPts
                 forAll(cpp, facei)
@@ -523,7 +523,7 @@ void Foam::writeAMIWeightsSum
     // Write the surface
     if (Pstream::master())
     {
-        vtkSurfaceWriter().write
+        vtkSurfaceWriter(mesh.time().writeFormat()).write
         (
             file.path(),
             file.name(),
@@ -554,7 +554,7 @@ void Foam::writeAMIWeightsSums(const polyMesh& mesh)
             {
                 Info<< "Calculating AMI weights between owner patch: "
                     << cpp.name() << " and neighbour patch: "
-                    << cpp.neighbPatch().name() << endl;
+                    << cpp.nbrPatch().name() << endl;
 
                 writeAMIWeightsSum
                 (
@@ -566,8 +566,8 @@ void Foam::writeAMIWeightsSums(const polyMesh& mesh)
                 writeAMIWeightsSum
                 (
                     mesh,
-                    cpp.neighbPatch(),
-                    cpp.neighbWeightsSum(),
+                    cpp.nbrPatch(),
+                    cpp.nbrWeightsSum(),
                     fileName("postProcessing") / "tgt_" + tmName
                 );
             }

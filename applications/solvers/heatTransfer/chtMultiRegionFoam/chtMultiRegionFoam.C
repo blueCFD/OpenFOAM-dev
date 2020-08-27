@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,8 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "turbulentFluidThermoModel.H"
+#include "fluidThermoMomentumTransportModel.H"
+#include "rhoReactionThermophysicalTransportModel.H"
 #include "rhoReactionThermo.H"
 #include "CombustionModel.T.H"
 #include "fixedGradientFvPatchFields.H"

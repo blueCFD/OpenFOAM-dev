@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "wallHeatTransferCoeff.H"
-#include "turbulentTransportModel.H"
+#include "kinematicMomentumTransportModel.H"
 #include "wallPolyPatch.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -198,16 +198,16 @@ bool Foam::functionObjects::wallHeatTransferCoeff::execute()
 
     if
     (
-        foundObject<incompressible::turbulenceModel>
+        foundObject<incompressible::momentumTransportModel>
         (
-            turbulenceModel::propertiesName
+            momentumTransportModel::typeName
         )
     )
     {
-        const incompressible::turbulenceModel& turbModel =
-            lookupObject<incompressible::turbulenceModel>
+        const incompressible::momentumTransportModel& turbModel =
+            lookupObject<incompressible::momentumTransportModel>
             (
-                turbulenceModel::propertiesName
+                momentumTransportModel::typeName
             );
 
         return store

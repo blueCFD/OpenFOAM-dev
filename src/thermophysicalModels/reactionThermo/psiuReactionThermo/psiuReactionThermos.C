@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,211 +23,38 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "psiuReactionThermo.H"
-#include "heheuPsiThermo.H"
-
-#include "makeReactionThermo.H"
-#include "addToRunTimeSelectionTable.H"
-
-#include "specie.H"
-#include "perfectGas.H"
-#include "hConstThermo.H"
-#include "janafThermo.H"
-#include "thermo.H"
-#include "constTransport.H"
-#include "sutherlandTransport.H"
-
-#include "absoluteEnthalpy.H"
-#include "absoluteInternalEnergy.H"
-
+#include "egrMixture.H"
 #include "homogeneousMixture.H"
 #include "inhomogeneousMixture.H"
 #include "veryInhomogeneousMixture.H"
-#include "multiComponentMixture.H"
-#include "egrMixture.H"
 
+#include "psiThermo.H"
+#include "psiuReactionThermo.H"
+#include "heheuPsiThermo.H"
+
+#include "forAbsoluteGases.H"
+#include "makeReactionThermo.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#define makePsiuReactionThermos(Mixture, ThermoPhysics)                        \
+    makeReactionThermos                                                        \
+    (                                                                          \
+        psiThermo,                                                             \
+        psiuReactionThermo,                                                    \
+        heheuPsiThermo,                                                        \
+        Mixture,                                                               \
+        ThermoPhysics                                                          \
+    )
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-// * * * * * * * * * * * * * * * * h-hu-Thermos * * * * * * * * * * * * * * * //
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    homogeneousMixture,
-    constTransport,
-    absoluteEnthalpy,
-    hConstThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    inhomogeneousMixture,
-    constTransport,
-    absoluteEnthalpy,
-    hConstThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    veryInhomogeneousMixture,
-    constTransport,
-    absoluteEnthalpy,
-    hConstThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    egrMixture,
-    constTransport,
-    absoluteEnthalpy,
-    hConstThermo,
-    perfectGas,
-    specie
-);
-
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    homogeneousMixture,
-    constTransport,
-    absoluteEnthalpy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    homogeneousMixture,
-    sutherlandTransport,
-    absoluteEnthalpy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    inhomogeneousMixture,
-    sutherlandTransport,
-    absoluteEnthalpy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    veryInhomogeneousMixture,
-    sutherlandTransport,
-    absoluteEnthalpy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    egrMixture,
-    sutherlandTransport,
-    absoluteEnthalpy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    homogeneousMixture,
-    sutherlandTransport,
-    absoluteInternalEnergy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    inhomogeneousMixture,
-    sutherlandTransport,
-    absoluteInternalEnergy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    veryInhomogeneousMixture,
-    sutherlandTransport,
-    absoluteInternalEnergy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-makeReactionThermos
-(
-    psiThermo,
-    psiuReactionThermo,
-    heheuPsiThermo,
-    egrMixture,
-    sutherlandTransport,
-    absoluteInternalEnergy,
-    janafThermo,
-    perfectGas,
-    specie
-);
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
+    forAbsoluteGases(makePsiuReactionThermos, egrMixture);
+    forAbsoluteGases(makePsiuReactionThermos, homogeneousMixture);
+    forAbsoluteGases(makePsiuReactionThermos, inhomogeneousMixture);
+    forAbsoluteGases(makePsiuReactionThermos, veryInhomogeneousMixture);
+}
 
 // ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,8 +69,8 @@ public:
         ChemistryCombustion
         (
             const word& modelType,
-            ReactionThermo& thermo,
-            const compressibleTurbulenceModel& turb,
+            const ReactionThermo& thermo,
+            const compressibleMomentumTransportModel& turb,
             const word& combustionProperties
         );
 
@@ -80,9 +80,6 @@ public:
 
 
     // Member Functions
-
-        //- Return access to the thermo package
-        virtual ReactionThermo& thermo();
 
         //- Return const access to the thermo package
         virtual const ReactionThermo& thermo() const;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,9 +60,9 @@ inline Foam::thirdBodyEfficiencies::thirdBodyEfficiencies
         List<Tuple2<word, scalar>> coeffs(dict.lookup("coeffs"));
         if (coeffs.size() != species_.size())
         {
-            FatalErrorInFunction
+            FatalIOErrorInFunction(dict)
                 << "number of efficiencies = " << coeffs.size()
-                << " is not equat to the number of species " << species_.size()
+                << " is not equal to the number of species " << species_.size()
                 << exit(FatalIOError);
         }
 
@@ -73,7 +73,7 @@ inline Foam::thirdBodyEfficiencies::thirdBodyEfficiencies
     }
     else
     {
-        scalar defaultEff = readScalar(dict.lookup("defaultEfficiency"));
+        scalar defaultEff = dict.lookup<scalar>("defaultEfficiency");
         scalarList::operator=(defaultEff);
     }
 }

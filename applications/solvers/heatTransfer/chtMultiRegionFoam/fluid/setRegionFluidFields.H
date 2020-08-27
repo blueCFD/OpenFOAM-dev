@@ -5,7 +5,7 @@
     rhoReactionThermo& thermo = thermoFluid[i];
     thermo.validate(args.executable(), "h", "e");
 
-    basicMultiComponentMixture& composition = thermo.composition();
+    basicSpecieMixture& composition = thermo.composition();
     PtrList<volScalarField>& Y = composition.Y();
 
     label inertIndex = -1;
@@ -27,7 +27,10 @@
     volVectorField& U = UFluid[i];
     surfaceScalarField& phi = phiFluid[i];
 
-    compressible::turbulenceModel& turbulence = turbulenceFluid[i];
+    compressible::momentumTransportModel& turbulence = turbulenceFluid[i];
+    rhoReactionThermophysicalTransportModel& thermophysicalTransport =
+        thermophysicalTransportFluid[i];
+
     volScalarField& K = KFluid[i];
     volScalarField& dpdt = dpdtFluid[i];
 
@@ -37,6 +40,7 @@
     volScalarField& p_rgh = p_rghFluid[i];
 
     const dimensionedVector& g = gFluid[i];
+    const dimensionedScalar& pRef = pRefFluid[i];
     const volScalarField& gh = ghFluid[i];
     const surfaceScalarField& ghf = ghfFluid[i];
 
@@ -60,3 +64,7 @@
     pressureControl& pressureControl = pressureControlFluid[i];
 
     scalar cumulativeContErr = cumulativeContErrs[i];
+
+    // This solver does not support moving mesh but it uses the pressure
+    // equation of one which does, so we need a dummy face-momentum field
+    autoPtr<surfaceVectorField> rhoUf(nullptr);

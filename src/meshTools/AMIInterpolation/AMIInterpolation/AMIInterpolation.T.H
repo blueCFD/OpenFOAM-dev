@@ -621,12 +621,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-<<<<<<< HEAD:src/meshTools/AMIInterpolation/AMIInterpolation/AMIInterpolation.T.H
-    #include "AMIInterpolation.T.C"
-    #include "AMIInterpolationParallelOps.T.C"
-=======
-    #include "AMIInterpolationTemplates.C"
->>>>>>> blueCFD-Core-7:src/meshTools/AMIInterpolation/AMIInterpolation/AMIInterpolation.H
+    #include "AMIInterpolationTemplates.T.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

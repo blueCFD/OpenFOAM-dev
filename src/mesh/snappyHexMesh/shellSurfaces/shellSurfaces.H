@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,8 +36,9 @@ SourceFiles
 #ifndef shellSurfaces_H
 #define shellSurfaces_H
 
-#include "searchableSurface.H"
 #include "Tuple2.T.H"
+#include "triSurfaceMesh.H"
+#include "triSurfaceFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,11 +58,13 @@ public:
     // Public data types
 
         //- Volume refinement controls
-        enum refineMode
+        enum class refineMode
         {
-            INSIDE,         // Refine all inside shell
-            OUTSIDE,        // ,,         outside
-            DISTANCE        // Refine based on distance to shell
+            inside,         // Refine all inside shell
+            outside,        // ,,         outside
+            distance,       // Refine based on distance to shell
+            insideSpan,     // Refine based on distance internal span
+            outsideSpan     // Refine based on distance external span
         };
 
 
@@ -84,11 +87,17 @@ private:
         //- Per shell per distance the refinement level
         labelListList levels_;
 
+        //- Number of cells across span for refinement mode span
+        labelList cellsAcrossSpan_;
+
+        //- Surface closness field for refinement mode span
+        PtrList<triSurfacePointScalarField> closeness_;
+
 
     // Private Data
 
         //- refineMode names
-        static const NamedEnum<refineMode, 3> refineModeNames_;
+        static const NamedEnum<refineMode, 5> refineModeNames_;
 
 
     // Private Member Functions
@@ -96,18 +105,33 @@ private:
         //- Helper function for initialisation.
         void setAndCheckLevels
         (
-            const label shellI,
+            const label shelli,
             const List<Tuple2<scalar, label>>&
         );
 
+        //- Specifically orient triSurfaces using a calculated point outside.
+        //  Done since quite often triSurfaces not of consistent orientation
+        //  which is (currently) necessary for sideness calculation
         void orient();
 
+        //- Interpolate the surface closeness field to the given point
+        scalar interpolate
+        (
+            const triSurfaceMesh& tris,
+            const triSurfacePointScalarField& closeness,
+            const point& pt,
+            const label index
+        ) const;
+
+        //- Find maximum level of a shell
         void findHigherLevel
         (
             const pointField& pt,
-            const label shellI,
+            const label shelli,
+            const scalar level0EdgeLength,
             labelList& maxLevel
         ) const;
+
 
 public:
 
@@ -123,20 +147,6 @@ public:
 
     // Member Functions
 
-        // Access
-
-            // const List<scalarField>& distances() const
-            //{
-            //    return distances_;
-            //}
-            //
-            ////- Per shell per distance the refinement level
-            // const labelListList& levels() const
-            //{
-            //    return levels_;
-            //}
-
-
         // Query
 
             //- Highest shell level
@@ -147,9 +157,9 @@ public:
             (
                 const pointField& pt,
                 const labelList& ptLevel,
+                const scalar level0EdgeLength,
                 labelList& maxLevel
             ) const;
-
 };
 
 

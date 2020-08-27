@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,8 +56,6 @@ Usage
         \f]
 
 Note
-    - Heat of formation is inputted in [J/kg], but internally uses [J/kmol]
-    - Standard entropy is inputted in [J/kg/K], but internally uses [J/kmol/K]
     - Specific heat at constant pressure polynomial coefficients evaluate to an
       expression in [J/kg/K].
 
@@ -132,14 +130,15 @@ class hPolynomialThermo
         //- Standard entropy
         scalar Sf_;
 
-        //- Specific heat at constant pressure polynomial coeffs
+        //- Specific heat at constant pressure polynomial coeffs [J/kg/K/K^i]
         Polynomial<PolySize> CpCoeffs_;
 
-        //- Enthalpy polynomial coeffs - derived from cp [J/kg]
-        //  NOTE: relative to Tstd
+        //- Enthalpy polynomial coeffs [J/kg/K^i]
+        //  Derived from Cp coeffs. Relative to Tstd.
         typename Polynomial<PolySize>::intPolyType hCoeffs_;
 
-        //- Entropy - derived from Cp [J/kg/K] - relative to Tstd
+        //- Entropy polynomial coeffs [J/kg/K/K^i]
+        //  Derived from Cp coeffs. Relative to Tstd.
         Polynomial<PolySize> sCoeffs_;
 
 
@@ -185,25 +184,25 @@ public:
             //- Heat capacity at constant pressure [J/kg/K]
             inline scalar Cp(const scalar p, const scalar T) const;
 
-            //- Absolute Enthalpy [J/kg]
+            //- Absolute enthalpy [J/kg]
             inline scalar Ha(const scalar p, const scalar T) const;
 
             //- Sensible enthalpy [J/kg]
             inline scalar Hs(const scalar p, const scalar T) const;
 
-            //- Chemical enthalpy [J/kg]
-            inline scalar Hc() const;
+            //- Enthalpy of formation [J/kg]
+            inline scalar Hf() const;
 
             //- Entropy [J/kg/K]
             inline scalar S(const scalar p, const scalar T) const;
+
+            //- Gibbs free energy of the mixture in the standard state [J/kg]
+            inline scalar Gstd(const scalar T) const;
 
             #include "HtoEthermo.H"
 
 
         // Derivative term used for Jacobian
-
-            //- Derivative of Gibbs free energy w.r.t. temperature
-            inline scalar dGdT(const scalar p, const scalar T) const;
 
             //- Temperature derivative of heat capacity at constant pressure
             inline scalar dCpdT(const scalar p, const scalar T) const;

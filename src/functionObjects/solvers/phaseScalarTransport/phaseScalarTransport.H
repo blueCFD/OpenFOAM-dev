@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,7 +72,7 @@ Usage
     }
     \endverbatim
 
-    Example specification for reactingTwoPhaseEulerFoam:
+    Example specification for reactingMultiphaseEulerFoam:
     \verbatim
     phaseScalarTransport1
     {
@@ -152,7 +152,7 @@ class phaseScalarTransport
         scalar alphaDt_;
 
         //- Number of corrector iterations (optional)
-        label nCorr_;
+        int nCorr_;
 
         //- Residual volume-fraction
         scalar residualAlpha_;

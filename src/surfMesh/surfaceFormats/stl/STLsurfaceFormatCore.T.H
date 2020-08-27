@@ -77,10 +77,10 @@ class STLsurfaceFormatCore
         static int detectBINARY(const fileName&);
 
         //- Read ASCII
-        bool readASCII(istream&, const off64_t);
+        bool readASCII(istream&, const off_t);
 
         //- Read BINARY
-        bool readBINARY(istream&, const off64_t);
+        bool readBINARY(istream&, const off_t);
 
 
 public:

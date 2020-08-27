@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -837,7 +837,7 @@ int main(int argc, char *argv[])
 
     if (mergeDim > 0)
     {
-        Info<< "Collapsing edges < " << mergeDim << " ..." << nl << endl;
+        Pout<< "Collapsing edges < " << mergeDim << " ..." << nl << endl;
 
         // Edge collapsing engine
         edgeCollapser collapser(mesh);
@@ -856,7 +856,7 @@ int main(int argc, char *argv[])
 
             if (d < mergeDim)
             {
-                Info<< "Merging edge " << e << " since length " << d
+                Pout<< "Merging edge " << e << " since length " << d
                     << " << " << mergeDim << nl;
 
                 collapseEdge[edgeI] = true;
@@ -882,6 +882,7 @@ int main(int argc, char *argv[])
 
         // Put all modifications into meshMod
         bool anyChange = collapser.setRefinement(allPointInfo, meshMod);
+        reduce(anyChange, orOp<bool>());
 
         if (anyChange)
         {
@@ -1034,7 +1035,7 @@ int main(int argc, char *argv[])
     }
 
     mesh.setInstance(runTimeExtruded.constant());
-    Info<< "Writing mesh to " << mesh.objectPath() << nl << endl;
+    Info<< "Writing mesh to " << mesh.localObjectPath() << nl << endl;
 
     if (!mesh.write())
     {

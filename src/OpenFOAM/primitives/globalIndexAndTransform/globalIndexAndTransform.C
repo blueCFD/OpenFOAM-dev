@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,9 +40,9 @@ namespace Foam
 
 Foam::label Foam::globalIndexAndTransform::matchTransform
 (
-    const List<vectorTensorTransform>& refTransforms,
+    const List<transformer>& refTransforms,
     label& matchedRefTransformI,
-    const vectorTensorTransform& testTransform,
+    const transformer& testTransform,
     scalar tolerance,
     bool checkBothSigns
 ) const
@@ -51,9 +51,9 @@ Foam::label Foam::globalIndexAndTransform::matchTransform
 
     forAll(refTransforms, i)
     {
-        const vectorTensorTransform& refTransform = refTransforms[i];
+        const transformer& refTransform = refTransforms[i];
 
-        scalar maxVectorMag = sqrt
+        const scalar maxVectorMag = sqrt
         (
             max(magSqr(testTransform.t()), magSqr(refTransform.t()))
         );
@@ -74,10 +74,10 @@ Foam::label Foam::globalIndexAndTransform::matchTransform
 
         scalar tensorDiff = 0;
 
-        if (refTransform.hasR() || testTransform.hasR())
+        if (refTransform.transforms() || testTransform.transforms())
         {
             tensorDiff =
-                mag(refTransform.R() - testTransform.R())
+                mag(refTransform.T() - testTransform.T())
                /sqrt(3.0)
                /tolerance;
         }
@@ -96,17 +96,19 @@ Foam::label Foam::globalIndexAndTransform::matchTransform
         {
             // Test the inverse transform differences too
 
+            const transformer testInvTransform = inv(testTransform);
+
             vectorDiff =
-                mag(refTransform.t() + testTransform.t())
+                mag(refTransform.t() - testInvTransform.t())
                /(maxVectorMag + vSmall)
                /tolerance;
 
             tensorDiff = 0;
 
-            if (refTransform.hasR() || testTransform.hasR())
+            if (refTransform.transforms() || testTransform.transforms())
             {
                 tensorDiff =
-                    mag(refTransform.R() - testTransform.R().T())
+                    mag(refTransform.T() - testInvTransform.T())
                    /sqrt(3.0)
                    /tolerance;
             }
@@ -128,7 +130,7 @@ void Foam::globalIndexAndTransform::determineTransforms()
 {
     const polyBoundaryMesh& patches = mesh_.boundaryMesh();
 
-    DynamicList<vectorTensorTransform> localTransforms;
+    DynamicList<transformer> localTransforms;
     DynamicField<scalar> localTols;
 
     label dummyMatch = -1;
@@ -137,84 +139,28 @@ void Foam::globalIndexAndTransform::determineTransforms()
     {
         const polyPatch& pp = patches[patchi];
 
-        // Note: special check for unordered cyclics. These are in fact
-        // transform bcs and should probably be split off.
-        // Note: We don't want to be finding transforms for patches marked as
-        // coincident full match. These should have no transform by definition.
-        if
-        (
-            isA<coupledPolyPatch>(pp)
-        && !(
-                isA<cyclicPolyPatch>(pp)
-             && refCast<const cyclicPolyPatch>(pp).transform()
-             == cyclicPolyPatch::NOORDERING
-            )
-        && !(
-                refCast<const coupledPolyPatch>(pp).transform()
-             == coupledPolyPatch::COINCIDENTFULLMATCH
-            )
-        )
+        if (isA<coupledPolyPatch>(pp))
         {
             const coupledPolyPatch& cpp = refCast<const coupledPolyPatch>(pp);
 
-            if (cpp.separated())
+            const transformer transform(inv(cpp.transform()));
+
+            if (transform.transformsPosition())
             {
-                const vectorField& sepVecs = cpp.separation();
-
-                forAll(sepVecs, sVI)
+                if
+                (
+                    matchTransform
+                    (
+                        localTransforms,
+                        dummyMatch,
+                        transform,
+                        cpp.matchTolerance(),
+                        false
+                    ) == 0
+                )
                 {
-                    const vector& sepVec = sepVecs[sVI];
-
-                    if (mag(sepVec) > small)
-                    {
-                        vectorTensorTransform transform(sepVec);
-
-                        if
-                        (
-                            matchTransform
-                            (
-                                localTransforms,
-                                dummyMatch,
-                                transform,
-                                cpp.matchTolerance(),
-                                false
-                            ) == 0
-                        )
-                        {
-                            localTransforms.append(transform);
-                            localTols.append(cpp.matchTolerance());
-                        }
-                    }
-                }
-            }
-            else if (!cpp.parallel())
-            {
-                const tensorField& transTensors = cpp.reverseT();
-
-                forAll(transTensors, tTI)
-                {
-                    const tensor& transT = transTensors[tTI];
-
-                    if (mag(transT - I) > small)
-                    {
-                        vectorTensorTransform transform(transT);
-
-                        if
-                        (
-                            matchTransform
-                            (
-                                localTransforms,
-                                dummyMatch,
-                                transform,
-                                cpp.matchTolerance(),
-                                false
-                            ) == 0
-                        )
-                        {
-                            localTransforms.append(transform);
-                            localTols.append(cpp.matchTolerance());
-                        }
-                    }
+                    localTransforms.append(transform);
+                    localTols.append(cpp.matchTolerance());
                 }
             }
         }
@@ -222,7 +168,7 @@ void Foam::globalIndexAndTransform::determineTransforms()
 
 
     // Collect transforms on master
-    List<List<vectorTensorTransform>> allTransforms(Pstream::nProcs());
+    List<List<transformer>> allTransforms(Pstream::nProcs());
     allTransforms[Pstream::myProcNo()] = localTransforms;
     Pstream::gatherList(allTransforms);
 
@@ -237,14 +183,14 @@ void Foam::globalIndexAndTransform::determineTransforms()
 
         forAll(allTransforms, proci)
         {
-            const List<vectorTensorTransform>& procTransVecs =
+            const List<transformer>& procTransVecs =
                 allTransforms[proci];
 
             forAll(procTransVecs, pSVI)
             {
-                const vectorTensorTransform& transform = procTransVecs[pSVI];
+                const transformer& transform = procTransVecs[pSVI];
 
-                if (mag(transform.t()) > small || transform.hasR())
+                if (transform.transformsPosition())
                 {
                     if
                     (
@@ -278,7 +224,7 @@ void Foam::globalIndexAndTransform::determineTransformPermutations()
 
     forAll(transformPermutations_, tPI)
     {
-        vectorTensorTransform transform;
+        transformer transform;
 
         label transformIndex = tPI;
 
@@ -293,11 +239,11 @@ void Foam::globalIndexAndTransform::determineTransformPermutations()
 
             if (w > 0)
             {
-                transform &= transforms_[b];
+                transform = transforms_[b] & transform;
             }
             else if (w < 0)
             {
-                transform &= inv(transforms_[b]);
+                transform = inv(transforms_[b]) & transform;
             }
         }
 
@@ -321,83 +267,24 @@ void Foam::globalIndexAndTransform::determinePatchTransformSign()
     {
         const polyPatch& pp = patches[patchi];
 
-        // Note: special check for unordered cyclics. These are in fact
-        // transform bcs and should probably be split off.
-        // Note: We don't want to be finding transforms for patches marked as
-        // coincident full match. These should have no transform by definition.
-        if
-        (
-            isA<coupledPolyPatch>(pp)
-        && !(
-                isA<cyclicPolyPatch>(pp)
-             && refCast<const cyclicPolyPatch>(pp).transform()
-             == cyclicPolyPatch::NOORDERING
-            )
-        && !(
-                refCast<const coupledPolyPatch>(pp).transform()
-             == coupledPolyPatch::COINCIDENTFULLMATCH
-            )
-        )
+        if (isA<coupledPolyPatch>(pp))
         {
             const coupledPolyPatch& cpp = refCast<const coupledPolyPatch>(pp);
 
-            if (cpp.separated())
+            const transformer transform(inv(cpp.transform()));
+
+            if (transform.transformsPosition())
             {
-                const vectorField& sepVecs = cpp.separation();
-
-                // This loop is implicitly expecting only a single
-                // value for separation()
-                forAll(sepVecs, sVI)
-                {
-                    const vector& sepVec = sepVecs[sVI];
-
-                    if (mag(sepVec) > small)
-                    {
-                        vectorTensorTransform t(sepVec);
-
-                        label matchTransI;
-                        label sign = matchTransform
-                        (
-                            transforms_,
-                            matchTransI,
-                            t,
-                            cpp.matchTolerance(),
-                            true
-                        );
-                        patchTransformSign_[patchi] =
-                            labelPair(matchTransI, sign);
-                    }
-                }
-
-            }
-            else if (!cpp.parallel())
-            {
-                const tensorField& transTensors = cpp.reverseT();
-
-                // This loop is implicitly expecting only a single
-                // value for reverseT()
-                forAll(transTensors, tTI)
-                {
-                    const tensor& transT = transTensors[tTI];
-
-                    if (mag(transT - I) > small)
-                    {
-                        vectorTensorTransform t(transT);
-
-                        label matchTransI;
-                        label sign = matchTransform
-                        (
-                            transforms_,
-                            matchTransI,
-                            t,
-                            cpp.matchTolerance(),
-                            true
-                        );
-
-                        patchTransformSign_[patchi] =
-                            labelPair(matchTransI, sign);
-                    }
-                }
+                label matchTransI;
+                label sign = matchTransform
+                (
+                    transforms_,
+                    matchTransI,
+                    transform,
+                    cpp.matchTolerance(),
+                    true
+                );
+                patchTransformSign_[patchi] = labelPair(matchTransI, sign);
             }
         }
     }
@@ -474,16 +361,8 @@ Foam::globalIndexAndTransform::globalIndexAndTransform(const polyMesh& mesh)
         forAll(transforms_, i)
         {
             Info<< '\t' << i << '\t';
-            const vectorTensorTransform& trafo = transforms_[i];
-            if (trafo.hasR())
-            {
-                 Info<< trafo.t() << '\t' << trafo.R();
-            }
-            else
-            {
-                 Info<< trafo.t() << '\t' << "---";
-            }
-            Info<< endl;
+            const transformer& trafo = transforms_[i];
+            Info<< trafo.t() << '\t' << trafo.T() << endl;
         }
         Info<< endl;
 
@@ -507,16 +386,8 @@ Foam::globalIndexAndTransform::globalIndexAndTransform(const polyMesh& mesh)
         forAll(transformPermutations_, i)
         {
             Info<< '\t' << i << '\t';
-            const vectorTensorTransform& trafo = transformPermutations_[i];
-            if (trafo.hasR())
-            {
-                 Info<< trafo.t() << '\t' << trafo.R();
-            }
-            else
-            {
-                 Info<< trafo.t() << '\t' << "---";
-            }
-            Info<< endl;
+            const transformer& trafo = transformPermutations_[i];
+            Info<< trafo.t() << '\t' << trafo.T() << endl;
         }
         Info<< "nullTransformIndex:" << nullTransformIndex() << endl
             << endl;

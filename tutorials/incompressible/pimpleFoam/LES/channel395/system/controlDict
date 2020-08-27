@@ -47,29 +47,7 @@ runTimeModifiable true;
 
 functions
 {
-    fieldAverage1
-    {
-        type            fieldAverage;
-        libs            ("libfieldFunctionObjects.so");
-        writeControl    writeTime;
-
-        fields
-        (
-            U
-            {
-                mean        on;
-                prime2Mean  on;
-                base        time;
-            }
-
-            p
-            {
-                mean        on;
-                prime2Mean  on;
-                base        time;
-            }
-        );
-    }
+    #includeFunc fieldAverage(U, p, prime2Mean = yes)
 }
 
 // ************************************************************************* //

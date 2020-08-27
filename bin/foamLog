@@ -5,11 +5,9 @@
 #  \\    /   O peration     | Website:  https://openfoam.org
 #   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
-#-------------------------------------------------------------------------------
-# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 #------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -23,18 +21,6 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Modifications
-#     This file has been modified by blueCAPE's unofficial mingw patches for
-#     OpenFOAM.
-#     For more information about these patches, visit:
-#         http://bluecfd.com/Core
-#
-#     Modifications made:
-#        - Derived from the patches for blueCFD 2.1 and 2.2.
-#        - Added ability to keep track of more separators.
-#        - Added option for merging outputs, namely for when the solver
-#          doesn't use Time iterations.
 #
 # Script
 #     foamLog
@@ -55,7 +41,6 @@ Usage: $Script [OPTIONS] <log file>
 options:
   -list             lists but does not extract
   -n                create single column files with the extracted data only
-  -merge            merge outputs for when solvers don't use Time iterations.
   -quiet            quiet operation
   -localDB          only use the local database file
   -help             print the usage
@@ -108,8 +93,6 @@ The database ($Script.db) will taken from these locations:
 
 Option -q suppresses the default information and only prints the extracted
 variables.
-
-Option -m merges outputs for when solvers don't use Time iterations.
 -----------------------------------------------------------------------------
 HELP
 }
@@ -123,7 +106,7 @@ error() {
 
 
 timeName=Time
-unset listOpt quietOpt mergeOpt localDB
+unset listOpt quietOpt localDB
 
 # Parse options
 while [ "$#" -gt 0 ]
@@ -139,10 +122,6 @@ do
         ;;
     -l | -list)
         listOpt=true
-        shift
-        ;;
-    -m | -merge)
-        mergeOpt=true
         shift
         ;;
     -q | -quiet | -s | -silent)
@@ -256,20 +235,16 @@ getAllQueries()
 
     for var in $dbQueries
     do
-        case $var in
-        Separator*) :
-          ;;
-        *)
-          getQueries $1 "$var"
-          line=`egrep "$LINEQ" $2`
-          if [ "$line" ]; then
-              column=`echo "$line" | fgrep "$NUMQ"`
-              if [ "$column" ]; then
-                  queries="$queries $var"
-              fi
-          fi
-          ;;
-        esac
+        getQueries $1 "$var"
+        line=`egrep "$LINEQ" $2`
+        if [ "$line" ]
+        then
+            column=`echo "$line" | fgrep "$NUMQ"`
+            if [ "$column" ]
+            then
+                queries="$queries $var"
+            fi
+        fi
     done
 
     for q in $queries
@@ -278,13 +253,6 @@ getAllQueries()
     done | sort -u
 }
 
-
-# doesSeparatorExist queryRegEx logFile 
-# Checks if the queryRegEx exists in the logFile
-doesSeparatorExist()
-{
-    egrep "$1" $2
-}
 
 #-----------------------------
 # Main
@@ -369,19 +337,6 @@ AWK_CONTENTS
 # Code for iteration separator (increments 'Iteration')
 #
 getQueries $DBFILE 'Separator'
-LINEQ1=$LINEQ
-getQueries $DBFILE 'Separator2'
-LINEQ2=$LINEQ
-getQueries $DBFILE 'Separator3'
-LINEQ3=$LINEQ
-LINEQ=$LINEQ1
-if [ -z "$MERGEITERS" -o -n "`doesSeparatorExist \"$LINEQ1\" $LOG`" ]; then
-  LINEQ=$LINEQ1
-elif [ -n "`doesSeparatorExist \"$LINEQ2\" $LOG`" ]; then
-  LINEQ=$LINEQ2
-elif [ -n "`doesSeparatorExist \"$LINEQ3\" $LOG`" ]; then
-  LINEQ=$LINEQ3
-fi
 cat << AWK_CONTENTS >> $AWKFILE
 # Iteration separator (increments 'Iteration')
 /$LINEQ/ {
@@ -428,10 +383,9 @@ AWK_CONTENTS
         extract(\$0, "Solving for ", varNameVal)
 
         varName=varNameVal[1]
-        extract(\$0, "Initial residual = ", val)
-        if(val[1]==varNameVal[1]) next;
         file=varName "_" subIter[varName]++
         file="$outputDir/" file
+        extract(\$0, "Initial residual = ", val)
         print $timeName "\t" val[1] > file
 
         varName=varNameVal[1] "FinalRes"
@@ -471,7 +425,6 @@ do
     fi
 done
 
-unset LINEQ1 LINEQ2 LINEQ3
 
 #-----------------------------
 # Run awk program on log

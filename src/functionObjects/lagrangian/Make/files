@@ -1,5 +1,5 @@
 cloudInfo/cloudInfo.C
-icoUncoupledKinematicCloud/icoUncoupledKinematicCloud.C
 dsmcFields/dsmcFields.C
+particles/particles.C
 
 LIB = $(FOAM_LIBBIN)/liblagrangianFunctionObjects

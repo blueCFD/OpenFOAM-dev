@@ -5,10 +5,8 @@
     \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2017-09-XX blueCAPE Lda: Modifications for blueCFD-Core 2017-1
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -22,12 +20,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
 
 Class
     Foam::fileOperation
@@ -47,10 +39,6 @@ Class
 #include "Switch.H"
 #include "tmpNrc.H"
 #include "NamedEnum.T.H"
-
-#if defined(WIN32) || defined(WIN64)
-#include "hacks_on_mingw.h"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -324,7 +312,7 @@ public:
             // ) const = 0;
 
 
-        // (reg)IOobject functinality
+        // (reg)IOobject functionality
 
             //- Generate disk file name for object. Opposite of filePath.
             //  Optional wanted typeName.
@@ -506,7 +494,7 @@ public:
             virtual void flush() const;
 
             //- Generate path (like io.path) from root+casename with any
-            //  'processorXXX' replaced by procDir (usually 'processsors')
+            //  'processorXXX' replaced by procDir (usually 'processors')
             fileName processorsCasePath
             (
                 const IOobject&,
@@ -514,7 +502,7 @@ public:
             ) const;
 
             //- Generate path (like io.path) with provided instance and any
-            //  'processorXXX' replaced by procDir (usually 'processsors')
+            //  'processorXXX' replaced by procDir (usually 'processors')
             fileName processorsPath
             (
                 const IOobject&,

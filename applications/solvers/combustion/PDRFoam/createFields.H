@@ -1,10 +1,3 @@
-// This hack was developed by Symscape, circa 2009 -------
-#if defined( WIN32 ) || defined( WIN64 )
-// Rename B to B_ to prevent name clashes on Windows with B
-IOobject::replaceFileName("B", "B_");
-#endif
-// End of hack --------------------------------------------
-
 Info<< "Reading thermophysical properties\n" << endl;
 
 autoPtr<psiuReactionThermo> pThermo
@@ -14,7 +7,7 @@ autoPtr<psiuReactionThermo> pThermo
 psiuReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "ha", "ea");
 
-basicSpecieMixture& composition = thermo.composition();
+basicCombustionMixture& composition = thermo.composition();
 
 volScalarField rho
 (
@@ -64,6 +57,16 @@ autoPtr<compressible::RASModel> turbulence
     )
 );
 
+Info<< "Creating thermophysical transport model\n" << endl;
+autoPtr<RASFluidThermophysicalTransportModel>
+thermophysicalTransport
+(
+    RASFluidThermophysicalTransportModel::New
+    (
+        turbulence(),
+        thermo
+    )
+);
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt

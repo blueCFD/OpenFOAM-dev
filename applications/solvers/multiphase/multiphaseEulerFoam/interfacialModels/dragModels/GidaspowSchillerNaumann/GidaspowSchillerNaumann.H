@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,17 +25,20 @@ Class
     Foam::dragModels::GidaspowSchillerNaumann
 
 Description
-    H, Enwald, E. Peirano, A-E Almstedt
-    'Eulerian Two-Phase Flow Theory Applied to Fluidization'
-    Int. J. Multiphase Flow, Vol. 22, Suppl, pp. 21-66 (1996)
-    Eq. 86-87, p. 40
+    Gidaspow, Schiller and Naumann drag model
 
-    This is identical to the Wen and Yu, Rowe model Table 3.6 p.56  in
-    the Ph.D. thesis of Berend van Wachem
-    'Derivation, Implementation and Validation
-                    of
-          Computer Simulation Models
-         for Gas-Solid Fluidized Beds'
+    References:
+    \verbatim
+        Enwald, H., Peirano, E., & Almstedt, A. E. (1996).
+        Eulerian two-phase flow theory applied to fluidization.
+        International Journal of Multiphase Flow, 22, 21-66.
+
+        This is identical to the Wen and Yu, Rowe model Table 3.6 p.56  in
+        van Wachem, B. G. M. (2000).
+        Derivation, implementation, and validation of computer simulation models
+        for gas-solid fluidized beds.
+        PhD Thesis, TU Delft.
+    \endverbatim
 
 SourceFiles
     GidaspowSchillerNaumann.C
@@ -62,6 +65,11 @@ class GidaspowSchillerNaumann
 :
     public dragModel
 {
+    // Private Data
+
+        //- Residual Reynolds Number
+        const dimensionedScalar residualRe_;
+
 
 public:
 
@@ -71,12 +79,12 @@ public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from a dictionary and a phase pair
         GidaspowSchillerNaumann
         (
-            const dictionary& interfaceDict,
-            const phaseModel& phase1,
-            const phaseModel& phase2
+            const dictionary& dict,
+            const phasePair& pair,
+            const bool registerObject
         );
 
 
@@ -86,7 +94,8 @@ public:
 
     // Member Functions
 
-        tmp<volScalarField> K(const volScalarField& Ur) const;
+        //- Drag coefficient
+        virtual tmp<volScalarField> CdRe() const;
 };
 
 

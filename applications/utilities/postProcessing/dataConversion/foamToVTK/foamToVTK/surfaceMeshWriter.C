@@ -2,13 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -23,27 +21,10 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - Derived from the patches for blueCFD 2.1 and 2.2. which in turn were derived
-        from 2.0 and 1.7.
-      - Always open the files in binary mode, because of how things work on 
-        Windows.
-        - Note: This modification is hard to stipulate who implemented this
-                first. Symscape's port only began integrating this fix after
-                blueCFD 1.7-2 was released with this sort of specific fix.
-                But it was Symscape that first implemented this kind of
-                "binary" fix in OpenFOAM's core code.
-
 \*---------------------------------------------------------------------------*/
 
 #include "surfaceMeshWriter.H"
-#include "writeFuns.H"
+#include "vtkWriteFieldOps.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -58,13 +39,10 @@ Foam::surfaceMeshWriter::surfaceMeshWriter
     binary_(binary),
     pp_(pp),
     fName_(fName),
-    // Use binary mode in case we write binary.
-    // Causes windows reading to fail if we don't
-    os_(fName.c_str(), 
-        ios_base::out|ios_base::binary)
+    os_(fName.c_str())
 {
     // Write header
-    writeFuns::writeHeader(os_, binary_, name);
+    vtkWriteOps::writeHeader(os_, binary_, name);
 
     os_ << "DATASET POLYDATA" << std::endl;
 
@@ -79,8 +57,8 @@ Foam::surfaceMeshWriter::surfaceMeshWriter
     os_ << "POINTS " << pp.nPoints() << " float" << std::endl;
 
     DynamicList<floatScalar> ptField(3*pp.nPoints());
-    writeFuns::insert(pp.localPoints(), ptField);
-    writeFuns::write(os_, binary, ptField);
+    vtkWriteOps::insert(pp.localPoints(), ptField);
+    vtkWriteOps::write(os_, binary, ptField);
 
 
     os_ << "POLYGONS " << pp.size() << ' ' << nFaceVerts << std::endl;
@@ -92,9 +70,9 @@ Foam::surfaceMeshWriter::surfaceMeshWriter
         const face& f = pp.localFaces()[facei];
 
         vertLabels.append(f.size());
-        writeFuns::insert(f, vertLabels);
+        vtkWriteOps::insert(f, vertLabels);
     }
-    writeFuns::write(os_, binary_, vertLabels);
+    vtkWriteOps::write(os_, binary_, vertLabels);
 }
 
 

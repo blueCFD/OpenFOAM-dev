@@ -96,15 +96,21 @@ volVectorField U
 mesh.setFluxRequired(p.name());
 
 Info<< "Creating turbulence model\n" << endl;
-autoPtr<compressible::turbulenceModel> turbulence
+autoPtr<compressible::momentumTransportModel> turbulence
 (
-    compressible::turbulenceModel::New
+    compressible::momentumTransportModel::New
     (
         rho,
         U,
         phi,
         thermo
     )
+);
+
+Info<< "Creating thermophysical transport model\n" << endl;
+autoPtr<psiReactionThermophysicalTransportModel> thermophysicalTransport
+(
+    psiReactionThermophysicalTransportModel::New(turbulence(), thermo)
 );
 
 Info<< "Creating combustion model\n" << endl;

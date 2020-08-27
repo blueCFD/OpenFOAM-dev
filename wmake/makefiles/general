@@ -5,13 +5,8 @@
 #   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
-# 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
-# 2017-09-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-2
-# 2017-10-xx blueCAPE Lda: Modifications for blueCFD-Core 2017-1
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -26,21 +21,6 @@
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Modifications
-#     This file has been modified by blueCAPE's unofficial mingw patches for
-#     OpenFOAM.
-#     For more information about these patches, visit:
-#         http://bluecfd.com/Core
-#
-#     Modifications made:
-#        - Derived from the patches for blueCFD 2.1 and 2.2.
-#        - Originally based on Sysmcape's patches for OpenFOAM, circa 2009,
-#          which added the ability to build binaries for Windows.
-#        - Object file paths are now stored inside a file, which is built and
-#          included through this Makefile.
-#        - Paths to header files for the local source code folder are now
-#          collected inside a file and included when needed.
-#
 # File
 #     wmake/makefiles/general
 #
@@ -53,7 +33,7 @@
 # The Makefile uses a POSIX shell
 #------------------------------------------------------------------------------
 
-SHELL           = /bin/dash
+SHELL           = /bin/sh
 
 
 #------------------------------------------------------------------------------
@@ -102,9 +82,6 @@ LIB             = libNULL
 # Shared library extension
 SO              = so
 
-# Executable extension
-EXE_EXT         =
-
 # Project executable
 EXE             = $(WM_PROJECT).out
 
@@ -130,15 +107,8 @@ include $(OBJECTS_DIR)/options
 include $(OBJECTS_DIR)/variables
 include $(OBJECTS_DIR)/sourceFiles
 DEPENDENCIES=$(SOURCE:%=$(OBJECTS_DIR)/%.dep)
-
-ifdef LFN_WORKAROUND
-BASENAMES=$(shell basename -a $(basename $(SOURCE)))
-else
 BASENAMES=$(basename $(SOURCE))
-endif
-
 OBJECTS=$(BASENAMES:%=$(OBJECTS_DIR)/%.o)
-LOCAL_INCLUDE ?=
 
 
 #------------------------------------------------------------------------------
@@ -147,7 +117,6 @@ LOCAL_INCLUDE ?=
 
 LIB_HEADER_DIRS = \
         $(EXE_INC) \
-        $(LOCAL_INCLUDE) \
         -IlnInclude \
         -I. \
         $(PROJECT_INC) \
@@ -167,34 +136,21 @@ all: $(EXE)
 silent:
 	@:
 
-# Add additional dependency regarding executable names
-ifneq ($(strip $(EXE_EXT)),)
-$(EXE) : $(EXE)$(EXE_EXT)
-endif
-
-$(EXE)$(EXE_EXT): $(OBJECTS)
-	@$(WM_SCRIPTS)/makeTargetDir $(EXE)$(EXE_EXT)
-	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
-      $(OBJECTS)
-	$(call QUIET_MESSAGE,ld,$(EXE)$(EXE_EXT))
-	$E $(LINKEXE) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
+$(EXE): $(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(EXE)
+	$(call QUIET_MESSAGE,ld,$(EXE))
+	$E $(LINKEXE) $(OBJECTS) -L$(LIB_PLATFORMS) \
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
-	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
-ifneq ($(CV2PDB_PATH),)
-	$(call QUIET_MESSAGE,cv2pdb,$(EXE)$(EXE_EXT))
-	$E $(CV2PDB_PATH)/cv2pdb.exe $(EXE)$(EXE_EXT) || \
-		(strip --strip-unneeded $(EXE)$(EXE_EXT); \
-		$(WM_SCRIPTS)/infoCV2PDBworkaround)
-endif
+	    $(LINK_LIBS) $(GLIBS) -o $(EXE)
 
 .PHONY: exe
-exe: $(SEXE)$(EXE_EXT) | silent
+exe: $(SEXE) | silent
 
-$(SEXE)$(EXE_EXT): $(OBJECTS)
-	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)$(EXE_EXT)
-	$(call QUIET_MESSAGE,ld,$(SEXE)$(EXE_EXT))
+$(SEXE): $(OBJECTS)
+	@$(WM_SCRIPTS)/makeTargetDir $(SEXE)
+	$(call QUIET_MESSAGE,ld,$(SEXE))
 	$E $(LINKEXE) $(OBJECTS) $(EXE_LIBS) \
-	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)$(EXE_EXT)
+	    $(SYS_LIBS) $(LINK_LIBS) $(GLIBS) -o $(SEXE)
 
 
 #------------------------------------------------------------------------------
@@ -209,17 +165,9 @@ libso: $(LIB).$(SO) | silent
 
 $(LIB).$(SO): $(OBJECTS)
 	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
-	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
-      $(OBJECTS)
 	$(call QUIET_MESSAGE,ld,$(LIB).$(SO))
-	$E $(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
-	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
-ifneq ($(CV2PDB_PATH),)
-	$(call QUIET_MESSAGE,cv2pdb,$(LIB).$(SO))
-	$E $(CV2PDB_PATH)/cv2pdb.exe $(LIB).$(SO) || \
-		(strip --strip-unneeded $(LIB).$(SO); \
-		$(WM_SCRIPTS)/infoCV2PDBworkaround)
-endif
+	$E $(LINKLIBSO) $(OBJECTS) -L$(LIB_PLATFORMS) \
+	    $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 
 .PHONY: lib
 lib: $(LIB).a | silent
@@ -255,35 +203,7 @@ lnInclude: $(MAKE_DIR)/files $(MAKE_DIR)/options
 #------------------------------------------------------------------------------
 
 $(OBJECTS): $(OBJECTS_DIR)/options
-
-ifdef LFN_WORKAROUND
-$(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(shell basename -a $(basename $S)).o : $(OBJECTS_DIR)/$S.dep))
-else
 $(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(basename $S).o : $(OBJECTS_DIR)/$S.dep))
-endif
-
-
-#------------------------------------------------------------------------------
-# Hard-coded compiling rules for C file extension, when the variable
-# LFN_WORKAROUND is set
-#------------------------------------------------------------------------------
-
-ifdef LFN_WORKAROUND
-
-define DEFINE_TRANSFORM_B
-ifeq ($(suffix $1),.$2)
-$(OBJECTS_DIR)/$(shell basename -a $(basename $1)).o : $(basename $1).$2
-	$$($(2)too)
-endif
-endef
-
-define DEFINE_TRANSFORM_B_CHECK_SUFFIXES
-$(foreach ss,C Cver L c,$(eval $(call DEFINE_TRANSFORM_B,$(1),$(ss))))
-endef
-
-$(foreach s,$(SOURCE),$(eval $(call DEFINE_TRANSFORM_B_CHECK_SUFFIXES,$(s))))
-
-endif
 
 
 #------------------------------------------------------------------------------

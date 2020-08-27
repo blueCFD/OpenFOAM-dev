@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "cyclicAMIPointPatch.H"
 #include "pointBoundaryMesh.H"
 #include "pointMesh.H"
-#include "Time.H"
+#include "Time.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -45,7 +45,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
-void Foam::cyclicAMIPointPatch::initGeometry(PstreamBuffers&)
+void Foam::cyclicAMIPointPatch::initCalcGeometry(PstreamBuffers&)
 {}
 
 
@@ -68,7 +68,7 @@ void Foam::cyclicAMIPointPatch::movePoints(PstreamBuffers&, const pointField&)
 void Foam::cyclicAMIPointPatch::initUpdateMesh(PstreamBuffers& pBufs)
 {
     facePointPatch::initUpdateMesh(pBufs);
-//    cyclicAMIPointPatch::initGeometry(pBufs);
+//    cyclicAMIPointPatch::initCalcGeometry(pBufs);
 }
 
 

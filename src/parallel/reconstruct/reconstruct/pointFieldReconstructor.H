@@ -37,14 +37,9 @@ SourceFiles
 
 #include "pointMesh.H"
 #include "pointFields.H"
-<<<<<<< HEAD
-#include "pointPatchFieldMapperPatchRef.H"
-#include "IOobjectList.T.H"
-=======
 #include "pointPatchFieldMapper.H"
 #include "setSizeFieldMapper.H"
-#include "IOobjectList.H"
->>>>>>> blueCFD-Core-7
+#include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

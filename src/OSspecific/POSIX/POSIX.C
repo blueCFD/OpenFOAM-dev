@@ -5,11 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
- 2017-09-15 FSD blueCAPE Lda: Modifications for blueCFD-Core 2017-1
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -23,16 +20,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - Derived from the patches for blueCFD-Core 2016.
-      - Changes based on Symscape's patches, circa 2009.
 
 Description
     POSIX versions of the functions declared in OSspecific.H
@@ -50,12 +37,8 @@ Description
 #include "fileStat.H"
 #include "timer.H"
 #include "IFstream.H"
-<<<<<<< HEAD
 #include "DynamicList.T.H"
-=======
-#include "DynamicList.H"
-#include "HashSet.H"
->>>>>>> blueCFD-Core-7
+#include "HashSet.T.H"
 #include "IOstreams.H"
 #include "Pstream.T.H"
 

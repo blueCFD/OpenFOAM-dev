@@ -30,12 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "IStringStream.H"
-<<<<<<< HEAD
 #include "Polynomial.T.H"
-#include "polynomialFunction.H"
-=======
-#include "Polynomial.H"
->>>>>>> blueCFD-Core-7
 #include "Random.H"
 #include "cpuTime.H"
 

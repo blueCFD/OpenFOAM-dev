@@ -39,11 +39,7 @@ SourceFiles
 #ifndef CompactIOList_H
 #define CompactIOList_H
 
-<<<<<<< HEAD:src/OpenFOAM/db/IOobjects/CompactIOList/CompactIOList.T.H
-#include "IOList.T.H"
-=======
-#include "ListCompactIO.H"
->>>>>>> blueCFD-Core-7:src/OpenFOAM/db/IOobjects/CompactIOList/CompactIOList.H
+#include "ListCompactIO.T.H"
 #include "regIOobject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

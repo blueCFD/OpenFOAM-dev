@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,13 @@ License
 
 template<class Type>
 const Foam::wordList Foam::fv::CodedSource<Type>::codeKeys_ =
-    {"codeAddSup", "codeCorrect", "codeInclude", "codeSetValue", "localCode"};
+{
+    "codeAddSup",
+    "codeCorrect",
+    "codeInclude",
+    "codeSetValue",
+    "localCode"
+};
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
@@ -79,13 +85,6 @@ void Foam::fv::CodedSource<Type>::prepare
             + "    -lfiniteVolume \\\n"
             + context.libs()
         );
-}
-
-
-template<class Type>
-Foam::dlLibraryTable& Foam::fv::CodedSource<Type>::libs() const
-{
-    return const_cast<Time&>(mesh_.time()).libs();
 }
 
 
@@ -167,7 +166,7 @@ void Foam::fv::CodedSource<Type>::correct
             << ">::correct for source " << name_ << endl;
     }
 
-    updateLibrary(name_);
+    updateLibrary();
     redirectFvOption().correct(field);
 }
 
@@ -185,7 +184,7 @@ void Foam::fv::CodedSource<Type>::addSup
             << ">::addSup for source " << name_ << endl;
     }
 
-    updateLibrary(name_);
+    updateLibrary();
     redirectFvOption().addSup(eqn, fieldi);
 }
 
@@ -204,7 +203,7 @@ void Foam::fv::CodedSource<Type>::addSup
             << ">::addSup for source " << name_ << endl;
     }
 
-    updateLibrary(name_);
+    updateLibrary();
     redirectFvOption().addSup(rho, eqn, fieldi);
 }
 
@@ -222,7 +221,7 @@ void Foam::fv::CodedSource<Type>::constrain
             << ">::constrain for source " << name_ << endl;
     }
 
-    updateLibrary(name_);
+    updateLibrary();
     redirectFvOption().constrain(eqn, fieldi);
 }
 

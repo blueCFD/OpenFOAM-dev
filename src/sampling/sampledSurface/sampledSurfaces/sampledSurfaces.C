@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,16 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "sampledSurfaces.H"
-<<<<<<< HEAD
-#include "volFields.H"
-#include "dictionary.H"
-#include "Time.T.H"
-#include "IOmanip.H"
-#include "volPointInterpolation.H"
 #include "PatchTools.T.H"
-=======
-#include "PatchTools.H"
->>>>>>> blueCFD-Core-7
 #include "mapPolyMesh.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -250,12 +241,7 @@ bool Foam::sampledSurfaces::read(const dictionary& dict)
         const word writeType(dict.lookup("surfaceFormat"));
 
         // Define the surface formatter
-        // Optionally defined extra controls for the output formats
-        formatter_ = surfaceWriter::New
-        (
-            writeType,
-            dict.subOrEmptyDict("formatOptions").subOrEmptyDict(writeType)
-        );
+        formatter_ = surfaceWriter::New(writeType, dict);
 
         PtrList<sampledSurface> newList
         (

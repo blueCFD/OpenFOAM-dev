@@ -42,7 +42,7 @@ void Foam::reducedUnits::calcRefValues()
     )
     {
         FatalErrorInFunction
-            << "One of more referencence values too small for floating point "
+            << "One of more reference values too small for floating point "
             << "calculation: "
             << "refTime_ = " << refTime_
             << ", refLength = " << refTemp_
@@ -135,11 +135,11 @@ void Foam::reducedUnits::setRefValues
     const IOdictionary& reducedUnitsDict
 )
 {
-    refLength_ = readScalar(reducedUnitsDict.lookup("refLength"));
+    refLength_ = reducedUnitsDict.template lookup<scalar>("refLength");
 
-    refTime_ = readScalar(reducedUnitsDict.lookup("refTime"));
+    refTime_ = reducedUnitsDict.template lookup<scalar>("refTime");
 
-    refMass_  = readScalar(reducedUnitsDict.lookup("refMass"));
+    refMass_  = reducedUnitsDict.template lookup<scalar>("refMass");
 
     calcRefValues();
 }

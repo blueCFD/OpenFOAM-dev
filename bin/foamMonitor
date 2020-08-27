@@ -64,11 +64,7 @@ error() {
 
 plotFileHeader() {
     cat<<EOF
-<<<<<<< HEAD
-set term wxt 1 font "helvetica,17" linewidth 1.5
-=======
 set term $gpterminal $size
->>>>>>> blueCFD-Core-7
 $logscale
 $yrange
 set ytics format "$yticFormat"

@@ -27,15 +27,9 @@ License
 #include "globalMeshData.H"
 #include "pointMeshMapper.H"
 #include "pointFields.H"
-<<<<<<< HEAD
 #include "MapGeometricFields.T.H"
 #include "MapPointField.T.H"
-
-=======
-#include "MapGeometricFields.H"
-#include "MapPointField.H"
 #include "facePointPatch.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

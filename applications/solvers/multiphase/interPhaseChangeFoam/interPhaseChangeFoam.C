@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,19 +42,15 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-<<<<<<< HEAD
-#include "CMULES.T.H"
-=======
 #include "dynamicFvMesh.H"
-#include "CMULES.H"
->>>>>>> blueCFD-Core-7
+#include "CMULES.T.H"
 #include "subCycle.H"
 #include "interfaceProperties.H"
 #include "phaseChangeTwoPhaseMixture.H"
-#include "turbulentTransportModel.H"
+#include "kinematicMomentumTransportModel.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
-#include "CorrectPhi.H"
+#include "CorrectPhi.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -80,7 +76,7 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
-    while (runTime.run())
+    while (pimple.run(runTime))
     {
         #include "readDyMControls.H"
 

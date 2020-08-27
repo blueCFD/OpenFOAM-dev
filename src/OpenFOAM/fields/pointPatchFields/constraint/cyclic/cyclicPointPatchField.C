@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,7 +111,7 @@ void Foam::cyclicPointPatchField<Type>::swapAddSeparated
 ) const
 {
     // Get neighbouring pointPatch
-    const cyclicPointPatch& nbrPatch = cyclicPatch_.neighbPatch();
+    const cyclicPointPatch& nbrPatch = cyclicPatch_.nbrPatch();
 
     if (cyclicPatch_.cyclicPatch().owner())
     {
@@ -138,7 +138,7 @@ void Foam::cyclicPointPatchField<Type>::swapAddSeparated
 
         const edgeList& pairs = cyclicPatch_.transformPairs();
 
-        if (doTransform())
+        if (transform().template transforms<Type>())
         {
             // Transform both sides.
             forAll(pairs, pairi)
@@ -147,8 +147,8 @@ void Foam::cyclicPointPatchField<Type>::swapAddSeparated
                 label nbrPointi = pairs[pairi][1];
 
                 Type tmp = pf[pointi];
-                pf[pointi] = transform(forwardT()[0], nbrPf[nbrPointi]);
-                nbrPf[nbrPointi] = transform(reverseT()[0], tmp);
+                pf[pointi] = transform().transform(nbrPf[nbrPointi]);
+                nbrPf[nbrPointi] = transform().invTransform(tmp);
             }
         }
         else
@@ -158,6 +158,7 @@ void Foam::cyclicPointPatchField<Type>::swapAddSeparated
                 Swap(pf[pairs[pairi][0]], nbrPf[pairs[pairi][1]]);
             }
         }
+
         this->addToInternalField(pField, pf);
         nbr.addToInternalField(pField, nbrPf);
     }

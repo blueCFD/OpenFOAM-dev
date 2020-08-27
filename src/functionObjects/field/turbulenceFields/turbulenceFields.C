@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "turbulenceFields.H"
-#include "turbulentTransportModel.H"
-#include "turbulentFluidThermoModel.H"
+#include "kinematicMomentumTransportModel.H"
+#include "thermophysicalTransportModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -49,7 +49,7 @@ template<>
 const char* Foam::NamedEnum
 <
     Foam::functionObjects::turbulenceFields::compressibleField,
-    9
+    8
 >::names[] =
 {
     "k",
@@ -57,16 +57,15 @@ const char* Foam::NamedEnum
     "omega",
     "mut",
     "muEff",
-    "alphat",
     "alphaEff",
     "R",
-    "devRhoReff"
+    "devTau"
 };
 
 const Foam::NamedEnum
 <
     Foam::functionObjects::turbulenceFields::compressibleField,
-    9
+    8
 > Foam::functionObjects::turbulenceFields::compressibleFieldNames_;
 
 template<>
@@ -82,7 +81,7 @@ const char* Foam::NamedEnum
     "nut",
     "nuEff",
     "R",
-    "devReff"
+    "devSigma"
 };
 
 const Foam::NamedEnum
@@ -118,7 +117,7 @@ Foam::functionObjects::turbulenceFields::~turbulenceFields()
 
 const Foam::word& Foam::functionObjects::turbulenceFields::modelName()
 {
-    return Foam::turbulenceModel::propertiesName;
+    return Foam::momentumTransportModel::typeName;
 }
 
 
@@ -163,10 +162,16 @@ bool Foam::functionObjects::turbulenceFields::read(const dictionary& dict)
 
 bool Foam::functionObjects::turbulenceFields::execute()
 {
-    if (obr_.foundObject<compressible::turbulenceModel>(modelName()))
+    if (obr_.foundObject<thermophysicalTransportModel>(modelName()))
     {
-        const compressible::turbulenceModel& model =
-            obr_.lookupObject<compressible::turbulenceModel>(modelName());
+        const thermophysicalTransportModel& ttm =
+            obr_.lookupObject<thermophysicalTransportModel>
+            (
+                thermophysicalTransportModel::typeName
+            );
+
+        const compressibleMomentumTransportModel& model =
+            ttm.momentumTransport();
 
         forAllConstIter(wordHashSet, fieldSet_, iter)
         {
@@ -196,26 +201,21 @@ bool Foam::functionObjects::turbulenceFields::execute()
                 case compressibleField::muEff:
                 {
                     processField<scalar>(f, model.muEff());
-                    break;
-                }
-                case compressibleField::alphat:
-                {
-                    processField<scalar>(f, model.alphat());
                     break;
                 }
                 case compressibleField::alphaEff:
                 {
-                    processField<scalar>(f, model.alphaEff());
+                    processField<scalar>(f, ttm.alphaEff());
                     break;
                 }
                 case compressibleField::R:
                 {
-                    processField<symmTensor>(f, model.R());
+                    processField<symmTensor>(f, model.sigma());
                     break;
                 }
-                case compressibleField::devRhoReff:
+                case compressibleField::devTau:
                 {
-                    processField<symmTensor>(f, model.devRhoReff());
+                    processField<symmTensor>(f, model.devTau());
                     break;
                 }
                 default:
@@ -226,10 +226,10 @@ bool Foam::functionObjects::turbulenceFields::execute()
             }
         }
     }
-    else if (obr_.foundObject<compressibleTurbulenceModel>(modelName()))
+    else if (obr_.foundObject<compressibleMomentumTransportModel>(modelName()))
     {
-        const compressibleTurbulenceModel& model =
-            obr_.lookupObject<compressibleTurbulenceModel>(modelName());
+        const compressibleMomentumTransportModel& model =
+            obr_.lookupObject<compressibleMomentumTransportModel>(modelName());
 
         forAllConstIter(wordHashSet, fieldSet_, iter)
         {
@@ -263,12 +263,12 @@ bool Foam::functionObjects::turbulenceFields::execute()
                 }
                 case compressibleField::R:
                 {
-                    processField<symmTensor>(f, model.R());
+                    processField<symmTensor>(f, model.sigma());
                     break;
                 }
-                case compressibleField::devRhoReff:
+                case compressibleField::devTau:
                 {
-                    processField<symmTensor>(f, model.devRhoReff());
+                    processField<symmTensor>(f, model.devTau());
                     break;
                 }
                 default:
@@ -279,10 +279,16 @@ bool Foam::functionObjects::turbulenceFields::execute()
             }
         }
     }
-    else if (obr_.foundObject<incompressible::turbulenceModel>(modelName()))
+    else if
+    (
+        obr_.foundObject<incompressible::momentumTransportModel>(modelName())
+    )
     {
-        const incompressible::turbulenceModel& model =
-            obr_.lookupObject<incompressible::turbulenceModel>(modelName());
+        const incompressible::momentumTransportModel& model =
+            obr_.lookupObject<incompressible::momentumTransportModel>
+            (
+                modelName()
+            );
 
         forAllConstIter(wordHashSet, fieldSet_, iter)
         {
@@ -316,12 +322,12 @@ bool Foam::functionObjects::turbulenceFields::execute()
                 }
                 case incompressibleField::R:
                 {
-                    processField<symmTensor>(f, model.R());
+                    processField<symmTensor>(f, model.sigma());
                     break;
                 }
-                case incompressibleField::devReff:
+                case incompressibleField::devSigma:
                 {
-                    processField<symmTensor>(f, model.devReff());
+                    processField<symmTensor>(f, model.devSigma());
                     break;
                 }
                 default:

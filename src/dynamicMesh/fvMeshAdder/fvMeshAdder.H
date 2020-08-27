@@ -42,12 +42,8 @@ SourceFiles
 #include "fvPatchFieldsFwd.H"
 #include "fvsPatchFieldsFwd.H"
 #include "fvPatchFieldMapper.H"
-<<<<<<< HEAD
 #include "DimensionedField.T.H"
-=======
-#include "DimensionedField.H"
 #include "pointFieldsFwd.H"
->>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
