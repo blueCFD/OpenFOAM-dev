@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,7 +50,7 @@ Foam::velocityComponentLaplacianFvMotionSolver::
 velocityComponentLaplacianFvMotionSolver
 (
     const polyMesh& mesh,
-    const IOdictionary& dict
+    const dictionary& dict
 )
 :
     componentVelocityMotionSolver(mesh, dict, typeName),
@@ -66,12 +66,7 @@ velocityComponentLaplacianFvMotionSolver
             IOobject::AUTO_WRITE
         ),
         fvMesh_,
-        dimensionedScalar
-        (
-            "cellMotionU",
-            pointMotionU_.dimensions(),
-            0
-        ),
+        dimensionedScalar(pointMotionU_.dimensions(), 0),
         cellMotionBoundaryTypes<scalar>(pointMotionU_.boundaryField())
     ),
     diffusivityPtr_

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,7 +65,7 @@ Ostream& operator<<(Ostream&, const fileStat&);
 
 class fileStat
 {
-    // Private data
+    // Private Data
 
         struct stat status_;
 
@@ -73,6 +73,15 @@ class fileStat
 
 
 public:
+
+    // Public static data
+
+        //- Number of file variants
+        static const label nVariants_;
+
+        //- Extensions of the file variants
+        static const char* variantExts_[];
+
 
     // Constructors
 
@@ -85,6 +94,7 @@ public:
         fileStat
         (
             const fileName& fName,
+            const bool checkVariants = true,
             const bool followLink = true,
             const unsigned int maxTime = 0
         );

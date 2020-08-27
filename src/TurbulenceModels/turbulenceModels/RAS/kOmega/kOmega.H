@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,6 +97,8 @@ protected:
     // Protected Member Functions
 
         virtual void correctNut();
+        virtual tmp<fvScalarMatrix> kSource() const;
+        virtual tmp<fvScalarMatrix> omegaSource() const;
 
 
 public:
@@ -139,26 +141,20 @@ public:
         //- Return the effective diffusivity for k
         tmp<volScalarField> DkEff() const
         {
-            return tmp<volScalarField>
+            return volScalarField::New
             (
-                new volScalarField
-                (
-                    "DkEff",
-                    alphaK_*this->nut_ + this->nu()
-                )
+                "DkEff",
+                alphaK_*this->nut_ + this->nu()
             );
         }
 
         //- Return the effective diffusivity for omega
         tmp<volScalarField> DomegaEff() const
         {
-            return tmp<volScalarField>
+            return volScalarField::New
             (
-                new volScalarField
-                (
-                    "DomegaEff",
-                    alphaOmega_*this->nut_ + this->nu()
-                )
+                "DomegaEff",
+                alphaOmega_*this->nut_ + this->nu()
             );
         }
 
@@ -177,19 +173,11 @@ public:
         //- Return the turbulence kinetic energy dissipation rate
         virtual tmp<volScalarField> epsilon() const
         {
-            return tmp<volScalarField>
+            return volScalarField::New
             (
-                new volScalarField
-                (
-                    IOobject
-                    (
-                        "epsilon",
-                        this->mesh_.time().timeName(),
-                        this->mesh_
-                    ),
-                    Cmu_*k_*omega_,
-                    omega_.boundaryField().types()
-                )
+                "epsilon",
+                Cmu_*k_*omega_,
+                omega_.boundaryField().types()
             );
         }
 

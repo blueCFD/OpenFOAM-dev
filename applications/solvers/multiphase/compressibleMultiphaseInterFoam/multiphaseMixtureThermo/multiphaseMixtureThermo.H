@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -122,7 +122,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- Dictionary of phases
         PtrDictionary<phaseModel> phases_;
@@ -148,7 +148,7 @@ private:
         static const scalar convertToRad;
 
 
-    // Private member functions
+    // Private Member Functions
 
         void calcAlphas();
 
@@ -379,6 +379,9 @@ public:
             //- Molecular weight [kg/kmol]
             virtual tmp<volScalarField> W() const;
 
+            //- Molecular weight for patch [kg/kmol]
+            virtual tmp<scalarField> W(const label patchi) const;
+
 
         // Fields derived from transport state variables
 
@@ -388,35 +391,41 @@ public:
             //- Kinematic viscosity of mixture for patch [m^2/s]
             virtual tmp<scalarField> nu(const label patchi) const;
 
-            //- Thermal diffusivity for temperature of mixture [J/m/s/K]
+            //- Thermal diffusivity for temperature of mixture [W/m/K]
             virtual tmp<volScalarField> kappa() const;
 
-            //- Thermal diffusivity of mixture for patch [J/m/s/K]
+            //- Thermal diffusivity of mixture for patch [W/m/K]
             virtual tmp<scalarField> kappa
             (
                 const label patchi
             ) const;
 
-            //- Effective thermal diffusivity of mixture [J/m/s/K]
+            //- Thermal diffusivity for energy of mixture [kg/m/s]
+            virtual tmp<volScalarField> alphahe() const;
+
+            //- Thermal diffusivity for energy of mixture for patch [kg/m/s]
+            virtual tmp<scalarField> alphahe(const label patchi) const;
+
+            //- Effective thermal diffusivity of mixture [W/m/K]
             virtual tmp<volScalarField> kappaEff
             (
                 const volScalarField& alphat
             ) const;
 
-            //- Effective thermal diffusivity of mixture for patch [J/m/s/K]
+            //- Effective thermal diffusivity of mixture for patch [W/m/K]
             virtual tmp<scalarField> kappaEff
             (
                 const scalarField& alphat,
                 const label patchi
             ) const;
 
-            //- Effective thermal diffusivity of mixture [J/m/s/K]
+            //- Effective thermal diffusivity of mixture [W/m/K]
             virtual tmp<volScalarField> alphaEff
             (
                 const volScalarField& alphat
             ) const;
 
-            //- Effective thermal diffusivity of mixture for patch [J/m/s/K]
+            //- Effective thermal diffusivity of mixture for patch [W/m/K]
             virtual tmp<scalarField> alphaEff
             (
                 const scalarField& alphat,

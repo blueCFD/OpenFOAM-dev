@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -125,18 +125,9 @@ public:
     :
         public refCount
     {
-        // Private data
+        // Private Data
 
             bool empty_;
-
-
-        // Private Member Functions
-
-            //- Disallow default bitwise copy construct
-            compound(const compound&);
-
-            //- Disallow default bitwise assignment
-            void operator=(const compound&);
 
 
     public:
@@ -164,6 +155,9 @@ public:
                 empty_(false)
             {}
 
+            //- Disallow default bitwise copy construction
+            compound(const compound&) = delete;
+
 
         // Selectors
 
@@ -177,31 +171,28 @@ public:
 
         // Member Functions
 
-            // Access
+            //- Return true if name is a compound type
+            static bool isCompound(const word& name);
 
-                //- Return true if name is a compound type
-                static bool isCompound(const word& name);
+            bool empty() const
+            {
+                return empty_;
+            }
 
-                bool empty() const
-                {
-                    return empty_;
-                }
+            bool& empty()
+            {
+                return empty_;
+            }
 
-                bool& empty()
-                {
-                    return empty_;
-                }
+            virtual label size() const = 0;
 
-                virtual label size() const = 0;
+            virtual void write(Ostream&) const = 0;
 
 
-            // Check
+        // Member Operators
 
-            // Edit
-
-            // Write
-
-                virtual void write(Ostream&) const = 0;
+            //- Disallow default bitwise assignment
+            void operator=(const compound&) = delete;
 
 
         // IOstream Operators
@@ -245,7 +236,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- The token type
         tokenType type_;
@@ -278,7 +269,7 @@ private:
 
 public:
 
-    // Static data members
+    // Static Data Members
 
         static const char* const typeName;
 
@@ -288,7 +279,7 @@ public:
         //- Construct null
         inline token();
 
-        //- Construct as copy
+        //- Copy constructor
         inline token(const token&);
 
         //- Construct punctuation character token
@@ -320,7 +311,7 @@ public:
     inline ~token();
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 
@@ -384,7 +375,7 @@ public:
             }
 
 
-    // Member operators
+    // Member Operators
 
         // Assignment
 
@@ -430,7 +421,7 @@ public:
             inline bool operator!=(const longDoubleScalar) const;
 
 
-    // IOstream operators
+    // IOstream Operators
 
         friend Istream& operator>>(Istream&, token&);
         friend Ostream& operator<<(Ostream&, const token&);

@@ -28,6 +28,7 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<<<<<<< HEAD
 #include "CellZoneInjection.T.H"
 #include "ConeInjection.T.H"
 #include "ConeNozzleInjection.T.H"
@@ -38,6 +39,17 @@ License
 #include "NoInjection.T.H"
 #include "PatchInjection.T.H"
 #include "PatchFlowRateInjection.T.H"
+=======
+#include "CellZoneInjection.H"
+#include "ConeInjection.H"
+#include "FieldActivatedInjection.H"
+#include "InflationInjection.H"
+#include "KinematicLookupTableInjection.H"
+#include "ManualInjection.H"
+#include "NoInjection.H"
+#include "PatchInjection.H"
+#include "PatchFlowRateInjection.H"
+>>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,7 +59,6 @@ License
                                                                                \
     makeInjectionModelType(CellZoneInjection, CloudType);                      \
     makeInjectionModelType(ConeInjection, CloudType);                          \
-    makeInjectionModelType(ConeNozzleInjection, CloudType);                    \
     makeInjectionModelType(FieldActivatedInjection, CloudType);                \
     makeInjectionModelType(InflationInjection, CloudType);                     \
     makeInjectionModelType(KinematicLookupTableInjection, CloudType);          \

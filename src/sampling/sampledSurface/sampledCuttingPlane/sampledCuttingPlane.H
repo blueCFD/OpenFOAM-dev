@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::sampledCuttingPlane
+    Foam::sampledSurfaces::cuttingPlane
 
 Description
     A sampledSurface defined by a plane using the iso-surface algorithm
@@ -38,7 +38,6 @@ SourceFiles
 
 #include "sampledSurface.H"
 #include "isoSurface.H"
-//#include "isoSurfaceCell.H"
 #include "plane.H"
 #include "ZoneIDs.H"
 #include "fvMeshSubset.H"
@@ -47,22 +46,21 @@ SourceFiles
 
 namespace Foam
 {
+namespace sampledSurfaces
+{
 
 /*---------------------------------------------------------------------------*\
-                       Class sampledCuttingPlane Declaration
+                       Class cuttingPlane Declaration
 \*---------------------------------------------------------------------------*/
 
-class sampledCuttingPlane
+class cuttingPlane
 :
     public sampledSurface
 {
-    // Private data
+    // Private Data
 
         //- Plane
         const plane plane_;
-
-        //- Merge tolerance
-        const scalar mergeTol_;
 
         //- Whether to coarsen
         const Switch regularise_;
@@ -90,7 +88,6 @@ class sampledCuttingPlane
         scalarField pointDistance_;
 
         //- Constructed iso surface
-        // autoPtr<isoSurfaceCell> isoSurfPtr_;
         autoPtr<isoSurface> isoSurfPtr_;
 
         //- Triangles converted to faceList
@@ -118,13 +115,13 @@ class sampledCuttingPlane
 public:
 
     //- Runtime type information
-    TypeName("sampledCuttingPlane");
+    TypeName("cuttingPlane");
 
 
     // Constructors
 
         //- Construct from dictionary
-        sampledCuttingPlane
+        cuttingPlane
         (
             const word& name,
             const polyMesh& mesh,
@@ -133,7 +130,7 @@ public:
 
 
     //- Destructor
-    virtual ~sampledCuttingPlane();
+    virtual ~cuttingPlane();
 
 
     // Member Functions
@@ -159,22 +156,9 @@ public:
         //- Faces of surface
         virtual const faceList& faces() const
         {
-            if (facesPtr_.empty())
-            {
-                const triSurface& s = surface();
-
-                facesPtr_.reset(new faceList(s.size()));
-
-                forAll(s, i)
-                {
-                    facesPtr_()[i] = s[i].triFaceFace();
-                }
-            }
-            return facesPtr_;
+            return surface().faces();
         }
 
-
-        // const isoSurfaceCell& surface() const
         const isoSurface& surface() const
         {
             return isoSurfPtr_();
@@ -248,6 +232,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace sampledSurfaces
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,6 +33,22 @@ namespace Foam
 {
 namespace laminarModels
 {
+
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+template<class BasicTurbulenceModel>
+tmp<fvSymmTensorMatrix> Maxwell<BasicTurbulenceModel>::sigmaSource() const
+{
+    return tmp<fvSymmTensorMatrix>
+    (
+        new fvSymmTensorMatrix
+        (
+            sigma_,
+            dimVolume*this->rho_.dimensions()*sigma_.dimensions()/dimTime
+        )
+    );
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -130,22 +146,12 @@ template<class BasicTurbulenceModel>
 tmp<Foam::volSymmTensorField>
 Maxwell<BasicTurbulenceModel>::devRhoReff() const
 {
-    return tmp<volSymmTensorField>
+    return volSymmTensorField::New
     (
-        new volSymmTensorField
-        (
-            IOobject
-            (
-                IOobject::groupName("devRhoReff", this->alphaRhoPhi_.group()),
-                this->runTime_.timeName(),
-                this->mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            this->alpha_*this->rho_*sigma_
-          - (this->alpha_*this->rho_*this->nu())
-           *dev(twoSymm(fvc::grad(this->U_)))
-        )
+        IOobject::groupName("devRhoReff", this->alphaRhoPhi_.group()),
+        this->alpha_*this->rho_*sigma_
+      - (this->alpha_*this->rho_*this->nu())
+       *dev(twoSymm(fvc::grad(this->U_)))
     );
 }
 
@@ -233,6 +239,7 @@ void Maxwell<BasicTurbulenceModel>::correct()
       + fvm::Sp(alpha*rho*rLambda, sigma)
      ==
         alpha*rho*P
+      + sigmaSource()
       + fvOptions(alpha, rho, sigma)
     );
 

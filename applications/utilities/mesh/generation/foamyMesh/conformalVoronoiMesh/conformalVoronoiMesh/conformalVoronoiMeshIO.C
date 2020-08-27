@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -410,9 +410,9 @@ Foam::autoPtr<Foam::fvMesh> Foam::conformalVoronoiMesh::createDummyMesh
         new fvMesh
         (
             io,
-            xferCopy(pointField()),
-            xferCopy(faceList()),
-            xferCopy(cellList())
+            pointField(),
+            faceList(),
+            cellList()
         )
     );
     fvMesh& mesh = meshPtr();
@@ -591,6 +591,8 @@ void Foam::conformalVoronoiMesh::reorderProcessorPatches
     const fileName& instance,
     const pointField& points,
     faceList& faces,
+    labelList& owner,
+    labelList& neighbour,
     const wordList& patchNames,
     const PtrList<dictionary>& patchDicts
 ) const
@@ -730,6 +732,8 @@ void Foam::conformalVoronoiMesh::reorderProcessorPatches
         if (nReorderedFaces > 0)
         {
             inplaceReorder(faceMap, faces);
+            inplaceReorder(faceMap, owner);
+            inplaceReorder(faceMap, neighbour);
         }
 
         // Rotate faces (rotation is already in new face indices).
@@ -791,6 +795,8 @@ void Foam::conformalVoronoiMesh::writeMesh
             instance,
             points,
             faces,
+            owner,
+            neighbour,
             patchNames,
             patchDicts
         );
@@ -811,10 +817,10 @@ void Foam::conformalVoronoiMesh::writeMesh
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        xferMove(points),
-        xferMove(faces),
-        xferMove(owner),
-        xferMove(neighbour)
+        Foam::move(points),
+        Foam::move(faces),
+        Foam::move(owner),
+        Foam::move(neighbour)
     );
 
     Info<< indent << "Adding patches to mesh" << endl;
@@ -1115,7 +1121,7 @@ void Foam::conformalVoronoiMesh::writeCellSizes
                 IOobject::AUTO_WRITE
             ),
             mesh,
-            dimensionedScalar("cellSize", dimLength, 0),
+            dimensionedScalar(dimLength, 0),
             zeroGradientFvPatchScalarField::typeName
         );
 
@@ -1141,7 +1147,7 @@ void Foam::conformalVoronoiMesh::writeCellSizes
         //         IOobject::AUTO_WRITE
         //     ),
         //     mesh,
-        //     dimensionedScalar("cellVolume", dimLength, 0),
+        //     dimensionedScalar(dimLength, 0),
         //     zeroGradientFvPatchScalarField::typeName
         // );
 
@@ -1160,7 +1166,7 @@ void Foam::conformalVoronoiMesh::writeCellSizes
         //         IOobject::AUTO_WRITE
         //     ),
         //     mesh,
-        //     dimensionedScalar("cellVolume", dimVolume, 0),
+        //     dimensionedScalar(dimVolume, 0),
         //     zeroGradientFvPatchScalarField::typeName
         // );
 
@@ -1179,7 +1185,7 @@ void Foam::conformalVoronoiMesh::writeCellSizes
         //         IOobject::AUTO_WRITE
         //     ),
         //     mesh,
-        //     dimensionedScalar("cellSize", dimLength, 0),
+        //     dimensionedScalar(dimLength, 0),
         //     zeroGradientFvPatchScalarField::typeName
         // );
 
@@ -1225,7 +1231,7 @@ void Foam::conformalVoronoiMesh::writeCellSizes
     //             IOobject::AUTO_WRITE
     //         ),
     //         ptMesh,
-    //         dimensionedScalar("ptTargetCellSize", dimLength, 0),
+    //         dimensionedScalar(dimLength, 0),
     //         pointPatchVectorField::calculatedType()
     //     );
 
@@ -1393,7 +1399,7 @@ Foam::labelHashSet Foam::conformalVoronoiMesh::findRemainingProtrusionSet
         protrudingCells.write();
     }
 
-    return protrudingCells;
+    return Foam::move(protrudingCells);
 }
 
 

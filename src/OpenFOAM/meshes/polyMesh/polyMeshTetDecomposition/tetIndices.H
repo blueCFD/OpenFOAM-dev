@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ Ostream& operator<<(Ostream&, const tetIndices&);
 
 class tetIndices
 {
-    // Private data
+    // Private Data
 
         //- Cell that this is a decomposed tet of
         label celli_;
@@ -92,16 +92,6 @@ class tetIndices
         //- Point on the face, *relative to the base point*, which
         //  characterises this tet on the face.
         label tetPti_;
-
-
-    // Private static data
-
-        //- Maximum number of bad tet warnings
-        static const label maxNWarnings;
-
-        //- Current number of bad tet warnings. Warnings stop when this reaches
-        //  the maximum number.
-        static label nWarnings;
 
 
 public:

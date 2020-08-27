@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,10 +117,7 @@ Notes:
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "fvMesh.H"
 #include "polyTopoChange.H"
-#include "OFstream.H"
-#include "meshTools.H"
 #include "mappedWallPolyPatch.H"
 #include "createShellMesh.H"
 #include "syncTools.H"
@@ -128,13 +125,7 @@ Notes:
 #include "wedgePolyPatch.H"
 #include "nonuniformTransformCyclicPolyPatch.H"
 #include "extrudeModel.H"
-#include "globalIndex.H"
 #include "faceSet.H"
-
-#include "volFields.H"
-#include "surfaceFields.H"
-#include "pointFields.H"
-//#include "ReadFields.H"
 #include "fvMeshTools.H"
 #include "OBJstream.H"
 #include "PatchTools.T.H"
@@ -1599,55 +1590,6 @@ int main(int argc, char *argv[])
     }
 
 
-
-
-    //// Read objects in time directory
-    // IOobjectList objects(mesh, runTime.timeName());
-    //
-    //// Read vol fields.
-    //
-    // PtrList<volScalarField> vsFlds;
-    // ReadFields(mesh, objects, vsFlds);
-    //
-    // PtrList<volVectorField> vvFlds;
-    // ReadFields(mesh, objects, vvFlds);
-    //
-    // PtrList<volSphericalTensorField> vstFlds;
-    // ReadFields(mesh, objects, vstFlds);
-    //
-    // PtrList<volSymmTensorField> vsymtFlds;
-    // ReadFields(mesh, objects, vsymtFlds);
-    //
-    // PtrList<volTensorField> vtFlds;
-    // ReadFields(mesh, objects, vtFlds);
-    //
-    //// Read surface fields.
-    //
-    // PtrList<surfaceScalarField> ssFlds;
-    // ReadFields(mesh, objects, ssFlds);
-    //
-    // PtrList<surfaceVectorField> svFlds;
-    // ReadFields(mesh, objects, svFlds);
-    //
-    // PtrList<surfaceSphericalTensorField> sstFlds;
-    // ReadFields(mesh, objects, sstFlds);
-    //
-    // PtrList<surfaceSymmTensorField> ssymtFlds;
-    // ReadFields(mesh, objects, ssymtFlds);
-    //
-    // PtrList<surfaceTensorField> stFlds;
-    // ReadFields(mesh, objects, stFlds);
-    //
-    //// Read point fields.
-    //
-    // PtrList<pointScalarField> psFlds;
-    // ReadFields(pointMesh::New(mesh), objects, psFlds);
-    //
-    // PtrList<pointVectorField> pvFlds;
-    // ReadFields(pointMesh::New(mesh), objects, pvFlds);
-
-
-
     // Create dummy fv* files
     createDummyFvMeshFiles(mesh, shellRegionName);
 
@@ -1882,7 +1824,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    const primitiveFacePatch extrudePatch(zoneFaces.xfer(), mesh.points());
+    const primitiveFacePatch extrudePatch(move(zoneFaces), mesh.points());
 
 
     Pstream::listCombineGather(isInternal, orEqOp<bool>());
@@ -2407,10 +2349,10 @@ int main(int argc, char *argv[])
             IOobject::AUTO_WRITE,
             false
         ),
-        xferCopy(pointField()),
-        xferCopy(faceList()),
-        xferCopy(labelList()),
-        xferCopy(labelList()),
+        pointField(),
+        faceList(),
+        labelList(),
+        labelList(),
         false
     );
 

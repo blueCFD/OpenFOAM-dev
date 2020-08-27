@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,15 +51,15 @@ namespace Foam
 
 class solidProperties
 {
-    // Private data
+    // Private Data
 
-        //- Density [kg/m3]
+        //- Density [kg/m^3]
         scalar rho_;
 
-        //- Specific heat capacity [J/(kg.K)]
+        //- Specific heat capacity [J/kg/K]
         scalar Cp_;
 
-        //- Thermal conductivity [W/(m.K)]
+        //- Thermal conductivity [W/m/K]
         scalar kappa_;
 
         //- Heat of formation [J/kg]
@@ -136,13 +136,13 @@ public:
 
         // Physical constants which define the solidProperties
 
-            //- Density [kg/m3]
+            //- Density [kg/m^3]
             inline scalar rho() const;
 
-            //- Specific heat capacity [J/(kg.K)]
+            //- Specific heat capacity [J/kg/K]
             inline scalar Cp() const;
 
-            //- Thermal conductivity [W/(m.K)]
+            //- Thermal conductivity [W/m/K]
             inline scalar kappa() const;
 
             //- Heat of formation [J/kg]

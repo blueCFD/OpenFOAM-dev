@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -23,6 +23,7 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+<<<<<<< HEAD
 Modifications
     This file has been modified by blueCAPE's unofficial mingw patches for
     OpenFOAM.
@@ -39,6 +40,8 @@ Application
 Description
     Converts a GAMBIT mesh to OpenFOAM format.
 
+=======
+>>>>>>> blueCFD-Core-7
 \*---------------------------------------------------------------------------*/
 
 %{
@@ -865,7 +868,7 @@ int main(int argc, char *argv[])
             runTime.constant(),
             runTime
         ),
-        xferMove(points),
+        move(points),
         cells,
         boundary,
         patchNames,

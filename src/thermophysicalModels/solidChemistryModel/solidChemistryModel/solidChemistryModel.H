@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,15 +62,6 @@ class solidChemistryModel
     public CompType,
     public ODESystem
 {
-    // Private Member Functions
-
-        //- Disallow copy constructor
-        solidChemistryModel(const solidChemistryModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const solidChemistryModel&);
-
-
 protected:
 
         //- Reference to solid mass fractions
@@ -88,7 +79,7 @@ protected:
         //- Number of solid reactions
         label nReaction_;
 
-        //- List of reaction rate per solid [kg/m3/s]
+        //- List of reaction rate per solid [kg/m^3/s]
         PtrList<volScalarField::Internal> RRs_;
 
         //- List of active reacting cells
@@ -114,6 +105,9 @@ public:
 
         //- Construct from thermo
         solidChemistryModel(typename CompType::reactionThermo& thermo);
+
+        //- Disallow default bitwise copy construction
+        solidChemistryModel(const solidChemistryModel&);
 
 
     //- Destructor
@@ -197,7 +191,7 @@ public:
             //- Return the chemical time scale
             virtual tmp<volScalarField> tc() const;
 
-            //- Return the heat release rate [kg/m/s3]
+            //- Return the heat release rate [kg/m/s^3]
             virtual tmp<volScalarField> Qdot() const;
 
 
@@ -229,6 +223,12 @@ public:
                 scalar& deltaT,
                 scalar& subDeltaT
             ) const = 0;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const solidChemistryModel&) = delete;
 };
 
 

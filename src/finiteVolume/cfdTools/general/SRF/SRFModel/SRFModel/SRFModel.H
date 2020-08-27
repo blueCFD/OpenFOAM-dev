@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,17 +88,6 @@ protected:
         dimensionedVector omega_;
 
 
-private:
-
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        SRFModel(const SRFModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const SRFModel&);
-
-
 public:
 
     //- Runtime type information
@@ -127,6 +116,9 @@ public:
             const word& type,
             const volVectorField& Urel
         );
+
+        //- Disallow default bitwise copy construction
+        SRFModel(const SRFModel&) = delete;
 
 
     // Selectors
@@ -178,6 +170,12 @@ public:
 
             //- Return absolute velocity for complete mesh
             tmp<volVectorField> Uabs() const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const SRFModel&) = delete;
 };
 
 

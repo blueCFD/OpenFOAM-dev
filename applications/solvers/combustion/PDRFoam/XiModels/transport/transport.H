@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,21 +57,12 @@ class transport
 :
     public XiModel
 {
-    // Private data
+    // Private Data
 
         scalar XiShapeCoef;
 
         autoPtr<XiEqModel> XiEqModel_;
         autoPtr<XiGModel> XiGModel_;
-
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        transport(const transport&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const transport&);
 
 
 public:
@@ -93,6 +84,9 @@ public:
             const volScalarField& b,
             const surfaceScalarField& phi
         );
+
+        //- Disallow default bitwise copy construction
+        transport(const transport&);
 
 
     //- Destructor
@@ -130,6 +124,12 @@ public:
         {
             XiEqModel_().writeFields();
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const transport&) = delete;
 };
 
 

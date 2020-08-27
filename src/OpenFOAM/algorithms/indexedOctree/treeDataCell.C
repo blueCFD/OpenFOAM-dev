@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(treeDataCell, 0);
+    defineTypeNameAndDebug(treeDataCell, 0);
 }
 
 
@@ -104,12 +104,12 @@ Foam::treeDataCell::treeDataCell
 (
     const bool cacheBb,
     const polyMesh& mesh,
-    const Xfer<labelList>& cellLabels,
+    labelList&& cellLabels,
     const polyMesh::cellDecomposition decompMode
 )
 :
     mesh_(mesh),
-    cellLabels_(cellLabels),
+    cellLabels_(move(cellLabels)),
     cacheBb_(cacheBb),
     decompMode_(decompMode)
 {
@@ -253,7 +253,7 @@ bool Foam::treeDataCell::findIntersectOp::operator()
 
         if ((cellBb.posBits(start) & cellBb.posBits(end)) != 0)
         {
-            // start and end in same block outside of cellBb.
+            // Start and end in same block outside of cellBb.
             return false;
         }
     }
@@ -263,7 +263,7 @@ bool Foam::treeDataCell::findIntersectOp::operator()
 
         if ((cellBb.posBits(start) & cellBb.posBits(end)) != 0)
         {
-            // start and end in same block outside of cellBb.
+            // Start and end in same block outside of cellBb.
             return false;
         }
     }
@@ -290,7 +290,7 @@ bool Foam::treeDataCell::findIntersectOp::operator()
             start,
             dir,
             shape.mesh_.points(),
-            intersection::HALF_RAY
+            intersection::algorithm::halfRay
         );
 
         if (inter.hit() && sqr(inter.distance()) <= minDistSqr)

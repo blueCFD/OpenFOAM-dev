@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,20 +56,11 @@ class surfaceFilmRegionModel
     public surfaceFilmModel,
     public singleLayerRegion
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        surfaceFilmRegionModel(const surfaceFilmRegionModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const surfaceFilmRegionModel&);
-
-
 protected:
 
     // Protected data
 
-        //- Acceleration due to gravity [m/s2]
+        //- Acceleration due to gravity [m/s^2]
         const dimensionedVector& g_;
 
 
@@ -96,6 +87,9 @@ public:
             const word& regionType
         );
 
+        //- Disallow default bitwise copy construction
+        surfaceFilmRegionModel(const surfaceFilmRegionModel&) = delete;
+
 
     //- Destructor
     virtual ~surfaceFilmRegionModel();
@@ -105,7 +99,7 @@ public:
 
         // Access
 
-            //- Return the accleration due to gravity
+            //- Return the acceleration due to gravity
             inline const dimensionedVector& g() const;
 
             //- External hook to add sources to the film
@@ -137,7 +131,7 @@ public:
             //- Return the film wall velocity [m/s]
             virtual const volVectorField& Uw() const = 0;
 
-            //- Return the film density [kg/m3]
+            //- Return the film density [kg/m^3]
             virtual const volScalarField& rho() const = 0;
 
             //- Return the film mean temperature [K]
@@ -178,6 +172,12 @@ public:
 
             //- Main driver routing to evolve the region - calls other evolves
             virtual void evolve();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const surfaceFilmRegionModel&) = delete;
 };
 
 

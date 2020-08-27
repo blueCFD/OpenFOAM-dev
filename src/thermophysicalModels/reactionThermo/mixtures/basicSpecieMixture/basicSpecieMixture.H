@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,17 +78,17 @@ public:
     {}
 
 
-    // Member functions
+    // Member Functions
 
         // Per specie properties
 
             //- Molecular weight of the given specie [kg/kmol]
-            virtual scalar W(const label speciei) const = 0;
+            virtual scalar Wi(const label speciei) const = 0;
 
 
         // Per specie thermo properties
 
-            //- Heat capacity at constant pressure [J/(kg K)]
+            //- Heat capacity at constant pressure [J/kg/K]
             virtual scalar Cp
             (
                 const label speciei,
@@ -96,7 +96,7 @@ public:
                 const scalar T
             ) const = 0;
 
-            //- Heat capacity at constant volume [J/(kg K)]
+            //- Heat capacity at constant volume [J/kg/K]
             virtual scalar Cv
             (
                 const label speciei,
@@ -123,7 +123,7 @@ public:
             //- Chemical enthalpy [J/kg]
             virtual scalar Hc(const label speciei) const = 0;
 
-            //- Entropy [J/(kg K)]
+            //- Entropy [J/kg/K]
             virtual scalar S
             (
                 const label speciei,
@@ -182,7 +182,7 @@ public:
                 const scalar T
             ) const = 0;
 
-            //- Density [kg/m3]
+            //- Density [kg/m^3]
             virtual scalar rho
             (
                 const label speciei,

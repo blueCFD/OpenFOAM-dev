@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,12 +59,30 @@ PrinceBlanch
 )
 :
     coalescenceModel(popBal, dict),
-    C1_("C1", dimless, dict.lookupOrDefault<scalar>("C1", 0.356)),
-    h0_("h0", dimLength, dict.lookupOrDefault<scalar>("h0", 1e-4)),
-    hf_("hf", dimLength, dict.lookupOrDefault<scalar>("h0", 1e-8)),
-    turbulentCollisions_(dict.lookup("turbulentCollisions")),
-    buoyantCollisions_(dict.lookup("buoyantCollisions")),
-    laminarShearCollisions_(dict.lookup("laminarShearCollisions"))
+    C1_(dimensionedScalar::lookupOrDefault("C1", dict, dimless, 0.356)),
+    h0_
+    (
+        dimensionedScalar::lookupOrDefault
+        (
+            "h0",
+            dict,
+            dimLength,
+            1e-4
+        )
+    ),
+    hf_
+    (
+        dimensionedScalar::lookupOrDefault
+        (
+            "hf",
+            dict,
+            dimLength,
+            1e-8
+        )
+    ),
+    turbulence_(dict.lookup("turbulence")),
+    buoyancy_(dict.lookup("buoyancy")),
+    laminarShear_(dict.lookup("laminarShear"))
 {}
 
 
@@ -79,12 +97,12 @@ addToCoalescenceRate
 )
 {
     const phaseModel& continuousPhase = popBal_.continuousPhase();
-    const sizeGroup& fi = *popBal_.sizeGroups()[i];
-    const sizeGroup& fj = *popBal_.sizeGroups()[j];
+    const sizeGroup& fi = popBal_.sizeGroups()[i];
+    const sizeGroup& fj = popBal_.sizeGroups()[j];
     const uniformDimensionedVectorField& g =
         popBal_.mesh().lookupObject<uniformDimensionedVectorField>("g");
 
-    dimensionedScalar rij(1.0/(1.0/fi.d() + 1.0/fj.d()));
+    const dimensionedScalar rij(1.0/(1.0/fi.d() + 1.0/fj.d()));
 
     const volScalarField collisionEfficiency
     (
@@ -100,7 +118,7 @@ addToCoalescenceRate
         )
     );
 
-    if (turbulentCollisions_)
+    if (turbulence_)
     {
         coalescenceRate +=
             (
@@ -111,9 +129,9 @@ addToCoalescenceRate
            *collisionEfficiency;
     }
 
-    if (buoyantCollisions_)
+    if (buoyancy_)
     {
-        dimensionedScalar Sij(pi/4.0*sqr(fi.d() + fj.d()));
+        const dimensionedScalar Sij(pi/4.0*sqr(fi.d() + fj.d()));
 
         coalescenceRate +=
             (
@@ -135,7 +153,7 @@ addToCoalescenceRate
            *collisionEfficiency;
     }
 
-    if (laminarShearCollisions_)
+    if (laminarShear_)
     {
         FatalErrorInFunction
             << "Laminar shear collision contribution not implemented for "

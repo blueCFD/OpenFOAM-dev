@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -134,10 +134,7 @@ class externalCoupledMixedFvPatchField
 :
     public mixedFvPatchField<Type>
 {
-
-private:
-
-    // Private data
+    // Private Data
 
         //- Convenience typedefs
         typedef externalCoupledMixedFvPatchField<Type> patchType;
@@ -264,7 +261,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         externalCoupledMixedFvPatchField
         (
             const externalCoupledMixedFvPatchField&
@@ -279,7 +276,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         externalCoupledMixedFvPatchField
         (
             const externalCoupledMixedFvPatchField&,
@@ -303,7 +300,7 @@ public:
     virtual ~externalCoupledMixedFvPatchField();
 
 
-    // Member functions
+    // Member Functions
 
         //- Return the log flag
         bool log() const

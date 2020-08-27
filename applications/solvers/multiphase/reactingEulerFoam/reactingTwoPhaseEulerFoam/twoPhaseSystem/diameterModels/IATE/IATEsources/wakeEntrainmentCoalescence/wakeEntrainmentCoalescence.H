@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,10 +27,11 @@ Class
 Description
     Bubble coalescence due to wake entrainment IATE source as defined in paper:
 
+    Reference:
     \verbatim
-        "Development of Interfacial Area Transport Equation"
-        Ishii, M., Kim, S. and Kelly, J.,
-        Nuclear Engineering and Technology, Vol.37 No.6 December 2005
+        Ishii, M., Kim, S., & Kelly, J. (2005).
+        Development of interfacial area transport equation.
+        Nuclear Engineering and Technology, 37(6), 525-536.
     \endverbatim
 
 SourceFiles
@@ -60,7 +61,7 @@ class wakeEntrainmentCoalescence
 :
     public IATEsource
 {
-    // Private data
+    // Private Data
 
         dimensionedScalar Cwe_;
 

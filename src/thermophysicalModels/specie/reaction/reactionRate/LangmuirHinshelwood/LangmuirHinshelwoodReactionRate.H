@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,14 @@ Class
     Foam::LangmuirHinshelwoodReactionRate
 
 Description
-    Power series reaction rate.
+    Langmuir-Hinshelwood reaction rate for gaseous reactions on surfaces.
+
+    Reference:
+    \verbatim
+        Hinshelwood, C.N. (1940).
+        The Kinetics of Chemical Change.
+        Oxford Clarendon Press
+    \endverbatim
 
 SourceFiles
     LangmuirHinshelwoodReactionRateI.H
@@ -56,30 +63,24 @@ Ostream& operator<<(Ostream&, const LangmuirHinshelwoodReactionRate&);
 
 class LangmuirHinshelwoodReactionRate
 {
-    // Private data
+    // Private Data
 
-        static const label n_ = 5;
-        scalar A_[n_];
-        scalar Ta_[n_];
+        //- Reactant names
+        FixedList<word, 2> reactantNames_;
 
-        label co_;
-        label c3h6_;
-        label no_;
+        //- Reactant indices
+        FixedList<label, 3> r_;
+
+        scalar a_;
+        FixedList<scalar, 3> A_;
+        FixedList<scalar, 3> Ta_;
+        FixedList<scalar, 3> beta_;
+        FixedList<scalar, 3> m_;
 
 
 public:
 
     // Constructors
-
-        //- Construct from components
-        inline LangmuirHinshelwoodReactionRate
-        (
-            const scalar A[],
-            const scalar Ta[],
-            const label co,
-            const label c3h6,
-            const label no
-        );
 
         //- Construct from dictionary
         inline LangmuirHinshelwoodReactionRate

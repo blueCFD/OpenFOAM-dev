@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,7 +103,7 @@ Foam::tmp<Foam::scalarField> Foam::levelSetFraction
     {
         const face& f = patch.patch().localFaces()[fI];
 
-        vector a = vector::zero, r = vector::zero;
+        scalar a = 0, r = 0;
 
         for(label eI = 0; eI < f.size(); ++ eI)
         {
@@ -124,19 +124,19 @@ Foam::tmp<Foam::scalarField> Foam::levelSetFraction
                     levelP[e[1]]
                 };
 
-            a += cut::areaOp()(tri);
+            a += cut::areaMagOp()(tri);
 
             if (above)
             {
-                r += triCut(tri, level, cut::areaOp(), cut::noOp());
+                r += triCut(tri, level, cut::areaMagOp(), cut::noOp());
             }
             else
             {
-                r += triCut(tri, level, cut::noOp(), cut::areaOp());
+                r += triCut(tri, level, cut::noOp(), cut::areaMagOp());
             }
         }
 
-        result[fI] = a/magSqr(a) & r;
+        result[fI] = r/a;
     }
 
     return tResult;
@@ -154,16 +154,11 @@ Foam::tmp<Foam::volScalarField> Foam::levelSetFraction
 
     tmp<volScalarField> tResult
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "levelSetFraction",
-                mesh.time().timeName(),
-                mesh
-            ),
+            "levelSetFraction",
             mesh,
-            dimensionedScalar("0", dimless, 0)
+            dimensionedScalar(dimless, 0)
         )
     );
     volScalarField& result = tResult.ref();

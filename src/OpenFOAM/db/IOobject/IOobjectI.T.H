@@ -88,6 +88,7 @@ inline Stream& Foam::IOobject::writeBanner(Stream& os, bool noHint)
     }
 
     os  <<
+<<<<<<< HEAD:src/OpenFOAM/db/IOobject/IOobjectI.T.H
         "| =========                 |"
         "                                                 |\n"
         "| \\\\      /  F ield         |"
@@ -106,6 +107,15 @@ inline Stream& Foam::IOobject::writeBanner(Stream& os, bool noHint)
         "|  Based on Windows porting (2.0.x v4) by Symscape: http://www.symscape.com   |\n"
         "\\*---------------------------------------------------------------------------*/\n";
 #endif
+=======
+    "  =========                 |\n"
+    "  \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox\n"
+    "   \\\\    /   O peration     | Website:  https://openfoam.org\n"
+    "    \\\\  /    A nd           | Version:  " << FOAMversion << "\n"
+    "     \\\\/     M anipulation  |\n"
+    "\\*-----------------------------------------"
+    "----------------------------------*/\n";
+>>>>>>> blueCFD-Core-7:src/OpenFOAM/db/IOobject/IOobjectI.H
 
     return os;
 }

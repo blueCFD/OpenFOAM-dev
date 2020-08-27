@@ -86,12 +86,7 @@
             phasei++;
         }
 
-        solve
-        (
-            p_rghEqnComp
-          + p_rghEqnIncomp,
-            mesh.solver(p_rgh.select(pimple.finalInnerIter()))
-        );
+        solve(p_rghEqnComp + p_rghEqnIncomp);
 
         if (pimple.finalNonOrthogonalIter())
         {

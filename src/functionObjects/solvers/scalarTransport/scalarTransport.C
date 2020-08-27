@@ -65,21 +65,11 @@ Foam::tmp<Foam::volScalarField> Foam::functionObjects::scalarTransport::D
 
     if (constantD_)
     {
-        return tmp<volScalarField>
+        return volScalarField::New
         (
-            new volScalarField
-            (
-                IOobject
-                (
-                    Dname,
-                    mesh_.time().timeName(),
-                    mesh_.time(),
-                    IOobject::NO_READ,
-                    IOobject::NO_WRITE
-                ),
-                mesh_,
-                dimensionedScalar(Dname, phi.dimensions()/dimLength, D_)
-            )
+            Dname,
+            mesh_,
+            dimensionedScalar(Dname, phi.dimensions()/dimLength, D_)
         );
     }
     else if (mesh_.foundObject<icoModel>(turbulenceModel::propertiesName))
@@ -102,21 +92,11 @@ Foam::tmp<Foam::volScalarField> Foam::functionObjects::scalarTransport::D
     }
     else
     {
-        return tmp<volScalarField>
+        return volScalarField::New
         (
-            new volScalarField
-            (
-                IOobject
-                (
-                    Dname,
-                    mesh_.time().timeName(),
-                    mesh_.time(),
-                    IOobject::NO_READ,
-                    IOobject::NO_WRITE
-                ),
-                mesh_,
-                dimensionedScalar(Dname, phi.dimensions()/dimLength, 0.0)
-            )
+            Dname,
+            mesh_,
+            dimensionedScalar(Dname, phi.dimensions()/dimLength, 0)
         );
     }
 }
@@ -224,7 +204,7 @@ bool Foam::functionObjects::scalarTransport::execute()
 
             fvOptions_.constrain(sEqn);
 
-            sEqn.solve(mesh_.solverDict(schemesField_));
+            sEqn.solve(schemesField_);
         }
     }
     else if (phi.dimensions() == dimVolume/dimTime)
@@ -244,7 +224,7 @@ bool Foam::functionObjects::scalarTransport::execute()
 
             fvOptions_.constrain(sEqn);
 
-            sEqn.solve(mesh_.solverDict(schemesField_));
+            sEqn.solve(schemesField_);
         }
     }
     else

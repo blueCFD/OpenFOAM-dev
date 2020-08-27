@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,7 +84,7 @@ Foam::uniformInletOutletFvPatchField<Type>::uniformInletOutletFvPatchField
     const fvPatchFieldMapper& mapper
 )
 :
-    mixedFvPatchField<Type>(p, iF),  // Don't map
+    mixedFvPatchField<Type>(ptf, p, iF, mapper, false), // Don't map
     phiName_(ptf.phiName_),
     uniformInletValue_(ptf.uniformInletValue_, false)
 {
@@ -100,7 +100,7 @@ Foam::uniformInletOutletFvPatchField<Type>::uniformInletOutletFvPatchField
     // Initialize the patch value to the refValue
     fvPatchField<Type>::operator=(this->refValue());
 
-    this->map(ptf, mapper);
+    mapper(*this, ptf);
 }
 
 
@@ -160,10 +160,10 @@ void Foam::uniformInletOutletFvPatchField<Type>::write(Ostream& os) const
     fvPatchField<Type>::write(os);
     if (phiName_ != "phi")
     {
-        os.writeKeyword("phi") << phiName_ << token::END_STATEMENT << nl;
+        writeEntry(os, "phi", phiName_);
     }
-    this->uniformInletValue_->writeData(os);
-    this->writeEntry("value", os);
+    writeEntry(os, this->uniformInletValue_());
+    writeEntry(os, "value", *this);
 }
 
 

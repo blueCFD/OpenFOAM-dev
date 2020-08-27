@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,7 +76,8 @@ Foam::labelList Foam::medialAxisMeshMover::getFixedValueBCs
             }
         }
     }
-    return adaptPatchIDs;
+
+    return Foam::move(adaptPatchIDs);
 }
 
 
@@ -1613,7 +1614,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
             IOobject::AUTO_WRITE
         ),
         pMesh(),
-        dimensionedScalar("scale", dimless, 1.0)
+        dimensionedScalar(dimless, 1.0)
     ),
     oldPoints_(mesh().points()),
     meshMover_
@@ -1639,7 +1640,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
             false
         ),
         pMesh(),
-        dimensionedVector("dispVec", dimLength, Zero)
+        dimensionedVector(dimLength, Zero)
     ),
     medialRatio_
     (
@@ -1653,7 +1654,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
             false
         ),
         pMesh(),
-        dimensionedScalar("medialRatio", dimless, 0.0)
+        dimensionedScalar(dimless, 0)
     ),
     medialDist_
     (
@@ -1667,7 +1668,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
             false
         ),
         pMesh(),
-        dimensionedScalar("pointMedialDist", dimLength, 0.0)
+        dimensionedScalar(dimLength, 0)
     ),
     medialVec_
     (
@@ -1681,7 +1682,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
             false
         ),
         pMesh(),
-        dimensionedVector("medialVec", dimLength, Zero)
+        dimensionedVector(dimLength, Zero)
     )
 {
     update(dict);
@@ -2183,7 +2184,7 @@ void Foam::medialAxisMeshMover::movePoints(const pointField& p)
     // Update motionSmoother for new geometry
     meshMover_.movePoints();
 
-    // Assume corrent mesh location is correct
+    // Assume current mesh location is correct
     meshMover_.correct();
 }
 

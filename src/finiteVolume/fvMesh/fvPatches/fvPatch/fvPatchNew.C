@@ -24,8 +24,12 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fvPatch.H"
+<<<<<<< HEAD
 #include "HashTable.T.H"
 #include "cyclicAMIPolyPatch.H"
+=======
+#include "HashTable.H"
+>>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

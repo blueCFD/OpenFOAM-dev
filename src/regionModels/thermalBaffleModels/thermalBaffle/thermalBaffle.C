@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,19 +75,11 @@ void thermalBaffle::solveEnergy()
 
     tmp<volScalarField> tQ
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "tQ",
-                regionMesh().time().timeName(),
-                regionMesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            "tQ",
             regionMesh(),
-            dimensionedScalar("zero", dimEnergy/dimVolume/dimTime, 0.0)
+            dimensionedScalar(dimEnergy/dimVolume/dimTime, 0)
         )
     );
 
@@ -178,12 +170,7 @@ thermalBaffle::thermalBaffle
             IOobject::NO_WRITE
         ),
         regionMesh(),
-        dimensionedScalar
-        (
-            "zero",
-            dimEnergy/dimArea/dimTime,
-            Zero
-        )
+        dimensionedScalar(dimEnergy/dimArea/dimTime, Zero)
     ),
     Q_
     (
@@ -196,16 +183,11 @@ thermalBaffle::thermalBaffle
             IOobject::NO_WRITE
         ),
         regionMesh(),
-        dimensionedScalar
-        (
-            "zero",
-            dimEnergy/dimVolume/dimTime,
-            Zero
-        )
+        dimensionedScalar(dimEnergy/dimVolume/dimTime, Zero)
     ),
     radiation_
     (
-        radiation::radiationModel::New
+        radiationModel::New
         (
             dict.subDict("radiation"),
             thermo_->T()
@@ -238,12 +220,7 @@ thermalBaffle::thermalBaffle
             IOobject::NO_WRITE
         ),
         regionMesh(),
-        dimensionedScalar
-        (
-            "zero",
-            dimEnergy/dimArea/dimTime,
-            Zero
-        )
+        dimensionedScalar(dimEnergy/dimArea/dimTime, Zero)
     ),
     Q_
     (
@@ -256,16 +233,11 @@ thermalBaffle::thermalBaffle
             IOobject::NO_WRITE
         ),
         regionMesh(),
-        dimensionedScalar
-        (
-            "zero",
-            dimEnergy/dimVolume/dimTime,
-            Zero
-        )
+        dimensionedScalar(dimEnergy/dimVolume/dimTime, Zero)
     ),
     radiation_
     (
-        radiation::radiationModel::New
+        radiationModel::New
         (
             thermo_->T()
         )

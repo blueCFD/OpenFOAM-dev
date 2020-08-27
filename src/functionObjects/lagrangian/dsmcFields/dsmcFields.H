@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,15 +60,6 @@ class dsmcFields
 :
     public fvMeshFunctionObject
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        dsmcFields(const dsmcFields&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const dsmcFields&);
-
-
 public:
 
     //- Runtime type information
@@ -85,6 +76,9 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        dsmcFields(const dsmcFields&) = delete;
+
 
     //- Destructor
     virtual ~dsmcFields();
@@ -100,6 +94,12 @@ public:
 
         //- Calculate and write the DSMC fields
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const dsmcFields&) = delete;
 };
 
 

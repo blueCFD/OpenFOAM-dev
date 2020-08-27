@@ -75,25 +75,12 @@ template<class ReactionThermo>
 Foam::tmp<Foam::volScalarField>
 Foam::combustionModels::noCombustion<ReactionThermo>::Qdot() const
 {
-    tmp<volScalarField> tQdot
+    return volScalarField::New
     (
-        new volScalarField
-        (
-            IOobject
-            (
-                this->thermo().phasePropertyName(typeName + ":Qdot"),
-                this->mesh().time().timeName(),
-                this->mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
-            this->mesh(),
-            dimensionedScalar("Qdot", dimEnergy/dimVolume/dimTime, 0.0)
-        )
+        this->thermo().phasePropertyName(typeName + ":Qdot"),
+        this->mesh(),
+        dimensionedScalar(dimEnergy/dimVolume/dimTime, 0)
     );
-
-    return tQdot;
 }
 
 

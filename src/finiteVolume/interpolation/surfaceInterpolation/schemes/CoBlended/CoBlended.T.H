@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ class CoBlended
     public surfaceInterpolationScheme<Type>,
     public blendedSchemeBase<Type>
 {
-    // Private data
+    // Private Data
 
         //- Courant number below which scheme1 is used
         const scalar Co1_;
@@ -97,15 +97,6 @@ class CoBlended
 
         //- The face-flux used to compute the face Courant number
         const surfaceScalarField& faceFlux_;
-
-
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        CoBlended(const CoBlended&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const CoBlended&);
 
 
 public:
@@ -181,6 +172,9 @@ public:
             }
         }
 
+        //- Disallow default bitwise copy construction
+        CoBlended(const CoBlended&) = delete;
+
 
     // Member Functions
 
@@ -210,25 +204,22 @@ public:
                     << exit(FatalError);
             }
 
-            return tmp<surfaceScalarField>
+            return surfaceScalarField::New
             (
-                new surfaceScalarField
+                vf.name() + "BlendingFactor",
+                scalar(1)
+              - max
                 (
-                    vf.name() + "BlendingFactor",
-                    scalar(1)
-                  - max
+                    min
                     (
-                        min
                         (
-                            (
-                                mesh.time().deltaT()*mesh.deltaCoeffs()
-                               *mag(tUflux)/mesh.magSf()
-                              - Co1_
-                            )/(Co2_ - Co1_),
-                            scalar(1)
-                        ),
-                        scalar(0)
-                    )
+                            mesh.time().deltaT()*mesh.deltaCoeffs()
+                           *mag(tUflux)/mesh.magSf()
+                          - Co1_
+                        )/(Co2_ - Co1_),
+                        scalar(1)
+                    ),
+                    scalar(0)
                 )
             );
         }
@@ -319,6 +310,12 @@ public:
                 );
             }
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const CoBlended&) = delete;
 };
 
 

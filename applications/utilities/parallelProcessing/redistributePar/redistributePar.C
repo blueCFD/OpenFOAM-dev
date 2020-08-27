@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -272,7 +272,7 @@ template<class GeoField>
 void readFields
 (
     const boolList& haveMesh,
-    const fvMesh& mesh,
+    const typename GeoField::Mesh& mesh,
     const autoPtr<fvMeshSubset>& subsetterPtr,
     IOobjectList& allObjects,
     PtrList<GeoField>& fields
@@ -353,8 +353,8 @@ void readFields
                     IOobject
                     (
                         name,
-                        mesh.time().timeName(),
-                        mesh,
+                        mesh.thisDb().time().timeName(),
+                        mesh.thisDb(),
                         IOobject::NO_READ,
                         IOobject::AUTO_WRITE
                     ),
@@ -740,6 +740,60 @@ int main(int argc, char *argv[])
         surfTensorFields
     );
 
+
+    // pointFields
+
+    pointMesh& pMesh =
+        const_cast<pointMesh&>(pointMesh::New(mesh));
+    PtrList<pointScalarField> pointScalarFields;
+    readFields
+    (
+        haveMesh,
+        pMesh,
+        subsetterPtr,
+        objects,
+        pointScalarFields
+    );
+
+    PtrList<pointVectorField> pointVectorFields;
+    readFields
+    (
+        haveMesh,
+        pMesh,
+        subsetterPtr,
+        objects,
+        pointVectorFields
+    );
+
+    PtrList<pointSphericalTensorField> pointSphereTensorFields;
+    readFields
+    (
+        haveMesh,
+        pMesh,
+        subsetterPtr,
+        objects,
+        pointSphereTensorFields
+    );
+
+    PtrList<pointSymmTensorField> pointSymmTensorFields;
+    readFields
+    (
+        haveMesh,
+        pMesh,
+        subsetterPtr,
+        objects,
+        pointSymmTensorFields
+    );
+
+    PtrList<pointTensorField> pointTensorFields;
+    readFields
+    (
+        haveMesh,
+        pMesh,
+        subsetterPtr,
+        objects,
+        pointTensorFields
+    );
 
     // Debugging: Create additional volField that will be mapped.
     // Used to test correctness of mapping

@@ -50,4 +50,19 @@ Foam::interpolationCellPoint<Type>::interpolationCellPoint
 }
 
 
+template<class Type>
+Foam::interpolationCellPoint<Type>::interpolationCellPoint
+(
+    const GeometricField<Type, fvPatchField, volMesh>& psi,
+    tmp<GeometricField<Type, pointPatchField, pointMesh>> psip
+)
+:
+    interpolation<Type>(psi),
+    psip_(psip)
+{
+    // Uses cellPointWeight to do interpolation which needs tet decomposition
+    (void)psi.mesh().tetBasePtIs();
+}
+
+
 // ************************************************************************* //

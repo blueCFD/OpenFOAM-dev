@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -21,7 +21,7 @@ thermoType
     mixture         reactingMixture;
     transport       polynomial;
     thermo          hPolynomial;
-    energy          sensibleEnthalpy;
+    energy          sensibleInternalEnergy;
     equationOfState icoPolynomial;
     specie          specie;
 }
@@ -41,9 +41,6 @@ liquids
 
 solids
 {}
-
-// de-activate the pressure-work term when running local time-stepping
-dpdt            no;
 
 
 // ************************************************************************* //

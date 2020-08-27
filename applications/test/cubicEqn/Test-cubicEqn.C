@@ -15,17 +15,17 @@ scalar randomScalar(const scalar min, const scalar max)
         "Scalar and long are not the same size"
     );
     static std::default_random_engine generator(std::time(0));
-    static std::uniform_int_distribution<long>
-        distribution
-        (
-            std::numeric_limits<long>::min(),
-            std::numeric_limits<long>::max()
-        );
+    static std::uniform_int_distribution<long> distribution
+    (
+        std::numeric_limits<long>::min(),
+        std::numeric_limits<long>::max()
+    );
     scalar x;
     do
     {
         long i = distribution(generator);
-        x = reinterpret_cast<scalar&>(i);
+        scalar* ptr = reinterpret_cast<scalar*>(&i);
+        x = *ptr;
     }
     while (min > mag(x) || mag(x) > max || !std::isfinite(x));
     return x;
@@ -39,7 +39,7 @@ void test(const Type& polynomialEqn, const scalar tol)
     const scalar nan = std::numeric_limits<scalar>::quiet_NaN();
     const scalar inf = std::numeric_limits<scalar>::infinity();
 
-    FixedList<label, Type::nComponents - 1> t;
+    FixedList<rootType, Type::nComponents - 1> t;
     FixedList<scalar, Type::nComponents - 1> v(nan);
     FixedList<scalar, Type::nComponents - 1> e(nan);
     bool ok = true;
@@ -48,16 +48,16 @@ void test(const Type& polynomialEqn, const scalar tol)
         t[i] = r.type(i);
         switch (t[i])
         {
-            case roots::real:
+            case rootType::real:
                 v[i] = polynomialEqn.value(r[i]);
                 e[i] = polynomialEqn.error(r[i]);
-                ok = ok && mag(v[i]) < tol*mag(e[i]);
+                ok = ok && mag(v[i]) <= tol*mag(e[i]);
                 break;
-            case roots::posInf:
+            case rootType::posInf:
                 v[i] = + inf;
                 e[i] = nan;
                 break;
-            case roots::negInf:
+            case rootType::negInf:
                 v[i] = - inf;
                 e[i] = nan;
                 break;
@@ -70,7 +70,7 @@ void test(const Type& polynomialEqn, const scalar tol)
     if (!ok)
     {
         Info<< "Coeffs: " << polynomialEqn << endl
-            << " Types: " << t << endl
+         // << " Types: " << t << endl
             << " Roots: " << r << endl
             << "Values: " << v << endl
             << "Errors: " << e << endl << endl;
@@ -79,8 +79,10 @@ void test(const Type& polynomialEqn, const scalar tol)
 
 int main()
 {
-    const int nTests = 1000000;
-    for (int t = 0; t < nTests; ++ t)
+    const scalar tol = 5;
+
+    const label nTests = 1000000;
+    for (label t = 0; t < nTests; ++ t)
     {
         test
         (
@@ -91,11 +93,26 @@ int main()
                 randomScalar(1e-50, 1e+50),
                 randomScalar(1e-50, 1e+50)
             ),
-            100
+            tol
         );
     }
+    Info << nTests << " random cubics tested" << endl;
 
-    Info << nTests << " cubics tested" << endl;
+    const label coeffMin = -9, coeffMax = 10, nCoeff = coeffMax - coeffMin;
+    for (label a = coeffMin; a < coeffMax; ++ a)
+    {
+        for (label b = coeffMin; b < coeffMax; ++ b)
+        {
+            for (label c = coeffMin; c < coeffMax; ++ c)
+            {
+                for (label d = coeffMin; d < coeffMax; ++ d)
+                {
+                    test(cubicEqn(a, b, c, d), tol);
+                }
+            }
+        }
+    }
+    Info<< nCoeff*nCoeff*nCoeff*nCoeff << " integer cubics tested" << endl;
 
     return 0;
 }

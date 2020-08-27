@@ -307,7 +307,7 @@ Foam::laminarFlameSpeedModels::RaviPetersen::operator()() const
             false
         ),
         p.mesh(),
-        dimensionedScalar("EqR", dimless, 0.0)
+        dimensionedScalar(dimless, 0)
     );
 
     if (psiuReactionThermo_.composition().contains("ft"))
@@ -327,19 +327,11 @@ Foam::laminarFlameSpeedModels::RaviPetersen::operator()() const
 
     tmp<volScalarField> tSu0
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "Su0",
-                p.time().timeName(),
-                p.db(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            "Su0",
             p.mesh(),
-            dimensionedScalar("Su0", dimVelocity, 0.0)
+            dimensionedScalar(dimVelocity, 0)
         )
     );
 

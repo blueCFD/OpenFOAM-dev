@@ -45,7 +45,7 @@ NonRandomTwoLiquid
             pair.phase1().mesh()
         ),
         pair.phase1().mesh(),
-        dimensionedScalar("one", dimless, 1)
+        dimensionedScalar(dimless, 1)
     ),
     gamma2_
     (
@@ -56,7 +56,7 @@ NonRandomTwoLiquid
             pair.phase1().mesh()
         ),
         pair.phase1().mesh(),
-        dimensionedScalar("one", dimless, 1)
+        dimensionedScalar(dimless, 1)
     ),
     beta12_("", dimless/dimTemperature, 0),
     beta21_("", dimless/dimTemperature, 0)
@@ -165,7 +165,7 @@ update
         (
             "W",
             dimMass/dimMoles,
-            this->thermo_.composition().W(species1Index_)
+            this->thermo_.composition().Wi(species1Index_)
         )
     );
 
@@ -177,7 +177,7 @@ update
         (
             "W",
             dimMass/dimMoles,
-            this->thermo_.composition().W(species2Index_)
+            this->thermo_.composition().Wi(species2Index_)
         )
     );
 

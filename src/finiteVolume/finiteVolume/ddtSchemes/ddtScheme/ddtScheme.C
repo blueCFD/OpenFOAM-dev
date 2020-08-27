@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -156,6 +156,8 @@ tmp<surfaceScalarField> ddtScheme<Type>::fvcDdtPhiCoeff
     const fluxFieldType& phiCorr
 )
 {
+    // Courant number limited formulation
+    /*
     tmp<surfaceScalarField> tddtCouplingCoeff = scalar(1)
       - min
         (
@@ -163,11 +165,20 @@ tmp<surfaceScalarField> ddtScheme<Type>::fvcDdtPhiCoeff
            *mesh().time().deltaT()*mesh().deltaCoeffs()/mesh().magSf(),
             scalar(1)
         );
+    */
+
+    // Flux normalised formulation
+    tmp<surfaceScalarField> tddtCouplingCoeff = scalar(1)
+      - min
+        (
+            mag(phiCorr)
+           /(mag(phi) + dimensionedScalar("small", phi.dimensions(), SMALL)),
+            scalar(1)
+        );
 
     surfaceScalarField& ddtCouplingCoeff = tddtCouplingCoeff.ref();
 
-    surfaceScalarField::Boundary& ccbf =
-        ddtCouplingCoeff.boundaryFieldRef();
+    surfaceScalarField::Boundary& ccbf = ddtCouplingCoeff.boundaryFieldRef();
 
     forAll(U.boundaryField(), patchi)
     {
@@ -204,7 +215,7 @@ tmp<surfaceScalarField> ddtScheme<Type>::fvcDdtPhiCoeff
     const volScalarField& rho
 )
 {
-    return fvcDdtPhiCoeff(U, phi, phiCorr/fvc::interpolate(rho));
+    return fvcDdtPhiCoeff(U, phi, phiCorr);
 }
 
 
@@ -231,7 +242,7 @@ tmp<surfaceScalarField> ddtScheme<Type>::fvcDdtPhiCoeff
     (
         U,
         phi,
-        (phi - fvc::dotInterpolate(mesh().Sf(), U))/fvc::interpolate(rho)
+        (phi - fvc::dotInterpolate(mesh().Sf(), U))
     );
 }
 

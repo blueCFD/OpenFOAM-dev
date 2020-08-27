@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -64,7 +64,7 @@ functions
 
         functionType        numberDensity;
         abszissaType        diameter;
-        regionType          all;
+        selectionMode       all;
         populationBalance   bubbles;
         normalize           true;
     }
@@ -80,7 +80,7 @@ functions
 
         functionType        volumeDensity;
         abszissaType        diameter;
-        regionType          all;
+        selectionMode       all;
         populationBalance   bubbles;
         normalize           true;
     }

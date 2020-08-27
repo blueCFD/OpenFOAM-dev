@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,17 +24,12 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "alphatWallBoilingWallFunctionFvPatchScalarField.H"
-#include "fvPatchFieldMapper.H"
-#include "addToRunTimeSelectionTable.H"
-
 #include "phaseSystem.H"
 #include "compressibleTurbulenceModel.H"
 #include "ThermalDiffusivity.T.H"
 #include "PhaseCompressibleTurbulenceModel.T.H"
 #include "saturationModel.H"
-#include "wallFvPatch.H"
-#include "uniformDimensionedFields.H"
-#include "mathematicalConstants.H"
+#include "addToRunTimeSelectionTable.H"
 
 using namespace Foam::constant::mathematical;
 
@@ -221,9 +216,9 @@ alphatWallBoilingWallFunctionFvPatchScalarField
     phaseType_(psf.phaseType_),
     relax_(psf.relax_),
     AbyV_(psf.AbyV_),
-    alphatConv_(psf.alphatConv_, mapper),
-    dDep_(psf.dDep_, mapper),
-    qq_(psf.qq_, mapper),
+    alphatConv_(mapper(psf.alphatConv_)),
+    dDep_(mapper(psf.dDep_)),
+    qq_(mapper(psf.qq_)),
     partitioningModel_(psf.partitioningModel_),
     nucleationSiteModel_(psf.nucleationSiteModel_),
     departureDiamModel_(psf.departureDiamModel_),
@@ -428,9 +423,10 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
                     )
                 );
 
-            const tmp<scalarField> tnutw = turbModel.nut(patchi);
+            const nutWallFunctionFvPatchScalarField& nutw =
+                nutWallFunctionFvPatchScalarField::nutw(turbModel, patchi);
 
-            const scalar Cmu25(pow025(Cmu_));
+            const scalar Cmu25(pow025(nutw.Cmu()));
 
             const scalarField& y = turbModel.y()[patchi];
 
@@ -449,10 +445,14 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
             const scalarField magUp(mag(Uw.patchInternalField() - Uw));
             const scalarField magGradUw(mag(Uw.snGrad()));
 
-            const fvPatchScalarField& rhow =
+            const fvPatchScalarField& rhoLiquidw =
                 turbModel.rho().boundaryField()[patchi];
-            const fvPatchScalarField& hew =
-            liquid.thermo().he().boundaryField()[patchi];
+
+            const fvPatchScalarField& rhoVaporw =
+                vaporTurbModel.rho().boundaryField()[patchi];
+
+            const fvPatchScalarField& pw =
+                liquid.thermo().p().boundaryField()[patchi];
 
             const fvPatchScalarField& Tw =
                 liquid.thermo().T().boundaryField()[patchi];
@@ -460,7 +460,7 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
 
             const scalarField uTau(Cmu25*sqrt(kw));
 
-            const scalarField yPlus(uTau*y/(muw/rhow));
+            const scalarField yPlus(uTau*y/(muw/rhoLiquidw));
 
             const scalarField Pr(muw/alphaw);
 
@@ -470,13 +470,7 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
             // Thermal sublayer thickness
             const scalarField P(this->Psmooth(Prat));
 
-            const scalarField yPlusTherm(this->yPlusTherm(P, Prat));
-
-            const fvPatchScalarField& rhoLiquidw =
-                turbModel.rho().boundaryField()[patchi];
-
-            const fvPatchScalarField& rhoVaporw =
-                vaporTurbModel.rho().boundaryField()[patchi];
+            const scalarField yPlusTherm(this->yPlusTherm(nutw, P, Prat));
 
             tmp<volScalarField> tCp = liquid.thermo().Cp();
             const volScalarField& Cp = tCp();
@@ -490,12 +484,21 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
             const fvPatchScalarField& Tsatw(Tsat.boundaryField()[patchi]);
             const scalarField Tsatc(Tsatw.patchInternalField());
 
-            const fvPatchScalarField& pw =
-                liquid.thermo().p().boundaryField()[patchi];
+            const fvPatchScalarField& hew
+                = liquid.thermo().he().boundaryField()[patchi];
+
+            const scalarField hw
+            (
+                liquid.thermo().he().member() == "e"
+              ? hew.patchInternalField() + pw/rhoLiquidw.patchInternalField()
+              : hew.patchInternalField()
+            );
 
             const scalarField L
             (
-                vapor.thermo().he(pw, Tsatc, patchi) - hew.patchInternalField()
+                vapor.thermo().he().member() == "e"
+              ? vapor.thermo().he(pw, Tsatc, patchi) + pw/rhoVaporw - hw
+              : vapor.thermo().he(pw, Tsatc, patchi) - hw
             );
 
             // Liquid phase fraction at the wall
@@ -510,11 +513,24 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
             {
                 // Liquid temperature at y+=250 is estimated from logarithmic
                 // thermal wall function (Koncar, Krepper & Egorov, 2005)
-                const scalarField Tplus_y250(Prt_*(log(E_*250)/kappa_ + P));
+                const scalarField Tplus_y250
+                (
+                    Prt_*(log(nutw.E()*250)/nutw.kappa() + P)
+                );
 
-                const scalarField Tplus(Prt_*(log(E_*yPlus)/kappa_ + P));
-                scalarField Tl(Tw - (Tplus_y250/Tplus)*(Tw - Tc));
-                Tl = max(Tc - 40, Tl);
+                const scalarField Tplus
+                (
+                    Prt_*(log(nutw.E()*yPlus)/nutw.kappa() + P)
+                );
+
+                const scalarField Tl
+                (
+                    max
+                    (
+                        Tc - 40,
+                        Tw - (Tplus_y250/Tplus)*(Tw - Tc)
+                    )
+                );
 
                 // Nucleation site density:
                 const scalarField N
@@ -583,7 +599,7 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
                 // Quenching heat transfer coefficient
                 const scalarField hQ
                 (
-                    2*(alphaw*Cpw)*fDep*sqrt((0.8/fDep)/(pi*alphaw/rhow))
+                    2*(alphaw*Cpw)*fDep*sqrt((0.8/fDep)/(pi*alphaw/rhoLiquidw))
                 );
 
                 // Quenching heat flux
@@ -675,10 +691,9 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchField<scalar>::write(os);
 
-    os.writeKeyword("phaseType") << phaseTypeNames_[phaseType_]
-        << token::END_STATEMENT << nl;
+    writeEntry(os, "phaseType", phaseTypeNames_[phaseType_]);
 
-    os.writeKeyword("relax") << relax_ << token::END_STATEMENT << nl;
+    writeEntry(os, "relax", relax_);
 
     switch (phaseType_)
     {
@@ -716,13 +731,12 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::write(Ostream& os) const
         }
     }
 
-    os.writeKeyword("otherPhase") << otherPhaseName_ << token::END_STATEMENT
-    << nl;
-    dmdt_.writeEntry("dmdt", os);
-    dDep_.writeEntry("dDep", os);
-    qq_.writeEntry("qQuenching", os);
-    alphatConv_.writeEntry("alphatConv", os);
-    writeEntry("value", os);
+    writeEntry(os, "otherPhase", otherPhaseName_);
+    writeEntry(os, "dmdt", dmdt_);
+    writeEntry(os, "dDep", dDep_);
+    writeEntry(os, "qQuenching", qq_);
+    writeEntry(os, "alphatConv", alphatConv_);
+    writeEntry(os, "value", *this);
 }
 
 

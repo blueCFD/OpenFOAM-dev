@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,12 +58,6 @@ class pyrolysisChemistryModel
 :
     public solidChemistryModel<CompType, SolidThermo>
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise assignment
-        void operator=(const pyrolysisChemistryModel&);
-
-
 protected:
 
         //- List of gas species present in reaction system
@@ -78,7 +72,7 @@ protected:
         //- Number of components being solved by ODE
         label nSpecie_;
 
-        //- List of reaction rate per gas [kg/m3/s]
+        //- List of reaction rate per gas [kg/m^3/s]
         PtrList<volScalarField::Internal> RRg_;
 
 
@@ -229,6 +223,12 @@ public:
                 scalar& deltaT,
                 scalar& subDeltaT
             ) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const pyrolysisChemistryModel&) = delete;
 };
 
 

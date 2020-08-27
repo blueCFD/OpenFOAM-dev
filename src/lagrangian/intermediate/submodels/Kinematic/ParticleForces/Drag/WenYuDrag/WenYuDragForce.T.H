@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,15 +25,27 @@ Class
     Foam::WenYuDragForce
 
 Description
-    Wen-Yu drag model for solid spheres.
+    Wen-Yu drag model for spheres.
+
+    Reference:
+    \verbatim
+        Gidaspow, D. (1994).
+        Multiphase flow and fluidization: continuum and kinetic theory
+        descriptions.
+        Academic press.
+    \endverbatim
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef WenYuDragForce_H
 #define WenYuDragForce_H
 
+<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/WenYuDrag/WenYuDragForce.T.H
 #include "ParticleForce.T.H"
 #include "volFieldsFwd.H"
+=======
+#include "DenseDragForce.H"
+>>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/WenYuDrag/WenYuDragForce.H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,20 +59,8 @@ namespace Foam
 template<class CloudType>
 class WenYuDragForce
 :
-    public ParticleForce<CloudType>
+    public DenseDragForce<CloudType>
 {
-    // Private Data
-
-        //- Reference to the carrier volume fraction field
-        const volScalarField& alphac_;
-
-
-    // Private Member Functions
-
-        //- Drag coefficient multiplied by Reynolds number
-        scalar CdRe(const scalar Re) const;
-
-
 public:
 
     //- Runtime type information
@@ -75,6 +75,15 @@ public:
             CloudType& owner,
             const fvMesh& mesh,
             const dictionary& dict
+        );
+
+        //- Construct from mesh
+        WenYuDragForce
+        (
+            CloudType& owner,
+            const fvMesh& mesh,
+            const dictionary& dict,
+            const word& typeName
         );
 
         //- Construct copy

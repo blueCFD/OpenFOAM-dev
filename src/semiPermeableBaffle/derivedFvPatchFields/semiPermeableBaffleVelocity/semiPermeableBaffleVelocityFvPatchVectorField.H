@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,8 +60,6 @@ SourceFiles
 namespace Foam
 {
 
-class basicSpecieMixture;
-
 /*---------------------------------------------------------------------------*\
        Class semiPermeableBaffleVelocityFvPatchVectorField Declaration
 \*---------------------------------------------------------------------------*/
@@ -70,16 +68,10 @@ class semiPermeableBaffleVelocityFvPatchVectorField
 :
     public fixedValueFvPatchVectorField
 {
-    // Private data
+    // Private Data
 
         //- Name of the density field
         const word rhoName_;
-
-
-    // Private Member Functions
-
-        //- Return the composition
-        const basicSpecieMixture& composition() const;
 
 
 public:
@@ -115,7 +107,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         semiPermeableBaffleVelocityFvPatchVectorField
         (
             const semiPermeableBaffleVelocityFvPatchVectorField&
@@ -130,7 +122,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         semiPermeableBaffleVelocityFvPatchVectorField
         (
             const semiPermeableBaffleVelocityFvPatchVectorField&,
@@ -154,7 +146,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Evaluation functions
 

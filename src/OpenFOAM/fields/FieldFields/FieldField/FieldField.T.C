@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -143,6 +143,14 @@ FieldField<Field, Type>::FieldField(const FieldField<Field, Type>& f)
 
 
 template<template<class> class Field, class Type>
+FieldField<Field, Type>::FieldField(FieldField<Field, Type>&& f)
+:
+    tmp<FieldField<Field, Type>>::refCount(),
+    PtrList<Field<Type>>(move(f))
+{}
+
+
+template<template<class> class Field, class Type>
 FieldField<Field, Type>::FieldField(FieldField<Field, Type>& f, bool reuse)
 :
     PtrList<Field<Type>>(f, reuse)
@@ -156,7 +164,6 @@ FieldField<Field, Type>::FieldField(const PtrList<Field<Type>>& tl)
 {}
 
 
-#ifndef NoConstructFromTmp
 template<template<class> class Field, class Type>
 FieldField<Field, Type>::FieldField(const tmp<FieldField<Field, Type>>& tf)
 :
@@ -168,7 +175,6 @@ FieldField<Field, Type>::FieldField(const tmp<FieldField<Field, Type>>& tf)
 {
     tf.clear();
 }
-#endif
 
 
 template<template<class> class Field, class Type>
@@ -294,6 +300,20 @@ void FieldField<Field, Type>::operator=(const FieldField<Field, Type>& f)
     {
         this->operator[](i) = f[i];
     }
+}
+
+
+template<template<class> class Field, class Type>
+void FieldField<Field, Type>::operator=(FieldField<Field, Type>&& f)
+{
+    if (this == &f)
+    {
+        FatalErrorInFunction
+            << "attempted assignment to self"
+            << abort(FatalError);
+    }
+
+    PtrList<Field<Type>>::operator=(move(f));
 }
 
 

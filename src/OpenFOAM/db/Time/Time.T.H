@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,7 +74,7 @@ class Time
     public objectRegistry,
     public TimeState
 {
-    // Private data
+    // Private Data
 
         //- Any loaded dynamic libraries. Make sure to construct before
         //  reading controlDict.
@@ -86,26 +86,26 @@ class Time
 public:
 
         //- Write control options
-        enum writeControls
+        enum class writeControl
         {
-            wcTimeStep,
-            wcRunTime,
-            wcAdjustableRunTime,
-            wcClockTime,
-            wcCpuTime
+            timeStep,
+            runTime,
+            adjustableRunTime,
+            clockTime,
+            cpuTime
         };
 
         //- Stop-run control options
-        enum stopAtControls
+        enum class stopAtControl
         {
-            saEndTime,    //!< stop when Time reaches the prescribed endTime
-            saNoWriteNow, //!< set endTime to stop immediately w/o writing
-            saWriteNow,   //!< set endTime to stop immediately w/ writing
-            saNextWrite   //!< stop the next time data are written
+            endTime,    //!< stop when Time reaches the prescribed endTime
+            noWriteNow, //!< set endTime to stop immediately w/o writing
+            writeNow,   //!< set endTime to stop immediately w/ writing
+            nextWrite   //!< stop the next time data are written
         };
 
         //- Supported time directory name formats
-        enum fmtflags
+        enum class format
         {
             general    = 0,
             fixed      = ios_base::fixed,
@@ -121,11 +121,11 @@ protected:
         scalar startTime_;
         mutable scalar endTime_;
 
-        static const NamedEnum<stopAtControls, 4> stopAtControlNames_;
-        mutable stopAtControls stopAt_;
+        static const NamedEnum<stopAtControl, 4> stopAtControlNames_;
+        mutable stopAtControl stopAt_;
 
-        static const NamedEnum<writeControls, 5> writeControlNames_;
-        writeControls writeControl_;
+        static const NamedEnum<writeControl, 5> writeControlNames_;
+        writeControl writeControl_;
 
         scalar writeInterval_;
 
@@ -152,7 +152,7 @@ protected:
 
 
         //- Time directory name format
-        static fmtflags format_;
+        static format format_;
 
         //- Time directory name precision
         static int precision_;
@@ -247,7 +247,7 @@ public:
     virtual ~Time();
 
 
-    // Member functions
+    // Member Functions
 
         // Database functions
 
@@ -364,7 +364,7 @@ public:
                 IOstream::streamFormat,
                 IOstream::versionNumber,
                 IOstream::compressionType,
-                const bool valid
+                const bool write
             ) const;
 
             //- Write the objects now (not at end of iteration) and continue
@@ -488,7 +488,7 @@ public:
             //- Adjust the current stopAtControl. Note that this value
             //  only persists until the next time the dictionary is read.
             //  Return true if the stopAtControl changed.
-            virtual bool stopAt(const stopAtControls) const;
+            virtual bool stopAt(const stopAtControl) const;
 
             //- Reset the time and time-index to those of the given time
             virtual void setTime(const Time&);
@@ -535,7 +535,7 @@ public:
             }
 
 
-    // Member operators
+    // Member Operators
 
         //- Set deltaT to that specified and increment time via operator++()
         virtual Time& operator+=(const dimensionedScalar&);

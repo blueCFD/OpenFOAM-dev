@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,17 +95,10 @@ class yPlus
         virtual void writeFileHeader(const label i);
 
         //- Calculate y+
-        void calcYPlus
+        tmp<volScalarField> calcYPlus
         (
-            const turbulenceModel& turbModel,
-            volScalarField& yPlus
+            const turbulenceModel& turbModel
         );
-
-        //- Disallow default bitwise copy construct
-        yPlus(const yPlus&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const yPlus&);
 
 
 public:
@@ -124,6 +117,9 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        yPlus(const yPlus&) = delete;
+
 
     //- Destructor
     virtual ~yPlus();
@@ -139,6 +135,12 @@ public:
 
         //- Write the yPlus field
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const yPlus&) = delete;
 };
 
 

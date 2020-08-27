@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,8 +48,8 @@ Description
             libs                ("libMyFunctionObjectlib.so");
             region              defaultRegion;
             enabled             yes;
-            timeStart           0;
-            timeEnd             10;
+            startTime           0;
+            endTime             10;
             writeControl        writeTime;
             writeInterval       1;
             ...
@@ -65,8 +65,8 @@ Description
         region   | Name of region for multi-region cases | no       |
         enabled  | On/off switch                         | no       | yes
         log      | Log information to standard output    | no       | yes
-        timeStart| Start time                            | no       |
-        timeEnd  | End time                              | no       |
+        startTime| Start time                            | no       |
+        endTime  | End time                              | no       |
         executeControl  | See time controls below        | no       | timeStep
         executeInterval | Steps between each execute phase | no     |
         writeControl    | See time controls below        | no       | timeStep
@@ -139,19 +139,10 @@ class mapPolyMesh;
 
 class functionObject
 {
-    // Private data
+    // Private Data
 
         //- Name
         const word name_;
-
-
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        functionObject(const functionObject&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const functionObject&);
 
 
 public:
@@ -191,6 +182,9 @@ public:
             NotImplemented;
             return autoPtr<functionObject>(nullptr);
         }
+
+        //- Disallow default bitwise copy construction
+        functionObject(const functionObject&) = delete;
 
 
     // Selectors
@@ -245,6 +239,12 @@ public:
 
         //- Update for changes of mesh
         virtual void movePoints(const polyMesh& mesh);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const functionObject&) = delete;
 };
 
 

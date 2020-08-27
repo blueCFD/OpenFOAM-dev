@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,12 +74,6 @@ class objectRegistry
         //  Used to terminate searching within the ancestors
         bool parentNotTime() const;
 
-        //- Disallow Copy constructor
-        objectRegistry(const objectRegistry&);
-
-        //- Disallow default bitwise copy construct and assignment
-        void operator=(const objectRegistry&);
-
 
 public:
 
@@ -105,12 +99,15 @@ public:
             const label nIoObjects = 128
         );
 
+        //- Disallow default bitwise copy construction
+        objectRegistry(const objectRegistry&);
+
 
     //- Destructor
     virtual ~objectRegistry();
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 
@@ -232,8 +229,14 @@ public:
                 IOstream::streamFormat fmt,
                 IOstream::versionNumber ver,
                 IOstream::compressionType cmp,
-                const bool valid
+                const bool write
             ) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const objectRegistry&) = delete;
 };
 
 

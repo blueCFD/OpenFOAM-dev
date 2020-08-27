@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,15 +62,6 @@ class reactingMixture
         speciesCompositionTable speciesComposition_;
 
 
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        reactingMixture(const reactingMixture&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const reactingMixture&);
-
-
 public:
 
     //- The type of thermo package this mixture is instantiated for
@@ -82,13 +73,16 @@ public:
         //- Construct from dictionary, mesh and phase name
         reactingMixture(const dictionary&, const fvMesh&, const word&);
 
+        //- Disallow default bitwise copy construction
+        reactingMixture(const reactingMixture&) = delete;
+
 
     //- Destructor
     virtual ~reactingMixture()
     {}
 
 
-    // Member functions
+    // Member Functions
 
         //- Return the instantiated type name
         static word typeName()
@@ -119,6 +113,12 @@ public:
         {
             return speciesComposition_;
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const reactingMixture&) = delete;
 };
 
 

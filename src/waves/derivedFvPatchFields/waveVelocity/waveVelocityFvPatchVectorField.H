@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,9 +26,9 @@ Class
 
 Description
     This boundary condition provides a waveVelocity condition. This sets the
-    velocity to that specified by a superposition of wave models. The
-    corresponding phase fraction and pressure conditions look this condition up
-    and re-use the wave modelling.
+    velocity to that specified by a superposition of wave models. All the
+    wave modelling parameters are obtained from a centrally registered
+    waveSuperposition class.
 
     Flow reversal will occur in the event that the amplitude of the velocity
     oscillation is greater than the mean flow. This triggers special handling,
@@ -62,14 +62,7 @@ Usage
         phi         | Name of the flux field                 | no     | phi
         p           | Name of the pressure field             | no     | p
         inletOutlet | does the condition behave like inletOutlet | no | true
-        origin      | origin of the wave coordinate system   | yes    |
-        direction   | direction of the mean flow             | yes    |
-        speed       | speed of the mean flow                 | yes    |
-        waves       | list of wave models to superimpose     | yes    |
         ramp        | ramping function for the mean flow speed | no   | None
-        scale       | scale factor along the mean flow direction | no | None
-        crossScale  | scale factor across the mean flow direction | no | None
-        heightAboveWave | use with the height above the wave | no     | false
     \endtable
 
     Example of the boundary condition specification:
@@ -77,31 +70,15 @@ Usage
     <patchName>
     {
         type        waveVelocity;
-        origin      (0 25 0);
-        direction   (1 0 0);
-        speed       2;
-        waves
-        (
-            Airy
-            {
-                length      40;
-                amplitude   0.5;
-                phase       0;
-                angle       0;
-            }
-            Airy
-            {
-                length      20;
-                amplitude   0.25;
-                phase       1.5708;
-                angle       0;
-            }
-        );
+        phi         phi;
+        p           p;
+        inletOutlet yes;
         ramp        constant 1;
-        scale       table ((100 1) (200 0));
-        crossScale  constant 1;
     }
     \endverbatim
+
+See also
+    Foam::waveSuperposition
 
 SourceFiles
     waveVelocityFvPatchVectorField.C
@@ -129,7 +106,7 @@ class waveVelocityFvPatchVectorField
 :
     public directionMixedFvPatchVectorField
 {
-    // Private data
+    // Private Data
 
         //- Name of the flux field
         const word phiName_;
@@ -139,9 +116,6 @@ class waveVelocityFvPatchVectorField
 
         //- Act as an inlet/outlet patch?
         const Switch inletOutlet_;
-
-        //- Wave superposition
-        const waveSuperposition waves_;
 
         //- Mesh subset corresponding to the patch adjacent cells
         mutable autoPtr<fvMeshSubset> faceCellSubset_;
@@ -182,7 +156,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         waveVelocityFvPatchVectorField
         (
             const waveVelocityFvPatchVectorField&
@@ -197,7 +171,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         waveVelocityFvPatchVectorField
         (
             const waveVelocityFvPatchVectorField&,
@@ -217,7 +191,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 
@@ -225,12 +199,6 @@ public:
             const word& pName() const
             {
                 return pName_;
-            }
-
-            //- Access the wave models
-            const waveSuperposition& waves() const
-            {
-                return waves_;
             }
 
             //- Access the face-cell subset

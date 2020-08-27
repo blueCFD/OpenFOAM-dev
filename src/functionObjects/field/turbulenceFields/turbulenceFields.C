@@ -91,34 +91,6 @@ const Foam::NamedEnum
     7
 > Foam::functionObjects::turbulenceFields::incompressibleFieldNames_;
 
-const Foam::word Foam::functionObjects::turbulenceFields::modelName
-(
-    Foam::turbulenceModel::propertiesName
-);
-
-
-// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
-
-bool Foam::functionObjects::turbulenceFields::compressible()
-{
-    if (obr_.foundObject<compressible::turbulenceModel>(modelName))
-    {
-        return true;
-    }
-    else if (obr_.foundObject<incompressible::turbulenceModel>(modelName))
-    {
-        return false;
-    }
-    else
-    {
-        FatalErrorInFunction
-            << "Turbulence model not found in database, deactivating"
-            << exit(FatalError);
-    }
-
-    return false;
-}
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -144,6 +116,12 @@ Foam::functionObjects::turbulenceFields::~turbulenceFields()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+const Foam::word& Foam::functionObjects::turbulenceFields::modelName()
+{
+    return Foam::turbulenceModel::propertiesName;
+}
+
+
 bool Foam::functionObjects::turbulenceFields::read(const dictionary& dict)
 {
     if (dict.found("field"))
@@ -155,13 +133,22 @@ bool Foam::functionObjects::turbulenceFields::read(const dictionary& dict)
         fieldSet_.insert(wordList(dict.lookup("fields")));
     }
 
+    if (dict.lookupOrDefault<Switch>("prefix", false))
+    {
+        prefix_ = modelName() + ':';
+    }
+    else
+    {
+        prefix_ = word::null;
+    }
+
     Info<< type() << " " << name() << ": ";
     if (fieldSet_.size())
     {
         Info<< "storing fields:" << nl;
         forAllConstIter(wordHashSet, fieldSet_, iter)
         {
-            Info<< "    " << modelName << ':' << iter.key() << nl;
+            Info<< "    " << prefix_ + iter.key() << nl;
         }
         Info<< endl;
     }
@@ -176,59 +163,57 @@ bool Foam::functionObjects::turbulenceFields::read(const dictionary& dict)
 
 bool Foam::functionObjects::turbulenceFields::execute()
 {
-    bool comp = compressible();
-
-    if (comp)
+    if (obr_.foundObject<compressible::turbulenceModel>(modelName()))
     {
         const compressible::turbulenceModel& model =
-            obr_.lookupObject<compressible::turbulenceModel>(modelName);
+            obr_.lookupObject<compressible::turbulenceModel>(modelName());
 
         forAllConstIter(wordHashSet, fieldSet_, iter)
         {
             const word& f = iter.key();
             switch (compressibleFieldNames_[f])
             {
-                case cfK:
+                case compressibleField::k:
                 {
                     processField<scalar>(f, model.k());
                     break;
                 }
-                case cfEpsilon:
+                case compressibleField::epsilon:
                 {
                     processField<scalar>(f, model.epsilon());
                     break;
                 }
-                case cfOmega:
+                case compressibleField::omega:
                 {
                     processField<scalar>(f, omega(model));
                     break;
                 }
-                case cfMut:
+                case compressibleField::mut:
                 {
                     processField<scalar>(f, model.mut());
                     break;
                 }
-                case cfMuEff:
+                case compressibleField::muEff:
                 {
                     processField<scalar>(f, model.muEff());
                     break;
                 }
-                case cfAlphat:
+                case compressibleField::alphat:
                 {
                     processField<scalar>(f, model.alphat());
                     break;
                 }
-                case cfAlphaEff:
+                case compressibleField::alphaEff:
                 {
                     processField<scalar>(f, model.alphaEff());
                     break;
                 }
-                case cfR:
+                case compressibleField::R:
                 {
                     processField<symmTensor>(f, model.R());
                     break;
                 }
-                case cfDevRhoReff:
+                case compressibleField::devRhoReff:
                 {
                     processField<symmTensor>(f, model.devRhoReff());
                     break;
@@ -236,52 +221,105 @@ bool Foam::functionObjects::turbulenceFields::execute()
                 default:
                 {
                     FatalErrorInFunction
-                        << "Invalid field selection" << abort(FatalError);
+                        << "Invalid field selection" << exit(FatalError);
                 }
             }
         }
     }
-    else
+    else if (obr_.foundObject<compressibleTurbulenceModel>(modelName()))
+    {
+        const compressibleTurbulenceModel& model =
+            obr_.lookupObject<compressibleTurbulenceModel>(modelName());
+
+        forAllConstIter(wordHashSet, fieldSet_, iter)
+        {
+            const word& f = iter.key();
+            switch (compressibleFieldNames_[f])
+            {
+                case compressibleField::k:
+                {
+                    processField<scalar>(f, model.k());
+                    break;
+                }
+                case compressibleField::epsilon:
+                {
+                    processField<scalar>(f, model.epsilon());
+                    break;
+                }
+                case compressibleField::omega:
+                {
+                    processField<scalar>(f, omega(model));
+                    break;
+                }
+                case compressibleField::mut:
+                {
+                    processField<scalar>(f, model.mut());
+                    break;
+                }
+                case compressibleField::muEff:
+                {
+                    processField<scalar>(f, model.muEff());
+                    break;
+                }
+                case compressibleField::R:
+                {
+                    processField<symmTensor>(f, model.R());
+                    break;
+                }
+                case compressibleField::devRhoReff:
+                {
+                    processField<symmTensor>(f, model.devRhoReff());
+                    break;
+                }
+                default:
+                {
+                    FatalErrorInFunction
+                        << "Invalid field selection" << exit(FatalError);
+                }
+            }
+        }
+    }
+    else if (obr_.foundObject<incompressible::turbulenceModel>(modelName()))
     {
         const incompressible::turbulenceModel& model =
-            obr_.lookupObject<incompressible::turbulenceModel>(modelName);
+            obr_.lookupObject<incompressible::turbulenceModel>(modelName());
 
         forAllConstIter(wordHashSet, fieldSet_, iter)
         {
             const word& f = iter.key();
             switch (incompressibleFieldNames_[f])
             {
-                case ifK:
+                case incompressibleField::k:
                 {
                     processField<scalar>(f, model.k());
                     break;
                 }
-                case ifEpsilon:
+                case incompressibleField::epsilon:
                 {
                     processField<scalar>(f, model.epsilon());
                     break;
                 }
-                case ifOmega:
+                case incompressibleField::omega:
                 {
                     processField<scalar>(f, omega(model));
                     break;
                 }
-                case ifNut:
+                case incompressibleField::nut:
                 {
                     processField<scalar>(f, model.nut());
                     break;
                 }
-                case ifNuEff:
+                case incompressibleField::nuEff:
                 {
                     processField<scalar>(f, model.nuEff());
                     break;
                 }
-                case ifR:
+                case incompressibleField::R:
                 {
                     processField<symmTensor>(f, model.R());
                     break;
                 }
-                case ifDevReff:
+                case incompressibleField::devReff:
                 {
                     processField<symmTensor>(f, model.devReff());
                     break;
@@ -289,10 +327,16 @@ bool Foam::functionObjects::turbulenceFields::execute()
                 default:
                 {
                     FatalErrorInFunction
-                        << "Invalid field selection" << abort(FatalError);
+                        << "Invalid field selection" << exit(FatalError);
                 }
             }
         }
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "Turbulence model not found in database, deactivating"
+            << exit(FatalError);
     }
 
     return true;
@@ -303,7 +347,7 @@ bool Foam::functionObjects::turbulenceFields::write()
 {
     forAllConstIter(wordHashSet, fieldSet_, iter)
     {
-        const word fieldName = modelName + ':' + iter.key();
+        const word fieldName = prefix_ + iter.key();
         writeObject(fieldName);
     }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,15 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "NonSphereDragForce.T.H"
-
-// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
-
-template<class CloudType>
-Foam::scalar Foam::NonSphereDragForce<CloudType>::CdRe(const scalar Re) const
-{
-    return 24.0*(1.0 + a_*pow(Re, b_)) + Re*c_/(1 + d_/(Re + rootVSmall));
-}
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -96,11 +87,10 @@ Foam::forceSuSp Foam::NonSphereDragForce<CloudType>::calcCoupled
     const scalar muc
 ) const
 {
-    forceSuSp value(Zero, 0.0);
+    const scalar CdRe =
+        24*(1 + a_*pow(Re, b_)) + Re*c_/(1 + d_/(Re + rootVSmall));
 
-    value.Sp() = mass*0.75*muc*CdRe(Re)/(p.rho()*sqr(p.d()));
-
-    return value;
+    return forceSuSp(Zero, mass*0.75*muc*CdRe/(p.rho()*sqr(p.d())));
 }
 
 

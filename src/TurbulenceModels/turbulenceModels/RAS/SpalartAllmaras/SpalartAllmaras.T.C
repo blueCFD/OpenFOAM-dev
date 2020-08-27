@@ -102,7 +102,7 @@ tmp<volScalarField> SpalartAllmaras<BasicTurbulenceModel>::fw
                max
                (
                    Stilda,
-                   dimensionedScalar("small", Stilda.dimensions(), small)
+                   dimensionedScalar(Stilda.dimensions(), small)
                )
               *sqr(kappa_*y_)
             ),
@@ -292,9 +292,10 @@ bool SpalartAllmaras<BasicTurbulenceModel>::read()
 template<class BasicTurbulenceModel>
 tmp<volScalarField> SpalartAllmaras<BasicTurbulenceModel>::DnuTildaEff() const
 {
-    return tmp<volScalarField>
+    return volScalarField::New
     (
-        new volScalarField("DnuTildaEff", (nuTilda_ + this->nu())/sigmaNut_)
+        "DnuTildaEff",
+        (nuTilda_ + this->nu())/sigmaNut_
     );
 }
 
@@ -302,19 +303,11 @@ tmp<volScalarField> SpalartAllmaras<BasicTurbulenceModel>::DnuTildaEff() const
 template<class BasicTurbulenceModel>
 tmp<volScalarField> SpalartAllmaras<BasicTurbulenceModel>::k() const
 {
-    return tmp<volScalarField>
+    return volScalarField::New
     (
-        new volScalarField
-        (
-            IOobject
-            (
-                "k",
-                this->runTime_.timeName(),
-                this->mesh_
-            ),
-            this->mesh_,
-            dimensionedScalar("0", dimensionSet(0, 2, -2, 0, 0), 0)
-        )
+        "k",
+        this->mesh_,
+        dimensionedScalar(dimensionSet(0, 2, -2, 0, 0), 0)
     );
 }
 
@@ -327,19 +320,11 @@ tmp<volScalarField> SpalartAllmaras<BasicTurbulenceModel>::epsilon() const
         << "Spalart-Allmaras model. Returning zero field"
         << endl;
 
-    return tmp<volScalarField>
+    return volScalarField::New
     (
-        new volScalarField
-        (
-            IOobject
-            (
-                "epsilon",
-                this->runTime_.timeName(),
-                this->mesh_
-            ),
-            this->mesh_,
-            dimensionedScalar("0", dimensionSet(0, 2, -3, 0, 0), 0)
-        )
+        "epsilon",
+        this->mesh_,
+        dimensionedScalar(dimensionSet(0, 2, -3, 0, 0), 0)
     );
 }
 
@@ -381,7 +366,7 @@ void SpalartAllmaras<BasicTurbulenceModel>::correct()
     fvOptions.constrain(nuTildaEqn.ref());
     solve(nuTildaEqn);
     fvOptions.correct(nuTilda_);
-    bound(nuTilda_, dimensionedScalar("0", nuTilda_.dimensions(), 0.0));
+    bound(nuTilda_, dimensionedScalar(nuTilda_.dimensions(), 0));
     nuTilda_.correctBoundaryConditions();
 
     correctNut(fv1);

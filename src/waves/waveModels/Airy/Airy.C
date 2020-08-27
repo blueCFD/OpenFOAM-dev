@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,11 +56,10 @@ Foam::scalar Foam::waveModels::Airy::celerity() const
 Foam::tmp<Foam::scalarField> Foam::waveModels::Airy::angle
 (
     const scalar t,
-    const scalar u,
     const scalarField& x
 ) const
 {
-    return phase_ + k()*(x - (u + celerity())*t);
+    return phase_ + k()*(x - celerity()*t);
 }
 
 
@@ -74,24 +73,23 @@ Foam::tmp<Foam::vector2DField> Foam::waveModels::Airy::vi
 (
     const label i,
     const scalar t,
-    const scalar u,
     const vector2DField& xz
 ) const
 {
     const scalarField x(xz.component(0));
     const scalarField z(xz.component(1));
 
-    const scalarField phi(angle(t, u, x));
-    const scalarField kz(- k()*z);
+    const scalarField phi(angle(t, x));
+    const scalarField kz(k()*z);
 
     if (deep())
     {
-        return i*exp(- mag(kz))*zip(cos(i*phi), sin(i*phi));
+        return i*exp(kz)*zip(cos(i*phi), sin(i*phi));
     }
     else
     {
         const scalar kd = k()*depth();
-        const scalarField kdz(max(scalar(0), kd - mag(kz)));
+        const scalarField kdz(max(scalar(0), kd + kz));
         return i*zip(cosh(i*kdz)*cos(i*phi), sinh(i*kdz)*sin(i*phi))/sinh(kd);
     }
 }
@@ -132,38 +130,35 @@ Foam::waveModels::Airy::~Airy()
 Foam::tmp<Foam::scalarField> Foam::waveModels::Airy::elevation
 (
     const scalar t,
-    const scalar u,
     const scalarField& x
 ) const
 {
-    return amplitude(t)*cos(angle(t, u, x));
+    return amplitude(t)*cos(angle(t, x));
 }
 
 
 Foam::tmp<Foam::vector2DField> Foam::waveModels::Airy::velocity
 (
     const scalar t,
-    const scalar u,
     const vector2DField& xz
 ) const
 {
     const scalar ka = k()*amplitude(t);
 
-    return celerity()*ka*vi(1, t, u, xz);
+    return celerity()*ka*vi(1, t, xz);
 }
 
 
 Foam::tmp<Foam::scalarField> Foam::waveModels::Airy::pressure
 (
     const scalar t,
-    const scalar u,
     const vector2DField& xz
 ) const
 {
     // It is a fluke of the formulation that the time derivative of the velocity
     // potential equals the x-derivative multiplied by the celerity. This allows
     // for this shortcut in evaluating the unsteady pressure.
-    return celerity()*velocity(t, u, xz)->component(0);
+    return celerity()*velocity(t, xz)->component(0);
 }
 
 
@@ -171,11 +166,11 @@ void Foam::waveModels::Airy::write(Ostream& os) const
 {
     waveModel::write(os);
 
-    os.writeKeyword("length") << length_ << token::END_STATEMENT << nl;
-    os.writeKeyword("phase") << phase_ << token::END_STATEMENT << nl;
+    writeEntry(os, "length", length_);
+    writeEntry(os, "phase", phase_);
     if (!deep())
     {
-        os.writeKeyword("depth") << depth_ << token::END_STATEMENT << nl;
+        writeEntry(os, "depth", depth_);
     }
 }
 

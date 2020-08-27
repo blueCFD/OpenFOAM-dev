@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,34 +83,39 @@ Description
     is currently neglected.
 
     \vartable
-        \theta_{ij}^{T}   |  Turbulent collision rate [m3/s]
-        \theta_{ij}^{B}   |  Buoyancy-driven collision rate [m3/s]
-        \theta_{ij}^{LS}  |  Laminar shear collision rate [m3/s]
-        \lambda_{ij}      |  Coalescence efficiency [-]
-        r_{ij}            |  Equivalent radius [m]
-        \rho_c            |  Density of continous phase [kg/m3]
-        \sigma            |  Surface tension [N/m]
-        h_0               |  Initial film thickness [m]
-        h_f               |  Critical film thickness [m]
-        \epsilon_c        |  Continuous phase turbulent dissipation rate [m2/s3]
-        d_i               |  Diameter of bubble i [m]
-        d_j               |  Diameter of bubble j [m]
-        u_{ri}            |  Rise velocity of bubble i [m/s]
-        S_{ij}            |  Collision cross sectional area [m2]
-        g                 |  Gravitational constant [m/s2]
+        \theta_{ij}^{T} |  Turbulent collision rate [m3/s]
+        \theta_{ij}^{B} |  Buoyancy-driven collision rate [m3/s]
+        \theta_{ij}^{LS}|  Laminar shear collision rate [m3/s]
+        \lambda_{ij}    |  Coalescence efficiency [-]
+        r_{ij}          |  Equivalent radius [m]
+        \rho_c          |  Density of continuous phase [kg/m^3]
+        \sigma          |  Surface tension [N/m]
+        h_0             |  Initial film thickness [m]
+        h_f             |  Critical film thickness [m]
+        \epsilon_c      |  Continuous phase turbulent dissipation rate [m2/s^3]
+        d_i             |  Diameter of bubble i [m]
+        d_j             |  Diameter of bubble j [m]
+        u_{ri}          |  Rise velocity of bubble i [m/s]
+        S_{ij}          |  Collision cross sectional area [m^2]
+        g               |  Gravitational constant [m/s^2]
     \endvartable
 
-    References:
+    Reference:
     \verbatim
-        "Bubble Coalescence and Break-Up in Air-Sparged Bubble-Columns"
-        Prince, M.J., Blanch, H.W.
-        AIChE Journal, Vol. 36, Issue 10, 1990, pp. 1485-1499
+        Prince, M. J., & Blanch, H. W. (1990).
+        Bubble coalescence and break‐up in air‐sparged bubble columns.
+        AIChE journal, 36(10), 1485-1499.
     \endverbatim
 
 Usage
     \table
         Property     | Description             | Required    | Default value
-        C1           | Coefficient C1          | no          | 0.089
+        C1           | coefficient C1          | no          | 0.089
+        h0           | initial film thickness  | no          | 1e-4m
+        hf           | critical film thickness | no          | 1e-8m
+        turbulence   | Switch for collisions due to turbulence    | yes | none
+        buoyancy     | Switch for collisions due to buoyancy      | yes | none
+        laminarShear | Switch for collisions due to laminar shear | yes | none
     \endtable
 
 SourceFiles
@@ -140,7 +145,7 @@ class PrinceBlanch
 :
     public coalescenceModel
 {
-    // Private data
+    // Private Data
 
         //- Optional coefficient C1, defaults to 0.089
         dimensionedScalar C1_;
@@ -152,13 +157,13 @@ class PrinceBlanch
         dimensionedScalar hf_;
 
         //- Switch for considering turbulent collisions
-        Switch turbulentCollisions_;
+        Switch turbulence_;
 
         //- Switch for considering buoyancy-induced collisions
-        Switch buoyantCollisions_;
+        Switch buoyancy_;
 
         //- Switch for considering buoyancy-induced collisions
-        Switch laminarShearCollisions_;
+        Switch laminarShear_;
 
 
 public:

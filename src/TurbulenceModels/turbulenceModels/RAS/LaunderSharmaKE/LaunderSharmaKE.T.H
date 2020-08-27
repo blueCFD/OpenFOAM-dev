@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,13 +83,6 @@ class LaunderSharmaKE
 :
     public eddyViscosity<RASModel<BasicTurbulenceModel>>
 {
-    // Private Member Functions
-
-        // Disallow default bitwise copy construct and assignment
-        LaunderSharmaKE(const LaunderSharmaKE&);
-        void operator=(const LaunderSharmaKE&);
-
-
 protected:
 
     // Protected data
@@ -146,6 +139,9 @@ public:
             const word& type = typeName
         );
 
+        //- Disallow default bitwise copy construction
+        LaunderSharmaKE(const LaunderSharmaKE&) = delete;
+
 
     //- Destructor
     virtual ~LaunderSharmaKE()
@@ -160,26 +156,20 @@ public:
         //- Return the effective diffusivity for k
         tmp<volScalarField> DkEff() const
         {
-            return tmp<volScalarField>
+            return volScalarField::New
             (
-                new volScalarField
-                (
-                    "DkEff",
-                    (this->nut_/sigmak_ + this->nu())
-                )
+                "DkEff",
+                (this->nut_/sigmak_ + this->nu())
             );
         }
 
         //- Return the effective diffusivity for epsilon
         tmp<volScalarField> DepsilonEff() const
         {
-            return tmp<volScalarField>
+            return volScalarField::New
             (
-                new volScalarField
-                (
-                    "DepsilonEff",
-                    (this->nut_/sigmaEps_ + this->nu())
-                )
+                "DepsilonEff",
+                (this->nut_/sigmaEps_ + this->nu())
             );
         }
 
@@ -197,6 +187,12 @@ public:
 
         //- Solve the turbulence equations and correct the turbulence viscosity
         virtual void correct();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const LaunderSharmaKE&) = delete;
 };
 
 

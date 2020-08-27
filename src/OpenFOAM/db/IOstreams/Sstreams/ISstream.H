@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ class ISstream
 :
     public Istream
 {
-    // Private data
+    // Private Data
 
         fileName name_;
         istream& is_;
@@ -73,9 +73,6 @@ class ISstream
 
         //- Read a variable name (includes '{')
         Istream& readVariable(string&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const ISstream&);
 
 
 public:
@@ -98,7 +95,7 @@ public:
     {}
 
 
-    // Member functions
+    // Member Functions
 
         // Inquiry
 
@@ -195,6 +192,12 @@ public:
 
             //- Print description of IOstream to Ostream
             virtual void print(Ostream&) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const ISstream&) = delete;
 };
 
 

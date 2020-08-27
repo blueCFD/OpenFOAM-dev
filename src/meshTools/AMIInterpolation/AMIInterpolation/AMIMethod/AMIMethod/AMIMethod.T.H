@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,6 +41,7 @@ SourceFiles
 #include "indexedOctree.H"
 #include "treeDataPrimitivePatch.H"
 #include "treeBoundBoxList.H"
+#include "primitivePatch.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -52,34 +53,21 @@ namespace Foam
                           Class AMIMethod Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class SourcePatch, class TargetPatch>
 class AMIMethod
 {
-
-private:
-
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        AMIMethod(const AMIMethod&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const AMIMethod&);
-
-
 protected:
 
     //- Local typedef to octree tree-type
-    typedef treeDataPrimitivePatch<TargetPatch> treeType;
+    typedef treeDataPrimitivePatch<primitivePatch> treeType;
 
 
     // Protected data
 
         //- Reference to source patch
-        const SourcePatch& srcPatch_;
+        const primitivePatch& srcPatch_;
 
         //- Reference to target patch
-        const TargetPatch& tgtPatch_;
+        const primitivePatch& tgtPatch_;
 
         //- Flag to indicate that the two patches are co-directional and
         //  that the orientation of the target patch should be reversed
@@ -147,7 +135,7 @@ protected:
             void appendNbrFaces
             (
                 const label facei,
-                const TargetPatch& patch,
+                const primitivePatch& patch,
                 const DynamicList<label>& visitedFaces,
                 DynamicList<label>& faceIDs
             ) const;
@@ -161,6 +149,7 @@ public:
     //- Runtime type information
     TypeName("AMIMethod");
 
+
     //- Declare runtime constructor selection table
     declareRunTimeSelectionTable
     (
@@ -168,8 +157,8 @@ public:
         AMIMethod,
         components,
         (
-            const SourcePatch& srcPatch,
-            const TargetPatch& tgtPatch,
+            const primitivePatch& srcPatch,
+            const primitivePatch& tgtPatch,
             const scalarField& srcMagSf,
             const scalarField& tgtMagSf,
             const faceAreaIntersect::triangulationMode& triMode,
@@ -187,24 +176,31 @@ public:
         )
     );
 
-    //- Construct from components
-    AMIMethod
-    (
-        const SourcePatch& srcPatch,
-        const TargetPatch& tgtPatch,
-        const scalarField& srcMagSf,
-        const scalarField& tgtMagSf,
-        const faceAreaIntersect::triangulationMode& triMode,
-        const bool reverseTarget,
-        const bool requireMatch
-    );
+
+    // Constructors
+
+        //- Construct from components
+        AMIMethod
+        (
+            const primitivePatch& srcPatch,
+            const primitivePatch& tgtPatch,
+            const scalarField& srcMagSf,
+            const scalarField& tgtMagSf,
+            const faceAreaIntersect::triangulationMode& triMode,
+            const bool reverseTarget,
+            const bool requireMatch
+        );
+
+        //- Disallow default bitwise copy construction
+        AMIMethod(const AMIMethod&) = delete;
+
 
     //- Selector
     static autoPtr<AMIMethod> New
     (
         const word& methodName,
-        const SourcePatch& srcPatch,
-        const TargetPatch& tgtPatch,
+        const primitivePatch& srcPatch,
+        const primitivePatch& tgtPatch,
         const scalarField& srcMagSf,
         const scalarField& tgtMagSf,
         const faceAreaIntersect::triangulationMode& triMode,
@@ -241,38 +237,18 @@ public:
                 label srcFacei = -1,
                 label tgtFacei = -1
             ) = 0;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const AMIMethod&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#define makeAMIMethod(AMIType)                                                 \
-                                                                               \
-    typedef AMIMethod<AMIType::sourcePatchType,AMIType::targetPatchType>       \
-        AMIMethod##AMIType;                                                    \
-                                                                               \
-    defineNamedTemplateTypeNameAndDebug(AMIMethod##AMIType, 0);                \
-    defineTemplateRunTimeSelectionTable(AMIMethod##AMIType, components);
-
-
-#define makeAMIMethodType(AMIType, Method)                                     \
-                                                                               \
-    typedef Method<AMIType::sourcePatchType,AMIType::targetPatchType>          \
-        Method##AMIType;                                                       \
-                                                                               \
-    defineNamedTemplateTypeNameAndDebug(Method##AMIType, 0);                   \
-                                                                               \
-    AMIMethod<AMIType::sourcePatchType,AMIType::targetPatchType>::             \
-        addcomponentsConstructorToTable<Method##AMIType>                       \
-        add##Method##AMIType##ConstructorToTable_;
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+<<<<<<< HEAD:src/meshTools/AMIInterpolation/AMIInterpolation/AMIMethod/AMIMethod/AMIMethod.T.H
 #include "AMIMethodI.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -281,6 +257,13 @@ public:
     #include "AMIMethod.T.C"
     #include "AMIMethodNew.T.C"
 #endif
+=======
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "AMIMethodI.H"
+>>>>>>> blueCFD-Core-7:src/meshTools/AMIInterpolation/AMIInterpolation/AMIMethod/AMIMethod/AMIMethod.H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

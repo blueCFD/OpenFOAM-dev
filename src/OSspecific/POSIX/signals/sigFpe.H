@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,7 +45,7 @@ SourceFiles
 
 #include <signal.h>
 
-#if defined(linux) || defined(linux64) || defined(linuxIA64) || \
+#if defined(linux) || defined(linux64) || \
     defined(linuxARM7) || defined(linuxPPC64) || defined(linuxPPC64le)
     #define LINUX
 #endif
@@ -67,13 +67,13 @@ namespace Foam
 
 class sigFpe
 {
-    // Private data
+    // Private Data
 
         //- Saved old signal trapping setting
         static struct sigaction oldAction_;
 
 
-    // Static data members
+    // Static Data Members
 
         #ifdef LINUX_GNUC
         //- Handler for caught signals
@@ -94,7 +94,7 @@ public:
     ~sigFpe();
 
 
-    // Member functions
+    // Member Functions
 
         //- Activate SIGFPE signal handler when FOAM_SIGFPE is %set
         //  Fill memory with NaN when FOAM_SETNAN is %set

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,15 +57,7 @@ class reactingOneDim
 :
     public pyrolysisModel
 {
-private:
-
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        reactingOneDim(const reactingOneDim&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const reactingOneDim&);
+    // Private Member Functions
 
         //- Read model controls
         void readReactingOneDimControls();
@@ -82,12 +74,12 @@ protected:
         autoPtr<basicSolidChemistryModel> solidChemistry_;
 
         //- Pointer to radiation model
-        autoPtr<radiation::radiationModel> radiation_;
+        autoPtr<radiationModel> radiation_;
 
 
         // Reference to solid thermo properties
 
-            //- Density [kg/m3]
+            //- Density [kg/m^3]
             volScalarField rho_;
 
             //- List of solid components
@@ -111,23 +103,23 @@ protected:
 
         // Fields
 
-            //- Total gas mass flux to the primary region [kg/m2/s]
+            //- Total gas mass flux to the primary region [kg/m^2/s]
             surfaceScalarField phiGas_;
 
             //- Sensible enthalpy gas flux [J/m2/s]
             volScalarField phiHsGas_;
 
-            //- Heat release rate [J/s/m3]
+            //- Heat release rate [J/s/m^3]
             volScalarField chemistryQdot_;
 
 
         // Source term fields
 
-            //- Coupled region radiative heat flux [W/m2]
+            //- Coupled region radiative heat flux [W/m^2]
             //  Requires user to input mapping info for coupled patches
             // volScalarField qrCoupled_;
 
-            //- In depth radiative heat flux [W/m2]
+            //- In depth radiative heat flux [W/m^2]
             volScalarField qr_;
 
 
@@ -219,7 +211,8 @@ public:
             const word& regionType
         );
 
-
+        //- Disallow default bitwise copy construction
+        reactingOneDim(const reactingOneDim&) = delete;
 
 
     //- Destructor
@@ -232,7 +225,7 @@ public:
 
             //- Fields
 
-                //- Return const density [Kg/m3]
+                //- Return const density [Kg/m^3]
                 const volScalarField& rho() const;
 
                 //- Return const temperature [K]
@@ -247,7 +240,7 @@ public:
                 //- Return the region thermal conductivity [W/m/k]
                 virtual tmp<volScalarField> kappa() const;
 
-                //- Return the total gas mass flux to primary region [kg/m2/s]
+                //- Return the total gas mass flux to primary region [kg/m^2/s]
                 virtual const surfaceScalarField& phiGas() const;
 
 
@@ -286,6 +279,12 @@ public:
 
             //- Provide some feedback
             virtual void info();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const reactingOneDim&) = delete;
 };
 
 

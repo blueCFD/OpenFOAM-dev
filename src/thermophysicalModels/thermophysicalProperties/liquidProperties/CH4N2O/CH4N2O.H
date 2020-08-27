@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ class CH4N2O
 :
     public liquidProperties
 {
-    // Private data
+    // Private Data
 
         NSRDSfunc0 rho_;
         NSRDSfunc1 pv_;
@@ -130,13 +130,13 @@ public:
         //- Heat of vapourisation [J/kg]
         inline scalar hl(scalar p, scalar T) const;
 
-        //- Liquid heat capacity [J/(kg K)]
+        //- Liquid heat capacity [J/kg/K]
         inline scalar Cp(scalar p, scalar T) const;
 
-        //- Liquid Enthalpy [J/(kg)]
+        //- Liquid Enthalpy [J/kg]
         inline scalar h(scalar p, scalar T) const;
 
-        //- Ideal gas heat capacity [J/(kg K)]
+        //- Ideal gas heat capacity [J/kg/K]
         inline scalar Cpg(scalar p, scalar T) const;
 
         //- Second Virial Coefficient [m^3/kg]
@@ -148,10 +148,10 @@ public:
         //- Vapour viscosity [Pa s]
         inline scalar mug(scalar p, scalar T) const;
 
-        //- Liquid thermal conductivity  [W/(m K)]
+        //- Liquid thermal conductivity  [W/m/K]
         inline scalar kappa(scalar p, scalar T) const;
 
-        //- Vapour thermal conductivity  [W/(m K)]
+        //- Vapour thermal conductivity  [W/m/K]
         inline scalar kappag(scalar p, scalar T) const;
 
         //- Surface tension [N/m]

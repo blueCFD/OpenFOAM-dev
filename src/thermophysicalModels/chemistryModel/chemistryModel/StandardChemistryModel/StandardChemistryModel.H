@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,12 +69,6 @@ class StandardChemistryModel
         template<class DeltaTType>
         scalar solve(const DeltaTType& deltaT);
 
-        //- Disallow copy constructor
-        StandardChemistryModel(const StandardChemistryModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const StandardChemistryModel&);
-
 
 protected:
 
@@ -101,7 +95,7 @@ protected:
         //- Temperature below which the reaction rates are assumed 0
         scalar Treact_;
 
-        //- List of reaction rate per specie [kg/m3/s]
+        //- List of reaction rate per specie [kg/m^3/s]
         PtrList<volScalarField::Internal> RR_;
 
         //- Temporary concentration field
@@ -128,6 +122,9 @@ public:
 
         //- Construct from thermo
         StandardChemistryModel(ReactionThermo& thermo);
+
+        //- Disallow default bitwise copy construction
+        StandardChemistryModel(const StandardChemistryModel&);
 
 
     //- Destructor
@@ -193,7 +190,7 @@ public:
                 const label i
             ) const;
 
-            //- Return non const access to chemical source terms [kg/m3/s]
+            //- Return non const access to chemical source terms [kg/m^3/s]
             virtual volScalarField::Internal& RR
             (
                 const label i
@@ -217,7 +214,7 @@ public:
             //- Return the chemical time scale
             virtual tmp<volScalarField> tc() const;
 
-            //- Return the heat release rate [kg/m/s3]
+            //- Return the heat release rate [kg/m/s^3]
             virtual tmp<volScalarField> Qdot() const;
 
 
@@ -249,6 +246,12 @@ public:
                 scalar& deltaT,
                 scalar& subDeltaT
             ) const = 0;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const StandardChemistryModel&) = delete;
 };
 
 

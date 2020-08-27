@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2017-09-XX blueCAPE Lda: Modifications for blueCFD-Core 2017-1
@@ -210,38 +210,40 @@ public:
             virtual mode_t mode
             (
                 const fileName&,
+                const bool checkVariants = true,
                 const bool followLink = true
             ) const = 0;
 
-            //- Return the file type: DIRECTORY, FILE or LINK
-            virtual fileName::Type type
+            //- Return the file type: directory, file or link
+            virtual fileType type
             (
                 const fileName&,
+                const bool checkVariants = true,
                 const bool followLink = true
             ) const = 0;
 
-            //- Does the name exist (as DIRECTORY or FILE) in the file system?
+            //- Does the name exist (as directory or file) in the file system?
             //  Optionally enable/disable check for gzip file.
             virtual bool exists
             (
                 const fileName&,
-                const bool checkGzip=true,
+                const bool checkVariants = true,
                 const bool followLink = true
             ) const = 0;
 
-            //- Does the name exist as a DIRECTORY in the file system?
+            //- Does the name exist as a directory in the file system?
             virtual bool isDir
             (
                 const fileName&,
                 const bool followLink = true
             ) const = 0;
 
-            //- Does the name exist as a FILE in the file system?
+            //- Does the name exist as a file in the file system?
             //  Optionally enable/disable check for gzip file.
             virtual bool isFile
             (
                 const fileName&,
-                const bool checkGzip=true,
+                const bool checkVariants = true,
                 const bool followLink = true
             ) const = 0;
 
@@ -249,6 +251,7 @@ public:
             virtual off_t fileSize
             (
                 const fileName&,
+                const bool checkVariants = true,
                 const bool followLink = true
             ) const = 0;
 
@@ -256,6 +259,7 @@ public:
             virtual time_t lastModified
             (
                 const fileName&,
+                const bool checkVariants = true,
                 const bool followLink = true
             ) const = 0;
 
@@ -263,6 +267,7 @@ public:
             virtual double highResLastModified
             (
                 const fileName&,
+                const bool checkVariants = true,
                 const bool followLink = true
             ) const = 0;
 
@@ -270,8 +275,8 @@ public:
             virtual fileNameList readDir
             (
                 const fileName&,
-                const fileName::Type=fileName::FILE,
-                const bool filtergz=true,
+                const fileType = fileType::file,
+                const bool filterVariants = true,
                 const bool followLink = true
             ) const = 0;
 
@@ -370,7 +375,7 @@ public:
                 regIOobject&,
                 const fileName&,
                 const word& typeName,
-                const bool valid = true
+                const bool read = true
             ) const = 0;
 
             //- Top-level read
@@ -384,7 +389,7 @@ public:
 
             //- Writes a regIOobject (so header, contents and divider).
             //  Returns success state. Default action is to write to
-            //  the objectPath using writeData. If !valid the
+            //  the objectPath using writeData. If !write the
             //  file does not need to be written (this is used e.g. to
             //  suppress empty local lagrangian data)
             virtual bool writeObject
@@ -393,7 +398,7 @@ public:
                 IOstream::streamFormat format=IOstream::ASCII,
                 IOstream::versionNumber version=IOstream::currentVersion,
                 IOstream::compressionType compression=IOstream::UNCOMPRESSED,
-                const bool valid = true
+                const bool write = true
             ) const;
 
 
@@ -413,7 +418,7 @@ public:
                 IOstream::streamFormat format=IOstream::ASCII,
                 IOstream::versionNumber version=IOstream::currentVersion,
                 IOstream::compressionType compression=IOstream::UNCOMPRESSED,
-                const bool valid = true
+                const bool write = true
             ) const = 0;
 
 

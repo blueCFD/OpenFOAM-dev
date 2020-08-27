@@ -96,6 +96,7 @@ wmake $targetType randomProcesses
 transportModels/Allwmake $targetType $*
 thermophysicalModels/Allwmake $targetType $*
 TurbulenceModels/Allwmake $targetType $*
+wmake $targetType radiationModels
 wmake $targetType combustionModels
 regionModels/Allwmake $targetType $*
 lagrangian/Allwmake $targetType $*
@@ -114,9 +115,10 @@ wmake $targetType sixDoFRigidBodyMotion
 wmake $targetType sixDoFRigidBodyState
 wmake $targetType rigidBodyDynamics
 wmake $targetType rigidBodyMeshMotion
-wmake $targetType waves
+wmake $targetType rigidBodyState
 wmake $targetType semiPermeableBaffle
 wmake $targetType atmosphericModels
+wmake $targetType waves
 
 
 #------------------------------------------------------------------------------

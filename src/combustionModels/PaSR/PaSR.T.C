@@ -49,7 +49,7 @@ Foam::combustionModels::PaSR<ReactionThermo>::PaSR
             IOobject::AUTO_WRITE
         ),
         this->mesh(),
-        dimensionedScalar("kappa", dimless, 0)
+        dimensionedScalar(dimless, 0)
     )
 {}
 
@@ -66,35 +66,32 @@ Foam::combustionModels::PaSR<ReactionThermo>::~PaSR()
 template<class ReactionThermo>
 void Foam::combustionModels::PaSR<ReactionThermo>::correct()
 {
-    if (this->active())
+    laminar<ReactionThermo>::correct();
+
+    tmp<volScalarField> tepsilon(this->turbulence().epsilon());
+    const scalarField& epsilon = tepsilon();
+
+    tmp<volScalarField> tmuEff(this->turbulence().muEff());
+    const scalarField& muEff = tmuEff();
+
+    tmp<volScalarField> ttc(this->tc());
+    const scalarField& tc = ttc();
+
+    tmp<volScalarField> trho(this->rho());
+    const scalarField& rho = trho();
+
+    forAll(epsilon, i)
     {
-        laminar<ReactionThermo>::correct();
+        const scalar tk =
+            Cmix_*sqrt(max(muEff[i]/rho[i]/(epsilon[i] + small), 0));
 
-        tmp<volScalarField> tepsilon(this->turbulence().epsilon());
-        const scalarField& epsilon = tepsilon();
-
-        tmp<volScalarField> tmuEff(this->turbulence().muEff());
-        const scalarField& muEff = tmuEff();
-
-        tmp<volScalarField> ttc(this->tc());
-        const scalarField& tc = ttc();
-
-        tmp<volScalarField> trho(this->rho());
-        const scalarField& rho = trho();
-
-        forAll(epsilon, i)
+        if (tk > small)
         {
-            const scalar tk =
-                Cmix_*sqrt(max(muEff[i]/rho[i]/(epsilon[i] + small), 0));
-
-            if (tk > small)
-            {
-                kappa_[i] = tc[i]/(tc[i] + tk);
-            }
-            else
-            {
-                kappa_[i] = 1.0;
-            }
+            kappa_[i] = tc[i]/(tc[i] + tk);
+        }
+        else
+        {
+            kappa_[i] = 1.0;
         }
     }
 }
@@ -112,13 +109,10 @@ template<class ReactionThermo>
 Foam::tmp<Foam::volScalarField>
 Foam::combustionModels::PaSR<ReactionThermo>::Qdot() const
 {
-    return tmp<volScalarField>
+    return volScalarField::New
     (
-        new volScalarField
-        (
-            this->thermo().phasePropertyName(typeName + ":Qdot"),
-            kappa_*laminar<ReactionThermo>::Qdot()
-        )
+        this->thermo().phasePropertyName(typeName + ":Qdot"),
+        kappa_*laminar<ReactionThermo>::Qdot()
     );
 }
 

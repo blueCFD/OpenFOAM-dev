@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,9 +29,9 @@ Description
 
     Reference:
     \verbatim
-        "Towards the Numerical Simulation of Multi-scale Two-phase Flows",
-        Marschall, H.,
-        PhD Thesis, TU München, 2011
+        Marschall, H. (2011).
+        Towards the numerical simulation of multi-scale two-phase flows.
+        PhD Thesis, TU München.
     \endverbatim
 
 SourceFiles
@@ -62,7 +62,7 @@ class segregated
 :
     public dragModel
 {
-    // Private data
+    // Private Data
 
         //- M coefficient
         const dimensionedScalar m_;

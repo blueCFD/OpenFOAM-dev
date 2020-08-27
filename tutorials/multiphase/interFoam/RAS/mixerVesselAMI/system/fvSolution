@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -17,7 +17,7 @@ FoamFile
 
 solvers
 {
-    "alpha.water.*"
+    "alpha.oil.*"
     {
         nAlphaCorr          1;
         nAlphaSubCycles     2;
@@ -73,10 +73,7 @@ relaxationFactors
 {
     equations
     {
-        "U.*"           1;
-        "k.*"           1;
-        "epsilon.*"     1;
-        "T.*"           1;
+        ".*"            1;
     }
 }
 

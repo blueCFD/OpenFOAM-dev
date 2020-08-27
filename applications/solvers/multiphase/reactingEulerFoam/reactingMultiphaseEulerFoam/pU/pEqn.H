@@ -180,7 +180,7 @@ while (pimple.correct())
             IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar("phiHbyA", dimArea*dimVelocity, 0)
+        dimensionedScalar(dimArea*dimVelocity, 0)
     );
 
     forAll(phases, phasei)
@@ -214,7 +214,7 @@ while (pimple.correct())
             mesh
         ),
         mesh,
-        dimensionedScalar("rAUf", dimensionSet(-1, 3, 1, 0, 0), 0)
+        dimensionedScalar(dimensionSet(-1, 3, 1, 0, 0), 0)
     );
 
     forAll(phases, phasei)
@@ -370,11 +370,7 @@ while (pimple.correct())
                 }
             }
 
-            solve
-            (
-                pEqn,
-                mesh.solver(p_rgh.select(pimple.finalInnerIter()))
-            );
+            pEqn.solve();
         }
 
         // Correct fluxes and velocities on last non-orthogonal iteration

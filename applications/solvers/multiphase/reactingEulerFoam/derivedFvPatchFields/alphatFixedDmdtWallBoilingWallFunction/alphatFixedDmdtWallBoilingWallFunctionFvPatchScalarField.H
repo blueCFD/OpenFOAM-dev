@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,7 +58,7 @@ class alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField
 :
     public alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
 {
-    // Private data
+    // Private Data
 
         //- name on the phase
         word vaporPhaseName_;
@@ -107,7 +107,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField
         (
             const alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField&
@@ -125,7 +125,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField
         (
             const alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField&,
@@ -149,7 +149,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         //- Is there phase change mass transfer for this phasePair
         virtual bool activePhasePair(const phasePairKey&) const;

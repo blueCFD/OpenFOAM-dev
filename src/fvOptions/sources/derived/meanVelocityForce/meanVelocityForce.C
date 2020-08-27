@@ -204,7 +204,7 @@ void Foam::fv::meanVelocityForce::addSup
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedVector("zero", eqn.dimensions()/dimVolume, Zero)
+        dimensionedVector(eqn.dimensions()/dimVolume, Zero)
     );
 
     scalar gradP = gradP0_ + dGradP_;
@@ -244,7 +244,8 @@ void Foam::fv::meanVelocityForce::constrain
                     mesh_.time().timeName(),
                     mesh_,
                     IOobject::NO_READ,
-                    IOobject::NO_WRITE
+                    IOobject::NO_WRITE,
+                    false
                 ),
                 1.0/eqn.A()
             )

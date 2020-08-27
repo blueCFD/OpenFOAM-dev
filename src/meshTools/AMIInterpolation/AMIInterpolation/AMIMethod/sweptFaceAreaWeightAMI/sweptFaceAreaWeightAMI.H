@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,13 +103,10 @@ namespace Foam
                     Class sweptFaceAreaWeightAMI Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class SourcePatch, class TargetPatch>
 class sweptFaceAreaWeightAMI
 :
-    public faceAreaWeightAMI<SourcePatch, TargetPatch>
+    public faceAreaWeightAMI
 {
-private:
-
     // Private static data
 
         //- Minimum length of a cut as a ratio of the overall projected edge
@@ -166,7 +163,7 @@ private:
         };
 
 
-    // Private member functions
+    // Private Member Functions
 
         // Debugging
 
@@ -248,7 +245,7 @@ public:
     // Constructors
 
         //- Use parent constructors
-        using faceAreaWeightAMI<SourcePatch, TargetPatch>::faceAreaWeightAMI;
+        using faceAreaWeightAMI::faceAreaWeightAMI;
 
 
     //- Destructor
@@ -259,12 +256,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "sweptFaceAreaWeightAMI.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

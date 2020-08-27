@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,8 +35,7 @@ Description
 Usage
     \table
         Property     | Description             | Required    | Default value
-        Umean        | mean velocity normal to the boundary [m/s] | yes |
-        ramp         | ramping function for the mean flow speed | no | None
+        UnMean       | mean velocity normal to the boundary [m/s] | yes |
         alpha        | phase-fraction field    | yes |
     \endtable
 
@@ -45,7 +44,7 @@ Usage
     <patchName>
     {
         type            outletPhaseMeanVelocity;
-        Umean           1.2;
+        UnMean          1.2;
         alpha           alpha.water;
         value           uniform (1.2 0 0);
     }
@@ -71,20 +70,17 @@ SourceFiles
 namespace Foam
 {
 /*---------------------------------------------------------------------------*\
-    Class outletPhaseMeanVelocityFvPatchVectorField Declaration
+         Class outletPhaseMeanVelocityFvPatchVectorField Declaration
 \*---------------------------------------------------------------------------*/
 
 class outletPhaseMeanVelocityFvPatchVectorField
 :
     public mixedFvPatchVectorField
 {
-    // Private data
+    // Private Data
 
-        //- Inlet integral flow rate
-        scalar Umean_;
-
-        //- Ramp for the mean flow rate
-        autoPtr<Function1<scalar>> ramp_;
+        //- Mean velocity normal to the boundary
+        autoPtr<Function1<scalar>> UnMean_;
 
         //- Name of the phase-fraction field
         word alphaName_;
@@ -124,7 +120,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         outletPhaseMeanVelocityFvPatchVectorField
         (
             const outletPhaseMeanVelocityFvPatchVectorField&
@@ -139,7 +135,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         outletPhaseMeanVelocityFvPatchVectorField
         (
             const outletPhaseMeanVelocityFvPatchVectorField&,
@@ -163,7 +159,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         //- Update the coefficients associated with the patch field
         virtual void updateCoeffs();

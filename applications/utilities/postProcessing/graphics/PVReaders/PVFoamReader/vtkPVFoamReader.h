@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,6 +63,7 @@ class vtkPVFoamReader
     public vtkMultiBlockDataSetAlgorithm
 {
 public:
+
     vtkTypeMacro(vtkPVFoamReader, vtkMultiBlockDataSetAlgorithm);
     void PrintSelf(ostream&, vtkIndent);
 
@@ -181,6 +182,9 @@ protected:
     //- Construct null
     vtkPVFoamReader();
 
+    //- Disallow default bitwise copy construction
+    vtkPVFoamReader(const vtkPVFoamReader&) = delete;
+
     //- Destructor
     ~vtkPVFoamReader();
 
@@ -209,14 +213,11 @@ protected:
     //- The file name for this case
     char* FileName;
 
+    //- Disallow default bitwise assignment
+    void operator=(const vtkPVFoamReader&) = delete;
+
 
 private:
-
-    //- Disallow default bitwise copy construct
-    vtkPVFoamReader(const vtkPVFoamReader&);
-
-    //- Disallow default bitwise assignment
-    void operator=(const vtkPVFoamReader&);
 
     //- Add/remove patch names to/from the view
     void updatePatchNamesView(const bool show);

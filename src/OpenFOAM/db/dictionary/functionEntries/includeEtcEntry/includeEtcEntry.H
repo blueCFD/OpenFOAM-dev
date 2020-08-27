@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,11 +35,11 @@ Description
       - ~/.OpenFOAM/\<VERSION\>
       - ~/.OpenFOAM/
     - \b group (site) settings (when $WM_PROJECT_SITE is set):
-      - $WM_PROJECT_SITE/\<VERSION\>
-      - $WM_PROJECT_SITE
+      - $WM_PROJECT_SITE/\<VERSION\>/etc/
+      - $WM_PROJECT_SITE/etc/
     - \b group (site) settings (when $WM_PROJECT_SITE is not set):
-      - $WM_PROJECT_INST_DIR/site/\<VERSION\>
-      - $WM_PROJECT_INST_DIR/site/
+      - $WM_PROJECT_INST_DIR/site/\<VERSION\>/etc/
+      - $WM_PROJECT_INST_DIR/site/etc/
     - \b other (shipped) settings:
       - $WM_PROJECT_DIR/etc/
 
@@ -81,12 +81,6 @@ class includeEtcEntry
 {
     // Private Member Functions
 
-        //- Disallow default bitwise copy construct
-        includeEtcEntry(const includeEtcEntry&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const includeEtcEntry&);
-
         //- Expand include fileName and return
         static fileName includeEtcFileName
         (
@@ -97,7 +91,7 @@ class includeEtcEntry
 
 public:
 
-    // Static data members
+    // Static Data Members
 
         //- Report which file is included to stdout
         static bool log;
@@ -105,6 +99,12 @@ public:
 
     //- Runtime type information
     ClassName("includeEtc");
+
+
+    // Constructors
+
+        //- Disallow default bitwise copy construction
+        includeEtcEntry(const includeEtcEntry&) = delete;
 
 
     // Member Functions
@@ -119,6 +119,12 @@ public:
             primitiveEntry&,
             Istream&
         );
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const includeEtcEntry&) = delete;
 };
 
 

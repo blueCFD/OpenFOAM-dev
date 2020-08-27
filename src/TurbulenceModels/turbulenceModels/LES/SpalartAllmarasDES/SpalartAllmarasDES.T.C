@@ -122,7 +122,7 @@ tmp<volScalarField> SpalartAllmarasDES<BasicTurbulenceModel>::r
                 max
                 (
                     Omega,
-                    dimensionedScalar("small", Omega.dimensions(), small)
+                    dimensionedScalar(Omega.dimensions(), small)
                 )
                 *sqr(kappa_*dTilda)
             ),
@@ -359,9 +359,10 @@ template<class BasicTurbulenceModel>
 tmp<volScalarField> SpalartAllmarasDES<BasicTurbulenceModel>::
 DnuTildaEff() const
 {
-    return tmp<volScalarField>
+    return volScalarField::New
     (
-        new volScalarField("DnuTildaEff", (nuTilda_ + this->nu())/sigmaNut_)
+        "DnuTildaEff",
+        (nuTilda_ + this->nu())/sigmaNut_
     );
 }
 
@@ -383,16 +384,9 @@ tmp<volScalarField> SpalartAllmarasDES<BasicTurbulenceModel>::LESRegion() const
 
     tmp<volScalarField> tLESRegion
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "DES::LESRegion",
-                this->mesh_.time().timeName(),
-                this->mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "DES::LESRegion",
             neg(dTilda(chi, fv1, fvc::grad(this->U_)) - y_)
         )
     );
@@ -446,7 +440,7 @@ void SpalartAllmarasDES<BasicTurbulenceModel>::correct()
     fvOptions.constrain(nuTildaEqn.ref());
     solve(nuTildaEqn);
     fvOptions.correct(nuTilda_);
-    bound(nuTilda_, dimensionedScalar("0", nuTilda_.dimensions(), 0.0));
+    bound(nuTilda_, dimensionedScalar(nuTilda_.dimensions(), 0));
     nuTilda_.correctBoundaryConditions();
 
     correctNut();

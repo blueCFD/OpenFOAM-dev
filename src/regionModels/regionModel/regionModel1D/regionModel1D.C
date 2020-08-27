@@ -39,7 +39,6 @@ namespace regionModels
 
 void Foam::regionModels::regionModel1D::constructMeshObjects()
 {
-
     nMagSfPtr_.reset
     (
         new surfaceScalarField
@@ -53,7 +52,7 @@ void Foam::regionModels::regionModel1D::constructMeshObjects()
                 IOobject::NO_WRITE
             ),
             regionMesh(),
-            dimensionedScalar("zero", dimArea, 0.0)
+            dimensionedScalar(dimArea, 0)
         )
     );
 }

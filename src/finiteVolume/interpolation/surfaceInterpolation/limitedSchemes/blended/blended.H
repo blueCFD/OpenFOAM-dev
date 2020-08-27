@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,18 +53,9 @@ class blended
     public limitedSurfaceInterpolationScheme<Type>,
     public blendedSchemeBase<Type>
 {
-    // Private data
+    // Private Data
 
         const scalar blendingFactor_;
-
-
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        blended(const blended&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const blended&);
 
 
 public:
@@ -112,6 +103,9 @@ public:
             blendingFactor_(readScalar(is))
         {}
 
+        //- Disallow default bitwise copy construction
+        blended(const blended&) = delete;
+
 
     //- Destructor
     virtual ~blended()
@@ -126,27 +120,11 @@ public:
              const GeometricField<Type, fvPatchField, volMesh>& vf
         ) const
         {
-            return tmp<surfaceScalarField>
+            return surfaceScalarField::New
             (
-                new surfaceScalarField
-                (
-                    IOobject
-                    (
-                        vf.name() + "BlendingFactor",
-                        this->mesh().time().timeName(),
-                        this->mesh(),
-                        IOobject::NO_READ,
-                        IOobject::NO_WRITE,
-                        false
-                    ),
-                    this->mesh(),
-                    dimensionedScalar
-                    (
-                        "blendingFactor",
-                        dimless,
-                        blendingFactor_
-                    )
-                )
+                vf.name() + "BlendingFactor",
+                this->mesh(),
+                dimensionedScalar(dimless, blendingFactor_)
             );
         }
 
@@ -156,27 +134,11 @@ public:
             const GeometricField<Type, fvPatchField, volMesh>&
         ) const
         {
-            return tmp<surfaceScalarField>
+            return surfaceScalarField::New
             (
-                new surfaceScalarField
-                (
-                    IOobject
-                    (
-                        "blendedLimiter",
-                        this->mesh().time().timeName(),
-                        this->mesh(),
-                        IOobject::NO_READ,
-                        IOobject::NO_WRITE,
-                        false
-                    ),
-                    this->mesh(),
-                    dimensionedScalar
-                    (
-                        "blendedLimiter",
-                        dimless,
-                        1 - blendingFactor_
-                    )
-                )
+                "blendedLimiter",
+                this->mesh(),
+                dimensionedScalar(dimless, 1 - blendingFactor_)
             );
         }
 
@@ -190,6 +152,12 @@ public:
                 blendingFactor_*this->mesh().surfaceInterpolation::weights()
               + (1 - blendingFactor_)*pos0(this->faceFlux_);
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const blended&) = delete;
 };
 
 

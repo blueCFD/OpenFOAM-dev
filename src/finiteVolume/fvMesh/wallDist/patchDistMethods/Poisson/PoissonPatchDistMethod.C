@@ -80,23 +80,18 @@ bool Foam::patchDistMethods::Poisson::correct
     {
         tyPsi_ = tmp<volScalarField>
         (
-            new volScalarField
+            volScalarField::New
             (
-                IOobject
-                (
-                    "yPsi",
-                    mesh_.time().timeName(),
-                    mesh_
-                ),
+                "yPsi",
                 mesh_,
-                dimensionedScalar("yPsi", sqr(dimLength), 0.0),
+                dimensionedScalar(sqr(dimLength), 0),
                 y.boundaryFieldRef().types()
             )
         );
     }
     volScalarField& yPsi = tyPsi_.ref();
 
-    solve(fvm::laplacian(yPsi) == dimensionedScalar("1", dimless, -1.0));
+    solve(fvm::laplacian(yPsi) == dimensionedScalar(dimless, -1.0));
 
     volVectorField gradyPsi(fvc::grad(yPsi));
     volScalarField magGradyPsi(mag(gradyPsi));
@@ -117,7 +112,7 @@ bool Foam::patchDistMethods::Poisson::correct
            /max
             (
                 magGradyPsi,
-                dimensionedScalar("smallMagGradyPsi", dimLength, small)
+                dimensionedScalar(dimLength, small)
             );
     }
 

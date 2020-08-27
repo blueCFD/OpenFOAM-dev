@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,7 +29,7 @@ Description
     Temperature dependent contact angle force with a stochastic perturbation
 
     The contact angle in degrees is specified as a Foam::Function1 type, to
-    enable the use of, e.g.  contant, polynomial, table values and the
+    enable the use of, e.g.  constant, polynomial, table values and the
     stochastic perturbation obtained from a
     Foam::distributionModels::distributionModel
 
@@ -82,18 +82,6 @@ class perturbedTemperatureDependentContactAngleForce
         const autoPtr<distributionModel> distribution_;
 
 
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        perturbedTemperatureDependentContactAngleForce
-        (
-            const perturbedTemperatureDependentContactAngleForce&
-        );
-
-        //- Disallow default bitwise assignment
-        void operator=(const perturbedTemperatureDependentContactAngleForce&);
-
-
 protected:
 
         //- Return the contact angle field
@@ -115,9 +103,24 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        perturbedTemperatureDependentContactAngleForce
+        (
+            const perturbedTemperatureDependentContactAngleForce&
+        ) = delete;
+
 
     //- Destructor
     virtual ~perturbedTemperatureDependentContactAngleForce();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=
+        (
+            const perturbedTemperatureDependentContactAngleForce&
+        ) = delete;
 };
 
 

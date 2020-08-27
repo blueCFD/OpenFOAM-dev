@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,11 +63,6 @@ class Function1
 :
     public tmp<Function1<Type>>::refCount
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise assignment
-        void operator=(const Function1<Type>&);
-
 
 protected:
 
@@ -166,7 +161,17 @@ public:
 
             //- Write in dictionary format
             virtual void writeData(Ostream& os) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const Function1<Type>&) = delete;
 };
+
+
+template<class Type>
+void writeEntry(Ostream& os, const Function1<Type>& f1);
 
 
 /*---------------------------------------------------------------------------*\

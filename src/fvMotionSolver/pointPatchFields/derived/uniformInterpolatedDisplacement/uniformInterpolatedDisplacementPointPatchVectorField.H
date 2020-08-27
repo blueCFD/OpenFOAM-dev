@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,13 +56,12 @@ SourceFiles
 #define uniformInterpolatedDisplacementPointPatchVectorField_H
 
 #include "fixedValuePointPatchField.H"
+#include "dynamicMeshPointInterpolator.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-class interpolationWeights;
 
 /*---------------------------------------------------------------------------*\
     Class uniformInterpolatedDisplacementPointPatchVectorField Declaration
@@ -72,28 +71,10 @@ class uniformInterpolatedDisplacementPointPatchVectorField
 :
     public fixedValuePointPatchField<vector>
 {
-    // Private data
+    // Private Data
 
-        //- Name of displacement field
-        const word fieldName_;
+        autoPtr<dynamicMeshPointInterpolator> pointInterpolator_;
 
-        const word interpolationScheme_;
-
-        //- Times with pre-specified displacement
-        wordList timeNames_;
-
-        //- Times with pre-specified displacement
-        scalarField timeVals_;
-
-        //- User-specified interpolator
-        autoPtr<interpolationWeights> interpolatorPtr_;
-
-
-        //- Cached interpolation times
-        labelList currentIndices_;
-
-        //- Cached interpolation weights
-        scalarField currentWeights_;
 
 public:
 
@@ -163,7 +144,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Evaluation functions
 

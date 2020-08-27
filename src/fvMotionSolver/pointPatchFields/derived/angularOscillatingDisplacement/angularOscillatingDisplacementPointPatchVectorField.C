@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -99,7 +99,7 @@ angularOscillatingDisplacementPointPatchVectorField
     angle0_(ptf.angle0_),
     amplitude_(ptf.amplitude_),
     omega_(ptf.omega_),
-    p0_(ptf.p0_, mapper)
+    p0_(mapper(ptf.p0_))
 {}
 
 
@@ -129,7 +129,7 @@ void angularOscillatingDisplacementPointPatchVectorField::autoMap
 {
     fixedValuePointPatchField<vector>::autoMap(m);
 
-    p0_.autoMap(m);
+    m(p0_, p0_);
 }
 
 
@@ -179,18 +179,13 @@ void angularOscillatingDisplacementPointPatchVectorField::write
 ) const
 {
     pointPatchField<vector>::write(os);
-    os.writeKeyword("axis")
-        << axis_ << token::END_STATEMENT << nl;
-    os.writeKeyword("origin")
-        << origin_ << token::END_STATEMENT << nl;
-    os.writeKeyword("angle0")
-        << angle0_ << token::END_STATEMENT << nl;
-    os.writeKeyword("amplitude")
-        << amplitude_ << token::END_STATEMENT << nl;
-    os.writeKeyword("omega")
-        << omega_ << token::END_STATEMENT << nl;
-    p0_.writeEntry("p0", os);
-    writeEntry("value", os);
+    writeEntry(os, "axis", axis_);
+    writeEntry(os, "origin", origin_);
+    writeEntry(os, "angle0", angle0_);
+    writeEntry(os, "amplitude", amplitude_);
+    writeEntry(os, "omega", omega_);
+    writeEntry(os, "p0", p0_);
+    writeEntry(os, "value", *this);
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,10 +69,6 @@ class SpalartAllmarasDDES
 
         tmp<volScalarField> rd(const volScalarField& magGradU) const;
 
-        // Disallow default bitwise copy construct and assignment
-        SpalartAllmarasDDES(const SpalartAllmarasDDES&);
-        void operator=(const SpalartAllmarasDDES&);
-
 
 protected:
 
@@ -113,10 +109,19 @@ public:
             const word& type = typeName
         );
 
+        //- Disallow default bitwise copy construction
+        SpalartAllmarasDDES(const SpalartAllmarasDDES&) = delete;
+
 
     //- Destructor
     virtual ~SpalartAllmarasDDES()
     {}
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const SpalartAllmarasDDES&) = delete;
 };
 
 

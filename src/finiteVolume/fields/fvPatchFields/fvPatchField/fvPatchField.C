@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,40 +44,6 @@ Foam::fvPatchField<Type>::fvPatchField
     updated_(false),
     manipulatedMatrix_(false),
     patchType_(word::null)
-{}
-
-
-template<class Type>
-Foam::fvPatchField<Type>::fvPatchField
-(
-    const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
-    const Type& value
-)
-:
-    Field<Type>(p.size(), value),
-    patch_(p),
-    internalField_(iF),
-    updated_(false),
-    manipulatedMatrix_(false),
-    patchType_(word::null)
-{}
-
-
-template<class Type>
-Foam::fvPatchField<Type>::fvPatchField
-(
-    const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
-    const word& patchType
-)
-:
-    Field<Type>(p.size()),
-    patch_(p),
-    internalField_(iF),
-    updated_(false),
-    manipulatedMatrix_(false),
-    patchType_(patchType)
 {}
 
 
@@ -141,7 +107,8 @@ Foam::fvPatchField<Type>::fvPatchField
     const fvPatchField<Type>& ptf,
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
-    const fvPatchFieldMapper& mapper
+    const fvPatchFieldMapper& mapper,
+    const bool mappingRequired
 )
 :
     Field<Type>(p.size()),
@@ -151,12 +118,15 @@ Foam::fvPatchField<Type>::fvPatchField
     manipulatedMatrix_(false),
     patchType_(ptf.patchType_)
 {
-    // For unmapped faces set to internal field value (zero-gradient)
-    if (notNull(iF) && mapper.hasUnmapped())
+    if (mappingRequired)
     {
-        fvPatchField<Type>::operator=(this->patchInternalField());
+        // For unmapped faces set to internal field value (zero-gradient)
+        if (notNull(iF) && mapper.hasUnmapped())
+        {
+            fvPatchField<Type>::operator=(this->patchInternalField());
+        }
+        mapper(*this, ptf);
     }
-    this->map(ptf, mapper);
 }
 
 
@@ -240,59 +210,7 @@ void Foam::fvPatchField<Type>::autoMap
     const fvPatchFieldMapper& mapper
 )
 {
-    Field<Type>& f = *this;
-
-    if (!this->size() && !mapper.distributed())
-    {
-        f.setSize(mapper.size());
-        if (f.size())
-        {
-            f = this->patchInternalField();
-        }
-    }
-    else
-    {
-        // Map all faces provided with mapping data
-        Field<Type>::autoMap(mapper);
-
-        // For unmapped faces set to internal field value (zero-gradient)
-        if (mapper.hasUnmapped())
-        {
-            Field<Type> pif(this->patchInternalField());
-
-            if
-            (
-                mapper.direct()
-             && notNull(mapper.directAddressing())
-             && mapper.directAddressing().size()
-            )
-            {
-                const labelList& mapAddressing = mapper.directAddressing();
-
-                forAll(mapAddressing, i)
-                {
-                    if (mapAddressing[i] < 0)
-                    {
-                        f[i] = pif[i];
-                    }
-                }
-            }
-            else if (!mapper.direct() && mapper.addressing().size())
-            {
-                const labelListList& mapAddressing = mapper.addressing();
-
-                forAll(mapAddressing, i)
-                {
-                    const labelList& localAddrs = mapAddressing[i];
-
-                    if (!localAddrs.size())
-                    {
-                        f[i] = pif[i];
-                    }
-                }
-            }
-        }
-    }
+    mapper(*this, *this);
 }
 
 
@@ -361,29 +279,11 @@ void Foam::fvPatchField<Type>::manipulateMatrix
 template<class Type>
 void Foam::fvPatchField<Type>::write(Ostream& os) const
 {
-    os.writeKeyword("type") << type() << token::END_STATEMENT << nl;
+    writeEntry(os, "type", type());
 
     if (patchType_.size())
     {
-        os.writeKeyword("patchType") << patchType_
-            << token::END_STATEMENT << nl;
-    }
-}
-
-
-template<class Type>
-template<class EntryType>
-void Foam::fvPatchField<Type>::writeEntryIfDifferent
-(
-    Ostream& os,
-    const word& entryName,
-    const EntryType& value1,
-    const EntryType& value2
-) const
-{
-    if (value1 != value2)
-    {
-        os.writeKeyword(entryName) << value2 << token::END_STATEMENT << nl;
+        writeEntry(os, "patchType", patchType_);
     }
 }
 

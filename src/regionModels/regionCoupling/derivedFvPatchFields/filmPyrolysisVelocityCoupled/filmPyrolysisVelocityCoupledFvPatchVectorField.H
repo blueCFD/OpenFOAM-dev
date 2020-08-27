@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,7 +69,7 @@ class filmPyrolysisVelocityCoupledFvPatchVectorField
 :
     public fixedValueFvPatchVectorField
 {
-    // Private data
+    // Private Data
 
         //- Name of film region
         word filmRegionName_;
@@ -117,7 +117,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         filmPyrolysisVelocityCoupledFvPatchVectorField
         (
             const filmPyrolysisVelocityCoupledFvPatchVectorField&
@@ -132,7 +132,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         filmPyrolysisVelocityCoupledFvPatchVectorField
         (
             const filmPyrolysisVelocityCoupledFvPatchVectorField&,
@@ -152,7 +152,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 

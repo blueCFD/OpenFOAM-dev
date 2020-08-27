@@ -105,7 +105,7 @@ bool Foam::patchDistMethods::advectionDiffusion::correct
             false
         ),
         mesh_,
-        dimensionedVector("ny", dimless, Zero),
+        dimensionedVector(dimless, Zero),
         patchTypes<vector>(mesh_, patchIDs_)
     );
 
@@ -137,7 +137,7 @@ bool Foam::patchDistMethods::advectionDiffusion::correct
           - fvm::Sp(fvc::div(yPhi), y)
           - epsilon_*y*fvm::laplacian(y)
          ==
-            dimensionedScalar("1", dimless, 1.0)
+            dimensionedScalar(dimless, 1.0)
         );
 
         yEqn.relax();

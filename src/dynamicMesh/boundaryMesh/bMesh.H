@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,16 +33,21 @@ Description
 #ifndef bMesh_H
 #define bMesh_H
 
+<<<<<<< HEAD
 #include "PrimitivePatch.T.H"
 #include "face.T.H"
 #include "List.T.H"
+=======
+#include "PrimitivePatch.H"
+#include "faceList.H"
+>>>>>>> blueCFD-Core-7
 #include "pointField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    typedef PrimitivePatch<face, List, const pointField> bMesh;
+    typedef PrimitivePatch<faceList, const pointField> bMesh;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

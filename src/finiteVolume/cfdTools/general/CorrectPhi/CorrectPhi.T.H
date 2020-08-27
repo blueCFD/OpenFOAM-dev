@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,14 +48,15 @@ SourceFiles
 
 namespace Foam
 {
-    class pimpleControl;
+    class nonOrthogonalSolutionControl;
 
     //- If the mesh is moving correct the velocity BCs on the moving walls to
     //  ensure the corrected fluxes and velocity are consistent
     void correctUphiBCs
     (
         volVectorField& U,
-        surfaceScalarField& phi
+        surfaceScalarField& phi,
+        const bool evaluateUBCs
     );
 
     //- If the mesh is moving correct the velocity BCs on the moving walls to
@@ -64,7 +65,8 @@ namespace Foam
     (
         const volScalarField& rho,
         volVectorField& U,
-        surfaceScalarField& phi
+        surfaceScalarField& phi,
+        const bool evaluateUBCs
     );
 
     template<class RAUfType, class DivUType>
@@ -75,7 +77,8 @@ namespace Foam
         const volScalarField& p,
         const RAUfType& rAUf,
         const DivUType& divU,
-        pimpleControl& pimple
+        nonOrthogonalSolutionControl& pcorrControl,
+        const bool evaluateUBCs
     );
 
     template<class RAUfType, class DivRhoUType>
@@ -88,7 +91,8 @@ namespace Foam
         const volScalarField& psi,
         const RAUfType& rAUf,
         const DivRhoUType& divRhoU,
-        pimpleControl& pimple
+        nonOrthogonalSolutionControl& pcorrControl,
+        const bool evaluateUBCs
     );
 }
 

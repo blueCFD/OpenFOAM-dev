@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,12 +24,17 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "surfaceWriter.H"
+<<<<<<< HEAD
 
 #include "MeshedSurfaceProxy.T.H"
 #include "proxySurfaceWriter.H"
 
 #include "HashTable.T.H"
 #include "word.H"
+=======
+#include "MeshedSurfaceProxy.H"
+#include "proxySurfaceWriter.H"
+>>>>>>> blueCFD-Core-7
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -39,13 +44,6 @@ namespace Foam
     defineTypeNameAndDebug(surfaceWriter, 0);
     defineRunTimeSelectionTable(surfaceWriter, word);
     defineRunTimeSelectionTable(surfaceWriter, wordDict);
-    addNamedToRunTimeSelectionTable
-    (
-        surfaceWriter,
-        surfaceWriter,
-        word,
-        null
-    );
 }
 
 

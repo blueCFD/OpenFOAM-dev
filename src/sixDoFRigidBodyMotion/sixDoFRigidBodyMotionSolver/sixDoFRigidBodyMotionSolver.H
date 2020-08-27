@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ class sixDoFRigidBodyMotionSolver
 :
     public displacementMotionSolver
 {
-    // Private data
+    // Private Data
 
         //- Six DoF motion object
         sixDoFRigidBodyMotion motion_;
@@ -90,18 +90,6 @@ class sixDoFRigidBodyMotionSolver
         label curTimeIndex_;
 
 
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        sixDoFRigidBodyMotionSolver
-        (
-            const sixDoFRigidBodyMotionSolver&
-        );
-
-        //- Disallow default bitwise assignment
-        void operator=(const sixDoFRigidBodyMotionSolver&);
-
-
 public:
 
     //- Runtime type information
@@ -110,11 +98,17 @@ public:
 
     // Constructors
 
-        //- Construct from polyMesh and IOdictionary
+        //- Construct from polyMesh and dictionary
         sixDoFRigidBodyMotionSolver
         (
             const polyMesh&,
-            const IOdictionary& dict
+            const dictionary& dict
+        );
+
+        //- Disallow default bitwise copy construction
+        sixDoFRigidBodyMotionSolver
+        (
+            const sixDoFRigidBodyMotionSolver&
         );
 
 
@@ -133,17 +127,14 @@ public:
         //- Solve for motion
         virtual void solve();
 
-        //- Write state using given format, version and compression
-        virtual bool writeObject
-        (
-            IOstream::streamFormat fmt,
-            IOstream::versionNumber ver,
-            IOstream::compressionType cmp,
-            const bool valid
-        ) const;
+        //- Write motion state information for restart
+        virtual bool write() const;
 
-        //- Read dynamicMeshDict dictionary
-        virtual bool read();
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const sixDoFRigidBodyMotionSolver&) = delete;
 };
 
 

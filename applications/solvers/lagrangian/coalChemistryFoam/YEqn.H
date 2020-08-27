@@ -12,7 +12,6 @@ tmp<fv::convectionScheme<scalar>> mvConvection
 
 {
     combustion->correct();
-    Qdot = combustion->Qdot();
     volScalarField Yt(0.0*Y[0]);
 
     forAll(Y, i)
@@ -36,7 +35,7 @@ tmp<fv::convectionScheme<scalar>> mvConvection
 
             fvOptions.constrain(YiEqn);
 
-            YiEqn.solve(mesh.solver("Yi"));
+            YiEqn.solve("Yi");
 
             fvOptions.correct(Yi);
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,12 +90,6 @@ class foamChemistryReader
         //- Read the species composition
         void readSpeciesComposition();
 
-        //- Disallow default bitwise copy construct
-        foamChemistryReader(const foamChemistryReader&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const foamChemistryReader&);
-
 
 public:
 
@@ -121,13 +115,16 @@ public:
             speciesTable& species
         );
 
+        //- Disallow default bitwise copy construction
+        foamChemistryReader(const foamChemistryReader&) = delete;
+
 
     //- Destructor
     virtual ~foamChemistryReader()
     {}
 
 
-    // Member functions
+    // Member Functions
 
         //- List of elements
         const wordList& elementNames() const
@@ -164,6 +161,12 @@ public:
         {
             return reactions_;
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const foamChemistryReader&) = delete;
 };
 
 

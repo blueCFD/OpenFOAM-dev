@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -101,7 +101,7 @@ public:
     virtual ~psiuReactionThermo();
 
 
-    // Member functions
+    // Member Functions
 
         //- Update properties
         virtual void correct() = 0;
@@ -159,10 +159,10 @@ public:
             //- Burnt gas compressibility [s^2/m^2]
             virtual tmp<volScalarField> psib() const = 0;
 
-            //- Dynamic viscosity of unburnt gas [kg/ms]
+            //- Dynamic viscosity of unburnt gas [kg/m/s]
             virtual tmp<volScalarField> muu() const = 0;
 
-            //- Dynamic viscosity of burnt gas [kg/ms]
+            //- Dynamic viscosity of burnt gas [kg/m/s]
             virtual tmp<volScalarField> mub() const = 0;
 };
 

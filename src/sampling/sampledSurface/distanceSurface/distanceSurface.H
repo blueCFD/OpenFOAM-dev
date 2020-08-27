@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,29 +22,28 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::distanceSurface
+     Foam::sampledSurfaces::distanceSurface
 
 Description
     A sampledSurface defined by a distance to a surface.
-
-    Uses either isoSurfaceCell or isoSurface.
 
 SourceFiles
     distanceSurface.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef distanceSurface_H
-#define distanceSurface_H
+#ifndef sampledSurfaces_distanceSurface_H
+#define sampledSurfaces_distanceSurface_H
 
 #include "sampledSurface.H"
 #include "searchableSurface.H"
-#include "isoSurfaceCell.H"
 #include "isoSurface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
+{
+namespace sampledSurfaces
 {
 
 /*---------------------------------------------------------------------------*\
@@ -55,7 +54,7 @@ class distanceSurface
 :
     public sampledSurface
 {
-    // Private data
+    // Private Data
 
         //- Surface
         const autoPtr<searchableSurface> surfPtr_;
@@ -65,9 +64,6 @@ class distanceSurface
 
         //- Signed distance
         const bool signed_;
-
-        //- Whether to use isoSurfaceCell or isoSurface
-        const bool cell_;
 
         //- Whether to coarsen
         const Switch regularise_;
@@ -89,13 +85,7 @@ class distanceSurface
         scalarField pointDistance_;
 
         //- Constructed iso surface
-        autoPtr<isoSurfaceCell> isoSurfCellPtr_;
-
-        //- Constructed iso surface
         autoPtr<isoSurface> isoSurfPtr_;
-
-        //- Triangles converted to faceList
-        mutable autoPtr<faceList> facesPtr_;
 
 
     // Private Member Functions
@@ -142,7 +132,6 @@ public:
             const word& surfaceName,
             const scalar distance,
             const bool signedDistance,
-            const bool cell,
             const Switch regularise,
             const Switch average
         );
@@ -175,30 +164,12 @@ public:
         //- Faces of surface
         virtual const faceList& faces() const
         {
-            if (facesPtr_.empty())
-            {
-                const triSurface& s = surface();
-
-                facesPtr_.reset(new faceList(s.size()));
-
-                forAll(s, i)
-                {
-                    facesPtr_()[i] = s[i].triFaceFace();
-                }
-            }
-            return facesPtr_;
+            return surface().faces();
         }
 
-        const triSurface& surface() const
+        const isoSurface& surface() const
         {
-            if (cell_)
-            {
-                return isoSurfCellPtr_();
-            }
-            else
-            {
-                return isoSurfPtr_();
-            }
+            return isoSurfPtr_();
         }
 
         //- Sample field on surface
@@ -269,6 +240,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace sampledSurfaces
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

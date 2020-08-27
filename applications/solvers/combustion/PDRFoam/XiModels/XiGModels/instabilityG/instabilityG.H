@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ class instabilityG
 :
     public XiGModel
 {
-    // Private data
+    // Private Data
 
         //- Flame instabilityG wrinling generation rate coefficient
         dimensionedScalar GIn_;
@@ -65,15 +65,6 @@ class instabilityG
 
         //- Xi generation rate model due to all other processes
         autoPtr<XiGModel> XiGModel_;
-
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        instabilityG(const instabilityG&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const instabilityG&);
 
 
 public:
@@ -93,6 +84,9 @@ public:
             const volScalarField& Su
         );
 
+        //- Disallow default bitwise copy construction
+        instabilityG(const instabilityG&);
+
 
     //- Destructor
     virtual ~instabilityG();
@@ -108,6 +102,12 @@ public:
 
         //- Update properties from given dictionary
         virtual bool read(const dictionary& XiGProperties);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const instabilityG&) = delete;
 };
 
 

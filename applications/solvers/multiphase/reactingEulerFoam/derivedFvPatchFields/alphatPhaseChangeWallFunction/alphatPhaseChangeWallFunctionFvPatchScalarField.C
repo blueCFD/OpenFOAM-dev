@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,8 +88,8 @@ alphatPhaseChangeWallFunctionFvPatchScalarField
 )
 :
     fixedValueFvPatchScalarField(ptf, p, iF, mapper),
-    dmdt_(ptf.dmdt_, mapper),
-    mDotL_(ptf.mDotL_, mapper)
+    dmdt_(mapper(ptf.dmdt_)),
+    mDotL_(mapper(ptf.mDotL_))
 {}
 
 
@@ -124,9 +124,9 @@ void alphatPhaseChangeWallFunctionFvPatchScalarField::
 write(Ostream& os) const
 {
     fvPatchField<scalar>::write(os);
-    dmdt_.writeEntry("dmdt", os);
-    mDotL_.writeEntry("mDotL", os);
-    writeEntry("value", os);
+    writeEntry(os, "dmdt", dmdt_);
+    writeEntry(os, "mDotL", mDotL_);
+    writeEntry(os, "value", *this);
 }
 
 

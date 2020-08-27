@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,7 +97,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- Enumeration for handling out-of-bound values
         boundsHandling boundsHandling_;
@@ -165,6 +165,9 @@ public:
 
 
     // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const interpolationTable&);
 
         //- Return an element of constant Tuple2<scalar, Type>
         const Tuple2<scalar, Type>& operator[](const label) const;

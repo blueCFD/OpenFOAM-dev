@@ -7,7 +7,7 @@ EXE_INC = \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
-    -I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude \
+    -I$(LIB_SRC)/radiationModels/lnInclude \
     -I$(LIB_SRC)/transportModels \
     -I$(LIB_SRC)/transportModels/incompressible/singlePhaseTransportModel \
     -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude \
@@ -15,22 +15,24 @@ EXE_INC = \
     -I$(LIB_SRC)/TurbulenceModels/phaseIncompressible/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
+<<<<<<< HEAD
+=======
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+>>>>>>> blueCFD-Core-7
     -I$(LIB_SRC)/meshTools/lnInclude
 
 EXE_LIBS = \
     -llagrangian \
     -llagrangianIntermediate \
     -llagrangianTurbulence \
-    -lspecie \
-    -lradiationModels \
     -lincompressibleTransportModels \
     -lturbulenceModels \
     -lincompressibleTurbulenceModels \
     -lDPMTurbulenceModels \
-    -lregionModels \
-    -lsurfaceFilmModels \
-    -lsampling \
     -lfiniteVolume \
+    -ldynamicFvMesh \
+    -ltopoChangerFvMesh \
     -lfvOptions \
     -lmeshTools
 

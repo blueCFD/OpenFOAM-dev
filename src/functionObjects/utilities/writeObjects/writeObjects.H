@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -107,7 +107,7 @@ public:
 
         //- Re-enumeration defining the write options, based on the original
         //  ones at IOobject::writeOption
-        enum writeOption
+        enum class writeOption
         {
             AUTO_WRITE,
             NO_WRITE,
@@ -118,7 +118,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- To only write objects of defined writeOption
         writeOption writeOption_;
@@ -128,12 +128,6 @@ private:
 
         //- Write the requested registered IO object
         virtual void writeObject(const regIOobject& obj);
-
-        //- Disallow default bitwise copy construct
-        writeObjects(const writeObjects&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const writeObjects&);
 
 
 public:
@@ -152,6 +146,9 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        writeObjects(const writeObjects&) = delete;
+
 
     //- Destructor
     virtual ~writeObjects();
@@ -167,6 +164,12 @@ public:
 
         //- Write the registered objects
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const writeObjects&) = delete;
 };
 
 

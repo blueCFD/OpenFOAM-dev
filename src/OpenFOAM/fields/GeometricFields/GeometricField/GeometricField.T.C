@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -400,8 +400,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
             << exit(FatalIOError);
     }
 
-    readOldTimeIfPresent();
-
     if (debug)
     {
         InfoInFunction
@@ -441,7 +439,34 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 }
 
 
-#ifndef NoConstructFromTmp
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
+(
+    GeometricField<Type, PatchField, GeoMesh>&& gf
+)
+:
+    Internal(move(gf)),
+    timeIndex_(gf.timeIndex()),
+    field0Ptr_(nullptr),
+    fieldPrevIterPtr_(nullptr),
+    boundaryField_(move(gf.boundaryField_))
+{
+    if (debug)
+    {
+        InfoInFunction
+            << "Constructing by moving" << endl << this->info() << endl;
+    }
+
+    if (gf.field0Ptr_)
+    {
+        field0Ptr_ = gf.field0Ptr_;
+        gf.field0Ptr_ = nullptr;
+    }
+
+    this->writeOpt() = IOobject::NO_WRITE;
+}
+
+
 template<class Type, template<class> class PatchField, class GeoMesh>
 Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 (
@@ -468,7 +493,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 
     tgf.clear();
 }
-#endif
 
 
 template<class Type, template<class> class PatchField, class GeoMesh>
@@ -502,7 +526,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 }
 
 
-#ifndef NoConstructFromTmp
 template<class Type, template<class> class PatchField, class GeoMesh>
 Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 (
@@ -532,7 +555,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 
     readIfPresent();
 }
-#endif
 
 
 template<class Type, template<class> class PatchField, class GeoMesh>
@@ -566,7 +588,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 }
 
 
-#ifndef NoConstructFromTmp
 template<class Type, template<class> class PatchField, class GeoMesh>
 Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 (
@@ -594,7 +615,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 
     tgf.clear();
 }
-#endif
 
 
 template<class Type, template<class> class PatchField, class GeoMesh>
@@ -673,7 +693,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 }
 
 
-#ifndef NoConstructFromTmp
 template<class Type, template<class> class PatchField, class GeoMesh>
 Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 (
@@ -711,7 +730,6 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 
     tgf.clear();
 }
-#endif
 
 
 template<class Type, template<class> class PatchField, class GeoMesh>
@@ -721,6 +739,162 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::clone() const
     return tmp<GeometricField<Type, PatchField, GeoMesh>>
     (
         new GeometricField<Type, PatchField, GeoMesh>(*this)
+    );
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
+Foam::GeometricField<Type, PatchField, GeoMesh>::New
+(
+    const word& name,
+    const Mesh& mesh,
+    const dimensionSet& ds,
+    const word& patchFieldType
+)
+{
+    return tmp<GeometricField<Type, PatchField, GeoMesh>>
+    (
+        new GeometricField<Type, PatchField, GeoMesh>
+        (
+            IOobject
+            (
+                name,
+                mesh.thisDb().time().timeName(),
+                mesh.thisDb(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            mesh,
+            ds,
+            patchFieldType
+        )
+    );
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
+Foam::GeometricField<Type, PatchField, GeoMesh>::New
+(
+    const word& name,
+    const Mesh& mesh,
+    const dimensioned<Type>& dt,
+    const word& patchFieldType
+)
+{
+    return tmp<GeometricField<Type, PatchField, GeoMesh>>
+    (
+        new GeometricField<Type, PatchField, GeoMesh>
+        (
+            IOobject
+            (
+                name,
+                mesh.thisDb().time().timeName(),
+                mesh.thisDb(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            mesh,
+            dt,
+            patchFieldType
+        )
+    );
+}
+
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
+Foam::GeometricField<Type, PatchField, GeoMesh>::New
+(
+    const word& name,
+    const Mesh& mesh,
+    const dimensioned<Type>& dt,
+    const wordList& patchFieldTypes,
+    const wordList& actualPatchTypes
+)
+{
+    return tmp<GeometricField<Type, PatchField, GeoMesh>>
+    (
+        new GeometricField<Type, PatchField, GeoMesh>
+        (
+            IOobject
+            (
+                name,
+                mesh.thisDb().time().timeName(),
+                mesh.thisDb(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            mesh,
+            dt,
+            patchFieldTypes,
+            actualPatchTypes
+        )
+    );
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
+Foam::GeometricField<Type, PatchField, GeoMesh>::New
+(
+    const word& newName,
+    const tmp<GeometricField<Type, PatchField, GeoMesh>>& tgf
+)
+{
+    return tmp<GeometricField<Type, PatchField, GeoMesh>>
+    (
+        new GeometricField<Type, PatchField, GeoMesh>
+        (
+            IOobject
+            (
+                newName,
+                tgf().instance(),
+                tgf().local(),
+                tgf().db(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            tgf
+        )
+    );
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+Foam::tmp<Foam::GeometricField<Type, PatchField, GeoMesh>>
+Foam::GeometricField<Type, PatchField, GeoMesh>::New
+(
+    const word& newName,
+    const tmp<GeometricField<Type, PatchField, GeoMesh>>& tgf,
+    const wordList& patchFieldTypes,
+    const wordList& actualPatchTypes
+)
+{
+    return tmp<GeometricField<Type, PatchField, GeoMesh>>
+    (
+        new GeometricField<Type, PatchField, GeoMesh>
+        (
+            IOobject
+            (
+                newName,
+                tgf().instance(),
+                tgf().local(),
+                tgf().db(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            tgf,
+            patchFieldTypes,
+            actualPatchTypes
+        )
     );
 }
 
@@ -961,8 +1135,6 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::relax(const scalar alpha)
 template<class Type, template<class> class PatchField, class GeoMesh>
 void Foam::GeometricField<Type, PatchField, GeoMesh>::relax()
 {
-    word name = this->name();
-
     if
     (
         this->mesh().data::template lookupOrDefault<bool>
@@ -970,14 +1142,14 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::relax()
             "finalIteration",
             false
         )
+     && this->mesh().relaxField(this->name() + "Final")
     )
     {
-        name += "Final";
+        relax(this->mesh().fieldRelaxationFactor(this->name() + "Final"));
     }
-
-    if (this->mesh().relaxField(name))
+    else if (this->mesh().relaxField(this->name()))
     {
-        relax(this->mesh().fieldRelaxationFactor(name));
+        relax(this->mesh().fieldRelaxationFactor(this->name()));
     }
 }
 
@@ -1029,14 +1201,9 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::T() const
 {
     tmp<GeometricField<Type, PatchField, GeoMesh>> result
     (
-        new GeometricField<Type, PatchField, GeoMesh>
+        GeometricField<Type, PatchField, GeoMesh>::New
         (
-            IOobject
-            (
-                this->name() + ".T()",
-                this->instance(),
-                this->db()
-            ),
+            this->name() + ".T()",
             this->mesh(),
             this->dimensions()
         )
@@ -1066,14 +1233,9 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::component
 {
     tmp<GeometricField<cmptType, PatchField, GeoMesh>> Component
     (
-        new GeometricField<cmptType, PatchField, GeoMesh>
+        GeometricField<cmptType, PatchField, GeoMesh>::New
         (
-            IOobject
-            (
-                this->name() + ".component(" + Foam::name(d) + ')',
-                this->instance(),
-                this->db()
-            ),
+            this->name() + ".component(" + Foam::name(d) + ')',
             this->mesh(),
             this->dimensions()
         )
@@ -1186,6 +1348,28 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
 template<class Type, template<class> class PatchField, class GeoMesh>
 void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
 (
+    GeometricField<Type, PatchField, GeoMesh>&& gf
+)
+{
+    if (this == &gf)
+    {
+        FatalErrorInFunction
+            << "attempted assignment to self"
+            << abort(FatalError);
+    }
+
+    checkField(*this, gf, "=");
+
+    // Only assign field contents not ID
+
+    ref() = move(gf());
+    boundaryFieldRef() = move(gf.boundaryField());
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
+(
     const tmp<GeometricField<Type, PatchField, GeoMesh>>& tgf
 )
 {
@@ -1235,6 +1419,17 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
 
 
 template<class Type, template<class> class PatchField, class GeoMesh>
+void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
+(
+    const zero&
+)
+{
+    ref() = Zero;
+    boundaryFieldRef() = Zero;
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
 void Foam::GeometricField<Type, PatchField, GeoMesh>::operator==
 (
     const tmp<GeometricField<Type, PatchField, GeoMesh>>& tgf
@@ -1261,6 +1456,17 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator==
 {
     ref() = dt;
     boundaryFieldRef() == dt.value();
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+void Foam::GeometricField<Type, PatchField, GeoMesh>::operator==
+(
+    const zero&
+)
+{
+    ref() = Zero;
+    boundaryFieldRef() == Zero;
 }
 
 

@@ -33,7 +33,12 @@ liftModels/wallDampedLift/wallDampedLift.C
 
 heatTransferModels/heatTransferModel/heatTransferModel.C
 heatTransferModels/heatTransferModel/newHeatTransferModel.C
+<<<<<<< HEAD
 heatTransferModels/RanzMarshall/RanzMarshall.T.C
+=======
+heatTransferModels/constantNu/constantNuHeatTransfer.C
+heatTransferModels/RanzMarshall/RanzMarshall.C
+>>>>>>> blueCFD-Core-7
 heatTransferModels/sphericalHeatTransfer/sphericalHeatTransfer.C
 
 virtualMassModels/virtualMassModel/virtualMassModel.C

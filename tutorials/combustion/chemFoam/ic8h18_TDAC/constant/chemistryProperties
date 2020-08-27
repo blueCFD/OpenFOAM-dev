@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -14,6 +14,8 @@ FoamFile
     object      chemistryProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/solvers/chemistry/TDAC/chemistryProperties.cfg"
 
 chemistryType
 {
@@ -34,16 +36,7 @@ odeCoeffs
 
 reduction
 {
-    active       on;
-
-    // Switch logging of the reduction statistics and performance
-    log         off;
-
-    // Tolerance depends on the reduction method, see details for each method
     tolerance   1e-4;
-
-    // Available methods: DRG, DAC, DRGEP, PFA, EFA
-    method      DAC;
 
     // Search initiating set (SIS) of species, needed for most methods
     initialSet
@@ -51,16 +44,6 @@ reduction
         CO;
         IC8H18;
         HO2;
-    }
-
-    // For DAC, option to automatically change the SIS switch from HO2 to H2O
-    // and CO to CO2, + disable fuel
-    automaticSIS    off;
-
-    // When automaticSIS, the method needs to know the fuel
-    fuelSpecies
-    {
-        IC8H18 1;
     }
 }
 

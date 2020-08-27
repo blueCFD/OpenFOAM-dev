@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,7 +95,7 @@ class velocityGroup
 :
     public diameterModel
 {
-    // Private data
+    // Private Data
 
         //- Name of the populationBalance this velocityGroup belongs to
         word popBalName_;
@@ -125,7 +125,7 @@ class velocityGroup
         volScalarField dmdt_;
 
 
-    // Private member functions
+    // Private Member Functions
 
         tmp<volScalarField> dsm() const;
 
@@ -173,11 +173,11 @@ public:
         //- Return const-reference to multivariate convectionScheme
         inline const tmp<fv::convectionScheme<scalar>>& mvConvection() const;
 
-        //- Return const-reference to mass transfer rate
+        //- Return const-reference to the mass transfer rate
         inline const volScalarField& dmdt() const;
 
-        //- Return reference to mass transfer rate
-        inline volScalarField& dmdt();
+        //- Return reference to the mass transfer rate
+        inline volScalarField& dmdtRef();
 
         //- Corrections before populationBalanceModel::solve()
         void preSolve();

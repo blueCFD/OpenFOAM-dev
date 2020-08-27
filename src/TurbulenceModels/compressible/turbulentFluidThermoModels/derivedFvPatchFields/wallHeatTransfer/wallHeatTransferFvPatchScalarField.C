@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,8 +55,8 @@ Foam::wallHeatTransferFvPatchScalarField::wallHeatTransferFvPatchScalarField
 )
 :
     mixedFvPatchScalarField(ptf, p, iF, mapper),
-    Tinf_(ptf.Tinf_, mapper),
-    alphaWall_(ptf.alphaWall_, mapper)
+    Tinf_(mapper(ptf.Tinf_)),
+    alphaWall_(mapper(ptf.alphaWall_))
 {}
 
 
@@ -119,9 +119,9 @@ void Foam::wallHeatTransferFvPatchScalarField::autoMap
     const fvPatchFieldMapper& m
 )
 {
-    scalarField::autoMap(m);
-    Tinf_.autoMap(m);
-    alphaWall_.autoMap(m);
+    m(*this, *this);
+    m(Tinf_, Tinf_);
+    m(alphaWall_, alphaWall_);
 }
 
 
@@ -174,9 +174,9 @@ void Foam::wallHeatTransferFvPatchScalarField::updateCoeffs()
 void Foam::wallHeatTransferFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
-    Tinf_.writeEntry("Tinf", os);
-    alphaWall_.writeEntry("alphaWall", os);
-    writeEntry("value", os);
+    writeEntry(os, "Tinf", Tinf_);
+    writeEntry(os, "alphaWall", alphaWall_);
+    writeEntry(os, "value", *this);
 }
 
 

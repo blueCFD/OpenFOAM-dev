@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -34,10 +34,12 @@ boundaryField
     }
     solid_to_gas
     {
-        type            compressible::turbulentTemperatureCoupledBaffleMixed;
+        type            compressible::turbulentTemperatureRadCoupledMixed;
         value           $internalField;
         Tnbr            T;
         kappaMethod     solidThermo;
+        qrNbr           qr;
+        qr              none;
     }
 }
 

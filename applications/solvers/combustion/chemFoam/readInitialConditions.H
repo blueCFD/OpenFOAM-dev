@@ -1,9 +1,16 @@
     const word constProp(initialConditions.lookup("constantProperty"));
-    if ((constProp != "pressure") && (constProp != "volume"))
+    if
+    (
+        (constProp != "pressure")
+     && (constProp != "volume")
+     && (constProp != "temperature")
+    )
     {
-        FatalError << "in initialConditions, unknown constantProperty type "
-            << constProp << nl << " Valid types are: pressure volume."
-            << abort(FatalError);
+        FatalError
+            << "in initialConditions, unknown constantProperty type "
+            << constProp << nl
+            << "    Valid types are: pressure volume temperature."
+            << exit(FatalError);
     }
 
     const word fractionBasis(initialConditions.lookup("fractionBasis"));
@@ -11,7 +18,7 @@
     {
         FatalError << "in initialConditions, unknown fractionBasis type " << nl
             << "Valid types are: mass or mole."
-            << fractionBasis << abort(FatalError);
+            << fractionBasis << exit(FatalError);
     }
 
     const label nSpecie = Y.size();
@@ -78,7 +85,7 @@
         Y[i] = Y0[i];
     }
 
-    thermo.he() = dimensionedScalar("h", dimEnergy/dimMass, h0);
+    thermo.he() = dimensionedScalar(dimEnergy/dimMass, h0);
     thermo.correct();
 
     rho = thermo.rho();
@@ -92,5 +99,5 @@
     Info << constProp << " will be held constant." << nl
         << " p   = " << p[0] << " [Pa]" << nl
         << " T   = " << thermo.T()[0] << " [K] " << nl
-        << " rho = " << rho[0] << " [kg/m3]" << nl
+        << " rho = " << rho[0] << " [kg/m^3]" << nl
         << endl;

@@ -39,9 +39,14 @@ Foam::ParticleForce<CloudType>::ParticleForce
 :
     owner_(owner),
     mesh_(mesh),
-    coeffs_(readCoeffs ? dict : dictionary::null)
+    coeffs_
+    (
+        readCoeffs
+      ? dict.optionalSubDict(forceType + "Coeffs")
+      : dictionary::null
+    )
 {
-    if (readCoeffs && (coeffs_.dictName() != forceType))
+    if (readCoeffs && coeffs_.isNull())
     {
         FatalIOErrorInFunction
         (

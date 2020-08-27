@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,11 +56,6 @@ class quadraticRamp
 :
     public ramp
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise assignment
-        void operator=(const quadraticRamp&);
-
 
 public:
 
@@ -86,6 +81,12 @@ public:
 
         //- Return value for time t
         virtual inline scalar value(const scalar t) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const quadraticRamp&) = delete;
 };
 
 

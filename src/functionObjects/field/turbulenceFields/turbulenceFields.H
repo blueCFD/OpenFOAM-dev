@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,8 +52,9 @@ Description
 Usage
     \table
         Property     | Description                 | Required | Default value
-        type         | type name: processorField   | yes      |
-        fields       | fields to store (see below) | yes      |
+        type         | Type name: processorField   | yes      |
+        fields       | Fields to store (see below) | yes      |
+        prefix       | If true prefix fields       | no       | no
     \endtable
 
     Where \c fields can include:
@@ -106,33 +107,31 @@ class turbulenceFields
 {
 public:
 
-    enum compressibleField
+    enum class compressibleField
     {
-        cfK,
-        cfEpsilon,
-        cfOmega,
-        cfMut,
-        cfMuEff,
-        cfAlphat,
-        cfAlphaEff,
-        cfR,
-        cfDevRhoReff
+        k,
+        epsilon,
+        omega,
+        mut,
+        muEff,
+        alphat,
+        alphaEff,
+        R,
+        devRhoReff
     };
     static const NamedEnum<compressibleField, 9> compressibleFieldNames_;
 
-    enum incompressibleField
+    enum class incompressibleField
     {
-        ifK,
-        ifEpsilon,
-        ifOmega,
-        ifNut,
-        ifNuEff,
-        ifR,
-        ifDevReff
+        k,
+        epsilon,
+        omega,
+        nut,
+        nuEff,
+        R,
+        devReff
     };
     static const NamedEnum<incompressibleField, 7> incompressibleFieldNames_;
-
-    static const word modelName;
 
 
 protected:
@@ -142,11 +141,14 @@ protected:
         //- Fields to load
         wordHashSet fieldSet_;
 
+        //- Optional field prefix to avoid name clashes
+        //  Defaults to null
+        word prefix_;
+
 
     // Protected Member Functions
 
-        //- Return true if compressible turbulence model is identified
-        bool compressible();
+        static const word& modelName();
 
         //- Process the turbulence field
         template<class Type>
@@ -159,17 +161,6 @@ protected:
         //- Return omega calculated from k and epsilon
         template<class Model>
         tmp<volScalarField> omega(const Model& model) const;
-
-
-private:
-
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        turbulenceFields(const turbulenceFields&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const turbulenceFields&);
 
 
 public:
@@ -188,6 +179,9 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        turbulenceFields(const turbulenceFields&) = delete;
+
 
     //- Destructor
     virtual ~turbulenceFields();
@@ -204,6 +198,12 @@ public:
         //- Do nothing.
         //  The turbulence fields are registered and written automatically
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const turbulenceFields&) = delete;
 };
 
 

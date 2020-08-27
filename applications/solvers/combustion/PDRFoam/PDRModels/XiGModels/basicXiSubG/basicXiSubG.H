@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,22 +71,13 @@ class basicSubGrid
 :
     public XiGModel
 {
-    // Private data
+    // Private Data
 
         //- Sub-grid generation rate coefficient
         scalar k1;
 
         //- Xi generation rate model due to turbulence
         autoPtr<XiGModel> XiGModel_;
-
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        basicSubGrid(const basicSubGrid&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const basicSubGrid&);
 
 
 public:
@@ -106,6 +97,9 @@ public:
             const volScalarField& Su
         );
 
+        //- Disallow default bitwise copy construction
+        basicSubGrid(const basicSubGrid&);
+
 
     //- Destructor
     virtual ~basicSubGrid();
@@ -121,6 +115,12 @@ public:
 
         //- Update properties from given dictionary
         virtual bool read(const dictionary& XiGProperties);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const basicSubGrid&) = delete;
 };
 
 

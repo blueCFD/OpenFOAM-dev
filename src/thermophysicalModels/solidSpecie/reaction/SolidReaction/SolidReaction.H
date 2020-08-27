@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,12 +61,7 @@ class SolidReaction
 :
     public Reaction<ReactionThermo>
 {
-
-private:
-
-    // Private data
-
-        typedef typename Reaction<ReactionThermo>::specieCoeffs specieCoeffs;
+    // Private Data
 
         //- List of gas species present in reaction system
         speciesTable pyrolisisGases_;
@@ -89,9 +84,6 @@ private:
 
         //- Return string representation of the right of the reaction
         void solidReactionStrRight(OStringStream&) const;
-
-        //- Disallow default bitwise assignment
-        void operator=(const SolidReaction&);
 
 
 public:
@@ -150,6 +142,12 @@ public:
 
         //- Write
         virtual void write(Ostream&) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const SolidReaction&) = delete;
 
 
     // Ostream Operator

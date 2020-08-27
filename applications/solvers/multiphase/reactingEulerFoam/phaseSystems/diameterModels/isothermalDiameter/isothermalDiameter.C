@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,7 +66,7 @@ Foam::diameterModels::isothermal::isothermal
             IOobject::AUTO_WRITE
         ),
         phase_.mesh(),
-        dimensionedScalar("d", dimLength, 0.0)
+        d0_
     )
 {}
 
@@ -81,18 +81,15 @@ Foam::diameterModels::isothermal::~isothermal()
 
 Foam::tmp<Foam::volScalarField> Foam::diameterModels::isothermal::d() const
 {
-    const volScalarField& p = phase_.db().lookupObject<volScalarField>
-    (
-        "p"
-    );
-
-    return d0_*pow(p0_/p, 1.0/3.0);
+    return d_;
 }
 
 
 void Foam::diameterModels::isothermal::correct()
 {
-    d_ = d();
+    const volScalarField& p = phase_.db().lookupObject<volScalarField>("p");
+
+    d_ = d0_*pow(p0_/p, 1.0/3.0);
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -627,12 +627,12 @@ Foam::label Foam::processorPolyPatch::matchFace
         return -1;
     }
 
-    enum CirculatorBase::direction circulateDirection
-        = CirculatorBase::CLOCKWISE;
+    CirculatorBase::direction circulateDirection =
+        CirculatorBase::direction::clockwise;
 
     if (!sameOrientation)
     {
-        circulateDirection = CirculatorBase::ANTICLOCKWISE;
+        circulateDirection = CirculatorBase::direction::anticlockwise;
     }
 
     label matchFp = -1;
@@ -679,7 +679,7 @@ Foam::label Foam::processorPolyPatch::matchFace
             }
             while
             (
-                aCirc.circulate(CirculatorBase::CLOCKWISE),
+                aCirc.circulate(CirculatorBase::direction::clockwise),
                 bCirc2.circulate(circulateDirection)
             );
 
@@ -1112,10 +1112,8 @@ bool Foam::processorPolyPatch::order
 void Foam::processorPolyPatch::write(Ostream& os) const
 {
     coupledPolyPatch::write(os);
-    os.writeKeyword("myProcNo") << myProcNo_
-        << token::END_STATEMENT << nl;
-    os.writeKeyword("neighbProcNo") << neighbProcNo_
-        << token::END_STATEMENT << nl;
+    writeEntry(os, "myProcNo", myProcNo_);
+    writeEntry(os, "neighbProcNo", neighbProcNo_);
 }
 
 

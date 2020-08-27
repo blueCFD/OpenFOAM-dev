@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,19 +29,18 @@ Description
 
     References:
     \verbatim
-        "Multifluid Eulerian modeling of dense gas–solids fluidized bed
-         hydrodynamics: Influence of the dissipation parameters"
-        Reuge, N.,
-        Chemical Engineering Science
-        Volume 63, Issue 22, November 2008, pp. 5540-5551
+        Reuge, N., Cadoret, L., Coufort-Saudejaud, C., Pannala, S., Syamlal, M.,
+        & Caussat, B. (2008).
+        Multifluid Eulerian modeling of dense gas–solids fluidized bed
+        hydrodynamics: influence of the dissipation parameters.
+        Chemical Engineering Science, 63(22), 5540-5551.
     \endverbatim
 
     \verbatim
-        "Frictional-collisional constitutive relations for granular materials,
-         with application to plane shearing"
-        Johnson, P.C., and Jackson, R.,
-        Journal of Fluid Mechanics
-        Volume 176, March 1987, pp. 67-93
+        Johnson, P. C., & Jackson, R. (1987).
+        Frictional–collisional constitutive relations for granular materials,
+        with application to plane shearing.
+        Journal of fluid Mechanics, 176, 67-93.
     \endverbatim
 
 SourceFiles
@@ -67,7 +66,7 @@ class JohnsonJacksonParticleSlipFvPatchVectorField
 :
     public partialSlipFvPatchVectorField
 {
-    // Private data
+    // Private Data
 
         //- Specularity coefficient
         dimensionedScalar specularityCoefficient_;
@@ -105,7 +104,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         JohnsonJacksonParticleSlipFvPatchVectorField
         (
             const JohnsonJacksonParticleSlipFvPatchVectorField&
@@ -120,7 +119,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         JohnsonJacksonParticleSlipFvPatchVectorField
         (
             const JohnsonJacksonParticleSlipFvPatchVectorField&,
@@ -140,22 +139,18 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Mapping functions
 
             //- Map (and resize as needed) from self given a mapping object
-            virtual void autoMap
-            (
-                const fvPatchFieldMapper&
-            );
+            //  Used to update fields following mesh topology change
+            virtual void autoMap(const fvPatchFieldMapper&);
 
             //- Reverse map the given fvPatchField onto this fvPatchField
-            virtual void rmap
-            (
-                const fvPatchVectorField&,
-                const labelList&
-            );
+            //  Used to reconstruct fields
+            virtual void rmap(const fvPatchVectorField&, const labelList&);
+
 
         //- Update the coefficients
         virtual void updateCoeffs();

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -366,29 +366,39 @@ Foam::fvFieldReconstructor::reconstructFvSurfaceField
 
         // Set the face values in the reconstructed field
 
-        // It is necessary to create a copy of the addressing array to
-        // take care of the face direction offset trick.
-        //
+        if (pTraits<Type>::nComponents == 1)
         {
+            // Assume all scalar surfaceFields are oriented flux fields
             const labelList& faceMap = faceProcAddressing_[proci];
 
             // Correctly oriented copy of internal field
             Field<Type> procInternalField(procField.primitiveField());
 
             // Addressing into original field
+            // It is necessary to create a copy of the addressing array to
+            // take care of the face direction offset trick.
             labelList curAddr(procInternalField.size());
 
-            forAll(procInternalField, addrI)
+            forAll(procInternalField, i)
             {
-                curAddr[addrI] = mag(faceMap[addrI])-1;
-                if (faceMap[addrI] < 0)
+                curAddr[i] = mag(faceMap[i]) - 1;
+                if (faceMap[i] < 0)
                 {
-                    procInternalField[addrI] = -procInternalField[addrI];
+                    procInternalField[i] = -procInternalField[i];
                 }
             }
 
             // Map
             internalField.rmap(procInternalField, curAddr);
+        }
+        else
+        {
+            // Map
+            internalField.rmap
+            (
+                procField.primitiveField(),
+                mag(labelField(faceProcAddressing_[proci])) - 1
+            );
         }
 
         // Set the boundary patch values in the reconstructed field

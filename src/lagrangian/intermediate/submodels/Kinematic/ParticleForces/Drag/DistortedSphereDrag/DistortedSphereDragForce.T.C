@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,6 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+<<<<<<< HEAD:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/DistortedSphereDrag/DistortedSphereDragForce.T.C
 #include "DistortedSphereDragForce.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -43,6 +44,10 @@ Foam::scalar Foam::DistortedSphereDragForce<CloudType>::CdRe
     }
 }
 
+=======
+#include "DistortedSphereDragForce.H"
+#include "SphereDragForce.H"
+>>>>>>> blueCFD-Core-7:src/lagrangian/intermediate/submodels/Kinematic/ParticleForces/Drag/DistortedSphereDrag/DistortedSphereDragForce.C
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -88,14 +93,16 @@ Foam::forceSuSp Foam::DistortedSphereDragForce<CloudType>::calcCoupled
     const scalar muc
 ) const
 {
-    forceSuSp value(Zero, 0.0);
-
     // Limit the drop distortion to y=0 (sphere) and y=1 (disk)
-    scalar y = min(max(p.y(), 0), 1);
+    const scalar y = min(max(p.y(), 0), 1);
 
-    value.Sp() = mass*0.75*muc*CdRe(Re)*(1 + 2.632*y)/(p.rho()*sqr(p.d()));
+    const scalar CdRe = SphereDragForce<CloudType>::CdRe(Re);
 
-    return value;
+    return forceSuSp
+    (
+        Zero,
+        mass*0.75*muc*CdRe*(1 + 2.632*y)/(p.rho()*sqr(p.d()))
+    );
 }
 
 

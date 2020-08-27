@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,32 +31,6 @@ License
 #include "surfaceFields.H"
 #include "psiReactionThermo.H"
 #include "rhoReactionThermo.H"
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-const Foam::basicSpecieMixture&
-Foam::semiPermeableBaffleVelocityFvPatchVectorField::composition() const
-{
-    const word& name = basicThermo::dictName;
-
-    if (db().foundObject<psiReactionThermo>(name))
-    {
-        return db().lookupObject<psiReactionThermo>(name).composition();
-    }
-    else if (db().foundObject<rhoReactionThermo>(name))
-    {
-        return db().lookupObject<rhoReactionThermo>(name).composition();
-    }
-    else
-    {
-        FatalErrorInFunction
-            << "Could not find a multi-component thermodynamic model."
-            << exit(FatalError);
-
-        return NullObjectRef<basicSpecieMixture>();
-    }
-}
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -138,7 +112,7 @@ void Foam::semiPermeableBaffleVelocityFvPatchVectorField::updateCoeffs()
     const scalarField& rhop =
         patch().lookupPatchField<volScalarField, scalar>(rhoName_);
 
-    const PtrList<volScalarField>& Y = composition().Y();
+    const PtrList<volScalarField>& Y = YBCType::composition(db()).Y();
 
     scalarField phip(patch().size(), Zero);
     forAll(Y, i)
@@ -169,7 +143,7 @@ void Foam::semiPermeableBaffleVelocityFvPatchVectorField::write
 {
     fvPatchVectorField::write(os);
     writeEntryIfDifferent<word>(os, "rho", "rho", rhoName_);
-    writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 

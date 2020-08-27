@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -75,14 +75,14 @@ relaxationFactors
 {
     fields
     {
-        "p.*"           1;
-        "rho.*"         1;
+        p               1;
+        rho             1;
     }
     equations
     {
-        "U.*"           0.9;
-        "e.*"           0.7;
-        "(k|epsilon|omega).*" 0.8;
+        U               0.9;
+        e               0.7;
+        "(k|epsilon|omega)" 0.8;
     }
 }
 

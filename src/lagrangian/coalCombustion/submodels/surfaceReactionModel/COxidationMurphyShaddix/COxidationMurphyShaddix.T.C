@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,8 +65,8 @@ Foam::COxidationMurphyShaddix<CloudType>::COxidationMurphyShaddix
     CsLocalId_ = owner.composition().localId(idSolid, "C");
 
     // Set local copies of thermo properties
-    WO2_ = owner.thermo().carrier().W(O2GlobalId_);
-    const scalar WCO2 = owner.thermo().carrier().W(CO2GlobalId_);
+    WO2_ = owner.thermo().carrier().Wi(O2GlobalId_);
+    const scalar WCO2 = owner.thermo().carrier().Wi(CO2GlobalId_);
     WC_ = WCO2 - WO2_;
 
     HcCO2_ = owner.thermo().carrier().Hc(CO2GlobalId_);
@@ -175,7 +175,7 @@ Foam::scalar Foam::COxidationMurphyShaddix<CloudType>::calculate
             << endl;
     }
 
-    // Molar reaction rate per unit surface area [kmol/(m^2.s)]
+    // Molar reaction rate per unit surface area [kmol/m^2/s]
     scalar qCsOld = 0;
     scalar qCs = 1;
 

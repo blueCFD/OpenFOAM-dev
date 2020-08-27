@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,15 +56,6 @@ class solidification
 :
     public phaseChangeModel
 {
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        solidification(const solidification&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const solidification&);
-
-
 protected:
 
     // Protected data
@@ -98,6 +89,9 @@ public:
         //- Construct from surface film model
         solidification(surfaceFilmRegionModel& film, const dictionary& dict);
 
+        //- Disallow default bitwise copy construction
+        solidification(const solidification&) = delete;
+
 
     //- Destructor
     virtual ~solidification();
@@ -115,6 +109,12 @@ public:
                 scalarField& dMass,
                 scalarField& dEnergy
             );
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const solidification&) = delete;
 };
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,7 +117,7 @@ class fvMatrix
     public tmp<fvMatrix<Type>>::refCount,
     public lduMatrix
 {
-    // Private data
+    // Private Data
 
         //- Const reference to GeometricField<Type, fvPatchField, volMesh>
         //  Converted into a non-const reference at the point of solution.
@@ -235,7 +235,7 @@ public:
             {}
 
 
-        // Member functions
+        // Member Functions
 
             //- Solve returning the solution statistics.
             //  Use the given solver controls
@@ -259,13 +259,11 @@ public:
             const dimensionSet&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         fvMatrix(const fvMatrix<Type>&);
 
-        //- Construct as copy of tmp<fvMatrix<Type>> deleting argument
-        #ifndef NoConstructFromTmp
+        //- Copy constructor of tmp<fvMatrix<Type>> deleting argument
         fvMatrix(const tmp<fvMatrix<Type>>&);
-        #endif
 
         //- Construct from Istream given field to solve for
         fvMatrix(const GeometricField<Type, fvPatchField, volMesh>&, Istream&);
@@ -278,7 +276,7 @@ public:
     virtual ~fvMatrix();
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 
@@ -402,6 +400,10 @@ public:
             //  Use the given solver controls
             SolverPerformance<Type> solveCoupled(const dictionary&);
 
+            //- Solve segregated or coupled returning the solution statistics.
+            //  Solver controls read from fvSolution
+            SolverPerformance<Type> solve(const word& name);
+
             //- Solve returning the solution statistics.
             //  Solver controls read from fvSolution
             SolverPerformance<Type> solve();
@@ -429,7 +431,7 @@ public:
                 flux() const;
 
 
-    // Member operators
+    // Member Operators
 
         void operator=(const fvMatrix<Type>&);
         void operator=(const tmp<fvMatrix<Type>>&);
@@ -552,8 +554,7 @@ void checkMethod
 //- Solve returning the solution statistics given convergence tolerance
 //  Use the given solver controls
 template<class Type>
-SolverPerformance<Type> solve(fvMatrix<Type>&, const dictionary&);
-
+SolverPerformance<Type> solve(fvMatrix<Type>&, const word&);
 
 //- Solve returning the solution statistics given convergence tolerance,
 //  deleting temporary matrix after solution.
@@ -562,15 +563,13 @@ template<class Type>
 SolverPerformance<Type> solve
 (
     const tmp<fvMatrix<Type>>&,
-    const dictionary&
+    const word&
 );
-
 
 //- Solve returning the solution statistics given convergence tolerance
 //  Solver controls read fvSolution
 template<class Type>
 SolverPerformance<Type> solve(fvMatrix<Type>&);
-
 
 //- Solve returning the solution statistics given convergence tolerance,
 //  deleting temporary matrix after solution.
@@ -578,12 +577,10 @@ SolverPerformance<Type> solve(fvMatrix<Type>&);
 template<class Type>
 SolverPerformance<Type> solve(const tmp<fvMatrix<Type>>&);
 
-
 //- Return the correction form of the given matrix
 //  by subtracting the matrix multiplied by the current field
 template<class Type>
 tmp<fvMatrix<Type>> correction(const fvMatrix<Type>&);
-
 
 //- Return the correction form of the given temporary matrix
 //  by subtracting the matrix multiplied by the current field

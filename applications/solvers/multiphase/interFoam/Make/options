@@ -18,7 +18,9 @@ EXE_LIBS = \
     -lincompressibleTurbulenceModels \
     -lfiniteVolume \
     -ldynamicFvMesh \
+    -ltopoChangerFvMesh \
     -lfvOptions \
+<<<<<<< HEAD
     -lmeshTools \
     -lsampling
 
@@ -27,3 +29,6 @@ EXE_LIBS += \
     -lincompressibleTransportModels \
     -linterfaceProperties \
     -ltwoPhaseProperties
+=======
+    -lmeshTools
+>>>>>>> blueCFD-Core-7

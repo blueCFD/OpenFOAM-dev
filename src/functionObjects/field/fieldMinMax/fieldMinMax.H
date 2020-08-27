@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,10 +97,10 @@ class fieldMinMax
 {
 public:
 
-    enum modeType
+    enum class modeType
     {
-        mdMag,
-        mdCmpt
+        mag,
+        cmpt
     };
 
 protected:
@@ -138,12 +138,6 @@ protected:
             const Type& maxValue
         );
 
-        //- Disallow default bitwise copy construct
-        fieldMinMax(const fieldMinMax&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const fieldMinMax&);
-
         //- Calculate the field min/max
         template<class Type>
         void calcMinMaxFields
@@ -172,6 +166,9 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        fieldMinMax(const fieldMinMax&) = delete;
+
 
     //- Destructor
     virtual ~fieldMinMax();
@@ -187,6 +184,12 @@ public:
 
         //- Write the fieldMinMax
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const fieldMinMax&) = delete;
 };
 
 

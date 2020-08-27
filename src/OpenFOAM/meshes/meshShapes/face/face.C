@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -336,7 +336,7 @@ int Foam::face::compare(const face& a, const face& b)
 
             break;
         }
-    } while (bCirc.circulate(CirculatorBase::CLOCKWISE));
+    } while (bCirc.circulate(CirculatorBase::direction::clockwise));
 
     // If the circulator has stopped then faces a and b do not share a matching
     // point. Doesn't work on matching, single element face.
@@ -355,8 +355,8 @@ int Foam::face::compare(const face& a, const face& b)
     }
     while
     (
-        aCirc.circulate(CirculatorBase::CLOCKWISE),
-        bCirc.circulate(CirculatorBase::CLOCKWISE)
+        aCirc.circulate(CirculatorBase::direction::clockwise),
+        bCirc.circulate(CirculatorBase::direction::clockwise)
     );
 
     // If the circulator has stopped then faces a and b matched.
@@ -383,8 +383,8 @@ int Foam::face::compare(const face& a, const face& b)
     }
     while
     (
-        aCirc.circulate(CirculatorBase::CLOCKWISE),
-        bCirc.circulate(CirculatorBase::ANTICLOCKWISE)
+        aCirc.circulate(CirculatorBase::direction::clockwise),
+        bCirc.circulate(CirculatorBase::direction::anticlockwise)
     );
 
     // If the circulator has stopped then faces a and b matched.
@@ -631,7 +631,7 @@ Foam::face Foam::face::reverseFace() const
         newList[pointi] = f[size() - pointi];
     }
 
-    return face(xferMove(newList));
+    return face(move(newList));
 }
 
 

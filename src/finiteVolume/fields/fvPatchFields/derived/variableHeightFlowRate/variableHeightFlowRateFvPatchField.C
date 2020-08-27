@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -174,11 +174,11 @@ void Foam::variableHeightFlowRateFvPatchScalarField::write(Ostream& os) const
     fvPatchScalarField::write(os);
     if (phiName_ != "phi")
     {
-        os.writeKeyword("phi") << phiName_ << token::END_STATEMENT << nl;
+        writeEntry(os, "phi", phiName_);
     }
-    os.writeKeyword("lowerBound") << lowerBound_ << token::END_STATEMENT << nl;
-    os.writeKeyword("upperBound") << upperBound_ << token::END_STATEMENT << nl;
-    this->writeEntry("value", os);
+    writeEntry(os, "lowerBound", lowerBound_);
+    writeEntry(os, "upperBound", upperBound_);
+    writeEntry(os, "value", *this);
 }
 
 

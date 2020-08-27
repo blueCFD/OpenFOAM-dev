@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,20 +78,28 @@ Foam::pimpleMultiRegionControl::pimpleMultiRegionControl
     pimpleControls_(),
     solidControls_()
 {
+    bool allSteady = true, allTransient = true;
+
     forAll(pimpleMeshes, i)
     {
         pimpleControls_.append
         (
-            new pimpleNoLoopControl(pimpleMeshes[i], algorithmName)
+            new pimpleNoLoopControl(pimpleMeshes[i], algorithmName, *this)
         );
+
+        allSteady = allSteady && pimpleMeshes[i].steady();
+        allTransient = allTransient && pimpleMeshes[i].transient();
     }
 
     forAll(solidMeshes, i)
     {
         solidControls_.append
         (
-            new solidNoLoopControl(solidMeshes[i], algorithmName)
+            new solidNoLoopControl(solidMeshes[i], algorithmName, *this)
         );
+
+        allSteady = allSteady && solidMeshes[i].steady();
+        allTransient = allTransient && solidMeshes[i].transient();
     }
 
     read();
@@ -120,11 +128,18 @@ Foam::pimpleMultiRegionControl::pimpleMultiRegionControl
         }
     }
 
-    if (nCorrPimple_ == 1)
+    Info<< nl << algorithmName << ": Operating solver in "
+        << (allSteady ? "steady-state" : allTransient ? "transient" :
+            "mixed steady-state/transient") << " mode with " << nCorrPimple_
+        << " outer corrector" << (nCorrPimple_ == 1 ? "" : "s") << nl;
+
+    if ((allSteady || allTransient) && nCorrPimple_ == 1)
     {
-        Info<< nl << algorithmName << ": Operating solver in PISO mode" << nl
-            << endl;
+        Info<< algorithmName << ": Operating solver in "
+            << (allSteady ? "SIMPLE" : "PISO") << " mode" << nl;
     }
+
+    Info<< nl << endl;
 }
 
 
@@ -263,11 +278,11 @@ bool Foam::pimpleMultiRegionControl::loop()
     {
         forAll(pimpleControls_, i)
         {
-            pimpleControls_[i].mesh().data::remove("finalIteration");
+            pimpleControls_[i].updateFinal();
         }
         forAll(solidControls_, i)
         {
-            solidControls_[i].mesh().data::remove("finalIteration");
+            solidControls_[i].updateFinal();
         }
 
         return false;
@@ -282,16 +297,13 @@ bool Foam::pimpleMultiRegionControl::loop()
         solidControls_[i].storePrevIterFields();
     }
 
-    if (finalIter())
+    forAll(pimpleControls_, i)
     {
-        forAll(pimpleControls_, i)
-        {
-            pimpleControls_[i].mesh().data::add("finalIteration", true);
-        }
-        forAll(solidControls_, i)
-        {
-            solidControls_[i].mesh().data::add("finalIteration", true);
-        }
+        pimpleControls_[i].updateFinal();
+    }
+    forAll(solidControls_, i)
+    {
+        solidControls_[i].updateFinal();
     }
 
     return true;

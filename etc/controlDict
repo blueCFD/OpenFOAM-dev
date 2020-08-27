@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -346,6 +346,7 @@ DebugSwitches
     blended             0;
     blobsSheetAtomization   0;
     blobsSwirlInjector  0;
+    blockMesh           0;
     booleanSurface      0;
     boundaryCutter      0;
     boundaryMesh        0;
@@ -567,7 +568,6 @@ DebugSwitches
     inversePointDistance 0;
     inverseVolume       0;
     isoSurface          0;
-    isoSurfaceCell      0;
     jplot               0;
     jumpCyclic          0;
     kEpsilon            0;

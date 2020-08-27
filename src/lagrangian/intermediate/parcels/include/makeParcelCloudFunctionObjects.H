@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,6 +28,7 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<<<<<<< HEAD
 #include "FacePostProcessing.T.H"
 #include "ParticleCollector.T.H"
 #include "ParticleErosion.T.H"
@@ -36,6 +37,17 @@ License
 #include "PatchCollisionDensity.T.H"
 #include "PatchPostProcessing.T.H"
 #include "VoidFraction.T.H"
+=======
+#include "FacePostProcessing.H"
+#include "ParticleCollector.H"
+#include "ParticleErosion.H"
+#include "ParticleTracks.H"
+#include "ParticleTrap.H"
+#include "PatchCollisionDensity.H"
+#include "PatchPostProcessing.H"
+#include "RelativeVelocity.H"
+#include "VoidFraction.H"
+>>>>>>> blueCFD-Core-7
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,6 +62,7 @@ License
     makeCloudFunctionObjectType(ParticleTrap, CloudType);                      \
     makeCloudFunctionObjectType(PatchCollisionDensity, CloudType);             \
     makeCloudFunctionObjectType(PatchPostProcessing, CloudType);               \
+    makeCloudFunctionObjectType(RelativeVelocity, CloudType);                  \
     makeCloudFunctionObjectType(VoidFraction, CloudType);
 
 

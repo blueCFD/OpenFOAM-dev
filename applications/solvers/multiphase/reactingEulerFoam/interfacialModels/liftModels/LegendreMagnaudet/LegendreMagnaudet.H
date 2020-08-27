@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,18 +29,16 @@ Description
 
     References:
     \verbatim
-        "Implementation and Comparison of Correlations for interfacial Forces
-        in a Gas-Liquid System within an Euler-Euler Framework"
-        Otromke, M.
-        PhD Thesis
-        April 2013
+        Otromke, M. (2013).
+        Implementation and Comparison of Correlations for interfacial Forces in
+        a Gas-Liquid System within an Euler-Euler Framework.
+        PhD Thesis.
     \endverbatim
 
     \verbatim
-        "The lift force on a spherical bubble in a viscous linear shear flow"
-        Legendre, D., Magnaudet, J.,
-        Journal of Fluid Mechanics
-        Volume 368, August 1998, pp. 81-126
+        Legendre, D., & Magnaudet, J. (1998).
+        The lift force on a spherical bubble in a viscous linear shear flow.
+        Journal of Fluid Mechanics, 368, 81-126.
     \endverbatim
 
 SourceFiles
@@ -71,7 +69,7 @@ class LegendreMagnaudet
 :
     public liftModel
 {
-    // Private data
+    // Private Data
 
         //- Residual Reynold's number
         const dimensionedScalar residualRe_;

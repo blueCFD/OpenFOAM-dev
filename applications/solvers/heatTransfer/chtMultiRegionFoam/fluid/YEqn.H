@@ -16,13 +16,21 @@ if (Y.size())
 
 {
     reaction.correct();
-    Qdot = reaction.Qdot();
-    volScalarField Yt
-    (
-        IOobject("Yt", runTime.timeName(), mesh),
-        mesh,
-        dimensionedScalar("Yt", dimless, 0)
-    );
+
+    tmp<volScalarField> Yt(nullptr);
+
+    if (Y.size())
+    {
+        Yt = tmp<volScalarField>
+        (
+            new volScalarField
+            (
+                IOobject("Yt", runTime.timeName(), mesh),
+                mesh,
+                dimensionedScalar(dimless, 0)
+            )
+        );
+    }
 
     forAll(Y, i)
     {
@@ -44,12 +52,12 @@ if (Y.size())
 
             fvOptions.constrain(YiEqn);
 
-            YiEqn.solve(mesh.solver("Yi"));
+            YiEqn.solve("Yi");
 
             fvOptions.correct(Yi);
 
             Yi.max(0.0);
-            Yt += Yi;
+            Yt.ref() += Yi;
         }
     }
 

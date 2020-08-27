@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,8 +59,8 @@ namespace functionEntries
 }
 
 
-const Foam::word Foam::functionEntries::codeStream::codeTemplateC
-    = "codeStreamTemplate.C";
+const Foam::word Foam::functionEntries::codeStream::codeTemplateC =
+    "codeStreamTemplate.C";
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -95,23 +95,23 @@ bool Foam::functionEntries::codeStream::doingMasterOnlyReading
         if (debug)
         {
             Pout<< "codeStream : baseIOdictionary:" << dict.name()
-                << " master-only-reading:" << d.globalObject()
+                << " master-only-reading:" << d.global()
                 << endl;
         }
 
-        return d.globalObject();
+        return d.global();
     }
     else
     {
         if (debug)
         {
             Pout<< "codeStream : not a baseIOdictionary:" << dict.name()
-                << " master-only-reading:" << regIOobject::masterOnlyReading
+                << " master-only-reading:" << false
                 << endl;
         }
 
-        // Fall back to regIOobject::masterOnlyReading
-        return regIOobject::masterOnlyReading;
+        // Fall back to false
+        return false;
     }
 }
 
@@ -123,8 +123,8 @@ Foam::functionEntries::codeStream::getFunction
     const dictionary& codeDict
 )
 {
-    // get code, codeInclude, codeOptions
-    dynamicCodeContext context(codeDict);
+    // get code, codeInclude, ...
+    dynamicCodeContext context(codeDict, {"code", "codeInclude", "localCode"});
 
     // codeName: codeStream + _<sha1>
     // codeDir : _<sha1>
