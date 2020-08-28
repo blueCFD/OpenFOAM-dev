@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,9 +40,7 @@ See also
 #include "IStringStream.H"
 #include "scalar.H"
 #include "vector.H"
-#include "ListOps.T.H"
-
-#include<list>
+#include "ListOps.H"
 
 using namespace Foam;
 

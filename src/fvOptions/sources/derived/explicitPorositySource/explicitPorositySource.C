@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -68,7 +68,7 @@ Foam::fv::explicitPorositySource::explicitPorositySource
             name_,
             mesh_,
             coeffs_,
-            cellSetName_
+            cellSetName()
         ).ptr()
     );
 }
@@ -80,7 +80,7 @@ void Foam::fv::explicitPorositySource::addSup
 (
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     fvMatrix<vector> porosityEqn(eqn.psi(), eqn.dimensions());
     porosityPtr_->addResistance(porosityEqn);
@@ -93,7 +93,7 @@ void Foam::fv::explicitPorositySource::addSup
     const volScalarField& rho,
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     fvMatrix<vector> porosityEqn(eqn.psi(), eqn.dimensions());
     porosityPtr_->addResistance(porosityEqn);
@@ -107,7 +107,7 @@ void Foam::fv::explicitPorositySource::addSup
     const volScalarField& rho,
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     fvMatrix<vector> porosityEqn(eqn.psi(), eqn.dimensions());
     porosityPtr_->addResistance(porosityEqn);

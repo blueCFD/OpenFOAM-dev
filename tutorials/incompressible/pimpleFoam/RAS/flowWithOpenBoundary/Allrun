@@ -36,8 +36,8 @@ setAtmosphereBC () {
 
     echo "Setting $_field BC on atmosphere patch to $_BC"
 
-    foamDictionary \
-        -entry boundaryField.atmosphere.type \
+    runApplication -a foamDictionary \
+        -entry boundaryField/atmosphere/type \
         -set "$_BC" \
         "0/$_field" > /dev/null 2>&1
 }

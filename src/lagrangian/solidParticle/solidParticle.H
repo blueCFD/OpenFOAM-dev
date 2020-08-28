@@ -39,6 +39,7 @@ SourceFiles
 #define solidParticle_H
 
 #include "particle.H"
+#include "Cloud.T.H"
 #include "IOstream.H"
 #include "autoPtr.H"
 #include "interpolationCellPoint.H"
@@ -122,6 +123,10 @@ public:
 
             inline const vector& g() const;
     };
+
+
+    //- Runtime type information
+    TypeName("solidParticle");
 
 
     // Constructors

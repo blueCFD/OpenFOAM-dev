@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,24 +51,35 @@ class pureMixture
 :
     public basicMixture
 {
-    // Private Data
-
-        ThermoType mixture_;
-
-        //- Construct as copy (not implemented)
-        pureMixture(const pureMixture<ThermoType>&);
-
 
 public:
 
     //- The type of thermodynamics this mixture is instantiated for
     typedef ThermoType thermoType;
 
+    //- Mixing type for thermodynamic properties
+    typedef ThermoType thermoMixtureType;
+
+    //- Mixing type for transport properties
+    typedef ThermoType transportMixtureType;
+
+
+private:
+
+    // Private Data
+
+        ThermoType mixture_;
+
+
+public:
 
     // Constructors
 
         //- Construct from dictionary, mesh and phase name
         pureMixture(const dictionary&, const fvMesh&, const word&);
+
+        //- Disallow default bitwise copy construction
+        pureMixture(const pureMixture<ThermoType>&) = delete;
 
 
     // Member Functions
@@ -79,17 +90,12 @@ public:
             return "pureMixture<" + ThermoType::typeName() + '>';
         }
 
-        const ThermoType& mixture() const
+        const thermoMixtureType& cellThermoMixture(const label) const
         {
             return mixture_;
         }
 
-        const ThermoType& cellMixture(const label) const
-        {
-            return mixture_;
-        }
-
-        const ThermoType& patchFaceMixture
+        const thermoMixtureType& patchFaceThermoMixture
         (
             const label,
             const label
@@ -98,22 +104,34 @@ public:
             return mixture_;
         }
 
-        const ThermoType& cellVolMixture
+        const transportMixtureType& cellTransportMixture(const label) const
+        {
+            return mixture_;
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
         (
-            const scalar,
-            const scalar,
+            const label,
             const label
         ) const
         {
             return mixture_;
         }
 
-        const ThermoType& patchFaceVolMixture
+        const transportMixtureType& cellTransportMixture
         (
-            const scalar,
-            const scalar,
             const label,
-            const label
+            const thermoMixtureType&
+        ) const
+        {
+            return mixture_;
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
+        (
+            const label,
+            const label,
+            const thermoMixtureType&
         ) const
         {
             return mixture_;
@@ -121,6 +139,12 @@ public:
 
         //- Read dictionary
         void read(const dictionary&);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const pureMixture<ThermoType>&) = delete;
 };
 
 

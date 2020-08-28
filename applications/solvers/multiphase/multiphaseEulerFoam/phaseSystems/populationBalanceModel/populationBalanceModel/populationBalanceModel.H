@@ -31,7 +31,7 @@ Description
     a transport equation of the volume-based number density function. The
     discretization is done using the fixed pivot technique of Kumar and
     Ramkrishna (1996). The source terms are written in a way that particle
-    number and mass are preserved. Coalescence (aggregation), breakup, drift
+    number and mass are preserved. Coalescence (coagulation), breakup, drift
     (growth and surface loss) as well as nucleation are supported.
     For the discrete breakup term two recipes are available, depending on the
     model choice. For models which state a total breakup rate and a separate
@@ -45,7 +45,7 @@ Description
     number-conservative solution.
 
     The implementation allows to split the population balance over multiple
-    velocity fields using the capability of reactingMultiphaseEulerFoam to solve
+    velocity fields using the capability of multiphaseEulerFoam to solve
     for n momentum equations. It is also possible to define multiple population
     balances, e.g. bubbles and droplets simultaneously.
 

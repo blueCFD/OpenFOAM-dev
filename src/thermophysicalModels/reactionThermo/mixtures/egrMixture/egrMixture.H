@@ -51,6 +51,21 @@ class egrMixture
 :
     public basicCombustionMixture
 {
+
+public:
+
+    //- The type of thermodynamics this mixture is instantiated for
+    typedef ThermoType thermoType;
+
+    //- Mixing type for thermodynamic properties
+    typedef ThermoType thermoMixtureType;
+
+    //- Mixing type for transport properties
+    typedef ThermoType transportMixtureType;
+
+
+private:
+
     // Private Data
 
         static const int nSpecies_ = 3;
@@ -62,7 +77,7 @@ class egrMixture
         ThermoType oxidant_;
         ThermoType products_;
 
-        mutable ThermoType mixture_;
+        mutable thermoType mixture_;
 
         //- Mixture fraction
         volScalarField& ft_;
@@ -73,20 +88,16 @@ class egrMixture
         //- Residual gases
         volScalarField& egr_;
 
-        //- Construct as copy (not implemented)
-        egrMixture(const egrMixture<ThermoType>&);
-
 
 public:
-
-    //- The type of thermodynamics this mixture is instantiated for
-    typedef ThermoType thermoType;
-
 
     // Constructors
 
         //- Construct from dictionary, mesh and phaseName
         egrMixture(const dictionary&, const fvMesh&, const word&);
+
+        //- Disallow default bitwise copy construction
+        egrMixture(const egrMixture<ThermoType>&) = delete;
 
 
     //- Destructor
@@ -107,19 +118,19 @@ public:
             return stoicRatio_;
         }
 
-        const ThermoType& mixture
+        const thermoType& mixture
         (
             const scalar,
             const scalar,
             const scalar
         ) const;
 
-        const ThermoType& cellMixture(const label celli) const
+        const thermoMixtureType& cellThermoMixture(const label celli) const
         {
             return mixture(ft_[celli], b_[celli], egr_[celli]);
         }
 
-        const ThermoType& patchFaceMixture
+        const thermoMixtureType& patchFaceThermoMixture
         (
             const label patchi,
             const label facei
@@ -133,12 +144,48 @@ public:
             );
         }
 
-        const ThermoType& cellReactants(const label celli) const
+        const transportMixtureType& cellTransportMixture
+        (
+            const label celli
+        ) const
+        {
+            return cellThermoMixture(celli);
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
+        (
+            const label patchi,
+            const label facei
+        ) const
+        {
+            return patchFaceThermoMixture(patchi, facei);
+        }
+
+        const transportMixtureType& cellTransportMixture
+        (
+            const label,
+            const thermoMixtureType& thermoMixture
+        ) const
+        {
+            return thermoMixture;
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
+        (
+            const label,
+            const label,
+            const thermoMixtureType& thermoMixture
+        ) const
+        {
+            return thermoMixture;
+        }
+
+        const thermoType& cellReactants(const label celli) const
         {
             return mixture(ft_[celli], 1, egr_[celli]);
         }
 
-        const ThermoType& patchFaceReactants
+        const thermoType& patchFaceReactants
         (
             const label patchi,
             const label facei
@@ -152,12 +199,12 @@ public:
             );
         }
 
-        const ThermoType& cellProducts(const label celli) const
+        const thermoType& cellProducts(const label celli) const
         {
             return mixture(ft_[celli], 0, 0);
         }
 
-        const ThermoType& patchFaceProducts
+        const thermoType& patchFaceProducts
         (
             const label patchi,
             const label facei
@@ -176,6 +223,12 @@ public:
 
         //- Return thermo based on index
         const ThermoType& specieThermo(const label speciei) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const egrMixture<ThermoType>&) = delete;
 };
 
 

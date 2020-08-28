@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,18 +47,15 @@ namespace Foam
                          Class heRhoThermo Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class BasicPsiThermo, class MixtureType>
+template<class BasicRhoThermo, class MixtureType>
 class heRhoThermo
 :
-    public heThermo<BasicPsiThermo, MixtureType>
+    public heThermo<BasicRhoThermo, MixtureType>
 {
     // Private Member Functions
 
         //- Calculate the thermo variables
         void calculate();
-
-        //- Construct as copy (not implemented)
-        heRhoThermo(const heRhoThermo<BasicPsiThermo, MixtureType>&);
 
 
 public:
@@ -76,6 +73,9 @@ public:
             const word& phaseName
         );
 
+        //- Disallow default bitwise copy construction
+        heRhoThermo(const heRhoThermo<BasicRhoThermo, MixtureType>&) = delete;
+
 
     //- Destructor
     virtual ~heRhoThermo();
@@ -85,6 +85,15 @@ public:
 
         //- Update properties
         virtual void correct();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=
+        (
+            const heRhoThermo<BasicRhoThermo, MixtureType>&
+        ) = delete;
 };
 
 

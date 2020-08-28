@@ -51,6 +51,21 @@ class veryInhomogeneousMixture
 :
     public basicCombustionMixture
 {
+
+public:
+
+    //- The type of thermodynamics this mixture is instantiated for
+    typedef ThermoType thermoType;
+
+    //- Mixing type for thermodynamic properties
+    typedef ThermoType thermoMixtureType;
+
+    //- Mixing type for transport properties
+    typedef ThermoType transportMixtureType;
+
+
+private:
+
     // Private Data
 
         static const int nSpecies_ = 3;
@@ -58,11 +73,11 @@ class veryInhomogeneousMixture
 
         dimensionedScalar stoicRatio_;
 
-        ThermoType fuel_;
-        ThermoType oxidant_;
-        ThermoType products_;
+        thermoType fuel_;
+        thermoType oxidant_;
+        thermoType products_;
 
-        mutable ThermoType mixture_;
+        mutable thermoType mixture_;
 
         //- Mixture fraction
         volScalarField& ft_;
@@ -73,15 +88,8 @@ class veryInhomogeneousMixture
         //- Regress variable
         volScalarField& b_;
 
-        //- Construct as copy (not implemented)
-        veryInhomogeneousMixture(const veryInhomogeneousMixture<ThermoType>&);
-
 
 public:
-
-    //- The type of thermodynamics this mixture is instantiated for
-    typedef ThermoType thermoType;
-
 
     // Constructors
 
@@ -93,6 +101,11 @@ public:
             const word&
         );
 
+        //- Disallow default bitwise copy construction
+        veryInhomogeneousMixture
+        (
+            const veryInhomogeneousMixture<ThermoType>&
+        ) = delete;
 
     //- Destructor
     virtual ~veryInhomogeneousMixture()
@@ -112,14 +125,14 @@ public:
             return stoicRatio_;
         }
 
-        const ThermoType& mixture(const scalar, const scalar) const;
+        const thermoType& mixture(const scalar, const scalar) const;
 
-        const ThermoType& cellMixture(const label celli) const
+        const thermoMixtureType& cellThermoMixture(const label celli) const
         {
             return mixture(ft_[celli], fu_[celli]);
         }
 
-        const ThermoType& patchFaceMixture
+        const thermoMixtureType& patchFaceThermoMixture
         (
             const label patchi,
             const label facei
@@ -132,12 +145,48 @@ public:
             );
         }
 
-        const ThermoType& cellReactants(const label celli) const
+        const transportMixtureType& cellTransportMixture
+        (
+            const label celli
+        ) const
+        {
+            return cellThermoMixture(celli);
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
+        (
+            const label patchi,
+            const label facei
+        ) const
+        {
+            return patchFaceThermoMixture(patchi, facei);
+        }
+
+        const transportMixtureType& cellTransportMixture
+        (
+            const label,
+            const thermoMixtureType& thermoMixture
+        ) const
+        {
+            return thermoMixture;
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
+        (
+            const label,
+            const label,
+            const thermoMixtureType& thermoMixture
+        ) const
+        {
+            return thermoMixture;
+        }
+
+        const thermoType& cellReactants(const label celli) const
         {
             return mixture(ft_[celli], ft_[celli]);
         }
 
-        const ThermoType& patchFaceReactants
+        const thermoType& patchFaceReactants
         (
             const label patchi,
             const label facei
@@ -150,13 +199,13 @@ public:
             );
         }
 
-        const ThermoType& cellProducts(const label celli) const
+        const thermoType& cellProducts(const label celli) const
         {
             scalar ft = ft_[celli];
             return mixture(ft, fres(ft, stoicRatio().value()));
         }
 
-        const ThermoType& patchFaceProducts
+        const thermoType& patchFaceProducts
         (
             const label patchi,
             const label facei
@@ -171,6 +220,12 @@ public:
 
         //- Return thermo based on index
         const ThermoType& specieThermo(const label speciei) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const veryInhomogeneousMixture<ThermoType>&) = delete;
 };
 
 

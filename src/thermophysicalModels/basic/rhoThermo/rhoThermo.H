@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,10 @@ Class
     Foam::rhoThermo
 
 Description
-    Basic thermodynamic properties based on density
+    Base-class for fluid thermodynamic properties based on density.
+
+See also
+    Foam::basicThermo
 
 SourceFiles
     rhoThermo.C
@@ -49,31 +52,18 @@ namespace Foam
 
 class rhoThermo
 :
-    public fluidThermo
+    virtual public fluidThermo
 {
-
-protected:
-
-    // Protected data
-
-        //- Density field [kg/m^3]
-        //  Named 'thermo:rho' to avoid (potential) conflict with solver density
-        volScalarField rho_;
-
-        //- Compressibility [s^2/m^2]
-        volScalarField psi_;
-
-        //- Dynamic viscosity [kg/m/s]
-        volScalarField mu_;
-
-
-    // Protected Member Functions
-
-        //- Construct as copy (not implemented)
-        rhoThermo(const rhoThermo&);
-
-
 public:
+
+    // Public Classes
+
+        //- Forward declare the implementation class
+        class implementation;
+
+        //- Forward declare the composite class
+        class composite;
+
 
     //- Runtime type information
     TypeName("rhoThermo");
@@ -90,34 +80,90 @@ public:
     );
 
 
-    // Constructors
+    // Selectors
 
-        //- Construct from mesh and phase name
-        rhoThermo
+        //- Standard selection based on fvMesh
+        static autoPtr<rhoThermo> New
         (
             const fvMesh&,
-            const word& phaseName
+            const word& phaseName=word::null
         );
-
-        //- Construct from mesh, dictionary and phase name
-        rhoThermo
-        (
-            const fvMesh&,
-            const dictionary&,
-            const word& phaseName
-        );
-
-
-    //- Selector
-    static autoPtr<rhoThermo> New
-    (
-        const fvMesh&,
-        const word& phaseName=word::null
-    );
 
 
     //- Destructor
     virtual ~rhoThermo();
+
+
+    // Member Functions
+
+        // Fields derived from thermodynamic state variables
+
+            //- Density [kg/m^3]
+            virtual tmp<volScalarField> rho() const = 0;
+
+            //- Density for patch [kg/m^3]
+            virtual tmp<scalarField> rho(const label patchi) const = 0;
+
+            //- Return non-const access to the local density field [kg/m^3]
+            virtual volScalarField& rho() = 0;
+
+            //- Add the given density correction to the density field.
+            //  Used to update the density field following pressure solution
+            virtual void correctRho(const volScalarField& deltaRho) = 0;
+
+            //- Compressibility [s^2/m^2]
+            virtual const volScalarField& psi() const = 0;
+
+
+        // Access to transport state variables
+
+            //- Dynamic viscosity of mixture [kg/m/s]
+            virtual tmp<volScalarField> mu() const = 0;
+
+            //- Dynamic viscosity of mixture for patch [kg/m/s]
+            virtual tmp<scalarField> mu(const label patchi) const = 0;
+};
+
+
+/*---------------------------------------------------------------------------*\
+                       Class rhoThermo::implementation Declaration
+\*---------------------------------------------------------------------------*/
+
+class rhoThermo::implementation
+:
+    virtual public rhoThermo
+{
+protected:
+
+    // Protected data
+
+        //- Density field [kg/m^3]
+        //  Named 'thermo:rho' to avoid (potential) conflict with solver density
+        volScalarField rho_;
+
+        //- Compressibility [s^2/m^2]
+        volScalarField psi_;
+
+        //- Dynamic viscosity [kg/m/s]
+        volScalarField mu_;
+
+
+public:
+
+    // Constructors
+
+        //- Construct from mesh and phase name
+        implementation(const fvMesh&, const word& phaseName);
+
+        //- Construct from mesh, dictionary and phase name
+        implementation(const fvMesh&, const dictionary&, const word& phaseName);
+
+        //- Disallow default bitwise copy construction
+        implementation(const implementation&) = delete;
+
+
+    //- Destructor
+    virtual ~implementation();
 
 
     // Member Functions
@@ -148,6 +194,40 @@ public:
 
             //- Dynamic viscosity of mixture for patch [kg/m/s]
             virtual tmp<scalarField> mu(const label patchi) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const implementation&) = delete;
+};
+
+
+/*---------------------------------------------------------------------------*\
+                    Class rhoThermo::composite Declaration
+\*---------------------------------------------------------------------------*/
+
+class rhoThermo::composite
+:
+    public basicThermo::implementation,
+    public fluidThermo::implementation,
+    public rhoThermo::implementation
+{
+public:
+
+    // Constructors
+
+        //- Construct from mesh and phase name
+        composite
+        (
+            const fvMesh& mesh,
+            const word& phaseName
+        )
+        :
+            basicThermo::implementation(mesh, phaseName),
+            fluidThermo::implementation(mesh, phaseName),
+            rhoThermo::implementation(mesh, phaseName)
+        {}
 };
 
 

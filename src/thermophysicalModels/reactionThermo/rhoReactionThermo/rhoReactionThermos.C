@@ -23,7 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "multiComponentMixture.H"
+#include "coefficientMultiComponentMixture.H"
+#include "valueMultiComponentMixture.H"
 #include "singleComponentMixture.H"
 
 #include "rhoThermo.H"
@@ -33,6 +34,7 @@ License
 #include "forGases.H"
 #include "forLiquids.H"
 #include "forPolynomials.H"
+#include "forTabulated.H"
 #include "makeReactionThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -60,14 +62,16 @@ License
 
 namespace Foam
 {
-    forGases(makeRhoReactionThermos, multiComponentMixture);
+    forGases(makeRhoReactionThermos, coefficientMultiComponentMixture);
     forGases(makeRhoReactionThermo, singleComponentMixture);
 
-    forLiquids(makeRhoReactionThermos, multiComponentMixture);
+    forLiquids(makeRhoReactionThermos, coefficientMultiComponentMixture);
     forLiquids(makeRhoReactionThermo, singleComponentMixture);
 
-    forPolynomials(makeRhoReactionThermos, multiComponentMixture);
+    forPolynomials(makeRhoReactionThermos, coefficientMultiComponentMixture);
     forPolynomials(makeRhoReactionThermo, singleComponentMixture);
+
+    forTabulated(makeRhoReactionThermos, valueMultiComponentMixture);
 }
 
 // ************************************************************************* //

@@ -51,6 +51,21 @@ class inhomogeneousMixture
 :
     public basicCombustionMixture
 {
+
+public:
+
+    //- The type of thermodynamics this mixture is instantiated for
+    typedef ThermoType thermoType;
+
+    //- Mixing type for thermodynamic properties
+    typedef ThermoType thermoMixtureType;
+
+    //- Mixing type for transport properties
+    typedef ThermoType transportMixtureType;
+
+
+private:
+
     // Private Data
 
         static const int nSpecies_ = 2;
@@ -58,11 +73,11 @@ class inhomogeneousMixture
 
         dimensionedScalar stoicRatio_;
 
-        ThermoType fuel_;
-        ThermoType oxidant_;
-        ThermoType products_;
+        thermoType fuel_;
+        thermoType oxidant_;
+        thermoType products_;
 
-        mutable ThermoType mixture_;
+        mutable thermoType mixture_;
 
         //- Mixture fraction
         volScalarField& ft_;
@@ -70,20 +85,16 @@ class inhomogeneousMixture
         //- Regress variable
         volScalarField& b_;
 
-        //- Construct as copy (not implemented)
-        inhomogeneousMixture(const inhomogeneousMixture<ThermoType>&);
-
 
 public:
-
-    //- The type of thermodynamics this mixture is instantiated for
-    typedef ThermoType thermoType;
-
 
     // Constructors
 
         //- Construct from dictionary, mesh and phase name
         inhomogeneousMixture(const dictionary&, const fvMesh&, const word&);
+
+        //- Disallow default bitwise copy construction
+        inhomogeneousMixture(const inhomogeneousMixture<ThermoType>&) = delete;
 
 
     //- Destructor
@@ -104,14 +115,14 @@ public:
             return stoicRatio_;
         }
 
-        const ThermoType& mixture(const scalar, const scalar) const;
+        const thermoType& mixture(const scalar, const scalar) const;
 
-        const ThermoType& cellMixture(const label celli) const
+        const thermoMixtureType& cellThermoMixture(const label celli) const
         {
             return mixture(ft_[celli], b_[celli]);
         }
 
-        const ThermoType& patchFaceMixture
+        const thermoMixtureType& patchFaceThermoMixture
         (
             const label patchi,
             const label facei
@@ -124,12 +135,48 @@ public:
             );
         }
 
-        const ThermoType& cellReactants(const label celli) const
+        const transportMixtureType& cellTransportMixture
+        (
+            const label celli
+        ) const
+        {
+            return cellThermoMixture(celli);
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
+        (
+            const label patchi,
+            const label facei
+        ) const
+        {
+            return patchFaceThermoMixture(patchi, facei);
+        }
+
+        const transportMixtureType& cellTransportMixture
+        (
+            const label,
+            const thermoMixtureType& thermoMixture
+        ) const
+        {
+            return thermoMixture;
+        }
+
+        const transportMixtureType& patchFaceTransportMixture
+        (
+            const label,
+            const label,
+            const thermoMixtureType& thermoMixture
+        ) const
+        {
+            return thermoMixture;
+        }
+
+        const thermoType& cellReactants(const label celli) const
         {
             return mixture(ft_[celli], 1);
         }
 
-        const ThermoType& patchFaceReactants
+        const thermoType& patchFaceReactants
         (
             const label patchi,
             const label facei
@@ -142,12 +189,12 @@ public:
             );
         }
 
-        const ThermoType& cellProducts(const label celli) const
+        const thermoType& cellProducts(const label celli) const
         {
             return mixture(ft_[celli], 0);
         }
 
-        const ThermoType& patchFaceProducts
+        const thermoType& patchFaceProducts
         (
             const label patchi,
             const label facei
@@ -165,6 +212,12 @@ public:
 
         //- Return thermo based on index
         const ThermoType& specieThermo(const label speciei) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const inhomogeneousMixture<ThermoType>&) = delete;
 };
 
 

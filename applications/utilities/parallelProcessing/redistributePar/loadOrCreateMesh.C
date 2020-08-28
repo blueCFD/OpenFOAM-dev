@@ -26,8 +26,8 @@ License
 #include "loadOrCreateMesh.H"
 #include "processorPolyPatch.H"
 #include "processorCyclicPolyPatch.H"
-#include "Time.T.H"
-#include "IOPtrList.T.H"
+#include "IOPtrList.H"
+#include "OSspecific.H"
 
 // * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
 

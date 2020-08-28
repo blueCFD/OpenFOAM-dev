@@ -2,11 +2,11 @@
 
 Info<< "Reading thermophysical properties\n" << endl;
 
-autoPtr<psiThermo> pThermo
+autoPtr<fluidThermo> pThermo
 (
-    psiThermo::New(mesh)
+    fluidThermo::New(mesh)
 );
-psiThermo& thermo = pThermo();
+fluidThermo& thermo = pThermo();
 
 volScalarField rho
 (
@@ -49,17 +49,5 @@ autoPtr<compressible::momentumTransportModel> turbulence
     )
 );
 
-const word kinematicCloudName
-(
-    args.optionLookupOrDefault<word>("cloudName", "kinematicCloud")
-);
-
-Info<< "Constructing kinematicCloud " << kinematicCloudName << endl;
-basicKinematicCloud kinematicCloud
-(
-    kinematicCloudName,
-    rho,
-    U,
-    thermo.mu(),
-    g
-);
+Info<< "Constructing clouds" << endl;
+parcelCloudList clouds(rho, U, thermo.mu(), g);

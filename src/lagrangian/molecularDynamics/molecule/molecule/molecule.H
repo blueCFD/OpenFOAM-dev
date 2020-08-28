@@ -38,6 +38,7 @@ SourceFiles
 #define molecule_H
 
 #include "particle.H"
+#include "Cloud.T.H"
 #include "IOstream.H"
 #include "autoPtr.H"
 #include "diagTensor.H"

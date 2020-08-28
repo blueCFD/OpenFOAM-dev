@@ -28,18 +28,18 @@ License
 #include "rhoThermo.H"
 #include "rhoReactionThermo.H"
 
-#include "CombustionModel.T.H"
+#include "combustionModel.H"
 
 #include "phaseModel.H"
-#include "ThermoPhaseModel.T.H"
-#include "IsothermalPhaseModel.T.H"
-#include "AnisothermalPhaseModel.T.H"
-#include "PurePhaseModel.T.H"
-#include "MultiComponentPhaseModel.T.H"
-#include "InertPhaseModel.T.H"
-#include "ReactingPhaseModel.T.H"
-#include "MovingPhaseModel.T.H"
-#include "StationaryPhaseModel.T.H"
+#include "ThermoPhaseModel.H"
+#include "IsothermalPhaseModel.H"
+#include "AnisothermalPhaseModel.H"
+#include "PurePhaseModel.H"
+#include "MultiComponentPhaseModel.H"
+#include "InertPhaseModel.H"
+#include "ReactingPhaseModel.H"
+#include "MovingPhaseModel.H"
+#include "StationaryPhaseModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -199,8 +199,7 @@ namespace Foam
                     MovingPhaseModel
                     <
                         ThermoPhaseModel<phaseModel, rhoReactionThermo>
-                    >,
-                    CombustionModel<rhoReactionThermo>
+                    >
                 >
             >
         >

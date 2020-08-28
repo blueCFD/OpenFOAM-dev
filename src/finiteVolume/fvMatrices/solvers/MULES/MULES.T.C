@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,13 +46,13 @@ void Foam::MULES::limitSum(UPtrList<scalarField>& phiPsiCorrs)
             }
         }
 
-        scalar sum = sumPos + sumNeg;
+        const scalar sum = sumPos + sumNeg;
 
         if (sum > 0 && sumPos > vSmall)
         {
-            scalar lambda = -sumNeg/sumPos;
+            const scalar lambda = -sumNeg/sumPos;
 
-            for (int phasei=0; phasei<phiPsiCorrs.size(); phasei++)
+            forAll (phiPsiCorrs, phasei)
             {
                 if (phiPsiCorrs[phasei][facei] > 0)
                 {
@@ -62,52 +62,15 @@ void Foam::MULES::limitSum(UPtrList<scalarField>& phiPsiCorrs)
         }
         else if (sum < 0 && sumNeg < -vSmall)
         {
-            scalar lambda = -sumPos/sumNeg;
+            const scalar lambda = -sumPos/sumNeg;
 
-            for (int phasei=0; phasei<phiPsiCorrs.size(); phasei++)
+            forAll (phiPsiCorrs, phasei)
             {
                 if (phiPsiCorrs[phasei][facei] < 0)
                 {
                     phiPsiCorrs[phasei][facei] *= lambda;
                 }
             }
-        }
-    }
-}
-
-
-void Foam::MULES::limitSum
-(
-    const UPtrList<const scalarField>& alphas,
-    UPtrList<scalarField>& phiPsiCorrs,
-    const labelHashSet& fixed
-)
-{
-    labelHashSet notFixed(identity(phiPsiCorrs.size()));
-    notFixed -= fixed;
-
-    forAll(phiPsiCorrs[0], facei)
-    {
-        scalar alphaNotFixed = 0, corrNotFixed = 0;
-        forAllConstIter(labelHashSet, notFixed, iter)
-        {
-            alphaNotFixed += alphas[iter.key()][facei];
-            corrNotFixed += phiPsiCorrs[iter.key()][facei];
-        }
-
-        scalar corrFixed = 0;
-        forAllConstIter(labelHashSet, fixed, iter)
-        {
-            corrFixed += phiPsiCorrs[iter.key()][facei];
-        }
-
-        const scalar sumCorr = corrNotFixed + corrFixed;
-
-        const scalar lambda = - sumCorr/alphaNotFixed;
-
-        forAllConstIter(labelHashSet, notFixed, iter)
-        {
-            phiPsiCorrs[iter.key()][facei] += lambda*alphas[iter.key()][facei];
         }
     }
 }

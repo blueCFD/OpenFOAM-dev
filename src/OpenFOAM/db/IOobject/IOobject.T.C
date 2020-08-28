@@ -27,6 +27,7 @@ License
 #include "Time.T.H"
 #include "IFstream.H"
 #include "registerNamedEnum.H"
+#include "OSspecific.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -50,12 +51,11 @@ const Foam::NamedEnum<Foam::IOobject::fileCheckTypes, 4>
 // Default fileCheck type
 Foam::IOobject::fileCheckTypes Foam::IOobject::fileModificationChecking
 (
-    fileCheckTypesNames.read
+    Foam::debug::namedEnumOptimisationSwitch
     (
-        debug::optimisationSwitches().lookup
-        (
-            "fileModificationChecking"
-        )
+        "fileModificationChecking",
+        fileCheckTypesNames,
+        fileModificationChecking
     )
 );
 

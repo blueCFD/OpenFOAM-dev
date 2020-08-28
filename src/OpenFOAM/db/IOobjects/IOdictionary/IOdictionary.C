@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,13 +24,45 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "IOdictionary.H"
+#include "objectRegistry.H"
+#include "Pstream.T.H"
+#include "Time.T.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+    defineTypeNameAndDebug(IOdictionary, 0);
+
+    bool IOdictionary::writeDictionaries
+    (
+        debug::infoSwitch("writeDictionaries", 0)
+    );
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+Foam::IOdictionary::IOdictionary
+(
+    const IOobject& io,
+    const word& wantedType
+)
+:
+    regIOobject(io)
+{
+    dictionary::name() = IOobject::objectPath();
+
+    // Reading performed by derived type
+}
+
+
 Foam::IOdictionary::IOdictionary(const IOobject& io)
 :
-    baseIOdictionary(io)
+    regIOobject(io)
 {
+    dictionary::name() = IOobject::objectPath();
+
     readHeaderOk(IOstream::ASCII, typeName);
 
     // For if MUST_READ_IF_MODIFIED
@@ -44,8 +76,10 @@ Foam::IOdictionary::IOdictionary
     const dictionary& dict
 )
 :
-    baseIOdictionary(io, dict)
+    regIOobject(io)
 {
+    dictionary::name() = IOobject::objectPath();
+
     if (!readHeaderOk(IOstream::ASCII, typeName))
     {
         dictionary::operator=(dict);
@@ -62,8 +96,10 @@ Foam::IOdictionary::IOdictionary
     Istream& is
 )
 :
-    baseIOdictionary(io, is)
+    regIOobject(io)
 {
+    dictionary::name() = IOobject::objectPath();
+
     // Note that we do construct the dictionary null and read in
     // afterwards
     // so that if there is some fancy massaging due to a
@@ -76,21 +112,17 @@ Foam::IOdictionary::IOdictionary
 }
 
 
-Foam::IOdictionary::IOdictionary
-(
-    const IOdictionary& dict
-)
+Foam::IOdictionary::IOdictionary(const IOdictionary& dict)
 :
-    baseIOdictionary(dict)
+    regIOobject(dict),
+    dictionary(dict)
 {}
 
 
-Foam::IOdictionary::IOdictionary
-(
-    IOdictionary&& dict
-)
+Foam::IOdictionary::IOdictionary(IOdictionary&& dict)
 :
-    baseIOdictionary(move(dict))
+    regIOobject(move(dict)),
+    dictionary(move(dict))
 {}
 
 
@@ -102,9 +134,15 @@ Foam::IOdictionary::~IOdictionary()
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
+void Foam::IOdictionary::operator=(const IOdictionary& rhs)
+{
+    dictionary::operator=(rhs);
+}
+
+
 void Foam::IOdictionary::operator=(IOdictionary&& rhs)
 {
-    baseIOdictionary::operator=(move(rhs));
+    dictionary::operator=(move(rhs));
 }
 
 
