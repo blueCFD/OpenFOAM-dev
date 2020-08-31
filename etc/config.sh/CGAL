@@ -5,8 +5,10 @@
 #   \\  /    A nd           | Copyright (C) 2014-2020 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
+# 2017-09-13 blueCAPE Lda: Modifications for blueCFD-Core 2017
+#------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM.
+#     This file is a derivative work of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -20,6 +22,15 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modifications
+#     This file has been modified by blueCAPE's unofficial mingw patches for
+#     OpenFOAM.
+#     For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#     Modifications made:
+#        - Added hack for using MSYS2.
 #
 # File
 #     etc/config.sh/CGAL
@@ -56,5 +67,21 @@ if [ "$cgal_version" != "cgal-system" ]
 then
     export CGAL_ARCH_PATH=$WM_THIRD_PARTY_DIR/$cgal_version
 fi
+
+# Dirty hack for overriding path for when building with MSys2
+if onWin
+then
+    export CGAL_ARCH_PATH=/mingw64
+    export BOOST_ARCH_PATH=/mingw64
+fi
+
+if [ "$FOAM_VERBOSE" -a "$PS1" ]
+then
+    echo "Using BOOST and CGAL" 1>&2
+    echo "    $boost_version at $BOOST_ARCH_PATH" 1>&2
+    echo "    $cgal_version at $CGAL_ARCH_PATH" 1>&2
+fi
+
+unset thirdPartyPath
 
 #------------------------------------------------------------------------------
