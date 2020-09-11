@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,30 +24,42 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "heatTransferModel.H"
+#include "phasePair.H"
+#include "BlendedInterfacialModel.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(heatTransferModel, 0);
+    defineBlendedInterfacialModelTypeNameAndDebug(heatTransferModel, 0);
     defineRunTimeSelectionTable(heatTransferModel, dictionary);
 }
+
+const Foam::dimensionSet Foam::heatTransferModel::dimK(1, -1, -3, -1, 0);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::heatTransferModel::heatTransferModel
 (
-    const dictionary& interfaceDict,
-    const volScalarField& alpha1,
-    const phaseModel& phase1,
-    const phaseModel& phase2
+    const dictionary& dict,
+    const phasePair& pair
 )
 :
-    interfaceDict_(interfaceDict),
-    alpha1_(alpha1),
-    phase1_(phase1),
-    phase2_(phase2)
+    pair_(pair),
+    residualAlpha_
+    (
+        "residualAlpha",
+        dimless,
+        dict.lookupOrDefault<scalar>
+        (
+            "residualAlpha",
+            pair_.ordered()
+          ? pair_.dispersed().residualAlpha().value()
+          : pair_.phase1().residualAlpha().value()
+        )
+    )
 {}
 
 
@@ -55,6 +67,15 @@ Foam::heatTransferModel::heatTransferModel
 
 Foam::heatTransferModel::~heatTransferModel()
 {}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField>
+Foam::heatTransferModel::K() const
+{
+    return K(residualAlpha_.value());
+}
 
 
 // ************************************************************************* //

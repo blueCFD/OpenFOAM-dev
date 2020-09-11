@@ -164,8 +164,20 @@ Foam::Reaction<ReactionThermo>::New
 {
     const word& reactionTypeName = dict.lookup("type");
 
-    typename dictionaryConstructorTable::iterator cstrIter
-        = dictionaryConstructorTablePtr_->find(reactionTypeName);
+    typename dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(reactionTypeName);
+
+    // Backwards compatibility check. Reaction names used to have "Reaction"
+    // (Reaction<ReactionThermo>::typeName_()) appended. This was removed as it
+    // is unnecessary given the context in which the reaction is specified. If
+    // this reaction name was not found, search also for the old name.
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        cstrIter = dictionaryConstructorTablePtr_->find
+        (
+            reactionTypeName.removeTrailing(typeName_())
+        );
+    }
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
@@ -181,6 +193,98 @@ Foam::Reaction<ReactionThermo>::New
     (
         cstrIter()(species, thermoDatabase, dict)
     );
+}
+
+
+template<class ReactionThermo>
+Foam::autoPtr<Foam::Reaction<ReactionThermo>>
+Foam::Reaction<ReactionThermo>::New
+(
+    const speciesTable& species,
+    const HashPtrTable<ReactionThermo>& thermoDatabase,
+    const objectRegistry& ob,
+    const dictionary& dict
+)
+{
+    // If the objectRegistry constructor table is empty
+    // use the dictionary constructor table only
+    if (!objectRegistryConstructorTablePtr_)
+    {
+        return New(species, thermoDatabase, dict);
+    }
+
+    const word& reactionTypeName = dict.lookup("type");
+
+    typename objectRegistryConstructorTable::iterator cstrIter =
+        objectRegistryConstructorTablePtr_->find(reactionTypeName);
+
+    // Backwards compatibility check. See above.
+    if (cstrIter == objectRegistryConstructorTablePtr_->end())
+    {
+        cstrIter = objectRegistryConstructorTablePtr_->find
+        (
+            reactionTypeName.removeTrailing(typeName_())
+        );
+    }
+
+    if (cstrIter == objectRegistryConstructorTablePtr_->end())
+    {
+        typename dictionaryConstructorTable::iterator cstrIter =
+            dictionaryConstructorTablePtr_->find(reactionTypeName);
+
+        // Backwards compatibility check. See above.
+        if (cstrIter == dictionaryConstructorTablePtr_->end())
+        {
+            cstrIter = dictionaryConstructorTablePtr_->find
+            (
+                reactionTypeName.removeTrailing(typeName_())
+            );
+        }
+
+        if (cstrIter == dictionaryConstructorTablePtr_->end())
+        {
+            FatalErrorInFunction
+                << "Unknown reaction type "
+                << reactionTypeName << nl << nl
+                << "Valid reaction types are :" << nl
+                << dictionaryConstructorTablePtr_->sortedToc()
+                << objectRegistryConstructorTablePtr_->sortedToc()
+                << exit(FatalError);
+        }
+
+        return autoPtr<Reaction<ReactionThermo>>
+        (
+            cstrIter()(species, thermoDatabase, dict)
+        );
+    }
+
+    return autoPtr<Reaction<ReactionThermo>>
+    (
+        cstrIter()(species, thermoDatabase, ob, dict)
+    );
+}
+
+
+template<class ReactionThermo>
+Foam::autoPtr<Foam::Reaction<ReactionThermo>>
+Foam::Reaction<ReactionThermo>::New
+(
+    const speciesTable& species,
+    const PtrList<ReactionThermo>& speciesThermo,
+    const dictionary& dict
+)
+{
+    HashPtrTable<ReactionThermo> thermoDatabase;
+    forAll(speciesThermo, i)
+    {
+        thermoDatabase.insert
+        (
+            speciesThermo[i].name(),
+            speciesThermo[i].clone().ptr()
+        );
+    }
+
+    return New(species, thermoDatabase, dict);
 }
 
 
@@ -205,6 +309,7 @@ void Foam::Reaction<ReactionThermo>::ddot
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     scalarField& d
 ) const
 {
@@ -217,6 +322,7 @@ void Foam::Reaction<ReactionThermo>::fdot
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     scalarField& f
 ) const
 {
@@ -229,6 +335,7 @@ void Foam::Reaction<ReactionThermo>::omega
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     scalarField& dcdt
 ) const
 {
@@ -237,7 +344,7 @@ void Foam::Reaction<ReactionThermo>::omega
 
     scalar omegaI = omega
     (
-        p, T, c, pf, cf, lRef, pr, cr, rRef
+        p, T, c, li, pf, cf, lRef, pr, cr, rRef
     );
 
     forAll(lhs_, i)
@@ -261,6 +368,7 @@ Foam::scalar Foam::Reaction<ReactionThermo>::omega
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     scalar& pf,
     scalar& cf,
     label& lRef,
@@ -272,8 +380,8 @@ Foam::scalar Foam::Reaction<ReactionThermo>::omega
 
     scalar clippedT = min(max(T, this->Tlow()), this->Thigh());
 
-    const scalar kf = this->kf(p, clippedT, c);
-    const scalar kr = this->kr(kf, p, clippedT, c);
+    const scalar kf = this->kf(p, clippedT, c, li);
+    const scalar kr = this->kr(kf, p, clippedT, c, li);
 
     pf = 1;
     pr = 1;
@@ -375,6 +483,7 @@ void Foam::Reaction<ReactionThermo>::dwdc
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     scalarSquareMatrix& J,
     scalarField& dcdt,
     scalar& omegaI,
@@ -387,7 +496,7 @@ void Foam::Reaction<ReactionThermo>::dwdc
     scalar pf, cf, pr, cr;
     label lRef, rRef;
 
-    omegaI = omega(p, T, c, pf, cf, lRef, pr, cr, rRef);
+    omegaI = omega(p, T, c, li, pf, cf, lRef, pr, cr, rRef);
 
     forAll(lhs_, i)
     {
@@ -402,8 +511,8 @@ void Foam::Reaction<ReactionThermo>::dwdc
         dcdt[si] += sr*omegaI;
     }
 
-    kfwd = this->kf(p, T, c);
-    kbwd = this->kr(kfwd, p, T, c);
+    kfwd = this->kf(p, T, c, li);
+    kbwd = this->kr(kfwd, p, T, c, li);
 
     forAll(lhs_, j)
     {
@@ -504,7 +613,7 @@ void Foam::Reaction<ReactionThermo>::dwdc
     {
         // This temporary array needs to be cached for efficiency
         scalarField dcidc(beta.size());
-        this->dcidc(p, T, c, dcidc);
+        this->dcidc(p, T, c, li, dcidc);
 
         forAll(beta, j)
         {
@@ -538,6 +647,7 @@ void Foam::Reaction<ReactionThermo>::dwdT
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     const scalar omegaI,
     const scalar kfwd,
     const scalar kbwd,
@@ -550,8 +660,8 @@ void Foam::Reaction<ReactionThermo>::dwdT
     scalar kf = kfwd;
     scalar kr = kbwd;
 
-    scalar dkfdT = this->dkfdT(p, T, c);
-    scalar dkrdT = this->dkrdT(p, T, c, dkfdT, kr);
+    scalar dkfdT = this->dkfdT(p, T, c, li);
+    scalar dkrdT = this->dkrdT(p, T, c, li, dkfdT, kr);
 
     scalar sumExp = 0.0;
     forAll(lhs_, i)
@@ -582,7 +692,7 @@ void Foam::Reaction<ReactionThermo>::dwdT
 
     // For reactions including third-body efficiencies or pressure dependent
     // reaction, an additional term is needed
-    scalar dcidT = this->dcidT(p, T, c);
+    scalar dcidT = this->dcidT(p, T, c, li);
     dcidT *= omegaI;
 
     // J(i, indexT) = sum_reactions nu_i dqdT

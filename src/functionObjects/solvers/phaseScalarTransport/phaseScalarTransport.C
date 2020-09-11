@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ License
 #include "nonOrthogonalSolutionControl.H"
 #include "phaseScalarTransport.H"
 #include "surfaceFields.H"
-#include "turbulenceModel.H"
+#include "momentumTransportModel.H"
 #include "wallFvPatch.H"
 #include "zeroGradientFvPatchField.H"
 
@@ -247,13 +247,13 @@ Foam::functionObjects::phaseScalarTransport::D
         );
     }
 
-    const word& nameNoPhase = turbulenceModel::propertiesName;
+    const word& nameNoPhase = momentumTransportModel::typeName;
     const word namePhase = IOobject::groupName(nameNoPhase, phaseName_);
 
     const word& name =
-        mesh_.foundObject<turbulenceModel>(namePhase)
+        mesh_.foundObject<momentumTransportModel>(namePhase)
       ? namePhase
-      : mesh_.foundObject<turbulenceModel>(nameNoPhase)
+      : mesh_.foundObject<momentumTransportModel>(nameNoPhase)
       ? nameNoPhase
       : word::null;
 
@@ -267,8 +267,8 @@ Foam::functionObjects::phaseScalarTransport::D
         );
     }
 
-    const turbulenceModel& turbulence =
-        mesh_.lookupObject<turbulenceModel>(name);
+    const momentumTransportModel& turbulence =
+        mesh_.lookupObject<momentumTransportModel>(name);
 
     if (alphaPhi.dimensions() == dimVolume/dimTime)
     {
@@ -409,7 +409,7 @@ bool Foam::functionObjects::phaseScalarTransport::execute()
     // Solve
     if (alphaPhi.dimensions() == dimVolume/dimTime)
     {
-        for (label i = 0; i <= nCorr_; ++ i)
+        for (int i=0; i<=nCorr_; i++)
         {
             fvScalarMatrix fieldEqn
             (
@@ -437,7 +437,7 @@ bool Foam::functionObjects::phaseScalarTransport::execute()
         const volScalarField& rho =
             mesh_.lookupObject<volScalarField>(rhoName_);
 
-        for (label i = 0; i <= nCorr_; ++ i)
+        for (int i=0; i<=nCorr_; i++)
         {
             fvScalarMatrix fieldEqn
             (

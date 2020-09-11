@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,10 +57,10 @@ Foam::reactionRateFlameAreaModels::relaxation::relaxation
 :
     reactionRateFlameArea(modelType, dict, mesh, combModel),
     correlation_(dict.optionalSubDict(typeName + "Coeffs").subDict(fuel_)),
-    C_(readScalar(dict.optionalSubDict(typeName + "Coeffs").lookup("C"))),
+    C_(dict.optionalSubDict(typeName + "Coeffs").lookup<scalar>("C")),
     alpha_
     (
-        readScalar(dict.optionalSubDict(typeName + "Coeffs").lookup("alpha"))
+        dict.optionalSubDict(typeName + "Coeffs").lookup<scalar>("alpha")
     )
 {}
 
@@ -106,7 +106,8 @@ void Foam::reactionRateFlameAreaModels::relaxation::correct
         small
     );
 
-    const compressibleTurbulenceModel& turbulence = combModel_.turbulence();
+    const compressibleMomentumTransportModel& turbulence =
+        combModel_.turbulence();
 
     // Total strain
     const volScalarField sigmaTotal

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -122,9 +122,17 @@ inline Foam::scalar Foam::perfectFluid<Specie>::Cv(scalar p, scalar T) const
 
 
 template<class Specie>
-inline Foam::scalar Foam::perfectFluid<Specie>::S(scalar p, scalar T) const
+inline Foam::scalar Foam::perfectFluid<Specie>::Sp(scalar p, scalar T) const
 {
     return -this->R()*log(p/Pstd);
+}
+
+
+template<class Specie>
+inline Foam::scalar Foam::perfectFluid<Specie>::Sv(scalar p, scalar T) const
+{
+    NotImplemented;
+    return 0;
 }
 
 
@@ -160,17 +168,7 @@ inline void Foam::perfectFluid<Specie>::operator+=
     const perfectFluid<Specie>& pf
 )
 {
-    scalar Y1 = this->Y();
-    Specie::operator+=(pf);
-
-    if (mag(this->Y()) > small)
-    {
-        Y1 /= this->Y();
-        const scalar Y2 = pf.Y()/this->Y();
-
-        R_ = 1.0/(Y1/R_ + Y2/pf.R_);
-        rho0_ = Y1*rho0_ + Y2*pf.rho0_;
-    }
+    NotImplemented;
 }
 
 
@@ -190,33 +188,8 @@ inline Foam::perfectFluid<Specie> Foam::operator+
     const perfectFluid<Specie>& pf2
 )
 {
-    Specie sp
-    (
-        static_cast<const Specie&>(pf1)
-      + static_cast<const Specie&>(pf2)
-    );
-
-    if (mag(sp.Y()) < small)
-    {
-        return perfectFluid<Specie>
-        (
-            sp,
-            pf1.R_,
-            pf1.rho0_
-        );
-    }
-    else
-    {
-        const scalar Y1 = pf1.Y()/sp.Y();
-        const scalar Y2 = pf2.Y()/sp.Y();
-
-        return perfectFluid<Specie>
-        (
-            sp,
-            1.0/(Y1/pf1.R_ + Y2/pf2.R_),
-            Y1*pf1.rho0_ + Y2*pf2.rho0_
-        );
-    }
+    NotImplemented;
+    return pf1;
 }
 
 
@@ -243,34 +216,8 @@ inline Foam::perfectFluid<Specie> Foam::operator==
     const perfectFluid<Specie>& pf2
 )
 {
-    Specie sp
-    (
-        static_cast<const Specie&>(pf1)
-     == static_cast<const Specie&>(pf2)
-    );
-
-    if (mag(sp.Y()) < small)
-    {
-        return perfectFluid<Specie>
-        (
-            sp,
-            pf1.R_,
-            pf1.rho0_
-        );
-    }
-    else
-    {
-        const scalar Y1 = pf1.Y()/sp.Y();
-        const scalar Y2 = pf2.Y()/sp.Y();
-        const scalar oneByR = Y2/pf2.R_ - Y1/pf1.R_;
-
-        return perfectFluid<Specie>
-        (
-            sp,
-            mag(oneByR) < small ? great : 1/oneByR,
-            Y2*pf2.rho0_ - Y1*pf1.rho0_
-        );
-    }
+    NotImplemented;
+    return pf1;
 }
 
 

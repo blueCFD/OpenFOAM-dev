@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,114 @@ License
 
 #include "face.T.H"
 #include "DynamicList.T.H"
+
+// * * * * * * * * * * * * * * * Static Functions  * * * * * * * * * * * * * //
+
+template<class PointField>
+Foam::point Foam::face::centre(const PointField& ps)
+{
+    // If the face is a triangle, do a direct calculation
+    if (ps.size() == 3)
+    {
+        return (1.0/3.0)*(ps[0] + ps[1] + ps[2]);
+    }
+
+    // For more complex faces, decompose into triangles ...
+
+    // Compute an estimate of the centre as the average of the points
+    point pAvg = Zero;
+    forAll(ps, pi)
+    {
+        pAvg += ps[pi];
+    }
+    pAvg /= ps.size();
+
+    // Compute the face area normal and unit normal by summing up the
+    // normals of the triangles formed by connecting each edge to the
+    // point average.
+    vector sumA = Zero;
+    forAll(ps, pi)
+    {
+        const point& p = ps[pi];
+        const point& pNext = ps[ps.fcIndex(pi)];
+
+        const vector a = (pNext - p)^(pAvg - p);
+
+        sumA += a;
+    }
+    const vector sumAHat = normalised(sumA);
+
+    // Compute the area-weighted sum of the triangle centres. Note use
+    // the triangle area projected in the direction of the face normal
+    // as the weight, *not* the triangle area magnitude. Only the
+    // former makes the calculation independent of the initial estimate.
+    scalar sumAn = 0;
+    vector sumAnc = Zero;
+    forAll(ps, pi)
+    {
+        const point& p = ps[pi];
+        const point& pNext = ps[ps.fcIndex(pi)];
+
+        const vector a = (pNext - p)^(pAvg - p);
+        const vector c = p + pNext + pAvg;
+
+        const scalar an = a & sumAHat;
+
+        sumAn += an;
+        sumAnc += an*c;
+    }
+
+    // Complete calculating centres and areas. If the face is too small
+    // for the sums to be reliably divided then just set the centre to
+    // the initial estimate.
+    if (sumAn > vSmall)
+    {
+        return (1.0/3.0)*sumAnc/sumAn;
+    }
+    else
+    {
+        return pAvg;
+    }
+}
+
+
+template<class PointField>
+Foam::vector Foam::face::area(const PointField& ps)
+{
+    // If the face is a triangle, do a direct calculation
+    if (ps.size() == 3)
+    {
+        return 0.5*((ps[1] - ps[0])^(ps[2] - ps[0]));
+    }
+
+    // For more complex faces, decompose into triangles ...
+
+    // Compute an estimate of the centre as the average of the points
+    point pAvg = Zero;
+    forAll(ps, pi)
+    {
+        pAvg += ps[pi];
+    }
+    pAvg /= ps.size();
+
+    // Compute the face area normal and unit normal by summing up the
+    // normals of the triangles formed by connecting each edge to the
+    // point average.
+    vector sumA = Zero;
+    forAll(ps, pi)
+    {
+        const point& p = ps[pi];
+        const point& pNext = ps[ps.fcIndex(pi)];
+
+        const vector a = (pNext - p)^(pAvg - p);
+
+        sumA += a;
+    }
+
+    return 0.5*sumA;
+}
+
+
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -49,13 +157,10 @@ Foam::label Foam::face::triangles
 template<class Type>
 Type Foam::face::average
 (
-    const pointField& meshPoints,
+    const pointField& ps,
     const Field<Type>& fld
 ) const
 {
-    // Calculate the average by breaking the face into triangles and
-    // area-weighted averaging their averages
-
     // If the face is a triangle, do a direct calculation
     if (size() == 3)
     {
@@ -68,51 +173,66 @@ Type Foam::face::average
             );
     }
 
-    label nPoints = size();
+    // For more complex faces, decompose into triangles ...
 
-    point centrePoint = Zero;
-    Type cf = Zero;
-
-    for (label pI=0; pI<nPoints; pI++)
+    // Compute an estimate of the centre and the field average as the average
+    // of the point values
+    point pAvg = Zero;
+    Type fldAvg = Zero;
+    forAll(*this, pi)
     {
-        centrePoint += meshPoints[operator[](pI)];
-        cf += fld[operator[](pI)];
+        pAvg += ps[operator[](pi)];
+        fldAvg += fld[operator[](pi)];
+    }
+    pAvg /= size();
+    fldAvg /= size();
+
+    // Compute the face area normal and unit normal by summing up the
+    // normals of the triangles formed by connecting each edge to the
+    // point average.
+    vector sumA = Zero;
+    forAll(*this, pi)
+    {
+        const point& p = ps[operator[](pi)];
+        const point& pNext = ps[operator[](fcIndex(pi))];
+
+        const vector a = (pNext - p)^(pAvg - p);
+
+        sumA += a;
+    }
+    const vector sumAHat = normalised(sumA);
+
+    // Compute the area-weighted sum of the average field values on each
+    // triangle
+    scalar sumAn = 0;
+    Type sumAnf = Zero;
+    forAll(*this, pi)
+    {
+        const point& p = ps[operator[](pi)];
+        const point& pNext = ps[operator[](fcIndex(pi))];
+
+        const vector a = (pNext - p)^(pAvg - p);
+        const Type f =
+            fld[operator[](pi)]
+          + fld[operator[](fcIndex(pi))]
+          + fldAvg;
+
+        const scalar an = a & sumAHat;
+
+        sumAn += an;
+        sumAnf += an*f;
     }
 
-    centrePoint /= nPoints;
-    cf /= nPoints;
-
-    scalar sumA = 0;
-    Type sumAf = Zero;
-
-    for (label pI=0; pI<nPoints; pI++)
+    // Complete calculating the average. If the face is too small for the sums
+    // to be reliably divided then just set the average to the initial
+    // estimate.
+    if (sumAn > vSmall)
     {
-        // Calculate 3*triangle centre field value
-        Type ttcf  =
-        (
-            fld[operator[](pI)]
-          + fld[operator[]((pI + 1) % nPoints)]
-          + cf
-        );
-
-        // Calculate 2*triangle area
-        scalar ta = Foam::mag
-        (
-            (meshPoints[operator[](pI)] - centrePoint)
-          ^ (meshPoints[operator[]((pI + 1) % nPoints)] - centrePoint)
-        );
-
-        sumA += ta;
-        sumAf += ta*ttcf;
-    }
-
-    if (sumA > vSmall)
-    {
-        return sumAf/(3*sumA);
+        return (1.0/3.0)*sumAnf/sumAn;
     }
     else
     {
-        return cf;
+        return fldAvg;
     }
 }
 

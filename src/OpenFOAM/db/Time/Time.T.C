@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -331,8 +331,6 @@ Foam::Time::Time
 
     objectRegistry(*this),
 
-    libs_(),
-
     controlDict_
     (
         IOobject
@@ -356,18 +354,19 @@ Foam::Time::Time
     purgeWrite_(0),
     writeOnce_(false),
     subCycling_(false),
-    sigWriteNow_(true, *this),
-    sigStopAtWriteNow_(true, *this),
+    sigWriteNow_(writeInfoHeader, *this),
+    sigStopAtWriteNow_(writeInfoHeader, *this),
 
     writeFormat_(IOstream::ASCII),
     writeVersion_(IOstream::currentVersion),
     writeCompression_(IOstream::UNCOMPRESSED),
     graphFormat_("raw"),
     runTimeModifiable_(false),
+    cacheTemporaryObjects_(true),
 
     functionObjects_(*this, enableFunctionObjects)
 {
-    libs_.open(controlDict_, "libs");
+    libs.open(controlDict_, "libs");
 
     // Explicitly set read flags on objectRegistry so anything constructed
     // from it reads as well (e.g. fvSolution).
@@ -407,8 +406,6 @@ Foam::Time::Time
 
     objectRegistry(*this),
 
-    libs_(),
-
     controlDict_
     (
         IOobject
@@ -432,14 +429,15 @@ Foam::Time::Time
     purgeWrite_(0),
     writeOnce_(false),
     subCycling_(false),
-    sigWriteNow_(true, *this),
-    sigStopAtWriteNow_(true, *this),
+    sigWriteNow_(writeInfoHeader, *this),
+    sigStopAtWriteNow_(writeInfoHeader, *this),
 
     writeFormat_(IOstream::ASCII),
     writeVersion_(IOstream::currentVersion),
     writeCompression_(IOstream::UNCOMPRESSED),
     graphFormat_("raw"),
     runTimeModifiable_(false),
+    cacheTemporaryObjects_(true),
 
     functionObjects_
     (
@@ -449,7 +447,7 @@ Foam::Time::Time
       : !args.optionFound("noFunctionObjects")
     )
 {
-    libs_.open(controlDict_, "libs");
+    libs.open(controlDict_, "libs");
 
     // Explicitly set read flags on objectRegistry so anything constructed
     // from it reads as well (e.g. fvSolution).
@@ -489,8 +487,6 @@ Foam::Time::Time
 
     objectRegistry(*this),
 
-    libs_(),
-
     controlDict_
     (
         IOobject
@@ -515,18 +511,19 @@ Foam::Time::Time
     purgeWrite_(0),
     writeOnce_(false),
     subCycling_(false),
-    sigWriteNow_(true, *this),
-    sigStopAtWriteNow_(true, *this),
+    sigWriteNow_(writeInfoHeader, *this),
+    sigStopAtWriteNow_(writeInfoHeader, *this),
 
     writeFormat_(IOstream::ASCII),
     writeVersion_(IOstream::currentVersion),
     writeCompression_(IOstream::UNCOMPRESSED),
     graphFormat_("raw"),
     runTimeModifiable_(false),
+    cacheTemporaryObjects_(true),
 
     functionObjects_(*this, enableFunctionObjects)
 {
-    libs_.open(controlDict_, "libs");
+    libs.open(controlDict_, "libs");
 
 
     // Explicitly set read flags on objectRegistry so anything constructed
@@ -569,8 +566,6 @@ Foam::Time::Time
 
     objectRegistry(*this),
 
-    libs_(),
-
     controlDict_
     (
         IOobject
@@ -600,10 +595,11 @@ Foam::Time::Time
     writeCompression_(IOstream::UNCOMPRESSED),
     graphFormat_("raw"),
     runTimeModifiable_(false),
+    cacheTemporaryObjects_(true),
 
     functionObjects_(*this, enableFunctionObjects)
 {
-    libs_.open(controlDict_, "libs");
+    libs.open(controlDict_, "libs");
 }
 
 
@@ -806,6 +802,11 @@ bool Foam::Time::run() const
         {
             functionObjects_.execute();
             functionObjects_.end();
+
+            if (cacheTemporaryObjects_)
+            {
+                cacheTemporaryObjects_ = checkCacheTemporaryObjects();
+            }
         }
     }
 
@@ -822,6 +823,11 @@ bool Foam::Time::run() const
             else
             {
                 functionObjects_.execute();
+
+                if (cacheTemporaryObjects_)
+                {
+                    cacheTemporaryObjects_ = checkCacheTemporaryObjects();
+                }
             }
         }
 

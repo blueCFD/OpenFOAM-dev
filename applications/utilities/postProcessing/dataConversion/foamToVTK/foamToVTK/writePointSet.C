@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -44,7 +44,7 @@ Modifications
 
 #include "writePointSet.H"
 #include "OFstream.H"
-#include "writeFuns.H"
+#include "vtkWriteFieldOps.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +66,7 @@ void writePointSet
     std::ofstream ostr(fileName.c_str(), 
                        ios_base::out|ios_base::binary);
 
-    writeFuns::writeHeader
+    vtkWriteOps::writeHeader
     (
         ostr,
         binary,
@@ -88,13 +88,13 @@ void writePointSet
 
     DynamicList<floatScalar> ptField(3*set.size());
 
-    writeFuns::insert
+    vtkWriteOps::insert
     (
         UIndirectList<point>(vMesh.mesh().points(), set.toc())(),
         ptField
     );
 
-    writeFuns::write(ostr, binary, ptField);
+    vtkWriteOps::write(ostr, binary, ptField);
 
 
     //-----------------------------------------------------------------
@@ -114,7 +114,7 @@ void writePointSet
 
     labelList pointIDs(set.toc());
 
-    writeFuns::write(ostr, binary, pointIDs);
+    vtkWriteOps::write(ostr, binary, pointIDs);
 }
 
 

@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -45,7 +45,7 @@
 #     etc/config.sh/paraview
 #
 # Description
-#     Setup file for paraview-[3-5].x
+#     Setup file for paraview-[4-5].x
 #     Sourced from OpenFOAM-<VERSION>/etc/bashrc or from foamPV alias
 #
 # Note
@@ -116,17 +116,16 @@ do
     fi
 done
 
-
 #- ParaView version, automatically determine major version
-#export ParaView_VERSION=3.12.0
 #export ParaView_VERSION=4.0.1
 #export ParaView_VERSION=4.1.0
 #export ParaView_VERSION=4.3.1
 #export ParaView_VERSION=4.4.0
 #export ParaView_VERSION=5.0.0
 #export ParaView_VERSION=5.0.1
-export ParaView_VERSION=5.4.0
+#export ParaView_VERSION=5.4.0
 #export ParaView_VERSION=5.5.0
+export ParaView_VERSION=5.6.3
 export ParaView_MAJOR=detect
 
 #export ParaView_GL=system
@@ -150,7 +149,6 @@ _foamParaviewEval()
 # Evaluate command-line parameters
 _foamParaviewEval $@
 
-
 # Set MAJOR version to correspond to VERSION
 # ParaView_MAJOR is "<digits>.<digits>" from ParaView_VERSION
 case "$ParaView_VERSION" in
@@ -166,21 +164,26 @@ case "$ParaView_VERSION" in
 esac
 export ParaView_VERSION ParaView_MAJOR
 
-paraviewInstDir=$WM_THIRD_PARTY_DIR/ParaView-$ParaView_VERSION
-paraviewArchName=ParaView-$ParaView_VERSION
-
-export ParaView_DIR=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$paraviewArchName
+# Set the binary and source directories
+export ParaView_DIR=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/ParaView-$ParaView_VERSION
+paraviewSrcDir=$WM_THIRD_PARTY_DIR/ParaView-$ParaView_VERSION
 
 # Set paths if binaries or source are present
-if [ -r $ParaView_DIR -o -r $paraviewInstDir ]
+if [ -d $ParaView_DIR -o -d $paraviewSrcDir ]
 then
     export ParaView_INCLUDE_DIR=$ParaView_DIR/include/paraview-$ParaView_MAJOR
-    if [ ! -d $ParaView_INCLUDE_DIR -a -d $ParaView_DIR/include/paraview-3.0 ]
-    then
-        export ParaView_INCLUDE_DIR=$ParaView_DIR/include/paraview-3.0
-    fi
 
-    ParaView_LIB_DIR=$ParaView_DIR/lib/paraview-$ParaView_MAJOR
+    paraviewArch=
+    if [ -d $ParaView_DIR/lib64 ]
+    then
+        paraviewArch=64
+    fi
+    paraviewLibSubDir=
+    if $WM_PROJECT_DIR/bin/tools/foamVersionCompare $ParaView_VERSION lt 5.5.0
+    then
+        paraviewLibSubDir=/paraview-$ParaView_MAJOR
+    fi
+    export ParaView_LIB_DIR=$ParaView_DIR/lib$paraviewArch$paraviewLibSubDir
 
     _foamAppendPath $ParaView_DIR/bin
     _foamAppendLib $ParaView_LIB_DIR
@@ -207,7 +210,11 @@ then
         fi
     fi
 
-    [ "$ParaView_GL" = mesa ] && alias paraview="paraview --mesa"
+    # Alias paraview to launch with mesa if necessary
+    if [ "$ParaView_GL" = mesa ]
+    then
+        alias paraview='LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ParaView_LIB_DIR/mesa paraview'
+    fi
 else
     unset PV_PLUGIN_PATH
 fi

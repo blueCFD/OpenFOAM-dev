@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "WenYu.H"
+#include "phasePair.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -33,13 +34,7 @@ namespace Foam
 namespace dragModels
 {
     defineTypeNameAndDebug(WenYu, 0);
-
-    addToRunTimeSelectionTable
-    (
-        dragModel,
-        WenYu,
-        dictionary
-    );
+    addToRunTimeSelectionTable(dragModel, WenYu, dictionary);
 }
 }
 
@@ -48,12 +43,13 @@ namespace dragModels
 
 Foam::dragModels::WenYu::WenYu
 (
-    const dictionary& interfaceDict,
-    const phaseModel& phase1,
-    const phaseModel& phase2
+    const dictionary& dict,
+    const phasePair& pair,
+    const bool registerObject
 )
 :
-    dragModel(interfaceDict, phase1, phase2)
+    dragModel(dict, pair, registerObject),
+    residualRe_("residualRe", dimless, dict)
 {}
 
 
@@ -65,22 +61,24 @@ Foam::dragModels::WenYu::~WenYu()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::dragModels::WenYu::K
-(
-    const volScalarField& Ur
-) const
+Foam::tmp<Foam::volScalarField> Foam::dragModels::WenYu::CdRe() const
 {
-    volScalarField alpha2(max(phase2_, scalar(1.0e-6)));
-    volScalarField bp(pow(alpha2, -2.65));
-
-    volScalarField Re(max(Ur*phase1_.d()/phase2_.nu(), scalar(1.0e-3)));
-    volScalarField Cds
+    const volScalarField alpha2
     (
-        neg(Re - 1000)*(24.0*(1.0 + 0.15*pow(Re, 0.687))/Re)
-      + pos0(Re - 1000)*0.44
+        max(1 - pair_.dispersed(), pair_.continuous().residualAlpha())
     );
 
-    return 0.75*Cds*phase2_.rho()*Ur*bp/phase1_.d();
+    const volScalarField Res(alpha2*pair_.Re());
+    const volScalarField CdsRes
+    (
+        neg(Res - 1000)*24*(1.0 + 0.15*pow(Res, 0.687))
+      + pos0(Res - 1000)*0.44*max(Res, residualRe_)
+    );
+
+    return
+        CdsRes
+       *pow(alpha2, -3.65)
+       *max(pair_.continuous(), pair_.continuous().residualAlpha());
 }
 
 

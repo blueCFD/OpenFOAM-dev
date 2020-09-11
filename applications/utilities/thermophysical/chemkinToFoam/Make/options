@@ -1,9 +1,7 @@
 EXE_INC = \
+    -IchemkinReader \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude
 
 EXE_LIBS = \
-    -lreactionThermophysicalModels \
-    -lcompressibleTransportModels \
-    -lfluidThermophysicalModels \
-    -lspecie
+    -lchemistryModel

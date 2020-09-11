@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "Gibilaro.H"
+#include "phasePair.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -33,13 +34,7 @@ namespace Foam
 namespace dragModels
 {
     defineTypeNameAndDebug(Gibilaro, 0);
-
-    addToRunTimeSelectionTable
-    (
-        dragModel,
-        Gibilaro,
-        dictionary
-    );
+    addToRunTimeSelectionTable(dragModel, Gibilaro, dictionary);
 }
 }
 
@@ -48,12 +43,12 @@ namespace dragModels
 
 Foam::dragModels::Gibilaro::Gibilaro
 (
-    const dictionary& interfaceDict,
-    const phaseModel& phase1,
-    const phaseModel& phase2
+    const dictionary& dict,
+    const phasePair& pair,
+    const bool registerObject
 )
 :
-    dragModel(interfaceDict, phase1, phase2)
+    dragModel(dict, pair, registerObject)
 {}
 
 
@@ -65,16 +60,18 @@ Foam::dragModels::Gibilaro::~Gibilaro()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::dragModels::Gibilaro::K
-(
-    const volScalarField& Ur
-) const
+Foam::tmp<Foam::volScalarField> Foam::dragModels::Gibilaro::CdRe() const
 {
-    volScalarField alpha2(max(phase2_, scalar(1.0e-6)));
-    volScalarField bp(pow(alpha2, -2.8));
-    volScalarField Re(max(alpha2*Ur*phase1_.d()/phase2_.nu(), scalar(1.0e-3)));
+    const volScalarField alpha2
+    (
+        max(1 - pair_.dispersed(), pair_.continuous().residualAlpha())
+    );
 
-    return (17.3/Re + scalar(0.336))*phase2_.rho()*Ur*bp/phase1_.d();
+    return
+        (4.0/3.0)
+       *(17.3/alpha2 + 0.336*pair_.Re())
+       *max(pair_.continuous(), pair_.continuous().residualAlpha())
+       *pow(alpha2, -2.8);
 }
 
 

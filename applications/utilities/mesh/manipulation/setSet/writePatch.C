@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -37,17 +37,12 @@ Modifications
 
 #include "writePatch.H"
 #include "OFstream.H"
-#include "writeFuns.H"
+#include "vtkWriteOps.H"
 #include "primitiveFacePatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-
-// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
-
-void writePatch
+void Foam::vtkWriteOps::writePatch
 (
     const bool binary,
     const word& setName,
@@ -89,9 +84,9 @@ void writePatch
 
     DynamicList<floatScalar> ptField(3*fp.nPoints());
 
-    writeFuns::insert(fp.localPoints(), ptField);
+    vtkWriteOps::insert(fp.localPoints(), ptField);
 
-    writeFuns::write(pStream, binary, ptField);
+    vtkWriteOps::write(pStream, binary, ptField);
 
 
     label nFaceVerts = 0;
@@ -112,9 +107,9 @@ void writePatch
 
         vertLabels.append(f.size());
 
-        writeFuns::insert(f, vertLabels);
+        vtkWriteOps::insert(f, vertLabels);
     }
-    writeFuns::write(pStream, binary, vertLabels);
+    vtkWriteOps::write(pStream, binary, vertLabels);
 
 
     //-----------------------------------------------------------------
@@ -132,11 +127,8 @@ void writePatch
     // Cell ids first
     pStream << fieldName << " 1 " << fp.size() << " int" << std::endl;
 
-    writeFuns::write(pStream, binary, fieldValues);
+    vtkWriteOps::write(pStream, binary, fieldValues);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

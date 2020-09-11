@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -104,7 +104,7 @@ Type Foam::functionObjects::fieldValues::volFieldValue::processValues
         }
         case operationType::weightedAverage:
         {
-            result = gSum(weightField*values)/gSum(weightField);
+            result = gSum(weightField*values)/max(gSum(weightField), vSmall);
             break;
         }
         case operationType::volAverage:
@@ -114,7 +114,8 @@ Type Foam::functionObjects::fieldValues::volFieldValue::processValues
         }
         case operationType::weightedVolAverage:
         {
-            result = gSum(weightField*V*values)/gSum(weightField*V);
+            result =
+                gSum(weightField*V*values)/max(gSum(weightField*V), vSmall);
             break;
         }
         case operationType::volIntegrate:
@@ -178,9 +179,9 @@ bool Foam::functionObjects::fieldValues::volFieldValue::writeValues
         scalarField V(filterField(fieldValue::mesh_.V()));
         scalarField weightField(values.size(), 1.0);
 
-        if (weightFieldName_ != "none")
+        forAll(weightFieldNames_, i)
         {
-            weightField = setFieldValues<scalar>(weightFieldName_, true);
+            weightField *= setFieldValues<scalar>(weightFieldNames_[i], true);
         }
 
         Type result = processValues(values, V, weightField);

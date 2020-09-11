@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "wallHeatFlux.H"
-#include "turbulentFluidThermoModel.H"
+#include "thermophysicalTransportModel.H"
 #include "solidThermo.H"
 #include "surfaceInterpolate.H"
 #include "fvcSnGrad.H"
@@ -78,33 +78,27 @@ Foam::functionObjects::wallHeatFlux::calcWallHeatFlux
     volScalarField::Boundary& wallHeatFluxBf =
         twallHeatFlux.ref().boundaryFieldRef();
 
-    const volScalarField::Boundary& heBf =
-        he.boundaryField();
+    const volScalarField::Boundary& heBf = he.boundaryField();
+    const volScalarField::Boundary& alphaBf = alpha.boundaryField();
 
-    const volScalarField::Boundary& alphaBf =
-        alpha.boundaryField();
-
-    forAll(wallHeatFluxBf, patchi)
+    forAllConstIter(labelHashSet, patchSet_, iter)
     {
-        if (!wallHeatFluxBf[patchi].coupled())
-        {
-            wallHeatFluxBf[patchi] = alphaBf[patchi]*heBf[patchi].snGrad();
-        }
+        const label patchi = iter.key();
+
+        wallHeatFluxBf[patchi] = alphaBf[patchi]*heBf[patchi].snGrad();
     }
 
     if (foundObject<volScalarField>("qr"))
     {
         const volScalarField& qr = lookupObject<volScalarField>("qr");
 
-        const volScalarField::Boundary& radHeatFluxBf =
-            qr.boundaryField();
+        const volScalarField::Boundary& radHeatFluxBf = qr.boundaryField();
 
-        forAll(wallHeatFluxBf, patchi)
+        forAllConstIter(labelHashSet, patchSet_, iter)
         {
-            if (!wallHeatFluxBf[patchi].coupled())
-            {
-                wallHeatFluxBf[patchi] -= radHeatFluxBf[patchi];
-            }
+            const label patchi = iter.key();
+
+            wallHeatFluxBf[patchi] -= radHeatFluxBf[patchi];
         }
     }
 
@@ -202,22 +196,22 @@ bool Foam::functionObjects::wallHeatFlux::execute()
 
     if
     (
-        foundObject<compressible::turbulenceModel>
+        foundObject<thermophysicalTransportModel>
         (
-            turbulenceModel::propertiesName
+            thermophysicalTransportModel::typeName
         )
     )
     {
-        const compressible::turbulenceModel& turbModel =
-            lookupObject<compressible::turbulenceModel>
+        const thermophysicalTransportModel& ttm =
+            lookupObject<thermophysicalTransportModel>
             (
-                turbulenceModel::propertiesName
+                thermophysicalTransportModel::typeName
             );
 
         return store
         (
             name,
-            calcWallHeatFlux(turbModel.alphaEff(), turbModel.transport().he())
+            calcWallHeatFlux(ttm.alphaEff(), ttm.thermo().he())
         );
     }
     else if (foundObject<solidThermo>(solidThermo::dictName))

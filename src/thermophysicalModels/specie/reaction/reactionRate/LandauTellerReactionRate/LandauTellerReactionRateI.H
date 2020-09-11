@@ -48,11 +48,11 @@ inline Foam::LandauTellerReactionRate::LandauTellerReactionRate
     const dictionary& dict
 )
 :
-    A_(readScalar(dict.lookup("A"))),
-    beta_(readScalar(dict.lookup("beta"))),
-    Ta_(readScalar(dict.lookup("Ta"))),
-    B_(readScalar(dict.lookup("B"))),
-    C_(readScalar(dict.lookup("C")))
+    A_(dict.lookup<scalar>("A")),
+    beta_(dict.lookup<scalar>("beta")),
+    Ta_(dict.lookup<scalar>("Ta")),
+    B_(dict.lookup<scalar>("B")),
+    C_(dict.lookup<scalar>("C"))
 {}
 
 
@@ -62,7 +62,8 @@ inline Foam::scalar Foam::LandauTellerReactionRate::operator()
 (
     const scalar p,
     const scalar T,
-    const scalarField&
+    const scalarField&,
+    const label
 ) const
 {
     scalar lta = A_;
@@ -102,7 +103,8 @@ inline Foam::scalar Foam::LandauTellerReactionRate::ddT
 (
     const scalar p,
     const scalar T,
-    const scalarField&
+    const scalarField&,
+    const label
 ) const
 {
     scalar lta = A_;
@@ -157,6 +159,7 @@ inline void Foam::LandauTellerReactionRate::dcidc
     const scalar p,
     const scalar T,
     const scalarField& c,
+    const label li,
     scalarField& dcidc
 ) const
 {}
@@ -166,7 +169,8 @@ inline Foam::scalar Foam::LandauTellerReactionRate::dcidT
 (
     const scalar p,
     const scalar T,
-    const scalarField& c
+    const scalarField& c,
+    const label li
 ) const
 {
     return 0;

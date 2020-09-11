@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ class cyclicAMIGAMGInterface
         PtrList<AMIInterpolation> AMIs_;
 
         //- AMI transformations
-        List<vectorTensorTransform> AMITransforms_;
+        List<transformer> AMITransforms_;
 
 
 public:
@@ -109,9 +109,9 @@ public:
         //- Cyclic interface functions
 
             //- Return neighbour processor number
-            virtual label neighbPatchID() const
+            virtual label nbrPatchID() const
             {
-                return fineCyclicAMIInterface_.neighbPatchID();
+                return fineCyclicAMIInterface_.nbrPatchID();
             }
 
             //- Does this side own the interface?
@@ -121,11 +121,11 @@ public:
             }
 
             //- Return neighbour patch
-            virtual const cyclicAMIGAMGInterface& neighbPatch() const
+            virtual const cyclicAMIGAMGInterface& nbrPatch() const
             {
                 return dynamic_cast<const cyclicAMIGAMGInterface&>
                 (
-                    coarseInterfaces_[neighbPatchID()]
+                    coarseInterfaces_[nbrPatchID()]
                 );
             }
 
@@ -136,21 +136,15 @@ public:
             }
 
             // Return a reference to the AMI transformations
-            virtual const List<vectorTensorTransform>& AMITransforms() const
+            virtual const List<transformer>& AMITransforms() const
             {
                 return AMITransforms_;
             }
 
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
+            //- Return transformation between the coupled patches
+            virtual const transformer& transform() const
             {
-                return fineCyclicAMIInterface_.forwardT();
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return fineCyclicAMIInterface_.reverseT();
+                return fineCyclicAMIInterface_.transform();
             }
 
 

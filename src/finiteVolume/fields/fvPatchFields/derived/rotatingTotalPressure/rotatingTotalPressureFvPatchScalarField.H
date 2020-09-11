@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ Usage
         psi          | compressibility field name | no       | none
         gamma        | ratio of specific heats (Cp/Cv) | yes |
         p0           | static pressure reference | yes       |
-        omega        | angular velocty of the frame [rad/s] | yes    |
+        omega        | angular velocity of the frame [rad/s] | yes    |
     \endtable
 
     Example of the boundary condition specification:
@@ -60,7 +60,7 @@ Usage
 
 See also
     Foam::totalPressureFvPatchScalarField
-    Foam::Function1Types
+    Foam::Function1s
 
 SourceFiles
     rotatingTotalPressureFvPatchScalarField.C
@@ -89,7 +89,7 @@ class rotatingTotalPressureFvPatchScalarField
     // Private Data
 
         //- Angular velocity of the frame
-        autoPtr<Function1<vector>> omega_;
+        const autoPtr<Function1<vector>> omega_;
 
 
 public:

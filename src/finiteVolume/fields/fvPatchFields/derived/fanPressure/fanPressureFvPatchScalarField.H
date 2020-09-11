@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,9 +31,7 @@ Description
 Usage
     \table
         Property     | Description             | Required    | Default value
-        file         | fan curve file name     | yes         |
-        outOfBounds  | out of bounds handling  | yes         |
-        direction    | direction of flow through fan [in/out] | yes |
+        fanCurve     | fan curve file name     | yes         |
         p0           | environmental total pressure | yes    |
     \endtable
 
@@ -42,8 +40,19 @@ Usage
     inlet
     {
         type            fanPressure;
-        file            "fanCurve";
-        outOfBounds     clamp;
+        fanCurve        tableFile;
+        tableFileCoeffs
+        {
+            file            "$FOAM_CASE/constant/pressureVsQ";
+            format          csv;
+            nHeaderLine     1;
+            refColumn       0;
+            componentColumns 1(1);
+            separator       ",";
+            mergeSeparators no;
+            outOfBounds     clamp;
+            interpolationScheme linear;
+        }
         direction       in;
         p0              uniform 0;
         value           uniform 0;
@@ -52,18 +61,31 @@ Usage
     outlet
     {
         type            fanPressure;
-        file            "fanCurve";
-        outOfBounds     clamp;
+        fanCurve        tableFile;
+        tableFileCoeffs
+        {
+            file            "$FOAM_CASE/constant/pressureVsQ";
+            format          csv;
+            nHeaderLine     1;
+            refColumn       0;
+            componentColumns 1(1);
+            separator       ",";
+            mergeSeparators no;
+            outOfBounds     clamp;
+            interpolationScheme linear;
+        }
         direction       out;
         p0              uniform 0;
         value           uniform 0;
     }
     \endverbatim
 
+    The above example shows the use of a comma separated (CSV) file to specify
+    the condition.
+
 See also
-    Foam::fanFvPatchField
     Foam::totalPressureFvPatchScalarField
-    Foam::interpolationTable
+    Foam::Function1s
 
 SourceFiles
    fanPressureFvPatchScalarField.C
@@ -74,7 +96,7 @@ SourceFiles
 #define fanPressureFvPatchScalarField_H
 
 #include "totalPressureFvPatchScalarField.H"
-#include "interpolationTable.H"
+#include "TableFile.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -89,8 +111,9 @@ class fanPressureFvPatchScalarField
 :
     public totalPressureFvPatchScalarField
 {
-
 public:
+
+    // Public Enumerations
 
         //- Fan flow direction
         enum fanFlowDirection
@@ -107,11 +130,11 @@ private:
 
     // Private Data
 
-        //- Tabulated fan curve
-        interpolationTable<scalar> fanCurve_;
+        //- Fan curve
+        const autoPtr<Function1<scalar>> fanCurve_;
 
         //- Direction of flow through the fan relative to patch
-        fanFlowDirection direction_;
+        const fanFlowDirection direction_;
 
 
 public:
@@ -137,8 +160,7 @@ public:
             const dictionary&
         );
 
-        //- Construct by mapping given
-        //  fanPressureFvPatchScalarField
+        //- Construct by mapping given fanPressureFvPatchScalarField
         //  onto a new patch
         fanPressureFvPatchScalarField
         (

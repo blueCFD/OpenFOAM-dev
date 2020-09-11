@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ License
 #include "indirectPrimitivePatch.H"
 #include "cellSet.H"
 #include "searchableSurfaces.H"
-#include "polyMeshGeometry.H"
+#include "polyMeshCheck.H"
 #include "IOmanip.H"
 #include "unitConversion.H"
 #include "snappySnapDriver.H"
@@ -634,8 +634,8 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
 
     if (checkCollapse)
     {
-        minArea = readScalar(motionDict.lookup("minArea"));
-        maxNonOrtho = readScalar(motionDict.lookup("maxNonOrtho"));
+        minArea = motionDict.lookup<scalar>("minArea");
+        maxNonOrtho = motionDict.lookup<scalar>("maxNonOrtho");
 
         Info<< "markFacesOnProblemCells :"
             << " Deleting all-anchor surface cells only if"
@@ -1210,10 +1210,10 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             const labelList allFaces(identity(mesh_.nFaces()));
             label nWrongFaces = 0;
 
-            // const scalar minV(readScalar(motionDict.lookup("minVol", true)));
+            // const scalar minV(motionDict.lookup<scalar>("minVol", true));
             // if (minV > -great)
             //{
-            //    polyMeshGeometry::checkFacePyramids
+            //    polyMeshCheck::checkFacePyramids
             //    (
             //        false,
             //        minV,
@@ -1239,10 +1239,10 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             //    nWrongFaces = nNewWrongFaces;
             //}
 
-            scalar minArea(readScalar(motionDict.lookup("minArea")));
+            scalar minArea(motionDict.lookup<scalar>("minArea"));
             if (minArea > -small)
             {
-                polyMeshGeometry::checkFaceArea
+                polyMeshCheck::checkFaceArea
                 (
                     false,
                     minArea,
@@ -1266,17 +1266,16 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
                 nWrongFaces = nNewWrongFaces;
             }
 
-            scalar minDet(readScalar(motionDict.lookup("minDeterminant")));
+            scalar minDet(motionDict.lookup<scalar>("minDeterminant"));
             if (minDet > -1)
             {
-                polyMeshGeometry::checkCellDeterminant
+                polyMeshCheck::checkCellDeterminant
                 (
                     false,
                     minDet,
                     mesh_,
                     mesh_.faceAreas(),
                     allFaces,
-                    polyMeshGeometry::affectedCells(mesh_, allFaces),
                     &wrongFaces
                 );
 

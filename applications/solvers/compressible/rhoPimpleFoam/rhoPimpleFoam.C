@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,8 @@ Description
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "fluidThermo.H"
-#include "turbulentFluidThermoModel.H"
+#include "fluidThermoMomentumTransportModel.H"
+#include "fluidThermophysicalTransportModel.H"
 #include "pimpleControl.H"
 #include "pressureControl.H"
 #include "CorrectPhi.T.H"
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
-    while (runTime.run())
+    while (pimple.run(runTime))
     {
         #include "readDyMControls.H"
 
@@ -140,7 +141,12 @@ int main(int argc, char *argv[])
                 }
             }
 
-            if (pimple.firstPimpleIter() && !pimple.simpleRho())
+            if
+            (
+                !mesh.steady()
+             && !pimple.simpleRho()
+             && pimple.firstPimpleIter()
+            )
             {
                 #include "rhoEqn.H"
             }
@@ -151,23 +157,20 @@ int main(int argc, char *argv[])
             // --- Pressure corrector loop
             while (pimple.correct())
             {
-                if (pimple.consistent())
-                {
-                    #include "pcEqn.H"
-                }
-                else
-                {
-                    #include "pEqn.H"
-                }
+                #include "pEqn.H"
             }
 
             if (pimple.turbCorr())
             {
                 turbulence->correct();
+                thermophysicalTransport->correct();
             }
         }
 
-        rho = thermo.rho();
+        if (!mesh.steady())
+        {
+            rho = thermo.rho();
+        }
 
         runTime.write();
 

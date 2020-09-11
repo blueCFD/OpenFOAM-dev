@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,10 +39,9 @@ SourceFiles
 #define StandardChemistryModel_H
 
 #include "BasicChemistryModel.T.H"
-#include "Reaction.T.H"
+#include "ReactionList.T.H"
 #include "ODESystem.H"
 #include "volFields.H"
-#include "simpleMatrix.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -78,13 +77,13 @@ protected:
     // Protected data
 
         //- Reference to the field of specie mass fractions
-        PtrList<volScalarField>& Y_;
-
-        //- Reactions
-        const PtrList<Reaction<ThermoType>>& reactions_;
+        const PtrList<volScalarField>& Y_;
 
         //- Thermodynamic data of the species
-        const PtrList<ThermoType>& specieThermo_;
+        const PtrList<ThermoType>& specieThermos_;
+
+        //- Reactions
+        const ReactionList<ThermoType> reactions_;
 
         //- Number of species
         label nSpecie_;
@@ -121,7 +120,7 @@ public:
     // Constructors
 
         //- Construct from thermo
-        StandardChemistryModel(ReactionThermo& thermo);
+        StandardChemistryModel(const ReactionThermo& thermo);
 
         //- Disallow default bitwise copy construction
         StandardChemistryModel(const StandardChemistryModel&);
@@ -137,7 +136,7 @@ public:
         inline const PtrList<Reaction<ThermoType>>& reactions() const;
 
         //- Thermodynamic data of the species
-        inline const PtrList<ThermoType>& specieThermo() const;
+        inline const PtrList<ThermoType>& specieThermos() const;
 
         //- The number of species
         virtual inline label nSpecie() const;
@@ -154,21 +153,23 @@ public:
         //- dc/dt = omega, rate of change in concentration, for each species
         virtual void omega
         (
-            const scalarField& c,
-            const scalar T,
             const scalar p,
+            const scalar T,
+            const scalarField& c,
+            const label li,
             scalarField& dcdt
         ) const;
 
 
         //- Return the reaction rate for iReaction and the reference
-        //  species and charateristic times
+        //  species and characteristic times
         virtual scalar omegaI
         (
             label iReaction,
-            const scalarField& c,
-            const scalar T,
             const scalar p,
+            const scalar T,
+            const scalarField& c,
+            const label li,
             scalar& pf,
             scalar& cf,
             label& lRef,
@@ -227,6 +228,7 @@ public:
             (
                 const scalar t,
                 const scalarField& c,
+                const label li,
                 scalarField& dcdt
             ) const;
 
@@ -234,15 +236,17 @@ public:
             (
                 const scalar t,
                 const scalarField& c,
+                const label li,
                 scalarField& dcdt,
                 scalarSquareMatrix& J
             ) const;
 
             virtual void solve
             (
-                scalarField &c,
-                scalar& T,
                 scalar& p,
+                scalar& T,
+                scalarField& c,
+                const label li,
                 scalar& deltaT,
                 scalar& subDeltaT
             ) const = 0;

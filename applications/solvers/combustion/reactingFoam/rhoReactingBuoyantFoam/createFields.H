@@ -51,13 +51,24 @@ volScalarField& p = thermo.p();
 mesh.setFluxRequired(p.name());
 
 Info << "Creating turbulence model.\n" << nl;
-autoPtr<compressible::turbulenceModel> turbulence
+autoPtr<compressible::momentumTransportModel> turbulence
 (
-    compressible::turbulenceModel::New
+    compressible::momentumTransportModel::New
     (
         rho,
         U,
         phi,
+        thermo
+    )
+);
+
+Info<< "Creating thermophysical transport model\n" << endl;
+autoPtr<rhoReactionThermophysicalTransportModel>
+thermophysicalTransport
+(
+    rhoReactionThermophysicalTransportModel::New
+    (
+        turbulence(),
         thermo
     )
 );
@@ -71,6 +82,7 @@ autoPtr<CombustionModel<rhoReactionThermo>> reaction
 #include "readGravitationalAcceleration.H"
 #include "readhRef.H"
 #include "gh.H"
+#include "readpRef.H"
 
 Info<< "Reading field p_rgh\n" << endl;
 volScalarField p_rgh
@@ -87,7 +99,18 @@ volScalarField p_rgh
 );
 
 // Force p_rgh to be consistent with p
-p_rgh = p - rho*gh;
+p_rgh = p - rho*gh - pRef;
+
+pressureControl pressureControl
+(
+    p,
+    p_rgh,
+    rho,
+    pimple.dict(),
+    thermo.incompressible()
+);
+
+mesh.setFluxRequired(p_rgh.name());
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt
@@ -105,9 +128,10 @@ volScalarField dpdt
 Info<< "Creating field kinetic energy K\n" << endl;
 volScalarField K("K", 0.5*magSqr(U));
 
+dimensionedScalar initialMass = fvc::domainIntegrate(rho);
+
 
 multivariateSurfaceInterpolationScheme<scalar>::fieldTable fields;
-
 forAll(Y, i)
 {
     fields.add(Y[i]);
@@ -116,3 +140,8 @@ fields.add(thermo.he());
 
 #include "createMRF.H"
 #include "createFvOptions.H"
+
+
+// This solver does not support moving mesh but it uses the pressure equation
+// of one which does, so we need a dummy face-momentum field
+autoPtr<surfaceVectorField> rhoUf(nullptr);

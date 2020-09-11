@@ -114,7 +114,7 @@ public:
             return relativePermeability_;
         }
 
-        //- Return remenance
+        //- Return remanence
         inline const dimensionedScalar& Mr() const
         {
             return remanence_;

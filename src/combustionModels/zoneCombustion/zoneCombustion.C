@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -104,8 +104,8 @@ template<class ReactionThermo>
 Foam::combustionModels::zoneCombustion<ReactionThermo>::zoneCombustion
 (
     const word& modelType,
-    ReactionThermo& thermo,
-    const compressibleTurbulenceModel& turb,
+    const ReactionThermo& thermo,
+    const compressibleMomentumTransportModel& turb,
     const word& combustionProperties
 )
 :
@@ -137,13 +137,6 @@ Foam::combustionModels::zoneCombustion<ReactionThermo>::~zoneCombustion()
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-template<class ReactionThermo>
-ReactionThermo& Foam::combustionModels::zoneCombustion<ReactionThermo>::thermo()
-{
-    return combustionModelPtr_->thermo();
-}
-
 
 template<class ReactionThermo>
 const ReactionThermo&

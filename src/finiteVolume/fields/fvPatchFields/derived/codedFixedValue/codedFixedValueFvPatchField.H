@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,17 +81,24 @@ SourceFiles
 #define codedFixedValueFvPatchField_H
 
 #include "fixedValueFvPatchFields.H"
-#include "codedBase.H"
+#include "CodedBase.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-// Forward declaration of classes
-class dynamicCode;
-class dynamicCodeContext;
-class IOdictionary;
+/*---------------------------------------------------------------------------*\
+              Class codedFixedValueFvPatchFieldBase Declaration
+\*---------------------------------------------------------------------------*/
+
+class codedFixedValueFvPatchFieldBase
+{
+public:
+
+    ClassNameNoDebug("fixedValueFvPatchField");
+};
+
 
 /*---------------------------------------------------------------------------*\
                  Class codedFixedValueFvPatchField Declaration
@@ -101,60 +108,23 @@ template<class Type>
 class codedFixedValueFvPatchField
 :
     public fixedValueFvPatchField<Type>,
-    public codedBase
+    public CodedBase<codedFixedValueFvPatchFieldBase>
 {
-    // Private static data
-
-        //- The keywords associated with source code
-        static const wordList codeKeys_;
-
-
     // Private Data
-
-        //- Dictionary contents for the boundary condition
-        const dictionary dict_;
-
-        const word name_;
 
         mutable autoPtr<fvPatchField<Type>> redirectPatchFieldPtr_;
 
 
     // Private Member Functions
 
-        const IOdictionary& dict() const;
-
-        //- Set the rewrite vars controlling the Type
-        static void setFieldTemplates(dynamicCode& dynCode);
-
-        //- Get the loaded dynamic libraries
-        virtual dlLibraryTable& libs() const;
-
         //- Adapt the context for the current object
         virtual void prepare(dynamicCode&, const dynamicCodeContext&) const;
-
-        //- Return a description (type + name) for the output
-        virtual string description() const;
 
         //- Clear the ptr to the redirected object
         virtual void clearRedirect() const;
 
-        //- Get the dictionary to initialize the codeContext
-        virtual const dictionary& codeDict() const;
-
-        //- Get the keywords associated with source code
-        virtual const wordList& codeKeys() const;
-
 
 public:
-
-    // Static Data Members
-
-        //- Name of the C code template to be used
-        static const word codeTemplateC;
-
-        //- Name of the H code template to be used
-        static const word codeTemplateH;
-
 
     //- Runtime type information
     TypeName("codedFixedValue");

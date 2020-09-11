@@ -18,21 +18,16 @@ FoamFile
 thermoType
 {
     type            heRhoThermo;
-    mixture         reactingMixture;
+    mixture         multiComponentMixture;
     transport       sutherland;
     thermo          janaf;
-    equationOfState incompressiblePerfectGas;
+    equationOfState perfectGas;
     specie          specie;
-    energy          sensibleInternalEnergy;
+    energy          sensibleEnthalpy;
 }
 
 inertSpecie N2;
 
-chemistryReader foamChemistryReader;
-
-foamChemistryFile "$FOAM_CASE/constant/gas/reactions";
-
-foamChemistryThermoFile "$FOAM_CASE/constant/gas/thermo.compressibleGas";
-
+#include "thermo.compressibleGas"
 
 // ************************************************************************* //

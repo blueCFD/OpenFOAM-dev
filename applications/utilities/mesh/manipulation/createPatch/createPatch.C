@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -224,7 +224,7 @@ void writeCyclicMatchObjs(const fileName& prefix, const polyMesh& mesh)
                 );
             }
 
-            const cyclicPolyPatch& nbrPatch = cycPatch.neighbPatch();
+            const cyclicPolyPatch& nbrPatch = cycPatch.nbrPatch();
             {
                 OFstream str(prefix+nbrPatch.name()+".obj");
                 Pout<< "Writing " << nbrPatch.name()
@@ -257,38 +257,6 @@ void writeCyclicMatchObjs(const fileName& prefix, const polyMesh& mesh)
                 str<< "l " << vertI-1 << ' ' << vertI << nl;
             }
         }
-    }
-}
-
-
-void separateList
-(
-    const vectorField& separation,
-    UList<vector>& field
-)
-{
-    if (separation.size() == 1)
-    {
-        // Single value for all.
-
-        forAll(field, i)
-        {
-            field[i] += separation[0];
-        }
-    }
-    else if (separation.size() == field.size())
-    {
-        forAll(field, i)
-        {
-            field[i] += separation[i];
-        }
-    }
-    else
-    {
-        FatalErrorInFunction
-            << "Sizes of field and transformation not equal. field:"
-            << field.size() << " transformation:" << separation.size()
-            << abort(FatalError);
     }
 }
 
@@ -338,7 +306,7 @@ void syncPoints
                 pointField patchInfo(procPatch.nPoints(), nullValue);
 
                 const labelList& meshPts = procPatch.meshPoints();
-                const labelList& nbrPts = procPatch.neighbPoints();
+                const labelList& nbrPts = procPatch.nbrPoints();
 
                 forAll(nbrPts, pointi)
                 {
@@ -389,15 +357,14 @@ void syncPoints
                 // Null any value which is not on neighbouring processor
                 nbrPatchInfo.setSize(procPatch.nPoints(), nullValue);
 
-                if (!procPatch.parallel())
+                if (procPatch.transform().transformsPosition())
                 {
                     hasTransformation = true;
-                    transformList(procPatch.forwardT(), nbrPatchInfo);
-                }
-                else if (procPatch.separated())
-                {
-                    hasTransformation = true;
-                    separateList(-procPatch.separation(), nbrPatchInfo);
+                    procPatch.transform().transformPosition
+                    (
+                        nbrPatchInfo,
+                        nbrPatchInfo
+                    );
                 }
 
                 const labelList& meshPts = procPatch.meshPoints();
@@ -427,34 +394,33 @@ void syncPoints
 
             const edgeList& coupledPoints = cycPatch.coupledPoints();
             const labelList& meshPts = cycPatch.meshPoints();
-            const cyclicPolyPatch& nbrPatch = cycPatch.neighbPatch();
+            const cyclicPolyPatch& nbrPatch = cycPatch.nbrPatch();
             const labelList& nbrMeshPts = nbrPatch.meshPoints();
 
-            pointField half0Values(coupledPoints.size());
+            pointField patchPoints(coupledPoints.size());
 
             forAll(coupledPoints, i)
             {
                 const edge& e = coupledPoints[i];
                 label point0 = meshPts[e[0]];
-                half0Values[i] = points[point0];
+                patchPoints[i] = points[point0];
             }
 
-            if (!cycPatch.parallel())
+            if (cycPatch.transform().transformsPosition())
             {
                 hasTransformation = true;
-                transformList(cycPatch.reverseT(), half0Values);
-            }
-            else if (cycPatch.separated())
-            {
-                hasTransformation = true;
-                separateList(cycPatch.separation(), half0Values);
+                cycPatch.transform().invTransformPosition
+                (
+                    patchPoints,
+                    patchPoints
+                );
             }
 
             forAll(coupledPoints, i)
             {
                 const edge& e = coupledPoints[i];
                 label point1 = nbrMeshPts[e[1]];
-                points[point1] = half0Values[i];
+                points[point1] = patchPoints[i];
             }
         }
     }
@@ -780,82 +746,6 @@ int main(int argc, char *argv[])
     else
     {
         Info<< "Synchronising points." << nl << endl;
-
-        // This is a bit tricky. Both normal and position might be out and
-        // current separation also includes the normal
-        // ( separation_ = (nf&(Cr - Cf))*nf ).
-
-        // For cyclic patches:
-        // - for separated ones use user specified offset vector
-
-        forAll(mesh.boundaryMesh(), patchi)
-        {
-            const polyPatch& pp = mesh.boundaryMesh()[patchi];
-
-            if (pp.size() && isA<coupledPolyPatch>(pp))
-            {
-                const coupledPolyPatch& cpp =
-                    refCast<const coupledPolyPatch>(pp);
-
-                if (cpp.separated())
-                {
-                    Info<< "On coupled patch " << pp.name()
-                        << " separation[0] was "
-                        << cpp.separation()[0] << endl;
-
-                    if (isA<cyclicPolyPatch>(pp) && pp.size())
-                    {
-                        const cyclicPolyPatch& cycpp =
-                            refCast<const cyclicPolyPatch>(pp);
-
-                        if (cycpp.transform() == cyclicPolyPatch::TRANSLATIONAL)
-                        {
-                            // Force to wanted separation
-                            Info<< "On cyclic translation patch " << pp.name()
-                                << " forcing uniform separation of "
-                                << cycpp.separationVector() << endl;
-                            const_cast<vectorField&>(cpp.separation()) =
-                                pointField(1, cycpp.separationVector());
-                        }
-                        else
-                        {
-                            const cyclicPolyPatch& nbr = cycpp.neighbPatch();
-                            const_cast<vectorField&>(cpp.separation()) =
-                                pointField
-                                (
-                                    1,
-                                    nbr[0].centre(mesh.points())
-                                  - cycpp[0].centre(mesh.points())
-                                );
-                        }
-                    }
-                    Info<< "On coupled patch " << pp.name()
-                        << " forcing uniform separation of "
-                        << cpp.separation() << endl;
-                }
-                else if (!cpp.parallel())
-                {
-                    Info<< "On coupled patch " << pp.name()
-                        << " forcing uniform rotation of "
-                        << cpp.forwardT()[0] << endl;
-
-                    const_cast<tensorField&>
-                    (
-                        cpp.forwardT()
-                    ).setSize(1);
-                    const_cast<tensorField&>
-                    (
-                        cpp.reverseT()
-                    ).setSize(1);
-
-                    Info<< "On coupled patch " << pp.name()
-                        << " forcing uniform rotation of "
-                        << cpp.forwardT() << endl;
-                }
-            }
-        }
-
-        Info<< "Synchronising points." << endl;
 
         pointField newPoints(mesh.points());
 

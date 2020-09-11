@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,10 @@ protected:
         virtual void resetAMI() const;
 
         //- Initialise the calculation of the patch geometry
-        virtual void initGeometry(PstreamBuffers&);
+        virtual void initCalcGeometry(PstreamBuffers&);
+
+        //- Calculate the patch geometry
+        virtual void calcGeometry(PstreamBuffers&);
 
         //- Initialise the patches for moving points
         virtual void initMovePoints(PstreamBuffers& pBufs, const pointField&);
@@ -109,8 +112,7 @@ public:
             const label start,
             const label index,
             const polyBoundaryMesh& bm,
-            const word& patchType,
-            const transformType transform = UNKNOWN
+            const word& patchType
         );
 
         //- Construct from dictionary
@@ -179,7 +181,7 @@ public:
                     index,
                     newSize,
                     newStart,
-                    neighbPatchName(),
+                    nbrPatchName(),
                     nonOverlapPatchName_
                 )
             );
@@ -224,7 +226,7 @@ public:
             inline bool updated() const;
 
             //- Return a reference to the neighbour patch
-            virtual const cyclicACMIPolyPatch& neighbPatch() const;
+            virtual const cyclicACMIPolyPatch& nbrPatch() const;
 
             //- Non-overlapping patch name
             inline const word& nonOverlapPatchName() const;
@@ -244,18 +246,6 @@ public:
             //- Overlap tolerance
             inline static scalar tolerance();
 
-
-        //- Calculate the patch geometry
-        virtual void calcGeometry
-        (
-            const primitivePatch& referPatch,
-            const pointField& thisCtrs,
-            const vectorField& thisAreas,
-            const pointField& thisCc,
-            const pointField& nbrCtrs,
-            const vectorField& nbrAreas,
-            const pointField& nbrCc
-        );
 
         //- Initialize ordering for primitivePatch. Does not
         //  refer to *this (except for name() and type() etc.)

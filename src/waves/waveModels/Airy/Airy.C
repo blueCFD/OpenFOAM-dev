@@ -80,7 +80,9 @@ Foam::tmp<Foam::vector2DField> Foam::waveModels::Airy::vi
     const scalarField z(xz.component(1));
 
     const scalarField phi(angle(t, x));
-    const scalarField kz(k()*z);
+
+    const scalar kzGreat = log(i*great);
+    const scalarField kz(min(max(k()*z, - kzGreat), kzGreat));
 
     if (deep())
     {
@@ -113,8 +115,8 @@ Foam::waveModels::Airy::Airy
 )
 :
     waveModel(db, dict),
-    length_(readScalar(dict.lookup("length"))),
-    phase_(readScalar(dict.lookup("phase"))),
+    length_(dict.lookup<scalar>("length")),
+    phase_(dict.lookup<scalar>("phase")),
     depth_(dict.lookupOrDefault<scalar>("depth", log(2*great)/k()))
 {}
 

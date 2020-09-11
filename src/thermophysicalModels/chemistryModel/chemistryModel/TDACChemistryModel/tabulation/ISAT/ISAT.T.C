@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::ISAT
     {
         dictionary scaleDict(this->coeffsDict_.subDict("scaleFactor"));
         label Ysize = this->chemistry_.Y().size();
-        scalar otherScaleFactor = readScalar(scaleDict.lookup("otherSpecies"));
+        scalar otherScaleFactor = scaleDict.lookup<scalar>("otherSpecies");
         for (label i=0; i<Ysize; i++)
         {
             if (!scaleDict.found(this->chemistry_.Y()[i].member()))
@@ -91,17 +91,14 @@ Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::ISAT
             else
             {
                 scaleFactor_[i] =
-                    readScalar
-                    (
-                        scaleDict.lookup(this->chemistry_.Y()[i].member())
-                    );
+                    scaleDict.lookup<scalar>(this->chemistry_.Y()[i].member());
             }
         }
-        scaleFactor_[Ysize] = readScalar(scaleDict.lookup("Temperature"));
-        scaleFactor_[Ysize + 1] = readScalar(scaleDict.lookup("Pressure"));
+        scaleFactor_[Ysize] = scaleDict.lookup<scalar>("Temperature");
+        scaleFactor_[Ysize + 1] = scaleDict.lookup<scalar>("Pressure");
         if (this->variableTimeStep())
         {
-            scaleFactor_[Ysize + 2] = readScalar(scaleDict.lookup("deltaT"));
+            scaleFactor_[Ysize + 2] = scaleDict.lookup<scalar>("deltaT");
         }
     }
 
@@ -341,6 +338,7 @@ void Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::computeA
 (
     scalarSquareMatrix& A,
     const scalarField& Rphiq,
+    const label li,
     const scalar rhoi,
     const scalar dt
 )
@@ -355,7 +353,7 @@ void Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::computeA
         {
             s2c = this->chemistry_.simplifiedToCompleteIndex()[i];
         }
-        Rcq[i] = rhoi*Rphiq[s2c]/this->chemistry_.specieThermo()[s2c].W();
+        Rcq[i] = rhoi*Rphiq[s2c]/this->chemistry_.specieThermos()[s2c].W();
     }
     Rcq[speciesNumber] = Rphiq[Rphiq.size() - nAdditionalEqns_];
     Rcq[speciesNumber + 1] = Rphiq[Rphiq.size() - nAdditionalEqns_ + 1];
@@ -374,7 +372,7 @@ void Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::computeA
     // A = C(psi0,t0)/(I-dt*J(psi(t0+dt)))
     // where C(psi0,t0) = I
     scalarField dcdt(speciesNumber + 2, Zero);
-    this->chemistry_.jacobian(runTime_.value(), Rcq, dcdt, A);
+    this->chemistry_.jacobian(runTime_.value(), Rcq, li, dcdt, A);
 
     // The jacobian is computed according to the molar concentration
     // the following conversion allows the code to use A with mass fraction
@@ -395,16 +393,16 @@ void Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::computeA
                 sj = this->chemistry_.simplifiedToCompleteIndex()[j];
             }
             A(i, j) *=
-              -dt*this->chemistry_.specieThermo()[si].W()
-               /this->chemistry_.specieThermo()[sj].W();
+              -dt*this->chemistry_.specieThermos()[si].W()
+               /this->chemistry_.specieThermos()[sj].W();
         }
 
         A(i, i) += 1;
         // Columns for pressure and temperature
         A(i, speciesNumber) *=
-            -dt*this->chemistry_.specieThermo()[si].W()/rhoi;
+            -dt*this->chemistry_.specieThermos()[si].W()/rhoi;
         A(i, speciesNumber + 1) *=
-            -dt*this->chemistry_.specieThermo()[si].W()/rhoi;
+            -dt*this->chemistry_.specieThermos()[si].W()/rhoi;
     }
 
     // For the temperature and pressure lines, ddc(dTdt)
@@ -418,9 +416,9 @@ void Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::computeA
         }
 
         A(speciesNumber, i) *=
-            -dt*rhoi/this->chemistry_.specieThermo()[si].W();
+            -dt*rhoi/this->chemistry_.specieThermos()[si].W();
         A(speciesNumber + 1, i) *=
-            -dt*rhoi/this->chemistry_.specieThermo()[si].W();
+            -dt*rhoi/this->chemistry_.specieThermos()[si].W();
     }
 
     A(speciesNumber, speciesNumber) = -dt*A(speciesNumber, speciesNumber) + 1;
@@ -536,6 +534,7 @@ Foam::label Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::add
 (
     const scalarField& phiq,
     const scalarField& Rphiq,
+    const label li,
     const scalar rho,
     const scalar deltaT
 )
@@ -614,7 +613,7 @@ Foam::label Foam::chemistryTabulationMethods::ISAT<CompType, ThermoType>::add
     // Compute the A matrix needed to store the chemPoint.
     label ASize = this->chemistry_.nEqns() + nAdditionalEqns_ - 2;
     scalarSquareMatrix A(ASize, Zero);
-    computeA(A, Rphiq, rho, deltaT);
+    computeA(A, Rphiq, li, rho, deltaT);
 
     chemisTree().insertNewLeaf
     (

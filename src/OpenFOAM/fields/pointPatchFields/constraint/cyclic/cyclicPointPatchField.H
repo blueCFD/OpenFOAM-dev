@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -127,7 +127,7 @@ public:
 
     // Member Functions
 
-        //- Constraint handling
+        // Constraint handling
 
             //- Return the constraint type this pointPatchField implements
             virtual const word& constraintType() const
@@ -135,24 +135,13 @@ public:
                 return cyclicPointPatch::typeName;
             }
 
-        //- Cyclic coupled interface functions
 
-            //- Does the patch field perform the transformation
-            virtual bool doTransform() const
-            {
-                return !(cyclicPatch_.parallel() || pTraits<Type>::rank == 0);
-            }
+        // Cyclic coupled interface functions
 
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
+            //- Return transformation between the coupled patches
+            virtual const transformer& transform() const
             {
-                return cyclicPatch_.forwardT();
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return cyclicPatch_.reverseT();
+                return cyclicPatch_.transform();
             }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,7 +111,11 @@ protected:
         //- Limiting viscosity when lambda = 0
         dimensionedScalar muInf_;
 
-        //- Model coeffiicient
+        bool BinghamPlastic_;
+
+        dimensionedScalar tauy_;
+
+        //- Model coefficient
         dimensionedScalar K_;
 
         //- Structural parameter

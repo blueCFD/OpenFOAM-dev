@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -43,7 +43,7 @@ Modifications
 \*---------------------------------------------------------------------------*/
 
 #include "patchWriter.H"
-#include "writeFuns.H"
+#include "vtkWriteFieldOps.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -70,11 +70,11 @@ Foam::patchWriter::patchWriter
     // Write header
     if (patchIDs_.size() == 1)
     {
-        writeFuns::writeHeader(os_, binary_, patches[patchIDs_[0]].name());
+        vtkWriteOps::writeHeader(os_, binary_, patches[patchIDs_[0]].name());
     }
     else
     {
-        writeFuns::writeHeader(os_, binary_, "patches");
+        vtkWriteOps::writeHeader(os_, binary_, "patches");
     }
     os_ << "DATASET POLYDATA" << std::endl;
 
@@ -104,9 +104,9 @@ Foam::patchWriter::patchWriter
     {
         const polyPatch& pp = patches[patchIDs_[i]];
 
-        writeFuns::insert(pp.localPoints(), ptField);
+        vtkWriteOps::insert(pp.localPoints(), ptField);
     }
-    writeFuns::write(os_, binary_, ptField);
+    vtkWriteOps::write(os_, binary_, ptField);
 
     os_ << "POLYGONS " << nFaces_ << ' ' << nFaceVerts << std::endl;
 
@@ -123,11 +123,11 @@ Foam::patchWriter::patchWriter
             const face& f = pp.localFaces()[facei];
 
             vertLabels.append(f.size());
-            writeFuns::insert(f + offset, vertLabels);
+            vtkWriteOps::insert(f + offset, vertLabels);
         }
         offset += pp.nPoints();
     }
-    writeFuns::write(os_, binary_, vertLabels);
+    vtkWriteOps::write(os_, binary_, vertLabels);
 }
 
 
@@ -149,10 +149,10 @@ void Foam::patchWriter::writePatchIDs()
 
         if (!isA<emptyPolyPatch>(pp))
         {
-            writeFuns::insert(scalarField(pp.size(), patchi), fField);
+            vtkWriteOps::insert(scalarField(pp.size(), patchi), fField);
         }
     }
-    writeFuns::write(os_, binary_, fField);
+    vtkWriteOps::write(os_, binary_, fField);
 }
 
 

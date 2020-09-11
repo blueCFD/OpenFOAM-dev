@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -120,37 +120,19 @@ public:
             virtual const volScalarField& delta() const = 0;
 
             //- Return the film coverage, 1 = covered, 0 = uncovered / []
-            virtual const volScalarField& alpha() const = 0;
+            virtual const volScalarField& coverage() const = 0;
 
             //- Return the film velocity [m/s]
             virtual const volVectorField& U() const = 0;
 
             //- Return the film surface velocity [m/s]
-            virtual const volVectorField& Us() const = 0;
+            virtual const volVectorField::Internal& Us() const = 0;
 
             //- Return the film wall velocity [m/s]
-            virtual const volVectorField& Uw() const = 0;
+            virtual const volVectorField::Internal& Uw() const = 0;
 
             //- Return the film density [kg/m^3]
             virtual const volScalarField& rho() const = 0;
-
-            //- Return the film mean temperature [K]
-            virtual const volScalarField& T() const = 0;
-
-            //- Return the film surface temperature [K]
-            virtual const volScalarField& Ts() const = 0;
-
-            //- Return the film wall temperature [K]
-            virtual const volScalarField& Tw() const = 0;
-
-            //- Return the film surface temperature [J/kg]
-            virtual const volScalarField& hs() const = 0;
-
-            //- Return the film specific heat capacity [J/kg/K]
-            virtual const volScalarField& Cp() const = 0;
-
-            //- Return the film thermal conductivity [W/m/K]
-            virtual const volScalarField& kappa() const = 0;
 
             //- Return the film surface tension [N/m]
             virtual const volScalarField& sigma() const = 0;

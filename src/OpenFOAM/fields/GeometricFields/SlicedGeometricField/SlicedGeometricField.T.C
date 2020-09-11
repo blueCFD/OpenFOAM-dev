@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -400,6 +400,66 @@ Internal::~Internal()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template
+<
+    class Type,
+    template<class> class PatchField,
+    template<class> class SlicedPatchField,
+    class GeoMesh
+>
+Foam::tmp<Foam::Field<Type>>
+Foam::SlicedGeometricField<Type, PatchField, SlicedPatchField, GeoMesh>::
+splice() const
+{
+    const Mesh& mesh = this->mesh();
+
+    label completeSize = GeoMesh::size(mesh);
+
+    forAll(mesh.boundaryMesh(), patchi)
+    {
+        completeSize += mesh.boundaryMesh()[patchi].size();
+    }
+
+    tmp<Field<Type>> tCompleteField(new Field<Type>(completeSize));
+    Field<Type>& completeField(tCompleteField.ref());
+
+    typename Field<Type>::subField(completeField, GeoMesh::size(mesh))
+        = this->primitiveField();
+
+    label start = GeoMesh::size(mesh);
+
+    forAll(mesh.boundaryMesh(), patchi)
+    {
+        if
+        (
+            mesh.boundary()[patchi].size()
+         == mesh.boundaryMesh()[patchi].size()
+        )
+        {
+            typename Field<Type>::subField
+            (
+                completeField,
+                mesh.boundary()[patchi].size(),
+                start
+            ) = this->boundaryField()[patchi];
+        }
+        else
+        {
+            typename Field<Type>::subField
+            (
+                completeField,
+                mesh.boundaryMesh()[patchi].size(),
+                start
+            ) = Zero;
+        }
+
+        start += mesh.boundaryMesh()[patchi].size();
+    }
+
+    return tCompleteField;
+}
+
 
 template
 <

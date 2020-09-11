@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -525,12 +525,7 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::initialise
 
         surfaceWriterPtr_.reset
         (
-            surfaceWriter::New
-            (
-                surfaceFormat,
-                dict.subOrEmptyDict("formatOptions").
-                    subOrEmptyDict(surfaceFormat)
-            ).ptr()
+            surfaceWriter::New(surfaceFormat, dict).ptr()
         );
     }
 }
@@ -766,8 +761,7 @@ bool Foam::functionObjects::fieldValues::surfaceFieldValue::write()
                 outputDir(),
                 regionTypeNames_[regionType_] + ("_" + regionName_),
                 points,
-                faces,
-                false
+                faces
             );
         }
     }

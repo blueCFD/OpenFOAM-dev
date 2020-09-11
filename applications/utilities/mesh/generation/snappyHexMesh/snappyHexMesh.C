@@ -155,7 +155,7 @@ autoPtr<refinementSurfaces> createRefinementSurfaces
                 shapeDict.optionalSubDict(scsFuncName + "Coeffs");
 
             const scalar surfaceCellSize =
-                readScalar(scsDict.lookup("surfaceCellSizeCoeff"));
+                scsDict.lookup<scalar>("surfaceCellSizeCoeff");
 
             const label refLevel = sizeCoeffToRefinement
             (
@@ -242,10 +242,7 @@ autoPtr<refinementSurfaces> createRefinementSurfaces
                             );
 
                         const scalar surfaceCellSize =
-                            readScalar
-                            (
-                                scsDict.lookup("surfaceCellSizeCoeff")
-                            );
+                                scsDict.lookup<scalar>("surfaceCellSizeCoeff");
 
                         const label refLevel = sizeCoeffToRefinement
                         (
@@ -777,7 +774,7 @@ int main(int argc, char *argv[])
     const scalar mergeDist = getMergeDistance
     (
         mesh,
-        readScalar(meshDict.lookup("mergeTolerance"))
+        meshDict.lookup<scalar>("mergeTolerance")
     );
 
     const Switch keepPatches(meshDict.lookupOrDefault("keepPatches", false));
@@ -937,7 +934,7 @@ int main(int argc, char *argv[])
 
         // Calculate current ratio of hex cells v.s. wanted cell size
         const scalar defaultCellSize =
-            readScalar(motionDict.lookup("defaultCellSize"));
+            motionDict.lookup<scalar>("defaultCellSize");
 
         const scalar initialCellSize = ::pow(meshPtr().V()[0], 1.0/3.0);
 

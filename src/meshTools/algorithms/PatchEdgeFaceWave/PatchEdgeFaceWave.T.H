@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ SourceFiles
 #include "scalarField.H"
 #include "PackedBoolList.H"
 #include "PrimitivePatch.T.H"
-#include "vectorTensorTransform.H"
+#include "transformer.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -333,7 +333,7 @@ public:
 
     void operator()
     (
-        const vectorTensorTransform& vt,
+        const transformer& vt,
         const bool forward,
         List<Type>& fld
     ) const
@@ -342,14 +342,14 @@ public:
         {
             forAll(fld, i)
             {
-                fld[i].transform(mesh_, patch_, vt.R(), tol_, td_);
+                fld[i].transform(mesh_, patch_, vt.T(), tol_, td_);
             }
         }
         else
         {
             forAll(fld, i)
             {
-                fld[i].transform(mesh_, patch_, vt.R().T(), tol_, td_);
+                fld[i].transform(mesh_, patch_, vt.T().T(), tol_, td_);
             }
         }
     }

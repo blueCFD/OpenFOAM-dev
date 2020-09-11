@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -115,9 +115,17 @@ inline Foam::scalar Foam::linear<Specie>::Cv(scalar p, scalar T) const
 
 
 template<class Specie>
-inline Foam::scalar Foam::linear<Specie>::S(scalar p, scalar T) const
+inline Foam::scalar Foam::linear<Specie>::Sp(scalar p, scalar T) const
 {
     return -log((rho0_ + psi_*p)/(rho0_ + psi_*Pstd))/(T*psi_);
+}
+
+
+template<class Specie>
+inline Foam::scalar Foam::linear<Specie>::Sv(scalar p, scalar T) const
+{
+    NotImplemented;
+    return 0;
 }
 
 
@@ -150,17 +158,7 @@ inline void Foam::linear<Specie>::operator+=
     const linear<Specie>& pf
 )
 {
-    scalar Y1 = this->Y();
-    Specie::operator+=(pf);
-
-    if (mag(this->Y()) > small)
-    {
-        Y1 /= this->Y();
-        const scalar Y2 = pf.Y()/this->Y();
-
-        psi_ = Y1*psi_ + Y2*pf.psi_;
-        rho0_ = Y1*rho0_ + Y2*pf.rho0_;
-    }
+    NotImplemented;
 }
 
 
@@ -180,33 +178,8 @@ inline Foam::linear<Specie> Foam::operator+
     const linear<Specie>& pf2
 )
 {
-    Specie sp
-    (
-        static_cast<const Specie&>(pf1)
-      + static_cast<const Specie&>(pf2)
-    );
-
-    if (mag(sp.Y()) < small)
-    {
-        return linear<Specie>
-        (
-            sp,
-            pf1.psi_,
-            pf1.rho0_
-        );
-    }
-    else
-    {
-        const scalar Y1 = pf1.Y()/sp.Y();
-        const scalar Y2 = pf2.Y()/sp.Y();
-
-        return linear<Specie>
-        (
-            sp,
-            Y1*pf1.psi_ + Y2*pf2.psi_,
-            Y1*pf1.rho0_ + Y2*pf2.rho0_
-        );
-    }
+    NotImplemented;
+    return pf1;
 }
 
 
@@ -233,21 +206,8 @@ inline Foam::linear<Specie> Foam::operator==
     const linear<Specie>& pf2
 )
 {
-    Specie sp
-    (
-        static_cast<const Specie&>(pf1)
-     == static_cast<const Specie&>(pf2)
-    );
-
-    const scalar Y1 = pf1.Y()/sp.Y();
-    const scalar Y2 = pf2.Y()/sp.Y();
-
-    return linear<Specie>
-    (
-        sp,
-        Y2*pf2.psi_  - Y1*pf1.psi_,
-        Y2*pf2.rho0_ - Y1*pf1.rho0_
-    );
+    NotImplemented;
+    return pf1;
 }
 
 

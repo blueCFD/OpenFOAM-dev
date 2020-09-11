@@ -14,7 +14,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "$FOAM_CASE/constant/initialConditions";
+#include "$FOAM_CASE/constant/initialConditions"
 
 dimensions      [1 -1 -2 0 0 0 0];
 
@@ -25,13 +25,13 @@ boundaryField
     outlet
     {
         type            calculated;
-        value           uniform $pInitial;
+        value           $internalField;
     }
 
     inlet
     {
         type            calculated;
-        value           uniform $pInitial;
+        value           $internalField;
     }
 
     wall

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,6 @@ License
 #include "polyTopoChange.H"
 #include "mapDistributePolyMesh.H"
 #include "Cloud.T.H"
-//#include "globalIndex.H"
 #include "OBJstream.H"
 #include "cellSet.H"
 #include "treeDataCell.H"
@@ -809,7 +808,13 @@ Foam::label Foam::meshRefinement::markInternalRefinement
 
     // Do test to see whether cells is inside/outside shell with higher level
     labelList maxLevel;
-    shells_.findHigherLevel(testCc, testLevels, maxLevel);
+    shells_.findHigherLevel
+    (
+        testCc,
+        testLevels,
+        meshCutter().level0EdgeLength(),
+        maxLevel
+    );
 
     // Mark for refinement. Note that we didn't store the original cellID so
     // now just reloop in same order.

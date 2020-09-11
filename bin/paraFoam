@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -75,10 +75,12 @@ error() {
 }
 
 pvExec () {
-    _opt=""
-    [ "$ParaView_GL" = mesa ] && _opt="--mesa"
-
-    paraview $_opt "$@"
+    if [ "$ParaView_GL" = mesa ]
+    then
+        LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ParaView_LIB_DIR/mesa paraview "$@"
+    else
+        paraview "$@"
+    fi
 }
 
 noPVReader () {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -37,16 +37,11 @@ Modifications
 
 #include "writePointSet.H"
 #include "OFstream.H"
-#include "writeFuns.H"
+#include "vtkWriteOps.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-
-// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
-
-void writePointSet
+void Foam::vtkWriteOps::writePointSet
 (
     const bool binary,
     const primitiveMesh& mesh,
@@ -90,9 +85,9 @@ void writePointSet
 
     DynamicList<floatScalar> ptField(3*pointLabels.size());
 
-    writeFuns::insert(setPoints, ptField);
+    vtkWriteOps::insert(setPoints, ptField);
 
-    writeFuns::write(pStream, binary, ptField);
+    vtkWriteOps::write(pStream, binary, ptField);
 
 
     //-----------------------------------------------------------------
@@ -110,11 +105,8 @@ void writePointSet
     // Cell ids first
     pStream << "pointID 1 " << pointLabels.size() << " int" << std::endl;
 
-    writeFuns::write(pStream, binary, pointLabels);
+    vtkWriteOps::write(pStream, binary, pointLabels);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

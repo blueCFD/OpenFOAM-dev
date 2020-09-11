@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,15 +117,15 @@ Foam::automatic::automatic
     internalClosenessFile_(coeffsDict_.lookup("internalClosenessFile")),
     internalClosenessCellSizeCoeff_
     (
-        readScalar(coeffsDict_.lookup("internalClosenessCellSizeCoeff"))
+        coeffsDict_.lookup<scalar>("internalClosenessCellSizeCoeff")
     ),
     curvatureCellSizeCoeff_
     (
-        readScalar(coeffsDict_.lookup("curvatureCellSizeCoeff"))
+        coeffsDict_.lookup<scalar>("curvatureCellSizeCoeff")
     ),
     maximumCellSize_
     (
-        readScalar(coeffsDict_.lookup("maximumCellSizeCoeff"))*defaultCellSize
+        coeffsDict_.lookup<scalar>("maximumCellSizeCoeff")*defaultCellSize
     )
 {}
 
@@ -286,7 +286,10 @@ Foam::tmp<Foam::triSurfacePointScalarField> Foam::automatic::load()
             faces[fI] = surface_.triSurface::operator[](fI).triFaceFace();
         }
 
-        vtkSurfaceWriter().write
+        vtkSurfaceWriter
+        (
+            surface_.searchableSurface::time().writeFormat()
+        ).write
         (
             surface_.searchableSurface::time().constant()/"triSurface",
             surfaceName_.lessExt().name(),
@@ -294,7 +297,6 @@ Foam::tmp<Foam::triSurfacePointScalarField> Foam::automatic::load()
             faces,
             "cellSize",
             pointCellSize,
-            true,
             true
         );
     }

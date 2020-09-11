@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,6 +37,7 @@ SourceFiles
 
 #include "basicSpecieMixture.H"
 #include "HashPtrTable.T.H"
+#include "specieElement.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,8 +55,13 @@ class multiComponentMixture
 {
     // Private Data
 
-        //- Species data
-        PtrList<ThermoType> speciesData_;
+        //- List of specie thermo
+        PtrList<ThermoType> specieThermos_;
+
+        typedef HashTable<List<specieElement>> speciesCompositionTable;
+
+        //- Table of species composition
+        speciesCompositionTable speciesComposition_;
 
         //- Temporary storage for the cell/face mixture thermo data
         mutable ThermoType mixture_;
@@ -67,15 +73,18 @@ class multiComponentMixture
 
     // Private Member Functions
 
-        //- Construct the species data from the given dictionary and return the
-        //  data for the first specie to initialise the mixture thermo data
-        const ThermoType& constructSpeciesData(const dictionary& thermoDict);
+        //- Read the species data from the given dictionary and return
+        PtrList<ThermoType> readSpeciesData(const dictionary& thermoDict) const;
+
+        //- Read the species composition from the given dictionary and return
+        speciesCompositionTable readSpeciesComposition
+        (
+            const dictionary& thermoDict,
+            const speciesTable& speciesTable_
+        ) const;
 
         //- Correct the mass fractions to sum to 1
         void correctMassFractions();
-
-        //- Construct as copy (not implemented)
-        multiComponentMixture(const multiComponentMixture<ThermoType>&);
 
 
 public:
@@ -86,19 +95,14 @@ public:
 
     // Constructors
 
-        //- Construct from dictionary, specie names, thermo database,
-        //  mesh and phase name
-        multiComponentMixture
-        (
-            const dictionary&,
-            const wordList& specieNames,
-            const HashPtrTable<ThermoType>& thermoData,
-            const fvMesh&,
-            const word&
-        );
-
         //- Construct from dictionary, mesh and phase name
         multiComponentMixture(const dictionary&, const fvMesh&, const word&);
+
+        //- Disallow default bitwise copy construction
+        multiComponentMixture
+        (
+            const multiComponentMixture<ThermoType>&
+        ) = delete;
 
 
     //- Destructor
@@ -112,6 +116,18 @@ public:
         static word typeName()
         {
             return "multiComponentMixture<" + ThermoType::typeName() + '>';
+        }
+
+        //- Return the raw specie thermodynamic data
+        const PtrList<ThermoType>& specieThermos() const
+        {
+            return specieThermos_;
+        }
+
+        //- Return the table of species composition
+        const speciesCompositionTable& specieComposition() const
+        {
+            return speciesComposition_;
         }
 
         const ThermoType& cellMixture(const label celli) const;
@@ -137,19 +153,13 @@ public:
             const label facei
         ) const;
 
-        //- Return the raw specie thermodynamic data
-        const PtrList<ThermoType>& speciesData() const
-        {
-            return speciesData_;
-        }
-
         //- Read dictionary
         void read(const dictionary&);
 
         //- Return thermo based on index
-        inline const ThermoType& getLocalThermo(const label speciei) const
+        inline const ThermoType& specieThermo(const label speciei) const
         {
-            return speciesData_[speciei];
+            return specieThermos_[speciei];
         }
 };
 

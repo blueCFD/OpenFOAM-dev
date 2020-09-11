@@ -58,7 +58,7 @@ Foam::label Foam::dynamicRefineFvMesh::count
             n++;
         }
 
-        // debug also serves to get-around Clang compiler trying to optimsie
+        // debug also serves to get-around Clang compiler trying to optimise
         // out this forAll loop under O3 optimisation
         if (debug)
         {
@@ -1183,7 +1183,7 @@ bool Foam::dynamicRefineFvMesh::update()
         dynamicMeshDict().optionalSubDict(typeName + "Coeffs")
     );
 
-    label refineInterval = readLabel(refineDict.lookup("refineInterval"));
+    label refineInterval = refineDict.lookup<label>("refineInterval");
 
     bool hasChanged = false;
 
@@ -1207,7 +1207,7 @@ bool Foam::dynamicRefineFvMesh::update()
 
     if (time().timeIndex() > 0 && time().timeIndex() % refineInterval == 0)
     {
-        label maxCells = readLabel(refineDict.lookup("maxCells"));
+        label maxCells = refineDict.lookup<label>("maxCells");
 
         if (maxCells <= 0)
         {
@@ -1218,7 +1218,7 @@ bool Foam::dynamicRefineFvMesh::update()
                 << exit(FatalError);
         }
 
-        label maxRefinement = readLabel(refineDict.lookup("maxRefinement"));
+        label maxRefinement = refineDict.lookup<label>("maxRefinement");
 
         if (maxRefinement <= 0)
         {
@@ -1234,16 +1234,16 @@ bool Foam::dynamicRefineFvMesh::update()
         const volScalarField& vFld = lookupObject<volScalarField>(fieldName);
 
         const scalar lowerRefineLevel =
-            readScalar(refineDict.lookup("lowerRefineLevel"));
+            refineDict.lookup<scalar>("lowerRefineLevel");
         const scalar upperRefineLevel =
-            readScalar(refineDict.lookup("upperRefineLevel"));
+            refineDict.lookup<scalar>("upperRefineLevel");
         const scalar unrefineLevel = refineDict.lookupOrDefault<scalar>
         (
             "unrefineLevel",
             great
         );
         const label nBufferLayers =
-            readLabel(refineDict.lookup("nBufferLayers"));
+            refineDict.lookup<label>("nBufferLayers");
 
         // Cells marked for refinement or otherwise protected from unrefinement.
         PackedBoolList refineCell(nCells());

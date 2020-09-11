@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -523,7 +523,7 @@ Foam::particle::particle
     tetFacei_(tetFacei),
     tetPti_(tetPti),
     facei_(-1),
-    stepFraction_(0.0),
+    stepFraction_(1.0),
     behind_(0.0),
     nBehind_(0),
     origProc_(Pstream::myProcNo()),
@@ -544,7 +544,7 @@ Foam::particle::particle
     tetFacei_(-1),
     tetPti_(-1),
     facei_(-1),
-    stepFraction_(0.0),
+    stepFraction_(1.0),
     behind_(0.0),
     nBehind_(0),
     origProc_(Pstream::myProcNo()),
@@ -915,7 +915,8 @@ Foam::scalar Foam::particle::trackToMovingTri
                     const scalar detAH = detAEqn.value(mu[j]);
 
                     Info<< "Hit on tet face " << i << " at local coordinate "
-                        << yH/detAH << ", " << mu[j]*detA[0]*100 << "% of the "
+                        << (std::isnormal(detAH) ? name(yH/detAH) : "???")
+                        << ", " << mu[j]*detA[0]*100 << "% of the "
                         << "way along the track" << endl;
                 }
 
@@ -1017,7 +1018,7 @@ Foam::scalar Foam::particle::trackToTri
     label& tetTriI
 )
 {
-    if (mesh_.moving())
+    if (mesh_.moving() && (stepFraction_ != 1 || fraction != 0))
     {
         return trackToMovingTri(displacement, fraction, tetTriI);
     }
@@ -1043,11 +1044,7 @@ Foam::vector Foam::particle::deviationFromMeshCentre() const
 }
 
 
-void Foam::particle::transformProperties(const tensor&)
-{}
-
-
-void Foam::particle::transformProperties(const vector&)
+void Foam::particle::transformProperties(const transformer&)
 {}
 
 
@@ -1067,31 +1064,16 @@ void Foam::particle::correctAfterParallelTransfer
     const coupledPolyPatch& ppp =
         refCast<const coupledPolyPatch>(mesh_.boundaryMesh()[patchi]);
 
-    if (!ppp.parallel())
+    if (ppp.transform().transformsPosition())
     {
-        const tensor& T =
-        (
-            ppp.forwardT().size() == 1
-          ? ppp.forwardT()[0]
-          : ppp.forwardT()[facei_]
-        );
-        transformProperties(T);
-    }
-    else if (ppp.separated())
-    {
-        const vector& s =
-        (
-            (ppp.separation().size() == 1)
-          ? ppp.separation()[0]
-          : ppp.separation()[facei_]
-        );
-        transformProperties(-s);
+        transformProperties(ppp.transform());
     }
 
     // Set the topology
     celli_ = ppp.faceCells()[facei_];
     facei_ += ppp.start();
     tetFacei_ = facei_;
+
     // Faces either side of a coupled patch are numbered in opposite directions
     // as their normals both point away from their connected cells. The tet
     // point therefore counts in the opposite direction from the base point.
@@ -1109,7 +1091,7 @@ void Foam::particle::correctAfterParallelTransfer
 
 void Foam::particle::prepareForInteractionListReferral
 (
-    const vectorTensorTransform& transform
+    const transformer& transform
 )
 {
     // Get the transformed position
@@ -1125,10 +1107,9 @@ void Foam::particle::prepareForInteractionListReferral
     coordinates_ = barycentric(1 - cmptSum(pos), pos.x(), pos.y(), pos.z());
 
     // Transform the properties
-    transformProperties(- transform.t());
-    if (transform.hasR())
+    if (transform.transformsPosition())
     {
-        transformProperties(transform.R().T());
+        transformProperties(inv(transform));
     }
 }
 
@@ -1151,7 +1132,7 @@ void Foam::particle::correctAfterInteractionListReferral(const label celli)
     // so this approximate topology is good enough. By using the nearby cell we
     // minimize the error associated with the incorrect topology.
     coordinates_ = barycentric(1, 0, 0, 0);
-    if (mesh_.moving())
+    if (mesh_.moving() && stepFraction_ != 1)
     {
         Pair<vector> centre;
         FixedList<scalar, 4> detA;

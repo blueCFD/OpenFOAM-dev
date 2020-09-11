@@ -14,7 +14,7 @@ autoPtr<psiuReactionThermo> pThermo
 psiuReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "ha", "ea");
 
-basicSpecieMixture& composition = thermo.composition();
+basicCombustionMixture& composition = thermo.composition();
 
 volScalarField rho
 (
@@ -64,6 +64,16 @@ autoPtr<compressible::RASModel> turbulence
     )
 );
 
+Info<< "Creating thermophysical transport model\n" << endl;
+autoPtr<RASFluidThermophysicalTransportModel>
+thermophysicalTransport
+(
+    RASFluidThermophysicalTransportModel::New
+    (
+        turbulence(),
+        thermo
+    )
+);
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt

@@ -6,9 +6,11 @@
 #     Splice lines in tables separated by the \\\n continuation tag
 #------------------------------------------------------------------------------
 
-/\\\\/{
+:x
+/\\\\$/{
 N
 s/\\\\\n */ /
+bx
 }
 
 

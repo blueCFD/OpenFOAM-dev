@@ -1,9 +1,15 @@
 EXE_INC = \
-    -I../multiphaseSystem/lnInclude \
-    -I$(LIB_SRC)/finiteVolume/lnInclude
+    -I../phaseSystems/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/phaseCompressible/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
 
 LIB_LIBS = \
-    -lmultiphaseSystem
+    -lfluidThermophysicalModels \
+    -lspecie
 
 LIB_LIBS += \
     -lfiniteVolume

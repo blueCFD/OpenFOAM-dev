@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 blueCAPE Lda 2016-07-28: Added in hack to workaround issues with ANSI strict.
@@ -69,7 +69,7 @@ Description
     randomiseInitialGrid yes;
 
     // Perturbation fraction, 1 = cell-size.
-    randomPurturbation   0.1;
+    randomPerturbation   0.1;
 
     // Number of relaxation iterations.
     nIterations      5;
@@ -200,7 +200,6 @@ class CV2D
         //- Temporary storage for a dual-cell
         static const label maxNvert = 20;
         mutable point2D vertices[maxNvert+1];
-        mutable vector2D edges[maxNvert+1];
 
 
     // Private Member Functions

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,7 @@ Usage
     \table
         nBin         | number of data bins     | yes         |
         direction    | direction along which bins are defined | yes |
-        cumulative   | bin data accumulated with incresing distance | yes |
+        cumulative   | bin data accumulated with increasing distance | yes |
     \endtable
 
 Note
@@ -88,11 +88,12 @@ Note
     \endverbatim
     or
     \verbatim
-        coordinateSystem
+        origin (0 0 0);
+        coordinateRotation
         {
-            origin  (0 0 0);
-            e3      (0 0 1);
-            e1      (1 0 0);
+            type axesRotation;
+            e1 (1 0 0);
+            e3 (0 0 1);
         }
     \endverbatim
 
@@ -232,7 +233,7 @@ protected:
         void initialise();
 
         //- Return the effective viscous stress (laminar + turbulent).
-        tmp<volSymmTensorField> devRhoReff() const;
+        tmp<volSymmTensorField> devTau() const;
 
         //- Dynamic viscosity field
         tmp<volScalarField> mu() const;

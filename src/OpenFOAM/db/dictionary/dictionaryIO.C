@@ -24,8 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "dictionary.H"
+#include "IOobject.T.H"
+#include "inputSyntaxEntry.H"
 #include "inputModeEntry.H"
-#include "regExp.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -36,21 +37,14 @@ Foam::dictionary::dictionary
     Istream& is
 )
 :
-    dictionaryName(parentDict.name() + '.' + name),
+    dictionaryName
+    (
+        parentDict.name().size()
+      ? parentDict.name()/name
+      : name
+    ),
     parent_(parentDict)
 {
-    read(is);
-}
-
-
-Foam::dictionary::dictionary(Istream& is)
-:
-    dictionaryName(is.name()),
-    parent_(dictionary::null)
-{
-    // Reset input mode as this is a "top-level" dictionary
-    functionEntries::inputModeEntry::clear();
-
     read(is);
 }
 
@@ -60,6 +54,9 @@ Foam::dictionary::dictionary(Istream& is, const bool keepHeader)
     dictionaryName(is.name()),
     parent_(dictionary::null)
 {
+    // Reset input syntax as this is a "top-level" dictionary
+    functionEntries::inputSyntaxEntry::clear();
+
     // Reset input mode as this is a "top-level" dictionary
     functionEntries::inputModeEntry::clear();
 
@@ -106,7 +103,7 @@ bool Foam::dictionary::read(Istream& is, const bool keepHeader)
     // normally remove the FoamFile header entry if it exists
     if (!keepHeader)
     {
-        remove("FoamFile");
+        remove(IOobject::foamFile);
     }
 
     if (is.bad())
@@ -119,12 +116,6 @@ bool Foam::dictionary::read(Istream& is, const bool keepHeader)
     }
 
     return true;
-}
-
-
-bool Foam::dictionary::read(Istream& is)
-{
-    return this->read(is, false);
 }
 
 
@@ -164,6 +155,9 @@ void Foam::writeEntry(Ostream& os, const dictionary& value)
 
 Foam::Istream& Foam::operator>>(Istream& is, dictionary& dict)
 {
+    // Reset input syntax as this is a "top-level" dictionary
+    functionEntries::inputSyntaxEntry::clear();
+
     // Reset input mode assuming this is a "top-level" dictionary
     functionEntries::inputModeEntry::clear();
 

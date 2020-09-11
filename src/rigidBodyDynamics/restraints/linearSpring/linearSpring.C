@@ -74,7 +74,8 @@ Foam::RBD::restraints::linearSpring::~linearSpring()
 void Foam::RBD::restraints::linearSpring::restrain
 (
     scalarField& tau,
-    Field<spatialVector>& fx
+    Field<spatialVector>& fx,
+    const rigidBodyModelState& state
 ) const
 {
     point attachmentPt = bodyPoint(refAttachmentPt_);
@@ -90,7 +91,9 @@ void Foam::RBD::restraints::linearSpring::restrain
     // Force and moment on the master body including optional damping
     vector force
     (
-        (-stiffness_*(magR - restLength_) - damping_*(r & v))*r
+        (allowSlack_ && magR < restLength_)
+      ? -damping_*(r & v)*r
+      : (-stiffness_*(magR - restLength_) - damping_*(r & v))*r
     );
 
     vector moment(attachmentPt ^ force);
@@ -100,6 +103,7 @@ void Foam::RBD::restraints::linearSpring::restrain
         Info<< " attachmentPt " << attachmentPt
             << " attachmentPt - anchor " << r*magR
             << " spring length " << magR
+            << " allow slack " << allowSlack_
             << " force " << force
             << " moment " << moment
             << endl;
@@ -122,6 +126,7 @@ bool Foam::RBD::restraints::linearSpring::read
     coeffs_.lookup("stiffness") >> stiffness_;
     coeffs_.lookup("damping") >> damping_;
     coeffs_.lookup("restLength") >> restLength_;
+    allowSlack_ = coeffs_.lookupOrDefault<Switch>("allowSlack", false);
 
     return true;
 }
@@ -143,6 +148,8 @@ void Foam::RBD::restraints::linearSpring::write
     writeEntry(os, "damping", damping_);
 
     writeEntry(os, "restLength", restLength_);
+
+    writeEntry(os, "allowSlack", allowSlack_);
 }
 
 

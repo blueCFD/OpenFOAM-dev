@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -485,134 +485,21 @@ void Foam::face::flip()
 }
 
 
-Foam::point Foam::face::centre(const pointField& points) const
+Foam::point Foam::face::centre(const pointField& ps) const
 {
-    // Calculate the centre by breaking the face into triangles and
-    // area-weighted averaging their centres
-
-    const label nPoints = size();
-
-    // If the face is a triangle, do a direct calculation
-    if (nPoints == 3)
-    {
-        return
-            (1.0/3.0)
-           *(
-               points[operator[](0)]
-             + points[operator[](1)]
-             + points[operator[](2)]
-            );
-    }
-
-
-    point centrePoint = Zero;
-    for (label pI=0; pI<nPoints; ++pI)
-    {
-        centrePoint += points[operator[](pI)];
-    }
-    centrePoint /= nPoints;
-
-    scalar sumA = 0;
-    vector sumAc = Zero;
-
-    for (label pI=0; pI<nPoints; ++pI)
-    {
-        const point& nextPoint = points[operator[]((pI + 1) % nPoints)];
-
-        // Calculate 3*triangle centre
-        const vector ttc
-        (
-            points[operator[](pI)]
-          + nextPoint
-          + centrePoint
-        );
-
-        // Calculate 2*triangle area
-        const scalar ta = Foam::mag
-        (
-            (points[operator[](pI)] - centrePoint)
-          ^ (nextPoint - centrePoint)
-        );
-
-        sumA += ta;
-        sumAc += ta*ttc;
-    }
-
-    if (sumA > vSmall)
-    {
-        return sumAc/(3.0*sumA);
-    }
-    else
-    {
-        return centrePoint;
-    }
+    return centre(UIndirectList<point>(ps, *this));
 }
 
 
-Foam::vector Foam::face::area(const pointField& p) const
+Foam::vector Foam::face::area(const pointField& ps) const
 {
-    const label nPoints = size();
-
-    // Calculate the area by summing the face triangle areas.
-    // Changed to deal with small concavity by using a central decomposition
-    //
-
-    // If the face is a triangle, do a direct calculation to avoid round-off
-    // error-related problems
-    //
-    if (nPoints == 3)
-    {
-        return triPointRef
-        (
-            p[operator[](0)],
-            p[operator[](1)],
-            p[operator[](2)]
-        ).area();
-    }
-
-    label pI;
-
-    point centrePoint = Zero;
-    for (pI = 0; pI < nPoints; ++pI)
-    {
-        centrePoint += p[operator[](pI)];
-    }
-    centrePoint /= nPoints;
-
-    vector a = Zero;
-
-    point nextPoint = centrePoint;
-
-    for (pI = 0; pI < nPoints; ++pI)
-    {
-        if (pI < nPoints - 1)
-        {
-            nextPoint = p[operator[](pI + 1)];
-        }
-        else
-        {
-            nextPoint = p[operator[](0)];
-        }
-
-        // Note: for best accuracy, centre point always comes last
-        //
-        a += triPointRef
-        (
-            p[operator[](pI)],
-            nextPoint,
-            centrePoint
-        ).area();
-    }
-
-    return a;
+    return area(UIndirectList<point>(ps, *this));
 }
 
 
 Foam::vector Foam::face::normal(const pointField& points) const
 {
-    const vector a = area(points);
-    const scalar maga = Foam::mag(a);
-    return maga > 0 ? a/maga : Zero;
+    return normalised(area(points));
 }
 
 

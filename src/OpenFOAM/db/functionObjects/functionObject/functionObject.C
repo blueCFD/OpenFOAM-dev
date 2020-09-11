@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,7 @@ License
 
 namespace Foam
 {
-    defineDebugSwitchWithName(functionObject, "functionObject", 0);
+    defineTypeNameAndDebug(functionObject, 0);
     defineRunTimeSelectionTable(functionObject, dictionary);
 }
 
@@ -44,7 +44,8 @@ bool Foam::functionObject::postProcess(false);
 Foam::functionObject::functionObject(const word& name)
 :
     name_(name),
-    log(postProcess)
+    log(false),
+    executeAtStart_(true)
 {}
 
 
@@ -66,7 +67,7 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
 
     if (dict.found("functionObjectLibs"))
     {
-        const_cast<Time&>(runTime).libs().open
+        libs.open
         (
             dict,
             "functionObjectLibs",
@@ -75,7 +76,7 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
     }
     else
     {
-        const_cast<Time&>(runTime).libs().open
+        libs.open
         (
             dict,
             "libs",
@@ -125,12 +126,20 @@ const Foam::word& Foam::functionObject::name() const
 
 bool Foam::functionObject::read(const dictionary& dict)
 {
+    log = dict.lookupOrDefault<Switch>("log", postProcess);
+
     if (!postProcess)
     {
-        log = dict.lookupOrDefault<Switch>("log", true);
+        executeAtStart_ = dict.lookupOrDefault<Switch>("executeAtStart", true);
     }
 
     return true;
+}
+
+
+bool Foam::functionObject::executeAtStart() const
+{
+    return executeAtStart_;
 }
 
 

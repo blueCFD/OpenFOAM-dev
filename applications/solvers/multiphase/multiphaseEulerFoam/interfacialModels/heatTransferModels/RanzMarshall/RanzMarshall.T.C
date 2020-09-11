@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "RanzMarshall.T.H"
+#include "phasePair.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -33,13 +34,7 @@ namespace Foam
 namespace heatTransferModels
 {
     defineTypeNameAndDebug(RanzMarshall, 0);
-
-    addToRunTimeSelectionTable
-    (
-        heatTransferModel,
-        RanzMarshall,
-        dictionary
-    );
+    addToRunTimeSelectionTable(heatTransferModel, RanzMarshall, dictionary);
 }
 }
 
@@ -48,13 +43,11 @@ namespace heatTransferModels
 
 Foam::heatTransferModels::RanzMarshall::RanzMarshall
 (
-    const dictionary& interfaceDict,
-    const volScalarField& alpha1,
-    const phaseModel& phase1,
-    const phaseModel& phase2
+    const dictionary& dict,
+    const phasePair& pair
 )
 :
-    heatTransferModel(interfaceDict, alpha1, phase1, phase2)
+    heatTransferModel(dict, pair)
 {}
 
 
@@ -66,17 +59,17 @@ Foam::heatTransferModels::RanzMarshall::~RanzMarshall()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::heatTransferModels::RanzMarshall::K
-(
-    const volScalarField& Ur
-) const
+Foam::tmp<Foam::volScalarField>
+Foam::heatTransferModels::RanzMarshall::K(const scalar residualAlpha) const
 {
-    volScalarField Re(max(Ur*phase1_.d()/phase2_.nu(), scalar(1.0e-3)));
-    dimensionedScalar Prb =
-        phase2_.rho()*phase2_.nu()*phase2_.Cp()/phase2_.kappa();
-    volScalarField Nu(scalar(2) + 0.6*sqrt(Re)*cbrt(Prb));
+    volScalarField Nu(2 + 0.6*sqrt(pair_.Re())*cbrt(pair_.Pr()));
 
-    return 6.0*phase2_.kappa()*Nu/sqr(phase1_.d());
+    return
+        6
+       *max(pair_.dispersed(), residualAlpha)
+       *pair_.continuous().thermo().kappa()
+       *Nu
+       /sqr(pair_.dispersed().d());
 }
 
 

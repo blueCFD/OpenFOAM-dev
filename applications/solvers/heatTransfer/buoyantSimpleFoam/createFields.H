@@ -36,9 +36,9 @@ volVectorField U
 #include "compressibleCreatePhi.H"
 
 Info<< "Creating turbulence model\n" << endl;
-autoPtr<compressible::turbulenceModel> turbulence
+autoPtr<compressible::momentumTransportModel> turbulence
 (
-    compressible::turbulenceModel::New
+    compressible::momentumTransportModel::New
     (
         rho,
         U,
@@ -47,10 +47,17 @@ autoPtr<compressible::turbulenceModel> turbulence
     )
 );
 
+Info<< "Creating thermophysical transport model\n" << endl;
+autoPtr<fluidThermophysicalTransportModel> thermophysicalTransport
+(
+    fluidThermophysicalTransportModel::New(turbulence(), thermo)
+);
+
 
 #include "readGravitationalAcceleration.H"
 #include "readhRef.H"
 #include "gh.H"
+#include "readpRef.H"
 
 
 Info<< "Reading field p_rgh\n" << endl;
@@ -68,23 +75,20 @@ volScalarField p_rgh
 );
 
 // Force p_rgh to be consistent with p
-p_rgh = p - rho*gh;
+p_rgh = p - rho*gh - pRef;
 
-label pRefCell = 0;
-scalar pRefValue = 0.0;
-setRefCell
+pressureControl pressureControl
 (
     p,
     p_rgh,
+    rho,
     simple.dict(),
-    pRefCell,
-    pRefValue
+    thermo.incompressible()
 );
 
 mesh.setFluxRequired(p_rgh.name());
 
 dimensionedScalar initialMass = fvc::domainIntegrate(rho);
-dimensionedScalar totalVolume = sum(mesh.V());
 
 #include "createMRF.H"
 #include "createRadiationModel.H"

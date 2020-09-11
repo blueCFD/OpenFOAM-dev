@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ Class
     Foam::dragModels::SchillerNaumann
 
 Description
+    Schiller and Naumann drag model for dispersed bubbly flows.
 
 SourceFiles
     SchillerNaumann.C
@@ -51,6 +52,11 @@ class SchillerNaumann
 :
     public dragModel
 {
+    // Private Data
+
+        //- Residual Reynolds Number
+        const dimensionedScalar residualRe_;
+
 
 public:
 
@@ -60,12 +66,12 @@ public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from a dictionary and a phase pair
         SchillerNaumann
         (
-            const dictionary& interfaceDict,
-            const phaseModel& phase1,
-            const phaseModel& phase2
+            const dictionary& dict,
+            const phasePair& pair,
+            const bool registerObject
         );
 
 
@@ -75,7 +81,8 @@ public:
 
     // Member Functions
 
-        tmp<volScalarField> K(const volScalarField& Ur) const;
+        //- Drag coefficient
+        virtual tmp<volScalarField> CdRe() const;
 };
 
 

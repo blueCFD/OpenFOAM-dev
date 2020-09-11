@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,11 +24,11 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "volumeFractionSource.H"
-#include "fvmDdt.H"
 #include "fvmDiv.H"
 #include "fvmLaplacian.H"
+#include "fvcDiv.H"
 #include "surfaceInterpolate.H"
-#include "turbulentFluidThermoModel.H"
+#include "thermophysicalTransportModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -87,28 +87,28 @@ Foam::tmp<Foam::volScalarField> Foam::fv::volumeFractionSource::D
 
     if (phi.dimensions() == dimVolume/dimTime)
     {
-        const turbulenceModel& turbulence =
-            mesh().lookupObject<turbulenceModel>
+        const momentumTransportModel& turbulence =
+            mesh().lookupObject<momentumTransportModel>
             (
-                turbulenceModel::propertiesName
+                momentumTransportModel::typeName
             );
 
         return turbulence.nuEff();
     }
     else if (phi.dimensions() == dimMass/dimTime)
     {
-        const compressible::turbulenceModel& turbulence =
-            mesh().lookupObject<compressible::turbulenceModel>
+        const thermophysicalTransportModel& ttm =
+            mesh().lookupObject<thermophysicalTransportModel>
             (
-                turbulenceModel::propertiesName
+                thermophysicalTransportModel::typeName
             );
 
         return
-            fieldNames_[fieldi] == turbulence.transport().T().name()
-          ? turbulence.kappaEff()
-          : fieldNames_[fieldi] == turbulence.transport().he().name()
-          ? turbulence.alphaEff()
-          : turbulence.muEff();
+            fieldNames_[fieldi] == ttm.thermo().T().name()
+          ? ttm.kappaEff()
+          : fieldNames_[fieldi] == ttm.thermo().he().name()
+          ? ttm.alphaEff()
+          : ttm.momentumTransport().muEff();
     }
     else
     {
@@ -199,7 +199,7 @@ Foam::fv::volumeFractionSource::volumeFractionSource
 )
 :
     option(name, modelType, dict, mesh),
-    phaseName_(dict.lookupType<word>("phase")),
+    phaseName_(dict.lookup<word>("phase")),
     phiName_("phi"),
     rhoName_("rho"),
     UName_("U")

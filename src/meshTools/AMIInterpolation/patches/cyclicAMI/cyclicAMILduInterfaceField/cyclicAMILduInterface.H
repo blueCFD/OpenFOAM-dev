@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,26 +72,23 @@ public:
         // Access
 
             //- Return neighbour
-            virtual label neighbPatchID() const = 0;
+            virtual label nbrPatchID() const = 0;
 
             //- Does this side own the interface?
             virtual bool owner() const = 0;
 
             //- Return processor number
-            virtual const cyclicAMILduInterface& neighbPatch() const = 0;
+            virtual const cyclicAMILduInterface& nbrPatch() const = 0;
 
             //- Return a reference to the AMI interpolators
             virtual const PtrList<AMIInterpolation>& AMIs() const = 0;
 
             // Return a reference to the AMI transformations
-            virtual const List<vectorTensorTransform>&
+            virtual const List<transformer>&
                 AMITransforms() const = 0;
 
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const = 0;
-
-            //- Return face reverse transformation tensor
-            virtual const tensorField& reverseT() const = 0;
+            //- Return transformation between the coupled patches
+            virtual const transformer& transform() const = 0;
 };
 
 

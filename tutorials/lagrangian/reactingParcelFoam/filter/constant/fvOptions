@@ -44,9 +44,9 @@ filter1
 }
 
 
-massSource1
+massSource
 {
-    type            scalarSemiImplicitSource;
+    type            semiImplicitSource;
 
     timeStart       0.2;
     duration        2.0;
@@ -57,50 +57,32 @@ massSource1
     );
 
     volumeMode      absolute;
-    injectionRateSuSp
+
+    sources
     {
-        rho         (1e-4 0); // kg/s
-        H2O         (1e-4 0); // kg/s
-    }
-}
+        rho
+        {
+            explicit    1e-4; // kg/s
+            implicit    0;
+        }
 
+        U
+        {
+            explicit    (0 0.005 0);
+            implicit    0;
+        }
 
-momentumSource1
-{
-    type            vectorSemiImplicitSource;
+        h
+        {
+            explicit    10;
+            implicit    0;
+        }
 
-    timeStart       0.2;
-    duration        2.0;
-    selectionMode   points;
-    points
-    (
-        (2.75 0.5 0)
-    );
-
-    volumeMode      absolute;
-    injectionRateSuSp
-    {
-        U           ((0 0.005 0) 0);
-    }
-}
-
-
-energySource1
-{
-    type            scalarSemiImplicitSource;
-
-    timeStart       0.2;
-    duration        2.0;
-    selectionMode   points;
-    points
-    (
-        (2.75 0.5 0)
-    );
-
-    volumeMode      absolute;
-    injectionRateSuSp
-    {
-        h           (10 0);
+        H2O
+        {
+            explicit    1e-4; // kg/s
+            implicit    0;
+        }
     }
 }
 

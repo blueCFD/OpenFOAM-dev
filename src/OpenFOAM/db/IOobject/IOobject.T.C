@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -43,6 +43,8 @@ Modifications
 #include "IOobject.T.H"
 #include "Time.T.H"
 #include "IFstream.H"
+#include "registerNamedEnum.H"
+
 #include "StaticHashTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -54,11 +56,7 @@ namespace Foam
     static StaticHashTable<Foam::word> replacedFileNames_;
 
     template<>
-    const char* NamedEnum
-    <
-        IOobject::fileCheckTypes,
-        4
-    >::names[] =
+    const char* NamedEnum<IOobject::fileCheckTypes, 4>::names[] =
     {
         "timeStamp",
         "timeStampMaster",
@@ -66,7 +64,6 @@ namespace Foam
         "inotifyMaster"
     };
 }
-
 
 const Foam::NamedEnum<Foam::IOobject::fileCheckTypes, 4>
     Foam::IOobject::fileCheckTypesNames;
@@ -83,41 +80,13 @@ Foam::IOobject::fileCheckTypes Foam::IOobject::fileModificationChecking
     )
 );
 
-namespace Foam
-{
-    // Register re-reader
-    class addfileModificationCheckingToOpt
-    :
-        public ::Foam::simpleRegIOobject
-    {
-    public:
-
-        addfileModificationCheckingToOpt(const char* name)
-        :
-            ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
-        {}
-
-        virtual ~addfileModificationCheckingToOpt()
-        {}
-
-        virtual void readData(Foam::Istream& is)
-        {
-            IOobject::fileModificationChecking =
-                IOobject::fileCheckTypesNames.read(is);
-        }
-
-        virtual void writeData(Foam::Ostream& os) const
-        {
-            os <<  IOobject::fileCheckTypesNames
-                [IOobject::fileModificationChecking];
-        }
-    };
-
-    addfileModificationCheckingToOpt addfileModificationCheckingToOpt_
-    (
-        "fileModificationChecking"
-    );
-}
+// Register re-reader
+registerOptNamedEnum
+(
+    "fileModificationChecking",
+    Foam::IOobject::fileCheckTypesNames,
+    Foam::IOobject::fileModificationChecking
+);
 
 
 // * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * * //
@@ -431,10 +400,16 @@ Foam::fileName Foam::IOobject::path
 }
 
 
-void Foam::IOobject::replaceFileName(const Foam::word & from, 
-                                     const Foam::word & to)
+Foam::fileName Foam::IOobject::localPath() const
 {
-    replacedFileNames_.insert(from, to);
+    if (instance().isAbsolute())
+    {
+        return instance();
+    }
+    else
+    {
+        return instance()/db_.dbDir()/local();
+    }
 }
 
 

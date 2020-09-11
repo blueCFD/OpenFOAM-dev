@@ -6,13 +6,18 @@ cd ${0%/*} || exit 1    # Run from this directory
 
 if ! onWin; then
 
-wmakeLnInclude interfacialModels
-wmake $targetType multiphaseSystem
+wmake $targetType phaseSystems
 wmake $targetType interfacialModels
-wmake $targetType
+wmake $targetType interfacialCompositionModels
+wmake $targetType multiphaseCompressibleMomentumTransportModels
+wmake $targetType multiphaseThermophysicalTransportModels
+multiphaseEulerFoam/Allwmake $targetType $*
+wmake $targetType functionObjects
 
 else
 
+    # TODO: Pending revision
+    wmake $targetType phaseSystems
     wmakeLnInclude interfacialModels
 
     set +x

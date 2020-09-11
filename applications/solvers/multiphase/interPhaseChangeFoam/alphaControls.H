@@ -1,21 +1,15 @@
 const dictionary& alphaControls = mesh.solverDict(alpha1.name());
 
-label nAlphaCorr(readLabel(alphaControls.lookup("nAlphaCorr")));
+const label nAlphaCorr(alphaControls.lookup<label>("nAlphaCorr"));
 
-label nAlphaSubCycles(readLabel(alphaControls.lookup("nAlphaSubCycles")));
+const label nAlphaSubCycles(alphaControls.lookup<label>("nAlphaSubCycles"));
 
-bool MULESCorr(alphaControls.lookupOrDefault<Switch>("MULESCorr", false));
+const bool MULESCorr(alphaControls.lookupOrDefault<Switch>("MULESCorr", false));
 
 // Apply the compression correction from the previous iteration
 // Improves efficiency for steady-simulations but can only be applied
 // once the alpha field is reasonably steady, i.e. fully developed
-//bool alphaApplyPrevCorr
-//(
-//    alphaControls.lookupOrDefault<Switch>("alphaApplyPrevCorr", false)
-//);
-
-// Isotropic compression coefficient
-scalar icAlpha
-(
-    alphaControls.lookupOrDefault<scalar>("icAlpha", 0)
-);
+// const bool alphaApplyPrevCorr
+// (
+//     alphaControls.lookupOrDefault<Switch>("alphaApplyPrevCorr", false)
+// );

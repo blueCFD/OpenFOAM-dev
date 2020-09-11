@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,16 +35,17 @@ License
 
 // * * * * * * * * * * * Protected Static Data Members * * * * * * * * * * * //
 
-const Foam::wordList Foam::codedFunctionObject::codeKeys_ =
-    {
-        "codeData",
-        "codeEnd",
-        "codeExecute",
-        "codeInclude",
-        "codeRead",
-        "codeWrite",
-        "localCode"
-    };
+template<>
+const Foam::wordList Foam::CodedBase<Foam::functionObject>::codeKeys_ =
+{
+    "codeData",
+    "codeEnd",
+    "codeExecute",
+    "codeInclude",
+    "codeRead",
+    "codeWrite",
+    "localCode"
+};
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -70,18 +71,21 @@ void Foam::codedFunctionObject::prepare
     const dynamicCodeContext& context
 ) const
 {
-    dynCode.setFilterVariable("typeName", name_);
+    dynCode.setFilterVariable("typeName", codeName());
 
     // Compile filtered C template
-    dynCode.addCompileFile("functionObjectTemplate.C");
+    dynCode.addCompileFile(codeTemplateC);
 
     // Copy filtered H template
-    dynCode.addCopyFile("functionObjectTemplate.H");
+    dynCode.addCopyFile(codeTemplateH);
 
-    // Debugging: make BC verbose
-    // dynCode.setFilterVariable("verbose", "true");
-    // Info<<"compile " << name_ << " sha1: "
-    //     << context.sha1() << endl;
+    // Debugging: make verbose
+    if (debug)
+    {
+        dynCode.setFilterVariable("verbose", "true");
+        Info<<"compile " << codeName() << " sha1: "
+            << context.sha1() << endl;
+    }
 
     // Define Make/options
     dynCode.setMakeOptions
@@ -99,33 +103,9 @@ void Foam::codedFunctionObject::prepare
 }
 
 
-Foam::dlLibraryTable& Foam::codedFunctionObject::libs() const
-{
-    return const_cast<Time&>(time_).libs();
-}
-
-
-Foam::string Foam::codedFunctionObject::description() const
-{
-    return "functionObject " + name();
-}
-
-
 void Foam::codedFunctionObject::clearRedirect() const
 {
     redirectFunctionObjectPtr_.clear();
-}
-
-
-const Foam::dictionary& Foam::codedFunctionObject::codeDict() const
-{
-    return dict_;
-}
-
-
-const Foam::wordList& Foam::codedFunctionObject::codeKeys() const
-{
-    return codeKeys_;
 }
 
 
@@ -139,11 +119,10 @@ Foam::codedFunctionObject::codedFunctionObject
 )
 :
     functionObject(name),
-    codedBase(),
-    time_(time),
-    dict_(dict)
+    CodedBase<functionObject>(dict),
+    time_(time)
 {
-    read(dict_);
+    read(dict);
 }
 
 
@@ -159,12 +138,12 @@ Foam::functionObject& Foam::codedFunctionObject::redirectFunctionObject() const
 {
     if (!redirectFunctionObjectPtr_.valid())
     {
-        dictionary constructDict(dict_);
-        constructDict.set("type", name_);
+        dictionary constructDict(codeDict());
+        constructDict.set("type", codeName());
 
         redirectFunctionObjectPtr_ = functionObject::New
         (
-            name_,
+            codeName(),
             time_,
             constructDict
         );
@@ -175,39 +154,28 @@ Foam::functionObject& Foam::codedFunctionObject::redirectFunctionObject() const
 
 bool Foam::codedFunctionObject::execute()
 {
-    updateLibrary(name_);
+    updateLibrary();
     return redirectFunctionObject().execute();
 }
 
 
 bool Foam::codedFunctionObject::write()
 {
-    updateLibrary(name_);
+    updateLibrary();
     return redirectFunctionObject().write();
 }
 
 
 bool Foam::codedFunctionObject::end()
 {
-    updateLibrary(name_);
+    updateLibrary();
     return redirectFunctionObject().end();
 }
 
 
 bool Foam::codedFunctionObject::read(const dictionary& dict)
 {
-    // The name keyword is "name". "redirectType" is also maintained here
-    // for backwards compatibility, but "name" is taken in preference and
-    // is printed in the error message if neither keyword is present.
-    name_ = word::null;
-    name_ = dict.lookupOrDefault("redirectType", name_);
-    name_ = dict.lookupOrDefault("name", name_);
-    if (name_ == word::null)
-    {
-        dict.lookup("name"); // <-- generate error message with "name" in it
-    }
-
-    updateLibrary(name_);
+    updateLibrary();
     return redirectFunctionObject().read(dict);
 }
 

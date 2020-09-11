@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -43,7 +43,7 @@ Modifications
 \*---------------------------------------------------------------------------*/
 
 #include "surfaceMeshWriter.H"
-#include "writeFuns.H"
+#include "vtkWriteFieldOps.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -64,7 +64,7 @@ Foam::surfaceMeshWriter::surfaceMeshWriter
         ios_base::out|ios_base::binary)
 {
     // Write header
-    writeFuns::writeHeader(os_, binary_, name);
+    vtkWriteOps::writeHeader(os_, binary_, name);
 
     os_ << "DATASET POLYDATA" << std::endl;
 
@@ -79,8 +79,8 @@ Foam::surfaceMeshWriter::surfaceMeshWriter
     os_ << "POINTS " << pp.nPoints() << " float" << std::endl;
 
     DynamicList<floatScalar> ptField(3*pp.nPoints());
-    writeFuns::insert(pp.localPoints(), ptField);
-    writeFuns::write(os_, binary, ptField);
+    vtkWriteOps::insert(pp.localPoints(), ptField);
+    vtkWriteOps::write(os_, binary, ptField);
 
 
     os_ << "POLYGONS " << pp.size() << ' ' << nFaceVerts << std::endl;
@@ -92,9 +92,9 @@ Foam::surfaceMeshWriter::surfaceMeshWriter
         const face& f = pp.localFaces()[facei];
 
         vertLabels.append(f.size());
-        writeFuns::insert(f, vertLabels);
+        vtkWriteOps::insert(f, vertLabels);
     }
-    writeFuns::write(os_, binary_, vertLabels);
+    vtkWriteOps::write(os_, binary_, vertLabels);
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,8 @@ Class
     Foam::heatTransferModels::RanzMarshall
 
 Description
+    Ranz-Marshall correlation for turbulent heat transfer from the surface of a
+    sphere to the surrounding fluid.
 
 SourceFiles
     RanzMarshall.C
@@ -44,14 +46,13 @@ namespace heatTransferModels
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class RanzMarshall Declaration
+                          Class RanzMarshall Declaration
 \*---------------------------------------------------------------------------*/
 
 class RanzMarshall
 :
     public heatTransferModel
 {
-
 public:
 
     //- Runtime type information
@@ -63,10 +64,8 @@ public:
         //- Construct from components
         RanzMarshall
         (
-            const dictionary& interfaceDict,
-            const volScalarField& alpha1,
-            const phaseModel& phase1,
-            const phaseModel& phase2
+            const dictionary& dict,
+            const phasePair& pair
         );
 
 
@@ -76,7 +75,8 @@ public:
 
     // Member Functions
 
-        tmp<volScalarField> K(const volScalarField& Ur) const;
+        //- The heat transfer function K used in the enthalpy equation
+        tmp<volScalarField> K(const scalar residualAlpha) const;
 };
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,22 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "internalWriter.H"
-#include "writeFuns.H"
+#include "vtkWriteFieldOps.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+template<class Type, class GeoMesh>
+void Foam::internalWriter::write
+(
+    const UPtrList<const DimensionedField<Type, GeoMesh>>& flds
+)
+{
+    forAll(flds, i)
+    {
+        vtkWriteOps::write(os_, binary_, flds[i], vMesh_);
+    }
+}
+
 
 template<class Type, template<class> class PatchField, class GeoMesh>
 void Foam::internalWriter::write
@@ -36,7 +49,7 @@ void Foam::internalWriter::write
 {
     forAll(flds, i)
     {
-        writeFuns::write(os_, binary_, flds[i], vMesh_);
+        vtkWriteOps::write(os_, binary_, flds[i], vMesh_);
     }
 }
 
@@ -50,7 +63,7 @@ void Foam::internalWriter::write
 {
     forAll(flds, i)
     {
-        writeFuns::write
+        vtkWriteOps::write
         (
             os_,
             binary_,

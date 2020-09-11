@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "yPlus.H"
-#include "turbulenceModel.H"
+#include "momentumTransportModel.H"
 #include "nutWallFunctionFvPatchScalarField.H"
 #include "wallFvPatch.H"
 #include "addToRunTimeSelectionTable.H"
@@ -64,14 +64,14 @@ void Foam::functionObjects::yPlus::writeFileHeader(const label i)
 
 Foam::tmp<Foam::volScalarField> Foam::functionObjects::yPlus::calcYPlus
 (
-    const turbulenceModel& turbModel
+    const momentumTransportModel& turbModel
 )
 {
     tmp<volScalarField> tyPlus
     (
         volScalarField::New
         (
-            type(),
+            IOobject::groupName(type(), phaseName_),
             mesh_,
             dimensionedScalar(dimless, 0)
         )
@@ -133,11 +133,12 @@ Foam::functionObjects::yPlus::yPlus
 :
     fvMeshFunctionObject(name, runTime, dict),
     logFiles(obr_, name),
-    writeLocalObjects(obr_, log)
+    writeLocalObjects(obr_, log),
+    phaseName_(dict.lookupOrDefault<word>("phase", word::null))
 {
     read(dict);
-    resetName(typeName);
-    resetLocalObjectName(typeName);
+    resetName(IOobject::groupName(typeName, phaseName_));
+    resetLocalObjectName(IOobject::groupName(typeName, phaseName_));
 }
 
 
@@ -160,14 +161,22 @@ bool Foam::functionObjects::yPlus::read(const dictionary& dict)
 
 bool Foam::functionObjects::yPlus::execute()
 {
-    if (mesh_.foundObject<turbulenceModel>(turbulenceModel::propertiesName))
+    if (mesh_.foundObject<momentumTransportModel>
+    (
+        IOobject::groupName(momentumTransportModel::typeName, phaseName_))
+    )
     {
-        const turbulenceModel& model = mesh_.lookupObject<turbulenceModel>
-        (
-            turbulenceModel::propertiesName
-        );
+        const momentumTransportModel& model =
+            mesh_.lookupObject<momentumTransportModel>
+            (
+                IOobject::groupName
+                (
+                    momentumTransportModel::typeName,
+                    phaseName_
+                )
+            );
 
-        word name(type());
+        word name(IOobject::groupName(type(), phaseName_));
 
         return store(name, calcYPlus(model));
     }
@@ -191,7 +200,10 @@ bool Foam::functionObjects::yPlus::write()
     logFiles::write();
 
     const volScalarField& yPlus =
-        mesh_.lookupObject<volScalarField>(type());
+        mesh_.lookupObject<volScalarField>
+        (
+            IOobject::groupName(type(), phaseName_)
+        );
 
     const volScalarField::Boundary& yPlusBf = yPlus.boundaryField();
     const fvPatchList& patches = mesh_.boundary();

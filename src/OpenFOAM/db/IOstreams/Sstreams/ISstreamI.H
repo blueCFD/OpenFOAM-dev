@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,16 +71,6 @@ inline Foam::ISstream& Foam::ISstream::get(char& c)
 inline int Foam::ISstream::peek()
 {
     return is_.peek();
-}
-
-
-inline Foam::ISstream& Foam::ISstream::getLine(string& s)
-{
-    getline(is_, s);
-    setState(is_.rdstate());
-    lineNumber_++;
-
-    return *this;
 }
 
 

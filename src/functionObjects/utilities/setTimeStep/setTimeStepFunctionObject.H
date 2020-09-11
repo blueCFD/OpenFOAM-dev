@@ -41,6 +41,7 @@ SourceFiles
 
 #include "functionObject.H"
 #include "Function1.T.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

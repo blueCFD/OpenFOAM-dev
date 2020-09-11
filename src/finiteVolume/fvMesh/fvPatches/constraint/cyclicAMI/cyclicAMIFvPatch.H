@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -101,9 +101,9 @@ public:
             }
 
             //- Return the neighbour patch ID
-            virtual label neighbPatchID() const
+            virtual label nbrPatchID() const
             {
-                return cyclicAMIPolyPatch_.neighbPatchID();
+                return cyclicAMIPolyPatch_.nbrPatchID();
             }
 
             //- Is this side the owner?
@@ -113,11 +113,11 @@ public:
             }
 
             //- Return the neighbour patch
-            virtual const cyclicAMIFvPatch& neighbPatch() const
+            virtual const cyclicAMIFvPatch& nbrPatch() const
             {
                 return refCast<const cyclicAMIFvPatch>
                 (
-                    this->boundaryMesh()[cyclicAMIPolyPatch_.neighbPatchID()]
+                    this->boundaryMesh()[cyclicAMIPolyPatch_.nbrPatchID()]
                 );
             }
 
@@ -128,7 +128,7 @@ public:
             }
 
             //- Return a reference to the AMI transforms
-            virtual const List<vectorTensorTransform>& AMITransforms() const
+            virtual const List<transformer>& AMITransforms() const
             {
                 return cyclicAMIPolyPatch_.AMITransforms();
             }
@@ -139,29 +139,17 @@ public:
                 return cyclicAMIPolyPatch_.applyLowWeightCorrection();
             }
 
-            //- Are the cyclic planes parallel
-            virtual bool parallel() const
+            //- Return transformation between the coupled patches
+            virtual const transformer& transform() const
             {
-                return cyclicAMIPolyPatch_.parallel();
-            }
-
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
-            {
-                return cyclicAMIPolyPatch_.forwardT();
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return cyclicAMIPolyPatch_.reverseT();
+                return cyclicAMIPolyPatch_.transform();
             }
 
             const cyclicAMIFvPatch& neighbFvPatch() const
             {
                 return refCast<const cyclicAMIFvPatch>
                 (
-                    this->boundaryMesh()[cyclicAMIPolyPatch_.neighbPatchID()]
+                    this->boundaryMesh()[cyclicAMIPolyPatch_.nbrPatchID()]
                 );
             }
 

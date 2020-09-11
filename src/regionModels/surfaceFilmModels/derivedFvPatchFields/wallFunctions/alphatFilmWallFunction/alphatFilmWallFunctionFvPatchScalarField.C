@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "alphatFilmWallFunctionFvPatchScalarField.H"
-#include "turbulentFluidThermoModel.H"
+#include "thermophysicalTransportModel.H"
 #include "surfaceFilmRegionModel.H"
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
@@ -162,15 +162,18 @@ void alphatFilmWallFunctionFvPatchScalarField::updateCoeffs()
     scalarField mDotFilmp = mDotFilm().boundaryField()[filmPatchi];
     filmModel.toPrimary(filmPatchi, mDotFilmp);
 
-    // Retrieve RAS turbulence model
-    const turbulenceModel& turbModel = db().lookupObject<turbulenceModel>
-    (
-        IOobject::groupName
+    const thermophysicalTransportModel& ttm =
+        db().lookupObject<thermophysicalTransportModel>
         (
-            turbulenceModel::propertiesName,
-            internalField().group()
-        )
-    );
+            IOobject::groupName
+            (
+                thermophysicalTransportModel::typeName,
+                internalField().group()
+            )
+        );
+
+    const compressibleMomentumTransportModel& turbModel =
+        ttm.momentumTransport();
 
     const scalarField& y = turbModel.y()[patchi];
     const scalarField& rhow = turbModel.rho().boundaryField()[patchi];
@@ -178,7 +181,7 @@ void alphatFilmWallFunctionFvPatchScalarField::updateCoeffs()
     const volScalarField& k = tk();
     const tmp<scalarField> tmuw = turbModel.mu(patchi);
     const scalarField& muw = tmuw();
-    const tmp<scalarField> talpha = turbModel.alpha(patchi);
+    const tmp<scalarField> talpha = ttm.thermo().alpha(patchi);
     const scalarField& alphaw = talpha();
 
     const scalar Cmu25 = pow(Cmu_, 0.25);

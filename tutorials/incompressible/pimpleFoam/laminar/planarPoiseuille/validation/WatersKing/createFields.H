@@ -19,11 +19,11 @@ const scalar nu2 =
     ).value();
 
 Info<< "Reading viscoelastic properties\n" << endl;
-IOdictionary turbulenceProperties
+IOdictionary momentumTransport
 (
     IOobject
     (
-        "turbulenceProperties",
+        "momentumTransport",
         runTime.constant(),
         mesh,
         IOobject::MUST_READ,
@@ -31,9 +31,9 @@ IOdictionary turbulenceProperties
     )
 );
 const dictionary& MaxwellCoeffs =
-    turbulenceProperties.subDict("laminar").subDict("MaxwellCoeffs");
-const scalar nu1 = readScalar(MaxwellCoeffs.lookup("nuM"));
-const scalar lambda = readScalar(MaxwellCoeffs.lookup("lambda"));
+    momentumTransport.subDict("laminar").subDict("MaxwellCoeffs");
+const scalar nu1 = MaxwellCoeffs.lookup<scalar>("nuM");
+const scalar lambda = MaxwellCoeffs.lookup<scalar>("lambda");
 
 const scalar rho = 1;
 
@@ -50,9 +50,8 @@ IOdictionary fvOptions
     )
 );
 const dictionary& gradPDict =
-    fvOptions.subDict("momentumSource").subDict("injectionRateSuSp");
-const scalar K =
-    Tuple2<vector, scalar>(gradPDict.lookup("U")).first().x();
+    fvOptions.subDict("momentumSource").subDict("sources");
+const scalar K(vector(gradPDict.subDict("U").lookup("explicit")).x());
 
 dictionary probes(IFstream(runTime.system()/"probes")());
 const point location = pointField(probes.lookup("probeLocations"))[0];

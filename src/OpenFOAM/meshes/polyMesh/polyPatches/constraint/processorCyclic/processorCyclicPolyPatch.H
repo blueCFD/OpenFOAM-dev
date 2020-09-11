@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,6 +38,7 @@ SourceFiles
 #define processorCyclicPolyPatch_H
 
 #include "processorPolyPatch.H"
+#include "cyclicPolyPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -69,7 +70,7 @@ protected:
     // Protected Member functions
 
         //- Initialise the calculation of the patch geometry
-        void initGeometry(PstreamBuffers&);
+        void initCalcGeometry(PstreamBuffers&);
 
         //- Calculate the patch geometry
         void calcGeometry(PstreamBuffers&);
@@ -121,7 +122,6 @@ public:
             const int myProcNo,
             const int neighbProcNo,
             const word& referPatchName,
-            const transformType transform = UNKNOWN,
             const word& patchType = typeName
         );
 
@@ -304,10 +304,10 @@ public:
             return referPatchID_;
         }
 
-        const coupledPolyPatch& referPatch() const
+        const cyclicPolyPatch& referPatch() const
         {
             const polyPatch& pp = this->boundaryMesh()[referPatchID()];
-            return refCast<const coupledPolyPatch>(pp);
+            return refCast<const cyclicPolyPatch>(pp);
         }
 
         //- Return message tag to use for communication
@@ -320,67 +320,16 @@ public:
         }
 
         //- Type of transform
-        virtual transformType transform() const
+        virtual cyclicTransform::transformTypes transformType() const
+        {
+            return referPatch().transformType();
+        }
+
+        //- Return transformation between the coupled patches
+        virtual const transformer& transform() const
         {
             return referPatch().transform();
         }
-
-        //- Type of transform
-        //  This is currently only for use when collapsing generated
-        //  meshes that can have zero area faces.
-        virtual transformType& transform()
-        {
-            return const_cast<coupledPolyPatch&>(referPatch()).transform();
-        }
-
-        //- Transform a patch-based position from other side to this side
-        virtual void transformPosition(pointField& l) const
-        {
-            referPatch().transformPosition(l);
-        }
-
-        //- Transform a patch-based position from other side to this side
-        virtual void transformPosition(point& l, const label facei) const
-        {
-            referPatch().transformPosition(l, facei);
-        }
-
-        //- Are the planes separated.
-        virtual bool separated() const
-        {
-            return referPatch().separated();
-        }
-
-        //- If the planes are separated the separation vector.
-        virtual const vectorField& separation() const
-        {
-            return referPatch().separation();
-        }
-
-        //- Are the cyclic planes parallel.
-        virtual bool parallel() const
-        {
-            return referPatch().parallel();
-        }
-
-        //- Return face transformation tensor.
-        virtual const tensorField& forwardT() const
-        {
-            return referPatch().forwardT();
-        }
-
-        //- Return neighbour-cell transformation tensor.
-        virtual const tensorField& reverseT() const
-        {
-            return referPatch().reverseT();
-        }
-
-        //- Are faces collocated. Either size 0,1 or length of patch
-        virtual const boolList& collocated() const
-        {
-            return referPatch().collocated();
-        }
-
 
         //- Initialize ordering for primitivePatch. Does not
         //  refer to *this (except for name() and type() etc.)
@@ -398,7 +347,6 @@ public:
             labelList& faceMap,
             labelList& rotation
         ) const;
-
 
         //- Write the polyPatch data as a dictionary
         virtual void write(Ostream&) const;

@@ -36,18 +36,6 @@ namespace Foam
     defineTypeNameAndDebug(regIOobject, 0);
 }
 
-float Foam::regIOobject::fileModificationSkew
-(
-    Foam::debug::floatOptimisationSwitch("fileModificationSkew", 30)
-);
-
-registerOptSwitch
-(
-    "fileModificationSkew",
-    float,
-    Foam::regIOobject::fileModificationSkew
-);
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -161,6 +149,8 @@ Foam::regIOobject::~regIOobject()
                 << endl;
         }
     }
+
+    db().resetCacheTemporaryObject(*this);
 
     // Check out of objectRegistry if not owned by the registry
     if (!ownedByRegistry_)

@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "waveSuperposition.H"
+#include "Time.T.H"
 #include "uniformDimensionedFields.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -233,7 +234,7 @@ Foam::waveSuperposition::waveSuperposition(const objectRegistry& db)
             wavei,
             waveModel::New(waveDict.dictName(), db, waveDict)
         );
-        waveAngles_[wavei] = readScalar(waveDict.lookup("angle"));
+        waveAngles_[wavei] = waveDict.lookup<scalar>("angle");
     }
 }
 
@@ -350,13 +351,13 @@ void Foam::waveSuperposition::write(Ostream& os) const
 {
     writeEntry(os, "origin", origin_);
     writeEntry(os, "direction", direction_);
-    os.writeKeyword("waves") << nl << token::BEGIN_LIST << nl << incrIndent;
+    writeKeyword(os, "waves") << nl << token::BEGIN_LIST << nl << incrIndent;
     forAll(waveModels_, wavei)
     {
-        os.writeKeyword(waveModels_[wavei].type()) << nl << indent
+        writeKeyword(os, waveModels_[wavei].type()) << nl << indent
             << token::BEGIN_BLOCK << nl << incrIndent;
         waveModels_[wavei].write(os);
-        os.writeKeyword("angle") << waveAngles_[wavei] << token::END_STATEMENT
+        writeKeyword(os, "angle") << waveAngles_[wavei] << token::END_STATEMENT
             << nl << decrIndent << indent << token::END_BLOCK << nl;
     }
     os  << decrIndent << token::END_LIST << token::END_STATEMENT << nl;

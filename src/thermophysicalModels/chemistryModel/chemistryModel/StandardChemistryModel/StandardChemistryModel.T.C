@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "StandardChemistryModel.T.H"
-#include "reactingMixture.H"
+#include "multiComponentMixture.H"
 #include "UniformField.T.H"
 #include "extrapolatedCalculatedFvPatchFields.H"
 
@@ -33,20 +33,26 @@ License
 template<class ReactionThermo, class ThermoType>
 Foam::StandardChemistryModel<ReactionThermo, ThermoType>::StandardChemistryModel
 (
-    ReactionThermo& thermo
+    const ReactionThermo& thermo
 )
 :
     BasicChemistryModel<ReactionThermo>(thermo),
     ODESystem(),
     Y_(this->thermo().composition().Y()),
+    specieThermos_
+    (
+        dynamic_cast<const multiComponentMixture<ThermoType>&>
+            (this->thermo()).specieThermos()
+    ),
     reactions_
     (
-        dynamic_cast<const reactingMixture<ThermoType>&>(this->thermo())
-    ),
-    specieThermo_
-    (
-        dynamic_cast<const reactingMixture<ThermoType>&>
-            (this->thermo()).speciesData()
+        dynamic_cast<const multiComponentMixture<ThermoType>&>
+        (
+            this->thermo()
+        ).species(),
+        specieThermos_,
+        this->mesh(),
+        *this
     ),
 
     nSpecie_(Y_.size()),
@@ -79,7 +85,7 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::StandardChemistryModel
                     IOobject::NO_READ,
                     IOobject::NO_WRITE
                 ),
-                thermo.p().mesh(),
+                thermo.T().mesh(),
                 dimensionedScalar(dimMass/dimVolume/dimTime, 0)
             )
         );
@@ -103,9 +109,10 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::
 template<class ReactionThermo, class ThermoType>
 void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::omega
 (
-    const scalarField& c,
-    const scalar T,
     const scalar p,
+    const scalar T,
+    const scalarField& c,
+    const label li,
     scalarField& dcdt
 ) const
 {
@@ -116,7 +123,7 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::omega
     {
         const Reaction<ThermoType>& R = reactions_[i];
 
-        R.omega(p, T, c, dcdt);
+        R.omega(p, T, c, li, dcdt);
     }
 }
 
@@ -125,9 +132,10 @@ template<class ReactionThermo, class ThermoType>
 Foam::scalar Foam::StandardChemistryModel<ReactionThermo, ThermoType>::omegaI
 (
     const label index,
-    const scalarField& c,
-    const scalar T,
     const scalar p,
+    const scalar T,
+    const scalarField& c,
+    const label li,
     scalar& pf,
     scalar& cf,
     label& lRef,
@@ -137,7 +145,7 @@ Foam::scalar Foam::StandardChemistryModel<ReactionThermo, ThermoType>::omegaI
 ) const
 {
     const Reaction<ThermoType>& R = reactions_[index];
-    scalar w = R.omega(p, T, c, pf, cf, lRef, pr, cr, rRef);
+    scalar w = R.omega(p, T, c, li, pf, cf, lRef, pr, cr, rRef);
     return(w);
 }
 
@@ -147,6 +155,7 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::derivatives
 (
     const scalar time,
     const scalarField& c,
+    const label li,
     scalarField& dcdt
 ) const
 {
@@ -158,7 +167,7 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::derivatives
         c_[i] = max(c[i], 0);
     }
 
-    omega(c_, T, p, dcdt);
+    omega(p, T, c_, li, dcdt);
 
     // Constant pressure
     // dT/dt = ...
@@ -166,21 +175,21 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::derivatives
     scalar cSum = 0;
     for (label i = 0; i < nSpecie_; i++)
     {
-        const scalar W = specieThermo_[i].W();
+        const scalar W = specieThermos_[i].W();
         cSum += c_[i];
         rho += W*c_[i];
     }
     scalar cp = 0;
     for (label i=0; i<nSpecie_; i++)
     {
-        cp += c_[i]*specieThermo_[i].cp(p, T);
+        cp += c_[i]*specieThermos_[i].cp(p, T);
     }
     cp /= rho;
 
     scalar dT = 0;
     for (label i = 0; i < nSpecie_; i++)
     {
-        const scalar hi = specieThermo_[i].ha(p, T);
+        const scalar hi = specieThermos_[i].ha(p, T);
         dT += hi*dcdt[i];
     }
     dT /= rho*cp;
@@ -197,6 +206,7 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::jacobian
 (
     const scalar t,
     const scalarField& c,
+    const label li,
     scalarField& dcdt,
     scalarSquareMatrix& J
 ) const
@@ -218,8 +228,8 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::jacobian
     scalarField cpi(nSpecie_);
     for (label i = 0; i < nSpecie_; i++)
     {
-        hi[i] = specieThermo_[i].ha(p, T);
-        cpi[i] = specieThermo_[i].cp(p, T);
+        hi[i] = specieThermos_[i].ha(p, T);
+        cpi[i] = specieThermos_[i].cp(p, T);
     }
     scalar omegaI = 0;
     List<label> dummy;
@@ -227,8 +237,8 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::jacobian
     {
         const Reaction<ThermoType>& R = reactions_[ri];
         scalar kfwd, kbwd;
-        R.dwdc(p, T, c_, J, dcdt, omegaI, kfwd, kbwd, false, dummy);
-        R.dwdT(p, T, c_, omegaI, kfwd, kbwd, J, false, dummy, nSpecie_);
+        R.dwdc(p, T, c_, li, J, dcdt, omegaI, kfwd, kbwd, false, dummy);
+        R.dwdT(p, T, c_, li, omegaI, kfwd, kbwd, J, false, dummy, nSpecie_);
     }
 
     // The species derivatives of the temperature term are partially computed
@@ -238,7 +248,7 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::jacobian
     for (label i=0; i<nSpecie_; i++)
     {
         cpMean += c_[i]*cpi[i]; // J/(m^3 K)
-        dcpdTMean += c_[i]*specieThermo_[i].dcpdT(p, T);
+        dcpdTMean += c_[i]*specieThermos_[i].dcpdT(p, T);
     }
     scalar dTdt = 0.0;
     for (label i=0; i<nSpecie_; i++)
@@ -310,7 +320,7 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::tc() const
 
             for (label i=0; i<nSpecie_; i++)
             {
-                c_[i] = rhoi*Y_[i][celli]/specieThermo_[i].W();
+                c_[i] = rhoi*Y_[i][celli]/specieThermos_[i].W();
                 cSum += c_[i];
             }
 
@@ -318,7 +328,7 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::tc() const
             {
                 const Reaction<ThermoType>& R = reactions_[i];
 
-                R.omega(pi, Ti, c_, pf, cf, lRef, pr, cr, rRef);
+                R.omega(pi, Ti, c_, celli, pf, cf, lRef, pr, cr, rRef);
 
                 forAll(R.rhs(), s)
                 {
@@ -358,7 +368,7 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::Qdot() const
         {
             forAll(Qdot, celli)
             {
-                const scalar hi = specieThermo_[i].Hc();
+                const scalar hi = specieThermos_[i].Hf();
                 Qdot[celli] -= hi*RR_[i][celli];
             }
         }
@@ -406,11 +416,14 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::calculateRR
         for (label i=0; i<nSpecie_; i++)
         {
             const scalar Yi = Y_[i][celli];
-            c_[i] = rhoi*Yi/specieThermo_[i].W();
+            c_[i] = rhoi*Yi/specieThermos_[i].W();
         }
 
         const Reaction<ThermoType>& R = reactions_[ri];
-        const scalar omegai = R.omega(pi, Ti, c_, pf, cf, lRef, pr, cr, rRef);
+        const scalar omegai = R.omega
+        (
+            pi, Ti, c_, celli, pf, cf, lRef, pr, cr, rRef
+        );
 
         forAll(R.lhs(), s)
         {
@@ -428,7 +441,7 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::calculateRR
             }
         }
 
-        RR[celli] *= specieThermo_[si].W();
+        RR[celli] *= specieThermos_[si].W();
     }
 
     return tRR;
@@ -458,14 +471,14 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::calculate()
         for (label i=0; i<nSpecie_; i++)
         {
             const scalar Yi = Y_[i][celli];
-            c_[i] = rhoi*Yi/specieThermo_[i].W();
+            c_[i] = rhoi*Yi/specieThermos_[i].W();
         }
 
-        omega(c_, Ti, pi, dcdt_);
+        omega(pi, Ti, c_, celli, dcdt_);
 
         for (label i=0; i<nSpecie_; i++)
         {
-            RR_[i][celli] = dcdt_[i]*specieThermo_[i].W();
+            RR_[i][celli] = dcdt_[i]*specieThermos_[i].W();
         }
     }
 }
@@ -506,7 +519,7 @@ Foam::scalar Foam::StandardChemistryModel<ReactionThermo, ThermoType>::solve
 
             for (label i=0; i<nSpecie_; i++)
             {
-                c_[i] = rhoi*Y_[i][celli]/specieThermo_[i].W();
+                c_[i] = rhoi*Y_[i][celli]/specieThermos_[i].W();
                 c0[i] = c_[i];
             }
 
@@ -517,7 +530,7 @@ Foam::scalar Foam::StandardChemistryModel<ReactionThermo, ThermoType>::solve
             while (timeLeft > small)
             {
                 scalar dt = timeLeft;
-                this->solve(c_, Ti, pi, dt, this->deltaTChem_[celli]);
+                this->solve(pi, Ti, c_, celli, dt, this->deltaTChem_[celli]);
                 timeLeft -= dt;
             }
 
@@ -529,7 +542,7 @@ Foam::scalar Foam::StandardChemistryModel<ReactionThermo, ThermoType>::solve
             for (label i=0; i<nSpecie_; i++)
             {
                 RR_[i][celli] =
-                    (c_[i] - c0[i])*specieThermo_[i].W()/deltaT[celli];
+                    (c_[i] - c0[i])*specieThermos_[i].W()/deltaT[celli];
             }
         }
         else

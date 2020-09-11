@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -183,7 +183,7 @@ void Foam::MPPICCloud<CloudType>::motion
     // ~~~~~~~~~
 
     // force calculation and tracking
-    td.part() = parcelType::trackingData::tpLinearTrack;
+    td.part() = parcelType::trackingData::tpPredictTrack;
     CloudType::move(cloud, td, this->db().time().deltaTValue());
 
 
@@ -200,6 +200,13 @@ void Foam::MPPICCloud<CloudType>::motion
 
     if (dampingModel_->active())
     {
+        if (this->mesh().moving())
+        {
+            FatalErrorInFunction
+                << "MPPIC damping modelling does not support moving meshes."
+                << exit(FatalError);
+        }
+
         // update averages
         td.updateAverages(cloud);
 
@@ -224,6 +231,13 @@ void Foam::MPPICCloud<CloudType>::motion
 
     if (packingModel_->active())
     {
+        if (this->mesh().moving())
+        {
+            FatalErrorInFunction
+                << "MPPIC packing modelling does not support moving meshes."
+                << exit(FatalError);
+        }
+
         // same procedure as for damping
         td.updateAverages(cloud);
         packingModel_->cacheFields(true);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,27 +53,6 @@ Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
 
 Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
 (
-    const maxwellSlipUFvPatchVectorField& mspvf,
-    const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
-    const fvPatchFieldMapper& mapper
-)
-:
-    mixedFixedValueSlipFvPatchVectorField(mspvf, p, iF, mapper),
-    TName_(mspvf.TName_),
-    rhoName_(mspvf.rhoName_),
-    psiName_(mspvf.psiName_),
-    muName_(mspvf.muName_),
-    tauMCName_(mspvf.tauMCName_),
-    accommodationCoeff_(mspvf.accommodationCoeff_),
-    Uwall_(mspvf.Uwall_),
-    thermalCreep_(mspvf.thermalCreep_),
-    curvature_(mspvf.curvature_)
-{}
-
-
-Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
-(
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
     const dictionary& dict
@@ -85,7 +64,7 @@ Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
     psiName_(dict.lookupOrDefault<word>("psi", "thermo:psi")),
     muName_(dict.lookupOrDefault<word>("mu", "thermo:mu")),
     tauMCName_(dict.lookupOrDefault<word>("tauMC", "tauMC")),
-    accommodationCoeff_(readScalar(dict.lookup("accommodationCoeff"))),
+    accommodationCoeff_(dict.lookup<scalar>("accommodationCoeff")),
     Uwall_("Uwall", dict, p.size()),
     thermalCreep_(dict.lookupOrDefault("thermalCreep", true)),
     curvature_(dict.lookupOrDefault("curvature", true))
@@ -129,6 +108,27 @@ Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
 Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
 (
     const maxwellSlipUFvPatchVectorField& mspvf,
+    const fvPatch& p,
+    const DimensionedField<vector, volMesh>& iF,
+    const fvPatchFieldMapper& mapper
+)
+:
+    mixedFixedValueSlipFvPatchVectorField(mspvf, p, iF, mapper),
+    TName_(mspvf.TName_),
+    rhoName_(mspvf.rhoName_),
+    psiName_(mspvf.psiName_),
+    muName_(mspvf.muName_),
+    tauMCName_(mspvf.tauMCName_),
+    accommodationCoeff_(mspvf.accommodationCoeff_),
+    Uwall_(mapper(mspvf.Uwall_)),
+    thermalCreep_(mspvf.thermalCreep_),
+    curvature_(mspvf.curvature_)
+{}
+
+
+Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
+(
+    const maxwellSlipUFvPatchVectorField& mspvf,
     const DimensionedField<vector, volMesh>& iF
 )
 :
@@ -146,6 +146,31 @@ Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::maxwellSlipUFvPatchVectorField::autoMap
+(
+    const fvPatchFieldMapper& m
+)
+{
+    mixedFixedValueSlipFvPatchVectorField::autoMap(m);
+    m(Uwall_, Uwall_);
+}
+
+
+void Foam::maxwellSlipUFvPatchVectorField::rmap
+(
+    const fvPatchVectorField& pvf,
+    const labelList& addr
+)
+{
+    mixedFixedValueSlipFvPatchVectorField::rmap(pvf, addr);
+
+    const maxwellSlipUFvPatchVectorField& mspvf =
+        refCast<const maxwellSlipUFvPatchVectorField>(pvf);
+
+    Uwall_.rmap(mspvf.Uwall_, addr);
+}
+
 
 void Foam::maxwellSlipUFvPatchVectorField::updateCoeffs()
 {

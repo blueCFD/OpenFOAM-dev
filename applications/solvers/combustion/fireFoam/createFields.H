@@ -53,15 +53,21 @@ volVectorField U
 
 
 Info<< "Creating turbulence model\n" << endl;
-autoPtr<compressible::turbulenceModel> turbulence
+autoPtr<compressible::momentumTransportModel> turbulence
 (
-    compressible::turbulenceModel::New
+    compressible::momentumTransportModel::New
     (
         rho,
         U,
         phi,
         thermo
     )
+);
+
+Info<< "Creating thermophysical transport model\n" << endl;
+autoPtr<psiReactionThermophysicalTransportModel> thermophysicalTransport
+(
+    psiReactionThermophysicalTransportModel::New(turbulence(), thermo)
 );
 
 Info<< "Creating combustion model\n" << endl;
@@ -119,12 +125,6 @@ Switch solvePrimaryRegion
     additionalControlsDict.lookup("solvePrimaryRegion")
 );
 
-Switch solvePyrolysisRegion
-(
-    additionalControlsDict.lookupOrDefault<bool>("solvePyrolysisRegion", true)
-);
-
-
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt
 (
@@ -143,6 +143,5 @@ volScalarField K("K", 0.5*magSqr(U));
 
 #include "createClouds.H"
 #include "createSurfaceFilmModel.H"
-#include "createPyrolysisModel.H"
 #include "createRadiationModel.H"
 #include "createFvOptions.H"

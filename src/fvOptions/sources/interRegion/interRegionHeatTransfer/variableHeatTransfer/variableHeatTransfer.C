@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "variableHeatTransfer.H"
-#include "turbulentFluidThermoModel.H"
+#include "thermophysicalTransportModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -65,11 +65,11 @@ Foam::fv::variableHeatTransfer::variableHeatTransfer
 {
     if (master_)
     {
-        a_ = readScalar(coeffs_.lookup("a"));
-        b_ = readScalar(coeffs_.lookup("b"));
-        c_ = readScalar(coeffs_.lookup("c"));
-        ds_ = readScalar(coeffs_.lookup("ds"));
-        Pr_ = readScalar(coeffs_.lookup("Pr"));
+        a_ = coeffs_.lookup<scalar>("a");
+        b_ = coeffs_.lookup<scalar>("b");
+        c_ = coeffs_.lookup<scalar>("c");
+        ds_ = coeffs_.lookup<scalar>("ds");
+        Pr_ = coeffs_.lookup<scalar>("Pr");
         AoV_.reset
         (
             new volScalarField
@@ -102,14 +102,16 @@ void Foam::fv::variableHeatTransfer::calculateHtc()
     const fvMesh& nbrMesh =
         mesh_.time().lookupObject<fvMesh>(nbrRegionName());
 
-    const compressible::turbulenceModel& nbrTurb =
-        nbrMesh.lookupObject<compressible::turbulenceModel>
+    const thermophysicalTransportModel& nbrTtm =
+        nbrMesh.lookupObject<thermophysicalTransportModel>
         (
-            turbulenceModel::propertiesName
+            thermophysicalTransportModel::typeName
         );
 
-    const fluidThermo& nbrThermo =
-        nbrMesh.lookupObject<fluidThermo>(basicThermo::dictName);
+    const compressibleMomentumTransportModel& nbrTurb =
+        nbrTtm.momentumTransport();
+
+    const fluidThermo& nbrThermo = nbrTtm.thermo();
 
     const volVectorField& UNbr =
         nbrMesh.lookupObject<volVectorField>(UNbrName_);
@@ -118,7 +120,7 @@ void Foam::fv::variableHeatTransfer::calculateHtc()
 
     const volScalarField NuNbr(a_*pow(ReNbr, b_)*pow(Pr_, c_));
 
-    const scalarField htcNbr(NuNbr*nbrTurb.kappaEff()/ds_);
+    const scalarField htcNbr(NuNbr*nbrTtm.kappaEff()/ds_);
 
     const scalarField htcNbrMapped(interpolate(htcNbr));
 

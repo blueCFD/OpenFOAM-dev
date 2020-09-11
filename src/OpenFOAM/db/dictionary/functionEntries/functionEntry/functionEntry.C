@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "functionEntry.H"
 #include "IOstreams.H"
 #include "ISstream.H"
+#include "Pstream.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,12 +50,112 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-Foam::token Foam::functionEntry::readLine(const word& key, Istream& is)
+Foam::token Foam::functionEntry::readLine(Istream& is)
 {
-    string s;
-    dynamic_cast<ISstream&>(is).getLine(s);
+    if (isA<Pstream>(is))
+    {
+        return token(is);
+    }
+    else
+    {
+        return token(word(readFuncNameArgs(is)), is.lineNumber());
+    }
+}
 
-    return token(string(key+s), is.lineNumber());
+
+// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
+
+Foam::string Foam::functionEntry::readFuncNameArgs(Istream& is)
+{
+    string fNameArgs;
+
+    // Read the function name with arguments if on the same line
+    const token fName(is);
+
+    if (fName.isWord())
+    {
+        const word& fNameWord = fName.wordToken();
+
+        if (fNameWord.find(token::BEGIN_LIST) != string::npos)
+        {
+            // If the function name includes a '(' push it back onto the stream
+            // and re-read as a list
+
+            ISstream& iss = dynamic_cast<ISstream&>(is);
+
+            for
+            (
+                string::const_reverse_iterator rit = fNameWord.rbegin();
+                rit != fNameWord.rend();
+                ++rit
+            )
+            {
+                iss.putback(*rit);
+            }
+
+            iss.readList(fNameArgs);
+        }
+        else
+        {
+            // Read the next token to check for '('
+            // in case the optional arguments start on the next line
+
+            const token nextToken(is);
+
+            if
+            (
+                nextToken.isPunctuation()
+             && nextToken.pToken() == token::BEGIN_LIST
+            )
+            {
+                ISstream& iss = dynamic_cast<ISstream&>(is);
+
+                iss.putback(token::BEGIN_LIST);
+                iss.readList(fNameArgs);
+                fNameArgs = fNameWord + fNameArgs;
+            }
+            else
+            {
+                is.putBack(nextToken);
+                fNameArgs = fNameWord;
+            }
+        }
+    }
+    else if (fName.isString())
+    {
+        // If the function name is a string delimit with '"'s
+        fNameArgs = '"' + fName.stringToken() + '"';
+    }
+    else
+    {
+        // For any other kind of string return for error reporting
+        fNameArgs = fName.anyStringToken();
+    }
+
+    return fNameArgs;
+}
+
+
+bool Foam::functionEntry::insert
+(
+    dictionary& parentDict,
+    const string& str
+)
+{
+    parentDict.read(IStringStream(str)());
+    return true;
+}
+
+
+bool Foam::functionEntry::insert
+(
+    const dictionary& parentDict,
+    primitiveEntry& thisEntry,
+    const string& str
+)
+{
+    thisEntry.read(parentDict, IStringStream(str)());
+    return true;
 }
 
 
@@ -67,11 +168,7 @@ Foam::functionEntry::functionEntry
     Istream& is
 )
 :
-    primitiveEntry
-    (
-        word(key+dict.name()+Foam::name(is.lineNumber())),
-        readLine(key, is)
-    )
+    primitiveEntry(key, readLine(is))
 {}
 
 
@@ -164,16 +261,19 @@ bool Foam::functionEntry::execute
 
 void Foam::functionEntry::write(Ostream& os) const
 {
-    // Contents should be single string token
-    const token& t = operator[](0);
-    const string& s = t.stringToken();
+    writeKeyword(os, keyword());
 
-    for (size_t i = 0; i < s.size(); i++)
+    if (size() == 1)
     {
-        os.write(s[i]);
+        os << operator[](0) << endl;
     }
-
-    os << endl;
+    else
+    {
+        FatalIOErrorInFunction(os)
+            << "Incorrect number of tokens in functionEntry, "
+               "should be a single word."
+            << exit(FatalIOError);
+    }
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,82 +29,8 @@ License
 #include "volFields.H"
 #include "dynamicCode.H"
 #include "dynamicCodeContext.H"
-#include "stringOps.H"
-
-// * * * * * * * * * * * * Private Static Data Members * * * * * * * * * * * //
-
-template<class Type>
-const Foam::wordList Foam::codedMixedFvPatchField<Type>::codeKeys_ =
-    {"code", "codeInclude", "localCode"};
-
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-template<class Type>
-const Foam::word Foam::codedMixedFvPatchField<Type>::codeTemplateC =
-    "mixedFvPatchFieldTemplate.C";
-
-template<class Type>
-const Foam::word Foam::codedMixedFvPatchField<Type>::codeTemplateH =
-    "mixedFvPatchFieldTemplate.H";
-
-
-// * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
-
-template<class Type>
-void Foam::codedMixedFvPatchField<Type>::setFieldTemplates
-(
-    dynamicCode& dynCode
-)
-{
-    word fieldType(pTraits<Type>::typeName);
-
-    // template type for fvPatchField
-    dynCode.setFilterVariable("TemplateType", fieldType);
-
-    // Name for fvPatchField - eg, ScalarField, VectorField, ...
-    fieldType[0] = toupper(fieldType[0]);
-    dynCode.setFilterVariable("FieldType", fieldType + "Field");
-}
-
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-template<class Type>
-const Foam::IOdictionary& Foam::codedMixedFvPatchField<Type>::dict() const
-{
-    const objectRegistry& obr = this->db();
-
-    if (obr.foundObject<IOdictionary>("codeDict"))
-    {
-        return obr.lookupObject<IOdictionary>("codeDict");
-    }
-    else
-    {
-        return obr.store
-        (
-            new IOdictionary
-            (
-                IOobject
-                (
-                    "codeDict",
-                    this->db().time().system(),
-                    this->db(),
-                    IOobject::MUST_READ_IF_MODIFIED,
-                    IOobject::NO_WRITE
-                )
-            )
-        );
-    }
-}
-
-
-template<class Type>
-Foam::dlLibraryTable& Foam::codedMixedFvPatchField<Type>::libs() const
-{
-    return const_cast<dlLibraryTable&>(this->db().time().libs());
-}
-
 
 template<class Type>
 void Foam::codedMixedFvPatchField<Type>::prepare
@@ -113,75 +39,51 @@ void Foam::codedMixedFvPatchField<Type>::prepare
     const dynamicCodeContext& context
 ) const
 {
-    // take no chances - typeName must be identical to name_
-    dynCode.setFilterVariable("typeName", name_);
+    dynCode.setFilterVariable("typeName", codeName());
 
-    // set TemplateType and FieldType filter variables
+    // Set TemplateType and FieldType filter variables
     // (for fvPatchField)
-    setFieldTemplates(dynCode);
+    word fieldType(pTraits<Type>::typeName);
 
-    // compile filtered C template
+    // Template type for fvPatchField
+    dynCode.setFilterVariable("TemplateType", fieldType);
+
+    // Name for fvPatchField - eg, ScalarField, VectorField, ...
+    fieldType[0] = toupper(fieldType[0]);
+    dynCode.setFilterVariable("FieldType", fieldType + "Field");
+
+    // Compile filtered C template
     dynCode.addCompileFile(codeTemplateC);
 
-    // copy filtered H template
+    // Copy filtered H template
     dynCode.addCopyFile(codeTemplateH);
 
+    // Debugging: make BC verbose
+    if (debug)
+    {
+        dynCode.setFilterVariable("verbose", "true");
+        Info<<"compile " << codeName() << " sha1: "
+            << context.sha1() << endl;
+    }
 
-    // debugging: make BC verbose
-    //  dynCode.setFilterVariable("verbose", "true");
-    //  Info<<"compile " << name_ << " sha1: "
-    //      << context.sha1() << endl;
-
-    // define Make/options
+    // Define Make/options
     dynCode.setMakeOptions
-        (
-            "EXE_INC = -g \\\n"
-            "-I$(LIB_SRC)/finiteVolume/lnInclude \\\n"
-            + context.options()
-            + "\n\nLIB_LIBS = \\\n"
-            + "    -lOpenFOAM \\\n"
-            + "    -lfiniteVolume \\\n"
-            + context.libs()
-        );
-}
-
-
-template<class Type>
-const Foam::dictionary& Foam::codedMixedFvPatchField<Type>::codeDict()
-const
-{
-    // use system/codeDict or in-line
-    return
     (
-        dict_.found("code")
-      ? dict_
-      : this->dict().subDict(name_)
+        "EXE_INC = -g \\\n"
+        "-I$(LIB_SRC)/finiteVolume/lnInclude \\\n"
+      + context.options()
+      + "\n\nLIB_LIBS = \\\n"
+      + "    -lOpenFOAM \\\n"
+      + "    -lfiniteVolume \\\n"
+      + context.libs()
     );
-}
-
-
-template<class Type>
-const Foam::wordList& Foam::codedMixedFvPatchField<Type>::codeKeys() const
-{
-    return codeKeys_;
-}
-
-
-template<class Type>
-Foam::string Foam::codedMixedFvPatchField<Type>::description() const
-{
-    return
-        "patch "
-      + this->patch().name()
-      + " on field "
-      + this->internalField().name();
 }
 
 
 template<class Type>
 void Foam::codedMixedFvPatchField<Type>::clearRedirect() const
 {
-    // remove instantiation of fvPatchField provided by library
+    // Remove instantiation of fvPatchField provided by library
     redirectPatchFieldPtr_.clear();
 }
 
@@ -196,7 +98,7 @@ Foam::codedMixedFvPatchField<Type>::codedMixedFvPatchField
 )
 :
     mixedFvPatchField<Type>(p, iF),
-    codedBase(),
+    CodedBase<codedMixedFvPatchFieldBase>(),
     redirectPatchFieldPtr_()
 {}
 
@@ -211,9 +113,7 @@ Foam::codedMixedFvPatchField<Type>::codedMixedFvPatchField
 )
 :
     mixedFvPatchField<Type>(ptf, p, iF, mapper),
-    codedBase(),
-    dict_(ptf.dict_),
-    name_(ptf.name_),
+    CodedBase<codedMixedFvPatchFieldBase>(ptf),
     redirectPatchFieldPtr_()
 {}
 
@@ -227,17 +127,10 @@ Foam::codedMixedFvPatchField<Type>::codedMixedFvPatchField
 )
 :
     mixedFvPatchField<Type>(p, iF, dict),
-    codedBase(),
-    dict_(dict),
-    name_
-    (
-        dict.found("redirectType")
-      ? dict.lookup("redirectType")
-      : dict.lookup("name")
-    ),
+    CodedBase<codedMixedFvPatchFieldBase>(dict),
     redirectPatchFieldPtr_()
 {
-    updateLibrary(name_);
+    updateLibrary();
 }
 
 
@@ -248,9 +141,7 @@ Foam::codedMixedFvPatchField<Type>::codedMixedFvPatchField
 )
 :
     mixedFvPatchField<Type>(ptf),
-    codedBase(),
-    dict_(ptf.dict_),
-    name_(ptf.name_),
+    CodedBase<codedMixedFvPatchFieldBase>(ptf),
     redirectPatchFieldPtr_()
 {}
 
@@ -263,9 +154,7 @@ Foam::codedMixedFvPatchField<Type>::codedMixedFvPatchField
 )
 :
     mixedFvPatchField<Type>(ptf, iF),
-    codedBase(),
-    dict_(ptf.dict_),
-    name_(ptf.name_),
+    CodedBase<codedMixedFvPatchFieldBase>(ptf),
     redirectPatchFieldPtr_()
 {}
 
@@ -278,19 +167,14 @@ Foam::codedMixedFvPatchField<Type>::redirectPatchField() const
 {
     if (!redirectPatchFieldPtr_.valid())
     {
-        // Construct a patch
-        // Make sure to construct the patchfield with up-to-date value
-
-        // Write the data from the mixed b.c.
         OStringStream os;
         mixedFvPatchField<Type>::write(os);
         IStringStream is(os.str());
-        // Construct dictionary from it.
         dictionary dict(is);
 
         // Override the type to enforce the fvPatchField::New constructor
         // to choose our type
-        dict.set("type", name_);
+        dict.set("type", codeName());
 
         redirectPatchFieldPtr_.set
         (
@@ -305,6 +189,7 @@ Foam::codedMixedFvPatchField<Type>::redirectPatchField() const
             )
         );
     }
+
     return redirectPatchFieldPtr_();
 }
 
@@ -318,7 +203,7 @@ void Foam::codedMixedFvPatchField<Type>::updateCoeffs()
     }
 
     // Make sure library containing user-defined fvPatchField is up-to-date
-    updateLibrary(name_);
+    updateLibrary();
 
     const mixedFvPatchField<Type>& fvp = redirectPatchField();
 
@@ -340,7 +225,7 @@ void Foam::codedMixedFvPatchField<Type>::evaluate
 )
 {
     // Make sure library containing user-defined fvPatchField is up-to-date
-    updateLibrary(name_);
+    updateLibrary();
 
     const mixedFvPatchField<Type>& fvp = redirectPatchField();
 
@@ -357,58 +242,7 @@ template<class Type>
 void Foam::codedMixedFvPatchField<Type>::write(Ostream& os) const
 {
     mixedFvPatchField<Type>::write(os);
-    os.writeKeyword("name") << name_
-        << token::END_STATEMENT << nl;
-
-    if (dict_.found("codeInclude"))
-    {
-        os.writeKeyword("codeInclude")
-            << token::HASH << token::BEGIN_BLOCK;
-
-        os.writeQuoted(string(dict_["codeInclude"]), false)
-            << token::HASH << token::END_BLOCK
-            << token::END_STATEMENT << nl;
-    }
-
-    if (dict_.found("localCode"))
-    {
-        os.writeKeyword("localCode")
-            << token::HASH << token::BEGIN_BLOCK;
-
-        os.writeQuoted(string(dict_["localCode"]), false)
-            << token::HASH << token::END_BLOCK
-            << token::END_STATEMENT << nl;
-    }
-
-    if (dict_.found("code"))
-    {
-        os.writeKeyword("code")
-            << token::HASH << token::BEGIN_BLOCK;
-
-        os.writeQuoted(string(dict_["code"]), false)
-            << token::HASH << token::END_BLOCK
-            << token::END_STATEMENT << nl;
-    }
-
-    if (dict_.found("codeOptions"))
-    {
-        os.writeKeyword("codeOptions")
-            << token::HASH << token::BEGIN_BLOCK;
-
-        os.writeQuoted(string(dict_["codeOptions"]), false)
-            << token::HASH << token::END_BLOCK
-            << token::END_STATEMENT << nl;
-    }
-
-    if (dict_.found("codeLibs"))
-    {
-        os.writeKeyword("codeLibs")
-            << token::HASH << token::BEGIN_BLOCK;
-
-        os.writeQuoted(string(dict_["codeLibs"]), false)
-            << token::HASH << token::END_BLOCK
-            << token::END_STATEMENT << nl;
-    }
+    writeCode(os);
 }
 
 

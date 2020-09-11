@@ -1090,7 +1090,7 @@ Foam::mappedPatchBase::mappedPatchBase
 
             case NORMAL:
             {
-                distance_ = readScalar(dict.lookup("distance"));
+                distance_ = dict.lookup<scalar>("distance");
             }
             break;
         }
@@ -1442,7 +1442,7 @@ void Foam::mappedPatchBase::write(Ostream& os) const
 
             if (!surfDict_.empty())
             {
-                os.writeKeyword(surfDict_.dictName());
+                writeKeyword(os, surfDict_.dictName());
                 os  << surfDict_;
             }
         }

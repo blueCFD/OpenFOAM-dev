@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ Class
     Foam::pressureControl
 
 Description
-    Provides controls for the pressure reference is closed-volume simulations
+    Provides controls for the pressure reference in closed-volume simulations
     and a general method for limiting the pressure during the startup of
     steady-state simulations.
 
@@ -76,6 +76,17 @@ class pressureControl
 public:
 
     // Constructors
+
+        //- Construct from the simple/pimple sub-dictionary
+        //  supporting the pressure and derived pressure fields (e.g. p_rgh)
+        pressureControl
+        (
+            const volScalarField& p,
+            const volScalarField& pRef,
+            const volScalarField& rho,
+            const dictionary& dict,
+            const bool pRefRequired = true
+        );
 
         //- Construct from the simple/pimple sub-dictionary
         pressureControl

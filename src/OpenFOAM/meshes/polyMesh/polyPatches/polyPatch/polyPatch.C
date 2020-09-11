@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -122,12 +122,12 @@ Foam::polyPatch::polyPatch
         faceSubList
         (
             bm.mesh().faces(),
-            readLabel(dict.lookup("nFaces")),
-            readLabel(dict.lookup("startFace"))
+            dict.lookup<label>("nFaces"),
+            dict.lookup<label>("startFace")
         ),
         bm.mesh().points()
     ),
-    start_(readLabel(dict.lookup("startFace"))),
+    start_(dict.lookup<label>("startFace")),
     boundaryMesh_(bm),
     faceCellsPtr_(nullptr),
     mePtr_(nullptr)
@@ -290,6 +290,12 @@ const Foam::vectorField::subField Foam::polyPatch::faceCentres() const
 const Foam::vectorField::subField Foam::polyPatch::faceAreas() const
 {
     return patchSlice(boundaryMesh().mesh().faceAreas());
+}
+
+
+const Foam::scalarField::subField Foam::polyPatch::magFaceAreas() const
+{
+    return patchSlice(boundaryMesh().mesh().magFaceAreas());
 }
 
 

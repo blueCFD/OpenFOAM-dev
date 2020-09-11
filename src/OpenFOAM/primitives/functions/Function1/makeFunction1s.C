@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,12 +30,24 @@ License
 #include "PolynomialEntry.T.H"
 #include "Sine.T.H"
 #include "Square.T.H"
-#include "CSV.T.H"
 #include "Table.T.H"
 #include "TableFile.T.H"
 #include "Scale.T.H"
+#include "CodedFunction1.T.H"
 
 #include "fieldTypes.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+defineTypeName(Foam::Function1s::coded);
+
+template<>
+const Foam::wordList Foam::CodedBase<Foam::Function1s::coded>::codeKeys_ =
+{
+    "code",
+    "codeInclude"
+};
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,10 +60,10 @@ License
     makeFunction1Type(Polynomial, Type);                                       \
     makeFunction1Type(Sine, Type);                                             \
     makeFunction1Type(Square, Type);                                           \
-    makeFunction1Type(CSV, Type);                                              \
     makeFunction1Type(Table, Type);                                            \
     makeFunction1Type(TableFile, Type);                                        \
-    makeFunction1Type(Scale, Type);
+    makeFunction1Type(Scale, Type);                                            \
+    makeFunction1Type(Coded, Type);
 
 namespace Foam
 {
@@ -63,22 +75,6 @@ namespace Foam
     makeFunction1s(sphericalTensor);
     makeFunction1s(symmTensor);
     makeFunction1s(tensor);
-}
-
-
-template<>
-Foam::tmp<Foam::Field<Foam::label>>
-Foam::Function1Types::Constant<Foam::label>::integrate
-(
-    const scalarField& x1,
-    const scalarField& x2
-) const
-{
-    FatalErrorInFunction
-        << "Evaluation is not defined for " << type() << " functions"
-        << exit(FatalError);
-
-    return tmp<Field<label>>(new Field<label>(x1.size()));
 }
 
 

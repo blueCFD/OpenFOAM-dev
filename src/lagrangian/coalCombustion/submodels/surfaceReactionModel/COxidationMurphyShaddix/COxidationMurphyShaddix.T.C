@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,14 +45,14 @@ Foam::COxidationMurphyShaddix<CloudType>::COxidationMurphyShaddix
 )
 :
     SurfaceReactionModel<CloudType>(dict, owner, typeName),
-    D0_(readScalar(this->coeffDict().lookup("D0"))),
-    rho0_(readScalar(this->coeffDict().lookup("rho0"))),
-    T0_(readScalar(this->coeffDict().lookup("T0"))),
-    Dn_(readScalar(this->coeffDict().lookup("Dn"))),
-    A_(readScalar(this->coeffDict().lookup("A"))),
-    E_(readScalar(this->coeffDict().lookup("E"))),
-    n_(readScalar(this->coeffDict().lookup("n"))),
-    WVol_(readScalar(this->coeffDict().lookup("WVol"))),
+    D0_(this->coeffDict().template lookup<scalar>("D0")),
+    rho0_(this->coeffDict().template lookup<scalar>("rho0")),
+    T0_(this->coeffDict().template lookup<scalar>("T0")),
+    Dn_(this->coeffDict().template lookup<scalar>("Dn")),
+    A_(this->coeffDict().template lookup<scalar>("A")),
+    E_(this->coeffDict().template lookup<scalar>("E")),
+    n_(this->coeffDict().template lookup<scalar>("n")),
+    WVol_(this->coeffDict().template lookup<scalar>("WVol")),
     CsLocalId_(-1),
     O2GlobalId_(owner.composition().carrierId("O2")),
     CO2GlobalId_(owner.composition().carrierId("CO2")),
@@ -69,7 +69,7 @@ Foam::COxidationMurphyShaddix<CloudType>::COxidationMurphyShaddix
     const scalar WCO2 = owner.thermo().carrier().Wi(CO2GlobalId_);
     WC_ = WCO2 - WO2_;
 
-    HcCO2_ = owner.thermo().carrier().Hc(CO2GlobalId_);
+    HcCO2_ = owner.thermo().carrier().Hf(CO2GlobalId_);
 
     const scalar YCloc = owner.composition().Y0(idSolid)[CsLocalId_];
     const scalar YSolidTot = owner.composition().YMixture0()[idSolid];
@@ -155,7 +155,7 @@ Foam::scalar Foam::COxidationMurphyShaddix<CloudType>::calculate
     // Particle surface area [m^2]
     const scalar Ap = constant::mathematical::pi*sqr(d);
 
-    // Calculate diffision constant at continuous phase temperature
+    // Calculate diffusion constant at continuous phase temperature
     // and density [m^2/s]
     const scalar D = D0_*(rho0_/rhoc)*pow(Tc/T0_, Dn_);
 

@@ -125,7 +125,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
                 }
             }
 
-            // Check if parallel "procesors" directory
+            // Check if parallel "processors" directory
             if (io.time().processorCase())
             {
                 tmpNrc<dirIndexList> pDirs

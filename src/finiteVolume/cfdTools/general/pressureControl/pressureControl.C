@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,6 +31,7 @@ License
 Foam::pressureControl::pressureControl
 (
     const volScalarField& p,
+    const volScalarField& pRef,
     const volScalarField& rho,
     const dictionary& dict,
     const bool pRefRequired
@@ -48,7 +49,7 @@ Foam::pressureControl::pressureControl
     scalar pMin = great;
 
     // Set the reference cell and value for closed domain simulations
-    if (pRefRequired && setRefCell(p, dict, refCell_, refValue_))
+    if (pRefRequired && setRefCell(p, pRef, dict, refCell_, refValue_))
     {
         pLimits = true;
 
@@ -58,9 +59,9 @@ Foam::pressureControl::pressureControl
 
     if (dict.found("pMax") && dict.found("pMin"))
     {
-        pMax_.value() = readScalar(dict.lookup("pMax"));
+        pMax_.value() = dict.lookup<scalar>("pMax");
         limitMaxP_ = true;
-        pMin_.value() = readScalar(dict.lookup("pMin"));
+        pMin_.value() = dict.lookup<scalar>("pMin");
         limitMinP_ = true;
     }
     else
@@ -99,7 +100,7 @@ Foam::pressureControl::pressureControl
 
         if (dict.found("pMax"))
         {
-            pMax_.value() = readScalar(dict.lookup("pMax"));
+            pMax_.value() = dict.lookup<scalar>("pMax");
             limitMaxP_ = true;
         }
         else if (dict.found("pMaxFactor"))
@@ -114,7 +115,7 @@ Foam::pressureControl::pressureControl
                     << exit(FatalIOError);
             }
 
-            const scalar pMaxFactor(readScalar(dict.lookup("pMaxFactor")));
+            const scalar pMaxFactor(dict.lookup<scalar>("pMaxFactor"));
             pMax_.value() = pMaxFactor*pMax;
             limitMaxP_ = true;
         }
@@ -156,7 +157,7 @@ Foam::pressureControl::pressureControl
 
         if (dict.found("pMin"))
         {
-            pMin_.value() = readScalar(dict.lookup("pMin"));
+            pMin_.value() = dict.lookup<scalar>("pMin");
             limitMinP_ = true;
         }
         else if (dict.found("pMinFactor"))
@@ -171,7 +172,7 @@ Foam::pressureControl::pressureControl
                     << exit(FatalIOError);
             }
 
-            const scalar pMinFactor(readScalar(dict.lookup("pMinFactor")));
+            const scalar pMinFactor(dict.lookup<scalar>("pMinFactor"));
             pMin_.value() = pMinFactor*pMin;
             limitMinP_ = true;
         }
@@ -228,6 +229,18 @@ Foam::pressureControl::pressureControl
         Info << endl;
     }
 }
+
+
+Foam::pressureControl::pressureControl
+(
+    const volScalarField& p,
+    const volScalarField& rho,
+    const dictionary& dict,
+    const bool pRefRequired
+)
+:
+    pressureControl(p, p, rho, dict, pRefRequired)
+{}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //

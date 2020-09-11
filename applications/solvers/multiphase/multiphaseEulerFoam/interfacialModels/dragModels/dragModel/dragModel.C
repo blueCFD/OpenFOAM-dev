@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,39 +24,76 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "dragModel.H"
+#include "phasePair.H"
+#include "noSwarm.H"
+#include "surfaceInterpolate.H"
+#include "BlendedInterfacialModel.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(dragModel, 0);
+    defineBlendedInterfacialModelTypeNameAndDebug(dragModel, 0);
     defineRunTimeSelectionTable(dragModel, dictionary);
 }
+
+const Foam::dimensionSet Foam::dragModel::dimK(1, -3, -1, 0, 0);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::dragModel::dragModel
 (
-    const dictionary& interfaceDict,
-    const phaseModel& phase1,
-    const phaseModel& phase2
+    const phasePair& pair,
+    const bool registerObject
 )
 :
-    interfaceDict_(interfaceDict),
-    phase1_(phase1),
-    phase2_(phase2),
-    residualPhaseFraction_
+    regIOobject
     (
-        "residualPhaseFraction",
-        dimless,
-        interfaceDict.lookup("residualPhaseFraction")
+        IOobject
+        (
+            IOobject::groupName(typeName, pair.name()),
+            pair.phase1().mesh().time().timeName(),
+            pair.phase1().mesh(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE,
+            registerObject
+        )
     ),
-    residualSlip_
+    pair_(pair)
+{}
+
+
+Foam::dragModel::dragModel
+(
+    const dictionary& dict,
+    const phasePair& pair,
+    const bool registerObject
+)
+:
+    regIOobject
     (
-        "residualSlip",
-        dimVelocity,
-        interfaceDict.lookup("residualSlip")
+        IOobject
+        (
+            IOobject::groupName(typeName, pair.name()),
+            pair.phase1().mesh().time().timeName(),
+            pair.phase1().mesh(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE,
+            registerObject
+        )
+    ),
+    pair_(pair),
+    swarmCorrection_
+    (
+        dict.found("swarmCorrection")
+      ? swarmCorrection::New
+        (
+            dict.subDict("swarmCorrection"),
+            pair
+        )
+      : autoPtr<swarmCorrection>(new swarmCorrections::noSwarm(dict, pair))
     )
 {}
 
@@ -65,6 +102,43 @@ Foam::dragModel::dragModel
 
 Foam::dragModel::~dragModel()
 {}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField> Foam::dragModel::Ki() const
+{
+    return
+        0.75
+       *CdRe()
+       *swarmCorrection_->Cs()
+       *pair_.continuous().rho()
+       *pair_.continuous().thermo().nu()
+       /sqr(pair_.dispersed().d());
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::dragModel::K() const
+{
+    return max(pair_.dispersed(), pair_.dispersed().residualAlpha())*Ki();
+}
+
+
+Foam::tmp<Foam::surfaceScalarField> Foam::dragModel::Kf() const
+{
+    return
+        max
+        (
+            fvc::interpolate(pair_.dispersed()),
+            pair_.dispersed().residualAlpha()
+        )*fvc::interpolate(Ki());
+}
+
+
+bool Foam::dragModel::writeData(Ostream& os) const
+{
+    return os.good();
+}
 
 
 // ************************************************************************* //

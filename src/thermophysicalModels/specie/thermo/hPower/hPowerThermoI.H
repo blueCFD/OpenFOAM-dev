@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -116,7 +116,8 @@ inline Foam::scalar Foam::hPowerThermo<EquationOfState>::limit
 template<class EquationOfState>
 inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Cp
 (
-    const scalar p, const scalar T
+    const scalar p,
+    const scalar T
 ) const
 {
     return c0_*pow(T/Tref_, n0_) + EquationOfState::Cp(p, T);
@@ -126,17 +127,19 @@ inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Cp
 template<class EquationOfState>
 inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Ha
 (
-    const scalar p, const scalar T
+    const scalar p,
+    const scalar T
 ) const
 {
-    return Hs(p, T) + Hc();
+    return Hs(p, T) + Hf();
 }
 
 
 template<class EquationOfState>
 inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Hs
 (
-    const scalar p, const scalar T
+    const scalar p,
+    const scalar T
 ) const
 {
     return
@@ -146,7 +149,7 @@ inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Hs
 
 
 template<class EquationOfState>
-inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Hc() const
+inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Hf() const
 {
     return Hf_;
 }
@@ -155,31 +158,34 @@ inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Hc() const
 template<class EquationOfState>
 inline Foam::scalar Foam::hPowerThermo<EquationOfState>::S
 (
-    const scalar p, const scalar T
+    const scalar p,
+    const scalar T
 ) const
 {
     return
         c0_*(pow(T, n0_) - pow(Tstd, n0_))/(pow(Tref_, n0_)*n0_)
-      + EquationOfState::S(p, T);
+      + EquationOfState::Sp(p, T);
 }
 
 
 template<class EquationOfState>
-inline Foam::scalar Foam::hPowerThermo<EquationOfState>::dGdT
+inline Foam::scalar Foam::hPowerThermo<EquationOfState>::Gstd
 (
-    const scalar p, const scalar T
+    const scalar T
 ) const
 {
-    // To be implemented
-    NotImplemented;
-    return 0;
+    return
+        c0_*(pow(T, n0_ + 1) - pow(Tstd, n0_ + 1))/(pow(Tref_, n0_)*(n0_ + 1))
+      + Hf()
+      - c0_*(pow(T, n0_) - pow(Tstd, n0_))*T/(pow(Tref_, n0_)*n0_);
 }
 
 
 template<class EquationOfState>
 inline Foam::scalar Foam::hPowerThermo<EquationOfState>::dCpdT
 (
-    const scalar p, const scalar T
+    const scalar p,
+    const scalar T
 ) const
 {
     // To be implemented

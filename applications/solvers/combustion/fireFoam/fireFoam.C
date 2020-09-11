@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,18 +26,17 @@ Application
 
 Description
     Transient solver for fires and turbulent diffusion flames with reacting
-    particle clouds, surface film and pyrolysis modelling.
+    particle clouds and surface film modelling.
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "turbulentFluidThermoModel.H"
+#include "fluidThermoMomentumTransportModel.H"
+#include "psiReactionThermophysicalTransportModel.H"
 #include "basicReactingCloud.H"
 #include "surfaceFilmModel.H"
-#include "pyrolysisModelCollection.H"
 #include "radiationModel.H"
 #include "SLGThermo.H"
-#include "solidChemistryModel.H"
 #include "psiReactionThermo.H"
 #include "CombustionModel.T.H"
 #include "pimpleControl.H"
@@ -59,7 +58,6 @@ int main(int argc, char *argv[])
     #include "createTimeControls.H"
     #include "compressibleCourantNo.H"
     #include "setInitialDeltaT.H"
-    #include "readPyrolysisTimeControls.H"
 
     turbulence->validate();
 
@@ -67,11 +65,10 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
-    while (runTime.run())
+    while (pimple.run(runTime))
     {
         #include "readTimeControls.H"
         #include "compressibleCourantNo.H"
-        #include "solidRegionDiffusionNo.H"
         #include "setMultiRegionDeltaT.H"
         #include "setDeltaT.H"
 
@@ -82,11 +79,6 @@ int main(int argc, char *argv[])
         parcels.evolve();
 
         surfaceFilm.evolve();
-
-        if(solvePyrolysisRegion)
-        {
-            pyrolysis.evolve();
-        }
 
         if (solvePrimaryRegion)
         {
@@ -107,6 +99,7 @@ int main(int argc, char *argv[])
                 if (pimple.turbCorr())
                 {
                     turbulence->correct();
+                    thermophysicalTransport->correct();
                 }
             }
 

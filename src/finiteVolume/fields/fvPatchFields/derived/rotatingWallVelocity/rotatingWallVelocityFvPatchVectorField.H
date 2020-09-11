@@ -32,7 +32,7 @@ Usage
         Property     | Description             | Required    | Default value
         origin       | origin of rotation in Cartesian co-ordinates | yes|
         axis         | axis of rotation        | yes         |
-        omega        | angular velocty of the frame [rad/s] | yes    |
+        omega        | angular velocity of the frame [rad/s] | yes    |
     \endtable
 
     Example of the boundary condition specification:
@@ -46,11 +46,11 @@ Usage
     }
     \endverbatim
 
-    The \c omega entry is a Function1 of time, see Foam::Function1Types.
+    The \c omega entry is a Function1 of time, see Foam::Function1s.
 
 See also
     Foam::fixedValueFvPatchField
-    Foam::Function1Types
+    Foam::Function1s
 
 SourceFiles
     rotatingWallVelocityFvPatchVectorField.C

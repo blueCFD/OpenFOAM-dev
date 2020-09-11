@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,9 +34,9 @@ Description
         \f]
         where
         \vartable
-            p_p     | incompressible pressure at patch [m2/s^2]
-            p_0     | incompressible total pressure [m2/s^2]
-            U       | velocity
+            p_p     | incompressible pressure at patch [m^2/s^2]
+            p_0     | incompressible total pressure [m^2/s^2]
+            U       | velocity [m/s]
         \endvartable
 
     2. compressible subsonic:
@@ -48,7 +48,7 @@ Description
             p_p     | pressure at patch [Pa]
             p_0     | total pressure [Pa]
             \rho    | density [kg/m^3]
-            U       | velocity
+            U       | velocity [m/s]
         \endvartable
 
     3. compressible transonic (\f$\gamma = 1\f$):
@@ -59,7 +59,8 @@ Description
         \vartable
             p_p     | pressure at patch [Pa]
             p_0     | total pressure [Pa]
-            G       | coefficient given by \f$\frac{\gamma}{1-\gamma}\f$
+            \psi    | compressibility [m^2/s^2]
+            U       | velocity [m/s]
         \endvartable
 
     4. compressible supersonic (\f$\gamma > 1\f$):
@@ -70,9 +71,10 @@ Description
         \vartable
             p_p     | pressure at patch [Pa]
             p_0     | total pressure [Pa]
-            \gamma  | ratio of specific heats (Cp/Cv)
-            \psi    | compressibility [m2/s^2]
-            G       | coefficient given by \f$\frac{\gamma}{1-\gamma}\f$
+            \psi    | compressibility [m^2/s^2]
+            G       | coefficient given by \f$\frac{\gamma}{1-\gamma}\f$ []
+            \gamma  | ratio of specific heats (Cp/Cv) []
+            U       | velocity [m/s]
         \endvartable
 
     The modes of operation are set by the dimensions of the pressure field
@@ -85,7 +87,6 @@ Description
         compressible transonic  | p          | psi   | 1
         compressible supersonic | p          | psi   | > 1
     \endtable
-
 
 Usage
     \table
@@ -108,6 +109,7 @@ Usage
     \endverbatim
 
 See also
+    Foam::dynamicPressureFvPatchScalarField
     Foam::fixedValueFvPatchField
 
 SourceFiles
@@ -118,7 +120,7 @@ SourceFiles
 #ifndef totalPressureFvPatchScalarField_H
 #define totalPressureFvPatchScalarField_H
 
-#include "fixedValueFvPatchFields.H"
+#include "dynamicPressureFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -131,28 +133,17 @@ namespace Foam
 
 class totalPressureFvPatchScalarField
 :
-    public fixedValueFvPatchScalarField
+    public dynamicPressureFvPatchScalarField
 {
-    // Private Data
+protected:
+
+    // Protected Data
 
         //- Name of the velocity field
-        word UName_;
+        const word UName_;
 
-        //- Name of the flux transporting the field
-        word phiName_;
-
-        //- Name of the density field used to normalise the mass flux
-        //  if necessary
-        word rhoName_;
-
-        //- Name of the compressibility field used to calculate the wave speed
-        word psiName_;
-
-        //- Heat capacity ratio
-        scalar gamma_;
-
-        //- Total pressure
-        scalarField p0_;
+        //- Name of the flux field
+        const word phiName_;
 
 
 public:
@@ -225,104 +216,11 @@ public:
 
     // Member Functions
 
-        // Access
-
-            //- Return the name of the velocity field
-            const word& UName() const
-            {
-                return UName_;
-            }
-
-            //- Return reference to the name of the velocity field
-            //  to allow adjustment
-            word& UName()
-            {
-                return UName_;
-            }
-
-            //- Return the name of the flux field
-            const word& phiName() const
-            {
-                return phiName_;
-            }
-
-            //- Return reference to the name of the flux field
-            //  to allow adjustment
-            word& phiName()
-            {
-                return phiName_;
-            }
-
-            //- Return the name of the density field
-            const word& rhoName() const
-            {
-                return rhoName_;
-            }
-
-            //- Return reference to the name of the density field
-            //  to allow adjustment
-            word& rhoName()
-            {
-                return rhoName_;
-            }
-
-            //- Return the name of the compressibility field
-            const word& psiName() const
-            {
-                return psiName_;
-            }
-
-            //- Return reference to the name of the compressibility field
-            //  to allow adjustment
-            word& psiName()
-            {
-                return psiName_;
-            }
-
-            //- Return the heat capacity ratio
-            scalar gamma() const
-            {
-                return gamma_;
-            }
-
-            //- Return reference to the heat capacity ratio to allow adjustment
-            scalar& gamma()
-            {
-                return gamma_;
-            }
-
-            //- Return the total pressure
-            const scalarField& p0() const
-            {
-                return p0_;
-            }
-
-            //- Return reference to the total pressure to allow adjustment
-            scalarField& p0()
-            {
-                return p0_;
-            }
-
-
-        // Mapping functions
-
-            //- Map (and resize as needed) from self given a mapping object
-            //  Used to update fields following mesh topology change
-            virtual void autoMap(const fvPatchFieldMapper&);
-
-            //- Reverse map the given fvPatchField onto this fvPatchField
-            //  Used to reconstruct fields
-            virtual void rmap(const fvPatchScalarField&, const labelList&);
-
-
         // Evaluation functions
-
-            //- Inherit updateCoeffs from fixedValueFvPatchScalarField
-            using fixedValueFvPatchScalarField::updateCoeffs;
 
             //- Update the coefficients associated with the patch field
             //  using the given patch total pressure and velocity fields
-            virtual void updateCoeffs
+            void updateCoeffs
             (
                 const scalarField& p0p,
                 const vectorField& Up

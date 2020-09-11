@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,8 +32,10 @@ template<class EquationOfState>
 Foam::hConstThermo<EquationOfState>::hConstThermo(const dictionary& dict)
 :
     EquationOfState(dict),
-    Cp_(readScalar(dict.subDict("thermodynamics").lookup("Cp"))),
-    Hf_(readScalar(dict.subDict("thermodynamics").lookup("Hf")))
+    Cp_(dict.subDict("thermodynamics").lookup<scalar>("Cp")),
+    Hf_(dict.subDict("thermodynamics").lookup<scalar>("Hf")),
+    Tref_(dict.subDict("thermodynamics").lookupOrDefault<scalar>("Tref", Tstd)),
+    Hsref_(dict.subDict("thermodynamics").lookupOrDefault<scalar>("Hsref", 0))
 {}
 
 
@@ -47,6 +49,14 @@ void Foam::hConstThermo<EquationOfState>::write(Ostream& os) const
     dictionary dict("thermodynamics");
     dict.add("Cp", Cp_);
     dict.add("Hf", Hf_);
+    if (Tref_ != Tstd)
+    {
+        dict.add("Tref", Tref_);
+    }
+    if (Hsref_ != 0)
+    {
+        dict.add("Hsref", Hsref_);
+    }
     os  << indent << dict.dictName() << dict;
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,21 +66,16 @@ Foam::specieCoeffs::specieCoeffs
             specieName = specieName(0, i);
         }
 
-        if (species.contains(specieName))
+        if (species.found(specieName))
         {
             index = species[specieName];
         }
         else
         {
-            // In order to support the convoluted way in which
-            // the solidChemistry currently handles gaseous species
-            // an error cannot be generated here.
-            // We will re-introduce this check after solidChemistry is
-            // re-written in a rational manner.
-            // FatalIOErrorInFunction(is)
-            //     << "Specie " << specieName
-            //     << " not found in table " << species
-            //     << exit(FatalIOError);
+            FatalIOErrorInFunction(is)
+                << "Specie " << specieName
+                << " not found in table " << species
+                << exit(FatalIOError);
 
             index = -1;
         }

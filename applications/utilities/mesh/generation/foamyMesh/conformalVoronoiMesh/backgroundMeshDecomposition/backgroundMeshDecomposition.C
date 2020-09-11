@@ -779,7 +779,6 @@ Foam::backgroundMeshDecomposition::backgroundMeshDecomposition
 :
     runTime_(runTime),
     geometryToConformTo_(geometryToConformTo),
-    rndGen_(rndGen),
     mesh_
     (
         IOobject
@@ -815,14 +814,14 @@ Foam::backgroundMeshDecomposition::backgroundMeshDecomposition
     ),
     decomposerPtr_(decompositionMethod::New(decomposeDict_)),
     mergeDist_(1e-6*mesh_.bounds().mag()),
-    spanScale_(readScalar(coeffsDict.lookup("spanScale"))),
+    spanScale_(coeffsDict.lookup<scalar>("spanScale")),
     minCellSizeLimit_
     (
         coeffsDict.lookupOrDefault<scalar>("minCellSizeLimit", 0.0)
     ),
-    minLevels_(readLabel(coeffsDict.lookup("minLevels"))),
-    volRes_(readLabel(coeffsDict.lookup("sampleResolution"))),
-    maxCellWeightCoeff_(readScalar(coeffsDict.lookup("maxCellWeightCoeff")))
+    minLevels_(coeffsDict.lookup<label>("minLevels")),
+    volRes_(coeffsDict.lookup<label>("sampleResolution")),
+    maxCellWeightCoeff_(coeffsDict.lookup<scalar>("maxCellWeightCoeff"))
 {
     if (!Pstream::parRun())
     {

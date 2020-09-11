@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,7 +94,7 @@ class cyclicAMIPointPatchField
                 (
                     new PrimitivePatchInterpolation<primitivePatch>
                     (
-                        cyclicAMIPatch_.cyclicAMIPatch().neighbPatch()
+                        cyclicAMIPatch_.cyclicAMIPatch().nbrPatch()
                     )
                 );
             }
@@ -183,26 +183,10 @@ public:
 
         // Cyclic AMI coupled interface functions
 
-            //- Does the patch field perform the transformation
-            virtual bool doTransform() const
+            //- Return transformation between the coupled patches
+            virtual const transformer& transform() const
             {
-                return
-                   !(
-                        cyclicAMIPatch_.parallel()
-                     || pTraits<Type>::rank == 0
-                    );
-            }
-
-            //- Return face transformation tensor
-            virtual const tensorField& forwardT() const
-            {
-                return cyclicAMIPatch_.forwardT();
-            }
-
-            //- Return neighbour-cell transformation tensor
-            virtual const tensorField& reverseT() const
-            {
-                return cyclicAMIPatch_.reverseT();
+                return cyclicAMIPatch_.transform();
             }
 
 

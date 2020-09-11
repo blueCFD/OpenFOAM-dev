@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,8 @@ Foam::fv::fixedTemperatureConstraint::fixedTemperatureConstraint
     cellSetOption(name, modelType, dict, mesh),
     mode_(temperatureModeNames_.read(coeffs_.lookup("mode"))),
     Tuniform_(nullptr),
-    TName_("T")
+    TName_("T"),
+    phase_(coeffs_.lookupOrDefault<word>("phase", word::null))
 {
     switch (mode_)
     {
@@ -93,12 +94,14 @@ Foam::fv::fixedTemperatureConstraint::fixedTemperatureConstraint
         }
     }
 
-
     // Set the field name to that of the energy field from which the temperature
     // is obtained
 
     const basicThermo& thermo =
-        mesh_.lookupObject<basicThermo>(basicThermo::dictName);
+        mesh_.lookupObject<basicThermo>
+        (
+            IOobject::groupName(basicThermo::dictName, phase_)
+        );
 
     fieldNames_.setSize(1, thermo.he().name());
 
@@ -115,7 +118,10 @@ void Foam::fv::fixedTemperatureConstraint::constrain
 )
 {
     const basicThermo& thermo =
-        mesh_.lookupObject<basicThermo>(basicThermo::dictName);
+        mesh_.lookupObject<basicThermo>
+        (
+            IOobject::groupName(basicThermo::dictName, phase_)
+        );
 
     switch (mode_)
     {
@@ -123,7 +129,7 @@ void Foam::fv::fixedTemperatureConstraint::constrain
         {
             const scalar t = mesh_.time().value();
             scalarField Tuni(cells_.size(), Tuniform_->value(t));
-            eqn.setValues(cells_, thermo.he(thermo.p(), Tuni, cells_));
+            eqn.setValues(cells_, thermo.he(Tuni, cells_));
 
             break;
         }
@@ -133,7 +139,7 @@ void Foam::fv::fixedTemperatureConstraint::constrain
                 mesh().lookupObject<volScalarField>(TName_);
 
             scalarField Tlkp(T, cells_);
-            eqn.setValues(cells_, thermo.he(thermo.p(), Tlkp, cells_));
+            eqn.setValues(cells_, thermo.he(Tlkp, cells_));
 
             break;
         }
