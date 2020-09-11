@@ -793,9 +793,7 @@ INPUT_ENCODING         = UTF-8
 # *.m, *.markdown, *.md, *.mm, *.dox, *.py, *.f90, *.f, *.for, *.tcl, *.vhd,
 # *.vhdl, *.ucf, *.qsf, *.as and *.js.
 
-FILE_PATTERNS          = *.H \
-                         *.C \
-                         *.dox
+FILE_PATTERNS          = *.H *.C
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -810,7 +808,11 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = \
+    $(WM_PROJECT_DIR)/src/mesh/blockMesh/blockMesh/blockMesh.C \
+    $(WM_PROJECT_DIR)/src/dynamicMesh/polyTopoChange/polyTopoChange/removeFaces.C \
+    $(WM_PROJECT_DIR)/src/meshTools/sets/topoSets/topoSet.C \
+    $(WM_PROJECT_DIR)/src/conversion/polyDualMesh/polyDualMesh.C
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1422,7 +1424,7 @@ EXT_LINKS_IN_WINDOW    = NO
 # Minimum value: 8, maximum value: 50, default value: 10.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-FORMULA_FONTSIZE       = 10
+FORMULA_FONTSIZE       = 16
 
 # Use the FORMULA_TRANPARENT tag to determine whether or not the images
 # generated for formulas are transparent PNGs. Transparent PNGs are not
@@ -1632,7 +1634,8 @@ PAPER_TYPE             = a4wide
 # If left blank no extra packages will be included.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-EXTRA_PACKAGES         = $(WM_PROJECT_DIR)/doc/Doxygen/Macros/tensorOperator
+EXTRA_PACKAGES         = $(WM_PROJECT_DIR)/doc/Doxygen/Macros/tensorOperator \
+                         amsmath
 
 # The LATEX_HEADER tag can be used to specify a personal LaTeX header for the
 # generated LaTeX document. The header should contain everything until the first

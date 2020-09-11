@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,21 +46,11 @@ namespace Foam
                   Class partialFaceAreaWeightAMI Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class SourcePatch, class TargetPatch>
 class partialFaceAreaWeightAMI
 :
-    public faceAreaWeightAMI<SourcePatch, TargetPatch>
+    public faceAreaWeightAMI
 {
-
-private:
-
     // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        partialFaceAreaWeightAMI(const partialFaceAreaWeightAMI&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const partialFaceAreaWeightAMI&);
 
         // Marching front
 
@@ -88,14 +78,17 @@ public:
         //- Construct from components
         partialFaceAreaWeightAMI
         (
-            const SourcePatch& srcPatch,
-            const TargetPatch& tgtPatch,
+            const primitivePatch& srcPatch,
+            const primitivePatch& tgtPatch,
             const scalarField& srcMagSf,
             const scalarField& tgtMagSf,
             const faceAreaIntersect::triangulationMode& triMode,
             const bool reverseTarget = false,
             const bool requireMatch = true
         );
+
+        //- Disallow default bitwise copy construction
+        partialFaceAreaWeightAMI(const partialFaceAreaWeightAMI&) = delete;
 
 
     //- Destructor
@@ -122,18 +115,18 @@ public:
                 label srcFacei = -1,
                 label tgtFacei = -1
             );
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const partialFaceAreaWeightAMI&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "partialFaceAreaWeightAMI.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

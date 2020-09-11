@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -68,13 +68,8 @@ inline void Foam::particle::movingTetGeometry
     const triFace triIs(currentTetIndices().faceTriIs(mesh_));
     const pointField& ptsOld = mesh_.oldPoints();
     const pointField& ptsNew = mesh_.points();
-
-    // !!! <-- We would be better off using mesh_.cellCentres() here. However,
-    // we need to put a mesh_.oldCellCentres() method in for this to work. The
-    // values obtained from the mesh and those obtained from the cell do not
-    // necessarily match. See mantis #1993.
-    const vector ccOld = mesh_.cells()[celli_].centre(ptsOld, mesh_.faces());
-    const vector ccNew = mesh_.cells()[celli_].centre(ptsNew, mesh_.faces());
+    const vector ccOld = mesh_.oldCellCentres()[celli_];
+    const vector ccNew = mesh_.cellCentres()[celli_];
 
     // Old and new points and cell centres are not sub-cycled. If we are sub-
     // cycling, then we have to account for the timestep change here by
@@ -286,7 +281,15 @@ inline Foam::vector Foam::particle::position() const
 }
 
 
-void Foam::particle::patchData(vector& n, vector& U) const
+inline void Foam::particle::reset()
+{
+    stepFraction_ = 0;
+    nBehind_ = 0;
+    behind_ = 0;
+}
+
+
+void Foam::particle::patchData(vector& normal, vector& displacement) const
 {
     if (!onBoundaryFace())
     {
@@ -300,27 +303,23 @@ void Foam::particle::patchData(vector& n, vector& U) const
         Pair<vector> centre, base, vertex1, vertex2;
         movingTetGeometry(1, centre, base, vertex1, vertex2);
 
-        n = triPointRef(base[0], vertex1[0], vertex2[0]).normal();
+        normal = triPointRef(base[0], vertex1[0], vertex2[0]).normal();
 
         // Interpolate the motion of the three face vertices to the current
         // coordinates
-        U =
+        displacement =
             coordinates_.b()*base[1]
           + coordinates_.c()*vertex1[1]
           + coordinates_.d()*vertex2[1];
-
-        // The movingTetGeometry method gives the motion as a displacement
-        // across the time-step, so we divide by the time-step to get velocity
-        U /= mesh_.time().deltaTValue();
     }
     else
     {
         vector centre, base, vertex1, vertex2;
         stationaryTetGeometry(centre, base, vertex1, vertex2);
 
-        n = triPointRef(base, vertex1, vertex2).normal();
+        normal = triPointRef(base, vertex1, vertex2).normal();
 
-        U = Zero;
+        displacement = Zero;
     }
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ SourceFiles
 #ifndef mapNearestAMI_H
 #define mapNearestAMI_H
 
-#include "AMIMethod.T.H"
+#include "AMIMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,29 +46,19 @@ namespace Foam
                         Class mapNearestAMI Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class SourcePatch, class TargetPatch>
 class mapNearestAMI
 :
-    public AMIMethod<SourcePatch, TargetPatch>
+    public AMIMethod
 {
-
-private:
-
     // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        mapNearestAMI(const mapNearestAMI&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const mapNearestAMI&);
 
         // Marching front
 
             //- Find nearest target face for source face srcFacei
             void findNearestFace
             (
-                const SourcePatch& srcPatch,
-                const TargetPatch& tgtPatch,
+                const primitivePatch& srcPatch,
+                const primitivePatch& tgtPatch,
                 const label& srcFacei,
                 label& tgtFacei
             ) const;
@@ -111,14 +101,17 @@ public:
         //- Construct from components
         mapNearestAMI
         (
-            const SourcePatch& srcPatch,
-            const TargetPatch& tgtPatch,
+            const primitivePatch& srcPatch,
+            const primitivePatch& tgtPatch,
             const scalarField& srcMagSf,
             const scalarField& tgtMagSf,
             const faceAreaIntersect::triangulationMode& triMode,
             const bool reverseTarget = false,
             const bool requireMatch = true
         );
+
+        //- Disallow default bitwise copy construction
+        mapNearestAMI(const mapNearestAMI&) = delete;
 
 
     //- Destructor
@@ -139,18 +132,18 @@ public:
                 label srcFacei = -1,
                 label tgtFacei = -1
             );
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const mapNearestAMI&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "mapNearestAMI.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -42,9 +42,9 @@ void Foam::moleFractions<ThermoType>::calculateMoleFractions()
     {
         const dimensionedScalar Wi
         (
-            "W",
+            "Wi",
             dimMass/dimMoles,
-            thermo.composition().W(i)
+            thermo.composition().Wi(i)
         );
 
         X_[i] = W*Y[i]/Wi;
@@ -84,12 +84,10 @@ Foam::moleFractions<ThermoType>::moleFractions
                     (
                         "X_" + Y[i].name(),
                         mesh_.time().timeName(),
-                        mesh_,
-                        IOobject::NO_READ,
-                        IOobject::AUTO_WRITE
+                        mesh_
                     ),
                     mesh_,
-                    dimensionedScalar("X", dimless, 0)
+                    dimensionedScalar(dimless, 0)
                 )
             );
         }
@@ -136,6 +134,11 @@ bool Foam::moleFractions<ThermoType>::execute()
 template<class ThermoType>
 bool Foam::moleFractions<ThermoType>::write()
 {
+    forAll(X_, i)
+    {
+        X_[i].write();
+    }
+
     return true;
 }
 

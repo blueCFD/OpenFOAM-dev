@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -114,7 +114,7 @@ class polynomialTransport
 :
     public Thermo
 {
-    // Private data
+    // Private Data
 
         //- Dynamic viscosity polynomial coefficients
         Polynomial<PolySize> muCoeffs_;
@@ -151,7 +151,7 @@ public:
         inline static autoPtr<polynomialTransport> New(const dictionary& dict);
 
 
-    // Member functions
+    // Member Functions
 
         //- Return the instantiated type name
         static word typeName()
@@ -159,13 +159,13 @@ public:
             return "polynomial<" + Thermo::typeName() + '>';
         }
 
-        //- Dynamic viscosity [kg/ms]
+        //- Dynamic viscosity [kg/m/s]
         inline scalar mu(const scalar p, const scalar T) const;
 
-        //- Thermal conductivity [W/mK]
+        //- Thermal conductivity [W/m/K]
         inline scalar kappa(const scalar p, const scalar T) const;
 
-        //- Thermal diffusivity of enthalpy [kg/ms]
+        //- Thermal diffusivity of enthalpy [kg/m/s]
         inline scalar alphah(const scalar p, const scalar T) const;
 
         // Species diffusivity
@@ -175,12 +175,9 @@ public:
         void write(Ostream& os) const;
 
 
-    // Member operators
-
-        inline void operator=(const polynomialTransport&);
+    // Member Operators
 
         inline void operator+=(const polynomialTransport&);
-
         inline void operator*=(const scalar);
 
 

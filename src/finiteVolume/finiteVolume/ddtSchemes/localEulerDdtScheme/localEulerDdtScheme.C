@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -347,6 +347,56 @@ localEulerDdtScheme<Type>::fvmDdt
 }
 
 
+/*
+// Courant number limited formulation
+template<class Type>
+tmp<surfaceScalarField> localEulerDdtScheme<Type>::fvcDdtPhiCoeff
+(
+    const GeometricField<Type, fvPatchField, volMesh>& U,
+    const fluxFieldType& phi,
+    const fluxFieldType& phiCorr
+)
+{
+    // Courant number limited formulation
+    tmp<surfaceScalarField> tddtCouplingCoeff = scalar(1)
+      - min
+        (
+            mag(phiCorr)*mesh().deltaCoeffs()
+           /(fvc::interpolate(localRDeltaT())*mesh().magSf()),
+            scalar(1)
+        );
+
+    surfaceScalarField& ddtCouplingCoeff = tddtCouplingCoeff.ref();
+
+    surfaceScalarField::Boundary& ccbf = ddtCouplingCoeff.boundaryFieldRef();
+
+    forAll(U.boundaryField(), patchi)
+    {
+        if
+        (
+            U.boundaryField()[patchi].fixesValue()
+         || isA<cyclicAMIFvPatch>(mesh().boundary()[patchi])
+        )
+        {
+            ccbf[patchi] = 0.0;
+        }
+    }
+
+    if (debug > 1)
+    {
+        InfoInFunction
+            << "ddtCouplingCoeff mean max min = "
+            << gAverage(ddtCouplingCoeff.primitiveField())
+            << " " << gMax(ddtCouplingCoeff.primitiveField())
+            << " " << gMin(ddtCouplingCoeff.primitiveField())
+            << endl;
+    }
+
+    return tddtCouplingCoeff;
+}
+*/
+
+
 template<class Type>
 tmp<typename localEulerDdtScheme<Type>::fluxFieldType>
 localEulerDdtScheme<Type>::fvcDdtUfCorr
@@ -594,22 +644,11 @@ tmp<surfaceScalarField> localEulerDdtScheme<Type>::meshPhi
     const GeometricField<Type, fvPatchField, volMesh>&
 )
 {
-    return tmp<surfaceScalarField>
+    return surfaceScalarField::New
     (
-        new surfaceScalarField
-        (
-            IOobject
-            (
-                "meshPhi",
-                mesh().time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
-            mesh(),
-            dimensionedScalar("0", dimVolume/dimTime, 0.0)
-        )
+        "meshPhi",
+        mesh(),
+        dimensionedScalar(dimVolume/dimTime, 0)
     );
 }
 

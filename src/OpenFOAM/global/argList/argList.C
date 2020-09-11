@@ -94,6 +94,12 @@ Foam::argList::initValidTables::initValidTables()
         "handler",
         "override the fileHandler"
      );
+    argList::addOption
+    (
+        "libs",
+        "(lib1 .. libN)",
+        "pre-load libraries"
+     );
 
     Pstream::addValidParOptions(validParOptions);
 }
@@ -107,6 +113,7 @@ void Foam::argList::initValidTables::clear()
     argList::removeOption("hostRoots");
     argList::removeOption("noFunctionObjects");
     argList::removeOption("fileHandler");
+    argList::removeOption("libs");
 }
 
 
@@ -425,6 +432,40 @@ Foam::argList::argList
     args_(argc),
     options_(argc)
 {
+    // Pre-load any libraries. Note that we cannot use dlLibraryTable here
+    {
+        const string libsString(getEnv("FOAM_LIBS"));
+        if (!libsString.empty())
+        {
+            IStringStream is(libsString);
+            const fileNameList libNames(is);
+            //Info<< "Loading libraries " << libNames << endl;
+            forAll(libNames, i)
+            {
+                dlOpen(libNames[i]);
+            }
+        }
+        for (int argI = 0; argI < argc; ++argI)
+        {
+            if (argv[argI][0] == '-')
+            {
+                const char *optionName = &argv[argI][1];
+                if (string(optionName) == "libs")
+                {
+                    const string libsString(argv[argI+1]);
+                    IStringStream is(libsString);
+                    const fileNameList libNames(is);
+                    //Info<< "Loading libraries " << libNames << endl;
+                    forAll(libNames, i)
+                    {
+                        dlOpen(libNames[i]);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
     // Check for fileHandler
     word handlerType(getEnv("FOAM_FILEHANDLER"));
     for (int argI = 0; argI < argc; ++argI)
@@ -807,22 +848,22 @@ void Foam::argList::parse
 
                 if (!decompDictStream.good())
                 {
-                    FatalError
-                        << "Cannot read "
-                        << decompDictStream.name()
-                        << exit(FatalError);
+                    // Assume non-distributed running
+                    dictNProcs = Pstream::nProcs();
                 }
-
-                dictionary decompDict(decompDictStream);
-
-                dictNProcs = readLabel
-                (
-                    decompDict.lookup("numberOfSubdomains")
-                );
-
-                if (decompDict.lookupOrDefault("distributed", false))
+                else
                 {
-                    decompDict.lookup("roots") >> roots;
+                    dictionary decompDict(decompDictStream);
+
+                    dictNProcs = readLabel
+                    (
+                        decompDict.lookup("numberOfSubdomains")
+                    );
+
+                    if (decompDict.lookupOrDefault("distributed", false))
+                    {
+                        decompDict.lookup("roots") >> roots;
+                    }
                 }
             }
 
@@ -1267,7 +1308,7 @@ void Foam::argList::printUsage() const
 
     Info<< nl
         <<"Using: OpenFOAM-" << Foam::FOAMversion
-        << " (see www.OpenFOAM.org)" << nl
+        << " (see https://openfoam.org)" << nl
         <<"Build: " << Foam::FOAMbuild << nl
         << endl;
 }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,23 +130,11 @@ protected:
         virtual void writeFileHeader(const label i);
 
         //- Calculate the heat transfer coefficient
-        void calcHeatTransferCoeff
+        tmp<volScalarField> calcHeatTransferCoeff
         (
             const volScalarField& nu,
-            const volScalarField& nut,
-            volScalarField& wallHeatTransferCoeff
+            const volScalarField& nut
         );
-
-
-private:
-
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        wallHeatTransferCoeff(const wallHeatTransferCoeff&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const wallHeatTransferCoeff&);
 
 
 public:
@@ -165,6 +153,9 @@ public:
             const dictionary&
         );
 
+        //- Disallow default bitwise copy construction
+        wallHeatTransferCoeff(const wallHeatTransferCoeff&) = delete;
+
 
     //- Destructor
     virtual ~wallHeatTransferCoeff();
@@ -180,6 +171,12 @@ public:
 
         //- Write the wall heat transfer coefficient
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const wallHeatTransferCoeff&) = delete;
 };
 
 

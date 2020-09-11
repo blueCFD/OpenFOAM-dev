@@ -124,20 +124,6 @@ Switch solvePyrolysisRegion
     additionalControlsDict.lookupOrDefault<bool>("solvePyrolysisRegion", true)
 );
 
-volScalarField Qdot
-(
-    IOobject
-    (
-        "Qdot",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("Qdot", dimEnergy/dimVolume/dimTime, 0.0)
-);
-
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt
@@ -149,7 +135,7 @@ volScalarField dpdt
         mesh
     ),
     mesh,
-    dimensionedScalar("dpdt", p.dimensions()/dimTime, 0)
+    dimensionedScalar(p.dimensions()/dimTime, 0)
 );
 
 Info<< "Creating field kinetic energy K\n" << endl;

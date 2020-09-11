@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -115,17 +115,6 @@ protected:
         ) const;
 
 
-private:
-
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        surfaceInterpolate(const surfaceInterpolate&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const surfaceInterpolate&);
-
-
 public:
 
     //- Runtime type information
@@ -143,6 +132,9 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        surfaceInterpolate(const surfaceInterpolate&) = delete;
+
 
     //- Destructor
     virtual ~surfaceInterpolate();
@@ -158,6 +150,12 @@ public:
 
         //- Write the interpolated fields
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const surfaceInterpolate&) = delete;
 };
 
 

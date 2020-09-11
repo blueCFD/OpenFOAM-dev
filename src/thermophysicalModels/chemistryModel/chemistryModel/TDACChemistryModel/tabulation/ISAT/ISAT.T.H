@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,7 +59,7 @@ class ISAT
 :
     public chemistryTabulationMethod<CompType, ThermoType>
 {
-    // Private data
+    // Private Data
 
         //- List of the stored 'points' organized in a binary tree
         binaryTree<CompType, ThermoType> chemisTree_;
@@ -117,9 +117,6 @@ class ISAT
 
 
     // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        ISAT(const ISAT&);
 
         //- Add a chemPoint to the MRU list
         void addToMRU(chemPointISAT<CompType, ThermoType>* phi0);
@@ -190,6 +187,9 @@ public:
             const dictionary& chemistryProperties,
             TDACChemistryModel<CompType, ThermoType>& chemistry
         );
+
+        //- Disallow default bitwise copy construction
+        ISAT(const ISAT&) = delete;
 
 
     // Destructor

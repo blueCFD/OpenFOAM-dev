@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,9 +48,7 @@ alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField
     relax_(1.0),
     fixedDmdt_(0.0),
     L_(0.0)
-{
-    checkType();
-}
+{}
 
 
 alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField::
@@ -191,13 +189,12 @@ void alphatFixedDmdtWallBoilingWallFunctionFvPatchScalarField::write
 ) const
 {
     fvPatchField<scalar>::write(os);
-    os.writeKeyword("vaporPhase") << vaporPhaseName_ << token::END_STATEMENT
-    << nl;
-    os.writeKeyword("relax") << relax_ << token::END_STATEMENT << nl;
-    os.writeKeyword("fixedDmdt") << fixedDmdt_ << token::END_STATEMENT << nl;
-    os.writeKeyword("L") << L_ << token::END_STATEMENT << nl;
-    dmdt_.writeEntry("dmdt", os);
-    writeEntry("value", os);
+    writeEntry(os, "vaporPhase", vaporPhaseName_);
+    writeEntry(os, "relax", relax_);
+    writeEntry(os, "fixedDmdt", fixedDmdt_);
+    writeEntry(os, "L", L_);
+    writeEntry(os, "dmdt", dmdt_);
+    writeEntry(os, "value", *this);
 }
 
 

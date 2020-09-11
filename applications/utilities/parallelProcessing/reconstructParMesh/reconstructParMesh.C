@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -439,7 +439,7 @@ void writeCellDistance
                 IOobject::AUTO_WRITE
             ),
             masterMesh,
-            dimensionedScalar("cellDist", dimless, 0),
+            dimensionedScalar(dimless, 0),
             extrapolatedCalculatedFvPatchScalarField::typeName
         );
 
@@ -691,9 +691,9 @@ int main(int argc, char *argv[])
                                 runTime,
                                 IOobject::NO_READ
                             ),
-                            xferCopy(pointField()),
-                            xferCopy(faceList()),
-                            xferCopy(cellList())
+                            pointField(),
+                            faceList(),
+                            cellList()
                         )
                     );
 

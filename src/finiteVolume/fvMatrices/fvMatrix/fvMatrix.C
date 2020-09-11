@@ -347,7 +347,6 @@ Foam::fvMatrix<Type>::fvMatrix(const fvMatrix<Type>& fvm)
 }
 
 
-#ifndef NoConstructFromTmp
 template<class Type>
 Foam::fvMatrix<Type>::fvMatrix(const tmp<fvMatrix<Type>>& tfvm)
 :
@@ -400,7 +399,6 @@ Foam::fvMatrix<Type>::fvMatrix(const tmp<fvMatrix<Type>>& tfvm)
 
     tfvm.clear();
 }
-#endif
 
 
 template<class Type>
@@ -673,15 +671,18 @@ void Foam::fvMatrix<Type>::relax(const scalar alpha)
 template<class Type>
 void Foam::fvMatrix<Type>::relax()
 {
-    word name = psi_.select
+    if
     (
         psi_.mesh().data::template lookupOrDefault<bool>
         ("finalIteration", false)
-    );
-
-    if (psi_.mesh().relaxEquation(name))
+     && psi_.mesh().relaxEquation(psi_.name() + "Final")
+    )
     {
-        relax(psi_.mesh().equationRelaxationFactor(name));
+        relax(psi_.mesh().equationRelaxationFactor(psi_.name() + "Final"));
+    }
+    else if (psi_.mesh().relaxEquation(psi_.name()))
+    {
+        relax(psi_.mesh().equationRelaxationFactor(psi_.name()));
     }
 }
 
@@ -738,16 +739,9 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::A() const
 {
     tmp<volScalarField> tAphi
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "A("+psi_.name()+')',
-                psi_.instance(),
-                psi_.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "A("+psi_.name()+')',
             psi_.mesh(),
             dimensions_/psi_.dimensions()/dimVol,
             extrapolatedCalculatedFvPatchScalarField::typeName
@@ -815,7 +809,7 @@ Foam::fvMatrix<Type>::H() const
             Hphi.replace
             (
                 cmpt,
-                dimensionedScalar("0", Hphi.dimensions(), 0.0)
+                dimensionedScalar(Hphi.dimensions(), 0)
             );
         }
     }
@@ -829,16 +823,9 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::H1() const
 {
     tmp<volScalarField> tH1
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "H(1)",
-                psi_.instance(),
-                psi_.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "H(1)",
             psi_.mesh(),
             dimensions_/(dimVol*psi_.dimensions()),
             extrapolatedCalculatedFvPatchScalarField::typeName
@@ -1329,50 +1316,6 @@ void Foam::checkMethod
             << " [" << dt.name() << dt.dimensions() << " ]"
             << abort(FatalError);
     }
-}
-
-
-template<class Type>
-Foam::SolverPerformance<Type> Foam::solve
-(
-    fvMatrix<Type>& fvm,
-    const dictionary& solverControls
-)
-{
-    return fvm.solve(solverControls);
-}
-
-template<class Type>
-Foam::SolverPerformance<Type> Foam::solve
-(
-    const tmp<fvMatrix<Type>>& tfvm,
-    const dictionary& solverControls
-)
-{
-    SolverPerformance<Type> solverPerf =
-        const_cast<fvMatrix<Type>&>(tfvm()).solve(solverControls);
-
-    tfvm.clear();
-
-    return solverPerf;
-}
-
-
-template<class Type>
-Foam::SolverPerformance<Type> Foam::solve(fvMatrix<Type>& fvm)
-{
-    return fvm.solve();
-}
-
-template<class Type>
-Foam::SolverPerformance<Type> Foam::solve(const tmp<fvMatrix<Type>>& tfvm)
-{
-    SolverPerformance<Type> solverPerf =
-        const_cast<fvMatrix<Type>&>(tfvm()).solve();
-
-    tfvm.clear();
-
-    return solverPerf;
 }
 
 

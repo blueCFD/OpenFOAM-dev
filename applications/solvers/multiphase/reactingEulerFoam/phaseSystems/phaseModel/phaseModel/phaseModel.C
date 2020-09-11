@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ Foam::phaseModel::phaseModel
             IOobject::AUTO_WRITE
         ),
         fluid.mesh(),
-        dimensionedScalar("alpha", dimless, 0)
+        dimensionedScalar(dimless, 0)
     ),
 
     fluid_(fluid),

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -206,17 +206,15 @@ void Foam::maxwellSlipUFvPatchVectorField::write(Ostream& os) const
     writeEntryIfDifferent<word>(os, "mu", "thermo:mu", muName_);
     writeEntryIfDifferent<word>(os, "tauMC", "tauMC", tauMCName_);
 
-    os.writeKeyword("accommodationCoeff")
-        << accommodationCoeff_ << token::END_STATEMENT << nl;
-    Uwall_.writeEntry("Uwall", os);
-    os.writeKeyword("thermalCreep")
-        << thermalCreep_ << token::END_STATEMENT << nl;
-    os.writeKeyword("curvature") << curvature_ << token::END_STATEMENT << nl;
+    writeEntry(os, "accommodationCoeff", accommodationCoeff_);
+    writeEntry(os, "Uwall", Uwall_);
+    writeEntry(os, "thermalCreep", thermalCreep_);
+    writeEntry(os, "curvature", curvature_);
 
-    refValue().writeEntry("refValue", os);
-    valueFraction().writeEntry("valueFraction", os);
+    writeEntry(os, "refValue", refValue());
+    writeEntry(os, "valueFraction", valueFraction());
 
-    writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 

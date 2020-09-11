@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -157,10 +157,10 @@ template<class Type>
 void Foam::fixedProfileFvPatchField<Type>::write(Ostream& os) const
 {
     fvPatchField<Type>::write(os);
-    profile_->writeData(os);
-    os.writeKeyword("direction") << dir_ << token::END_STATEMENT << nl;
-    os.writeKeyword("origin") << origin_ << token::END_STATEMENT << nl;
-    this->writeEntry("value", os);
+    writeEntry(os, profile_());
+    writeEntry(os, "direction", dir_);
+    writeEntry(os, "origin", origin_);
+    writeEntry(os, "value", *this);
 }
 
 

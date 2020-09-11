@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -136,11 +136,11 @@ public:
     // Public data types
 
         //- Track direction enumerations
-        enum trackDirection
+        enum class trackDirection
         {
-            FORWARD,
-            BACKWARD,
-            BOTH
+            forward,
+            backward,
+            both
         };
 
         //- Track direction enumeration names
@@ -149,7 +149,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- Input dictionary
         dictionary dict_;
@@ -224,12 +224,6 @@ private:
         //- Do all seeding and tracking
         void track();
 
-        //- Disallow default bitwise copy construct
-        streamLine(const streamLine&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const streamLine&);
-
 
 public:
 
@@ -246,6 +240,9 @@ public:
             const Time& runTime,
             const dictionary& dict
         );
+
+        //- Disallow default bitwise copy construction
+        streamLine(const streamLine&) = delete;
 
 
     //- Destructor
@@ -268,6 +265,12 @@ public:
 
         //- Update for mesh point-motion
         virtual void movePoints(const polyMesh&);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const streamLine&) = delete;
 };
 
 

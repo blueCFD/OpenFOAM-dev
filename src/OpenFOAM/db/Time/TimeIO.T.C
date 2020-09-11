@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -258,7 +258,11 @@ void Foam::Time::readDict()
 
     if (controlDict_.readIfPresent("writeInterval", writeInterval_))
     {
-        if (writeControl_ == wcTimeStep && label(writeInterval_) < 1)
+        if
+        (
+            writeControl_ == writeControl::timeStep
+         && label(writeInterval_) < 1
+        )
         {
             FatalIOErrorInFunction(controlDict_)
                 << "writeInterval < 1 for writeControl timeStep"
@@ -275,8 +279,8 @@ void Foam::Time::readDict()
     {
         switch (writeControl_)
         {
-            case wcRunTime:
-            case wcAdjustableRunTime:
+            case writeControl::runTime:
+            case writeControl::adjustableRunTime:
                 // Recalculate writeTimeIndex_ to be in units of current
                 // writeInterval.
                 writeTimeIndex_ = label
@@ -311,15 +315,15 @@ void Foam::Time::readDict()
 
         if (formatName == "general")
         {
-            format_ = general;
+            format_ = format::general;
         }
         else if (formatName == "fixed")
         {
-            format_ = fixed;
+            format_ = format::fixed;
         }
         else if (formatName == "scientific")
         {
-            format_ = scientific;
+            format_ = format::scientific;
         }
         else
         {
@@ -337,7 +341,7 @@ void Foam::Time::readDict()
     {
         stopAt_ = stopAtControlNames_.read(controlDict_.lookup("stopAt"));
 
-        if (stopAt_ == saEndTime)
+        if (stopAt_ == stopAtControl::endTime)
         {
             controlDict_.lookup("endTime") >> endTime_;
         }
@@ -539,7 +543,7 @@ bool Foam::Time::writeObject
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
     IOstream::compressionType cmp,
-    const bool valid
+    const bool write
 ) const
 {
     if (writeTime())
@@ -548,7 +552,7 @@ bool Foam::Time::writeObject
 
         if (writeOK)
         {
-            writeOK = objectRegistry::writeObject(fmt, ver, cmp, valid);
+            writeOK = objectRegistry::writeObject(fmt, ver, cmp, write);
         }
 
         if (writeOK)
@@ -596,7 +600,7 @@ bool Foam::Time::writeNow()
 
 bool Foam::Time::writeAndEnd()
 {
-    stopAt_  = saWriteNow;
+    stopAt_  = stopAtControl::writeNow;
     endTime_ = value();
 
     return writeNow();

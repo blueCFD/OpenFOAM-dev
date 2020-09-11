@@ -154,11 +154,6 @@ Linux)
         esac
         ;;
 
-    ia64)
-        WM_ARCH=linuxIA64
-        export WM_COMPILER=I64
-        ;;
-
     armv7l)
         WM_ARCH=linuxARM7
         export WM_ARCH_OPTION=32
@@ -211,7 +206,7 @@ SunOS)
     /bin/cat <<USAGE 1>&2
 
     Your "$WM_ARCH" operating system is not supported by this release
-    of OpenFOAM. For further assistance, please contact www.OpenFOAM.org
+    of OpenFOAM. For further assistance, please contact https://openfoam.org
 
 USAGE
     ;;

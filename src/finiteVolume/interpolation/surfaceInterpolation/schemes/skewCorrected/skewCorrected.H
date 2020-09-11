@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,15 +60,6 @@ class skewCorrected
         tmp<surfaceInterpolationScheme<Type>> tScheme_;
 
 
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        skewCorrected(const skewCorrected&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const skewCorrected&);
-
-
 public:
 
     //- Runtime type information
@@ -106,6 +97,9 @@ public:
                 surfaceInterpolationScheme<Type>::New(mesh, faceFlux, is)
             )
         {}
+
+        //- Disallow default bitwise copy construction
+        skewCorrected(const skewCorrected&) = delete;
 
 
     // Member Functions
@@ -213,6 +207,12 @@ public:
                     );
             }
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const skewCorrected&) = delete;
 };
 
 

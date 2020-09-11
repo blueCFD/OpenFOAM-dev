@@ -139,19 +139,11 @@ Foam::BlendedInterfacialModel<modelType>::K() const
 
     tmp<volScalarField> x
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                modelType::typeName + ":K",
-                pair_.phase1().mesh().time().timeName(),
-                pair_.phase1().mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            modelType::typeName + ":K",
             pair_.phase1().mesh(),
-            dimensionedScalar("zero", modelType::dimK, 0)
+            dimensionedScalar(modelType::dimK, 0)
         )
     );
 
@@ -207,19 +199,11 @@ Foam::BlendedInterfacialModel<modelType>::Kf() const
 
     tmp<surfaceScalarField> x
     (
-        new surfaceScalarField
+        surfaceScalarField::New
         (
-            IOobject
-            (
-                modelType::typeName + ":Kf",
-                pair_.phase1().mesh().time().timeName(),
-                pair_.phase1().mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            modelType::typeName + ":Kf",
             pair_.phase1().mesh(),
-            dimensionedScalar("zero", modelType::dimK, 0)
+            dimensionedScalar(modelType::dimK, 0)
         )
     );
 
@@ -338,19 +322,11 @@ Foam::BlendedInterfacialModel<modelType>::Ff() const
 
     tmp<surfaceScalarField> x
     (
-        new surfaceScalarField
+        surfaceScalarField::New
         (
-            IOobject
-            (
-                modelType::typeName + ":Ff",
-                pair_.phase1().mesh().time().timeName(),
-                pair_.phase1().mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            modelType::typeName + ":Ff",
             pair_.phase1().mesh(),
-            dimensionedScalar("zero", modelType::dimF*dimArea, 0)
+            dimensionedScalar(modelType::dimF*dimArea, 0)
         )
     );
 
@@ -400,19 +376,11 @@ Foam::BlendedInterfacialModel<modelType>::D() const
 
     tmp<volScalarField> x
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                modelType::typeName + ":D",
-                pair_.phase1().mesh().time().timeName(),
-                pair_.phase1().mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            modelType::typeName + ":D",
             pair_.phase1().mesh(),
-            dimensionedScalar("zero", modelType::dimD, 0)
+            dimensionedScalar(modelType::dimD, 0)
         )
     );
 

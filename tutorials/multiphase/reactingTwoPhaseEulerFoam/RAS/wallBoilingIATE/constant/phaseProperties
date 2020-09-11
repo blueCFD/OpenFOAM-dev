@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -73,7 +73,7 @@ gas
         p0              1e5;
     }
 
-    Sc              0.7;
+    Sct             0.7;
 
     residualAlpha   1e-4;
 }
@@ -86,7 +86,7 @@ liquid
     {
         d               0.00045;
     }
-    Sc              0.7;
+    Sct             0.7;
 
     residualAlpha   1e-4;
 }
@@ -111,10 +111,20 @@ surfaceTension
 
 saturationModel
 {
-    type constant;
+    type function1;
 
-    Tsat 373;
-    pSat 1e5;
+    function csvFile;
+    functionCoeffs
+    {
+        nHeaderLine         1;
+        refColumn           0;
+        componentColumns    (1);
+        separator           ",";
+        mergeSeparators     no;
+        file                "Tsat_water_1_2bar.csv";
+        outOfBounds         clamp;
+        interpolationScheme linear;
+    };
 };
 
 aspectRatio

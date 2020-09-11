@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -35,16 +35,16 @@ geometry
         }
     }
 
-    gasInlet
+    oilInlet
     {
         type triSurfaceMesh;
-        file "gasInlet.stl";
+        file "oilInlet.stl";
 
         regions
         {
-            gasInlet
+            oilInlet
             {
-                name gasInlet;
+                name oilInlet;
             }
         }
     }
@@ -192,7 +192,31 @@ castellatedMeshControls
     features
     (
         {
-           file "gasInlet.eMesh";
+           file "shaftRotating.eMesh";
+           levels ((1 1));
+        }
+        {
+           file "shaft.eMesh";
+           levels ((1 1));
+        }
+        {
+           file "sparger.eMesh";
+           levels ((1 1));
+        }
+        {
+           file "stirrer.eMesh";
+           levels ((1 1));
+        }
+        {
+           file "baffles.eMesh";
+           levels ((1 1));
+        }
+        {
+           file "rotating.eMesh";
+           levels ((1 1));
+        }
+        {
+           file "oilInlet.eMesh";
            levels ((1 1));
         }
         {
@@ -227,7 +251,7 @@ castellatedMeshControls
             }
         }
 
-        gasInlet
+        oilInlet
         {
             level (0 1);
             patchInfo
@@ -520,7 +544,7 @@ meshQualityControls
     //    <0 = inside out tet,
     //     0 = flat tet
     //     1 = regular tet
-    minTetQuality 1e-9;
+    minTetQuality -1e-30;
 
     // Minimum face area. Set to <0 to disable.
     minArea -1;

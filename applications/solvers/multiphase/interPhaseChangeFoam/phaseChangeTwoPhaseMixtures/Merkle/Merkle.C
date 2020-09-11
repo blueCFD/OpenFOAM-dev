@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,7 +66,7 @@ Foam::phaseChangeTwoPhaseMixtures::Merkle::Merkle
 Foam::Pair<Foam::tmp<Foam::volScalarField>>
 Foam::phaseChangeTwoPhaseMixtures::Merkle::mDotAlphal() const
 {
-    const volScalarField& p = alpha1_.db().lookupObject<volScalarField>("p");
+    const volScalarField& p = alpha1().db().lookupObject<volScalarField>("p");
 
     return Pair<tmp<volScalarField>>
     (
@@ -75,11 +75,12 @@ Foam::phaseChangeTwoPhaseMixtures::Merkle::mDotAlphal() const
     );
 }
 
+
 Foam::Pair<Foam::tmp<Foam::volScalarField>>
 Foam::phaseChangeTwoPhaseMixtures::Merkle::mDotP() const
 {
-    const volScalarField& p = alpha1_.db().lookupObject<volScalarField>("p");
-    volScalarField limitedAlpha1(min(max(alpha1_, scalar(0)), scalar(1)));
+    const volScalarField& p = alpha1().db().lookupObject<volScalarField>("p");
+    volScalarField limitedAlpha1(min(max(alpha1(), scalar(0)), scalar(1)));
 
     return Pair<tmp<volScalarField>>
     (
@@ -90,7 +91,9 @@ Foam::phaseChangeTwoPhaseMixtures::Merkle::mDotP() const
 
 
 void Foam::phaseChangeTwoPhaseMixtures::Merkle::correct()
-{}
+{
+    phaseChangeTwoPhaseMixture::correct();
+}
 
 
 bool Foam::phaseChangeTwoPhaseMixtures::Merkle::read()

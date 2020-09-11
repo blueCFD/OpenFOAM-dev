@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,10 +29,12 @@ Description
 
     Reference:
     \verbatim
-        "Water Wave Mechanics For Engineers And Scientists"
-        R G Dean and R A Dalrymple
-        Pages 314-317
+        Dean, R. G., & Dalrymple, R. A. (1991).
+        Water wave mechanics for engineers and scientists (Vol. 2).
+        World Scientific Publishing Company.
     \endverbatim
+
+    See pages 314-317.
 
 SourceFiles
     solitary.C
@@ -59,7 +61,7 @@ class solitary
 :
     public waveModel
 {
-    //- Private data
+    // Private Data
 
         //- Offset [m]
         const scalar offset_;
@@ -84,7 +86,6 @@ class solitary
         tmp<scalarField> parameter
         (
             const scalar t,
-            const scalar u,
             const scalarField& x
         ) const;
 
@@ -92,7 +93,6 @@ class solitary
         tmp<scalarField> Pi
         (
             const scalar t,
-            const scalar u,
             const scalarField& x
         ) const;
 
@@ -138,32 +138,29 @@ public:
                 return depth_;
             }
 
-        //- Get the wave elevation at a given time, mean velocity and local
-        //  coordinates. Local x is aligned with the mean velocity.
+        //- Get the wave elevation at a given time and local coordinates. Local
+        //  x is aligned with the direction of propagation.
         virtual tmp<scalarField> elevation
         (
             const scalar t,
-            const scalar u,
             const scalarField& x
         ) const;
 
-        //- Get the wave velocity at a given time, mean velocity and local
-        //  coordinates. Local x is aligned with the mean velocity, and z with
-        //  negative gravity.
+        //- Get the wave velocity at a given time and local coordinates. Local
+        //  x is aligned with the direction of propagation, and z with negative
+        //  gravity.
         virtual tmp<vector2DField> velocity
         (
             const scalar t,
-            const scalar u,
             const vector2DField& xz
         ) const;
 
-        //- Get the wave pressure at a given time, mean velocity and local
-        //  coordinates. Local x is aligned with the mean velocity, and z with
-        //  negative gravity.
+        //- Get the wave pressure at a given time and local coordinates. Local
+        //  x is aligned with the direction of propagation, and z with negative
+        //  gravity.
         virtual tmp<scalarField> pressure
         (
             const scalar t,
-            const scalar u,
             const vector2DField& xz
         ) const;
 

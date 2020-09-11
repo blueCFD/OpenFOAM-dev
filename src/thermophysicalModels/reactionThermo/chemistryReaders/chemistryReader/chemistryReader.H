@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,15 +56,6 @@ typedef HashTable<List<specieElement>> speciesCompositionTable;
 template<class ThermoType>
 class chemistryReader
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        chemistryReader(const chemistryReader&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const chemistryReader&);
-
-
 public:
 
     //- Runtime type information
@@ -79,6 +70,9 @@ public:
         //- Construct null
         chemistryReader()
         {}
+
+        //- Disallow default bitwise copy construction
+        chemistryReader(const chemistryReader&) = delete;
 
 
     // Declare run-time constructor selection table
@@ -124,6 +118,12 @@ public:
 
         //- Return access to the list of reactions
         virtual const ReactionList<ThermoType>& reactions() const = 0;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const chemistryReader&) = delete;
 };
 
 

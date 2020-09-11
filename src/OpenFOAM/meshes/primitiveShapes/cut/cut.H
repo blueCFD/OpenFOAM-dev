@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,8 +55,6 @@ namespace cut
 template<class Type>
 class uniformOp
 {
-private:
-
     //- Data
     Type data_;
 
@@ -76,7 +74,7 @@ public:
         {}
 
 
-    // Member functions
+    // Member Functions
 
         //- Access the data
         Type data() const
@@ -115,7 +113,7 @@ public:
         {}
 
 
-    // Member operators
+    // Member Operators
 
         //- Operate on nothing
         result operator()() const
@@ -124,8 +122,8 @@ public:
         }
 
         //- Operate on a triangle or tetrahedron
-        template<unsigned Size>
-        result operator()(const FixedList<point, Size>& p) const
+        template<class Type, unsigned Size>
+        result operator()(const FixedList<Type, Size>& p) const
         {
             return result();
         }
@@ -161,7 +159,7 @@ public:
         {}
 
 
-    // Member operators
+    // Member Operators
 
         //- Operate on nothing
         result operator()() const
@@ -173,6 +171,51 @@ public:
         result operator()(const FixedList<point, 3>& p) const
         {
             return result(triPointRef(p[0], p[1], p[2]).area());
+        }
+};
+
+
+/*---------------------------------------------------------------------------*\
+                            Class areaMagOp Declaration
+\*---------------------------------------------------------------------------*/
+
+class areaMagOp
+:
+    public uniformOp<nil>
+{
+public:
+
+    // Typedefs
+
+        //- Result type
+        typedef scalar result;
+
+
+    // Constructors
+
+        //- Construct null
+        areaMagOp()
+        {}
+
+        //- Construct from base
+        areaMagOp(const uniformOp<nil>& op)
+        :
+            uniformOp<nil>(op)
+        {}
+
+
+    // Member Operators
+
+        //- Operate on nothing
+        result operator()() const
+        {
+            return 0;
+        }
+
+        //- Operate on a triangle
+        result operator()(const FixedList<point, 3>& p) const
+        {
+            return result(triPointRef(p[0], p[1], p[2]).mag());
         }
 };
 
@@ -206,7 +249,7 @@ public:
         {}
 
 
-    // Member operators
+    // Member Operators
 
         //- Operate on nothing
         result operator()() const
@@ -248,7 +291,7 @@ public:
         {}
 
 
-    // Member operators
+    // Member Operators
 
         //- Operate on nothing
         result operator()() const
@@ -261,6 +304,49 @@ public:
         {
             const FixedList<Type, 3>& x = *this;
             return result(areaOp()(p)*(x[0] + x[1] + x[2])/3);
+        }
+};
+
+
+/*---------------------------------------------------------------------------*\
+                       Class areaMagIntegrateOp Declaration
+\*---------------------------------------------------------------------------*/
+
+template<class Type>
+class areaMagIntegrateOp
+:
+    public FixedList<Type, 3>
+{
+public:
+
+    // Typedefs
+
+        //- Result type
+        typedef Type result;
+
+
+    // Constructors
+
+        //- Construct from base
+        areaMagIntegrateOp(const FixedList<Type, 3>& x)
+        :
+            FixedList<Type, 3>(x)
+        {}
+
+
+    // Member Operators
+
+        //- Operate on nothing
+        result operator()() const
+        {
+            return pTraits<result>::zero;
+        }
+
+        //- Operate on a triangle
+        result operator()(const FixedList<point, 3>& p) const
+        {
+            const FixedList<Type, 3>& x = *this;
+            return result(areaMagOp()(p)*(x[0] + x[1] + x[2])/3);
         }
 };
 
@@ -291,7 +377,7 @@ public:
         {}
 
 
-    // Member operators
+    // Member Operators
 
         //- Operate on nothing
         result operator()() const
@@ -312,7 +398,7 @@ public:
                             Class listOp Declaration
 \*---------------------------------------------------------------------------*/
 
-template<unsigned Size>
+template<class Type, unsigned Size>
 class listOp
 :
     public uniformOp<nil>
@@ -324,20 +410,20 @@ public:
         //- Result class
         class result
         :
-            public DynamicList<FixedList<point, Size>>
+            public DynamicList<FixedList<Type, Size>>
         {
         public:
 
             // Constructors
 
                 //- Construct from a single element
-                result(const FixedList<point, Size>& x)
+                result(const FixedList<Type, Size>& x)
                 :
-                    DynamicList<FixedList<point, Size>>(1, x)
+                    DynamicList<FixedList<Type, Size>>(1, x)
                 {}
 
 
-            // Member operators
+            // Member Operators
 
                 //- Add together two lists
                 result operator+(const result& x) const
@@ -362,7 +448,7 @@ public:
         {}
 
 
-    // Member operators
+    // Member Operators
 
         //- Operate on nothing
         result operator()() const
@@ -371,17 +457,17 @@ public:
         }
 
         //- Operate on a triangle or tetrahedron
-        result operator()(const FixedList<point, Size>& p) const
+        result operator()(const FixedList<Type, Size>& p) const
         {
             return result(p);
         }
 };
 
 
-typedef listOp<3> listTriOp;
+typedef listOp<point, 3> listTriOp;
 
 
-typedef listOp<4> listTetOp;
+typedef listOp<point, 4> listTetOp;
 
 
 /*---------------------------------------------------------------------------*\
@@ -416,7 +502,7 @@ public:
         {}
 
 
-    // Member operators
+    // Member Operators
 
         //- Operate on nothing
         result operator()() const
@@ -425,8 +511,8 @@ public:
         }
 
         //- Operate on a triangle or tetrahedron
-        template<unsigned Size>
-        result operator()(const FixedList<point, Size>& p) const
+        template<class Type, unsigned Size>
+        result operator()(const FixedList<Type, Size>& p) const
         {
             this->data().append(p);
             return result();
@@ -481,10 +567,10 @@ public:
 //- Cut a triangle along the zero plane defined by the given levels. Templated
 //  on aboveOp and belowOp; the operations applied to the regions on either side
 //  of the cut.
-template<class AboveOp, class BelowOp>
+template<class Point, class AboveOp, class BelowOp>
 typename cut::opAddResult<AboveOp, BelowOp>::type triCut
 (
-    const FixedList<point, 3>& tri,
+    const FixedList<Point, 3>& tri,
     const FixedList<scalar, 3>& level,
     const AboveOp& aboveOp,
     const BelowOp& belowOp
@@ -501,10 +587,10 @@ typename cut::opAddResult<AboveOp, BelowOp>::type triCut
 );
 
 //- As triCut, but for a tetrahedron.
-template<class AboveOp, class BelowOp>
+template<class Point, class AboveOp, class BelowOp>
 typename cut::opAddResult<AboveOp, BelowOp>::type tetCut
 (
-    const FixedList<point, 4>& tet,
+    const FixedList<Point, 4>& tet,
     const FixedList<scalar, 4>& level,
     const AboveOp& aboveOp,
     const BelowOp& belowOp

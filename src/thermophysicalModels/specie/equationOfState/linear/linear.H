@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ class linear
 :
     public Specie
 {
-    // Private data
+    // Private Data
 
         //- Compressibility
         scalar psi_;
@@ -123,7 +123,7 @@ public:
         inline static autoPtr<linear> New(const dictionary& dict);
 
 
-    // Member functions
+    // Member Functions
 
         //- Return the instantiated type name
         static word typeName()
@@ -149,7 +149,13 @@ public:
             //- Return Cp departure [J/(kg K]
             inline scalar Cp(scalar p, scalar T) const;
 
-            //- Return entropy [J/(kg K)]
+            //- Return internal energy departure [J/kg]
+            inline scalar E(const scalar p, const scalar T) const;
+
+            //- Return Cv departure [J/(kg K]
+            inline scalar Cv(scalar p, scalar T) const;
+
+            //- Return entropy [J/kg/K]
             inline scalar S(const scalar p, const scalar T) const;
 
             //- Return compressibility rho/p [s^2/m^2]
@@ -168,7 +174,7 @@ public:
             void write(Ostream& os) const;
 
 
-    // Member operators
+    // Member Operators
 
         inline void operator+=(const linear&);
         inline void operator*=(const scalar);

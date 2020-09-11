@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,17 +97,6 @@ protected:
         void calculateMaxProducts();
 
 
-private:
-
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        singleStepReactingMixture(const singleStepReactingMixture&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const singleStepReactingMixture&);
-
-
 public:
 
     //- The type of thermo package this mixture is instantiated for
@@ -124,13 +113,16 @@ public:
             const word&
         );
 
+        //- Disallow default bitwise copy construction
+        singleStepReactingMixture(const singleStepReactingMixture&) = delete;
+
 
     //- Destructor
     virtual ~singleStepReactingMixture()
     {}
 
 
-    // Member functions
+    // Member Functions
 
         //- Return the instantiated type name
         static word typeName()
@@ -176,6 +168,12 @@ public:
 
             //- Read dictionary
             void read(const dictionary&);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const singleStepReactingMixture&) = delete;
 };
 
 

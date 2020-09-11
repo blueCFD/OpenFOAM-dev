@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,6 +36,8 @@ Description
     \verbatim
     delta           Prandtl;
 
+    kappa           0.41;
+
     PrandtlCoeffs
     {
         delta   cubeRootVol;
@@ -45,8 +47,6 @@ Description
             deltaCoeff      1;
         }
 
-        // Default coefficients
-        kappa           0.41;
         Cdelta          0.158;
     }
     \endverbatim
@@ -76,7 +76,7 @@ class PrandtlDelta
 :
     public LESdelta
 {
-    // Private data
+    // Private Data
 
         autoPtr<LESdelta> geometricDelta_;
         scalar kappa_;
@@ -84,10 +84,6 @@ class PrandtlDelta
 
 
     // Private Member Functions
-
-        //- Disallow default bitwise copy construct and assignment
-        PrandtlDelta(const PrandtlDelta&);
-        void operator=(const PrandtlDelta&);
 
         // Calculate the delta values
         void calcDelta();
@@ -109,6 +105,9 @@ public:
             const dictionary&
         );
 
+        //- Disallow default bitwise copy construction
+        PrandtlDelta(const PrandtlDelta&) = delete;
+
 
     //- Destructor
     virtual ~PrandtlDelta()
@@ -122,6 +121,12 @@ public:
 
         // Correct values
         virtual void correct();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const PrandtlDelta&) = delete;
 };
 
 

@@ -57,7 +57,7 @@ Foam::anisotropicFilter::anisotropicFilter
             mesh
         ),
         mesh,
-        dimensionedVector("zero", dimLength*dimLength, Zero),
+        dimensionedVector(dimLength*dimLength, Zero),
         calculatedFvPatchVectorField::typeName
     )
 {
@@ -97,7 +97,7 @@ Foam::anisotropicFilter::anisotropicFilter
             mesh
         ),
         mesh,
-        dimensionedVector("zero", dimLength*dimLength, Zero),
+        dimensionedVector(dimLength*dimLength, Zero),
         calculatedFvPatchScalarField::typeName
     )
 {
@@ -184,14 +184,9 @@ Foam::tmp<Foam::volSymmTensorField> Foam::anisotropicFilter::operator()
 
     tmp<volSymmTensorField> tmpFilteredField
     (
-        new volSymmTensorField
+        volSymmTensorField::New
         (
-            IOobject
-            (
-                "anisotropicFilteredSymmTensorField",
-                mesh().time().timeName(),
-                mesh()
-            ),
+            "anisotropicFilteredSymmTensorField",
             mesh(),
             unFilteredField().dimensions()
         )
@@ -220,14 +215,9 @@ Foam::tmp<Foam::volTensorField> Foam::anisotropicFilter::operator()
 
     tmp<volTensorField> tmpFilteredField
     (
-        new volTensorField
+        volTensorField::New
         (
-            IOobject
-            (
-                "anisotropicFilteredTensorField",
-                mesh().time().timeName(),
-                mesh()
-            ),
+            "anisotropicFilteredTensorField",
             mesh(),
             unFilteredField().dimensions()
         )

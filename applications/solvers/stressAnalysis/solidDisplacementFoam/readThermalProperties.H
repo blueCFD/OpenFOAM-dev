@@ -25,7 +25,7 @@ volScalarField threeKalpha
         IOobject::NO_WRITE
     ),
     mesh,
-    dimensionedScalar("0", dimensionSet(0, 2, -2 , -1, 0), 0.0)
+    dimensionedScalar(dimensionSet(0, 2, -2 , -1, 0), 0)
 );
 
 
@@ -40,15 +40,15 @@ volScalarField DT
         IOobject::NO_WRITE
     ),
     mesh,
-    dimensionedScalar("0", dimensionSet(0, 2, -1 , 0, 0), 0.0)
+    dimensionedScalar(dimensionSet(0, 2, -1 , 0, 0), 0)
 );
 
 
+// Cache "k" for use in thermal BCs
+autoPtr<volScalarField> rhoKPtr;
+
 if (thermalStress)
 {
-
-    autoPtr<volScalarField> CPtr;
-
     IOobject CIO
     (
         "C",
@@ -57,6 +57,8 @@ if (thermalStress)
         IOobject::NO_READ,
         IOobject::NO_WRITE
     );
+
+    autoPtr<volScalarField> CPtr;
 
     const dictionary& CDict(thermalProperties.subDict("C"));
     word CType(CDict.lookup("type"));
@@ -72,7 +74,6 @@ if (thermalStress)
                 mesh,
                 dimensionedScalar
                 (
-                    "C",
                     dimensionSet(0, 2, -2 , -1, 0),
                     CValue
                 )
@@ -102,8 +103,6 @@ if (thermalStress)
 
     volScalarField& C = CPtr();
 
-    autoPtr<volScalarField> rhoKPtr;
-
     IOobject rhoKIO
     (
         "k",
@@ -127,7 +126,6 @@ if (thermalStress)
                 mesh,
                 dimensionedScalar
                 (
-                    "rhoK",
                     dimensionSet(1, 1, -3 , -1, 0),
                     rhoKValue
                 )
@@ -183,7 +181,6 @@ if (thermalStress)
                 mesh,
                 dimensionedScalar
                 (
-                    "alpha",
                     inv(dimTemperature),
                     alphaValue
                 )

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,7 +71,7 @@ Foam::SolidReaction<ReactionThermo>::SolidReaction
     glhs_(),
     grhs_()
 {
-    this->setLRhs
+    specieCoeffs::setLRhs
     (
         IStringStream(dict.lookup("reaction"))(),
         pyrolisisGases_,
@@ -84,7 +84,7 @@ Foam::SolidReaction<ReactionThermo>::SolidReaction
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class ReactionThermo>
-const Foam::List<typename Foam::SolidReaction<ReactionThermo>::specieCoeffs>&
+const Foam::List<Foam::specieCoeffs>&
 Foam::SolidReaction<ReactionThermo>::glhs() const
 {
     return glhs_;
@@ -92,7 +92,7 @@ Foam::SolidReaction<ReactionThermo>::glhs() const
 
 
 template<class ReactionThermo>
-const Foam::List<typename Foam::Reaction<ReactionThermo>::specieCoeffs>&
+const Foam::List<Foam::specieCoeffs>&
 Foam::SolidReaction<ReactionThermo>::grhs() const
 {
     return grhs_;
@@ -111,8 +111,7 @@ template<class ReactionThermo>
 void Foam::SolidReaction<ReactionThermo>::write(Ostream& os) const
 {
     OStringStream reaction;
-    os.writeKeyword("reaction") << solidReactionStr(reaction)
-        << token::END_STATEMENT << nl;
+    writeEntry(os, "reaction", solidReactionStr(reaction));
 }
 
 
@@ -122,14 +121,14 @@ Foam::string Foam::SolidReaction<ReactionThermo>::solidReactionStr
     OStringStream& reaction
 ) const
 {
-    this->reactionStrLeft(reaction);
+    specieCoeffs::reactionStr(reaction, this->species(), this->lhs());
     if (glhs().size() > 0)
     {
         reaction << " + ";
         solidReactionStrLeft(reaction);
     }
     reaction << " = ";
-    this->reactionStrRight(reaction);
+    specieCoeffs::reactionStr(reaction, this->species(), this->rhs());
     if (grhs().size() > 0)
     {
         reaction << " + ";

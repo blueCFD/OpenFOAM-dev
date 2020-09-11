@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,7 +80,7 @@ class interfaceHeight
     public fvMeshFunctionObject,
     public logFiles
 {
-    // Private data
+    // Private Data
 
         //- Name of the alpha field
         word alphaName_;
@@ -104,11 +104,18 @@ class interfaceHeight
     // Private Enumerations
 
         //- File enumeration
-        enum fileID
+        enum class fileID
         {
-            HEIGHT_FILE = 0,
-            POSITION_FILE = 1
+            heightFile = 0,
+            positionFile = 1
         };
+
+        using logFiles::file;
+
+        Ostream& file(const fileID fid)
+        {
+            return logFiles::file(label(fid));
+        }
 
 
 protected:

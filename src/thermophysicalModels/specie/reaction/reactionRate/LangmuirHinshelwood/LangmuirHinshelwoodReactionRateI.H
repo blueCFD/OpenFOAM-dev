@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,42 +30,34 @@ License
 
 inline Foam::LangmuirHinshelwoodReactionRate::LangmuirHinshelwoodReactionRate
 (
-    const scalar A[],
-    const scalar Ta[],
-    const label co,
-    const label c3h6,
-    const label no
-)
-:
-    co_(co),
-    c3h6_(c3h6),
-    no_(no)
-{
-    for (int i=0; i<n_; i++)
-    {
-        A_[i] = A[i];
-        Ta_[i] = Ta[i];
-    }
-}
-
-
-inline Foam::LangmuirHinshelwoodReactionRate::LangmuirHinshelwoodReactionRate
-(
     const speciesTable& st,
     const dictionary& dict
 )
 :
-    co_(st["CO"]),
-    c3h6_(st["C3H6"]),
-    no_(st["NO"])
+    reactantNames_(dict.lookup("reactants")),
+    a_(dict.lookupOrDefault<scalar>("a", 1)),
+    A_(dict.lookup("A")),
+    Ta_(dict.lookup("Ta")),
+    beta_
+    (
+        dict.lookupOrDefault<FixedList<scalar, 3>>
+        (
+            "beta",
+            FixedList<scalar, 3>({0, 0, 0})
+        )
+    ),
+    m_
+    (
+        dict.lookupOrDefault<FixedList<scalar, 3>>
+        (
+            "m",
+            FixedList<scalar, 3>({1, 1, 2})
+        )
+    )
 {
-    // read (A, Ta) pairs
-    FixedList<Tuple2<scalar, scalar>, n_> coeffs(dict.lookup("coeffs"));
-
-    forAll(coeffs, i)
+    forAll(reactantNames_, i)
     {
-        A_[i] = coeffs[i].first();
-        Ta_[i] = coeffs[i].second();
+        r_[i] = st[reactantNames_[i]];
     }
 }
 
@@ -79,13 +71,18 @@ inline Foam::scalar Foam::LangmuirHinshelwoodReactionRate::operator()
     const scalarField& c
 ) const
 {
-    return A_[0]*exp(-Ta_[0]/T)/
-    (
-        T
-       *sqr(1 + A_[1]*exp(-Ta_[1]/T)*c[co_] + A_[2]*exp(-Ta_[2]/T)*c[c3h6_])
-       *(1 + A_[3]*exp(-Ta_[3]/T)*sqr(c[co_])*sqr(c[c3h6_]))
-       *(1 + A_[4]*exp(-Ta_[4]/T)*pow(c[no_], 0.7))
-    );
+    const scalar c0m = pow(c[r_[0]], m_[0]);
+    const scalar c1m = pow(c[r_[1]], m_[1]);
+
+    const scalar TaByT0 = Ta_[0]/T;
+    const scalar TaByT1 = Ta_[1]/T;
+    const scalar TaByT2 = Ta_[2]/T;
+
+    const scalar k0 = A_[0]*pow(T, beta_[0])*exp(-TaByT0);
+    const scalar k1 = A_[1]*pow(T, beta_[1])*exp(-TaByT1);
+    const scalar k2 = A_[2]*pow(T, beta_[2])*exp(-TaByT2);
+
+    return k0/pow(a_ + k1*c0m + k2*c1m, m_[2]);
 }
 
 
@@ -96,39 +93,23 @@ inline Foam::scalar Foam::LangmuirHinshelwoodReactionRate::ddT
     const scalarField& c
 ) const
 {
-    scalar den =
-    (
-        T
-       *sqr(1 + A_[1]*exp(-Ta_[1]/T)*c[co_] + A_[2]*exp(-Ta_[2]/T)*c[c3h6_])
-       *(1 + A_[3]*exp(-Ta_[3]/T)*sqr(c[co_])*sqr(c[c3h6_]))
-       *(1 + A_[4]*exp(-Ta_[4]/T)*pow(c[no_], 0.7))
-    );
-    scalar rate = A_[0]*exp(-Ta_[0]/T)/ den;
+    const scalar c0m = pow(c[r_[0]], m_[0]);
+    const scalar c1m = pow(c[r_[1]], m_[1]);
 
-    scalar derivDen =
-    (
-        sqr(1 + A_[1]*exp(-Ta_[1]/T)*c[co_] + A_[2]*exp(-Ta_[2]/T)*c[c3h6_])
-       *(1 + A_[3]*exp(-Ta_[3]/T)*sqr(c[co_])*sqr(c[c3h6_]))
-       *(1 + A_[4]*exp(-Ta_[4]/T)*pow(c[no_], 0.7))
-      + 2*T*(1 + A_[1]*exp(-Ta_[1]/T)*c[co_] + A_[2]*exp(-Ta_[2]/T)*c[c3h6_])
-       *
-        (
-            A_[1]*exp(-Ta_[1]/T)*c[co_]*Ta_[1]/sqr(T)
-          + A_[2]*exp(-Ta_[2]/T)*c[c3h6_]*Ta_[2]/sqr(T)
-        )
-       *(1 + A_[3]*exp(-Ta_[3]/T)*sqr(c[co_])*sqr(c[c3h6_]))
-       *(1 + A_[4]*exp(-Ta_[4]/T)*pow(c[no_], 0.7))
-      + T
-       *sqr(1 + A_[1]*exp(-Ta_[1]/T)*c[co_] + A_[2]*exp(-Ta_[2]/T)*c[c3h6_])
-       *(A_[3]*exp(-Ta_[3]/T)*Ta_[3]*sqr(c[co_])*sqr(c[c3h6_])/sqr(T))
-       *(1 + A_[4]*exp(-Ta_[4]/T)*pow(c[no_], 0.7))
-      + T
-       *sqr(1 + A_[1]*exp(-Ta_[1]/T)*c[co_] + A_[2]*exp(-Ta_[2]/T)*c[c3h6_])
-       *(1 + A_[3]*exp(-Ta_[3]/T)*sqr(c[co_])*sqr(c[c3h6_]))
-       *(A_[4]*exp(-Ta_[4]/T)*Ta_[4]*pow(c[no_], 0.7))/sqr(T)
-    );
+    const scalar TaByT0 = Ta_[0]/T;
+    const scalar TaByT1 = Ta_[1]/T;
+    const scalar TaByT2 = Ta_[2]/T;
 
-    return rate*(Ta_[0]/sqr(T) - derivDen/den);
+    const scalar k0 = A_[0]*pow(T, beta_[0])*exp(-TaByT0);
+    const scalar k1 = A_[1]*pow(T, beta_[1])*exp(-TaByT1);
+    const scalar k2 = A_[2]*pow(T, beta_[2])*exp(-TaByT2);
+
+    return
+       (
+           (beta_[0] + TaByT0)*k0
+         - m_[2]*k0*((beta_[1] + TaByT1)*k1*c0m + (beta_[2] + TaByT2)*k2*c1m)
+          /(a_ + k1*c0m + k2*c1m)
+       )/(pow(a_ + k1*c0m + k2*c1m, m_[2])*T);
 }
 
 
@@ -162,15 +143,12 @@ inline Foam::scalar Foam::LangmuirHinshelwoodReactionRate::dcidT
 
 inline void Foam::LangmuirHinshelwoodReactionRate::write(Ostream& os) const
 {
-    FixedList<Tuple2<scalar, scalar>, n_> coeffs;
-
-    forAll(coeffs, i)
-    {
-        coeffs[i].first() = A_[i];
-        coeffs[i].second() = Ta_[i];
-    }
-
-    os.writeKeyword("coeffs") << coeffs << nl;
+    writeEntry(os, "reactants", reactantNames_);
+    writeEntry(os, "a", a_);
+    writeEntry(os, "A", A_);
+    writeEntry(os, "Ta", Ta_);
+    writeEntry(os, "beta", beta_);
+    writeEntry(os, "m", m_);
 }
 
 

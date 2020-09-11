@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ Foam::cyclicAMIPointPatchField<Type>::cyclicAMIPointPatchField
     ppiPtr_(nullptr),
     nbrPpiPtr_(nullptr)
 {
-    if (!isType<cyclicAMIPointPatch>(p))
+    if (!isA<cyclicAMIPointPatch>(p))
     {
         FatalIOErrorInFunction
         (
@@ -83,7 +83,7 @@ Foam::cyclicAMIPointPatchField<Type>::cyclicAMIPointPatchField
     ppiPtr_(nullptr),
     nbrPpiPtr_(nullptr)
 {
-    if (!isType<cyclicAMIPointPatch>(this->patch()))
+    if (!isA<cyclicAMIPointPatch>(this->patch()))
     {
         FatalErrorInFunction
             << "Field type does not correspond to patch type for patch "
@@ -110,6 +110,13 @@ Foam::cyclicAMIPointPatchField<Type>::cyclicAMIPointPatchField
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class Type>
+bool Foam::cyclicAMIPointPatchField<Type>::coupled() const
+{
+    return cyclicAMIPatch_.coupled();
+}
+
 
 template<class Type>
 void Foam::cyclicAMIPointPatchField<Type>::swapAddSeparated

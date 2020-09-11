@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -493,7 +493,8 @@ Foam::coupledPolyPatch::coupledPolyPatch
     const dictionary& dict,
     const label index,
     const polyBoundaryMesh& bm,
-    const word& patchType
+    const word& patchType,
+    const transformType defaultTransform
 )
 :
     polyPatch(name, dict, index, bm, patchType),
@@ -502,7 +503,7 @@ Foam::coupledPolyPatch::coupledPolyPatch
     (
         dict.found("transform")
       ? transformTypeNames.read(dict.lookup("transform"))
-      : UNKNOWN
+      : defaultTransform
     )
 {}
 
@@ -562,10 +563,8 @@ void Foam::coupledPolyPatch::write(Ostream& os) const
     polyPatch::write(os);
     // if (matchTolerance_ != defaultMatchTol_)
     {
-        os.writeKeyword("matchTolerance") << matchTolerance_
-            << token::END_STATEMENT << nl;
-        os.writeKeyword("transform") << transformTypeNames[transform_]
-            << token::END_STATEMENT << nl;
+        writeEntry(os, "matchTolerance", matchTolerance_);
+        writeEntry(os, "transform", transformTypeNames[transform_]);
     }
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,6 @@ License
 
 #include "CSV.T.H"
 #include "DynamicList.T.H"
-//#include "IFstream.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -75,7 +74,7 @@ Type Foam::Function1Types::CSV<Type>::readValue(const List<string>& split)
         if (componentColumns_[i] >= split.size())
         {
             FatalErrorInFunction
-            << "No column " << componentColumns_[i] << " in "
+                << "No column " << componentColumns_[i] << " in "
                 << split << endl
                 << exit(FatalError);
         }
@@ -92,7 +91,6 @@ template<class Type>
 void Foam::Function1Types::CSV<Type>::read()
 {
     fileName expandedFile(fName_);
-    // IFstream is(expandedFile.expand());
     autoPtr<ISstream> isPtr(fileHandler().NewIFstream(expandedFile.expand()));
     ISstream& is = isPtr();
 
@@ -105,16 +103,16 @@ void Foam::Function1Types::CSV<Type>::read()
 
     DynamicList<Tuple2<scalar, Type>> values;
 
-    // skip header
+    // Skip header
     for (label i = 0; i < nHeaderLine_; i++)
     {
         string line;
         is.getLine(line);
     }
 
-    label nEntries = max(componentColumns_);
+    const label nEntries = max(refColumn_, max(componentColumns_));
 
-    // read data
+    // Read data
     while (is.good())
     {
         string line;
@@ -271,18 +269,13 @@ void Foam::Function1Types::CSV<Type>::writeData(Ostream& os) const
     // the values themselves
     TableBase<Type>::writeEntries(os);
 
-    os.writeKeyword("nHeaderLine") << nHeaderLine_ << token::END_STATEMENT
-        << nl;
+    writeEntry(os, "nHeaderLine", nHeaderLine_);
+    writeEntry(os, "refColumn", refColumn_);
+    writeEntry(os, "componentColumns", componentColumns_);
+    writeEntry(os, "separator", string(separator_));
+    writeEntry(os, "mergeSeparators", mergeSeparators_);
+    writeEntry(os, "file", fName_);
 
-    os.writeKeyword("refColumn") << refColumn_ << token::END_STATEMENT << nl;
-
-    componentColumns_.writeEntry("componentColumns", os);
-
-    os.writeKeyword("separator") << string(separator_)
-        << token::END_STATEMENT << nl;
-    os.writeKeyword("mergeSeparators") << mergeSeparators_
-        << token::END_STATEMENT << nl;
-    os.writeKeyword("file") << fName_ << token::END_STATEMENT << nl;
     os  << decrIndent << indent << token::END_BLOCK << endl;
 }
 

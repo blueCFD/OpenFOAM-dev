@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,27 +45,28 @@ Description
     \vartable
         \sigma      |  Surface tension [N/m]
         v_i         |  Volume of mother bubble i [m]
-        \epsilon_c  |  Turbulent dissipation rate of continuous phase [m2/s3]
+        \epsilon_c  |  Turbulent dissipation rate of continuous phase [m2/s^3]
         \mu_c       |  Molecular dynamic viscosity of liquid phase [Pa s]
-        \rho_c      |  Density of continous phase [kg/m3]
-        \rho_d      |  Density of disperse phase [kg/m3]
+        \rho_c      |  Density of continuous phase [kg/m^3]
+        \rho_d      |  Density of disperse phase [kg/m^3]
     \endvartable
 
     References:
     \verbatim
-        "Validation of bubble breakage, coalescence and mass transfer models for
-         gas-liquid dispersion in agitated vessel"
-        Laakkonen, M., Alopaeus, V., Aittamaa, J.
-        Chemical Engineering Science, Vol. 61, 2006, pp. 218-228
-        Eq. 2-3, p. 220
+        Laakkonen, M., Alopaeus, V., & Aittamaa, J. (2006).
+        Validation of bubble breakage, coalescence and mass transfer models for
+        gas-liquid dispersion in agitated vessel.
+        Chemical engineering science, 61(1), 218-228.
+        Eq. 2-3, p. 220.
     \endverbatim
 
 Usage
     \table
         Property     | Description             | Required    | Default value
-        C1           | Coefficient C1          | no          | 6.0
-        C2           | Coefficient C2          | no          | 0.04
-        C3           | Coefficient C3          | no          | 0.01
+        C1           | coefficient C1          | no          | 6.0
+        C2           | coefficient C2          | no          | 0.04
+        C3           | coefficient C3          | no          | 0.01
+        daughterSizeDistributionModel | inh. from breakupModel | inherited |
     \endtable
 
 SourceFiles
@@ -95,7 +96,7 @@ class LaakkonenAlopaeusAittamaa
 :
     public breakupModel
 {
-    // Private data
+    // Private Data
 
         //- Optional coefficient C1, defaults to 6.0
         dimensionedScalar C1_;

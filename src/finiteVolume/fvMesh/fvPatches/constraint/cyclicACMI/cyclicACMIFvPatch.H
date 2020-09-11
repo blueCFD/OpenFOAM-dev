@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,9 +51,7 @@ class cyclicACMIFvPatch
 :
     public cyclicAMIFvPatch
 {
-private:
-
-    // Private member functions
+    // Private Member Functions
 
         //- Update the patch areas after AMI update
         void updateAreas() const;
@@ -82,14 +80,14 @@ public:
         {}
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 
             //- Return a reference to the AMI interpolators
-            virtual const PtrList<AMIPatchToPatchInterpolation>& AMIs() const
+            virtual const PtrList<AMIInterpolation>& AMIs() const
             {
-                const PtrList<AMIPatchToPatchInterpolation>& AMIs =
+                const PtrList<AMIInterpolation>& AMIs =
                     cyclicAMIFvPatch::AMIs();
 
                 updateAreas();

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ SourceFiles
 #ifndef faceAreaWeightAMI_H
 #define faceAreaWeightAMI_H
 
-#include "AMIMethod.T.H"
+#include "AMIMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,14 +46,11 @@ namespace Foam
                       Class faceAreaWeightAMI Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class SourcePatch, class TargetPatch>
 class faceAreaWeightAMI
 :
-    public AMIMethod<SourcePatch, TargetPatch>
+    public AMIMethod
 {
-private:
-
-    // Private data
+    // Private Data
 
         //- Flag to restart uncovered source faces
         const bool restartUncoveredSourceFace_;
@@ -62,12 +59,6 @@ private:
 protected:
 
     // Protected Member Functions
-
-        //- Disallow default bitwise copy construct
-        faceAreaWeightAMI(const faceAreaWeightAMI&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const faceAreaWeightAMI&);
 
         // Marching front
 
@@ -141,8 +132,8 @@ public:
         //- Construct from components
         faceAreaWeightAMI
         (
-            const SourcePatch& srcPatch,
-            const TargetPatch& tgtPatch,
+            const primitivePatch& srcPatch,
+            const primitivePatch& tgtPatch,
             const scalarField& srcMagSf,
             const scalarField& tgtMagSf,
             const faceAreaIntersect::triangulationMode& triMode,
@@ -150,6 +141,9 @@ public:
             const bool requireMatch = true,
             const bool restartUncoveredSourceFace = true
         );
+
+        //- Disallow default bitwise copy construction
+        faceAreaWeightAMI(const faceAreaWeightAMI&) = delete;
 
 
     //- Destructor
@@ -170,18 +164,18 @@ public:
                 label srcFacei = -1,
                 label tgtFacei = -1
             );
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const faceAreaWeightAMI&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "faceAreaWeightAMI.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

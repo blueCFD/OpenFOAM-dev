@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ Description
         {
             Info<< "Iterate forwards over face : " << circ() << endl;
 
-        } while (circ.circulate(CirculatorBase::CLOCKWISE));
+        } while (circ.circulate(CirculatorBase::direction::clockwise));
     \endcode
 
     \code
@@ -63,8 +63,11 @@ Description
         }
         while
         (
-            circClockwise.circulate(CirculatorBase::CLOCKWISE),
-            circAnticlockwise.circulate(CirculatorBase::ANTICLOCKWISE)
+            circClockwise.circulate(CirculatorBase::direction::clockwise),
+            circAnticlockwise.circulate
+            (
+                CirculatorBase::direction::anticlockwise
+            )
         );
     \endcode
 
@@ -150,7 +153,7 @@ public:
             const const_iterator& end
         );
 
-        //- Construct as copy
+        //- Copy constructor
         inline ConstCirculator(const ConstCirculator<ContainerType>&);
 
 
@@ -164,7 +167,11 @@ public:
         inline size_type size() const;
 
         //- Circulate around the list in the given direction
-        inline bool circulate(const CirculatorBase::direction dir = NONE);
+        inline bool circulate
+        (
+            const CirculatorBase::direction dir =
+                CirculatorBase::direction::none
+        );
 
         //- Set the fulcrum to the current position of the iterator
         inline void setFulcrumToIterator();

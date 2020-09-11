@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -17,9 +17,14 @@ FoamFile
 surfaces
 (
     "vessel.stl"
-    "gasInlet.stl"
+    "oilInlet.stl"
     "stirrer.stl"
     "outlet.stl"
+    "shaft.stl"
+    "shaftRotating.stl"
+    "rotating.stl"
+    "baffles.stl"
+    "sparger.stl"
 );
 
 // Identify a feature when angle between faces < includedAngle

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,10 +22,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::sampledIsoSurface
+    Foam::sampledSurfaces::isoSurface
 
 Description
-    A sampledSurface defined by a surface of iso value. Always triangulated.
+    A sampledSurface defined by a surface of iso value.
     To be used in sampleSurfaces / functionObjects. Recalculates iso surface
     only if time changes.
 
@@ -37,84 +37,49 @@ SourceFiles
 #ifndef sampledIsoSurface_H
 #define sampledIsoSurface_H
 
-#include "isoSurface.H"
 #include "sampledSurface.H"
-#include "ZoneIDs.H"
-#include "fvMeshSubset.H"
+#include "MeshedSurface.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace sampledSurfaces
+{
 
 /*---------------------------------------------------------------------------*\
-                       Class sampledIsoSurface Declaration
+                          Class isoSurface Declaration
 \*---------------------------------------------------------------------------*/
 
-class sampledIsoSurface
+class isoSurface
 :
-    public sampledSurface
+    public sampledSurface,
+    public MeshedSurface<face>
 {
-    // Private data
+    // Private Data
 
         //- Field to get isoSurface of
         const word isoField_;
 
         //- Iso value
-        const scalar isoVal_;
+        const scalarField isoVals_;
 
-        //- Merge tolerance
-        const scalar mergeTol_;
-
-        //- Whether to coarse
+        //- Whether to coarsen
         const Switch regularise_;
 
-        //- Whether to recalculate cell values as average of point values
-        const Switch average_;
-
-        //- Zone name/index (if restricted to zones)
-        mutable cellZoneID zoneID_;
-
-        //- For zones: patch to put exposed faces into
-        mutable word exposedPatchName_;
-
-        mutable autoPtr<isoSurface> surfPtr_;
-
-        //- Triangles converted to faceList
-        mutable autoPtr<faceList> facesPtr_;
-
+        //- If restricted to zones, name of this zone or a regular expression
+        keyType zoneKey_;
 
         // Recreated for every isoSurface
 
-            //- Time at last call, also track if surface needs an update
+            //- Time at last call, also track it surface needs an update
             mutable label prevTimeIndex_;
 
-            //- Cached volfield
-            mutable autoPtr<volScalarField> storedVolFieldPtr_;
-            mutable const volScalarField* volFieldPtr_;
-
-            //- Cached pointfield
-            mutable const pointScalarField* pointFieldPtr_;
-
-            // And on subsetted mesh
-
-                //- Cached submesh
-                mutable autoPtr<fvMeshSubset> subMeshPtr_;
-
-                //- Cached volfield
-                mutable autoPtr<volScalarField> storedVolSubFieldPtr_;
-                mutable const volScalarField* volSubFieldPtr_;
-
-                //- Cached pointfield
-                mutable autoPtr<pointScalarField> storedPointSubFieldPtr_;
-                mutable const pointScalarField* pointSubFieldPtr_;
-
+            //- For every triangle/face the original cell in mesh
+            mutable labelList meshCells_;
 
 
     // Private Member Functions
-
-        //- Get fields needed to recreate iso surface.
-        void getIsoFields() const;
 
         //- Create iso surface (if time has changed)
         //  Do nothing (and return false) if no update was needed
@@ -127,7 +92,7 @@ class sampledIsoSurface
             const GeometricField<Type, fvPatchField, volMesh>& vField
         ) const;
 
-
+        //- Interpolate field to vertices
         template<class Type>
         tmp<Field<Type>>
         interpolateField(const interpolation<Type>&) const;
@@ -136,13 +101,13 @@ class sampledIsoSurface
 public:
 
     //- Runtime type information
-    TypeName("sampledIsoSurface");
+    TypeName("isoSurface");
 
 
     // Constructors
 
         //- Construct from dictionary
-        sampledIsoSurface
+        isoSurface
         (
             const word& name,
             const polyMesh& mesh,
@@ -151,7 +116,7 @@ public:
 
 
     //- Destructor
-    virtual ~sampledIsoSurface();
+    virtual ~isoSurface();
 
 
     // Member Functions
@@ -168,39 +133,17 @@ public:
         //  Do nothing (and return false) if no update was needed
         virtual bool update();
 
-
         //- Points of surface
         virtual const pointField& points() const
         {
-            return surface().points();
+            return MeshedSurface<face>::points();
         }
 
         //- Faces of surface
         virtual const faceList& faces() const
         {
-            if (facesPtr_.empty())
-            {
-                const triSurface& s = surface();
-
-                facesPtr_.reset(new faceList(s.size()));
-
-                forAll(s, i)
-                {
-                    facesPtr_()[i] = s[i].triFaceFace();
-                }
-            }
-            return facesPtr_;
+            return *this;
         }
-
-
-        const isoSurface& surface() const
-        {
-            return surfPtr_();
-        }
-
-        //- Lookup or read isoField. Sets volFieldPtr_ and pointFieldPtr_.
-        void getIsoField();
-
 
         //- Sample field on surface
         virtual tmp<scalarField> sample
@@ -231,7 +174,6 @@ public:
         (
             const volTensorField&
         ) const;
-
 
         //- Interpolate field on surface
         virtual tmp<scalarField> interpolate
@@ -270,6 +212,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace sampledSurfaces
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

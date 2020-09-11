@@ -137,7 +137,7 @@ pyrolysisChemistryModel
                     IOobject::NO_WRITE
                 ),
                 this->mesh(),
-                dimensionedScalar("zero", dimMass/dimVolume/dimTime, 0.0)
+                dimensionedScalar(dimMass/dimVolume/dimTime, 0)
             )
         );
     }
@@ -630,19 +630,11 @@ Foam::pyrolysisChemistryModel<CompType, SolidThermo, GasThermo>::gasHs
 {
     tmp<volScalarField> tHs
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "Hs_" + pyrolisisGases_[index],
-                this->mesh_.time().timeName(),
-                this->mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            "Hs_" + pyrolisisGases_[index],
             this->mesh_,
-            dimensionedScalar("zero", dimEnergy/dimMass, 0.0)
+            dimensionedScalar(dimEnergy/dimMass, 0)
         )
     );
 

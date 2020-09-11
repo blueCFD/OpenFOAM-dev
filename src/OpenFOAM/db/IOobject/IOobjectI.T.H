@@ -88,18 +88,13 @@ inline Stream& Foam::IOobject::writeBanner(Stream& os, bool noHint)
     }
 
     os  <<
-        "| =========                 |"
-        "                                                 |\n"
-        "| \\\\      /  F ield         |"
-        " OpenFOAM: The Open Source CFD Toolbox           |\n"
-        "|  \\\\    /   O peration     |"
-        " Version:  " << FOAMversion << spaces << "|\n"
-        "|   \\\\  /    A nd           |"
-        " Website:  https://openfoam.org                  |\n"
-        "|    \\\\/     M anipulation  |"
-        "                                                 |\n"
-        "\\*-----------------------------------------"
-        "----------------------------------*/\n";
+    "  =========                 |\n"
+    "  \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox\n"
+    "   \\\\    /   O peration     | Website:  https://openfoam.org\n"
+    "    \\\\  /    A nd           | Version:  " << FOAMversion << "\n"
+    "     \\\\/     M anipulation  |\n"
+    "\\*-----------------------------------------"
+    "----------------------------------*/\n";
 #if defined( WIN32 ) || defined( WIN64 )
     os <<
         "/*   Windows 32 and 64 bit porting by blueCAPE: http://www.bluecape.com.pt   *\\\n"

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "cyclicAMIPolyPatch.H"
 #include "SubField.T.H"
 #include "Time.T.H"
+#include "unitConversion.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -328,7 +329,7 @@ void Foam::cyclicAMIPolyPatch::resetAMI() const
         AMIs_.set
         (
             0,
-            new AMIPatchToPatchInterpolation
+            new AMIInterpolation
             (
                 *this,
                 nbrPatch0,
@@ -484,7 +485,7 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     const word& patchType,
     const transformType transform,
     const bool AMIRequireMatch,
-    const AMIPatchToPatchInterpolation::interpolationMethod AMIMethod
+    const AMIInterpolation::interpolationMethod AMIMethod
 )
 :
     coupledPolyPatch(name, size, start, index, bm, patchType, transform),
@@ -517,7 +518,7 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     const polyBoundaryMesh& bm,
     const word& patchType,
     const bool AMIRequireMatch,
-    const AMIPatchToPatchInterpolation::interpolationMethod AMIMethod
+    const AMIInterpolation::interpolationMethod AMIMethod
 )
 :
     coupledPolyPatch(name, dict, index, bm, patchType),
@@ -537,7 +538,7 @@ Foam::cyclicAMIPolyPatch::cyclicAMIPolyPatch
     AMIMethod_
     (
         dict.found("method")
-      ? AMIPatchToPatchInterpolation::wordTointerpolationMethod
+      ? AMIInterpolation::wordTointerpolationMethod
         (
             dict.lookup("method")
         )
@@ -801,7 +802,7 @@ Foam::cyclicAMIPolyPatch::surfPtr() const
 }
 
 
-const Foam::PtrList<Foam::AMIPatchToPatchInterpolation>&
+const Foam::PtrList<Foam::AMIInterpolation>&
 Foam::cyclicAMIPolyPatch::AMIs() const
 {
     if (!owner())
@@ -947,6 +948,26 @@ void Foam::cyclicAMIPolyPatch::transformPosition
         );
 
         l -= s;
+    }
+}
+
+
+void Foam::cyclicAMIPolyPatch::transformDirection
+(
+    vector& d,
+    const label facei
+) const
+{
+    if (!parallel())
+    {
+        const tensor& T =
+        (
+            forwardT().size() == 1
+          ? forwardT()[0]
+          : forwardT()[facei]
+        );
+
+        d = Foam::transform(T, d);
     }
 }
 
@@ -1180,8 +1201,7 @@ void Foam::cyclicAMIPolyPatch::write(Ostream& os) const
     coupledPolyPatch::write(os);
     if (!nbrPatchName_.empty())
     {
-        os.writeKeyword("neighbourPatch") << nbrPatchName_
-            << token::END_STATEMENT << nl;
+        writeEntry(os, "neighbourPatch", nbrPatchName_);
     }
     coupleGroup_.write(os);
 
@@ -1189,23 +1209,19 @@ void Foam::cyclicAMIPolyPatch::write(Ostream& os) const
     {
         case ROTATIONAL:
         {
-            os.writeKeyword("rotationAxis") << rotationAxis_
-                << token::END_STATEMENT << nl;
-            os.writeKeyword("rotationCentre") << rotationCentre_
-                << token::END_STATEMENT << nl;
+            writeEntry(os, "rotationAxis", rotationAxis_);
+            writeEntry(os, "rotationCentre", rotationCentre_);
 
             if (rotationAngleDefined_)
             {
-                os.writeKeyword("rotationAngle") << radToDeg(rotationAngle_)
-                    << token::END_STATEMENT << nl;
+                writeEntry(os, "rotationAngle", radToDeg(rotationAngle_));
             }
 
             break;
         }
         case TRANSLATIONAL:
         {
-            os.writeKeyword("separationVector") << separationVector_
-                << token::END_STATEMENT << nl;
+            writeEntry(os, "separationVector", separationVector_);
             break;
         }
         case NOORDERING:
@@ -1220,19 +1236,20 @@ void Foam::cyclicAMIPolyPatch::write(Ostream& os) const
 
     if (AMIReverse_)
     {
-        os.writeKeyword("flipNormals") << AMIReverse_
-            << token::END_STATEMENT << nl;
+        writeEntry(os, "flipNormals", AMIReverse_);
     }
 
     if (AMILowWeightCorrection_ > 0)
     {
-        os.writeKeyword("lowWeightCorrection") << AMILowWeightCorrection_
-            << token::END_STATEMENT << nl;
+        writeEntry(os, "lowWeightCorrection", AMILowWeightCorrection_);
     }
 
-    os.writeKeyword("method")
-        << AMIPatchToPatchInterpolation::interpolationMethodToWord(AMIMethod_)
-        << token::END_STATEMENT << nl;
+    writeEntry
+    (
+        os,
+        "method",
+        AMIInterpolation::interpolationMethodToWord(AMIMethod_)
+    );
 
     if (!surfDict_.empty())
     {

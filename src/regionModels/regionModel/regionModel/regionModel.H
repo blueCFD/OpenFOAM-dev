@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,16 +59,13 @@ class regionModel
 :
     public IOdictionary
 {
-
-private:
-
     // Private Member Functions
 
-        //- Disallow default bitwise copy construct
-        regionModel(const regionModel&);
+        //- Disallow default bitwise copy construction
+        regionModel(const regionModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const regionModel&);
+        void operator=(const regionModel&) = delete;
 
         //- Construct region mesh and fields
         void constructMeshObjects();
@@ -128,8 +125,7 @@ protected:
             mutable wordList interRegionAMINames_;
 
             //- List of AMI objects per coupled region
-            mutable PtrList<PtrList<AMIPatchToPatchInterpolation>>
-                interRegionAMI_;
+            mutable PtrList<PtrList<AMIInterpolation>> interRegionAMI_;
 
 
     // Protected member functions
@@ -141,7 +137,7 @@ protected:
         virtual bool read(const dictionary& dict);
 
         //- Create or return a new inter-region AMI object
-        virtual const AMIPatchToPatchInterpolation& interRegionAMI
+        virtual const AMIInterpolation& interRegionAMI
         (
             const regionModel& nbrRegion,
             const label regionPatchi,

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -68,7 +68,7 @@ class BlendedInterfacialModel
 :
     public regIOobject
 {
-    // Private data
+    // Private Data
 
         //- Reference to phase 1
         const phaseModel& phase1_;
@@ -93,12 +93,6 @@ class BlendedInterfacialModel
 
 
     // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        BlendedInterfacialModel(const BlendedInterfacialModel<ModelType>&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const BlendedInterfacialModel<ModelType>&);
 
         //- Correct coeff/value on fixed flux boundary conditions
         template<class GeoField>
@@ -155,6 +149,12 @@ public:
             const bool correctFixedFluxBCs = true
         );
 
+        //- Disallow default bitwise copy construction
+        BlendedInterfacialModel
+        (
+            const BlendedInterfacialModel<ModelType>&
+        ) = delete;
+
 
     //- Destructor
     ~BlendedInterfacialModel();
@@ -195,6 +195,12 @@ public:
 
         //- Dummy write for regIOobject
         bool writeData(Ostream& os) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const BlendedInterfacialModel<ModelType>&) = delete;
 };
 
 

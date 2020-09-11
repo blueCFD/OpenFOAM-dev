@@ -30,7 +30,7 @@ Description
 #include "HashTable.T.H"
 #include "HashPtrTable.T.H"
 #include "Map.T.H"
-#include "StaticHashTable.T.H"
+#include "StaticHashTable.H"
 #include "cpuTime.H"
 
 using namespace Foam;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ class arcEdge
 :
     public blockEdge
 {
-    // Private data
+    // Private Data
 
         point p1_, p2_, p3_;
         cylindricalCS cs_;
@@ -64,12 +64,6 @@ class arcEdge
 
         //- Calculate the coordinate system, angle and radius
         cylindricalCS calcAngle();
-
-        //- Disallow default bitwise copy construct
-        arcEdge(const arcEdge&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const arcEdge&);
 
 
 public:
@@ -98,6 +92,9 @@ public:
             Istream&
         );
 
+        //- Disallow default bitwise copy construction
+        arcEdge(const arcEdge&) = delete;
+
 
     //- Destructor
     virtual ~arcEdge()
@@ -112,6 +109,12 @@ public:
 
         //- Return the length of the curve
         scalar length() const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const arcEdge&) = delete;
 };
 
 

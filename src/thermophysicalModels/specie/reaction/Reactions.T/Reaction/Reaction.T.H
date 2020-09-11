@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,6 +38,7 @@ SourceFiles
 #define Reaction_H
 
 #include "speciesTable.H"
+#include "specieCoeffs.H"
 #include "HashPtrTable.T.H"
 #include "scalarField.H"
 #include "simpleMatrix.H"
@@ -68,16 +69,6 @@ class Reaction
 :
     public ReactionThermo::thermoType
 {
-protected:
-
-    // Protected member functions
-
-        //- Return string representation of the left of the reaction
-        void reactionStrLeft(OStringStream& reaction) const;
-
-        //- Return string representation of the right of the reaction
-        void reactionStrRight(OStringStream& reaction) const;
-
 
 public:
 
@@ -89,48 +80,9 @@ public:
         //- Default temperature limits of applicability of reaction rates
         static scalar TlowDefault, ThighDefault;
 
-    // Public data types
-
-        //- Class to hold the specie index and its coefficients in the
-        //  reaction rate expression
-        struct specieCoeffs
-        {
-            label index;
-            scalar stoichCoeff;
-            scalar exponent;
-
-            specieCoeffs()
-            :
-                index(-1),
-                stoichCoeff(0),
-                exponent(1)
-            {}
-
-            specieCoeffs(const speciesTable& species, Istream& is);
-
-            bool operator==(const specieCoeffs& sc) const
-            {
-                return index == sc.index;
-            }
-
-            bool operator!=(const specieCoeffs& sc) const
-            {
-                return index != sc.index;
-            }
-
-            friend Ostream& operator<<(Ostream& os, const specieCoeffs& sc)
-            {
-                os  << sc.index << token::SPACE
-                    << sc.stoichCoeff << token::SPACE
-                    << sc.exponent;
-                return os;
-            }
-        };
-
-
 private:
 
-    // Private data
+    // Private Data
 
         //- Name of reaction
         const word name_;
@@ -150,14 +102,8 @@ private:
 
     // Private Member Functions
 
-        //- Return string representation of reaction
-        string reactionStr(OStringStream& reaction) const;
-
         //- Construct reaction thermo
         void setThermo(const HashPtrTable<ReactionThermo>& thermoDatabase);
-
-        //- Disallow default bitwise assignment
-        void operator=(const Reaction<ReactionThermo>&);
 
         //- Return new reaction ID for un-named reactions
         label getNewReactionID();
@@ -215,15 +161,6 @@ public:
         (
             const speciesTable& species
         ) const = 0;
-
-        //- Construct the left- and right-hand-side reaction coefficients
-        void setLRhs
-        (
-            Istream&,
-            const speciesTable&,
-            List<specieCoeffs>& lhs,
-            List<specieCoeffs>& rhs
-        );
 
 
     // Selectors
@@ -413,6 +350,12 @@ public:
 
         //- Write
         virtual void write(Ostream&) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const Reaction<ReactionThermo>&) = delete;
 
 
     // Ostream Operator

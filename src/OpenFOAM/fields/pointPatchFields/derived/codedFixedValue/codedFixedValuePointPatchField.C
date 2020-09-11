@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,15 +31,22 @@ License
 #include "dynamicCodeContext.H"
 #include "stringOps.H"
 
+// * * * * * * * * * * * * Private Static Data Members * * * * * * * * * * * //
+
+template<class Type>
+const Foam::wordList Foam::codedFixedValuePointPatchField<Type>::codeKeys_ =
+    {"code", "codeInclude", "localCode"};
+
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 template<class Type>
-const Foam::word Foam::codedFixedValuePointPatchField<Type>::codeTemplateC
-    = "fixedValuePointPatchFieldTemplate.C";
+const Foam::word Foam::codedFixedValuePointPatchField<Type>::codeTemplateC =
+    "fixedValuePointPatchFieldTemplate.C";
 
 template<class Type>
-const Foam::word Foam::codedFixedValuePointPatchField<Type>::codeTemplateH
-    = "fixedValuePointPatchFieldTemplate.H";
+const Foam::word Foam::codedFixedValuePointPatchField<Type>::codeTemplateH =
+    "fixedValuePointPatchFieldTemplate.H";
 
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
@@ -141,8 +148,8 @@ void Foam::codedFixedValuePointPatchField<Type>::prepare
 
 
 template<class Type>
-const Foam::dictionary& Foam::codedFixedValuePointPatchField<Type>::codeDict()
-const
+const Foam::dictionary&
+Foam::codedFixedValuePointPatchField<Type>::codeDict() const
 {
     // Use system/codeDict or in-line
     return
@@ -151,6 +158,14 @@ const
       ? dict_
       : this->dict().subDict(name_)
     );
+}
+
+
+template<class Type>
+const Foam::wordList&
+Foam::codedFixedValuePointPatchField<Type>::codeKeys() const
+{
+    return codeKeys_;
 }
 
 
@@ -210,11 +225,10 @@ Foam::codedFixedValuePointPatchField<Type>::codedFixedValuePointPatchField
 (
     const pointPatch& p,
     const DimensionedField<Type, pointMesh>& iF,
-    const dictionary& dict,
-    const bool valueRequired
+    const dictionary& dict
 )
 :
-    fixedValuePointPatchField<Type>(p, iF, dict, valueRequired),
+    fixedValuePointPatchField<Type>(p, iF, dict),
     codedBase(),
     dict_(dict),
     name_
@@ -270,9 +284,8 @@ Foam::codedFixedValuePointPatchField<Type>::redirectPatchField() const
         // Make sure to construct the patchfield with up-to-date value
 
         OStringStream os;
-        os.writeKeyword("type") << name_ << token::END_STATEMENT
-            << nl;
-        static_cast<const Field<Type>&>(*this).writeEntry("value", os);
+        writeEntry(os, "type", name_);
+        writeEntry(os, "value", static_cast<const Field<Type>&>(*this));
         IStringStream is(os.str());
         dictionary dict(is);
 
@@ -333,8 +346,7 @@ template<class Type>
 void Foam::codedFixedValuePointPatchField<Type>::write(Ostream& os) const
 {
     fixedValuePointPatchField<Type>::write(os);
-    os.writeKeyword("name") << name_
-        << token::END_STATEMENT << nl;
+    writeEntry(os, "name", name_);
 
     if (dict_.found("codeInclude"))
     {

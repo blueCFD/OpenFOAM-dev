@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,6 +113,9 @@ protected:
     //- Construct null
     vtkPVblockMeshReader();
 
+    //- Disallow default bitwise copy construction
+    vtkPVblockMeshReader(const vtkPVblockMeshReader&) = delete;
+
     //- Destructor
     ~vtkPVblockMeshReader();
 
@@ -140,14 +143,11 @@ protected:
 
     char* FileName;
 
+    //- Disallow default bitwise assignment
+    void operator=(const vtkPVblockMeshReader&) = delete;
+
 
 private:
-
-    //- Disallow default bitwise copy construct
-    vtkPVblockMeshReader(const vtkPVblockMeshReader&);
-
-    //- Disallow default bitwise assignment
-    void operator=(const vtkPVblockMeshReader&);
 
     //- Add/remove point numbers to/from the view
     void updatePointNumbersView(const bool show);

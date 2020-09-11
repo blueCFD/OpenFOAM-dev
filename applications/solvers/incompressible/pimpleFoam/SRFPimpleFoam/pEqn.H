@@ -21,7 +21,7 @@ if (pimple.consistent())
     HbyA -= (rAUrel - rAtUrel())*fvc::grad(p);
 }
 
-if (pimple.nCorrPISO() <= 1)
+if (pimple.nCorrPiso() <= 1)
 {
     tUrelEqn.clear();
 }
@@ -40,7 +40,7 @@ while (pimple.correctNonOrthogonal())
 
     pEqn.setReference(pRefCell, pRefValue);
 
-    pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
+    pEqn.solve();
 
     if (pimple.finalNonOrthogonalIter())
     {

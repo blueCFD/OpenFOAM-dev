@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -178,20 +178,9 @@ void Foam::dynamicRefineFvMesh::calculateProtectedCells
 
 void Foam::dynamicRefineFvMesh::readDict()
 {
-    dictionary refineDict
+    const dictionary refineDict
     (
-        IOdictionary
-        (
-            IOobject
-            (
-                "dynamicMeshDict",
-                time().constant(),
-                *this,
-                IOobject::MUST_READ_IF_MODIFIED,
-                IOobject::NO_WRITE,
-                false
-            )
-        ).optionalSubDict(typeName + "Coeffs")
+        dynamicMeshDict().optionalSubDict(typeName + "Coeffs")
     );
 
     List<Pair<word>> fluxVelocities = List<Pair<word>>
@@ -1189,20 +1178,9 @@ bool Foam::dynamicRefineFvMesh::update()
     // Re-read dictionary. Chosen since usually -small so trivial amount
     // of time compared to actual refinement. Also very useful to be able
     // to modify on-the-fly.
-    dictionary refineDict
+    const dictionary refineDict
     (
-        IOdictionary
-        (
-            IOobject
-            (
-                "dynamicMeshDict",
-                time().constant(),
-                *this,
-                IOobject::MUST_READ_IF_MODIFIED,
-                IOobject::NO_WRITE,
-                false
-            )
-        ).optionalSubDict(typeName + "Coeffs")
+        dynamicMeshDict().optionalSubDict(typeName + "Coeffs")
     );
 
     label refineInterval = readLabel(refineDict.lookup("refineInterval"));
@@ -1223,9 +1201,6 @@ bool Foam::dynamicRefineFvMesh::update()
             << " be >= 1." << nl
             << exit(FatalError);
     }
-
-
-
 
     // Note: cannot refine at time 0 since no V0 present since mesh not
     //       moved yet.
@@ -1400,7 +1375,7 @@ bool Foam::dynamicRefineFvMesh::writeObject
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
     IOstream::compressionType cmp,
-    const bool valid
+    const bool write
 ) const
 {
     // Force refinement data to go to the current time directory.
@@ -1408,8 +1383,8 @@ bool Foam::dynamicRefineFvMesh::writeObject
 
     bool writeOk =
     (
-        dynamicFvMesh::writeObject(fmt, ver, cmp, valid)
-     && meshCutter_.write(valid)
+        dynamicFvMesh::writeObject(fmt, ver, cmp, write)
+     && meshCutter_.write(write)
     );
 
     if (dumpLevel_)
@@ -1426,7 +1401,7 @@ bool Foam::dynamicRefineFvMesh::writeObject
                 false
             ),
             *this,
-            dimensionedScalar("level", dimless, 0)
+            dimensionedScalar(dimless, 0)
         );
 
         const labelList& cellLevel = meshCutter_.cellLevel();

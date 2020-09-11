@@ -64,16 +64,11 @@ Foam::diameterModels::IATEsources::randomCoalescence::R() const
 {
     tmp<volScalarField> tR
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "R",
-                iate_.phase().U().time().timeName(),
-                iate_.phase().mesh()
-            ),
+            "R",
             iate_.phase().U().mesh(),
-            dimensionedScalar("R", dimless/dimTime, 0)
+            dimensionedScalar(dimless/dimTime, 0)
         )
     );
 

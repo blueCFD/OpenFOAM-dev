@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ Class
     Foam::outletMappedUniformInletFvPatchField
 
 Description
-    This boundary conditon averages the field over the "outlet" patch specified
+    This boundary condition averages the field over the "outlet" patch specified
     by name "outletPatch" and applies this as the uniform value of the field
     over this patch.
 
@@ -74,7 +74,7 @@ class outletMappedUniformInletFvPatchField
 :
     public fixedValueFvPatchField<Type>
 {
-    // Private data
+    // Private Data
 
         //- Name of the outlet patch to be mapped
         word outletPatchName_;
@@ -116,7 +116,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         outletMappedUniformInletFvPatchField
         (
             const outletMappedUniformInletFvPatchField<Type>&
@@ -131,7 +131,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         outletMappedUniformInletFvPatchField
         (
             const outletMappedUniformInletFvPatchField<Type>&,
@@ -151,7 +151,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 

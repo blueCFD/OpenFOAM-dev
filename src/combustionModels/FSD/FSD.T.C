@@ -72,10 +72,10 @@ FSD<ReactionThermo, ThermoType>::FSD
             IOobject::AUTO_WRITE
         ),
         this->mesh(),
-        dimensionedScalar("zero", dimless, 0.0)
+        dimensionedScalar(dimless, 0)
     ),
-    YFuelFuelStream_(dimensionedScalar("YFuelStream", dimless, 1.0)),
-    YO2OxiStream_(dimensionedScalar("YOxiStream", dimless, 0.23)),
+    YFuelFuelStream_(dimensionedScalar(dimless, 1.0)),
+    YO2OxiStream_(dimensionedScalar(dimless, 0.23)),
     Cv_(readScalar(this->coeffs().lookup("Cv"))),
     C_(5.0),
     ftMin_(0.0),
@@ -122,7 +122,7 @@ void FSD<ReactionThermo, ThermoType>::calculateSourceNorm()
     dimensionedScalar dMgft = 1.0e-3*
         (ft_*cAux*mgft)().weightedAverage(this->mesh().V())
        /((ft_*cAux)().weightedAverage(this->mesh().V()) + small)
-      + dimensionedScalar("ddMgft", mgft.dimensions(), small);
+      + dimensionedScalar(mgft.dimensions(), small);
 
     mgft += dMgft;
 
@@ -148,18 +148,11 @@ void FSD<ReactionThermo, ThermoType>::calculateSourceNorm()
 
     tmp<volScalarField> tPc
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                this->thermo().phasePropertyName("Pc"),
-                U.time().timeName(),
-                U.db(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            this->thermo().phasePropertyName("Pc"),
             U.mesh(),
-            dimensionedScalar("Pc", dimless, 0)
+            dimensionedScalar(dimless, 0)
         )
     );
 
@@ -167,23 +160,11 @@ void FSD<ReactionThermo, ThermoType>::calculateSourceNorm()
 
     tmp<volScalarField> tomegaFuel
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                this->thermo().phasePropertyName("omegaFuelBar"),
-                U.time().timeName(),
-                U.db(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            this->thermo().phasePropertyName("omegaFuelBar"),
             U.mesh(),
-            dimensionedScalar
-            (
-                "omegaFuelBar",
-                omegaFuel.dimensions(),
-                0
-            )
+            dimensionedScalar(omegaFuel.dimensions(), 0)
         )
     );
 
@@ -204,7 +185,7 @@ void FSD<ReactionThermo, ThermoType>::calculateSourceNorm()
 
     volScalarField  deltaF
     (
-        lesModel.delta()/dimensionedScalar("flame", dimLength, 1.5e-3)
+        lesModel.delta()/dimensionedScalar(dimLength, 1.5e-3)
     );
 
     // Linear correlation between delta and flame thickness
@@ -298,18 +279,11 @@ void FSD<ReactionThermo, ThermoType>::calculateSourceNorm()
 
     tmp<volScalarField> tproducts
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                this->thermo().phasePropertyName("products"),
-                U.time().timeName(),
-                U.db(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            this->thermo().phasePropertyName("products"),
             U.mesh(),
-            dimensionedScalar("products", dimless, 0)
+            dimensionedScalar(dimless, 0)
         )
     );
 
@@ -339,12 +313,9 @@ template<class ReactionThermo, class ThermoType>
 void FSD<ReactionThermo, ThermoType>::correct()
 {
     this->wFuel_ ==
-        dimensionedScalar("zero", dimMass/pow3(dimLength)/dimTime, 0.0);
+        dimensionedScalar(dimMass/pow3(dimLength)/dimTime, 0);
 
-    if (this->active())
-    {
-        calculateSourceNorm();
-    }
+    calculateSourceNorm();
 }
 
 

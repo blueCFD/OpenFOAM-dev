@@ -25,8 +25,6 @@ sampledSurface/sampledPatchInternalField/sampledPatchInternalField.C
 sampledSurface/sampledPlane/sampledPlane.C
 sampledSurface/isoSurface/isoSurface.C
 sampledSurface/isoSurface/sampledIsoSurface.C
-sampledSurface/isoSurface/isoSurfaceCell.C
-sampledSurface/isoSurface/sampledIsoSurfaceCell.C
 sampledSurface/distanceSurface/distanceSurface.C
 sampledSurface/sampledCuttingPlane/sampledCuttingPlane.C
 sampledSurface/sampledSurface/sampledSurface.C
@@ -39,6 +37,7 @@ sampledSurface/thresholdCellFaces/sampledThresholdCellFaces.C
 surfWriters = sampledSurface/writers
 
 $(surfWriters)/surfaceWriter.C
+$(surfWriters)/none/noSurfaceWriter.C
 $(surfWriters)/ensight/ensightSurfaceWriter.C
 $(surfWriters)/ensight/ensightPTraits.C
 $(surfWriters)/foam/foamSurfaceWriter.C
@@ -54,6 +53,7 @@ graphField/makeGraph.C
 
 meshToMesh/meshToMesh.C
 meshToMesh/meshToMeshParallelOps.C
+meshToMesh/distributedWeightedFvPatchFieldMapper.C
 meshToMeshMethods = meshToMesh/calcMethod
 $(meshToMeshMethods)/meshToMeshMethod/meshToMeshMethod.C
 $(meshToMeshMethods)/meshToMeshMethod/meshToMeshMethodNew.C

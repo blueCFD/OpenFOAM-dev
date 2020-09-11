@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,15 +24,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "sampledIsoSurface.H"
-#include "volFieldsFwd.H"
-#include "pointFields.H"
 #include "volPointInterpolation.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::sampledIsoSurface::sampleField
+Foam::sampledSurfaces::isoSurface::sampleField
 (
     const GeometricField<Type, fvPatchField, volMesh>& vField
 ) const
@@ -40,62 +38,47 @@ Foam::sampledIsoSurface::sampleField
     // Recreate geometry if time has changed
     updateGeometry();
 
-    return tmp<Field<Type>>(new Field<Type>(vField, surface().meshCells()));
+    return tmp<Field<Type>>(new Field<Type>(vField, meshCells_));
 }
 
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::sampledIsoSurface::interpolateField
+Foam::sampledSurfaces::isoSurface::interpolateField
 (
     const interpolation<Type>& interpolator
 ) const
 {
-    // Get fields to sample. Assume volPointInterpolation!
-    const GeometricField<Type, fvPatchField, volMesh>& volFld =
-        interpolator.psi();
-
     // Recreate geometry if time has changed
     updateGeometry();
 
-    if (subMeshPtr_.valid())
+    // One value per point
+    tmp<Field<Type>> tvalues(new Field<Type>(points().size()));
+    Field<Type>& values = tvalues.ref();
+
+    boolList pointDone(points().size(), false);
+
+    forAll(faces(), cutFacei)
     {
-        tmp<GeometricField<Type, fvPatchField, volMesh>> tvolSubFld =
-            subMeshPtr_().interpolate(volFld);
+        const face& f = faces()[cutFacei];
 
-        const GeometricField<Type, fvPatchField, volMesh>& volSubFld =
-            tvolSubFld();
+        forAll(f, faceVertI)
+        {
+            label pointi = f[faceVertI];
 
-        tmp<GeometricField<Type, pointPatchField, pointMesh>> tpointSubFld =
-            volPointInterpolation::New(volSubFld.mesh()).interpolate(volSubFld);
-
-        // Sample.
-        return surface().interpolate
-        (
-            (
-                average_
-              ? pointAverage(tpointSubFld())()
-              : volSubFld
-            ),
-            tpointSubFld()
-        );
+            if (!pointDone[pointi])
+            {
+                values[pointi] = interpolator.interpolate
+                (
+                    points()[pointi],
+                    meshCells_[cutFacei]
+                );
+                pointDone[pointi] = true;
+            }
+        }
     }
-    else
-    {
-        tmp<GeometricField<Type, pointPatchField, pointMesh>> tpointFld =
-            volPointInterpolation::New(volFld.mesh()).interpolate(volFld);
 
-        // Sample.
-        return surface().interpolate
-        (
-            (
-                average_
-              ? pointAverage(tpointFld())()
-              : volFld
-            ),
-            tpointFld()
-        );
-    }
+    return tvalues;
 }
 
 

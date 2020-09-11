@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,15 +59,6 @@ class basicSolidChemistryModel
 :
     public basicChemistryModel
 {
-    // Private Member Functions
-
-        //- Construct as copy (not implemented)
-        basicSolidChemistryModel(const basicSolidChemistryModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const basicSolidChemistryModel&);
-
-
 protected:
 
     // Protected data
@@ -102,6 +93,9 @@ public:
         //- Construct from thermo
         basicSolidChemistryModel(solidReactionThermo& thermo);
 
+        //- Construct as copy (not implemented)
+        basicSolidChemistryModel(const basicSolidChemistryModel&);
+
 
     //- Selector
     static autoPtr<basicSolidChemistryModel> New(solidReactionThermo& thermo);
@@ -119,19 +113,19 @@ public:
         //- Return const access to the solid thermo package
         inline const solidReactionThermo& solidThermo() const;
 
-        //- Return total gases mass source term [kg/m3/s]
+        //- Return total gases mass source term [kg/m^3/s]
         virtual tmp<volScalarField::Internal> RRg() const = 0;
 
-        //- Return total solids mass source term [kg/m3/s]
+        //- Return total solids mass source term [kg/m^3/s]
         virtual tmp<volScalarField::Internal> RRs() const = 0;
 
-        //- Return chemical source terms for solids [kg/m3/s]
+        //- Return chemical source terms for solids [kg/m^3/s]
         virtual const volScalarField::Internal& RRs
         (
             const label i
         ) const = 0;
 
-        //- Return chemical source terms for gases [kg/m3/s]
+        //- Return chemical source terms for gases [kg/m^3/s]
         virtual const volScalarField::Internal& RRg
         (
             const label i
@@ -169,6 +163,12 @@ public:
 
         //- Return non-const access to the total source terms
         virtual volScalarField::Internal& RR(const label i);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const basicSolidChemistryModel&) = delete;
 };
 
 

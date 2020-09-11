@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,22 +83,13 @@ class basicSubGrid
 :
     public XiEqModel
 {
-    // Private data
+    // Private Data
 
         //- tblock
         volSymmTensorField B_;
 
         //- Equilibrium Xi model due to turbulence
         autoPtr<XiEqModel> XiEqModel_;
-
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        basicSubGrid(const basicSubGrid&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const basicSubGrid&);
 
 
 public:
@@ -118,6 +109,9 @@ public:
             const volScalarField& Su
         );
 
+        //- Disallow default bitwise copy construction
+        basicSubGrid(const basicSubGrid&);
+
 
     //- Destructor
     virtual ~basicSubGrid();
@@ -130,6 +124,12 @@ public:
 
         //- Update properties from given dictionary
         virtual bool read(const dictionary& XiEqProperties);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const basicSubGrid&) = delete;
 };
 
 

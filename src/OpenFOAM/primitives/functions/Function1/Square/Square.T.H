@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,7 +97,7 @@ class Square
 :
     public Function1<Type>
 {
-    // Private data
+    // Private Data
 
         //- Start-time for the square function
         scalar t0_;
@@ -122,9 +122,6 @@ class Square
 
         //- Read the coefficients from the given dictionary
         void read(const dictionary& coeffs);
-
-        //- Disallow default bitwise assignment
-        void operator=(const Square<Type>&);
 
 
 public:
@@ -157,6 +154,12 @@ public:
 
         //- Write in dictionary format
         virtual void writeData(Ostream& os) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const Square<Type>&) = delete;
 };
 
 

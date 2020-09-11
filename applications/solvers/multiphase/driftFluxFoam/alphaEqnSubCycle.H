@@ -8,7 +8,7 @@
             mesh
         ),
         mesh,
-        dimensionedScalar("0", phi.dimensions(), 0)
+        dimensionedScalar(phi.dimensions(), 0)
     );
 
     surfaceScalarField phir(fvc::flux(UdmModel.Udm()));
@@ -25,7 +25,7 @@
                 mesh
             ),
             mesh,
-            dimensionedScalar("0", phi.dimensions(), 0)
+            dimensionedScalar(phi.dimensions(), 0)
         );
 
         for
@@ -54,7 +54,7 @@
           - fvm::laplacian(turbulence->nut(), alpha1)
         );
 
-        alpha1Eqn.solve(mesh.solver("alpha1Diffusion"));
+        alpha1Eqn.solve("alpha1Diffusion");
 
         alphaPhi += alpha1Eqn.flux();
         alpha2 = 1.0 - alpha1;

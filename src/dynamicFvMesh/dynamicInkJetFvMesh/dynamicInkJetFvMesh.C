@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,21 +42,7 @@ namespace Foam
 Foam::dynamicInkJetFvMesh::dynamicInkJetFvMesh(const IOobject& io)
 :
     dynamicFvMesh(io),
-    dynamicMeshCoeffs_
-    (
-        IOdictionary
-        (
-            IOobject
-            (
-                "dynamicMeshDict",
-                io.time().constant(),
-                *this,
-                IOobject::MUST_READ_IF_MODIFIED,
-                IOobject::NO_WRITE,
-                false
-            )
-        ).optionalSubDict(typeName + "Coeffs")
-    ),
+    dynamicMeshCoeffs_(dynamicMeshDict().optionalSubDict(typeName + "Coeffs")),
     amplitude_(readScalar(dynamicMeshCoeffs_.lookup("amplitude"))),
     frequency_(readScalar(dynamicMeshCoeffs_.lookup("frequency"))),
     refPlaneX_(readScalar(dynamicMeshCoeffs_.lookup("refPlaneX"))),
@@ -71,13 +57,15 @@ Foam::dynamicInkJetFvMesh::dynamicInkJetFvMesh(const IOobject& io)
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         )
-    )
+    ),
+    velocityMotionCorrection_(*this, dynamicMeshDict())
 {
     Info<< "Performing a dynamic mesh calculation: " << endl
         << "amplitude: " << amplitude_
         << " frequency: " << frequency_
         << " refPlaneX: " << refPlaneX_ << endl;
 }
+
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -117,7 +105,7 @@ bool Foam::dynamicInkJetFvMesh::update()
 
     fvMesh::movePoints(newPoints);
 
-    lookupObjectRef<volVectorField>("U").correctBoundaryConditions();
+    velocityMotionCorrection_.update();
 
     return true;
 }

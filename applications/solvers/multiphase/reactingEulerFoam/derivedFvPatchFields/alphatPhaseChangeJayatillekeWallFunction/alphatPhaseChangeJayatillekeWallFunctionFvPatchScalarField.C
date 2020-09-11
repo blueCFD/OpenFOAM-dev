@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,14 +24,11 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField.H"
-#include "fvPatchFieldMapper.H"
-#include "addToRunTimeSelectionTable.H"
-
 #include "phaseSystem.H"
 #include "compressibleTurbulenceModel.H"
 #include "ThermalDiffusivity.T.H"
 #include "PhaseCompressibleTurbulenceModel.T.H"
-#include "wallFvPatch.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,18 +48,6 @@ label alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::maxIters_
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::checkType()
-{
-    if (!isA<wallFvPatch>(patch()))
-    {
-        FatalErrorInFunction
-            << "Patch type for patch " << patch().name() << " must be wall\n"
-            << "Current patch type is " << patch().type() << nl
-            << exit(FatalError);
-    }
-}
-
-
 tmp<scalarField>
 alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::Psmooth
 (
@@ -76,6 +61,7 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::Psmooth
 tmp<scalarField>
 alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::yPlusTherm
 (
+    const nutWallFunctionFvPatchScalarField& nutw,
     const scalarField& P,
     const scalarField& Prat
 ) const
@@ -89,9 +75,10 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::yPlusTherm
 
         for (int i=0; i<maxIters_; i++)
         {
-            scalar f = ypt - (log(E_*ypt)/kappa_ + P[facei])/Prat[facei];
-            scalar df = 1 - 1.0/(ypt*kappa_*Prat[facei]);
-            scalar yptNew = ypt - f/df;
+            const scalar f =
+                ypt - (log(nutw.E()*ypt)/nutw.kappa() + P[facei])/Prat[facei];
+            const scalar df = 1 - 1.0/(ypt*nutw.kappa()*Prat[facei]);
+            const scalar yptNew = ypt - f/df;
 
             if (yptNew < vSmall)
             {
@@ -138,7 +125,10 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::calcAlphat
             IOobject::groupName(turbulenceModel::propertiesName, phase.name())
         );
 
-    const scalar Cmu25 = pow025(Cmu_);
+    const nutWallFunctionFvPatchScalarField& nutw =
+        nutWallFunctionFvPatchScalarField::nutw(turbModel, patchi);
+
+    const scalar Cmu25 = pow025(nutw.Cmu());
 
     const scalarField& y = turbModel.y()[patchi];
 
@@ -165,7 +155,7 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::calcAlphat
 
     scalarField Tp(Tw.patchInternalField());
 
-    // Heat flux [W/m2] - lagging alphatw
+    // Heat flux [W/m^2] - lagging alphatw
     const scalarField qDot
     (
         (prevAlphat + alphaw)*hew.snGrad()
@@ -183,7 +173,7 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::calcAlphat
     // Thermal sublayer thickness
     scalarField P(this->Psmooth(Prat));
 
-    scalarField yPlusTherm(this->yPlusTherm(P, Prat));
+    scalarField yPlusTherm(this->yPlusTherm(nutw, P, Prat));
 
     tmp<scalarField> talphatConv(new scalarField(this->size()));
     scalarField& alphatConv = talphatConv.ref();
@@ -195,21 +185,31 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::calcAlphat
         scalar alphaEff = 0.0;
         if (yPlus[facei] < yPlusTherm[facei])
         {
-            scalar A = qDot[facei]*rhow[facei]*uTau[facei]*y[facei];
-            scalar B = qDot[facei]*Pr[facei]*yPlus[facei];
-            scalar C = Pr[facei]*0.5*rhow[facei]*uTau[facei]*sqr(magUp[facei]);
+            const scalar A = qDot[facei]*rhow[facei]*uTau[facei]*y[facei];
+
+            const scalar B = qDot[facei]*Pr[facei]*yPlus[facei];
+
+            const scalar C =
+                Pr[facei]*0.5*rhow[facei]*uTau[facei]*sqr(magUp[facei]);
+
             alphaEff = A/(B + C + vSmall);
         }
         else
         {
-            scalar A = qDot[facei]*rhow[facei]*uTau[facei]*y[facei];
-            scalar B =
-                qDot[facei]*Prt_*(1.0/kappa_*log(E_*yPlus[facei]) + P[facei]);
-            scalar magUc =
-                uTau[facei]/kappa_*log(E_*yPlusTherm[facei]) - mag(Uw[facei]);
-            scalar C =
+            const scalar A = qDot[facei]*rhow[facei]*uTau[facei]*y[facei];
+
+            const scalar B =
+                qDot[facei]*Prt_
+               *(1.0/nutw.kappa()*log(nutw.E()*yPlus[facei]) + P[facei]);
+
+            const scalar magUc =
+                uTau[facei]/nutw.kappa()
+               *log(nutw.E()*yPlusTherm[facei]) - mag(Uw[facei]);
+
+            const scalar C =
                 0.5*rhow[facei]*uTau[facei]
                *(Prt_*sqr(magUp[facei]) + (Pr[facei] - Prt_)*sqr(magUc));
+
             alphaEff = A/(B + C + vSmall);
         }
 
@@ -231,13 +231,8 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
 )
 :
     alphatPhaseChangeWallFunctionFvPatchScalarField(p, iF),
-    Prt_(0.85),
-    Cmu_(0.09),
-    kappa_(0.41),
-    E_(9.8)
-{
-    checkType();
-}
+    Prt_(0.85)
+{}
 
 
 alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::
@@ -249,10 +244,7 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
 )
 :
     alphatPhaseChangeWallFunctionFvPatchScalarField(p, iF, dict),
-    Prt_(dict.lookupOrDefault<scalar>("Prt", 0.85)),
-    Cmu_(dict.lookupOrDefault<scalar>("Cmu", 0.09)),
-    kappa_(dict.lookupOrDefault<scalar>("kappa", 0.41)),
-    E_(dict.lookupOrDefault<scalar>("E", 9.8))
+    Prt_(dict.lookupOrDefault<scalar>("Prt", 0.85))
 {}
 
 
@@ -266,10 +258,7 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
 )
 :
     alphatPhaseChangeWallFunctionFvPatchScalarField(ptf, p, iF, mapper),
-    Prt_(ptf.Prt_),
-    Cmu_(ptf.Cmu_),
-    kappa_(ptf.kappa_),
-    E_(ptf.E_)
+    Prt_(ptf.Prt_)
 {}
 
 
@@ -280,10 +269,7 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
 )
 :
     alphatPhaseChangeWallFunctionFvPatchScalarField(awfpsf),
-    Prt_(awfpsf.Prt_),
-    Cmu_(awfpsf.Cmu_),
-    kappa_(awfpsf.kappa_),
-    E_(awfpsf.E_)
+    Prt_(awfpsf.Prt_)
 {}
 
 
@@ -295,10 +281,7 @@ alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
 )
 :
     alphatPhaseChangeWallFunctionFvPatchScalarField(awfpsf, iF),
-    Prt_(awfpsf.Prt_),
-    Cmu_(awfpsf.Cmu_),
-    kappa_(awfpsf.kappa_),
-    E_(awfpsf.E_)
+    Prt_(awfpsf.Prt_)
 {}
 
 
@@ -323,12 +306,9 @@ void alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField::write
 ) const
 {
     fvPatchField<scalar>::write(os);
-    os.writeKeyword("Prt") << Prt_ << token::END_STATEMENT << nl;
-    os.writeKeyword("Cmu") << Cmu_ << token::END_STATEMENT << nl;
-    os.writeKeyword("kappa") << kappa_ << token::END_STATEMENT << nl;
-    os.writeKeyword("E") << E_ << token::END_STATEMENT << nl;
-    dmdt_.writeEntry("dmdt", os);
-    writeEntry("value", os);
+    writeEntry(os, "Prt", Prt_);
+    writeEntry(os, "dmdt", dmdt_);
+    writeEntry(os, "value", *this);
 }
 
 

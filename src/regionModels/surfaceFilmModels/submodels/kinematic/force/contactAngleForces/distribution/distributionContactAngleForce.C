@@ -74,16 +74,11 @@ tmp<volScalarField> distributionContactAngleForce::theta() const
 {
     tmp<volScalarField> ttheta
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                typeName + ":theta",
-                filmModel_.time().timeName(),
-                filmModel_.regionMesh()
-            ),
+            typeName + ":theta",
             filmModel_.regionMesh(),
-            dimensionedScalar("0", dimless, 0)
+            dimensionedScalar(dimless, 0)
         )
     );
 

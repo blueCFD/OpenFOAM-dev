@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 Description
@@ -40,7 +40,7 @@ surfaces
         pointAndNormalDict
         {
             basePoint    (0 0 2); // Overrides default basePoint (0 0 0)
-            normalVector $z;      // $y: macro for (0 0 1)
+            normalVector $z;      // $z: macro for (0 0 1)
         }
     }
 

@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -79,8 +79,8 @@ solvers
 
     U
     {
-        solver          smoothSolver;
-        smoother        GaussSeidel;
+        solver          PBiCGStab;
+        preconditioner  DILU;
         tolerance       1e-06;
         relTol          0;
         nSweeps         1;
@@ -88,8 +88,8 @@ solvers
 
     "(T|k|B|nuTilda).*"
     {
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
+        solver          PBiCGStab;
+        preconditioner  DILU;
         tolerance       1e-08;
         relTol          0;
     }
@@ -99,8 +99,8 @@ PIMPLE
 {
     momentumPredictor no;
     transonic       no;
-    nOuterCorrectors 3;
-    nCorrectors     1;
+    nOuterCorrectors 2;
+    nCorrectors     2;
     nNonOrthogonalCorrectors 0;
 }
 

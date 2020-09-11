@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -101,7 +101,7 @@ void Foam::fvMesh::makeMagSf() const
             IOobject::NO_WRITE,
             false
         ),
-        mag(Sf()) + dimensionedScalar("vs", dimArea, vSmall)
+        mag(Sf()) + dimensionedScalar(dimArea, vSmall)
     );
 }
 
@@ -262,9 +262,6 @@ const Foam::volScalarField::Internal& Foam::fvMesh::V00() const
             ),
             V0()
         );
-
-        // If V00 is used then V0 should be stored for restart
-        V0Ptr_->writeOpt() = IOobject::AUTO_WRITE;
     }
 
     return *V00Ptr_;
@@ -383,18 +380,9 @@ Foam::tmp<Foam::surfaceVectorField> Foam::fvMesh::delta() const
 
     tmp<surfaceVectorField> tdelta
     (
-        new surfaceVectorField
+        surfaceVectorField::New
         (
-            IOobject
-            (
-                "delta",
-                pointsInstance(),
-                meshSubDir,
-                *this,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            "delta",
             *this,
             dimLength
         )
@@ -435,7 +423,7 @@ const Foam::surfaceScalarField& Foam::fvMesh::phi() const
     // mesh motion fluxes if the time has been incremented
     if (!time().subCycling() && phiPtr_->timeIndex() != time().timeIndex())
     {
-        (*phiPtr_) = dimensionedScalar("0", dimVolume/dimTime, 0.0);
+        (*phiPtr_) = dimensionedScalar(dimVolume/dimTime, 0);
     }
 
     return *phiPtr_;

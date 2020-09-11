@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,7 +80,7 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::StandardChemistryModel
                     IOobject::NO_WRITE
                 ),
                 thermo.p().mesh(),
-                dimensionedScalar("zero", dimMass/dimVolume/dimTime, 0)
+                dimensionedScalar(dimMass/dimVolume/dimTime, 0)
             )
         );
     }
@@ -237,13 +237,13 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::jacobian
     scalar dcpdTMean = 0;
     for (label i=0; i<nSpecie_; i++)
     {
-        cpMean += c_[i]*cpi[i]; // J/(m3.K)
+        cpMean += c_[i]*cpi[i]; // J/(m^3 K)
         dcpdTMean += c_[i]*specieThermo_[i].dcpdT(p, T);
     }
     scalar dTdt = 0.0;
     for (label i=0; i<nSpecie_; i++)
     {
-        dTdt += hi[i]*dcdt[i]; // J/(m3.s)
+        dTdt += hi[i]*dcdt[i]; // J/(m^3 s)
     }
     dTdt /= -cpMean; // K/s
 
@@ -254,8 +254,8 @@ void Foam::StandardChemistryModel<ReactionThermo, ThermoType>::jacobian
         {
             J(nSpecie_, i) += hi[j]*J(j, i);
         }
-        J(nSpecie_, i) += cpi[i]*dTdt; // J/(mol.s)
-        J(nSpecie_, i) /= -cpMean;    // K/s / (mol/m3)
+        J(nSpecie_, i) += cpi[i]*dTdt; // J/(mol s)
+        J(nSpecie_, i) /= -cpMean;    // K/s/(mol/m3)
     }
 
     // ddT of dTdt
@@ -276,19 +276,11 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::tc() const
 {
     tmp<volScalarField> ttc
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "tc",
-                this->time().timeName(),
-                this->mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            "tc",
             this->mesh(),
-            dimensionedScalar("zero", dimTime, small),
+            dimensionedScalar(dimTime, small),
             extrapolatedCalculatedFvPatchScalarField::typeName
         )
     );
@@ -350,19 +342,11 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::Qdot() const
 {
     tmp<volScalarField> tQdot
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "Qdot",
-                this->mesh_.time().timeName(),
-                this->mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            "Qdot",
             this->mesh_,
-            dimensionedScalar("zero", dimEnergy/dimVolume/dimTime, 0)
+            dimensionedScalar(dimEnergy/dimVolume/dimTime, 0)
         )
     );
 
@@ -394,18 +378,11 @@ Foam::StandardChemistryModel<ReactionThermo, ThermoType>::calculateRR
 {
     tmp<volScalarField::Internal> tRR
     (
-        new volScalarField::Internal
+        volScalarField::Internal::New
         (
-            IOobject
-            (
-                "RR",
-                this->mesh().time().timeName(),
-                this->mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "RR",
             this->mesh(),
-            dimensionedScalar("zero", dimMass/dimVolume/dimTime, 0)
+            dimensionedScalar(dimMass/dimVolume/dimTime, 0)
         )
     );
 

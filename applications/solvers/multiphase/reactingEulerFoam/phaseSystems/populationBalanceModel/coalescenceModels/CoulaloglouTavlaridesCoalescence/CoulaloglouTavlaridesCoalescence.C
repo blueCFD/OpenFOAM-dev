@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,8 +57,8 @@ CoulaloglouTavlaridesCoalescence
 )
 :
     coalescenceModel(popBal, dict),
-    C1_("C1", dimless, dict.lookupOrDefault<scalar>("C1", 2.8)),
-    C2_("C2", inv(dimArea), dict.lookupOrDefault<scalar>("C2", 1.83e9))
+    C1_(dimensionedScalar::lookupOrDefault("C1", dict, dimless, 2.8)),
+    C2_(dimensionedScalar::lookupOrDefault("C2", dict, inv(dimArea), 1.83e9))
 {}
 
 
@@ -74,8 +74,8 @@ addToCoalescenceRate
 )
 {
     const phaseModel& continuousPhase = popBal_.continuousPhase();
-    const sizeGroup& fi = *popBal_.sizeGroups()[i];
-    const sizeGroup& fj = *popBal_.sizeGroups()[j];
+    const sizeGroup& fi = popBal_.sizeGroups()[i];
+    const sizeGroup& fj = popBal_.sizeGroups()[j];
 
     coalescenceRate +=
         C1_*(pow(fi.x(), 2.0/3.0) + pow(fj.x(), 2.0/3.0))

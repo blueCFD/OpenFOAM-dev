@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,22 +55,13 @@ class diffusion
 :
     public singleStepCombustion<ReactionThermo, ThermoType>
 {
-    // Private data
+    // Private Data
 
         //- Model constant
         scalar C_;
 
         //- Name of oxidant - default is "O2"
         word oxidantName_;
-
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        diffusion(const diffusion&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const diffusion&);
 
 
 public:
@@ -90,6 +81,9 @@ public:
             const word& combustionProperties
         );
 
+        //- Disallow default bitwise copy construction
+        diffusion(const diffusion&);
+
 
     //- Destructor
     virtual ~diffusion();
@@ -102,6 +96,12 @@ public:
 
         //- Update properties
         virtual bool read();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const diffusion&) = delete;
 };
 
 

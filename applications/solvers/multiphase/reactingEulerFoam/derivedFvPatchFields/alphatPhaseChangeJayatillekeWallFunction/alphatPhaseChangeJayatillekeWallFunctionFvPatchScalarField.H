@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,6 +63,7 @@ SourceFiles
 #define compressible_alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField_H
 
 #include "alphatPhaseChangeWallFunctionFvPatchScalarField.H"
+#include "nutWallFunctionFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -87,15 +88,6 @@ protected:
         //- Turbulent Prandtl number
         scalar Prt_;
 
-        //- Cmu coefficient
-        scalar Cmu_;
-
-        //- Von Karman constant
-        scalar kappa_;
-
-        //- E coefficient
-        scalar E_;
-
         // Solution parameters
 
             static scalar maxExp_;
@@ -105,15 +97,13 @@ protected:
 
     // Protected Member Functions
 
-        //- Check the type of the patch
-        void checkType();
-
         //- 'P' function
         tmp<scalarField> Psmooth(const scalarField& Prat) const;
 
         //- Calculate y+ at the edge of the thermal laminar sublayer
         tmp<scalarField> yPlusTherm
         (
+            const nutWallFunctionFvPatchScalarField& nutw,
             const scalarField& P,
             const scalarField& Prat
         ) const;
@@ -159,7 +149,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
         (
             const alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField&
@@ -177,7 +167,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField
         (
             const alphatPhaseChangeJayatillekeWallFunctionFvPatchScalarField&,
@@ -201,7 +191,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Evaluation functions
 

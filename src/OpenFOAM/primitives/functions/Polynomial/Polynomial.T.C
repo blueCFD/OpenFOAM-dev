@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,18 +39,6 @@ Foam::Polynomial<PolySize>::Polynomial()
         this->v_[i] = 0.0;
     }
 }
-
-
-template<int PolySize>
-Foam::Polynomial<PolySize>::Polynomial
-(
-    const Polynomial<PolySize>& poly
-)
-:
-    VectorSpace<Polynomial<PolySize>, scalar, PolySize>(poly),
-    logActive_(poly.logActive_),
-    logCoeff_(poly.logCoeff_)
-{}
 
 
 template<int PolySize>
@@ -147,7 +135,6 @@ Foam::scalar Foam::Polynomial<PolySize>::value(const scalar x) const
 {
     scalar val = this->v_[0];
 
-    // avoid costly pow() in calculation
     scalar powX = 1;
     for (label i=1; i<PolySize; ++i)
     {
@@ -171,7 +158,6 @@ Foam::scalar Foam::Polynomial<PolySize>::derivative(const scalar x) const
 
     if (PolySize > 1)
     {
-        // avoid costly pow() in calculation
         deriv += this->v_[1];
 
         scalar powX = 1;
@@ -198,7 +184,6 @@ Foam::scalar Foam::Polynomial<PolySize>::integral
     const scalar x2
 ) const
 {
-    // avoid costly pow() in calculation
     scalar powX1 = x1;
     scalar powX2 = x2;
 

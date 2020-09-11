@@ -45,7 +45,7 @@ Foam::interfaceCompositionModels::Henry<Thermo, OtherThermo>::Henry
             pair.phase1().mesh()
         ),
         pair.phase1().mesh(),
-        dimensionedScalar("one", dimless, 1)
+        dimensionedScalar(dimless, 1)
     )
 {
     if (k_.size() != this->speciesNames_.size())
@@ -116,19 +116,11 @@ Foam::interfaceCompositionModels::Henry<Thermo, OtherThermo>::YfPrime
     const volScalarField& Tf
 ) const
 {
-    return tmp<volScalarField>
+    return volScalarField::New
     (
-        new volScalarField
-        (
-            IOobject
-            (
-                IOobject::groupName("YfPrime", this->pair_.name()),
-                this->pair_.phase1().mesh().time().timeName(),
-                this->pair_.phase1().mesh()
-            ),
-            this->pair_.phase1().mesh(),
-            dimensionedScalar("zero", dimless/dimTemperature, 0)
-        )
+        IOobject::groupName("YfPrime", this->pair_.name()),
+        this->pair_.phase1().mesh(),
+        dimensionedScalar(dimless/dimTemperature, 0)
     );
 }
 

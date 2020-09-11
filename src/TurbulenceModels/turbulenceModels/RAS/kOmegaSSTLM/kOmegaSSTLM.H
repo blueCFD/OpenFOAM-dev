@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,13 +103,6 @@ class kOmegaSSTLM
 :
     public kOmegaSST<BasicTurbulenceModel>
 {
-    // Private Member Functions
-
-        // Disallow default bitwise copy construct and assignment
-        kOmegaSSTLM(const kOmegaSSTLM&);
-        void operator=(const kOmegaSSTLM&);
-
-
 protected:
 
     // Protected data
@@ -231,6 +224,9 @@ public:
             const word& type = typeName
         );
 
+        //- Disallow default bitwise copy construction
+        kOmegaSSTLM(const kOmegaSSTLM&) = delete;
+
 
     //- Destructor
     virtual ~kOmegaSSTLM()
@@ -258,31 +254,31 @@ public:
         //  momentum-thickness Reynolds number
         tmp<volScalarField> DReThetatEff() const
         {
-            return tmp<volScalarField>
+            return volScalarField::New
             (
-                new volScalarField
-                (
-                    "DReThetatEff",
-                    sigmaThetat_*(this->nut_ + this->nu())
-                )
+                "DReThetatEff",
+                sigmaThetat_*(this->nut_ + this->nu())
             );
         }
 
         //- Return the effective diffusivity for intermittency
         tmp<volScalarField> DgammaIntEff() const
         {
-            return tmp<volScalarField>
+            return volScalarField::New
             (
-                new volScalarField
-                (
-                    "DgammaIntEff",
-                    this->nut_ + this->nu()
-                )
+                "DgammaIntEff",
+                this->nut_ + this->nu()
             );
         }
 
         //- Solve the turbulence equations and correct the turbulence viscosity
         virtual void correct();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const kOmegaSSTLM&) = delete;
 };
 
 

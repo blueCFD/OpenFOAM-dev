@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,14 +85,14 @@ void Foam::regionCoupledBase::resetAMI() const
         // Construct/apply AMI interpolation to determine addressing and weights
         AMIPtr_.reset
         (
-            new AMIPatchToPatchInterpolation
+            new AMIInterpolation
             (
                 patch_,
                 nbrPatch0,
                 surfPtr(),
                 faceAreaIntersect::tmMesh,
                 true,
-                AMIPatchToPatchInterpolation::imFaceAreaWeight,
+                AMIInterpolation::imFaceAreaWeight,
                 -1,
                 AMIReverse_
             )
@@ -279,7 +279,7 @@ surfPtr() const
 }
 
 
-const Foam::AMIPatchToPatchInterpolation& Foam::regionCoupledBase::AMI() const
+const Foam::AMIInterpolation& Foam::regionCoupledBase::AMI() const
 {
     if (!owner())
     {
@@ -331,15 +331,12 @@ bool Foam::regionCoupledBase::order
 
 void Foam::regionCoupledBase::write(Ostream& os) const
 {
-    os.writeKeyword("neighbourPatch") << nbrPatchName_
-    << token::END_STATEMENT << nl;
-    os.writeKeyword("neighbourRegion") << nbrRegionName_
-    << token::END_STATEMENT << nl;
+    writeEntry(os, "neighbourPatch", nbrPatchName_);
+    writeEntry(os, "neighbourRegion", nbrRegionName_);
 
     if (AMIReverse_)
     {
-        os.writeKeyword("flipNormals") << AMIReverse_
-            << token::END_STATEMENT << nl;
+        writeEntry(os, "flipNormals", AMIReverse_);
     }
 
     if (!surfDict_.empty())

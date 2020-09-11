@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -108,7 +108,7 @@ class fixedProfileFvPatchField
 :
     public fixedValueFvPatchField<Type>
 {
-    // Private data
+    // Private Data
 
         //- Profile data
         autoPtr<Function1<Type>> profile_;
@@ -161,7 +161,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         fixedProfileFvPatchField
         (
             const fixedProfileFvPatchField<Type>&
@@ -176,7 +176,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         fixedProfileFvPatchField
         (
             const fixedProfileFvPatchField<Type>&,
@@ -196,7 +196,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Evaluation functions
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -126,17 +126,6 @@ protected:
         volScalarField Xi_;
 
 
-private:
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        XiModel(const XiModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const XiModel&);
-
-
 public:
 
     //- Runtime type information
@@ -171,10 +160,10 @@ public:
         );
 
 
-    // Selectors
+    // Constructors
 
-        //- Return a reference to the selected Xi model
-        static autoPtr<XiModel> New
+        //- Construct from components
+        XiModel
         (
             const dictionary& XiProperties,
             const psiuReactionThermo& thermo,
@@ -185,11 +174,14 @@ public:
             const surfaceScalarField& phi
         );
 
+        //- Disallow default bitwise copy construction
+        XiModel(const XiModel&);
 
-    // Constructors
 
-        //- Construct from components
-        XiModel
+    // Selectors
+
+        //- Return a reference to the selected Xi model
+        static autoPtr<XiModel> New
         (
             const dictionary& XiProperties,
             const psiuReactionThermo& thermo,
@@ -241,6 +233,12 @@ public:
 
         //- Write fields related to Xi model
         virtual void writeFields() = 0;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const XiModel&) = delete;
 };
 
 

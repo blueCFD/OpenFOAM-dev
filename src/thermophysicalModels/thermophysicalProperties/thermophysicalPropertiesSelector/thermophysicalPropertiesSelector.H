@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,7 +111,7 @@ public:
             //  Note: currently it is assumed the liquid is incompressible
             inline scalar psi(scalar p, scalar T) const;
 
-            //- Return (Cp - Cv) [J/(kg K]
+            //- Return (Cp - Cv) [J/kg/K]
             //  Note: currently it is assumed the liquid is incompressible
             //  so CpMCv 0
             inline scalar CpMCv(scalar p, scalar T) const;
@@ -119,11 +119,8 @@ public:
 
         // Fundamental thermodynamic properties
 
-            //- Heat capacity at constant pressure [J/(kg K)]
+            //- Heat capacity at constant pressure [J/kg/K]
             inline scalar Cp(const scalar p, const scalar T) const;
-
-            //- Absolute Enthalpy [J/kg]
-            inline scalar Ha(const scalar p, const scalar T) const;
 
             //- Sensible enthalpy [J/kg]
             inline scalar Hs(const scalar p, const scalar T) const;
@@ -131,7 +128,19 @@ public:
             //- Chemical enthalpy [J/kg]
             inline scalar Hc() const;
 
-            // Entropy [J/(kg K)]
+            //- Absolute Enthalpy [J/kg]
+            inline scalar Ha(const scalar p, const scalar T) const;
+
+            //- Heat capacity at constant volume [J/kg/K]
+            inline scalar Cv(const scalar p, const scalar T) const;
+
+            //- Sensible internal energy [J/kg]
+            inline scalar Es(const scalar p, const scalar T) const;
+
+            //- Absolute internal energy [J/kg]
+            inline scalar Ea(const scalar p, const scalar T) const;
+
+            // Entropy [J/kg/K]
             inline scalar S(const scalar p, const scalar T) const;
 
 
@@ -146,10 +155,10 @@ public:
             //- Liquid viscosity [Pa s]
             inline scalar mu(scalar p, scalar T) const;
 
-            //- Liquid thermal conductivity  [W/(m K)]
+            //- Liquid thermal conductivity  [W/m/K]
             inline scalar kappa(scalar p, scalar T) const;
 
-            //- Liquid thermal diffusivity of enthalpy [kg/ms]
+            //- Liquid thermal diffusivity of enthalpy [kg/m/s]
             inline scalar alphah(const scalar p, const scalar T) const;
 };
 

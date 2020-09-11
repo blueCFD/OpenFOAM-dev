@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,10 +30,6 @@ Description
     energy.  The condition manipulates the E parameter to account for roughness
     effects.
 
-    Parameter ranges
-    - roughness height = sand-grain roughness (0 for smooth walls)
-    - roughness constant = 0.5-1.0
-
 Usage
     \table
         Property     | Description             | Required    | Default value
@@ -41,18 +37,23 @@ Usage
         Cs           | roughness constant      | yes         |
     \endtable
 
+    Parameter ranges
+    - roughness height (Ks) = sand-grain roughness (0 for smooth walls)
+    - roughness constant (Cs) = 0.5 - 1.0
+
     Example of the boundary condition specification:
     \verbatim
     <patchName>
     {
         type            nutkRoughWallFunction;
-        Ks              uniform 0;
+        Ks              uniform 1e-5;
         Cs              uniform 0.5;
+        value           uniform 0;
     }
     \endverbatim
 
 See also
-    Foam::nutkRoughWallFunctionFvPatchScalarField
+    Foam::nutkWallFunctionFvPatchScalarField
 
 SourceFiles
     nutkRoughWallFunctionFvPatchScalarField.C
@@ -77,9 +78,7 @@ class nutkRoughWallFunctionFvPatchScalarField
 :
     public nutkWallFunctionFvPatchScalarField
 {
-protected:
-
-    // Protected data
+    // Private Data
 
         //- Roughness height
         scalarField Ks_;
@@ -88,13 +87,18 @@ protected:
         scalarField Cs_;
 
 
+    // Private Member Functions
+
+        //- Return the roughness dependent E
+        scalar E(const scalar KsPlus, const scalar Cs) const;
+
+
+protected:
+
     // Protected Member Functions
 
-        //- Compute the roughness function
-        virtual scalar fnRough(const scalar KsPlus, const scalar Cs) const;
-
         //- Calculate the turbulence viscosity
-        virtual tmp<scalarField> calcNut() const;
+        virtual tmp<scalarField> nut() const;
 
 
 public:
@@ -131,7 +135,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         nutkRoughWallFunctionFvPatchScalarField
         (
             const nutkRoughWallFunctionFvPatchScalarField&
@@ -146,7 +150,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         nutkRoughWallFunctionFvPatchScalarField
         (
             const nutkRoughWallFunctionFvPatchScalarField&,
@@ -166,17 +170,30 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Access functions
 
-            // Return Ks
+            //- Return the roughness height
+            const scalarField& Ks() const
+            {
+                return Ks_;
+            }
+
+            //- Return reference to the roughness height to allow adjustment
             scalarField& Ks()
             {
                 return Ks_;
             }
 
-            // Return Cs
+
+            //- Return the roughness constant scale
+            const scalarField& Cs() const
+            {
+                return Cs_;
+            }
+
+            //- Return reference to the roughness constant to allow adjustment
             scalarField& Cs()
             {
                 return Cs_;

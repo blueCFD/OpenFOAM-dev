@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,15 +55,6 @@ namespace wallBoilingModels
 
 class departureFrequencyModel
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        departureFrequencyModel(const departureFrequencyModel&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const departureFrequencyModel&);
-
-
 public:
 
     //- Runtime type information
@@ -88,6 +79,9 @@ public:
         //- Construct null
         departureFrequencyModel();
 
+        //- Disallow default bitwise copy construction
+        departureFrequencyModel(const departureFrequencyModel&) = delete;
+
 
     // Selectors
 
@@ -111,6 +105,12 @@ public:
         ) const = 0;
 
         virtual void write(Ostream& os) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const departureFrequencyModel&) = delete;
 };
 
 

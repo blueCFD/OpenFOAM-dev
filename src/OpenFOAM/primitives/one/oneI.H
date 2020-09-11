@@ -41,6 +41,26 @@ public:
     typedef arg2 type;
 };
 
+inline scalar operator+(const scalar& t, const one&)
+{
+    return t + 1;
+}
+
+inline scalar operator+(const one&, const scalar& t)
+{
+    return 1 + t;
+}
+
+inline scalar operator-(const scalar& t, const one&)
+{
+    return t - 1;
+}
+
+inline scalar operator-(const one&, const scalar& t)
+{
+    return 1 - t;
+}
+
 inline const one& operator*(const one& o, const one&)
 {
     return o;

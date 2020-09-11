@@ -68,18 +68,11 @@ Foam::solidChemistryModel<CompType, SolidThermo>::RRs() const
 {
     tmp<volScalarField::Internal> tRRs
     (
-        new volScalarField::Internal
+        volScalarField::Internal::New
         (
-            IOobject
-            (
-                "RRs",
-                this->time().timeName(),
-                this->mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "RRs",
             this->mesh(),
-            dimensionedScalar("zero", dimMass/dimVolume/dimTime, 0.0)
+            dimensionedScalar(dimMass/dimVolume/dimTime, 0)
         )
     );
 

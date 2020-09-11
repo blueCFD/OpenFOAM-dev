@@ -63,15 +63,29 @@ void Foam::functionObjects::wallHeatTransferCoeff::writeFileHeader
 }
 
 
-void Foam::functionObjects::wallHeatTransferCoeff::calcHeatTransferCoeff
+Foam::tmp<Foam::volScalarField>
+Foam::functionObjects::wallHeatTransferCoeff::calcHeatTransferCoeff
 (
     const volScalarField& nu,
-    const volScalarField& nut,
-    volScalarField& wallHeatTransferCoeff
+    const volScalarField& nut
 )
 {
+    tmp<volScalarField> twallHeatTransferCoeff
+    (
+        volScalarField::New
+        (
+            type(),
+            mesh_,
+            dimensionedScalar
+            (
+                dimMass/pow3(dimTime)/(dimTemperature/dimLength),
+                0
+            )
+        )
+    );
+
     volScalarField::Boundary& wallHeatTransferCoeffBf =
-        wallHeatTransferCoeff.boundaryFieldRef();
+        twallHeatTransferCoeff.ref().boundaryFieldRef();
 
     const volScalarField::Boundary& nuBf = nu.boundaryField();
     const volScalarField::Boundary& nutBf = nut.boundaryField();
@@ -84,6 +98,8 @@ void Foam::functionObjects::wallHeatTransferCoeff::calcHeatTransferCoeff
                 rho_*Cp_*(nuBf[patchi]/Prl_ + nutBf[patchi]/Prt_);
         }
     }
+
+    return twallHeatTransferCoeff;
 }
 
 
@@ -101,30 +117,6 @@ Foam::functionObjects::wallHeatTransferCoeff::wallHeatTransferCoeff
     writeLocalObjects(obr_, log),
     patchSet_()
 {
-    volScalarField* wallHeatTransferCoeffPtr
-    (
-        new volScalarField
-        (
-            IOobject
-            (
-                type(),
-                mesh_.time().timeName(),
-                mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh_,
-            dimensionedScalar
-            (
-                "0",
-                dimMass/pow3(dimTime)/(dimTemperature/dimLength),
-                0
-            )
-        )
-    );
-
-    mesh_.objectRegistry::store(wallHeatTransferCoeffPtr);
-
     read(dict);
     resetName(typeName);
     resetLocalObjectName(typeName);
@@ -202,8 +194,7 @@ bool Foam::functionObjects::wallHeatTransferCoeff::read(const dictionary& dict)
 
 bool Foam::functionObjects::wallHeatTransferCoeff::execute()
 {
-    volScalarField& wallHeatTransferCoeff =
-        lookupObjectRef<volScalarField>(type());
+    word name(type());
 
     if
     (
@@ -219,11 +210,10 @@ bool Foam::functionObjects::wallHeatTransferCoeff::execute()
                 turbulenceModel::propertiesName
             );
 
-        calcHeatTransferCoeff
+        return store
         (
-            turbModel.nu(),
-            turbModel.nut(),
-            wallHeatTransferCoeff
+            name,
+            calcHeatTransferCoeff(turbModel.nu(), turbModel.nut())
         );
     }
     else
@@ -231,9 +221,9 @@ bool Foam::functionObjects::wallHeatTransferCoeff::execute()
         FatalErrorInFunction
             << "Unable to find incompressible turbulence model in the "
             << "database" << exit(FatalError);
-    }
 
-    return true;
+        return false;
+    }
 }
 
 

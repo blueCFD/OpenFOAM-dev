@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,7 +71,7 @@ class phaseSystem
 {
 public:
 
-    // Public typedefs
+    // Public Typedefs
 
         typedef HashPtrTable<fvVectorMatrix> momentumTransferTable;
 
@@ -357,9 +357,21 @@ public:
 
         // Sub-model lookup
 
+            //- Check availability of a sub model for a given phase pair
+            template<class modelType>
+            bool foundSubModel(const phasePair& key) const;
+
             //- Return a sub model between a phase pair
             template<class modelType>
             const modelType& lookupSubModel(const phasePair& key) const;
+
+            //- Check availability of a sub model between two phases
+            template<class modelType>
+            bool foundSubModel
+            (
+                const phaseModel& dispersed,
+                const phaseModel& continuous
+            ) const;
 
             //- Return a sub model between two phases
             template<class modelType>
@@ -368,6 +380,10 @@ public:
                 const phaseModel& dispersed,
                 const phaseModel& continuous
             ) const;
+
+            //- Check availability of a blended sub model for a given phase pair
+            template<class modelType>
+            bool foundBlendedSubModel(const phasePair& key) const;
 
             //- Return a blended sub model between a phase pair
             template<class modelType>
@@ -425,7 +441,7 @@ public:
             virtual tmp<volScalarField> dmdt(const phasePairKey& key) const;
 
             //- Return the mass transfer rates for each phase
-            virtual Xfer<PtrList<volScalarField>> dmdts() const;
+            virtual PtrList<volScalarField> dmdts() const;
 
 
         // Transfers
@@ -440,34 +456,34 @@ public:
 
             //- Return the implicit force coefficients for the face-based
             //  algorithm
-            virtual Xfer<PtrList<surfaceScalarField>> AFfs() const = 0;
+            virtual PtrList<surfaceScalarField> AFfs() const = 0;
 
             //- Return the force fluxes for the cell-based algorithm
-            virtual Xfer<PtrList<surfaceScalarField>> phiFs
+            virtual PtrList<surfaceScalarField> phiFs
             (
                 const PtrList<volScalarField>& rAUs
             ) = 0;
 
             //- Return the force fluxes for the face-based algorithm
-            virtual Xfer<PtrList<surfaceScalarField>> phiFfs
+            virtual PtrList<surfaceScalarField> phiFfs
             (
                 const PtrList<surfaceScalarField>& rAUfs
             ) = 0;
 
             //- Return the force fluxes for the cell-based algorithm
-            virtual Xfer<PtrList<surfaceScalarField>> phiKdPhis
+            virtual PtrList<surfaceScalarField> phiKdPhis
             (
                 const PtrList<volScalarField>& rAUs
             ) const = 0;
 
             //- Return the force fluxes for the face-based algorithm
-            virtual Xfer<PtrList<surfaceScalarField>> phiKdPhifs
+            virtual PtrList<surfaceScalarField> phiKdPhifs
             (
                 const PtrList<surfaceScalarField>& rAUfs
             ) const = 0;
 
             //- Return the explicit part of the drag force
-            virtual Xfer<PtrList<volVectorField>> KdUByAs
+            virtual PtrList<volVectorField> KdUByAs
             (
                 const PtrList<volScalarField>& rAUs
             ) const = 0;
@@ -485,7 +501,7 @@ public:
             ) = 0;
 
             //- Return the flux corrections for the cell-based algorithm
-            virtual Xfer<PtrList<surfaceScalarField>> ddtCorrByAs
+            virtual PtrList<surfaceScalarField> ddtCorrByAs
             (
                 const PtrList<volScalarField>& rAUs,
                 const bool includeVirtualMass = false

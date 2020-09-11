@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,15 +64,16 @@ Foam::mixedFvPatchField<Type>::mixedFvPatchField
     const mixedFvPatchField<Type>& ptf,
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
-    const fvPatchFieldMapper& mapper
+    const fvPatchFieldMapper& mapper,
+    const bool mappingRequired
 )
 :
-    fvPatchField<Type>(ptf, p, iF, mapper),
-    refValue_(ptf.refValue_, mapper),
-    refGrad_(ptf.refGrad_, mapper),
-    valueFraction_(ptf.valueFraction_, mapper)
+    fvPatchField<Type>(ptf, p, iF, mapper, mappingRequired),
+    refValue_(mapper(ptf.refValue_)),
+    refGrad_(mapper(ptf.refGrad_)),
+    valueFraction_(mapper(ptf.valueFraction_))
 {
-    if (notNull(iF) && mapper.hasUnmapped())
+    if (mappingRequired && notNull(iF) && mapper.hasUnmapped())
     {
         WarningInFunction
             << "On field " << iF.name() << " patch " << p.name()
@@ -120,9 +121,9 @@ void Foam::mixedFvPatchField<Type>::autoMap
 )
 {
     fvPatchField<Type>::autoMap(m);
-    refValue_.autoMap(m);
-    refGrad_.autoMap(m);
-    valueFraction_.autoMap(m);
+    m(refValue_, refValue_);
+    m(refGrad_, refGrad_);
+    m(valueFraction_, valueFraction_);
 }
 
 
@@ -226,10 +227,10 @@ template<class Type>
 void Foam::mixedFvPatchField<Type>::write(Ostream& os) const
 {
     fvPatchField<Type>::write(os);
-    refValue_.writeEntry("refValue", os);
-    refGrad_.writeEntry("refGradient", os);
-    valueFraction_.writeEntry("valueFraction", os);
-    this->writeEntry("value", os);
+    writeEntry(os, "refValue", refValue_);
+    writeEntry(os, "refGradient", refGrad_);
+    writeEntry(os, "valueFraction", valueFraction_);
+    writeEntry(os, "value", *this);
 }
 
 

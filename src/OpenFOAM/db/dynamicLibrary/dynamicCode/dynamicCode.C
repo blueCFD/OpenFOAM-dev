@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 2018-02-26 blueCAPE Lda: Modifications for blueCFD-Core 2017-2
@@ -159,7 +159,7 @@ bool Foam::dynamicCode::resolveTemplates
         if (!templateDir.empty() && isDir(templateDir))
         {
             file = templateDir/templateName;
-            if (!isFile(file, false))
+            if (!isFile(file, false, false))
             {
                 file.clear();
             }
@@ -345,7 +345,13 @@ void Foam::dynamicCode::reset
 )
 {
     clear();
-    setFilterContext(context);
+
+    forAllConstIter(HashTable<string>, context.code(), iter)
+    {
+        setFilterVariable(iter.key(), iter());
+    }
+
+    setFilterVariable("SHA1sum", context.sha1().str());
 }
 
 
@@ -368,18 +374,6 @@ void Foam::dynamicCode::addCreateFile
 )
 {
     createFiles_.append(fileAndContent(name, contents));
-}
-
-
-void Foam::dynamicCode::setFilterContext
-(
-    const dynamicCodeContext& context
-)
-{
-    filterVars_.set("localCode", context.localCode());
-    filterVars_.set("code", context.code());
-    filterVars_.set("codeInclude", context.include());
-    filterVars_.set("SHA1sum", context.sha1().str());
 }
 
 
@@ -514,7 +508,7 @@ bool Foam::dynamicCode::upToDate(const SHA1Digest& sha1) const
 {
     const fileName file = digestFile();
 
-    if (!exists(file, false) || SHA1Digest(IFstream(file)()) != sha1)
+    if (!exists(file, false, false) || SHA1Digest(IFstream(file)()) != sha1)
     {
         return false;
     }

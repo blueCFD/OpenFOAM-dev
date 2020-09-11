@@ -91,5 +91,11 @@ makeLESModel(Smagorinsky);
 #include "kEqn.H"
 makeLESModel(kEqn);
 
+#include "LRR.T.H"
+makeRASModel(LRR);
+
+#include "SSG.T.H"
+makeRASModel(SSG);
+
 
 // ************************************************************************* //

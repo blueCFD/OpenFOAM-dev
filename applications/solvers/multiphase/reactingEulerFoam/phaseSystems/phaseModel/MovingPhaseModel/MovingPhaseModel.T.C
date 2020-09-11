@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -151,7 +151,7 @@ Foam::MovingPhaseModel<BasePhaseModel>::MovingPhaseModel
             fluid.mesh()
         ),
         fluid.mesh(),
-        dimensionedScalar("0", dimensionSet(0, 3, -1, 0, 0), 0)
+        dimensionedScalar(dimensionSet(0, 3, -1, 0, 0), 0)
     ),
     alphaRhoPhi_
     (
@@ -162,7 +162,7 @@ Foam::MovingPhaseModel<BasePhaseModel>::MovingPhaseModel
             fluid.mesh()
         ),
         fluid.mesh(),
-        dimensionedScalar("0", dimensionSet(1, 0, -1, 0, 0), 0)
+        dimensionedScalar(dimensionSet(1, 0, -1, 0, 0), 0)
     ),
     DUDt_(nullptr),
     DUDtf_(nullptr),
@@ -188,7 +188,7 @@ Foam::MovingPhaseModel<BasePhaseModel>::MovingPhaseModel
             fluid.mesh()
         ),
         fluid.mesh(),
-        dimensionedScalar("0", dimDensity/dimTime, 0)
+        dimensionedScalar(dimDensity/dimTime, 0)
     ),
     continuityErrorSources_
     (
@@ -199,7 +199,7 @@ Foam::MovingPhaseModel<BasePhaseModel>::MovingPhaseModel
             fluid.mesh()
         ),
         fluid.mesh(),
-        dimensionedScalar("0", dimDensity/dimTime, 0)
+        dimensionedScalar(dimDensity/dimTime, 0)
     ),
     K_(nullptr)
 {
@@ -219,17 +219,22 @@ Foam::MovingPhaseModel<BasePhaseModel>::~MovingPhaseModel()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class BasePhaseModel>
-void Foam::MovingPhaseModel<BasePhaseModel>::correct()
+void Foam::MovingPhaseModel<BasePhaseModel>::correctContinuityErrors()
 {
-    BasePhaseModel::correct();
-
-    this->fluid().MRF().correctBoundaryVelocity(U_);
-
     volScalarField& rho = this->thermoRef().rho();
 
     continuityErrorFlow_ = fvc::ddt(*this, rho) + fvc::div(alphaRhoPhi_);
 
     continuityErrorSources_ = - (this->fluid().fvOptions()(*this, rho)&rho);
+}
+
+
+template<class BasePhaseModel>
+void Foam::MovingPhaseModel<BasePhaseModel>::correct()
+{
+    BasePhaseModel::correct();
+    this->fluid().MRF().correctBoundaryVelocity(U_);
+    correctContinuityErrors();
 }
 
 
@@ -255,6 +260,13 @@ void Foam::MovingPhaseModel<BasePhaseModel>::correctKinematics()
         K_.clear();
         K();
     }
+}
+
+
+template<class BasePhaseModel>
+void Foam::MovingPhaseModel<BasePhaseModel>::correctThermo()
+{
+    correctContinuityErrors();
 }
 
 
@@ -441,12 +453,11 @@ Foam::MovingPhaseModel<BasePhaseModel>::K() const
 {
     if (!K_.valid())
     {
-        K_ =
-            new volScalarField
-            (
-                IOobject::groupName("K", this->name()),
-                0.5*magSqr(this->U())
-            );
+        K_ = volScalarField::New
+        (
+            IOobject::groupName("K", this->name()),
+            0.5*magSqr(this->U())
+        );
     }
 
     return tmp<volScalarField>(K_());

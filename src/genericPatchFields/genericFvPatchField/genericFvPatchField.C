@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -434,7 +434,7 @@ Foam::genericFvPatchField<Type>::genericFvPatchField
         scalarFields_.insert
         (
             iter.key(),
-            new scalarField(*iter(), mapper)
+            mapper(*iter()).ptr()
         );
     }
 
@@ -448,7 +448,7 @@ Foam::genericFvPatchField<Type>::genericFvPatchField
         vectorFields_.insert
         (
             iter.key(),
-            new vectorField(*iter(), mapper)
+            mapper(*iter()).ptr()
         );
     }
 
@@ -462,7 +462,7 @@ Foam::genericFvPatchField<Type>::genericFvPatchField
         sphericalTensorFields_.insert
         (
             iter.key(),
-            new sphericalTensorField(*iter(), mapper)
+            mapper(*iter()).ptr()
         );
     }
 
@@ -476,7 +476,7 @@ Foam::genericFvPatchField<Type>::genericFvPatchField
         symmTensorFields_.insert
         (
             iter.key(),
-            new symmTensorField(*iter(), mapper)
+            mapper(*iter()).ptr()
         );
     }
 
@@ -490,7 +490,7 @@ Foam::genericFvPatchField<Type>::genericFvPatchField
         tensorFields_.insert
         (
             iter.key(),
-            new tensorField(*iter(), mapper)
+            mapper(*iter()).ptr()
         );
     }
 }
@@ -548,7 +548,7 @@ void Foam::genericFvPatchField<Type>::autoMap
         iter
     )
     {
-        iter()->autoMap(m);
+        m(*iter(), *iter());
     }
 
     forAllIter
@@ -558,7 +558,7 @@ void Foam::genericFvPatchField<Type>::autoMap
         iter
     )
     {
-        iter()->autoMap(m);
+        m(*iter(), *iter());
     }
 
     forAllIter
@@ -568,7 +568,7 @@ void Foam::genericFvPatchField<Type>::autoMap
         iter
     )
     {
-        iter()->autoMap(m);
+        m(*iter(), *iter());
     }
 
     forAllIter
@@ -578,7 +578,7 @@ void Foam::genericFvPatchField<Type>::autoMap
         iter
     )
     {
-        iter()->autoMap(m);
+        m(*iter(), *iter());
     }
 
     forAllIter
@@ -588,7 +588,7 @@ void Foam::genericFvPatchField<Type>::autoMap
         iter
     )
     {
-        iter()->autoMap(m);
+        m(*iter(), *iter());
     }
 }
 
@@ -767,7 +767,7 @@ Foam::genericFvPatchField<Type>::gradientBoundaryCoeffs() const
 template<class Type>
 void Foam::genericFvPatchField<Type>::write(Ostream& os) const
 {
-    os.writeKeyword("type") << actualTypeName_ << token::END_STATEMENT << nl;
+    writeEntry(os, "type", actualTypeName_);
 
     forAllConstIter(dictionary, dict_, iter)
     {
@@ -783,28 +783,48 @@ void Foam::genericFvPatchField<Type>::write(Ostream& os) const
             {
                 if (scalarFields_.found(iter().keyword()))
                 {
-                    scalarFields_.find(iter().keyword())()
-                        ->writeEntry(iter().keyword(), os);
+                    writeEntry
+                    (
+                        os,
+                        iter().keyword(),
+                        *scalarFields_.find(iter().keyword())()
+                    );
                 }
                 else if (vectorFields_.found(iter().keyword()))
                 {
-                    vectorFields_.find(iter().keyword())()
-                        ->writeEntry(iter().keyword(), os);
+                    writeEntry
+                    (
+                        os,
+                        iter().keyword(),
+                        *vectorFields_.find(iter().keyword())()
+                    );
                 }
                 else if (sphericalTensorFields_.found(iter().keyword()))
                 {
-                    sphericalTensorFields_.find(iter().keyword())()
-                        ->writeEntry(iter().keyword(), os);
+                    writeEntry
+                    (
+                        os,
+                        iter().keyword(),
+                        *sphericalTensorFields_.find(iter().keyword())()
+                    );
                 }
                 else if (symmTensorFields_.found(iter().keyword()))
                 {
-                    symmTensorFields_.find(iter().keyword())()
-                        ->writeEntry(iter().keyword(), os);
+                    writeEntry
+                    (
+                        os,
+                        iter().keyword(),
+                        *symmTensorFields_.find(iter().keyword())()
+                    );
                 }
                 else if (tensorFields_.found(iter().keyword()))
                 {
-                    tensorFields_.find(iter().keyword())()
-                        ->writeEntry(iter().keyword(), os);
+                    writeEntry
+                    (
+                        os,
+                        iter().keyword(),
+                        *tensorFields_.find(iter().keyword())()
+                    );
                 }
             }
             else
@@ -814,7 +834,7 @@ void Foam::genericFvPatchField<Type>::write(Ostream& os) const
         }
     }
 
-    this->writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 

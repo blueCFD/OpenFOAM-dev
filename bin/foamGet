@@ -54,7 +54,7 @@ USAGE
 
 error() {
     exec 1>&2
-    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    while [ "$#" -ge 1 ]; do echo "Error: $1"; shift; done
     usage
     exit 1
 }
@@ -68,8 +68,8 @@ findFilesInDirs () {
         [ -d "$_d" ] && _out="$(find "$_d" -name "$_str" -type f | sort) $_out"
     done
 
-    # Remove whitespace
-    echo "$_out" | xargs -n 1
+    # Remove whitespace and blank lines
+    echo "$_out" | xargs -n 1 | awk 'NF'
 }
 
 findFiles () {
@@ -136,17 +136,22 @@ setFile () {
 noFilesMessage () {
     _ext="$1"
     [ "$_ext" = "ANY" ] && echo "(with or without file extensions)" && return 1
-    [ -n "$_ext" ] && echo "with file extension $_ext" && return 1
+    [ -n "$_ext" ] && echo "with file extension '$_ext'" && return 1
 }
 
 searchDirs="\
-    ${HOME}/.OpenFOAM \
-    $WM_PROJECT_SITE \
-    $WM_PROJECT_INST_DIR/site \
+    ${HOME}/.OpenFOAM/$WM_PROJECT_VERSION \
+    ${HOME}/.OpenFOAM"
+[ -n "$WM_PROJECT_SITE" ] && searchDirs="$searchDirs \
+    $WM_PROJECT_SITE/$WM_PROJECT_VERSION/etc \
+    $WM_PROJECT_SITE/etc"
+searchDirs="$searchDirs \
+    $WM_PROJECT_INST_DIR/site/$WM_PROJECT_VERSION/etc \
+    $WM_PROJECT_INST_DIR/site/etc \
     $FOAM_ETC/caseDicts"
 
 ext="ANY"
-tgt="system"
+tgt=""
 while [ "$#" -gt 0 ]
 do
    case "$1" in
@@ -170,7 +175,6 @@ do
    -t | -target)
       [ "$#" -ge 2 ] || error "'$1' option requires an argument"
       tgt="$2"
-      [ -d "$tgt" ] || error "directory with -t option does not exist: '$tgt'"
       shift 2
       ;;
    -*)
@@ -183,15 +187,32 @@ do
 done
 
 [ $# -gt 1 ] && error "$# arguments \"$*\" specified: only 1 permitted"
-[ $# -eq 1 ] || error "Missing argument: no file name/prefix <file> supplied"
+[ $# -eq 1 ] || error "missing argument: no file name/prefix <file> supplied"
 prefix="$1"
 
+[ "$tgt" ] || \
+    case "$prefix" in
+       All*)
+          tgt="."
+          ;;
+       *Properties|*Cloud)
+          tgt="constant"
+          ;;
+       s)
+          tgt="0"
+          ;;
+       *)
+          tgt="system"
+          ;;
+    esac
+
 [ -s "system/controlDict" ] || \
-    error "Cannot find OpenFOAM case directory (no system/controlDict file)"
+    echo "Warning: cannot find OpenFOAM case directory (no system/controlDict file)"
+[ -d "$tgt" ] || error "target directory does not exist: '$tgt'"
 
 files="$(findFiles "$searchDirs" "$prefix" "$ext")"
 [ -z "$files" ] && \
-    error "No file $prefix found $(noFilesMessage "$ext")"
+    error "no file $prefix found $(noFilesMessage "$ext")"
 
 nFiles="$(nArgs "$files")"
 [ "$nFiles" -eq 1 ] && cpFile "$files" "$tgt" && exit 0

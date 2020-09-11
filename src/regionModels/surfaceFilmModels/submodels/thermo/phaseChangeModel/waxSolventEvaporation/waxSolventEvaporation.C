@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -179,7 +179,7 @@ void waxSolventEvaporation::correctModel
     );
 
     // Molecular weight of vapour [kg/kmol]
-    const scalar Wvap = thermo.carrier().W(vapId);
+    const scalar Wvap = thermo.carrier().Wi(vapId);
 
     const scalar Wwax = Wwax_.value();
     const scalar Wsolvent = Wsolvent_.value();
@@ -196,7 +196,7 @@ void waxSolventEvaporation::correctModel
             false
         ),
         film.regionMesh(),
-        dimensionedScalar("zero", dimDensity*dimVelocity, 0)
+        dimensionedScalar(dimDensity*dimVelocity, 0)
     );
 
     volScalarField::Internal evapRateInf
@@ -211,7 +211,7 @@ void waxSolventEvaporation::correctModel
             false
         ),
         film.regionMesh(),
-        dimensionedScalar("zero", dimDensity*dimVelocity, 0)
+        dimensionedScalar(dimDensity*dimVelocity, 0)
     );
 
     bool filmPresent = false;
@@ -230,7 +230,7 @@ void waxSolventEvaporation::correctModel
                 Ysolvent*Wsolvent/((1 - Ysolvent)*Wwax + Ysolvent*Wsolvent)
             );
 
-            // Primary region density [kg/m3]
+            // Primary region density [kg/m^3]
             const scalar rhoInfc = rhoInf[celli];
 
             // Cell pressure [Pa]
@@ -321,7 +321,7 @@ void waxSolventEvaporation::correctModel
         max
         (
            -film.rhoSp()(),
-            dimensionedScalar("zero", film.rhoSp().dimensions(), 0)
+            dimensionedScalar(film.rhoSp().dimensions(), 0)
         )
     );
 

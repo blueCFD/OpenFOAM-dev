@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,11 +31,10 @@ Description
 
     Reference:
     \verbatim
-        "Modeling of laboratory and commercial scale hydro-processing reactors
-        using CFD"
-        Gunjal, P.R., Ranade, V.V.,
-        Chemical Engineering Science
-        Volume 62, Issues 18-20, September-October 2007, pp. 5512 - 5526
+        Gunjal, P. R., & Ranade, V. V. (2007).
+        Modeling of laboratory and commercial scale hydro-processing reactors
+        using CFD.
+        Chemical Engineering Science, 62(18-20), 5512-5526.
     \endverbatim
 
 SourceFiles
@@ -67,7 +66,7 @@ class AttouFerschneider
 :
     public dragModel
 {
-    // Private data
+    // Private Data
 
         //- Name of the gaseous phase
         const word gasName_;
@@ -85,7 +84,7 @@ class AttouFerschneider
         const dimensionedScalar E2_;
 
 
-    // Private member functions
+    // Private Member Functions
 
         //- Return the momentum transfer coefficient between gas and liquid
         virtual tmp<volScalarField> KGasLiquid

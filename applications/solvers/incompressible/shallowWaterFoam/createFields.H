@@ -15,7 +15,7 @@ volScalarField h
 );
 
 Info<< "Reading field h0 if present\n" << endl;
-volScalarField h0
+const volScalarField h0
 (
     IOobject
     (
@@ -25,7 +25,7 @@ volScalarField h0
         IOobject::READ_IF_PRESENT
     ),
     mesh,
-    dimensionedScalar("h0", dimLength, 0.0)
+    dimensionedScalar(dimLength, 0)
 );
 
 Info<< "Creating field hU\n" << endl;

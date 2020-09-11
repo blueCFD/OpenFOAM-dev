@@ -326,11 +326,7 @@ while (pimple.correct())
                 pEqn += pEqnComp2();
             }
 
-            solve
-            (
-                pEqn,
-                mesh.solver(p_rgh.select(pimple.finalInnerIter()))
-            );
+            pEqn.solve();
         }
 
         // Correct fluxes and velocities on last non-orthogonal iteration

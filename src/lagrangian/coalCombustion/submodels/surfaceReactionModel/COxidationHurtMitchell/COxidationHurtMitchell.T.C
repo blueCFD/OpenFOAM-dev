@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,8 +52,8 @@ Foam::COxidationHurtMitchell<CloudType>::COxidationHurtMitchell
     ashLocalId_ = owner.composition().localId(idSolid, "ash", true);
 
     // Set local copies of thermo properties
-    WO2_ = owner.thermo().carrier().W(O2GlobalId_);
-    const scalar WCO2 = owner.thermo().carrier().W(CO2GlobalId_);
+    WO2_ = owner.thermo().carrier().Wi(O2GlobalId_);
+    const scalar WCO2 = owner.thermo().carrier().Wi(CO2GlobalId_);
     WC_ = WCO2 - WO2_;
 
     HcCO2_ = owner.thermo().carrier().Hc(CO2GlobalId_);
@@ -174,7 +174,7 @@ Foam::scalar Foam::COxidationHurtMitchell<CloudType>::calculate
     // Kinetic rate of char oxidation [g/(cm^2.s.atm^0.5)]
     const scalar Rk = A*exp(-E/(RRcal*T));
 
-    // Molar reaction rate per unit surface area [kmol/(m^2.s)]
+    // Molar reaction rate per unit surface area [kmol/m^2/s]
     const scalar qCsLim = mass*Ychar/(WC_*Ap*dt);
     const scalar qCs = min(convSI*Rk*Foam::sqrt(ppO2/101325.0), qCsLim);
 

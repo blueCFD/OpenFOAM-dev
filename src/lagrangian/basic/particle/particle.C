@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,7 +30,7 @@ License
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-const Foam::scalar Foam::particle::negativeSpaceDisplacementFactor = 1.01;
+const Foam::label Foam::particle::maxNBehind_ = 10;
 
 Foam::label Foam::particle::particleCount_ = 0;
 
@@ -152,6 +152,11 @@ void Foam::particle::rotate(const bool reverse)
 
 void Foam::particle::changeTet(const label tetTriI)
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     const bool isOwner = mesh_.faceOwner()[tetFacei_] == celli_;
 
     const label firstTetPtI = 1;
@@ -227,6 +232,11 @@ void Foam::particle::changeTet(const label tetTriI)
 
 void Foam::particle::changeFace(const label tetTriI)
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     // Get the old topology
     const triFace triOldIs(currentTetIndices().faceTriIs(mesh_));
 
@@ -342,6 +352,11 @@ void Foam::particle::changeFace(const label tetTriI)
 
 void Foam::particle::changeCell()
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     // Set the cell to be the one on the other side of the face
     const label ownerCellI = mesh_.faceOwner()[tetFacei_];
     const bool isOwner = celli_ == ownerCellI;
@@ -354,6 +369,11 @@ void Foam::particle::changeCell()
 
 void Foam::particle::changeToMasterPatch()
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     label thisPatch = patch();
 
     forAll(mesh_.cells()[celli_], cellFaceI)
@@ -389,12 +409,16 @@ void Foam::particle::changeToMasterPatch()
 void Foam::particle::locate
 (
     const vector& position,
-    const vector* direction,
     label celli,
     const bool boundaryFail,
     const string boundaryMsg
 )
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     // Find the cell, if it has not been given
     if (celli < 0)
     {
@@ -415,7 +439,8 @@ void Foam::particle::locate
     // through each tet from the cell centre. If a tet contains the position
     // then the track will end with a single trackToTri.
     const class cell& c = mesh_.cells()[celli_];
-    label minF = 1, minTetFacei = -1, minTetPti = -1;
+    scalar minF = vGreat;
+    label minTetFacei = -1, minTetPti = -1;
     forAll(c, cellTetFacei)
     {
         const class face& f = mesh_.faces()[c[cellTetFacei]];
@@ -463,34 +488,11 @@ void Foam::particle::locate
     }
     else
     {
-        // Re-do the track, but this time do the bit tangential to the
-        // direction/patch first. This gets us as close as possible to the
-        // original path/position.
-
-        if (direction == nullptr)
-        {
-            const polyPatch& p = mesh_.boundaryMesh()[patch()];
-            direction = &p.faceNormals()[p.whichFace(facei_)];
-        }
-
-        const vector n = *direction/mag(*direction);
-        const vector sN = (displacement & n)*n;
-        const vector sT = displacement - sN;
-
-        coordinates_ = barycentric(1, 0, 0, 0);
-        celli_ = celli;
-        tetFacei_ = minTetFacei;
-        tetPti_ = minTetPti;
-        facei_ = -1;
-
-        track(sT, 0);
-        track(sN, 0);
-
         static label nWarnings = 0;
         static const label maxNWarnings = 100;
         if (nWarnings < maxNWarnings)
         {
-            WarningInFunction << boundaryMsg << endl;
+            WarningInFunction << boundaryMsg.c_str() << endl;
             ++ nWarnings;
         }
         if (nWarnings == maxNWarnings)
@@ -522,6 +524,8 @@ Foam::particle::particle
     tetPti_(tetPti),
     facei_(-1),
     stepFraction_(0.0),
+    behind_(0.0),
+    nBehind_(0),
     origProc_(Pstream::myProcNo()),
     origId_(getNewParticleID())
 {}
@@ -541,13 +545,14 @@ Foam::particle::particle
     tetPti_(-1),
     facei_(-1),
     stepFraction_(0.0),
+    behind_(0.0),
+    nBehind_(0),
     origProc_(Pstream::myProcNo()),
     origId_(getNewParticleID())
 {
     locate
     (
         position,
-        nullptr,
         celli,
         false,
         "Particle initialised with a location outside of the mesh."
@@ -564,6 +569,8 @@ Foam::particle::particle(const particle& p)
     tetPti_(p.tetPti_),
     facei_(p.facei_),
     stepFraction_(p.stepFraction_),
+    behind_(p.behind_),
+    nBehind_(p.nBehind_),
     origProc_(p.origProc_),
     origId_(p.origId_)
 {}
@@ -578,6 +585,8 @@ Foam::particle::particle(const particle& p, const polyMesh& mesh)
     tetPti_(p.tetPti_),
     facei_(p.facei_),
     stepFraction_(p.stepFraction_),
+    behind_(p.behind_),
+    nBehind_(p.nBehind_),
     origProc_(p.origProc_),
     origId_(p.origId_)
 {}
@@ -591,6 +600,11 @@ Foam::scalar Foam::particle::track
     const scalar fraction
 )
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     scalar f = trackToFace(displacement, fraction);
 
     while (onInternalFace())
@@ -610,6 +624,11 @@ Foam::scalar Foam::particle::trackToCell
     const scalar fraction
 )
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     const scalar f = trackToFace(displacement, fraction);
 
     if (onInternalFace())
@@ -627,13 +646,19 @@ Foam::scalar Foam::particle::trackToFace
     const scalar fraction
 )
 {
+    if (debug)
+    {
+        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
+    }
+
     scalar f = 1;
 
     label tetTriI = onFace() ? 0 : -1;
 
     facei_ = -1;
 
-    while (true)
+    // Loop the tets in the current cell
+    while (nBehind_ < maxNBehind_)
     {
         f *= trackToTri(f*displacement, f*fraction, tetTriI);
 
@@ -654,6 +679,25 @@ Foam::scalar Foam::particle::trackToFace
             changeTet(tetTriI);
         }
     }
+
+    // Warn if stuck, and incorrectly advance the step fraction to completion
+    static label stuckID = -1, stuckProc = -1;
+    if (origId_ != stuckID && origProc_ != stuckProc)
+    {
+        WarningInFunction
+            << "Particle #" << origId_ << " got stuck at " << position()
+            << endl;
+    }
+
+    stuckID = origId_;
+    stuckProc = origProc_;
+
+    stepFraction_ += f*fraction;
+
+    behind_ = 0;
+    nBehind_ = 0;
+
+    return 0;
 }
 
 
@@ -690,11 +734,8 @@ Foam::scalar Foam::particle::trackToStationaryTri
             << "Start local coordinates = " << y0 << endl;
     }
 
-    // Get the factor by which the displacement is increased
-    const scalar f = detA >= 0 ? 1 : negativeSpaceDisplacementFactor;
-
     // Calculate the local tracking displacement
-    barycentric Tx1(f*x1 & T);
+    barycentric Tx1(x1 & T);
 
     if (debug)
     {
@@ -706,7 +747,7 @@ Foam::scalar Foam::particle::trackToStationaryTri
     scalar muH = std::isnormal(detA) && detA <= 0 ? vGreat : 1/detA;
     for (label i = 0; i < 4; ++ i)
     {
-        if (std::isnormal(Tx1[i]) && Tx1[i] < 0)
+        if (Tx1[i] < - detA*small)
         {
             scalar mu = - y0[i]/Tx1[i];
 
@@ -764,6 +805,22 @@ Foam::scalar Foam::particle::trackToStationaryTri
     // Set the proportion of the track that has been completed
     stepFraction_ += fraction*muH*detA;
 
+    // Accumulate displacement behind
+    if (detA <= 0 || nBehind_ > 0)
+    {
+        behind_ += muH*detA*mag(displacement);
+
+        if (behind_ > 0)
+        {
+            behind_ = 0;
+            nBehind_ = 0;
+        }
+        else
+        {
+            ++ nBehind_;
+        }
+    }
+
     return iH != -1 ? 1 - muH*detA : 0;
 }
 
@@ -801,12 +858,9 @@ Foam::scalar Foam::particle::trackToMovingTri
             << "Start local coordinates = " << y0[0] << endl;
     }
 
-    // Get the factor by which the displacement is increased
-    const scalar f = detA[0] >= 0 ? 1 : negativeSpaceDisplacementFactor;
-
     // Get the relative global position
     const vector x0Rel = x0 - centre[0];
-    const vector x1Rel = f*x1 - centre[1];
+    const vector x1Rel = x1 - centre[1];
 
     // Form the determinant and hit equations
     cubicEqn detAEqn(sqr(detA[0])*detA[3], detA[0]*detA[2], detA[1], 1);
@@ -843,7 +897,11 @@ Foam::scalar Foam::particle::trackToMovingTri
 
         for (label j = 0; j < 3; ++ j)
         {
-            if (mu.type(j) == roots::real && hitEqn[i].derivative(mu[j]) < 0)
+            if
+            (
+                mu.type(j) == rootType::real
+             && hitEqn[i].derivative(mu[j]) < - detA[0]*small
+            )
             {
                 if (debug)
                 {
@@ -913,6 +971,22 @@ Foam::scalar Foam::particle::trackToMovingTri
 
     // Set the proportion of the track that has been completed
     stepFraction_ += fraction*muH*detA[0];
+
+    // Accumulate displacement behind
+    if (detA[0] <= 0 || nBehind_ > 0)
+    {
+        behind_ += muH*detA[0]*mag(displacement);
+
+        if (behind_ > 0)
+        {
+            behind_ = 0;
+            nBehind_ = 0;
+        }
+        else
+        {
+            ++ nBehind_;
+        }
+    }
 
     if (debug)
     {
@@ -1131,7 +1205,6 @@ void Foam::particle::autoMap
     locate
     (
         position,
-        nullptr,
         mapper.reverseCellMap()[celli_],
         true,
         "Particle mapped to a location outside of the mesh."

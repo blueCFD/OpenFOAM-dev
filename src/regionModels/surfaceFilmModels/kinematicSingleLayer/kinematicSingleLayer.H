@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,17 +66,6 @@ class kinematicSingleLayer
 :
     public surfaceFilmRegionModel
 {
-private:
-
-    // Private member functions
-
-        //- Disallow default bitwise copy construct
-        kinematicSingleLayer(const kinematicSingleLayer&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const kinematicSingleLayer&);
-
-
 protected:
 
     // Protected data
@@ -109,13 +98,13 @@ protected:
 
             // Fields
 
-                //- Density [kg/m3]
+                //- Density [kg/m^3]
                 volScalarField rho_;
 
                 //- Dynamic viscosity [Pa.s]
                 volScalarField mu_;
 
-                //- Surface tension [m/s2]
+                //- Surface tension [m/s^2]
                 volScalarField sigma_;
 
 
@@ -136,10 +125,10 @@ protected:
             //- Velocity - wall [m/s]
             volVectorField Uw_;
 
-            //- Film thickness*density (helper field) [kg/m2]
+            //- Film thickness*density (helper field) [kg/m^2]
             volScalarField deltaRho_;
 
-            //- Mass flux (includes film thickness) [kg.m/s]
+            //- Mass flux (includes film thickness) [kg m/s]
             surfaceScalarField phi_;
 
 
@@ -161,26 +150,26 @@ protected:
             // Note: need boundary value mapped from primary region, and then
             // pushed into the patch internal field
 
-                //- Momementum [kg/m/s2]
+                //- Momementum [kg/m/s^2]
                 volVectorField USp_;
 
                 //- Pressure [Pa]
                 volScalarField pSp_;
 
-                //- Mass [kg/m2/s]
+                //- Mass [kg/m^2/s]
                 volScalarField rhoSp_;
 
 
             // Primary region - registered to the primary region mesh
             // Internal use only - not read-in
 
-                //- Momementum [kg/m/s2]
+                //- Momementum [kg/m/s^2]
                 volVectorField USpPrimary_;
 
                 //- Pressure [Pa]
                 volScalarField pSpPrimary_;
 
-                //- Mass [kg/m2/s]
+                //- Mass [kg/m^2/s]
                 volScalarField rhoSpPrimary_;
 
 
@@ -193,7 +182,7 @@ protected:
             //- Pressure [Pa]
             volScalarField pPrimary_;
 
-            //- Density [kg/m3]
+            //- Density [kg/m^3]
             volScalarField rhoPrimary_;
 
             //- Viscosity [Pa.s]
@@ -311,6 +300,9 @@ public:
             const bool readFields = true
         );
 
+        //- Disallow default bitwise copy construction
+        kinematicSingleLayer(const kinematicSingleLayer&) = delete;
+
 
     //- Destructor
     virtual ~kinematicSingleLayer();
@@ -344,7 +336,7 @@ public:
             //- Return const access to the dynamic viscosity [Pa.s]
             inline const volScalarField& mu() const;
 
-            //- Return const access to the surface tension [kg/s2]
+            //- Return const access to the surface tension [kg/s^2]
             inline const volScalarField& sigma() const;
 
 
@@ -365,13 +357,13 @@ public:
             //- Return the film wall velocity [m/s]
             virtual const volVectorField& Uw() const;
 
-            //- Return the film thickness*density (helper field) [kg/m3]
+            //- Return the film thickness*density (helper field) [kg/m^3]
             virtual const volScalarField& deltaRho() const;
 
-            //- Return the film flux [kg.m/s]
+            //- Return the film flux [kg m/s]
             virtual const surfaceScalarField& phi() const;
 
-            //- Return the film density [kg/m3]
+            //- Return the film density [kg/m^3]
             virtual const volScalarField& rho() const;
 
             //- Return the film mean temperature [K]
@@ -413,8 +405,8 @@ public:
                 const label patchi,            // patchi on primary region
                 const label facei,             // facei of patchi
                 const scalar massSource,       // [kg]
-                const vector& momentumSource,  // [kg.m/s] (tang'l momentum)
-                const scalar pressureSource,   // [kg.m/s] (normal momentum)
+                const vector& momentumSource,  // [kg m/s] (tang'l momentum)
+                const scalar pressureSource,   // [kg m/s] (normal momentum)
                 const scalar energySource = 0  // [J]
             );
 
@@ -423,34 +415,34 @@ public:
 
             // Primary region
 
-                //- Momementum [kg/m/s2]
+                //- Momementum [kg/m/s^2]
                 inline volVectorField& USpPrimary();
 
                 //- Pressure [Pa]
                 inline volScalarField& pSpPrimary();
 
-                //- Mass [kg/m2/s]
+                //- Mass [kg/m^2/s]
                 inline volScalarField& rhoSpPrimary();
 
 
             // Film region
 
-                //- Momentum [kg/m/s2]
+                //- Momentum [kg/m/s^2]
                 inline volVectorField& USp();
 
                 //- Pressure [Pa]
                 inline volScalarField& pSp();
 
-                //- Mass [kg/m2/s]
+                //- Mass [kg/m^2/s]
                 inline volScalarField& rhoSp();
 
-                //- Momentum [kg/m/s2]
+                //- Momentum [kg/m/s^2]
                 inline const volVectorField& USp() const;
 
                 //- Pressure [Pa]
                 inline const volScalarField& pSp() const;
 
-                //- Mass [kg/m2/s]
+                //- Mass [kg/m^2/s]
                 inline const volScalarField& rhoSp() const;
 
 
@@ -462,7 +454,7 @@ public:
             //- Pressure [Pa]
             inline const volScalarField& pPrimary() const;
 
-            //- Density [kg/m3]
+            //- Density [kg/m^3]
             inline const volScalarField& rhoPrimary() const;
 
             //- Viscosity [Pa.s]
@@ -533,6 +525,12 @@ public:
 
             //- Provide some feedback
             virtual void info();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const kinematicSingleLayer&) = delete;
 };
 
 

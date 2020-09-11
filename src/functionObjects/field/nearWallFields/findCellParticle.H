@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ class findCellParticle
 :
     public particle
 {
-    // Private data
+    // Private Data
 
         //- Displacement over which to track
         vector displacement_;
@@ -99,7 +99,7 @@ public:
             {}
 
 
-        // Member functions
+        // Member Functions
 
             labelListList& cellToData()
             {
@@ -228,17 +228,29 @@ public:
             //- Overridable function to handle the particle hitting a cyclicAMI
             void hitCyclicAMIPatch
             (
+                const vector&,
+                const scalar,
                 Cloud<findCellParticle>&,
-                trackingData&,
-                const vector&
+                trackingData&
             );
 
             //- Overridable function to handle the particle hitting a cyclicACMI
             void hitCyclicACMIPatch
             (
+                const vector&,
+                const scalar,
                 Cloud<findCellParticle>&,
-                trackingData&,
-                const vector&
+                trackingData&
+            );
+
+            //- Overridable function to handle the particle hitting a
+            //cyclicRepeatAMI
+            void hitCyclicRepeatAMIPatch
+            (
+                const vector&,
+                const scalar,
+                Cloud<findCellParticle>&,
+                trackingData&
             );
 
             //- Overridable function to handle the particle hitting a

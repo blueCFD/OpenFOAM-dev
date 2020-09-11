@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ namespace Foam
 Foam::sixDoFRigidBodyMotionSolver::sixDoFRigidBodyMotionSolver
 (
     const polyMesh& mesh,
-    const IOdictionary& dict
+    const dictionary& dict
 )
 :
     displacementMotionSolver(mesh, dict, typeName),
@@ -100,7 +100,7 @@ Foam::sixDoFRigidBodyMotionSolver::sixDoFRigidBodyMotionSolver
             false
         ),
         pointMesh::New(mesh),
-        dimensionedScalar("zero", dimless, 0.0)
+        dimensionedScalar(dimless, 0)
     ),
     curTimeIndex_(-1)
 {
@@ -187,25 +187,25 @@ void Foam::sixDoFRigidBodyMotionSolver::solve()
 
     // Store the motion state at the beginning of the time-stepbool
     bool firstIter = false;
-    if (curTimeIndex_ != this->db().time().timeIndex())
+    if (curTimeIndex_ != t.timeIndex())
     {
         motion_.newTime();
-        curTimeIndex_ = this->db().time().timeIndex();
+        curTimeIndex_ = t.timeIndex();
         firstIter = true;
     }
 
     dimensionedVector g("g", dimAcceleration, Zero);
 
-    if (db().foundObject<uniformDimensionedVectorField>("g"))
+    if (mesh().foundObject<uniformDimensionedVectorField>("g"))
     {
-        g = db().lookupObject<uniformDimensionedVectorField>("g");
+        g = mesh().lookupObject<uniformDimensionedVectorField>("g");
     }
     else if (coeffDict().found("g"))
     {
         coeffDict().lookup("g") >> g;
     }
 
-    // scalar ramp = min(max((this->db().time().value() - 5)/10, 0), 1);
+    // scalar ramp = min(max((t.value() - 5)/10, 0), 1);
     scalar ramp = 1.0;
 
     if (test_)
@@ -229,7 +229,7 @@ void Foam::sixDoFRigidBodyMotionSolver::solve()
         forcesDict.add("rho", rhoName_);
         forcesDict.add("CofR", motion_.centreOfRotation());
 
-        functionObjects::forces f("forces", db(), forcesDict);
+        functionObjects::forces f("forces", t, forcesDict);
 
         f.calcForcesMoment();
 
@@ -259,13 +259,7 @@ void Foam::sixDoFRigidBodyMotionSolver::solve()
 }
 
 
-bool Foam::sixDoFRigidBodyMotionSolver::writeObject
-(
-    IOstream::streamFormat fmt,
-    IOstream::versionNumber ver,
-    IOstream::compressionType cmp,
-    const bool valid
-) const
+bool Foam::sixDoFRigidBodyMotionSolver::write() const
 {
     IOdictionary dict
     (
@@ -282,22 +276,16 @@ bool Foam::sixDoFRigidBodyMotionSolver::writeObject
     );
 
     motion_.state().write(dict);
-    return dict.regIOobject::write();
-}
 
-
-bool Foam::sixDoFRigidBodyMotionSolver::read()
-{
-    if (displacementMotionSolver::read())
-    {
-        motion_.read(coeffDict());
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return
+        dict.regIOobject::writeObject
+        (
+            IOstream::ASCII,
+            IOstream::currentVersion,
+            mesh().time().writeCompression(),
+            true
+        )
+     && displacementMotionSolver::write();
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,11 +53,6 @@ class upwind
 :
     public limitedSurfaceInterpolationScheme<Type>
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise assignment
-        void operator=(const upwind&);
-
 
 public:
 
@@ -109,22 +104,11 @@ public:
             const GeometricField<Type, fvPatchField, volMesh>&
         ) const
         {
-            return tmp<surfaceScalarField>
+            return surfaceScalarField::New
             (
-                new surfaceScalarField
-                (
-                    IOobject
-                    (
-                        "upwindLimiter",
-                        this->mesh().time().timeName(),
-                        this->mesh(),
-                        IOobject::NO_READ,
-                        IOobject::NO_WRITE,
-                        false
-                    ),
-                    this->mesh(),
-                    dimensionedScalar("upwindLimiter", dimless, 0.0)
-                )
+                "upwindLimiter",
+                this->mesh(),
+                dimensionedScalar(dimless, 0)
             );
         }
 
@@ -142,6 +126,12 @@ public:
         {
             return weights();
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const upwind&) = delete;
 };
 
 

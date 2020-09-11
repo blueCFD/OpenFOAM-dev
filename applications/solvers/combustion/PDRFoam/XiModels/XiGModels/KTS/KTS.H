@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,18 +53,9 @@ class KTS
 :
     public XiGModel
 {
-    // Private data
+    // Private Data
 
         scalar GEtaCoef_;
-
-
-    // Private Member Functions
-
-        //- Disallow copy construct
-        KTS(const KTS&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const KTS&);
 
 
 public:
@@ -84,6 +75,9 @@ public:
             const volScalarField& Su
         );
 
+        //- Disallow default bitwise copy construction
+        KTS(const KTS&);
+
 
     //- Destructor
     virtual ~KTS();
@@ -96,6 +90,12 @@ public:
 
         //- Update properties from given dictionary
         virtual bool read(const dictionary& XiGProperties);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const KTS&) = delete;
 };
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -247,7 +247,7 @@ void Foam::fv::rotorDiskSource::setFaceArea(vector& axis, const bool correct)
                 IOobject::NO_WRITE
             ),
             mesh_,
-            dimensionedScalar("0", dimArea, 0)
+            dimensionedScalar(dimArea, 0)
         );
         UIndirectList<scalar>(area.primitiveField(), cells_) = area_;
 
@@ -384,7 +384,7 @@ void Foam::fv::rotorDiskSource::createCoordinateSystem()
 
     const scalar sumArea = gSum(area_);
     const scalar diameter = Foam::sqrt(4.0*sumArea/mathematical::pi);
-    Info<< "    Rotor gometry:" << nl
+    Info<< "    Rotor geometry:" << nl
         << "    - disk diameter = " << diameter << nl
         << "    - disk area     = " << sumArea << nl
         << "    - origin        = " << coordSys_.origin() << nl

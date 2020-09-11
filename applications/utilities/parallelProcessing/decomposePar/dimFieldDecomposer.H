@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,9 +52,7 @@ class IOobjectList;
 
 class dimFieldDecomposer
 {
-private:
-
-    // Private data
+    // Private Data
 
         //- Reference to complete mesh
         const fvMesh& completeMesh_;
@@ -69,15 +67,6 @@ private:
         const labelList& cellAddressing_;
 
 
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        dimFieldDecomposer(const dimFieldDecomposer&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const dimFieldDecomposer&);
-
-
 public:
 
     // Constructors
@@ -90,6 +79,9 @@ public:
             const labelList& faceAddressing,
             const labelList& cellAddressing
         );
+
+        //- Disallow default bitwise copy construction
+        dimFieldDecomposer(const dimFieldDecomposer&) = delete;
 
 
     //- Destructor
@@ -109,6 +101,12 @@ public:
         //- Decompose llist of fields
         template<class GeoField>
         void decomposeFields(const PtrList<GeoField>& fields) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const dimFieldDecomposer&) = delete;
 };
 
 

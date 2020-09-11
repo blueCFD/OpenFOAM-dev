@@ -58,7 +58,7 @@ volScalarField rhoEffLagrangian
         IOobject::AUTO_WRITE
     ),
     mesh,
-    dimensionedScalar("zero", dimDensity, 0.0)
+    dimensionedScalar(dimDensity, 0)
 );
 
 // dynamic pressure field - used externally (optional)
@@ -73,7 +73,7 @@ volScalarField pDyn
         IOobject::AUTO_WRITE
     ),
     mesh,
-    dimensionedScalar("zero", dimPressure, 0.0)
+    dimensionedScalar(dimPressure, 0)
 );
 
 
@@ -123,25 +123,11 @@ volScalarField dpdt
         mesh
     ),
     mesh,
-    dimensionedScalar("dpdt", p.dimensions()/dimTime, 0)
+    dimensionedScalar(p.dimensions()/dimTime, 0)
 );
 
 Info<< "Creating field kinetic energy K\n" << endl;
 volScalarField K("K", 0.5*magSqr(U));
-
-volScalarField Qdot
-(
-    IOobject
-    (
-        "Qdot",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("Qdot", dimEnergy/dimVolume/dimTime, 0.0)
-);
 
 #include "createMRF.H"
 #include "createClouds.H"

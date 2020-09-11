@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -106,6 +106,9 @@ private:
         //- Calculate and return the flux field
         tmp<surfaceScalarField> phi(const volVectorField& U) const;
 
+        //- Correct the continuity errors
+        void correctContinuityErrors();
+
 
 public:
 
@@ -130,6 +133,9 @@ public:
 
         //- Correct the kinematics
         virtual void correctKinematics();
+
+        //- Correct the thermodynamics
+        virtual void correctThermo();
 
         //- Correct the turbulence
         virtual void correctTurbulence();
@@ -201,15 +207,6 @@ public:
             virtual void divU(tmp<volScalarField> divU);
 
 
-        // Transport (prevents compiler warnings)
-
-            //- Return the effective thermal conductivity
-            using BasePhaseModel::kappaEff;
-
-            //- Return the effective thermal conductivity for enthalpy
-            using BasePhaseModel::alphaEff;
-
-
         // Turbulence
 
             //- Return the turbulent dynamic viscosity
@@ -224,17 +221,23 @@ public:
             //- Return the effective kinematic viscosity
             virtual tmp<volScalarField> nuEff() const;
 
+            //- Effective thermal turbulent diffusivity for temperature
+            //  of mixture for patch [W/m/K]
+            using BasePhaseModel::kappaEff;
+
             //- Return the effective thermal conductivity
             virtual tmp<volScalarField> kappaEff() const;
 
             //- Return the effective thermal conductivity on a patch
             virtual tmp<scalarField> kappaEff(const label patchi) const;
 
-            //- Return the effective thermal diffusivity for enthalpy
+            //- Effective thermal turbulent diffusivity of mixture [kg/m/s]
+            using BasePhaseModel::alphaEff;
+
+            //- Return the effective thermal diffusivity
             virtual tmp<volScalarField> alphaEff() const;
 
-            //- Return the effective thermal conductivity for enthalpy on a
-            //  patch
+            //- Return the effective thermal conductivity on a patch
             virtual tmp<scalarField> alphaEff(const label patchi) const;
 
             //- Return the turbulent kinetic energy

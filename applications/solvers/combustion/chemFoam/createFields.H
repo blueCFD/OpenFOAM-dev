@@ -59,9 +59,8 @@
         mesh,
         dimensionedScalar
         (
-            "zero",
             dimensionSet(dimEnergy/dimMass/dimTemperature),
-            0.0
+            0
         )
     );
 
@@ -76,7 +75,7 @@
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedVector("zero", dimVelocity, Zero)
+        dimensionedVector(dimVelocity, Zero)
     );
 
     #include "createPhi.H"

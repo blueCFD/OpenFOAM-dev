@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,19 +39,19 @@ Description
 
     References:
     \verbatim
-        "On the modeling of multidimensional effects in boiling channels"
-        Kurul, N., Podowski, M.Z.,
-        ANS Proceedings, National Heat Transfer Conference,
-        Minneapolis, Minnesota, USA, July 28-31, 1991,
-        ISBN: 0-89448-162-1, pp. 30-40
+        Kurul, N., & Podowski, M.Z. (1991).
+        On the modeling of multidimensional effects in boiling channels.
+        ANS. Proc. National Heat Transfer Con. Minneapolis, Minnesota, USA,
+        1991.
+        ISBN: 0-89448-162-1, pp. 30-40.
     \endverbatim
 
     \verbatim
-        "Development and validation of a boiling model for OpenFOAM
-        multiphase solver"
-        Peltola, J., Pättikangas, T.J.H.,
-        CFD4NRS-4 Conference Proceedings, paper 59,
-        Daejeon, Korea, September 10-12 2012
+        Peltola, J., & Pättikangas, T.J.H. (2012).
+        Development and validation of a boiling model for OpenFOAM multiphase
+        solver.
+        CFD4NRS-4 Conference Proceedings, Daejeon, Korea, 2012.
+        paper 59.
     \endverbatim
 
 Usage
@@ -158,7 +158,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- name of the other phase (vapor/liquid phase)
         word otherPhaseName_;
@@ -235,7 +235,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         alphatWallBoilingWallFunctionFvPatchScalarField
         (
             const alphatWallBoilingWallFunctionFvPatchScalarField&
@@ -250,7 +250,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         alphatWallBoilingWallFunctionFvPatchScalarField
         (
             const alphatWallBoilingWallFunctionFvPatchScalarField&,
@@ -270,7 +270,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         using alphatPhaseChangeWallFunctionFvPatchScalarField::dmdt;
 
@@ -289,13 +289,13 @@ public:
             return dDep_;
         }
 
-        //- Return the quenching surface heat flux [W/m2]
+        //- Return the quenching surface heat flux [W/m^2]
         const scalarField& qq() const
         {
             return qq_;
         }
 
-        //- Return the evaporation surface heat flux [W/m2]
+        //- Return the evaporation surface heat flux [W/m^2]
         tmp<scalarField> qe() const
         {
             return mDotL_/AbyV_;

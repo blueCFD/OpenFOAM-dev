@@ -12,12 +12,9 @@ intersectSurfaces()
     outputName2=$(basename $2)
     outputName2=${outputName2%.*}
 
-    runApplication -s $outputName1:$outputName2 \
+    runApplication -s ${outputName1}_$outputName2 \
         surfaceBooleanFeatures "$@" intersection
 }
-
-# Set application name
-application=$(getApplication)
 
 # Run the surface preparation script
 ./constant/triSurface/surfaceProcess.sh > log.surfaceProcess 2>&1

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,10 +86,10 @@ class eConstThermo
 :
     public EquationOfState
 {
-    // Private data
+    // Private Data
 
         //- Heat capacity at constant volume
-        //  Note: input in [J/(kg K)], but internally uses [J/(kmol K)]
+        //  Note: input in [J/kg/K], but internally uses [J/kmol/K]
         scalar Cv_;
 
         //- Heat of formation
@@ -139,20 +139,22 @@ public:
 
         // Fundamental properties
 
-            //- Heat capacity at constant pressure [J/(kg K)]
-            inline scalar Cp(const scalar p, const scalar T) const;
+            //- Heat capacity at constant volume [J/kg/K]
+            inline scalar Cv(const scalar p, const scalar T) const;
 
-            //- Absolute Enthalpy [J/kg]
-            inline scalar Ha(const scalar p, const scalar T) const;
+            //- Sensible internal energy [J/kg]
+            inline scalar Es(const scalar p, const scalar T) const;
 
-            //- Sensible enthalpy [J/kg]
-            inline scalar Hs(const scalar p, const scalar T) const;
+            //- Absolute internal energy [J/kg]
+            inline scalar Ea(const scalar p, const scalar T) const;
 
             //- Chemical enthalpy [J/kg]
             inline scalar Hc() const;
 
-            //- Entropy [J/(kg K)]
+            //- Entropy [J/kg/K]
             inline scalar S(const scalar p, const scalar T) const;
+
+            #include "EtoHthermo.H"
 
 
         // Derivative term used for Jacobian
@@ -164,14 +166,13 @@ public:
             inline scalar dCpdT(const scalar p, const scalar T) const;
 
 
-
         // I-O
 
             //- Write to Ostream
             void write(Ostream& os) const;
 
 
-    // Member operators
+    // Member Operators
 
         inline void operator+=(const eConstThermo&);
 

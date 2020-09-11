@@ -94,18 +94,11 @@ Foam::tmp<Foam::volScalarField> Foam::XiEqModels::SCOPEXiEq::XiEq() const
 
     tmp<volScalarField> tXiEq
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "XiEq",
-                epsilon.time().timeName(),
-                epsilon.db(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "XiEq",
             epsilon.mesh(),
-            dimensionedScalar("XiEq", dimless, 0.0)
+            dimensionedScalar(dimless, 0)
         )
     );
     volScalarField& xieq = tXiEq.ref();

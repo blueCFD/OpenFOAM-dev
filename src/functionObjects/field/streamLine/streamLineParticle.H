@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -123,7 +123,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- Lifetime of particle. Particle dies when reaches 0.
         label lifeTime_;
@@ -231,18 +231,30 @@ public:
             //  cyclicAMIPatch
             void hitCyclicAMIPatch
             (
+                const vector&,
+                const scalar,
                 streamLineParticleCloud&,
-                trackingData&,
-                const vector& direction
+                trackingData&
             );
 
             //- Overridable function to handle the particle hitting a
             //  cyclicACMIPatch
             void hitCyclicACMIPatch
             (
+                const vector&,
+                const scalar,
                 streamLineParticleCloud&,
-                trackingData&,
-                const vector& direction
+                trackingData&
+            );
+
+            //- Overridable function to handle the particle hitting a
+            //  cyclicRepeatAMIPatch
+            void hitCyclicRepeatAMIPatch
+            (
+                const vector&,
+                const scalar,
+                streamLineParticleCloud&,
+                trackingData&
             );
 
             //- Overridable function to handle the particle hitting a

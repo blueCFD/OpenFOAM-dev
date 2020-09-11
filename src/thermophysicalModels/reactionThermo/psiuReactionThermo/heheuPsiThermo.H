@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,7 +88,7 @@ public:
     virtual ~heheuPsiThermo();
 
 
-    // Member functions
+    // Member Functions
 
         //- Update properties
         virtual void correct();
@@ -146,10 +146,10 @@ public:
 
         // Access to transport variables
 
-            //- Dynamic viscosity of unburnt gas [kg/ms]
+            //- Dynamic viscosity of unburnt gas [kg/m/s]
             virtual tmp<volScalarField> muu() const;
 
-            //- Dynamic viscosity of burnt gas [kg/ms]
+            //- Dynamic viscosity of burnt gas [kg/m/s]
             virtual tmp<volScalarField> mub() const;
 };
 

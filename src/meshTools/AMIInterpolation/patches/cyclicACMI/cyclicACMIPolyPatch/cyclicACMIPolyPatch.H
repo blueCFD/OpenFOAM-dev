@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ SourceFiles
 #define cyclicACMIPolyPatch_H
 
 #include "cyclicAMIPolyPatch.H"
-#include "AMIPatchToPatchInterpolation.H"
+#include "AMIInterpolation.T.H"
 #include "polyBoundaryMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -52,10 +52,7 @@ class cyclicACMIPolyPatch
 :
     public cyclicAMIPolyPatch
 {
-
-private:
-
-    // Private data
+    // Private Data
 
         //- Fraction of face area below which face is considered disconnected
         static const scalar tolerance_;

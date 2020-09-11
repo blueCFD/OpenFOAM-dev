@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -82,6 +82,9 @@ Usage
         Zref         | Reference height [m]             | yes       |
         z0           | Surface roughness height [m]     | yes       |
         zGround      | Minimum z-coordinate [m]         | yes       |
+        Ulower       | Velocity below the BL            | no        |
+        kLower       | Turbulence k below the BL        | no        |
+        epsilonLower | Turbulence epsilon below the BL  | no        |
     \endtable
 
     Example of the boundary condition specification:
@@ -125,7 +128,16 @@ namespace Foam
 
 class atmBoundaryLayer
 {
-    // Private data
+    // Private static data
+
+        //- Default value of the Von Karman constant
+        static const scalar kappaDefault_;
+
+        //- Default value of the turbulent viscosity coefficient
+        static const scalar CmuDefault_;
+
+
+    // Private Data
 
         //- Flow direction
         vector flowDir_;
@@ -154,6 +166,25 @@ class atmBoundaryLayer
         //- Friction velocity
         scalarField Ustar_;
 
+        //- True if the boundary layer is offset within the domain
+        bool offset_;
+
+        //- Velocity of the flow below the boundary layer
+        const scalar Ulower_;
+
+        //- Turbulence kinetic energy of the flow below the boundary layer
+        const scalar kLower_;
+
+        //- Turbulence kinetic energy dissipation rate of the flow below the
+        //  boundary layer
+        const scalar epsilonLower_;
+
+
+    // Private Member Functions
+
+        //- Initialisation shared by multiple constructors
+        void init();
+
 
 public:
 
@@ -161,6 +192,22 @@ public:
 
         //- Construct null
         atmBoundaryLayer();
+
+        //- Construct from components
+        atmBoundaryLayer
+        (
+            const vector& flowDir,
+            const vector& zDir,
+            const scalar Uref,
+            const scalar Zref,
+            const scalarField& z0,
+            const scalarField& zGround,
+            const scalar kappa = kappaDefault_,
+            const scalar Cmu = CmuDefault_,
+            const scalar ULower = 0,
+            const scalar kLower = 0,
+            const scalar epsilonLower = 0
+        );
 
         //- Construct from the coordinates field and dictionary
         atmBoundaryLayer(const vectorField& p, const dictionary&);
@@ -173,11 +220,11 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         atmBoundaryLayer(const atmBoundaryLayer&);
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 

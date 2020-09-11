@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ class timeVaryingUniformFixedValuePointPatchField
 :
     public fixedValuePointPatchField<Type>
 {
-    // Private data
+    // Private Data
 
         //- The time series being used, including the bounding treatment
         interpolationTable<Type> timeSeries_;
@@ -93,7 +93,7 @@ public:
             const pointPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         timeVaryingUniformFixedValuePointPatchField
         (
             const timeVaryingUniformFixedValuePointPatchField<Type>&
@@ -108,7 +108,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         timeVaryingUniformFixedValuePointPatchField
         (
             const timeVaryingUniformFixedValuePointPatchField<Type>&,
@@ -128,7 +128,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Access
 

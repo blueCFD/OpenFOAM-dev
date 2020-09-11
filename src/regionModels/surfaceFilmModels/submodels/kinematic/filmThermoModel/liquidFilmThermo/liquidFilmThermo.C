@@ -240,18 +240,11 @@ tmp<volScalarField> liquidFilmThermo::rho() const
 {
     tmp<volScalarField> trho
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                type() + ":rho",
-                film().time().timeName(),
-                film().regionMesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            type() + ":rho",
             film().regionMesh(),
-            dimensionedScalar("0", dimDensity, 0.0),
+            dimensionedScalar(dimDensity, 0),
             extrapolatedCalculatedFvPatchScalarField::typeName
         )
     );
@@ -288,18 +281,11 @@ tmp<volScalarField> liquidFilmThermo::mu() const
 {
     tmp<volScalarField> tmu
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                type() + ":mu",
-                film().time().timeName(),
-                film().regionMesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            type() + ":mu",
             film().regionMesh(),
-            dimensionedScalar("0", dimPressure*dimTime, 0.0),
+            dimensionedScalar(dimPressure*dimTime, 0),
             extrapolatedCalculatedFvPatchScalarField::typeName
         )
     );
@@ -336,18 +322,11 @@ tmp<volScalarField> liquidFilmThermo::sigma() const
 {
     tmp<volScalarField> tsigma
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                type() + ":sigma",
-                film().time().timeName(),
-                film().regionMesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            type() + ":sigma",
             film().regionMesh(),
-            dimensionedScalar("0", dimMass/sqr(dimTime), 0.0),
+            dimensionedScalar(dimMass/sqr(dimTime), 0),
             extrapolatedCalculatedFvPatchScalarField::typeName
         )
     );
@@ -384,18 +363,11 @@ tmp<volScalarField> liquidFilmThermo::Cp() const
 {
     tmp<volScalarField> tCp
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                type() + ":Cp",
-                film().time().timeName(),
-                film().regionMesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            type() + ":Cp",
             film().regionMesh(),
-            dimensionedScalar("0", dimEnergy/dimMass/dimTemperature, 0.0),
+            dimensionedScalar(dimEnergy/dimMass/dimTemperature, 0),
             extrapolatedCalculatedFvPatchScalarField::typeName
         )
     );
@@ -432,18 +404,11 @@ tmp<volScalarField> liquidFilmThermo::kappa() const
 {
     tmp<volScalarField> tkappa
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                type() + ":kappa",
-                film().time().timeName(),
-                film().regionMesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            type() + ":kappa",
             film().regionMesh(),
-            dimensionedScalar("0", dimPower/dimLength/dimTemperature, 0.0),
+            dimensionedScalar(dimPower/dimLength/dimTemperature, 0),
             extrapolatedCalculatedFvPatchScalarField::typeName
         )
     );

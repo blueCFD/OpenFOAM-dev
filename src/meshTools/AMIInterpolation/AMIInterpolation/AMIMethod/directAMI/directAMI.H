@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ SourceFiles
 #ifndef directAMI_H
 #define directAMI_H
 
-#include "AMIMethod.T.H"
+#include "AMIMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,21 +46,11 @@ namespace Foam
                           Class directAMI Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class SourcePatch, class TargetPatch>
 class directAMI
 :
-    public AMIMethod<SourcePatch, TargetPatch>
+    public AMIMethod
 {
-
-private:
-
     // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        directAMI(const directAMI&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const directAMI&);
 
         // Marching front
 
@@ -107,14 +97,17 @@ public:
         //- Construct from components
         directAMI
         (
-            const SourcePatch& srcPatch,
-            const TargetPatch& tgtPatch,
+            const primitivePatch& srcPatch,
+            const primitivePatch& tgtPatch,
             const scalarField& srcMagSf,
             const scalarField& tgtMagSf,
             const faceAreaIntersect::triangulationMode& triMode,
             const bool reverseTarget = false,
             const bool requireMatch = true
         );
+
+        //- Disallow default bitwise copy construction
+        directAMI(const directAMI&) = delete;
 
 
     //- Destructor
@@ -135,18 +128,18 @@ public:
                 label srcFacei = -1,
                 label tgtFacei = -1
             );
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const directAMI&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "directAMI.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

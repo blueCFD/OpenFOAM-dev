@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,16 +49,6 @@ SourceFiles
 namespace Foam
 {
 
-namespace functionEntries
-{
-    class codeStream;
-}
-namespace fileOperations
-{
-    class uncollatedFileOperation;
-    class masterUncollatedFileOperation;
-}
-
 /*---------------------------------------------------------------------------*\
                          Class regIOobject Declaration
 \*---------------------------------------------------------------------------*/
@@ -67,7 +57,9 @@ class regIOobject
 :
     public IOobject
 {
+
 protected:
+
         //- Helper: check readOpt flags and read if necessary
         bool readHeaderOk
         (
@@ -75,13 +67,10 @@ protected:
             const word& typeName
         );
 
-        //- To flag master-only reading of objects
-        static bool masterOnlyReading;
-
 
 private:
 
-    // Private data
+    // Private Data
 
         //- Is this object registered with the registry
         bool registered_;
@@ -102,20 +91,13 @@ private:
     // Private Member Functions
 
         //- Return Istream
-        Istream& readStream(const bool valid = true);
+        Istream& readStream(const bool read = true);
 
         //- Dissallow assignment
         void operator=(const regIOobject&);
 
 
 public:
-
-        //- Declare friendship with any classes that need access to
-        //  masterOnlyReading
-        friend class functionEntries::codeStream;
-        friend class fileOperations::uncollatedFileOperation;
-        friend class fileOperations::masterUncollatedFileOperation;
-
 
     // Static data
 
@@ -131,18 +113,18 @@ public:
         //  top level regIOobject.
         regIOobject(const IOobject&, const bool isTime = false);
 
-        //- Construct as copy
+        //- Copy constructor
         regIOobject(const regIOobject&);
 
-        //- Construct as copy, transferring registry registration to copy
+        //- Copy constructor, transferring registry registration to copy
         //  if registerCopy is true
         regIOobject(const regIOobject&, bool registerCopy);
 
-        //- Construct as copy with new name, transferring registry registration
+        //- Copy constructor with new name, transferring registry registration
         //  to copy as specified
         regIOobject(const word& newName, const regIOobject&, bool registerCopy);
 
-        //- Construct as copy with new IO parameters
+        //- Copy constructor with new IO parameters
         regIOobject(const IOobject&, const regIOobject&);
 
 
@@ -150,7 +132,7 @@ public:
     virtual ~regIOobject();
 
 
-    // Member functions
+    // Member Functions
 
         // Registration
 
@@ -244,7 +226,7 @@ public:
             bool headerOk();
 
             //- Return Istream and check object type against that given
-            Istream& readStream(const word&, const bool valid = true);
+            Istream& readStream(const word&, const bool read = true);
 
             //- Close Istream
             void close();
@@ -274,6 +256,10 @@ public:
             //- Read object if modified (as set by call to modified)
             virtual bool readIfModified();
 
+            //- Is object same for all processors
+            //  Defaults to false, must be overridden by global IO classes
+            virtual bool global() const;
+
 
         // Writing
 
@@ -287,23 +273,14 @@ public:
                 IOstream::streamFormat,
                 IOstream::versionNumber,
                 IOstream::compressionType,
-                const bool valid
+                const bool write
             ) const;
 
             //- Write using setting from DB
-            virtual bool write(const bool valid = true) const;
+            virtual bool write(const bool write = true) const;
 
 
-        // Other
-
-            //- Is object global
-            virtual bool global() const
-            {
-                return false;
-            }
-
-
-    // Member operators
+    // Member Operators
 
         void operator=(const IOobject&);
 };

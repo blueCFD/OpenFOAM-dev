@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,39 +24,27 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "distanceSurface.H"
-#include "volFieldsFwd.H"
-#include "pointFields.H"
 #include "volPointInterpolation.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::distanceSurface::sampleField
+Foam::sampledSurfaces::distanceSurface::sampleField
 (
     const GeometricField<Type, fvPatchField, volMesh>& vField
 ) const
 {
-    if (cell_)
-    {
-        return tmp<Field<Type>>
-        (
-            new Field<Type>(vField, isoSurfCellPtr_().meshCells())
-        );
-    }
-    else
-    {
-        return tmp<Field<Type>>
-        (
-            new Field<Type>(vField, isoSurfPtr_().meshCells())
-        );
-    }
+    return tmp<Field<Type>>
+    (
+        new Field<Type>(vField, isoSurfPtr_().meshCells())
+    );
 }
 
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::distanceSurface::interpolateField
+Foam::sampledSurfaces::distanceSurface::interpolateField
 (
     const interpolation<Type>& interpolator
 ) const
@@ -72,31 +60,15 @@ Foam::distanceSurface::interpolateField
         volPointInterpolation::New(fvm).interpolate(volFld)
     );
 
-    // Sample.
-    if (cell_)
-    {
-        return isoSurfCellPtr_().interpolate
+    return isoSurfPtr_().interpolate
+    (
         (
-            (
-                average_
-              ? pointAverage(pointFld())()
-              : volFld
-            ),
-            pointFld()
-        );
-    }
-    else
-    {
-        return isoSurfPtr_().interpolate
-        (
-            (
-                average_
-              ? pointAverage(pointFld())()
-              : volFld
-            ),
-            pointFld()
-        );
-    }
+            average_
+          ? pointAverage(pointFld())()
+          : volFld
+        ),
+        pointFld()
+    );
 }
 
 

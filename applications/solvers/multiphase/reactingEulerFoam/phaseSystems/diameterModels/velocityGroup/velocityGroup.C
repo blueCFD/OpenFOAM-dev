@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,16 +53,11 @@ Foam::tmp<Foam::volScalarField> Foam::diameterModels::velocityGroup::dsm() const
 {
     tmp<volScalarField> tInvDsm
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "invDsm",
-                phase_.time().timeName(),
-                phase_.mesh()
-            ),
+            "invDsm",
             phase_.mesh(),
-            dimensionedScalar("invDsm", inv(dimLength), Zero)
+            dimensionedScalar(inv(dimLength), Zero)
         )
     );
 
@@ -84,16 +79,11 @@ Foam::diameterModels::velocityGroup::fSum() const
 {
     tmp<volScalarField> tsumSizeGroups
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "sumSizeGroups",
-                phase_.time().timeName(),
-                phase_.mesh()
-            ),
+            "sumSizeGroups",
             phase_.mesh(),
-            dimensionedScalar("sumSizeGroups", dimless, 0)
+            dimensionedScalar(dimless, 0)
         )
     );
 
@@ -110,8 +100,8 @@ Foam::diameterModels::velocityGroup::fSum() const
 
 void Foam::diameterModels::velocityGroup::renormalize()
 {
-        Info<< phase_.name()
-            << " renormalizing sizeGroups"
+        Info<< "Renormalizing sizeGroups for velocityGroup "
+            << phase_.name()
             << endl;
 
         // Set negative values to zero
@@ -213,7 +203,7 @@ Foam::diameterModels::velocityGroup::velocityGroup
             IOobject::AUTO_WRITE
         ),
         phase.mesh(),
-        dimensionedScalar("d", dimLength, Zero)
+        dimensionedScalar(dimLength, Zero)
     ),
     dmdt_
     (
@@ -224,7 +214,7 @@ Foam::diameterModels::velocityGroup::velocityGroup
             phase.mesh()
         ),
         phase.mesh(),
-        dimensionedScalar("dmdt", dimDensity/dimTime, Zero)
+        dimensionedScalar(dimDensity/dimTime, Zero)
     )
 {
     if

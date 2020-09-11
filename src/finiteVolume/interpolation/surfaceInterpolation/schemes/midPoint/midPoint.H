@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,11 +52,6 @@ class midPoint
 :
     public surfaceInterpolationScheme<Type>
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise assignment
-        void operator=(const midPoint&);
-
 
 public:
 
@@ -100,19 +95,11 @@ public:
         {
             tmp<surfaceScalarField> taw
             (
-                new surfaceScalarField
+                surfaceScalarField::New
                 (
-                    IOobject
-                    (
-                        "midPointWeights",
-                        this->mesh().time().timeName(),
-                        this->mesh(),
-                        IOobject::NO_READ,
-                        IOobject::NO_WRITE,
-                        false
-                    ),
+                    "midPointWeights",
                     this->mesh(),
-                    dimensionedScalar("0.5", dimless, 0.5)
+                    dimensionedScalar(dimless, 0.5)
                 )
             );
 
@@ -129,6 +116,12 @@ public:
 
             return taw;
         }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const midPoint&) = delete;
 };
 
 

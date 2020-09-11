@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,7 @@ public:
 
 private:
 
-    // Private data
+    // Private Data
 
         //- Default matching tolerance
         static const scalar defaultMatchTol_;
@@ -202,7 +202,8 @@ public:
             const dictionary& dict,
             const label index,
             const polyBoundaryMesh& bm,
-            const word& patchType
+            const word& patchType,
+            const transformType defaultTransform = UNKNOWN
         );
 
         //- Construct as copy, resetting the boundary mesh

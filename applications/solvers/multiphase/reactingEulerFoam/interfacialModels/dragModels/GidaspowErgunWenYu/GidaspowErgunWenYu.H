@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,9 +29,10 @@ Description
 
     Reference:
     \verbatim
-        "Multiphase flow and fluidization",
-        Gidaspow, D.,
-        Academic Press, New York, 1994.
+        Gidaspow, D. (1994).
+        Multiphase flow and fluidization: continuum and kinetic theory
+        descriptions.
+        Academic press, New York.
     \endverbatim
 
 SourceFiles
@@ -65,7 +66,7 @@ class GidaspowErgunWenYu
 :
     public dragModel
 {
-    // Private data
+    // Private Data
 
         //- Ergun drag model
         autoPtr<Ergun> Ergun_;

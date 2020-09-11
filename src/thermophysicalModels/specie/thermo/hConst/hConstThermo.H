@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,7 +84,7 @@ class hConstThermo
 :
     public EquationOfState
 {
-    // Private data
+    // Private Data
 
         scalar Cp_;
         scalar Hf_;
@@ -132,7 +132,7 @@ public:
 
         // Fundamental properties
 
-            //- Heat capacity at constant pressure [J/(kg K)]
+            //- Heat capacity at constant pressure [J/kg/K]
             inline scalar Cp(const scalar p, const scalar T) const;
 
             //- Absolute Enthalpy [J/kg]
@@ -144,8 +144,10 @@ public:
             //- Chemical enthalpy [J/kg]
             inline scalar Hc() const;
 
-            //- Entropy [J/(kg K)]
+            //- Entropy [J/kg/K]
             inline scalar S(const scalar p, const scalar T) const;
+
+            #include "HtoEthermo.H"
 
 
         // Derivative term used for Jacobian
@@ -163,7 +165,7 @@ public:
             void write(Ostream& os) const;
 
 
-    // Member operators
+    // Member Operators
 
         inline void operator+=(const hConstThermo&);
 

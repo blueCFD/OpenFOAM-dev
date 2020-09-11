@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -948,10 +948,10 @@ int main(int argc, char *argv[])
             runTime.constant(),
             runTime
         ),
-        xferMove<pointField>(foamPoints),
-        xferMove<faceList>(foamFaces),
-        xferCopy<labelList>(foamOwner),
-        xferMove<labelList>(foamNeighbour)
+        move(foamPoints),
+        move(foamFaces),
+        clone(foamOwner),
+        move(foamNeighbour)
     );
 
     // Create patches. Use patch types to determine what Foam types to generate.
@@ -1119,7 +1119,7 @@ int main(int argc, char *argv[])
             IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar("cellId", dimless, 0.0)
+        dimensionedScalar(dimless, 0)
     );
 
     forAll(foamCellMap, celli)
@@ -1139,7 +1139,7 @@ int main(int argc, char *argv[])
             IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar("cellType", dimless, 0.0)
+        dimensionedScalar(dimless, 0)
     );
 
     forAll(foamCellType, celli)

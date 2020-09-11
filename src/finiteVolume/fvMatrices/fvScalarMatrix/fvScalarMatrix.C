@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fvScalarMatrix.H"
+#include "Residuals.T.H"
 #include "extrapolatedCalculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -127,7 +128,7 @@ Foam::solverPerformance Foam::fvMatrix<Foam::scalar>::fvSolver::solve
 
     psi.correctBoundaryConditions();
 
-    psi.mesh().setSolverPerformance(psi.name(), solverPerf);
+    Residuals<scalar>::append(psi.mesh(), solverPerf);
 
     return solverPerf;
 }
@@ -177,7 +178,7 @@ Foam::solverPerformance Foam::fvMatrix<Foam::scalar>::solveSegregated
 
     psi.correctBoundaryConditions();
 
-    psi.mesh().setSolverPerformance(psi.name(), solverPerf);
+    Residuals<scalar>::append(psi.mesh(), solverPerf);
 
     return solverPerf;
 }
@@ -212,16 +213,9 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Foam::scalar>::H() const
 {
     tmp<volScalarField> tHphi
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "H("+psi_.name()+')',
-                psi_.instance(),
-                psi_.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "H("+psi_.name()+')',
             psi_.mesh(),
             dimensions_/dimVol,
             extrapolatedCalculatedFvPatchScalarField::typeName
@@ -244,16 +238,9 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Foam::scalar>::H1() const
 {
     tmp<volScalarField> tH1
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "H(1)",
-                psi_.instance(),
-                psi_.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            "H(1)",
             psi_.mesh(),
             dimensions_/(dimVol*psi_.dimensions()),
             extrapolatedCalculatedFvPatchScalarField::typeName

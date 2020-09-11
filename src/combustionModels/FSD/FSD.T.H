@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -82,7 +82,7 @@ class FSD
 :
     public singleStepCombustion <ReactionThermo, ThermoType>
 {
-    // Private data
+    // Private Data
 
         //- Auto pointer to consumption speed per unit of flame area model
         autoPtr<reactionRateFlameArea> reactionRateFlameArea_;
@@ -120,12 +120,6 @@ class FSD
         //- Calculate the normalised fuel source term
         void calculateSourceNorm();
 
-        //- Disallow copy construct
-        FSD(const FSD&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const FSD&);
-
 
 public:
 
@@ -144,6 +138,9 @@ public:
             const word& combustionProperties
         );
 
+        //- Disallow default bitwise copy construction
+        FSD(const FSD&);
+
 
     //- Destructor
     virtual ~FSD();
@@ -156,6 +153,12 @@ public:
 
         //- Update properties
         virtual bool read();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const FSD&) = delete;
 };
 
 

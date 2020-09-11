@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,16 +58,10 @@ class Constant
 :
     public Function1<Type>
 {
-    // Private data
+    // Private Data
 
         //- Constant value
         Type value_;
-
-
-    // Private Member Functions
-
-        //- Disallow default bitwise assignment
-        void operator=(const Constant<Type>&);
 
 
 public:
@@ -123,6 +117,12 @@ public:
 
         //- Write in dictionary format
         virtual void writeData(Ostream& os) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const Constant<Type>&) = delete;
 };
 
 

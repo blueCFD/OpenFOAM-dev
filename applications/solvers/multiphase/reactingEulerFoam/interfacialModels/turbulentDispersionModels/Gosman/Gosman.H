@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,11 +29,11 @@ Description
 
     Reference:
     \verbatim
-        "Multidimensional modeling of turbulent two-phase flows in stirred
-         vessels"
-        Gosman, A.D., Lekakou, C., Politis, S., Issa, R.I., and Looney, M.K.,
-        AIChE Journal
-        Volume 38, Issue 12, 1992, pp. 1946-1956
+        Gosman, A. D., Lekakou, C., Politis, S., Issa, R. I., &
+        Looney, M. K. (1992).
+        Multidimensional modeling of turbulent two-phase flows in stirred
+        vessels.
+        AIChE Journal, 38(12), 1946-1956.
      \endverbatim
 
 SourceFiles
@@ -64,7 +64,7 @@ class Gosman
 :
     public turbulentDispersionModel
 {
-    // Private data
+    // Private Data
 
         //- Schmidt number
         const dimensionedScalar sigma_;

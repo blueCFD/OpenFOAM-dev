@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,8 @@ Class
 Description
     This boundary condition provides a wavePressure condition. This sets the
     pressure to a value specified by a superposition of wave models. All the
-    parameters are looked up from the corresponding velocity condition.
+    wave modelling parameters are obtained from a centrally registered
+    waveSuperposition class.
 
     This functions like an outletInlet condition. Faces on which the flow is
     leaving the domain have a value set by the wave model. Faces on which the
@@ -55,6 +56,8 @@ Usage
     }
     \endverbatim
 
+See also
+    Foam::waveSuperposition
 
 SourceFiles
     wavePressureFvPatchScalarField.C
@@ -79,7 +82,7 @@ class wavePressureFvPatchScalarField
 :
     public mixedFvPatchScalarField
 {
-    // Private data
+    // Private Data
 
         //- Name of the velocity field
         const word UName_;
@@ -121,7 +124,7 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Copy constructor
         wavePressureFvPatchScalarField
         (
             const wavePressureFvPatchScalarField&
@@ -136,7 +139,7 @@ public:
             );
         }
 
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         wavePressureFvPatchScalarField
         (
             const wavePressureFvPatchScalarField&,
@@ -160,7 +163,7 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Evaluation functions
 

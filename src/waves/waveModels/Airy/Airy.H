@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,11 +29,12 @@ Description
 
     Reference:
     \verbatim
-        "On the Theory of Oscillatory Waves"
-        G G Stokes
-        Transactions of the Cambridge Philosophical Society (1847), Volume 8,
-        Pages 441-455, Equations 18 and 19 (leading terms only)
+        Stokes, G.G. (1847)
+        On the theory of oscillatory waves.
+        Transactions of the Cambridge Philosophical Society, 8, 441.
     \endverbatim
+
+    See the leading terms of equations 18 and 19.
 
 SourceFiles
     Airy.C
@@ -60,7 +61,7 @@ class Airy
 :
     public waveModel
 {
-    //- Private data
+    // Private Data
 
         //- Peak-to-peak length [m]
         const scalar length_;
@@ -86,7 +87,6 @@ protected:
         tmp<scalarField> angle
         (
             const scalar t,
-            const scalar u,
             const scalarField& x
         ) const;
 
@@ -98,7 +98,6 @@ protected:
         (
             const label i,
             const scalar t,
-            const scalar u,
             const vector2DField& xz
         ) const;
 
@@ -150,32 +149,29 @@ public:
                 return depth_;
             }
 
-        //- Get the wave elevation at a given time, mean velocity and local
-        //  coordinates. Local x is aligned with the mean velocity.
+        //- Get the wave elevation at a given time and local coordinates. Local
+        //  x is aligned with the direction of propagation.
         virtual tmp<scalarField> elevation
         (
             const scalar t,
-            const scalar u,
             const scalarField& x
         ) const;
 
-        //- Get the wave velocity at a given time, mean velocity and local
-        //  coordinates. Local x is aligned with the mean velocity, and z with
-        //  negative gravity.
+        //- Get the wave velocity at a given time and local coordinates. Local
+        //  x is aligned with the direction of propagation, and z with negative
+        //  gravity.
         virtual tmp<vector2DField> velocity
         (
             const scalar t,
-            const scalar u,
             const vector2DField& xz
         ) const;
 
-        //- Get the wave pressure at a given time, mean velocity and local
-        //  coordinates. Local x is aligned with the mean velocity, and z with
-        //  negative gravity.
+        //- Get the wave pressure at a given time and local coordinates. Local
+        //  x is aligned with the direction of propagation, and z with negative
+        //  gravity.
         virtual tmp<scalarField> pressure
         (
             const scalar t,
-            const scalar u,
             const vector2DField& xz
         ) const;
 

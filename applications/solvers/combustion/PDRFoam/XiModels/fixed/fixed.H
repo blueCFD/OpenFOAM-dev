@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,15 +53,6 @@ class fixed
 :
     public XiModel
 {
-    // Private Member Functions
-
-        //- Disallow copy construct
-        fixed(const fixed&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const fixed&);
-
-
 public:
 
     //- Runtime type information
@@ -82,6 +73,9 @@ public:
             const surfaceScalarField& phi
         );
 
+        //- Disallow default bitwise copy construction
+        fixed(const fixed&);
+
 
     //- Destructor
     virtual ~fixed();
@@ -100,6 +94,11 @@ public:
         virtual void writeFields()
         {}
 
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const fixed&) = delete;
 };
 
 

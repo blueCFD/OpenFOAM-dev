@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,18 +28,17 @@ Description
     Lopez de Bertodano (1992) turbulent dispersion model.
 
     \verbatim
-        "Turbulent bubbly two-phase flow in a triangular
-         duct"
-        Lopez de Bertodano, M.
-        Ph.D. Thesis, Rensselaer Polytechnic Institution, New York, USA, 1992.
+        Lopez, D. B. M. (1993).
+        Turbulent bubbly two-phase flow in a triangular duct.
+        PhD Thesis, Rensselaer Polytechnic Institution.
     \endverbatim
 
     \verbatim
-        "The Favre averaged drag model for turbulent dispersion in Eulerian
-         multi-phase flows"
-        Burns, A.D., Frank, T., Hamill, I., Shi, J.M.,
-        5th international conference on multiphase flow
-        Volume 4, Paper 392, May 2004
+        Burns, A. D., Frank, T., Hamill, I., & Shi, J. M. (2004, May).
+        The Favre averaged drag model for turbulent dispersion in Eulerian
+        multi-phase flows.
+        In 5th international conference on multiphase flow,
+        ICMF (Vol. 4, pp. 1-17).
     \endverbatim
 
 SourceFiles
@@ -70,7 +69,7 @@ class LopezDeBertodano
 :
     public turbulentDispersionModel
 {
-    // Private data
+    // Private Data
 
         //- Constant turbulent dispersion coefficient
         const dimensionedScalar Ctd_;

@@ -48,6 +48,7 @@ primitives/Scalar/longDoubleScalar/longDoubleScalar.C
 primitives/Scalar/doubleScalar/doubleScalar.C
 primitives/Scalar/floatScalar/floatScalar.C
 primitives/Scalar/scalar/scalar.C
+primitives/Scalar/scalar/incGamma.C
 primitives/Scalar/scalar/invIncGamma.C
 primitives/Scalar/lists/scalarList.C
 primitives/Scalar/lists/scalarIOList.C
@@ -95,7 +96,6 @@ primitives/functions/Function1/quadraticRamp/quadraticRamp.C
 primitives/functions/Function1/quarterSineRamp/quarterSineRamp.C
 primitives/functions/Function1/quarterCosineRamp/quarterCosineRamp.C
 primitives/functions/Function1/halfCosineRamp/halfCosineRamp.C
-primitives/functions/Polynomial/polynomialFunction.C
 
 primitives/subModelBase/subModelBase.C
 
@@ -142,7 +142,7 @@ primitives/Barycentric/barycentric/barycentric.C
 primitives/Barycentric2D/barycentric2D/barycentric2D.C
 
 containers/HashTables/HashTable/HashTableCore.T.C
-containers/HashTables/StaticHashTable/StaticHashTableCore.T.C
+containers/HashTables/ListHashTable/ListHashTableCore.T.C
 containers/Lists/SortableList/ParSortableListName.T.C
 containers/Lists/PackedList/PackedListCore.T.C
 containers/Lists/PackedList/PackedBoolList.C
@@ -210,6 +210,7 @@ $(dictionaryListEntry)/dictionaryListEntry.C
 $(dictionaryListEntry)/dictionaryListEntryIO.C
 
 functionEntries = $(dictionary)/functionEntries
+$(functionEntries)/negEntry/negEntry.C
 $(functionEntries)/calcEntry/calcEntry.C
 $(functionEntries)/codeStream/codeStream.C
 $(functionEntries)/functionEntry/functionEntry.C
@@ -219,6 +220,8 @@ $(functionEntries)/includeFuncEntry/includeFuncEntry.C
 $(functionEntries)/includeIfPresentEntry/includeIfPresentEntry.C
 $(functionEntries)/inputModeEntry/inputModeEntry.C
 $(functionEntries)/removeEntry/removeEntry.C
+$(functionEntries)/ifeqEntry/ifeqEntry.C
+$(functionEntries)/ifEntry/ifEntry.C
 
 IOdictionary = db/IOobjects/IOdictionary
 $(IOdictionary)/baseIOdictionary.C
@@ -608,6 +611,9 @@ fields/cloud/cloud.C
 
 Fields = fields/Fields
 
+$(Fields)/fieldMappers/directFieldMapper/directFieldMapper.C
+$(Fields)/fieldMappers/generalFieldMapper/generalFieldMapper.C
+$(Fields)/fieldMappers/setSizeFieldMapper/setSizeFieldMapper.C
 $(Fields)/labelField/labelField.C
 $(Fields)/scalarField/scalarField.C
 $(Fields)/vectorField/vectorField.C
@@ -706,5 +712,6 @@ $(writers)/xmgrGraph/xmgrGraph.C
 $(writers)/jplotGraph/jplotGraph.C
 
 meshes/data/data.C
+meshes/Residuals/residuals.C
 
 LIB = $(FOAM_LIBBIN)/libOpenFOAM

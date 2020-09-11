@@ -100,7 +100,7 @@ alias user='cd $WM_PROJECT_USER_DIR'
 # Refresh the environment
 # ~~~~~~~~~~~~~~~~~~~~~~~
 # For backward-compatibility unalias wmRefresh if it is defined as an alias
-if declare -f wmRefresh > /dev/null
+if command -V wmRefresh 2> /dev/null | head -1 | grep -q "function"
 then
     unset wmRefresh
 else
@@ -111,7 +111,7 @@ wmRefresh()
 {
     wmProjectDir=$WM_PROJECT_DIR
     foamSettings=$FOAM_SETTINGS
-    wmUnset
+    . $wmProjectDir/etc/config.sh/unset
     . $wmProjectDir/etc/bashrc $foamSettings
 }
 

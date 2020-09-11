@@ -154,7 +154,7 @@ void Foam::fv::interRegionExplicitPorositySource::addSup
             IOobject::NO_WRITE
         ),
         nbrMesh,
-        dimensionedVector("zero", U.dimensions(), Zero)
+        dimensionedVector(U.dimensions(), Zero)
     );
 
     // Map local velocity onto neighbour region
@@ -208,7 +208,7 @@ void Foam::fv::interRegionExplicitPorositySource::addSup
             IOobject::NO_WRITE
         ),
         nbrMesh,
-        dimensionedVector("zero", U.dimensions(), Zero)
+        dimensionedVector(U.dimensions(), Zero)
     );
 
     // Map local velocity onto neighbour region
@@ -232,7 +232,7 @@ void Foam::fv::interRegionExplicitPorositySource::addSup
             IOobject::NO_WRITE
         ),
         nbrMesh,
-        dimensionedScalar("zero", dimDensity, 0.0)
+        dimensionedScalar(dimDensity, 0)
     );
 
     volScalarField muNbr
@@ -246,7 +246,7 @@ void Foam::fv::interRegionExplicitPorositySource::addSup
             IOobject::NO_WRITE
         ),
         nbrMesh,
-        dimensionedScalar("zero", dimViscosity, 0.0)
+        dimensionedScalar(dimViscosity, 0)
     );
 
     const volScalarField& mu =

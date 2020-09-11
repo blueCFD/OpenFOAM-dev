@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -19,15 +19,7 @@ solvers
     p
     {
         solver          GAMG;
-        smoother        GaussSeidel;
-        tolerance       1e-6;
-        relTol          0.1;
-    }
-
-    "(U|k|omega|epsilon)"
-    {
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
+        smoother        DIC;
         tolerance       1e-6;
         relTol          0.1;
     }
@@ -36,6 +28,22 @@ solvers
     {
         $p;
         relTol         0;
+    }
+
+    "pcorr.*"
+    {
+        $p;
+        tolerance       1e-2;
+        relTol          0;
+
+    }
+
+    "(U|k|omega|epsilon)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0.1;
     }
 
     "(U|k|omega|epsilon)Final"

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: Added hack for 'isAbsolute()' to properly detect absolute
@@ -66,9 +66,13 @@ void Foam::fileName::toUnixPath()
 }
 
 
-Foam::fileName::Type Foam::fileName::type(const bool followLink) const
+Foam::fileType Foam::fileName::type
+(
+    const bool checkVariants,
+    const bool followLink
+) const
 {
-    return ::Foam::type(*this, followLink);
+    return ::Foam::type(*this, checkVariants, followLink);
 }
 
 
@@ -373,7 +377,7 @@ Foam::wordList Foam::fileName::components(const char delimiter) const
     }
 
     // Transfer to wordList
-    return wordList(wrdList.xfer());
+    return wordList(move(wrdList));
 }
 
 
@@ -392,6 +396,12 @@ Foam::word Foam::fileName::component
 void Foam::fileName::operator=(const fileName& str)
 {
     string::operator=(str);
+}
+
+
+void Foam::fileName::operator=(fileName&& str)
+{
+    string::operator=(move(str));
 }
 
 

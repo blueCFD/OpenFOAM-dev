@@ -290,8 +290,7 @@ while (pimple.correct())
 
         solve
         (
-            pEqnComp1() + pEqnComp2() + pEqnIncomp,
-            mesh.solver(p_rgh.select(pimple.finalInnerIter()))
+            pEqnComp1() + pEqnComp2() + pEqnIncomp
         );
 
         if (pimple.finalNonOrthogonalIter())

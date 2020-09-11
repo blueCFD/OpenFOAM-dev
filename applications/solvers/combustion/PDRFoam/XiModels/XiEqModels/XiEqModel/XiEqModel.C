@@ -98,19 +98,11 @@ Foam::XiEqModel::calculateSchelkinEffect(const scalar uPrimeCoef) const
 
     tmp<volScalarField> tN
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "tN",
-                mesh.time().timeName(),
-                mesh,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
+            "tN",
             mesh,
-            dimensionedScalar("zero", Nv.dimensions(), 0.0)
+            dimensionedScalar(Nv.dimensions(), 0)
         )
     );
     volScalarField& N = tN.ref();
@@ -138,7 +130,7 @@ Foam::XiEqModel::calculateSchelkinEffect(const scalar uPrimeCoef) const
 
     const volVectorField Uhat
     (
-        U/(mag(U) + dimensionedScalar("Usmall", U.dimensions(), 1e-4))
+        U/(mag(U) + dimensionedScalar(U.dimensions(), 1e-4))
     );
 
     const volScalarField nr(sqrt(max(N - (Uhat & ns & Uhat), scalar(1e-4))));

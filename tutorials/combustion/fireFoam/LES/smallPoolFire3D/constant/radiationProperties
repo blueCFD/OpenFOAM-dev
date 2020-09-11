@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  dev                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 
 FoamFile
@@ -31,16 +31,16 @@ fvDOMCoeffs
 // Number of flow iterations per radiation iteration
 solverFreq 10;
 
-absorptionEmissionModel greyMeanAbsorptionEmission;
+absorptionEmissionModel greyMeanCombustion;
 
-constantAbsorptionEmissionCoeffs
+constantCoeffs
 {
-    absorptivity    absorptivity    [ m^-1 ]       0.01;
-    emissivity      emissivity      [ m^-1 ]       0.01;
-    E               E               [ kg m^-1 s^-3 ]  0;
+    absorptivity    0.01;
+    emissivity      0.01;
+    E               0;
 }
 
-greyMeanAbsorptionEmissionCoeffs
+greyMeanCombustionCoeffs
 {
     lookUpTableFileName      none;
 

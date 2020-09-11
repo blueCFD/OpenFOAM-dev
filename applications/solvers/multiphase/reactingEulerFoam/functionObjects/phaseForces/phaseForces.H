@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,12 +26,14 @@ Class
 
 Description
     This function object calculates and outputs the blended interfacial forces
-    acting on a given phase (drag, virtual mass, lift, wall-lubrication and
-    turbulent dispersion). It works only in combination with the
-    reactingEulerFoam solvers. For a simulation involving more than two phases,
-    the accumulated force is calculated by looping over all phasePairs involving
-    that phase. The fields are stored in the database so that they can be
-    processed further, e.g. with the fieldAveraging functionObject.
+    acting on a given phase, i.e. drag, virtual mass, lift, wall-lubrication and
+    turbulent dispersion. Note that it works only in run-time processing mode
+    and in combination with the reactingEulerFoam solvers.
+
+    For a simulation involving more than two phases, the accumulated force is
+    calculated by looping over all phasePairs involving that phase. The fields
+    are stored in the database so that they can be processed further, e.g. with
+    the fieldAveraging functionObject.
 
     Example of function object specification:
     \verbatim
@@ -39,10 +41,11 @@ Description
     {
         type            phaseForces;
         libs ("libreactingEulerFoamFunctionObjects.so");
-        writeControl    outputTime;
+        writeControl    writeTime;
         writeInterval   1;
-        log             false;
+
         ...
+
         phaseName       water;
     }
     \endverbatim
@@ -85,7 +88,11 @@ class phaseForces
 :
     public fvMeshFunctionObject
 {
-    // Private data
+protected:
+
+    // Protected data
+
+        HashPtrTable<volVectorField> forceFields_;
 
         //- Phase for which forces are evaluated
         const phaseModel& phase_;
@@ -93,44 +100,12 @@ class phaseForces
         //- Constant access to phaseSystem
         const phaseSystem& fluid_;
 
-        //- Drag force
-        volVectorField dragForce_;
 
-        //- Virtual mass force
-        volVectorField virtualMassForce_;
+    // Protected Member Functions
 
-        //- Lift force
-        volVectorField liftForce_;
-
-        //- Wall lubrication force
-        volVectorField wallLubricationForce_;
-
-        //- Turbulent dispersion force
-        volVectorField turbulentDispersionForce_;
-
-
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        phaseForces(const phaseForces&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const phaseForces&);
-
-        //- Evaluate and return the drag force
-        tmp<volVectorField> dragForce() const;
-
-        //- Evaluate and return the virtual mass force
-        tmp<volVectorField> virtualMassForce() const;
-
-        //- Evaluate and return the lift force
-        tmp<volVectorField> liftForce() const;
-
-        //- Evaluate and return the wall lubrication force
-        tmp<volVectorField> wallLubricationForce() const;
-
-        //- Evaluate and return the turbulent dispersion force
-        tmp<volVectorField> turbulentDispersionForce() const;
+        //- Evaluate and return non-drag force
+        template<class modelType>
+        tmp<volVectorField> nonDragForce(const phasePair& key) const;
 
 
 public:
@@ -149,6 +124,9 @@ public:
             const dictionary&
         );
 
+        //- Disallow default bitwise copy construction
+        phaseForces(const phaseForces&) = delete;
+
 
     //- Destructor
     virtual ~phaseForces();
@@ -164,6 +142,12 @@ public:
 
         //- Write the force fields
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const phaseForces&) = delete;
 };
 
 

@@ -11,7 +11,7 @@ if (pimple.transonic())
         fvc::interpolate(psi)
        *(
             fvc::flux(HbyA)
-          + fvc::interpolate(rho*rAU)*fvc::ddtCorr(rho, U, phi)
+          + fvc::interpolate(betav*rho*rAU)*fvc::ddtCorr(rho, U, phi)
            /fvc::interpolate(rho)
         )
     );
@@ -27,7 +27,7 @@ if (pimple.transonic())
             betav*fvOptions(psi, p, rho.name())
         );
 
-        pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
+        pEqn.solve();
 
         if (pimple.finalNonOrthogonalIter())
         {
@@ -42,7 +42,7 @@ else
         "phiHbyA",
         (
             fvc::flux(rho*HbyA)
-          + fvc::interpolate(rho*rAU)*fvc::ddtCorr(rho, U, phi)
+          + fvc::interpolate(betav*rho*rAU)*fvc::ddtCorr(rho, U, phi)
         )
     );
 
@@ -57,7 +57,7 @@ else
             betav*fvOptions(psi, p, rho.name())
         );
 
-        pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
+        pEqn.solve();
 
         if (pimple.finalNonOrthogonalIter())
         {

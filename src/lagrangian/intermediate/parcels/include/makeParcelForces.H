@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,6 +30,7 @@ License
 
 #include "SphereDragForce.T.H"
 #include "NonSphereDragForce.T.H"
+#include "SchillerNaumannDragForce.T.H"
 #include "WenYuDragForce.T.H"
 #include "ErgunWenYuDragForce.T.H"
 #include "PlessisMasliyahDragForce.T.H"
@@ -44,6 +45,8 @@ License
 #include "SRFForce.T.H"
 #include "VirtualMassForce.T.H"
 
+#include "ScaledForce.T.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #define makeParcelForces(CloudType)                                            \
@@ -51,6 +54,7 @@ License
     makeParticleForceModel(CloudType);                                         \
     makeParticleForceModelType(SphereDragForce, CloudType);                    \
     makeParticleForceModelType(NonSphereDragForce, CloudType);                 \
+    makeParticleForceModelType(SchillerNaumannDragForce, CloudType);           \
     makeParticleForceModelType(WenYuDragForce, CloudType);                     \
     makeParticleForceModelType(ErgunWenYuDragForce, CloudType);                \
     makeParticleForceModelType(PlessisMasliyahDragForce, CloudType);           \
@@ -61,7 +65,8 @@ License
     makeParticleForceModelType(ParamagneticForce, CloudType);                  \
     makeParticleForceModelType(PressureGradientForce, CloudType);              \
     makeParticleForceModelType(SRFForce, CloudType);                           \
-    makeParticleForceModelType(VirtualMassForce, CloudType);
+    makeParticleForceModelType(VirtualMassForce, CloudType);                   \
+    makeParticleForceModelType(ScaledForce, CloudType);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

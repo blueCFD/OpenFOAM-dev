@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     #include "createTime.H"
 
-    fileNameList fieldNames = readDir(runTime.timePath(), fileName::FILE);
+    fileNameList fieldNames = readDir(runTime.timePath(), fileType::file);
     dictionary fieldNameDict;
     forAll(fieldNames, i)
     {
@@ -134,7 +134,8 @@ int main(int argc, char *argv[])
                             runTime.timeName(),
                             mesh,
                             IOobject::MUST_READ,
-                            IOobject::AUTO_WRITE
+                            IOobject::AUTO_WRITE,
+                            false
                         ),
                         mesh
                     );
@@ -152,7 +153,8 @@ int main(int argc, char *argv[])
                             runTime.timeName(),
                             mesh,
                             IOobject::MUST_READ,
-                            IOobject::AUTO_WRITE
+                            IOobject::AUTO_WRITE,
+                            false
                         ),
                         mesh
                     );

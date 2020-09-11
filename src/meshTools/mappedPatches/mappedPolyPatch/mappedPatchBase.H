@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,7 +85,7 @@ SourceFiles
 #include "pointField.H"
 #include "Tuple2.T.H"
 #include "pointIndexHit.H"
-#include "AMIPatchToPatchInterpolation.H"
+#include "AMIInterpolation.T.H"
 #include "coupleGroupIdentifier.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -230,7 +230,7 @@ protected:
         // AMI interpolator (only for NEARESTPATCHFACEAMI)
 
             //- Pointer to AMI interpolator
-            mutable autoPtr<AMIPatchToPatchInterpolation> AMIPtr_;
+            mutable autoPtr<AMIInterpolation> AMIPtr_;
 
             //- Flag to indicate that slave patch should be reversed for AMI
             const bool AMIReverse_;
@@ -351,7 +351,7 @@ public:
     virtual ~mappedPatchBase();
 
 
-    // Member functions
+    // Member Functions
 
         void clearOut();
 
@@ -385,7 +385,7 @@ public:
             inline const mapDistribute& map() const;
 
             //- Return reference to the AMI interpolator
-            inline const AMIPatchToPatchInterpolation& AMI
+            inline const AMIInterpolation& AMI
             (
                 const bool forceUpdate = false
             ) const;

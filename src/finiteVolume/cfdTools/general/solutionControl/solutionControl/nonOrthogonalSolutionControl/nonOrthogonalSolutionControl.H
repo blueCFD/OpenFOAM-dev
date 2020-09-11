@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,10 +57,10 @@ protected:
     // Protected data
 
         //- Maximum number of non-orthogonal correctors
-        label nNonOrthCorr_;
+        label nCorrNonOrth_;
 
         //- Current non-orthogonal corrector index
-        label nonOrthCorr_;
+        label corrNonOrth_;
 
 
 public:
@@ -88,16 +88,21 @@ public:
             //- Read controls
             virtual bool read();
 
+
         // Access
 
             //- Maximum number of non-orthogonal correctors
-            inline label nNonOrthCorr() const;
+            inline label nCorrNonOrth() const;
+
+            //- Flat to indicate any non-orthogonal iteration
+            inline bool anyNonOrthogonalIter() const;
 
             //- Flag to indicate the first non-orthogonal iteration
             inline bool firstNonOrthogonalIter() const;
 
             //- Flag to indicate the last non-orthogonal iteration
             inline bool finalNonOrthogonalIter() const;
+
 
         // Evolution
 

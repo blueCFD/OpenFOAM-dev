@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -106,7 +106,7 @@ class forceCoeffs
 :
     public forces
 {
-    // Private data
+    // Private Data
 
         // Force coefficient geometry
 
@@ -135,15 +135,6 @@ class forceCoeffs
             scalar Aref_;
 
 
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construct
-        forceCoeffs(const forceCoeffs&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const forceCoeffs&);
-
-
 protected:
 
     //- Output file header information
@@ -166,6 +157,9 @@ public:
             const dictionary&
         );
 
+        //- Disallow default bitwise copy construction
+        forceCoeffs(const forceCoeffs&) = delete;
+
 
     //- Destructor
     virtual ~forceCoeffs();
@@ -181,6 +175,12 @@ public:
 
         //- Write the forces
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const forceCoeffs&) = delete;
 };
 
 

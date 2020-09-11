@@ -142,7 +142,7 @@ Foam::RASModels::kineticTheoryModel::kineticTheoryModel
             IOobject::NO_WRITE
         ),
         U.mesh(),
-        dimensionedScalar("zero", dimensionSet(0, 2, -1, 0, 0), 0.0)
+        dimensionedScalar(dimensionSet(0, 2, -1, 0, 0), 0)
     ),
 
     gs0_
@@ -156,7 +156,7 @@ Foam::RASModels::kineticTheoryModel::kineticTheoryModel
             IOobject::NO_WRITE
         ),
         U.mesh(),
-        dimensionedScalar("zero", dimensionSet(0, 0, 0, 0, 0), 0.0)
+        dimensionedScalar(dimensionSet(0, 0, 0, 0, 0), 0)
     ),
 
     kappa_
@@ -170,7 +170,7 @@ Foam::RASModels::kineticTheoryModel::kineticTheoryModel
             IOobject::NO_WRITE
         ),
         U.mesh(),
-        dimensionedScalar("zero", dimensionSet(1, -1, -1, 0, 0), 0.0)
+        dimensionedScalar(dimensionSet(1, -1, -1, 0, 0), 0)
     ),
 
     nuFric_
@@ -184,7 +184,7 @@ Foam::RASModels::kineticTheoryModel::kineticTheoryModel
             IOobject::AUTO_WRITE
         ),
         U.mesh(),
-        dimensionedScalar("zero", dimensionSet(0, 2, -1, 0, 0), 0.0)
+        dimensionedScalar(dimensionSet(0, 2, -1, 0, 0), 0)
     )
 {
     if (type == typeName)
@@ -251,21 +251,11 @@ Foam::RASModels::kineticTheoryModel::epsilon() const
 Foam::tmp<Foam::volSymmTensorField>
 Foam::RASModels::kineticTheoryModel::R() const
 {
-    return tmp<volSymmTensorField>
+    return volSymmTensorField::New
     (
-        new volSymmTensorField
-        (
-            IOobject
-            (
-                IOobject::groupName("R", U_.group()),
-                runTime_.timeName(),
-                mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-          - (nut_)*dev(twoSymm(fvc::grad(U_)))
-          - (lambda_*fvc::div(phi_))*symmTensor::I
-        )
+        IOobject::groupName("R", U_.group()),
+      - (nut_)*dev(twoSymm(fvc::grad(U_)))
+      - (lambda_*fvc::div(phi_))*symmTensor::I
     );
 }
 
@@ -319,22 +309,12 @@ Foam::RASModels::kineticTheoryModel::pPrimef() const
 Foam::tmp<Foam::volSymmTensorField>
 Foam::RASModels::kineticTheoryModel::devRhoReff() const
 {
-    return tmp<volSymmTensorField>
+    return volSymmTensorField::New
     (
-        new volSymmTensorField
-        (
-            IOobject
-            (
-                IOobject::groupName("devRhoReff", U_.group()),
-                runTime_.timeName(),
-                mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-          - (rho_*nut_)
-           *dev(twoSymm(fvc::grad(U_)))
-          - ((rho_*lambda_)*fvc::div(phi_))*symmTensor::I
-        )
+        IOobject::groupName("devRhoReff", U_.group()),
+      - (rho_*nut_)
+       *dev(twoSymm(fvc::grad(U_)))
+      - ((rho_*lambda_)*fvc::div(phi_))*symmTensor::I
     );
 }
 

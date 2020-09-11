@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,12 +54,6 @@ class singleLayerRegion
 {
     // Private Member Functions
 
-        //- Disallow default bitwise copy construct
-        singleLayerRegion(const singleLayerRegion&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const singleLayerRegion&);
-
         //- Construct region mesh and fields
         void constructMeshObjects();
 
@@ -76,7 +70,7 @@ protected:
             //- Patch normal vectors
             autoPtr<volVectorField> nHatPtr_;
 
-            //- Face area magnitudes / [m2]
+            //- Face area magnitudes / [m^2]
             autoPtr<volScalarField> magSfPtr_;
 
 
@@ -112,6 +106,9 @@ public:
             bool readFields = true
         );
 
+        //- Disallow default bitwise copy construction
+        singleLayerRegion(const singleLayerRegion&) = delete;
+
 
     //- Destructor
     virtual ~singleLayerRegion();
@@ -126,7 +123,7 @@ public:
                 //- Return the patch normal vectors
                 virtual const volVectorField& nHat() const;
 
-                //- Return the face area magnitudes / [m2]
+                //- Return the face area magnitudes / [m^2]
                 virtual const volScalarField& magSf() const;
 
 
@@ -149,6 +146,12 @@ public:
             //  Mapping region prescribed by underlying mapped poly patch
             template<class Type>
             wordList mappedPushedFieldPatchTypes() const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const singleLayerRegion&) = delete;
 };
 
 

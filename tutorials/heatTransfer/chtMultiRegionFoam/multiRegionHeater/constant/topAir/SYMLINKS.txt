@@ -1,3 +1,0 @@
-The original source for 'g' was '../bottomWater/g'
-The original source for 'radiationProperties' was '../bottomWater/radiationProperties'
-The original source for 'turbulenceProperties' was '../bottomWater/turbulenceProperties'

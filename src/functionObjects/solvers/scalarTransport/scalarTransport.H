@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,7 @@ class scalarTransport
 :
     public fvMeshFunctionObject
 {
-    // Private data
+    // Private Data
 
         //- Name of field to process
         word fieldName_;
@@ -111,12 +111,6 @@ class scalarTransport
         //- Return the diffusivity field
         tmp<volScalarField> D(const surfaceScalarField& phi) const;
 
-        //- Disallow default bitwise copy construct
-        scalarTransport(const scalarTransport&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const scalarTransport&);
-
 
 public:
 
@@ -134,6 +128,9 @@ public:
             const dictionary& dict
         );
 
+        //- Disallow default bitwise copy construction
+        scalarTransport(const scalarTransport&) = delete;
+
 
     //- Destructor
     virtual ~scalarTransport();
@@ -150,6 +147,12 @@ public:
         //- Do nothing.
         //  The volScalarField is registered and written automatically
         virtual bool write();
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const scalarTransport&) = delete;
 };
 
 

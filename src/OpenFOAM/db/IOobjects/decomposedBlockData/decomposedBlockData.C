@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -123,11 +123,12 @@ Foam::decomposedBlockData::decomposedBlockData
 (
     const label comm,
     const IOobject& io,
-    const Xfer<List<char>>& list,
+    List<char>&& list,
     const UPstream::commsTypes commsType
 )
 :
     regIOobject(io),
+    List<char>(move(list)),
     commsType_(commsType),
     comm_(comm)
 {
@@ -140,8 +141,6 @@ Foam::decomposedBlockData::decomposedBlockData
             " but decomposedBlockData does not support automatic rereading."
             << endl;
     }
-
-    List<char>::transfer(list());
 
     if
     (
@@ -1028,7 +1027,7 @@ bool Foam::decomposedBlockData::writeObject
     IOstream::streamFormat fmt,
     IOstream::versionNumber ver,
     IOstream::compressionType cmp,
-    const bool valid
+    const bool write
 ) const
 {
     autoPtr<OSstream> osPtr;

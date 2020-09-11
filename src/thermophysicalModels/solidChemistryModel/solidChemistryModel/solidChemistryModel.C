@@ -73,7 +73,7 @@ Foam::solidChemistryModel<CompType, SolidThermo>::solidChemistryModel
                     IOobject::NO_WRITE
                 ),
                 this->mesh(),
-                dimensionedScalar("zero", dimMass/dimVolume/dimTime, 0.0)
+                dimensionedScalar(dimMass/dimVolume/dimTime, 0)
             )
         );
    }
@@ -116,19 +116,11 @@ Foam::solidChemistryModel<CompType, SolidThermo>::Qdot() const
 {
     tmp<volScalarField> tQdot
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
-            (
-                "Qdot",
-                this->mesh_.time().timeName(),
-                this->mesh_,
-                IOobject::NO_READ,
-                IOobject::AUTO_WRITE,
-                false
-            ),
+            "Qdot",
             this->mesh_,
-            dimensionedScalar("zero", dimEnergy/dimVolume/dimTime, 0.0)
+            dimensionedScalar(dimEnergy/dimVolume/dimTime, 0)
         )
     );
 

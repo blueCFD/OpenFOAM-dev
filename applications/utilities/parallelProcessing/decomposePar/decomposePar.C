@@ -241,6 +241,11 @@ int main(int argc, char *argv[])
     );
     argList::addBoolOption
     (
+        "noFields",
+        "opposite of -fields; only decompose geometry"
+    );
+    argList::addBoolOption
+    (
         "noSets",
         "skip decomposing cellSets, faceSets, pointSets"
     );
@@ -272,11 +277,28 @@ int main(int argc, char *argv[])
     bool copyZero                = args.optionFound("copyZero");
     bool copyUniform             = args.optionFound("copyUniform");
     bool decomposeFieldsOnly     = args.optionFound("fields");
+    bool decomposeGeomOnly       = args.optionFound("noFields");
     bool decomposeSets           = !args.optionFound("noSets");
     bool forceOverwrite          = args.optionFound("force");
     bool ifRequiredDecomposition = args.optionFound("ifRequired");
 
     const word dictName("decomposeParDict");
+
+
+    if (decomposeGeomOnly)
+    {
+        Info<< "Skipping decomposing fields"
+            << nl << endl;
+
+        if (decomposeFieldsOnly || copyZero)
+        {
+            FatalErrorInFunction
+                << "Cannot combine geometry-only decomposition (-noFields)"
+                << " with field decomposition (-noFields or -copyZero)"
+                << exit(FatalError);
+        }
+    }
+
 
     // Set time from database
     #include "createTime.H"
@@ -328,7 +350,7 @@ int main(int argc, char *argv[])
                 fileHandler().readDir
                 (
                     runTime.path(),
-                    fileName::Type::DIRECTORY
+                    fileType::directory
                 )
             );
             forAllReverse(dirs, diri)
@@ -499,7 +521,7 @@ int main(int argc, char *argv[])
                         IOobject::AUTO_WRITE
                     ),
                     mesh,
-                    dimensionedScalar("cellDist", dimless, 0)
+                    dimensionedScalar(dimless, 0)
                 );
 
                 forAll(procIds, celli)
@@ -561,7 +583,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        else
+        else if (!decomposeGeomOnly)
         {
             // Decompose the field files
 
@@ -661,7 +683,7 @@ int main(int argc, char *argv[])
                     fileHandler().readDir
                     (
                         runTime.timePath()/cloud::prefix,
-                        fileName::DIRECTORY
+                        fileType::directory
                     )
                 );
 

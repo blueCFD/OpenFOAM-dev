@@ -72,6 +72,13 @@ public:
             const GeometricField<Type, fvPatchField, volMesh>& psi
         );
 
+        //- Construct from components
+        interpolationCellPoint
+        (
+            const GeometricField<Type, fvPatchField, volMesh>& psi,
+            tmp<GeometricField<Type, pointPatchField, pointMesh>> psip
+        );
+
 
     // Member Functions
 
