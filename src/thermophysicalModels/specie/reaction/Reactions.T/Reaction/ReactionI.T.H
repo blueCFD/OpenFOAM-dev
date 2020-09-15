@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,29 +21,64 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::IOsampledSurfaces
-
-Description
-    Instance of the generic IOOutputFilter for sampledSurfaces.
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef IOsampledSurfaces_H
-#define IOsampledSurfaces_H
-
-#include "sampledSurfaces.H"
-#include "IOOutputFilter.T.H"
+#include "Reaction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    typedef IOOutputFilter<sampledSurfaces> IOsampledSurfaces;
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class ReactionThermo>
+inline const word& Reaction<ReactionThermo>::name() const
+{
+    return name_;
 }
+
+
+template<class ReactionThermo>
+inline scalar Reaction<ReactionThermo>::Tlow() const
+{
+    return Tlow_;
+}
+
+
+template<class ReactionThermo>
+inline scalar Reaction<ReactionThermo>::Thigh() const
+{
+    return Thigh_;
+}
+
+
+template<class ReactionThermo>
+inline const List<specieCoeffs>& Reaction<ReactionThermo>::lhs() const
+{
+    return lhs_;
+}
+
+
+template<class ReactionThermo>
+inline const List<specieCoeffs>& Reaction<ReactionThermo>::rhs() const
+{
+    return rhs_;
+}
+
+
+// * * * * * * * * * * * * * * * Ostream Operator  * * * * * * * * * * * * * //
+
+template<class ReactionThermo>
+inline Ostream& operator<<(Ostream& os, const Reaction<ReactionThermo>& r)
+{
+    r.write(os);
+    return os;
+}
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+} // End namespace Foam
 
 // ************************************************************************* //
