@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 # 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2020-09-16 FSD blueCAPE Lda: Modifications for blueCFD-Core 2020-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -34,8 +35,6 @@
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
 #        - Added the ability to cross-compile the wmake related binaries for
 #          running on Windows.
-#        - Recovered the wmkdepend utility, because we need it on Windows, due
-#          to the limitation on the number of files currently open.
 #
 # File
 #     Makefile
@@ -76,8 +75,7 @@ EXE_EXTENSION ?=
 #------------------------------------------------------------------------------
 
 all:  $(WMAKE_BIN)/dirToString$(EXE_EXTENSION) \
-      $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION) \
-      $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION)
+      $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION)
 
 clean:
 	@E rm -f $(WMAKE_BIN)/* 2>/dev/null
@@ -94,14 +92,5 @@ $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION): wmkdep.l
 	$(cc) $(cFLAGS) lex.yy.c -o $(WMAKE_BIN)/wmkdep$(EXE_EXTENSION)
 	@rm -f lex.yy.c 2>/dev/null
 
-
-# for bootstrapping - use generated files directly (instead of from .atg file)
-$(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION): wmkdepend.cpp \
-    wmkdependParser.cpp wmkdependScanner.cpp \
-    wmkdependParser.h   wmkdependScanner.h
-	@mkdir -p $(WMAKE_BIN)
-	$(CC) $(c++FLAGS) \
-	     wmkdepend.cpp wmkdependParser.cpp wmkdependScanner.cpp \
-	    -o $(WMAKE_BIN)/wmkdepend$(EXE_EXTENSION)
 
 #------------------------------------------------------------------------------
