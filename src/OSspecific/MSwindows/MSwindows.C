@@ -608,7 +608,7 @@ mode_t mode
 }
 
 
-fileName::Type type
+fileType type
 (
     const fileName& name,
     const bool checkVariants,
@@ -617,8 +617,8 @@ fileName::Type type
 {
     //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
     //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
-    
-    fileName::Type fileType = fileName::UNDEFINED;
+
+    fileType vfileType = fileType::undefined;
     const DWORD attrs = ::GetFileAttributes(name.c_str());
 
     bool variantCheck =
@@ -630,18 +630,16 @@ fileName::Type type
 
     if (attrs != INVALID_FILE_ATTRIBUTES && variantCheck)
     {
-        fileType = (attrs & FILE_ATTRIBUTE_DIRECTORY) ?
-            fileName::DIRECTORY :
-            fileName::FILE;
+        vfileType = (attrs & FILE_ATTRIBUTE_DIRECTORY) ?
+            fileType::directory :
+            fileType::file;
     }
 
     return fileType;
 }
 
 
-static
-bool 
-isGzFile(const fileName& name)
+static bool isGzFile(const fileName& name)
 {
     string gzName(name);
     gzName += ".gz";
@@ -837,7 +835,7 @@ double highResLastModified
 fileNameList readDir
 (
     const fileName& directory,
-    const fileName::Type type,
+    const fileType type,
     const bool filterVariants,
     const bool followLink
 )
@@ -877,10 +875,10 @@ fileNameList readDir
 
                 if
                 (
-                    (type == fileName::DIRECTORY)
+                    (type == fileType::directory)
                  ||
                     (
-                        type == fileName::FILE
+                        type == fileType::file
                         && fName[fName.size()-1] != '~'
                         && fileNameExt != "bak"
                         && fileNameExt != "BAK"
@@ -944,15 +942,15 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
         return false;
     }
 
-    const fileName::Type srcType = src.type(false, followLink);
+    const fileType srcType = src.type(false, followLink);
 
     fileName destFile(dest);
 
     // Check type of source file.
-    if (srcType == fileName::FILE)
+    if (srcType == fileType::file)
     {
         // If dest is a directory, create the destination file name.
-        if (destFile.type() == fileName::DIRECTORY)
+        if (destFile.type() == fileType::directory)
         {
             destFile = destFile/src.name();
         }
@@ -995,10 +993,10 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
             return false;
         }
     }
-    else if (srcType == fileName::LINK)
+    else if (srcType == fileType::link)
     {
         // If dest is a directory, create the destination file name.
-        if (destFile.type() == fileName::DIRECTORY)
+        if (destFile.type() == fileType::directory)
         {
             destFile = destFile/src.name();
         }
@@ -1011,10 +1009,10 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
 
         ln(src, destFile);
     }
-    else if (srcType == fileName::DIRECTORY)
+    else if (srcType == fileType::directory)
     {
         // If dest is a directory, create the destination file name.
-        if (destFile.type() == fileName::DIRECTORY)
+        if (destFile.type() == fileType::directory)
         {
             destFile = destFile/src.component(src.components().size() -1);
         }
@@ -1026,7 +1024,7 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
         }
 
         // Copy files
-        fileNameList contents = readDir(src, fileName::FILE, false);
+        fileNameList contents = readDir(src, fileType::file, false);
         forAll(contents, i)
         {
             if (MSwindows::debug)
@@ -1041,7 +1039,7 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
         }
 
         // Copy sub directories.
-        fileNameList subdirs = readDir(src, fileName::DIRECTORY);
+        fileNameList subdirs = readDir(src, fileType::directory);
         forAll(subdirs, i)
         {
             if (MSwindows::debug)
@@ -1101,8 +1099,8 @@ bool mv(const fileName& src, const fileName& dst, const bool followLink)
 
     if
     (
-        dst.type() == fileName::DIRECTORY
-     && src.type(false, followLink) != fileName::DIRECTORY
+        dst.type() == fileType::directory
+     && src.type(false, followLink) != fileType::directory
     )
     {
         const fileName dstName(dst/src.name());
@@ -1218,7 +1216,7 @@ bool rmDir(const fileName& directory)
           {
               fileName path = directory/fName;
 
-              if (path.type(false, false) == fileName::DIRECTORY)
+              if (path.type(false, false) == fileType::directory)
               {
                   success = rmDir(path);
 
