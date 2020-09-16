@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2017 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,6 +64,12 @@ Description
                                 | ((unsigned int)(minor)))
 
 
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+const Foam::label Foam::fileStat::nVariants_ = 2;
+
+const char* Foam::fileStat::variantExts_[] = {"gz", "orig"};
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -80,6 +86,7 @@ fileStat::fileStat()
 fileStat::fileStat
 (
     const fileName& fName,
+    const bool checkVariants,
     const bool followLink,
     const unsigned int maxTime
 )
@@ -95,7 +102,7 @@ fileStat::fileStat
         {
             locIsValid = false;
         }
-        else
+        else if (checkVariants)
         {
             // FIXME: Need to populate the 'st_atim' branch in 'stat_extended'
             // Task assigned to this: https://github.com/blueCFD/Core/issues/65
@@ -103,7 +110,14 @@ fileStat::fileStat
             status_.st_atim.tv_sec = 0;
             status_.st_atim.tv_nsec = 0;
 
-            locIsValid = true;
+            for (label i = 0; !locIsValid && i < nVariants_; ++ i)
+            {
+                const fileName fNameVar = fName + "." + variantExts_[i];
+                if (getFileStatus(fNameVar.c_str(), &status_) == 0)
+                {
+                    locIsValid = true;
+                }
+            }
         }
     }
 
