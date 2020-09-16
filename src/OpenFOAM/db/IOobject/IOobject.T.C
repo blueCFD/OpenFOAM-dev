@@ -45,7 +45,7 @@ Modifications
 #include "IFstream.H"
 #include "registerNamedEnum.H"
 
-#include "StaticHashTable.H"
+#include "ListHashTable.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -53,7 +53,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(IOobject, 0);
 
-    static StaticHashTable<Foam::word> replacedFileNames_;
+    static ListHashTable<Foam::word> replacedFileNames_;
 
     template<>
     const char* NamedEnum<IOobject::fileCheckTypes, 4>::names[] =
@@ -415,7 +415,7 @@ Foam::fileName Foam::IOobject::localPath() const
 
 const Foam::word & Foam::IOobject::uniqueFileName() const
 {
-    StaticHashTable<word>::const_iterator findIt = 
+    ListHashTable<word>::const_iterator findIt = 
       replacedFileNames_.find(name());
 
     const word & diskFileName = (findIt == replacedFileNames_.end()) ?
