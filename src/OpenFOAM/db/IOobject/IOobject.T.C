@@ -45,7 +45,7 @@ Modifications
 #include "IFstream.H"
 #include "registerNamedEnum.H"
 
-#include "ListHashTable.H"
+#include "ListHashTable.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
