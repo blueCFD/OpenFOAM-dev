@@ -42,6 +42,26 @@ SourceFiles
 #include <limits>
 using std::numeric_limits;
 
+#if (defined( WIN32 ) || defined( WIN64 )) && defined(__STRICT_ANSI__)
+#undef __STRICT_ANSI__
+#define REDEFINE_SA__
+#endif
+
+#include <cmath>
+
+#if defined( WIN32 ) || defined( WIN64 )
+#ifdef REDEFINE_SA__
+#define __STRICT_ANSI__ 1
+#endif
+
+#define j0l _j0
+#define j1l _j1
+#define jnl _jn
+#define y0l _y0
+#define y1l _y1
+#define ynl _yn
+#endif
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
