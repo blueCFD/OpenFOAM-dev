@@ -79,7 +79,7 @@ public:
     virtual void readData(Foam::Istream& is)
     {
         sigStopAtWriteNow::signal_ = readLabel(is);
-        sigStopAtWriteNow::set(true);
+        sigStopAtWriteNow::set(writeInfoHeader);
     }
 
     virtual void writeData(Foam::Ostream& os) const
@@ -93,7 +93,7 @@ addstopAtWriteNowSignalToOpt addstopAtWriteNowSignalToOpt_
     "stopAtWriteNowSignal"
 );
 
-}
+} // End namespace Foam
 
 
 Foam::Time const* Foam::sigStopAtWriteNow::runTimePtr_ = nullptr;
