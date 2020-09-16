@@ -846,7 +846,6 @@ fileNameList readDir
 
     if (MSwindows::debug)
     {
-        //InfoInFunction
         Pout<< FUNCTION_NAME << " : reading directory " << directory << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
@@ -855,10 +854,7 @@ fileNameList readDir
     }
 
     // Setup empty string list MAXTVALUES long
-    fileNameList dirEntries(maxNnames);
-
-    // Temporary variables and counters
-    label nEntries = 0;
+    HashSet<fileName> dirEntries(maxNnames);
 
     MSwindows::DirectoryIterator dirIt(directory);
 
@@ -868,7 +864,7 @@ fileNameList readDir
         {
             const fileName & fName = dirIt.next();
 
-            // ignore files begining with ., i.e. '.', '..' and '.*'
+            // Ignore files begining with ., i.e. '.', '..' and '.*'
             if (fName.size() > 0 && fName[size_t(0)] != '.')
             {
                 word fileNameExt = fName.ext();
@@ -889,12 +885,7 @@ fileNameList readDir
                 {
                     if ((directory/fName).type(false, followLink) == type)
                     {
-                        if (nEntries >= dirEntries.size())
-                        {
-                            dirEntries.setSize(dirEntries.size() + maxNnames);
-                        }
-
-                        dirEntries[nEntries++] = fName;
+                        bool filtered = false;
 
                         if (filterVariants)
                         {
@@ -902,10 +893,16 @@ fileNameList readDir
                             {
                                 if (fExt == fileStat::variantExts_[i])
                                 {
-                                    dirEntries[nEntries - 1] = fName.lessExt();
+                                    dirEntries.insert(fName.lessExt());
+                                    filtered = true;
                                     break;
                                 }
                             }
+                        }
+
+                        if (!filtered)
+                        {
+                            dirEntries.insert(fName);
                         }
                     }
                 }
@@ -918,10 +915,7 @@ fileNameList readDir
             << "cannot open directory " << directory << endl;
     }
 
-    // Reset the length of the entries list
-    dirEntries.setSize(nEntries);
-    
-    return dirEntries;
+    return dirEntries.toc();
 }
 
 
