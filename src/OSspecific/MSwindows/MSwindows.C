@@ -840,10 +840,6 @@ fileNameList readDir
     const bool followLink
 )
 {
-    // Initial filename list size
-    // also used as increment if initial size found to be insufficient
-    const int maxNnames = 100;
-
     if (MSwindows::debug)
     {
         Pout<< FUNCTION_NAME << " : reading directory " << directory << endl;
@@ -853,8 +849,8 @@ fileNameList readDir
         }
     }
 
-    // Setup empty string list MAXTVALUES long
-    HashSet<fileName> dirEntries(maxNnames);
+    // Create empty set of file names
+    HashSet<fileName> dirEntries;
 
     MSwindows::DirectoryIterator dirIt(directory);
 
