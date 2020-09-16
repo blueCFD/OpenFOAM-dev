@@ -98,7 +98,12 @@ fileStat::fileStat
 
     if (!timedOut(myTimer))
     {
-        if (::stat(fName.c_str(), &status_) != 0)
+        //FIXME: 'followLink' can't be used with 'GetFileAttributes' nor ::stat
+        //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
+
+        int (*getFileStatus)(const char *, struct stat *) = ::stat;
+
+        if (getFileStatus(fName.c_str(), &status_) != 0)
         {
             locIsValid = false;
         }
