@@ -45,7 +45,7 @@ Modifications
 
 #include "sigStopAtWriteNow.H"
 #include "error.H"
-#include "JobInfo.H"
+#include "jobInfo.H"
 #include "IOstreams.H"
 #include "Time.T.H"
 
@@ -117,7 +117,7 @@ void Foam::sigStopAtWriteNow::sigHandler(int)
     }
 
     // Update jobInfo file
-    jobInfo.signalEnd();
+    jobInfo_.signalEnd();
 
     Info<< "sigStopAtWriteNow :"
         << " setting up write and stop at end of the next iteration"

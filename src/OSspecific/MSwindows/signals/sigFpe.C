@@ -49,7 +49,7 @@ Class
 #include "error.H"
 #include "sigFpe.H"
 
-#include "JobInfo.H"
+#include "jobInfo.H"
 #include "OSspecific.H"
 #include "IOstreams.H"
 
@@ -96,7 +96,7 @@ void Foam::sigFpe::sigFpeHandler(int)
     }
 
     // Update jobInfo file
-    jobInfo.signalEnd();
+    jobInfo_.signalEnd();
 
     error::printStack(Perr);
 

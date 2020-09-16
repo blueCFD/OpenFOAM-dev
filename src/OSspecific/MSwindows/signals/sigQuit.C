@@ -48,7 +48,7 @@ Class
 
 #include "error.H"
 #include "sigQuit.H"
-#include "JobInfo.H"
+#include "jobInfo.H"
 #include "IOstreams.H"
 
 // SIGBREAK is best alternative to SIGQUIT on windows
@@ -72,7 +72,7 @@ void Foam::sigQuit::sigQuitHandler(int)
     }
 
     // Update jobInfo file
-    jobInfo.signalEnd();
+    jobInfo_.signalEnd();
 
     error::printStack(Perr);
 

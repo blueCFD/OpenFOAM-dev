@@ -584,14 +584,19 @@ bool chMod(const fileName& name, const mode_t m)
 }
 
 
-mode_t mode(const fileName& name, const bool followLink)
+mode_t mode
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
         Pout<< FUNCTION_NAME << " : name:" << name << endl;
     }
 
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
     if (fileStatus.isValid())
     {
         return fileStatus.status().st_mode;
@@ -603,15 +608,27 @@ mode_t mode(const fileName& name, const bool followLink)
 }
 
 
-fileName::Type type(const fileName& name, const bool followLink)
+fileName::Type type
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
     //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
-
+    
     fileName::Type fileType = fileName::UNDEFINED;
     const DWORD attrs = ::GetFileAttributes(name.c_str());
 
-    if (attrs != INVALID_FILE_ATTRIBUTES) 
+    bool variantCheck =
+    (
+        !checkVariants
+      ||
+        checkVariants && !fileStatus(name, checkVariants, followLink).isValid()
+    );
+
+    if (attrs != INVALID_FILE_ATTRIBUTES && variantCheck)
     {
         fileType = (attrs & FILE_ATTRIBUTE_DIRECTORY) ?
             fileName::DIRECTORY :
@@ -638,7 +655,7 @@ isGzFile(const fileName& name)
 bool exists
 (
     const fileName& name,
-    const bool checkGzip,
+    const bool checkVariants,
     const bool followLink
 )
 {
@@ -647,9 +664,8 @@ bool exists
 
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name
-            << " checkGzip:" << checkGzip
-            << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
@@ -657,8 +673,13 @@ bool exists
     }
 
     const DWORD attrs = ::GetFileAttributes(name.c_str());
-    const bool success = (attrs != INVALID_FILE_ATTRIBUTES) || 
-                         (checkGzip && isGzFile(name));
+    const bool success =
+        (attrs != INVALID_FILE_ATTRIBUTES) || 
+        (
+            checkVariants
+         &&
+            fileStatus(name, checkVariants, followLink).isValid()
+        );
 
     return success;
 }
@@ -671,7 +692,8 @@ bool isDir(const fileName& name, const bool followLink)
 
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " followLink:"
+            << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
@@ -689,18 +711,17 @@ bool isDir(const fileName& name, const bool followLink)
 bool isFile
 (
     const fileName& name,
-    const bool checkGzip,
+    const bool checkVariants,
     const bool followLink
 )
 {
     //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
     //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
 
-   if (MSwindows::debug)
+    if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name
-            << " checkGzip:" << checkGzip
-            << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
@@ -715,25 +736,33 @@ bool isFile
     )
      ||
     (
-        checkGzip && isGzFile(name)
+        checkVariants
+     &&
+        fileStatus(name, checkVariants, followLink).isValid()
     );
 
     return success;
 }
 
 
-off_t fileSize(const fileName& name, const bool followLink)
+off_t fileSize
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
-        if ((MSwindows::debug & 2) && !Pstream::master())
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
+         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
         }
     }
 
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
 
     if (fileStatus.isValid())
     {
@@ -746,18 +775,24 @@ off_t fileSize(const fileName& name, const bool followLink)
 }
 
 
-time_t lastModified(const fileName& name, const bool followLink)
+time_t lastModified
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
         }
     }
 
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
     if (fileStatus.isValid())
     {
         return fileStatus.status().st_mtime;
@@ -769,17 +804,23 @@ time_t lastModified(const fileName& name, const bool followLink)
 }
 
 
-double highResLastModified(const fileName& name, const bool followLink)
+double highResLastModified
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
         }
     }
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
     if (fileStatus.isValid())
     {
         return
@@ -797,7 +838,7 @@ fileNameList readDir
 (
     const fileName& directory,
     const fileName::Type type,
-    const bool filtergz,
+    const bool filterVariants,
     const bool followLink
 )
 {
@@ -848,20 +889,25 @@ fileNameList readDir
                     )
                 )
                 {
-                    if ((directory/fName).type(followLink) == type)
+                    if ((directory/fName).type(false, followLink) == type)
                     {
                         if (nEntries >= dirEntries.size())
                         {
                             dirEntries.setSize(dirEntries.size() + maxNnames);
                         }
 
-                        if (filtergz && fileNameExt == "gz")
+                        dirEntries[nEntries++] = fName;
+
+                        if (filterVariants)
                         {
-                            dirEntries[nEntries++] = fName.lessExt();
-                        }
-                        else
-                        {
-                            dirEntries[nEntries++] = fName;
+                            for (label i = 0; i < fileStat::nVariants_; ++ i)
+                            {
+                                if (fExt == fileStat::variantExts_[i])
+                                {
+                                    dirEntries[nEntries - 1] = fName.lessExt();
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -898,7 +944,7 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
         return false;
     }
 
-    const fileName::Type srcType = src.type(followLink);
+    const fileName::Type srcType = src.type(false, followLink);
 
     fileName destFile(dest);
 
@@ -1056,7 +1102,7 @@ bool mv(const fileName& src, const fileName& dst, const bool followLink)
     if
     (
         dst.type() == fileName::DIRECTORY
-     && src.type(followLink) != fileName::DIRECTORY
+     && src.type(false, followLink) != fileName::DIRECTORY
     )
     {
         const fileName dstName(dst/src.name());
@@ -1083,7 +1129,7 @@ bool mvBak(const fileName& src, const std::string& ext)
         }
     }
 
-    if (exists(src, false))
+    if (exists(src, false, false))
     {
         const int maxIndex = 99;
         char index[3];
@@ -1099,7 +1145,7 @@ bool mvBak(const fileName& src, const std::string& ext)
 
             // avoid overwriting existing files, except for the last
             // possible index where we have no choice
-            if (!exists(dstName, false) || n == maxIndex)
+            if (!exists(dstName, false, false) || n == maxIndex)
             {
                 return (0 == std::rename(src.c_str(), dstName.c_str()));
             }
@@ -1125,16 +1171,22 @@ bool rm(const fileName& file)
         }
     }
 
-    bool success = (0 == std::remove(file.c_str()));
-
-    // If deleting plain file name failed try with .gz
-    if (!success) 
+    if(0 == std::remove(file.c_str()))
     {
-        const string fileGz = file + ".gz";
-        success = (0 == std::remove(fileGz.c_str()));
+        return true;
     }
 
-    return success;
+    // If deleting plain file name failed try variants
+    for (label i = 0; i < fileStat::nVariants_; ++ i)
+    {
+        const fileName fileVar = file + "." + fileStat::variantExts_[i];
+        if (std::remove(string(fileVar).c_str()) == 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -1166,7 +1218,7 @@ bool rmDir(const fileName& directory)
           {
               fileName path = directory/fName;
 
-              if (path.type() == fileName::DIRECTORY)
+              if (path.type(false, false) == fileName::DIRECTORY)
               {
                   success = rmDir(path);
 
