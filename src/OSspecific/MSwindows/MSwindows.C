@@ -54,6 +54,7 @@ Details
 #include "timer.H"
 #include "IFstream.H"
 #include "DynamicList.T.H"
+#include "HashSet.T.H"
 #include "IOstreams.H"
 #include "Pstream.T.H"
 
@@ -625,7 +626,7 @@ fileType type
     (
         !checkVariants
       ||
-        checkVariants && !fileStatus(name, checkVariants, followLink).isValid()
+        (checkVariants && !fileStat(name, checkVariants, followLink).isValid())
     );
 
     if (attrs != INVALID_FILE_ATTRIBUTES && variantCheck)
@@ -635,18 +636,7 @@ fileType type
             fileType::file;
     }
 
-    return fileType;
-}
-
-
-static bool isGzFile(const fileName& name)
-{
-    string gzName(name);
-    gzName += ".gz";
-    const DWORD attrs = ::GetFileAttributes(gzName.c_str());
-    const bool success = (attrs != INVALID_FILE_ATTRIBUTES);
-
-    return success;
+    return vfileType;
 }
 
 
@@ -676,7 +666,7 @@ bool exists
         (
             checkVariants
          &&
-            fileStatus(name, checkVariants, followLink).isValid()
+            fileStat(name, checkVariants, followLink).isValid()
         );
 
     return success;
@@ -736,7 +726,7 @@ bool isFile
     (
         checkVariants
      &&
-        fileStatus(name, checkVariants, followLink).isValid()
+        fileStat(name, checkVariants, followLink).isValid()
     );
 
     return success;
@@ -863,7 +853,7 @@ fileNameList readDir
             // Ignore files begining with ., i.e. '.', '..' and '.*'
             if (fName.size() > 0 && fName[size_t(0)] != '.')
             {
-                word fileNameExt = fName.ext();
+                word fExt = fName.ext();
 
                 if
                 (
@@ -872,10 +862,10 @@ fileNameList readDir
                     (
                         type == fileType::file
                         && fName[fName.size()-1] != '~'
-                        && fileNameExt != "bak"
-                        && fileNameExt != "BAK"
-                        && fileNameExt != "old"
-                        && fileNameExt != "save"
+                        && fExt != "bak"
+                        && fExt != "BAK"
+                        && fExt != "old"
+                        && fExt != "save"
                     )
                 )
                 {
@@ -1432,7 +1422,7 @@ void* dlSym(void* handle, const std::string& symbol)
     }
 
     // get address of symbol
-    void* fun = (void *)
+    void* fun = reinterpret_cast<void *>
     (
         ::GetProcAddress(static_cast<HMODULE>(handle), symbol.c_str())
     );
@@ -1471,7 +1461,7 @@ bool dlSymFound(void* handle, const std::string& symbol)
 
 fileNameList dlLoaded()
 {
-    fileNameList libs;
+    DynamicList<fileName> libs;
     OfLoadedLibs & loadedLibs = getLoadedLibs();
 
     for (OfLoadedLibs::const_iterator it = loadedLibs.begin();
