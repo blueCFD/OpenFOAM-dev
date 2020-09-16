@@ -86,10 +86,10 @@ class regExp
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        regExp(const regExp&);
+        regExp(const regExp&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const regExp&);
+        void operator=(const regExp&) = delete;
 
         //- Return true if it matches and sets the sub-groups matched.
         //  Templated to support both std::string and Foam::string
