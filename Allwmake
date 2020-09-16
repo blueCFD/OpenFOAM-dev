@@ -21,6 +21,13 @@ wmakeCheckPwd "$WM_PROJECT_DIR" || {
 # Compile wmake support applications
 (cd wmake/src && make $(isMinGW && echo 'EXE_EXTENSION=.exe'))
 
+
+# Create the .build file sooner than libOpenFOAM
+if isMinGW
+then
+    wmakePrintBuild -update -pkg blueCFD-Core
+fi
+
 # Compile ThirdParty libraries and applications
 if [ -d "$WM_THIRD_PARTY_DIR" ]
 then
