@@ -242,6 +242,9 @@ bool dlSymFound(void* handle, const std::string& symbol);
 //- Return all loaded libraries
 fileNameList dlLoaded();
 
+//- Convert to unix path separators
+string toUnixPath(const string& path);
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
