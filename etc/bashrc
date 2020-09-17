@@ -240,14 +240,6 @@ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/paraview`
 _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/ensight`
 _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/gperftools`
 
-# Auto load other packages files present in the global config.d
-if [ -d "$WM_PROJECT_DIR/etc/config.d" ]; then
-  for configdsh in "$WM_PROJECT_DIR/etc/config.d"/*.sh; do
-    [ -e ${configdsh} ] && _foamSource ${configdsh}
-  done
-fi
-
-
 # Clean environment paths again. Only remove duplicates
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
