@@ -62,8 +62,6 @@ wmake $targetType meshTools
 # Decomposition methods needed by dummyThirdParty
 # (dummy metisDecomp, scotchDecomp etc) needed by e.g. meshTools
 if isMinGW; then
-  parallel/decompose/AllwmakeLnInclude
-
   # finiteVolume and dynamicMesh are needed by the Decomposition methods
   wmake $targetType finiteVolume
   wmake $targetType mesh/extrudeModel
