@@ -3,9 +3,3 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lfiniteVolume
-
-EXE_INC += \
-    -I$(LIB_SRC)/meshTools/lnInclude
-
-LIB_LIBS += \
-    -lmeshTools
