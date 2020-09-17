@@ -8,6 +8,7 @@
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
 # 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 # 2016-10-23 blueCAPE Lda: Modifications for blueCFD-Core 2016-2
+# 2020-09-17 FSD blueCAPE Lda: Modifications for blueCFD-Core 2020-1
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -34,7 +35,6 @@
 #     Modifications made:
 #        - Derived from the patches for blueCFD 2.1 and 2.2.
 #        - Extended compiler options to mingw32 and mingw-w32/64.
-#        - Added abilities for auto-loading shell script files from "config.d".
 #        - Some of the modifications were originally made by Symscape,
 #          namely:
 #          - Added "MSwindows" to "WM_OSTYPE".
