@@ -16,3 +16,8 @@ LIB_LIBS = \
     -lmomentumTransportModels \
     -lfluidThermoMomentumTransportModels \
     -lthermophysicalTransportModels
+
+LIB_LIBS += \
+    -lfluidThermophysicalModels \
+    -lsolidThermo \
+    -lspecie

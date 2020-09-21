@@ -7,3 +7,7 @@ LIB_LIBS = \
     -lfluidThermophysicalModels \
     -lspecie \
     -lfiniteVolume
+
+#if (defined( WIN32 ) || defined( WIN64 ))
+c++OPT := $(c++OPT:-gdwarf=) -Wa,-mbig-obj
+#endif
