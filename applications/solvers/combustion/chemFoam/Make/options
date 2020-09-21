@@ -13,4 +13,5 @@ EXE_LIBS = \
     -lmeshTools
 
 EXE_LIBS += \
-    -lfluidThermophysicalModels
+    -lfluidThermophysicalModels \
+    -lreactionThermophysicalModels
