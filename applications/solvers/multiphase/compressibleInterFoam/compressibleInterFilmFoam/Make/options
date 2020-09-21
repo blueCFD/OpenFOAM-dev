@@ -43,3 +43,6 @@ EXE_LIBS = \
     -ldynamicFvMesh \
     -lfiniteVolume \
     -lfvOptions
+
+EXE_LIBS += \
+     -lregionModels

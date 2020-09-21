@@ -1,8 +1,0 @@
-#include "../Make/options"
-
-/* We override only the LIB_LIBS entry for Windows */
-
-LIB_LIBS = \
-    -lfiniteVolume \
-    -lturbulenceModels \
-    -lcompressibleTurbulenceModels

@@ -9,3 +9,9 @@ EXE_INC = \
 LIB_LIBS = \
     -limmiscibleIncompressibleTwoPhaseMixture \
     -lfiniteVolume
+
+LIB_LIBS += \
+    -lincompressibleTwoPhaseMixture \
+    -ltwoPhaseMixture \
+    -linterfaceProperties \
+    -lincompressibleTransportModels

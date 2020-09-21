@@ -13,3 +13,6 @@ EXE_LIBS = \
     -lsolidThermo \
     -lsolidDisplacementThermo \
     -lmeshTools
+
+EXE_LIBS += \
+    -lfluidThermophysicalModels

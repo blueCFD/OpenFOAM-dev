@@ -25,5 +25,6 @@ EXE_LIBS += \
     -lsampling \
     -ltwoPhaseMixture \
     -lincompressibleTransportModels \
+    -lincompressibleTwoPhaseMixture \
     -linterfaceProperties \
     -ltwoPhaseProperties
