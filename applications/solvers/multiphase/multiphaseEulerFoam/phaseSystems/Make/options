@@ -1,4 +1,5 @@
 EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I../interfacialModels/lnInclude \
     -I../interfacialCompositionModels/lnInclude \
     -I../multiphaseCompressibleMomentumTransportModels/lnInclude \
@@ -10,9 +11,15 @@ EXE_INC = \
     -I$(LIB_SRC)/MomentumTransportModels/phaseCompressible/lnInclude \
     -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude \
     -I$(LIB_SRC)/combustionModels/lnInclude \
-    -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude
 
 LIB_LIBS = \
     -lcombustionModels
+
+LIB_LIBS += \
+    -lthermophysicalTransportModels \
+    -lfiniteVolume \
+    -lfvOptions \
+    -lmeshTools \
+    -lsampling
