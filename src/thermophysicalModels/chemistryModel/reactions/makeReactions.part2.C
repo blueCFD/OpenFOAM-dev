@@ -49,17 +49,19 @@ License
 #include "forPolynomials.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+/*
 template<>
 const char* const Foam::Tuple2<Foam::word, Foam::scalar>::typeName
 (
     "Tuple2<word,scalar>"
 );
+*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+/*
     forCommonGases(defineReaction, nullArg);
     forCommonLiquids(defineReaction, nullArg);
     forPolynomials(defineReaction, nullArg);
@@ -92,9 +94,9 @@ namespace Foam
     forCommonGases(makeIRReactions, powerSeriesReactionRate);
     forCommonLiquids(makeIRReactions, powerSeriesReactionRate);
     forPolynomials(makeIRReactions, powerSeriesReactionRate);
+*/
 
 
-/*
     // Pressure dependent reactions
 
     forCommonGases
@@ -228,7 +230,6 @@ namespace Foam
         ArrheniusReactionRate,
         SRIFallOffFunction
     );
-    */
 }
 
 // ************************************************************************* //

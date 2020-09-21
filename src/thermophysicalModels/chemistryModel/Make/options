@@ -14,3 +14,7 @@ LIB_LIBS = \
     -lODE \
     -lfiniteVolume \
     -lmeshTools
+
+#if (defined( WIN32 ) || defined( WIN64 ))
+c++OPT := $(c++OPT:-gdwarf=) -Wa,-mbig-obj
+#endif

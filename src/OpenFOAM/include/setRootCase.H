@@ -6,5 +6,3 @@ if (!args.checkRootCase())
 
 //Hack by blueCAPE Lda 2009
 #include "forceLoadLibraries.H"
-
-#include "listOutput.H"

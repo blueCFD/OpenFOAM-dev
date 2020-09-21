@@ -6,6 +6,7 @@ chemistryModel/TDACChemistryModel/reduction/chemistryReductionMethod/chemistryRe
 chemistryModel/TDACChemistryModel/tabulation/chemistryTabulationMethod/chemistryTabulationMethods.C
 
 reactions/makeReactions.C
+reactions/makeReactions.part2.C
 
 reactions/makeLangmuirHinshelwoodReactions.C
 reactions/makeMichaelisMentenReactions.C
