@@ -413,6 +413,13 @@ Foam::fileName Foam::IOobject::localPath() const
 }
 
 
+void Foam::IOobject::replaceFileName(const Foam::word & from, 
+                                     const Foam::word & to)
+{
+    replacedFileNames_.insert(from, to);
+}
+
+
 const Foam::word & Foam::IOobject::uniqueFileName() const
 {
     ListHashTable<word>::const_iterator findIt = 
