@@ -32,7 +32,7 @@
 #   NOTE: this script was partially based on the wmake script.
 #
 # Usage
-#     wmakeListAllIncludedLibraries <finalOptionsFullPath>
+#     wmakeListAllIncludedLibraries
 #
 #------------------------------------------------------------------------------
 Script=${0##*/}
@@ -40,11 +40,6 @@ Script=${0##*/}
 # Source the wmake functions
 # shellcheck source=scripts/wmakeFunctions
 . "${0%/*}/scripts/wmakeFunctions"
-
-if [ "$#" -eq 0 ]
-then
-    exit 1
-fi
 
 #
 # Check environment variables
@@ -57,9 +52,9 @@ do
     }
 done
 
-opFile=$1
+findObjectDir .
 
-EXE_INC=$(grep -e "EXE_INC.*=" $opFile | sed 's=EXE\_INC.*\=[ ]*==')
+EXE_INC=$(grep -e "EXE_INC.*=" $objectsDir/options | sed 's=EXE\_INC.*\=[ ]*==')
 FILES_INC=$(echo $EXE_INC | \
             sed -e "s/\-I\([a-zA-Z0-9]*\ *\)/\1/g" \
                 -e 's/(LIB_SRC)/FOAM_SRC/g' | \
@@ -67,8 +62,4 @@ FILES_INC=$(echo $EXE_INC | \
             grep -v -e "=" -e "EXE_INC")
 
 # Use only the libraries that we can find
-LIBSMUSTLOAD=""
-for libraryFiles in $FILES_INC
-do
-    grep -e "^LIB =" $libraryFiles | sed -e 's=.*/lib=-l='
-done
+eval 'grep -e "^LIB ="' $FILES_INC | sed -e 's=.*/lib=-l='
