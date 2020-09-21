@@ -1,0 +1,74 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2020 blueCAPE Lda
+#
+#    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#    For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     wmakeListAllIncludedLibraries
+#
+# Description
+#     Script for listing 
+#
+#   NOTE: this script was partially based on the wmake script.
+#
+# Usage
+#     wmakeListAllIncludedLibraries <finalOptionsFullPath>
+#
+#------------------------------------------------------------------------------
+Script=${0##*/}
+
+# Source the wmake functions
+# shellcheck source=scripts/wmakeFunctions
+. "${0%/*}/scripts/wmakeFunctions"
+
+if [ "$#" -eq 0 ]
+then
+    exit 1
+fi
+
+#
+# Check environment variables
+#
+for check in WM_OPTIONS WM_LINK_LANGUAGE WM_DIR WM_PROJECT WM_PROJECT_DIR
+do
+    eval test "\$$check" || {
+        echo "$Script error: environment variable \$$check not set" 1>&2
+        exit 1
+    }
+done
+
+opFile=$1
+
+EXE_INC=$(grep -e "EXE_INC.*=" $opFile | sed 's=EXE\_INC.*\=[ ]*==')
+FILES_INC=$(echo $EXE_INC | \
+            sed -e "s/\-I\([a-zA-Z0-9]*\ *\)/\1/g" \
+                -e 's/(LIB_SRC)/FOAM_SRC/g' | \
+            sed -e 's=[ ]=\n=g' -e 's=lnInclude=Make/files=g' | \
+            grep -v -e "=" -e "EXE_INC")
+
+# Use only the libraries that we can find
+LIBSMUSTLOAD=""
+for libraryFiles in $FILES_INC
+do
+    grep -e "^LIB =" $libraryFiles | sed -e 's=.*/lib=-l='
+done
