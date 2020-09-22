@@ -18,8 +18,17 @@ LIB_LIBS = \
     -lcombustionModels
 
 LIB_LIBS += \
-    -lthermophysicalTransportModels \
     -lfiniteVolume \
-    -lfvOptions \
+    -leulerianInterfacialModels \
+    -leulerianInterfacialCompositionModels \
+    -lmultiphaseMomentumTransportModels \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lreactionThermophysicalModels \
+    -lmomentumTransportModels \
+    -lfluidThermoMomentumTransportModels \
+    -lthermophysicalTransportModels \
     -lmeshTools \
-    -lsampling
+    -lsampling \
+    -lrhoReactionThermophysicalTransportModels \
+    -lVoFphaseCompressibleMomentumTransportModels

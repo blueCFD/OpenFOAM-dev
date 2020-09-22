@@ -15,3 +15,15 @@ EXE_INC = \
 LIB_LIBS = \
     -lmultiphaseMomentumTransportModels \
     -lthermophysicalTransportModels
+
+LIB_LIBS += \
+    -lphaseSystem \
+    -leulerianInterfacialModels \
+    -leulerianInterfacialCompositionModels \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lreactionThermophysicalModels \
+    -lfluidThermoMomentumTransportModels \
+    -lmomentumTransportModels \
+    -lfiniteVolume \
+    -lmeshTools
