@@ -4,7 +4,6 @@ EXE_INC = \
     -I../../interfacialCompositionModels/lnInclude \
     -I../../phaseSystems/lnInclude \
     -I../../multiphaseCompressibleMomentumTransportModels/lnInclude \
-    -IalphaContactAngle \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
@@ -18,3 +17,16 @@ EXE_INC = \
 LIB_LIBS = \
     -lcombustionModels \
     -lphaseSystem
+
+LIB_LIBS += \
+    -lfiniteVolume \
+    -leulerianInterfacialModels \
+    -leulerianInterfacialCompositionModels \
+    -lmultiphaseMomentumTransportModels \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lreactionThermophysicalModels \
+    -lmomentumTransportModels \
+    -lfluidThermoMomentumTransportModels \
+    -lmeshTools \
+    -lsampling

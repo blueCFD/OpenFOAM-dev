@@ -22,6 +22,7 @@ LIB_LIBS += \
     -leulerianInterfacialModels \
     -leulerianInterfacialCompositionModels \
     -lmultiphaseMomentumTransportModels \
+    -lmultiphaseThermophysicalTransportModels \
     -lfluidThermophysicalModels \
     -lspecie \
     -lreactionThermophysicalModels \
@@ -29,6 +30,4 @@ LIB_LIBS += \
     -lfluidThermoMomentumTransportModels \
     -lthermophysicalTransportModels \
     -lmeshTools \
-    -lsampling \
-    -lrhoReactionThermophysicalTransportModels \
-    -lVoFphaseCompressibleMomentumTransportModels
+    -lsampling
