@@ -10,3 +10,8 @@ LIB_LIBS = \
     -lfieldFunctionObjects \
     -lfileFormats \
     -lfiniteVolume
+
+LIB_LIBS += \
+    -lfluidThermophysicalModels \
+    -leulerianInterfacialModels \
+    -lphaseSystem
