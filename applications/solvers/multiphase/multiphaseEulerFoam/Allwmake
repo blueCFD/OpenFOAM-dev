@@ -16,8 +16,27 @@ wmake $targetType functionObjects
 
 else
 
-    # TODO: Pending revision
-    wmake $targetType phaseSystems
+    # Have to create a temporary copy at the user's folder, because that way we
+    # will have shorter paths that fit into Windows' 260 character limit
+    if [ "${PWD/$WM_PROJECT_DIR/}" != "$PWD" ]
+    then
+        originalPath=$PWD
+        originalRelative="${PWD/$WM_PROJECT_DIR/}"
+        temporaryPath="$WM_PROJECT_USER_DIR/$(basename $PWD).$(date +%s)"
+
+        mkdir -p $temporaryPath
+        cp -r . $temporaryPath
+        cd $temporaryPath
+        ./Allwmake $@
+        retval=$?
+        find . -name $WM_OPTIONS | while read line
+        do
+            cp -r $line/ $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line/
+        done
+        #TODO delete the temporary folder
+        exit $retval
+    fi
+
     wmakeLnInclude interfacialModels
 
     set +x
@@ -40,12 +59,15 @@ else
       export WM_CONTINUE_ON_ERROR=1
       set +e
 
-      wmake libso multiphaseSystem
-      wmake libso interfacialModels
+      wmake $targetType phaseSystems
+      wmake $targetType interfacialModels
+      wmake $targetType interfacialCompositionModels
+      wmake $targetType multiphaseCompressibleMomentumTransportModels
+      wmake $targetType multiphaseThermophysicalTransportModels
 
       exit 0
 
-    ) > /dev/null 2>&1
+    ) # > /dev/null 2>&1
 
     echo "Library stub stack is done being built at" \
          "multiphaseEulerFoam."
@@ -53,10 +75,14 @@ else
     # Now going to do the second and final linking step.
     set -x
 
-    wmake libso multiphaseSystem
-    wmake libso interfacialModels
+    wmake $targetType phaseSystems
+    wmake $targetType interfacialModels
+    wmake $targetType interfacialCompositionModels
+    wmake $targetType multiphaseCompressibleMomentumTransportModels
+    wmake $targetType multiphaseThermophysicalTransportModels
 
-    wmake
+    multiphaseEulerFoam/Allwmake $targetType $*
+    wmake $targetType functionObjects
 
 fi
 
