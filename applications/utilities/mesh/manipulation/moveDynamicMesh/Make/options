@@ -13,4 +13,5 @@ EXE_LIBS = \
     -ldynamicMesh
 
 EXE_LIBS += \
-    -lfiniteVolume
+    -lfiniteVolume \
+    -lfileFormats
