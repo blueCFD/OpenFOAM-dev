@@ -17,4 +17,10 @@ LIB_LIBS += \
     -lfiniteVolume \
     -lphaseSystem \
     -leulerianInterfacialModels \
-    -leulerianInterfacialCompositionModels
+    -leulerianInterfacialCompositionModels \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lreactionThermophysicalModels \
+    -lfluidThermoMomentumTransportModels \
+    -lmomentumTransportModels \
+    -lmeshTools

@@ -4,69 +4,7 @@ cd ${0%/*} || exit 1    # Run from this directory
 # Parse arguments for library compilation
 . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 
-if ! onWin; then
-
 wmake $targetType multiphaseSystems
 wmake $targetType
-
-else
-
-    set +x
-
-    echo "Library stub stack is currently being built at" \
-         "reactingTwoPhaseEulerFoam..."
-
-    # Going to ommit the first build loop, as it will give a few errors, but
-    # it's the second loop that matters.
-    (
-        export WM_CONTINUE_ON_ERROR=1
-        set +e
-
-        (find .. -name "Make.twoPhase" -type d ; \
-         find . -name "Make.win" -type d) | \
-            xargs -I {} grep -h "LIB =" {}/files | sed 's=.*/==' | \
-            while read libitem
-        do
-            if [ ! -e "$FOAM_LIBBIN/${libitem}.a" ]; then
-              cp $FOAM_LIBBIN/libstubLibrary.a $FOAM_LIBBIN/${libitem}.a
-            fi
-            if [ -e "$FOAM_LIBBIN/${libitem}.dll" ]; then
-              rm $FOAM_LIBBIN/${libitem}.dll
-            fi
-        done
-
-        eval rm $(wdep ../phaseSystems/ | \
-                  sed -e 's=\.dep$={sourceFiles,variables,options}=')
-        eval rm $(wdep ../interfacialModels/ | \
-                  sed -e 's=\.dep$={sourceFiles,variables,options}=')
-        eval rm $(wdep ../interfacialCompositionModels/ | \
-                  sed -e 's=\.dep$={sourceFiles,variables,options}=')
-
-        wmake libso ../phaseSystems Make.twoPhase
-        wmake libso ../interfacialModels Make.twoPhase
-        wmake libso ../interfacialCompositionModels Make.twoPhase
-
-        wmake libso twoPhaseSystem Make.win
-        wmake libso twoPhaseCompressibleTurbulenceModels Make.win
-
-        exit 0
-
-    ) > /dev/null 2>&1
-
-    echo "Library stub stack is done being built at" \
-         "reactingTwoPhaseEulerFoam."
-
-    set -x
-
-    wmake libso ../phaseSystems Make.twoPhase
-    wmake libso ../interfacialModels Make.twoPhase
-    wmake libso ../interfacialCompositionModels Make.twoPhase
-
-    wmake libso twoPhaseSystem Make.win
-    wmake libso twoPhaseCompressibleTurbulenceModels Make.win
-
-    wmake
-
-fi
 
 #------------------------------------------------------------------------------

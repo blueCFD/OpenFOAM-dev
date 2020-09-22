@@ -22,18 +22,26 @@ else
     then
         originalPath=$PWD
         originalRelative="${PWD/$WM_PROJECT_DIR/}"
-        temporaryPath="$WM_PROJECT_USER_DIR/$(basename $PWD).$(date +%s)"
+        temporaryPath="$WM_PROJECT_USER_DIR/$$"
+
+        echo "Handling this solver stack at the temporary path '$temporaryPath'"
 
         mkdir -p $temporaryPath
         cp -r . $temporaryPath
         cd $temporaryPath
+
         ./Allwmake $@
         retval=$?
+
         find . -name $WM_OPTIONS | while read line
         do
             cp -r $line/ $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line/
         done
+
         #TODO delete the temporary folder
+        cd ..
+        #[ -d "${temporaryPath}" ] && rm -r "${temporaryPath}"
+
         exit $retval
     fi
 
