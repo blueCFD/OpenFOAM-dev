@@ -1,22 +1,7 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # Run from this directory
 
-if ! onWin; then
-
 wclean libso multiphaseSystems
 wclean
-
-else
-
-    wclean libso ../phaseSystems Make.twoPhase
-    wclean libso ../interfacialModels Make.twoPhase
-    wclean libso ../interfacialCompositionModels Make.twoPhase
-
-    wclean libso twoPhaseSystem Make.win
-    wclean libso twoPhaseCompressibleTurbulenceModels Make.win
-
-    wclean
-
-fi
 
 #------------------------------------------------------------------------------
