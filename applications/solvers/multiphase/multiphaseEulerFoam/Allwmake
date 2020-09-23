@@ -35,6 +35,7 @@ else
 
         find . -name $WM_OPTIONS | while read line
         do
+            mkdir -p $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line
             cp -r $line/ $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line/
         done
 
