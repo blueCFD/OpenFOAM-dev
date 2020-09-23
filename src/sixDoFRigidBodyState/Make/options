@@ -7,3 +7,6 @@ EXE_INC = \
 LIB_LIBS = \
     -lfiniteVolume \
     -ldynamicFvMesh
+
+LIB_LIBS += \
+    -lsixDoFRigidBodyMotion
