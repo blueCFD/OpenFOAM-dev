@@ -110,12 +110,6 @@ public:
     TypeName("semiPermeableBaffleMassFraction");
 
 
-    // Static member functions
-
-        //- Access the composition for the given database
-        static const basicSpecieMixture& composition(const objectRegistry& db);
-
-
     // Constructors
 
         //- Construct from patch and internal field
