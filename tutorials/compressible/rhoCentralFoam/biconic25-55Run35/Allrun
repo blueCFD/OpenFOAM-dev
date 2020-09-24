@@ -10,7 +10,8 @@ runApplication datToFoam constant/grid256.dat
 
 points="constant/polyMesh/points"
 pointsTmp="constant/points.tmp"
-sed -i -e 's/binary/ascii/' -ne '1,17p' $points
+cutOffLine=$(grep -an "// \* \* \* \*" $points | cut -d : -f 1)
+sed -i -e 's/binary/ascii/' -ne '1,'$cutOffLine'p' $points
 cat $pointsTmp >> $points
 rm $pointsTmp
 
