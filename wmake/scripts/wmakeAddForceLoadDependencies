@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # License
 #
-#    Copyright (C) 2011-2017 blueCAPE Lda
+#    Copyright (C) 2011-2020 blueCAPE Lda
 #
 #    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
 #    For more information about these patches, visit:
@@ -43,6 +43,10 @@ Script=${0##*/}
 if [ "$#" -eq 0 ]
 then
     exit 1
+elif [ -n "$WM_DO_NOT_FORCE_LOAD" ]
+then
+    # Overridden the forcefully loaded libraries mode
+    exit 0
 fi
 
 #
