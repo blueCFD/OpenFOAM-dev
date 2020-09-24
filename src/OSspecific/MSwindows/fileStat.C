@@ -103,9 +103,9 @@ fileStat::fileStat
 
         int (*getFileStatus)(const char *, struct stat *) = ::stat;
 
-        if (getFileStatus(fName.c_str(), &status_) != 0)
+        if (getFileStatus(fName.c_str(), &status_) == 0)
         {
-            locIsValid = false;
+            locIsValid = true;
         }
         else if (checkVariants)
         {
