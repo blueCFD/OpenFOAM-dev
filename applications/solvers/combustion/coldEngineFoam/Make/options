@@ -24,3 +24,6 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lfvOptions
+
+EXE_LIBS += \
+    -lreactionThermophysicalModels
