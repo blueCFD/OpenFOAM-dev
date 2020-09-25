@@ -99,7 +99,7 @@ logReportDir()
 
 
 # Recursively run all cases
-foamRunTutorials -test -skipFirst
+foamRunTutorials -skipFirst $@
 
 
 # Analyse all log files
