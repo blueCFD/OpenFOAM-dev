@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -138,7 +138,7 @@ namespace Foam
 
 
 
-        //- initialise inotify
+        //- Initialise inotify
         inline fileMonitorWatcher(const bool useInotify, const label sz = 20)
         :
             useInotify_(useInotify)
@@ -157,7 +157,7 @@ namespace Foam
             }
         }
 
-        //- remove all watches
+        //- Remove all watches
         inline ~fileMonitorWatcher()
         {
         }

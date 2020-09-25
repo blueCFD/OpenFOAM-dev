@@ -1368,7 +1368,7 @@ bool dlClose(void* libHandle)
 
     const bool success = 
       ::FreeLibrary(static_cast<HMODULE>(libHandle));
-  
+
     if (!success) 
     {
         WarningInFunction
