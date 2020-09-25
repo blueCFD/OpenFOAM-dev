@@ -253,7 +253,7 @@ then
 fi
 
 cp -f $FOAM_TUTORIALS/Allrun .
-./Allrun $RUN_ARGUMENTS || retVal=1
+./Allrun -test $RUN_ARGUMENTS || retVal=1
 
 sed -e :a -e '/\\$/N; s/\\\n//; ta' Allrun > temp
 APPLICATIONS=\
