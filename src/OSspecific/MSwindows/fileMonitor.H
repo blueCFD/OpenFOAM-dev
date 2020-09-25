@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -92,8 +92,10 @@ public:
 
         static const NamedEnum<fileState, 3> fileStateNames_;
 
+
 private:
-    // Private data
+
+    // Private Data
 
         //- Whether to use inotify (requires -DFOAM_USE_INOTIFY, see above)
         const bool useInotify_;

@@ -434,6 +434,7 @@ DebugSwitches
     displacementLaplacian 0;
     displacementSBRStress 0;
     distanceSurface     0;
+    dlLibraryTable      0;
     Distribution        0;
     downwind            0;
     dragModel           0;
