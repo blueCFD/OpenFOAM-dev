@@ -8,6 +8,7 @@
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added -target and -jobs
 # 2017-09-26 FSD blueCAPE Lda: Added more verbosity
+# 2020-09-28 FSD blueCAPE Lda: Ability to test in function of wall clock
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -51,6 +52,9 @@ options:
   -jobs N    | -j     for running multiple cases in parallel with N cores
   -parallel  | -p     run only cases that are configured to run in parallel
   -nonParallel | -n   run only cases that are configured to run in serial
+  -wallClock <sec> | -w <sec>
+                      run the solvers for a limited amount of wall clock time
+                    in second, instead of just running a single time step
 
 * quickly tests the tutorials and writes out the scheme/solver information
 
@@ -73,6 +77,7 @@ TEST_RUN_DIR=../tutorialsTest
 RUN_ARGUMENTS=""
 serialOnly=false
 parallelOnly=false
+wallClockLimit=-1
 
 # parse options
 while [ "$#" -gt 0 ]
@@ -81,7 +86,7 @@ do
     -r | -root)
         [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
         ROOT="$2"
-		TUTORIALS_DIR=$ROOT
+        TUTORIALS_DIR=$ROOT
         shift
         ;;
     -t | -target)
@@ -110,6 +115,12 @@ do
         parallelOnly=true
         RUN_ARGUMENTS="${RUN_ARGUMENTS} $1"
         echo "NOTE: Will only run cases in parallel mode."
+        ;;
+    -w | -wallClock)
+        [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
+        wallClockLimit=$2
+        [ "$2" -ge 1 ] || usage "'$1' option requires an argument as an integer"
+        shift
         ;;
     -h | -help)
         usage
@@ -227,8 +238,11 @@ cp -r ${TUTORIALS_DIR} ${TEST_RUN_DIR}
 echo "Modifying the controlDicts to run only one time step"
 cd ${TEST_RUN_DIR} || exit 1
 
-for CD in `find . -name "controlDict*"`
-do
+if [ "$wallClockLimit" = "-1" ]
+then
+
+  for CD in `find . -name "controlDict*"`
+  do
     mv ${CD} ${CD}.orig
     sed \
     -e s/"\(startFrom[ \t]*\)\([a-zA-Z]*\);"/"\1 latestTime;"/g \
@@ -236,7 +250,23 @@ do
     -e s/"\(writeControl[ \t]*\)\([a-zA-Z]*\);"/"\1 timeStep;"/g \
     -e s/"\(writeInterval[ \t]*\)\([0-9a-zA-Z.-]*\);"/"\1 1;"/g \
     ${CD}.orig > ${CD}
-done
+  done
+
+else
+
+  for CD in `find . -name "controlDict*"`
+  do
+    cp ${CD} ${CD}.orig
+    foamDictionary -entry functions -value ${CD} 2>/dev/null || \
+        foamDictionary -entry functions -set "{}"
+
+    foamDictionary -entry \
+        functions/"#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
+        -add "" ${CD}
+  done
+
+fi
+
 
 if [ "$DEFAULT_SCHEMES" = true ]
 then
