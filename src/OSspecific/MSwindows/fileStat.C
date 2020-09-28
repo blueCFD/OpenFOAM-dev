@@ -79,7 +79,8 @@ namespace Foam
 
 fileStat::fileStat()
 :
-    isValid_(false)
+    isValid_(false),
+    actualValidFileName_()
 {}
 
 
@@ -89,7 +90,8 @@ fileStat::fileStat
     const bool checkVariants,
     const bool followLink,
     const unsigned int maxTime
-)
+) :
+    actualValidFileName_()
 {
     // Work on volatile
     volatile bool locIsValid = false;
@@ -106,6 +108,7 @@ fileStat::fileStat
         if (getFileStatus(fName.c_str(), &status_) == 0)
         {
             locIsValid = true;
+            actualValidFileName_ = fName;
         }
         else if (checkVariants)
         {
@@ -120,6 +123,7 @@ fileStat::fileStat
                 const fileName fNameVar = fName + "." + variantExts_[i];
                 if (getFileStatus(fNameVar.c_str(), &status_) == 0)
                 {
+                    actualValidFileName_ = fNameVar;
                     locIsValid = true;
                 }
             }
