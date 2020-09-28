@@ -65,16 +65,12 @@ Details
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
-#include <map>
+#include <unordered_map>
 
 // Windows system header files
 #include <io.h> // _close
 #include <windows.h>
 #include <signal.h>
-
-// For C++11 std::thread and std::mutex
-#include <thread>
-#include <mutex>
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -1268,15 +1264,8 @@ int system(const std::string& command)
 // Explicitly track loaded libraries, rather than use
 // EnumerateLoadedModules64 and have to link against Dbghelp.dll
 // Details at http://msdn.microsoft.com/en-us/library/ms679316(v=vs.85).aspx
-typedef std::map<void*, std::string> OfLoadedLibs;
-
-static
-OfLoadedLibs &
-getLoadedLibs()
-{
-  static OfLoadedLibs loadedLibs;
-  return loadedLibs;
-}
+// Using the convention from OpenFOAM.com
+static std::unordered_map<void*, std::string> libsLoaded;
 
 
 void* dlOpen(const fileName& libName, const bool check)
@@ -1342,7 +1331,7 @@ void* dlOpen(const fileName& libName, const bool check)
         }
         else
         {
-            getLoadedLibs()[libHandle] = libName;
+            libsLoaded[libHandle] = libName;
         }
 
         if (MSwindows::debug)
@@ -1378,7 +1367,7 @@ bool dlClose(void* libHandle)
     }
     else
     {
-        getLoadedLibs().erase(libHandle);
+        libsLoaded.erase(libHandle);
     }
     
     return success;
@@ -1433,14 +1422,11 @@ bool dlSymFound(void* handle, const std::string& symbol)
 
 fileNameList dlLoaded()
 {
-    DynamicList<fileName> libs;
-    OfLoadedLibs & loadedLibs = getLoadedLibs();
+    DynamicList<fileName> libs(libsLoaded.size());
 
-    for (OfLoadedLibs::const_iterator it = loadedLibs.begin();
-         it != loadedLibs.end();
-         ++it)
+    for (const auto& item : libsLoaded)
     {
-        libs.append(it->second);
+        libs.append(item.second);
     }
 
     if (MSwindows::debug)
