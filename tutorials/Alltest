@@ -257,8 +257,9 @@ else
   for CD in `find . -name "controlDict*"`
   do
     cp ${CD} ${CD}.orig
-    foamDictionary -entry functions -value ${CD} 2>/dev/null || \
-        foamDictionary -entry functions -set "{}"
+
+    foamDictionary -entry functions ${CD} 2>&1 1>/dev/null || \
+        foamDictionary -entry functions -set "{}" ${CD} 2>&1 1>/dev/null
 
     foamDictionary -entry \
         functions/"#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
