@@ -90,6 +90,8 @@ class fileStat
         struct stat_extended status_;
 
         bool isValid_;
+        
+        fileName actualValidFileName_;
 
 
 public:
@@ -137,6 +139,12 @@ public:
             bool isValid() const
             {
                 return isValid_;
+            }
+
+            //- What's the actual file's name?
+            const fileName& actualValidFileName() const
+            {
+                return actualValidFileName_;
             }
 
 

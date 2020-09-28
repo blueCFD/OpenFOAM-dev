@@ -616,16 +616,17 @@ fileType type
     //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
 
     fileType vfileType = fileType::undefined;
+    fileName actualFileName = name;
+    fileStat fileStatus(name, checkVariants, followLink);
+
+    if(checkVariants && fileStatus.isValid())
+    {
+        actualFileName = fileStatus.actualValidFileName();
+    }
+
     const DWORD attrs = ::GetFileAttributes(name.c_str());
-
-    bool variantCheck =
-    (
-        !checkVariants
-      ||
-        (checkVariants && !fileStat(name, checkVariants, followLink).isValid())
-    );
-
-    if (attrs != INVALID_FILE_ATTRIBUTES && variantCheck)
+    
+    if (attrs != INVALID_FILE_ATTRIBUTES)
     {
         vfileType = (attrs & FILE_ATTRIBUTE_DIRECTORY) ?
             fileType::directory :
@@ -919,7 +920,6 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
     }
 
     const fileType srcType = src.type(false, followLink);
-
     fileName destFile(dest);
 
     // Check type of source file.
