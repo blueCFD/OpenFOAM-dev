@@ -71,6 +71,9 @@ do
     -test)
         shift
         ;;
+    -nonParallel|-parallel)
+        shift
+        ;;
     -*)
         usage "Invalid option '$1'"
         ;;
