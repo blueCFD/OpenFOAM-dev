@@ -258,8 +258,8 @@ else
   do
     cp ${CD} ${CD}.orig
 
-    foamDictionary -entry functions ${CD} 2>&1 1>/dev/null || \
-        foamDictionary -entry functions -set "{}" ${CD} 2>&1 1>/dev/null
+    foamDictionary -entry functions ${CD} 1> /dev/null 2>&1 || \
+        foamDictionary -entry functions -set "{}" ${CD} 1> /dev/null 2>&1
 
     foamDictionary -entry \
         functions/"#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
