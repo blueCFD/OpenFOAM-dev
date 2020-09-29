@@ -103,6 +103,7 @@ foamRunTutorials -skipFirst $@
 
 
 # Analyse all log files
+echo "Analysing all log files..."
 rm -f testLoopReport && touch testLoopReport
 
 retVal=0
@@ -113,6 +114,8 @@ do
 done
 
 find . -name "log.*" -exec cat {} \; >> logs
+
+echo "Tutorials have been executed and processed."
 
 exit $retVal
 
