@@ -23,12 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "noChemistryReduction.H"
-#include "DAC.T.H"
-#include "DRG.T.H"
-#include "DRGEP.T.H"
-#include "EFA.T.H"
-#include "PFA.T.H"
+#include "chemistryReductionMethod.H"
 
 #include "psiReactionThermo.H"
 #include "rhoReactionThermo.H"
@@ -45,36 +40,10 @@ namespace Foam
     forCommonGases(defineChemistryReductionMethod, psiReactionThermo);
     forCommonGases(defineChemistryReductionMethod, rhoReactionThermo);
 
-    forCommonGases(makeChemistryReductionMethod, none, psiReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, none, rhoReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, DAC, psiReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, DAC, rhoReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, DRG, psiReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, DRG, rhoReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, DRGEP, psiReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, DRGEP, rhoReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, EFA, psiReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, EFA, rhoReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, PFA, psiReactionThermo);
-    forCommonGases(makeChemistryReductionMethod, PFA, rhoReactionThermo);
-
     forCommonLiquids(defineChemistryReductionMethod, rhoReactionThermo);
 
-    forCommonLiquids(makeChemistryReductionMethod, none, rhoReactionThermo);
-    forCommonLiquids(makeChemistryReductionMethod, DAC, rhoReactionThermo);
-    forCommonLiquids(makeChemistryReductionMethod, DRG, rhoReactionThermo);
-    forCommonLiquids(makeChemistryReductionMethod, DRGEP, rhoReactionThermo);
-    forCommonLiquids(makeChemistryReductionMethod, EFA, rhoReactionThermo);
-    forCommonLiquids(makeChemistryReductionMethod, PFA, rhoReactionThermo);
-
     forPolynomials(defineChemistryReductionMethod, rhoReactionThermo);
-
-    forPolynomials(makeChemistryReductionMethod, none, rhoReactionThermo);
-    forPolynomials(makeChemistryReductionMethod, DAC, rhoReactionThermo);
-    forPolynomials(makeChemistryReductionMethod, DRG, rhoReactionThermo);
-    forPolynomials(makeChemistryReductionMethod, DRGEP, rhoReactionThermo);
-    forPolynomials(makeChemistryReductionMethod, EFA, rhoReactionThermo);
-    forPolynomials(makeChemistryReductionMethod, PFA, rhoReactionThermo);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// ************************************************************************* //

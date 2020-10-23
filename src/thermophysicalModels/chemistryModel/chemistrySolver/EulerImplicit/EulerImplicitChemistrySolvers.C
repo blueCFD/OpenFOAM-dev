@@ -23,6 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "EulerImplicit.T.H"
+
 #include "StandardChemistryModel.T.H"
 #include "TDACChemistryModel.T.H"
 
@@ -38,12 +40,13 @@ License
 
 namespace Foam
 {
-    forCommonGases(defineChemistrySolvers, psiReactionThermo);
-    forCommonGases(defineChemistrySolvers, rhoReactionThermo);
+    forCommonGases(makeChemistrySolvers, EulerImplicit, psiReactionThermo);
+    forCommonGases(makeChemistrySolvers, EulerImplicit, rhoReactionThermo);
 
-    forCommonLiquids(defineChemistrySolvers, rhoReactionThermo);
+    forCommonLiquids(makeChemistrySolvers, EulerImplicit, rhoReactionThermo);
 
-    forPolynomials(defineChemistrySolvers, rhoReactionThermo);
+    forPolynomials(makeChemistrySolvers, EulerImplicit, rhoReactionThermo);
 }
+
 
 // ************************************************************************* //
