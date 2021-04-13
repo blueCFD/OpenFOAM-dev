@@ -1,8 +1,8 @@
 #                            -*- mode: org; -*-
 #
-#+TITLE:          blueCFD-Core README for port of OpenFOAM 6
+#+TITLE:          blueCFD-Core README for port of OpenFOAM 8
 #+AUTHOR:                     FSD blueCAPE Lda
-#+DATE:                       28th July 2020
+#+DATE:                       23rd October 2020
 #+LINK:                    http://bluecfd.com/Core
 #+OPTIONS: author:nil ^:{}
 # Copyright (c) 2013-2020 blueCAPE Lda.
