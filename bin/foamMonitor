@@ -100,7 +100,7 @@ gpterminal='x11 1 font "helvetica,17" linewidth 1.5 persist noraise'
 
 if isMinGW
 then
-    gpterminal='wxt 1 font "helvetica,17" linewidth 1.5'
+    gpterminal='windows 1 font "helvetica,17" linewidth 1.5'
 fi
 
 command -v gnuplot >/dev/null 2>&1 || error "Gnuplot not installed"
