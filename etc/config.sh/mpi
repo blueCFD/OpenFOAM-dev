@@ -316,6 +316,15 @@ MSMPI81)
     _foamAddLib     $MPI_ARCH_PATH/lib
     ;;
 
+MSMPI101)
+    export FOAM_MPI=MS-MPI-10.1.2
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    ;;
+
 *)
     export FOAM_MPI=dummy
     ;;
