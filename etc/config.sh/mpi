@@ -325,6 +325,21 @@ MSMPI101)
     _foamAddLib     $MPI_ARCH_PATH/lib
     ;;
 
+INTELMPI20216)
+    export FOAM_MPI=IntelMPI_2021.6
+    export MPI_HOME=$WM_THIRD_PARTY_DIR/$FOAM_MPI
+    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER/$FOAM_MPI
+    export I_MPI_ROOT=$MPI_ARCH_PATH
+
+    _foamAddPath    $MPI_ARCH_PATH/bin
+    _foamAddPath    $MPI_ARCH_PATH/bin/release
+    _foamAddPath    $MPI_ARCH_PATH/libfabric/bin
+    _foamAddPath    $MPI_ARCH_PATH/libfabric/bin/utils
+
+    _foamAddLib     $MPI_ARCH_PATH/lib
+    _foamAddLib     $MPI_ARCH_PATH/lib/release
+    ;;
+
 *)
     export FOAM_MPI=dummy
     ;;
