@@ -6,11 +6,8 @@
 #   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2016-08-03 blueCAPE Lda: Added passing on command line options
-# 2017-09-26 FSD blueCAPE Lda: Added more verbosity
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -99,11 +96,10 @@ logReportDir()
 
 
 # Recursively run all cases
-foamRunTutorials -skipFirst $@
+foamRunTutorials -test -skipFirst
 
 
 # Analyse all log files
-echo "Analysing all log files..."
 rm -f testLoopReport && touch testLoopReport
 
 retVal=0
@@ -114,8 +110,6 @@ do
 done
 
 find . -name "log.*" -exec cat {} \; >> logs
-
-echo "Tutorials have been executed and processed."
 
 exit $retVal
 
