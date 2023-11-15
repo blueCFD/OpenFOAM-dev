@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -385,61 +385,77 @@ public:
 #endif
 
 
-#define makeFvsPatchTypeFieldTypeName(type)                                    \
+#define makeFvsPatchField(fvsPatchTypeField)                                   \
                                                                                \
-defineNamedTemplateTypeNameAndDebug(type, 0);
+defineNamedTemplateTypeNameAndDebug(fvsPatchTypeField, 0);                     \
+template<>                                                                     \
+int fvsPatchTypeField::disallowGenericFvsPatchField                            \
+(                                                                              \
+    debug::debugSwitch("disallowGenericFvsPatchField", 0)                      \
+);                                                                             \
+defineTemplateRunTimeSelectionTable(fvsPatchTypeField, patch);                 \
+defineTemplateRunTimeSelectionTable(fvsPatchTypeField, patchMapper);           \
+defineTemplateRunTimeSelectionTable(fvsPatchTypeField, dictionary);
 
-#define makeFvsPatchFieldsTypeName(type)                                       \
-                                                                               \
-makeFvsPatchTypeFieldTypeName(type##FvsPatchScalarField);                      \
-makeFvsPatchTypeFieldTypeName(type##FvsPatchVectorField);                      \
-makeFvsPatchTypeFieldTypeName(type##FvsPatchSphericalTensorField);             \
-makeFvsPatchTypeFieldTypeName(type##FvsPatchSymmTensorField);                  \
-makeFvsPatchTypeFieldTypeName(type##FvsPatchTensorField);
 
+#define addToPatchFieldRunTimeSelection(PatchTypeField, typePatchTypeField)    \
+    addToRunTimeSelectionTable                                                 \
+    (                                                                          \
+        PatchTypeField,                                                        \
+        typePatchTypeField,                                                    \
+        patch                                                                  \
+    );                                                                         \
+    addToRunTimeSelectionTable                                                 \
+    (                                                                          \
+        PatchTypeField,                                                        \
+        typePatchTypeField,                                                    \
+        patchMapper                                                            \
+    );                                                                         \
+    addToRunTimeSelectionTable                                                 \
+    (                                                                          \
+        PatchTypeField,                                                        \
+        typePatchTypeField,                                                    \
+        dictionary                                                             \
+    );
+
+
+// For non-templated patch fields
 #define makeFvsPatchTypeField(PatchTypeField, typePatchTypeField)              \
-                                                                               \
-defineNamedTemplateTypeNameAndDebug(typePatchTypeField, 0);                    \
-                                                                               \
-addToRunTimeSelectionTable                                                     \
-(                                                                              \
-    PatchTypeField, typePatchTypeField, patch                                  \
-);                                                                             \
-                                                                               \
-addToRunTimeSelectionTable                                                     \
-(                                                                              \
-    PatchTypeField,                                                            \
-    typePatchTypeField,                                                        \
-    patchMapper                                                                \
-);                                                                             \
-                                                                               \
-addToRunTimeSelectionTable                                                     \
-(                                                                              \
-    PatchTypeField, typePatchTypeField, dictionary                             \
-);
+    defineTypeNameAndDebug(typePatchTypeField, 0);                             \
+    addToPatchFieldRunTimeSelection(PatchTypeField, typePatchTypeField)
 
+// For templated patch fields
+#define makeTemplateFvsPatchTypeField(fieldType, type)                         \
+    defineNamedTemplateTypeNameAndDebug                                        \
+    (                                                                          \
+        CAT4(type, FvsPatch, CAPITALIZE(fieldType), Field),                    \
+        0                                                                      \
+    );                                                                         \
+    addToPatchFieldRunTimeSelection                                            \
+    (                                                                          \
+        CAT3(fvsPatch, CAPITALIZE(fieldType), Field),                          \
+        CAT4(type, FvsPatch, CAPITALIZE(fieldType), Field)                     \
+    )
 
 #define makeFvsPatchFields(type)                                               \
-                                                                               \
-makeFvsPatchTypeField(fvsPatchScalarField, type##FvsPatchScalarField);         \
-makeFvsPatchTypeField(fvsPatchVectorField, type##FvsPatchVectorField);         \
-makeFvsPatchTypeField                                                          \
-(                                                                              \
-    fvsPatchSphericalTensorField,                                              \
-    type##FvsPatchSphericalTensorField                                         \
-);                                                                             \
-makeFvsPatchTypeField(fvsPatchSymmTensorField, type##FvsPatchSymmTensorField); \
-makeFvsPatchTypeField(fvsPatchTensorField, type##FvsPatchTensorField);
+    FOR_ALL_FIELD_TYPES(makeTemplateFvsPatchTypeField, type)
 
+#define makeFvsPatchFieldTypeName(fieldType, type)                             \
+    defineNamedTemplateTypeNameAndDebug                                        \
+    (                                                                          \
+        CAT4(type, FvsPatch, CAPITALIZE(fieldType), Field),                    \
+        0                                                                      \
+    );
+
+#define makeFvsPatchFieldTypeNames(type)                                       \
+    FOR_ALL_FIELD_TYPES(makeFvsPatchFieldTypeName, type)
+
+#define makeFvsPatchTypeFieldTypedef(fieldType, type)                          \
+    typedef type##FvsPatchField<fieldType>                                     \
+        CAT4(type, FvsPatch, CAPITALIZE(fieldType), Field);
 
 #define makeFvsPatchTypeFieldTypedefs(type)                                    \
-                                                                               \
-typedef type##FvsPatchField<scalar> type##FvsPatchScalarField;                 \
-typedef type##FvsPatchField<vector> type##FvsPatchVectorField;                 \
-typedef type##FvsPatchField<sphericalTensor>                                   \
-    type##FvsPatchSphericalTensorField;                                        \
-typedef type##FvsPatchField<symmTensor> type##FvsPatchSymmTensorField;         \
-typedef type##FvsPatchField<tensor> type##FvsPatchTensorField;
+    FOR_ALL_FIELD_TYPES(makeFvsPatchTypeFieldTypedef, type)
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
