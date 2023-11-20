@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -48,6 +48,7 @@ using std::ios;
 #include "symmetryPlaneFvPatch.H"
 #include "symmetryFvPatch.H"
 #include "cellModeller.H"
+#include "OSspecific.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

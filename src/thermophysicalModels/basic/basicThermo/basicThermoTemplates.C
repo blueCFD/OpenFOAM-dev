@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,11 +24,12 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "basicThermo.H"
+#include "wordIOList.H"
 
-// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
 template<class Thermo, class Table>
-typename Table::iterator Foam::basicThermo::lookupThermo
+typename Table::iterator Foam::basicThermo::lookupCstrIter
 (
     const dictionary& thermoTypeDict,
     Table* tablePtr,
@@ -50,43 +51,34 @@ typename Table::iterator Foam::basicThermo::lookupThermo
             << nl << nl;
 
         // Get the list of all the suitable thermo packages available
-        wordList validThermoTypeNames
-        (
-            tablePtr->sortedToc()
-        );
+        wordList validThermoTypeNames(tablePtr->sortedToc());
 
         // Build a table of the thermo packages constituent parts
-        // Note: row-0 contains the names of constituent parts
-        List<wordList> validThermoTypeNameCmpts
-        (
-            validThermoTypeNames.size() + 1
-        );
+        DynamicList<wordList> validThermoTypeNameCmpts;
 
-        validThermoTypeNameCmpts[0].setSize(nCmpt);
-        forAll(validThermoTypeNameCmpts[0], j)
+        // Set row zero to the column headers
+        validThermoTypeNameCmpts.append(wordList(nCmpt));
+        forAll(validThermoTypeNameCmpts[0], i)
         {
-            validThermoTypeNameCmpts[0][j] = cmptNames[j];
+            validThermoTypeNameCmpts[0][i] = cmptNames[i];
         }
 
-        // Split the thermo package names into their constituent parts
-        // Removing incompatible entries from the list
-        label j = 0;
+        // Split the thermo package names into their constituent parts and add
+        // them to the table, removing any incompatible entries from the list
         forAll(validThermoTypeNames, i)
         {
-            wordList names
+            const wordList names
             (
                 Thermo::splitThermoName(validThermoTypeNames[i], nCmpt)
             );
 
             if (names.size())
             {
-                validThermoTypeNameCmpts[j++] = names;
+                validThermoTypeNameCmpts.append(names);
             }
         }
-        validThermoTypeNameCmpts.setSize(j);
 
         // Print the table of available packages
-        // in terms of their constituent parts
         printTable(validThermoTypeNameCmpts, FatalError);
 
         FatalError<< exit(FatalError);
@@ -97,7 +89,7 @@ typename Table::iterator Foam::basicThermo::lookupThermo
 
 
 template<class Thermo, class Table>
-typename Table::iterator Foam::basicThermo::lookupThermo
+typename Table::iterator Foam::basicThermo::lookupCstrIter
 (
     const dictionary& thermoDict,
     Table* tablePtr
@@ -129,7 +121,7 @@ typename Table::iterator Foam::basicThermo::lookupThermo
               + word(thermoTypeDict.lookup("energy")) + ">>"
             );
 
-            return lookupThermo<Thermo, Table>
+            return lookupCstrIter<Thermo, Table>
             (
                 thermoTypeDict,
                 tablePtr,
@@ -164,7 +156,7 @@ typename Table::iterator Foam::basicThermo::lookupThermo
               + word(thermoTypeDict.lookup("energy")) + ">>>"
             );
 
-            return lookupThermo<Thermo, Table>
+            return lookupCstrIter<Thermo, Table>
             (
                 thermoTypeDict,
                 tablePtr,
@@ -197,6 +189,8 @@ typename Table::iterator Foam::basicThermo::lookupThermo
 }
 
 
+// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
+
 template<class Thermo>
 Foam::autoPtr<Thermo> Foam::basicThermo::New
 (
@@ -218,7 +212,7 @@ Foam::autoPtr<Thermo> Foam::basicThermo::New
     );
 
     typename Thermo::fvMeshConstructorTable::iterator cstrIter =
-        lookupThermo<Thermo, typename Thermo::fvMeshConstructorTable>
+        lookupCstrIter<Thermo, typename Thermo::fvMeshConstructorTable>
         (
             thermoDict,
             Thermo::fvMeshConstructorTablePtr_
@@ -237,7 +231,7 @@ Foam::autoPtr<Thermo> Foam::basicThermo::New
 )
 {
     typename Thermo::dictionaryConstructorTable::iterator cstrIter =
-        lookupThermo<Thermo, typename Thermo::dictionaryConstructorTable>
+        lookupCstrIter<Thermo, typename Thermo::dictionaryConstructorTable>
         (
             dict,
             Thermo::dictionaryConstructorTablePtr_

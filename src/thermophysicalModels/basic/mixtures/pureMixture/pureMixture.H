@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,24 +51,32 @@ class pureMixture
 :
     public basicMixture
 {
-    // Private Data
-
-        ThermoType mixture_;
-
-        //- Construct as copy (not implemented)
-        pureMixture(const pureMixture<ThermoType>&);
-
 
 public:
 
     //- The type of thermodynamics this mixture is instantiated for
     typedef ThermoType thermoType;
 
+    //- The type of mixture
+    typedef ThermoType mixtureType;
+
+
+private:
+
+    // Private Data
+
+        mixtureType mixture_;
+
+
+public:
 
     // Constructors
 
         //- Construct from dictionary, mesh and phase name
         pureMixture(const dictionary&, const fvMesh&, const word&);
+
+        //- Disallow default bitwise copy construction
+        pureMixture(const pureMixture<ThermoType>&) = delete;
 
 
     // Member Functions
@@ -79,39 +87,13 @@ public:
             return "pureMixture<" + ThermoType::typeName() + '>';
         }
 
-        const ThermoType& mixture() const
+        const mixtureType& cellMixture(const label) const
         {
             return mixture_;
         }
 
-        const ThermoType& cellMixture(const label) const
-        {
-            return mixture_;
-        }
-
-        const ThermoType& patchFaceMixture
+        const mixtureType& patchFaceMixture
         (
-            const label,
-            const label
-        ) const
-        {
-            return mixture_;
-        }
-
-        const ThermoType& cellVolMixture
-        (
-            const scalar,
-            const scalar,
-            const label
-        ) const
-        {
-            return mixture_;
-        }
-
-        const ThermoType& patchFaceVolMixture
-        (
-            const scalar,
-            const scalar,
             const label,
             const label
         ) const
@@ -121,6 +103,12 @@ public:
 
         //- Read dictionary
         void read(const dictionary&);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const pureMixture<ThermoType>&) = delete;
 };
 
 

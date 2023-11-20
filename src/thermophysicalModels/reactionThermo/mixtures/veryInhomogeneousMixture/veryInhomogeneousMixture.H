@@ -51,6 +51,18 @@ class veryInhomogeneousMixture
 :
     public basicCombustionMixture
 {
+
+public:
+
+    //- The type of thermodynamics this mixture is instantiated for
+    typedef ThermoType thermoType;
+
+    //- The type of mixture
+    typedef ThermoType mixtureType;
+
+
+private:
+
     // Private Data
 
         static const int nSpecies_ = 3;
@@ -58,11 +70,11 @@ class veryInhomogeneousMixture
 
         dimensionedScalar stoicRatio_;
 
-        ThermoType fuel_;
-        ThermoType oxidant_;
-        ThermoType products_;
+        mixtureType fuel_;
+        mixtureType oxidant_;
+        mixtureType products_;
 
-        mutable ThermoType mixture_;
+        mutable mixtureType mixture_;
 
         //- Mixture fraction
         volScalarField& ft_;
@@ -73,15 +85,8 @@ class veryInhomogeneousMixture
         //- Regress variable
         volScalarField& b_;
 
-        //- Construct as copy (not implemented)
-        veryInhomogeneousMixture(const veryInhomogeneousMixture<ThermoType>&);
-
 
 public:
-
-    //- The type of thermodynamics this mixture is instantiated for
-    typedef ThermoType thermoType;
-
 
     // Constructors
 
@@ -93,6 +98,11 @@ public:
             const word&
         );
 
+        //- Disallow default bitwise copy construction
+        veryInhomogeneousMixture
+        (
+            const veryInhomogeneousMixture<ThermoType>&
+        ) = delete;
 
     //- Destructor
     virtual ~veryInhomogeneousMixture()
@@ -112,14 +122,14 @@ public:
             return stoicRatio_;
         }
 
-        const ThermoType& mixture(const scalar, const scalar) const;
+        const mixtureType& mixture(const scalar, const scalar) const;
 
-        const ThermoType& cellMixture(const label celli) const
+        const mixtureType& cellMixture(const label celli) const
         {
             return mixture(ft_[celli], fu_[celli]);
         }
 
-        const ThermoType& patchFaceMixture
+        const mixtureType& patchFaceMixture
         (
             const label patchi,
             const label facei
@@ -132,12 +142,12 @@ public:
             );
         }
 
-        const ThermoType& cellReactants(const label celli) const
+        const mixtureType& cellReactants(const label celli) const
         {
             return mixture(ft_[celli], ft_[celli]);
         }
 
-        const ThermoType& patchFaceReactants
+        const mixtureType& patchFaceReactants
         (
             const label patchi,
             const label facei
@@ -150,13 +160,13 @@ public:
             );
         }
 
-        const ThermoType& cellProducts(const label celli) const
+        const mixtureType& cellProducts(const label celli) const
         {
             scalar ft = ft_[celli];
             return mixture(ft, fres(ft, stoicRatio().value()));
         }
 
-        const ThermoType& patchFaceProducts
+        const mixtureType& patchFaceProducts
         (
             const label patchi,
             const label facei
@@ -171,6 +181,12 @@ public:
 
         //- Return thermo based on index
         const ThermoType& specieThermo(const label speciei) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const veryInhomogeneousMixture<ThermoType>&) = delete;
 };
 
 

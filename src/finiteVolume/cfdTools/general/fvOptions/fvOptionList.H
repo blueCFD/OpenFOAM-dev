@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,9 +79,6 @@ protected:
 
     // Protected Member Functions
 
-        //- Return the "options" sub-dictionary if present otherwise return dict
-        const dictionary& optionsDict(const dictionary& dict) const;
-
         //- Read options dictionary
         bool readOptions(const dictionary& dict);
 
@@ -95,7 +92,15 @@ protected:
             GeometricField<Type, fvPatchField, volMesh>& field,
             const word& fieldName,
             const dimensionSet& ds
-        );
+        ) const;
+
+
+private:
+
+    // Private Member Functions
+
+        //- Return the "options" sub-dictionary if present otherwise return dict
+        const dictionary& optionsDict(const dictionary& dict) const;
 
 
 public:
@@ -137,7 +142,7 @@ public:
             tmp<fvMatrix<Type>> operator()
             (
                 GeometricField<Type, fvPatchField, volMesh>& field
-            );
+            ) const;
 
             //- Return source for equation with specified name
             template<class Type>
@@ -145,7 +150,7 @@ public:
             (
                 GeometricField<Type, fvPatchField, volMesh>& field,
                 const word& fieldName
-            );
+            ) const;
 
             //- Return source for equation
             template<class Type>
@@ -153,7 +158,7 @@ public:
             (
                 const volScalarField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field
-            );
+            ) const;
 
             //- Return source for equation with specified name
             template<class Type>
@@ -162,7 +167,7 @@ public:
                 const volScalarField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field,
                 const word& fieldName
-            );
+            ) const;
 
             //- Return source for equation
             template<class Type>
@@ -171,7 +176,7 @@ public:
                 const volScalarField& alpha,
                 const volScalarField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field
-            );
+            ) const;
 
             //- Return source for equation with specified name
             template<class Type>
@@ -181,7 +186,7 @@ public:
                 const volScalarField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field,
                 const word& fieldName
-            );
+            ) const;
 
             //- Return source for equation
             template<class Type>
@@ -190,7 +195,7 @@ public:
                 const volScalarField& alpha,
                 const geometricOneField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field
-            );
+            ) const;
 
             //- Return source for equation
             template<class Type>
@@ -199,7 +204,7 @@ public:
                 const geometricOneField& alpha,
                 const volScalarField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field
-            );
+            ) const;
 
             //- Return source for equation
             template<class Type>
@@ -208,14 +213,14 @@ public:
                 const geometricOneField& alpha,
                 const geometricOneField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field
-            );
+            ) const;
 
             //- Return source for equation with second time derivative
             template<class Type>
             tmp<fvMatrix<Type>> d2dt2
             (
                 GeometricField<Type, fvPatchField, volMesh>& field
-            );
+            ) const;
 
             //- Return source for equation with second time derivative
             template<class Type>
@@ -223,21 +228,33 @@ public:
             (
                 GeometricField<Type, fvPatchField, volMesh>& field,
                 const word& fieldName
-            );
+            ) const;
 
 
         // Constraints
 
             //- Apply constraints to equation
             template<class Type>
-            void constrain(fvMatrix<Type>& eqn);
+            void constrain(fvMatrix<Type>& eqn) const;
 
 
         // Correction
 
             //- Apply correction to field
             template<class Type>
-            void correct(GeometricField<Type, fvPatchField, volMesh>& field);
+            void correct
+            (
+                GeometricField<Type, fvPatchField, volMesh>& field
+            ) const;
+
+
+        // Mesh changes
+
+            //- Update for mesh changes
+            virtual void updateMesh(const mapPolyMesh&);
+
+            //- Update for mesh motion
+            virtual bool movePoints();
 
 
         // IO

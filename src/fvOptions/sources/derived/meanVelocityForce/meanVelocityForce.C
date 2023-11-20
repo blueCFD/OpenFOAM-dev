@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,40 +130,44 @@ Foam::scalar Foam::fv::meanVelocityForce::magUbarAve
     scalar magUbarAve = 0.0;
 
     const scalarField& cv = mesh_.V();
-    forAll(cells_, i)
+
+    const labelList& cells = this->cells();
+
+    forAll(cells, i)
     {
-        label celli = cells_[i];
-        scalar volCell = cv[celli];
-        magUbarAve += (flowDir_ & U[celli])*volCell;
+        const label celli = cells[i];
+        magUbarAve += (flowDir_ & U[celli])*cv[celli];
     }
 
     reduce(magUbarAve, sumOp<scalar>());
 
-    magUbarAve /= V_;
+    magUbarAve /= V();
 
     return magUbarAve;
 }
 
 
-void Foam::fv::meanVelocityForce::correct(volVectorField& U)
+void Foam::fv::meanVelocityForce::correct(volVectorField& U) const
 {
     const scalarField& rAU = rAPtr_();
 
     // Integrate flow variables over cell set
     scalar rAUave = 0.0;
     const scalarField& cv = mesh_.V();
-    forAll(cells_, i)
+
+    const labelList& cells = this->cells();
+
+    forAll(cells, i)
     {
-        label celli = cells_[i];
-        scalar volCell = cv[celli];
-        rAUave += rAU[celli]*volCell;
+        const label celli = cells[i];
+        rAUave += rAU[celli]*cv[celli];
     }
 
     // Collect across all processors
     reduce(rAUave, sumOp<scalar>());
 
     // Volume averages
-    rAUave /= V_;
+    rAUave /= V();
 
     scalar magUbarAve = this->magUbarAve(U);
 
@@ -172,9 +176,9 @@ void Foam::fv::meanVelocityForce::correct(volVectorField& U)
     dGradP_ = relaxation_*(mag(Ubar_) - magUbarAve)/rAUave;
 
     // Apply correction to velocity field
-    forAll(cells_, i)
+    forAll(cells, i)
     {
-        label celli = cells_[i];
+        label celli = cells[i];
         U[celli] += flowDir_*rAU[celli]*dGradP_;
     }
 
@@ -191,7 +195,7 @@ void Foam::fv::meanVelocityForce::addSup
 (
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     volVectorField::Internal Su
     (
@@ -209,7 +213,7 @@ void Foam::fv::meanVelocityForce::addSup
 
     scalar gradP = gradP0_ + dGradP_;
 
-    UIndirectList<vector>(Su, cells_) = flowDir_*gradP;
+    UIndirectList<vector>(Su, cells()) = flowDir_*gradP;
 
     eqn += Su;
 }
@@ -220,7 +224,7 @@ void Foam::fv::meanVelocityForce::addSup
     const volScalarField& rho,
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     this->addSup(eqn, fieldi);
 }
@@ -230,7 +234,7 @@ void Foam::fv::meanVelocityForce::constrain
 (
     fvMatrix<vector>& eqn,
     const label
-)
+) const
 {
     if (rAPtr_.empty())
     {

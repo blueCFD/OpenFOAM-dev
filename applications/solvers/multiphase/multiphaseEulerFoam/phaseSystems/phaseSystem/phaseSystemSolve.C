@@ -54,6 +54,20 @@ void Foam::phaseSystem::solve
 
     const bool LTS = fv::localEulerDdt::enabled(mesh_);
 
+    // Temporary switch for testing and comparing the standard split
+    // and the new un-split phase flux discretisation
+    const bool splitPhaseFlux
+    (
+        alphaControls.lookupOrDefault<Switch>("splitPhaseFlux", false)
+    );
+
+    // Temporary switch for testing and comparing the standard mean flux
+    // and the new phase flux reference for the phase flux correction
+    const bool meanFluxReference
+    (
+        alphaControls.lookupOrDefault<Switch>("meanFluxReference", false)
+    );
+
     // Optional reference phase which is not solved for
     // but obtained from the sum of the other phases
     phaseModel* referencePhasePtr = nullptr;
@@ -81,20 +95,6 @@ void Foam::phaseSystem::solve
         solvePhases = movingPhases();
     }
 
-    // The phases included in the flux sum limit
-    // which is all moving phases if the number of solved phases is > 1
-    // otherwise it is just the solved phases
-    // as the flux sum limit is not needed in this case
-    phaseModelPartialList fluxPhases;
-    if (solvePhases.size() == 1)
-    {
-        fluxPhases = solvePhases;
-    }
-    else
-    {
-        fluxPhases = movingPhases();
-    }
-
     forAll(phases(), phasei)
     {
         phases()[phasei].correctBoundaryConditions();
@@ -107,8 +107,8 @@ void Foam::phaseSystem::solve
 
         forAll(solvePhases, solvePhasei)
         {
-            phaseModel& phase = solvePhases[solvePhasei];
-            volScalarField& alpha = phase;
+            const phaseModel& phase = solvePhases[solvePhasei];
+            const volScalarField& alpha = phase;
 
             alphaPhiDbyA0s.set
             (
@@ -136,10 +136,18 @@ void Foam::phaseSystem::solve
         alphaVoid -= stationaryPhases()[stationaryPhasei];
     }
 
-    bool dilatation = false;
-    forAll(fluxPhases, fluxPhasei)
+    // Calculate the effective flux of the moving phases
+    tmp<surfaceScalarField> tphiMoving(phi_);
+    if (stationaryPhases().size())
     {
-        if (fluxPhases[fluxPhasei].divU().valid())
+        tphiMoving = phi_/upwind<scalar>(mesh_, phi_).interpolate(alphaVoid);
+    }
+    const surfaceScalarField& phiMoving = tphiMoving();
+
+    bool dilatation = false;
+    forAll(movingPhases(), movingPhasei)
+    {
+        if (movingPhases()[movingPhasei].divU().valid())
         {
             dilatation = true;
             break;
@@ -151,10 +159,10 @@ void Foam::phaseSystem::solve
         PtrList<volScalarField::Internal> Sps(phases().size());
         PtrList<volScalarField::Internal> Sus(phases().size());
 
-        forAll(fluxPhases, fluxPhasei)
+        forAll(movingPhases(), movingPhasei)
         {
-            phaseModel& phase = fluxPhases[fluxPhasei];
-            volScalarField& alpha = phase;
+            const phaseModel& phase = movingPhases()[movingPhasei];
+            const volScalarField& alpha = phase;
             const label phasei = phase.index();
 
             Sps.set
@@ -179,8 +187,8 @@ void Foam::phaseSystem::solve
                 new volScalarField::Internal
                 (
                     "Su",
-                    min(alpha, scalar(1))
-                    *fvc::div(fvc::absolute(phi_, phase.U()))
+                    min(alpha.v(), scalar(1))
+                   *fvc::div(fvc::absolute(phi_, phase.U()))->v()
                 )
             );
 
@@ -258,138 +266,182 @@ void Foam::phaseSystem::solve
             !(++alphaSubCycle).end();
         )
         {
-            // Generate face-alphas
-            PtrList<surfaceScalarField> alphafs(phases().size());
-            if (solvePhases.size() > 1)
-            {
-                forAll(phases(), phasei)
-                {
-                    phaseModel& phase = phases()[phasei];
-                    alphafs.set
-                    (
-                        phasei,
-                        new surfaceScalarField
-                        (
-                            IOobject::groupName("alphaf", phase.name()),
-                            upwind<scalar>(mesh_, phi_).interpolate(phase)
-                        )
-                    );
-                }
-            }
-
             // Create correction fluxes
-            PtrList<surfaceScalarField> alphaPhiCorrs(phases().size());
+            PtrList<surfaceScalarField> alphaPhis(phases().size());
 
-            if (solvePhases.size() > 1)
+            forAll(movingPhases(), movingPhasei)
             {
-                forAll(stationaryPhases(), stationaryPhasei)
-                {
-                    phaseModel& phase = stationaryPhases()[stationaryPhasei];
+                const phaseModel& phase = movingPhases()[movingPhasei];
+                const volScalarField& alpha = phase;
 
-                    alphaPhiCorrs.set
-                    (
-                        phase.index(),
-                        new surfaceScalarField
-                        (
-                            IOobject::groupName("alphaPhiCorr", phase.name()),
-                          - upwind<scalar>(mesh_, phi_).flux(phase)
-                        )
-                    );
-                }
-            }
-
-            forAll(fluxPhases, fluxPhasei)
-            {
-                phaseModel& phase = fluxPhases[fluxPhasei];
-                volScalarField& alpha = phase;
-
-                alphaPhiCorrs.set
+                alphaPhis.set
                 (
                     phase.index(),
                     new surfaceScalarField
                     (
                         IOobject::groupName("alphaPhiCorr", phase.name()),
-                        fvc::flux(phi_, alpha, "div(phi," + alpha.name() + ')')
+                        fvc::flux
+                        (
+                            splitPhaseFlux ? phi_ : phase.phi()(),
+                            alpha,
+                            "div(phi," + alpha.name() + ')'
+                        )
                     )
                 );
 
-                surfaceScalarField& alphaPhiCorr = alphaPhiCorrs[phase.index()];
+                surfaceScalarField& alphaPhi = alphaPhis[phase.index()];
 
-                forAll(phases(), phasei)
+                if (splitPhaseFlux)
                 {
-                    phaseModel& phase2 = phases()[phasei];
-                    volScalarField& alpha2 = phase2;
-
-                    if (&phase2 == &phase) continue;
-
-                    surfaceScalarField phir(phase.phi() - phase2.phi());
-
-                    cAlphaTable::const_iterator cAlpha
-                    (
-                        cAlphas_.find(phasePairKey(phase.name(), phase2.name()))
-                    );
-
-                    if (cAlpha != cAlphas_.end())
+                    forAll(phases(), phasei)
                     {
-                        surfaceScalarField phic
+                        const phaseModel& phase2 = phases()[phasei];
+                        const volScalarField& alpha2 = phase2;
+
+                        if (&phase2 == &phase) continue;
+
+                        surfaceScalarField phir(phase.phi() - phase2.phi());
+
+                        cAlphaTable::const_iterator cAlpha
                         (
-                            (mag(phi_) + mag(phir))/mesh_.magSf()
+                            cAlphas_.find
+                            (
+                                phasePairKey(phase.name(), phase2.name())
+                            )
                         );
 
-                        phir +=
-                            min(cAlpha()*phic, max(phic))
-                           *nHatf(alpha, alpha2);
+                        if (cAlpha != cAlphas_.end())
+                        {
+                            surfaceScalarField phic
+                            (
+                                (mag(phi_) + mag(phir))/mesh_.magSf()
+                            );
+
+                            phir +=
+                                min(cAlpha()*phic, max(phic))
+                               *nHatf(alpha, alpha2);
+                        }
+
+                        const word phirScheme
+                        (
+                            "div(phir,"
+                          + alpha2.name() + ',' + alpha.name()
+                          + ')'
+                        );
+
+                        alphaPhi += fvc::flux
+                        (
+                           -fvc::flux(-phir, alpha2, phirScheme),
+                            alpha,
+                            phirScheme
+                        );
                     }
+                }
+                else if (!cAlphas_.empty())
+                {
+                    forAll(phases(), phasei)
+                    {
+                        const phaseModel& phase2 = phases()[phasei];
+                        const volScalarField& alpha2 = phase2;
 
-                    word phirScheme
-                    (
-                        "div(phir," + alpha2.name() + ',' + alpha.name() + ')'
-                    );
+                        if (&phase2 == &phase) continue;
 
-                    alphaPhiCorr += fvc::flux
-                    (
-                       -fvc::flux(-phir, alpha2, phirScheme),
-                        alpha,
-                        phirScheme
-                    );
+                        cAlphaTable::const_iterator cAlpha
+                        (
+                            cAlphas_.find
+                            (
+                                phasePairKey(phase.name(), phase2.name())
+                            )
+                        );
+
+                        if (cAlpha != cAlphas_.end())
+                        {
+                            const surfaceScalarField phir
+                            (
+                                phase.phi() - phase2.phi()
+                            );
+
+                            const surfaceScalarField phic
+                            (
+                                (mag(phi_) + mag(phir))/mesh_.magSf()
+                            );
+
+                            const surfaceScalarField phirc
+                            (
+                                min(cAlpha()*phic, max(phic))
+                               *nHatf(alpha, alpha2)
+                            );
+
+                            const word phirScheme
+                            (
+                                "div(phir,"
+                              + alpha2.name() + ',' + alpha.name()
+                              + ')'
+                            );
+
+                            alphaPhi += fvc::flux
+                            (
+                                -fvc::flux(-phirc, alpha2, phirScheme),
+                                alpha,
+                                phirScheme
+                            );
+                        }
+                    }
                 }
 
                 if (alphaPhiDbyA0s.set(phase.index()))
                 {
-                    alphaPhiCorr +=
+                    alphaPhi +=
                         fvc::interpolate(max(alpha, scalar(0)))
                        *fvc::interpolate(max(1 - alpha, scalar(0)))
                        *alphaPhiDbyA0s[phase.index()];
                 }
 
-                phase.correctInflowOutflow(alphaPhiCorr);
+                phase.correctInflowOutflow(alphaPhi);
 
                 MULES::limit
                 (
                     geometricOneField(),
                     alpha,
-                    phi_,
-                    alphaPhiCorr,
+                    meanFluxReference
+                      ? phiMoving    // Guarantees boundedness but less accurate
+                      : phase.phi()(), // Less robust but more accurate
+                    alphaPhi,
                     Sps[phase.index()],
                     Sus[phase.index()],
                     min(alphaVoid.primitiveField(), phase.alphaMax())(),
                     zeroField(),
-                    true
+                    false
                 );
             }
 
-            if (solvePhases.size() > 1)
+            // Limit the flux corrections to ensure the phase fractions sum to 1
             {
-                // Limit the flux sums, fixing those of the stationary phases
-                labelHashSet fixedAlphaPhiCorrs;
-                forAll(stationaryPhases(), stationaryPhasei)
+                // Generate alphas for the moving phases
+                UPtrList<const volScalarField> alphasMoving
+                (
+                    movingPhases().size()
+                );
+
+                UPtrList<surfaceScalarField> alphaPhisMoving
+                (
+                    movingPhases().size()
+                );
+
+                forAll(movingPhases(), movingPhasei)
                 {
-                    fixedAlphaPhiCorrs.insert
+                    const phaseModel& phase = movingPhases()[movingPhasei];
+
+                    alphasMoving.set(movingPhasei, &phase);
+
+                    alphaPhisMoving.set
                     (
-                        stationaryPhases()[stationaryPhasei].index()
+                        movingPhasei,
+                        &alphaPhis[phase.index()]
                     );
                 }
-                MULES::limitSum(alphafs, alphaPhiCorrs, fixedAlphaPhiCorrs);
+
+                MULES::limitSum(alphasMoving, alphaPhisMoving, phiMoving);
             }
 
             forAll(solvePhases, solvePhasei)
@@ -397,8 +449,7 @@ void Foam::phaseSystem::solve
                 phaseModel& phase = solvePhases[solvePhasei];
                 volScalarField& alpha = phase;
 
-                surfaceScalarField& alphaPhi = alphaPhiCorrs[phase.index()];
-                alphaPhi += upwind<scalar>(mesh_, phi_).flux(phase);
+                surfaceScalarField& alphaPhi = alphaPhis[phase.index()];
                 phase.correctInflowOutflow(alphaPhi);
 
                 MULES::explicitSolve
@@ -463,7 +514,17 @@ void Foam::phaseSystem::solve
                     << endl;
             }
 
-            if (!referencePhasePtr)
+            if (referencePhasePtr)
+            {
+                volScalarField& referenceAlpha = *referencePhasePtr;
+                referenceAlpha = alphaVoid;
+
+                forAll(solvePhases, solvePhasei)
+                {
+                    referenceAlpha -= solvePhases[solvePhasei];
+                }
+            }
+            else
             {
                 volScalarField sumAlphaMoving
                 (
@@ -528,7 +589,6 @@ void Foam::phaseSystem::solve
                 referencePhase.alphaPhiRef() -= phase.alphaPhi();
             }
 
-            referencePhase.correctInflowOutflow(referencePhase.alphaPhiRef());
             referencePhase.alphaRhoPhiRef() =
                 fvc::interpolate(referencePhase.rho())
                *referencePhase.alphaPhi();

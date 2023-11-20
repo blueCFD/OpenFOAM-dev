@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,7 +48,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::fv::VoFSolidificationMeltingSource::update()
+void Foam::fv::VoFSolidificationMeltingSource::update() const
 {
     if (curTimeIndex_ == mesh_.time().timeIndex())
     {
@@ -75,9 +75,11 @@ void Foam::fv::VoFSolidificationMeltingSource::update()
     const volScalarField CpVoF(thermo.thermo1().Cp());
     const volScalarField& alphaVoF = thermo.alpha1();
 
-    forAll(cells_, i)
+    const labelList& cells = this->cells();
+
+    forAll(cells, i)
     {
-        const label celli = cells_[i];
+        const label celli = cells[i];
 
         alphaSolid_[celli] = min
         (
@@ -154,7 +156,7 @@ void Foam::fv::VoFSolidificationMeltingSource::addSup
 (
     fvMatrix<scalar>& eqn,
     const label fieldi
-)
+) const
 {
     apply(geometricOneField(), eqn);
 }
@@ -165,7 +167,7 @@ void Foam::fv::VoFSolidificationMeltingSource::addSup
     const volScalarField& rho,
     fvMatrix<scalar>& eqn,
     const label fieldi
-)
+) const
 {
     apply(rho, eqn);
 }
@@ -175,7 +177,7 @@ void Foam::fv::VoFSolidificationMeltingSource::addSup
 (
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     if (debug)
     {
@@ -187,9 +189,11 @@ void Foam::fv::VoFSolidificationMeltingSource::addSup
     scalarField& Sp = eqn.diag();
     const scalarField& V = mesh_.V();
 
-    forAll(cells_, i)
+    const labelList& cells = this->cells();
+
+    forAll(cells, i)
     {
-        const label celli = cells_[i];
+        const label celli = cells[i];
         const scalar Vc = V[celli];
         const scalar alphaFluid = 1 - alphaSolid_[celli];
 
@@ -205,7 +209,7 @@ void Foam::fv::VoFSolidificationMeltingSource::addSup
     const volScalarField& rho,
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     // Momentum source uses a Boussinesq approximation - redirect
     addSup(eqn, fieldi);

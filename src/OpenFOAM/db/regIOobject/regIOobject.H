@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,9 +39,6 @@ SourceFiles
 #define regIOobject_H
 
 #include "IOobject.T.H"
-#include "typeInfo.H"
-#include "OSspecific.H"
-#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -140,7 +137,7 @@ public:
             bool checkOut();
 
             //- Add file watch on object (if registered and READ_IF_MODIFIED)
-            virtual void addWatch();
+            void addWatch();
 
             //- Is this object owned by the registry?
             inline bool ownedByRegistry() const;
@@ -235,10 +232,6 @@ public:
 
             //- Read object
             virtual bool read();
-
-            //- Add file watch for fileName on object if not yet watched. Return
-            //  index of watch
-            virtual label addWatch(const fileName&);
 
             //- Return file-monitoring handles
             inline const labelList& watchIndices() const;

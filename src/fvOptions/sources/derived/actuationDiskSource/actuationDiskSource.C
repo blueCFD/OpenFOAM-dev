@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,7 +113,7 @@ void Foam::fv::actuationDiskSource::addSup
 (
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     const scalarField& cellsV = mesh_.V();
     vectorField& Usource = eqn.source();
@@ -124,7 +124,7 @@ void Foam::fv::actuationDiskSource::addSup
         addActuationDiskAxialInertialResistance
         (
             Usource,
-            cells_,
+            cells(),
             cellsV,
             geometricOneField(),
             U
@@ -138,7 +138,7 @@ void Foam::fv::actuationDiskSource::addSup
     const volScalarField& rho,
     fvMatrix<vector>& eqn,
     const label fieldi
-)
+) const
 {
     const scalarField& cellsV = mesh_.V();
     vectorField& Usource = eqn.source();
@@ -149,7 +149,7 @@ void Foam::fv::actuationDiskSource::addSup
         addActuationDiskAxialInertialResistance
         (
             Usource,
-            cells_,
+            cells(),
             cellsV,
             rho,
             U

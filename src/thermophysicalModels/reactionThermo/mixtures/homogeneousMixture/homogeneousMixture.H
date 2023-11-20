@@ -51,18 +51,27 @@ class homogeneousMixture
 :
     public basicCombustionMixture
 {
+
+public:
+
+    //- The type of thermodynamics this mixture is instantiated for
+    typedef ThermoType thermoType;
+
+    //- The type of mixture
+    typedef ThermoType mixtureType;
+
+
+private:
+
     // Private Data
 
         static const int nSpecies_ = 1;
         static const char* specieNames_[1];
 
-        ThermoType reactants_;
-        ThermoType products_;
+        mixtureType reactants_;
+        mixtureType products_;
 
-        mutable ThermoType mixture_;
-
-        //- Construct as copy (not implemented)
-        homogeneousMixture(const homogeneousMixture<ThermoType>&);
+        mutable mixtureType mixture_;
 
         //- Regress variable
         volScalarField& b_;
@@ -70,14 +79,13 @@ class homogeneousMixture
 
 public:
 
-    //- The type of thermodynamics this mixture is instantiated for
-    typedef ThermoType thermoType;
-
-
     // Constructors
 
         //- Construct from dictionary, mesh and phase name
         homogeneousMixture(const dictionary&, const fvMesh&, const word&);
+
+        //- Disallow default bitwise copy construction
+        homogeneousMixture(const homogeneousMixture<ThermoType>&) = delete;
 
 
     //- Destructor
@@ -93,14 +101,14 @@ public:
             return "homogeneousMixture<" + ThermoType::typeName() + '>';
         }
 
-        const ThermoType& mixture(const scalar) const;
+        const mixtureType& mixture(const scalar) const;
 
-        const ThermoType& cellMixture(const label celli) const
+        const mixtureType& cellMixture(const label celli) const
         {
             return mixture(b_[celli]);
         }
 
-        const ThermoType& patchFaceMixture
+        const mixtureType& patchFaceMixture
         (
             const label patchi,
             const label facei
@@ -109,22 +117,22 @@ public:
             return mixture(b_.boundaryField()[patchi][facei]);
         }
 
-        const ThermoType& cellReactants(const label) const
+        const mixtureType& cellReactants(const label) const
         {
             return reactants_;
         }
 
-        const ThermoType& patchFaceReactants(const label, const label) const
+        const mixtureType& patchFaceReactants(const label, const label) const
         {
             return reactants_;
         }
 
-        const ThermoType& cellProducts(const label) const
+        const mixtureType& cellProducts(const label) const
         {
             return products_;
         }
 
-        const ThermoType& patchFaceProducts(const label, const label) const
+        const mixtureType& patchFaceProducts(const label, const label) const
         {
             return products_;
         }
@@ -134,6 +142,12 @@ public:
 
         //- Return thermo based on index
         const ThermoType& specieThermo(const label speciei) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const homogeneousMixture<ThermoType>&) = delete;
 };
 
 

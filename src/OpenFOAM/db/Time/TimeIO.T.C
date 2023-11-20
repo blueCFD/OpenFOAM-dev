@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,6 +29,7 @@ License
 #include "dimensionedConstants.H"
 #include "IOdictionary.H"
 #include "fileOperation.H"
+#include "OSspecific.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -416,18 +417,6 @@ void Foam::Time::readDict()
 
     controlDict_.readIfPresent("graphFormat", graphFormat_);
     controlDict_.readIfPresent("runTimeModifiable", runTimeModifiable_);
-
-
-
-
-    if (!runTimeModifiable_ && controlDict_.watchIndices().size())
-    {
-        forAllReverse(controlDict_.watchIndices(), i)
-        {
-            fileHandler().removeWatch(controlDict_.watchIndices()[i]);
-        }
-        controlDict_.watchIndices().clear();
-    }
 }
 
 
@@ -436,16 +425,6 @@ bool Foam::Time::read()
     if (controlDict_.regIOobject::read())
     {
         readDict();
-
-        if (runTimeModifiable_)
-        {
-            // For IOdictionary the call to regIOobject::read() would have
-            // already updated all the watchIndices via the addWatch but
-            // controlDict_ is an unwatchedIOdictionary so will only have
-            // stored the dependencies as files.
-            fileHandler().addWatches(controlDict_, controlDict_.files());
-        }
-        controlDict_.files().clear();
 
         return true;
     }
@@ -480,17 +459,6 @@ void Foam::Time::readModifiedObjects()
         {
             readDict();
             functionObjects_.read();
-
-            if (runTimeModifiable_)
-            {
-                // For IOdictionary the call to regIOobject::read() would have
-                // already updated all the watchIndices via the addWatch but
-                // controlDict_ is an unwatchedIOdictionary so will only have
-                // stored the dependencies as files.
-
-                fileHandler().addWatches(controlDict_, controlDict_.files());
-            }
-            controlDict_.files().clear();
         }
 
         bool registryModified = objectRegistry::modified();

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,26 +27,14 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::localIOdictionary::localIOdictionary(const IOobject& io)
-:
-    baseIOdictionary(io)
-{
-    readHeaderOk(IOstream::ASCII, typeName);
-
-    // For if MUST_READ_IF_MODIFIED
-    addWatch();
-}
-
-
 Foam::localIOdictionary::localIOdictionary
 (
-    const IOobject& io,
-    const word& wantedType
+    const IOobject& io
 )
 :
-    baseIOdictionary(io)
+    IOdictionary(io, typeName)
 {
-    readHeaderOk(IOstream::ASCII, wantedType);
+    readHeaderOk(IOstream::ASCII, typeName);
 
     // For if MUST_READ_IF_MODIFIED
     addWatch();
@@ -59,7 +47,7 @@ Foam::localIOdictionary::localIOdictionary
     const dictionary& dict
 )
 :
-    baseIOdictionary(io, dict)
+    IOdictionary(io, typeName)
 {
     if (!readHeaderOk(IOstream::ASCII, typeName))
     {
@@ -74,43 +62,15 @@ Foam::localIOdictionary::localIOdictionary
 Foam::localIOdictionary::localIOdictionary
 (
     const IOobject& io,
-    Istream& is
+    const word& actualType
 )
 :
-    baseIOdictionary(io, is)
+    IOdictionary(io, actualType)
 {
-    // Note that we do construct the dictionary null and read in
-    // afterwards
-    // so that if there is some fancy massaging due to a
-    // functionEntry in
-    // the dictionary at least the type information is already complete.
-    is  >> *this;
+    readHeaderOk(IOstream::ASCII, actualType);
 
     // For if MUST_READ_IF_MODIFIED
     addWatch();
-}
-
-
-Foam::localIOdictionary::localIOdictionary
-(
-    localIOdictionary&& dict
-)
-:
-    baseIOdictionary(move(dict))
-{}
-
-
-// * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * * //
-
-Foam::localIOdictionary::~localIOdictionary()
-{}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-void Foam::localIOdictionary::operator=(localIOdictionary&& rhs)
-{
-    baseIOdictionary::operator=(move(rhs));
 }
 
 

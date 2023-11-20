@@ -7,7 +7,7 @@ IOobject::replaceFileName("K", "K_");
 // End of hack --------------------------------------------
 
 // Initialise fluid field pointer lists
-PtrList<rhoReactionThermo> thermoFluid(fluidRegions.size());
+PtrList<fluidReactionThermo> thermoFluid(fluidRegions.size());
 PtrList<volScalarField> rhoFluid(fluidRegions.size());
 PtrList<volVectorField> UFluid(fluidRegions.size());
 PtrList<surfaceScalarField> phiFluid(fluidRegions.size());
@@ -18,9 +18,9 @@ PtrList<volScalarField> ghFluid(fluidRegions.size());
 PtrList<surfaceScalarField> ghfFluid(fluidRegions.size());
 PtrList<compressible::momentumTransportModel>
     turbulenceFluid(fluidRegions.size());
-PtrList<rhoReactionThermophysicalTransportModel>
+PtrList<fluidReactionThermophysicalTransportModel>
     thermophysicalTransportFluid(fluidRegions.size());
-PtrList<CombustionModel<rhoReactionThermo>> reactionFluid(fluidRegions.size());
+PtrList<combustionModel> reactionFluid(fluidRegions.size());
 PtrList<volScalarField> p_rghFluid(fluidRegions.size());
 PtrList<radiationModel> radiation(fluidRegions.size());
 PtrList<volScalarField> KFluid(fluidRegions.size());
@@ -40,7 +40,7 @@ forAll(fluidRegions, i)
         << fluidRegions[i].name() << nl << endl;
 
     Info<< "    Adding to thermoFluid\n" << endl;
-    thermoFluid.set(i, rhoReactionThermo::New(fluidRegions[i]).ptr());
+    thermoFluid.set(i, fluidReactionThermo::New(fluidRegions[i]).ptr());
 
     Info<< "    Adding to rhoFluid\n" << endl;
     rhoFluid.set
@@ -191,7 +191,7 @@ forAll(fluidRegions, i)
     thermophysicalTransportFluid.set
     (
         i,
-        rhoReactionThermophysicalTransportModel::New
+        fluidReactionThermophysicalTransportModel::New
         (
             turbulenceFluid[i],
             thermoFluid[i]
@@ -202,11 +202,7 @@ forAll(fluidRegions, i)
     reactionFluid.set
     (
         i,
-        CombustionModel<rhoReactionThermo>::New
-        (
-            thermoFluid[i],
-            turbulenceFluid[i]
-        )
+        combustionModel::New(thermoFluid[i], turbulenceFluid[i])
     );
 
     p_rghFluid.set

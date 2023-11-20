@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,10 +25,10 @@ Class
     Foam::IOdictionary
 
 Description
-    IOdictionary is derived from dictionary and IOobject to give the dictionary
-    automatic IO functionality via the objectRegistry.  To facilitate IO,
-    IOdictionary is provided with a constructor from IOobject and writeData and
-    write functions.
+    IOdictionary is derived from dictionary and IOobject to give the
+    dictionary automatic IO functionality via the objectRegistry.  To facilitate
+    IO, IOdictionary is provided with a constructor from IOobject and writeData
+    and write functions.
 
 SourceFiles
     IOdictionary.C
@@ -39,7 +39,8 @@ SourceFiles
 #ifndef IOdictionary_H
 #define IOdictionary_H
 
-#include "baseIOdictionary.H"
+#include "dictionary.H"
+#include "regIOobject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,10 +53,26 @@ namespace Foam
 
 class IOdictionary
 :
-    public baseIOdictionary
+    public regIOobject,
+    public dictionary
 {
+    // Private Data
+
+        static bool writeDictionaries;
+
+
+protected:
+
+    // Protected constructors
+
+        //- Construct given an IOobject, supply wanted typeName
+        IOdictionary(const IOobject& io, const word& wantedType);
+
 
 public:
+
+    TypeName("dictionary");
+
 
     // Constructors
 
@@ -81,6 +98,8 @@ public:
 
     // Member Functions
 
+        using regIOobject::name;
+
         //- Is object global
         virtual bool global() const
         {
@@ -94,10 +113,19 @@ public:
             return globalFilePath(type());
         }
 
+        //- ReadData function required for regIOobject read operation
+        virtual bool readData(Istream&);
+
+        //- WriteData function required for regIOobject write operation
+        virtual bool writeData(Ostream&) const;
+
 
     // Member Operators
 
-        //- Move assignment
+        //- Assignment of dictionary entries only
+        void operator=(const IOdictionary&);
+
+        //- Move assignment of dictionary entries only
         void operator=(IOdictionary&&);
 };
 

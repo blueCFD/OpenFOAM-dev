@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -688,93 +688,62 @@ void Foam::MULES::limit
 }
 
 
-template<class SurfaceScalarFieldList>
-void Foam::MULES::limitSum(SurfaceScalarFieldList& phiPsiCorrs)
-{
-    {
-        UPtrList<scalarField> phiPsiCorrsInternal(phiPsiCorrs.size());
-        forAll(phiPsiCorrs, phasei)
-        {
-            phiPsiCorrsInternal.set(phasei, &phiPsiCorrs[phasei]);
-        }
-
-        limitSum(phiPsiCorrsInternal);
-    }
-
-    const surfaceScalarField::Boundary& bfld =
-        phiPsiCorrs[0].boundaryField();
-
-    forAll(bfld, patchi)
-    {
-        if (bfld[patchi].coupled())
-        {
-            UPtrList<scalarField> phiPsiCorrsPatch(phiPsiCorrs.size());
-            forAll(phiPsiCorrs, phasei)
-            {
-                phiPsiCorrsPatch.set
-                (
-                    phasei,
-                    &phiPsiCorrs[phasei].boundaryFieldRef()[patchi]
-                );
-            }
-
-            limitSum(phiPsiCorrsPatch);
-        }
-    }
-}
-
-
-template<class SurfaceScalarFieldList>
+template<template<class> class AlphaList, template<class> class PhiList>
 void Foam::MULES::limitSum
 (
-    const SurfaceScalarFieldList& alphas,
-    SurfaceScalarFieldList& phiPsiCorrs,
-    const labelHashSet& fixed
+    const AlphaList<const volScalarField>& alphas,
+    PhiList<surfaceScalarField>& phiPsis,
+    const surfaceScalarField& phi
 )
 {
-    {
-        UPtrList<const scalarField> alphasInternal(alphas.size());
-        forAll(alphas, phasei)
-        {
-            alphasInternal.set(phasei, &alphas[phasei]);
-        }
-        UPtrList<scalarField> phiPsiCorrsInternal(phiPsiCorrs.size());
-        forAll(phiPsiCorrs, phasei)
-        {
-            phiPsiCorrsInternal.set(phasei, &phiPsiCorrs[phasei]);
-        }
+    PtrList<surfaceScalarField> alphaPhiUDs(phiPsis.size());
 
-        limitSum(alphasInternal, phiPsiCorrsInternal, fixed);
+    forAll(phiPsis, phasei)
+    {
+        alphaPhiUDs.set
+        (
+            phasei,
+            upwind<scalar>(phi.mesh(), phi).flux(alphas[phasei])
+        );
+
+        phiPsis[phasei] -= alphaPhiUDs[phasei];
     }
 
-    const surfaceScalarField::Boundary& bfld =
-        phiPsiCorrs[0].boundaryField();
-
-    forAll(bfld, patchi)
     {
-        if (bfld[patchi].coupled())
+        UPtrList<scalarField> phiPsisInternal(phiPsis.size());
+
+        forAll(phiPsisInternal, phasei)
         {
-            UPtrList<const scalarField> alphasPatch(alphas.size());
-            forAll(alphas, phasei)
+            phiPsisInternal.set(phasei, &phiPsis[phasei]);
+        }
+
+        limitSum(phiPsisInternal);
+    }
+
+    const surfaceScalarField::Boundary& phibf = phi.boundaryField();
+
+    forAll(phibf, patchi)
+    {
+        if (phibf[patchi].coupled())
+        {
+            UPtrList<scalarField> phiPsisPatch(phiPsis.size());
+
+            forAll(phiPsisPatch, phasei)
             {
-                alphasPatch.set
+                phiPsisPatch.set
                 (
                     phasei,
-                    &alphas[phasei].boundaryField()[patchi]
-                );
-            }
-            UPtrList<scalarField> phiPsiCorrsPatch(phiPsiCorrs.size());
-            forAll(phiPsiCorrs, phasei)
-            {
-                phiPsiCorrsPatch.set
-                (
-                    phasei,
-                    &phiPsiCorrs[phasei].boundaryFieldRef()[patchi]
+                    &phiPsis[phasei].boundaryFieldRef()[patchi]
                 );
             }
 
-            limitSum(alphasPatch, phiPsiCorrsPatch, fixed);
+            limitSum(phiPsisPatch);
         }
+    }
+
+    forAll(phiPsis, phasei)
+    {
+        phiPsis[phasei] += alphaPhiUDs[phasei];
     }
 }
 

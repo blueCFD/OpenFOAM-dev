@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,7 +48,6 @@ SourceFiles
 #include "volFieldsFwd.H"
 #include "dictionary.H"
 #include "Switch.H"
-#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,6 +55,7 @@ namespace Foam
 {
 
 class fvMesh;
+class mapPolyMesh;
 
 namespace fv
 {
@@ -92,7 +92,7 @@ protected:
         wordList fieldNames_;
 
         //- Applied flag list - corresponds to each fieldNames_ entry
-        List<bool> applied_;
+        mutable List<bool> applied_;
 
 
 public:
@@ -202,7 +202,7 @@ public:
             inline bool active() const;
 
             //- Set the applied flag to true for field index fieldi
-            inline void setApplied(const label fieldi);
+            inline void setApplied(const label fieldi) const;
 
 
         // Edit
@@ -214,7 +214,7 @@ public:
         // Checks
 
             //- Is the source active?
-            virtual bool isActive();
+            virtual bool isActive() const;
 
             //- Return index of field name if found in fieldNames list
             virtual label applyToField(const word& fieldName) const;
@@ -231,31 +231,31 @@ public:
                 (
                     fvMatrix<scalar>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     fvMatrix<vector>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     fvMatrix<symmTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     fvMatrix<sphericalTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     fvMatrix<tensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
 
             // Explicit and implicit sources for compressible equations
@@ -265,35 +265,35 @@ public:
                     const volScalarField& rho,
                     fvMatrix<scalar>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     const volScalarField& rho,
                     fvMatrix<vector>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     const volScalarField& rho,
                     fvMatrix<symmTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     const volScalarField& rho,
                     fvMatrix<sphericalTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
                     const volScalarField& rho,
                     fvMatrix<tensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
 
             // Explicit and implicit sources for phase equations
@@ -304,7 +304,7 @@ public:
                     const volScalarField& rho,
                     fvMatrix<scalar>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
@@ -312,7 +312,7 @@ public:
                     const volScalarField& rho,
                     fvMatrix<vector>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
@@ -320,7 +320,7 @@ public:
                     const volScalarField& rho,
                     fvMatrix<symmTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
@@ -328,7 +328,7 @@ public:
                     const volScalarField& rho,
                     fvMatrix<sphericalTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void addSup
                 (
@@ -336,7 +336,7 @@ public:
                     const volScalarField& rho,
                     fvMatrix<tensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
 
             // Constraints
@@ -345,40 +345,49 @@ public:
                 (
                     fvMatrix<scalar>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void constrain
                 (
                     fvMatrix<vector>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void constrain
                 (
                     fvMatrix<sphericalTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void constrain
                 (
                     fvMatrix<symmTensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
                 virtual void constrain
                 (
                     fvMatrix<tensor>& eqn,
                     const label fieldi
-                );
+                ) const;
 
 
             // Correction
 
-                virtual void correct(volScalarField& field);
-                virtual void correct(volVectorField& field);
-                virtual void correct(volSphericalTensorField& field);
-                virtual void correct(volSymmTensorField& field);
-                virtual void correct(volTensorField& field);
+                virtual void correct(volScalarField& field) const;
+                virtual void correct(volVectorField& field) const;
+                virtual void correct(volSphericalTensorField& field) const;
+                virtual void correct(volSymmTensorField& field) const;
+                virtual void correct(volTensorField& field) const;
+
+
+        // Mesh changes
+
+            //- Update for mesh changes
+            virtual void updateMesh(const mapPolyMesh&);
+
+            //- Update for mesh motion
+            virtual bool movePoints();
 
 
         // IO

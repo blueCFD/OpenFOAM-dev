@@ -234,14 +234,13 @@ $(functionEntries)/ifeqEntry/ifeqEntry.C
 $(functionEntries)/ifEntry/ifEntry.C
 
 IOdictionary = db/IOobjects/IOdictionary
-$(IOdictionary)/baseIOdictionary.C
-$(IOdictionary)/baseIOdictionaryIO.C
 $(IOdictionary)/IOdictionary.C
+$(IOdictionary)/IOdictionaryIO.C
 $(IOdictionary)/localIOdictionary.C
-$(IOdictionary)/unwatchedIOdictionary.C
 
 db/IOobjects/IOMap/IOMapName.T.C
 db/IOobjects/decomposedBlockData/decomposedBlockData.C
+db/IOobjects/GlobalIOList/GlobalIOLists.T.C
 db/IOobjects/GlobalIOField/GlobalIOFields.T.C
 
 
@@ -616,6 +615,9 @@ meshTools = meshes/meshTools
 $(meshTools)/matchPoints.C
 
 fields/UniformDimensionedFields/uniformDimensionedFields.C
+
+fields/UniformGeometricFields/uniformGeometricFields.C
+
 fields/cloud/cloud.C
 
 Fields = fields/Fields

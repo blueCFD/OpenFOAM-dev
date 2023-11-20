@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,11 +36,7 @@ SourceFiles
 #ifndef basicChemistryModel_H
 #define basicChemistryModel_H
 
-#include "IOdictionary.H"
-#include "Switch.H"
-#include "scalarField.H"
-#include "volFields.H"
-#include "basicThermo.H"
+#include "fluidReactionThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,6 +61,9 @@ protected:
         //- Reference to the mesh database
         const fvMesh& mesh_;
 
+        //- Reference to the thermo
+        const fluidReactionThermo& thermo_;
+
         //- Chemistry activation switch
         Switch chemistry_;
 
@@ -80,10 +79,6 @@ protected:
 
     // Protected Member Functions
 
-        //- Return non-const access to the latest estimation of integration
-        //  step, e.g. for multi-chemistry model
-        inline volScalarField::Internal& deltaTChem();
-
         //- Correct function - updates due to mesh changes
         void correct();
 
@@ -94,22 +89,32 @@ public:
     TypeName("basicChemistryModel");
 
 
+    //- Declare run-time constructor selection tables
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        basicChemistryModel,
+        thermo,
+        (const fluidReactionThermo& thermo),
+        (thermo)
+    );
+
+
     // Constructors
 
         //- Construct from thermo
-        basicChemistryModel(const basicThermo& thermo);
+        basicChemistryModel(const fluidReactionThermo& thermo);
 
-        //- Construct as copy (not implemented)
-        basicChemistryModel(const basicChemistryModel&);
+        //- Disallow default bitwise copy construction
+        basicChemistryModel(const basicChemistryModel&) = delete;
 
 
     // Selectors
 
-        //- Generic New for each of the related chemistry model
-        template<class ChemistryModel>
-        static autoPtr<ChemistryModel> New
+        //- Select based on fluid reaction thermo
+        static autoPtr<basicChemistryModel> New
         (
-            const typename ChemistryModel::reactionThermo& thermo
+            const fluidReactionThermo& thermo
         );
 
 
@@ -121,6 +126,9 @@ public:
 
         //- Return const access to the mesh database
         inline const fvMesh& mesh() const;
+
+        //- Return const access to the thermo
+        inline const fluidReactionThermo& thermo() const;
 
         //- Chemistry activation switch
         inline Switch chemistry() const;
@@ -193,10 +201,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "basicChemistryModelI.H"
-
-#ifdef NoRepository
-    #include "basicChemistryModelTemplates.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

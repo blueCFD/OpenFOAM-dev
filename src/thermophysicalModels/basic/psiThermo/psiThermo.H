@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,10 @@ Class
     Foam::psiThermo
 
 Description
-    Basic thermodynamic properties based on compressibility
+    Base-class for fluid thermodynamic properties based on compressibility.
+
+See also
+    Foam::basicThermo
 
 SourceFiles
     psiThermo.C
@@ -36,7 +39,6 @@ SourceFiles
 #define psiThermo_H
 
 #include "fluidThermo.H"
-#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,27 +51,18 @@ namespace Foam
 
 class psiThermo
 :
-    public fluidThermo
+    virtual public fluidThermo
 {
-
-protected:
-
-    // Protected data
-
-        //- Compressibility [s^2/m^2]
-        volScalarField psi_;
-
-        //- Dynamic viscosity [kg/m/s]
-        volScalarField mu_;
-
-
-    // Protected Member Functions
-
-        //- Construct as copy (not implemented)
-        psiThermo(const psiThermo&);
-
-
 public:
+
+    // Public Classes
+
+        //- Forward declare the implementation class
+        class implementation;
+
+        //- Forward declare the composite class
+        class composite;
+
 
     //- Runtime type information
     TypeName("psiThermo");
@@ -86,22 +79,14 @@ public:
     );
 
 
-    // Constructors
+    // Selectors
 
-        //- Construct from mesh and phase name
-        psiThermo
+        //- Standard selection based on fvMesh
+        static autoPtr<psiThermo> New
         (
-            const fvMesh&,
-            const word& phaseName
+            const fvMesh& mesh,
+            const word& phaseName=word::null
         );
-
-
-    //- Selector
-    static autoPtr<psiThermo> New
-    (
-        const fvMesh& mesh,
-        const word& phaseName=word::null
-    );
 
 
     //- Destructor
@@ -116,6 +101,66 @@ public:
             //  Used to update the density field following pressure solution.
             //  For psiThermo does nothing.
             virtual void correctRho(const volScalarField& deltaRho);
+
+            //- Density [kg/m^3] - uses current value of pressure
+            virtual tmp<volScalarField> rho() const = 0;
+
+            //- Density for patch [kg/m^3]
+            virtual tmp<scalarField> rho(const label patchi) const = 0;
+
+            //- Compressibility [s^2/m^2]
+            virtual const volScalarField& psi() const = 0;
+
+
+        // Access to transport state variables
+
+            //- Dynamic viscosity of mixture [kg/m/s]
+            virtual tmp<volScalarField> mu() const = 0;
+
+            //- Dynamic viscosity of mixture for patch [kg/m/s]
+            virtual tmp<scalarField> mu(const label patchi) const = 0;
+};
+
+
+/*---------------------------------------------------------------------------*\
+                      Class psiThermo::implementation Declaration
+\*---------------------------------------------------------------------------*/
+
+class psiThermo::implementation
+:
+    virtual public psiThermo
+{
+protected:
+
+    // Protected data
+
+        // Fields
+
+            //- Compressibility [s^2/m^2]
+            volScalarField psi_;
+
+            //- Dynamic viscosity [kg/m/s]
+            volScalarField mu_;
+
+
+public:
+
+    // Constructors
+
+        //- Construct from mesh and phase name
+        implementation(const fvMesh&, const word& phaseName);
+
+        //- Disallow default bitwise copy construction
+        implementation(const implementation&) = delete;
+
+
+    //- Destructor
+    virtual ~implementation();
+
+
+    // Member Functions
+
+        // Fields derived from thermodynamic state variables
 
             //- Density [kg/m^3] - uses current value of pressure
             virtual tmp<volScalarField> rho() const;
@@ -134,6 +179,40 @@ public:
 
             //- Dynamic viscosity of mixture for patch [kg/m/s]
             virtual tmp<scalarField> mu(const label patchi) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const implementation&) = delete;
+};
+
+
+/*---------------------------------------------------------------------------*\
+                     Class psiThermo::composite Declaration
+\*---------------------------------------------------------------------------*/
+
+class psiThermo::composite
+:
+    public basicThermo::implementation,
+    public fluidThermo::implementation,
+    public psiThermo::implementation
+{
+public:
+
+    // Constructors
+
+        //- Construct from mesh and phase name
+        composite
+        (
+            const fvMesh& mesh,
+            const word& phaseName
+        )
+        :
+            basicThermo::implementation(mesh, phaseName),
+            fluidThermo::implementation(mesh, phaseName),
+            psiThermo::implementation(mesh, phaseName)
+        {}
 };
 
 
