@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,8 +28,8 @@ License
 
 // * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * //
 
-template<class T, class Container>
-Foam::CompactListList<T, Container>::CompactListList(Istream& is)
+template<class T>
+Foam::CompactListList<T>::CompactListList(Istream& is)
 {
     operator>>(is, *this);
 }
@@ -37,32 +37,23 @@ Foam::CompactListList<T, Container>::CompactListList(Istream& is)
 
 // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
 
-template<class T, class Container>
-Foam::Istream& Foam::operator>>(Istream& is, CompactListList<T, Container>& lst)
+template<class T>
+Foam::Istream& Foam::operator>>(Istream& is, CompactListList<T>& lst)
 {
     is  >> lst.offsets_ >> lst.m_;
-    // Note: empty list gets output as two empty lists
-    if (lst.offsets_.size() == 0)
+
+    // An empty compact list list gets output as two empty lists
+    if (lst.offsets_.empty())
     {
-        lst.size_ = 0;
+        lst.clear();
     }
-    else
-    {
-        lst.size_ = lst.offsets_.size()-1;
-    }
+
+    lst.UCompactListList<T>::shallowCopy
+    (
+        UCompactListList<T>(lst.offsets_, lst.m_)
+    );
+
     return is;
-}
-
-
-template<class T, class Container>
-Foam::Ostream& Foam::operator<<
-(
-    Ostream& os,
-    const CompactListList<T, Container>& lst
-)
-{
-    os  << lst.offsets_ << lst.m_;
-    return os;
 }
 
 

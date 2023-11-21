@@ -86,11 +86,7 @@ vapor
 {
     type            reactingPhaseModel;
 
-    diameterModel   constant;
-    constantCoeffs
-    {
-        d           1;
-    }
+    diameterModel   none;
 
     residualAlpha   1e-5;
 }
@@ -136,44 +132,37 @@ blending
 {
     default
     {
-        type            none;
-        continuousPhase vapor;
+        type            continuous;
+        phase           vapor;
     }
 }
 
 interfaceCompression
-();
+{}
 
 surfaceTension
-();
+{}
 
 drag
-(
-    (particles in vapor)
+{
+    particles_dispersedIn_vapor
     {
         type            timeScaleFiltered;
         minRelaxTime    1e-4;
-
         dragModel
         {
             type            aerosolDrag;
-
             sigma           340e-12;
-
-            swarmCorrection
-            {
-                type    none;
-            }
         }
     }
-);
+}
 
 virtualMass
-();
+{}
 
 heatTransfer
-(
-    (particles in vapor)
+{
+    particles_dispersedIn_vapor
     {
         type            timeScaleFiltered;
         minRelaxTime    1e-4;
@@ -184,29 +173,29 @@ heatTransfer
             Nu              1;
         }
     }
-);
+}
 
 phaseTransfer
-(
-    (particles in vapor)
+{
+    particles_dispersedIn_vapor
     {
         type reactionDriven;
         reactingPhase vapor;
         targetPhase particles;
         species (TiO2);
     }
-);
+}
 
 lift
-();
+{}
 
 wallLubrication
-();
+{}
 
 turbulentDispersion
-();
+{}
 
 interfaceCompression
-();
+{}
 
 // ************************************************************************* //

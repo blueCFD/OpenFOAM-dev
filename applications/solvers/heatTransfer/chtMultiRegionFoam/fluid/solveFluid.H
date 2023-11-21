@@ -46,12 +46,13 @@ else
 
     if (Ecorr == nEcorr - 1)
     {
+        tmp<fvVectorMatrix>& tUEqn = UEqns[i];
         fvVectorMatrix& UEqn = tUEqn.ref();
 
         // --- PISO loop
         while (pimple.correct())
         {
-            #include "../../buoyantPimpleFoam/pEqn.H"
+            #include "../../buoyantFoam/pEqn.H"
         }
 
         if (pimples.pimpleTurbCorr(i))

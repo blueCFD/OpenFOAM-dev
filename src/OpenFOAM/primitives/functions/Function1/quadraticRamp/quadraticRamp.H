@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ Class
     Foam::Function1s::quadraticRamp
 
 Description
-    Quadratic ramp function starting from 0 and increasing quadraticRampally
+    Quadratic ramp function starting from 0 and increasing quadratically
     to 1 from \c t_0 over the \c duration and remaining at 1 thereafter.
 
 See also

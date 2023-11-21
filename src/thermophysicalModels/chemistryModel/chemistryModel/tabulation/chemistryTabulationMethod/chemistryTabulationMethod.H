@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,17 +46,14 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class ThermoType>
-class chemistryModel;
+class odeChemistryModel;
 
 /*---------------------------------------------------------------------------*\
                   Class chemistryTabulationMethod Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class ThermoType>
 class chemistryTabulationMethod
 {
-
 public:
 
     //- Runtime type information
@@ -71,7 +68,7 @@ public:
         dictionary,
         (
             const dictionary& dict,
-            const chemistryModel<ThermoType>& chemistry
+            const odeChemistryModel& chemistry
         ),
         (dict, chemistry)
     );
@@ -83,7 +80,7 @@ public:
         chemistryTabulationMethod
         (
             const dictionary& dict,
-            const chemistryModel<ThermoType>& chemistry
+            const odeChemistryModel& chemistry
         );
 
 
@@ -92,7 +89,7 @@ public:
         static autoPtr<chemistryTabulationMethod> New
         (
             const IOdictionary& dict,
-            const chemistryModel<ThermoType>& chemistry
+            const odeChemistryModel& chemistry
         );
 
 
@@ -123,8 +120,8 @@ public:
         (
             const scalarField& phiQ,
             const scalarField& RphiQ,
+            const label nActive,
             const label li,
-            const scalar rho,
             const scalar deltaT
         ) = 0;
 
@@ -140,13 +137,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "chemistryTabulationMethod.C"
-    #include "chemistryTabulationMethodNew.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

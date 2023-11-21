@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,6 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "volFields.H"
 #include "surfaceFields.H"
+#include "pressureInletOutletVelocityFvPatchVectorField.H"
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -84,29 +85,39 @@ Foam::totalPressureFvPatchScalarField::totalPressureFvPatchScalarField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::totalPressureFvPatchScalarField::updateCoeffs
-(
-    const scalarField& p0p,
-    const vectorField& Up
-)
+void Foam::totalPressureFvPatchScalarField::updateCoeffs()
 {
     const fvsPatchField<scalar>& phip =
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
-    dynamicPressureFvPatchScalarField::updateCoeffs
-    (
-        p0_,
-        0.5*(1 - pos0(phip))*magSqr(Up)
-    );
-}
-
-
-void Foam::totalPressureFvPatchScalarField::updateCoeffs()
-{
     const fvPatchField<vector>& Up =
         patch().lookupPatchField<volVectorField, vector>(UName_);
 
-    updateCoeffs(p0_, Up);
+    if (isA<pressureInletOutletVelocityFvPatchVectorField>(Up))
+    {
+        const pressureInletOutletVelocityFvPatchVectorField& Upiov =
+            refCast<const pressureInletOutletVelocityFvPatchVectorField>(Up);
+
+        if (Upiov.tangentialVelocity().valid())
+        {
+            const scalar t = this->db().time().userTimeValue();
+
+            dynamicPressureFvPatchScalarField::updateCoeffs
+            (
+                p0_,
+                0.5*neg(phip)*magSqr(Upiov.tangentialVelocity()->value(t))
+              - 0.5*neg(phip)*magSqr(Up)
+            );
+
+            return;
+        }
+    }
+
+    dynamicPressureFvPatchScalarField::updateCoeffs
+    (
+        p0_,
+        -0.5*neg(phip)*magSqr(Up)
+    );
 }
 
 

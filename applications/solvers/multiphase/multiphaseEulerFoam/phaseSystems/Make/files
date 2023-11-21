@@ -2,9 +2,19 @@ phaseModel/phaseModel/phaseModel.C
 phaseModel/phaseModel/phaseModelNew.C
 phaseModel/phaseModel/phaseModels.C
 
-phasePair/phasePairKey/phasePairKey.C
-phasePair/phasePair/phasePair.C
-phasePair/orderedPhasePair/orderedPhasePair.C
+phaseInterface/phaseInterfaceKey/phaseInterfaceKey.C
+phaseInterface/phaseInterface/phaseInterface.C
+phaseInterface/dispersedPhaseInterface/dispersedPhaseInterface.C
+phaseInterface/segregatedPhaseInterface/segregatedPhaseInterface.C
+phaseInterface/displacedPhaseInterface/displacedPhaseInterface.C
+phaseInterface/dispersedDisplacedPhaseInterface/dispersedDisplacedPhaseInterface.C
+phaseInterface/segregatedDisplacedPhaseInterface/segregatedDisplacedPhaseInterface.C
+phaseInterface/sidedPhaseInterface/sidedPhaseInterface.C
+phaseInterface/dispersedSidedPhaseInterface/dispersedSidedPhaseInterface.C
+phaseInterface/segregatedSidedPhaseInterface/segregatedSidedPhaseInterface.C
+phaseInterface/displacedSidedPhaseInterface/displacedSidedPhaseInterface.C
+phaseInterface/dispersedDisplacedSidedPhaseInterface/dispersedDisplacedSidedPhaseInterface.C
+phaseInterface/segregatedDisplacedSidedPhaseInterface/segregatedDisplacedSidedPhaseInterface.C
 
 phaseSystem/phaseSystem.C
 phaseSystem/phaseSystemNew.C
@@ -19,6 +29,7 @@ diameterModels/sphericalDiameter/sphericalDiameter.C
 diameterModels/constantDiameter/constantDiameter.C
 diameterModels/isothermalDiameter/isothermalDiameter.C
 diameterModels/linearTsubDiameter/linearTsubDiameter.C
+diameterModels/noDiameter/noDiameter.C
 diameterModels/velocityGroup/velocityGroup.C
 
 diameterModels/IATE/IATE.C
@@ -88,10 +99,9 @@ $(nucleationModels)/wallBoiling/wallBoiling.C
 
 BlendedInterfacialModel/blendingMethods/blendingMethod/blendingMethod.C
 BlendedInterfacialModel/blendingMethods/blendingMethod/blendingMethodNew.C
-BlendedInterfacialModel/blendingMethods/noBlending/noBlending.C
 BlendedInterfacialModel/blendingMethods/linear/linear.C
 BlendedInterfacialModel/blendingMethods/hyperbolic/hyperbolic.C
-
-alphaContactAngle/alphaContactAngleFvPatchScalarField.C
+BlendedInterfacialModel/blendingMethods/continuous/continuous.C
+BlendedInterfacialModel/blendingMethods/segregatedBlendingMethod/segregatedBlendingMethod.C
 
 LIB = $(FOAM_LIBBIN)/libphaseSystem

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "chemistryModel.H"
 #include "UniformField.T.H"
 #include "localEulerDdtScheme.H"
-#include "clockTime.H"
+#include "cpuLoad.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -36,27 +36,23 @@ Foam::chemistryModel<ThermoType>::chemistryModel
     const fluidReactionThermo& thermo
 )
 :
-    basicChemistryModel(thermo),
-    ODESystem(),
+    odeChemistryModel(thermo),
     log_(this->lookupOrDefault("log", false)),
+    loadBalancing_(this->lookupOrDefault("loadBalancing", false)),
     jacobianType_
     (
         this->found("jacobian")
       ? jacobianTypeNames_.read(this->lookup("jacobian"))
       : jacobianType::fast
     ),
-    Yvf_(this->thermo().composition().Y()),
     mixture_(refCast<const multiComponentMixture<ThermoType>>(this->thermo())),
     specieThermos_(mixture_.specieThermos()),
     reactions_(mixture_.species(), specieThermos_, this->mesh(), *this),
-    nSpecie_(Yvf_.size()),
     RR_(nSpecie_),
     Y_(nSpecie_),
     c_(nSpecie_),
     YTpWork_(scalarField(nSpecie_ + 2)),
     YTpYTpWork_(scalarSquareMatrix(nSpecie_ + 2)),
-    cTos_(nSpecie_, -1),
-    sToc_(nSpecie_),
     mechRedPtr_
     (
         chemistryReductionMethod<ThermoType>::New
@@ -66,15 +62,7 @@ Foam::chemistryModel<ThermoType>::chemistryModel
         )
     ),
     mechRed_(*mechRedPtr_),
-    mechRedActive_(mechRed_.active()),
-    tabulationPtr_
-    (
-        chemistryTabulationMethod<ThermoType>::New
-        (
-            *this,
-            *this
-        )
-    ),
+    tabulationPtr_(chemistryTabulationMethod::New(*this, *this)),
     tabulation_(*tabulationPtr_)
 {
     // Create the fields for the chemistry sources
@@ -104,7 +92,7 @@ Foam::chemistryModel<ThermoType>::chemistryModel
 
     // When the mechanism reduction method is used, the 'active' flag for every
     // species should be initialised (by default 'active' is true)
-    if (mechRedActive_)
+    if (reduction_)
     {
         const basicSpecieMixture& composition = this->thermo().composition();
 
@@ -152,7 +140,7 @@ void Foam::chemistryModel<ThermoType>::derivatives
     scalarField& dYTpdt
 ) const
 {
-    if (mechRedActive_)
+    if (reduction_)
     {
         forAll(sToc_, i)
         {
@@ -197,7 +185,7 @@ void Foam::chemistryModel<ThermoType>::derivatives
                 c_,
                 li,
                 dYTpdt,
-                mechRedActive_,
+                reduction_,
                 cTos_,
                 0
             );
@@ -245,7 +233,7 @@ void Foam::chemistryModel<ThermoType>::jacobian
     scalarSquareMatrix& J
 ) const
 {
-    if (mechRedActive_)
+    if (reduction_)
     {
         forAll(sToc_, i)
         {
@@ -333,7 +321,7 @@ void Foam::chemistryModel<ThermoType>::jacobian
                 li,
                 dYTpdt,
                 ddNdtByVdcTp,
-                mechRedActive_,
+                reduction_,
                 cTos_,
                 0,
                 nSpecie_,
@@ -687,7 +675,7 @@ void Foam::chemistryModel<ThermoType>::calculate()
                     c_,
                     celli,
                     dNdtByV,
-                    mechRedActive_,
+                    reduction_,
                     cTos_,
                     0
                 );
@@ -713,10 +701,14 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
 
     const basicSpecieMixture& composition = this->thermo().composition();
 
+    optionalCpuLoad& chemistryCpuTime
+    (
+        optionalCpuLoad::New(this->mesh(), "chemistryCpuTime", loadBalancing_)
+    );
+
     // CPU time analysis
-    const clockTime clockTime_ = clockTime();
-    clockTime_.timeIncrement();
-    scalar solveChemistryCpuTime_ = 0;
+    cpuTime solveCpuTime_;
+    scalar totalSolveCpuTime_ = 0;
 
     basicChemistryModel::correct();
 
@@ -742,6 +734,8 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
     // Composition vector (Yi, T, p, deltaT)
     scalarField phiq(nEqns() + 1);
     scalarField Rphiq(nEqns() + 1);
+
+    chemistryCpuTime.reset();
 
     forAll(rho0vf, celli)
     {
@@ -789,7 +783,7 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
         // (it will either expand the current data or add a new stored point).
         else
         {
-            if (mechRedActive_)
+            if (reduction_)
             {
                 // Compute concentrations
                 for (label i=0; i<nSpecie_; i++)
@@ -810,15 +804,15 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
 
             if (log_)
             {
-                // Reset the time
-                clockTime_.timeIncrement();
+                // Reset the solve time
+                solveCpuTime_.cpuTimeIncrement();
             }
 
             // Calculate the chemical source terms
             while (timeLeft > small)
             {
                 scalar dt = timeLeft;
-                if (mechRedActive_)
+                if (reduction_)
                 {
                     // Solve the reduced set of ODE
                     solve
@@ -845,7 +839,7 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
 
             if (log_)
             {
-                solveChemistryCpuTime_ += clockTime_.timeIncrement();
+                totalSolveCpuTime_ += solveCpuTime_.cpuTimeIncrement();
             }
 
             // If tabulation is used, we add the information computed here to
@@ -860,13 +854,20 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
                 Rphiq[Rphiq.size()-2] = p;
                 Rphiq[Rphiq.size()-1] = deltaT[celli];
 
-                tabulation_.add(phiq, Rphiq, celli, rho0, deltaT[celli]);
+                tabulation_.add
+                (
+                    phiq,
+                    Rphiq,
+                    mechRed_.nActiveSpecies(),
+                    celli,
+                    deltaT[celli]
+                );
             }
 
             // When operations are done and if mechanism reduction is active,
             // the number of species (which also affects nEqns) is set back
             // to the total number of species (stored in the mechRed object)
-            if (mechRedActive_)
+            if (reduction_)
             {
                 setNSpecie(mechRed_.nSpecie());
             }
@@ -880,19 +881,24 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
         {
             RR_[i][celli] = (Y_[i]*rho - Y0[i]*rho0)/deltaT[celli];
         }
+
+        if (loadBalancing_)
+        {
+            chemistryCpuTime.cpuTimeIncrement(celli);
+        }
     }
 
     if (log_)
     {
         cpuSolveFile_()
             << this->time().userTimeValue()
-            << "    " << solveChemistryCpuTime_ << endl;
+            << "    " << totalSolveCpuTime_ << endl;
     }
 
     mechRed_.update();
     tabulation_.update();
 
-    if (mechRedActive_ && Pstream::parRun())
+    if (reduction_ && Pstream::parRun())
     {
         List<bool> active(composition.active());
         Pstream::listCombineGather(active, orEqOp<bool>());

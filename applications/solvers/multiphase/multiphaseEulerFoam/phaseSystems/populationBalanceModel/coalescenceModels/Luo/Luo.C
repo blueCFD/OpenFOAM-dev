@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,9 +25,7 @@ License
 
 #include "Luo.H"
 #include "addToRunTimeSelectionTable.H"
-#include "mathematicalConstants.H"
-#include "phaseCompressibleMomentumTransportModel.H"
-#include "virtualMassModel.H"
+#include "dispersedVirtualMassModel.H"
 #include "phaseSystem.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -82,18 +80,18 @@ addToCoalescenceRate
 
     if
     (
-        popBal_.fluid().foundSubModel<virtualMassModel>
+        popBal_.fluid().foundInterfacialModel
+        <virtualMassModels::dispersedVirtualMassModel>
         (
-            fi.phase(),
-            popBal_.continuousPhase()
+            dispersedPhaseInterface(fi.phase(), popBal_.continuousPhase())
         )
     )
     {
-        const virtualMassModel& vm =
-            popBal_.fluid().lookupSubModel<virtualMassModel>
+        const virtualMassModels::dispersedVirtualMassModel& vm =
+            popBal_.fluid().lookupInterfacialModel
+            <virtualMassModels::dispersedVirtualMassModel>
             (
-                fi.phase(),
-                popBal_.continuousPhase()
+                dispersedPhaseInterface(fi.phase(), popBal_.continuousPhase())
             );
 
         const dimensionedScalar xi = fi.dSph()/fj.dSph();

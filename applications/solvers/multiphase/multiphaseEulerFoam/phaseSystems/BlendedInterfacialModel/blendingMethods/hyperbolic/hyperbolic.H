@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,17 @@ Class
     Foam::blendingMethods::hyperbolic
 
 Description
+    Blending method based on smooth hyperbolic functions. Supports the full
+    range of phase fraction space. E.g., from droplets in air, through a
+    segregated regime, to bubbly flow.
+
+    This method requires a volume fraction at which the phase is considered to
+    become continuous, and a range of volume fraction over which this occurs,
+    to be specified for both phases.
+
+    Alternatively, the volume fraction can be omitted or replaced with the
+    keyword "none" to represent a phase which cannot become continuous. E.g.,
+    a particulate phase.
 
 SourceFiles
     hyperbolic.C
@@ -54,10 +65,23 @@ class hyperbolic
     // Private Data
 
         //- Minimum fraction of phases which can be considered continuous
-        HashTable<dimensionedScalar, word, word::hash> minContinuousAlpha_;
+        Pair<scalar> minContinuousAlpha_;
 
         //- Width of the transition
-        const dimensionedScalar transitionAlphaScale_;
+        const scalar transitionAlphaScale_;
+
+
+protected:
+
+    // Protected Member Functions
+
+        //- Evaluate the blending function
+        virtual tmp<volScalarField> fContinuous
+        (
+            const UPtrList<const volScalarField>& alphas,
+            const label phaseSet,
+            const label systemSet
+        ) const;
 
 
 public:
@@ -68,11 +92,11 @@ public:
 
     // Constructors
 
-        //- Construct from a dictionary and a list of phase names
+        //- Construct from a dictionary and an interface
         hyperbolic
         (
             const dictionary& dict,
-            const wordList& phaseNames
+            const phaseInterface& interface
         );
 
 
@@ -82,19 +106,11 @@ public:
 
     // Member Functions
 
-        //- Factor for first phase
-        virtual tmp<volScalarField> f1
-        (
-            const phaseModel& phase1,
-            const phaseModel& phase2
-        ) const;
+        //- Return whether or not a phase can be considered continuous
+        virtual bool canBeContinuous(const label index) const;
 
-        //- Factor for second phase
-        virtual tmp<volScalarField> f2
-        (
-            const phaseModel& phase1,
-            const phaseModel& phase2
-        ) const;
+        //- Return whether or not this interface can segregate
+        virtual bool canSegregate() const;
 };
 
 

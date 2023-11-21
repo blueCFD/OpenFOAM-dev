@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,7 +73,9 @@ class distributor
 :
     public fvMeshDistributor
 {
-    // Private Member Data
+protected:
+
+    // Protected Member Data
 
         //- Cache the decomposer/distributor
         autoPtr<decompositionMethod> distributor_;
@@ -89,13 +91,13 @@ class distributor
         label timeIndex_;
 
 
-    // Private Member Functions
+    // Protected Member Functions
 
         //- Read the projection parameters from dictionary
         void readDict();
 
         //- Distribute the mesh and mesh data
-        void distribute();
+        void distribute(const labelList& distribution);
 
 
 public:

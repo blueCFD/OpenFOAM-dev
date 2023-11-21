@@ -38,11 +38,7 @@ air
 {
     type          purePhaseModel;
 
-    diameterModel constant;
-    constantCoeffs
-    {
-        d               1;
-    }
+    diameterModel none;
 
     residualAlpha   0;
 }
@@ -51,63 +47,54 @@ blending
 {
     default
     {
-        type            none;
-        continuousPhase air;
+        type            continuous;
+        phase           air;
     }
 }
 
 surfaceTension
-(
-    (air and particles)
+{
+    air_particles
     {
         type            constant;
         sigma           0;
     }
-);
+}
 
 interfaceCompression
-();
+{}
 
 drag
-(
-    (particles in air)
+{
+    particles_dispersedIn_air
     {
         type            GidaspowErgunWenYu;
         residualRe      1e-3;
-        swarmCorrection
-        {
-            type        none;
-        }
     }
-);
+}
 
 virtualMass
-(
-);
+{}
 
 heatTransfer
-(
-    (particles in air)
+{
+    particles_dispersedIn_air
     {
         type            RanzMarshall;
         residualAlpha   1e-4;
     }
-);
+}
 
 phaseTransfer
-(
-);
+{}
 
 lift
-(
-);
+{}
 
 wallLubrication
-(
-);
+{}
 
 turbulentDispersion
-(
-);
+{}
 
 // ************************************************************************* //

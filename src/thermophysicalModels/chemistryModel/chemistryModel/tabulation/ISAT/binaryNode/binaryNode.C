@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,11 +24,11 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "binaryNode.H"
+#include "ISAT.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class ThermoType>
-Foam::binaryNode<ThermoType>::binaryNode()
+Foam::binaryNode::binaryNode()
 :
     leafLeft_(nullptr),
     leafRight_(nullptr),
@@ -38,12 +38,11 @@ Foam::binaryNode<ThermoType>::binaryNode()
 {}
 
 
-template<class ThermoType>
-Foam::binaryNode<ThermoType>::binaryNode
+Foam::binaryNode::binaryNode
 (
-    chemPointISAT<ThermoType>* elementLeft,
-    chemPointISAT<ThermoType>* elementRight,
-    binaryNode<ThermoType>* parent
+    chemPointISAT* elementLeft,
+    chemPointISAT* elementRight,
+    binaryNode* parent
 )
 :
     leafLeft_(elementLeft),
@@ -53,81 +52,79 @@ Foam::binaryNode<ThermoType>::binaryNode
     parent_(parent),
     v_(elementLeft->completeSpaceSize(), 0)
 {
-    calcV(elementLeft, elementRight, v_);
-    a_ = calcA(elementLeft, elementRight);
+    calcV(*elementLeft, *elementRight, v_);
+    a_ = calcA(*elementLeft, *elementRight);
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class ThermoType>
-void Foam::binaryNode<ThermoType>::calcV
+void Foam::binaryNode::calcV
 (
-    chemPointISAT<ThermoType>*& elementLeft,
-    chemPointISAT<ThermoType>*& elementRight,
+    const chemPointISAT& elementLeft,
+    const chemPointISAT& elementRight,
     scalarField& v
 )
 {
     // LT is the transpose of the L matrix
-    scalarSquareMatrix& LT = elementLeft->LT();
-    bool mechReductionActive = elementLeft->chemistry().mechRed().active();
+    const scalarSquareMatrix& LT = elementLeft.LT();
+    const bool reduction = elementLeft.table().reduction();
 
     // Difference of composition in the full species domain
-    scalarField phiDif(elementRight->phi() - elementLeft->phi());
-    const scalarField& scaleFactor(elementLeft->scaleFactor());
-    scalar epsTol = elementLeft->tolerance();
+    const scalarField& phil(elementLeft.phi());
+    const scalarField& phir(elementRight.phi());
+    const scalarField& scaleFactor(elementLeft.scaleFactor());
+    const scalar epsTol = elementLeft.tolerance();
 
-    // v = LT.T()*LT*phiDif
-    for (label i=0; i<elementLeft->completeSpaceSize(); i++)
+    // v = LT.T()*LT*(phir - phil)
+    for (label i=0; i<elementLeft.completeSpaceSize(); i++)
     {
         label si = i;
         bool outOfIndexI = true;
-        if (mechReductionActive)
+        if (reduction)
         {
-            if (i<elementLeft->completeSpaceSize() - 3)
+            if (i<elementLeft.completeSpaceSize() - 3)
             {
-                si = elementLeft->completeToSimplifiedIndex()[i];
+                si = elementLeft.completeToSimplifiedIndex()[i];
                 outOfIndexI = (si == -1);
             }
             else // temperature and pressure
             {
                 outOfIndexI = false;
-                const label dif = i - (elementLeft->completeSpaceSize() - 3);
-                si = elementLeft->nActiveSpecies() + dif;
+                const label dif = i - (elementLeft.completeSpaceSize() - 3);
+                si = elementLeft.nActive() + dif;
             }
         }
-        if (!mechReductionActive || (mechReductionActive && !(outOfIndexI)))
+        if (!reduction || (reduction && !(outOfIndexI)))
         {
             v[i] = 0;
-            for (label j=0; j<elementLeft->completeSpaceSize(); j++)
+            for (label j=0; j<elementLeft.completeSpaceSize(); j++)
             {
                 label sj = j;
                 bool outOfIndexJ = true;
-                if (mechReductionActive)
+
+                if (reduction)
                 {
-                    if (j < elementLeft->completeSpaceSize() - 3)
+                    if (j < elementLeft.completeSpaceSize() - 3)
                     {
-                        sj = elementLeft->completeToSimplifiedIndex()[j];
+                        sj = elementLeft.completeToSimplifiedIndex()[j];
                         outOfIndexJ = (sj==-1);
                     }
                     else
                     {
                         outOfIndexJ = false;
                         const label dif =
-                            j - (elementLeft->completeSpaceSize() - 3);
-                        sj = elementLeft->nActiveSpecies() + dif;
+                            j - (elementLeft.completeSpaceSize() - 3);
+                        sj = elementLeft.nActive() + dif;
                     }
                 }
-                if
-                (
-                    !mechReductionActive
-                  ||(mechReductionActive && !(outOfIndexJ))
-                )
+
+                if (!reduction ||(reduction && !(outOfIndexJ)))
                 {
                     // Since L is a lower triangular matrix k=0->min(i, j)
                     for (label k=0; k<=min(si, sj); k++)
                     {
-                        v[i] += LT(k, si)*LT(k, sj)*phiDif[j];
+                        v[i] += LT(k, si)*LT(k, sj)*(phir[j] - phil[j]);
                     }
                 }
             }
@@ -136,27 +133,9 @@ void Foam::binaryNode<ThermoType>::calcV
         {
             // When it is an inactive species the diagonal element of LT is
             // 1/(scaleFactor*epsTol)
-            v[i] = phiDif[i]/sqr(scaleFactor[i]*epsTol);
+            v[i] = (phir[i] - phil[i])/sqr(scaleFactor[i]*epsTol);
         }
     }
-}
-
-
-template<class ThermoType>
-Foam::scalar Foam::binaryNode<ThermoType>::calcA
-(
-    chemPointISAT<ThermoType>* elementLeft,
-    chemPointISAT<ThermoType>* elementRight
-)
-{
-    scalarField phih((elementLeft->phi() + elementRight->phi())/2);
-    scalar a = 0;
-    forAll(phih, i)
-    {
-        a += v_[i]*phih[i];
-    }
-
-    return a;
 }
 
 

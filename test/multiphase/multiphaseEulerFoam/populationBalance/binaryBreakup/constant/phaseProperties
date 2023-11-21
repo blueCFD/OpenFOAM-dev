@@ -106,11 +106,7 @@ air3
 water
 {
     type            pureIsothermalPhaseModel;
-    diameterModel   constant;
-    constantCoeffs
-    {
-        d               1e-4;
-    }
+    diameterModel   none;
 
     residualAlpha   1e-6;
 }
@@ -147,36 +143,36 @@ blending
 {
     default
     {
-        type            none;
-        continuousPhase water;
+        type            continuous;
+        phase           water;
     }
 }
 
 surfaceTension
-();
+{}
 
 interfaceCompression
-();
+{}
 
 drag
-();
+{}
 
 virtualMass
-();
+{}
 
 heatTransfer
-();
+{}
 
 phaseTransfer
-();
+{}
 
 lift
-();
+{}
 
 wallLubrication
-();
+{}
 
 turbulentDispersion
-();
+{}
 
 // ************************************************************************* //

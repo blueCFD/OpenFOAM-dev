@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,19 +29,17 @@ Description
 
     Constant values for momentum source for actuation disk
     \f[
-        T = 2 \rho A U_{o}^2 a (1-a)
-    \f]
-    and
-    \f[
-        U_1 = (1 - a)U_{o}
+        T = 2 \rho A (\hat{d}\dot U_{o})^2 a (1-a) \hat{d}
     \f]
 
     where:
     \vartable
-        A   | disk area
-        U_o | upstream velocity
-        a   | 1 - Cp/Ct
-        U_1 | velocity at the disk
+        A    | Disk area
+        dHat | Unit disk direction
+        U_o  | Upstream velocity
+        a    | 1 - Cp/Ct
+        Cp   | Power coefficient
+        Ct   | Thrust coefficient
     \endvartable
 
 Usage
@@ -53,8 +51,6 @@ Usage
 
         selectionMode   cellSet;
         cellSet         actuationDisk1;
-
-        U               U;          // Name of the velocity field
 
         diskDir         (-1 0 0);   // Disk direction
         Cp              0.1;        // Power coefficient
@@ -99,6 +95,9 @@ protected:
         //- The set of cells the fvConstraint applies to
         fvCellSet set_;
 
+        //- The name of the phase to which this fvModel applies
+        word phaseName_;
+
         //- Name of the velocity field
         word UName_;
 
@@ -129,12 +128,13 @@ private:
         void readCoeffs();
 
         //- Add resistance to the UEqn
-        template<class RhoFieldType>
+        template<class AlphaFieldType, class RhoFieldType>
         void addActuationDiskAxialInertialResistance
         (
             vectorField& Usource,
             const labelList& cells,
             const scalarField& V,
+            const AlphaFieldType& alpha,
             const RhoFieldType& rho,
             const vectorField& U
         ) const;
@@ -187,6 +187,15 @@ public:
             //- Source term to compressible momentum equation
             virtual void addSup
             (
+                const volScalarField& rho,
+                fvMatrix<vector>& eqn,
+                const word& fieldName
+            ) const;
+
+            //- Explicit and implicit sources for phase equations
+            virtual void addSup
+            (
+                const volScalarField& alpha,
                 const volScalarField& rho,
                 fvMatrix<vector>& eqn,
                 const word& fieldName

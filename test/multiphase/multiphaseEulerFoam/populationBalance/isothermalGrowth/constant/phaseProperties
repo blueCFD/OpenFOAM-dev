@@ -94,11 +94,7 @@ air3
 water
 {
     type                pureIsothermalPhaseModel;
-    diameterModel       constant;
-    constantCoeffs
-    {
-        d               1e-4;
-    }
+    diameterModel       none;
 
     residualAlpha       1e-6;
 }
@@ -132,66 +128,52 @@ blending
 {
     default
     {
-        type            none;
-        continuousPhase water;
+        type            continuous;
+        phase           water;
     }
 }
 
 drag
-(
-    (air1 in water)
+{
+    air1_dispersedIn_water
     {
         type            SchillerNaumann;
         residualRe      1e-3;
-        swarmCorrection
-        {
-            type        none;
-        }
     }
 
-    (air2 in water)
+    air2_dispersedIn_water
     {
-        type            SchillerNaumann;
-        residualRe      1e-3;
-        swarmCorrection
-        {
-            type        none;
-        }
+        $air1_dispersedIn_water;
     }
 
-    (air3 in water)
+    air3_dispersedIn_water
     {
-        type            SchillerNaumann;
-        residualRe      1e-3;
-        swarmCorrection
-        {
-            type        none;
-        }
+        $air1_dispersedIn_water;
     }
-);
+}
 
 heatTransfer
-();
+{}
 
 interfaceCompression
-();
+{}
 
 lift
-();
+{}
 
 phaseTransfer
-();
+{}
 
 surfaceTension
-();
+{}
 
 turbulentDispersion
-();
+{}
 
 virtualMass
-();
+{}
 
 wallLubrication
-();
+{}
 
 // ************************************************************************* //

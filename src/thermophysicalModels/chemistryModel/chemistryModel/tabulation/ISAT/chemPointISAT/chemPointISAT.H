@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -122,6 +122,10 @@ Description
 #ifndef chemPointISAT_H
 #define chemPointISAT_H
 
+#include "scalarField.H"
+#include "LUscalarMatrix.T.H"
+#include "Switch.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -129,15 +133,10 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class ThermoType>
 class binaryNode;
-
-template<class ThermoType>
-class chemistryModel;
 
 namespace chemistryTabulationMethods
 {
-    template<class ThermoType>
     class ISAT;
 }
 
@@ -146,13 +145,12 @@ namespace chemistryTabulationMethods
                         Class chemPointISAT Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class ThermoType>
 class chemPointISAT
 {
     // Private Data
 
         //- Reference to the ISAT table
-        chemistryTabulationMethods::ISAT<ThermoType>& table_;
+        chemistryTabulationMethods::ISAT& table_;
 
         //- Vector storing the composition, temperature and pressure
         //  and deltaT if a variable time step is set on
@@ -172,7 +170,7 @@ class chemPointISAT
         scalarField scaleFactor_;
 
         //- Reference to the node in the binary tree holding this chemPoint
-        binaryNode<ThermoType>* node_;
+        binaryNode* node_;
 
         //- The size of the composition space (size of the vector phi)
         label completeSpaceSize_;
@@ -184,7 +182,7 @@ class chemPointISAT
         static scalar tolerance_;
 
         //- Number of active species stored in the chemPoint
-        label nActiveSpecies_;
+        label nActive_;
 
         //- Vectors that store the index conversion between the simplified
         //  and the complete chemical mechanism
@@ -251,151 +249,88 @@ public:
         //- Construct from components
         chemPointISAT
         (
-            chemistryTabulationMethods::ISAT<ThermoType>& table,
+            chemistryTabulationMethods::ISAT& table,
             const scalarField& phi,
             const scalarField& Rphi,
             const scalarSquareMatrix& A,
             const scalarField& scaleFactor,
-            const scalar& tolerance,
-            const label& completeSpaceSize,
+            const scalar tolerance,
+            const label completeSpaceSize,
+            const label nActive,
             const dictionary& coeffsDict,
-            binaryNode<ThermoType>* node = nullptr
+            binaryNode* node = nullptr
         );
 
         //- Construct from another chemPoint and reference to a binary node
         chemPointISAT
         (
-            const chemPointISAT<ThermoType>& p,
-            binaryNode<ThermoType>* node
+            const chemPointISAT& p,
+            binaryNode* node
         );
 
         //- Construct from another chemPoint
-        chemPointISAT(chemPointISAT<ThermoType>& p);
+        chemPointISAT(chemPointISAT& p);
 
 
     // Member Functions
 
-        //- Access to the chemistryModel
-        inline const chemistryModel<ThermoType>& chemistry()
-        {
-            return table_.chemistry();
-        }
+        //- Access to the ISAT table
+        inline const chemistryTabulationMethods::ISAT& table() const;
 
-        inline label nGrowth()
-        {
-            return nGrowth_;
-        }
+        inline label nGrowth() const;
 
-        inline label& completeSpaceSize()
-        {
-            return completeSpaceSize_;
-        }
+        inline label& completeSpaceSize();
 
-        inline const scalarField& phi() const
-        {
-            return phi_;
-        }
+        inline const label& completeSpaceSize() const;
 
-        inline const scalarField& Rphi() const
-        {
-            return Rphi_;
-        }
+        inline const scalarField& phi() const;
 
-        inline const scalarField& scaleFactor()
-        {
-            return scaleFactor_;
-        }
+        inline const scalarField& Rphi() const;
 
-        inline const scalar& tolerance()
-        {
-            return tolerance_;
-        }
+        inline const scalarField& scaleFactor() const;
 
-        static void changeTolerance(scalar newTol)
-        {
-            tolerance_ = newTol;
-        }
+        inline const scalar& tolerance() const;
 
-        inline binaryNode<ThermoType>*& node()
-        {
-            return node_;
-        }
+        inline static void changeTolerance(scalar newTol);
 
-        inline const scalarSquareMatrix& A() const
-        {
-            return A_;
-        }
+        inline binaryNode*& node();
 
-        inline scalarSquareMatrix& A()
-        {
-            return A_;
-        }
+        inline const scalarSquareMatrix& A() const;
 
-        inline const scalarSquareMatrix& LT() const
-        {
-            return LT_;
-        }
+        inline scalarSquareMatrix& A();
 
-        inline scalarSquareMatrix& LT()
-        {
-            return LT_;
-        }
+        inline const scalarSquareMatrix& LT() const;
 
-        inline label nActiveSpecies()
-        {
-            return nActiveSpecies_;
-        }
+        inline scalarSquareMatrix& LT();
 
-        inline List<label>& completeToSimplifiedIndex()
-        {
-            return completeToSimplifiedIndex_;
-        }
+        inline label nActive() const;
 
-        inline List<label>& simplifiedToCompleteIndex()
-        {
-            return simplifiedToCompleteIndex_;
-        }
+        inline const List<label>& completeToSimplifiedIndex() const;
+
+        inline const List<label>& simplifiedToCompleteIndex() const;
 
         //- Increases the number of retrieves the chempoint has generated
-        void increaseNumRetrieve();
+        inline void increaseNumRetrieve();
 
         //- Resets the number of retrieves at each time step
-        void resetNumRetrieve();
+        inline void resetNumRetrieve();
 
         //- Increases the "counter" of the chP life
-        void increaseNLifeTime();
+        inline void increaseNLifeTime();
 
-        label simplifiedToCompleteIndex(const label i);
+        inline label simplifiedToCompleteIndex(const label i);
 
-        inline const label& timeTag()
-        {
-            return timeTag_;
-        }
+        inline const label& timeTag();
 
-        inline label& lastTimeUsed()
-        {
-            return lastTimeUsed_;
-        }
+        inline label& lastTimeUsed();
 
-        inline bool& toRemove()
-        {
-            return toRemove_;
-        }
+        inline bool& toRemove();
 
-        inline label& maxNumNewDim()
-        {
-            return maxNumNewDim_;
-        }
+        inline label& maxNumNewDim();
 
-        inline const label& numRetrieve()
-        {
-            return numRetrieve_;
-        }
+        inline const label& numRetrieve();
 
-        inline const label& nLifeTime()
-        {
-            return nLifeTime_;
-        }
+        inline const label& nLifeTime();
 
         // ISAT functions
 
@@ -447,9 +382,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#ifdef NoRepository
-    #include "chemPointISAT.C"
-#endif
+#include "chemPointISATI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

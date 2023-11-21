@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,11 +73,7 @@ void Foam::fvMesh::clearGeomNotOldVol()
         MoveableMeshObject
     >(*this);
 
-    slicedVolScalarField::Internal* VPtr =
-        static_cast<slicedVolScalarField::Internal*>(VPtr_);
-    deleteDemandDrivenData(VPtr);
-    VPtr_ = nullptr;
-
+    deleteDemandDrivenData(VPtr_);
     deleteDemandDrivenData(SfPtr_);
     deleteDemandDrivenData(magSfPtr_);
     deleteDemandDrivenData(CPtr_);
@@ -264,24 +260,9 @@ Foam::fvMesh::fvMesh(const IOobject& io, const bool changers)
     fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this, boundaryMesh()),
-    topoChanger_
-    (
-        changers
-      ? fvMeshTopoChanger::New(*this)
-      : autoPtr<fvMeshTopoChanger>(nullptr)
-    ),
-    distributor_
-    (
-        changers
-      ? fvMeshDistributor::New(*this)
-      : autoPtr<fvMeshDistributor>(nullptr)
-    ),
-    mover_
-    (
-        changers
-      ? fvMeshMover::New(*this)
-      : autoPtr<fvMeshMover>(nullptr)
-    ),
+    topoChanger_(nullptr),
+    distributor_(nullptr),
+    mover_(nullptr),
     lduPtr_(nullptr),
     curTimeIndex_(time().timeIndex()),
     VPtr_(nullptr),
@@ -296,6 +277,14 @@ Foam::fvMesh::fvMesh(const IOobject& io, const bool changers)
     if (debug)
     {
         Pout<< FUNCTION_NAME << "Constructing fvMesh from IOobject" << endl;
+    }
+
+    // Construct changers
+    if (changers)
+    {
+        topoChanger_.set(fvMeshTopoChanger::New(*this).ptr());
+        distributor_.set(fvMeshDistributor::New(*this).ptr());
+        mover_.set(fvMeshMover::New(*this).ptr());
     }
 
     // Check the existence of the cell volumes and read if present
@@ -369,6 +358,9 @@ Foam::fvMesh::fvMesh
     fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this, boundaryMesh()),
+    topoChanger_(nullptr),
+    distributor_(nullptr),
+    mover_(nullptr),
     lduPtr_(nullptr),
     curTimeIndex_(time().timeIndex()),
     VPtr_(nullptr),
@@ -411,6 +403,9 @@ Foam::fvMesh::fvMesh
     fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this, boundaryMesh()),
+    topoChanger_(nullptr),
+    distributor_(nullptr),
+    mover_(nullptr),
     lduPtr_(nullptr),
     curTimeIndex_(time().timeIndex()),
     VPtr_(nullptr),
@@ -444,6 +439,9 @@ Foam::fvMesh::fvMesh
     fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this),
+    topoChanger_(nullptr),
+    distributor_(nullptr),
+    mover_(nullptr),
     lduPtr_(nullptr),
     curTimeIndex_(time().timeIndex()),
     VPtr_(nullptr),
@@ -887,7 +885,7 @@ void Foam::fvMesh::updateMesh(const mapPolyMesh& map)
         }
 
         // Few checks
-        if (VPtr_ && (V().size() != map.nOldCells()))
+        if (VPtr_ && (VPtr_->size() != map.nOldCells()))
         {
             FatalErrorInFunction
                 << "V:" << V().size()
@@ -960,7 +958,7 @@ void Foam::fvMesh::distribute(const mapDistributePolyMesh& map)
     //     }
     //
     //     // Few checks
-    //     if (VPtr_ && (V().size() != map.nOldCells()))
+    //     if (VPtr_ && (VPtr_->size() != map.nOldCells()))
     //     {
     //         FatalErrorInFunction
     //             << "V:" << V().size()

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,12 +25,17 @@ Class
     Foam::pressureInletOutletVelocityFvPatchVectorField
 
 Description
-    This velocity inlet/outlet boundary condition is applied to pressure
-    boundaries where the pressure is specified.  A zero-gradient condition is
-    applied for outflow (as defined by the flux); for inflow, the velocity is
-    obtained from the patch-face normal component of the internal-cell value.
+    Velocity inlet/outlet boundary condition for patches where the pressure is
+    specified in some manner, e.g. fixedValue, totalPressure,
+    entrainmentPressure etc.
 
-    The tangential patch velocity can be optionally specified.
+    This boundary condition is directionMixed:
+        Flux outflow: zeroGradient condition
+        Flux inflow: zeroGradient condition for normal component
+                     fixedValue for tangential component
+
+    The external tangential velocity can be optionally specified otherwise it
+    is assumed zero.
 
 Usage
     \table
@@ -53,11 +58,11 @@ Usage
     The \c tangentialVelocity entry is a Function1 of time, see
     Foam::Function1s.
 
-Note
-    Sign conventions:
-    - positive flux (out of domain): apply zero-gradient condition
-    - negative flux (into of domain): derive from the flux in the patch-normal
-      direction
+See also
+    Foam::directionMixedFvPatchVectorField
+    Foam::totalPressureFvPatchScalarField
+    Foam::entrainmentPressureFvPatchScalarField
+    Foam::fixedValueFvPatchField
 
 SourceFiles
     pressureInletOutletVelocityFvPatchVectorField.C
@@ -175,6 +180,12 @@ public:
             word& phiName()
             {
                 return phiName_;
+            }
+
+            //- Return the tangential velocity Function1
+            const autoPtr<Function1<vector>>& tangentialVelocity() const
+            {
+                return tangentialVelocity_;
             }
 
 

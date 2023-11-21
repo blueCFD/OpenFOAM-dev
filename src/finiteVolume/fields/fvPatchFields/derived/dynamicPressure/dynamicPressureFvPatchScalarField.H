@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,6 +56,7 @@ class dynamicPressureFvPatchScalarField
 :
     public fixedValueFvPatchScalarField
 {
+
 protected:
 
     // Protected Data
@@ -71,6 +72,20 @@ protected:
 
         //- Reference pressure
         scalarField p0_;
+
+
+    // Protected Member Functions
+
+        using fixedValueFvPatchScalarField::updateCoeffs;
+
+        //- Update the coefficients associated with the patch field
+        //  using the given external static pressure, and difference between
+        //  the external kinetic energy and patch kinetic energy fields
+        void updateCoeffs
+        (
+            const scalarField& p0p,
+            const scalarField& K0mKp
+        );
 
 
 public:
@@ -131,20 +146,6 @@ public:
             //- Reverse map the given fvPatchField onto this fvPatchField
             //  Used to reconstruct fields
             virtual void rmap(const fvPatchScalarField&, const labelList&);
-
-
-        // Evaluation functions
-
-            using fixedValueFvPatchScalarField::updateCoeffs;
-
-            //- Update the coefficients associated with the patch field
-            //  using the given patch reference pressure and kinetic energy
-            //  fields
-            void updateCoeffs
-            (
-                const scalarField& p0p,
-                const scalarField& Kp
-            );
 
 
         //- Write

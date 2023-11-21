@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,7 +66,7 @@ SourceFiles
 #ifndef chemistryModel_H
 #define chemistryModel_H
 
-#include "basicChemistryModel.H"
+#include "odeChemistryModel.H"
 #include "ReactionList.T.H"
 #include "ODESystem.H"
 #include "volFields.H"
@@ -74,7 +74,6 @@ SourceFiles
 #include "chemistryReductionMethod.H"
 #include "chemistryTabulationMethod.H"
 #include "DynamicField.T.H"
-#include "OFstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -88,8 +87,7 @@ namespace Foam
 template<class ThermoType>
 class chemistryModel
 :
-    public basicChemistryModel,
-    public ODESystem
+    public odeChemistryModel
 {
     // Private classes
 
@@ -130,11 +128,11 @@ class chemistryModel
         //- Switch to select performance logging
         Switch log_;
 
+        //- Switch to enable loadBalancing performance logging
+        Switch loadBalancing_;
+
         //- Type of the Jacobian to be calculated
         const jacobianType jacobianType_;
-
-        //- Reference to the field of specie mass fractions
-        const PtrList<volScalarField>& Yvf_;
 
         //- Reference to the multi component mixture
         const multiComponentMixture<ThermoType>& mixture_;
@@ -144,9 +142,6 @@ class chemistryModel
 
         //- Reactions
         const ReactionList<ThermoType> reactions_;
-
-        //- Number of species
-        label nSpecie_;
 
         //- List of reaction rate per specie [kg/m^3/s]
         PtrList<volScalarField::Internal> RR_;
@@ -169,27 +164,17 @@ class chemistryModel
         //- Specie-temperature-pressure workspace matrices
         mutable FixedList<scalarSquareMatrix, 2> YTpYTpWork_;
 
-        //- Temporary map from complete to simplified concentration fields
-        //  c -> sc
-        List<label> cTos_;
-
-        //- Temporary map from simplified to complete concentration fields
-        //  sc -> c
-        DynamicList<label> sToc_;
-
         //- Mechanism reduction method
         autoPtr<chemistryReductionMethod<ThermoType>> mechRedPtr_;
 
         //- Mechanism reduction method reference
         chemistryReductionMethod<ThermoType>& mechRed_;
 
-        bool mechRedActive_;
-
         //- Tabulation method
-        autoPtr<chemistryTabulationMethod<ThermoType>> tabulationPtr_;
+        autoPtr<chemistryTabulationMethod> tabulationPtr_;
 
         //- Tabulation method reference
-        chemistryTabulationMethod<ThermoType>& tabulation_;
+        chemistryTabulationMethod& tabulation_;
 
         //- Log file for average time spent solving the chemistry
         autoPtr<OFstream> cpuSolveFile_;
@@ -229,9 +214,6 @@ public:
 
     // Member Functions
 
-        //- Create and return a TDAC log file of the given name
-        inline autoPtr<OFstream> logFile(const word& name) const;
-
         //- Return reference to the mixture
         inline const multiComponentMixture<ThermoType>& mixture() const;
 
@@ -240,9 +222,6 @@ public:
 
         //- Thermodynamic data of the species
         inline const PtrList<ThermoType>& specieThermos() const;
-
-        //- The number of species
-        virtual inline label nSpecie() const;
 
         //- The number of reactions
         virtual inline label nReaction() const;
@@ -290,9 +269,6 @@ public:
 
         // ODE functions (overriding abstract functions in ODE.H)
 
-            //- Number of ODE's to solve
-            inline virtual label nEqns() const;
-
             virtual void derivatives
             (
                 const scalar t,
@@ -321,32 +297,13 @@ public:
             ) const = 0;
 
 
-        //- Return a reference to the list of mass fraction fields
-        inline const PtrList<volScalarField>& Y() const;
-
-
         // Mechanism reduction access functions
-
-            //- Return access to the mechanism reduction method
-            //  Needed by ISAT
-            inline const chemistryReductionMethod<ThermoType>& mechRed() const;
-
-            //- Allow the reduction method to reset the number of species
-            inline void setNSpecie(const label newNs);
 
             //- Return true if specie i is active
             inline bool active(const label i) const;
 
             //- Set specie i active
             inline void setActive(const label i);
-
-            //- Return the index in the complete set of species
-            //  corresponding to the index si in the simplified set of species
-            inline label sToc(const label si) const;
-
-            //- Return the index in the simplified set of species
-            //  corresponding to the index si in the complete set of species
-            inline label cTos(const label ci) const;
 
 
     // Member Operators

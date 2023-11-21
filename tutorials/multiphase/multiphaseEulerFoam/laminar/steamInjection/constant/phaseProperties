@@ -36,11 +36,7 @@ steam
 water
 {
     type            purePhaseModel;
-    diameterModel   constant;
-    constantCoeffs
-    {
-        d               1e-4;
-    }
+    diameterModel   none;
 
     residualAlpha   1e-3;
 }
@@ -49,83 +45,76 @@ blending
 {
     default
     {
-        type            none;
-        continuousPhase water;
+        type            continuous;
+        phase           water;
     }
 }
 
 surfaceTension
-(
-    (steam and water)
+{
+    steam_water
     {
         type            constant;
         sigma           0.07;
     }
-);
+}
 
 saturation
-(
-    (steam and water)
+{
+    steam_water
     {
         type constant;
         pSat 1e5;
         Tsat 372.76;
     }
-);
+}
 
 drag
-(
-    (steam in water)
+{
+    steam_dispersedIn_water
     {
         type            SchillerNaumann;
         residualRe      1e-3;
-        swarmCorrection
-        {
-            type        none;
-        }
     }
-);
+}
 
 virtualMass
-(
-    (steam in water)
+{
+    steam_dispersedIn_water
     {
         type            constantCoefficient;
         Cvm             0.5;
     }
-);
+}
 
-heatTransfer.steam
-(
-    (steam in water)
+heatTransfer
+{
+    steam_dispersedIn_water_inThe_steam
     {
         type spherical;
         residualAlpha 1e-4;
     }
-);
 
-heatTransfer.water
-(
-    (steam in water)
+    steam_dispersedIn_water_inThe_water
     {
         type RanzMarshall;
         residualAlpha 1e-4;
     }
-);
+}
 
 phaseTransfer
-();
+{}
 
 lift
-();
+{}
 
 wallLubrication
-();
+{}
 
 turbulentDispersion
-();
+{}
 
 interfaceCompression
-();
+{}
 
 // ************************************************************************* //

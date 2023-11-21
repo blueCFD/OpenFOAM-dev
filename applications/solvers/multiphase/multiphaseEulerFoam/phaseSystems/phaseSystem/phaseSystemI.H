@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -101,13 +101,6 @@ Foam::phaseSystem::multiComponentPhases()
 }
 
 
-inline const Foam::phaseSystem::phasePairTable&
-Foam::phaseSystem::phasePairs() const
-{
-    return phasePairs_;
-}
-
-
 inline const Foam::phaseModel& Foam::phaseSystem::otherPhase
 (
     const phaseModel& phase
@@ -182,6 +175,12 @@ inline Foam::fvConstraints& Foam::phaseSystem::fvConstraints(fvMesh& mesh)
 inline const Foam::fvConstraints& Foam::phaseSystem::fvConstraints() const
 {
     return Foam::fvConstraints::New(mesh_);
+}
+
+
+inline const Foam::dimensionedScalar& Foam::phaseSystem::deltaN() const
+{
+    return deltaN_;
 }
 
 
