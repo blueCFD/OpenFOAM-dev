@@ -45,7 +45,8 @@ SourceFiles
 #include "PtrListDictionary.T.H"
 
 #include "IOMRFZoneList.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 
 #include "volFields.H"
 #include "surfaceFields.H"
@@ -60,6 +61,7 @@ class blendingMethod;
 template<class modelType> class BlendedInterfacialModel;
 class surfaceTensionModel;
 class aspectRatioModel;
+class nonOrthogonalSolutionControl;
 
 /*---------------------------------------------------------------------------*\
                          Class phaseSystem Declaration
@@ -274,14 +276,6 @@ protected:
         //  around the specified mixture mean
         void setMixtureU(const volVectorField& Um);
 
-        //- Re-normalise the flux of the phases
-        //  around the specified mixture mean
-        void setMixturePhi
-        (
-            const PtrList<surfaceScalarField>& alphafs,
-            const surfaceScalarField& phim
-        );
-
 
         // Functions required for interface compression
 
@@ -438,8 +432,17 @@ public:
             //- Return MRF zones
             inline const IOMRFZoneList& MRF() const;
 
-            //- Access the fvOptions
-            inline const fv::options& fvOptions() const;
+            //- Access the fvModels
+            inline Foam::fvModels& fvModels(fvMesh& mesh);
+
+            //- Access the fvModels
+            inline const Foam::fvModels& fvModels() const;
+
+            //- Access the fvConstraints
+            inline Foam::fvConstraints& fvConstraints(fvMesh& mesh);
+
+            //- Access the fvConstraints
+            inline const Foam::fvConstraints& fvConstraints() const;
 
 
         // Sub-model lookup
@@ -622,6 +625,14 @@ public:
                 const PtrList<surfaceScalarField>& phiKdPhifs
             ) = 0;
 
+            //- Re-normalise the flux of the phases
+            //  around the specified mixture mean
+            void setMixturePhi
+            (
+                const PtrList<surfaceScalarField>& alphafs,
+                const surfaceScalarField& phim
+            );
+
             //- Return the flux corrections for the cell-based algorithm
             virtual PtrList<surfaceScalarField> ddtCorrByAs
             (
@@ -680,6 +691,13 @@ public:
 
             //- Correct fixed-flux BCs to be consistent with the velocity BCs
             void correctBoundaryFlux();
+
+            void correctPhi
+            (
+                const volScalarField& p_rgh,
+                const tmp<volScalarField>& divU,
+                nonOrthogonalSolutionControl& pimple
+            );
 
 
         // IO

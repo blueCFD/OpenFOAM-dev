@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,8 @@ namespace Foam
 #include "PhaseIncompressibleMomentumTransportModel.T.H"
 #include "pimpleControl.H"
 #include "CorrectPhi.T.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 #include "parcelCloudList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -119,13 +120,7 @@ int main(int argc, char *argv[])
         {
             if (correctPhi)
             {
-                // Calculate absolute flux from the mapped surface velocity
-                phic = mesh.Sf() & Ucf();
-
                 #include "correctPhic.H"
-
-                // Make the flux relative to the mesh motion
-                fvc::makeRelative(phic, Uc);
             }
 
             if (checkMeshCourantNo)
@@ -211,6 +206,8 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
+            fvModels.correct();
+
             #include "UcEqn.H"
 
             // --- PISO loop

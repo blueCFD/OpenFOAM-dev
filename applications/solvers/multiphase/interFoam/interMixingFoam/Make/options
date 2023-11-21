@@ -24,7 +24,8 @@ EXE_LIBS = \
     -lfiniteVolume \
     -ldynamicFvMesh \
     -lmeshTools \
-    -lfvOptions \
+    -lfvModels \
+    -lfvConstraints \
     -lsampling
 
 EXE_LIBS += \

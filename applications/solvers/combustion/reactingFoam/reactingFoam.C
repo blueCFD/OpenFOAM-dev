@@ -39,7 +39,8 @@ Description
 #include "pimpleControl.H"
 #include "pressureControl.H"
 #include "CorrectPhi.T.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
@@ -104,6 +105,8 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
+            fvModels.correct();
+
             if (pimple.frozenFlow())
             {
                 #include "YEqn.H"
@@ -129,14 +132,7 @@ int main(int argc, char *argv[])
 
                         if (correctPhi)
                         {
-                            // Calculate absolute flux
-                            // from the mapped surface velocity
-                            phi = mesh.Sf() & rhoUf();
-
                             #include "correctPhi.H"
-
-                            // Make the fluxes relative to the mesh-motion
-                            fvc::makeRelative(phi, rho, U);
                         }
 
                         if (checkMeshCourantNo)

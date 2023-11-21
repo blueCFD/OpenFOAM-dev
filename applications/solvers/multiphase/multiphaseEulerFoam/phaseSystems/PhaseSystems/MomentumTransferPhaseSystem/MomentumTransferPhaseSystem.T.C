@@ -371,13 +371,14 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransfer()
 
                 const volVectorField& U = eqn.psi();
                 const surfaceScalarField& phi = phase.phi();
+                const tmp<surfaceScalarField> taphi(fvc::absolute(phi, U));
+                const surfaceScalarField& aphi(taphi());
 
                 eqn -=
                     Vm
                    *(
                         fvm::ddt(U)
-                      + fvm::div(phi, U)
-                      - fvm::Sp(fvc::div(phi), U)
+                      + fvm::div(aphi, U) - fvm::Sp(fvc::div(aphi), U)
                       - otherPhase.DUDt()
                     )
                   + this->MRF_.DDt(Vm, U - otherPhase.U());
@@ -421,14 +422,15 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransferf()
         if (!phase.stationary())
         {
             const volVectorField& U = phase.U();
+            const surfaceScalarField& phi = phase.phi();
+            const tmp<surfaceScalarField> aphi(fvc::absolute(phi, U));
 
             UgradUs.set
             (
                 phasei,
                 new fvVectorMatrix
                 (
-                    fvm::div(phase.phi(), U)
-                  - fvm::Sp(fvc::div(phase.phi()), U)
+                    fvm::div(aphi, U) - fvm::Sp(fvc::div(aphi), U)
                   + this->MRF().DDt(U)
                 )
             );

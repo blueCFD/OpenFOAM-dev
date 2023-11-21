@@ -106,6 +106,8 @@ int main(int argc, char *argv[])
         {
             if (pimple.frozenFlow())
             {
+                fvModels.correct();
+
                 fluid.solve(rAUs, rAUfs);
                 fluid.correct();
                 fluid.correctContinuityError();
@@ -123,6 +125,26 @@ int main(int argc, char *argv[])
             {
                 if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
                 {
+                    // Store divU from the previous mesh so that it can be
+                    // mapped and used in correctPhi to ensure the corrected phi
+                    // has the same divergence
+                    tmp<volScalarField> divU;
+
+                    if
+                    (
+                        correctPhi
+                    )
+                    {
+                        divU = volScalarField::New
+                        (
+                            "divU0",
+                            fvc::div
+                            (
+                                fvc::absolute(phi, fluid.movingPhases()[0].U())
+                            )
+                        );
+                    }
+
                     mesh.update();
 
                     if (mesh.changing())
@@ -132,12 +154,19 @@ int main(int argc, char *argv[])
 
                         fluid.meshUpdate();
 
+                        if (correctPhi)
+                        {
+                            fluid.correctPhi(p_rgh, divU, pimple);
+                        }
+
                         if (checkMeshCourantNo)
                         {
                             #include "meshCourantNo.H"
                         }
                     }
                 }
+
+                fvModels.correct();
 
                 fluid.solve(rAUs, rAUfs);
                 fluid.correct();

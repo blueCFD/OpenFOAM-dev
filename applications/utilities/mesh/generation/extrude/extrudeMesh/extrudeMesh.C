@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,6 +45,7 @@ Description
 #include "MeshedSurfaces.T.H"
 #include "globalIndex.H"
 #include "cellSet.H"
+#include "systemDict.H"
 
 #include "extrudedMesh.H"
 #include "extrudeModel.H"
@@ -284,21 +285,7 @@ int main(int argc, char *argv[])
             << runTimeExtruded.timeName() << nl << endl;
     }
 
-    const word dictName
-    (
-        args.optionLookupOrDefault<word>("dict", "extrudeMeshDict")
-    );
-
-    IOdictionary dict
-    (
-        IOobject
-        (
-            dictName,
-            runTimeExtruded.system(),
-            runTimeExtruded,
-            IOobject::MUST_READ_IF_MODIFIED
-        )
-    );
+    const dictionary dict(systemDict("extrudeMeshDict", args, runTimeExtruded));
 
     // Point generator
     autoPtr<extrudeModel> model(extrudeModel::New(dict));

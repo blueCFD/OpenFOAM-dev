@@ -6,14 +6,14 @@
       + turbulence->divDevSigma(Urel)
       + SRF->Su()
      ==
-        fvOptions(Urel)
+        fvModels.source(Urel)
     );
     fvVectorMatrix& UrelEqn = tUrelEqn.ref();
 
     UrelEqn.relax();
 
-    fvOptions.constrain(UrelEqn);
+    fvConstraints.constrain(UrelEqn);
 
     solve(UrelEqn == -fvc::grad(p));
 
-    fvOptions.correct(Urel);
+    fvConstraints.constrain(Urel);

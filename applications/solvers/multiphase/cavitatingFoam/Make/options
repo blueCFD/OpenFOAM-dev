@@ -17,7 +17,8 @@ EXE_LIBS = \
     -lbarotropicCompressibilityModel \
     -lfiniteVolume \
     -ldynamicFvMesh \
-    -lfvOptions \
+    -lfvModels \
+    -lfvConstraints \
     -lmeshTools
 
 EXE_LIBS += \

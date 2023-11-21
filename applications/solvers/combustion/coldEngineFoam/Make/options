@@ -23,7 +23,5 @@ EXE_LIBS = \
     -lspecie \
     -lfiniteVolume \
     -lmeshTools \
-    -lfvOptions
-
-EXE_LIBS += \
-    -lreactionThermophysicalModels
+    -lfvModels \
+    -lfvConstraints

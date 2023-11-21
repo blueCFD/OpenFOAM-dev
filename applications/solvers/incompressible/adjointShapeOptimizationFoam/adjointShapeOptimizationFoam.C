@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,7 +49,8 @@ Description
 #include "singlePhaseTransportModel.H"
 #include "kinematicMomentumTransportModel.H"
 #include "simpleControl.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 
 template<class Type>
 void zeroCells
@@ -103,6 +104,8 @@ int main(int argc, char *argv[])
 
         // Pressure-velocity SIMPLE corrector
         {
+            fvModels.correct();
+
             // Momentum predictor
 
             tmp<fvVectorMatrix> tUEqn
@@ -111,17 +114,17 @@ int main(int argc, char *argv[])
               + turbulence->divDevSigma(U)
               + fvm::Sp(alpha, U)
              ==
-                fvOptions(U)
+                fvModels.source(U)
             );
             fvVectorMatrix& UEqn = tUEqn.ref();
 
             UEqn.relax();
 
-            fvOptions.constrain(UEqn);
+            fvConstraints.constrain(UEqn);
 
             solve(UEqn == -fvc::grad(p));
 
-            fvOptions.correct(U);
+            fvConstraints.constrain(U);
 
             volScalarField rAU(1.0/UEqn.A());
             volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p));
@@ -157,7 +160,7 @@ int main(int argc, char *argv[])
             // Momentum corrector
             U = HbyA - rAU*fvc::grad(p);
             U.correctBoundaryConditions();
-            fvOptions.correct(U);
+            fvConstraints.constrain(U);
         }
 
         // Adjoint Pressure-velocity SIMPLE corrector
@@ -182,17 +185,17 @@ int main(int argc, char *argv[])
               + turbulence->divDevSigma(Ua)
               + fvm::Sp(alpha, Ua)
              ==
-                fvOptions(Ua)
+                fvModels.source(Ua)
             );
             fvVectorMatrix& UaEqn = tUaEqn.ref();
 
             UaEqn.relax();
 
-            fvOptions.constrain(UaEqn);
+            fvConstraints.constrain(UaEqn);
 
             solve(UaEqn == -fvc::grad(pa));
 
-            fvOptions.correct(Ua);
+            fvConstraints.constrain(Ua);
 
             volScalarField rAUa(1.0/UaEqn.A());
             volVectorField HbyAa("HbyAa", Ua);
@@ -226,7 +229,7 @@ int main(int argc, char *argv[])
             // Adjoint momentum corrector
             Ua = HbyAa - rAUa*fvc::grad(pa);
             Ua.correctBoundaryConditions();
-            fvOptions.correct(Ua);
+            fvConstraints.constrain(Ua);
         }
 
         laminarTransport.correct();

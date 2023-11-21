@@ -8,14 +8,14 @@
      ==
         rho()*g
       + clouds.SU(U)
-      + fvOptions(rho, U)
+      + fvModels.source(rho, U)
     );
     fvVectorMatrix& UEqn = tUEqn.ref();
 
     UEqn.relax();
 
-    fvOptions.constrain(UEqn);
+    fvConstraints.constrain(UEqn);
 
     solve(UEqn == -fvc::grad(p));
 
-    fvOptions.correct(U);
+    fvConstraints.constrain(U);

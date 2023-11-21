@@ -264,8 +264,7 @@ void Foam::MovingPhaseModel<BasePhaseModel>::correctKinematics()
 
     if (K_.valid())
     {
-        K_.clear();
-        K();
+        K_.ref() = 0.5*magSqr(this->U());
     }
 }
 
@@ -402,6 +401,25 @@ Foam::MovingPhaseModel<BasePhaseModel>::Uf() const
 
 
 template<class BasePhaseModel>
+Foam::surfaceVectorField&
+Foam::MovingPhaseModel<BasePhaseModel>::UfRef()
+{
+    if (Uf_.valid())
+    {
+        return Uf_.ref();
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "Uf has not been allocated."
+            << exit(FatalError);
+
+        return const_cast<surfaceVectorField&>(surfaceVectorField::null());
+    }
+}
+
+
+template<class BasePhaseModel>
 Foam::tmp<Foam::surfaceScalarField>
 Foam::MovingPhaseModel<BasePhaseModel>::alphaPhi() const
 {
@@ -439,7 +457,9 @@ Foam::MovingPhaseModel<BasePhaseModel>::DUDt() const
 {
     if (!DUDt_.valid())
     {
-        DUDt_ = fvc::ddt(U_) + fvc::div(phi_, U_) - fvc::div(phi_)*U_;
+        const tmp<surfaceScalarField> taphi(fvc::absolute(phi_, U_));
+        const surfaceScalarField& aphi(taphi());
+        DUDt_ = fvc::ddt(U_) + fvc::div(aphi, U_) - fvc::div(aphi)*U_;
     }
 
     return tmp<volVectorField>(DUDt_());

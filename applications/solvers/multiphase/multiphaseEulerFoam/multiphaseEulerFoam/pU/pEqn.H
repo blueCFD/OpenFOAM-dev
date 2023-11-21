@@ -183,7 +183,7 @@ while (pimple.correct())
     }
 
     MRF.makeRelative(phiHbyA);
-    fvc::makeRelative(phiHbyA, phases[0].U());
+    fvc::makeRelative(phiHbyA, fluid.movingPhases()[0].U());
 
     // Construct pressure "diffusivity"
     surfaceScalarField rAUf
@@ -321,7 +321,7 @@ while (pimple.correct())
 
                 phase.URef().correctBoundaryConditions();
                 phase.correctUf();
-                fvOptions.correct(phase.URef());
+                fvConstraints.constrain(phase.URef());
             }
         }
     }

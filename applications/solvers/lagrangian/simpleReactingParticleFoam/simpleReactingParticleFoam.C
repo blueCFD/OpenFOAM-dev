@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,8 @@ Description
 #include "fluidReactionThermo.H"
 #include "combustionModel.H"
 #include "IOporosityModelList.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 #include "SLGThermo.H"
 #include "simpleControl.H"
 
@@ -66,6 +67,8 @@ int main(int argc, char *argv[])
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         clouds.evolve();
+
+        fvModels.correct();
 
         // --- Pressure-velocity SIMPLE corrector loop
         {

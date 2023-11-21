@@ -16,16 +16,16 @@
           : -betav*dpdt
         )
       - fvm::laplacian(Db, hea)
-      + betav*fvOptions(rho, hea)
+      + betav*fvModels.source(rho, hea)
     );
 
     EaEqn.relax();
 
-    fvOptions.constrain(EaEqn);
+    fvConstraints.constrain(EaEqn);
 
     EaEqn.solve();
 
-    fvOptions.correct(hea);
+    fvConstraints.constrain(hea);
 
     thermo.correct();
 }

@@ -5,23 +5,24 @@
       - fvm::laplacian(turbulence.alphaEff(), T)
       + (
             fvc::div(fvc::absolute(phi, U), p)()() // - contErr/rho*p
-          + (fvc::ddt(rho, K) + fvc::div(rhoPhi, K))()() - contErr*K
+          + (fvc::ddt(rho, K) + fvc::div(rhoPhi, K))()()
+          - (U()&(fvModels.source(rho, U)&U)()) - contErr*K
         )
        *(
            alpha1()/mixture.thermo1().Cv()()
          + alpha2()/mixture.thermo2().Cv()()
         )
      ==
-        fvOptions(rho, T)
+        fvModels.source(rho, T)
     );
 
     TEqn.relax();
 
-    fvOptions.constrain(TEqn);
+    fvConstraints.constrain(TEqn);
 
     TEqn.solve();
 
-    fvOptions.correct(T);
+    fvConstraints.constrain(T);
 
     mixture.correctThermo();
     mixture.correct();

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,7 +30,8 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 #include "simpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -55,6 +56,8 @@ int main(int argc, char *argv[])
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
+        fvModels.correct();
+
         while (simple.correctNonOrthogonal())
         {
             fvScalarMatrix TEqn
@@ -63,13 +66,13 @@ int main(int argc, char *argv[])
               + fvm::div(phi, T)
               - fvm::laplacian(DT, T)
              ==
-                fvOptions(T)
+                fvModels.source(T)
             );
 
             TEqn.relax();
-            fvOptions.constrain(TEqn);
+            fvConstraints.constrain(TEqn);
             TEqn.solve();
-            fvOptions.correct(T);
+            fvConstraints.constrain(T);
         }
 
         runTime.write();

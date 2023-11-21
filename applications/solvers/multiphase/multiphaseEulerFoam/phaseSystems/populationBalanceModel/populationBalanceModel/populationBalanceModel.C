@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -1270,13 +1270,13 @@ void Foam::diameterModels::populationBalanceModel::solve()
                 ==
                     Su_[i]
                   - fvm::SuSp(SuSp_[i], fi)
-                  + fluid_.fvOptions()(alpha, rho, fi)/rho
+                  + fluid_.fvModels().source(alpha, rho, fi)/rho
                   + fvc::ddt(residualAlpha, fi)
                   - fvm::ddt(residualAlpha, fi)
                 );
 
                 sizeGroupEqn.relax();
-                fluid_.fvOptions().constrain(sizeGroupEqn);
+                fluid_.fvConstraints().constrain(sizeGroupEqn);
 
                 maxInitialResidual = max
                 (
@@ -1284,7 +1284,7 @@ void Foam::diameterModels::populationBalanceModel::solve()
                     maxInitialResidual
                 );
 
-                fluid_.fvOptions().correct(fi);
+                fluid_.fvConstraints().constrain(fi);
             }
         }
 

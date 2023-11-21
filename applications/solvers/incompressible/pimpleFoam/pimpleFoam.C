@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,8 @@ Description
 #include "kinematicMomentumTransportModel.H"
 #include "pimpleControl.H"
 #include "CorrectPhi.T.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
@@ -99,14 +100,7 @@ int main(int argc, char *argv[])
 
                     if (correctPhi)
                     {
-                        // Calculate absolute flux
-                        // from the mapped surface velocity
-                        phi = mesh.Sf() & Uf();
-
                         #include "correctPhi.H"
-
-                        // Make the flux relative to the mesh motion
-                        fvc::makeRelative(phi, U);
                     }
 
                     if (checkMeshCourantNo)
@@ -115,6 +109,8 @@ int main(int argc, char *argv[])
                     }
                 }
             }
+
+            fvModels.correct();
 
             #include "UEqn.H"
 

@@ -25,12 +25,13 @@ PtrList<fvVectorMatrix> UEqns(phases.size());
                 phase.UEqn()
              ==
                *momentumTransfer[phase.name()]
-              + fvOptions(alpha, rho, U)
+              + fvModels.source(alpha, rho, U)
             )
         );
 
         UEqns[phase.index()].relax();
-        fvOptions.constrain(UEqns[phase.index()]);
-        fvOptions.correct(U);
+        fvConstraints.constrain(UEqns[phase.index()]);
+        U.correctBoundaryConditions();
+        fvConstraints.constrain(U);
     }
 }

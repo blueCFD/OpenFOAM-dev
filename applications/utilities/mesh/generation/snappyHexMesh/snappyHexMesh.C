@@ -72,6 +72,7 @@ Description
 #include "globalIndex.H"
 #include "IOmanip.H"
 #include "fvMeshTools.H"
+#include "systemDict.H"
 
 using namespace Foam;
 
@@ -750,9 +751,7 @@ int main(int argc, char *argv[])
 
 
     // Read meshing dictionary
-    const word dictName("snappyHexMeshDict");
-    #include "setSystemMeshDictionaryIO.H"
-    const IOdictionary meshDict(dictIO);
+    const IOdictionary meshDict(systemDict("snappyHexMeshDict", args, mesh));
 
 
     // all surface geometry
