@@ -764,14 +764,14 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
     if (log_)
     {
         cpuSolveFile_()
-            << this->time().timeOutputValue()
+            << this->time().userTimeValue()
             << "    " << solveChemistryCpuTime_ << endl;
     }
 
     mechRed_.update();
     tabulation_.update();
 
-    if (Pstream::parRun())
+    if (mechRedActive_ && Pstream::parRun())
     {
         List<bool> active(composition.active());
         Pstream::listCombineGather(active, orEqOp<bool>());

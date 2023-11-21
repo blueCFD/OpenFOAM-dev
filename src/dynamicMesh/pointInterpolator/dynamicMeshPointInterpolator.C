@@ -112,7 +112,7 @@ Foam::dynamicMeshPointInterpolator::curPointField() const
     (
         interpolatorPtr_->valueWeights
         (
-            t.timeOutputValue(),
+            t.userTimeValue(),
             currentIndices_,
             currentWeights_
         )

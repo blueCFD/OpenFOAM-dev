@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,35 +113,13 @@ Foam::label Foam::probes::classifyFields()
     label nFields = 0;
     clearFieldGroups();
 
-    if (loadFromFiles_)
+    // Check currently available fields
+    forAll(fields_, fieldi)
     {
-        // check files for a particular time
-        IOobjectList objects(mesh_, mesh_.time().timeName());
-        wordList allFields = objects.sortedNames();
+        const word& fieldName = fields_[fieldi];
 
-        labelList indices = findStrings(fieldSelection_, allFields);
-
-        forAll(indices, fieldi)
+        if (mesh_.objectRegistry::found(fieldName))
         {
-            const word& fieldName = allFields[indices[fieldi]];
-
-            nFields += appendFieldGroup
-            (
-                fieldName,
-                objects.find(fieldName)()->headerClassName()
-            );
-        }
-    }
-    else
-    {
-        // check currently available fields
-        wordList allFields = mesh_.sortedNames();
-        labelList indices = findStrings(fieldSelection_, allFields);
-
-        forAll(indices, fieldi)
-        {
-            const word& fieldName = allFields[indices[fieldi]];
-
             nFields += appendFieldGroup
             (
                 fieldName,
@@ -152,5 +130,6 @@ Foam::label Foam::probes::classifyFields()
 
     return nFields;
 }
+
 
 // ************************************************************************* //

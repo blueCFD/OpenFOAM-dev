@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ Foam::refinementParameters::refinementParameters(const dictionary& dict)
         )
     ),
     nBufferLayers_(dict.lookup<label>("nCellsBetweenLevels")),
-    keepPoints_(pointField(1, dict.lookup("locationInMesh"))),
+    selectionPoints_(dict),
     allowFreeStandingZoneFaces_(dict.lookup("allowFreeStandingZoneFaces")),
     useTopologicalSnapDetection_
     (
@@ -69,6 +69,51 @@ Foam::refinementParameters::refinementParameters(const dictionary& dict)
 }
 
 
+Foam::refinementParameters::cellSelectionPoints::cellSelectionPoints
+(
+    const dictionary& dict
+)
+:
+    inside_
+    (
+        dict.found("insidePoints")
+      ? List<point>(dict.lookup("insidePoints"))
+      : dict.found("insidePoint")
+          ? List<point>(1, dict.lookup("insidePoint"))
+          : dict.found("locationInMesh")
+              ? List<point>(1, dict.lookup("locationInMesh"))
+              : List<point>::null()
+    ),
+    outside_
+    (
+        dict.found("outsidePoints")
+      ? List<point>(dict.lookup("outsidePoints"))
+      : dict.found("outsidePoint")
+          ? List<point>(1, dict.lookup("outsidePoint"))
+          : List<point>::null()
+    )
+{
+    if (inside_.size())
+    {
+        Info << "Cell selection insidePoints: " << inside_ << endl;
+    }
+
+    if (outside_.size())
+    {
+        Info << "Cell selection outsidePoints: " << outside_ << endl;
+    }
+
+    if (!inside_.size() && !outside_.size())
+    {
+        FatalErrorInFunction
+            << "Neither insidePoint/insidePoints nor "
+               "outsidePoint/outsidePoints specified: "
+            << "cannot select any cells."
+            << exit(FatalError);
+    }
+}
+
+
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::labelList Foam::refinementParameters::findCells(const polyMesh& mesh)
@@ -81,13 +126,13 @@ const
     globalIndex globalCells(mesh.nCells());
 
     // Cell label per point
-    labelList cellLabels(keepPoints_.size());
+    labelList cellLabels(selectionPoints_.inside().size());
 
-    forAll(keepPoints_, i)
+    forAll(selectionPoints_.inside(), i)
     {
-        const point& keepPoint = keepPoints_[i];
+        const point& insidePoint = selectionPoints_.inside()[i];
 
-        label localCelli = mesh.findCell(keepPoint);
+        label localCelli = mesh.findCell(insidePoint);
 
         label globalCelli = -1;
 
@@ -101,7 +146,7 @@ const
         if (globalCelli == -1)
         {
             FatalErrorInFunction
-                << "Point " << keepPoint
+                << "Point " << insidePoint
                 << " is not inside the mesh or on a face or edge." << nl
                 << "Bounding box of the mesh:" << mesh.bounds()
                 << exit(FatalError);
@@ -111,7 +156,7 @@ const
         label proci = globalCells.whichProcID(globalCelli);
         label procCelli = globalCells.toLocal(proci, globalCelli);
 
-        Info<< "Found point " << keepPoint << " in cell " << procCelli
+        Info<< "Found point " << insidePoint << " in cell " << procCelli
             << " on processor " << proci << endl;
 
 

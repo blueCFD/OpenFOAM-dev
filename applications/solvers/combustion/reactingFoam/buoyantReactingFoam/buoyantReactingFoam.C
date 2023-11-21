@@ -35,7 +35,6 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "dynamicFvMesh.H"
 #include "fluidReactionThermo.H"
 #include "combustionModel.H"
 #include "compressibleMomentumTransportModels.H"
@@ -58,7 +57,7 @@ int main(int argc, char *argv[])
 
     #include "setRootCaseLists.H"
     #include "createTime.H"
-    #include "createDynamicFvMesh.H"
+    #include "createMesh.H"
     #include "createDyMControls.H"
     #include "initContinuityErrs.H"
     #include "createFields.H"
@@ -106,7 +105,7 @@ int main(int argc, char *argv[])
 
         runTime++;
 
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        Info<< "Time = " << runTime.userTimeName() << nl << endl;
 
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())

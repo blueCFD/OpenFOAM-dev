@@ -40,18 +40,24 @@ Usage
     transport
     {
         mu
-        (
-            (200 1.82e-05)
-            (350 2.61e-05)
-            (400 3.93e-05)
-        );
+        {
+            values
+            (
+                (200 1.82e-05)
+                (350 2.61e-05)
+                (400 3.93e-05)
+            );
+        }
 
         kappa
-        (
-            (200 2.56e-5)
-            (350 3.33e-5)
-            (400 4.72e-5)
-        );
+        {
+            values
+            (
+                (200 2.56e-5)
+                (350 3.33e-5)
+                (400 4.72e-5)
+            );
+        }
     }
     \endverbatim
 
@@ -109,8 +115,8 @@ class icoTabulatedTransport
         inline icoTabulatedTransport
         (
             const Thermo& t,
-            const nonUniformTable& muPoly,
-            const nonUniformTable& kappaPoly
+            const nonUniformTable& mu,
+            const nonUniformTable& kappa
         );
 
 

@@ -93,6 +93,24 @@ $(faceToCell)/extendedFaceToCellStencil.C
 $(faceToCell)/extendedCentredFaceToCellStencil.C
 $(faceToCell)/MeshObjects/centredCFCFaceToCellStencilObject.C
 
+fvMeshTopoChangers = fvMesh/fvMeshTopoChangers
+
+$(fvMeshTopoChangers)/fvMeshTopoChanger/fvMeshTopoChanger.C
+$(fvMeshTopoChangers)/fvMeshTopoChanger/fvMeshTopoChangerNew.C
+$(fvMeshTopoChangers)/none/fvMeshTopoChangersNone.C
+
+fvMeshDistributors = fvMesh/fvMeshDistributors
+
+$(fvMeshDistributors)/fvMeshDistributor/fvMeshDistributor.C
+$(fvMeshDistributors)/fvMeshDistributor/fvMeshDistributorNew.C
+$(fvMeshDistributors)/none/fvMeshDistributorsNone.C
+
+fvMeshMovers = fvMesh/fvMeshMovers
+
+$(fvMeshMovers)/fvMeshMover/fvMeshMover.C
+$(fvMeshMovers)/fvMeshMover/fvMeshMoverNew.C
+$(fvMeshMovers)/none/fvMeshMoversNone.C
+
 functionObjects/fvMeshFunctionObject/fvMeshFunctionObject.C
 functionObjects/volRegion/volRegion.C
 
@@ -169,6 +187,7 @@ $(derivedFvPatchFields)/mappedVelocityFluxFixedValue/mappedVelocityFluxFixedValu
 $(derivedFvPatchFields)/matchedFlowRateOutletVelocity/matchedFlowRateOutletVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/noSlip/noSlipFvPatchVectorField.C
 $(derivedFvPatchFields)/movingWallVelocity/movingWallVelocityFvPatchVectorField.C
+$(derivedFvPatchFields)/movingWallSlipVelocity/movingWallSlipVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/outletInlet/outletInletFvPatchFields.C
 $(derivedFvPatchFields)/outletMappedUniformInlet/outletMappedUniformInletFvPatchFields.C
 $(derivedFvPatchFields)/fixedMeanOutletInlet/fixedMeanOutletInletFvPatchFields.C

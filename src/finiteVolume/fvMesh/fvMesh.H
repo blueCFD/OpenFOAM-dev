@@ -69,6 +69,9 @@ namespace Foam
 {
 
 class fvMeshLduAddressing;
+class fvMeshTopoChanger;
+class fvMeshDistributor;
+class fvMeshMover;
 class volMesh;
 class mapDistributePolyMesh;
 
@@ -89,6 +92,15 @@ class fvMesh
 
         //- Boundary mesh
         fvBoundaryMesh boundary_;
+
+        //- The topo-changer function class
+        autoPtr<fvMeshTopoChanger> topoChanger_;
+
+        //- The distributor function class
+        autoPtr<fvMeshDistributor> distributor_;
+
+        //- The mover function class
+        autoPtr<fvMeshMover> mover_;
 
 
     // Demand-driven data
@@ -171,7 +183,8 @@ public:
     // Constructors
 
         //- Construct from IOobject
-        explicit fvMesh(const IOobject& io);
+        //  with the option to not instantiate the mesh changers
+        explicit fvMesh(const IOobject& io, const bool changers = true);
 
         //- Construct from cellShapes with boundary.
         fvMesh
@@ -287,19 +300,34 @@ public:
                 return lduAddr().upperAddr();
             }
 
+            //- Return the topo-changer function class
+            const fvMeshTopoChanger& topoChanger() const;
+
+            //- Return the distributor function class
+            const fvMeshDistributor& distributor() const;
+
+            //- Return the mover function class
+            const fvMeshMover& mover() const;
+
             //- Return cell volumes
             const DimensionedField<scalar, volMesh>& V() const;
 
             //- Return old-time cell volumes
             const DimensionedField<scalar, volMesh>& V0() const;
 
+            //- Access old-time cell volumes
+            DimensionedField<scalar, volMesh>& V0Ref();
+
             //- Return old-old-time cell volumes
             const DimensionedField<scalar, volMesh>& V00() const;
+
+            //- Access old-old-time cell volumes
+            DimensionedField<scalar, volMesh>& V00Ref();
 
             //- Return sub-cycle cell volumes
             tmp<DimensionedField<scalar, volMesh>> Vsc() const;
 
-            //- Return sub-cycl old-time cell volumes
+            //- Return sub-cycle old-time cell volumes
             tmp<DimensionedField<scalar, volMesh>> Vsc0() const;
 
             //- Return cell face area vectors
@@ -307,9 +335,6 @@ public:
 
             //- Return cell face area magnitudes
             const surfaceScalarField& magSf() const;
-
-            //- Return cell face motion fluxes
-            const surfaceScalarField& phi() const;
 
             //- Return cell centres as volVectorField
             const volVectorField& C() const;
@@ -320,6 +345,12 @@ public:
             //- Return face deltas as surfaceVectorField
             tmp<surfaceVectorField> delta() const;
 
+            //- Return cell face motion fluxes
+            const surfaceScalarField& phi() const;
+
+            //- Access cell face motion fluxes
+            surfaceScalarField& phiRef();
+
             //- Return a labelType of valid component indicators
             //  1 : valid (solved)
             // -1 : invalid (not solved)
@@ -328,6 +359,12 @@ public:
 
 
         // Edit
+
+            //- Is mesh dynamic
+            virtual bool dynamic() const;
+
+            //- Update the mesh for both mesh motion and topology change
+            virtual bool update();
 
             //- Clear all geometry and addressing
             void clearOut();
@@ -338,7 +375,7 @@ public:
             //- Update mesh corresponding to the given distribution map
             //  This is a prototype implementation without field mapping
             //  or handling of old-time volumes for mesh-morphing
-            virtual void updateMesh(const mapDistributePolyMesh& mdpm);
+            virtual void distribute(const mapDistributePolyMesh& mdpm);
 
             //- Move points, returns volumes swept by faces in motion
             virtual tmp<scalarField> movePoints(const pointField&);
@@ -368,12 +405,6 @@ public:
             //- Remove boundary patches. Warning: fvPatchFields hold ref to
             //  these fvPatches.
             void removeFvBoundary();
-
-            //- Return cell face motion fluxes
-            surfaceScalarField& setPhi();
-
-            //- Return old-time cell volumes
-            DimensionedField<scalar, volMesh>& setV0();
 
 
         // Write

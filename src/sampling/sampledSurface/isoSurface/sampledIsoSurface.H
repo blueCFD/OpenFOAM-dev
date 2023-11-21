@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ Description
         type        isoSurface;
         isoField    p;
         isoValue    1e5;
-        filter      full;
+        filtering   full;
         interpolate yes;
     }
     \endverbatim
@@ -43,7 +43,7 @@ Usage
         Property     | Description             | Required    | Default value
         isoField     | the field to get an iso-surface of | yes |
         isoValue     | the iso-surface value   | yes         |
-        filter       | the level of filtering to perform on the iso-surface \\
+        filtering    | the level of filtering to perform on the iso-surface \\
                                                | no          | full
         interpolate  | interpolate values to the surface points | no | no
     \endtable
@@ -141,6 +141,9 @@ public:
 
 
     // Member Functions
+
+        //- Return the list of fields required
+        virtual wordList fields() const;
 
         //- Does the surface need an update?
         virtual bool needsUpdate() const;

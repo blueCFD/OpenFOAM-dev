@@ -59,7 +59,6 @@ incompressibleTwoPhaseInteractingMixture
     alphaMax_(muModel_->lookupOrDefault("alphaMax", 1.0)),
 
     U_(U),
-    phi_(phi),
 
     mu_
     (
@@ -82,7 +81,7 @@ incompressibleTwoPhaseInteractingMixture
 
 bool Foam::incompressibleTwoPhaseInteractingMixture::read()
 {
-    if (regIOobject::read())
+    if (twoPhaseMixture::read())
     {
         if (muModel_->read() || nucModel_->read())
         {

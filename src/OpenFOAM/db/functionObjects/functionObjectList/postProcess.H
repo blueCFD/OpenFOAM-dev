@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,10 +37,6 @@ Description
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifndef CREATE_TIME
-    #define CREATE_TIME createTime.H
-#endif
 
 #ifndef CREATE_MESH
     #define CREATE_MESH createMesh.H
@@ -84,7 +80,7 @@ if (argList::postProcess(argc, argv))
         return 0;
     }
 
-    #include INCLUDE_FILE(CREATE_TIME)
+    #include "createTime.H"
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
     #include INCLUDE_FILE(CREATE_MESH)
 
@@ -96,7 +92,7 @@ if (argList::postProcess(argc, argv))
     {
         runTime.setTime(timeDirs[timei], timei);
 
-        Info<< "Time = " << runTime.timeName() << endl;
+        Info<< "Time = " << runTime.userTimeName() << endl;
 
         FatalIOError.throwExceptions();
 
@@ -116,8 +112,6 @@ if (argList::postProcess(argc, argv))
             // if not constructed from runTime
             dictionary functionsControlDict("controlDict");
 
-            HashSet<word> selectedFields;
-
             // Construct functionObjectList
             autoPtr<functionObjectList> functionsPtr
             (
@@ -125,8 +119,7 @@ if (argList::postProcess(argc, argv))
                 (
                     args,
                     runTime,
-                    functionsControlDict,
-                    selectedFields
+                    functionsControlDict
                 )
             );
 

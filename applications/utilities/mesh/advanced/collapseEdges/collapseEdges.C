@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     runTime.functionObjects().off();
     instantList timeDirs = timeSelector::selectIfPresent(runTime, args);
 
-    #include "createMesh.H"
+    #include "createMeshNoChangers.H"
 
     const word oldInstance = mesh.pointsInstance();
 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     {
         runTime.setTime(timeDirs[timeI], timeI);
 
-        Info<< "Time = " << runTime.timeName() << endl;
+        Info<< "Time = " << runTime.userTimeName() << endl;
 
         autoPtr<polyMeshFilter> meshFilterPtr;
 

@@ -727,7 +727,8 @@ int main(int argc, char *argv[])
                     runTime.timeName(),
                     runTime,
                     Foam::IOobject::MUST_READ
-                )
+                ),
+                false
             )
         );
     }

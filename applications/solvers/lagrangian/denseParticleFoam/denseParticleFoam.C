@@ -76,7 +76,6 @@ namespace Foam
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "fvCFD.H"
-#include "dynamicFvMesh.H"
 #include "viscosityModel.H"
 #include "phaseIncompressibleMomentumTransportModel.H"
 #include "pimpleControl.H"
@@ -94,7 +93,7 @@ int main(int argc, char *argv[])
 
     #include "setRootCaseLists.H"
     #include "createTime.H"
-    #include "createDynamicFvMesh.H"
+    #include "createMesh.H"
     #include "createDyMControls.H"
     #include "createFields.H"
     #include "createUcfIfPresent.H"
@@ -110,7 +109,7 @@ int main(int argc, char *argv[])
 
         runTime++;
 
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        Info<< "Time = " << runTime.userTimeName() << nl << endl;
 
         // Store the particle positions
         clouds.storeGlobalPositions();

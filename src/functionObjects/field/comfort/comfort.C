@@ -96,7 +96,7 @@ Foam::dimensionedScalar Foam::functionObjects::comfort::Trad() const
             << "The calculated mean wall radiation temperature is out of the\n"
             << "bounds specified in EN ISO 7730:2006\n"
             << "Valid range is 10 degC < T < 40 degC\n"
-            << "The actual value is: " << Trad - 273.15 << nl << endl;
+            << "The actual value is: " << Trad.value() - 273.15 << nl << endl;
     }
 
     return Trad;
@@ -295,6 +295,12 @@ bool Foam::functionObjects::comfort::read(const dictionary& dict)
       : 1.05 + 0.645*Icl_.value();
 
     return true;
+}
+
+
+Foam::wordList Foam::functionObjects::comfort::fields() const
+{
+    return wordList{"U", "T"};
 }
 
 

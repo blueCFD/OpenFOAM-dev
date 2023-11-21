@@ -45,6 +45,7 @@ SourceFiles
 #include "clock.H"
 #include "cpuTime.H"
 #include "TimeState.T.H"
+#include "userTime.H"
 #include "Switch.H"
 #include "instantList.H"
 #include "NamedEnum.T.H"
@@ -122,6 +123,9 @@ protected:
         mutable scalar endTime_;
         scalar beginTime_;
 
+        //- Optional user-time, defaults to realTime in s
+        autoPtr<userTimes::userTime> userTime_;
+
         static const NamedEnum<stopAtControl, 4> stopAtControlNames_;
         mutable stopAtControl stopAt_;
 
@@ -141,7 +145,6 @@ protected:
 
         //- If time is being sub-cycled this is the previous TimeState
         autoPtr<TimeState> prevTimeState_;
-
 
         // Signal handlers for writing
 
@@ -406,6 +409,21 @@ public:
 
             //- Return end time
             virtual dimensionedScalar endTime() const;
+
+            //- Return the userTime
+            const userTimes::userTime& userTime() const;
+
+            //- Return current user time value
+            scalar userTimeValue() const;
+
+            //- Convert the user-time (e.g. CA deg) to real-time (s).
+            scalar userTimeToTime(const scalar tau) const;
+
+            //- Convert the real-time (s) into user-time (e.g. CA deg)
+            scalar timeToUserTime(const scalar t) const;
+
+            //- Return current user time name with units
+            word userTimeName() const;
 
             //- Return the list of function objects
             const functionObjectList& functionObjects() const

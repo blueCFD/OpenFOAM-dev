@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -269,7 +269,8 @@ int main(int argc, char *argv[])
                 runTime.timeName(),
                 runTime,
                 IOobject::MUST_READ
-            )
+            ),
+            false
         );
 
 
@@ -295,7 +296,7 @@ int main(int argc, char *argv[])
             // Set time for global database
             runTime.setTime(timeDirs[timei], timei);
 
-            Info<< "Time = " << runTime.timeName() << endl << endl;
+            Info<< "Time = " << runTime.userTimeName() << endl << endl;
 
             // Set time for all databases
             forAll(databases, proci)

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -119,8 +119,14 @@ public:
             return ((((f_*T + e_)*T + d_)*T + c_)*T + b_)*T + a_;
         }
 
+        using FieldFunction1<scalar, NSRDS0>::integral;
+
         //- Integrate between two scalar values
         virtual scalar integral(const scalar x1, const scalar x2) const;
+
+        //- Return the integral as a function. Note that this will error if the
+        //  "f" coefficient is not zero.
+        NSRDS0 integral(const word& name, const scalar a) const;
 
         //- Write the function coefficients
         virtual void write(Ostream& os) const;

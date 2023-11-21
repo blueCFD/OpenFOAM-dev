@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     const scalar scaleFactor = args.argRead<scalar>(1);
 
     #include "createTime.H"
-    #include "createMesh.H"
+    #include "createMeshNoChangers.H"
 
     volPointInterpolation pInterp(mesh);
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     {
         runTime.setTime(Times[timeI], timeI);
 
-        Info<< "Time = " << runTime.timeName() << endl;
+        Info<< "Time = " << runTime.userTimeName() << endl;
 
         typeIOobject<volVectorField> Uheader
         (

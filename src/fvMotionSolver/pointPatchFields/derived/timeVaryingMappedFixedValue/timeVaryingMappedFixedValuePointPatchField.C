@@ -549,7 +549,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::updateCoeffs()
     // Apply offset to mapped values
     if (offset_.valid())
     {
-        const scalar t = this->db().time().timeOutputValue();
+        const scalar t = this->db().time().userTimeValue();
         this->operator==(*this + offset_->value(t));
     }
 

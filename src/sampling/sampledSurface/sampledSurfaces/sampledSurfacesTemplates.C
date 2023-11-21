@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -166,56 +166,20 @@ void Foam::functionObjects::sampledSurfaces::sampleAndWrite
 
 
 template<class GeoField>
-void Foam::functionObjects::sampledSurfaces::sampleAndWrite
-(
-    const IOobjectList& objects
-)
+void Foam::functionObjects::sampledSurfaces::sampleAndWrite()
 {
-    wordList names;
-    if (loadFromFiles_)
+    forAll(fields_, fieldi)
     {
-        IOobjectList fieldObjects(objects.lookupClass(GeoField::typeName));
-        names = fieldObjects.names();
-    }
-    else
-    {
-        names = mesh_.thisDb().names<GeoField>();
-    }
-
-    labelList nameIDs(findStrings(fieldSelection_, names));
-
-    wordHashSet fieldNames(wordList(names, nameIDs));
-
-    forAllConstIter(wordHashSet, fieldNames, iter)
-    {
-        const word& fieldName = iter.key();
-
-        if ((Pstream::master()) && verbose_)
+        if (mesh_.thisDb().foundObject<GeoField>(fields_[fieldi]))
         {
-            Pout<< "sampleAndWrite: " << fieldName << endl;
-        }
+            if (Pstream::master() && verbose_)
+            {
+                Pout<< "sampleAndWrite: " << fields_[fieldi] << endl;
+            }
 
-        if (loadFromFiles_)
-        {
-            const GeoField fld
-            (
-                IOobject
-                (
-                    fieldName,
-                    mesh_.time().timeName(),
-                    mesh_,
-                    IOobject::MUST_READ
-                ),
-                mesh_
-            );
-
-            sampleAndWrite(fld);
-        }
-        else
-        {
             sampleAndWrite
             (
-                mesh_.thisDb().lookupObject<GeoField>(fieldName)
+                mesh_.thisDb().lookupObject<GeoField>(fields_[fieldi])
             );
         }
     }

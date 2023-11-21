@@ -35,8 +35,8 @@ Description
 Usage
     \table
         Property     | Description
-        Cp           | Constant Heat capacity at constant pressure [J/kmol/K]
-        Tref         | Reference temperature [K] (defaults to 0)
+        Cp           | Constant Heat capacity at constant pressure [J/kg/K]
+        Tref         | Reference temperature [K] (defaults to Tstd)
         Hsref        | Reference sensible enthalpy [J/kg] (defaults to 0)
         Hf           | Heat of formation [J/kg]
     \endtable
@@ -108,7 +108,7 @@ class hConstThermo
 {
     // Private Data
 
-        //- Heat capacity at constant pressure [J/kmol/K]
+        //- Heat capacity at constant pressure [J/kg/K]
         scalar Cp_;
 
         //- Heat of formation [J/kg]

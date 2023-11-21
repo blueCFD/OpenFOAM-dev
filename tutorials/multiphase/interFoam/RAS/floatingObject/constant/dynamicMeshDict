@@ -13,63 +13,110 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dynamicFvMesh   dynamicMotionSolverFvMesh;
-
-motionSolverLibs   ("librigidBodyMeshMotion.so");
-
-motionSolver       rigidBodyMotion;
-
-rigidBodyMotionCoeffs
+mover
 {
-    report          on;
+    type            motionSolver;
 
-    solver
+    libs            ("libfvMeshMovers.so" "librigidBodyMeshMotion.so");
+
+    motionSolver       rigidBodyMotion;
+
+    rigidBodyMotionCoeffs
     {
-        type Newmark;
-    }
+        report          on;
 
-    accelerationRelaxation 0.7;
-
-    bodies
-    {
-        floatingObject
+        solver
         {
-            type            cuboid;
-            parent          root;
+            type Newmark;
+        }
 
-            // Cuboid dimensions
-            Lx              0.3;
-            Ly              0.2;
-            Lz              0.5;
+        accelerationRelaxation 0.7;
 
-            // Density of the cuboid
-            rho             500;
-
-            // Cuboid mass
-            mass            #calc "$rho*$Lx*$Ly*$Lz";
-            L               ($Lx $Ly $Lz);
-            centreOfMass    (0 0 0.25);
-            transform       (1 0 0 0 1 0 0 0 1) (0.5 0.45 0.1);
-
-            joint
+        bodies
+        {
+            floatingObject
             {
-                type            composite;
-                joints
-                (
-                    {
-                        type Py;
-                    }
-                    {
-                        type Ry;
-                    }
-                );
-            }
+                type            cuboid;
+                parent          root;
 
-            patches         (floatingObject);
-            innerDistance   0.05;
-            outerDistance   0.35;
+                // Cuboid dimensions
+                Lx              0.3;
+                Ly              0.2;
+                Lz              0.5;
+
+                // Density of the cuboid
+                rho             500;
+
+                // Cuboid mass
+                mass            #calc "$rho*$Lx*$Ly*$Lz";
+                L               ($Lx $Ly $Lz);
+                centreOfMass    (0 0 0.25);
+                transform       (1 0 0 0 1 0 0 0 1) (0.5 0.45 0.1);
+
+                joint
+                {
+                    type            composite;
+                    joints
+                    (
+                        {
+                            type Py;
+                        }
+                        {
+                            type Ry;
+                        }
+                    );
+                }
+
+                patches         (floatingObject);
+                innerDistance   0.05;
+                outerDistance   0.35;
+            }
         }
     }
+}
+
+
+topoChanger
+{
+    type    refiner;
+
+    libs    ("libfvMeshTopoChangers.so");
+
+    // How often to refine
+    refineInterval  1;
+
+    // Field to be refinement on
+    field           alpha.water;
+
+    // Refine field in between lower..upper
+    lowerRefineLevel 0.001;
+    upperRefineLevel 0.999;
+
+    // Have slower than 2:1 refinement
+    nBufferLayers   1;
+
+    // Refine cells only up to maxRefinement levels
+    maxRefinement   1;
+
+    // Stop refinement if maxCells reached
+    maxCells        200000;
+
+    // Flux field and corresponding velocity field. Fluxes on changed
+    // faces get recalculated by interpolating the velocity. Use 'none'
+    // on surfaceScalarFields that do not need to be reinterpolated.
+    correctFluxes
+    (
+        (phi none)
+        (nHatf none)
+        (rhoPhi none)
+        (alphaPhi.water none)
+        (meshPhi none)
+        (meshPhi_0 none)
+        (ghf none)
+    );
+
+    // Write the refinement level as a volScalarField
+    dumpLevel       true;
 }
 
 

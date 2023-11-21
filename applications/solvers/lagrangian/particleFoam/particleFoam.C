@@ -33,7 +33,6 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "dynamicFvMesh.H"
 #include "viscosityModel.H"
 #include "incompressibleMomentumTransportModels.H"
 #include "parcelCloudList.H"
@@ -47,7 +46,7 @@ int main(int argc, char *argv[])
 
     #include "setRootCaseLists.H"
     #include "createTime.H"
-    #include "createDynamicFvMesh.H"
+    #include "createMesh.H"
     #include "createFields.H"
     #include "CourantNo.H"
 
@@ -57,7 +56,7 @@ int main(int argc, char *argv[])
 
     while (runTime.loop())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        Info<< "Time = " << runTime.userTimeName() << nl << endl;
 
         clouds.storeGlobalPositions();
 

@@ -116,6 +116,7 @@ void Foam::Time::setControls()
     if (startFrom == "startTime")
     {
         controlDict_.lookup("startTime") >> startTime_;
+        startTime_ = userTimeToTime(startTime_);
     }
     else
     {
@@ -128,11 +129,11 @@ void Foam::Time::setControls()
             {
                 if (timeDirs[0].name() == constant() && timeDirs.size() >= 2)
                 {
-                    startTime_ = timeDirs[1].value();
+                    startTime_ = userTimeToTime(timeDirs[1].value());
                 }
                 else
                 {
-                    startTime_ = timeDirs[0].value();
+                    startTime_ = userTimeToTime(timeDirs[0].value());
                 }
             }
         }
@@ -140,7 +141,7 @@ void Foam::Time::setControls()
         {
             if (timeDirs.size())
             {
-                startTime_ = timeDirs.last().value();
+                startTime_ = userTimeToTime(timeDirs.last().value());
             }
         }
         else
@@ -153,7 +154,6 @@ void Foam::Time::setControls()
     }
 
     setTime(startTime_, 0);
-
     readDict();
     deltaTSave_ = deltaT_;
     deltaT0_ = deltaT_;
@@ -177,6 +177,7 @@ void Foam::Time::setControls()
             setTime(startTime_, 0);
 
             word newTime(timeName());
+
             if (newTime == oldTime)
             {
                 break;
@@ -365,12 +366,16 @@ Foam::Time::Time
     endTime_(0),
     beginTime_(startTime_),
 
+    userTime_(userTimes::userTime::New(controlDict_)),
+
     stopAt_(stopAtControl::endTime),
     writeControl_(writeControl::timeStep),
     writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
+
     subCycling_(false),
+
     sigWriteNow_(writeInfoHeader, *this),
     sigStopAtWriteNow_(writeInfoHeader, *this),
 
@@ -434,12 +439,16 @@ Foam::Time::Time
     endTime_(0),
     beginTime_(startTime_),
 
+    userTime_(userTimes::userTime::New(controlDict_)),
+
     stopAt_(stopAtControl::endTime),
     writeControl_(writeControl::timeStep),
     writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
+
     subCycling_(false),
+
     sigWriteNow_(writeInfoHeader, *this),
     sigStopAtWriteNow_(writeInfoHeader, *this),
 
@@ -536,12 +545,16 @@ Foam::Time::Time
     endTime_(0),
     beginTime_(startTime_),
 
+    userTime_(userTimes::userTime::New(controlDict_)),
+
     stopAt_(stopAtControl::endTime),
     writeControl_(writeControl::timeStep),
     writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
+
     subCycling_(false),
+
     sigWriteNow_(writeInfoHeader, *this),
     sigStopAtWriteNow_(writeInfoHeader, *this),
 
@@ -604,11 +617,14 @@ Foam::Time::Time
     endTime_(0),
     beginTime_(startTime_),
 
+    userTime_(userTimes::userTime::New(controlDict_)),
+
     stopAt_(stopAtControl::endTime),
     writeControl_(writeControl::timeStep),
     writeInterval_(great),
     purgeWrite_(0),
     writeOnce_(false),
+
     subCycling_(false),
 
     writeFormat_(IOstream::ASCII),
@@ -678,7 +694,7 @@ Foam::word Foam::Time::findInstance
         fileHandler().findInstance
         (
             startIO,
-            timeOutputValue(),
+            userTimeValue(),
             stopInstance
         )
     );
@@ -807,6 +823,36 @@ Foam::dimensionedScalar Foam::Time::endTime() const
 }
 
 
+const Foam::userTimes::userTime& Foam::Time::userTime() const
+{
+    return *userTime_;
+}
+
+
+Foam::scalar Foam::Time::userTimeValue() const
+{
+    return userTime_->timeToUserTime(value());
+}
+
+
+Foam::scalar Foam::Time::userTimeToTime(const scalar tau) const
+{
+    return userTime_->userTimeToTime(tau);
+}
+
+
+Foam::scalar Foam::Time::timeToUserTime(const scalar t) const
+{
+    return userTime_->timeToUserTime(t);
+}
+
+
+Foam::word Foam::Time::userTimeName() const
+{
+    return timeName(userTimeValue()) + userTime_->unit();
+}
+
+
 bool Foam::Time::running() const
 {
     return value() < (endTime_ - 0.5*deltaT_);
@@ -908,7 +954,7 @@ void Foam::Time::setTime(const Time& t)
 
 void Foam::Time::setTime(const instant& inst, const label newIndex)
 {
-    value() = inst.value();
+    value() = userTimeToTime(inst.value());
     dimensionedScalar::name() = inst.name();
     timeIndex_ = newIndex;
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -93,6 +93,9 @@ class rigidBodyMeshMotion
             const label bodyID,
             const dictionary& dict
         );
+
+        template<class Type>
+        inline Type weight(const Type& pDist) const;
     };
 
 
@@ -121,8 +124,18 @@ class rigidBodyMeshMotion
         //- Current time index (used for updating)
         label curTimeIndex_;
 
+
+    // Private Member Functions
+
         //- To avoid warning from clang
         using RBD::rigidBodyMotion::write;
+
+        //- Return the list of transformation for each body from time 0
+        List<septernion> transforms0() const;
+
+        //- Return the list of weights for each body to pointi
+        //   w is used as the work-space for the weights and returned
+        List<scalar>& weights(const label pointi, List<scalar>& w) const;
 
 
 public:
@@ -158,6 +171,9 @@ public:
 
         //- Solve for motion
         virtual void solve();
+
+        //-  Update local data for topology changes
+        virtual void updateMesh(const mapPolyMesh&);
 
         //- Write motion state information for restart
         virtual bool write() const;

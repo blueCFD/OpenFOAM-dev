@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,16 +32,14 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "engineTime.H"
-#include "engineMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
     #include "setRootCase.H"
-    #include "createEngineTime.H"
-    #include "createEngineMesh.H"
+    #include "createTime.H"
+    #include "createMesh.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,37 +49,37 @@ int main(int argc, char *argv[])
     scalar ca0 = -180.0;
     scalar ca1 = 0.0;
 
-    while (runTime.theta() > ca0)
+    while (runTime.userTimeValue() > ca0)
     {
         ca0 += fullCycle;
         ca1 += fullCycle;
     }
 
-    while (mag(runTime.theta() - ca0) > eps)
+    while (mag(runTime.userTimeValue() - ca0) > eps)
     {
-        scalar t0 = runTime.userTimeToTime(ca0 - runTime.theta());
+        scalar t0 = runTime.userTimeToTime(ca0 - runTime.userTimeValue());
         runTime.setDeltaT(t0);
         runTime++;
-        Info<< "CA = " << runTime.theta() << endl;
-        mesh.move();
+        Info<< "CA = " << runTime.userTimeValue() << endl;
+        mesh.update();
     }
 
     scalar Vmax = sum(mesh.V().field());
 
-    while (mag(runTime.theta()-ca1) > eps)
+    while (mag(runTime.userTimeValue()-ca1) > eps)
     {
-        scalar t1 = runTime.userTimeToTime(ca1-runTime.theta());
+        scalar t1 = runTime.userTimeToTime(ca1 - runTime.userTimeValue());
         runTime.setDeltaT(t1);
         runTime++;
-        Info<< "CA = " << runTime.theta() << endl;
-        mesh.move();
+        Info<< "CA = " << runTime.userTimeValue() << endl;
+        mesh.update();
     }
 
     scalar Vmin = sum(mesh.V().field());
 
     Info<< "\nVmax = " << Vmax;
     Info<< ", Vmin = " << Vmin << endl;
-    Info<< "Vmax/Vmin = " << Vmax/Vmin << endl;
+    Info<< "Compression ratio Vmax/Vmin = " << Vmax/Vmin << endl;
     Info<< "\nEnd\n" << endl;
 
     return 0;

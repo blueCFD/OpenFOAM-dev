@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,8 @@ SourceFiles
 #define refinementParameters_H
 
 #include "dictionary.H"
-#include "pointField.H"
+#include "labelList.H"
+#include "point.T.H"
 #include "Switch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -53,6 +54,42 @@ class polyMesh;
 
 class refinementParameters
 {
+public:
+
+    // Public classes
+
+        //- Class to hold the points to select cells inside and outside
+        //  surface regions
+        class cellSelectionPoints
+        {
+            //- Points inside the surface regions to selected cells
+            const List<point> inside_;
+
+            //- Points outside the surface region to deselect cells
+            const List<point> outside_;
+
+
+        public:
+
+            //- Constructor
+            cellSelectionPoints(const dictionary& dict);
+
+            //- Return the points inside the surface regions to selected cells
+            const List<point>& inside() const
+            {
+                return inside_;
+            }
+
+            //- Return the points outside the surface region to deselect cells
+            const List<point>& outside() const
+            {
+                return outside_;
+            }
+        };
+
+
+private:
+
     // Private Data
 
         //- Total number of cells
@@ -73,8 +110,8 @@ class refinementParameters
         //- Number of layers between different refinement levels
         const label nBufferLayers_;
 
-        //- Areas to keep
-        const pointField keepPoints_;
+        //- Points to select cells inside and outside surface regions
+        const cellSelectionPoints selectionPoints_;
 
         //- FaceZone faces allowed which have owner and neighbour in same
         //  cellZone?
@@ -141,10 +178,11 @@ public:
                 return nBufferLayers_;
             }
 
-            //- Areas to keep
-            const pointField& keepPoints() const
+            //- Return the points to select cells inside and outside
+            //  surface regions
+            const cellSelectionPoints& selectionPoints() const
             {
-                return keepPoints_;
+                return selectionPoints_;
             }
 
             //- Are zone faces allowed only in between different cell zones
