@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class OFstreamCollator Declaration
+                      Class OFstreamCollator Declaration
 \*---------------------------------------------------------------------------*/
 
 class OFstreamCollator
@@ -77,7 +77,7 @@ class OFstreamCollator
 
             const label comm_;
             const word typeName_;
-            const fileName pathName_;
+            const fileName filePath_;
             const string data_;
             const labelList sizes_;
             PtrList<List<char>> slaveData_;
@@ -90,7 +90,7 @@ class OFstreamCollator
             (
                 const label comm,
                 const word& typeName,
-                const fileName& pathName,
+                const fileName& filePath,
                 const string& data,
                 const labelList& sizes,
                 IOstream::streamFormat format,
@@ -101,7 +101,7 @@ class OFstreamCollator
             :
                 comm_(comm),
                 typeName_(typeName),
-                pathName_(pathName),
+                filePath_(filePath),
                 data_(data),
                 sizes_(sizes),
                 slaveData_(0),

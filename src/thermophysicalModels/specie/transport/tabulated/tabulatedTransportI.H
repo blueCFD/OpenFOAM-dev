@@ -31,8 +31,8 @@ template<class Thermo>
 inline Foam::tabulatedTransport<Thermo>::tabulatedTransport
 (
     const Thermo& t,
-    const nonUniformTable& mu,
-    const nonUniformTable& kappa
+    const table2D& mu,
+    const table2D& kappa
 )
 :
     Thermo(t),
@@ -97,17 +97,6 @@ inline Foam::scalar Foam::tabulatedTransport<Thermo>::kappa
 ) const
 {
     return kappa_.f(p, T);
-}
-
-
-template<class Thermo>
-inline Foam::scalar Foam::tabulatedTransport<Thermo>::alphah
-(
-    const scalar p,
-    const scalar T
-) const
-{
-    return kappa(p, T)/this->Cp(p, T);
 }
 
 

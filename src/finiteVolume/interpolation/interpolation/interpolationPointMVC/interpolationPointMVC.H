@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,13 +42,13 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                   Class interpolationPointMVC Declaration
+                    Class interpolationPointMVC Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
 class interpolationPointMVC
 :
-    public interpolation<Type>
+    public fieldInterpolation<Type, interpolationPointMVC<Type>>
 {
 protected:
 

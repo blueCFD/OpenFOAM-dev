@@ -10,6 +10,9 @@ phaseSystem/phaseSystem.C
 phaseSystem/phaseSystemNew.C
 phaseSystem/phaseSystemSolve.C
 
+PhaseSystems/HeatTransferPhaseSystem/heatTransferPhaseSystem.C
+PhaseSystems/TwoResistanceHeatTransferPhaseSystem/twoResistanceHeatTransferPhaseSystem.C
+
 diameterModels/diameterModel/diameterModel.C
 diameterModels/diameterModel/diameterModelNew.C
 diameterModels/sphericalDiameter/sphericalDiameter.C
@@ -42,7 +45,7 @@ populationBalanceModel/populationBalanceModel/populationBalanceModel.C
 coalescenceModels = populationBalanceModel/coalescenceModels
 $(coalescenceModels)/coalescenceModel/coalescenceModel.C
 $(coalescenceModels)/ballisticCollisions/ballisticCollisions.C
-$(coalescenceModels)/brownianCollisions/brownianCollisions.C
+$(coalescenceModels)/BrownianCollisions/BrownianCollisions.C
 $(coalescenceModels)/constantCoalescence/constantCoalescence.C
 $(coalescenceModels)/CoulaloglouTavlaridesCoalescence/CoulaloglouTavlaridesCoalescence.C
 $(coalescenceModels)/DahnekeInterpolation/DahnekeInterpolation.C
@@ -77,7 +80,6 @@ $(driftModels)/phaseChange/phaseChange.C
 
 nucleationModels = populationBalanceModel/nucleationModels
 $(nucleationModels)/nucleationModel/nucleationModel.C
-$(nucleationModels)/constantNucleation/constantNucleation.C
 $(nucleationModels)/reactionDriven/reactionDriven.C
 $(nucleationModels)/wallBoiling/wallBoiling.C
 

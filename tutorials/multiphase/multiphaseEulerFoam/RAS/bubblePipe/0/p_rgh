@@ -10,7 +10,6 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    location    "0";
     object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -21,29 +20,26 @@ internalField   uniform 1e5;
 
 boundaryField
 {
+    #includeEtc "caseDicts/setConstraintTypes"
+
     inlet
     {
         type            fixedFluxPressure;
+        value           $internalField;
     }
+
     outlet
     {
         type            prghPressure;
         p               $internalField;
         value           $internalField;
     }
-    wall
+
+    walls
     {
         type            fixedFluxPressure;
-    }
-    front
-    {
-        type            wedge;
-    }
-    back
-    {
-        type            wedge;
+        value           $internalField;
     }
 }
-
 
 // ************************************************************************* //

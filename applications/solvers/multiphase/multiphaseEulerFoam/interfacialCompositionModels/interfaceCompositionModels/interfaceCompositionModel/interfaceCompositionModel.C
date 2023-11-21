@@ -97,6 +97,16 @@ Foam::tmp<Foam::volScalarField> Foam::interfaceCompositionModel::dY
 }
 
 
+Foam::tmp<Foam::volScalarField> Foam::interfaceCompositionModel::dYfPrime
+(
+    const word& speciesName,
+    const volScalarField& Tf
+) const
+{
+    return YfPrime(speciesName, Tf);
+}
+
+
 Foam::tmp<Foam::volScalarField> Foam::interfaceCompositionModel::D
 (
     const word& speciesName
@@ -109,59 +119,11 @@ Foam::tmp<Foam::volScalarField> Foam::interfaceCompositionModel::D
     return volScalarField::New
     (
         IOobject::groupName("D", pair_.name()),
-        composition().alphah(speciei, p, T)
+        composition().kappa(speciei, p, T)
+       /composition().Cp(speciei, p, T)
        /composition().rho(speciei, p, T)
        /Le_
     );
-}
-
-
-Foam::tmp<Foam::volScalarField> Foam::interfaceCompositionModel::L
-(
-    const word& speciesName,
-    const volScalarField& Tf
-) const
-{
-    const label speciei = composition().species()[speciesName];
-    const volScalarField& p(thermo_.p());
-    volScalarField Ha(composition().Ha(speciei, p, Tf));
-
-    const volScalarField& otherP(otherThermo_.p());
-    tmp<volScalarField> otherHa(nullptr);
-    if (otherHasComposition())
-    {
-        const label otherSpeciei = otherComposition().species()[speciesName];
-        otherHa = otherComposition().Ha(otherSpeciei, otherP, Tf);
-    }
-    else
-    {
-        otherHa = otherThermo_.ha(otherP, Tf);
-    }
-
-    return
-        volScalarField::New
-        (
-            IOobject::groupName("L", pair_.name()),
-            otherHa - Ha
-        );
-}
-
-
-void Foam::interfaceCompositionModel::addDmdtL
-(
-    const volScalarField& K,
-    const volScalarField& Tf,
-    volScalarField& dmdtL,
-    volScalarField& dmdtLPrime
-) const
-{
-    forAllConstIter(hashedWordList, species_, iter)
-    {
-        const volScalarField rhoKDL(thermo_.rho()*K*D(*iter)*L(*iter, Tf));
-
-        dmdtL += rhoKDL*dY(*iter, Tf);
-        dmdtLPrime += rhoKDL*YfPrime(*iter, Tf);
-    }
 }
 
 

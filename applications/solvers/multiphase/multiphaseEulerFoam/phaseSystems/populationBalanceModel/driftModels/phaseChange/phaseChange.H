@@ -49,7 +49,7 @@ namespace driftModels
 {
 
 /*---------------------------------------------------------------------------*\
-                     Class phaseChange Declaration
+                         Class phaseChange Declaration
 \*---------------------------------------------------------------------------*/
 
 class phaseChange
@@ -98,8 +98,8 @@ public:
 
     // Member Functions
 
-        //- Correct diameter independent expressions
-        virtual void correct();
+        //- Precompute diameter independent expressions
+        virtual void precompute();
 
         //- Add to driftRate
         virtual void addToDriftRate

@@ -25,15 +25,15 @@ Class
     Foam::tabulatedTransport
 
 Description
-    Transport properties package using non-uniform tabulated data for
-    viscosity and thermal conductivity vs temperature.
+    Transport properties package using uniform tabulated data for
+    viscosity and thermal conductivity vs pressure and temperature.
 
 Usage
 
     \table
         Property        | Description
-        mu              | Dynamic viscosity vs temperature table
-        kappa           | Thermal conductivity vs temperature table
+        mu              | Dynamic viscosity vs pressure and temperature table
+        kappa           | Thermal conductivity vs pressure and temperature table
     \endtable
 
     Example of the specification of the transport properties:
@@ -41,18 +41,42 @@ Usage
     transport
     {
         mu
-        (
-            (200 1.82e-05)
-            (350 2.61e-05)
-            (400 3.93e-05)
-        );
+        {
+            pLow    1e3;
+            pHigh   1e6;
+
+            Tlow    200;
+            Thigh   1500;
+
+            values
+            <m> <n>
+            (
+                (..........)
+                .
+                .
+                .
+                (..........)
+            );
+        }
 
         kappa
-        (
-            (200 2.56e-5)
-            (350 3.33e-5)
-            (400 4.72e-5)
-        );
+        {
+            pLow    1e3;
+            pHigh   1e6;
+
+            Tlow    200;
+            Thigh   1500;
+
+            values
+            <m> <n>
+            (
+                (..........)
+                .
+                .
+                .
+                (..........)
+            );
+        }
     }
     \endverbatim
 
@@ -61,14 +85,14 @@ SourceFiles
     tabulatedTransport.C
 
 See also
-    Foam::thermophysicalFunctions::nonUniformTable
+    Foam::thermophysicalFunctions::table2D
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef tabulatedTransport_H
 #define tabulatedTransport_H
 
-#include "nonUniformTableThermophysicalFunction.H"
+#include "table2DThermophysicalFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -92,16 +116,16 @@ class tabulatedTransport
 :
     public Thermo
 {
-    typedef thermophysicalFunctions::nonUniformTable nonUniformTable;
+    typedef thermophysicalFunctions::table2D table2D;
 
 
     // Private Data
 
         //- Dynamic viscosity table [Pa.s]
-        nonUniformTable mu_;
+        table2D mu_;
 
         //- Thermal conductivity table [W/m/K]
-        nonUniformTable kappa_;
+        table2D kappa_;
 
 
     // Private Member Functions
@@ -110,8 +134,8 @@ class tabulatedTransport
         inline tabulatedTransport
         (
             const Thermo& t,
-            const nonUniformTable& muPoly,
-            const nonUniformTable& kappaPoly
+            const table2D& muPoly,
+            const table2D& kappaPoly
         );
 
 
@@ -145,9 +169,6 @@ public:
 
         //- Thermal conductivity [W/m/K]
         inline scalar kappa(const scalar p, const scalar T) const;
-
-        //- Thermal diffusivity of enthalpy [kg/m/s]
-        inline scalar alphah(const scalar p, const scalar T) const;
 
         // Species diffusivity
         // inline scalar D(const scalar p, const scalar T) const;

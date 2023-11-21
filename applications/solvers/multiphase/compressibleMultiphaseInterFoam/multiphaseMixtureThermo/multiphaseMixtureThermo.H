@@ -47,7 +47,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                         Class multiphaseMixtureThermo Declaration
+                   Class multiphaseMixtureThermo Declaration
 \*---------------------------------------------------------------------------*/
 
 class multiphaseMixtureThermo
@@ -338,6 +338,14 @@ public:
 
             //- Enthalpy of formation [J/kg]
             virtual tmp<volScalarField> hc() const;
+
+            //- Temperature from enthalpy/internal energy
+            virtual tmp<volScalarField> THE
+            (
+                const volScalarField& h,
+                const volScalarField& p,
+                const volScalarField& T0    // starting temperature
+            ) const;
 
             //- Temperature from enthalpy/internal energy for cell-set
             virtual tmp<scalarField> THE

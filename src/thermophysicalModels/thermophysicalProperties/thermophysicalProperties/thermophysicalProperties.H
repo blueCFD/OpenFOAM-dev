@@ -51,7 +51,7 @@ class thermophysicalProperties;
 Ostream& operator<<(Ostream& os, const thermophysicalProperties& l);
 
 /*---------------------------------------------------------------------------*\
-                    Class thermophysicalProperties Declaration
+                  Class thermophysicalProperties Declaration
 \*---------------------------------------------------------------------------*/
 
 class thermophysicalProperties
@@ -163,9 +163,6 @@ public:
 
             //- Liquid thermal conductivity  [W/m/K]
             virtual scalar kappa(scalar p, scalar T) const = 0;
-
-            //- Liquid thermal diffusivity of enthalpy [kg/m/s]
-            virtual scalar alphah(const scalar p, const scalar T) const = 0;
 
 
     // I-O

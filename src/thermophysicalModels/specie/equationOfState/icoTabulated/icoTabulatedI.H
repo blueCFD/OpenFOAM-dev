@@ -31,7 +31,7 @@ template<class Specie>
 inline Foam::icoTabulated<Specie>::icoTabulated
 (
     const Specie& sp,
-    const nonUniformTable& rho
+    const nonUniformTable1D& rho
 )
 :
     Specie(sp),
@@ -172,7 +172,7 @@ inline Foam::scalar Foam::icoTabulated<Specie>::Z
     scalar T
 ) const
 {
-    return 0;
+    return p/(rho(p, T)*this->R()*T);
 }
 
 

@@ -45,7 +45,7 @@ namespace diameterModels
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class nucleationModel Declaration
+                       Class nucleationModel Declaration
 \*---------------------------------------------------------------------------*/
 
 class nucleationModel
@@ -149,8 +149,8 @@ public:
         }
 
 
-        //- Correct diameter independent expressions
-        virtual void correct();
+        //- Precompute diameter independent expressions
+        virtual void precompute();
 
         //- Add to nucleationRate
         virtual void addToNucleationRate

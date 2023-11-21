@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,13 +40,13 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class interpolationCellPointFace Declaration
+                 Class interpolationCellPointFace Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
 class interpolationCellPointFace
 :
-    public interpolation<Type>
+    public fieldInterpolation<Type, interpolationCellPointFace<Type>>
 {
     // Private Data
 
@@ -94,6 +94,9 @@ public:
 
 
     // Member Functions
+
+        //- Inherit interpolate from interpolation
+        using interpolation<Type>::interpolate;
 
         //- Interpolate field to the given point in the given cell
         Type interpolate

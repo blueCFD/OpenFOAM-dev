@@ -52,14 +52,14 @@ SourceFiles
     icoTabulated.C
 
 See also
-    Foam::thermophysicalFunctions::nonUniformTable
+    Foam::thermophysicalFunctions::nonUniformTable1D
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef icoTabulated_H
 #define icoTabulated_H
 
-#include "nonUniformTableThermophysicalFunction.H"
+#include "nonUniformTable1DThermophysicalFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -88,13 +88,13 @@ class icoTabulated
 :
     public Specie
 {
-    typedef thermophysicalFunctions::nonUniformTable nonUniformTable;
+    typedef thermophysicalFunctions::nonUniformTable1D nonUniformTable1D;
 
 
     // Private Data
 
         //- Density table [kg/m^3]
-        nonUniformTable rho_;
+        nonUniformTable1D rho_;
 
 
 public:
@@ -105,7 +105,7 @@ public:
         inline icoTabulated
         (
             const Specie& sp,
-            const nonUniformTable& rho
+            const nonUniformTable1D& rho
         );
 
         //- Construct from dictionary

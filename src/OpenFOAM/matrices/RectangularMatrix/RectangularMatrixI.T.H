@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -134,7 +134,7 @@ namespace Foam
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-inline Foam::RectangularMatrix<Type> outer
+inline RectangularMatrix<Type> outer
 (
     const Field<Type>& f1,
     const Field<Type>& f2

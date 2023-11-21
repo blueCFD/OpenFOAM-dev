@@ -35,6 +35,8 @@ template<class Type>
 const Foam::wordList Foam::fv::CodedSource<Type>::codeKeys_ =
 {
     "codeAddSup",
+    "codeAddRhoSup",
+    "codeAddAlphaRhoSup",
     "codeCorrect",
     "codeInclude",
     "codeSetValue",
@@ -205,6 +207,26 @@ void Foam::fv::CodedSource<Type>::addSup
 
     updateLibrary();
     redirectFvOption().addSup(rho, eqn, fieldi);
+}
+
+
+template<class Type>
+void Foam::fv::CodedSource<Type>::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<Type>& eqn,
+    const label fieldi
+) const
+{
+    if (debug)
+    {
+        Info<< "CodedSource<"<< pTraits<Type>::typeName
+            << ">::addSup for source " << name_ << endl;
+    }
+
+    updateLibrary();
+    redirectFvOption().addSup(alpha, rho, eqn, fieldi);
 }
 
 

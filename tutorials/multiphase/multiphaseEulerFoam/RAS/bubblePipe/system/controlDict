@@ -7,55 +7,91 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version         2.0;
-    format          ascii;
-    class           dictionary;
-    location        "system";
-    object          controlDict;
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     multiphaseEulerFoam;
+application         multiphaseEulerFoam;
 
-startFrom       startTime;
+startFrom           startTime;
 
-startTime       0;
+startTime           0;
 
-stopAt          endTime;
+stopAt              endTime;
 
-endTime         2.0;
+endTime             4;
 
-deltaT          0.001;
+deltaT              1e-4;
 
-writeControl    adjustableRunTime;
+writeControl        adjustableRunTime;
 
-writeInterval   1;
+writeInterval       0.5;
 
-purgeWrite      0;
+purgeWrite          0;
 
-writeFormat     ascii;
+writeFormat         ascii;
 
-writePrecision  9;
+writePrecision      6;
 
-writeCompression off;
+writeCompression    uncompressed;
 
-timeFormat      general;
+timeFormat          general;
 
-timePrecision   6;
+timePrecision       6;
 
-runTimeModifiable yes;
+runTimeModifiable   yes;
 
-adjustTimeStep  yes;
+adjustTimeStep      yes;
 
-maxCo           0.25;
+maxCo               0.8;
 
-maxDeltaT       0.001;
+maxDeltaT           1;
 
 functions
 {
-    #includeFunc        singleGraph
-    #includeFunc yPlus(phase=liquid)
-}
+    #includeFunc    residuals(p_rgh, k.water, omega.water)
+    #includeFunc    timeStep
+    #includeFunc    writeObjects(d.air1)
+    #includeFunc    writeObjects(d.air2)
+    #includeFunc    phaseForces(phase=water)
+    #includeFunc    singleGraph
 
+    probabilityDensity.injection
+    {
+        type                sizeDistribution;
+        functionObjectLibs  ("libmultiphaseEulerFoamFunctionObjects.so");
+
+        writeControl        outputTime;
+        writeInterval       1;
+
+        populationBalance   bubbles;
+        regionType          cellZone;
+        name                injection;
+        functionType        volume;
+        coordinateType      diameter;
+        densityFunction     yes;
+        normalize           yes;
+    }
+
+    probabilityDensity.outlet
+    {
+        type                sizeDistribution;
+        functionObjectLibs  ("libmultiphaseEulerFoamFunctionObjects.so");
+
+        writeControl        outputTime;
+        writeInterval       1;
+
+        populationBalance   bubbles;
+        regionType          cellZone;
+        name                outlet;
+        functionType        volume;
+        coordinateType      diameter;
+        densityFunction     yes;
+        normalize           yes;
+    }
+}
 
 // ************************************************************************* //

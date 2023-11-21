@@ -10,7 +10,6 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
     object      fvSchemes;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -28,29 +27,22 @@ gradSchemes
 
 divSchemes
 {
-    default                         none;
+    default         none;
 
     "div\(phi,alpha.*\)"            Gauss vanLeer;
-    "div\(phir,alpha.*\)"           Gauss vanLeer;
+    "div\(phir,alpha.*,alpha.*\)"   Gauss vanLeer;
 
     "div\(alphaRhoPhi.*,U.*\)"      Gauss linearUpwind limited;
     "div\(phi.*,U.*\)"              Gauss linearUpwind limited;
+    "div\(alphaRhoPhi.*,(k|epsilon|omega).*\)"    Gauss limitedLinear 1;
+    "div\(alphaPhi.*,f.*\)"         Gauss limitedLinear 1;
 
-    "div\(alphaRhoPhi.*,Yi\)"       Gauss linearUpwind limited;
-    "div\(alphaRhoPhi.*,(h|e).*\)"  Gauss linearUpwind limited;
-    "div\(alphaRhoPhi.*,f.*\)"      Gauss upwind;
-    "div\(alphaRhoPhi.*,K.*\)"      Gauss linearUpwind limited;
-    "div\(alphaPhi.*,p\)"           Gauss linearUpwind limited;
-    "div\(phi.*,kappai.*\)"         Gauss linearUpwind limited;
-    "div\(alphaRhoPhi.*,(k|epsilon|omega).*\)"  Gauss upwind;
-    "div\(phim,(k|epsilon)m\)"      Gauss upwind;
-
-    "div\(\(\(\(alpha.*\*thermo:rho.*\)\*nuEff.*\)\*dev2\(T\(grad\(U.*\)\)\)\)\)" Gauss linear;
+    "div\(\(\(\(alpha.*\*thermo:rho.*\)*nuEff.*\)*dev2\(T\(grad\(U.*\)\)\)\)\)" Gauss linear;
 }
 
 laplacianSchemes
 {
-    default         Gauss linear corrected;
+    default         Gauss linear uncorrected;
 }
 
 interpolationSchemes
@@ -58,21 +50,10 @@ interpolationSchemes
     default         linear;
 }
 
-snGradSchemes
-{
-    default         corrected;
-}
-
-fluxRequired
-{
-    default         no;
-}
-
 wallDist
 {
-    method          meshWave;
-    nRequired       yes;
+    method          Poisson;
+    nRequired       true;
 }
-
 
 // ************************************************************************* //

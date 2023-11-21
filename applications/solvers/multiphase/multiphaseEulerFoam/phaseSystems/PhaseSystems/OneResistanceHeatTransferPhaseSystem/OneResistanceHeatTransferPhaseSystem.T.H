@@ -39,7 +39,7 @@ SourceFiles
 #ifndef OneResistanceHeatTransferPhaseSystem_H
 #define OneResistanceHeatTransferPhaseSystem_H
 
-#include "phaseSystem.H"
+#include "HeatTransferPhaseSystem.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,13 +51,13 @@ template<class modelType> class BlendedInterfacialModel;
 class heatTransferModel;
 
 /*---------------------------------------------------------------------------*\
-                    Class OneResistanceHeatTransferPhaseSystem Declaration
+            Class OneResistanceHeatTransferPhaseSystem Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class BasePhaseSystem>
 class OneResistanceHeatTransferPhaseSystem
 :
-    public BasePhaseSystem
+    public HeatTransferPhaseSystem<BasePhaseSystem>
 {
 protected:
 
@@ -77,23 +77,6 @@ protected:
 
             //- Heat transfer models
             heatTransferModelTable heatTransferModels_;
-
-
-    // Protected Member Functions
-
-        //- Add energy transfer terms which result from bulk mass transfers
-        void addDmdtHefs
-        (
-            const phaseSystem::dmdtfTable& dmdtfs,
-            phaseSystem::heatTransferTable& eqns
-        ) const;
-
-        //- Add energy transfer terms which result from specie mass transfers
-        void addDmidtHef
-        (
-            const phaseSystem::dmidtfTable& dmidtfs,
-            phaseSystem::heatTransferTable& eqns
-        ) const;
 
 
 public:

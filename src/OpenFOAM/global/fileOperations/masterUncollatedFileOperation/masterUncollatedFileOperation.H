@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,11 +59,10 @@ Description
 #define fileOperations_masterUncollatedFileOperation_H
 
 #include "fileOperation.H"
-#include "OSspecific.H"
 #include "HashPtrTable.T.H"
-#include "Switch.H"
 #include "unthreadedInitialise.H"
 #include "boolList.H"
+#include "OSspecific.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -76,7 +75,7 @@ namespace fileOperations
 {
 
 /*---------------------------------------------------------------------------*\
-                     Class masterUncollatedFileOperation Declaration
+                Class masterUncollatedFileOperation Declaration
 \*---------------------------------------------------------------------------*/
 
 class masterUncollatedFileOperation
@@ -687,11 +686,12 @@ public:
             ) const;
 
             //- Top-level read
+            //  Format set to ASCII if defaultFormat and file format are ASCII
             virtual bool read
             (
                 regIOobject&,
                 const bool masterOnly,
-                const IOstream::streamFormat format,
+                const IOstream::streamFormat defaultFormat,
                 const word& typeName
             ) const;
 
@@ -707,12 +707,17 @@ public:
             ) const;
 
             //- Generate an ISstream that reads a file
-            virtual autoPtr<ISstream> NewIFstream(const fileName&) const;
+            virtual autoPtr<ISstream> NewIFstream
+            (
+                const fileName& filePath,
+                IOstream::streamFormat format=IOstream::ASCII,
+                IOstream::versionNumber version=IOstream::currentVersion
+            ) const;
 
             //- Generate an Ostream that writes a file
             virtual autoPtr<Ostream> NewOFstream
             (
-                const fileName& pathname,
+                const fileName& filePath,
                 IOstream::streamFormat format=IOstream::ASCII,
                 IOstream::versionNumber version=IOstream::currentVersion,
                 IOstream::compressionType compression=IOstream::UNCOMPRESSED,

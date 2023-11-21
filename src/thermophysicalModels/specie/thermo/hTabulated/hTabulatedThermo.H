@@ -25,8 +25,8 @@ Class
     Foam::hTabulatedThermo
 
 Description
-    Enthalpy based thermodynamics package using non-uniform tabulated data for
-    heat capacity vs temperature.
+    Enthalpy based thermodynamics package using uniform tabulated data for
+    enthalpy and heat capacity vs pressure and temperature.
 
 Usage
 
@@ -34,7 +34,8 @@ Usage
         Property     | Description
         Hf           | Heat of formation
         Sf           | Standard entropy
-        Cp           | Specific heat at constant pressure vs temperature table
+        Hs           | Sensible enthalpy vs pressure and temperature table
+        Cp           | Specific heat capacity vs pressure and temperature table
     \endtable
 
     Example of the specification of the thermodynamic properties:
@@ -43,12 +44,44 @@ Usage
     {
         Hf              0;
         Sf              0;
+
+        Hs
+        {
+            pLow    1e4;
+            pHigh   5e5;
+
+            Tlow    200;
+            Thigh   1500;
+
+            values
+            <m> <n>
+            (
+                (..........)
+                .
+                .
+                .
+                (..........)
+            );
+        }
+
         Cp
-        (
-            (200     1005)
-            (350     1010)
-            (400     1020)
-        );
+        {
+            pLow    1e3;
+            pHigh   1e6;
+
+            Tlow    200;
+            Thigh   1500;
+
+            values
+            <m> <n>
+            (
+                (..........)
+                .
+                .
+                .
+                (..........)
+            );
+        }
     }
     \endverbatim
 
@@ -57,14 +90,14 @@ SourceFiles
     hTabulatedThermo.C
 
 See also
-    Foam::thermophysicalFunctions::nonUniformTable
+    Foam::thermophysicalFunctions::table2D
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef hTabulatedThermo_H
 #define hTabulatedThermo_H
 
-#include "integratedNonUniformTableThermophysicalFunction.H"
+#include "table2DThermophysicalFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -93,8 +126,7 @@ class hTabulatedThermo
 :
     public EquationOfState
 {
-    typedef thermophysicalFunctions::integratedNonUniformTable
-        integratedNonUniformTable;
+    typedef thermophysicalFunctions::table2D table2D;
 
 
     // Private Data
@@ -105,8 +137,11 @@ class hTabulatedThermo
         //- Standard entropy
         scalar Sf_;
 
+        //- Sensible enthalpy table [J/kg]
+        table2D Hs_;
+
         //- Specific heat at constant pressure table [J/kg/K]
-        integratedNonUniformTable Cp_;
+        table2D Cp_;
 
 
 public:
@@ -137,11 +172,11 @@ public:
             //- Heat capacity at constant pressure [J/kg/K]
             inline scalar Cp(const scalar p, const scalar T) const;
 
-            //- Absolute enthalpy [J/kg]
-            inline scalar Ha(const scalar p, const scalar T) const;
-
             //- Sensible enthalpy [J/kg]
             inline scalar Hs(const scalar p, const scalar T) const;
+
+            //- Absolute enthalpy [J/kg]
+            inline scalar Ha(const scalar p, const scalar T) const;
 
             //- Enthalpy of formation [J/kg]
             inline scalar Hf() const;

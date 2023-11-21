@@ -10,41 +10,35 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    location    "0";
     object      p;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [ 1 -1 -2 0 0 0 0 ];
+dimensions      [1 -1 -2 0 0 0 0];
 
 internalField   uniform 1e5;
 
 boundaryField
 {
+    #includeEtc "caseDicts/setConstraintTypes"
+
     inlet
     {
         type            calculated;
         value           $internalField;
     }
+
     outlet
     {
         type            calculated;
         value           $internalField;
     }
-    wall
+
+    walls
     {
         type            calculated;
         value           $internalField;
     }
-    front
-    {
-        type            wedge;
-    }
-    back
-    {
-        type            wedge;
-    }
 }
-
 
 // ************************************************************************* //

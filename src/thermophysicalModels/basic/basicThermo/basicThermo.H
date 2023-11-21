@@ -72,7 +72,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class basicThermo Declaration
+                         Class basicThermo Declaration
 \*---------------------------------------------------------------------------*/
 
 class basicThermo
@@ -343,6 +343,14 @@ public:
             //- Enthalpy of formation [J/kg]
             virtual tmp<volScalarField> hc() const = 0;
 
+            //- Temperature from enthalpy/internal energy
+            virtual tmp<volScalarField> THE
+            (
+                const volScalarField& h,
+                const volScalarField& p,
+                const volScalarField& T0    // starting temperature
+            ) const = 0;
+
             //- Temperature from enthalpy/internal energy for cell-set
             virtual tmp<scalarField> THE
             (
@@ -416,10 +424,7 @@ public:
             virtual const volScalarField& alpha() const = 0;
 
             //- Thermal diffusivity for enthalpy of mixture for patch [kg/m/s]
-            virtual const scalarField& alpha
-            (
-                const label patchi
-            ) const = 0;
+            virtual const scalarField& alpha(const label patchi) const = 0;
 
 
         // Fields derived from transport state variables
@@ -429,10 +434,7 @@ public:
 
             //- Thermal diffusivity for temperature of mixture
             //  for patch [W/m/K]
-            virtual tmp<scalarField> kappa
-            (
-                const label patchi
-            ) const = 0;
+            virtual tmp<scalarField> kappa(const label patchi) const = 0;
 
             //- Thermal diffusivity for energy of mixture [kg/m/s]
             virtual tmp<volScalarField> alphahe() const = 0;

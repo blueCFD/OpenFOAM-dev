@@ -74,7 +74,7 @@ Ostream& operator<<(Ostream&, const InfoProxy<lduMatrix>&);
 
 
 /*---------------------------------------------------------------------------*\
-                           Class lduMatrix Declaration
+                          Class lduMatrix Declaration
 \*---------------------------------------------------------------------------*/
 
 class lduMatrix
@@ -595,17 +595,44 @@ public:
 
             bool diagonal() const
             {
-                return (diagPtr_ && !lowerPtr_ && !upperPtr_);
+                return
+                (
+                    diagPtr_
+                 && Pstream::parRun()
+                    ?
+                        !lowerPtr_ && !upperPtr_
+                    :
+                        !(lowerPtr_ && lowerPtr_->size())
+                     && !(upperPtr_ && upperPtr_->size())
+                );
             }
 
             bool symmetric() const
             {
-                return (diagPtr_ && (!lowerPtr_ && upperPtr_));
+                return
+                (
+                    diagPtr_
+                 && Pstream::parRun()
+                    ?
+                        !lowerPtr_ && upperPtr_
+                    :
+                        !(lowerPtr_ && lowerPtr_->size())
+                     && (upperPtr_ && upperPtr_->size())
+                );
             }
 
             bool asymmetric() const
             {
-                return (diagPtr_ && lowerPtr_ && upperPtr_);
+                return
+                (
+                    diagPtr_
+                 && Pstream::parRun()
+                    ?
+                        lowerPtr_ && upperPtr_
+                    :
+                        (lowerPtr_ && lowerPtr_->size())
+                     && (upperPtr_ && upperPtr_->size())
+                );
             }
 
 

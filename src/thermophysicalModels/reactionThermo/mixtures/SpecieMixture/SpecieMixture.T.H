@@ -49,7 +49,7 @@ class fvMesh;
 
 
 /*---------------------------------------------------------------------------*\
-                     Class SpecieMixture Declaration
+                        Class SpecieMixture Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class MixtureType>
@@ -245,22 +245,6 @@ public:
 
             //- Thermal conductivity [W/m/K]
             virtual tmp<volScalarField> kappa
-            (
-                const label speciei,
-                const volScalarField& p,
-                const volScalarField& T
-            ) const;
-
-            //- Thermal conductivity [W/m/K]
-            virtual scalar alphah
-            (
-                const label speciei,
-                const scalar p,
-                const scalar T
-            ) const;
-
-            //- Thermal diffusivity of enthalpy [kg/m/s]
-            virtual tmp<volScalarField> alphah
             (
                 const label speciei,
                 const volScalarField& p,

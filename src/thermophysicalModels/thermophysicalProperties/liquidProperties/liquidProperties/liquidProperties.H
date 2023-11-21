@@ -47,7 +47,7 @@ class liquidProperties;
 Ostream& operator<<(Ostream& os, const liquidProperties& l);
 
 /*---------------------------------------------------------------------------*\
-                    Class liquidProperties Declaration
+                      Class liquidProperties Declaration
 \*---------------------------------------------------------------------------*/
 
 class liquidProperties
@@ -253,9 +253,6 @@ public:
 
             //- Liquid thermal conductivity  [W/m/K]
             virtual scalar kappa(scalar p, scalar T) const = 0;
-
-            //- Liquid thermal diffusivity of enthalpy [kg/m/s]
-            inline scalar alphah(const scalar p, const scalar T) const;
 
             //- Vapour thermal conductivity  [W/m/K]
             virtual scalar kappag(scalar p, scalar T) const = 0;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,13 +42,13 @@ namespace Foam
 class fvMesh;
 
 /*---------------------------------------------------------------------------*\
-                           Class interpolationCell Declaration
+                      Class interpolationCell Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
 class interpolationCell
 :
-    public interpolation<Type>
+    public fieldInterpolation<Type, interpolationCell<Type>>
 {
 
 public:

@@ -49,17 +49,18 @@ coefficientMultiComponentMixture
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class ThermoType>
-const ThermoType&
-Foam::coefficientMultiComponentMixture<ThermoType>::cellMixture
+const typename
+Foam::coefficientMultiComponentMixture<ThermoType>::thermoMixtureType&
+Foam::coefficientMultiComponentMixture<ThermoType>::cellThermoMixture
 (
     const label celli
 ) const
 {
     mixture_ = this->Y()[0][celli]*this->specieThermos()[0];
 
-    for (label n=1; n<this->Y().size(); n++)
+    for (label i=1; i<this->Y().size(); i++)
     {
-        mixture_ += this->Y()[n][celli]*this->specieThermos()[n];
+        mixture_ += this->Y()[i][celli]*this->specieThermos()[i];
     }
 
     return mixture_;
@@ -67,8 +68,9 @@ Foam::coefficientMultiComponentMixture<ThermoType>::cellMixture
 
 
 template<class ThermoType>
-const ThermoType&
-Foam::coefficientMultiComponentMixture<ThermoType>::patchFaceMixture
+const typename
+Foam::coefficientMultiComponentMixture<ThermoType>::thermoMixtureType&
+Foam::coefficientMultiComponentMixture<ThermoType>::patchFaceThermoMixture
 (
     const label patchi,
     const label facei
@@ -78,11 +80,11 @@ Foam::coefficientMultiComponentMixture<ThermoType>::patchFaceMixture
         this->Y()[0].boundaryField()[patchi][facei]
        *this->specieThermos()[0];
 
-    for (label n=1; n<this->Y().size(); n++)
+    for (label i=1; i<this->Y().size(); i++)
     {
         mixture_ +=
-            this->Y()[n].boundaryField()[patchi][facei]
-           *this->specieThermos()[n];
+            this->Y()[i].boundaryField()[patchi][facei]
+           *this->specieThermos()[i];
     }
 
     return mixture_;

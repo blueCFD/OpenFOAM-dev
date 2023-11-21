@@ -147,7 +147,7 @@ namespace compressible
 {
 
 /*---------------------------------------------------------------------------*\
-            Class alphatWallBoilingWallFunctionFvPatchScalarField Declaration
+       Class alphatWallBoilingWallFunctionFvPatchScalarField Declaration
 \*---------------------------------------------------------------------------*/
 
 class alphatWallBoilingWallFunctionFvPatchScalarField
@@ -280,18 +280,6 @@ public:
         const scalarField& dDeparture() const
         {
             return dDep_;
-        }
-
-        //- Return the quenching surface heat flux [W/m^2]
-        const scalarField& qq() const
-        {
-            return qq_;
-        }
-
-        //- Return the evaporation surface heat flux [W/m^2]
-        tmp<scalarField> qe() const
-        {
-            return dmdtLf_/AbyV_;
         }
 
 
