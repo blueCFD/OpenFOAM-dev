@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -283,7 +283,7 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
 
     // Lookup the fluid model
     const phaseSystem& fluid =
-        db().lookupObject<phaseSystem>("phaseProperties");
+        db().lookupObject<phaseSystem>(phaseSystem::propertiesName);
 
     const word volatileSpecie(fluid.lookupOrDefault<word>("volatile", "none"));
 
@@ -356,7 +356,12 @@ void alphatWallBoilingWallFunctionFvPatchScalarField::updateCoeffs()
 
                 const rhoThermo& lThermo = liquid.thermo();
 
-                const scalarField& alphaw = lThermo.alpha(patchi);
+                const tmp<scalarField> talphaw
+                (
+                    lThermo.kappa().boundaryField()[patchi]
+                   /lThermo.Cp().boundaryField()[patchi]
+                );
+                const scalarField& alphaw = talphaw();
 
                 const tmp<volScalarField> tk = turbModel.k();
                 const volScalarField& k = tk();

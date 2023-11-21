@@ -47,6 +47,7 @@ namespace Foam
 
 class fvMesh;
 class mapPolyMesh;
+class mapDistributePolyMesh;
 
 /*---------------------------------------------------------------------------*\
                            Class option Declaration
@@ -212,10 +213,13 @@ public:
         // Mesh changes
 
             //- Update for mesh changes
-            virtual void updateMesh(const mapPolyMesh&);
+            virtual void updateMesh(const mapPolyMesh&) = 0;
+
+            //- Update mesh corresponding to the given distribution map
+            virtual void distribute(const mapDistributePolyMesh&) = 0;
 
             //- Update for mesh motion
-            virtual bool movePoints();
+            virtual bool movePoints() = 0;
 
 
         // IO

@@ -22,28 +22,19 @@ fi
 # use sentinel file to handle version changes
 wmakeMpiLib()
 {
-    for libName
-    do
     (
+        version="$1"
+        libName="$2"
+
         WM_OPTIONS="$WM_OPTIONS$WM_MPLIB"
         whichmpi="$WM_PROJECT_DIR/platforms/$WM_OPTIONS/src/parallel/decompose/$libName/using:$FOAM_MPI"
-        whichscotch="$WM_PROJECT_DIR/platforms/$WM_OPTIONS/src/parallel/decompose/$libName/using:$SCOTCH_VERSION"
-        [ -e "$whichmpi" -a -e "$whichscotch" ] || wclean $libName
+        whichtarget="$WM_PROJECT_DIR/platforms/$WM_OPTIONS/src/parallel/decompose/$libName/using:$version"
+        [ -e "$whichmpi" -a -e "$whichtarget" ] || wclean $libName
         echo "wmake $targetType $libName"
         wmake $targetType $libName
-        touch "$whichmpi" "$whichscotch"
+        touch "$whichmpi" "$whichtarget"
     )
-    done
 }
-
-wmakeLnInclude decompositionMethods
-
-if [ -n "$WM_MPLIB" ]; then
-
-#this is to guarantee that scotchDecomp is built with the correct headers
-if [ -e "scotchDecomp/scotchDecomp.dep" ]; then
-    wrmdep scotchDecomp/scotchDecomp.C
-fi
 
 
 if [ -n "$SCOTCH_ARCH_PATH" ]
@@ -52,7 +43,7 @@ then
 
     if [ -n "$WM_MPLIB" ] && [ -d "$FOAM_LIBBIN/$FOAM_MPI" ]
     then
-        wmakeMpiLib ptscotchDecomp
+        wmakeMpiLib $SCOTCH_VERSION ptscotchDecomp
     fi
 else
     echo "    skipping scotchDecomp (ptscotchDecomp)"
@@ -60,8 +51,28 @@ fi
 
 fi
 
-# Try and build metisDecomp (has own logic)
-(cd metisDecomp && ./Allwmake $targetType)
+if settings=`$WM_PROJECT_DIR/bin/foamEtcFile config.sh/zoltan`
+then
+    . $settings
+    echo "    using ZOLTAN_ARCH_PATH=$ZOLTAN_ARCH_PATH"
+
+    if [ -n "$ZOLTAN_ARCH_PATH" ] \
+    && [ -r "$ZOLTAN_ARCH_PATH/include/zoltan.h" ] \
+    && [ -r "$FOAM_EXT_LIBBIN/$FOAM_MPI/libzoltan.a" ]
+    then
+        wmakeMpiLib $ZOLTAN_VERSION zoltanDecomp
+    else
+        echo "    skipping zoltanDecomp"
+    fi
+else
+    echo
+    echo "    Error: no config.sh/zoltan settings"
+    echo
+fi
+
+
+# Optionally build metisDecomp with its Allwmake
+wmake -a $targetType metisDecomp
 
 wmake $targetType decompositionMethods
 

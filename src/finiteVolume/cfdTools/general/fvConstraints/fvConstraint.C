@@ -148,14 +148,4 @@ bool Foam::fvConstraint::read(const dictionary& dict)
 }
 
 
-void Foam::fvConstraint::updateMesh(const mapPolyMesh& mpm)
-{}
-
-
-bool Foam::fvConstraint::movePoints()
-{
-    return true;
-}
-
-
 // ************************************************************************* //

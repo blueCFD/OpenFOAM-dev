@@ -806,6 +806,7 @@ Foam::labelList Foam::ptscotchDecomp::decompose
     {
         decomp[i] = finalDecomp[i];
     }
+
     return decomp;
 }
 

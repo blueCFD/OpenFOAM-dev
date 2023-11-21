@@ -167,16 +167,6 @@ void Foam::fvModel::preUpdateMesh()
 {}
 
 
-void Foam::fvModel::updateMesh(const mapPolyMesh& mpm)
-{}
-
-
-bool Foam::fvModel::movePoints()
-{
-    return true;
-}
-
-
 void Foam::fvModel::correct()
 {}
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,6 +70,8 @@ const Foam::NamedEnum<Foam::Time::writeControl, 5>
 Foam::Time::format Foam::Time::format_(Foam::Time::format::general);
 
 int Foam::Time::precision_(6);
+
+int Foam::Time::curPrecision_(Foam::Time::precision_);
 
 const int Foam::Time::maxPrecision_(3 - log10(small));
 
@@ -162,15 +164,15 @@ void Foam::Time::setControls()
     // If not increase time precision to see if it is formatted differently.
     if (!fileHandler().exists(timePath(), false, false))
     {
-        int oldPrecision = precision_;
+        int oldPrecision = curPrecision_;
         int requiredPrecision = -1;
         bool found = false;
         word oldTime(timeName());
         for
         (
-            precision_ = maxPrecision_;
-            precision_ > oldPrecision;
-            precision_--
+            curPrecision_ = maxPrecision_;
+            curPrecision_ > oldPrecision;
+            curPrecision_--
         )
         {
             // Update the time formatting
@@ -189,28 +191,28 @@ void Foam::Time::setControls()
 
             if (found)
             {
-                requiredPrecision = precision_;
+                requiredPrecision = curPrecision_;
             }
         }
 
         if (requiredPrecision > 0)
         {
             // Update the time precision
-            precision_ = requiredPrecision;
+            curPrecision_ = requiredPrecision;
 
             // Update the time formatting
             setTime(startTime_, 0);
 
             WarningInFunction
                 << "Increasing the timePrecision from " << oldPrecision
-                << " to " << precision_
+                << " to " << curPrecision_
                 << " to support the formatting of the current time directory "
                 << timeName() << nl << endl;
         }
         else
         {
             // Could not find time directory so assume it is not present
-            precision_ = oldPrecision;
+            curPrecision_ = oldPrecision;
 
             // Revert the time formatting
             setTime(startTime_, 0);
@@ -1253,12 +1255,13 @@ Foam::Time& Foam::Time::operator++()
         // Adjust the precision of the time directory name if necessary
         if (writeTime_)
         {
+            // User-time equivalent of deltaT
+            const scalar userDeltaT =
+                timeToUserTime(value()) - timeToUserTime(value() - deltaT_);
+
             // Tolerance used when testing time equivalence
             const scalar timeTol =
-                max(min(pow(10.0, -precision_), 0.1*deltaT_), small);
-
-            // User-time equivalent of deltaT
-            const scalar userDeltaT = timeToUserTime(deltaT_);
+                max(min(pow(10.0, -precision_), 0.1*userDeltaT), small);
 
             // Time value obtained by reading timeName
             scalar timeNameValue = -vGreat;
@@ -1271,28 +1274,28 @@ Foam::Time& Foam::Time::operator++()
              && (mag(timeNameValue - oldTimeValue - userDeltaT) > timeTol)
             )
             {
-                int oldPrecision = precision_;
+                int oldPrecision = curPrecision_;
                 while
                 (
-                    precision_ < maxPrecision_
+                    curPrecision_ < maxPrecision_
                  && readScalar(dimensionedScalar::name().c_str(), timeNameValue)
                  && (mag(timeNameValue - oldTimeValue - userDeltaT) > timeTol)
                 )
                 {
-                    precision_++;
+                    curPrecision_++;
                     setTime(value(), timeIndex());
                 }
 
-                if (precision_ != oldPrecision)
+                if (curPrecision_ != oldPrecision)
                 {
                     WarningInFunction
                         << "Increased the timePrecision from " << oldPrecision
-                        << " to " << precision_
+                        << " to " << curPrecision_
                         << " to distinguish between timeNames at time "
                         << dimensionedScalar::name()
                         << endl;
 
-                    if (precision_ == maxPrecision_)
+                    if (curPrecision_ == maxPrecision_)
                     {
                         // Reached maxPrecision limit
                         WarningInFunction
