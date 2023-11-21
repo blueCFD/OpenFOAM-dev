@@ -201,7 +201,7 @@ Foam::fv::effectivenessHeatExchangerSource::effectivenessHeatExchangerSource
 Foam::wordList Foam::fv::effectivenessHeatExchangerSource::addSupFields() const
 {
     const basicThermo& thermo =
-        mesh().lookupObject<basicThermo>(basicThermo::dictName);
+        mesh().lookupObject<basicThermo>(physicalProperties::typeName);
 
     return wordList(1, thermo.he().name());
 }
@@ -215,7 +215,7 @@ void Foam::fv::effectivenessHeatExchangerSource::addSup
 ) const
 {
     const basicThermo& thermo =
-        mesh().lookupObject<basicThermo>(basicThermo::dictName);
+        mesh().lookupObject<basicThermo>(physicalProperties::typeName);
 
     const surfaceScalarField Cpf(fvc::interpolate(thermo.Cp()));
 
@@ -317,6 +317,13 @@ void Foam::fv::effectivenessHeatExchangerSource::updateMesh
 )
 {
     set_.updateMesh(mpm);
+}
+
+
+bool Foam::fv::effectivenessHeatExchangerSource::movePoints()
+{
+    set_.movePoints();
+    return true;
 }
 
 

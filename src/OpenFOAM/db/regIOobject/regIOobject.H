@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -129,6 +129,45 @@ public:
 
     // Member Functions
 
+        // Path components
+
+            //- Return true if object is global, i.e. same for all processors
+            //  Defaults to false, must be overridden by global IO classes
+            virtual bool global() const;
+
+            //- Return true if object is global, i.e. same for all processors
+            //  and written to the global case directory,
+            //  i.e. not the processor time directory
+            //  Defaults to global()
+            virtual bool globalFile() const;
+
+            using IOobject::caseName;
+
+            const fileName& caseName() const;
+
+            using IOobject::path;
+
+            //- Return complete path
+            fileName path() const;
+
+            using IOobject::objectPath;
+
+            //- Return complete path + object name
+            fileName objectPath() const
+            {
+                return path()/name();
+            }
+
+            using IOobject::filePath;
+
+            //- Return complete path + object name if the file exists
+            //  in the case directory otherwise null.
+            //
+            //  For global objects in parallel searches up into the global
+            //  case directory
+            fileName filePath() const;
+
+
         // Registration
 
             //- Add object to registry
@@ -211,12 +250,6 @@ public:
 
         // Reading
 
-            //- Return complete path + object name if the file exists
-            //  in the case directory otherwise null. Does not search
-            //  up if parallel. Can be overridden to provide this functionality
-            //  (e.g. IOdictionary)
-            virtual fileName filePath() const;
-
             //- Read and check header info
             bool headerOk();
 
@@ -246,10 +279,6 @@ public:
 
             //- Read object if modified (as set by call to modified)
             virtual bool readIfModified();
-
-            //- Is object same for all processors
-            //  Defaults to false, must be overridden by global IO classes
-            virtual bool global() const;
 
 
         // Writing

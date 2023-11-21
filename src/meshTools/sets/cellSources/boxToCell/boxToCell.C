@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,16 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(boxToCell, 0);
     addToRunTimeSelectionTable(topoSetSource, boxToCell, word);
-    addToRunTimeSelectionTable(topoSetSource, boxToCell, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::boxToCell::usage_
-(
-    boxToCell::typeName,
-    "\n    Usage: boxToCell (minx miny minz) (maxx maxy maxz)\n\n"
-    "    Select all cells with cellCentre within bounding box\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -91,17 +82,6 @@ Foam::boxToCell::boxToCell
       ? treeBoundBoxList(1, treeBoundBox(dict.lookup("box")))
       : dict.lookup("boxes")
     )
-{}
-
-
-Foam::boxToCell::boxToCell
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    bbs_(1, treeBoundBox(checkIs(is)))
 {}
 
 

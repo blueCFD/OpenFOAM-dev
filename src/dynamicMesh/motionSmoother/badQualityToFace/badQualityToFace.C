@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,22 +33,9 @@ License
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(badQualityToFace, 0);
-
-addToRunTimeSelectionTable(topoSetSource, badQualityToFace, word);
-
-addToRunTimeSelectionTable(topoSetSource, badQualityToFace, istream);
-
+    defineTypeNameAndDebug(badQualityToFace, 0);
+    addToRunTimeSelectionTable(topoSetSource, badQualityToFace, word);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::badQualityToFace::usage_
-(
-    badQualityToFace::typeName,
-    "\n    Usage: badQualityToFace mesh-quality-dictionary\n\n"
-    "    Select all faces that do not satisfy the selection criterion\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -69,7 +56,6 @@ void Foam::badQualityToFace::combine(topoSet& set, const bool add) const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Construct from dictionary
 Foam::badQualityToFace::badQualityToFace
 (
     const polyMesh& mesh,
@@ -78,18 +64,6 @@ Foam::badQualityToFace::badQualityToFace
 :
     topoSetSource(mesh),
     dict_(dict)
-{}
-
-
-// Construct from Istream
-Foam::badQualityToFace::badQualityToFace
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    dict_(is)
 {}
 
 

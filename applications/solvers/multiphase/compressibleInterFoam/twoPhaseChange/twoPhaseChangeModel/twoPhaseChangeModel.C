@@ -43,10 +43,10 @@ const Foam::word Foam::twoPhaseChangeModel::phaseChangePropertiesName
 
 Foam::IOobject Foam::twoPhaseChangeModel::createIOobject
 (
-    const twoPhaseMixtureThermo& mixture
+    const compressibleTwoPhaseMixture& mixture
 ) const
 {
-    IOobject io
+    typeIOobject<IOdictionary> io
     (
         phaseChangePropertiesName,
         mixture.alpha1().mesh().time().constant(),
@@ -55,7 +55,7 @@ Foam::IOobject Foam::twoPhaseChangeModel::createIOobject
         IOobject::NO_WRITE
     );
 
-    if (io.typeHeaderOk<IOdictionary>(true))
+    if (io.headerOk())
     {
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
         return io;
@@ -73,7 +73,7 @@ Foam::IOobject Foam::twoPhaseChangeModel::createIOobject
 Foam::twoPhaseChangeModel::twoPhaseChangeModel
 (
     const word& type,
-    const twoPhaseMixtureThermo& mixture
+    const compressibleTwoPhaseMixture& mixture
 )
 :
     IOdictionary(createIOobject(mixture)),

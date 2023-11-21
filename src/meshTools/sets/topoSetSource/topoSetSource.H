@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -92,35 +92,8 @@ public:
             REMOVE
         };
 
+
 protected:
-
-        //- A table of usage strings
-        static HashTable<string>* usageTablePtr_;
-
-        //- Class with constructor to add usage string to table
-        class addToUsageTable
-        {
-        public:
-
-            addToUsageTable(const word& name, const string& msg)
-            {
-                if (!usageTablePtr_)
-                {
-                    usageTablePtr_ = new HashTable<string>();
-                }
-                usageTablePtr_->insert(name, msg);
-            }
-
-            ~addToUsageTable()
-            {
-                if (usageTablePtr_)
-                {
-                    delete usageTablePtr_;
-                    usageTablePtr_ = nullptr;
-                }
-            }
-        };
-
 
     // Protected data
 
@@ -151,8 +124,6 @@ public:
             return actionNames_[actionName];
         }
 
-        //- Check state of stream.
-        static Istream& checkIs(Istream& is);
 
     // Declare run-time constructor selection table
 
@@ -167,19 +138,6 @@ public:
                 const dictionary& dict
             ),
             (mesh, dict)
-        );
-
-        // For the Istream constructor
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            topoSetSource,
-            istream,
-            (
-                const polyMesh& mesh,
-                Istream& is
-            ),
-            (mesh, is)
         );
 
 
@@ -203,26 +161,6 @@ public:
                 return topoSetSource::New(topoSetSourceType, mesh_, dict);
             }
         };
-
-
-        static const string& usage(const word& name)
-        {
-            if (!usageTablePtr_)
-            {
-                usageTablePtr_ = new HashTable<string>();
-            }
-
-            const HashTable<string>& usageTable = *usageTablePtr_;
-
-            if (usageTable.found(name))
-            {
-                return usageTable[name];
-            }
-            else
-            {
-                return illegalSource_;
-            }
-        }
 
 
     // Constructors
@@ -249,14 +187,6 @@ public:
             const word& topoSetSourceType,
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Return a reference to the selected topoSetSource
-        static autoPtr<topoSetSource> New
-        (
-            const word& topoSetSourceType,
-            const polyMesh& mesh,
-            Istream& is
         );
 
 

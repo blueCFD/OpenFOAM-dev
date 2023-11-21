@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,8 +53,6 @@ class nearestToPoint
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- Points to select nearest to
         pointField points_;
@@ -84,13 +82,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        nearestToPoint
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

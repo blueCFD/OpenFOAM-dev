@@ -115,7 +115,7 @@ Foam::fv::heatSource::~heatSource()
 Foam::wordList Foam::fv::heatSource::addSupFields() const
 {
     const basicThermo& thermo =
-        mesh().lookupObject<basicThermo>(basicThermo::dictName);
+        mesh().lookupObject<basicThermo>(physicalProperties::typeName);
 
     return wordList(1, thermo.he().name());
 }
@@ -147,6 +147,19 @@ void Foam::fv::heatSource::addSup
 ) const
 {
     addSup(eqn, fieldName);
+}
+
+
+void Foam::fv::heatSource::updateMesh(const mapPolyMesh& mpm)
+{
+    set_.updateMesh(mpm);
+}
+
+
+bool Foam::fv::heatSource::movePoints()
+{
+    set_.movePoints();
+    return true;
 }
 
 

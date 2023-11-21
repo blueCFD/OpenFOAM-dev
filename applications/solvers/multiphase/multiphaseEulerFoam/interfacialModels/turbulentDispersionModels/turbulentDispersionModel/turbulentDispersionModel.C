@@ -28,7 +28,7 @@ License
 #include "fvcGrad.H"
 #include "surfaceInterpolate.H"
 #include "fvcSnGrad.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "BlendedInterfacialModel.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

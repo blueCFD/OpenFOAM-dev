@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -281,11 +281,11 @@ inline Foam::vector Foam::particle::position() const
 }
 
 
-inline void Foam::particle::reset()
+inline void Foam::particle::reset(const scalar stepFraction)
 {
-    stepFraction_ = 0;
-    nBehind_ = 0;
-    behind_ = 0;
+    stepFraction_ = stepFraction;
+    stepFractionBehind_ = 0;
+    nTracksBehind_ = 0;
 }
 
 

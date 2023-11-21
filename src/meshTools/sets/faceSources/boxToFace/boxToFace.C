@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,16 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(boxToFace, 0);
     addToRunTimeSelectionTable(topoSetSource, boxToFace, word);
-    addToRunTimeSelectionTable(topoSetSource, boxToFace, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::boxToFace::usage_
-(
-    boxToFace::typeName,
-    "\n    Usage: boxToFace ((minx miny minz) (maxx maxy maxz))\n\n"
-    "    Select all face with faceCentre within bounding box\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -91,17 +82,6 @@ Foam::boxToFace::boxToFace
       ? treeBoundBoxList(1, treeBoundBox(dict.lookup("box")))
       : dict.lookup("boxes")
     )
-{}
-
-
-Foam::boxToFace::boxToFace
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    bbs_(1, treeBoundBox(checkIs(is)))
 {}
 
 

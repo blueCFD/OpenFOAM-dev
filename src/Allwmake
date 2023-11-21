@@ -92,7 +92,7 @@ wmake $targetType sampling
 wmake $targetType ODE
 wmake $targetType randomProcesses
 
-wmake $targetType transportModels
+wmake $targetType physicalProperties
 
 thermophysicalModels/Allwmake $targetType $*
 twoPhaseModels/Allwmake $targetType $*

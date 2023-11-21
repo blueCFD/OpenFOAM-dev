@@ -34,17 +34,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(setToFaceZone, 0);
     addToRunTimeSelectionTable(topoSetSource, setToFaceZone, word);
-    addToRunTimeSelectionTable(topoSetSource, setToFaceZone, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::setToFaceZone::usage_
-(
-    setToFaceZone::typeName,
-    "\n    Usage: setToFaceZone <faceSet>\n\n"
-    "    Select all faces in the faceSet."
-    " Sets flipMap.\n\n"
-);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -68,17 +58,6 @@ Foam::setToFaceZone::setToFaceZone
 :
     topoSetSource(mesh),
     setName_(dict.lookupBackwardsCompatible<word>({"set", "faceSet"}))
-{}
-
-
-Foam::setToFaceZone::setToFaceZone
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    setName_(checkIs(is))
 {}
 
 

@@ -33,7 +33,7 @@ License
 #include "surfaceTensionModel.H"
 #include "fvm.H"
 #include "fvcDdt.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "shapeModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -1130,15 +1130,11 @@ Foam::diameterModels::populationBalanceModel::continuousTurbulence() const
 
 void Foam::diameterModels::populationBalanceModel::solve()
 {
-    const dictionary& solutionControls = mesh_.solverDict(name_);
-    bool solveOnFinalIterOnly =
-        solutionControls.lookupOrDefault<bool>("solveOnFinalIterOnly", false);
-
-    if (!solveOnFinalIterOnly || pimple_.finalPimpleIter())
+    if (!solveOnFinalIterOnly() || pimple_.finalPimpleIter())
     {
         const label nCorr = this->nCorr();
         const scalar tolerance =
-            solutionControls.lookup<scalar>("tolerance");
+            mesh_.solverDict(name_).lookup<scalar>("tolerance");
 
         if (nCorr > 0)
         {

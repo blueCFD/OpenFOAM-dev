@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,17 +34,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(rotatedBoxToCell, 0);
     addToRunTimeSelectionTable(topoSetSource, rotatedBoxToCell, word);
-    addToRunTimeSelectionTable(topoSetSource, rotatedBoxToCell, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::rotatedBoxToCell::usage_
-(
-    rotatedBoxToCell::typeName,
-    "\n    Usage: rotatedBoxToCell (originx originy originz)"
-    " (ix iy iz) (jx jy jz) (kx ky kz)\n\n"
-    "    Select all cells with cellCentre within parallelepiped\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -137,16 +127,6 @@ Foam::rotatedBoxToCell::rotatedBoxToCell
     i_(dict.lookup("i")),
     j_(dict.lookup("j")),
     k_(dict.lookup("k"))
-{}
-
-
-Foam::rotatedBoxToCell::rotatedBoxToCell(const polyMesh& mesh, Istream& is)
-:
-    topoSetSource(mesh),
-    origin_(is),
-    i_(is),
-    j_(is),
-    k_(is)
 {}
 
 

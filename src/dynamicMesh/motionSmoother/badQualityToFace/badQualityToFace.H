@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,9 +54,6 @@ class badQualityToFace
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
-
         //- Mesh quality dictionary
         const dictionary dict_;
 
@@ -78,13 +75,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        badQualityToFace
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

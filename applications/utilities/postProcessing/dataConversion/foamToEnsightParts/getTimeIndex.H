@@ -13,7 +13,7 @@
      && runTime.timeName() != "0"
     )
     {
-        IOobject io
+        typeIOobject<IOdictionary> io
         (
             "time",
             runTime.timeName(),
@@ -24,7 +24,7 @@
             false
         );
 
-        if (io.typeHeaderOk<IOdictionary>(true))
+        if (io.headerOk())
         {
             io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
             IOdictionary timeObject(io);
@@ -33,7 +33,8 @@
         }
         else
         {
-            Info<< "skip ... missing entry " << io.objectPath() << endl;
+            Info<< "skip ... missing entry "
+                << io.objectPath() << endl;
             continue;
         }
     }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -639,7 +639,7 @@ int main(int argc, char *argv[])
 
     Info<< "Checking for motionProperties\n" << endl;
 
-    IOobject motionObj
+    typeIOobject<IOdictionary> motionObj
     (
         "motionProperties",
         runTime.constant(),
@@ -651,7 +651,7 @@ int main(int argc, char *argv[])
     // corrector for mesh motion
     twoDPointCorrector* correct2DPtr = nullptr;
 
-    if (motionObj.typeHeaderOk<IOdictionary>(true))
+    if (motionObj.headerOk())
     {
         Info<< "Reading " << runTime.constant() / "motionProperties"
             << endl << endl;
@@ -758,7 +758,7 @@ int main(int argc, char *argv[])
     if (maxLevel > 0)
     {
         Info<< "Read existing refinement level from file "
-            << refLevel.localObjectPath() << nl
+            << refLevel.relativeObjectPath() << nl
             << "   min level : " << min(refLevel) << nl
             << "   max level : " << maxLevel << nl
             << endl;
@@ -766,7 +766,7 @@ int main(int argc, char *argv[])
     else
     {
         Info<< "Created zero refinement level in file "
-            << refLevel.localObjectPath() << nl
+            << refLevel.relativeObjectPath() << nl
             << endl;
     }
 

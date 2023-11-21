@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,7 +34,6 @@ namespace Foam
 {
     defineTypeNameAndDebug(faceToCell, 0);
     addToRunTimeSelectionTable(topoSetSource, faceToCell, word);
-    addToRunTimeSelectionTable(topoSetSource, faceToCell, istream);
 
     template<>
     const char* Foam::NamedEnum
@@ -50,14 +49,6 @@ namespace Foam
     };
 }
 
-
-Foam::topoSetSource::addToUsageTable Foam::faceToCell::usage_
-(
-    faceToCell::typeName,
-    "\n    Usage: faceToCell <faceSet> neighbour|owner|any|all\n\n"
-    "    Select cells that are the owner|neighbour|any"
-    " of the faces in the faceSet or where all faces are in the faceSet\n\n"
-);
 
 const Foam::NamedEnum<Foam::faceToCell::faceAction, 4>
     Foam::faceToCell::faceActionNames_;
@@ -173,18 +164,6 @@ Foam::faceToCell::faceToCell
     topoSetSource(mesh),
     setName_(dict.lookup("set")),
     option_(faceActionNames_.read(dict.lookup("option")))
-{}
-
-
-Foam::faceToCell::faceToCell
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    setName_(checkIs(is)),
-    option_(faceActionNames_.read(checkIs(is)))
 {}
 
 

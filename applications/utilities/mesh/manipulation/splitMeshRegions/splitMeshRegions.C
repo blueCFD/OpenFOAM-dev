@@ -225,17 +225,6 @@ void subsetSurfaceFields
             )
         );
 
-        // Hack: set value to 0 for introduced patches (since don't
-        //       get initialised.
-        forAll(tSubFld().boundaryField(), patchi)
-        {
-            if (addedPatches.found(patchi))
-            {
-                tSubFld.ref().boundaryFieldRef()[patchi] ==
-                    typename GeoField::value_type(Zero);
-            }
-        }
-
         // Store on subMesh
         GeoField* subFld = tSubFld.ptr();
         subFld->rename(fld.name());
@@ -586,7 +575,7 @@ autoPtr<mapPolyMesh> createRegionMesh
 {
     // Create dummy system/fv*
     {
-        IOobject io
+        typeIOobject<IOdictionary> io
         (
             "fvSchemes",
             mesh.time().system(),
@@ -599,8 +588,7 @@ autoPtr<mapPolyMesh> createRegionMesh
 
         Info<< "Testing:" << io.objectPath() << endl;
 
-        if (!io.typeHeaderOk<IOdictionary>(true))
-        // if (!exists(io.objectPath()))
+        if (!io.headerOk())
         {
             Info<< "Writing dummy " << regionName/io.name() << endl;
             dictionary dummyDict;
@@ -615,7 +603,7 @@ autoPtr<mapPolyMesh> createRegionMesh
         }
     }
     {
-        IOobject io
+        typeIOobject<IOdictionary> io
         (
             "fvSolution",
             mesh.time().system(),
@@ -626,8 +614,7 @@ autoPtr<mapPolyMesh> createRegionMesh
             false
         );
 
-        if (!io.typeHeaderOk<IOdictionary>(true))
-        // if (!exists(io.objectPath()))
+        if (!io.headerOk())
         {
             Info<< "Writing dummy " << regionName/io.name() << endl;
             dictionary dummyDict;
@@ -1404,7 +1391,7 @@ void writeCellToRegion(const fvMesh& mesh, const labelList& cellRegion)
         cellToRegion.write();
 
         Info<< "Writing region per cell file (for manual decomposition) to "
-            << cellToRegion.localObjectPath() << nl << endl;
+            << cellToRegion.relativeObjectPath() << nl << endl;
     }
     // Write for postprocessing
     {
@@ -1430,7 +1417,7 @@ void writeCellToRegion(const fvMesh& mesh, const labelList& cellRegion)
         cellToRegion.write();
 
         Info<< "Writing region per cell as volScalarField to "
-            << cellToRegion.localObjectPath() << nl << endl;
+            << cellToRegion.relativeObjectPath() << nl << endl;
     }
 }
 

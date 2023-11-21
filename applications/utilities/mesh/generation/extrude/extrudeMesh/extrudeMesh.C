@@ -84,7 +84,7 @@ void createDummyFvMeshFiles(const polyMesh& mesh, const word& regionName)
 {
     // Create dummy system/fv*
     {
-        IOobject io
+        typeIOobject<IOdictionary> io
         (
             "fvSchemes",
             mesh.time().system(),
@@ -97,7 +97,7 @@ void createDummyFvMeshFiles(const polyMesh& mesh, const word& regionName)
 
         Info<< "Testing:" << io.objectPath() << endl;
 
-        if (!io.typeHeaderOk<IOdictionary>(false))
+        if (!io.headerOk())
         {
             Info<< "Writing dummy " << regionName/io.name() << endl;
             dictionary dummyDict;
@@ -112,7 +112,7 @@ void createDummyFvMeshFiles(const polyMesh& mesh, const word& regionName)
         }
     }
     {
-        IOobject io
+        typeIOobject<IOdictionary> io
         (
             "fvSolution",
             mesh.time().system(),
@@ -123,7 +123,7 @@ void createDummyFvMeshFiles(const polyMesh& mesh, const word& regionName)
             false
         );
 
-        if (!io.typeHeaderOk<IOdictionary>(false))
+        if (!io.headerOk())
         {
             Info<< "Writing dummy " << regionName/io.name() << endl;
             dictionary dummyDict;
@@ -1028,7 +1028,7 @@ int main(int argc, char *argv[])
     }
 
     mesh.setInstance(runTimeExtruded.constant());
-    Info<< "Writing mesh to " << mesh.localObjectPath() << nl << endl;
+    Info<< "Writing mesh to " << mesh.relativeObjectPath() << nl << endl;
 
     if (!mesh.write())
     {

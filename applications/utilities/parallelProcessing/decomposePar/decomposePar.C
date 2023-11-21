@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
         label nProcs = fileHandler().nProcs(runTime.path(), regionDir);
 
         // Get the dictionary IO
-        const IOobject dictIO
+        const typeIOobject<IOdictionary> dictIO
         (
             systemDictIO(dictName, args, runTime, regionName)
         );
@@ -464,7 +464,7 @@ int main(int argc, char *argv[])
                 cellDecomposition.write();
 
                 Info<< nl << "Wrote decomposition to "
-                    << cellDecomposition.localObjectPath()
+                    << cellDecomposition.relativeObjectPath()
                     << " for use in manual decomposition." << endl;
 
                 // Write as volScalarField for postprocessing.

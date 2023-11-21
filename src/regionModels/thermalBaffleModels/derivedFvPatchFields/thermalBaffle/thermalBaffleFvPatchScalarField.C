@@ -69,7 +69,7 @@ thermalBaffleFvPatchScalarField
 
     const fvMesh& thisMesh = patch().boundaryMesh().mesh();
 
-    typedef regionModels::thermalBaffleModels::thermalBaffleModel baffle;
+    typedef regionModels::thermalBaffleModel baffle;
 
     if (thisMesh.name() == polyMesh::defaultRegion)
     {
@@ -295,12 +295,6 @@ void thermalBaffleFvPatchScalarField::write(Ostream& os) const
         word regionName = dict_.lookup("regionName");
         writeKeyword(os, "regionName") << regionName
             << token::END_STATEMENT << nl;
-
-        writeKeyword(os, "thermoType");
-        os << dict_.subDict("thermoType") << nl;
-
-        writeKeyword(os, "mixture");
-        os << dict_.subDict("mixture") << nl;
 
         writeKeyword(os, "radiation");
         os << dict_.subDict("radiation") << nl;

@@ -34,16 +34,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(setToPointZone, 0);
     addToRunTimeSelectionTable(topoSetSource, setToPointZone, word);
-    addToRunTimeSelectionTable(topoSetSource, setToPointZone, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::setToPointZone::usage_
-(
-    setToPointZone::typeName,
-    "\n    Usage: setToPointZone <pointSet>\n\n"
-    "    Select all points in the pointSet.\n\n"
-);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -67,17 +58,6 @@ Foam::setToPointZone::setToPointZone
 :
     topoSetSource(mesh),
     setName_(dict.lookupBackwardsCompatible<word>({"set", "pointSet"}))
-{}
-
-
-Foam::setToPointZone::setToPointZone
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    setName_(checkIs(is))
 {}
 
 

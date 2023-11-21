@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,16 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(nearestToPoint, 0);
     addToRunTimeSelectionTable(topoSetSource, nearestToPoint, word);
-    addToRunTimeSelectionTable(topoSetSource, nearestToPoint, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::nearestToPoint::usage_
-(
-    nearestToPoint::typeName,
-    "\n    Usage: nearestToPoint (pt0 .. ptn)\n\n"
-    "    Select the nearest point for each of the points pt0 ..ptn\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -98,17 +89,6 @@ Foam::nearestToPoint::nearestToPoint
 :
     topoSetSource(mesh),
     points_(dict.lookup("points"))
-{}
-
-
-Foam::nearestToPoint::nearestToPoint
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    points_(checkIs(is))
 {}
 
 

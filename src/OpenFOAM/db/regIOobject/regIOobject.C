@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -138,7 +138,8 @@ Foam::regIOobject::~regIOobject()
         if (this == &db())
         {
             Pout<< "Destroying objectRegistry " << name()
-                << " in directory " << rootPath()/caseName()/instance()
+                << " in directory "
+                << rootPath()/caseName()/instance()
                 << endl;
         }
         else
@@ -160,6 +161,30 @@ Foam::regIOobject::~regIOobject()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool Foam::regIOobject::global() const
+{
+    return false;
+}
+
+
+bool Foam::regIOobject::globalFile() const
+{
+    return global();
+}
+
+
+const Foam::fileName& Foam::regIOobject::caseName() const
+{
+    return IOobject::caseName(globalFile());
+}
+
+
+Foam::fileName Foam::regIOobject::path() const
+{
+    return IOobject::path(globalFile());
+}
+
 
 bool Foam::regIOobject::checkIn()
 {
@@ -390,21 +415,21 @@ void Foam::regIOobject::rename(const word& newName)
 
 Foam::fileName Foam::regIOobject::filePath() const
 {
-    return localFilePath(type());
+    return IOobject::filePath(type(), globalFile());
 }
 
 
 bool Foam::regIOobject::headerOk()
 {
-    // Note: Should be consistent with IOobject::typeHeaderOk(false)
+    // Note: Should be consistent with typeIOobject<Type>::headerOk()
 
     bool ok = true;
 
-    fileName fName(filePath());
+    const fileName fName(filePath());
 
     ok = Foam::fileHandler().readHeader(*this, fName, type());
 
-    if (!ok && IOobject::debug)
+    if (IOobject::debug && (!ok || headerClassName() != type()))
     {
         IOWarningInFunction(fName)
             << "failed to read header of file " << objectPath()
@@ -412,12 +437,6 @@ bool Foam::regIOobject::headerOk()
     }
 
     return ok;
-}
-
-
-bool Foam::regIOobject::global() const
-{
-    return false;
 }
 
 

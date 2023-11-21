@@ -33,16 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(patchDistanceToCell, 0);
     addToRunTimeSelectionTable(topoSetSource, patchDistanceToCell, word);
-    addToRunTimeSelectionTable(topoSetSource, patchDistanceToCell, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::patchDistanceToCell::usage_
-(
-    patchDistanceToCell::typeName,
-    "\n    Usage: patchDistanceToCell (<patches>) distance\n\n"
-    "    Select cells that are below a distance from a list of patches\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -82,32 +73,6 @@ Foam::patchDistanceToCell::patchDistanceToCell
     ),
     distance_(dict.lookup<scalar>("distance"))
 {}
-
-
-Foam::patchDistanceToCell::patchDistanceToCell
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    patches_(),
-    distance_()
-{
-    token firstToken(is);
-    is.putBack(firstToken);
-
-    if (firstToken == token::BEGIN_LIST)
-    {
-        is >> patches_;
-    }
-    else
-    {
-        patches_ = wordReList(1, word(is));
-    }
-
-    is >> distance_;
-}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,17 +51,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(planeToFaceZone, 0);
     addToRunTimeSelectionTable(topoSetSource, planeToFaceZone, word);
-    addToRunTimeSelectionTable(topoSetSource, planeToFaceZone, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::planeToFaceZone::usage_
-(
-    planeToFaceZone::typeName,
-    "\n    Usage: planeToFaceZone (px py pz) (nx ny nz) include\n\n"
-    "    Select faces for which the adjacent cell centres lie on opposite "
-    " of a plane\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -366,19 +356,6 @@ Foam::planeToFaceZone::planeToFaceZone
             )
         ]
     )
-{}
-
-
-Foam::planeToFaceZone::planeToFaceZone
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    point_(checkIs(is)),
-    normal_(checkIs(is)),
-    include_(includeNames_[word(checkIs(is))])
 {}
 
 

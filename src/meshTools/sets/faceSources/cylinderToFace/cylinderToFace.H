@@ -53,8 +53,6 @@ class cylinderToFace
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- First point on cylinder axis
         vector point1_;
@@ -93,13 +91,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        cylinderToFace
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

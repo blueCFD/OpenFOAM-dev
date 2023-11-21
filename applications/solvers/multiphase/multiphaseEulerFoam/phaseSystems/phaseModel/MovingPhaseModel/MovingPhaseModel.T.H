@@ -46,7 +46,7 @@ SourceFiles
 
 #include "phaseModel.H"
 #include "PhaseThermophysicalTransportModel.T.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

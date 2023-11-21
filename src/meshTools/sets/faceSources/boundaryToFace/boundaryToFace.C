@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,16 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(boundaryToFace, 0);
     addToRunTimeSelectionTable(topoSetSource, boundaryToFace, word);
-    addToRunTimeSelectionTable(topoSetSource, boundaryToFace, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::boundaryToFace::usage_
-(
-    boundaryToFace::typeName,
-    "\n    Usage: boundaryToFace\n\n"
-    "    Select all boundary faces\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -70,16 +61,6 @@ Foam::boundaryToFace::boundaryToFace(const polyMesh& mesh)
 
 
 Foam::boundaryToFace::boundaryToFace(const polyMesh& mesh, const dictionary&)
-:
-    topoSetSource(mesh)
-{}
-
-
-Foam::boundaryToFace::boundaryToFace
-(
-    const polyMesh& mesh,
-    Istream& is
-)
 :
     topoSetSource(mesh)
 {}

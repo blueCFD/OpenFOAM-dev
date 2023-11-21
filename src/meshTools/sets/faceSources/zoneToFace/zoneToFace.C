@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,17 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(zoneToFace, 0);
     addToRunTimeSelectionTable(topoSetSource, zoneToFace, word);
-    addToRunTimeSelectionTable(topoSetSource, zoneToFace, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::zoneToFace::usage_
-(
-    zoneToFace::typeName,
-    "\n    Usage: zoneToFace zone\n\n"
-    "    Select all faces in the faceZone."
-    " Note:accepts wildcards for zone.\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -106,18 +96,12 @@ Foam::zoneToFace::zoneToFace
 )
 :
     topoSetSource(mesh),
-    zoneName_(dict.lookup("name"))
-{}
-
-
-Foam::zoneToFace::zoneToFace
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    zoneName_(checkIs(is))
+    zoneName_
+    (
+        dict.dictName() == "sourceInfo"
+      ? dict.lookupBackwardsCompatible({"zone", "name"})
+      : dict.lookup("zone")
+    )
 {}
 
 

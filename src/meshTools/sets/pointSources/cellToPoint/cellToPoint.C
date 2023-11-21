@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,7 +34,6 @@ namespace Foam
 {
     defineTypeNameAndDebug(cellToPoint, 0);
     addToRunTimeSelectionTable(topoSetSource, cellToPoint, word);
-    addToRunTimeSelectionTable(topoSetSource, cellToPoint, istream);
 
     template<>
     const char* Foam::NamedEnum
@@ -47,13 +46,6 @@ namespace Foam
     };
 }
 
-
-Foam::topoSetSource::addToUsageTable Foam::cellToPoint::usage_
-(
-    cellToPoint::typeName,
-    "\n    Usage: cellToPoint <cellSet> all\n\n"
-    "    Select all points of cells in the cellSet\n\n"
-);
 
 const Foam::NamedEnum<Foam::cellToPoint::cellAction, 1>
     Foam::cellToPoint::cellActionNames_;
@@ -109,18 +101,6 @@ Foam::cellToPoint::cellToPoint
     topoSetSource(mesh),
     setName_(dict.lookup("set")),
     option_(cellActionNames_.read(dict.lookup("option")))
-{}
-
-
-Foam::cellToPoint::cellToPoint
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    setName_(checkIs(is)),
-    option_(cellActionNames_.read(checkIs(is)))
 {}
 
 

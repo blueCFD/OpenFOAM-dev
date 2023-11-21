@@ -21,10 +21,7 @@ actions
         type    cellSet;
         action  new;
         source  boxToCell;
-        sourceInfo
-        {
-            box (0.1 0.8 -100) (0.4 100 100);
-        }
+        box (0.1 0.8 -100) (0.4 100 100);
     }
 
     {
@@ -38,10 +35,7 @@ actions
         type    faceSet;
         action  new;
         source  patchToFace;
-        sourceInfo
-        {
-            name   freeSurface;
-        }
+        patch   freeSurface;
     }
 
     {
@@ -49,10 +43,7 @@ actions
         type    faceSet;
         action  subset;
         source  boxToFace;
-        sourceInfo
-        {
-            box (-100 0.9 -100) (0.2 100 100);
-        }
+        box (-100 0.9 -100) (0.2 100 100);
     }
 
     {
@@ -60,10 +51,7 @@ actions
         type    faceZoneSet;
         action  new;
         source  setToFaceZone;
-        sourceInfo
-        {
-            faceSet    f0FaceSet;
-        }
+        faceSet    f0FaceSet;
     }
 );
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2017-09-xx FSD blueCFD Lda: Modifications for blueCFD-Core 2017-1
@@ -73,7 +73,7 @@ namespace fileOperations
 
 Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
 (
-    const bool checkGlobal,
+    const bool globalFile,
     const bool isFile,
     const IOobject& io
 ) const
@@ -95,8 +95,8 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
     }
     else
     {
-        fileName path = io.path();
-        fileName objectPath = path/diskFileName;
+        fileName path = io.path(globalFile);
+        fileName objectPath = path/io.name();
 
         if (isFileOrDir(isFile, objectPath))
         {
@@ -106,7 +106,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
         {
             if
             (
-                checkGlobal
+                globalFile
              && io.time().processorCase()
              && (
                     io.instance() == io.time().system()
@@ -131,7 +131,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
             {
                 tmpNrc<dirIndexList> pDirs
                 (
-                    lookupProcessorsPath(io.objectPath())
+                    lookupProcessorsPath(io.objectPath(globalFile))
                 );
                 forAll(pDirs(), i)
                 {
@@ -160,8 +160,8 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
                 {
                     fileName fName
                     (
-                        io.rootPath()/io.caseName()
-                       /newInstancePath/io.db().dbDir()/io.local()/diskFileName
+                        io.rootPath()/io.caseName(globalFile)
+                       /newInstancePath/io.db().dbDir()/io.local()/io.name()
                     );
 
                     if (isFileOrDir(isFile, fName))
@@ -382,7 +382,7 @@ bool Foam::fileOperations::uncollatedFileOperation::mv
 
 Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePath
 (
-    const bool checkGlobal,
+    const bool globalFile,
     const IOobject& io,
     const word& typeName
 ) const
@@ -390,17 +390,17 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePath
     if (debug)
     {
         Pout<< "uncollatedFileOperation::filePath :"
-            << " objectPath:" << io.objectPath()
-            << " checkGlobal:" << checkGlobal << endl;
+            << " objectPath:" << io.objectPath(globalFile)
+            << " globalFile:" << globalFile << endl;
     }
 
-    fileName objPath(filePathInfo(checkGlobal, true, io));
+    fileName objPath(filePathInfo(globalFile, true, io));
 
     if (debug)
     {
         Pout<< "uncollatedFileOperation::filePath :"
             << " Returning from file searching:" << endl
-            << "    objectPath:" << io.objectPath() << endl
+            << "    objectPath:" << io.objectPath(globalFile) << endl
             << "    filePath  :" << objPath << endl << endl;
     }
     return objPath;
@@ -409,24 +409,24 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePath
 
 Foam::fileName Foam::fileOperations::uncollatedFileOperation::dirPath
 (
-    const bool checkGlobal,
+    const bool globalFile,
     const IOobject& io
 ) const
 {
     if (debug)
     {
         Pout<< "uncollatedFileOperation::dirPath :"
-            << " objectPath:" << io.objectPath()
-            << " checkGlobal:" << checkGlobal << endl;
+            << " objectPath:" << io.objectPath(globalFile)
+            << " globalFile:" << globalFile << endl;
     }
 
-    fileName objPath(filePathInfo(checkGlobal, false, io));
+    fileName objPath(filePathInfo(globalFile, false, io));
 
     if (debug)
     {
         Pout<< "uncollatedFileOperation::dirPath :"
             << " Returning from directory searching:" << endl
-            << "    objectPath:" << io.objectPath() << endl
+            << "    objectPath:" << io.objectPath(globalFile) << endl
             << "    dirPath   :" << objPath << endl << endl;
     }
     return objPath;
@@ -500,7 +500,7 @@ bool Foam::fileOperations::uncollatedFileOperation::readHeader
         if (IOobject::debug)
         {
             InfoInFunction
-                << "file " << io.objectPath() << " could not be opened"
+                << "file for object " << io.name() << " could not be opened"
                 << endl;
         }
 

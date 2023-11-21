@@ -33,17 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(cylinderAnnulusToFace, 0);
     addToRunTimeSelectionTable(topoSetSource, cylinderAnnulusToFace, word);
-    addToRunTimeSelectionTable(topoSetSource, cylinderAnnulusToFace, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::cylinderAnnulusToFace::usage_
-(
-    cylinderAnnulusToFace::typeName,
-    "\n    Usage: cylinderAnnulusToFace (point1X point1Y point1Z)"
-    " (point2X point2Y point2Z) outerRadius innerRadius\n\n"
-    "    Select all faces with face centre within bounding cylinder annulus\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -104,20 +94,6 @@ Foam::cylinderAnnulusToFace::cylinderAnnulusToFace
     point2_(dict.lookupBackwardsCompatible<point>({"point2", "p2"})),
     outerRadius_(dict.lookup<scalar>("outerRadius")),
     innerRadius_(dict.lookup<scalar>("innerRadius"))
-{}
-
-
-Foam::cylinderAnnulusToFace::cylinderAnnulusToFace
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    point1_(checkIs(is)),
-    point2_(checkIs(is)),
-    outerRadius_(readScalar(checkIs(is))),
-    innerRadius_(readScalar(checkIs(is)))
 {}
 
 

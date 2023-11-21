@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,97 +50,22 @@ bool Foam::regIOobject::writeObject
         return false;
     }
 
-    if (instance().empty())
-    {
-        SeriousErrorInFunction
-            << "instance undefined for object " << name()
-            << endl;
+    // If the instance is a time directory update to the current time
+    updateInstance();
 
-        return false;
-    }
-
-
-
-    //- uncomment this if you want to write global objects on master only
-    // bool isGlobal = global();
-    bool isGlobal = false;
-
-    if (instance() == time().timeName())
-    {
-        // Mark as written to local directory
-        isGlobal = false;
-    }
-    else if
-    (
-        instance() != time().system()
-     && instance() != time().caseSystem()
-     && instance() != time().constant()
-     && instance() != time().caseConstant()
-    )
-    {
-        // Update instance
-        const_cast<regIOobject&>(*this).instance() = time().timeName();
-
-        // Mark as written to local directory
-        isGlobal = false;
-    }
-
-    if (OFstream::debug)
-    {
-        if (isGlobal)
-        {
-            Pout<< "regIOobject::write() : "
-                << "writing (global) file " << objectPath();
-        }
-        else
-        {
-            Pout<< "regIOobject::write() : "
-                << "writing (local) file " << objectPath();
-        }
-    }
-
-
-    bool osGood = false;
-
-
+    // Write global objects on master only
     // Everyone check or just master
     bool masterOnly =
-        isGlobal
+        globalFile()
      && (
             regIOobject::fileModificationChecking == timeStampMaster
          || regIOobject::fileModificationChecking == inotifyMaster
         );
 
+    bool osGood = false;
 
     if (Pstream::master() || !masterOnly)
     {
-        // if (mkDir(path()))
-        //{
-        //    // Try opening an OFstream for object
-        //    OFstream os(objectPath(), fmt, ver, cmp);
-        //
-        //    // If any of these fail, return (leave error handling to Ostream
-        //    // class)
-        //    if (!os.good())
-        //    {
-        //        return false;
-        //    }
-        //
-        //    if (!writeHeader(os))
-        //    {
-        //        return false;
-        //    }
-        //
-        //    // Write the data to the Ostream
-        //    if (!writeData(os))
-        //    {
-        //        return false;
-        //    }
-        //
-        //    writeEndDivider(os);
-        //
-        //    osGood = os.good();
-        //}
         osGood = fileHandler().writeObject(*this, fmt, ver, cmp, write);
     }
     else
@@ -175,5 +100,6 @@ bool Foam::regIOobject::write(const bool write) const
         write
     );
 }
+
 
 // ************************************************************************* //

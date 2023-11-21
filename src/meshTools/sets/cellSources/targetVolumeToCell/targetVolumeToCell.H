@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,8 +55,6 @@ class targetVolumeToCell
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- Wanted volume
         const scalar vol_;
@@ -102,13 +100,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        targetVolumeToCell
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

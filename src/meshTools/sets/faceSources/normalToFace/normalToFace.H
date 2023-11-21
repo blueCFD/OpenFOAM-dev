@@ -54,8 +54,6 @@ class normalToFace
 
 private:
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- (unit)vector to compare to
         vector normal_;
@@ -87,9 +85,6 @@ public:
 
         //- Construct from dictionary
         normalToFace(const polyMesh& mesh, const dictionary& dict);
-
-        //- Construct from Istream
-        normalToFace(const polyMesh& mesh, Istream&);
 
 
     //- Destructor

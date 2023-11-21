@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,11 +52,9 @@ class cellToCell
 {
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
-
         //- Name of set to use
         word setName_;
+
 
 public:
 
@@ -79,13 +77,6 @@ public:
             const dictionary& dict
         );
 
-        //- Construct from Istream
-        cellToCell
-        (
-            const polyMesh& mesh,
-            Istream&
-        );
-
 
     //- Destructor
     virtual ~cellToCell();
@@ -103,7 +94,6 @@ public:
             const topoSetSource::setAction action,
             topoSet&
         ) const;
-
 };
 
 

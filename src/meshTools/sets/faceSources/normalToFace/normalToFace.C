@@ -34,17 +34,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(normalToFace, 0);
     addToRunTimeSelectionTable(topoSetSource, normalToFace, word);
-    addToRunTimeSelectionTable(topoSetSource, normalToFace, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::normalToFace::usage_
-(
-    normalToFace::typeName,
-    "\n    Usage: normalToFace (nx ny nz) <tol>\n\n"
-    "    Select faces with normal aligned to unit vector (nx ny nz)\n"
-    "    to within tol\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -86,16 +76,6 @@ Foam::normalToFace::normalToFace(const polyMesh& mesh, const dictionary& dict)
     topoSetSource(mesh),
     normal_(dict.lookup("normal")),
     tol_(dict.lookup<scalar>("cos"))
-{
-    setNormal();
-}
-
-
-Foam::normalToFace::normalToFace(const polyMesh& mesh, Istream& is)
-:
-    topoSetSource(mesh),
-    normal_(checkIs(is)),
-    tol_(readScalar(checkIs(is)))
 {
     setNormal();
 }

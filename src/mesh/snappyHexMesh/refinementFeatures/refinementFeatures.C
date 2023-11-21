@@ -46,7 +46,7 @@ void Foam::refinementFeatures::read
 
         // Try reading extendedEdgeMesh first
 
-        IOobject extFeatObj
+        typeIOobject<extendedFeatureEdgeMesh> extFeatObj
         (
             featFileName,                       // name
             io.time().constant(),               // instance
@@ -57,7 +57,7 @@ void Foam::refinementFeatures::read
             false
         );
 
-        const fileName fName(typeFilePath<extendedFeatureEdgeMesh>(extFeatObj));
+        const fileName fName(extFeatObj.filePath());
 
         if (!fName.empty() && extendedEdgeMesh::canRead(fName))
         {
@@ -77,7 +77,7 @@ void Foam::refinementFeatures::read
         {
             // Try reading edgeMesh
 
-            IOobject featObj
+            typeIOobject<featureEdgeMesh> featObj
             (
                 featFileName,
                 io.time().constant(),
@@ -88,14 +88,15 @@ void Foam::refinementFeatures::read
                 false
             );
 
-            const fileName fName(typeFilePath<featureEdgeMesh>(featObj));
+            const fileName fName(featObj.filePath());
 
             if (fName.empty())
             {
                 FatalIOErrorInFunction
                 (
                     dict
-                )   << "Could not open " << featObj.objectPath()
+                )   << "Could not open "
+                    << featObj.objectPath()
                     << exit(FatalIOError);
             }
 

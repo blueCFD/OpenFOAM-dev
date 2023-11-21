@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,6 +56,12 @@ void Foam::sampledSets::lineFace::calcSamples
     DynamicList<scalar>& samplingCurveDist
 )
 {
+    // Ask for the tetBasePtIs and oldCellCentres to trigger all processors to
+    // build them, otherwise, if some processors have no particles then there
+    // is a comms mismatch.
+    mesh.tetBasePtIs();
+    mesh.oldCellCentres();
+
     // Create lists of initial positions from which to track, the faces and
     // cells associated with those positions, and whether the track  propagates
     // forward (true) or backward (false) along the line from start to end
@@ -139,6 +145,8 @@ void Foam::sampledSets::lineFace::calcSamples
 
             const vector s =
                 sign*(end - start)*(1 - dist/mag(end - start));
+
+            sampleParticle.reset(1);
 
             if
             (

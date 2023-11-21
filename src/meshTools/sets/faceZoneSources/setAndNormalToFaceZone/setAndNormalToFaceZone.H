@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,8 +53,6 @@ class setAndNormalToFaceZone
 {
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- Name of set to use
         word setName_;
@@ -83,13 +81,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        setAndNormalToFaceZone
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

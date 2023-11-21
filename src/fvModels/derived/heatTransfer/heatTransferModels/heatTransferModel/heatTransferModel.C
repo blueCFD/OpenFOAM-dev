@@ -42,7 +42,7 @@ namespace fv
 
 void Foam::fv::heatTransferModel::readCoeffs()
 {
-    IOobject AoVIO
+    typeIOobject<volScalarField> AoVIO
     (
         "AoV",
         mesh().time().constant(),
@@ -56,7 +56,7 @@ void Foam::fv::heatTransferModel::readCoeffs()
         AoV_ = dimensionedScalar("AoV", dimless/dimLength, coeffs());
         AoVPtr_.clear();
     }
-    else if (AoVIO.typeHeaderOk<volScalarField>(false))
+    else if (AoVIO.headerOk())
     {
         AoV_ = dimensionedScalar("AoV", dimless/dimLength, NaN);
         AoVPtr_.set(new volScalarField(AoVIO, mesh()));

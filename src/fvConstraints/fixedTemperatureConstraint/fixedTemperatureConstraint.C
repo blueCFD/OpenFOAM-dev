@@ -112,7 +112,7 @@ Foam::wordList Foam::fv::fixedTemperatureConstraint::constrainedFields() const
     const basicThermo& thermo =
         mesh().lookupObject<basicThermo>
         (
-            IOobject::groupName(basicThermo::dictName, phaseName_)
+            IOobject::groupName(physicalProperties::typeName, phaseName_)
         );
 
     return wordList(1, thermo.he().name());
@@ -130,7 +130,7 @@ bool Foam::fv::fixedTemperatureConstraint::constrain
     const basicThermo& thermo =
         mesh().lookupObject<basicThermo>
         (
-            IOobject::groupName(basicThermo::dictName, phaseName_)
+            IOobject::groupName(physicalProperties::typeName, phaseName_)
         );
 
     switch (mode_)
@@ -159,6 +159,13 @@ bool Foam::fv::fixedTemperatureConstraint::constrain
 void Foam::fv::fixedTemperatureConstraint::updateMesh(const mapPolyMesh& mpm)
 {
     set_.updateMesh(mpm);
+}
+
+
+bool Foam::fv::fixedTemperatureConstraint::movePoints()
+{
+    set_.movePoints();
+    return true;
 }
 
 

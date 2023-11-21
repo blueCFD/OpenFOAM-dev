@@ -1,4 +1,4 @@
 The original source for 'g' was '../shell/g'
 The original source for 'momentumTransport' was '../shell/momentumTransport'
-The original source for 'thermophysicalProperties' was '../shell/thermophysicalProperties'
+The original source for 'physicalProperties' was '../shell/physicalProperties'
 The original source for 'thermophysicalTransport' was '../shell/thermophysicalTransport'

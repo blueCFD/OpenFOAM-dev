@@ -25,6 +25,7 @@ License
 
 #include "fieldAverage.H"
 #include "fieldAverageItem.H"
+#include "timeIOdictionary.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -205,7 +206,7 @@ void Foam::functionObjects::fieldAverage::writeAverages() const
 
 void Foam::functionObjects::fieldAverage::writeAveragingProperties() const
 {
-    IOdictionary propsDict
+    timeIOdictionary propsDict
     (
         IOobject
         (
@@ -242,7 +243,7 @@ void Foam::functionObjects::fieldAverage::readAveragingProperties()
     }
     else
     {
-        IOobject propsDictHeader
+        typeIOobject<timeIOdictionary> propsDictHeader
         (
             name() + "Properties",
             obr_.time().timeName(obr_.time().startTime().value()),
@@ -253,7 +254,7 @@ void Foam::functionObjects::fieldAverage::readAveragingProperties()
             false
         );
 
-        if (!propsDictHeader.typeHeaderOk<IOdictionary>())
+        if (!propsDictHeader.headerOk())
         {
             Log << "    Starting averaging at time "
                 << obr_.time().timeName() << nl;
@@ -261,7 +262,7 @@ void Foam::functionObjects::fieldAverage::readAveragingProperties()
             return;
         }
 
-        IOdictionary propsDict(propsDictHeader);
+        timeIOdictionary propsDict(propsDictHeader);
 
         Log << "    Restarting averaging for fields:" << nl;
 

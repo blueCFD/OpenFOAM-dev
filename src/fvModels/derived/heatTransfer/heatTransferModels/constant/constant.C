@@ -47,7 +47,7 @@ namespace heatTransferModels
 
 void Foam::fv::heatTransferModels::constant::readCoeffs()
 {
-    IOobject htcIO
+    typeIOobject<volScalarField> htcIO
     (
         "htc",
         mesh().time().constant(),
@@ -67,7 +67,7 @@ void Foam::fv::heatTransferModels::constant::readCoeffs()
             );
         htcPtr_.clear();
     }
-    else if (htcIO.typeHeaderOk<volScalarField>(false))
+    else if (htcIO.headerOk())
     {
         htc_ = dimensionedScalar("htc", dimPower/dimTemperature/dimArea, NaN);
         htcPtr_.set(new volScalarField(htcIO, mesh()));

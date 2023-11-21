@@ -26,6 +26,7 @@ License
 #include "meanVelocityForce.H"
 #include "volFields.H"
 #include "fvMatrices.H"
+#include "timeIOdictionary.H"
 #include "IFstream.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -65,7 +66,7 @@ void Foam::fv::meanVelocityForce::writeProps
     // Only write on output time
     if (mesh().time().writeTime())
     {
-        IOdictionary propsDict
+        timeIOdictionary propsDict
         (
             IOobject
             (
@@ -250,6 +251,13 @@ bool Foam::fv::meanVelocityForce::constrain(volVectorField& U) const
 void Foam::fv::meanVelocityForce::updateMesh(const mapPolyMesh& mpm)
 {
     set_.updateMesh(mpm);
+}
+
+
+bool Foam::fv::meanVelocityForce::movePoints()
+{
+    set_.movePoints();
+    return true;
 }
 
 

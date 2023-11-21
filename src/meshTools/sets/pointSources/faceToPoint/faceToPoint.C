@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,7 +34,6 @@ namespace Foam
 {
     defineTypeNameAndDebug(faceToPoint, 0);
     addToRunTimeSelectionTable(topoSetSource, faceToPoint, word);
-    addToRunTimeSelectionTable(topoSetSource, faceToPoint, istream);
 
     template<>
     const char* Foam::NamedEnum
@@ -47,13 +46,6 @@ namespace Foam
     };
 }
 
-
-Foam::topoSetSource::addToUsageTable Foam::faceToPoint::usage_
-(
-    faceToPoint::typeName,
-    "\n    Usage: faceToPoint <faceSet> all\n\n"
-    "    Select all points of faces in the faceSet\n\n"
-);
 
 const Foam::NamedEnum<Foam::faceToPoint::faceAction, 1>
     Foam::faceToPoint::faceActionNames_;
@@ -103,18 +95,6 @@ Foam::faceToPoint::faceToPoint
     topoSetSource(mesh),
     setName_(dict.lookup("set")),
     option_(faceActionNames_.read(dict.lookup("option")))
-{}
-
-
-Foam::faceToPoint::faceToPoint
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    setName_(checkIs(is)),
-    option_(faceActionNames_.read(checkIs(is)))
 {}
 
 

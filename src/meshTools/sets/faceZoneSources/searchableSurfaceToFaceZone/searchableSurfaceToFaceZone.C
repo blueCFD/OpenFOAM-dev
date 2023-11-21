@@ -46,15 +46,6 @@ namespace Foam
 }
 
 
-Foam::topoSetSource::addToUsageTable Foam::searchableSurfaceToFaceZone::usage_
-(
-    searchableSurfaceToFaceZone::typeName,
-    "\n    Usage: searchableSurfaceToFaceZone surface\n\n"
-    "    Select all faces whose cell-cell centre vector intersects the surface "
-    "\n"
-);
-
-
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 void Foam::searchableSurfaceToFaceZone::combine
@@ -218,7 +209,11 @@ Foam::searchableSurfaceToFaceZone::searchableSurfaceToFaceZone
             word(dict.lookup("surface")),
             IOobject
             (
-                dict.lookupOrDefault("name", mesh.objectRegistry::db().name()),
+                dict.lookupOrDefault
+                (
+                    "file",
+                    mesh.objectRegistry::db().name()
+                ),
                 mesh.time().constant(),
                 searchableSurface::geometryDir(mesh.time()),
                 mesh.objectRegistry::db(),

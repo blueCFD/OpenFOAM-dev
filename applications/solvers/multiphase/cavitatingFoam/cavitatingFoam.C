@@ -37,7 +37,7 @@ Description
 #include "dynamicFvMesh.H"
 #include "barotropicCompressibilityModel.H"
 #include "incompressibleTwoPhaseMixture.H"
-#include "kinematicMomentumTransportModel.H"
+#include "incompressibleMomentumTransportModels.H"
 #include "CorrectPhi.T.H"
 #include "pimpleControl.H"
 

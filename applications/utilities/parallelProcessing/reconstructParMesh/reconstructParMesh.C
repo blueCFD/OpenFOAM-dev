@@ -199,7 +199,7 @@ void writeCellDistribution
     cellDecomposition.write();
 
     Info<< nl << "Wrote decomposition to "
-        << cellDecomposition.localObjectPath()
+        << cellDecomposition.relativeObjectPath()
         << " for use in manual decomposition." << endl;
 
 
@@ -343,9 +343,8 @@ int main(int argc, char *argv[])
 
 
             // Problem: faceCompactIOList recognises both 'faceList' and
-            //          'faceCompactList' so we should be lenient when doing
-            //          typeHeaderOk
-            if (!facesIO.typeHeaderOk<faceCompactIOList>(false))
+            //          'faceCompactList' so we cannot check the type
+            if (!facesIO.headerOk())
             {
                 Info<< "No mesh." << nl << endl;
                 continue;

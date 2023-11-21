@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -342,12 +342,6 @@ const Foam::Time& Foam::IOobject::time() const
 }
 
 
-const Foam::fileName& Foam::IOobject::caseName() const
-{
-    return time().caseName();
-}
-
-
 Foam::word Foam::IOobject::group() const
 {
     return group(name_);
@@ -366,31 +360,58 @@ const Foam::fileName& Foam::IOobject::rootPath() const
 }
 
 
-Foam::fileName Foam::IOobject::path() const
+const Foam::fileName& Foam::IOobject::caseName(const bool global) const
 {
-    if (instance().isAbsolute())
+    if (global)
     {
-        return instance();
+        return time().globalCaseName();
     }
     else
     {
-        return rootPath()/caseName()/instance()/db_.dbDir()/local();
+        return time().caseName();
     }
 }
 
 
-Foam::fileName Foam::IOobject::path
-(
-    const word& instance,
-    const fileName& local
-) const
+Foam::fileName& Foam::IOobject::instance() const
 {
-    // Note: can only be called with relative instance since is word type
-    return rootPath()/caseName()/instance/db_.dbDir()/local;
+    return instance_;
 }
 
 
-Foam::fileName Foam::IOobject::localPath() const
+void Foam::IOobject::updateInstance() const
+{
+    if
+    (
+        !instance_.isAbsolute()
+     && instance_ != time().system()
+     && instance_ != time().constant()
+     && instance_ != time().timeName()
+    )
+    {
+        scalar timeValue;
+        if (readScalar(instance_.c_str(), timeValue))
+        {
+            instance_ = time().timeName();
+        }
+    }
+}
+
+
+Foam::fileName Foam::IOobject::path(const bool global) const
+{
+    if (instance_.isAbsolute())
+    {
+        return instance_;
+    }
+    else
+    {
+        return rootPath()/caseName(global)/instance()/db_.dbDir()/local();
+    }
+}
+
+
+Foam::fileName Foam::IOobject::relativePath() const
 {
     if (instance().isAbsolute())
     {
@@ -403,36 +424,13 @@ Foam::fileName Foam::IOobject::localPath() const
 }
 
 
-void Foam::IOobject::replaceFileName(const Foam::word & from, 
-                                     const Foam::word & to)
+Foam::fileName Foam::IOobject::filePath
+(
+    const word& typeName,
+    const bool global
+) const
 {
-    replacedFileNames_.insert(from, to);
-}
-
-
-const Foam::word & Foam::IOobject::uniqueFileName() const
-{
-    ListHashTable<word>::const_iterator findIt = 
-      replacedFileNames_.find(name());
-
-    const word & diskFileName = (findIt == replacedFileNames_.end()) ?
-      name() : *findIt;
-
-    return diskFileName;
-}
-
-
-Foam::fileName Foam::IOobject::localFilePath(const word& typeName) const
-{
-    // Do not check for undecomposed files
-    return fileHandler().filePath(false, *this, typeName);
-}
-
-
-Foam::fileName Foam::IOobject::globalFilePath(const word& typeName) const
-{
-    // Check for undecomposed files
-    return fileHandler().filePath(true, *this, typeName);
+    return fileHandler().filePath(global, *this, typeName);
 }
 
 

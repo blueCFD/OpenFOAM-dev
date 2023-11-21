@@ -16,14 +16,10 @@ volVectorField U
 
 #include "createPhi.H"
 
-singlePhaseTransportModel laminarTransport(U, phi);
 
-dimensionedScalar rhoInfValue
-(
-    "rhoInf",
-    dimDensity,
-    laminarTransport
-);
+autoPtr<viscosityModel> viscosity(viscosityModel::New(mesh));
+
+dimensionedScalar rhoInfValue("rhoInf", dimDensity, viscosity);
 
 volScalarField rhoInf
 (
@@ -41,7 +37,7 @@ volScalarField rhoInf
 
 autoPtr<incompressible::momentumTransportModel> turbulence
 (
-    incompressible::momentumTransportModel::New(U, phi, laminarTransport)
+    incompressible::momentumTransportModel::New(U, phi, viscosity)
 );
 
 volScalarField mu
@@ -54,13 +50,13 @@ volScalarField mu
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    laminarTransport.nu()*rhoInfValue
+    viscosity->nu()*rhoInfValue
 );
 
 Info<< "Constructing clouds" << endl;
 parcelCloudList clouds(rhoInf, U, mu, g);
 
-IOobject Hheader
+typeIOobject<volVectorField> Hheader
 (
     "H",
     runTime.timeName(),
@@ -71,14 +67,14 @@ IOobject Hheader
 
 autoPtr<volVectorField> HPtr;
 
-if (Hheader.typeHeaderOk<volVectorField>(true))
+if (Hheader.headerOk())
 {
     Info<< "\nReading field H\n" << endl;
 
     HPtr.reset(new volVectorField (Hheader, mesh));
 }
 
-IOobject HdotGradHheader
+typeIOobject<volVectorField> HdotGradHheader
 (
     "HdotGradH",
     runTime.timeName(),
@@ -89,7 +85,7 @@ IOobject HdotGradHheader
 
 autoPtr<volVectorField> HdotGradHPtr;
 
-if (HdotGradHheader.typeHeaderOk<volVectorField>(true))
+if (HdotGradHheader.headerOk())
 {
     Info<< "Reading field HdotGradH" << endl;
 

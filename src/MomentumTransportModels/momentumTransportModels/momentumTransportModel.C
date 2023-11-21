@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,7 +45,7 @@ Foam::IOdictionary Foam::momentumTransportModel::readModelDict
     bool registerObject
 )
 {
-    IOobject momentumTransport
+    typeIOobject<IOdictionary> momentumTransport
     (
         IOobject::groupName(typeName, group),
         obr.time().constant(),
@@ -55,13 +55,13 @@ Foam::IOdictionary Foam::momentumTransportModel::readModelDict
         registerObject
     );
 
-    if (momentumTransport.typeHeaderOk<IOdictionary>(true))
+    if (momentumTransport.headerOk())
     {
         return momentumTransport;
     }
     else
     {
-        IOobject turbulenceProperties
+        typeIOobject<IOdictionary> turbulenceProperties
         (
             IOobject::groupName("turbulenceProperties", group),
             obr.time().constant(),
@@ -71,7 +71,7 @@ Foam::IOdictionary Foam::momentumTransportModel::readModelDict
             registerObject
         );
 
-        if (turbulenceProperties.typeHeaderOk<IOdictionary>(true))
+        if (turbulenceProperties.headerOk())
         {
             return turbulenceProperties;
         }
@@ -89,7 +89,8 @@ Foam::momentumTransportModel::momentumTransportModel
 (
     const volVectorField& U,
     const surfaceScalarField& alphaRhoPhi,
-    const surfaceScalarField& phi
+    const surfaceScalarField& phi,
+    const viscosity& viscosity
 )
 :
     IOdictionary(readModelDict(U.db(), alphaRhoPhi.group(), true)),
@@ -100,6 +101,7 @@ Foam::momentumTransportModel::momentumTransportModel
     U_(U),
     alphaRhoPhi_(alphaRhoPhi),
     phi_(phi),
+    viscosity_(viscosity),
     y_(mesh_)
 {
     // Ensure name of IOdictionary is typeName

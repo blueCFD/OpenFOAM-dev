@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,8 +56,6 @@ class shapeToCell
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- Name of cell type
         word type_;
@@ -93,13 +91,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        shapeToCell
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

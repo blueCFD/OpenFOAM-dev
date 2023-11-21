@@ -152,7 +152,7 @@ SourceFiles
 #include "sizeGroup.H"
 #include "phasePair.H"
 #include "pimpleControl.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "HashPtrTable.T.H"
 #include "Pair.T.H"
 
@@ -330,9 +330,6 @@ private:
         //- Return whether the sources should be updated on this iteration
         bool updateSources();
 
-        //- Return the number of corrections
-        inline label nCorr() const;
-
         //- Return the interval at which the sources are updated
         inline label sourceUpdateInterval() const;
 
@@ -383,9 +380,13 @@ public:
 
             autoPtr<populationBalanceModel> operator()(Istream& is) const
             {
+                word name(is);
+
+                Info << "Setting up population balance: " << name << endl;
+
                 return autoPtr<populationBalanceModel>
                 (
-                    new populationBalanceModel(fluid_, word(is), pDmdt_)
+                    new populationBalanceModel(fluid_, name, pDmdt_)
                 );
             }
         };
@@ -407,6 +408,12 @@ public:
 
         //- Return populationBalanceCoeffs dictionary
         inline const dictionary& dict() const;
+
+        //- Return the number of corrections
+        inline label nCorr() const;
+
+        //- Solve on final pimple iteration only
+        inline Switch solveOnFinalIterOnly() const;
 
         //- Return continuous phase
         inline const phaseModel& continuousPhase() const;

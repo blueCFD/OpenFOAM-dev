@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,16 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(sphereToCell, 0);
     addToRunTimeSelectionTable(topoSetSource, sphereToCell, word);
-    addToRunTimeSelectionTable(topoSetSource, sphereToCell, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::sphereToCell::usage_
-(
-    sphereToCell::typeName,
-    "\n    Usage: sphereToCell (centreX centreY centreZ) radius\n\n"
-    "    Select all cells with cellCentre within bounding sphere\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -88,18 +79,6 @@ Foam::sphereToCell::sphereToCell
     topoSetSource(mesh),
     centre_(dict.lookup("centre")),
     radius_(dict.lookup<scalar>("radius"))
-{}
-
-
-Foam::sphereToCell::sphereToCell
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    centre_(checkIs(is)),
-    radius_(readScalar(checkIs(is)))
 {}
 
 

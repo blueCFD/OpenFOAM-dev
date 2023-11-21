@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,8 +53,6 @@ class labelToPoint
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- Point labels read from dictionary
         labelList labels_;
@@ -84,13 +82,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        labelToPoint
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

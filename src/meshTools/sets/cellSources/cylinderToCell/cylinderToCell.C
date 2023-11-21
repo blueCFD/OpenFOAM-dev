@@ -33,17 +33,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(cylinderToCell, 0);
     addToRunTimeSelectionTable(topoSetSource, cylinderToCell, word);
-    addToRunTimeSelectionTable(topoSetSource, cylinderToCell, istream);
 }
-
-
-Foam::topoSetSource::addToUsageTable Foam::cylinderToCell::usage_
-(
-    cylinderToCell::typeName,
-    "\n    Usage: cylinderToCell (point1X point1Y point1Z)"
-    " (point2X point2Y point2Z) radius\n\n"
-    "    Select all cells with cell centre within bounding cylinder\n\n"
-);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -100,19 +90,6 @@ Foam::cylinderToCell::cylinderToCell
     point1_(dict.lookupBackwardsCompatible<point>({"point1", "p1"})),
     point2_(dict.lookupBackwardsCompatible<point>({"point2", "p2"})),
     radius_(dict.lookup<scalar>("radius"))
-{}
-
-
-Foam::cylinderToCell::cylinderToCell
-(
-    const polyMesh& mesh,
-    Istream& is
-)
-:
-    topoSetSource(mesh),
-    point1_(checkIs(is)),
-    point2_(checkIs(is)),
-    radius_(readScalar(checkIs(is)))
 {}
 
 

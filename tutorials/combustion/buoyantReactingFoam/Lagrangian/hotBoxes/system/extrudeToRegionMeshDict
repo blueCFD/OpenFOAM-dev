@@ -15,11 +15,7 @@ FoamFile
 
 region          wallFilmRegion;
 
-faceZones
-(
-    cubeFaces
-    floorFaces
-);
+faceZones       (wallFilmFaces);
 
 oneD            false;
 

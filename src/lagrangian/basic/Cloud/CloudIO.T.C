@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "Cloud.T.H"
 #include "Time.T.H"
 #include "IOPosition.T.H"
-#include "IOdictionary.H"
+#include "timeIOdictionary.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -39,7 +39,7 @@ Foam::word Foam::Cloud<ParticleType>::cloudPropertiesName("cloudProperties");
 template<class ParticleType>
 void Foam::Cloud<ParticleType>::readCloudUniformProperties()
 {
-    IOobject dictObj
+    typeIOobject<timeIOdictionary> dictObj
     (
         cloudPropertiesName,
         time().timeName(),
@@ -50,9 +50,9 @@ void Foam::Cloud<ParticleType>::readCloudUniformProperties()
         false
     );
 
-    if (dictObj.typeHeaderOk<IOdictionary>(true))
+    if (dictObj.headerOk())
     {
-        const IOdictionary uniformPropsDict(dictObj);
+        const timeIOdictionary uniformPropsDict(dictObj);
 
         const word procName("processor" + Foam::name(Pstream::myProcNo()));
         if (uniformPropsDict.found(procName))
@@ -71,7 +71,7 @@ void Foam::Cloud<ParticleType>::readCloudUniformProperties()
 template<class ParticleType>
 void Foam::Cloud<ParticleType>::writeCloudUniformProperties() const
 {
-    IOdictionary uniformPropsDict
+    timeIOdictionary uniformPropsDict
     (
         IOobject
         (

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,8 +54,6 @@ class patchToFace
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- Name/regular expression of patch
         wordRe patchName_;
@@ -85,13 +83,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        patchToFace
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -145,7 +145,7 @@ Foam::fileOperations::masterUncollatedFileOperation::findInstancePath
 Foam::fileName
 Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
 (
-    const bool checkGlobal,
+    const bool globalFile,
     const bool isFile,
     const IOobject& io,
     pathType& searchType,
@@ -187,7 +187,10 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
         // 2. Check processors/
         if (io.time().processorCase())
         {
-            tmpNrc<dirIndexList> pDirs(lookupProcessorsPath(io.objectPath()));
+            tmpNrc<dirIndexList> pDirs
+            (
+                lookupProcessorsPath(io.objectPath(globalFile))
+            );
             forAll(pDirs(), i)
             {
                 const fileName& pDir = pDirs()[i].first();
@@ -204,7 +207,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
         }
         {
             // 3. Check local
-            fileName localPath = io.objectPath();
+            fileName localPath = io.objectPath(globalFile);
 
             if
             (
@@ -222,7 +225,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
         // Any global checks
         if
         (
-            checkGlobal
+            globalFile
          && io.time().processorCase()
          && (
                 io.instance() == io.time().system()
@@ -263,7 +266,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
                 // 1. Try processors equivalent
                 tmpNrc<dirIndexList> pDirs
                 (
-                    lookupProcessorsPath(io.objectPath())
+                    lookupProcessorsPath(io.objectPath(globalFile))
                 );
                 forAll(pDirs(), i)
                 {
@@ -306,8 +309,8 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
                 // 2. Check local
                 fileName fName
                 (
-                   io.rootPath()/io.caseName()
-                  /newInstancePath/io.db().dbDir()/io.local()/diskFileName
+                   io.rootPath()/io.caseName(false)
+                  /newInstancePath/io.db().dbDir()/io.local()/io.name()
                 );
                 if (isFileOrDir(isFile, fName))
                 {
@@ -324,7 +327,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
 
 
 Foam::fileName
-Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
+Foam::fileOperations::masterUncollatedFileOperation::relativeObjectPath
 (
     const IOobject& io,
     const pathType& searchType,
@@ -346,7 +349,7 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
 
         case fileOperation::OBJECT:
         {
-            return io.path()/diskFileName;
+            return io.path(false)/io.name();
         }
         break;
 
@@ -408,8 +411,8 @@ Foam::fileOperations::masterUncollatedFileOperation::localObjectPath
         case fileOperation::FINDINSTANCE:
         {
             return
-                io.rootPath()/io.caseName()
-               /instancePath/io.db().dbDir()/io.local()/diskFileName;
+                io.rootPath()/io.caseName(false)
+               /instancePath/io.db().dbDir()/io.local()/io.name();
         }
         break;
 
@@ -575,7 +578,7 @@ Foam::fileOperations::masterUncollatedFileOperation::read
                 if (filePaths[0].empty())
                 {
                     FatalIOErrorInFunction(filePaths[0])
-                        << "cannot find file " << io.objectPath()
+                        << "cannot find file for object " << io.name()
                         << exit(FatalIOError);
                 }
 
@@ -612,7 +615,7 @@ Foam::fileOperations::masterUncollatedFileOperation::read
                 if (filePaths[0].empty())
                 {
                     FatalIOErrorInFunction(filePaths[0])
-                        << "cannot find file " << io.objectPath()
+                        << "cannot find file for object " << io.name()
                         << exit(FatalIOError);
                 }
 
@@ -1131,7 +1134,7 @@ bool Foam::fileOperations::masterUncollatedFileOperation::mv
 
 Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
 (
-    const bool checkGlobal,
+    const bool globalFile,
     const IOobject& io,
     const word& typeName
 ) const
@@ -1139,13 +1142,13 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
     if (debug)
     {
         Pout<< "masterUncollatedFileOperation::filePath :"
-            << " objectPath:" << io.objectPath()
-            << " checkGlobal:" << checkGlobal << endl;
+            << " objectPath:" << io.objectPath(globalFile)
+            << " globalFile:" << globalFile << endl;
     }
 
     // Now that we have an IOobject path use it to detect & cache
     // processor directory naming
-    (void)lookupProcessorsPath(io.objectPath());
+    (void)lookupProcessorsPath(io.objectPath(globalFile));
 
     // Trigger caching of times
     (void)findTimes(io.time().path(), io.time().constant());
@@ -1164,7 +1167,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
         // fail (except on master). This gets handled later on (in PARENTOBJECT)
         objPath = filePathInfo
         (
-            checkGlobal,
+            globalFile,
             true,
             io,
             searchType,
@@ -1196,7 +1199,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
 
     if
     (
-        checkGlobal
+        globalFile
      || searchType == fileOperation::PARENTOBJECT
      || searchType == fileOperation::PROCBASEOBJECT
      || searchType == fileOperation::PROCBASEINSTANCE
@@ -1233,7 +1236,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
             case fileOperation::PROCINSTANCE:
             {
                 // Construct equivalent local path
-                objPath = localObjectPath
+                objPath = relativeObjectPath
                 (
                     io,
                     searchType,
@@ -1251,7 +1254,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
 
                 objPath = masterOp<fileName, fileOrNullOp>
                 (
-                    io.objectPath(),
+                    io.objectPath(globalFile),
                     fileOrNullOp(true),
                     Pstream::msgType(),
                     comm_
@@ -1265,7 +1268,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
     {
         Pout<< "masterUncollatedFileOperation::filePath :"
             << " Returning from file searching:" << endl
-            << "    objectPath:" << io.objectPath() << endl
+            << "    objectPath:" << io.objectPath(globalFile) << endl
             << "    filePath  :" << objPath << endl << endl;
     }
     return objPath;
@@ -1274,20 +1277,20 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
 
 Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::dirPath
 (
-    const bool checkGlobal,
+    const bool globalFile,
     const IOobject& io
 ) const
 {
     if (debug)
     {
         Pout<< "masterUncollatedFileOperation::dirPath :"
-            << " objectPath:" << io.objectPath()
-            << " checkGlobal:" << checkGlobal << endl;
+            << " objectPath:" << io.objectPath(globalFile)
+            << " globalFile:" << globalFile << endl;
     }
 
     // Now that we have an IOobject path use it to detect & cache
     // processor directory naming
-    (void)lookupProcessorsPath(io.objectPath());
+    (void)lookupProcessorsPath(io.objectPath(globalFile));
 
     // Determine master dirPath and scatter
 
@@ -1300,7 +1303,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::dirPath
     {
         objPath = filePathInfo
         (
-            checkGlobal,
+            globalFile,
             false,
             io,
             searchType,
@@ -1318,7 +1321,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::dirPath
 
     if
     (
-        checkGlobal
+        globalFile
      || searchType == fileOperation::PARENTOBJECT
      || searchType == fileOperation::PROCBASEOBJECT
      || searchType == fileOperation::PROCBASEINSTANCE
@@ -1355,7 +1358,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::dirPath
             case fileOperation::PROCINSTANCE:
             {
                 // Construct equivalent local path
-                objPath = localObjectPath
+                objPath = relativeObjectPath
                 (
                     io,
                     searchType,
@@ -1372,7 +1375,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::dirPath
                 // have the file and some not (e.g. lagrangian data)
                 objPath = masterOp<fileName, fileOrNullOp>
                 (
-                    io.objectPath(),
+                    io.objectPath(globalFile),
                     fileOrNullOp(false),
                     Pstream::msgType(),
                     comm_
@@ -1386,7 +1389,7 @@ Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::dirPath
     {
         Pout<< "masterUncollatedFileOperation::dirPath :"
             << " Returning from file searching:" << endl
-            << "    objectPath:" << io.objectPath() << endl
+            << "    objectPath:" << io.objectPath(globalFile) << endl
             << "    filePath  :" << objPath << endl << endl;
     }
     return objPath;
@@ -1430,7 +1433,7 @@ bool Foam::fileOperations::masterUncollatedFileOperation::exists
     }
 
     // 3. Check local
-    fileName localPath = io.objectPath();
+    fileName localPath = io.objectPath(false);
 
     if (localPath != writePath && isFileOrDir(isFile, localPath))
     {
@@ -1470,7 +1473,7 @@ Foam::fileOperations::masterUncollatedFileOperation::findInstance
     //         parent directory in case of parallel)
 
 
-    tmpNrc<dirIndexList> pDirs(lookupProcessorsPath(io.objectPath()));
+    tmpNrc<dirIndexList> pDirs(lookupProcessorsPath(io.objectPath(false)));
 
     word foundInstance;
 
@@ -1740,8 +1743,8 @@ bool Foam::fileOperations::masterUncollatedFileOperation::readHeader
 
     if (debug)
     {
-        Pout<< "masterUncollatedFileOperation::readHeader :" << endl
-            << "    objectPath:" << io.objectPath() << endl
+        Pout<< "masterUncollatedFileOperation::readHeader :" << nl
+            << "    object :" << io.name() << nl
             << "    fName     :" << fName << endl;
     }
 

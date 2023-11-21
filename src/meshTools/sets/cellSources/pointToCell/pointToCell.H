@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,8 +62,6 @@ public:
 
 private:
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         static const NamedEnum<pointAction, 2> pointActionNames_;
 
@@ -100,13 +98,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        pointToCell
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 

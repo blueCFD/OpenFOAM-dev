@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -370,16 +370,15 @@ bool Foam::fileOperation::exists(IOobject& io) const
     }
     else
     {
-        ok =
-            isFile(objPath)
-         && io.typeHeaderOk<IOList<label>>(false);// object with local scope
+        // IOobject::headerOk assumes local scope
+        ok = isFile(objPath) && io.headerOk();
     }
 
     if (!ok)
     {
         // Re-test with searched for objectPath. This is for backwards
         // compatibility
-        fileName originalPath(filePath(io.objectPath()));
+        fileName originalPath(filePath(io.objectPath(false)));
         if (originalPath != objPath)
         {
             // Test for either directory or a (valid) file & IOobject
@@ -389,9 +388,8 @@ bool Foam::fileOperation::exists(IOobject& io) const
             }
             else
             {
-                ok =
-                    isFile(originalPath)
-                 && io.typeHeaderOk<IOList<label>>(false);
+                // IOobject::headerOk assumes local scope
+                ok = isFile(originalPath) && io.headerOk();
             }
         }
     }
@@ -445,7 +443,7 @@ Foam::fileName Foam::fileOperation::objectPath
     const word& typeName
 ) const
 {
-    return io.objectPath();
+    return io.objectPath(false);
 }
 
 
@@ -460,7 +458,7 @@ bool Foam::fileOperation::writeObject
 {
     if (write)
     {
-        fileName filePath(io.objectPath());
+        const fileName filePath(io.objectPath());
 
         mkDir(filePath.path());
 
@@ -501,6 +499,7 @@ bool Foam::fileOperation::writeObject
 
         IOobject::writeEndDivider(os);
     }
+
     return true;
 }
 
@@ -889,7 +888,7 @@ Foam::fileNameList Foam::fileOperation::readObjects
             << " instance:" << instance << endl;
     }
 
-    fileName path(db.path(instance, db.dbDir()/local));
+    fileName path(db.path(instance, local));
 
     newInstance = word::null;
     fileNameList objectNames;
@@ -910,6 +909,7 @@ Foam::fileNameList Foam::fileOperation::readObjects
             objectNames = Foam::readDir(procsPath, fileType::file);
         }
     }
+
     return objectNames;
 }
 

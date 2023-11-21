@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,8 +70,6 @@ class regionToCell
 
     // Private Data
 
-        //- Add usage string
-        static addToUsageTable usage_;
 
         //- Name of cellSet to keep to
         const word setName_;
@@ -130,13 +128,6 @@ public:
         (
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from Istream
-        regionToCell
-        (
-            const polyMesh& mesh,
-            Istream&
         );
 
 
