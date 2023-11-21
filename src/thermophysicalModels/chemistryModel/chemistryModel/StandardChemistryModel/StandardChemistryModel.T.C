@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "StandardChemistryModel.T.H"
-#include "multiComponentMixture.H"
 #include "UniformField.T.H"
 #include "extrapolatedCalculatedFvPatchFields.H"
 
@@ -39,21 +38,9 @@ Foam::StandardChemistryModel<ThermoType>::StandardChemistryModel
     basicChemistryModel(thermo),
     ODESystem(),
     Y_(this->thermo().composition().Y()),
-    specieThermos_
-    (
-        dynamic_cast<const multiComponentMixture<ThermoType>&>
-            (this->thermo()).specieThermos()
-    ),
-    reactions_
-    (
-        dynamic_cast<const multiComponentMixture<ThermoType>&>
-        (
-            this->thermo()
-        ).species(),
-        specieThermos_,
-        this->mesh(),
-        *this
-    ),
+    mixture_(refCast<const multiComponentMixture<ThermoType>>(this->thermo())),
+    specieThermos_(mixture_.specieThermos()),
+    reactions_(mixture_.species(), specieThermos_, this->mesh(), *this),
     nSpecie_(Y_.size()),
     nReaction_(reactions_.size()),
     Treact_(basicChemistryModel::template lookupOrDefault<scalar>("Treact", 0)),
@@ -119,28 +106,6 @@ void Foam::StandardChemistryModel<ThermoType>::omega
 
 
 template<class ThermoType>
-Foam::scalar Foam::StandardChemistryModel<ThermoType>::omegaI
-(
-    const label index,
-    const scalar p,
-    const scalar T,
-    const scalarField& c,
-    const label li,
-    scalar& pf,
-    scalar& cf,
-    label& lRef,
-    scalar& pr,
-    scalar& cr,
-    label& rRef
-) const
-{
-    const Reaction<ThermoType>& R = reactions_[index];
-    scalar w = R.omega(p, T, c, li, pf, cf, lRef, pr, cr, rRef);
-    return(w);
-}
-
-
-template<class ThermoType>
 void Foam::StandardChemistryModel<ThermoType>::derivatives
 (
     const scalar t,
@@ -157,37 +122,29 @@ void Foam::StandardChemistryModel<ThermoType>::derivatives
         c_[i] = max(c[i], 0);
     }
 
+    dcdt = Zero;
+
+    // Evaluate contributions from reactions
     omega(p, T, c_, li, dcdt);
 
-    // Constant pressure
-    // dT/dt = ...
-    scalar rho = 0;
-    scalar cSum = 0;
+    // Evaluate the effect on the thermodynamic system ...
+
+    // c*Cp
+    scalar ccp = 0;
     for (label i = 0; i < nSpecie_; i++)
     {
-        const scalar W = specieThermos_[i].W();
-        cSum += c_[i];
-        rho += W*c_[i];
+        ccp += c_[i]*specieThermos_[i].cp(p, T);
     }
-    scalar cp = 0;
-    for (label i=0; i<nSpecie_; i++)
-    {
-        cp += c_[i]*specieThermos_[i].cp(p, T);
-    }
-    cp /= rho;
 
-    scalar dTdt = 0;
+    // dT/dt
+    scalar& dTdt = dcdt[nSpecie_];
     for (label i = 0; i < nSpecie_; i++)
     {
-        const scalar hi = specieThermos_[i].ha(p, T);
-        dTdt += hi*dcdt[i];
+        dTdt -= dcdt[i]*specieThermos_[i].ha(p, T);
     }
-    dTdt /= rho*cp;
+    dTdt /= ccp;
 
-    dcdt[nSpecie_] = -dTdt;
-
-    // dp/dt = ...
-    dcdt[nSpecie_ + 1] = 0;
+    // dp/dt = 0 (pressure is assumed constant)
 }
 
 
@@ -209,69 +166,67 @@ void Foam::StandardChemistryModel<ThermoType>::jacobian
         c_[i] = max(c[i], 0);
     }
 
-    J = Zero;
     dcdt = Zero;
+    J = Zero;
 
-    // To compute the species derivatives of the temperature term,
-    // the enthalpies of the individual species is needed
-    scalarField hi(nSpecie_);
-    scalarField cpi(nSpecie_);
-    for (label i = 0; i < nSpecie_; i++)
-    {
-        hi[i] = specieThermos_[i].ha(p, T);
-        cpi[i] = specieThermos_[i].cp(p, T);
-    }
-    scalar omegaI = 0;
-    List<label> dummy;
+    // Evaluate contributions from reactions
     forAll(reactions_, ri)
     {
         const Reaction<ThermoType>& R = reactions_[ri];
-        scalar kfwd, kbwd;
-        R.dwdc(p, T, c_, li, J, dcdt, omegaI, kfwd, kbwd, false, dummy);
-        R.dwdT(p, T, c_, li, omegaI, kfwd, kbwd, J, false, dummy, nSpecie_);
+        scalar omegaI, kfwd, kbwd;
+        const labelList null;
+        R.dwdc(p, T, c_, li, J, dcdt, omegaI, kfwd, kbwd, false, null);
+        R.dwdT(p, T, c_, li, omegaI, kfwd, kbwd, J, false, null, nSpecie_);
     }
 
-    // The species derivatives of the temperature term are partially computed
-    // while computing dwdc, they are completed hereunder:
-    scalar cpMean = 0;
-    scalar dcpdTMean = 0;
-    for (label i=0; i<nSpecie_; i++)
-    {
-        cpMean += c_[i]*cpi[i]; // J/(m^3 K)
-        dcpdTMean += c_[i]*specieThermos_[i].dcpdT(p, T);
-    }
-    scalar dTdt = 0.0;
-    for (label i=0; i<nSpecie_; i++)
-    {
-        dTdt += hi[i]*dcdt[i]; // J/(m^3 s)
-    }
-    dTdt /= -cpMean; // K/s
+    // Evaluate the effect on the thermodynamic system ...
 
-    dcdt[nSpecie_] = dTdt;
-
-    // dp/dt = ...
-    dcdt[nSpecie_ + 1] = 0;
-
+    // c*Cp
+    scalar ccp = 0, dccpdT = 0;
     for (label i = 0; i < nSpecie_; i++)
     {
-        J(nSpecie_, i) = 0;
+        ccp += c_[i]*specieThermos_[i].cp(p, T);
+        dccpdT += c_[i]*specieThermos_[i].dcpdT(p, T);
+    }
+
+    // dT/dt
+    scalar& dTdt = dcdt[nSpecie_];
+    for (label i = 0; i < nSpecie_; i++)
+    {
+        dTdt -= dcdt[i]*specieThermos_[i].ha(p, T);
+    }
+    dTdt /= ccp;
+
+    // dp/dt = 0 (pressure is assumed constant)
+
+    // d(dTdt)/dc
+    for (label i = 0; i < nSpecie_; i++)
+    {
+        scalar& d2Tdtdci = J(nSpecie_, i);
         for (label j = 0; j < nSpecie_; j++)
         {
-            J(nSpecie_, i) += hi[j]*J(j, i);
+            const scalar d2cjdtdci = J(j, i);
+            d2Tdtdci -= d2cjdtdci*specieThermos_[j].ha(p, T);
         }
-        J(nSpecie_, i) += cpi[i]*dTdt; // J/(mol s)
-        J(nSpecie_, i) /= -cpMean;    // K/s/(mol/m3)
+        d2Tdtdci -= specieThermos_[i].cp(p, T)*dTdt;
+        d2Tdtdci /= ccp;
     }
 
-    // ddT of dTdt
-    J(nSpecie_, nSpecie_) = 0;
+    // d(dTdt)/dT
+    scalar& d2TdtdT = J(nSpecie_, nSpecie_);
     for (label i = 0; i < nSpecie_; i++)
     {
-        J(nSpecie_, nSpecie_) += cpi[i]*dcdt[i] + hi[i]*J(i, nSpecie_);
+        const scalar d2cidtdT = J(i, nSpecie_);
+        d2TdtdT -=
+            dcdt[i]*specieThermos_[i].cp(p, T)
+          + d2cidtdT*specieThermos_[i].ha(p, T);
     }
-    J(nSpecie_, nSpecie_) += dTdt*dcpdTMean;
-    J(nSpecie_, nSpecie_) /= -cpMean;
-    J(nSpecie_, nSpecie_) += dTdt/T;
+    d2TdtdT -= dTdt*dccpdT;
+    d2TdtdT /= ccp;
+
+    // d(dpdt)/dc = 0 (pressure is assumed constant)
+
+    // d(dpdt)/dT = 0 (pressure is assumed constant)
 }
 
 
@@ -300,8 +255,7 @@ Foam::StandardChemistryModel<ThermoType>::tc() const
 
     const label nReaction = reactions_.size();
 
-    scalar pf, cf, pr, cr;
-    label lRef, rRef;
+    scalar omegaf, omegar;
 
     if (this->chemistry_)
     {
@@ -324,12 +278,11 @@ Foam::StandardChemistryModel<ThermoType>::tc() const
             forAll(reactions_, i)
             {
                 const Reaction<ThermoType>& R = reactions_[i];
-
-                R.omega(pi, Ti, c_, celli, pf, cf, lRef, pr, cr, rRef);
+                R.omega(pi, Ti, c_, celli, omegaf, omegar);
 
                 forAll(R.rhs(), s)
                 {
-                    tc[celli] += R.rhs()[s].stoichCoeff*pf*cf;
+                    tc[celli] += R.rhs()[s].stoichCoeff*omegaf;
                 }
             }
 
@@ -405,8 +358,7 @@ Foam::StandardChemistryModel<ThermoType>::calculateRR
 
     reactionEvaluationScope scope(*this);
 
-    scalar pf, cf, pr, cr;
-    label lRef, rRef;
+    scalar omegaf, omegar;
 
     forAll(rho, celli)
     {
@@ -421,16 +373,13 @@ Foam::StandardChemistryModel<ThermoType>::calculateRR
         }
 
         const Reaction<ThermoType>& R = reactions_[ri];
-        const scalar omegai = R.omega
-        (
-            pi, Ti, c_, celli, pf, cf, lRef, pr, cr, rRef
-        );
+        const scalar omegaI = R.omega(pi, Ti, c_, celli, omegaf, omegar);
 
         forAll(R.lhs(), s)
         {
             if (si == R.lhs()[s].index)
             {
-                RR[celli] -= R.lhs()[s].stoichCoeff*omegai;
+                RR[celli] -= R.lhs()[s].stoichCoeff*omegaI;
             }
         }
 
@@ -438,7 +387,7 @@ Foam::StandardChemistryModel<ThermoType>::calculateRR
         {
             if (si == R.rhs()[s].index)
             {
-                RR[celli] += R.rhs()[s].stoichCoeff*omegai;
+                RR[celli] += R.rhs()[s].stoichCoeff*omegaI;
             }
         }
 
@@ -503,11 +452,11 @@ Foam::scalar Foam::StandardChemistryModel<ThermoType>::solve
         return deltaTMin;
     }
 
-    tmp<volScalarField> trho(this->thermo().rho());
+    tmp<volScalarField> trho(this->thermo().rho0());
     const scalarField& rho = trho();
 
-    const scalarField& T = this->thermo().T();
-    const scalarField& p = this->thermo().p();
+    const scalarField& T = this->thermo().T().oldTime();
+    const scalarField& p = this->thermo().p().oldTime();
 
     reactionEvaluationScope scope(*this);
 
@@ -524,7 +473,7 @@ Foam::scalar Foam::StandardChemistryModel<ThermoType>::solve
 
             for (label i=0; i<nSpecie_; i++)
             {
-                c_[i] = rhoi*Y_[i][celli]/specieThermos_[i].W();
+                c_[i] = rhoi*Y_[i].oldTime()[celli]/specieThermos_[i].W();
                 c0[i] = c_[i];
             }
 

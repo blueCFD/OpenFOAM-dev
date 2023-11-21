@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,13 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-template<class ThermoType>
-inline bool Foam::TDACChemistryModel<ThermoType>::variableTimeStep() const
-{
-    return variableTimeStep_;
-}
-
 
 template<class ThermoType>
 inline Foam::label Foam::TDACChemistryModel<ThermoType>::timeSteps() const
@@ -149,14 +142,6 @@ template<class ThermoType>
 inline Foam::scalarField& Foam::TDACChemistryModel<ThermoType>::simplifiedC()
 {
     return simplifiedC_;
-}
-
-
-template<class ThermoType>
-inline Foam::List<Foam::List<Foam::specieElement>>&
-Foam::TDACChemistryModel<ThermoType>::specieComp()
-{
-    return specieComp_;
 }
 
 

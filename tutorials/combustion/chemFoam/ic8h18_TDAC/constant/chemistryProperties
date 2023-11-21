@@ -36,15 +36,13 @@ odeCoeffs
 
 reduction
 {
-    tolerance   1e-4;
-
     // Search initiating set (SIS) of species, needed for most methods
     initialSet
-    {
-        CO;
-        IC8H18;
-        HO2;
-    }
+    (
+        CO
+        IC8H18
+        HO2
+    );
 }
 
 // Tabulation is not effective for single-cell ignition calculations

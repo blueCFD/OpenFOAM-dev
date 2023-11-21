@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,29 +36,17 @@ Foam::chemistryReductionMethods::DRGEP<ThermoType>::DRGEP
 )
 :
     chemistryReductionMethod<ThermoType>(dict, chemistry),
-    searchInitSet_(this->coeffsDict_.subDict("initialSet").size()),
+    searchInitSet_(),
     sC_(this->nSpecie_,0),
     sH_(this->nSpecie_,0),
     sO_(this->nSpecie_,0),
     sN_(this->nSpecie_,0),
     NGroupBased_(50)
 {
-    label j=0;
-    dictionary initSet = this->coeffsDict_.subDict("initialSet");
-    for (label i=0; i<chemistry.nSpecie(); i++)
+    const wordHashSet initSet(this->coeffsDict_.lookup("initialSet"));
+    forAllConstIter(wordHashSet, initSet, iter)
     {
-        if (initSet.found(chemistry.Y()[i].member()))
-        {
-            searchInitSet_[j++]=i;
-        }
-    }
-    if (j<searchInitSet_.size())
-    {
-        FatalErrorInFunction
-            << searchInitSet_.size()-j
-            << " species in the initial set is not in the mechanism "
-            << initSet
-            << exit(FatalError);
+        searchInitSet_.append(chemistry.mixture().species()[iter.key()]);
     }
 
     if (this->coeffsDict_.found("NGroupBased"))
@@ -66,12 +54,11 @@ Foam::chemistryReductionMethods::DRGEP<ThermoType>::DRGEP
         NGroupBased_ = this->coeffsDict_.template lookup<label>("NGroupBased");
     }
 
-    const List<List<specieElement>>& specieComposition =
-        this->chemistry_.specieComp();
     for (label i=0; i<this->nSpecie_; i++)
     {
         const List<specieElement>& curSpecieComposition =
-            specieComposition[i];
+            chemistry.mixture().specieComposition(i);
+
         // for all elements in the current species
         forAll(curSpecieComposition, j)
         {
@@ -144,17 +131,14 @@ void Foam::chemistryReductionMethods::DRGEP<ThermoType>::reduceMechanism
     // Index of the other species involved in the rABNum
     RectangularMatrix<label> rABOtherSpec(this->nSpecie_, this->nSpecie_, -1);
 
-    scalar pf, cf, pr, cr;
-    label lRef, rRef;
     scalarField omegaV(this->chemistry_.reactions().size());
     forAll(this->chemistry_.reactions(), i)
     {
         const Reaction<ThermoType>& R = this->chemistry_.reactions()[i];
+
         // for each reaction compute omegai
-        scalar omegai = this->chemistry_.omega
-        (
-            R, p,T, c1, li, pf, cf, lRef, pr, cr, rRef
-        );
+        scalar omegaf, omegar;
+        const scalar omegai = R.omega(p, T, c1, li, omegaf, omegar);
         omegaV[i] = omegai;
 
         // then for each pair of species composing this reaction,

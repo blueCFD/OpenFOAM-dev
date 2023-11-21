@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,7 +94,6 @@ class TDACChemistryModel
         scalarField completeC_;
         scalarField simplifiedC_;
         Field<bool> reactionsDisabled_;
-        List<List<specieElement>> specieComp_;
         Field<label> completeToSimplifiedIndex_;
         DynamicList<label> simplifiedToCompleteIndex_;
         autoPtr<chemistryReductionMethod<ThermoType>> mechRed_;
@@ -157,15 +156,13 @@ public:
 
     // Member Functions
 
-        //- Return true if the time-step is variable and/or non-uniform
-        inline bool variableTimeStep() const;
-
         //- Return the number of chemistry evaluations (used by ISAT)
         inline label timeSteps() const;
 
         //- Create and return a TDAC log file of the given name
         inline autoPtr<OFstream> logFile(const word& name) const;
 
+        //- Return a reference to the list of mass fraction fields
         inline const PtrList<volScalarField>& Y();
 
         //- dc/dt = omega, rate of change in concentration, for each species
@@ -176,23 +173,6 @@ public:
             const scalarField& c,
             const label li,
             scalarField& dcdt
-        ) const;
-
-        //- Return the reaction rate for reaction r and the reference
-        //  species and characteristic times
-        virtual scalar omega
-        (
-            const Reaction<ThermoType>& r,
-            const scalar p,
-            const scalar T,
-            const scalarField& c,
-            const label li,
-            scalar& pf,
-            scalar& cf,
-            label& lRef,
-            scalar& pr,
-            scalar& cr,
-            label& rRef
         ) const;
 
 
@@ -260,8 +240,6 @@ public:
             inline Field<label>& completeToSimplifiedIndex();
 
             inline const Field<label>& completeToSimplifiedIndex() const;
-
-            inline List<List<specieElement>>& specieComp();
 
             inline autoPtr<chemistryReductionMethod<ThermoType>>& mechRed();
 

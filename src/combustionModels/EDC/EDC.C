@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,7 +58,7 @@ Foam::combustionModels::EDC::EDC
     const word& combustionProperties
 )
 :
-    laminar(modelType, thermo, turb, combustionProperties),
+    combustionModel(modelType, thermo, turb, combustionProperties),
     version_
     (
         EDCversionNames
@@ -88,7 +88,13 @@ Foam::combustionModels::EDC::EDC
         ),
         this->mesh(),
         dimensionedScalar(dimless, 0)
-    )
+    ),
+    outerCorrect_
+    (
+        this->coeffs().lookupOrDefault("outerCorrect", true)
+    ),
+    timeIndex_(-1),
+    chemistryPtr_(basicChemistryModel::New(thermo))
 {}
 
 
@@ -102,6 +108,11 @@ Foam::combustionModels::EDC::~EDC()
 
 void Foam::combustionModels::EDC::correct()
 {
+    if (!outerCorrect_ && timeIndex_ == this->mesh().time().timeIndex())
+    {
+        return;
+    }
+
     tmp<volScalarField> tepsilon(this->turbulence().epsilon());
     const volScalarField& epsilon = tepsilon();
 
@@ -118,7 +129,7 @@ void Foam::combustionModels::EDC::correct()
 
     if (version_ == EDCversions::v2016)
     {
-        tmp<volScalarField> ttc(this->chemistryPtr_->tc());
+        tmp<volScalarField> ttc(chemistryPtr_->tc());
         const volScalarField& tc = ttc();
 
         forAll(tauStar, i)
@@ -187,14 +198,22 @@ void Foam::combustionModels::EDC::correct()
         }
     }
 
-    this->chemistryPtr_->solve(tauStar);
+    chemistryPtr_->solve(tauStar);
+
+    timeIndex_ = this->mesh().time().timeIndex();
 }
 
 
 Foam::tmp<Foam::fvScalarMatrix>
 Foam::combustionModels::EDC::R(volScalarField& Y) const
 {
-    return kappa_*laminar::R(Y);
+    tmp<fvScalarMatrix> tSu(new fvScalarMatrix(Y, dimMass/dimTime));
+    fvScalarMatrix& Su = tSu.ref();
+
+    const label specieI = this->thermo().composition().species()[Y.member()];
+    Su += chemistryPtr_->RR(specieI);
+
+    return kappa_*tSu;
 }
 
 
@@ -204,14 +223,14 @@ Foam::combustionModels::EDC::Qdot() const
     return volScalarField::New
     (
         this->thermo().phasePropertyName(typeName + ":Qdot"),
-        kappa_*this->chemistryPtr_->Qdot()
+        kappa_*chemistryPtr_->Qdot()
     );
 }
 
 
 bool Foam::combustionModels::EDC::read()
 {
-    if (laminar::read())
+    if (combustionModel::read())
     {
         version_ =
         (
@@ -230,6 +249,7 @@ bool Foam::combustionModels::EDC::read()
         Ctau_ = this->coeffs().lookupOrDefault("Ctau", 0.4083);
         exp1_ = this->coeffs().lookupOrDefault("exp1", EDCexp1[int(version_)]);
         exp2_ = this->coeffs().lookupOrDefault("exp2", EDCexp2[int(version_)]);
+        outerCorrect_ = this->coeffs().lookupOrDefault("outerCorrect", true);
 
         return true;
     }

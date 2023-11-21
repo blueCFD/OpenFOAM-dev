@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,75 +21,83 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::ChemistryCombustion
-
-Description
-    Chemistry model wrapper for combustion models
-
-SourceFiles
-    ChemistryCombustion.C
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef chemistryCombustion_H
-#define chemistryCombustion_H
+#ifndef compileTemplate_H
+#define compileTemplate_H
 
-#include "autoPtr.H"
-#include "combustionModel.H"
-#include "basicChemistryModel.H"
+#include "CodedBase.T.H"
+#include "dynamicCode.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace combustionModels
-{
 
 /*---------------------------------------------------------------------------*\
-                     class chemistryCombustion Declaration
+                       Class compileTemplate Declaration
 \*---------------------------------------------------------------------------*/
 
-class chemistryCombustion
+class compileTemplate
 :
-    public combustionModel
+    public CodedBase<compileTemplate>
 {
-protected:
+    // Private Member Data
 
-    // Protected data
+        //- Name of the class Thermo basicThermo is instantiated on
+        const word templateName_;
 
-        //- Pointer to chemistry model
-        autoPtr<basicChemistryModel> chemistryPtr_;
+        //- List of template argument substitutions
+        const List<Pair<word>> substitutions_;
+
+
+    // Private Member Functions
+
+        dictionary optionsDict
+        (
+            const word& templateName,
+            const word& instantiatedName
+        ) const;
+
+        void setFilterVariable
+        (
+            dynamicCode& dynCode,
+            const dynamicCodeContext& context,
+            const word& name,
+            const word& type
+        ) const;
+
+        void setFilterVariable
+        (
+            dynamicCode& dynCode,
+            const dynamicCodeContext& context,
+            const Pair<word>& substitution
+        ) const;
+
+        //- Adapt the context for the current object
+        virtual void prepare(dynamicCode&, const dynamicCodeContext&) const;
+
+        //- Clear the ptr to the redirected object
+        virtual void clearRedirect() const
+        {}
 
 
 public:
 
     // Constructors
 
-        //- Construct from components and thermo
-        chemistryCombustion
+        //- Construct from name and dictionary
+        compileTemplate
         (
-            const word& modelType,
-            const fluidReactionThermo& thermo,
-            const compressibleMomentumTransportModel& turb,
-            const word& combustionProperties
+            const word& templateName,
+            const word& instantiatedName,
+            const List<Pair<word>>& substitutions
         );
-
-
-    //- Destructor
-    virtual ~chemistryCombustion();
-
-
-    // Member Functions
-
-        //- Return const access to the chemistry
-        const basicChemistryModel& chemistry() const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace combustionModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

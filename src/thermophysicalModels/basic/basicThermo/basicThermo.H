@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -169,6 +169,12 @@ public:
             const int nCmpt
         );
 
+        //- Split name of thermo package into a list of named components names
+        static List<Pair<word>> thermoNameComponents
+        (
+            const word& thermoName
+        );
+
 
     // Selectors
 
@@ -260,6 +266,9 @@ public:
 
             //- Density for patch [kg/m^3]
             virtual tmp<scalarField> rho(const label patchi) const = 0;
+
+            //- Old-time density [kg/m^3]
+            virtual tmp<volScalarField> rho0() const = 0;
 
             //- Enthalpy/Internal energy [J/kg]
             //  Non-const access allowed for transport equations

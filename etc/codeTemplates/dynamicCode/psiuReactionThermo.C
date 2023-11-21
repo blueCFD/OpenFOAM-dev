@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) YEAR OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,41 +23,68 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef forPolynomials_H
-#define forPolynomials_H
+#include "forThermo.H"
+#include "makeReactionThermo.H"
 
-#include "specie.H"
-
-#include "icoPolynomial.H"
-
-#include "hPolynomialThermo.H"
-
-#include "sensibleEnthalpy.H"
-#include "sensibleInternalEnergy.H"
-
-#include "logPolynomialTransport.H"
-#include "polynomialTransport.H"
+#include "${specie}.H"
 
 #include "thermo.H"
 
-#include "forThermo.H"
+// EoS
+#include "${equationOfState}.H"
+
+// Thermo
+#include "${thermo}Thermo.H"
+#include "${energy}.H"
+
+// Transport
+#include "${transport}Transport.H"
+
+// psi/rho
+#include "${typeBase}.H"
+#include "${type}.H"
+
+// Mixture
+#include "${mixture}.H"
+
+
+// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
+
+extern "C"
+{
+    // dynamicCode:
+    // SHA1 = ${SHA1sum}
+    //
+    // Unique function name that can be checked if the correct library version
+    // has been loaded
+    void ${typeName}_${SHA1sum}(bool load)
+    {
+        if (load)
+        {
+            // code that can be explicitly executed after loading
+        }
+        else
+        {
+            // code that can be explicitly executed before unloading
+        }
+    }
+}
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define forPolynomialEquations(Mu, He, Cp, Args...)                            \
-    forThermo(Mu, He, Cp, icoPolynomial, specie, Args);
-
-#define forPolynomialEnergiesAndThermos(Mu, Args...)                           \
-    forPolynomialEquations(Mu, sensibleEnthalpy, hPolynomialThermo, Args);     \
-    forPolynomialEquations(Mu, sensibleInternalEnergy, hPolynomialThermo, Args)
-
-#define forPolynomialTransports(Args...)                                       \
-    forPolynomialEnergiesAndThermos(logPolynomialTransport, Args);             \
-    forPolynomialEnergiesAndThermos(polynomialTransport, Args)
-
-#define forPolynomials(Macro, Args...)                                         \
-    forPolynomialTransports(Macro, Args)
-
-#endif
+namespace Foam
+{
+    forThermo
+    (
+        ${transport}Transport,
+        ${energy},
+        ${thermo}Thermo,
+        ${equationOfState},
+        ${specie},
+        makePsiuReactionThermo,
+        ${mixture}
+    );
+}
 
 // ************************************************************************* //

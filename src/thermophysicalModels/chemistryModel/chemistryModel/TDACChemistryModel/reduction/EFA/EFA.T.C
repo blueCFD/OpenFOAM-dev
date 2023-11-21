@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,12 +42,11 @@ Foam::chemistryReductionMethods::EFA<ThermoType>::EFA
     sN_(this->nSpecie_,0),
     sortPart_(0.05)
 {
-    const List<List<specieElement>>& specieComposition =
-    this->chemistry_.specieComp();
     for (label i=0; i<this->nSpecie_; i++)
     {
         const List<specieElement>& curSpecieComposition =
-        specieComposition[i];
+            chemistry.mixture().specieComposition(i);
+
         // for all elements in the current species
         forAll(curSpecieComposition, j)
         {
@@ -128,18 +127,15 @@ void Foam::chemistryReductionMethods::EFA<ThermoType>::reduceMechanism
     // Index of the other species involved in the rABNum
     RectangularMatrix<label> rABOtherSpec(this->nSpecie_, this->nSpecie_, -1);
 
-    scalar pf, cf, pr, cr;
-    label lRef, rRef;
     forAll(this->chemistry_.reactions(), i)
     {
         const Reaction<ThermoType>& R = this->chemistry_.reactions()[i];
 
         // for each reaction compute omegai
-        this->chemistry_.omega
-        (
-            R, p, T, c1, li, pf, cf, lRef, pr, cr, rRef
-        );
-        scalar fr = mag(pf*cf)+mag(pr*cr);
+        scalar omegaf, omegar;
+        R.omega(p, T, c1, li, omegaf, omegar);
+
+        scalar fr = mag(omegaf) + mag(omegar);
         scalar NCi(0.0),NHi(0.0),NOi(0.0),NNi(0.0);
         forAll(R.lhs(),s)
         {

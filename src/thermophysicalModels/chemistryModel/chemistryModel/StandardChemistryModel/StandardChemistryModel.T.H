@@ -42,6 +42,7 @@ SourceFiles
 #include "ReactionList.T.H"
 #include "ODESystem.H"
 #include "volFields.H"
+#include "multiComponentMixture.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -110,6 +111,9 @@ protected:
         //- Reference to the field of specie mass fractions
         const PtrList<volScalarField>& Y_;
 
+        //- Reference to the multi component mixture
+        const multiComponentMixture<ThermoType>& mixture_;
+
         //- Thermodynamic data of the species
         const PtrList<ThermoType>& specieThermos_;
 
@@ -163,6 +167,9 @@ public:
 
     // Member Functions
 
+        //- Return reference to the mixture
+        inline const multiComponentMixture<ThermoType>& mixture() const;
+
         //- The reactions
         inline const PtrList<Reaction<ThermoType>>& reactions() const;
 
@@ -189,24 +196,6 @@ public:
             const scalarField& c,
             const label li,
             scalarField& dcdt
-        ) const;
-
-
-        //- Return the reaction rate for iReaction and the reference
-        //  species and characteristic times
-        virtual scalar omegaI
-        (
-            label iReaction,
-            const scalar p,
-            const scalar T,
-            const scalarField& c,
-            const label li,
-            scalar& pf,
-            scalar& cf,
-            label& lRef,
-            scalar& pr,
-            scalar& cr,
-            label& rRef
         ) const;
 
         //- Calculates the reaction rates

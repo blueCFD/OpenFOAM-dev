@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
     There are many versions and developments of the EDC model, 4 of which are
     currently supported in this implementation: v1981, v1996, v2005 and
     v2016.  The model variant is selected using the optional \c version entry in
-    the \c EDCCoeffs dictionary, \eg
+    the \c EDCCoeffs dictionary
 
     \verbatim
         EDCCoeffs
@@ -99,7 +99,9 @@ SourceFiles
 #ifndef EDC_H
 #define EDC_H
 
-#include "../laminar/laminar.H"
+#include "autoPtr.H"
+#include "combustionModel.H"
+#include "basicChemistryModel.H"
 #include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -130,22 +132,42 @@ const scalar EDCexp2[] = {3, 3, 2, 2};
 
 class EDC
 :
-    public laminar
+    public combustionModel
 {
     // Private Data
 
         //- The selected model version
         EDCversions version_;
 
+        //- Model constant
         scalar C1_;
+
+        //- Model constant
         scalar C2_;
+
+        //- Model constant
         scalar Cgamma_;
+
+        //- Model constant
         scalar Ctau_;
+
+        //- Model constant
         scalar exp1_;
+
+        //- Model constant
         scalar exp2_;
 
         //- Mixing parameter
         volScalarField kappa_;
+
+        //- Run chemistry correction on every outer iteration. Default true.
+        bool outerCorrect_;
+
+        //- The time index of the last correction
+        label timeIndex_;
+
+        //- Pointer to chemistry model
+        autoPtr<basicChemistryModel> chemistryPtr_;
 
 
 public:
