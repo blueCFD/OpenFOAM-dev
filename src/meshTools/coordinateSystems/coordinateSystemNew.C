@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,8 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "coordinateSystem.H"
-#include "dictionary.H"
+#include "coordinateSystems.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -34,8 +33,68 @@ Foam::autoPtr<Foam::coordinateSystem> Foam::coordinateSystem::New
     const dictionary& dict
 )
 {
-    const dictionary& coordDict = dict.subDict(typeName_());
-    word coordType = coordDict.lookup("type");
+    const entry* entryPtr = dict.lookupEntryPtr(typeName_(), false, false);
+
+    // Non-dictionary entry is a lookup into global coordinateSystems
+    if (entryPtr && !entryPtr->isDict())
+    {
+        const word name(entryPtr->stream());
+
+        const coordinateSystems::coordinateSystems& css =
+            coordinateSystems::coordinateSystems::New(obr);
+
+        if (css.found(name))
+        {
+            if (debug)
+            {
+                InfoInFunction
+                    << "Using global coordinate system: " << name << endl;
+            }
+
+            return css[name].clone();
+        }
+        else
+        {
+            FatalErrorInFunction
+                << "could not find coordinate system: " << name << nl
+                << "available coordinate systems: " << css.toc() << nl << nl
+                << exit(FatalError);
+
+            return autoPtr<coordinateSystem>(nullptr);
+        }
+    }
+    else
+    {
+        const dictionary& coordDict = dict.subDict(typeName_());
+        const word coordType = coordDict.lookup("type");
+
+        dictionaryConstructorTable::iterator cstrIter =
+            dictionaryConstructorTablePtr_->find(coordType);
+
+        if (cstrIter == dictionaryConstructorTablePtr_->end())
+        {
+            FatalIOErrorInFunction
+            (
+                dict
+            )   << "Unknown coordinateSystem type "
+                << coordType << nl << nl
+                << "Valid coordinateSystem types are :" << nl
+                << dictionaryConstructorTablePtr_->sortedToc()
+                << exit(FatalIOError);
+        }
+
+        return autoPtr<coordinateSystem>(cstrIter()(coordType, coordDict));
+    }
+}
+
+
+Foam::autoPtr<Foam::coordinateSystem> Foam::coordinateSystem::New
+(
+    const word& name,
+    const dictionary& dict
+)
+{
+    const word coordType = dict.lookup("type");
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(coordType);
@@ -52,30 +111,7 @@ Foam::autoPtr<Foam::coordinateSystem> Foam::coordinateSystem::New
             << exit(FatalIOError);
     }
 
-    return autoPtr<coordinateSystem>(cstrIter()(obr, coordDict));
-}
-
-
-Foam::autoPtr<Foam::coordinateSystem> Foam::coordinateSystem::New
-(
-    const dictionary& dict
-)
-{
-    const dictionary& coordDict = dict.subDict(typeName_());
-
-    return autoPtr<coordinateSystem>(new coordinateSystem(coordDict));
-}
-
-
-Foam::autoPtr<Foam::coordinateSystem> Foam::coordinateSystem::New
-(
-    Istream& is
-)
-{
-    const word name(is);
-    const dictionary dict(is);
-
-    return autoPtr<coordinateSystem>(new coordinateSystem(name, dict));
+    return autoPtr<coordinateSystem>(cstrIter()(name, dict));
 }
 
 

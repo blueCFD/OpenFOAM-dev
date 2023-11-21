@@ -24,7 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "heSolidThermo.H"
-#include "volFields.H"
+#include "fvmLaplacian.H"
+#include "fvcLaplacian.H"
+#include "coordinateSystem.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -264,6 +266,107 @@ Foam::heSolidThermo<BasicSolidThermo, MixtureType>::Kappa
     }
 
     return tKappa;
+}
+
+
+template<class BasicSolidThermo, class MixtureType>
+Foam::tmp<Foam::volSymmTensorField>
+Foam::heSolidThermo<BasicSolidThermo, MixtureType>::KappaLocal() const
+{
+    const fvMesh& mesh = this->T_.mesh();
+
+    const coordinateSystem coordinates
+    (
+        coordinateSystem::New(mesh, this->properties())
+    );
+
+    const tmp<volVectorField> tKappa(Kappa());
+    const volVectorField& Kappa = tKappa();
+
+    tmp<volSymmTensorField> tKappaLocal
+    (
+        volSymmTensorField::New
+        (
+            "KappaLocal",
+            mesh,
+            dimensionedSymmTensor(Kappa.dimensions(), Zero)
+        )
+    );
+    volSymmTensorField& KappaLocal = tKappaLocal.ref();
+
+    KappaLocal.primitiveFieldRef() =
+        coordinates.R(mesh.C()).transformVector(Kappa);
+
+    forAll(KappaLocal.boundaryField(), patchi)
+    {
+        KappaLocal.boundaryFieldRef()[patchi] =
+            coordinates.R(mesh.boundary()[patchi].Cf())
+           .transformVector(Kappa.boundaryField()[patchi]);
+    }
+
+    return tKappaLocal;
+}
+
+
+template<class BasicSolidThermo, class MixtureType>
+Foam::tmp<Foam::symmTensorField>
+Foam::heSolidThermo<BasicSolidThermo, MixtureType>::KappaLocal
+(
+    const label patchi
+) const
+{
+    const fvMesh& mesh = this->T_.mesh();
+
+    const coordinateSystem coordinates
+    (
+        coordinateSystem::New(mesh, this->properties())
+    );
+
+    return
+        coordinates.R(mesh.boundary()[patchi].Cf())
+       .transformVector(Kappa(patchi));
+}
+
+
+template<class BasicSolidThermo, class MixtureType>
+Foam::tmp<Foam::surfaceScalarField>
+Foam::heSolidThermo<BasicSolidThermo, MixtureType>::q() const
+{
+    const fvMesh& mesh = this->T_.mesh();
+    mesh.setFluxRequired(this->T_.name());
+
+    return
+      - (
+            isotropic()
+          ? fvm::laplacian(this->kappa(), this->T_)().flux()
+          : fvm::laplacian(KappaLocal(), this->T_)().flux()
+        );
+}
+
+
+template<class BasicSolidThermo, class MixtureType>
+Foam::tmp<Foam::fvScalarMatrix>
+Foam::heSolidThermo<BasicSolidThermo, MixtureType>::divq
+(
+    volScalarField& e
+) const
+{
+    return
+      - (
+            isotropic()
+          ?   fvc::laplacian(this->kappa(), this->T_)
+            + correction(fvm::laplacian(this->alpha(), e))
+          :   fvc::laplacian(KappaLocal(), this->T_)
+            + correction
+              (
+                  fvm::laplacian
+                  (
+                      KappaLocal()/this->Cv(),
+                      e,
+                      "laplacian(" + this->alpha().name() + ",e)"
+                  )
+              )
+        );
 }
 
 

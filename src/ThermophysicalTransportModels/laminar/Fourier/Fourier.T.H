@@ -25,7 +25,12 @@ Class
     Foam::laminarThermophysicalTransportModels::Fourier
 
 Description
-    Fourier's gradient heat flux model for laminar flow.
+    Fourier's temperature gradient heat flux model
+    for single specie laminar flow.
+
+    The heat flux source is implemented as an implicit energy correction to the
+    temperature gradient based flux source.  At convergence the energy
+    correction is 0.
 
 SourceFiles
     Fourier.C
@@ -96,14 +101,25 @@ public:
         //- Read thermophysicalTransport dictionary
         virtual bool read();
 
+        //- Effective mass diffusivity for a given specie mass-fraction [kg/m/s]
+        virtual tmp<volScalarField> DEff(const volScalarField& Yi) const;
+
+        //- Effective mass diffusivity for a given specie mass-fraction
+        //  for patch [kg/m/s]
+        virtual tmp<scalarField> DEff
+        (
+            const volScalarField& Yi,
+            const label patchi
+        ) const;
+
         //- Return the heat flux
-        virtual tmp<volVectorField> q() const;
+        virtual tmp<surfaceScalarField> q() const;
 
         //- Return the source term for the energy equation
         virtual tmp<fvScalarMatrix> divq(volScalarField& he) const;
 
         //- Return the specie flux for the given specie mass-fraction
-        virtual tmp<volVectorField> j(const volScalarField& Yi) const;
+        virtual tmp<surfaceScalarField> j(const volScalarField& Yi) const;
 
         //- Return the source term for the given specie mass-fraction equation
         virtual tmp<fvScalarMatrix> divj(volScalarField& Yi) const;

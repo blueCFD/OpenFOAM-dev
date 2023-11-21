@@ -75,6 +75,7 @@ SourceFiles
 #include "writeLocalObjects.H"
 #include "HashSet.T.H"
 #include "volFieldsFwd.H"
+#include "surfaceFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -108,11 +109,7 @@ protected:
         virtual void writeFileHeader(const label i);
 
         //- Calculate the heat-flux
-        tmp<volScalarField> calcWallHeatFlux
-        (
-            const volScalarField& alpha,
-            const volScalarField& he
-        );
+        tmp<volScalarField> calcWallHeatFlux(const surfaceScalarField& q);
 
 
 public:

@@ -25,10 +25,14 @@ Class
     Foam::turbulenceThermophysicalTransportModels::nonUnityLewisEddyDiffusivity
 
 Description
-    Non-unity-Lewis-Eddy-diffusivity based gradient heat flux model for RAS or
-    LES of turbulent flow. Allows independent specification of turbulent
-    Prandtl and Schmidt numbers. The laminar Lewis number is still assumed to
-    equal one.
+    Non-unity-Lewis-Eddy-diffusivity based temperature gradient heat flux model
+    for RAS or LES of turbulent flow. Allows independent specification of
+    turbulent Prandtl and Schmidt numbers.  Unity laminar Lewis number is
+    assumed.
+
+    The heat flux source is implemented as an implicit energy correction to the
+    temperature gradient based flux source.  At convergence the energy
+    correction is 0.
 
 Usage
     \verbatim
@@ -45,7 +49,7 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#include "eddyDiffusivity.H"
+#include "unityLewisEddyDiffusivity.H"
 
 #ifndef nonUnityLewisEddyDiffusivity_H
 #define nonUnityLewisEddyDiffusivity_H
@@ -64,7 +68,7 @@ namespace turbulenceThermophysicalTransportModels
 template<class TurbulenceThermophysicalTransportModel>
 class nonUnityLewisEddyDiffusivity
 :
-    public eddyDiffusivity<TurbulenceThermophysicalTransportModel>
+    public unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>
 {
 
 protected:
@@ -120,7 +124,7 @@ public:
             return volScalarField::New
             (
                 "DEff",
-                this->thermo().alphaEff(this->Prt_/Sct_*this->alphat())
+                this->thermo().alphaEff((this->Prt_/Sct_)*this->alphat())
             );
         }
 
@@ -140,7 +144,7 @@ public:
         }
 
         //- Return the heat flux
-        virtual tmp<volVectorField> q() const;
+        virtual tmp<surfaceScalarField> q() const;
 
         //- Return the source term for the energy equation
         virtual tmp<fvScalarMatrix> divq(volScalarField& he) const;

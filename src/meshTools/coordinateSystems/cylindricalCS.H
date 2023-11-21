@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::cylindricalCS
+    Foam::coordinateSystems::cylindrical
 
 Description
     Cylindrical coordinate system
@@ -41,12 +41,14 @@ SourceFiles
 
 namespace Foam
 {
+namespace coordinateSystems
+{
 
 /*---------------------------------------------------------------------------*\
-                        Class cylindricalCS Declaration
+                        Class cylindrical Declaration
 \*---------------------------------------------------------------------------*/
 
-class cylindricalCS
+class cylindrical
 :
     public coordinateSystem
 {
@@ -56,9 +58,7 @@ class cylindricalCS
         bool inDegrees_;
 
 
-protected:
-
-    // Protected Member Functions
+    // Private Member Functions
 
 
         //- Convert from local coordinate system to the global Cartesian system
@@ -88,29 +88,14 @@ protected:
 
 public:
 
+    //- Runtime type information
+    TypeName("cylindrical");
+
 
     // Constructors
 
-        //- Construct null
-        cylindricalCS(const bool inDegrees=true);
-
-        //- Construct copy
-        cylindricalCS
-        (
-            const coordinateSystem&,
-            const bool inDegrees=true
-        );
-
-        //- Construct copy with a different name
-        cylindricalCS
-        (
-            const word& name,
-            const coordinateSystem&,
-            const bool inDegrees=true
-        );
-
         //- Construct from origin and rotation
-        cylindricalCS
+        cylindrical
         (
             const word& name,
             const point& origin,
@@ -119,7 +104,7 @@ public:
         );
 
         //- Construct from origin and 2 axes
-        cylindricalCS
+        cylindrical
         (
             const word& name,
             const point& origin,
@@ -129,29 +114,24 @@ public:
         );
 
         //- Construct from dictionary and name
-        cylindricalCS(const word&, const dictionary&);
+        cylindrical(const word&, const dictionary&);
 
-        //- Construct from dictionary and objectRegistry
-        cylindricalCS(const objectRegistry&, const dictionary&);
+        //- Construct and return a clone
+        virtual autoPtr<coordinateSystem> clone() const
+        {
+            return autoPtr<coordinateSystem>(new cylindrical(*this));
+        }
 
 
     //- Destructor
-    virtual ~cylindricalCS();
-
-
-    // Member Functions
-
-        //- Are angles in degrees?
-        bool  inDegrees() const;
-
-        //- Non-const access to inDegrees
-        bool& inDegrees();
+    virtual ~cylindrical();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+} // End namespace coordinateSystems
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

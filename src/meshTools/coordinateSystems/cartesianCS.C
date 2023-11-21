@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,48 +24,65 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cartesianCS.H"
-
-#include "one.H"
-#include "mathematicalConstants.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(cartesianCS, 0);
-    addToRunTimeSelectionTable(coordinateSystem, cartesianCS, dictionary);
+namespace coordinateSystems
+{
+    defineTypeNameAndDebug(cartesian, 0);
+    addToRunTimeSelectionTable(coordinateSystem, cartesian, dictionary);
+}
+}
+
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+Foam::vector Foam::coordinateSystems::cartesian::localToGlobal
+(
+    const vector& local,
+    bool translate
+) const
+{
+    return coordinateSystem::localToGlobal(local, translate);
+}
+
+
+Foam::tmp<Foam::vectorField> Foam::coordinateSystems::cartesian::localToGlobal
+(
+    const vectorField& local,
+    bool translate
+) const
+{
+    return coordinateSystem::localToGlobal(local, translate);
+}
+
+
+Foam::vector Foam::coordinateSystems::cartesian::globalToLocal
+(
+    const vector& global,
+    bool translate
+) const
+{
+    return coordinateSystem::globalToLocal(global, translate);
+}
+
+
+Foam::tmp<Foam::vectorField> Foam::coordinateSystems::cartesian::globalToLocal
+(
+    const vectorField& global,
+    bool translate
+) const
+{
+    return coordinateSystem::globalToLocal(global, translate);
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::cartesianCS::cartesianCS()
-:
-    coordinateSystem()
-{}
-
-
-Foam::cartesianCS::cartesianCS
-(
-    const coordinateSystem& cs
-)
-:
-    coordinateSystem(cs)
-{}
-
-
-Foam::cartesianCS::cartesianCS
-(
-    const word& name,
-    const coordinateSystem& cs
-)
-:
-    coordinateSystem(name, cs)
-{}
-
-
-Foam::cartesianCS::cartesianCS
+Foam::coordinateSystems::cartesian::cartesian
 (
     const word& name,
     const point& origin,
@@ -76,7 +93,7 @@ Foam::cartesianCS::cartesianCS
 {}
 
 
-Foam::cartesianCS::cartesianCS
+Foam::coordinateSystems::cartesian::cartesian
 (
     const word& name,
     const point& origin,
@@ -88,7 +105,7 @@ Foam::cartesianCS::cartesianCS
 {}
 
 
-Foam::cartesianCS::cartesianCS
+Foam::coordinateSystems::cartesian::cartesian
 (
     const word& name,
     const dictionary& dict
@@ -98,63 +115,10 @@ Foam::cartesianCS::cartesianCS
 {}
 
 
-Foam::cartesianCS::cartesianCS
-(
-    const objectRegistry& obr,
-    const dictionary& dict
-)
-:
-    coordinateSystem(obr, dict)
-{}
-
-
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::cartesianCS::~cartesianCS()
+Foam::coordinateSystems::cartesian::~cartesian()
 {}
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-
-Foam::vector Foam::cartesianCS::localToGlobal
-(
-    const vector& local,
-    bool translate
-) const
-{
-    return coordinateSystem::localToGlobal(local, translate);
-}
-
-
-Foam::tmp<Foam::vectorField> Foam::cartesianCS::localToGlobal
-(
-    const vectorField& local,
-    bool translate
-) const
-{
-    return coordinateSystem::localToGlobal(local, translate);
-}
-
-
-Foam::vector Foam::cartesianCS::globalToLocal
-(
-    const vector& global,
-    bool translate
-) const
-{
-    return coordinateSystem::globalToLocal(global, translate);
-}
-
-
-Foam::tmp<Foam::vectorField> Foam::cartesianCS::globalToLocal
-(
-    const vectorField& global,
-    bool translate
-) const
-{
-    return coordinateSystem::globalToLocal(global, translate);
-}
 
 
 // ************************************************************************* //

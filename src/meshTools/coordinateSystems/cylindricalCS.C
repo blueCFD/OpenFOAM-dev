@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,114 +24,24 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cylindricalCS.H"
-
-#include "one.H"
 #include "mathematicalConstants.H"
 #include "addToRunTimeSelectionTable.H"
 
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::cylindricalCS::cylindricalCS(const bool inDegrees)
-:
-    coordinateSystem(),
-    inDegrees_(inDegrees)
-{}
-
-
-Foam::cylindricalCS::cylindricalCS
-(
-    const coordinateSystem& cs,
-    const bool inDegrees
-)
-:
-    coordinateSystem(cs),
-    inDegrees_(inDegrees)
-{}
-
-
-Foam::cylindricalCS::cylindricalCS
-(
-    const word& name,
-    const coordinateSystem& cs,
-    const bool inDegrees
-)
-:
-    coordinateSystem(name, cs),
-    inDegrees_(inDegrees)
-{}
-
-
-Foam::cylindricalCS::cylindricalCS
-(
-    const word& name,
-    const point& origin,
-    const coordinateRotation& cr,
-    const bool inDegrees
-)
-:
-    coordinateSystem(name, origin, cr),
-    inDegrees_(inDegrees)
-{}
-
-
-Foam::cylindricalCS::cylindricalCS
-(
-    const word& name,
-    const point& origin,
-    const vector& axis,
-    const vector& dirn,
-    const bool inDegrees
-)
-:
-    coordinateSystem(name, origin, axis, dirn),
-    inDegrees_(inDegrees)
-{}
-
-
-Foam::cylindricalCS::cylindricalCS
-(
-    const word& name,
-    const dictionary& dict
-)
-:
-    coordinateSystem(name, dict),
-    inDegrees_(dict.lookupOrDefault("degrees", true))
-{}
-
-
-Foam::cylindricalCS::cylindricalCS
-(
-    const objectRegistry& obr,
-    const dictionary& dict
-)
-:
-    coordinateSystem(obr, dict),
-    inDegrees_(dict.lookupOrDefault("degrees", true))
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::cylindricalCS::~cylindricalCS()
-{}
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool Foam::cylindricalCS::inDegrees() const
+namespace Foam
 {
-    return inDegrees_;
+namespace coordinateSystems
+{
+    defineTypeNameAndDebug(cylindrical, 0);
+    addToRunTimeSelectionTable(coordinateSystem, cylindrical, dictionary);
+}
 }
 
 
-bool& Foam::cylindricalCS::inDegrees()
-{
-    return inDegrees_;
-}
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-
-Foam::vector Foam::cylindricalCS::localToGlobal
+Foam::vector Foam::coordinateSystems::cylindrical::localToGlobal
 (
     const vector& local,
     bool translate
@@ -150,7 +60,7 @@ Foam::vector Foam::cylindricalCS::localToGlobal
 }
 
 
-Foam::tmp<Foam::vectorField> Foam::cylindricalCS::localToGlobal
+Foam::tmp<Foam::vectorField> Foam::coordinateSystems::cylindrical::localToGlobal
 (
     const vectorField& local,
     bool translate
@@ -162,7 +72,6 @@ Foam::tmp<Foam::vectorField> Foam::cylindricalCS::localToGlobal
        *(inDegrees_ ? constant::mathematical::pi/180.0 : 1.0)
     );
 
-
     vectorField lc(local.size());
     lc.replace(vector::X, local.component(vector::X)*cos(theta));
     lc.replace(vector::Y, local.component(vector::X)*sin(theta));
@@ -172,7 +81,7 @@ Foam::tmp<Foam::vectorField> Foam::cylindricalCS::localToGlobal
 }
 
 
-Foam::vector Foam::cylindricalCS::globalToLocal
+Foam::vector Foam::coordinateSystems::cylindrical::globalToLocal
 (
     const vector& global,
     bool translate
@@ -196,7 +105,7 @@ Foam::vector Foam::cylindricalCS::globalToLocal
 }
 
 
-Foam::tmp<Foam::vectorField> Foam::cylindricalCS::globalToLocal
+Foam::tmp<Foam::vectorField> Foam::coordinateSystems::cylindrical::globalToLocal
 (
     const vectorField& global,
     bool translate
@@ -230,6 +139,52 @@ Foam::tmp<Foam::vectorField> Foam::cylindricalCS::globalToLocal
 
     return tresult;
 }
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::coordinateSystems::cylindrical::cylindrical
+(
+    const word& name,
+    const point& origin,
+    const coordinateRotation& cr,
+    const bool inDegrees
+)
+:
+    coordinateSystem(name, origin, cr),
+    inDegrees_(inDegrees)
+{}
+
+
+Foam::coordinateSystems::cylindrical::cylindrical
+(
+    const word& name,
+    const point& origin,
+    const vector& axis,
+    const vector& dirn,
+    const bool inDegrees
+)
+:
+    coordinateSystem(name, origin, axis, dirn),
+    inDegrees_(inDegrees)
+{}
+
+
+Foam::coordinateSystems::cylindrical::cylindrical
+(
+    const word& name,
+    const dictionary& dict
+)
+:
+    coordinateSystem(name, dict),
+    inDegrees_(dict.lookupOrDefault("degrees", true))
+{}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::coordinateSystems::cylindrical::~cylindrical()
+{}
 
 
 // ************************************************************************* //

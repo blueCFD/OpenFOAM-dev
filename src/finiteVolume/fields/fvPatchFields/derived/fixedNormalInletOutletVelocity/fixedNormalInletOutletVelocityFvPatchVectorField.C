@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,19 +97,6 @@ fixedNormalInletOutletVelocityFvPatchVectorField
 Foam::fixedNormalInletOutletVelocityFvPatchVectorField::
 fixedNormalInletOutletVelocityFvPatchVectorField
 (
-    const fixedNormalInletOutletVelocityFvPatchVectorField& pivpvf
-)
-:
-    directionMixedFvPatchVectorField(pivpvf),
-    phiName_(pivpvf.phiName_),
-    fixTangentialInflow_(pivpvf.fixTangentialInflow_),
-    normalVelocity_(pivpvf.normalVelocity().clone())
-{}
-
-
-Foam::fixedNormalInletOutletVelocityFvPatchVectorField::
-fixedNormalInletOutletVelocityFvPatchVectorField
-(
     const fixedNormalInletOutletVelocityFvPatchVectorField& pivpvf,
     const DimensionedField<vector, volMesh>& iF
 )
@@ -117,7 +104,7 @@ fixedNormalInletOutletVelocityFvPatchVectorField
     directionMixedFvPatchVectorField(pivpvf, iF),
     phiName_(pivpvf.phiName_),
     fixTangentialInflow_(pivpvf.fixTangentialInflow_),
-    normalVelocity_(pivpvf.normalVelocity().clone())
+    normalVelocity_(pivpvf.normalVelocity().clone(iF))
 {}
 
 

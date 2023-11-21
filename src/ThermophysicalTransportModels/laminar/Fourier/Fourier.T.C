@@ -25,6 +25,7 @@ License
 
 #include "Fourier.T.H"
 #include "fvmLaplacian.H"
+#include "fvcLaplacian.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,17 +69,54 @@ bool Fourier<BasicThermophysicalTransportModel>::read()
 }
 
 
-template<class BasicThermophysicalTransportModel>
-tmp<volVectorField>Fourier<BasicThermophysicalTransportModel>::q() const
+template<class TurbulenceThermophysicalTransportModel>
+tmp<volScalarField>
+Fourier<TurbulenceThermophysicalTransportModel>::DEff
+(
+    const volScalarField& Yi
+) const
 {
-    return volVectorField::New
+    FatalErrorInFunction
+        << type() << " supports single component systems only, " << nl
+        << "    for multi-component transport select"
+           " unityLewisFourier"
+        << exit(FatalError);
+
+    return tmp<volScalarField>(nullptr);
+}
+
+
+template<class TurbulenceThermophysicalTransportModel>
+tmp<scalarField>
+Fourier<TurbulenceThermophysicalTransportModel>::DEff
+(
+    const volScalarField& Yi,
+    const label patchi
+) const
+{
+    FatalErrorInFunction
+        << type() << " supports single component systems only, " << nl
+        << "    for multi-component transport select"
+           " unityLewisFourier"
+        << exit(FatalError);
+
+    return tmp<scalarField>(nullptr);
+}
+
+
+template<class BasicThermophysicalTransportModel>
+tmp<surfaceScalarField> Fourier<BasicThermophysicalTransportModel>::q() const
+{
+    const thermoModel& thermo = this->thermo();
+
+    return surfaceScalarField::New
     (
         IOobject::groupName
         (
             "q",
             this->momentumTransport().alphaRhoPhi().group()
         ),
-       -this->thermo().alpha()*this->alpha()*fvc::grad(this->thermo().he())
+        -fvc::interpolate(this->alpha()*thermo.kappa())*fvc::snGrad(thermo.T())
     );
 }
 
@@ -87,25 +125,29 @@ template<class BasicThermophysicalTransportModel>
 tmp<fvScalarMatrix>
 Fourier<BasicThermophysicalTransportModel>::divq(volScalarField& he) const
 {
-    return -fvm::laplacian(this->alpha()*this->thermo().alpha(), he);
+    const thermoModel& thermo = this->thermo();
+
+    // Return heat flux source as an implicit energy correction
+    // to the temperature gradient flux
+    return
+        -correction(fvm::laplacian(this->alpha()*thermo.alpha(), he))
+        -fvc::laplacian(this->alpha()*thermo.kappa(), thermo.T());
 }
 
 
 template<class BasicThermophysicalTransportModel>
-tmp<volVectorField>Fourier<BasicThermophysicalTransportModel>::j
+tmp<surfaceScalarField> Fourier<BasicThermophysicalTransportModel>::j
 (
     const volScalarField& Yi
 ) const
 {
-    return volVectorField::New
-    (
-        IOobject::groupName
-        (
-            "j(" + Yi.name() + ')',
-            this->momentumTransport().alphaRhoPhi().group()
-        ),
-       -this->thermo().alpha()*this->alpha()*fvc::grad(Yi)
-    );
+    FatalErrorInFunction
+        << type() << " supports single component systems only, " << nl
+        << "    for multi-component transport select"
+           " unityLewisFourier"
+        << exit(FatalError);
+
+    return tmp<surfaceScalarField>(nullptr);
 }
 
 
@@ -113,7 +155,13 @@ template<class BasicThermophysicalTransportModel>
 tmp<fvScalarMatrix>
 Fourier<BasicThermophysicalTransportModel>::divj(volScalarField& Yi) const
 {
-    return -fvm::laplacian(this->alpha()*this->thermo().alpha(), Yi);
+    FatalErrorInFunction
+        << type() << " supports single component systems only, " << nl
+        << "    for multi-component transport select"
+           " unityLewisFourier"
+        << exit(FatalError);
+
+    return tmp<fvScalarMatrix>(nullptr);
 }
 
 

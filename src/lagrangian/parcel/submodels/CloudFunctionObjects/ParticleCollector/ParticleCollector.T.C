@@ -30,6 +30,7 @@ License
 #include "Random.H"
 #include "triangle.H"
 #include "cloud.H"
+#include "axesRotation.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -194,7 +195,14 @@ void Foam::ParticleCollector<CloudType>::initConcentricCircles()
     faces_.setSize(nFace);
     area_.setSize(nFace);
 
-    coordSys_ = cylindricalCS("coordSys", origin, normal_[0], refDir, false);
+    coordSys_ = coordinateSystems::cylindrical
+    (
+        "coordSys",
+        origin,
+        normal_[0],
+        refDir,
+        false
+    );
 
     List<label> ptIDs(identity(nPointPerRadius));
 
@@ -522,7 +530,7 @@ Foam::ParticleCollector<CloudType>::ParticleCollector
     faceTris_(),
     nSector_(0),
     radius_(),
-    coordSys_(false),
+    coordSys_("coordSys", vector::zero, axesRotation(sphericalTensor::I)),
     normal_(),
     negateParcelsOppositeNormal_
     (

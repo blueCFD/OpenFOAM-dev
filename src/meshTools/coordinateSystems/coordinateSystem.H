@@ -61,15 +61,9 @@ SourceFiles
 #ifndef coordinateSystem_H
 #define coordinateSystem_H
 
-#include "vector.H"
-#include "point.T.H"
-#include "tensor.H"
-#include "vectorField.H"
-#include "pointField.H"
-#include "tmp.H"
 #include "coordinateRotation.H"
 #include "objectRegistry.H"
-#include "autoPtr.H"
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -95,14 +89,11 @@ class coordinateSystem
         //- Name of coordinate system
         word name_;
 
-        //- Optional note
-        string note_;
-
         //- Origin
         point origin_;
 
         //- Local-to-Global transformation tensor
-        autoPtr<coordinateRotation> R_;
+        mutable autoPtr<coordinateRotation> R_;
 
 
 protected:
@@ -133,12 +124,6 @@ protected:
             bool translate
         ) const;
 
-        //- Init from dict and obr
-        void init(const dictionary&);
-
-        //- Init from dictionary
-        void init(const dictionary&, const objectRegistry&);
-
 
 public:
 
@@ -148,14 +133,11 @@ public:
 
     // Constructors
 
-        //- Construct null. This is equivalent to an identity coordinateSystem
-        coordinateSystem();
-
-        //- Construct copy with a different name
+        //- Construct from origin
         coordinateSystem
         (
             const word& name,
-            const coordinateSystem&
+            const point& origin
         );
 
         //- Construct from origin and rotation
@@ -178,23 +160,11 @@ public:
         //- Construct from dictionary with a given name
         coordinateSystem(const word& name, const dictionary&);
 
-        //- Construct from dictionary with default name
-        coordinateSystem(const dictionary&);
-
-        //- Construct from dictionary (default name)
-        //  With the ability to reference global coordinateSystems
-        coordinateSystem(const objectRegistry&, const dictionary&);
-
-        //- Construct from Istream
-        //  The Istream contains a word followed by a dictionary
-        coordinateSystem(Istream&);
-
-
-    //- Return clone
-    autoPtr<coordinateSystem> clone() const
-    {
-        return autoPtr<coordinateSystem>(new coordinateSystem(*this));
-    }
+        //- Construct and return a clone
+        virtual autoPtr<coordinateSystem> clone() const
+        {
+            return autoPtr<coordinateSystem>(new coordinateSystem(*this));
+        }
 
 
     // Declare run-time constructor selection table
@@ -204,10 +174,10 @@ public:
         coordinateSystem,
         dictionary,
         (
-            const objectRegistry& obr,
+            const word& name,
             const dictionary& dict
         ),
-        (obr, dict)
+        (name, dict)
     );
 
 
@@ -220,14 +190,12 @@ public:
             const dictionary& dict
         );
 
-        //- Select constructed from dictionary
+        //- Select constructed from name and dictionary
         static autoPtr<coordinateSystem> New
         (
+            const word& name,
             const dictionary& dict
         );
-
-        //- Select constructed from Istream
-        static autoPtr<coordinateSystem> New(Istream& is);
 
 
     //- Destructor
@@ -244,16 +212,10 @@ public:
                 return name_;
             }
 
-            //- Return non-constant access to the optional note
-            string& note()
+            //- Return keyword
+            const word& keyword() const
             {
-                return note_;
-            }
-
-            //- Return the optional note
-            const string& note() const
-            {
-                return note_;
+                return name_;
             }
 
             //- Return origin
@@ -268,46 +230,12 @@ public:
                 return R_();
             }
 
-            //- Return non const reference to co-ordinate rotation
-            coordinateRotation& R()
+            //- Update and return the co-ordinate rotation for a list of points
+            const coordinateRotation& R(const UList<vector>& points) const
             {
+                R_->updatePoints(points);
                 return R_();
             }
-
-            //- Update and return the co-ordinate rotation for a list of cells
-            const coordinateRotation& R
-            (
-                const polyMesh& mesh,
-                const labelList& cells
-            )
-            {
-                R_->updateCells(mesh, cells);
-                return R_();
-            }
-
-            //- Return as dictionary of entries
-            //  \param[in] ignoreType drop type (cartesian, cylindrical, etc)
-            //  when generating the dictionary
-            virtual dictionary dict(bool ignoreType=false) const;
-
-
-        // Edit
-
-            //- Rename
-            void rename(const word& newName)
-            {
-                name_ = newName;
-            }
-
-            //- Edit access to origin
-            point& origin()
-            {
-                return origin_;
-            }
-
-            //- Reset origin and rotation to an identity coordinateSystem
-            //  Also resets the note
-            virtual void clear();
 
 
         // Write
@@ -378,20 +306,9 @@ public:
             }
 
 
-    // Member Operators
+    // IOstream Operators
 
-        // friend Operators
-
-            friend bool operator!=
-            (
-                const coordinateSystem&,
-                const coordinateSystem&
-            );
-
-
-        // IOstream Operators
-
-            friend Ostream& operator<<(Ostream&, const coordinateSystem&);
+        friend Ostream& operator<<(Ostream&, const coordinateSystem&);
 };
 
 

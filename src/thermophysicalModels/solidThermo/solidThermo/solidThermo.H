@@ -40,6 +40,7 @@ SourceFiles
 
 #include "basicThermo.H"
 #include "uniformGeometricFields.H"
+#include "fvScalarMatrix.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -114,25 +115,33 @@ public:
 
     // Member Functions
 
-        // Fields derived from thermodynamic state variables
+        //- Density [kg/m^3]
+        virtual tmp<volScalarField> rho() const = 0;
 
-            //- Density [kg/m^3]
-            virtual tmp<volScalarField> rho() const = 0;
+        //- Density for patch [kg/m^3]
+        virtual tmp<scalarField> rho(const label patchi) const = 0;
 
-            //- Density for patch [kg/m^3]
-            virtual tmp<scalarField> rho(const label patchi) const = 0;
+        //- Return non-const access to the local density field [kg/m^3]
+        virtual volScalarField& rho() = 0;
 
-            //- Return non-const access to the local density field [kg/m^3]
-            virtual volScalarField& rho() = 0;
+        //- Return true if thermal conductivity is isotropic
+        virtual bool isotropic() const = 0;
 
-            //- Anisotropic thermal conductivity [W/m/K]
-            virtual tmp<volVectorField> Kappa() const = 0;
+        //- Anisotropic thermal conductivity [W/m/K]
+        virtual tmp<volVectorField> Kappa() const = 0;
 
-            //- Anisotropic thermal conductivity for patch [W/m/K]
-            virtual tmp<vectorField> Kappa(const label patchi) const = 0;
+        //- Anisotropic thermal conductivity for patch [W/m/K]
+        virtual tmp<vectorField> Kappa(const label patchi) const = 0;
 
-            //- Return true if thermal conductivity is isotropic
-            virtual bool isotropic() const = 0;
+        //- Anisotropic thermal conductivity for patch
+        //  in the local coordinate system [W/m/K]
+        virtual tmp<symmTensorField> KappaLocal(const label patchi) const = 0;
+
+        //- Return the heat flux
+        virtual tmp<surfaceScalarField> q() const = 0;
+
+        //- Return the source term for the energy equation
+        virtual tmp<fvScalarMatrix> divq(volScalarField& he) const = 0;
 };
 
 
@@ -184,25 +193,14 @@ public:
 
     // Member Functions
 
-        // Fields derived from thermodynamic state variables
+        //- Density [kg/m^3]
+        virtual tmp<volScalarField> rho() const;
 
-            //- Density [kg/m^3]
-            virtual tmp<volScalarField> rho() const;
+        //- Density for patch [kg/m^3]
+        virtual tmp<scalarField> rho(const label patchi) const;
 
-            //- Density for patch [kg/m^3]
-            virtual tmp<scalarField> rho(const label patchi) const;
-
-            //- Return non-const access to the local density field [kg/m^3]
-            virtual volScalarField& rho();
-
-            //- Anisotropic thermal conductivity [W/m/K]
-            virtual tmp<volVectorField> Kappa() const = 0;
-
-            //- Anisotropic thermal conductivity for patch [W/m/K]
-            virtual tmp<vectorField> Kappa(const label patchi) const = 0;
-
-            //- Return true if thermal conductivity is isotropic
-            virtual bool isotropic() const = 0;
+        //- Return non-const access to the local density field [kg/m^3]
+        virtual volScalarField& rho();
 };
 
 
@@ -242,6 +240,7 @@ public:
             solidThermo::implementation(mesh, dict, phaseName)
         {}
 };
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

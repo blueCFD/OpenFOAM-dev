@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::cartesianCS
+    Foam::coordinateSystems::cartesian
 
 Description
     Cylindrical coordinate system
@@ -36,25 +36,23 @@ SourceFiles
 #define cartesianCS_H
 
 #include "coordinateSystem.H"
-#include "typeInfo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace coordinateSystems
+{
 
 /*---------------------------------------------------------------------------*\
-                         Class cartesianCS Declaration
+                         Class cartesian Declaration
 \*---------------------------------------------------------------------------*/
 
-class cartesianCS
+class cartesian
 :
     public coordinateSystem
 {
-protected:
-
-    // Protected Member Functions
-
+    // Private Member Functions
 
         //- Convert from local coordinate system to the global Cartesian system
         //  with optional translation for the origin
@@ -89,24 +87,8 @@ public:
 
     // Constructors
 
-        //- Construct null
-        cartesianCS();
-
-        //- Construct copy
-        cartesianCS
-        (
-            const coordinateSystem&
-        );
-
-        //- Construct copy with a different name
-        cartesianCS
-        (
-            const word& name,
-            const coordinateSystem&
-        );
-
         //- Construct from origin and rotation
-        cartesianCS
+        cartesian
         (
             const word& name,
             const point& origin,
@@ -114,7 +96,7 @@ public:
         );
 
         //- Construct from origin and 2 axes
-        cartesianCS
+        cartesian
         (
             const word& name,
             const point& origin,
@@ -123,22 +105,24 @@ public:
         );
 
         //- Construct from dictionary
-        cartesianCS(const word&, const dictionary&);
+        cartesian(const word&, const dictionary&);
 
-
-        //- Construct from dictionary and objectRegistry
-        cartesianCS(const objectRegistry&, const dictionary&);
+        //- Construct and return a clone
+        virtual autoPtr<coordinateSystem> clone() const
+        {
+            return autoPtr<coordinateSystem>(new cartesian(*this));
+        }
 
 
     //- Destructor
-    virtual ~cartesianCS();
-
+    virtual ~cartesian();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+} // End namespace coordinateSystems
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
