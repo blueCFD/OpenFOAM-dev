@@ -19,8 +19,6 @@ option1
 {
     type            verticalDamping;
 
-    selectionMode   all;
-
     origin          (1200 0 0);
     direction       (1 0 0);
     scale
@@ -31,9 +29,6 @@ option1
     }
 
     lambda          0.5;
-
-    timeStart       0;
-    duration        1e6;
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,14 +38,6 @@ namespace diameterModels
 }
 
 
-// * * * * * * * * * * * * Protected Member Functions * * * * * * * * * * * //
-
-Foam::tmp<Foam::volScalarField> Foam::diameterModels::isothermal::calcD() const
-{
-    return d_;
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::diameterModels::isothermal::isothermal
@@ -57,10 +49,18 @@ Foam::diameterModels::isothermal::isothermal
     spherical(diameterProperties, phase),
     d0_("d0", dimLength, diameterProperties),
     p0_("p0", dimPressure, diameterProperties),
-    d_(dRef())
-{
-    d_ = d0_;
-}
+    d_
+    (
+        IOobject
+        (
+            IOobject::groupName("d", phase.name()),
+            phase.time().timeName(),
+            phase.mesh()
+        ),
+        phase.mesh(),
+        d0_
+    )
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -70,6 +70,12 @@ Foam::diameterModels::isothermal::~isothermal()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField> Foam::diameterModels::isothermal::d() const
+{
+    return d_;
+}
+
 
 void Foam::diameterModels::isothermal::correct()
 {

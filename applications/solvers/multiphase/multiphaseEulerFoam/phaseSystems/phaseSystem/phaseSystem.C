@@ -36,6 +36,7 @@ License
 #include "unitConversion.H"
 #include "dragModel.H"
 #include "BlendedInterfacialModel.T.H"
+#include "movingWallVelocityFvPatchVectorField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -763,7 +764,7 @@ void Foam::phaseSystem::correctContinuityError()
             )
         );
 
-        if (fvOptions().appliesToField(rho.name()))
+        if (fvOptions().addsSupToField(rho.name()))
         {
             source += fvOptions()(alpha, rho)&rho;
         }
@@ -838,6 +839,50 @@ void Foam::phaseSystem::correctEnergyTransport()
     forAll(phaseModels_, phasei)
     {
         phaseModels_[phasei].correctEnergyTransport();
+    }
+}
+
+
+void Foam::phaseSystem::meshUpdate()
+{
+    if (mesh_.changing())
+    {
+        MRF_.update();
+
+        // forAll(phaseModels_, phasei)
+        // {
+        //     phaseModels_[phasei].meshUpdate();
+        // }
+    }
+}
+
+
+void Foam::phaseSystem::correctBoundaryFlux()
+{
+    forAll(movingPhases(), movingPhasei)
+    {
+        phaseModel& phase = movingPhases()[movingPhasei];
+
+        const volVectorField::Boundary& UBf = phase.U()().boundaryField();
+
+        FieldField<fvsPatchField, scalar> phiRelBf
+        (
+            MRF_.relative(mesh_.Sf().boundaryField() & UBf)
+        );
+
+        surfaceScalarField::Boundary& phiBf = phase.phiRef().boundaryFieldRef();
+
+        forAll(mesh_.boundary(), patchi)
+        {
+            if
+            (
+                isA<fixedValueFvsPatchScalarField>(phiBf[patchi])
+             && !isA<movingWallVelocityFvPatchVectorField>(UBf[patchi])
+            )
+            {
+                phiBf[patchi] == phiRelBf[patchi];
+            }
+        }
     }
 }
 

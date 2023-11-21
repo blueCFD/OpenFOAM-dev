@@ -19,8 +19,6 @@ option1
 {
     type            isotropicDamping;
 
-    selectionMode   all;
-
     origin          (1200 0 0);
     direction       (1 0 0);
     scale
@@ -32,9 +30,6 @@ option1
 
     value           (2 0 0);
     lambda          0.5;
-
-    timeStart       0;
-    duration        1e6;
 }
 
 

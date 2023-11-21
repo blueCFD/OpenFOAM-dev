@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,7 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template <class Function1Type>
+template<class Function1Type>
 void Foam::Function1s::Ramp<Function1Type>::read(const dictionary& dict)
 {
     start_ = dict.lookupOrDefault<scalar>("start", 0);
@@ -35,7 +35,7 @@ void Foam::Function1s::Ramp<Function1Type>::read(const dictionary& dict)
 }
 
 
-template <class Function1Type>
+template<class Function1Type>
 Foam::Function1s::Ramp<Function1Type>::Ramp
 (
     const word& name,
@@ -50,14 +50,14 @@ Foam::Function1s::Ramp<Function1Type>::Ramp
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-template <class Function1Type>
+template<class Function1Type>
 Foam::Function1s::Ramp<Function1Type>::~Ramp()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template <class Function1Type>
+template<class Function1Type>
 void Foam::Function1s::Ramp<Function1Type>::write(Ostream& os) const
 {
     writeEntry(os, "start", start_);

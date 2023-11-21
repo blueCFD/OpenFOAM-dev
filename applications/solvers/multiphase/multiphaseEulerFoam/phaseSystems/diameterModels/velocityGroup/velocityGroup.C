@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -135,41 +135,6 @@ void Foam::diameterModels::velocityGroup::scale()
 }
 
 
-// * * * * * * * * * * * * Protected Member Functions * * * * * * * * * * * //
-
-Foam::tmp<Foam::volScalarField>
-Foam::diameterModels::velocityGroup::calcD() const
-{
-    return d_;
-}
-
-
-Foam::tmp<Foam::volScalarField>
-Foam::diameterModels::velocityGroup::calcA() const
-{
-    tmp<volScalarField> tA
-    (
-        volScalarField::New
-        (
-            "a",
-            phase().mesh(),
-            dimensionedScalar(inv(dimLength), Zero)
-        )
-    );
-
-    volScalarField& a = tA.ref();
-
-    forAll(sizeGroups_, i)
-    {
-        const sizeGroup& fi = sizeGroups_[i];
-
-        a += fi.a()*fi/fi.x();
-    }
-
-    return phase()*a;
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::diameterModels::velocityGroup::velocityGroup
@@ -205,10 +170,8 @@ Foam::diameterModels::velocityGroup::velocityGroup
         diameterProperties.lookup("sizeGroups"),
         sizeGroup::iNew(phase, *this)
     ),
-    d_(dRef())
-{
-    d_ = dsm();
-}
+    d_(IOobject::groupName("d", phase.name()), dsm())
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -218,6 +181,37 @@ Foam::diameterModels::velocityGroup::~velocityGroup()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField> Foam::diameterModels::velocityGroup::d() const
+{
+    return d_;
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::diameterModels::velocityGroup::a() const
+{
+    tmp<volScalarField> tA
+    (
+        volScalarField::New
+        (
+            "a",
+            phase().mesh(),
+            dimensionedScalar(inv(dimLength), Zero)
+        )
+    );
+
+    volScalarField& a = tA.ref();
+
+    forAll(sizeGroups_, i)
+    {
+        const sizeGroup& fi = sizeGroups_[i];
+
+        a += fi.a()*fi/fi.x();
+    }
+
+    return phase()*a;
+}
+
 
 void Foam::diameterModels::velocityGroup::correct()
 {

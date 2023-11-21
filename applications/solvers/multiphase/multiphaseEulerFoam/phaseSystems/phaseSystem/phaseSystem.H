@@ -675,6 +675,12 @@ public:
             //- Correct the energy transport e.g. alphat
             virtual void correctEnergyTransport();
 
+            //- Update the fluid properties for mesh changes
+            virtual void meshUpdate();
+
+            //- Correct fixed-flux BCs to be consistent with the velocity BCs
+            void correctBoundaryFlux();
+
 
         // IO
 

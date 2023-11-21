@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -108,7 +108,7 @@ class velocityGroup
         PtrList<sizeGroup> sizeGroups_;
 
         //- Sauter-mean diameter of the phase
-        volScalarField& d_;
+        volScalarField d_;
 
 
     // Private Member Functions
@@ -122,17 +122,6 @@ class velocityGroup
         void scale();
 
 
-protected:
-
-    // Protected Member Functions
-
-        //- Get the diameter field
-        virtual tmp<volScalarField> calcD() const;
-
-        //- Get the surface area per unit volume field
-        virtual tmp<volScalarField> calcA() const;
-
-
 public:
 
     //- Runtime type information
@@ -141,7 +130,7 @@ public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from dictionary and phase
         velocityGroup
         (
             const dictionary& diameterProperties,
@@ -164,7 +153,13 @@ public:
         //- Return sizeGroups belonging to this velocityGroup
         inline const PtrList<sizeGroup>& sizeGroups() const;
 
-        //- Correct the diameter field
+        //- Get the diameter field
+        virtual tmp<volScalarField> d() const;
+
+        //- Get the surface area per unit volume field
+        virtual tmp<volScalarField> a() const;
+
+        //- Correct the model
         virtual void correct();
 
         //- Read diameterProperties dictionary

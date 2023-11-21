@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,13 +57,59 @@ const Foam::NamedEnum<Foam::fv::semiImplicitSource::volumeMode, 2>
     Foam::fv::semiImplicitSource::volumeModeNames_;
 
 
-// * * * * * * * * * * * ** Private Member Functions  ** * * * * * * * * * * //
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+void Foam::fv::semiImplicitSource::readCoeffs()
+{
+    // Get the volume mode
+    volumeMode_ = volumeModeNames_.read(coeffs_.lookup("volumeMode"));
+
+    // Set volume normalisation
+    switch (volumeMode_)
+    {
+        case volumeMode::absolute:
+            VDash_ = V();
+            break;
+        case volumeMode::specific:
+            VDash_ = 1;
+            break;
+    }
+
+    // Set field source terms
+    fieldSp_.clear();
+    fieldSu_.clear();
+    forAllConstIter(dictionary, coeffs_.subDict("sources"), iter)
+    {
+        fieldSu_.set
+        (
+            iter().keyword(),
+            objectFunction1::New<VolField>
+            (
+                "explicit",
+                iter().dict(),
+                iter().keyword(),
+                mesh_,
+                false
+            ).ptr()
+        );
+        fieldSp_.set
+        (
+            iter().keyword(),
+            Function1<scalar>::New
+            (
+                "implicit",
+                iter().dict()
+            ).ptr()
+        );
+    }
+}
+
 
 template<class Type>
 void Foam::fv::semiImplicitSource::addSupType
 (
     fvMatrix<Type>& eqn,
-    const label fieldi
+    const word& fieldName
 ) const
 {
     if (debug)
@@ -80,7 +126,7 @@ void Foam::fv::semiImplicitSource::addSupType
     (
         IOobject
         (
-            name_ + fieldNames_[fieldi] + "Su",
+            name_ + fieldName + "Su",
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
@@ -97,13 +143,14 @@ void Foam::fv::semiImplicitSource::addSupType
     );
 
     // Explicit source function for the field
-    UIndirectList<Type>(Su, cells()) = fieldSu_[fieldi].value<Type>(t)/VDash_;
+    UIndirectList<Type>(Su, cells()) =
+        fieldSu_[fieldName]->value<Type>(t)/VDash_;
 
     volScalarField::Internal Sp
     (
         IOobject
         (
-            name_ + fieldNames_[fieldi] + "Sp",
+            name_ + fieldName + "Sp",
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
@@ -120,7 +167,8 @@ void Foam::fv::semiImplicitSource::addSupType
     );
 
     // Implicit source function for the field
-    UIndirectList<scalar>(Sp, cells()) = fieldSp_[fieldi].value(t)/VDash_;
+    UIndirectList<scalar>(Sp, cells()) =
+        fieldSp_[fieldName]->value(t)/VDash_;
 
     eqn += Su + fvm::SuSp(Sp, psi);
 }
@@ -131,16 +179,23 @@ void Foam::fv::semiImplicitSource::addSupType
 (
     const volScalarField& rho,
     fvMatrix<Type>& eqn,
-    const label fieldi
+    const word& fieldName
 ) const
 {
-    if (debug)
-    {
-        Info<< "semiImplicitSource<" << pTraits<Type>::typeName
-            << ">::addSup for source " << name_ << endl;
-    }
+    return this->addSup(eqn, fieldName);
+}
 
-    return this->addSup(eqn, fieldi);
+
+template<class Type>
+void Foam::fv::semiImplicitSource::addSupType
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<Type>& eqn,
+    const word& fieldName
+) const
+{
+    return this->addSup(eqn, fieldName);
 }
 
 
@@ -158,7 +213,7 @@ Foam::fv::semiImplicitSource::semiImplicitSource
     volumeMode_(volumeMode::absolute),
     VDash_(1)
 {
-    read(dict);
+    readCoeffs();
 }
 
 
@@ -170,221 +225,26 @@ Foam::fv::semiImplicitSource::~semiImplicitSource()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::fv::semiImplicitSource::addSup
-(
-    fvMatrix<scalar>& eqn,
-    const label fieldi
-) const
+Foam::wordList Foam::fv::semiImplicitSource::addSupFields() const
 {
-    addSupType(eqn, fieldi);
+    return fieldSu_.toc();
 }
 
 
-void Foam::fv::semiImplicitSource::addSup
-(
-    fvMatrix<vector>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
+FOR_ALL_FIELD_TYPES(IMPLEMENT_FV_OPTION_ADD_SUP, semiImplicitSource);
 
 
-void Foam::fv::semiImplicitSource::addSup
-(
-    fvMatrix<symmTensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
+FOR_ALL_FIELD_TYPES(IMPLEMENT_FV_OPTION_ADD_RHO_SUP, semiImplicitSource);
 
 
-void Foam::fv::semiImplicitSource::addSup
-(
-    fvMatrix<sphericalTensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    fvMatrix<tensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& rho,
-    fvMatrix<scalar>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& rho,
-    fvMatrix<vector>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& rho,
-    fvMatrix<symmTensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& rho,
-    fvMatrix<sphericalTensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& rho,
-    fvMatrix<tensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& alpha,
-    const volScalarField& rho,
-    fvMatrix<scalar>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& alpha,
-    const volScalarField& rho,
-    fvMatrix<vector>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& alpha,
-    const volScalarField& rho,
-    fvMatrix<symmTensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& alpha,
-    const volScalarField& rho,
-    fvMatrix<sphericalTensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
-
-
-void Foam::fv::semiImplicitSource::addSup
-(
-    const volScalarField& alpha,
-    const volScalarField& rho,
-    fvMatrix<tensor>& eqn,
-    const label fieldi
-) const
-{
-    addSupType(eqn, fieldi);
-}
+FOR_ALL_FIELD_TYPES(IMPLEMENT_FV_OPTION_ADD_ALPHA_RHO_SUP, semiImplicitSource);
 
 
 bool Foam::fv::semiImplicitSource::read(const dictionary& dict)
 {
     if (cellSetOption::read(dict))
     {
-        volumeMode_ = volumeModeNames_.read(coeffs_.lookup("volumeMode"));
-
-        const dictionary& sources = coeffs_.subDict("sources");
-
-        // Number of fields with a source term
-        const label nFields = sources.size();
-
-        // Set field names and source terms
-        fieldNames_.setSize(nFields);
-        fieldSp_.setSize(nFields);
-        fieldSu_.setSize(nFields);
-        label i = 0;
-        forAllConstIter(dictionary, sources, iter)
-        {
-            fieldNames_[i] = iter().keyword();
-            fieldSu_.set
-            (
-                i,
-                objectFunction1::New<VolField>
-                (
-                    "explicit",
-                    iter().dict(),
-                    fieldNames_[i],
-                    mesh_
-                ).ptr()
-            );
-            fieldSp_.set
-            (
-                i,
-                Function1<scalar>::New
-                (
-                    "implicit",
-                    iter().dict()
-                ).ptr()
-            );
-            i++;
-        }
-
-        // Set volume normalisation
-        if (volumeMode_ == volumeMode::absolute)
-        {
-            VDash_ = V();
-        }
-
-        applied_.setSize(nFields, false);
-
+        readCoeffs();
         return true;
     }
     else

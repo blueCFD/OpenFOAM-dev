@@ -1,0 +1,110 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+convertToMeters 1;
+
+radius 0.015875; // Pipe radius (z-axis)
+length 0.44;     // Pipe length (x-axis)
+angle  1;        // Center (wedge) angle
+
+// Number of cells
+xCells 220;
+yCells 1;
+zCells 16;
+
+// Derived parameters
+zr           #calc "$radius*cos(degToRad(0.5*$angle))";
+halfWidth    #calc "$radius*sin(degToRad(0.5*$angle))";
+negHalfWidth #neg $halfWidth;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+vertices
+(
+    (0.0     0.0           0.0)
+    ($length 0.0           0.0)
+    ($length 0.0           0.0)
+    (0.0     0.0           0.0)
+    (0.0     $negHalfWidth $zr)
+    ($length $negHalfWidth $zr)
+    ($length $halfWidth    $zr)
+    (0.0     $halfWidth    $zr)
+);
+
+blocks
+(
+    hex (0 1 1 0 4 5 6 7) ($xCells $yCells $zCells) simpleGrading (1 1 1)
+);
+
+edges
+();
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 0)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (1 1 6 5)
+        );
+    }
+    walls
+    {
+        type wall;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+    front
+    {
+        type wedge;
+        faces
+        (
+            (0 1 5 4)
+        );
+    }
+    back
+    {
+        type wedge;
+        faces
+        (
+            (0 7 6 1)
+        );
+    }
+    axis
+    {
+        type empty;
+        faces
+        (
+            (0 0 1 1)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

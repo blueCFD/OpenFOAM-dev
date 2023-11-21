@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,6 +41,16 @@ namespace fv
 }
 
 
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+void Foam::fv::accelerationSource::readCoeffs()
+{
+    UName_ = coeffs_.lookupOrDefault<word>("U", "U");
+
+    velocity_ = Function1<vector>::New("velocity", coeffs_);
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::fv::accelerationSource::accelerationSource
@@ -52,21 +62,28 @@ Foam::fv::accelerationSource::accelerationSource
 )
 :
     cellSetOption(name, modelType, dict, mesh),
+    UName_(word::null),
     velocity_(nullptr)
 {
-    read(dict);
+    readCoeffs();
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+Foam::wordList Foam::fv::accelerationSource::addSupFields() const
+{
+    return wordList(1, UName_);
+}
+
+
 void Foam::fv::accelerationSource::addSup
 (
     fvMatrix<vector>& eqn,
-    const label fieldi
+    const word& fieldName
 ) const
 {
-    add(geometricOneField(), eqn, fieldi);
+    add(geometricOneField(), eqn, fieldName);
 }
 
 
@@ -74,10 +91,10 @@ void Foam::fv::accelerationSource::addSup
 (
     const volScalarField& rho,
     fvMatrix<vector>& eqn,
-    const label fieldi
+    const word& fieldName
 ) const
 {
-    add(rho, eqn, fieldi);
+    add(rho, eqn, fieldName);
 }
 
 
@@ -86,10 +103,10 @@ void Foam::fv::accelerationSource::addSup
     const volScalarField& alpha,
     const volScalarField& rho,
     fvMatrix<vector>& eqn,
-    const label fieldi
+    const word& fieldName
 ) const
 {
-    add((alpha*rho)(), eqn, fieldi);
+    add((alpha*rho)(), eqn, fieldName);
 }
 
 
@@ -97,12 +114,7 @@ bool Foam::fv::accelerationSource::read(const dictionary& dict)
 {
     if (cellSetOption::read(dict))
     {
-        fieldNames_ = wordList(1, coeffs_.lookupOrDefault<word>("U", "U"));
-
-        applied_.setSize(1, false);
-
-        velocity_ = Function1<vector>::New("velocity", dict);
-
+        readCoeffs();
         return true;
     }
     else

@@ -59,7 +59,7 @@ class objectFunction1
     // Private Classes
 
         //- Tag structure used to deduce type in the templated constructor
-        template <class PrimitiveType>
+        template<class PrimitiveType>
         struct type
         {};
 
@@ -67,7 +67,7 @@ class objectFunction1
     // Private Constructors
 
         //- Construct from an name and a dictionary
-        template <class PrimitiveType>
+        template<class PrimitiveType>
         objectFunction1
         (
             const word& name,
@@ -80,13 +80,14 @@ public:
 
     // Selector
 
-        template <template <class> class ObjectType>
+        template<template<class> class ObjectType>
         static autoPtr<objectFunction1> New
         (
             const word& name,
             const dictionary& dict,
             const word& objectName,
-            const objectRegistry& db
+            const objectRegistry& db,
+            const bool error = true
         );
 
 
@@ -98,19 +99,19 @@ public:
     // Member Functions
 
         //- Return value as a function of scalar x
-        template <class PrimitiveType>
+        template<class PrimitiveType>
         PrimitiveType value(const scalar x) const;
 
         //- Return value as a function of scalarField x
-        template <class PrimitiveType>
+        template<class PrimitiveType>
         tmp<Field<PrimitiveType>> value(const scalarField& x) const;
 
         //- Integrate between two scalars
-        template <class PrimitiveType>
+        template<class PrimitiveType>
         PrimitiveType integral(const scalar x1, const scalar x2) const;
 
         //- Integrate between two scalar fields
-        template <class PrimitiveType>
+        template<class PrimitiveType>
         tmp<Field<PrimitiveType>> integral
         (
             const scalarField& x1,

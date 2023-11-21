@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,7 +83,7 @@ class IATE
         dimensionedScalar residualAlpha_;
 
         //- The Sauter-mean diameter of the phase
-        volScalarField& d_;
+        volScalarField d_;
 
         //- IATE sources
         PtrList<IATEsource> sources_;
@@ -92,17 +92,6 @@ class IATE
     // Private Member Functions
 
         tmp<volScalarField> dsm() const;
-
-
-protected:
-
-    // Protected Member Functions
-
-        //- Get the diameter field
-        virtual tmp<volScalarField> calcD() const;
-
-        //- Get the surface area per unit volume field
-        virtual tmp<volScalarField> calcA() const;
 
 
 public:
@@ -115,7 +104,7 @@ public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from dictionary and phase
         IATE
         (
             const dictionary& diameterProperties,
@@ -135,7 +124,13 @@ public:
             return kappai_;
         }
 
-        //- Correct the diameter field
+        //- Get the diameter field
+        virtual tmp<volScalarField> d() const;
+
+        //- Get the surface area per unit volume field
+        virtual tmp<volScalarField> a() const;
+
+        //- Correct the model
         virtual void correct();
 
         //- Read phaseProperties dictionary

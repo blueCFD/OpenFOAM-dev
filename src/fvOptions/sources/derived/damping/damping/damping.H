@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ SourceFiles
 #ifndef damping_H
 #define damping_H
 
-#include "cellSetOption.H"
+#include "fvOption.H"
 #include "Function1.T.H"
 #include "volFields.H"
 
@@ -56,11 +56,14 @@ namespace fv
 
 class damping
 :
-    public cellSetOption
+    public option
 {
 protected:
 
     // Protected Data
+
+        //- Name of the velocity field
+        word UName_;
 
         //- Damping coefficient [1/s]
         dimensionedScalar lambda_;
@@ -77,6 +80,10 @@ protected:
 
     // Protected Member Functions
 
+        //- Non-virtual read
+        void readCoeffs();
+
+        //- Return the force coefficient
         tmp<volScalarField::Internal> forceCoeff() const;
 
 
@@ -104,6 +111,13 @@ public:
 
 
     // Member Functions
+
+        // Checks
+
+            //- Return the list of fields for which the option adds source term
+            //  to the transport equation
+            virtual wordList addSupFields() const;
+
 
         // IO
 

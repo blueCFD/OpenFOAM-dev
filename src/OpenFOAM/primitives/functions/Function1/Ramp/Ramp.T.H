@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,7 +79,7 @@ namespace Function1s
                             Class Ramp Declaration
 \*---------------------------------------------------------------------------*/
 
-template <class Function1Type>
+template<class Function1Type>
 class Ramp
 :
     public FieldFunction1<scalar, Function1Type>
