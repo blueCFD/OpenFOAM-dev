@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
@@ -389,11 +389,11 @@ cdSource
 if [ "$targetType" = "" ]
 then
     unset targetType
-    if grep -e '^ *LIB *=' "$MakeDir/files" >/dev/null 2>&1
+    if grep -q -e '^ *LIB *=' "$MakeDir/files"
     then
         targetType=libso
     fi
-elif grep -e '^ *EXE *=' "$MakeDir/files" >/dev/null 2>&1
+elif grep -q -e '^ *EXE *=' "$MakeDir/files"
 then
     # Application. Remove any nonsense targetType
     case "$targetType" in
@@ -405,8 +405,7 @@ fi
 
 
 #------------------------------------------------------------------------------
-# Spawn a sub-shell and unset MAKEFLAGS in that sub-shell to avoid
-# files and options being built in parallel
+# Created the objectsDir directory
 #------------------------------------------------------------------------------
 
 objectsDir=$MakeDir/$WM_OPTIONS
@@ -417,56 +416,31 @@ then
     objectsDir=$platformPath${exPath//$WM_PROJECT_DIR/}
 fi
 
-# Need to override the temporary folder on Windows
-# See https://github.com/blueCFD/Core/issues/35 for more details.
-if onWin
-then
-    export TEMP=$objectsDir/tempDir
-    export TMP=$objectsDir/tempDir
-    mkdir -p $TMP
+mkdir -p "$objectsDir"
+
+
+#------------------------------------------------------------------------------
+# Create $objectsDir/files from $MakeDir/files if necessary
+#
+# Spawn a sub-shell and unset MAKEFLAGS in that sub-shell to avoid
+# $objectsDir/files being built in parallel
+#------------------------------------------------------------------------------
+
+if ! grep -q "SOURCE" "$MakeDir/files"; then
+    (
+        unset MAKEFLAGS
+
+        $make -s -f "$WM_DIR/makefiles/files" MAKE_DIR="$MakeDir" \
+              OBJECTS_DIR="$objectsDir"
+    )
+
+    # Check the $objectsDir/files file was created successfully
+    [ -r "$objectsDir/files" ] || {
+        echo "$Script error: file '$objectsDir/files'" \
+             "could not be created in $PWD" 1>&2
+        exit 1
+    }
 fi
-
-# If on Windows, check if we need to activate the workaround
-onWin && figureOutIfLongFileNameSupportIsNeeded
-
-
-(
-    unset MAKEFLAGS
-    mkdir -p "$objectsDir"
-
-    # Pre-build the $WM_OPTIONS/options file
-    # which is included when building the $WM_OPTIONS/files file
-    $make -s -f "$WM_DIR/makefiles/files" MAKE_DIR="$MakeDir" \
-          OBJECTS_DIR="$objectsDir" "$objectsDir/options"
-
-    $make -s -f "$WM_DIR/makefiles/files" MAKE_DIR="$MakeDir" \
-          OBJECTS_DIR="$objectsDir"
-
-    if isMinGW && \
-       [ "$targetType" = "libso" -o "$targetType" = "all" -o \
-         "$targetType" = "dep" -o -z "$targetType" ]
-    then
-        make -s -f $WM_DIR/makefiles/files versioning MAKE_DIR="$MakeDir" \
-            OBJECTS_DIR="$objectsDir"
-    fi
-
-    if isMinGW
-    then
-        make -s -f $WM_DIR/makefiles/files localHeaderPaths MAKE_DIR="$MakeDir" \
-            OBJECTS_DIR="$objectsDir"
-    fi
-)
-
-
-#------------------------------------------------------------------------------
-# Check the $objectsDir/sourceFiles file was created successfully
-#------------------------------------------------------------------------------
-
-[ -r "$objectsDir/sourceFiles" ] || {
-    echo "$Script error: file '$objectsDir/sourceFiles'" \
-         "could not be created in $PWD" 1>&2
-    exit 1
-}
 
 
 #------------------------------------------------------------------------------
@@ -477,7 +451,7 @@ onWin && figureOutIfLongFileNameSupportIsNeeded
 case "$targetType" in
     lib | libo | libso | dep )
         # ... but only if 'LIB' is declared in 'Make/files'
-        if grep -e '^ *LIB *=' "$MakeDir/files" >/dev/null 2>&1
+        if grep -q -e '^ *LIB *=' "$MakeDir/files"
         then
             $make -s -f "$WM_DIR/makefiles/general" MAKE_DIR="$MakeDir" \
                   OBJECTS_DIR="$objectsDir" lnInclude ${ADDITIONAL_WMAKE_ARGS}

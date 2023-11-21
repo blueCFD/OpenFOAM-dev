@@ -34,7 +34,6 @@ Description
 #include "fluidThermoMomentumTransportModel.H"
 #include "fluidThermophysicalTransportModel.H"
 #include "LESModel.T.H"
-#include "radiationModel.H"
 #include "fvOptions.H"
 #include "simpleControl.H"
 #include "pimpleControl.H"

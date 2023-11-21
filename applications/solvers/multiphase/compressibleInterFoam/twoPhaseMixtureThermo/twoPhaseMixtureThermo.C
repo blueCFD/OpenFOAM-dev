@@ -43,7 +43,7 @@ Foam::twoPhaseMixtureThermo::twoPhaseMixtureThermo
 :
     rhoThermo::composite(U.mesh(), word::null),
     twoPhaseMixture(U.mesh(), *this),
-    interfaceProperties(alpha1(), U, *this),
+    interfaceProperties(alpha1(), alpha2(), U, *this),
     thermo1_(nullptr),
     thermo2_(nullptr),
     Alpha1_
@@ -393,24 +393,6 @@ Foam::tmp<Foam::scalarField> Foam::twoPhaseMixtureThermo::Cpv
     return
         Alpha1_.boundaryField()[patchi]*thermo1_->Cpv(T, patchi)
       + Alpha2_.boundaryField()[patchi]*thermo2_->Cpv(T, patchi);
-}
-
-
-Foam::tmp<Foam::volScalarField> Foam::twoPhaseMixtureThermo::CpByCpv() const
-{
-    return Alpha1_*thermo1_->CpByCpv() + Alpha2_*thermo2_->CpByCpv();
-}
-
-
-Foam::tmp<Foam::scalarField> Foam::twoPhaseMixtureThermo::CpByCpv
-(
-    const scalarField& T,
-    const label patchi
-) const
-{
-    return
-        Alpha1_.boundaryField()[patchi]*thermo1_->CpByCpv(T, patchi)
-      + Alpha2_.boundaryField()[patchi]*thermo2_->CpByCpv(T, patchi);
 }
 
 

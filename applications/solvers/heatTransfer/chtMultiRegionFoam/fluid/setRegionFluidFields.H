@@ -32,10 +32,10 @@
     multivariateSurfaceInterpolationScheme<scalar>::fieldTable& fields =
         fieldsFluid[i];
 
-    radiationModel& rad = radiation[i];
-
     IOMRFZoneList& MRF = MRFfluid[i];
-    const fv::options& fvOptions = fluidFvOptions[i];
+    const fv::options& fvOptions = fvOptionsFluid[i];
+
+    #include "checkRadiationModel.H"
 
     const dimensionedScalar initialMass
     (

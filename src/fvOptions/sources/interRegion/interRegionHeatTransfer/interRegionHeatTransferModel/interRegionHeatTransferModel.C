@@ -145,13 +145,10 @@ Foam::fv::interRegionHeatTransferModel::interRegionHeatTransferModel
     TName_(coeffs_.lookupOrDefault<word>("T", "T")),
     TNbrName_(coeffs_.lookupOrDefault<word>("TNbr", "T"))
 {
-    if (active())
-    {
-        coeffs_.lookup("fields") >> fieldNames_;
-        applied_.setSize(fieldNames_.size(), false);
+    coeffs_.lookup("fields") >> fieldNames_;
+    applied_.setSize(fieldNames_.size(), false);
 
-        coeffs_.lookup("semiImplicit") >> semiImplicit_;
-    }
+    coeffs_.lookup("semiImplicit") >> semiImplicit_;
 }
 
 
@@ -213,14 +210,14 @@ void Foam::fv::interRegionHeatTransferModel::addSup
                 const basicThermo& thermo =
                    mesh_.lookupObject<basicThermo>(basicThermo::dictName);
 
-                volScalarField htcByCpv(htc_/thermo.Cpv());
+                const volScalarField htcByCpv(htc_/thermo.Cpv());
 
                 eqn += htc_*(Tmapped - T) + htcByCpv*he - fvm::Sp(htcByCpv, he);
 
                 if (debug)
                 {
                     const dimensionedScalar energy =
-                        fvc::domainIntegrate(htc_*(he/thermo.Cp() - Tmapped));
+                        fvc::domainIntegrate(htc_*(Tmapped - T));
 
                     Info<< "Energy exchange from region " << nbrMesh.name()
                         << " To " << mesh_.name() << " : " <<  energy.value()

@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "DSMCCloud.T.H"
-#include "BinaryCollisionModel.T.H"
+#include "NoBinaryCollision.T.H"
 #include "WallInteractionModel.T.H"
 #include "InflowBoundaryModel.T.H"
 #include "constants.H"
@@ -204,7 +204,7 @@ void Foam::DSMCCloud<ParcelType>::initialise
 template<class ParcelType>
 void Foam::DSMCCloud<ParcelType>::collisions()
 {
-    if (!binaryCollision().active())
+    if (isType<NoBinaryCollision<DSMCCloud<ParcelType>>>(binaryCollision()))
     {
         return;
     }

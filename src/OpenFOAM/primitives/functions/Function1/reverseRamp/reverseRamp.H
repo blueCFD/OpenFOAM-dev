@@ -31,7 +31,7 @@ Description
 
     Usage for scaling a vector:
     \verbatim
-        <entryName>
+        <name>
         {
             scale
             {
@@ -83,8 +83,10 @@ class reverseRamp
 :
     public Ramp<reverseRamp>
 {
-    //- Standard ramp function to reverse
-    autoPtr<Function1<scalar>> ramp_;
+    // Private Data
+
+        //- Standard ramp function to reverse
+        autoPtr<Function1<scalar>> ramp_;
 
 
 public:
@@ -95,10 +97,10 @@ public:
 
     // Constructors
 
-        //- Construct from entry name and dictionary
+        //- Construct from name and dictionary
         reverseRamp
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict
         );
 
@@ -116,14 +118,14 @@ public:
         virtual inline scalar value(const scalar t) const;
 
         //- Return the integral between times t1 and t2
-        virtual inline scalar integrate
+        virtual inline scalar integral
         (
             const scalar t1,
             const scalar t2
         ) const;
 
-        //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

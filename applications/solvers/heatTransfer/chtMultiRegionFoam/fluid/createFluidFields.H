@@ -22,7 +22,6 @@ PtrList<fluidReactionThermophysicalTransportModel>
     thermophysicalTransportFluid(fluidRegions.size());
 PtrList<combustionModel> reactionFluid(fluidRegions.size());
 PtrList<volScalarField> p_rghFluid(fluidRegions.size());
-PtrList<radiationModel> radiation(fluidRegions.size());
 PtrList<volScalarField> KFluid(fluidRegions.size());
 PtrList<volScalarField> dpdtFluid(fluidRegions.size());
 PtrList<multivariateSurfaceInterpolationScheme<scalar>::fieldTable>
@@ -31,7 +30,7 @@ PtrList<multivariateSurfaceInterpolationScheme<scalar>::fieldTable>
 List<scalar> initialMassFluid(fluidRegions.size());
 
 PtrList<IOMRFZoneList> MRFfluid(fluidRegions.size());
-PtrList<fv::options> fluidFvOptions(fluidRegions.size());
+PtrList<fv::options> fvOptionsFluid(fluidRegions.size());
 
 // Populate fluid field pointer lists
 forAll(fluidRegions, i)
@@ -227,13 +226,6 @@ forAll(fluidRegions, i)
 
     fluidRegions[i].setFluxRequired(p_rghFluid[i].name());
 
-    Info<< "    Adding to radiationFluid\n" << endl;
-    radiation.set
-    (
-        i,
-        radiationModel::New(thermoFluid[i].T())
-    );
-
     initialMassFluid[i] = fvc::domainIntegrate(rhoFluid[i]).value();
 
     Info<< "    Adding to KFluid\n" << endl;
@@ -287,8 +279,8 @@ forAll(fluidRegions, i)
         new IOMRFZoneList(fluidRegions[i])
     );
 
-    Info<< "    Adding fvOptions\n" << endl;
-    fluidFvOptions.set
+    Info<< "    Adding fvOptionsFluid\n" << endl;
+    fvOptionsFluid.set
     (
         i,
         new fv::options(fluidRegions[i])

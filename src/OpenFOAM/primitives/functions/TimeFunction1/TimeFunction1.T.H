@@ -78,19 +78,19 @@ public:
 
     // Constructor
 
-        //- Construct from time, entry name and dictionary
+        //- Construct from time, name and dictionary
         TimeFunction1
         (
             const Time& time,
-            const word& entryName,
+            const word& name,
             const dictionary& dict
         );
 
-        //- Construct null from time and entry name
+        //- Construct null from time and name
         TimeFunction1
         (
             const Time& time,
-            const word& entryName
+            const word& name
         );
 
         //- Copy constructor
@@ -111,11 +111,11 @@ public:
 
         // Evaluation
 
-            //- Return value as a function of (scalar) independent variable
+            //- Return value as a function of scalar x
             virtual Type value(const scalar x) const;
 
-            //- Integrate between two (scalar) values
-            virtual Type integrate(const scalar x1, const scalar x2) const;
+            //- Integrate between two scalars
+            virtual Type integral(const scalar x1, const scalar x2) const;
 
 
     // I/O
@@ -128,7 +128,7 @@ public:
         );
 
         //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
+        virtual void write(Ostream& os) const;
 };
 
 

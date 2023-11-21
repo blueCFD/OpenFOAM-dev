@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,12 +28,12 @@ License
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class Type>
-void Foam::Function1s::Sine<Type>::read(const dictionary& coeffs)
+void Foam::Function1s::Sine<Type>::read(const dictionary& dict)
 {
-    amplitude_ = Function1<Type>::New("amplitude", coeffs);
-    frequency_ = coeffs.lookup<scalar>("frequency");
-    start_ = coeffs.lookupOrDefault<scalar>("start", 0);
-    level_ = Function1<Type>::New("level", coeffs);
+    amplitude_ = Function1<Type>::New("amplitude", dict);
+    frequency_ = dict.lookup<scalar>("frequency");
+    start_ = dict.lookupOrDefault<scalar>("start", 0);
+    level_ = Function1<Type>::New("level", dict);
 
     integrable_ =
         isA<Constant<Type>>(amplitude_())
@@ -46,11 +46,11 @@ void Foam::Function1s::Sine<Type>::read(const dictionary& coeffs)
 template<class Type>
 Foam::Function1s::Sine<Type>::Sine
 (
-    const word& entryName,
+    const word& name,
     const dictionary& dict
 )
 :
-    FieldFunction1<Type, Sine<Type>>(entryName)
+    FieldFunction1<Type, Sine<Type>>(name)
 {
     read(dict);
 }
@@ -78,17 +78,12 @@ Foam::Function1s::Sine<Type>::~Sine()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-void Foam::Function1s::Sine<Type>::writeData(Ostream& os) const
+void Foam::Function1s::Sine<Type>::write(Ostream& os) const
 {
-    Function1<Type>::writeData(os);
-    os  << token::END_STATEMENT << nl;
-    os  << indent << word(this->name() + "Coeffs") << nl;
-    os  << indent << token::BEGIN_BLOCK << incrIndent << nl;
-    amplitude_->writeData(os);
+    amplitude_->write(os);
     writeEntry(os, "frequency", frequency_);
     writeEntry(os, "start", start_);
-    level_->writeData(os);
-    os  << decrIndent << indent << token::END_BLOCK << endl;
+    level_->write(os);
 }
 
 

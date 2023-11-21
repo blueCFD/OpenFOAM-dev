@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 2018-02-26 blueCAPE Lda: Modifications for blueCFD-Core 2017-2
@@ -192,8 +192,8 @@ bool Foam::dynamicCode::writeCommentSHA1(Ostream& os) const
 
     if (hasSHA1)
     {
-        os  << "/* dynamicCode:\n * SHA1 = ";
-        os.writeQuoted(filterVars_["SHA1sum"], false) << "\n */\n";
+        os  << "# dynamicCode:\n# SHA1 = ";
+        os.writeQuoted(filterVars_["SHA1sum"], false) << "\n\n";
     }
 
     return hasSHA1;

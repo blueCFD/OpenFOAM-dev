@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "liquid.H"
+#include "None.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -34,24 +35,47 @@ namespace Foam
     addToRunTimeSelectionTable(liquidProperties, liquid, dictionary);
 }
 
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+Foam::autoPtr<Foam::Function1<Foam::scalar>> Foam::liquid::New
+(
+    const word& name,
+    const dictionary& dict
+)
+{
+    if (dict.isDict(name))
+    {
+        return Function1<scalar>::New(name, dict);
+    }
+    else
+    {
+        return autoPtr<Function1<scalar>>
+        (
+            new Function1s::None<scalar>(name, dict)
+        );
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::liquid::liquid(const dictionary& dict)
 :
     liquidProperties(dict),
-    rho_(thermophysicalFunction::New(dict, "rho")),
-    pv_(thermophysicalFunction::New(dict, "pv")),
-    hl_(thermophysicalFunction::New(dict, "hl")),
-    Cp_(thermophysicalFunction::New(dict, "Cp")),
-    h_(thermophysicalFunction::New(dict, "h")),
-    Cpg_(thermophysicalFunction::New(dict, "Cpg")),
-    B_(thermophysicalFunction::New(dict, "B")),
-    mu_(thermophysicalFunction::New(dict, "mu")),
-    mug_(thermophysicalFunction::New(dict, "mug")),
-    kappa_(thermophysicalFunction::New(dict, "kappa")),
-    kappag_(thermophysicalFunction::New(dict, "kappag")),
-    sigma_(thermophysicalFunction::New(dict, "sigma")),
-    D_(thermophysicalFunction::New(dict, "D"))
+    rho_(New("rho", dict)),
+    pv_(New("pv", dict)),
+    hl_(New("hl", dict)),
+    Cp_(New("Cp", dict)),
+    h_(New("h", dict)),
+    Cpg_(New("Cpg", dict)),
+    B_(New("B", dict)),
+    mu_(New("mu", dict)),
+    mug_(New("mug", dict)),
+    kappa_(New("kappa", dict)),
+    kappag_(New("kappag", dict)),
+    sigma_(New("sigma", dict)),
+    D_(New("D", dict))
 {}
 
 

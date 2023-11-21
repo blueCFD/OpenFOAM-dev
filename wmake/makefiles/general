@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -77,6 +77,8 @@ WM_SCRIPTS      = $(WM_DIR)/scripts
 LIB_SRC         = $(WM_PROJECT_DIR)/src
 LIB_PLATFORMS   = $(WM_PROJECT_DIR)/platforms/$(WM_OPTIONS)/lib
 OBJECTS_DIR     = $(MAKE_DIR)/$(WM_OPTIONS)
+OPTIONS         = $(MAKE_DIR)/options
+FILES           = $(MAKE_DIR)/files
 
 SYS_INC         =
 SYS_LIBS        =
@@ -90,6 +92,12 @@ EXE_INC         =
 EXE_LIBS        =
 
 LIB_LIBS        =
+
+# For backward compatibility set FILES to $(OBJECTS_DIR)/files if it has been
+# created from $(MAKE_DIR)/files that does not contain the SOURCE entry
+ifneq ("$(wildcard $(OBJECTS_DIR)/files)","")
+    FILES = $(OBJECTS_DIR)/files
+endif
 
 
 #------------------------------------------------------------------------------
@@ -121,14 +129,18 @@ include $(GENERAL_RULES)/general
 
 
 #------------------------------------------------------------------------------
-# Include PROJECT directory tree file and
-# source, object and dependency list files.
-# These are constructed by makefiles/files
+# Include the options file which might contain specific rules, suffixes etc.
 #------------------------------------------------------------------------------
 
-include $(OBJECTS_DIR)/options
-include $(OBJECTS_DIR)/variables
-include $(OBJECTS_DIR)/sourceFiles
+include $(OPTIONS)
+include $(GENERAL_RULES)/transform
+
+
+#------------------------------------------------------------------------------
+# Include the files file containing the list of source files to compile
+#------------------------------------------------------------------------------
+
+include $(FILES)
 DEPENDENCIES=$(SOURCE:%=$(OBJECTS_DIR)/%.dep)
 
 ifdef LFN_WORKAROUND
@@ -246,19 +258,15 @@ $(LIB).o: $(OBJECTS)
 # Set rule to create the include directory for libraries
 #------------------------------------------------------------------------------
 
-lnInclude: $(MAKE_DIR)/files $(MAKE_DIR)/options
+lnInclude: $(MAKE_DIR)/files $(OPTIONS)
 	@rm -rf lnInclude ; wmakeLnInclude .
 
 
 #------------------------------------------------------------------------------
-# Declare all object files depend on $(OBJECTS_DIR)/options
+# Declare all object files depend on $(OPTIONS)
 #------------------------------------------------------------------------------
 
-$(OBJECTS): $(OBJECTS_DIR)/options
-
-ifdef LFN_WORKAROUND
-$(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(shell basename -a $(basename $S)).o : $(OBJECTS_DIR)/$S.dep))
-else
+$(OBJECTS): $(OPTIONS)
 $(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(basename $S).o : $(OBJECTS_DIR)/$S.dep))
 endif
 

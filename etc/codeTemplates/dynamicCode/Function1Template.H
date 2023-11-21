@@ -93,7 +93,7 @@ public:
 
     // Member Functions
 
-        //- Return constant value
+        //- Return value as a function of scalar variable
         inline virtual ${TemplateType} value(const scalar x) const
         {
 //{{{ begin code
@@ -102,14 +102,14 @@ public:
         }
 
         //- Integrate between two values
-        virtual ${TemplateType} integrate
+        virtual ${TemplateType} integral
         (
             const scalar x1,
             const scalar x2
         ) const;
 
-        //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

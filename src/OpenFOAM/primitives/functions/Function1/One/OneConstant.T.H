@@ -29,7 +29,7 @@ Description
 
     Usage:
     \verbatim
-        <entryName> one;
+        <name> one;
     \endverbatim
 
 SourceFiles
@@ -67,11 +67,11 @@ public:
 
     // Constructors
 
-        //- Construct from entry name
-        OneConstant(const word& entryName);
+        //- Construct from name
+        OneConstant(const word& name);
 
-        //- Construct from entry name and dictionary
-        OneConstant(const word& entryName, const dictionary& dict);
+        //- Construct from name and dictionary
+        OneConstant(const word& name, const dictionary& dict);
 
 
     //- Destructor
@@ -84,10 +84,10 @@ public:
         virtual inline Type value(const scalar) const;
 
         //- Integrate between two values
-        virtual inline Type integrate(const scalar x1, const scalar x2) const;
+        virtual inline Type integral(const scalar x1, const scalar x2) const;
 
         //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,13 +31,13 @@ template<class Type>
 Foam::TimeFunction1<Type>::TimeFunction1
 (
     const Time& time,
-    const word& entryName,
+    const word& name,
     const dictionary& dict
 )
 :
     time_(time),
-    name_(entryName),
-    function_(Function1<Type>::New(entryName, dict))
+    name_(name),
+    function_(Function1<Type>::New(name, dict))
 {}
 
 
@@ -45,11 +45,11 @@ template<class Type>
 Foam::TimeFunction1<Type>::TimeFunction1
 (
     const Time& time,
-    const word& entryName
+    const word& name
 )
 :
     time_(time),
-    name_(entryName),
+    name_(name),
     function_(nullptr)
 {}
 
@@ -90,7 +90,7 @@ Type Foam::TimeFunction1<Type>::value(const scalar x) const
 
 
 template<class Type>
-Type Foam::TimeFunction1<Type>::integrate
+Type Foam::TimeFunction1<Type>::integral
 (
     const scalar x1,
     const scalar x2
@@ -98,11 +98,18 @@ Type Foam::TimeFunction1<Type>::integrate
 {
     return
         time_.timeToUserTimeRatio()
-       *function_->integrate
+       *function_->integral
         (
             time_.userTimeToTime(x1),
             time_.userTimeToTime(x2)
         );
+}
+
+
+template<class Type>
+void Foam::TimeFunction1<Type>::write(Ostream& os) const
+{
+    writeEntry(os, function_());
 }
 
 
@@ -116,13 +123,6 @@ Foam::Ostream& Foam::operator<<
 )
 {
     return os << tf.function_();
-}
-
-
-template<class Type>
-void Foam::TimeFunction1<Type>::writeData(Ostream& os) const
-{
-    function_->writeData(os);
 }
 
 

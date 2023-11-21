@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,12 +25,13 @@ License
 
 #include "Function1.T.H"
 
+
 // * * * * * * * * * * * * * * * * Constructor * * * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::Function1<Type>::Function1(const word& entryName)
+Foam::Function1<Type>::Function1(const word& name)
 :
-    name_(entryName)
+    name_(name)
 {}
 
 
@@ -45,20 +46,10 @@ Foam::Function1<Type>::Function1(const Function1<Type>& de)
 template<class Type, class Function1Type>
 Foam::FieldFunction1<Type, Function1Type>::FieldFunction1
 (
-    const word& entryName
+    const word& name
 )
 :
-    Function1<Type>(entryName)
-{}
-
-
-template<class Type, class Function1Type>
-Foam::FieldFunction1<Type, Function1Type>::FieldFunction1
-(
-    const FieldFunction1<Type, Function1Type>& ff1
-)
-:
-    Function1<Type>(ff1)
+    Function1<Type>(name)
 {}
 
 
@@ -94,13 +85,6 @@ const Foam::word& Foam::Function1<Type>::name() const
 }
 
 
-template<class Type>
-void Foam::Function1<Type>::writeData(Ostream& os) const
-{
-    writeKeyword(os, name_) << type();
-}
-
-
 template<class Type, class Function1Type>
 Foam::tmp<Foam::Field<Type>> Foam::FieldFunction1<Type, Function1Type>::value
 (
@@ -121,7 +105,7 @@ Foam::tmp<Foam::Field<Type>> Foam::FieldFunction1<Type, Function1Type>::value
 
 template<class Type, class Function1Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::FieldFunction1<Type, Function1Type>::integrate
+Foam::FieldFunction1<Type, Function1Type>::integral
 (
     const scalarField& x1,
     const scalarField& x2
@@ -132,10 +116,24 @@ Foam::FieldFunction1<Type, Function1Type>::integrate
 
     forAll(x1, i)
     {
-        fld[i] = refCast<const Function1Type>(*this).integrate(x1[i], x2[i]);
+        fld[i] = refCast<const Function1Type>(*this).integral(x1[i], x2[i]);
     }
 
     return tfld;
+}
+
+
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
+
+template<class Type>
+void Foam::Function1<Type>::operator=(const Function1<Type>& f)
+{
+    if (this == &f)
+    {
+        FatalErrorInFunction
+            << "attempted assignment to self"
+            << abort(FatalError);
+    }
 }
 
 
@@ -144,7 +142,14 @@ Foam::FieldFunction1<Type, Function1Type>::integrate
 template<class Type>
 void  Foam::writeEntry(Ostream& os, const Function1<Type>& f1)
 {
-    f1.writeData(os);
+    writeKeyword(os, f1.name())
+        << nl << indent << token::BEGIN_BLOCK << nl << incrIndent;
+
+    writeEntry(os, "type", f1.type());
+
+    f1.write(os);
+
+    os  << decrIndent << indent << token::END_BLOCK << endl;
 }
 
 
@@ -163,7 +168,7 @@ Foam::Ostream& Foam::operator<<
         "Ostream& operator<<(Ostream&, const Function1<Type>&)"
     );
 
-    f1.writeData(os);
+    f1.write(os);
 
     return os;
 }

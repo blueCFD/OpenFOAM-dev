@@ -25,10 +25,10 @@ Class
     Foam::Function1
 
 Description
-    Top level data entry class for use in dictionaries. Provides a mechanism
-    to specify a variable as a certain type, e.g. constant or table, and
-    provide functions to return the (interpolated) value, and integral between
-    limits.
+    Run-time selectable general function of one variable
+
+    with many options provided from simple constant values to complex
+    functions, interpolated tabulated data etc. etc.
 
 SourceFiles
     Function1.C
@@ -85,17 +85,17 @@ public:
         Function1,
         dictionary,
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict
         ),
-        (entryName, dict)
+        (name, dict)
     );
 
 
     // Constructors
 
-        //- Construct from entry name
-        Function1(const word& entryName);
+        //- Construct from name
+        Function1(const word& name);
 
         //- Copy constructor
         Function1(const Function1<Type>& f1);
@@ -107,7 +107,7 @@ public:
     //- Selector
     static autoPtr<Function1<Type>> New
     (
-        const word& entryName,
+        const word& name,
         const dictionary& dict
     );
 
@@ -118,32 +118,36 @@ public:
 
     // Member Functions
 
-        // Access
+        //- Return the name of the entry
+        const word& name() const;
 
-            //- Return the name of the entry
-            const word& name() const;
+        //- Return value as a function of scalar x
+        virtual Type value(const scalar x) const = 0;
 
+        //- Return value as a function of a scalar field x
+        virtual tmp<Field<Type>> value(const scalarField& x) const = 0;
 
-        // Evaluation
+        //- Integrate between two scalars
+        virtual Type integral(const scalar x1, const scalar x2) const = 0;
 
-            //- Return value as a function of (scalar) independent variable
-            virtual Type value(const scalar x) const = 0;
+        //- Integrate between two scalar fields
+        virtual tmp<Field<Type>> integral
+        (
+            const scalarField& x1,
+            const scalarField& x2
+        ) const = 0;
 
-            //- Return value as a function of (scalar) independent variable
-            virtual tmp<Field<Type>> value(const scalarField& x) const = 0;
-
-            //- Integrate between two (scalar) values
-            virtual Type integrate(const scalar x1, const scalar x2) const = 0;
-
-            //- Integrate between two (scalar) values
-            virtual tmp<Field<Type>> integrate
-            (
-                const scalarField& x1,
-                const scalarField& x2
-            ) const = 0;
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const = 0;
 
 
-        // I/O
+    // Member Operators
+
+        //- Assignment
+        void operator=(const Function1<Type>&);
+
+
+    // IOstream Operators
 
             //- Ostream Operator
             friend Ostream& operator<< <Type>
@@ -151,15 +155,6 @@ public:
                 Ostream& os,
                 const Function1<Type>& func
             );
-
-            //- Write in dictionary format
-            virtual void writeData(Ostream& os) const;
-
-
-    // Member Operators
-
-        //- Disallow default bitwise assignment
-        void operator=(const Function1<Type>&) = delete;
 };
 
 
@@ -181,11 +176,8 @@ public:
 
     // Constructors
 
-        //- Construct from entry name
-        FieldFunction1(const word& entryName);
-
-        //- Copy constructor
-        FieldFunction1(const FieldFunction1<Type, Function1Type>& ff1);
+        //- Construct from name
+        FieldFunction1(const word& name);
 
         //- Construct and return a clone
         virtual tmp<Function1<Type>> clone() const;
@@ -197,23 +189,21 @@ public:
 
     // Member Functions
 
-        // Evaluation
+        //- Return value as a function of one scalars
+        virtual Type value(const scalar x) const = 0;
 
-            //- Return value as a function of (scalar) independent variable
-            virtual Type value(const scalar x) const = 0;
+        //- Return value as a function of one scalar field
+        virtual tmp<Field<Type>> value(const scalarField& x) const;
 
-            //- Return value as a function of (scalar) independent variable
-            virtual tmp<Field<Type>> value(const scalarField& x) const;
+        //- Integrate between two scalar values
+        virtual Type integral(const scalar x1, const scalar x2) const = 0;
 
-            //- Integrate between two (scalar) values
-            virtual Type integrate(const scalar x1, const scalar x2) const = 0;
-
-            //- Integrate between two (scalar) values
-            virtual tmp<Field<Type>> integrate
-            (
-                const scalarField& x1,
-                const scalarField& x2
-            ) const;
+        //- Integrate between two scalar fields
+        virtual tmp<Field<Type>> integral
+        (
+            const scalarField& x1,
+            const scalarField& x2
+        ) const;
 };
 
 
@@ -235,7 +225,13 @@ public:
     defineNamedTemplateTypeNameAndDebug(Function1s::SS<Type>, 0);              \
                                                                                \
     Function1<Type>::adddictionaryConstructorToTable<Function1s::SS<Type>>     \
-        add##SS##Type##ConstructorToTable_;
+    addFunction1##SS##Type##ConstructorToTable_;
+
+
+#define makeNamedFunction1Type(SS, Type, Name)                                 \
+                                                                               \
+    Function1<Type>::adddictionaryConstructorToTable<Function1s::SS<Type>>     \
+    addFunction1##Name##Type##ConstructorToTable_(#Name);
 
 
 #define makeScalarFunction1(SS)                                                \
@@ -243,7 +239,23 @@ public:
     defineTypeNameAndDebug(SS, 0);                                             \
                                                                                \
     Function1<scalar>::adddictionaryConstructorToTable<SS>                     \
-        add##SS##ConstructorToTable_;
+        addFunction1##SS##ConstructorToTable_;
+
+
+#define makeFunction1s(Type)                                                   \
+    makeFunction1(Type);                                                       \
+    makeFunction1Type(None, Type);                                             \
+    makeFunction1Type(Constant, Type);                                         \
+    makeFunction1Type(Uniform, Type);                                          \
+    makeFunction1Type(ZeroConstant, Type);                                     \
+    makeFunction1Type(OneConstant, Type);                                      \
+    makeFunction1Type(Polynomial, Type);                                       \
+    makeFunction1Type(Sine, Type);                                             \
+    makeFunction1Type(Square, Type);                                           \
+    makeFunction1Type(Table, Type);                                            \
+    makeNamedFunction1Type(Table, Type, tableFile);                            \
+    makeFunction1Type(Scale, Type);                                            \
+    makeFunction1Type(Coded, Type);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

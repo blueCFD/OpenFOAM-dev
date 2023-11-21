@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,13 +30,13 @@ License
 template<class Type>
 Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 (
-    const word& entryName,
+    const word& name,
     const dictionary& dict
 )
 {
-    if (dict.isDict(entryName))
+    if (dict.isDict(name))
     {
-        const dictionary& coeffsDict(dict.subDict(entryName));
+        const dictionary& coeffsDict(dict.subDict(name));
 
         const word Function1Type(coeffsDict.lookup("type"));
 
@@ -48,17 +48,17 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
             FatalErrorInFunction
                 << "Unknown Function1 type "
                 << Function1Type << " for Function1 "
-                << entryName << nl << nl
+                << name << nl << nl
                 << "Valid Function1 types are:" << nl
                 << dictionaryConstructorTablePtr_->sortedToc() << nl
                 << exit(FatalError);
         }
 
-        return cstrIter()(entryName, coeffsDict);
+        return cstrIter()(name, coeffsDict);
     }
     else
     {
-        Istream& is(dict.lookup(entryName, false));
+        Istream& is(dict.lookup(name, false));
 
         token firstToken(is);
         word Function1Type;
@@ -68,7 +68,7 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
             is.putBack(firstToken);
             return autoPtr<Function1<Type>>
             (
-                new Function1s::Constant<Type>(entryName, is)
+                new Function1s::Constant<Type>(name, is)
             );
         }
         else
@@ -84,19 +84,33 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
             FatalErrorInFunction
                 << "Unknown Function1 type "
                 << Function1Type << " for Function1 "
-                << entryName << nl << nl
+                << name << nl << nl
                 << "Valid Function1 types are:" << nl
                 << dictionaryConstructorTablePtr_->sortedToc() << nl
                 << exit(FatalError);
         }
 
-        return cstrIter()
+        autoPtr<Function1<Type>> funcPtr
         (
-            entryName,
-            dict.found(entryName + "Coeffs")
-          ? dict.subDict(entryName + "Coeffs")
-          : dict
+            cstrIter()
+            (
+                name,
+                dict.found(name + "Coeffs")
+              ? dict.subDict(name + "Coeffs")
+              : dict
+            )
         );
+
+        if (dict.found(name + "Coeffs"))
+        {
+            IOWarningInFunction(dict)
+                << "Using deprecated "
+                << (name + "Coeffs") << " sub-dictionary."<< nl
+                << "    Please use the simpler form" << endl;
+            funcPtr->write(Info);
+        }
+
+        return funcPtr;
     }
 }
 

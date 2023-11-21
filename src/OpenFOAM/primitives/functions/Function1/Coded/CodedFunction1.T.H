@@ -125,10 +125,10 @@ public:
 
     // Constructors
 
-        //- Construct from entry name and dictionary
+        //- Construct from name and dictionary
         Coded
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict
         );
 
@@ -145,24 +145,24 @@ public:
 
     // Member Functions
 
-        //- Return value
+        //- Return value as a function of a scalar
         virtual inline Type value(const scalar x) const;
 
-        //- Return value as a function of (scalar) independent variable
+        //- Return value as a function of a scalar field
         virtual tmp<Field<Type>> value(const scalarField& x) const;
 
-        //- Integrate between two values
-        virtual Type integrate(const scalar x1, const scalar x2) const;
+        //- Integrate between two scalars
+        virtual Type integral(const scalar x1, const scalar x2) const;
 
-        //- Integrate between two (scalar) values
-        virtual tmp<Field<Type>> integrate
+        //- Integrate between two scalar fields
+        virtual tmp<Field<Type>> integral
         (
             const scalarField& x1,
             const scalarField& x2
         ) const;
 
-        //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

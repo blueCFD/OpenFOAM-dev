@@ -31,8 +31,8 @@ template<class Thermo>
 inline Foam::icoTabulatedTransport<Thermo>::icoTabulatedTransport
 (
     const Thermo& t,
-    const nonUniformTable1D& mu,
-    const nonUniformTable1D& kappa
+    const nonUniformTable& mu,
+    const nonUniformTable& kappa
 )
 :
     Thermo(t),
@@ -85,7 +85,7 @@ inline Foam::scalar Foam::icoTabulatedTransport<Thermo>::mu
     const scalar T
 ) const
 {
-    return mu_.f(p, T);
+    return mu_.value(T);
 }
 
 
@@ -96,7 +96,7 @@ inline Foam::scalar Foam::icoTabulatedTransport<Thermo>::kappa
     const scalar T
 ) const
 {
-    return kappa_.f(p, T);
+    return kappa_.value(T);
 }
 
 

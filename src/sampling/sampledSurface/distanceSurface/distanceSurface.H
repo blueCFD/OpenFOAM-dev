@@ -67,6 +67,7 @@ SourceFiles
 #include "sampledSurface.H"
 #include "searchableSurface.H"
 #include "isoSurface.H"
+#include "fvMeshSubset.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -101,11 +102,16 @@ class distanceSurface
         const Switch average_;
 
         //- If restricted to zones, name of this zone or a regular expression
-        keyType zoneKey_;
+        wordRe zoneKey_;
+
+        //- For zones: patch to put exposed faces into
+        mutable word exposedPatchName_;
 
         //- Track if the surface needs an update
         mutable bool needsUpdate_;
 
+        //- Optional subsetted mesh
+        autoPtr<fvMeshSubset> subMeshPtr_;
 
         //- Distance to cell centres
         autoPtr<volScalarField> cellDistancePtr_;
@@ -149,20 +155,6 @@ public:
             const word& name,
             const polyMesh& mesh,
             const dictionary& dict
-        );
-
-        //- Construct from components
-        distanceSurface
-        (
-            const word& name,
-            const polyMesh& mesh,
-            const bool interpolate,
-            const word& surfaceType,
-            const word& surfaceName,
-            const scalar distance,
-            const bool signedDistance,
-            const isoSurface::filterType filter,
-            const Switch average
         );
 
 

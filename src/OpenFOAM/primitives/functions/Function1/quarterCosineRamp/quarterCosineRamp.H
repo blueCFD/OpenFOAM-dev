@@ -65,10 +65,10 @@ public:
 
     // Constructors
 
-        //- Construct from entry name and dictionary
+        //- Construct from name and dictionary
         quarterCosineRamp
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict
         );
 
@@ -83,7 +83,7 @@ public:
         virtual inline scalar value(const scalar t) const;
 
         //- Return the integral between times t1 and t2
-        virtual inline scalar integrate
+        virtual inline scalar integral
         (
             const scalar t1,
             const scalar t2

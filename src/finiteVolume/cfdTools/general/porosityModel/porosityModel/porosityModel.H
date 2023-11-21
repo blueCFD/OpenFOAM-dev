@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ SourceFiles
 #include "runTimeSelectionTables.H"
 #include "coordinateSystem.H"
 #include "dimensionedVector.H"
-#include "keyType.H"
+#include "wordRe.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -82,11 +82,8 @@ protected:
         //- Model coefficients dictionary
         dictionary coeffs_;
 
-        //- Porosity active flag
-        bool active_;
-
         //- Name(s) of cell-zone
-        keyType zoneName_;
+        wordRe zoneName_;
 
         //- Cell zone IDs
         labelList cellZoneIDs_;
@@ -216,9 +213,6 @@ public:
 
         //- Return const access to the porosity model name
         inline const word& name() const;
-
-        //- Return const access to the porosity active flag
-        inline bool active() const;
 
         //- Return const access to the cell zone IDs
         inline const labelList& cellZoneIDs() const;

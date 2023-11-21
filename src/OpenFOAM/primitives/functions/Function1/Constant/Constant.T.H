@@ -27,9 +27,9 @@ Class
 Description
     Templated function that returns a constant value.
 
-    Usage - for entry \<entryName\> returning the value <value>:
+    Usage - for entry \<name\> returning the value <value>:
     \verbatim
-        <entryName>    constant  <value>
+        <name>    constant  <value>
     \endverbatim
 
 SourceFiles
@@ -72,16 +72,16 @@ public:
 
     // Constructors
 
-        //- Construct from entry name and value
-        Constant(const word& entryName, const Type& val);
+        //- Construct from name and value
+        Constant(const word& name, const Type& val);
 
-        //- Construct from entry name and dictionary
-        Constant(const word& entryName, const dictionary& dict);
+        //- Construct from name and dictionary
+        Constant(const word& name, const dictionary& dict);
 
-        //- Construct from entry name and Istream
+        //- Construct from name and Istream
         //  Reads the constant value without the Function1 type
         //  for backward compatibility
-        Constant(const word& entryName, Istream& is);
+        Constant(const word& name, Istream& is);
 
         //- Copy constructor
         Constant(const Constant<Type>& cnst);
@@ -103,10 +103,10 @@ public:
         virtual inline Type value(const scalar) const;
 
         //- Integrate between two values
-        virtual inline Type integrate(const scalar x1, const scalar x2) const;
+        virtual inline Type integral(const scalar x1, const scalar x2) const;
 
         //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

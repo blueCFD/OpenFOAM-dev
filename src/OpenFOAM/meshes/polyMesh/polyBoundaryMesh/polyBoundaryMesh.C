@@ -581,7 +581,7 @@ Foam::wordList Foam::polyBoundaryMesh::physicalTypes() const
 
 Foam::labelList Foam::polyBoundaryMesh::findIndices
 (
-    const keyType& key,
+    const wordRe& key,
     const bool usePatchGroups
 ) const
 {
@@ -654,7 +654,7 @@ Foam::labelList Foam::polyBoundaryMesh::findIndices
 }
 
 
-Foam::label Foam::polyBoundaryMesh::findIndex(const keyType& key) const
+Foam::label Foam::polyBoundaryMesh::findIndex(const wordRe& key) const
 {
     if (!key.empty())
     {
@@ -1106,7 +1106,29 @@ void Foam::polyBoundaryMesh::updateMesh()
 }
 
 
-void Foam::polyBoundaryMesh::shuffle
+void Foam::polyBoundaryMesh::renamePatches
+(
+    const wordUList& newNames,
+    const bool validBoundary
+)
+{
+    polyPatchList& patches = *this;
+    forAll(patches, patchi)
+    {
+        if (patches.set(patchi))
+        {
+            patches[patchi].rename(newNames);
+        }
+    }
+
+    if (validBoundary)
+    {
+        updateMesh();
+    }
+}
+
+
+void Foam::polyBoundaryMesh::reorderPatches
 (
     const labelUList& newToOld,
     const bool validBoundary
@@ -1117,12 +1139,11 @@ void Foam::polyBoundaryMesh::shuffle
 
     // Adapt indices
     polyPatchList& patches = *this;
-
     forAll(patches, patchi)
     {
         if (patches.set(patchi))
         {
-            patches[patchi].index() = patchi;
+            patches[patchi].reorder(newToOld);
         }
     }
 

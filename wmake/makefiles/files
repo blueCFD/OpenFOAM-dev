@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -42,8 +42,10 @@
 #     wmake/makefiles/files
 #
 # Description
-#     A Makefile for the 'options' and 'files' files, used by wmake
+#     A Makefile to process Make/files for gmake
 #
+#     If the Make/files file does not contain a SOURCE list the source file
+#     names in it are converted into the SOURCE list for gmake.
 #------------------------------------------------------------------------------
 
 GENERAL_RULES   = $(WM_DIR)/rules/General
@@ -51,63 +53,27 @@ include $(GENERAL_RULES)/general
 
 
 #------------------------------------------------------------------------------
-# Declare names of make system control files derived from file 'files'
+# Declare names of make system control files
 #------------------------------------------------------------------------------
 
 OBJECTS_DIR     = $(MAKE_DIR)/$(WM_OPTIONS)
-OPTIONS         = $(OBJECTS_DIR)/options
+OPTIONS         = $(MAKE_DIR)/options
 FILES           = $(OBJECTS_DIR)/files
-VARS            = $(OBJECTS_DIR)/variables
-SFILES          = $(OBJECTS_DIR)/sourceFiles
 
-VERSIONFILE = $(OBJECTS_DIR)/version_of_build.rc
-LOCAL_PATHS_INCLUDE = $(OBJECTS_DIR)/includeHeaderPaths
-
--include $(OPTIONS)
+include $(OPTIONS)
 
 
 #------------------------------------------------------------------------------
-# Set the directory containing the wmake scripts
+# Scan Make/files for source file names and create the SOURCE entry
 #------------------------------------------------------------------------------
 
-WM_SCRIPTS   = $(WM_DIR)/scripts
+# Create a sed pattern from the source file suffix list
+SUFFIX_SED = \
+    $(foreach s,$(SUFFIXES),'-e s/\(^ *\)\([^ ]*\$(s)$$\)/\1SOURCE += \2/')
 
-
-#------------------------------------------------------------------------------
-# Declare dependency of all make system files on FILES
-# Causes all derived files to be remade if any are changed or missing
-#------------------------------------------------------------------------------
-
-.PHONY: reviseSourceFilesListWithVersion
-
-all : $(OPTIONS) $(SFILES) $(VARS)
-
-versioning : $(VERSIONFILE) reviseSourceFilesListWithVersion $(VERSIONFILE).dep
-
-localHeaderPaths : $(LOCAL_PATHS_INCLUDE)
-
-$(OPTIONS) : $(MAKE_DIR)/options
-	@$(CPP) $(GFLAGS) $(MAKE_DIR)/options | sed -e 's@   *@ @g' > $(OPTIONS)
-ifneq ($(WM_TARGET_ARCH),)
-	$(WM_SCRIPTS)/wmakeAddForceLoadDependencies $(OPTIONS) $(MAKE_DIR)/files
-endif
-
-$(SFILES): $(MAKE_DIR)/files
-	@$(CPP) $(GFLAGS) $(MAKE_DIR)/files | sed -e 's@   *@ @g' > $(FILES)
-	# Find all macro definitions in the files
-	@grep "=" $(FILES) > $(VARS)
-	echo "SOURCE = " > $(SFILES)
-	# Remove all macro definitions from the files list
-	@grep -v "=" $(FILES) >> $(SFILES)
-	@rm -f $(FILES)
-	# Add a newline to files to ensure the last line is followed by a newline
-	@echo "" >> $(SFILES)
-	# Remove commented lines, blank lines, and trailing blanks from files
-	@sed -i -e '/^#/ d' -e '/^[ \t]*$$/ d' -e 's,[ \t]*$$,,' $(SFILES)
-	# Add backslashes
-	@sed -i -e 's,$$, \\,' -e '$$s,\\,,' $(SFILES)
-
-$(VARS): $(SFILES)
+# Prepend SOURCE += to each of the source file names
+$(FILES): $(MAKE_DIR)/files
+	@sed $(SUFFIX_SED) $(MAKE_DIR)/files > $(FILES)
 
 $(VERSIONFILE): $(MAKE_DIR)/files $(WM_PROJECT_DIR)/.build
 	$(WM_SCRIPTS)/makeVersionResourceFile $(OBJECTS_DIR) $(VERSIONFILE) \

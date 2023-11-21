@@ -29,6 +29,7 @@ License
 #include "fvcSnGrad.H"
 #include "fvmSup.H"
 #include "surfaceInterpolate.H"
+#include "Function2Evaluate.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,27 +66,15 @@ FickianEddyDiffusivity
         )
     ),
 
-    D_(this->coeffDict_.lookup("D")),
-    DT_(this->coeffDict_.lookupOrDefault("DT", scalarList()))
+    D_(this->thermo().composition().species().size()),
+    DT_
+    (
+        this->coeffDict_.found("DT")
+      ? this->thermo().composition().species().size()
+      : 0
+    )
 {
-    if (D_.size() != this->thermo().composition().Y().size())
-    {
-        FatalIOErrorInFunction(this->coeffDict_)
-            << "Size of mass diffusion coefficient array D " << D_.size()
-            << " does not equal the number of species "
-            << this->thermo().composition().Y().size()
-            << exit(FatalIOError);
-    }
-
-    if (DT_.size() && DT_.size() != this->thermo().composition().Y().size())
-    {
-        FatalIOErrorInFunction(this->coeffDict_)
-            << "Size of thermal (Sorer) diffusion coefficient array DT "
-            << DT_.size()
-            << " does not equal the number of species "
-            << this->thermo().composition().Y().size()
-            << exit(FatalIOError);
-    }
+    read();
 }
 
 
@@ -103,12 +92,78 @@ FickianEddyDiffusivity<TurbulenceThermophysicalTransportModel>::read()
     {
         Sct_.readIfPresent(this->coeffDict());
 
+        const speciesTable& species = this->thermo().composition().species();
+        const dictionary& Ddict = this->coeffDict_.subDict("D");
+
+        forAll(species, i)
+        {
+            D_.set(i, Function2<scalar>::New(species[i], Ddict).ptr());
+        }
+
+        if (this->coeffDict_.found("DT"))
+        {
+            const dictionary& DTdict = this->coeffDict_.subDict("DT");
+
+            forAll(species, i)
+            {
+                DT_.set(i, Function2<scalar>::New(species[i], DTdict).ptr());
+            }
+        }
+
         return true;
     }
     else
     {
         return false;
     }
+}
+
+
+template<class TurbulenceThermophysicalTransportModel>
+tmp<volScalarField>
+FickianEddyDiffusivity<TurbulenceThermophysicalTransportModel>::DEff
+(
+    const volScalarField& Yi
+) const
+{
+    const basicSpecieMixture& composition =
+        this->thermo().composition();
+
+    return volScalarField::New
+    (
+        "DEff",
+        this->momentumTransport().rho()
+       *evaluate
+        (
+            D_[composition.index(Yi)],
+            dimViscosity,
+            this->thermo().p(),
+            this->thermo().T()
+        )
+      + (this->Prt_/Sct_)*this->alphat()
+    );
+}
+
+
+template<class TurbulenceThermophysicalTransportModel>
+tmp<scalarField>
+FickianEddyDiffusivity<TurbulenceThermophysicalTransportModel>::DEff
+(
+    const volScalarField& Yi,
+    const label patchi
+) const
+{
+    const basicSpecieMixture& composition =
+        this->thermo().composition();
+
+    return
+        this->momentumTransport().rho().boundaryField()[patchi]
+       *D_[composition.index(Yi)].value
+        (
+            this->thermo().p().boundaryField()[patchi],
+            this->thermo().T().boundaryField()[patchi]
+        )
+      + this->Prt_.value()/Sct_.value()*this->alphat(patchi);
 }
 
 
@@ -122,12 +177,16 @@ FickianEddyDiffusivity<TurbulenceThermophysicalTransportModel>::j
     if (DT_.size())
     {
         const basicSpecieMixture& composition = this->thermo().composition();
+        const volScalarField& p = this->thermo().T();
         const volScalarField& T = this->thermo().T();
 
         return
             unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>::
             j(Yi)
-          - dimensionedScalar(dimDynamicViscosity, DT_[composition.index(Yi)])
+          - fvc::interpolate
+            (
+                evaluate(DT_[composition.index(Yi)], dimDynamicViscosity, p, T)
+            )
            *fvc::snGrad(T)/fvc::interpolate(T);
     }
     else

@@ -25,46 +25,143 @@ Class
     Foam::Function1s::Table
 
 Description
-    Templated table container function.
+    Templated interpolated tabulated data Function1.
 
     Items are stored in a list of Tuple2's. First column is always stored as
-    scalar entries. Data is read in Tuple2 form.
+    scalar entries. Data is read in Tuple2 form:
 
     Usage:
     \verbatim
-        <entryName>   table
+        <name>   table
         (
             (0.0 (1 2 3))
             (1.0 (4 5 6))
         );
     \endverbatim
 
+    or in dictionary form which supports the setting of options, e.g.
+    \verbatim
+        <name>   table;
+
+        values
+        (
+            (0.0 (1 2 3))
+            (1.0 (4 5 6))
+        );
+
+        outOfBounds         clamp;     // optional out-of-bounds handling
+        interpolationScheme linear;    // optional interpolation method
+    \endverbatim
+
+    or in sub-dictionary form which avoids clashes between table entries and
+    other entries in the dictionary:
+
+    \verbatim
+        <name>
+        {
+            type    table;
+
+            values
+            (
+                (0.0 (1 2 3))
+                (1.0 (4 5 6))
+            );
+
+            outOfBounds         clamp;     // optional out-of-bounds handling
+            interpolationScheme linear;    // optional interpolation method
+        }
+    \endverbatim
+
+    The data may be read from a separate file in either native or CSV format:
+
+    Usage:
+    \verbatim
+        <name>
+        {
+            type                table;
+            file                "<file path>"; // Name/path of thedata file
+            format              foam;      // data format (optional)
+            outOfBounds         clamp;     // optional out-of-bounds handling
+            interpolationScheme linear;    // optional interpolation method
+        }
+    \endverbatim
+
 SourceFiles
     Table.C
+
+See also
+    FoamTableReader.C
+    CsvTableReader.C
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef Table_H
 #define Table_H
 
-#include "TableBase.T.H"
+#include "tableBase.H"
+#include "Function1.T.H"
+#include "TableReader.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+class interpolationWeights;
+
 namespace Function1s
 {
 
 /*---------------------------------------------------------------------------*\
-                            Class Table Declaration
+                          Class Table Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
 class Table
 :
-    public TableBase<Type, Table<Type>>
+    public tableBase,
+    public FieldFunction1<Type, Table<Type>>
 {
+    // Private Data
+
+        //- Enumeration for handling out-of-bound values
+        const tableBase::boundsHandling boundsHandling_;
+
+        //- Interpolation type
+        const word interpolationScheme_;
+
+        //- Table data
+        List<Tuple2<scalar, Type>> table_;
+
+        //- Extracted values
+        mutable autoPtr<scalarField> tableSamplesPtr_;
+
+        //- Interpolator method
+        mutable autoPtr<interpolationWeights> interpolatorPtr_;
+
+        //- Cached indices
+        mutable labelList indices_;
+
+        //- Cached weights
+        mutable scalarField weights_;
+
+        //- Table reader
+        const autoPtr<TableReader<Type>> reader_;
+
+
+    // Private Member Functions
+
+        //- Return (demand driven) interpolator
+        const interpolationWeights& interpolator() const;
+
+        //- Check the table for size and consistency
+        void check() const;
+
+        //- Bound the argument to the table. Errors or warns, or shifts the
+        //  value if the table repeats. Does not clamp to the ends of the table
+        //  as the interpolator already performs that function.
+        scalar bound(const scalar x) const;
+
 
 public:
 
@@ -74,9 +171,6 @@ public:
 
     // Constructors
 
-        //- Construct from entry name and Istream
-        Table(const word& entryName, const dictionary& dict);
-
         //- Construct from components
         Table
         (
@@ -85,6 +179,9 @@ public:
             const word& interpolationScheme,
             const List<Tuple2<scalar, Type>>& table
         );
+
+        //- Construct from name and dictionary
+        Table(const word& name, const dictionary& dict);
 
         //- Copy constructor
         Table(const Table<Type>& tbl);
@@ -96,8 +193,20 @@ public:
 
     // Member Functions
 
-        //- Write entries only in dictionary format
-        virtual void writeEntries(Ostream& os) const;
+        //- Return Table value as a function of scalar x
+        virtual Type value(const scalar x) const;
+
+        //- Integrate between two scalars
+        virtual Type integral(const scalar x1, const scalar x2) const;
+
+        //- Return the reference values
+        virtual tmp<scalarField> x() const;
+
+        //- Return the dependent values
+        virtual tmp<Field<Type>> y() const;
+
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

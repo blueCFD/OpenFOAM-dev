@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,18 +39,18 @@ Description
 
 #include "argList.H"
 #include "Time.T.H"
-#include "fvMesh.H"
 #include "singleCellFvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "fixedValueFvPatchFields.H"
 #include "distributedTriSurfaceMesh.H"
 #include "cyclicAMIPolyPatch.H"
-#include "mapDistribute.H"
+#include "symmetryPolyPatch.H"
+#include "symmetryPlanePolyPatch.H"
+#include "wedgePolyPatch.H"
 #include "meshTools.H"
 #include "uindirectPrimitivePatch.H"
 #include "DynamicField.T.H"
-#include "scalarMatrices.H"
 #include "scalarListIOList.H"
 
 using namespace Foam;
@@ -251,6 +251,26 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createNamedMesh.H"
 
+    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+
+    forAll(patches, patchi)
+    {
+        const polyPatch& pp = patches[patchi];
+        if
+        (
+            isA<cyclicTransform>(pp)
+         || isA<symmetryPolyPatch>(pp)
+         || isA<symmetryPlanePolyPatch>(pp)
+         || isA<wedgePolyPatch>(pp)
+        )
+        {
+            FatalErrorIn(args.executable()) << args.executable()
+                << " does not currently support transforming patches: "
+                   "cyclic, symmetry and wedge."
+                << exit(FatalError);
+        }
+    }
+
     // Read view factor dictionary
     IOdictionary viewFactorDict
     (
@@ -333,7 +353,6 @@ int main(int argc, char *argv[])
     label nCoarseFaces = 0;      // total number of coarse faces
     label nFineFaces = 0;        // total number of fine faces
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
     const polyBoundaryMesh& coarsePatches = coarseMesh.boundaryMesh();
 
     labelList viewFactorsPatches(patches.size());

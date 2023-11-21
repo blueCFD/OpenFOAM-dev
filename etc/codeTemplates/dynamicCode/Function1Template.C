@@ -116,7 +116,7 @@ Foam::Function1s::${typeName}Function1${TemplateType}::
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::${TemplateType}
-Foam::Function1s::${typeName}Function1${TemplateType}::integrate
+Foam::Function1s::${typeName}Function1${TemplateType}::integral
 (
     const scalar x1,
     const scalar x2
@@ -127,7 +127,7 @@ Foam::Function1s::${typeName}Function1${TemplateType}::integrate
 }
 
 
-void Foam::Function1s::${typeName}Function1${TemplateType}::writeData
+void Foam::Function1s::${typeName}Function1${TemplateType}::write
 (
     Ostream& os
 ) const

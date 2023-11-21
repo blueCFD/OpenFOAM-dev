@@ -34,7 +34,7 @@ Description
 
     Usage for a vector:
     \verbatim
-        <entryName>
+        <name>
         {
             type      scale;
 
@@ -60,7 +60,7 @@ Description
 
     Simplified usage to scale by a constant factor, e.g. 2:
     \verbatim
-        <entryName>
+        <name>
         {
             type      scale;
 
@@ -80,7 +80,7 @@ Description
 
     Usage including the optional 'xScale' function:
     \verbatim
-        <entryName>
+        <name>
         {
             type      scale;
 
@@ -158,7 +158,7 @@ class Scale
     // Private Member Functions
 
         //- Read the coefficients from the given dictionary
-        void read(const dictionary& coeffs);
+        void read(const dictionary& dict);
 
 
 public:
@@ -169,10 +169,10 @@ public:
 
     // Constructors
 
-        //- Construct from entry name and dictionary
+        //- Construct from name and dictionary
         Scale
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict
         );
 
@@ -186,14 +186,14 @@ public:
 
     // Member Functions
 
-        //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
-
         //- Return value
         virtual inline Type value(const scalar x) const;
 
         //- Integrate between two values
-        virtual inline Type integrate(const scalar x1, const scalar x2) const;
+        virtual inline Type integral(const scalar x1, const scalar x2) const;
+
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

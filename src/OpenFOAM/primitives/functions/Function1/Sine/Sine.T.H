@@ -43,8 +43,8 @@ Description
 
     Example for a scalar:
     \verbatim
-        <entryName> sine;
-        <entryName>Coeffs
+        <name> sine;
+        <name>Coeffs
         {
             amplitude 2e-7;
             frequency 10;
@@ -55,8 +55,8 @@ Description
 
     Example for a vector:
     \verbatim
-        <entryName> sine;
-        <entryName>Coeffs
+        <name> sine;
+        <name>Coeffs
         {
             amplitude (1 0.1 0);
             frequency 10;
@@ -112,7 +112,7 @@ class Sine
     // Private Member Functions
 
         //- Read the coefficients from the given dictionary
-        void read(const dictionary& coeffs);
+        void read(const dictionary& dict);
 
 
 public:
@@ -123,10 +123,10 @@ public:
 
     // Constructors
 
-        //- Construct from entry name and dictionary
+        //- Construct from name and dictionary
         Sine
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict
         );
 
@@ -144,10 +144,10 @@ public:
         virtual inline Type value(const scalar x) const;
 
         //- Integrate between two values
-        virtual inline Type integrate(const scalar x1, const scalar x2) const;
+        virtual inline Type integral(const scalar x1, const scalar x2) const;
 
-        //- Write in dictionary format
-        virtual void writeData(Ostream& os) const;
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const;
 
 
     // Member Operators

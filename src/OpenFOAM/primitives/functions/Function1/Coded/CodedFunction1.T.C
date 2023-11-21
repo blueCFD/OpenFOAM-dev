@@ -93,11 +93,11 @@ Foam::Function1s::Coded<Type>::compileNew()
 template<class Type>
 Foam::Function1s::Coded<Type>::Coded
 (
-    const word& entryName,
+    const word& name,
     const dictionary& dict
 )
 :
-    Function1<Type>(entryName),
+    Function1<Type>(name),
     CodedBase<coded>(dict)
 {
     redirectFunction1Ptr_ = compileNew();
@@ -142,7 +142,7 @@ Foam::tmp<Foam::Field<Type>> Foam::Function1s::Coded<Type>::value
 
 
 template<class Type>
-inline Type Foam::Function1s::Coded<Type>::integrate
+inline Type Foam::Function1s::Coded<Type>::integral
 (
     const scalar x1,
     const scalar x2
@@ -154,7 +154,7 @@ inline Type Foam::Function1s::Coded<Type>::integrate
 
 
 template<class Type>
-Foam::tmp<Foam::Field<Type>> Foam::Function1s::Coded<Type>::integrate
+Foam::tmp<Foam::Field<Type>> Foam::Function1s::Coded<Type>::integral
 (
     const scalarField& x1,
     const scalarField& x2
@@ -166,10 +166,8 @@ Foam::tmp<Foam::Field<Type>> Foam::Function1s::Coded<Type>::integrate
 
 
 template<class Type>
-void Foam::Function1s::Coded<Type>::writeData(Ostream& os) const
+void Foam::Function1s::Coded<Type>::write(Ostream& os) const
 {
-    Function1<Type>::writeData(os);
-    os  << token::END_STATEMENT << nl;
     writeCode(os);
 }
 

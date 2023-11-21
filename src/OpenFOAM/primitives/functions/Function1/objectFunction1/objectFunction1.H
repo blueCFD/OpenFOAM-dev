@@ -70,7 +70,7 @@ class objectFunction1
         template <class PrimitiveType>
         objectFunction1
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict,
             const type<PrimitiveType>&
         );
@@ -83,7 +83,7 @@ public:
         template <template <class> class ObjectType>
         static autoPtr<objectFunction1> New
         (
-            const word& entryName,
+            const word& name,
             const dictionary& dict,
             const word& objectName,
             const objectRegistry& db
@@ -96,27 +96,25 @@ public:
 
     // Member Functions
 
-        // Evaluation
+        //- Return value as a function of scalar x
+        template <class PrimitiveType>
+        PrimitiveType value(const scalar x) const;
 
-            //- Return value as a function of (scalar) independent variable
-            template <class PrimitiveType>
-            PrimitiveType value(const scalar x) const;
+        //- Return value as a function of scalarField x
+        template <class PrimitiveType>
+        tmp<Field<PrimitiveType>> value(const scalarField& x) const;
 
-            //- Return value as a function of (scalar) independent variable
-            template <class PrimitiveType>
-            tmp<Field<PrimitiveType>> value(const scalarField& x) const;
+        //- Integrate between two scalars
+        template <class PrimitiveType>
+        PrimitiveType integral(const scalar x1, const scalar x2) const;
 
-            //- Integrate between two (scalar) values
-            template <class PrimitiveType>
-            PrimitiveType integrate(const scalar x1, const scalar x2) const;
-
-            //- Integrate between two (scalar) values
-            template <class PrimitiveType>
-            tmp<Field<PrimitiveType>> integrate
-            (
-                const scalarField& x1,
-                const scalarField& x2
-            ) const;
+        //- Integrate between two scalar fields
+        template <class PrimitiveType>
+        tmp<Field<PrimitiveType>> integral
+        (
+            const scalarField& x1,
+            const scalarField& x2
+        ) const;
 
 
     // Member Operators

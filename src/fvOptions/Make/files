@@ -5,7 +5,7 @@ interRegionOption/interRegionOption.C
 interRegionOption/interRegionOptionIO.C
 
 
-/* Sources */
+# Sources
 
 generalSources=sources/general
 $(generalSources)/codedSource/codedSource.C
@@ -31,8 +31,7 @@ $(derivedSources)/rotorDiskSource/trimModel/fixed/fixedTrim.C
 $(derivedSources)/rotorDiskSource/trimModel/targetCoeff/targetCoeffTrim.C
 $(derivedSources)/solidificationMeltingSource/solidificationMeltingSource.C
 $(derivedSources)/solidificationMeltingSource/solidificationMeltingSourceIO.C
-$(derivedSources)/tabulatedAccelerationSource/tabulatedAccelerationSource.C
-$(derivedSources)/tabulatedAccelerationSource/tabulated6DoFAcceleration/tabulated6DoFAcceleration.C
+$(derivedSources)/sixDoFAccelerationSource/sixDoFAccelerationSource.C
 $(derivedSources)/buoyancyForce/buoyancyForce.C
 $(derivedSources)/buoyancyForce/buoyancyForceIO.C
 $(derivedSources)/buoyancyEnergy/buoyancyEnergy.C
@@ -49,18 +48,18 @@ interRegion = sources/interRegion
 $(interRegion)/interRegionHeatTransfer/interRegionHeatTransferModel/interRegionHeatTransferModel.C
 $(interRegion)/interRegionHeatTransfer/interRegionHeatTransferModel/interRegionHeatTransferModelIO.C
 $(interRegion)/interRegionHeatTransfer/constantHeatTransfer/constantHeatTransfer.C
-$(interRegion)/interRegionHeatTransfer/tabulatedHeatTransfer/tabulatedHeatTransfer.C
+$(interRegion)/interRegionHeatTransfer/function2HeatTransfer/function2HeatTransfer.C
 $(interRegion)/interRegionHeatTransfer/variableHeatTransfer/variableHeatTransfer.C
 $(interRegion)/interRegionExplicitPorositySource/interRegionExplicitPorositySource.C
 
 
-/* Constraints */
+# Constraints
 
 constraints/fixedValueConstraint/fixedValueConstraints.C
 constraints/fixedTemperatureConstraint/fixedTemperatureConstraint.C
 
 
-/* Corrections */
+# Corrections
 
 corrections/limitTemperature/limitTemperature.C
 corrections/limitVelocity/limitVelocity.C

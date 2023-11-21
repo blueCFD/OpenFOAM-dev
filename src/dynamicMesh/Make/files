@@ -101,7 +101,6 @@ motionSmoother/badQualityToFace/badQualityToFace.C
 motionSolvers/motionSolver/motionSolver.C
 motionSolvers/displacement/points0/points0MotionSolver.C
 motionSolvers/displacement/displacement/displacementMotionSolver.C
-motionSolvers/displacement/interpolation/displacementInterpolationMotionSolver.C
 motionSolvers/displacement/layeredSolver/displacementLayeredMotionMotionSolver.C
 motionSolvers/displacement/layeredSolver/pointEdgeStructuredWalk.C
 motionSolvers/displacement/linearSolver/displacementLinearMotionMotionSolver.C
@@ -117,7 +116,7 @@ solidBodyMotionFunctions = motionSolvers/displacement/solidBody/solidBodyMotionF
 $(solidBodyMotionFunctions)/solidBodyMotionFunction/solidBodyMotionFunction.C
 $(solidBodyMotionFunctions)/solidBodyMotionFunction/solidBodyMotionFunctionNew.C
 $(solidBodyMotionFunctions)/SDA/SDA.C
-$(solidBodyMotionFunctions)/tabulated6DoFMotion/tabulated6DoFMotion.C
+$(solidBodyMotionFunctions)/sixDoFMotion/sixDoFMotion.C
 $(solidBodyMotionFunctions)/linearMotion/linearMotion.C
 $(solidBodyMotionFunctions)/rotatingMotion/rotatingMotion.C
 $(solidBodyMotionFunctions)/axisRotationMotion/axisRotationMotion.C
