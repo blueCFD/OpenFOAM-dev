@@ -118,16 +118,12 @@ Foam::kineticTheoryModels::frictionalStressModels::Schaeffer::nu
 
     tmp<volScalarField> tnu
     (
-        new volScalarField
+        volScalarField::New
         (
-            IOobject
+            IOobject::groupName
             (
-                "Schaeffer:nu",
-                phase.mesh().time().timeName(),
-                phase.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
+                IOobject::modelName("nu", frictionalStressModel::typeName),
+                phase.group()
             ),
             phase.mesh(),
             dimensionedScalar(dimensionSet(0, 2, -1, 0, 0), 0)

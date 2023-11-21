@@ -113,16 +113,32 @@ nonUnityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>::q() const
 
     if (Y.size())
     {
+        surfaceScalarField hGradY
+        (
+            surfaceScalarField::New
+            (
+                "hGradY",
+                Y[0].mesh(),
+                dimensionedScalar(dimEnergy/dimMass/dimLength, 0)
+            )
+        );
+
         forAll(Y, i)
         {
-            tmpq.ref() -=
-                fvc::interpolate
-                (
-                    this->alpha()*DEff(Y[i])
-                   *composition.HE(i, this->thermo().p(), this->thermo().T())
-                )
-               *fvc::snGrad(Y[i]);
+            const volScalarField hi
+            (
+                composition.HE(i, this->thermo().p(), this->thermo().T())
+            );
+
+            hGradY += fvc::interpolate(hi)*fvc::snGrad(Y[i]);
         }
+
+        tmpq.ref() -=
+            fvc::interpolate
+            (
+                this->alpha()
+               *this->thermo().alphaEff((this->Prt_/Sct_)*this->alphat())
+            )*hGradY*Y[0].mesh().magSf();
     }
 
     return tmpq;

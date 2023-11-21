@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,29 +23,22 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fieldExpression.H"
+#include "chemistryReductionMethod.H"
 
-// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
+#include "DAC.T.H"
 
-template<class Type>
-bool Foam::functionObjects::fieldExpression::foundObject
-(
-    const word& name
-)
+#include "forCommonGases.H"
+#include "forCommonLiquids.H"
+#include "forPolynomials.H"
+#include "makeChemistryReductionMethod.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
 {
-    if (fvMeshFunctionObject::foundObject<Type>(name))
-    {
-        return true;
-    }
-    else
-    {
-        Warning
-            << "    functionObjects::" << type() << " " << this->name()
-            << " cannot find required object " << name << " of type "
-            << Type::typeName << endl;
-
-        return false;
-    }
+    forCommonGases(makeChemistryReductionMethod, DAC);
+    forCommonLiquids(makeChemistryReductionMethod, DAC);
+    forPolynomials(makeChemistryReductionMethod, DAC);
 }
 
 

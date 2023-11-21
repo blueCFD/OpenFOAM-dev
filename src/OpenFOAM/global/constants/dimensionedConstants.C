@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,7 +43,12 @@ Foam::dictionary& Foam::dimensionedConstants()
 }
 
 
-void Foam::registerDimensionedConstant::lookup()
+Foam::dimensionedScalar Foam::dimensionedConstant
+(
+    const char* const group,
+    const char* name,
+    const dimensionSet& dimensions
+)
 {
     dictionary& dict = dimensionedConstants();
 
@@ -64,51 +69,52 @@ void Foam::registerDimensionedConstant::lookup()
             << dict.name() << std::endl;
     }
 
-    dimensionedScalar::operator=
+    return dimensionedScalar
     (
-        dimensionedScalar
-        (
-            name(),
-            dimensions(),
-            dict.subDict(unitSetCoeffs).subDict(group_)
-        )
+        name,
+        dimensions,
+        dict.subDict(unitSetCoeffs).subDict(group)
     );
 }
 
 
-void Foam::registerDimensionedConstantWithDefault::lookup()
+Foam::dimensionedScalar Foam::dimensionedConstant
+(
+    const char* const group,
+    const char* name,
+    const dimensionedScalar& defaultValuee
+)
 {
     dictionary& dict = dimensionedConstants();
 
     const word unitSet(dict.lookup("unitSet"));
     dictionary& unitDict(dict.subDict(unitSet + "Coeffs"));
 
-    if (unitDict.found(group_))
+    const dimensionedScalar defaultValue(name, defaultValuee);
+
+    if (unitDict.found(group))
     {
-        dictionary& groupDict = unitDict.subDict(group_);
-        if (groupDict.found(name()))
+        dictionary& groupDict = unitDict.subDict(group);
+        if (groupDict.found(name))
         {
-            dimensionedScalar::operator=
+            return dimensionedScalar
             (
-                dimensionedScalar
-                (
-                    name(),
-                    default_.dimensions(),
-                    groupDict.lookup(name())
-                )
+                name,
+                defaultValue.dimensions(),
+                groupDict.lookup(name)
             );
         }
         else
         {
-            groupDict.add(name(), default_);
-            dimensionedScalar::operator=(default_);
+            groupDict.add(name, defaultValue);
+            return defaultValue;
         }
     }
     else
     {
-        unitDict.add(group_, dictionary::null);
-        unitDict.subDict(group_).add(name(), default_);
-        dimensionedScalar::operator=(default_);
+        unitDict.add(group, dictionary::null);
+        unitDict.subDict(group).add(name, defaultValue);
+        return defaultValue;
     }
 }
 

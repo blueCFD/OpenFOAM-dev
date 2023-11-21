@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,16 +23,23 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "diffusion.H"
+#include "chemistryTabulationMethod.H"
+
+#include "ISAT.T.H"
 
 #include "forCommonGases.H"
-#include "makeThermoCombustionModel.H"
+#include "forCommonLiquids.H"
+#include "forPolynomials.H"
+#include "makeChemistryTabulationMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    forCommonGases(makeThermoCombustionModel, diffusion);
+    forCommonGases(makeChemistryTabulationMethod, ISAT);
+    forCommonLiquids(makeChemistryTabulationMethod, ISAT);
+    forPolynomials(makeChemistryTabulationMethod, ISAT);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// ************************************************************************* //

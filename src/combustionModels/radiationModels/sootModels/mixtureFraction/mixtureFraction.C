@@ -25,11 +25,33 @@ License
 
 #include "mixtureFraction.H"
 #include "singleStepCombustion.H"
+#include "addToRunTimeSelectionTable.H"
+
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+namespace radiationModels
+{
+namespace sootModels
+{
+    defineTypeNameAndDebug(mixtureFraction, 0);
+
+    addToRunTimeSelectionTable
+    (
+        sootModel,
+        mixtureFraction,
+        dictionary
+    );
+}
+}
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class ThermoType>
-Foam::radiationModels::sootModels::mixtureFraction<ThermoType>::mixtureFraction
+Foam::radiationModels::sootModels::mixtureFraction::mixtureFraction
 (
     const dictionary& dict,
     const fvMesh& mesh,
@@ -59,42 +81,42 @@ Foam::radiationModels::sootModels::mixtureFraction<ThermoType>::mixtureFraction
     ),
     mapFieldMax_(1)
 {
-    const combustionModels::singleStepCombustion<ThermoType>& combustion =
-        mesh.lookupObject<combustionModels::singleStepCombustion<ThermoType>>
+    const combustionModels::singleStepCombustion& combustion =
+        mesh.lookupObject<combustionModels::singleStepCombustion>
         (
             combustionModel::combustionPropertiesName
         );
 
-    const multiComponentMixture<ThermoType>& mixture = combustion.mixture();
+    const basicSpecieMixture& mixture = combustion.mixture();
 
-    const Reaction<ThermoType>& reaction = combustion.reaction();
+    const reaction& singleReaction = combustion.singleReaction();
 
     scalar totalMol = 0;
-    forAll(reaction.rhs(), i)
+    forAll(singleReaction.rhs(), i)
     {
-        const scalar stoichCoeff = reaction.rhs()[i].stoichCoeff;
+        const scalar stoichCoeff = singleReaction.rhs()[i].stoichCoeff;
         totalMol += mag(stoichCoeff);
     }
 
     totalMol += nuSoot_;
 
-    scalarList Xi(reaction.rhs().size());
+    scalarList Xi(singleReaction.rhs().size());
 
     scalar Wm = 0;
-    forAll(reaction.rhs(), i)
+    forAll(singleReaction.rhs(), i)
     {
-        const label speciei = reaction.rhs()[i].index;
-        const scalar stoichCoeff = reaction.rhs()[i].stoichCoeff;
+        const label speciei = singleReaction.rhs()[i].index;
+        const scalar stoichCoeff = singleReaction.rhs()[i].stoichCoeff;
         Xi[i] = mag(stoichCoeff)/totalMol;
-        Wm += Xi[i]*mixture.specieThermos()[speciei].W();
+        Wm += Xi[i]*mixture.Wi(speciei);
     }
 
     scalarList Yprod0(mixture.species().size(), 0.0);
 
-    forAll(reaction.rhs(), i)
+    forAll(singleReaction.rhs(), i)
     {
-        const label speciei = reaction.rhs()[i].index;
-        Yprod0[speciei] = mixture.specieThermos()[speciei].W()/Wm*Xi[i];
+        const label speciei = singleReaction.rhs()[i].index;
+        Yprod0[speciei] = mixture.Wi(speciei)/Wm*Xi[i];
     }
 
     const scalar XSoot = nuSoot_/totalMol;
@@ -106,7 +128,7 @@ Foam::radiationModels::sootModels::mixtureFraction<ThermoType>::mixtureFraction
 
     if (mappingFieldName_ == "none")
     {
-        const label index = reaction.rhs()[0].index;
+        const label index = singleReaction.rhs()[0].index;
         mappingFieldName_ = mixture.Y(index).name();
     }
 
@@ -118,16 +140,13 @@ Foam::radiationModels::sootModels::mixtureFraction<ThermoType>::mixtureFraction
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-template<class ThermoType>
-Foam::radiationModels::sootModels::mixtureFraction<ThermoType>::
-~mixtureFraction()
+Foam::radiationModels::sootModels::mixtureFraction::~mixtureFraction()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class ThermoType>
-void Foam::radiationModels::sootModels::mixtureFraction<ThermoType>::correct()
+void Foam::radiationModels::sootModels::mixtureFraction::correct()
 {
     const volScalarField& mapField =
         mesh_.lookupObject<volScalarField>(mappingFieldName_);
@@ -136,4 +155,4 @@ void Foam::radiationModels::sootModels::mixtureFraction<ThermoType>::correct()
 }
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,16 +23,23 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "infinitelyFastChemistry.H"
+#include "chemistryReductionMethod.H"
+
+#include "DRGEP.T.H"
 
 #include "forCommonGases.H"
-#include "makeThermoCombustionModel.H"
+#include "forCommonLiquids.H"
+#include "forPolynomials.H"
+#include "makeChemistryReductionMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    forCommonGases(makeThermoCombustionModel, infinitelyFastChemistry);
+    forCommonGases(makeChemistryReductionMethod, DRGEP);
+    forCommonLiquids(makeChemistryReductionMethod, DRGEP);
+    forPolynomials(makeChemistryReductionMethod, DRGEP);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// ************************************************************************* //

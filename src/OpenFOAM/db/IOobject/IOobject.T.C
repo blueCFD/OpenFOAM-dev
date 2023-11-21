@@ -43,7 +43,6 @@ Modifications
 #include "IOobject.T.H"
 #include "Time.T.H"
 #include "IFstream.H"
-#include "registerNamedEnum.H"
 #include "OSspecific.H"
 
 #include "ListHashTable.T.H"
@@ -79,15 +78,6 @@ Foam::IOobject::fileCheckTypes Foam::IOobject::fileModificationChecking
         fileModificationChecking
     )
 );
-
-// Register re-reader
-registerOptNamedEnum
-(
-    "fileModificationChecking",
-    Foam::IOobject::fileCheckTypesNames,
-    Foam::IOobject::fileModificationChecking
-);
-
 
 // * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * * //
 

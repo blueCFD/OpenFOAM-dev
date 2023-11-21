@@ -23,9 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "noChemistrySolver.H"
-#include "EulerImplicit.T.H"
-#include "ode.T.H"
+#include "chemistrySolver.H"
 
 #include "StandardChemistryModel.T.H"
 #include "TDACChemistryModel.T.H"
@@ -37,53 +35,12 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define defineChemistrySolvers(nullArg, ThermoPhysics)                         \
-    defineChemistrySolver                                                      \
-    (                                                                          \
-        StandardChemistryModel,                                                \
-        ThermoPhysics                                                          \
-    );                                                                         \
-    defineChemistrySolver                                                      \
-    (                                                                          \
-        TDACChemistryModel,                                                    \
-        ThermoPhysics                                                          \
-    )
-
-#define makeChemistrySolvers(Solver, ThermoPhysics)                            \
-    makeChemistrySolver                                                        \
-    (                                                                          \
-        Solver,                                                                \
-        StandardChemistryModel,                                                \
-        ThermoPhysics                                                          \
-    );                                                                         \
-    makeChemistrySolver                                                        \
-    (                                                                          \
-        Solver,                                                                \
-        TDACChemistryModel,                                                    \
-        ThermoPhysics                                                          \
-    )
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 namespace Foam
 {
     forCommonGases(defineChemistrySolvers, nullArg);
-
-    forCommonGases(makeChemistrySolvers, noChemistrySolver);
-    forCommonGases(makeChemistrySolvers, EulerImplicit);
-    forCommonGases(makeChemistrySolvers, ode);
-
     forCommonLiquids(defineChemistrySolvers, nullArg);
-
-    forCommonLiquids(makeChemistrySolvers, noChemistrySolver);
-    forCommonLiquids(makeChemistrySolvers, EulerImplicit);
-    forCommonLiquids(makeChemistrySolvers, ode);
-
     forPolynomials(defineChemistrySolvers, nullArg);
-
-    forPolynomials(makeChemistrySolvers, noChemistrySolver);
-    forPolynomials(makeChemistrySolvers, EulerImplicit);
-    forPolynomials(makeChemistrySolvers, ode);
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,121 +51,19 @@ namespace Foam
 
 dictionary& dimensionedConstants();
 
+dimensionedScalar dimensionedConstant
+(
+    const char* const group,
+    const char* name,
+    const dimensionSet& dimensions
+);
 
-class registerDimensionedConstant
-:
-    public simpleRegIOobject,
-    public dimensionedScalar
-{
-    const word& group_;
-
-    //- Lookup the dimensionedConstant from the registry
-    void lookup();
-
-
-public:
-
-    registerDimensionedConstant
-    (
-        const word& group,
-        const char* name,
-        const dimensionSet& dimensions
-    )
-    :
-        simpleRegIOobject(debug::addDimensionedConstantObject, name),
-        dimensionedScalar(name, dimensions, 0),
-        group_(group)
-    {
-        lookup();
-    }
-
-    virtual ~registerDimensionedConstant()
-    {}
-
-    virtual void readData(Istream& is)
-    {
-        lookup();
-    }
-
-    virtual void writeData(Ostream& os) const
-    {
-        os << static_cast<const dimensionedScalar&>(*this);
-    }
-};
-
-
-//- Defined and register a dimensioned constant
-#define defineDimensionedConstant(Group, Name, Dimensions)                     \
-    registerDimensionedConstant register##Name##DimensionedConstant_           \
-    (                                                                          \
-        Group::group,                                                          \
-        #Name,                                                                 \
-        Dimensions                                                             \
-    );                                                                         \
-    const Foam::dimensionedScalar& Group::Name                                 \
-    (                                                                          \
-        register##Name##DimensionedConstant_                                   \
-    );
-
-
-class registerDimensionedConstantWithDefault
-:
-    public simpleRegIOobject,
-    public dimensionedScalar
-{
-    const word& group_;
-    const dimensionedScalar default_;
-
-    //- Lookup the dimensionedConstant from the registry
-    void lookup();
-
-
-public:
-
-    registerDimensionedConstantWithDefault
-    (
-        const word& group,
-        const char* name,
-        const dimensionedScalar& value
-    )
-    :
-        simpleRegIOobject(debug::addDimensionedConstantObject, name),
-        dimensionedScalar(name, value),
-        group_(group),
-        default_(name, value)
-    {
-        lookup();
-    }
-
-    virtual ~registerDimensionedConstantWithDefault()
-    {}
-
-    virtual void readData(Istream& is)
-    {
-        lookup();
-    }
-
-    virtual void writeData(Ostream& os) const
-    {
-        os << static_cast<const dimensionedScalar&>(*this);
-    }
-};
-
-
-//- Defined and register a dimensioned constant with default
-#define defineDimensionedConstantWithDefault(Group, Name, DefaultExpr)         \
-    registerDimensionedConstantWithDefault                                     \
-        register##Name##DimensionedConstant_                                   \
-        (                                                                      \
-            Group::group,                                                      \
-            #Name,                                                             \
-            DefaultExpr                                                        \
-        );                                                                     \
-                                                                               \
-    const Foam::dimensionedScalar& Group::Name                                 \
-    (                                                                          \
-        register##Name##DimensionedConstant_                                   \
-    );
+dimensionedScalar dimensionedConstant
+(
+    const char* const group,
+    const char* name,
+    const dimensionedScalar& defaultValue
+);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

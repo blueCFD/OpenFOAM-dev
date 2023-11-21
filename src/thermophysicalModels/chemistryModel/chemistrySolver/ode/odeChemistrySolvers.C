@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,18 +23,24 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "mixtureFraction.H"
+#include "ode.T.H"
+
+#include "StandardChemistryModel.T.H"
+#include "TDACChemistryModel.T.H"
 
 #include "forCommonGases.H"
-#include "makeThermoSootModel.H"
-
-#include "addToRunTimeSelectionTable.H"
+#include "forCommonLiquids.H"
+#include "forPolynomials.H"
+#include "makeChemistrySolver.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    forCommonGases(makeThermoSootModel, mixtureFraction);
+    forCommonGases(makeChemistrySolvers, ode);
+    forCommonLiquids(makeChemistrySolvers, ode);
+    forPolynomials(makeChemistrySolvers, ode);
 }
+
 
 // ************************************************************************* //

@@ -118,16 +118,9 @@ Foam::RASModels::phasePressureModel::sigma() const
 {
     return tmp<volSymmTensorField>
     (
-        new volSymmTensorField
+        volSymmTensorField::New
         (
-            IOobject
-            (
-                IOobject::groupName("R", U_.group()),
-                runTime_.timeName(),
-                mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            IOobject::groupName("R", U_.group()),
             mesh_,
             dimensioned<symmTensor>
             (
@@ -145,11 +138,15 @@ Foam::RASModels::phasePressureModel::pPrime() const
 {
     tmp<volScalarField> tpPrime
     (
-        g0_
-       *min
+        volScalarField::New
         (
-            exp(preAlphaExp_*(alpha_ - alphaMax_)),
-            expMax_
+            IOobject::groupName("pPrime", U_.group()),
+            g0_
+           *min
+            (
+                exp(preAlphaExp_*(alpha_ - alphaMax_)),
+                expMax_
+            )
         )
     );
 
@@ -173,11 +170,15 @@ Foam::RASModels::phasePressureModel::pPrimef() const
 {
     tmp<surfaceScalarField> tpPrime
     (
-        g0_
-       *min
+        surfaceScalarField::New
         (
-            exp(preAlphaExp_*(fvc::interpolate(alpha_) - alphaMax_)),
-            expMax_
+            IOobject::groupName("pPrimef", U_.group()),
+            g0_
+           *min
+            (
+                exp(preAlphaExp_*(fvc::interpolate(alpha_) - alphaMax_)),
+                expMax_
+            )
         )
     );
 
@@ -201,16 +202,9 @@ Foam::RASModels::phasePressureModel::devTau() const
 {
     return tmp<volSymmTensorField>
     (
-        new volSymmTensorField
+        volSymmTensorField::New
         (
-            IOobject
-            (
-                IOobject::groupName("devTau", U_.group()),
-                runTime_.timeName(),
-                mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
+            IOobject::groupName("devTau", U_.group()),
             mesh_,
             dimensioned<symmTensor>
             (

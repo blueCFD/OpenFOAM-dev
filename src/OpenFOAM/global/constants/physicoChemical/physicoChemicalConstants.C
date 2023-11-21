@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -42,7 +42,6 @@ Modifications
 #include "universalConstants.H"
 #include "electromagneticConstants.H"
 #include "physicoChemicalConstants.H"
-
 #include "dimensionedConstants.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -54,37 +53,42 @@ namespace constant
 
 const char* const physicoChemical::group = "physicoChemical";
 
-defineDimensionedConstantWithDefault
+
+// Note: cannot use dimless etc. as they may not have been constructed yet
+
+const Foam::dimensionedScalar physicoChemical::R
 (
-    physicoChemical,
-    R,
-    dimensionedScalar(physicoChemical::NA*physicoChemical::k)
-);
-
-
-defineDimensionedConstantWithDefault
-(
-    physicoChemical,
-    F,
-    dimensionedScalar(physicoChemical::NA*electromagnetic::e)
-);
-
-
-// Note: cannot use dimless etc. since not guaranteed to be constructed
-defineDimensionedConstantWithDefault
-(
-    physicoChemical,
-    sigma,
-    dimensionedScalar
+    dimensionedConstant
     (
-        dimensionedScalar
-        (
-            "C",
-            dimensionSet(0, 0, 0, 0, 0),
-            sqr(mathematical::pi)/60.0
-        )
-       *pow4(physicoChemical::k)
-       /(pow3(universal::hr)*sqr(universal::c))
+        physicoChemical::group,
+        "R",
+        physicoChemical::NA*physicoChemical::k
+    )
+);
+
+
+// Note: the 1e3 converts from /mol to /kmol for consistency with the
+// SI choice of kg rather than g for mass.
+// This is not appropriate for USCS and will be changed to an entry in
+// the DimensionedConstants dictionary in etc/controlDict
+const Foam::dimensionedScalar physicoChemical::RR
+(
+    dimensionedConstant
+    (
+        physicoChemical::group,
+        "RR",
+        1000*physicoChemical::R
+    )
+);
+
+
+const Foam::dimensionedScalar physicoChemical::F
+(
+    dimensionedConstant
+    (
+        physicoChemical::group,
+        "F",
+        physicoChemical::NA*electromagnetic::e
     )
 #ifdef WM_SP
        .dimensions(),
@@ -97,45 +101,48 @@ defineDimensionedConstantWithDefault
 );
 
 
-defineDimensionedConstantWithDefault
+const Foam::dimensionedScalar physicoChemical::sigma
 (
-    physicoChemical,
-    b,
-    dimensionedScalar
+    dimensionedConstant
     (
-        (universal::h*universal::c/physicoChemical::k)
-       /dimensionedScalar
-        (
-            "C",
-            dimensionSet(0, 0, 0, 0, 0),
-            4.965114231
-        )
+        physicoChemical::group,
+        "sigma",
+        (sqr(mathematical::pi)/60.0)
+       *pow4(physicoChemical::k)/(pow3(universal::hr)*sqr(universal::c))
     )
 );
 
 
-defineDimensionedConstantWithDefault
+const Foam::dimensionedScalar physicoChemical::b
 (
-    physicoChemical,
-    c1,
-    dimensionedScalar
+    dimensionedConstant
     (
-        dimensionedScalar
-        (
-            "C",
-            dimensionSet(0, 0, 0, 0, 0),
-            mathematical::twoPi
-        )
-       *universal::h*sqr(universal::c)
+        physicoChemical::group,
+        "b",
+        (universal::h*universal::c/physicoChemical::k)/4.965114231
     )
 );
 
 
-defineDimensionedConstantWithDefault
+const Foam::dimensionedScalar physicoChemical::c1
 (
-    physicoChemical,
-    c2,
-    dimensionedScalar(universal::h*universal::c/physicoChemical::k)
+    dimensionedConstant
+    (
+        physicoChemical::group,
+        "c1",
+        mathematical::twoPi*universal::h*sqr(universal::c)
+    )
+);
+
+
+const Foam::dimensionedScalar physicoChemical::c2
+(
+    dimensionedConstant
+    (
+        physicoChemical::group,
+        "c2",
+        universal::h*universal::c/physicoChemical::k
+    )
 );
 
 

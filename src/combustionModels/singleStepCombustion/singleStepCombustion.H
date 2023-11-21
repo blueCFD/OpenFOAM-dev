@@ -25,7 +25,7 @@ Class
     Foam::combustionModels::singleStepCombustion
 
 Description
-    Base class for combustion models using multiComponentMixture.
+    Base class for combustion models using basicSpecieMixture.
 
 SourceFiles
     singleStepCombustion.C
@@ -36,8 +36,8 @@ SourceFiles
 #define singleStepCombustion_H
 
 #include "combustionModel.H"
-#include "multiComponentMixture.H"
-#include "ReactionList.T.H"
+#include "basicSpecieMixture.H"
+#include "reaction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,7 +50,6 @@ namespace combustionModels
                     Class singleStepCombustion Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class ThermoType>
 class singleStepCombustion
 :
     public combustionModel
@@ -60,10 +59,10 @@ protected:
     // Protected data
 
         //- Reference to the mixture
-        const multiComponentMixture<ThermoType>& mixture_;
+        const basicSpecieMixture& mixture_;
 
         //- The single-step reaction
-        autoPtr<Reaction<ThermoType>> reaction_;
+        reaction reaction_;
 
         //- Stoichiometric air-fuel mass ratio
         dimensionedScalar stoicRatio_;
@@ -82,9 +81,6 @@ protected:
 
         //- List of components residual
         PtrList<volScalarField> fres_;
-
-        //- Inert specie index
-        label inertIndex_;
 
         //- Fuel specie index
         label fuelIndex_;
@@ -137,10 +133,10 @@ public:
         // Access functions
 
             //- Return the mixture
-            const multiComponentMixture<ThermoType>& mixture() const;
+            const basicSpecieMixture& mixture() const;
 
             //- Return the single step reaction
-            inline const Reaction<ThermoType>& reaction() const;
+            inline const reaction& singleReaction() const;
 
             //- Return the stoichiometric air-fuel mass ratio
             inline const dimensionedScalar& stoicRatio() const;
@@ -156,9 +152,6 @@ public:
 
             //- Return the list of components residual
             inline tmp<volScalarField> fres(const label index) const;
-
-            //- Return the inert specie index
-            inline label inertIndex() const;
 
             //- Return the fuel specie index
             inline label fuelIndex() const;
@@ -198,12 +191,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "singleStepCombustionI.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "singleStepCombustion.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2015 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,26 +25,33 @@ License
 
 #include "CMULES.T.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::MULES::correct
+template<class ReactionThermo>
+inline Foam::scalar Foam::Reaction<ReactionThermo>::Tlow() const
+{
+    return Tlow_;
+}
+
+
+template<class ReactionThermo>
+inline Foam::scalar Foam::Reaction<ReactionThermo>::Thigh() const
+{
+    return Thigh_;
+}
+
+
+// * * * * * * * * * * * * * * * Ostream Operator  * * * * * * * * * * * * * //
+
+template<class ReactionThermo>
+inline Foam::Ostream& Foam::operator<<
 (
-    volScalarField& psi,
-    const surfaceScalarField& phi,
-    surfaceScalarField& phiPsiCorr,
-    const scalar psiMax,
-    const scalar psiMin
+    Ostream& os,
+    const Reaction<ReactionThermo>& r
 )
 {
-    correct
-    (
-        geometricOneField(),
-        psi,
-        phi,
-        phiPsiCorr,
-        zeroField(), zeroField(),
-        psiMax, psiMin
-    );
+    r.write(os);
+    return os;
 }
 
 

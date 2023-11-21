@@ -59,6 +59,9 @@ makeRASLESThermophysicalTransportModel(RAS, unityLewisEddyDiffusivity);
 #include "nonUnityLewisEddyDiffusivity.H"
 makeRASLESThermophysicalTransportModel(RAS, nonUnityLewisEddyDiffusivity);
 
+#include "FickianEddyDiffusivity.T.H"
+makeRASLESThermophysicalTransportModel(RAS, FickianEddyDiffusivity);
+
 
 // -------------------------------------------------------------------------- //
 // LES models

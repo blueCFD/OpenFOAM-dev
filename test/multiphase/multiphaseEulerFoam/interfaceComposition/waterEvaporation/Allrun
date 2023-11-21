@@ -4,7 +4,8 @@ cd ${0%/*} || exit 1
 
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
-gYs="air.gas H2O.gas none.gas"
+# gYs="air.gas H2O.gas none.gas"
+gYs="air.gas H2O.gas"
 gHes="e.gas h.gas"
 lHes="e.liquid h.liquid"
 
@@ -18,7 +19,7 @@ setInertY()
         * ) arg="-set $y";;
     esac
 
-    runApplication -a foamDictionary -entry inertSpecie $arg \
+    runApplication -a foamDictionary -entry defaultSpecie $arg \
         constant/thermophysicalProperties.$phase
 }
 
@@ -33,7 +34,7 @@ setThermoAndEnergy()
         * ) exit 1;;
     esac
 
-    runApplication -a foamDictionary -entry thermoType.thermo -set $thermo \
+    runApplication -a foamDictionary -entry thermoType/thermo -set $thermo \
         constant/thermophysicalProperties.$phase
 
     case $he in
@@ -42,7 +43,7 @@ setThermoAndEnergy()
         * ) exit 1;;
     esac
 
-    runApplication -a foamDictionary -entry thermoType.energy -set $energy \
+    runApplication -a foamDictionary -entry thermoType/energy -set $energy \
         constant/thermophysicalProperties.$phase
 }
 
