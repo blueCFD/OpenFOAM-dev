@@ -31,7 +31,7 @@
 #
 #------------------------------------------------------------------------------
 
-#- String to recognize new iteration by (usually same as 'Time')
+#- String to recognise new iteration by (usually same as 'Time')
 Separator/^[ \t]*Time = /Time = 
 Separator2/^[ \t]*Iteration: /Iteration: 
 Separator3/^ExecutionTime = /ExecutionTime = 

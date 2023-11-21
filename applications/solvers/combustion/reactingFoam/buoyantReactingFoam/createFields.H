@@ -65,10 +65,7 @@ thermophysicalTransport
 );
 
 Info<< "Creating reaction model\n" << endl;
-autoPtr<combustionModel> reaction
-(
-    combustionModel::New(thermo, turbulence())
-);
+autoPtr<combustionModel> reaction(combustionModel::New(thermo, turbulence()));
 
 #include "readGravitationalAcceleration.H"
 #include "readhRef.H"
@@ -89,9 +86,6 @@ volScalarField p_rgh
     mesh
 );
 
-// Force p_rgh to be consistent with p
-p_rgh = p - rho*gh - pRef;
-
 pressureReference pressureReference
 (
     p,
@@ -101,6 +95,19 @@ pressureReference pressureReference
 );
 
 mesh.setFluxRequired(p_rgh.name());
+
+hydrostaticInitialisation
+(
+    p_rgh,
+    p,
+    rho,
+    U,
+    gh,
+    ghf,
+    pRef,
+    thermo,
+    pimple.dict()
+);
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt
@@ -131,8 +138,3 @@ fields.add(thermo.he());
 #include "createMRF.H"
 #include "createFvModels.H"
 #include "createFvConstraints.H"
-
-
-// This solver does not support moving mesh but it uses the pressure equation
-// of one which does, so we need a dummy face-momentum field
-autoPtr<surfaceVectorField> rhoUf(nullptr);

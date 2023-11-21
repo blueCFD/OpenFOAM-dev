@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,7 +113,7 @@ void Foam::diameterModels::nucleationModels::wallBoiling::precompute()
                     << endl
                     << "    The nucleation rate in populationBalance "
                     << popBal_.name() << " is set to zero." << endl
-                    << "    Adjust discretization over property space to"
+                    << "    Adjust discretisation over property space to"
                     << " suppress this warning."
                     << endl;
             }
@@ -128,7 +128,7 @@ void Foam::diameterModels::nucleationModels::wallBoiling::precompute()
                     << endl
                     << "    The nucleation rate in populationBalance "
                     << popBal_.name() << " is set to zero." << endl
-                    << "    Adjust discretization over property space to"
+                    << "    Adjust discretisation over property space to"
                     << " suppress this warning."
                     << endl;
             }
@@ -174,7 +174,7 @@ Foam::diameterModels::nucleationModels::wallBoiling::addToNucleationRate
 
             const labelList& faceCells = alphatw.patch().faceCells();
 
-            dimensionedScalar unitLength("unitLength", dimLength, 1.0);
+            dimensionedScalar unitLength("unitLength", dimLength, 1);
 
             forAll(alphatw, facei)
             {

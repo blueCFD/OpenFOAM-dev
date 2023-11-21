@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -1639,7 +1639,7 @@ int main(int argc, char *argv[])
             // Mark zone cells, used for finding faces
             boolList zoneCell(pShapeMesh.nCells(), false);
 
-            // shift cell indizes by 1
+            // Shift cell indices by 1
             label nr=0;
             for (label celli = (start() - 1); celli < end(); celli++)
             {
@@ -1759,7 +1759,7 @@ int main(int argc, char *argv[])
 
                 cellSet internal(pShapeMesh, name, end() - start());
 
-                // shift cell indizes by 1
+                // Shift cell indices by 1
                 for (label celli = start() - 1; celli <= end() - 1; celli++)
                 {
                     internal.insert(celli);

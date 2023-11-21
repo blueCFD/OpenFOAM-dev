@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -187,7 +187,7 @@ Description
 // acceptable.  Do NOT use for cryptographic purposes.
 // ----------------------------------------------------------------------------
 
-// Specialized little-endian code
+// Specialised little-endian code
 #if !defined (__BYTE_ORDER) || (__BYTE_ORDER == __LITTLE_ENDIAN)
 static unsigned jenkins_hashlittle
 (
@@ -365,7 +365,7 @@ static unsigned jenkins_hashlittle
 // from hashlittle() on all machines.  hashbig() takes advantage of
 // big-endian byte ordering.
 // ----------------------------------------------------------------------------
-// specialized big-endian code
+// specialised big-endian code
 #if !defined (__BYTE_ORDER) || (__BYTE_ORDER == __BIG_ENDIAN)
 static unsigned jenkins_hashbig
 (
@@ -555,7 +555,7 @@ unsigned Foam::HasherInt
 // ----------------------------------------------------------------------------
 // hashword2() -- same as hashword(), but take two seeds and return two
 // 32-bit values.  pc and pb must both be non-null, and *pc and *pb must
-// both be initialized with seeds.  If you pass in (*pb)==0, the output
+// both be initialised with seeds.  If you pass in (*pb)==0, the output
 // (*pc) will be the same as the return value from hashword().
 // ----------------------------------------------------------------------------
 unsigned Foam::HasherDual

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -465,7 +465,7 @@ Foam::label Foam::intersectedSurface::nextEdge
         }
 
         FatalErrorInFunction
-            << "Unnormalized normal e1:" << e1
+            << "Unnormalised normal e1:" << e1
             << " formed from cross product of e0:" << e0 << " n:" << n
             << abort(FatalError);
     }
@@ -927,7 +927,7 @@ Foam::faceList Foam::intersectedSurface::splitFace
         )
     );
 
-    // Order in which edges have been walked. Initialize outside edges.
+    // Order in which edges have been walked. Initialise outside edges.
     Map<label> visited(fEdges.size()*2);
 
     forAll(fEdges, i)

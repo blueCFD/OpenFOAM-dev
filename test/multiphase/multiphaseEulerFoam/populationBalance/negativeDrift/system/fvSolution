@@ -61,11 +61,12 @@ PIMPLE
     pRefCell        0;
     pRefValue       1e5;
 
-    frozenFlow      yes;
+    flow            no;
+    thermophysics   yes;
+    models          yes;
 }
 
 relaxationFactors
 {}
-
 
 // ************************************************************************* //

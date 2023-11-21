@@ -261,7 +261,7 @@ MaxwellStefan<BasicThermophysicalTransportModel>::q() const
             {
                 const volScalarField hi
                 (
-                    composition.HE(i, this->thermo().p(), this->thermo().T())
+                    composition.Hs(i, this->thermo().p(), this->thermo().T())
                 );
 
                 const surfaceScalarField ji(this->j(Y[i]));
@@ -276,7 +276,7 @@ MaxwellStefan<BasicThermophysicalTransportModel>::q() const
 
             const volScalarField hi
             (
-                composition.HE(i, this->thermo().p(), this->thermo().T())
+                composition.Hs(i, this->thermo().p(), this->thermo().T())
             );
 
             sumJh -= sumJ*fvc::interpolate(hi);
@@ -309,81 +309,57 @@ tmp<fvScalarMatrix> MaxwellStefan<BasicThermophysicalTransportModel>::divq
 
     const PtrList<volScalarField>& Y = composition.Y();
 
-    if (!Y.size())
+    tmpDivq.ref() -=
+        correction(fvm::laplacian(this->alpha()*this->alphaEff(), he));
+
+    surfaceScalarField sumJ
+    (
+        surfaceScalarField::New
+        (
+            "sumJ",
+            he.mesh(),
+            dimensionedScalar(dimMass/dimArea/dimTime, 0)
+        )
+    );
+
+    surfaceScalarField sumJh
+    (
+        surfaceScalarField::New
+        (
+            "sumJh",
+            he.mesh(),
+            dimensionedScalar(sumJ.dimensions()*he.dimensions(), 0)
+        )
+    );
+
+    forAll(Y, i)
     {
-        tmpDivq.ref() -=
-            correction(fvm::laplacian(this->alpha()*this->alphaEff(), he));
-    }
-    else
-    {
-        tmpDivq.ref() -= fvm::laplacian(this->alpha()*this->alphaEff(), he);
-
-        volScalarField heNew
-        (
-            volScalarField::New
-            (
-                "he",
-                he.mesh(),
-                dimensionedScalar(he.dimensions(), 0)
-            )
-        );
-
-        surfaceScalarField sumJ
-        (
-            surfaceScalarField::New
-            (
-                "sumJ",
-                he.mesh(),
-                dimensionedScalar(dimMass/dimArea/dimTime, 0)
-            )
-        );
-
-        surfaceScalarField sumJh
-        (
-            surfaceScalarField::New
-            (
-                "sumJh",
-                he.mesh(),
-                dimensionedScalar(sumJ.dimensions()*he.dimensions(), 0)
-            )
-        );
-
-        forAll(Y, i)
+        if (i != d)
         {
-            if (i != d)
-            {
-                const volScalarField hi
-                (
-                    composition.HE(i, this->thermo().p(), this->thermo().T())
-                );
-
-                heNew += Y[i]*hi;
-
-                const surfaceScalarField ji(this->j(Y[i]));
-                sumJ += ji;
-
-                sumJh += ji*fvc::interpolate(hi);
-            }
-        }
-
-        {
-            const label i = d;
-
             const volScalarField hi
             (
-                composition.HE(i, this->thermo().p(), this->thermo().T())
+                composition.Hs(i, this->thermo().p(), this->thermo().T())
             );
 
-            heNew += Y[i]*hi;
+            const surfaceScalarField ji(this->j(Y[i]));
+            sumJ += ji;
 
-            sumJh -= sumJ*fvc::interpolate(hi);
+            sumJh += ji*fvc::interpolate(hi);
         }
-
-        tmpDivq.ref() +=
-            fvc::laplacian(this->alpha()*this->alphaEff(), heNew);
-
-        tmpDivq.ref() += fvc::div(sumJh*he.mesh().magSf());
     }
+
+    {
+        const label i = d;
+
+        const volScalarField hi
+        (
+            composition.Hs(i, this->thermo().p(), this->thermo().T())
+        );
+
+        sumJh -= sumJ*fvc::interpolate(hi);
+    }
+
+    tmpDivq.ref() += fvc::div(sumJh*he.mesh().magSf());
 
     return tmpDivq;
 }
@@ -478,7 +454,7 @@ transformDiffusionCoefficient()
     A.decompose();
     A.inv(invA);
 
-    // Calculate the generalized Fick's law diffusion coefficients
+    // Calculate the generalised Fick's law diffusion coefficients
     multiply(D, invA, B);
 }
 
@@ -566,7 +542,7 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::transform
     }
 
     // Transform binary mass diffusion coefficients internal field DijPtrs ->
-    // generalized Fick's law diffusion coefficients DijPtrs
+    // generalised Fick's law diffusion coefficients DijPtrs
     transformDiffusionCoefficientFields();
 
     forAll(Y0.boundaryField(), patchi)
@@ -590,7 +566,7 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::transform
         }
 
         // Transform binary mass diffusion coefficients patch field DijPtrs ->
-        // generalized Fick's law diffusion coefficients DijPtrs
+        // generalised Fick's law diffusion coefficients DijPtrs
         transformDiffusionCoefficientFields();
     }
 }
@@ -654,7 +630,7 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::correct()
     }
 
     //- Transform the binary mass diffusion coefficients into the
-    //  the generalized Fick's law diffusion coefficients
+    //  the generalised Fick's law diffusion coefficients
     transform(Dij);
 
     // Accumulate the explicit part of the specie mass flux fields

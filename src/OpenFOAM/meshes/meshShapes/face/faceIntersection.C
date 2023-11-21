@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ Foam::pointHit Foam::face::ray
 ) const
 {
     // Return potential intersection with face with a ray starting
-    // at p, direction n (does not need to be normalized)
+    // at p, direction n (does not need to be normalised)
     // Does face-center decomposition and returns triangle intersection
     // point closest to p.
 
@@ -66,7 +66,7 @@ Foam::pointHit Foam::face::ray
     scalar nearestMissDist = great;
     bool eligible = false;
 
-    // Initialize to miss, distance = great
+    // Initialise to miss, distance = great
     pointHit nearest(p);
 
     const labelList& f = *this;
@@ -160,7 +160,7 @@ Foam::pointHit Foam::face::intersection
 
     scalar nearestHitDist = vGreat;
 
-    // Initialize to miss, distance = great
+    // Initialise to miss, distance = great
     pointHit nearest(p);
 
     const labelList& f = *this;
@@ -231,7 +231,7 @@ Foam::pointHit Foam::face::nearestPointClassify
     const face& f = *this;
     point ctr = centre(meshPoints);
 
-    // Initialize to miss, distance=great
+    // Initialise to miss, distance=great
     pointHit nearest(p);
 
     nearType = -1;

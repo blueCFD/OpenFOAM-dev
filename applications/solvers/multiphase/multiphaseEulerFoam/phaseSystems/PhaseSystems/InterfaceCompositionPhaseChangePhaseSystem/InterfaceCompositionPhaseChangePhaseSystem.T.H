@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -93,10 +93,13 @@ class InterfaceCompositionPhaseChangePhaseSystem
             //- Interface composition models
             interfaceCompositionModelTable interfaceCompositionModels_;
 
-            //- The explicit part of the interfacial mass transfer rates
+            //- Interface mass transfer rates
+            phaseSystem::dmdtfTable dmdtfs_;
+
+            //- The explicit part of the interface specie transfer rates
             phaseSystem::dmidtfTable dmidtfSus_;
 
-            //- The implicit part of the interfacial mass transfer rates
+            //- The implicit part of the interface specie transfer rates
             phaseSystem::dmidtfTable dmidtfSps_;
 
             //- Interface temperatures
@@ -105,11 +108,11 @@ class InterfaceCompositionPhaseChangePhaseSystem
 
     // Private Member Functions
 
-        //- Return mass transfers across each interface
-        autoPtr<phaseSystem::dmdtfTable> dmdtfs() const;
+        //- Correct mass transfers across each interface
+        void correctDmdtfs();
 
         //- Return species mass transfers across each interface
-        autoPtr<phaseSystem::dmidtfTable> dmidtfs() const;
+        autoPtr<phaseSystem::dmidtfTable> totalDmidtfs() const;
 
 
 public:
@@ -147,6 +150,9 @@ public:
 
         //- Correct the fluid properties other than those listed below
         virtual void correct();
+
+        //- Correct the mass transfer rates for the new species mass fractions
+        virtual void correctSpecies();
 
         //- Correct the interface temperatures
         virtual void correctInterfaceThermo();
