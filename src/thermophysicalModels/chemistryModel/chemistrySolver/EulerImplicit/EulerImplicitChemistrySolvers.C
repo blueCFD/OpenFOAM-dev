@@ -25,7 +25,7 @@ License
 
 #include "EulerImplicit.T.H"
 
-#include "StandardChemistryModel.T.H"
+#include "standardChemistryModel.H"
 #include "TDACChemistryModel.T.H"
 
 #include "forGases.H"
@@ -36,8 +36,8 @@ License
 
 namespace Foam
 {
-    forGases(makeChemistrySolvers, EulerImplicit);
-    forLiquids(makeChemistrySolvers, EulerImplicit);
+    forCoeffGases(makeChemistrySolvers, EulerImplicit);
+    forCoeffLiquids(makeChemistrySolvers, EulerImplicit);
 }
 
 

@@ -5,8 +5,6 @@ autoPtr<fluidReactionThermo> pThermo(fluidReactionThermo::New(mesh));
 fluidReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "h", "e");
 
-SLGThermo slgThermo(mesh, thermo);
-
 basicSpecieMixture& composition = thermo.composition();
 PtrList<volScalarField>& Y = composition.Y();
 
@@ -105,11 +103,10 @@ volScalarField p_rgh
 // Force p_rgh to be consistent with p
 p_rgh = p - rho*gh;
 
-pressureControl pressureControl
+pressureReference pressureReference
 (
     p,
     p_rgh,
-    rho,
     pimple.dict(),
     thermo.incompressible()
 );

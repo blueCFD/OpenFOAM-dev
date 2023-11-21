@@ -38,7 +38,7 @@ Description
 #include "phaseSystem.H"
 #include "phaseDynamicMomentumTransportModel.H"
 #include "pimpleControl.H"
-#include "pressureControl.H"
+#include "pressureReference.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
@@ -158,7 +158,13 @@ int main(int argc, char *argv[])
 
                         if (correctPhi)
                         {
-                            fluid.correctPhi(p_rgh, divU, pimple);
+                            fluid.correctPhi
+                            (
+                                p_rgh,
+                                divU,
+                                pressureReference,
+                                pimple
+                            );
                         }
 
                         if (checkMeshCourantNo)

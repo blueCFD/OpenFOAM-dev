@@ -79,11 +79,10 @@ volScalarField p_rgh
 // Force p_rgh to be consistent with p
 p_rgh = p - rho*gh - pRef;
 
-pressureControl pressureControl
+pressureReference pressureReference
 (
     p,
     p_rgh,
-    rho,
     pimple.dict(),
     thermo.incompressible()
 );

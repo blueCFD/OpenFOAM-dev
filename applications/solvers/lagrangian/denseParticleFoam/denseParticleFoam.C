@@ -80,6 +80,7 @@ namespace Foam
 #include "singlePhaseTransportModel.H"
 #include "phaseKinematicMomentumTransportModel.H"
 #include "pimpleControl.H"
+#include "pressureReference.H"
 #include "CorrectPhi.T.H"
 #include "fvModels.H"
 #include "fvConstraints.H"

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,8 +31,16 @@ inline Foam::ThermoParcel<ParcelType>::trackingData::trackingData
 )
 :
     ParcelType::trackingData(cloud),
-    Cp_(cloud.thermo().thermo().Cp()),
-    kappa_(cloud.thermo().thermo().kappa()),
+    Cp_(cloud.carrierThermo().Cp()),
+    kappa_(cloud.carrierThermo().kappa()),
+    pInterp_
+    (
+        interpolation<scalar>::New
+        (
+            cloud.solution().interpolationSchemes(),
+            cloud.p()
+        )
+    ),
     TInterp_
     (
         interpolation<scalar>::New
@@ -58,6 +66,7 @@ inline Foam::ThermoParcel<ParcelType>::trackingData::trackingData
         )
     ),
     GInterp_(nullptr),
+    pc_(Zero),
     Tc_(Zero),
     Cpc_(Zero)
 {
@@ -89,6 +98,14 @@ inline const Foam::volScalarField&
 Foam::ThermoParcel<ParcelType>::trackingData::kappa() const
 {
     return kappa_;
+}
+
+
+template<class ParcelType>
+inline const Foam::interpolation<Foam::scalar>&
+Foam::ThermoParcel<ParcelType>::trackingData::pInterp() const
+{
+    return pInterp_();
 }
 
 
@@ -128,6 +145,20 @@ Foam::ThermoParcel<ParcelType>::trackingData::GInterp() const
     }
 
     return GInterp_();
+}
+
+
+template<class ParcelType>
+inline Foam::scalar Foam::ThermoParcel<ParcelType>::trackingData::pc() const
+{
+    return pc_;
+}
+
+
+template<class ParcelType>
+inline Foam::scalar& Foam::ThermoParcel<ParcelType>::trackingData::pc()
+{
+    return pc_;
 }
 
 

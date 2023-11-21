@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,15 @@ Foam::ThermoCloud<CloudType>::constProps()
 
 
 template<class CloudType>
-inline const Foam::SLGThermo& Foam::ThermoCloud<CloudType>::thermo() const
+inline const Foam::fluidThermo&
+Foam::ThermoCloud<CloudType>::carrierThermo() const
+{
+    return carrierThermo_;
+}
+
+
+template<class CloudType>
+inline const Foam::parcelThermo& Foam::ThermoCloud<CloudType>::thermo() const
 {
     return thermo_;
 }
@@ -80,6 +88,14 @@ inline const Foam::HeatTransferModel<Foam::ThermoCloud<CloudType>>&
 Foam::ThermoCloud<CloudType>::heatTransfer() const
 {
     return heatTransferModel_;
+}
+
+
+template<class CloudType>
+inline const Foam::CompositionModel<Foam::ThermoCloud<CloudType>>&
+Foam::ThermoCloud<CloudType>::composition() const
+{
+    return compositionModel_;
 }
 
 
@@ -222,7 +238,7 @@ Foam::ThermoCloud<CloudType>::hsCoeffRef()
 
 template<class CloudType>
 inline Foam::tmp<Foam::fvScalarMatrix>
-Foam::ThermoCloud<CloudType>::Sh(volScalarField& hs) const
+Foam::ThermoCloud<CloudType>::Sh(const volScalarField& hs) const
 {
     if (debug)
     {
@@ -236,7 +252,7 @@ Foam::ThermoCloud<CloudType>::Sh(volScalarField& hs) const
     {
         if (this->solution().semiImplicit("h"))
         {
-            const volScalarField Cp(thermo_.thermo().Cp());
+            const volScalarField Cp(carrierThermo_.Cp());
             const volScalarField::Internal
                 Vdt(this->mesh().V()*this->db().time().deltaT());
 

@@ -29,19 +29,25 @@ License
 #include "IFstream.H"
 #include "OSspecific.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-template<>
-const Foam::wordList Foam::CodedBase<Foam::compileTemplate>::codeKeys_ =
-{};
-
-
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+Foam::fileName Foam::compileTemplate::name
+(
+    const word& instantiatedName
+) const
+{
+    fileName templateFileName(instantiatedName);
+    templateFileName.replaceAll(',', '_');
+    templateFileName.replaceAll('<', '_');
+    templateFileName.replaceAll('>', '_');
+
+    return templateFileName;
+}
+
 
 Foam::dictionary Foam::compileTemplate::optionsDict
 (
-    const word& templateName,
-    const word& instantiatedName
+    const word& templateName
 ) const
 {
     IFstream optionsFile(dynamicCode::resolveTemplate(templateName));
@@ -52,40 +58,7 @@ Foam::dictionary Foam::compileTemplate::optionsDict
             << exit(FatalError);
     }
 
-    dictionary dict(optionsFile);
-
-    fileName templateFileName(instantiatedName);
-    templateFileName.replaceAll(',', '_');
-    templateFileName.replaceAll('<', '_');
-    templateFileName.replaceAll('>', '_');
-
-    dict.add("name", templateFileName);
-
-    return dict;
-}
-
-
-void Foam::compileTemplate::setFilterVariable
-(
-    dynamicCode& dynCode,
-    const dynamicCodeContext& context,
-    const word& name,
-    const word& type
-) const
-{
-    if (context.dict().found(name))
-    {
-        const HashSet<word> types(context.dict().lookup(name));
-        if (!types.found(type))
-        {
-            FatalIOErrorInFunction(context.dict())
-                << "Unknown " << name << " type " << type << nl
-                << "Supported " << name << " types: " << types
-                << exit(FatalIOError);
-        }
-    }
-
-    dynCode.setFilterVariable(name, type);
+    return dictionary(optionsFile);
 }
 
 
@@ -100,6 +73,18 @@ void Foam::compileTemplate::setFilterVariable
     word type(substitution.second());
     const word typeRenameMapName(name + "Renamed");
 
+    if (context.dict().found(name))
+    {
+        const HashSet<word> types(context.dict().lookup(name));
+        if (!types.found(type))
+        {
+            FatalIOErrorInFunction(context.dict())
+                << "Unknown " << name << " type " << type << nl
+                << "Supported " << name << " types: " << types
+                << exit(FatalIOError);
+        }
+    }
+
     if (context.dict().found(typeRenameMapName))
     {
         const HashTable<word> renameMap
@@ -113,7 +98,7 @@ void Foam::compileTemplate::setFilterVariable
         }
     }
 
-    setFilterVariable(dynCode, context, name, type);
+    dynCode.setFilterVariable(name, type);
 
     const word typeBase(name + "Base");
     if (context.dict().found(typeBase))
@@ -138,7 +123,7 @@ void Foam::compileTemplate::prepare
     }
 
     // Compile filtered C template
-    dynCode.addCompileFile(templateName_ + ".C");
+    dynCode.addCompileFile(codeTemplateC(templateName_));
 
     // Define Make/options
     dynCode.setMakeOptions(context.options() + "\n\n" + context.libs());
@@ -162,10 +147,7 @@ Foam::compileTemplate::compileTemplate
     const List<Pair<word>>& substitutions
 )
 :
-    CodedBase<compileTemplate>
-    (
-        optionsDict(templateName, instantiatedName)
-    ),
+    codedBase(name(instantiatedName), optionsDict(templateName)),
     templateName_(templateName),
     substitutions_(substitutions)
 {

@@ -30,18 +30,6 @@ License
 #include "dynamicCodeContext.H"
 #include "addToRunTimeSelectionTable.H"
 
-// * * * * * * * * * * * * Private Static Data Members * * * * * * * * * * * //
-
-const Foam::wordList Foam::fv::codedFvModel::codeKeys_ =
-{
-    "codeAddSup",
-    "codeAddRhoSup",
-    "codeAddAlphaRhoSup",
-    "codeInclude",
-    "localCode"
-};
-
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -59,8 +47,6 @@ namespace fv
 void Foam::fv::codedFvModel::readCoeffs()
 {
     fieldName_ = coeffs().lookup<word>("field");
-
-    name_ = coeffs().lookup<word>("name");
 
     if (fieldPrimitiveTypeName() != word::null)
     {
@@ -89,7 +75,7 @@ void Foam::fv::codedFvModel::prepare
     const word primitiveTypeName = fieldPrimitiveTypeName();
 
     // Set additional rewrite rules
-    dynCode.setFilterVariable("typeName", name_);
+    dynCode.setFilterVariable("typeName", name());
     dynCode.setFilterVariable("TemplateType", primitiveTypeName);
     dynCode.setFilterVariable("SourceType", primitiveTypeName + "Source");
 
@@ -142,9 +128,17 @@ const Foam::dictionary& Foam::fv::codedFvModel::codeDict() const
 }
 
 
-const Foam::wordList& Foam::fv::codedFvModel::codeKeys() const
+Foam::wordList Foam::fv::codedFvModel::codeKeys() const
 {
-    return codeKeys_;
+
+    return
+    {
+        "codeAddSup",
+        "codeAddRhoSup",
+        "codeAddAlphaRhoSup",
+        "codeInclude",
+        "localCode"
+    };
 }
 
 

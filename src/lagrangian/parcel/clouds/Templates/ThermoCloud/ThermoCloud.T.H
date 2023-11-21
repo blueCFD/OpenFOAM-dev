@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,7 +43,7 @@ SourceFiles
 #include "fvMatricesFwd.H"
 #include "dimensionedTypes.H"
 #include "fvMesh.H"
-#include "SLGThermo.H"
+#include "parcelThermo.H"
 #include "Cloud.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -57,6 +57,9 @@ class integrationScheme;
 
 template<class CloudType>
 class HeatTransferModel;
+
+template<class CloudType>
+class CompositionModel;
 
 
 /*---------------------------------------------------------------------------*\
@@ -108,8 +111,11 @@ protected:
 
         // References to the carrier gas fields
 
+            //- Thermophysical properties of the carrier fluid
+            const fluidThermo& carrierThermo_;
+
             //- SLG thermodynamics package
-            const SLGThermo& thermo_;
+            const parcelThermo thermo_;
 
             //- Temperature [K]
             const volScalarField& T_;
@@ -123,6 +129,10 @@ protected:
             //- Heat transfer model
             autoPtr<HeatTransferModel<ThermoCloud<CloudType>>>
                 heatTransferModel_;
+
+            //- Reacting composition model
+            autoPtr<CompositionModel<ThermoCloud<CloudType>>>
+                compositionModel_;
 
 
         // Reference to the particle integration schemes
@@ -180,7 +190,7 @@ public:
             const volScalarField& rho,
             const volVectorField& U,
             const dimensionedVector& g,
-            const SLGThermo& thermo,
+            const fluidThermo& carrierThermo,
             const bool readFields = true
         );
 
@@ -235,8 +245,11 @@ public:
             //- Return access to the constant properties
             inline typename parcelType::constantProperties& constProps();
 
+            //- Return const access to carrier thermo package
+            inline const fluidThermo& carrierThermo() const;
+
             //- Return const access to thermo package
-            inline const SLGThermo& thermo() const;
+            inline const parcelThermo& thermo() const;
 
             //- Return const access to the carrier temperature field
             inline const volScalarField& T() const;
@@ -250,6 +263,10 @@ public:
                 //- Return reference to heat transfer model
                 inline const HeatTransferModel<ThermoCloud<CloudType>>&
                     heatTransfer() const;
+
+                //- Return const access to reacting composition model
+                inline const CompositionModel<ThermoCloud<CloudType>>&
+                    composition() const;
 
 
             // Integration schemes
@@ -301,7 +318,10 @@ public:
                     inline volScalarField::Internal& hsCoeffRef();
 
                     //- Return sensible enthalpy source term [J/kg/m^3/s]
-                    inline tmp<fvScalarMatrix> Sh(volScalarField& hs) const;
+                    inline tmp<fvScalarMatrix> Sh
+                    (
+                        const volScalarField& hs
+                    ) const;
 
 
                 // Radiation - overrides thermoCloud virtual abstract members
@@ -375,6 +395,9 @@ public:
 
             //- Print cloud information
             void info();
+
+            //- Write the field data for the cloud
+            virtual void writeFields() const;
 
 
     // Member Operators

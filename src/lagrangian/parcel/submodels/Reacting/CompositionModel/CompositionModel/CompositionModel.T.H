@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,14 +39,10 @@ SourceFiles
 #define CompositionModel_H
 
 #include "CloudSubModelBase.T.H"
-#include "IOdictionary.H"
-#include "autoPtr.H"
-#include "runTimeSelectionTables.H"
-
-#include "PtrList.T.H"
-#include "SLGThermo.H"
-
+#include "parcelThermo.H"
+#include "basicSpecieMixture.H"
 #include "phasePropertiesList.H"
+#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,8 +60,14 @@ class CompositionModel
 {
     // Private Data
 
+        //- Reference to thermophysical properties of the carrier fluid
+        const fluidThermo& carrierThermo_;
+
+        //- Pointer to the multi-component carrier composition
+        const basicSpecieMixture* carrierMixture_;
+
         //- Reference to the thermo database
-        const SLGThermo& thermo_;
+        const parcelThermo& thermo_;
 
         //- List of phase properties
         phasePropertiesList phaseProps_;
@@ -127,7 +129,7 @@ public:
         // Access
 
             //- Return the thermo database
-            const SLGThermo& thermo() const;
+            const parcelThermo& thermo() const;
 
 
             // Composition lists
@@ -267,17 +269,17 @@ public:
 
 #define makeCompositionModel(CloudType)                                        \
                                                                                \
-    typedef Foam::CloudType::reactingCloudType reactingCloudType;              \
+    typedef Foam::CloudType::thermoCloudType thermoCloudType;                  \
     defineNamedTemplateTypeNameAndDebug                                        \
     (                                                                          \
-        Foam::CompositionModel<reactingCloudType>,                             \
+        Foam::CompositionModel<thermoCloudType>,                               \
         0                                                                      \
     );                                                                         \
     namespace Foam                                                             \
     {                                                                          \
         defineTemplateRunTimeSelectionTable                                    \
         (                                                                      \
-            CompositionModel<reactingCloudType>,                               \
+            CompositionModel<thermoCloudType>,                                 \
             dictionary                                                         \
         );                                                                     \
     }
@@ -285,12 +287,12 @@ public:
 
 #define makeCompositionModelType(SS, CloudType)                                \
                                                                                \
-    typedef Foam::CloudType::reactingCloudType reactingCloudType;              \
-    defineNamedTemplateTypeNameAndDebug(Foam::SS<reactingCloudType>, 0);       \
+    typedef Foam::CloudType::thermoCloudType thermoCloudType;                  \
+    defineNamedTemplateTypeNameAndDebug(Foam::SS<thermoCloudType>, 0);         \
                                                                                \
-    Foam::CompositionModel<reactingCloudType>::                                \
-        adddictionaryConstructorToTable<Foam::SS<reactingCloudType>>           \
-            add##SS##CloudType##reactingCloudType##ConstructorToTable_;
+    Foam::CompositionModel<thermoCloudType>::                                  \
+        adddictionaryConstructorToTable<Foam::SS<thermoCloudType>>             \
+            add##SS##CloudType##thermoCloudType##ConstructorToTable_;
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,13 +30,17 @@ License
 // Momentum
 #include "makeParcelForces.H"
 #include "makeParcelDispersionModels.H"
-#include "makeParcelInjectionModels.H"
+#include "makeThermoParcelInjectionModels.H"
 #include "makeParcelPatchInteractionModels.H"
 #include "makeParcelStochasticCollisionModels.H"
 #include "makeThermoParcelSurfaceFilmModels.H" // thermo variant
 
 // Thermodynamic
 #include "makeParcelHeatTransferModels.H"
+#include "makeParcelCompositionModels.H"
+
+#include "NoComposition.T.H"
+#include "SinglePhaseMixture.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -45,13 +49,13 @@ makeParcelCloudFunctionObjects(thermoCloud);
 // Momentum sub-models
 makeParcelForces(thermoCloud);
 makeParcelDispersionModels(thermoCloud);
-makeParcelInjectionModels(thermoCloud);
+makeThermoParcelInjectionModels(thermoCloud);
 makeParcelPatchInteractionModels(thermoCloud);
 makeParcelStochasticCollisionModels(thermoCloud);
 makeParcelSurfaceFilmModels(thermoCloud);
 
 // Thermo sub-models
 makeParcelHeatTransferModels(thermoCloud);
-
+makeParcelCompositionModels(thermoCloud);
 
 // ************************************************************************* //

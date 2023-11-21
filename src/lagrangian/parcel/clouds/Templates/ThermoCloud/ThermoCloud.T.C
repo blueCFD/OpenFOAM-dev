@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,8 +25,8 @@ License
 
 #include "ThermoCloud.T.H"
 #include "integrationScheme.H"
-
 #include "HeatTransferModel.T.H"
+#include "CompositionModel.T.H"
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
@@ -36,6 +36,15 @@ void Foam::ThermoCloud<CloudType>::setModels()
     heatTransferModel_.reset
     (
         HeatTransferModel<ThermoCloud<CloudType>>::New
+        (
+            this->subModelProperties(),
+            *this
+        ).ptr()
+    );
+
+    compositionModel_.reset
+    (
+        CompositionModel<ThermoCloud<CloudType>>::New
         (
             this->subModelProperties(),
             *this
@@ -118,6 +127,8 @@ void Foam::ThermoCloud<CloudType>::cloudReset(ThermoCloud<CloudType>& c)
     CloudType::cloudReset(c);
 
     heatTransferModel_.reset(c.heatTransferModel_.ptr());
+    compositionModel_.reset(c.compositionModel_.ptr());
+
     TIntegrator_.reset(c.TIntegrator_.ptr());
 
     radiation_ = c.radiation_;
@@ -133,17 +144,19 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
     const volScalarField& rho,
     const volVectorField& U,
     const dimensionedVector& g,
-    const SLGThermo& thermo,
+    const fluidThermo& carrierThermo,
     const bool readFields
 )
 :
-    CloudType(cloudName, rho, U, g, thermo, false),
+    CloudType(cloudName, rho, U, g, carrierThermo, false),
     cloudCopyPtr_(nullptr),
     constProps_(this->particleProperties()),
-    thermo_(thermo),
-    T_(thermo.thermo().T()),
-    p_(thermo.thermo().p()),
+    carrierThermo_(carrierThermo),
+    thermo_(carrierThermo_),
+    T_(carrierThermo.T()),
+    p_(carrierThermo.p()),
     heatTransferModel_(nullptr),
+    compositionModel_(nullptr),
     TIntegrator_(nullptr),
     radiation_(false),
     radAreaP_(nullptr),
@@ -207,10 +220,12 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
     CloudType(c, name),
     cloudCopyPtr_(nullptr),
     constProps_(c.constProps_),
+    carrierThermo_(c.carrierThermo_),
     thermo_(c.thermo_),
     T_(c.T()),
     p_(c.p()),
     heatTransferModel_(c.heatTransferModel_->clone()),
+    compositionModel_(c.compositionModel_->clone()),
     TIntegrator_(c.TIntegrator_->clone()),
     radiation_(c.radiation_),
     radAreaP_(nullptr),
@@ -316,10 +331,12 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
     CloudType(mesh, name, c),
     cloudCopyPtr_(nullptr),
     constProps_(),
+    carrierThermo_(c.carrierThermo_),
     thermo_(c.thermo()),
     T_(c.T()),
     p_(c.p()),
     heatTransferModel_(nullptr),
+    compositionModel_(nullptr),
     TIntegrator_(nullptr),
     radiation_(false),
     radAreaP_(nullptr),
@@ -444,7 +461,7 @@ void Foam::ThermoCloud<CloudType>::preEvolve()
 {
     CloudType::preEvolve();
 
-    this->pAmbient() = thermo_.thermo().p().average().value();
+    this->pAmbient() = carrierThermo_.p().average().value();
 }
 
 
@@ -476,6 +493,16 @@ void Foam::ThermoCloud<CloudType>::info()
 
     Info<< "    Temperature min/max             = " << Tmin() << ", " << Tmax()
         << endl;
+}
+
+
+template<class CloudType>
+void Foam::ThermoCloud<CloudType>::writeFields() const
+{
+    if (compositionModel_.valid())
+    {
+        CloudType::particleType::writeFields(*this, this->composition());
+    }
 }
 
 

@@ -289,6 +289,7 @@ $(schemes)/localBlended/localBlended.C
 $(schemes)/limiterBlended/limiterBlended.C
 $(schemes)/CoBlended/CoBlended.T.C
 $(schemes)/cellCoBlended/cellCoBlended.C
+$(schemes)/deferred/deferred.C
 $(schemes)/localMax/localMax.C
 $(schemes)/localMin/localMin.C
 
@@ -411,7 +412,7 @@ $(general)/constrainHbyA/constrainHbyA.C
 $(general)/adjustPhi/adjustPhi.C
 $(general)/bound/bound.C
 $(general)/CorrectPhi/correctUphiBCs.C
-$(general)/pressureControl/pressureControl.C
+$(general)/pressureReference/pressureReference.C
 $(general)/levelSet/levelSet.C
 
 solutionControl = $(general)/solutionControl

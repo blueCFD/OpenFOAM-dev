@@ -5,8 +5,6 @@ autoPtr<fluidReactionThermo> pThermo(fluidReactionThermo::New(mesh));
 fluidReactionThermo& thermo = pThermo();
 thermo.validate(args.executable(), "h", "e");
 
-SLGThermo slgThermo(mesh, thermo);
-
 basicSpecieMixture& composition = thermo.composition();
 PtrList<volScalarField>& Y = composition.Y();
 
@@ -87,10 +85,9 @@ volScalarField K("K", 0.5*magSqr(U));
 
 #include "readGravitationalAcceleration.H"
 
-pressureControl pressureControl
+pressureReference pressureReference
 (
     p,
-    rho,
     pimple.dict(),
     thermo.incompressible()
 );

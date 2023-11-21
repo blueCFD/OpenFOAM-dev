@@ -58,20 +58,20 @@ Foam::fv::VoFSurfaceFilm::VoFSurfaceFilm
 )
 :
     fvModel(sourceName, modelType, dict, mesh),
+    phaseName_(dict.lookup("phase")),
+    thermo_
+    (
+        mesh.lookupObject<fluidThermo>
+        (
+            IOobject::groupName(basicThermo::dictName, phaseName_)
+        )
+    ),
     film_
     (
         regionModels::surfaceFilmModel::New
         (
             mesh,
             mesh.lookupObject<uniformDimensionedVectorField>("g")
-        )
-    ),
-    phaseName_(dict.lookup("phase")),
-    thermo_
-    (
-        mesh.lookupObject<rhoThermo>
-        (
-            IOobject::groupName(basicThermo::dictName, phaseName_)
         )
     ),
     curTimeIndex_(-1)
@@ -123,19 +123,11 @@ void Foam::fv::VoFSurfaceFilm::addSup
     }
     else if (fieldName == "T")
     {
-        const twoPhaseMixtureThermo& thermo
-        (
-            mesh().lookupObject<twoPhaseMixtureThermo>
-            (
-                twoPhaseMixtureThermo::dictName
-            )
-        );
-
-        const volScalarField::Internal Cv(thermo.thermo1().Cv());
+        const volScalarField::Internal Cv(thermo_.Cv());
 
         eqn +=
             film_->Sh()()/Cv
-          + film_->Srho()*(eqn.psi() - thermo.thermo1().he()/Cv);
+          + film_->Srho()*(eqn.psi() - thermo_.he()/Cv);
     }
     else
     {

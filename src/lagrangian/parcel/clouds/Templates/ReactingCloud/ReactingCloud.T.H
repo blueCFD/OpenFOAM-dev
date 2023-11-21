@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ SourceFiles
 #include "fvMatricesFwd.H"
 #include "dimensionedTypes.H"
 #include "fvMesh.H"
-#include "SLGThermo.H"
+#include "fluidThermo.H"
 #include "Cloud.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -53,9 +53,6 @@ namespace Foam
 {
 
 // Forward declaration of classes
-
-template<class CloudType>
-class CompositionModel;
 
 template<class CloudType>
 class PhaseChangeModel;
@@ -111,10 +108,6 @@ protected:
 
         // References to the cloud sub-models
 
-            //- Reacting composition model
-            autoPtr<CompositionModel<ReactingCloud<CloudType>>>
-                compositionModel_;
-
             //- Reacting phase change model
             autoPtr<PhaseChangeModel<ReactingCloud<CloudType>>>
                 phaseChangeModel_;
@@ -162,7 +155,7 @@ public:
             const volScalarField& rho,
             const volVectorField& U,
             const dimensionedVector& g,
-            const SLGThermo& thermo,
+            const fluidThermo& carrierThermo,
             const bool readFields = true
         );
 
@@ -220,10 +213,6 @@ public:
 
             // Sub-models
 
-                //- Return const access to reacting composition model
-                inline const CompositionModel<ReactingCloud<CloudType>>&
-                    composition() const;
-
                 //- Return const access to reacting phase change model
                 inline const PhaseChangeModel<ReactingCloud<CloudType>>&
                     phaseChange() const;
@@ -253,7 +242,7 @@ public:
                     inline tmp<fvScalarMatrix> SYi
                     (
                         const label i,
-                        volScalarField& Yi
+                        const volScalarField& Yi
                     ) const;
 
                     //- Return tmp mass source for field i - fully explicit
@@ -315,9 +304,6 @@ public:
 
             //- Print cloud information
             void info();
-
-            //- Write the field data for the cloud
-            virtual void writeFields() const;
 
 
     // Member Operators

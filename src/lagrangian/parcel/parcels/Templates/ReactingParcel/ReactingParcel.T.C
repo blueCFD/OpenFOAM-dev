@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,9 +57,11 @@ void Foam::ReactingParcel<ParcelType>::calcPhaseChange
     scalarField& Cs
 )
 {
-    typedef typename TrackCloudType::reactingCloudType reactingCloudType;
-    const CompositionModel<reactingCloudType>& composition =
+    typedef typename TrackCloudType::thermoCloudType thermoCloudType;
+    const CompositionModel<thermoCloudType>& composition =
         cloud.composition();
+
+    typedef typename TrackCloudType::reactingCloudType reactingCloudType;
     PhaseChangeModel<reactingCloudType>& phaseChange = cloud.phaseChange();
 
     if (YPhase < small)
@@ -302,14 +304,14 @@ void Foam::ReactingParcel<ParcelType>::correctSurfaceValues
         return;
     }
 
-    const SLGThermo& thermo = cloud.thermo();
+    const basicSpecieMixture& carrier = cloud.composition().carrier();
 
     // Far field carrier  molar fractions
-    scalarField Xinf(thermo.carrier().species().size());
+    scalarField Xinf(carrier.species().size());
 
     forAll(Xinf, i)
     {
-        Xinf[i] = thermo.carrier().Y(i)[this->cell()]/thermo.carrier().Wi(i);
+        Xinf[i] = carrier.Y(i)[this->cell()]/carrier.Wi(i);
     }
     Xinf /= sum(Xinf);
 
@@ -331,7 +333,7 @@ void Foam::ReactingParcel<ParcelType>::correctSurfaceValues
         const scalar Csi = Cs[i] + Xsff*Xinf[i]*CsTot;
 
         Xs[i] = (2.0*Csi + Xinf[i]*CsTot)/3.0;
-        Ys[i] = Xs[i]*thermo.carrier().Wi(i);
+        Ys[i] = Xs[i]*carrier.Wi(i);
     }
     Xs /= sum(Xs);
     Ys /= sum(Ys);
@@ -346,14 +348,14 @@ void Foam::ReactingParcel<ParcelType>::correctSurfaceValues
 
     forAll(Ys, i)
     {
-        const scalar W = thermo.carrier().Wi(i);
+        const scalar W = carrier.Wi(i);
         const scalar sqrtW = sqrt(W);
         const scalar cbrtW = cbrt(W);
 
         rhos += Xs[i]*W;
-        mus += Ys[i]*sqrtW*thermo.carrier().mu(i, td.pc(), T);
-        kappas += Ys[i]*cbrtW*thermo.carrier().kappa(i, td.pc(), T);
-        Cps += Xs[i]*thermo.carrier().Cp(i, td.pc(), T);
+        mus += Ys[i]*sqrtW*carrier.mu(i, td.pc(), T);
+        kappas += Ys[i]*cbrtW*carrier.kappa(i, td.pc(), T);
+        Cps += Xs[i]*carrier.Cp(i, td.pc(), T);
 
         sumYiSqrtW += Ys[i]*sqrtW;
         sumYiCbrtW += Ys[i]*cbrtW;
@@ -383,8 +385,8 @@ void Foam::ReactingParcel<ParcelType>::calc
     const scalar dt
 )
 {
-    typedef typename TrackCloudType::reactingCloudType reactingCloudType;
-    const CompositionModel<reactingCloudType>& composition =
+    typedef typename TrackCloudType::thermoCloudType thermoCloudType;
+    const CompositionModel<thermoCloudType>& composition =
         cloud.composition();
 
 

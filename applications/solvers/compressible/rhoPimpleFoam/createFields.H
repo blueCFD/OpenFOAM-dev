@@ -40,10 +40,9 @@ volVectorField U
 
 #include "compressibleCreatePhi.H"
 
-pressureControl pressureControl
+pressureReference pressureReference
 (
     p,
-    rho,
     pimple.dict(),
     thermo.incompressible()
 );

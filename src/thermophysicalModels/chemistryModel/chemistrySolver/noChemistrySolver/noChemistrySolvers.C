@@ -25,7 +25,7 @@ License
 
 #include "noChemistrySolver.H"
 
-#include "StandardChemistryModel.T.H"
+#include "standardChemistryModel.H"
 #include "TDACChemistryModel.T.H"
 
 #include "forGases.H"
@@ -36,8 +36,8 @@ License
 
 namespace Foam
 {
-    forGases(makeChemistrySolvers, noChemistrySolver);
-    forLiquids(makeChemistrySolvers, noChemistrySolver);
+    forCoeffGases(makeChemistrySolvers, noChemistrySolver);
+    forCoeffLiquids(makeChemistrySolvers, noChemistrySolver);
 }
 
 

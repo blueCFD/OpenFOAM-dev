@@ -39,7 +39,7 @@ Description
 #include "dynamicMomentumTransportModel.H"
 #include "fluidThermophysicalTransportModel.H"
 #include "pimpleControl.H"
-#include "pressureControl.H"
+#include "pressureReference.H"
 #include "CorrectPhi.T.H"
 #include "fvModels.H"
 #include "fvConstraints.H"
