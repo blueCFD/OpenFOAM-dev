@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,6 +55,9 @@ class liquidProperties
     public thermophysicalProperties
 {
     // Private Data
+
+        //- Name of the liquid
+        const word name_;
 
         //- Critical temperature [K]
         scalar Tc_;
@@ -118,6 +121,7 @@ public:
         //- Construct from components
         liquidProperties
         (
+            const word& name,
             scalar W,
             scalar Tc,
             scalar Pc,
@@ -162,6 +166,10 @@ public:
 
 
     // Member Functions
+
+        //- Return the name of the liquid
+        virtual const word& name() const;
+
 
         // Physical constants which define the specie
 
@@ -218,16 +226,26 @@ public:
 
         // Fundamental thermodynamic properties
 
-            //- Sensible enthalpy [J/kg]
-            inline scalar Hs(const scalar p, const scalar T) const;
+            //- Liquid heat of formation [J/kg]
+            virtual scalar Hf() const = 0;
 
-            //- Enthalpy of formation [J/kg]
-            inline scalar Hf() const;
+            //- Liquid sensible enthalpy [J/kg]
+            //  currently pressure effects are neglected
+            virtual scalar Hs(scalar p, scalar T) const = 0;
 
-            //- Absolute enthalpy [J/kg]
-            inline scalar Ha(const scalar p, const scalar T) const;
+            //- Liquid absolute enthalpy [J/kg]
+            //  currently pressure effects are neglected
+            virtual scalar Ha(scalar p, scalar T) const = 0;
 
-            // Entropy [J/kg/K]
+            //- Sensible internal energy [J/kg]
+            //  currently pressure effects are neglected
+            inline scalar Es(scalar p, const scalar T) const;
+
+            //- Absolute internal energy [J/kg]
+            //  currently pressure effects are neglected
+            inline scalar Ea(scalar p, scalar T) const;
+
+            //- Liquid entropy [J/kg/K]
             scalar S(const scalar p, const scalar T) const;
 
 
@@ -238,9 +256,6 @@ public:
 
             //- Heat of vapourisation [J/kg]
             virtual scalar hl(scalar p, scalar T) const = 0;
-
-            //- Liquid enthalpy [J/kg] - reference to 298.15 K
-            virtual scalar h(scalar p, scalar T) const = 0;
 
             //- Vapour heat capacity [J/kg/K]
             virtual scalar Cpg(scalar p, scalar T) const = 0;

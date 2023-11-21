@@ -36,8 +36,9 @@ Description
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "phaseSystem.H"
-#include "phaseCompressibleMomentumTransportModel.H"
+#include "phaseDynamicMomentumTransportModel.H"
 #include "pimpleControl.H"
+#include "pressureControl.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 

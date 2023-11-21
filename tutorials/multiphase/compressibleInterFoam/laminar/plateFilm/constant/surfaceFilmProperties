@@ -19,25 +19,18 @@ surfaceFilmModel thermoSingleLayer;
 
 regionName      plateRegion;
 
-thermophysicalProperties
-{
-    type        liquid;
-
-    liquid      liquid;
-
-    useReferenceValues  yes;
-    pRef    1e5;
-    TRef    300;
-}
+phase           liquid;
 
 viscosity
 {
-    model       liquid;
+    model       Newtonian;
 }
 
-deltaWet        1e-12;
+sigma       0.07;
 
-hydrophilic     no;
+deltaWet    1e-12;
+
+hydrophilic no;
 
 transfer
 {

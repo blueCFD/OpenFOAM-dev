@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,12 +56,13 @@ class surfaceFilmRegionModel
     public surfaceFilmModel,
     public singleLayerRegion
 {
-protected:
-
-    // Protected data
+    // Private data
 
         //- Acceleration due to gravity [m/s^2]
         const dimensionedVector& g_;
+
+
+protected:
 
 
     // Protected member functions
@@ -126,28 +127,28 @@ public:
             virtual const volVectorField& U() const = 0;
 
             //- Return the film surface velocity [m/s]
-            virtual const volVectorField::Internal& Us() const = 0;
+            virtual tmp<volVectorField::Internal> Us() const = 0;
 
             //- Return the film wall velocity [m/s]
-            virtual const volVectorField::Internal& Uw() const = 0;
+            virtual tmp<volVectorField::Internal> Uw() const = 0;
 
             //- Return the film density [kg/m^3]
             virtual const volScalarField& rho() const = 0;
 
             //- Return the film surface tension [N/m]
-            virtual const volScalarField& sigma() const = 0;
+            virtual tmp<volScalarField> sigma() const = 0;
 
 
-            // Transfer fields - to the primary region
+        // Transfer fields - to the primary region
 
-                //- Return mass transfer source - Eulerian phase only
-                virtual tmp<volScalarField> primaryMassTrans() const = 0;
+            //- Return mass transfer source - Eulerian phase only
+            virtual tmp<volScalarField> primaryMassTrans() const = 0;
 
-                //- Return the film mass available for transfer
-                virtual const volScalarField& cloudMassTrans() const = 0;
+            //- Return the film mass available for transfer
+            virtual const volScalarField& cloudMassTrans() const = 0;
 
-                //- Return the parcel diameters originating from film
-                virtual const volScalarField& cloudDiameterTrans() const = 0;
+            //- Return the parcel diameters originating from film
+            virtual const volScalarField& cloudDiameterTrans() const = 0;
 
 
         // Evolution

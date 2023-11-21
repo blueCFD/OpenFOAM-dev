@@ -78,7 +78,7 @@ namespace Foam
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "singlePhaseTransportModel.H"
-#include "PhaseIncompressibleMomentumTransportModel.T.H"
+#include "phaseKinematicMomentumTransportModel.H"
 #include "pimpleControl.H"
 #include "CorrectPhi.T.H"
 #include "fvModels.H"

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,14 +24,16 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "waxSolventEvaporation.H"
-#include "addToRunTimeSelectionTable.H"
 #include "thermoSingleLayer.H"
-#include "zeroField.H"
+#include "liquidThermo.H"
+#include "basicSpecieMixture.H"
 
 #include "fvmDdt.H"
 #include "fvmDiv.H"
 #include "fvcDiv.H"
 #include "fvmSup.H"
+
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -80,7 +82,7 @@ waxSolventEvaporation::waxSolventEvaporation
     const dictionary& dict
 )
 :
-    phaseChangeModel(typeName, film, dict),
+    speciePhaseChange(typeName, film, dict),
     Wwax_
     (
         IOobject
@@ -160,15 +162,18 @@ void waxSolventEvaporation::correctModel
     const volScalarField& rho = film.rho();
     const surfaceScalarField& phi = film.phi();
 
-    // Set local thermo properties
-    const SLGThermo& slgThermo = film.slgThermo();
-    const thermoModel& thermo = film.thermo();
-    const label vapId = slgThermo.carrierId(thermo.name());
+    // Set local liquidThermo properties
+    const liquidProperties& liquidThermo =
+        refCast<const heRhoThermopureMixtureliquidProperties>(film.thermo())
+       .cellThermoMixture(0).properties();
+
+    const basicSpecieMixture& primarySpecieThermo =
+        refCast<const basicSpecieMixture>(film.primaryThermo());
 
     // Retrieve fields from film model
     const scalarField& pInf = film.pPrimary();
-    const scalarField& T = film.T();
-    const scalarField& h = film.h();
+    const scalarField& T = film.thermo().T();
+    const scalarField& he = film.thermo().he();
     const scalarField& rhoInf = film.rhoPrimary();
     const scalarField& muInf = film.muPrimary();
     const scalarField& V = film.regionMesh().V();
@@ -181,7 +186,7 @@ void waxSolventEvaporation::correctModel
     );
 
     // Molecular weight of vapour [kg/kmol]
-    const scalar Wvap = slgThermo.carrier().Wi(vapId);
+    const scalar Wvap = this->Wvap();
 
     const scalar Wwax = Wwax_.value();
     const scalar Wsolvent = Wsolvent_.value();
@@ -216,6 +221,9 @@ void waxSolventEvaporation::correctModel
         dimensionedScalar(evapRateCoeff.dimensions(), 0)
     );
 
+    // Local surface temperature at which evaporation takes place
+    scalarField Tloc(dMass.size());
+
     bool filmPresent = false;
 
     forAll(dMass, celli)
@@ -239,14 +247,14 @@ void waxSolventEvaporation::correctModel
             const scalar pc = pInf[celli];
 
             // Calculate the boiling temperature
-            const scalar Tb = thermo.Tb(pc);
+            const scalar Tb = liquidThermo.pvInvert(pc);
 
             // Local temperature - impose lower limit of 200 K for stability
-            const scalar Tloc = min(TbFactor_*Tb, max(200.0, T[celli]));
+            Tloc[celli] = min(TbFactor_*Tb, max(200.0, T[celli]));
 
             const scalar pPartialCoeff
             (
-                thermo.pv(pc, Tloc)*activityCoeff_->value(Xsolvent)
+                liquidThermo.pv(pc, Tloc[celli])*activityCoeff_->value(Xsolvent)
             );
 
             scalar XsCoeff = pPartialCoeff/pc;
@@ -277,7 +285,7 @@ void waxSolventEvaporation::correctModel
             const scalar Re = rhoInfc*mag(dU[celli])*L_/muInfc;
 
             // Vapour diffusivity [m^2/s]
-            const scalar Dab = thermo.D(pc, Tloc);
+            const scalar Dab = liquidThermo.D(pc, Tloc[celli]);
 
             // Schmidt number
             const scalar Sc = muInfc/(rhoInfc*(Dab + rootVSmall));
@@ -307,8 +315,6 @@ void waxSolventEvaporation::correctModel
 
             evapRateInf[celli] = evapRateCoeff[celli]*YInf[celli];
             evapRateCoeff[celli] *= YsCoeff;
-
-            // hVap[celli] = thermo.hl(pc, Tloc);
         }
     }
 
@@ -367,11 +373,14 @@ void waxSolventEvaporation::correctModel
 
         dMass += dm;
 
+        // Assume that the vapour transferred to the primary region is
+        // already at temperature Tloc so that all heat required for
+        // the phase-change is provided by the film
+        dEnergy += dm*primarySpecieThermo.Hs(vapId(), pInf, Tloc);
+
         // Heat is assumed to be removed by heat-transfer to the wall
         // so the energy remains unchanged by the phase-change.
-        dEnergy += dm*h;
-
-        // Latent heat [J/kg]
+        dEnergy += dm*he;
         // dEnergy += dm*(h[celli] + hVap);
     }
 }
@@ -392,8 +401,7 @@ void waxSolventEvaporation::correctModel
     else
     {
         const thermoSingleLayer& film = filmType<thermoSingleLayer>();
-        const label vapId = film.slgThermo().carrierId(film.thermo().name());
-        const scalarField& YInf = film.YPrimary()[vapId];
+        const scalarField& YInf = film.YPrimary()[vapId()];
 
         correctModel(dt, availableMass, dMass, dEnergy, YInf);
     }

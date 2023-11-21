@@ -32,7 +32,6 @@ Usage
     \verbatim
     VoFSurfaceFilm
     {
-        libs    ("libradiationModels.so");
         type    VoFSurfaceFilm;
         phase   water;
     }
@@ -48,7 +47,6 @@ SourceFiles
 
 #include "fvModel.H"
 #include "rhoThermo.H"
-#include "SLGThermo.H"
 #include "surfaceFilmModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -68,17 +66,14 @@ class VoFSurfaceFilm
 {
     // Private Data
 
+        //- The surface film model pointer
+        mutable autoPtr<regionModels::surfaceFilmModel> film_;
+
         //- The name of the phase which transfers to the film
         word phaseName_;
 
         //- Reference to the primary region thermo
-        const rhoThermo& thermo_;
-
-        //- The SLG thermo required by the surfaceFilmModel
-        SLGThermo slgThermo_;
-
-        //- The surface film model pointer
-        mutable autoPtr<regionModels::surfaceFilmModel> film_;
+        const fluidThermo& thermo_;
 
         //- Current time index (used for updating)
         mutable label curTimeIndex_;

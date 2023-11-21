@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,50 +39,9 @@ namespace surfaceFilmModels
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-inline const SLGThermo& thermoSingleLayer::slgThermo() const
+inline const fluidThermo& thermoSingleLayer::primaryThermo() const
 {
-    return slgThermo_;
-}
-
-
-inline tmp<scalarField> thermoSingleLayer::h
-(
-    const scalarField& T,
-    const label patchi
-) const
-{
-    const scalarField& Cp = Cp_.boundaryField()[patchi];
-    return Cp*(T - Tref.value());
-}
-
-
-inline tmp<volScalarField> thermoSingleLayer::h
-(
-    const volScalarField& T
-) const
-{
-    return volScalarField::New
-    (
-        "h(" + T.name() + ")",
-        Cp_*(T - Tref)
-    );
-}
-
-
-inline tmp<volScalarField> thermoSingleLayer::T
-(
-    const volScalarField& h
-) const
-{
-    tmp<volScalarField> tT
-    (
-        volScalarField::New("T(" + h.name() + ")", h/Cp_ + Tref)
-    );
-
-    tT.ref().min(Tmax_);
-    tT.ref().max(Tmin_);
-
-    return tT;
+    return primaryThermo_;
 }
 
 

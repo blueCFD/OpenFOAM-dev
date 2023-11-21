@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ SourceFiles
 #ifndef standardPhaseChange_H
 #define standardPhaseChange_H
 
-#include "phaseChangeModel.H"
+#include "speciePhaseChange.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,7 +52,7 @@ namespace surfaceFilmModels
 
 class standardPhaseChange
 :
-    public phaseChangeModel
+    public speciePhaseChange
 {
 protected:
 

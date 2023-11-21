@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,9 @@ License
 #include "C3H6O.H"
 #include "addToRunTimeSelectionTable.H"
 
+#include "thermodynamicConstants.H"
+using namespace Foam::constant::thermodynamic;
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -41,6 +44,7 @@ Foam::C3H6O::C3H6O()
 :
     liquidProperties
     (
+        typeName,
         58.08,
         508.20,
         4.7015e+6,
@@ -99,7 +103,8 @@ Foam::C3H6O::C3H6O()
     kappa_("kappa", 0.2502, -0.000298, 0.0, 0.0, 0.0, 0.0),
     kappag_("kappag", -26.8, 0.9098, -126500000, 0.0),
     sigma_("sigma", 508.20, 0.0622, 1.124, 0.0, 0.0, 0.0),
-    D_("D", 147.18, 20.1, 58.08, 28) // note: Same as nHeptane
+    D_("D", 147.18, 20.1, 58.08, 28), // note: Same as nHeptane
+    Hf_(h_.value(Tstd))
 {}
 
 
@@ -134,7 +139,8 @@ Foam::C3H6O::C3H6O
     kappa_(thermalConductivity),
     kappag_(vapourThermalConductivity),
     sigma_(surfaceTension),
-    D_(vapourDiffusivity)
+    D_(vapourDiffusivity),
+    Hf_(h_.value(Tstd))
 {}
 
 

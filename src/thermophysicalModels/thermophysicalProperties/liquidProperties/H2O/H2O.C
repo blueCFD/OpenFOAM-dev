@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,9 @@ License
 #include "H2O.H"
 #include "addToRunTimeSelectionTable.H"
 
+#include "thermodynamicConstants.H"
+using namespace Foam::constant::thermodynamic;
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -41,6 +44,7 @@ Foam::H2O::H2O()
 :
     liquidProperties
     (
+        typeName,
         18.015,
         647.13,
         2.2055e+7,
@@ -99,7 +103,8 @@ Foam::H2O::H2O()
     kappa_("kappa", -0.4267, 0.0056903, -8.0065e-06, 1.815e-09, 0, 0),
     kappag_("kappag", 6.977e-05, 1.1243, 844.9, -148850),
     sigma_("sigma", 647.13, 0.18548, 2.717, -3.554, 2.047, 0),
-    D_("D", 15.0, 15.0, 18.015, 28)
+    D_("D", 15.0, 15.0, 18.015, 28),
+    Hf_(h_.value(Tstd))
 {}
 
 
@@ -134,7 +139,8 @@ Foam::H2O::H2O
     kappa_(thermalConductivity),
     kappag_(vapourThermalConductivity),
     sigma_(surfaceTension),
-    D_(vapourDiffusivity)
+    D_(vapourDiffusivity),
+    Hf_(h_.value(Tstd))
 {}
 
 

@@ -7,13 +7,13 @@ EXE_INC = \
     -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude \
     -I$(LIB_SRC)/ThermophysicalTransportModels/fluidReactionThermo/lnInclude \
     -I$(LIB_SRC)/lagrangian/distributionModels/lnInclude \
+    -I$(LIB_SRC)/transportModels/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/chemistryModel/lnInclude \
     -I$(LIB_SRC)/combustionModels/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
-    -I$(LIB_SRC)/thermophysicalModels/SLGThermo/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
@@ -27,13 +27,12 @@ EXE_LIBS = \
     -lmeshTools \
     -lsampling \
     -lmomentumTransportModels \
-    -lfluidThermoMomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
     -lthermophysicalTransportModels \
     -lfluidReactionThermophysicalTransportModels \
     -lspecie \
     -lfluidThermophysicalModels \
     -lreactionThermophysicalModels \
-    -lSLGThermo \
     -lchemistryModel \
     -lcombustionModels \
     -lregionModels \

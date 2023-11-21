@@ -1,5 +1,3 @@
-interRegionModel/interRegionModel.C
-
 general/codedFvModel/codedFvModel.C
 general/semiImplicitSource/semiImplicitSource.C
 
@@ -29,11 +27,17 @@ derived/accelerationSource/accelerationSource.C
 derived/volumeFractionSource/volumeFractionSource.C
 derived/solidEquilibriumEnergySource/solidEquilibriumEnergySource.C
 derived/massSource/massSource.C
+derived/heatSource/heatSource.C
+derived/heatTransfer/heatTransfer.C
 
-interRegion/interRegionHeatTransfer/interRegionHeatTransferModel/interRegionHeatTransferModel.C
-interRegion/interRegionHeatTransfer/constantHeatTransfer/constantHeatTransfer.C
-interRegion/interRegionHeatTransfer/function2HeatTransfer/function2HeatTransfer.C
-interRegion/interRegionHeatTransfer/variableHeatTransfer/variableHeatTransfer.C
+interRegion/interRegionModel/interRegionModel.C
 interRegion/interRegionExplicitPorositySource/interRegionExplicitPorositySource.C
+interRegion/interRegionHeatTransfer/interRegionHeatTransfer.C
+
+derived/heatTransfer/heatTransferModels/heatTransferModel/heatTransferModel.C
+derived/heatTransfer/heatTransferModels/constant/constant.C
+derived/heatTransfer/heatTransferModels/function1/function1.C
+derived/heatTransfer/heatTransferModels/function2/function2.C
+derived/heatTransfer/heatTransferModels/variable/variable.C
 
 LIB = $(FOAM_LIBBIN)/libfvModels

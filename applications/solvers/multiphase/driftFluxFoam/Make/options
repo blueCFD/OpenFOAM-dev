@@ -19,8 +19,4 @@ EXE_LIBS = \
     -lfvModels \
     -lfvConstraints \
     -lmomentumTransportModels \
-    -lfluidThermoMomentumTransportModels
-
-EXE_LIBS += \
-    -ltwoPhaseMixture \
-    -lincompressibleTransportModels
+    -lcompressibleMomentumTransportModels
