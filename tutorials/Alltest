@@ -43,10 +43,23 @@ usage()
 usage: ${0##*/} [OPTION]
 
 options:
-  -root <dir>       specify root directory to run tests from
-  -help             print the usage
+  -root <dir>   | -r <dir>
+                      specify root directory to run tests from
+  -target <dir> | -t <dir>
+                      specify directory where the tests are executed in
+  -help      | -h     print the usage
+  -jobs N    | -j     for running multiple cases in parallel with N cores
+  -parallel  | -p     run only cases that are configured to run in parallel
+  -nonParallel | -n   run only cases that are configured to run in serial
+  -wallClock <sec> | -w <sec>
+                      run the solvers for a limited amount of wall clock time
+                    in second, instead of just running a single time step
 
 * quickly tests the tutorials
+
+Currently defined paths:
+  root:    $(realpath $rootDir)
+  target:  $(realpath $testDir)
 
 USAGE
     exit 1
@@ -57,6 +70,10 @@ USAGE
 rootDir="./"
 testDir=../tutorialsTest
 
+RUN_ARGUMENTS=""
+serialOnly=false
+parallelOnly=false
+wallClockLimit=-1
 
 # Parse options
 while [ "$#" -gt 0 ]
@@ -65,6 +82,36 @@ do
     -r | -root)
         [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
         rootDir="$2"
+        shift
+        ;;
+    -t | -target)
+        [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
+        testDir="$2"
+        shift
+        ;;
+    -j | -jobs)
+        if test $# -ge 2 && expr $2 + 1 > /dev/null 2>&1
+        then
+            RUN_ARGUMENTS="${RUN_ARGUMENTS} $1 $2"
+            shift
+        else
+            usage "Error: Missing number of jobs"
+        fi
+        ;;
+    -n | -nonParallel)
+        serialOnly=true
+        RUN_ARGUMENTS="${RUN_ARGUMENTS} $1"
+        echo "NOTE: Will only run cases in serial mode."
+        ;;
+    -p | -parallel)
+        parallelOnly=true
+        RUN_ARGUMENTS="${RUN_ARGUMENTS} $1"
+        echo "NOTE: Will only run cases in parallel mode."
+        ;;
+    -w | -wallClock)
+        [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
+        wallClockLimit=$2
+        [ "$2" -ge 1 ] || usage "'$1' option requires an argument as an integer"
         shift
         ;;
     -h | -help)
@@ -81,18 +128,28 @@ do
 done
 
 
+if $serialOnly && $parallelOnly
+then
+    usage "Cannot use -parallel and -nonParallel options at the same time."
+fi
+
 # Create a copy of the tutorials in which to run the test loop
 echo "Copying the tutorials"
 if [ -d "$testDir" ]
 then
     rm -rf "$testDir" || exit 1
 fi
-cp -a "${rootDir}" "${testDir}" || exit 1
 
+echo "Copying the tutorials"
+cp -r "${rootDir}" "${testDir}" || exit 1
 
 # Change the control dict to make the tests quick
 echo "Modifying the controlDicts to run only one time step"
 cd ${testDir} || exit 1
+
+if [ "$wallClockLimit" = "-1" ]
+then
+
 find . -name "controlDict*" | while read -r controlDict
 do
     (
@@ -105,12 +162,30 @@ do
     ) > /dev/null
 done
 
+else
+
+find . -name "controlDict*" | while read -r controlDict
+do
+    (
+        foamDictionary -entry functions "$controlDict" || \
+            foamDictionary -entry functions -set "{}" "$controlDict"
+
+        foamDictionary -entry \
+            functions/"#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
+            -add "" "$controlDict"
+
+        foamDictionary -entry DebugSwitches \
+            -merge "{ fvSchemes 1; solution 1; }" "$controlDict"
+    ) > /dev/null
+done
+
+fi
+
 
 # Copy the Allrun script into the test directory
 cp -f "$FOAM_TUTORIALS"/Allrun . || exit 1
 
-
 # Run everything
-./Allrun && exit 0 || exit 1
+./Allrun -test $RUN_ARGUMENTS && exit 0 || exit 1
 
 #------------------------------------------------------------------------------
