@@ -58,7 +58,7 @@ Usage
 #ifndef integratedNonUniformTable1_H
 #define integratedNonUniformTable1_H
 
-#include "nonUniformTable1.H"
+#include "NonUniformTable1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,7 +73,7 @@ namespace Function1s
 
 class integratedNonUniformTable
 :
-    public nonUniformTable
+    public NonUniformTable<scalar>
 {
     // Private member data
 

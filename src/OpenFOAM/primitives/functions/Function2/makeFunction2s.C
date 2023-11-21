@@ -28,6 +28,7 @@ License
 #include "ZeroConstant2.T.H"
 #include "OneConstant2.T.H"
 #include "Scale2.T.H"
+#include "UniformTable2.T.H"
 #include "CodedFunction2.T.H"
 
 #include "fieldTypes.H"
@@ -53,6 +54,7 @@ const Foam::wordList Foam::CodedBase<Foam::Function2s::coded>::codeKeys_ =
     makeFunction2Type(ZeroConstant, Type);                                     \
     makeFunction2Type(OneConstant, Type);                                      \
     makeFunction2Type(Scale, Type);                                            \
+    makeFunction2Type(UniformTable, Type);                                     \
     makeFunction2Type(Coded, Type);
 
 namespace Foam

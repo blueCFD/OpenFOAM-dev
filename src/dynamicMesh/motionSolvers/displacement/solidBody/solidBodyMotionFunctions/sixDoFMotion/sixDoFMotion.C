@@ -57,6 +57,8 @@ namespace solidBodyMotionFunctions
 #include "Sine.T.H"
 #include "Square.T.H"
 #include "Table.T.H"
+#include "UniformTable1.T.H"
+#include "NonUniformTable1.T.H"
 #include "EmbeddedTableReader.T.H"
 #include "FoamTableReader.T.H"
 #include "Scale.T.H"

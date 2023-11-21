@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,6 +48,7 @@ Description
 #include "CrankNicolsonDdtScheme.T.H"
 #include "subCycle.H"
 #include "compressibleInterPhaseTransportModel.H"
+#include "noPhaseChange.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
 #include "CorrectPhi.T.H"
@@ -77,11 +78,6 @@ int main(int argc, char *argv[])
     {
         #include "readDyMControls.H"
 
-        // Store divU from the previous mesh so that it can be mapped
-        // and used in correctPhi to ensure the corrected phi has the
-        // same divergence
-        volScalarField divU("divU0", fvc::div(fvc::absolute(phi, U)));
-
         if (LTS)
         {
             #include "setRDeltaT.H"
@@ -102,6 +98,20 @@ int main(int argc, char *argv[])
         {
             if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
             {
+                // Store divU from the previous mesh so that it can be mapped
+                // and used in correctPhi to ensure the corrected phi has the
+                // same divergence
+                tmp<volScalarField> divU;
+
+                if (correctPhi)
+                {
+                    divU = volScalarField::New
+                    (
+                        "divU0",
+                        fvc::div(fvc::absolute(phi, U))
+                    );
+                }
+
                 mesh.update();
 
                 if (mesh.changing())
@@ -130,9 +140,9 @@ int main(int argc, char *argv[])
                         #include "meshCourantNo.H"
                     }
                 }
-            }
 
-            divU = fvc::div(fvc::absolute(phi, U));
+                divU.clear();
+            }
 
             #include "alphaControls.H"
             #include "compressibleAlphaEqnSubCycle.H"

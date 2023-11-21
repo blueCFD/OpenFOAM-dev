@@ -71,14 +71,14 @@ SourceFiles
     rhoTabulated.C
 
 See also
-    Foam::Function1s::nonUniformTable
+    Foam::Function1s::NonUniformTable
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef rhoTabulated_H
 #define rhoTabulated_H
 
-#include "uniformTable2.H"
+#include "UniformTable2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -107,7 +107,7 @@ class rhoTabulated
 :
     public Specie
 {
-    typedef Function2s::uniformTable table2D;
+    typedef Function2s::UniformTable<scalar> table2D;
 
 
     // Private Data

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,6 +32,7 @@ License
 #include "inputSyntaxEntry.H"
 #include "fileOperation.H"
 #include "stringOps.H"
+#include "IOstreams.H"
 
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
 
@@ -364,16 +365,16 @@ const Foam::entry* Foam::dictionary::lookupScopedSubEntryPtr
                     << exit(FatalIOError);
             }
 
-            dictionary dict(ifs);
+            dictionary dict(keyword, *this, ifs);
 
-            const Foam::entry* hmm = dict.lookupScopedEntryPtr
+            const Foam::entry* entryPtr = dict.lookupScopedEntryPtr
             (
                 localKeyword,
                 recursive,
                 patternMatch
             );
 
-            if (!hmm)
+            if (!entryPtr)
             {
                 FatalIOErrorInFunction(dict)
                     << "keyword " << localKeyword
@@ -382,7 +383,7 @@ const Foam::entry* Foam::dictionary::lookupScopedSubEntryPtr
                     << exit(FatalIOError);
             }
 
-            return hmm->clone(*this).ptr();
+            return entryPtr->clone(*this).ptr();
         }
     }
 }
@@ -794,6 +795,64 @@ const Foam::entry& Foam::dictionary::lookupEntry
     }
 
     return *entryPtr;
+}
+
+
+const Foam::entry* Foam::dictionary::lookupEntryPtrBackwardsCompatible
+(
+    const wordList& keywords,
+    bool recursive,
+    bool patternMatch
+) const
+{
+    const entry* result = nullptr;
+
+    forAll(keywords, keywordi)
+    {
+        const entry* entryPtr =
+            lookupEntryPtr(keywords[keywordi], recursive, patternMatch);
+
+        if (entryPtr)
+        {
+            if (result)
+            {
+                IOWarningInFunction((*this))
+                    << "Duplicate backwards compatible keywords \""
+                    << result->keyword() << "\" and \"" << entryPtr->keyword()
+                    << "\" are defined in dictionary " << name() << endl
+                    << "The preferred keyword for this entry is \""
+                    << keywords[0] << "\"" << endl;
+            }
+            else
+            {
+                result = entryPtr;
+            }
+        }
+    }
+
+    return result;
+}
+
+
+const Foam::entry& Foam::dictionary::lookupEntryBackwardsCompatible
+(
+    const wordList& keywords,
+    bool recursive,
+    bool patternMatch
+) const
+{
+    const entry* entryPtr =
+        lookupEntryPtrBackwardsCompatible(keywords, recursive, patternMatch);
+
+    if (entryPtr == nullptr)
+    {
+        // Generate error message using the first keyword
+        return lookupEntry(keywords[0], recursive, patternMatch);
+    }
+    else
+    {
+        return *entryPtr;
+    }
 }
 
 

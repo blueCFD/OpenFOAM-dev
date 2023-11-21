@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -1266,7 +1266,7 @@ int main(int argc, char *argv[])
     }
 
     // Mesh distribution engine (uses tolerance to reconstruct meshes)
-    fvMeshDistribute distributor(mesh, mergeDist);
+    fvMeshDistribute distributor(mesh);
 
 
 

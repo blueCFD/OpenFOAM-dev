@@ -67,6 +67,12 @@ makeBaseMomentumTransportModel
 #include "Stokes.T.H"
 makeLaminarModel(Stokes);
 
+#include "generalizedNewtonian.H"
+makeLaminarModel(generalizedNewtonian);
+
+#include "lambdaThixotropic.H"
+makeLaminarModel(lambdaThixotropic);
+
 #include "Maxwell.T.H"
 makeLaminarModel(Maxwell);
 

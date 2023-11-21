@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,8 +29,8 @@ Description
     gradient heat flux model for RAS or LES of turbulent flow with optional
     Soret thermal diffusion of species.
 
-    Currently the diffusion coefficients are constant but temperature and
-    pressure dependency will be added.
+    The mixture diffusion coefficients are specified as Function2<scalar>s of
+    pressure and temperature but independent of composition.
 
     The heat flux source is implemented as an implicit energy correction to the
     temperature gradient based flux source.  At convergence the energy
@@ -41,10 +41,57 @@ Usage
     RAS
     {
         model           FickianEddyDiffusivity;
+
+        mixtureDiffusionCoefficients yes;
+
         Prt             0.85;
         Sct             0.7;
-        D               (1e-5 2e-5 1e-5); // [m^2/s]
-        DT              (1e-5 2e-5 1e-5); // [kg/m/s] Optional
+
+        Dm // [m^2/s]
+        {
+            O2 1e-2;
+            O3 5e-2;
+            N2 1e-2;
+        }
+
+        DT // [kg/m/s] Optional
+        {
+            O2 1e-2;
+            O3 5e-2;
+            N2 1e-2;
+        }
+    }
+    \endverbatim
+
+    or if binary mass diffusion coefficient functions are available they can be
+    mixed to form the mass diffusion coefficients w.r.t. the mixture:
+
+    \verbatim
+    RAS
+    {
+        model           FickianEddyDiffusivity;
+
+        mixtureDiffusionCoefficients no;
+
+        Prt             0.85;
+        Sct             0.7;
+
+        D // [m^2/s]
+        {
+            O2-O2 1e-2;
+            O3-O3 5e-2;
+            N2-N2 1e-2;
+            O3-O2 5e-2;
+            O3-N2 5e-2;
+            O2-N2 1e-2;
+        }
+
+        DT // [kg/m/s] Optional
+        {
+            O2 1e-2;
+            O3 5e-2;
+            N2 1e-2;
+        }
     }
     \endverbatim
 
@@ -53,8 +100,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
+#include "Fickian.T.H"
 #include "unityLewisEddyDiffusivity.H"
-#include "Function2.T.H"
 
 #ifndef FickianEddyDiffusivity_H
 #define FickianEddyDiffusivity_H
@@ -73,7 +120,10 @@ namespace turbulenceThermophysicalTransportModels
 template<class TurbulenceThermophysicalTransportModel>
 class FickianEddyDiffusivity
 :
-    public unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>
+    public Fickian
+    <
+        unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>
+    >
 {
 
 protected:
@@ -84,14 +134,6 @@ protected:
 
             //- Turbulent Schmidt number []
             dimensionedScalar Sct_;
-
-            //- List of specie mass diffusion coefficient functions
-            //  w.r.t the mixture [m^2/s]
-            PtrList<Function2<scalar>> D_;
-
-            //- List of specie Soret thermal diffusion coefficient
-            //  functions [kg/m/s]
-            PtrList<Function2<scalar>> DT_;
 
 
 public:
@@ -131,25 +173,17 @@ public:
         //- Read thermophysicalTransport dictionary
         virtual bool read();
 
-        //- Effective mass diffusivity for a given specie mass-fraction [kg/m/s]
+        //- Effective mass diffusion coefficient
+        //  for a given specie mass-fraction [kg/m/s]
         virtual tmp<volScalarField> DEff(const volScalarField& Yi) const;
 
-        //- Effective mass diffusivity for a given specie mass-fraction
-        //  for patch [kg/m/s]
+        //- Effective mass diffusion coefficient
+        //  for a given specie mass-fraction for patch [kg/m/s]
         virtual tmp<scalarField> DEff
         (
             const volScalarField& Yi,
             const label patchi
         ) const;
-
-        //- Return the heat flux [W/m^2]
-        virtual tmp<surfaceScalarField> q() const;
-
-        //- Return the source term for the energy equation
-        virtual tmp<fvScalarMatrix> divq(volScalarField& he) const;
-
-        //- Return the specie flux for the given specie mass-fraction [kg/m^2/s]
-        virtual tmp<surfaceScalarField> j(const volScalarField& Yi) const;
 };
 
 

@@ -1,12 +1,20 @@
 {
-    volScalarField rAU("rAU", 1.0/UEqn.A());
-    surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU));
-    volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p_rgh));
+    if (correctPhi)
+    {
+        rAU.ref() = 1.0/UEqn.A();
+    }
+    else
+    {
+        rAU = 1.0/UEqn.A();
+    }
+
+    surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU()));
+    volVectorField HbyA(constrainHbyA(rAU()*UEqn.H(), U, p_rgh));
     surfaceScalarField phiHbyA
     (
         "phiHbyA",
         fvc::flux(HbyA)
-      + MRF.zeroFilter(fvc::interpolate(rho*rAU)*fvc::ddtCorr(U, phi, Uf))
+      + MRF.zeroFilter(fvc::interpolate(rho*rAU())*fvc::ddtCorr(U, phi, Uf))
     );
     MRF.makeRelative(phiHbyA);
 
@@ -22,6 +30,9 @@
 
     // Update the pressure BCs to ensure flux consistency
     constrainPressure(p_rgh, U, phiHbyA, rAUf, MRF);
+
+    // Cache the phase change pressure source
+    fvScalarMatrix Sp_rgh(phaseChange.Sp_rgh(rho, gh, p_rgh));
 
     // Make the fluxes relative to the mesh motion
     fvc::makeRelative(phiHbyA, U);
@@ -115,8 +126,8 @@
     {
         fvScalarMatrix p_rghEqnIncomp
         (
-            fvc::div(phiHbyA)
-          - fvm::laplacian(rAUf, p_rgh)
+            fvc::div(phiHbyA) - fvm::laplacian(rAUf, p_rgh)
+         == Sp_rgh
         );
 
         solve
@@ -138,7 +149,7 @@
             phi = phiHbyA + p_rghEqnIncomp.flux();
 
             U = HbyA
-              + rAU*fvc::reconstruct((phig + p_rghEqnIncomp.flux())/rAUf);
+              + rAU()*fvc::reconstruct((phig + p_rghEqnIncomp.flux())/rAUf);
             U.correctBoundaryConditions();
             fvOptions.correct(U);
         }

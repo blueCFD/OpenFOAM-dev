@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -101,12 +101,11 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
 
     if (modelDict.found("laminar"))
     {
-        const word modelType
-        (
-            modelDict.subDict("laminar").found("model")
-          ? modelDict.subDict("laminar").lookup("model")
-          : modelDict.subDict("laminar").lookup("laminarModel")
-        );
+        const word modelType =
+            modelDict.subDict("laminar").lookupBackwardsCompatible<word>
+            (
+                {"model", "laminarModel"}
+            );
 
         Info<< "Selecting laminar stress model " << modelType << endl;
 
@@ -207,29 +206,6 @@ Foam::laminarModel<BasicMomentumTransportModel>::nut
 
 template<class BasicMomentumTransportModel>
 Foam::tmp<Foam::volScalarField>
-Foam::laminarModel<BasicMomentumTransportModel>::nuEff() const
-{
-    return volScalarField::New
-    (
-        IOobject::groupName("nuEff", this->alphaRhoPhi_.group()),
-        this->nu()
-    );
-}
-
-
-template<class BasicMomentumTransportModel>
-Foam::tmp<Foam::scalarField>
-Foam::laminarModel<BasicMomentumTransportModel>::nuEff
-(
-    const label patchi
-) const
-{
-    return this->nu(patchi);
-}
-
-
-template<class BasicMomentumTransportModel>
-Foam::tmp<Foam::volScalarField>
 Foam::laminarModel<BasicMomentumTransportModel>::k() const
 {
     return volScalarField::New
@@ -260,7 +236,7 @@ Foam::laminarModel<BasicMomentumTransportModel>::sigma() const
 {
     return volSymmTensorField::New
     (
-        IOobject::groupName("R", this->alphaRhoPhi_.group()),
+        IOobject::groupName("sigma", this->alphaRhoPhi_.group()),
         this->mesh_,
         dimensionedSymmTensor(sqr(this->U_.dimensions()), Zero)
     );

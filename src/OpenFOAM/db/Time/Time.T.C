@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -278,8 +278,7 @@ void Foam::Time::setControls()
     {
         writeTimeIndex_ = label
         (
-            ((value() - beginTime_) + 0.5*deltaT_)
-          / writeInterval_
+            ((value() - beginTime_) + 0.5*deltaT_)/writeInterval_
         );
     }
 
@@ -971,8 +970,6 @@ void Foam::Time::setDeltaT(const scalar deltaT)
 {
     setDeltaTNoAdjust(deltaT);
 
-    functionObjects_.setTimeStep();
-
     if (writeControl_ == writeControl::adjustableRunTime)
     {
         adjustDeltaT();
@@ -984,6 +981,34 @@ void Foam::Time::setDeltaTNoAdjust(const scalar deltaT)
 {
     deltaT_ = deltaT;
     deltaTchanged_ = true;
+}
+
+
+void Foam::Time::setWriteInterval(const scalar writeInterval)
+{
+    if (writeInterval_ == great || !equal(writeInterval, writeInterval_))
+    {
+        writeInterval_ = writeInterval;
+
+        if
+        (
+            writeControl_ == writeControl::runTime
+         || writeControl_ == writeControl::adjustableRunTime
+        )
+        {
+            // Recalculate writeTimeIndex_ for consistency with the new
+            // writeInterval
+            writeTimeIndex_ = label
+            (
+                ((value() - beginTime_) + 0.5*deltaT_)/writeInterval_
+            );
+        }
+        else if (writeControl_ == writeControl::timeStep)
+        {
+            // Set to the nearest integer
+            writeInterval_ = label(writeInterval + 0.5);
+        }
+    }
 }
 
 
