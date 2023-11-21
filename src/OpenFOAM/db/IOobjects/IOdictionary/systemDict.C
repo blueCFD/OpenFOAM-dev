@@ -29,20 +29,35 @@ License
 
 // * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * * //
 
-Foam::IOdictionary Foam::systemDict
+Foam::IOobject Foam::systemDictIO
 (
     const word& dictName,
     const argList& args,
-    const objectRegistry& mesh
+    const objectRegistry& ob,
+    const word& regionName
 )
 {
-    fileName dictPath = "";
+    fileName dictPath = fileName::null;
+
     if (args.optionFound("dict"))
     {
         dictPath = args["dict"];
-        if (isDir(dictPath))
+
+        if
+        (
+            isDir
+            (
+                dictPath.isAbsolute()
+              ? dictPath
+              : ob.time().globalPath()/dictPath
+            )
+        )
         {
-            dictPath = dictPath / dictName;
+            dictPath = dictPath/dictName;
+        }
+        else if (dictPath.isName())
+        {
+            dictPath = ob.time().system()/dictPath;
         }
     }
 
@@ -50,33 +65,42 @@ Foam::IOdictionary Foam::systemDict
     {
         Info<< "Reading " << dictPath << nl << endl;
 
-        return IOdictionary
-        (
+        return
             IOobject
             (
                 dictPath,
-                mesh,
+                ob.time(),
                 IOobject::MUST_READ_IF_MODIFIED,
                 IOobject::NO_WRITE
-            )
-        );
+            );
     }
     else
     {
         Info<< "Reading " << dictName << nl << endl;
 
-        return IOdictionary
-        (
+        return
             IOobject
             (
                 dictName,
-                mesh.time().system(),
-                mesh,
+                ob.time().system(),
+                regionName == polyMesh::defaultRegion ? word::null : regionName,
+                ob,
                 IOobject::MUST_READ_IF_MODIFIED,
                 IOobject::NO_WRITE
-            )
-        );
+            );
     }
+}
+
+
+Foam::IOdictionary Foam::systemDict
+(
+    const word& dictName,
+    const argList& args,
+    const objectRegistry& ob,
+    const word& regionName
+)
+{
+    return IOdictionary(systemDictIO(dictName, args, ob, regionName));
 }
 
 

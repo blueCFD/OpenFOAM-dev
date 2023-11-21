@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     location    "system";
@@ -100,7 +99,7 @@ functions
             {
                 type            patchInternalField;
                 patches         ( lowerWall );
-                distance        1E-6;
+                distance        1e-6;
                 interpolate     true;
                 triangulate     false;
             }

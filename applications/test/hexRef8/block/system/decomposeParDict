@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     note        "mesh decomposition control dictionary";
@@ -58,7 +57,6 @@ multiLevelCoeffs
         // simpleCoeffs
         //{
         //    n           (2 1 1);
-        //    delta       0.001;
         //}
         method scotch;
     }
@@ -74,13 +72,11 @@ multiLevelCoeffs
 simpleCoeffs
 {
     n           (2 1 1);
-    delta       0.001;
 }
 
 hierarchicalCoeffs
 {
     n           (1 2 1);
-    delta       0.001;
     order       xyz;
 }
 

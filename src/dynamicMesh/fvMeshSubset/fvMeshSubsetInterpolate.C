@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,22 +24,19 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fvMeshSubset.H"
-#include "emptyFvsPatchField.H"
-#include "emptyPointPatchField.H"
-#include "emptyFvPatchFields.H"
+#include "surfaceFields.H"
+#include "internalFvsPatchField.H"
+#include "internalPointPatchField.H"
+#include "internalFvPatchFields.H"
 #include "directFvPatchFieldMapper.H"
 #include "directPointPatchFieldMapper.H"
 #include "flipOp.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-tmp<GeometricField<Type, fvPatchField, volMesh>> fvMeshSubset::interpolate
+Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh>>
+Foam::fvMeshSubset::interpolate
 (
     const GeometricField<Type, fvPatchField, volMesh>& vf,
     const fvMesh& sMesh,
@@ -61,7 +58,7 @@ tmp<GeometricField<Type, fvPatchField, volMesh>> fvMeshSubset::interpolate
             patchFields.set
             (
                 patchi,
-                new emptyFvPatchField<Type>
+                new internalFvPatchField<Type>
                 (
                     sMesh.boundary()[patchi],
                     DimensionedField<Type, volMesh>::null()
@@ -125,7 +122,7 @@ tmp<GeometricField<Type, fvPatchField, volMesh>> fvMeshSubset::interpolate
 
             forAll(directAddressing, i)
             {
-                label baseFacei = faceMap[subPatch.start()+i];
+                const label baseFacei = faceMap[subPatch.start() + i];
 
                 if (baseFacei >= baseStart && baseFacei < baseStart+baseSize)
                 {
@@ -158,7 +155,8 @@ tmp<GeometricField<Type, fvPatchField, volMesh>> fvMeshSubset::interpolate
 
 
 template<class Type>
-tmp<GeometricField<Type, fvPatchField, volMesh>> fvMeshSubset::interpolate
+Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh>>
+Foam::fvMeshSubset::interpolate
 (
     const GeometricField<Type, fvPatchField, volMesh>& vf
 ) const
@@ -175,16 +173,18 @@ tmp<GeometricField<Type, fvPatchField, volMesh>> fvMeshSubset::interpolate
 
 
 template<class Type>
-tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
+Foam::tmp<Foam::GeometricField<Type, Foam::fvsPatchField, Foam::surfaceMesh>>
+Foam::fvMeshSubset::interpolate
 (
-    const GeometricField<Type, fvsPatchField, surfaceMesh>& vf,
+    const GeometricField<Type, fvsPatchField, surfaceMesh>& sf,
     const fvMesh& sMesh,
     const labelList& patchMap,
     const labelList& cellMap,
-    const labelList& faceMap,
-    const bool negateIfFlipped
+    const labelList& faceMap
 )
 {
+    const bool negateIfFlipped = isFlux(sf);
+
     // 1. Create the complete field with dummy patch fields
     PtrList<fvsPatchField<Type>> patchFields(patchMap.size());
 
@@ -198,7 +198,7 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
             patchFields.set
             (
                 patchi,
-                new emptyFvsPatchField<Type>
+                new internalFvsPatchField<Type>
                 (
                     sMesh.boundary()[patchi],
                     DimensionedField<Type, surfaceMesh>::null()
@@ -227,7 +227,7 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
         (
             IOobject
             (
-                "subset"+vf.name(),
+                "subset"+sf.name(),
                 sMesh.time().timeName(),
                 sMesh,
                 IOobject::NO_READ,
@@ -235,10 +235,10 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
                 false
             ),
             sMesh,
-            vf.dimensions(),
+            sf.dimensions(),
             Field<Type>
             (
-                vf.primitiveField(),
+                sf.primitiveField(),
                 SubList<label>
                 (
                     faceMap,
@@ -250,7 +250,6 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& resF = tresF.ref();
 
-
     // 2. Change the fvsPatchFields to the correct type using a mapper
     //  constructor (with reference to the now correct internal field)
 
@@ -259,11 +258,12 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
 
     forAll(bf, patchi)
     {
+        const fvPatch& subPatch = sMesh.boundary()[patchi];
+
         if (patchMap[patchi] != -1)
         {
             // Construct addressing
-            const fvPatch& subPatch = sMesh.boundary()[patchi];
-            const fvPatch& basePatch = vf.mesh().boundary()[patchMap[patchi]];
+            const fvPatch& basePatch = sf.mesh().boundary()[patchMap[patchi]];
             const label baseStart = basePatch.start();
             const label baseSize = basePatch.size();
 
@@ -271,7 +271,7 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
 
             forAll(directAddressing, i)
             {
-                label baseFacei = faceMap[subPatch.start()+i];
+                label baseFacei = faceMap[subPatch.start() + i];
 
                 if (baseFacei >= baseStart && baseFacei < baseStart+baseSize)
                 {
@@ -291,48 +291,50 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
                 patchi,
                 fvsPatchField<Type>::New
                 (
-                    vf.boundaryField()[patchMap[patchi]],
+                    sf.boundaryField()[patchMap[patchi]],
                     subPatch,
                     resF(),
                     directFvPatchFieldMapper(directAddressing)
                 )
             );
+        }
 
+        // Map internal face values onto the patch elected to hold
+        // the exposed faces
+        fvsPatchField<Type>& pfld = bf[patchi];
+        const labelUList& fc = bf[patchi].patch().faceCells();
+        const labelList& own = sf.mesh().faceOwner();
 
-            // Postprocess patch field for exposed faces
+        forAll(pfld, i)
+        {
+            const label baseFacei = faceMap[subPatch.start() + i];
 
-            fvsPatchField<Type>& pfld = bf[patchi];
-            const labelUList& fc = bf[patchi].patch().faceCells();
-            const labelList& own = vf.mesh().faceOwner();
-
-            forAll(pfld, i)
+            if (baseFacei < sf.primitiveField().size())
             {
-                label baseFacei = faceMap[subPatch.start()+i];
-                if (baseFacei < vf.primitiveField().size())
-                {
-                    Type val = vf.internalField()[baseFacei];
+                Type val = sf.internalField()[baseFacei];
 
-                    if (cellMap[fc[i]] == own[baseFacei] || !negateIfFlipped)
-                    {
-                        pfld[i] = val;
-                    }
-                    else
-                    {
-                        pfld[i] = flipOp()(val);
-                    }
+                if (cellMap[fc[i]] == own[baseFacei] || !negateIfFlipped)
+                {
+                    pfld[i] = val;
                 }
                 else
                 {
-                    // Exposed face from other patch.
-                    // Only possible in case of a coupled boundary
-                    label patchi = vf.mesh().boundaryMesh().whichPatch
-                    (
-                        baseFacei
-                    );
-                    const fvPatch& otherPatch = vf.mesh().boundary()[patchi];
-                    label patchFacei = otherPatch.patch().whichFace(baseFacei);
-                    pfld[i] = vf.boundaryField()[patchi][patchFacei];
+                    pfld[i] = flipOp()(val);
                 }
+            }
+            else
+            {
+                // Exposed face from other patch.
+                // Only possible in case of a coupled boundary
+                const label patchi = sf.mesh().boundaryMesh().whichPatch
+                (
+                    baseFacei
+                );
+                const fvPatch& otherPatch = sf.mesh().boundary()[patchi];
+                const label patchFacei =
+                    otherPatch.patch().whichFace(baseFacei);
+
+                pfld[i] = sf.boundaryField()[patchi][patchFacei];
             }
         }
     }
@@ -342,10 +344,10 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
 
 
 template<class Type>
-tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
+Foam::tmp<Foam::GeometricField<Type, Foam::fvsPatchField, Foam::surfaceMesh>>
+Foam::fvMeshSubset::interpolate
 (
-    const GeometricField<Type, fvsPatchField, surfaceMesh>& sf,
-    const bool negateIfFlipped
+    const GeometricField<Type, fvsPatchField, surfaceMesh>& sf
 ) const
 {
     return interpolate
@@ -354,17 +356,16 @@ tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvMeshSubset::interpolate
         subMesh(),
         patchMap(),
         cellMap(),
-        faceMap(),
-        negateIfFlipped
+        faceMap()
     );
 }
 
 
 template<class Type>
-tmp<GeometricField<Type, pointPatchField, pointMesh>>
-fvMeshSubset::interpolate
+Foam::tmp<Foam::GeometricField<Type, Foam::pointPatchField, Foam::pointMesh>>
+Foam::fvMeshSubset::interpolate
 (
-    const GeometricField<Type, pointPatchField, pointMesh>& vf,
+    const GeometricField<Type, pointPatchField, pointMesh>& pf,
     const pointMesh& sMesh,
     const labelList& patchMap,
     const labelList& pointMap
@@ -383,7 +384,7 @@ fvMeshSubset::interpolate
             patchFields.set
             (
                 patchi,
-                new emptyPointPatchField<Type>
+                new internalPointPatchField<Type>
                 (
                     sMesh.boundary()[patchi],
                     DimensionedField<Type, pointMesh>::null()
@@ -412,7 +413,7 @@ fvMeshSubset::interpolate
         (
             IOobject
             (
-                "subset"+vf.name(),
+                "subset"+pf.name(),
                 sMesh.time().timeName(),
                 sMesh.thisDb(),
                 IOobject::NO_READ,
@@ -420,8 +421,8 @@ fvMeshSubset::interpolate
                 false
             ),
             sMesh,
-            vf.dimensions(),
-            Field<Type>(vf.primitiveField(), pointMap),
+            pf.dimensions(),
+            Field<Type>(pf.primitiveField(), pointMap),
             patchFields
         )
     );
@@ -443,7 +444,7 @@ fvMeshSubset::interpolate
         {
             // Construct addressing
             const pointPatch& basePatch =
-                vf.mesh().boundary()[patchMap[patchi]];
+                pf.mesh().boundary()[patchMap[patchi]];
 
             const labelList& meshPoints = basePatch.meshPoints();
 
@@ -479,7 +480,7 @@ fvMeshSubset::interpolate
                 patchi,
                 pointPatchField<Type>::New
                 (
-                    vf.boundaryField()[patchMap[patchi]],
+                    pf.boundaryField()[patchMap[patchi]],
                     subPatch,
                     resF(),
                     directPointPatchFieldMapper(directAddressing)
@@ -493,7 +494,8 @@ fvMeshSubset::interpolate
 
 
 template<class Type>
-tmp<GeometricField<Type, pointPatchField, pointMesh>> fvMeshSubset::interpolate
+Foam::tmp<Foam::GeometricField<Type, Foam::pointPatchField, Foam::pointMesh>>
+Foam::fvMeshSubset::interpolate
 (
     const GeometricField<Type, pointPatchField, pointMesh>& sf
 ) const
@@ -509,7 +511,8 @@ tmp<GeometricField<Type, pointPatchField, pointMesh>> fvMeshSubset::interpolate
 
 
 template<class Type>
-tmp<DimensionedField<Type, volMesh>> fvMeshSubset::interpolate
+Foam::tmp<Foam::DimensionedField<Type, Foam::volMesh>>
+Foam::fvMeshSubset::interpolate
 (
     const DimensionedField<Type, volMesh>& df,
     const fvMesh& sMesh,
@@ -540,7 +543,8 @@ tmp<DimensionedField<Type, volMesh>> fvMeshSubset::interpolate
 
 
 template<class Type>
-tmp<DimensionedField<Type, volMesh>> fvMeshSubset::interpolate
+Foam::tmp<Foam::DimensionedField<Type, Foam::volMesh>>
+Foam::fvMeshSubset::interpolate
 (
     const DimensionedField<Type, volMesh>& df
 ) const
@@ -548,9 +552,5 @@ tmp<DimensionedField<Type, volMesh>> fvMeshSubset::interpolate
     return interpolate(df, subMesh(), cellMap());
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

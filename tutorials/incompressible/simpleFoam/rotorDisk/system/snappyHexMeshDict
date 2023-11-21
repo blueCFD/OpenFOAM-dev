@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      snappyHexMeshDict;
@@ -82,7 +81,7 @@ castellatedMeshControls
             level       (4 4);
             faceZone    rotatingZone;
             cellZone    rotatingZone;
-            cellZoneInside  inside;
+            mode        inside;
         }
 
     }

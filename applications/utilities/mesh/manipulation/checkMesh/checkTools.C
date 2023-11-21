@@ -41,6 +41,7 @@ License
 #include "syncTools.H"
 #include "globalIndex.H"
 #include "PatchTools.T.H"
+#include "writeFile.H"
 
 
 void Foam::printMeshStats(const polyMesh& mesh, const bool allTopology)
@@ -270,13 +271,11 @@ void Foam::mergeAndWrite
 
     fileName outputDir
     (
-        set.time().path()
-      / (Pstream::parRun() ? ".." : "")
-      / "postProcessing"
-      / mesh.pointsInstance()
-      / set.name()
+        set.time().globalPath()
+       /functionObjects::writeFile::outputPrefix
+       /mesh.pointsInstance()
+       /set.name()
     );
-    outputDir.clean();
 
     mergeAndWrite(mesh, writer, set.name(), setPatch, outputDir);
 }
@@ -378,7 +377,7 @@ void Foam::mergeAndWrite
 
 void Foam::mergeAndWrite
 (
-    const writer<scalar>& writer,
+    const setWriter<scalar>& writer,
     const pointSet& set
 )
 {

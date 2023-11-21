@@ -31,17 +31,13 @@ Description
 #include "fvMeshSubset.H"
 #include "boolList.H"
 #include "Pstream.T.H"
-#include "emptyPolyPatch.H"
+#include "internalPolyPatch.H"
 #include "demandDrivenData.H"
 #include "cyclicPolyPatch.H"
+#include "processorPolyPatch.H"
 #include "removeCells.H"
 #include "polyTopoChange.H"
 #include "mapPolyMesh.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -225,8 +221,9 @@ void Foam::fvMeshSubset::doCoupledPatches
             {
                 forAll(cycPatch, i)
                 {
-                    label thisFacei = cycPatch.start() + i;
-                    label otherFacei = cycPatch.transformGlobalFace(thisFacei);
+                    const label thisFacei = cycPatch.start() + i;
+                    const label otherFacei =
+                        cycPatch.transformGlobalFace(thisFacei);
 
                     if
                     (
@@ -244,8 +241,9 @@ void Foam::fvMeshSubset::doCoupledPatches
             {
                 forAll(cycPatch, i)
                 {
-                    label thisFacei = cycPatch.start() + i;
-                    label otherFacei = cycPatch.transformGlobalFace(thisFacei);
+                    const label thisFacei = cycPatch.start() + i;
+                    const label otherFacei =
+                        cycPatch.transformGlobalFace(thisFacei);
 
                     if
                     (
@@ -274,7 +272,7 @@ void Foam::fvMeshSubset::doCoupledPatches
 }
 
 
-labelList Foam::fvMeshSubset::subset
+Foam::labelList Foam::fvMeshSubset::subset
 (
     const label nElems,
     const labelList& selectedElements,
@@ -338,9 +336,7 @@ void Foam::fvMeshSubset::subsetZones()
 
 
     // FaceZones
-
     const faceZoneMesh& faceZones = baseMesh().faceZones();
-
 
     // Do we need to remove zones where the side we're interested in
     // no longer exists? Guess not.
@@ -381,15 +377,15 @@ void Foam::fvMeshSubset::subsetZones()
         nSub = 0;
         forAll(faceMap(), subFacei)
         {
-            label meshFacei = faceMap()[subFacei];
+            const label meshFacei = faceMap()[subFacei];
             if (zone[meshFacei] != 0)
             {
                 subAddressing[nSub] = subFacei;
-                label subOwner = subMesh().faceOwner()[subFacei];
-                label baseOwner = baseMesh().faceOwner()[meshFacei];
+                const label subOwner = subMesh().faceOwner()[subFacei];
+                const label baseOwner = baseMesh().faceOwner()[meshFacei];
                 // If subowner is the same cell as the base keep the flip status
-                bool sameOwner = (cellMap()[subOwner] == baseOwner);
-                bool flip = (zone[meshFacei] == 1);
+                const bool sameOwner = (cellMap()[subOwner] == baseOwner);
+                const bool flip = (zone[meshFacei] == 1);
                 subFlipStatus[nSub] = (sameOwner == flip);
 
                 nSub++;
@@ -406,7 +402,7 @@ void Foam::fvMeshSubset::subsetZones()
         );
     }
 
-
+    // CellZones
     const cellZoneMesh& cellZones = baseMesh().cellZones();
 
     List<cellZone*> cZonePtrs(cellZones.size());
@@ -525,7 +521,7 @@ void Foam::fvMeshSubset::setCellSubset
     const label avgNPointsPerFace = 4;
 
 
-    label nCellsInSet = cellMap_.size();
+    const label nCellsInSet = cellMap_.size();
 
     // Mark all used faces
 
@@ -581,7 +577,7 @@ void Foam::fvMeshSubset::setCellSubset
     }
 
     // These are all the internal faces in the mesh.
-    label nInternalFaces = globalFaceMap.size();
+    const label nInternalFaces = globalFaceMap.size();
 
 
     // Where to insert old internal faces.
@@ -669,10 +665,6 @@ void Foam::fvMeshSubset::setCellSubset
         globalPointMap[pointMap_[pointi]] = pointi;
     }
 
-    // Pout<< "Number of cells in new mesh: " << nCellsInSet << endl;
-    // Pout<< "Number of faces in new mesh: " << globalFaceMap.size() << endl;
-    // Pout<< "Number of points in new mesh: " << globalPointMap.size() << endl;
-
     // Make a new mesh
     pointField newPoints(globalPointMap.size());
 
@@ -731,7 +723,7 @@ void Foam::fvMeshSubset::setCellSubset
     // Assign boundary faces. Visited in order of faceMap_.
     for (label facei = nInternalFaces; facei < faceMap_.size(); facei++)
     {
-        label oldFacei = faceMap_[facei];
+        const label oldFacei = faceMap_[facei];
 
         face oldF = oldFaces[oldFacei];
 
@@ -759,7 +751,7 @@ void Foam::fvMeshSubset::setCellSubset
         else
         {
             // Boundary face. Increment the appropriate patch
-            label patchOfFace = oldPatches.whichPatch(oldFacei);
+            const label patchOfFace = oldPatches.whichPatch(oldFacei);
 
             // Update count for patch
             boundaryPatchSizes[patchOfFace]++;
@@ -852,14 +844,14 @@ void Foam::fvMeshSubset::setCellSubset
         // Newly created patch so is at end. Check if any faces in it.
         if (boundaryPatchSizes[oldInternalPatchID] > 0)
         {
-            newBoundary[nNewPatches] = new emptyPolyPatch
+            newBoundary[nNewPatches] = new internalPolyPatch
             (
                 "oldInternalFaces",
                 boundaryPatchSizes[oldInternalPatchID],
                 patchStart,
                 nNewPatches,
                 fvMeshSubsetPtr_().boundaryMesh(),
-                emptyPolyPatch::typeName
+                internalPolyPatch::typeName
             );
 
             // The index for the first patch is -1 as it originates from
@@ -868,6 +860,10 @@ void Foam::fvMeshSubset::setCellSubset
             nNewPatches++;
         }
     }
+    // else
+    // {
+    //     patchMap_[wantedPatchID] = -1;
+    // }
 
     // Reset the patch lists
     newBoundary.setSize(nNewPatches);
@@ -1028,13 +1024,13 @@ void Foam::fvMeshSubset::setLargeCellSubset
             oldPatchi++
         )
         {
-            globalPatchMap[oldPatchi] = oldPatchi+1;
+            globalPatchMap[oldPatchi] = oldPatchi + 1;
         }
     }
     else
     {
         oldInternalPatchID = wantedPatchID;
-        nextPatchID = wantedPatchID+1;
+        nextPatchID = wantedPatchID + 1;
 
         // old to new patches
         globalPatchMap = identity(oldPatches.size());
@@ -1198,9 +1194,6 @@ void Foam::fvMeshSubset::setLargeCellSubset
         }
     }
 
-    // Pout<< "Number of cells in new mesh : " << cellMap_.size() << endl;
-    // Pout<< "Number of faces in new mesh : " << faceMap_.size() << endl;
-    // Pout<< "Number of points in new mesh: " << pointMap_.size() << endl;
 
     // Make a new mesh
     pointField newPoints(pointMap_.size());
@@ -1238,7 +1231,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
     // flipped)
     for (label facei = nInternalFaces; facei < faceMap_.size(); facei++)
     {
-        label oldFacei = faceMap_[facei];
+        const label oldFacei = faceMap_[facei];
 
         face oldF = oldFaces[oldFacei];
 
@@ -1382,7 +1375,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
         oldPatchi++
     )
     {
-        label newSize = boundaryPatchSizes[globalPatchMap[oldPatchi]];
+        const label newSize = boundaryPatchSizes[globalPatchMap[oldPatchi]];
 
         // Clone (even if 0 size)
         newBoundary[nNewPatches] = oldPatches[oldPatchi].clone
@@ -1412,18 +1405,15 @@ void Foam::fvMeshSubset::setLargeCellSubset
         // Newly created patch so is at end. Check if any faces in it.
         if (oldInternalSize > 0)
         {
-            newBoundary[nNewPatches] = new emptyPolyPatch
+            newBoundary[nNewPatches] = new internalPolyPatch
             (
                 "oldInternalFaces",
                 boundaryPatchSizes[oldInternalPatchID],
                 patchStart,
                 nNewPatches,
                 fvMeshSubsetPtr_().boundaryMesh(),
-                emptyPolyPatch::typeName
+                internalPolyPatch::typeName
             );
-
-            // Pout<< "    oldInternalFaces : "
-            //    << boundaryPatchSizes[oldInternalPatchID] << endl;
 
             // The index for the first patch is -1 as it originates from
             // the internal faces
@@ -1432,6 +1422,10 @@ void Foam::fvMeshSubset::setLargeCellSubset
             nNewPatches++;
         }
     }
+    // else
+    // {
+    //     patchMap_[wantedPatchID] = -1;
+    // }
 
     // Old patches
 
@@ -1442,7 +1436,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
         oldPatchi++
     )
     {
-        label newSize = boundaryPatchSizes[globalPatchMap[oldPatchi]];
+        const label newSize = boundaryPatchSizes[globalPatchMap[oldPatchi]];
 
         // Patch still exists. Add it
         newBoundary[nNewPatches] = oldPatches[oldPatchi].clone
@@ -1452,9 +1446,6 @@ void Foam::fvMeshSubset::setLargeCellSubset
             newSize,
             patchStart
         ).ptr();
-
-        // Pout<< "    " << oldPatches[oldPatchi].name() << " : "
-        //    << newSize << endl;
 
         patchStart += newSize;
         patchMap_[nNewPatches] = oldPatchi;    // compact patchMap
@@ -1500,7 +1491,7 @@ Foam::labelList Foam::fvMeshSubset::getExposedFaces
 ) const
 {
     // Collect cells to remove
-    labelList cellsToRemove(getCellsToRemove(region, currentRegion));
+    const labelList cellsToRemove(getCellsToRemove(region, currentRegion));
 
     return removeCells(baseMesh(), syncCouples).getExposedFaces(cellsToRemove);
 }
@@ -1560,7 +1551,7 @@ bool Foam::fvMeshSubset::hasSubMesh() const
 }
 
 
-const fvMesh& Foam::fvMeshSubset::subMesh() const
+const Foam::fvMesh& Foam::fvMeshSubset::subMesh() const
 {
     checkCellSubset();
 
@@ -1568,7 +1559,7 @@ const fvMesh& Foam::fvMeshSubset::subMesh() const
 }
 
 
-fvMesh& Foam::fvMeshSubset::subMesh()
+Foam::fvMesh& Foam::fvMeshSubset::subMesh()
 {
     checkCellSubset();
 
@@ -1576,7 +1567,7 @@ fvMesh& Foam::fvMeshSubset::subMesh()
 }
 
 
-const labelList& Foam::fvMeshSubset::pointMap() const
+const Foam::labelList& Foam::fvMeshSubset::pointMap() const
 {
     checkCellSubset();
 
@@ -1584,7 +1575,7 @@ const labelList& Foam::fvMeshSubset::pointMap() const
 }
 
 
-const labelList& Foam::fvMeshSubset::faceMap() const
+const Foam::labelList& Foam::fvMeshSubset::faceMap() const
 {
     checkCellSubset();
 
@@ -1592,7 +1583,7 @@ const labelList& Foam::fvMeshSubset::faceMap() const
 }
 
 
-const labelList& Foam::fvMeshSubset::faceFlipMap() const
+const Foam::labelList& Foam::fvMeshSubset::faceFlipMap() const
 {
     if (!faceFlipMapPtr_.valid())
     {
@@ -1608,20 +1599,20 @@ const labelList& Foam::fvMeshSubset::faceFlipMap() const
         const labelList& subOwn = subMesh().faceOwner();
         const labelList& own = baseMesh_.faceOwner();
 
-        for (label subFaceI = 0; subFaceI < subInt; subFaceI++)
+        for (label subFacei = 0; subFacei < subInt; subFacei++)
         {
-            faceFlipMap[subFaceI] = subToBaseFace[subFaceI]+1;
+            faceFlipMap[subFacei] = subToBaseFace[subFacei] + 1;
         }
-        for (label subFaceI = subInt; subFaceI < subOwn.size(); subFaceI++)
+        for (label subFacei = subInt; subFacei < subOwn.size(); subFacei++)
         {
-            label faceI = subToBaseFace[subFaceI];
-            if (subToBaseCell[subOwn[subFaceI]] == own[faceI])
+            const label facei = subToBaseFace[subFacei];
+            if (subToBaseCell[subOwn[subFacei]] == own[facei])
             {
-                faceFlipMap[subFaceI] = faceI+1;
+                faceFlipMap[subFacei] = facei + 1;
             }
             else
             {
-                faceFlipMap[subFaceI] = -faceI-1;
+                faceFlipMap[subFacei] = -facei - 1;
             }
         }
     }
@@ -1630,7 +1621,7 @@ const labelList& Foam::fvMeshSubset::faceFlipMap() const
 }
 
 
-const labelList& Foam::fvMeshSubset::cellMap() const
+const Foam::labelList& Foam::fvMeshSubset::cellMap() const
 {
     checkCellSubset();
 
@@ -1638,16 +1629,12 @@ const labelList& Foam::fvMeshSubset::cellMap() const
 }
 
 
-const labelList& Foam::fvMeshSubset::patchMap() const
+const Foam::labelList& Foam::fvMeshSubset::patchMap() const
 {
     checkCellSubset();
 
     return patchMap_;
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

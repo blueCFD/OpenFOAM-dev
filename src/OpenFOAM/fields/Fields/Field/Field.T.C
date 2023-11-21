@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,8 +27,6 @@ License
 #include "FieldM.T.H"
 #include "dictionary.H"
 #include "contiguous.H"
-#include "mapDistributeBase.H"
-#include "flipOp.H"
 
 // * * * * * * * * * * * * * * * Static Members  * * * * * * * * * * * * * * //
 
@@ -227,29 +225,12 @@ Foam::Field<Type>::Field
         }
         else
         {
-            if (is.version() == 2.0)
-            {
-                IOWarningInFunction
-                (
-                    dict
-                )   << "expected keyword 'uniform' or 'nonuniform', "
-                       "assuming deprecated Field format from "
-                       "Foam version 2.0." << endl;
-
-                this->setSize(s);
-
-                is.putBack(firstToken);
-                operator=(pTraits<Type>(is));
-            }
-            else
-            {
-                FatalIOErrorInFunction
-                (
-                    dict
-                )   << "expected keyword 'uniform' or 'nonuniform', found "
-                    << firstToken.info()
-                    << exit(FatalIOError);
-            }
+            FatalIOErrorInFunction
+            (
+                dict
+            )   << "expected keyword 'uniform' or 'nonuniform', found "
+                << firstToken.info()
+                << exit(FatalIOError);
         }
     }
 }

@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      snappyHexMeshDict;
@@ -55,7 +54,7 @@ castellatedMeshControls
             level (2 2);
             faceZone    solid;
             cellZone    solid;
-            cellZoneInside  inside;
+            mode        inside;
         }
 
         CAD
@@ -96,8 +95,8 @@ castellatedMeshControls
     {
         CAD
         {
-            mode inside;
-            levels ((1E15 1));
+            mode    inside;
+            level   1;
         }
     }
 

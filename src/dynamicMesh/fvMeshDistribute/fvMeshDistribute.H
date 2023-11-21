@@ -52,8 +52,8 @@ SourceFiles
 #ifndef fvMeshDistribute_H
 #define fvMeshDistribute_H
 
-#include "Field.T.H"
 #include "fvMeshSubset.H"
+#include "FieldField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -103,8 +103,8 @@ class fvMeshDistribute
 
         // Patch handling
 
-            //- Find patch to put exposed faces into.
-            label findNonEmptyPatch() const;
+            //- Find patch to put exposed internal faces into
+            label findInternalPatch() const;
 
             //- Save boundary fields
             template<class T, class Mesh>
@@ -133,16 +133,9 @@ class fvMeshDistribute
                 const PtrList<Field<T>>& oldFlds
             );
 
-            //- Init patch fields of certain type
-            template<class GeoField, class PatchFieldType>
-            void initPatchFields
-            (
-                const typename GeoField::value_type& initVal
-            );
-
-            //- Call correctBoundaryConditions on fields
+            //- Correct processor patch fields
             template<class GeoField>
-            void correctBoundaryConditions();
+            void correctProcessorPatchFields();
 
             //- Delete all processor patches. Move any processor faces into
             //  patchi.

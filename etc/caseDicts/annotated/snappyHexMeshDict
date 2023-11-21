@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      snappyHexMeshDict;
@@ -51,7 +50,7 @@ geometry
         type triSurfaceMesh;
         file "sphere.stl"
 
-        // tolerance   1E-5;   // optional:non-default tolerance on intersections
+        // tolerance   1e-5;   // optional:non-default tolerance on intersections
         // maxTreeDepth 10;    // optional:depth of octree. Decrease only in case
                               // of memory limitations.
 
@@ -188,7 +187,7 @@ castellatedMeshControls
 
             // faceZone sphere;
             // cellZone sphere;
-            // cellZoneInside inside;  // outside/insidePoint
+            // mode        inside;  // outside/insidePoint
 
             //- Optional specification of what to do with faceZone faces:
             //      internal : keep them as internal faces (default)

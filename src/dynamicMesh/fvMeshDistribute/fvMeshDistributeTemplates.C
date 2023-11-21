@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "mapPolyMesh.H"
+#include "processorFvPatchField.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -39,8 +40,7 @@ void Foam::fvMeshDistribute::printFieldInfo(const fvMesh& mesh)
     {
         const GeoField& fld = *iter();
 
-        Pout<< "Field:" << iter.key() << " internalsize:" << fld.size()
-            //<< " value:" << fld
+        Pout<< "Field:" << iter.key() << " internal size:" << fld.size()
             << endl;
 
         forAll(fld.boundaryField(), patchi)
@@ -206,6 +206,7 @@ void Foam::fvMeshDistribute::mapExposedFaces
     {
         fldType& fld = *iter();
         typename fldType::Boundary& bfld = fld.boundaryFieldRef();
+        const bool negateIfFlipped = isFlux(fld);
 
         const Field<T>& oldInternal = oldFlds[fieldI++];
 
@@ -217,15 +218,14 @@ void Foam::fvMeshDistribute::mapExposedFaces
 
             forAll(patchFld, i)
             {
-                const label faceI = patchFld.patch().start()+i;
+                const label facei = patchFld.patch().start()+i;
+                const label oldFacei = faceMap[facei];
 
-                label oldFaceI = faceMap[faceI];
-
-                if (oldFaceI < oldInternal.size())
+                if (oldFacei < oldInternal.size())
                 {
-                    patchFld[i] = oldInternal[oldFaceI];
+                    patchFld[i] = oldInternal[oldFacei];
 
-                    if (map.flipFaceFlux().found(faceI))
+                    if (negateIfFlipped && map.flipFaceFlux().found(facei))
                     {
                         patchFld[i] = flipOp()(patchFld[i]);
                     }
@@ -236,13 +236,11 @@ void Foam::fvMeshDistribute::mapExposedFaces
 }
 
 
-template<class GeoField, class PatchFieldType>
-void Foam::fvMeshDistribute::initPatchFields
-(
-    const typename GeoField::value_type& initVal
-)
+template<class GeoField>
+void Foam::fvMeshDistribute::correctProcessorPatchFields()
 {
-    // Init patch fields of certain type
+    typedef processorFvPatchField<typename GeoField::value_type>
+        processorPatchFieldType;
 
     HashTable<GeoField*> flds
     (
@@ -255,31 +253,62 @@ void Foam::fvMeshDistribute::initPatchFields
 
         typename GeoField::Boundary& bfld = fld.boundaryFieldRef();
 
-        forAll(bfld, patchi)
+        if
+        (
+            Pstream::defaultCommsType == Pstream::commsTypes::blocking
+         || Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
+        )
         {
-            if (isA<PatchFieldType>(bfld[patchi]))
+            label nReq = Pstream::nRequests();
+
+            forAll(bfld, patchi)
             {
-                bfld[patchi] == initVal;
+                if (isA<processorPatchFieldType>(bfld[patchi]))
+                {
+                    bfld[patchi].initEvaluate(Pstream::defaultCommsType);
+                }
+            }
+
+            // Block for any outstanding requests
+            if
+            (
+                Pstream::parRun()
+             && Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
+            )
+            {
+                Pstream::waitRequests(nReq);
+            }
+
+            forAll(bfld, patchi)
+            {
+                if (isA<processorPatchFieldType>(bfld[patchi]))
+                {
+                    bfld[patchi].evaluate(Pstream::defaultCommsType);
+                }
             }
         }
-    }
-}
+        else if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
+        {
+            const lduSchedule& patchSchedule =
+                mesh_.globalData().patchSchedule();
 
-
-template<class GeoField>
-void Foam::fvMeshDistribute::correctBoundaryConditions()
-{
-    // correctBoundaryConditions patch fields of certain type
-
-    HashTable<GeoField*> flds
-    (
-        mesh_.objectRegistry::lookupClass<GeoField>()
-    );
-
-    forAllIter(typename HashTable<GeoField*>, flds, iter)
-    {
-        const GeoField& fld = *iter();
-        fld.correctBoundaryConditions();
+            forAll(patchSchedule, patchEvali)
+            {
+                if (isA<processorPatchFieldType>(bfld[patchEvali]))
+                {
+                    if (patchSchedule[patchEvali].init)
+                    {
+                        bfld[patchSchedule[patchEvali].patch]
+                            .initEvaluate(Pstream::commsTypes::scheduled);
+                    }
+                    else
+                    {
+                        bfld[patchSchedule[patchEvali].patch]
+                            .evaluate(Pstream::commsTypes::scheduled);
+                    }
+                }
+            }
+        }
     }
 }
 

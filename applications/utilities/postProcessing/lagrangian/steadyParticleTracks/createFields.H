@@ -1,8 +1,4 @@
-const word dictName("particleTrackDict");
-
-#include "setConstantMeshDictionaryIO.H"
-
-IOdictionary propsDict(dictIO);
+IOdictionary propsDict(systemDict("steadyParticleTracksDict", args, runTime));
 
 word cloudName(propsDict.lookup("cloudName"));
 

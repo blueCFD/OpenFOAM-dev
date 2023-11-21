@@ -48,7 +48,7 @@ tmp<volScalarField> realizableKE<BasicMomentumTransportModel>::rCmu
     tmp<volSymmTensorField> tS = dev(symm(gradU));
     const volSymmTensorField& S = tS();
 
-    volScalarField W
+    const volScalarField W
     (
         (2*sqrt(2.0))*((S&S)&&S)
        /(
@@ -59,12 +59,12 @@ tmp<volScalarField> realizableKE<BasicMomentumTransportModel>::rCmu
 
     tS.clear();
 
-    volScalarField phis
+    const volScalarField phis
     (
         (1.0/3.0)*acos(min(max(sqrt(6.0)*W, -scalar(1)), scalar(1)))
     );
-    volScalarField As(sqrt(6.0)*cos(phis));
-    volScalarField Us(sqrt(S2/2.0 + magSqr(skew(gradU))));
+    const volScalarField As(sqrt(6.0)*cos(phis));
+    const volScalarField Us(sqrt(S2/2.0 + magSqr(skew(gradU))));
 
     return 1.0/(A0_ + As*Us*k_/epsilon_);
 }
@@ -87,11 +87,11 @@ void realizableKE<BasicMomentumTransportModel>::correctNut
 template<class BasicMomentumTransportModel>
 void realizableKE<BasicMomentumTransportModel>::correctNut()
 {
-    tmp<volTensorField> tgradU = fvc::grad(this->U_);
-    volScalarField S2(modelName("S2"), 2*magSqr(dev(symm(tgradU()))));
-    volScalarField magS(modelName("magS"), sqrt(S2));
+    const volTensorField gradU(fvc::grad(this->U_));
+    const volScalarField S2(modelName("S2"), 2*magSqr(dev(symm(gradU))));
+    const volScalarField magS(modelName("magS"), sqrt(S2));
 
-    correctNut(tgradU(), S2, magS);
+    correctNut(gradU, S2, magS);
 }
 
 
@@ -271,21 +271,24 @@ void realizableKE<BasicMomentumTransportModel>::correct()
         fvc::div(fvc::absolute(this->phi(), U))()
     );
 
-    tmp<volTensorField> tgradU = fvc::grad(U);
-    volScalarField S2(modelName("S2"), 2*magSqr(dev(symm(tgradU()))));
-    volScalarField magS(modelName("magS"), sqrt(S2));
+    const volTensorField gradU(fvc::grad(U));
+    const volScalarField S2(modelName("S2"), 2*magSqr(dev(symm(gradU))));
+    const volScalarField magS(modelName("magS"), sqrt(S2));
 
-    volScalarField::Internal eta(modelName("eta"), magS()*k_()/epsilon_());
-    volScalarField::Internal C1
+    const volScalarField::Internal eta
+    (
+        modelName("eta"), magS()*k_()/epsilon_()
+    );
+    const volScalarField::Internal C1
     (
         modelName("C1"),
         max(eta/(scalar(5) + eta), scalar(0.43))
     );
 
-    volScalarField::Internal G
+    const volScalarField::Internal G
     (
         this->GName(),
-        nut*(tgradU().v() && dev(twoSymm(tgradU().v())))
+        nut*(gradU.v() && dev(twoSymm(gradU.v())))
     );
 
     // Update epsilon and G at the wall
@@ -337,7 +340,7 @@ void realizableKE<BasicMomentumTransportModel>::correct()
     fvConstraints.constrain(k_);
     bound(k_, this->kMin_);
 
-    correctNut(tgradU(), S2, magS);
+    correctNut(gradU, S2, magS);
 }
 
 

@@ -39,11 +39,17 @@ Script=$0
 usage() {
     cat<<USAGE
 
-Usage: ${0##*/} [OPTIONS]
+Usage: ${0##*/} [OPTIONS] <arg (optional)>
 options:
   -help      | -h     print the usage
 
-Helper script used by the Allclean scripts in the OpenFOAM tutorials
+Script to clean tutorial cases called by the Allclean scripts in the OpenFOAM
+tutorials. The script executes recursively on sub-directories to clean all
+cases. Recursive execution is disabled for the top level Allclean or Allwclean
+scripts by supplying a dummy argument <arg> when executing, e.g.
+
+./${0##*/} cases
+
 USAGE
 }
 
@@ -60,26 +66,28 @@ do
     esac
 done
 
-# If an argument is supplied do not execute ./Allwclean or ./Allclean
-# (to avoid recursion)
-if [ $# -eq 0 -a -f Allwclean ]
+# Specialised ./Allwclean script, do not execute if argument is supplied
+if [ $# -eq 0 ] && [ -f Allwclean ]
 then
-    # Specialised script
     ./Allwclean
-elif [ $# -eq 0 -a -f Allclean ]
+
+# Specialised ./Allclean script, do not execute if argument is supplied
+elif [ $# -eq 0 ] && [ -f Allclean ]
 then
-    # Specialised script
     ./Allclean
+
+# For a case directory without Allclean, use the cleanCase function
 elif [ -d system ]
 then
-    # Normal case
     cleanCase
+
+# For a code directory without Allwclean, use the cleanApplication function
 elif [ -d Make ]
 then
-    # Normal application
     cleanApplication
+
+# Otherwise loop over sub-directories and execute script within each one
 else
-    # Recurse into subdirectories
     for caseName in *
     do
         ( cd "$caseName" 2>/dev/null && $Script )

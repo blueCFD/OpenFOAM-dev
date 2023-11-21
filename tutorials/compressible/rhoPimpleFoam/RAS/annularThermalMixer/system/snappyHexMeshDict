@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      snappyHexMeshDict;
@@ -114,7 +113,7 @@ castellatedMeshControls
             level       (2 2);
             faceZone    rotatingZone;
             cellZone    rotatingZone;
-            cellZoneInside  inside;
+            mode        inside;
         }
 
         innerInlet
@@ -203,10 +202,6 @@ castellatedMeshControls
     }
 
     resolveFeatureAngle 30;
-
-    refinementRegions
-    {
-    }
 
     locationInMesh (0.035 0.043 0.017);
 

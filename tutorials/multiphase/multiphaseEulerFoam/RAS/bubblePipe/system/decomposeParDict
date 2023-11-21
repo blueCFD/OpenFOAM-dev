@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      decomposeParDict;
@@ -21,7 +20,6 @@ method              simple;
 simpleCoeffs
 {
     n               (1 1 4);
-    delta           0.001;
 }
 
 // ************************************************************************* //

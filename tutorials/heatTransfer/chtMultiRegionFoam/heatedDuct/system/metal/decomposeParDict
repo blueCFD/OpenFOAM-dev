@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     note        "mesh decomposition control dictionary";
@@ -24,7 +23,6 @@ method          hierarchical;
 hierarchicalCoeffs
 {
     n           (1 1 4);
-    delta       0.001;
     order       xyz;
 }
 

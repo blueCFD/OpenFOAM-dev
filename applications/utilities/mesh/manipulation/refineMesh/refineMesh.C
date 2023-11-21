@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,6 +45,7 @@ Description
 #include "labelIOList.H"
 #include "IOdictionary.H"
 #include "syncTools.H"
+#include "systemDict.H"
 
 using namespace Foam;
 
@@ -187,55 +188,34 @@ int main(int argc, char *argv[])
     labelList refCells;
 
     // Dictionary to control refinement
-    dictionary refineDict;
     const word dictName("refineMeshDict");
-
+    IOobject dictIO(systemDictIO(dictName, args, runTime));
+    dictionary refineDict;
     if (readDict)
     {
-        fileName dictPath = args["dict"];
-        if (isDir(dictPath))
-        {
-            dictPath = dictPath/dictName;
-        }
-
-        IOobject dictIO
-        (
-            dictPath,
-            mesh,
-            IOobject::MUST_READ
-        );
-
-        if (!dictIO.typeHeaderOk<IOdictionary>(true))
-        {
-            FatalErrorInFunction
-                << "Cannot open specified refinement dictionary "
-                << dictPath
-                << exit(FatalError);
-        }
-
-        Info<< "Refining according to " << dictPath << nl << endl;
-
-        refineDict = IOdictionary(dictIO);
-    }
-    else if (!refineAllCells)
-    {
-        IOobject dictIO
-        (
-            dictName,
-            runTime.system(),
-            mesh,
-            IOobject::MUST_READ
-        );
-
         if (dictIO.typeHeaderOk<IOdictionary>(true))
         {
-            Info<< "Refining according to " << dictName << nl << endl;
-
+            Info<< "Refining according to " << dictIO.path() << nl << endl;
             refineDict = IOdictionary(dictIO);
         }
         else
         {
-            Info<< "Refinement dictionary " << dictName << " not found" << endl;
+            FatalErrorInFunction
+                << "Cannot open specified refinement dictionary "
+                << dictIO.path() << exit(FatalError);
+        }
+    }
+    else if (!refineAllCells)
+    {
+        if (dictIO.typeHeaderOk<IOdictionary>(true))
+        {
+            Info<< "Refining according to " << dictIO.path() << nl << endl;
+            refineDict = IOdictionary(dictIO);
+        }
+        else
+        {
+            Info<< "Refinement dictionary " << dictIO.path() << " not found"
+                << nl << endl;
         }
     }
 
@@ -264,9 +244,9 @@ int main(int argc, char *argv[])
             Info<< "3D case; refining all directions" << nl << endl;
 
             wordList directions(3);
-            directions[0] = "tan1";
-            directions[1] = "tan2";
-            directions[2] = "normal";
+            directions[0] = "e1";
+            directions[1] = "e2";
+            directions[2] = "e3";
             refineDict.add("directions", directions);
 
             // Use hex cutter
@@ -281,20 +261,20 @@ int main(int argc, char *argv[])
             if (dirs.x() == -1)
             {
                 Info<< "2D case; refining in directions y,z\n" << endl;
-                directions[0] = "tan2";
-                directions[1] = "normal";
+                directions[0] = "e2";
+                directions[1] = "e3";
             }
             else if (dirs.y() == -1)
             {
                 Info<< "2D case; refining in directions x,z\n" << endl;
-                directions[0] = "tan1";
-                directions[1] = "normal";
+                directions[0] = "e1";
+                directions[1] = "e3";
             }
             else
             {
                 Info<< "2D case; refining in directions x,y\n" << endl;
-                directions[0] = "tan1";
-                directions[1] = "tan2";
+                directions[0] = "e1";
+                directions[1] = "e2";
             }
 
             refineDict.add("directions", directions);
@@ -306,8 +286,8 @@ int main(int argc, char *argv[])
         refineDict.add("coordinateSystem", "global");
 
         dictionary coeffsDict;
-        coeffsDict.add("tan1", vector(1, 0, 0));
-        coeffsDict.add("tan2", vector(0, 1, 0));
+        coeffsDict.add("e1", vector(1, 0, 0));
+        coeffsDict.add("e2", vector(0, 1, 0));
         refineDict.add("globalCoeffs", coeffsDict);
 
         refineDict.add("geometricCut", "false");

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: Added hack for 'isAbsolute()' to properly detect absolute
@@ -73,6 +73,18 @@ Foam::fileType Foam::fileName::type
 ) const
 {
     return ::Foam::type(*this, checkVariants, followLink);
+}
+
+
+bool Foam::fileName::isName() const
+{
+    return find('/') == npos;
+}
+
+
+bool Foam::fileName::hasPath() const
+{
+    return find('/') != npos;
 }
 
 

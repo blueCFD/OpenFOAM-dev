@@ -52,7 +52,7 @@ Description
 #include "searchableSurfaces.H"
 #include "refinementSurfaces.H"
 #include "refinementFeatures.H"
-#include "shellSurfaces.H"
+#include "refinementRegions.H"
 #include "decompositionMethod.H"
 #include "noDecomp.H"
 #include "fvMeshDistribute.H"
@@ -60,7 +60,6 @@ Description
 #include "refinementParameters.H"
 #include "snapParameters.H"
 #include "layerParameters.H"
-#include "vtkSetWriter.H"
 #include "faceSet.H"
 #include "motionSmoother.H"
 #include "polyTopoChange.H"
@@ -531,17 +530,10 @@ void extractSurface
 
         MeshedSurface<face> sortedFace(unsortedFace);
 
-        fileName globalCasePath
-        (
-            runTime.processorCase()
-          ? runTime.path()/".."/outFileName
-          : runTime.path()/outFileName
-        );
-        globalCasePath.clean();
+        Info<< "Writing merged surface to "
+            << runTime.globalPath()/outFileName << endl;
 
-        Info<< "Writing merged surface to " << globalCasePath << endl;
-
-        sortedFace.write(globalCasePath);
+        sortedFace.write(runTime.globalPath()/outFileName);
     }
 }
 
@@ -902,7 +894,7 @@ int main(int argc, char *argv[])
 
     autoPtr<refinementSurfaces> surfacesPtr;
 
-    Info<< "Reading refinement surfaces." << endl;
+    Info<< "Reading refinement surfaces..." << endl;
 
     if (surfaceSimplify)
     {
@@ -958,7 +950,9 @@ int main(int argc, char *argv[])
             new refinementSurfaces
             (
                 allGeometry,
-                refineDict.subDict("refinementSurfaces"),
+                refineDict.found("refinementSurfaces")
+              ? refineDict.subDict("refinementSurfaces")
+              : dictionary::null,
                 refineDict.lookupOrDefault("gapLevelIncrement", 0)
             )
         );
@@ -1010,7 +1004,6 @@ int main(int argc, char *argv[])
         (
             100.0,      // max size ratio
             1e-9,       // intersection tolerance
-            autoPtr<writer<scalar>>(new vtkSetWriter<scalar>()),
             0.01,       // min triangle quality
             true
         );
@@ -1023,18 +1016,20 @@ int main(int argc, char *argv[])
     // Read refinement shells
     // ~~~~~~~~~~~~~~~~~~~~~~
 
-    Info<< "Reading refinement shells." << endl;
-    shellSurfaces shells
+    Info<< "Reading refinement regions..." << endl;
+    refinementRegions shells
     (
         allGeometry,
-        refineDict.subDict("refinementRegions")
+        refineDict.found("refinementRegions")
+      ? refineDict.subDict("refinementRegions")
+      : dictionary::null
     );
-    Info<< "Read refinement shells in = "
+    Info<< "Read refinement regions in = "
         << mesh.time().cpuTimeIncrement() << " s" << nl << endl;
 
 
     Info<< "Setting refinement level of surface to be consistent"
-        << " with shells." << endl;
+        << " with shells.." << endl;
     surfaces.setMinLevelFields(shells);
     Info<< "Checked shell refinement in = "
         << mesh.time().cpuTimeIncrement() << " s" << nl << endl;
@@ -1043,11 +1038,13 @@ int main(int argc, char *argv[])
     // Read feature meshes
     // ~~~~~~~~~~~~~~~~~~~
 
-    Info<< "Reading features." << endl;
+    Info<< "Reading features..." << endl;
     refinementFeatures features
     (
         mesh,
-        refineDict.lookup("features")
+        refineDict.found("features")
+      ? refineDict.lookup("features")
+      : PtrList<dictionary>()
     );
     Info<< "Read features in = "
         << mesh.time().cpuTimeIncrement() << " s" << nl << endl;

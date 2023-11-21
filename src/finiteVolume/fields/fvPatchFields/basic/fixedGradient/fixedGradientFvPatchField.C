@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,13 +45,27 @@ Foam::fixedGradientFvPatchField<Type>::fixedGradientFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
-    const dictionary& dict
+    const dictionary& dict,
+    const bool gradientRequired
 )
 :
     fvPatchField<Type>(p, iF, dict, false),
-    gradient_("gradient", dict, p.size())
+    gradient_(p.size())
 {
-    evaluate();
+    if (gradientRequired)
+    {
+        if (dict.found("gradient"))
+        {
+            gradient_ = Field<Type>("gradient", dict, p.size());
+            evaluate();
+        }
+        else
+        {
+            FatalIOErrorInFunction(dict)
+                << "Essential entry 'gradient' missing"
+                << exit(FatalIOError);
+        }
+    }
 }
 
 
@@ -61,20 +75,21 @@ Foam::fixedGradientFvPatchField<Type>::fixedGradientFvPatchField
     const fixedGradientFvPatchField<Type>& ptf,
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
-    const fvPatchFieldMapper& mapper
+    const fvPatchFieldMapper& mapper,
+    const bool mappingRequired
 )
 :
-    fvPatchField<Type>(ptf, p, iF, mapper),
-    gradient_(mapper(ptf.gradient_))
+    fvPatchField<Type>(ptf, p, iF, mapper, mappingRequired),
+    gradient_(p.size())
 {
-    if (notNull(iF) && mapper.hasUnmapped())
+    if (mappingRequired)
     {
-        WarningInFunction
-            << "On field " << iF.name() << " patch " << p.name()
-            << " patchField " << this->type()
-            << " : mapper does not map all values." << nl
-            << "    To avoid this warning fully specify the mapping in derived"
-            << " patch fields." << endl;
+        // For unmapped faces set to internal field value (zero-gradient)
+        if (mapper.hasUnmapped())
+        {
+            gradient_ = Zero;
+        }
+        mapper(gradient_, ptf);
     }
 }
 

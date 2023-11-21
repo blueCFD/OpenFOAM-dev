@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      snappyHexMeshDict;
@@ -319,7 +318,7 @@ castellatedMeshControls
             level (1 2);
             cellZone rotating;
             faceZone rotating;
-            cellZoneInside insidePoint;
+            mode        insidePoint;
             insidePoint (0 0.1 0.5);
         }
     }
@@ -329,23 +328,6 @@ castellatedMeshControls
     // - used if feature snapping (see snapControls below) is used
     resolveFeatureAngle 30;
 
-
-    // Region-wise refinement
-    // ~~~~~~~~~~~~~~~~~~~~~~
-
-    // Specifies refinement level for cells in relation to a surface. One of
-    // three modes
-    // - distance. 'levels' specifies per distance to the surface the
-    //   wanted refinement level. The distances need to be specified in
-    //   increasing order.
-    // - inside. 'levels' is only one entry and only the level is used. All
-    //   cells inside the surface get refined up to the level. The surface
-    //   needs to be closed for this to be possible.
-    // - outside. Same but cells outside.
-
-    refinementRegions
-    {
-    }
 
     // Mesh selection
     // ~~~~~~~~~~~~~~
@@ -533,13 +515,13 @@ meshQualityControls
 
     // Minimum pyramid volume. Is absolute volume of cell pyramid.
     // Set to a sensible fraction of the smallest cell volume expected.
-    // Set to very negative number (e.g. -1E30) to disable.
+    // Set to very negative number (e.g. -1e30) to disable.
     minVol 1e-13;
 
     // Minimum quality of the tet formed by the face-centre
     // and variable base point minimum decomposition triangles and
     // the cell centre. This has to be a positive number for tracking
-    // to work. Set to very negative number (e.g. -1E30) to
+    // to work. Set to very negative number (e.g. -1e30) to
     // disable.
     //    <0 = inside out tet,
     //     0 = flat tet

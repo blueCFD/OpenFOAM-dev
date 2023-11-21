@@ -29,7 +29,7 @@ License
 #include "Time.T.H"
 #include "refinementSurfaces.H"
 #include "refinementFeatures.H"
-#include "shellSurfaces.H"
+#include "refinementRegions.H"
 #include "faceSet.H"
 #include "decompositionMethod.H"
 #include "fvMeshDistribute.H"

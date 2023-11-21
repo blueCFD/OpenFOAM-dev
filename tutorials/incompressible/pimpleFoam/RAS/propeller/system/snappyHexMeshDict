@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      snappyHexMeshDict;
@@ -170,7 +169,7 @@ castellatedMeshControls
             level       (4 4);
             cellZone    innerCylinder;
             faceZone    innerCylinder;
-            cellZoneInside  inside;
+            mode        inside;
         }
         outerCylinder
         {
@@ -229,13 +228,13 @@ castellatedMeshControls
     {
         innerCylinder
         {
-            mode        inside;
-            levels      ((1E15 4));
+            mode    inside;
+            level   4;
         }
         middleCylinder
         {
-            mode        inside;
-            levels      ((1E15 3));
+            mode    inside;
+            level   3;
         }
     }
 
@@ -391,13 +390,13 @@ meshQualityControls
 
     //- Minimum pyramid volume. Is absolute volume of cell pyramid.
     //  Set to a sensible fraction of the smallest cell volume expected.
-    //  Set to very negative number (e.g. -1E30) to disable.
+    //  Set to very negative number (e.g. -1e30) to disable.
     minVol 1e-13;
 
     //- Minimum quality of the tet formed by the face-centre
     //  and variable base point minimum decomposition triangles and
     //  the cell centre. This has to be a positive number for tracking
-    //  to work. Set to very negative number (e.g. -1E30) to
+    //  to work. Set to very negative number (e.g. -1e30) to
     //  disable.
     //     <0 = inside out tet,
     //      0 = flat tet

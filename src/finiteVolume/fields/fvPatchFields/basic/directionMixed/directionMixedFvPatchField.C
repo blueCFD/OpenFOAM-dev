@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,32 +45,6 @@ Foam::directionMixedFvPatchField<Type>::directionMixedFvPatchField
 template<class Type>
 Foam::directionMixedFvPatchField<Type>::directionMixedFvPatchField
 (
-    const directionMixedFvPatchField<Type>& ptf,
-    const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
-    const fvPatchFieldMapper& mapper
-)
-:
-    transformFvPatchField<Type>(ptf, p, iF, mapper),
-    refValue_(mapper(ptf.refValue_)),
-    refGrad_(mapper(ptf.refGrad_)),
-    valueFraction_(mapper(ptf.valueFraction_))
-{
-    if (notNull(iF) && mapper.hasUnmapped())
-    {
-        WarningInFunction
-            << "On field " << iF.name() << " patch " << p.name()
-            << " patchField " << this->type()
-            << " : mapper does not map all values." << nl
-            << "    To avoid this warning fully specify the mapping in derived"
-            << " patch fields." << endl;
-    }
-}
-
-
-template<class Type>
-Foam::directionMixedFvPatchField<Type>::directionMixedFvPatchField
-(
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
     const dictionary& dict
@@ -83,6 +57,22 @@ Foam::directionMixedFvPatchField<Type>::directionMixedFvPatchField
 {
     evaluate();
 }
+
+
+template<class Type>
+Foam::directionMixedFvPatchField<Type>::directionMixedFvPatchField
+(
+    const directionMixedFvPatchField<Type>& ptf,
+    const fvPatch& p,
+    const DimensionedField<Type, volMesh>& iF,
+    const fvPatchFieldMapper& mapper
+)
+:
+    transformFvPatchField<Type>(ptf, p, iF, mapper),
+    refValue_(mapper(ptf.refValue_)),
+    refGrad_(mapper(ptf.refGrad_)),
+    valueFraction_(mapper(ptf.valueFraction_))
+{}
 
 
 template<class Type>

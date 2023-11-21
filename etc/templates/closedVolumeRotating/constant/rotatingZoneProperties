@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     object      rotatingZoneProperties;
@@ -17,6 +16,6 @@ FoamFile
 origin    (0 0 0);
 axis      (0 0 1);
 omega     constant <rad/s>;
-nonRotatingPatches (fixed);
+nonRotatingPatches (); // List of stationary patches inside the rotatingZone
 
 // ************************************************************************* //

@@ -57,15 +57,15 @@ SourceFiles
 #define fvMeshSubset_H
 
 #include "fvMesh.H"
-#include "pointMesh.H"
-#include "GeometricField.T.H"
 #include "HashSet.T.H"
-#include "surfaceMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+class pointMesh;
+class surfaceMesh;
 
 /*---------------------------------------------------------------------------*\
                         Class fvMeshSubset Declaration
@@ -183,7 +183,7 @@ public:
             );
 
 
-            //- Two step subsetting
+            // Two step subsetting
 
                 //- Get labels of exposed faces.
                 //  These are
@@ -272,16 +272,14 @@ public:
                 const fvMesh& sMesh,
                 const labelList& patchMap,
                 const labelList& cellMap,
-                const labelList& faceMap,
-                const bool negateIfFlipped = true
+                const labelList& faceMap
             );
 
             template<class Type>
             tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
             interpolate
             (
-                const GeometricField<Type, fvsPatchField, surfaceMesh>&,
-                const bool negateIfFlipped = true
+                const GeometricField<Type, fvsPatchField, surfaceMesh>&
             ) const;
 
             //- Map point field
