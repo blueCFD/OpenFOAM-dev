@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,19 +51,6 @@ class phasePair
 :
     public phasePairKey
 {
-public:
-
-    // Hash table types
-
-        //- Dictionary hash table
-        typedef HashTable<dictionary, phasePairKey, phasePairKey::hash>
-            dictTable;
-
-        //- Scalar hash table
-        typedef HashTable<scalar, phasePairKey, phasePairKey::hash>
-            scalarTable;
-
-
 private:
 
     // Private Data
@@ -76,12 +63,6 @@ private:
 
         //- Gravitational acceleration
         const uniformDimensionedVectorField& g_;
-
-
-    // Private Member Functions
-
-        // Etvos number for given diameter
-        tmp<volScalarField> EoH(const volScalarField& d) const;
 
 
 public:
@@ -133,11 +114,8 @@ public:
         //- Eotvos number
         tmp<volScalarField> Eo() const;
 
-        //- Eotvos number based on hydraulic diameter type 1
-        tmp<volScalarField> EoH1() const;
-
-        //- Eotvos number based on hydraulic diameter type 2
-        tmp<volScalarField> EoH2() const;
+        //- Eotvos number for given diameter
+        tmp<volScalarField> Eo(const volScalarField& d) const;
 
         //- Surface tension coefficient
         tmp<volScalarField> sigma() const;
@@ -148,8 +126,6 @@ public:
         //- Takahashi Number
         tmp<volScalarField> Ta() const;
 
-        //- Aspect ratio
-        virtual tmp<volScalarField> E() const;
 
         // Access
 

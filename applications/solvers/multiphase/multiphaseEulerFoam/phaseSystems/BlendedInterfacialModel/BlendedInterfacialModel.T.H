@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,6 @@ SourceFiles
 
 #include "blendingMethod.H"
 #include "phasePair.H"
-#include "orderedPhasePair.H"
 #include "HashPtrTable.T.H"
 #include "hashedWordList.H"
 #include "geometricZeroField.H"
@@ -151,18 +150,6 @@ public:
             autoPtr<ModelType> model,
             autoPtr<ModelType> model1In2,
             autoPtr<ModelType> model2In1,
-            const bool correctFixedFluxBCs = true
-        );
-
-
-        //- Construct from the model table, dictionary and pairs
-        BlendedInterfacialModel
-        (
-            const phasePair::dictTable& modelTable,
-            const blendingMethod& blending,
-            const phasePair& pair,
-            const orderedPhasePair& pair1In2,
-            const orderedPhasePair& pair2In1,
             const bool correctFixedFluxBCs = true
         );
 

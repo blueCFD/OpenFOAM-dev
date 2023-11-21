@@ -45,9 +45,7 @@ SourceFiles
 #define surfaceFilm_H
 
 #include "fvModel.H"
-#include "fluidThermo.H"
-#include "uniformDimensionedFields.H"
-#include "surfaceFilmModel.H"
+#include "thermoSingleLayer.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,7 +55,7 @@ namespace fv
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class surfaceFilm Declaration
+                          Class surfaceFilm Declaration
 \*---------------------------------------------------------------------------*/
 
 class surfaceFilm
@@ -66,11 +64,12 @@ class surfaceFilm
 {
     // Private Data
 
-        //- Reference to the primary region thermo
-        const fluidThermo& primaryThermo_;
+        //- The surface film model
+        regionModels::surfaceFilmModels::thermoSingleLayer surfaceFilm_;
 
-        //- The surfaceFilmModel pointer
-        autoPtr<regionModels::surfaceFilmModel> surfaceFilm_;
+        //- List of fields for which the fvModel adds source term
+        //  to the transport equation
+        wordList fieldNames_;
 
         //- Current time index (used for updating)
         mutable label curTimeIndex_;

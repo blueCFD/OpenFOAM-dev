@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,7 +48,6 @@ class metisDecomp
 :
     public decompositionMethod
 {
-
     // Private Member Functions
 
         //- Call Metis with options from dictionary.
@@ -82,12 +81,6 @@ public:
 
 
     // Member Functions
-
-        virtual bool parallelAware() const
-        {
-            // Metis does not know about proc boundaries
-            return false;
-        }
 
         //- Inherit decompose from decompositionMethod
         using decompositionMethod::decompose;

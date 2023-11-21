@@ -772,23 +772,12 @@ int main(int argc, char *argv[])
     const Switch keepPatches(meshDict.lookupOrDefault("keepPatches", false));
 
 
-
     // Read decomposePar dictionary
     dictionary decomposeDict;
     {
         if (Pstream::parRun())
         {
-            decomposeDict = IOdictionary
-            (
-                IOobject
-                (
-                    "decomposeParDict",
-                    runTime.system(),
-                    mesh,
-                    IOobject::MUST_READ_IF_MODIFIED,
-                    IOobject::NO_WRITE
-                )
-            );
+            decomposeDict = decompositionMethod::decomposeParDict(runTime);
         }
         else
         {
@@ -1029,12 +1018,6 @@ int main(int argc, char *argv[])
         << mesh.time().cpuTimeIncrement() << " s" << nl << endl;
 
 
-    Info<< "Setting refinement level of surface to be consistent"
-        << " with shells.." << endl;
-    surfaces.setMinLevelFields(shells);
-    Info<< "Checked shell refinement in = "
-        << mesh.time().cpuTimeIncrement() << " s" << nl << endl;
-
 
     // Read feature meshes
     // ~~~~~~~~~~~~~~~~~~~
@@ -1064,6 +1047,7 @@ int main(int argc, char *argv[])
     meshRefinement meshRefiner
     (
         mesh,
+        refineDict,
         mergeDist,          // tolerance used in sorting coordinates
         overwrite,          // overwrite mesh files?
         surfaces,           // for surface intersection refinement
@@ -1244,28 +1228,12 @@ int main(int argc, char *argv[])
     // Decomposition
     autoPtr<decompositionMethod> decomposerPtr
     (
-        decompositionMethod::New
-        (
-            decomposeDict
-        )
+        decompositionMethod::NewDistributor(decomposeDict)
     );
     decompositionMethod& decomposer = decomposerPtr();
 
-    if (Pstream::parRun() && !decomposer.parallelAware())
-    {
-        FatalErrorInFunction
-            << "You have selected decomposition method "
-            << decomposer.typeName
-            << " which is not parallel aware." << endl
-            << "Please select one that is (hierarchical, ptscotch)"
-            << exit(FatalError);
-    }
-
     // Mesh distribution engine (uses tolerance to reconstruct meshes)
     fvMeshDistribute distributor(mesh);
-
-
-
 
 
     // Now do the real work -refinement -snapping -layers

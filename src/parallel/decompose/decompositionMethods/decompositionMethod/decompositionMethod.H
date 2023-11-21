@@ -52,7 +52,7 @@ protected:
 
     // Protected data
 
-        const dictionary& decompositionDict_;
+        dictionary decompositionDict_;
         label nProcessors_;
 
         //- Optional constraints
@@ -71,7 +71,18 @@ public:
         (
             autoPtr,
             decompositionMethod,
-            dictionary,
+            decomposer,
+            (
+                const dictionary& decompositionDict
+            ),
+            (decompositionDict)
+        );
+
+        declareRunTimeSelectionTable
+        (
+            autoPtr,
+            decompositionMethod,
+            distributor,
             (
                 const dictionary& decompositionDict
             ),
@@ -91,7 +102,13 @@ public:
     // Selectors
 
         //- Return a reference to the selected decomposition method
-        static autoPtr<decompositionMethod> New
+        static autoPtr<decompositionMethod> NewDecomposer
+        (
+            const dictionary& decompositionDict
+        );
+
+        //- Return a reference to the selected decomposition method
+        static autoPtr<decompositionMethod> NewDistributor
         (
             const dictionary& decompositionDict
         );
@@ -109,9 +126,8 @@ public:
             return nProcessors_;
         }
 
-        //- Is method parallel aware (i.e. does it synchronise domains across
-        //  proc boundaries)
-        virtual bool parallelAware() const = 0;
+        //- Read and return the decomposeParDict
+        static dictionary decomposeParDict(const Time& time);
 
 
         // No topology (implemented by geometric decomposers)
@@ -148,7 +164,6 @@ public:
 
             //- Like decompose but with uniform weights on the points
             virtual labelList decompose(const polyMesh&, const pointField&);
-
 
             //- Return for every coordinate the wanted processor number. Gets
             //  passed agglomeration map (from fine to coarse cells) and coarse
@@ -275,7 +290,6 @@ public:
                 const labelList& specifiedProcessor,
                 const List<labelPair>& explicitConnections
             );
-
 
             //- Decompose a mesh. Apply all constraints from decomposeParDict
             //  ('preserveFaceZones' etc). Calls either

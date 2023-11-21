@@ -189,21 +189,21 @@ public:
         // Helper
 
             //- From surface and region on surface to global region
-            label globalRegion(const label surfI, const label regionI) const
+            label globalRegion(const label surfi, const label regioni) const
             {
-                return regionOffset_[surfI]+regionI;
+                return regionOffset_[surfi]+regioni;
             }
 
             //- Min level for surface and region on surface
-            label minLevel(const label surfI, const label regionI) const
+            label minLevel(const label surfi, const label regioni) const
             {
-                return minLevel_[globalRegion(surfI, regionI)];
+                return minLevel_[globalRegion(surfi, regioni)];
             }
 
             //- Max level for surface and region on surface
-            label maxLevel(const label surfI, const label regionI) const
+            label maxLevel(const label surfi, const label regioni) const
             {
-                return maxLevel_[globalRegion(surfI, regionI)];
+                return maxLevel_[globalRegion(surfi, regioni)];
             }
 
             label nRegions() const
@@ -211,14 +211,14 @@ public:
                 return minLevel_.size();
             }
 
-            //- Calculate minLevelFields
+            //- Calculate the refinement level for every element
+            //  of the searchablesurface
             void setMinLevelFields
             (
-                const refinementRegions& shells
+                const refinementRegions& shells,
+                const scalar level0EdgeLength,
+                const bool extendedRefinementSpan
             );
-
-            ////- Helper: count number of triangles per region
-            // static labelList countRegions(const triSurface&);
 
 
         // Searching
@@ -335,7 +335,7 @@ public:
                 const pointField& samples,
                 const scalarField& nearestDistSqr,
                 labelList& hitSurface,
-                List<pointIndexHit>& hitInfo,
+                List<pointIndexHit>& hitinfo,
                 labelList& hitRegion,
                 vectorField& hitNormal
             ) const;

@@ -94,8 +94,9 @@ class fvMeshDistribute
             const label value
         );
 
-        //- Check all procs have same names and in exactly same order.
-        static void checkEqualWordList(const string&, const wordList&);
+        //- Check all procs have same names and in exactly same order
+        //  and return the number of fields
+        static label checkEqualWordList(const string&, const wordList&);
 
         //- Merge wordlists over all processors
         static wordList mergeWordList(const wordList&);
@@ -103,8 +104,13 @@ class fvMeshDistribute
 
         // Patch handling
 
-            //- Find patch to put exposed internal faces into
+            //- Find internal patch to put exposed internal faces into
+            //  Used when fields are present and require mapping
             label findInternalPatch() const;
+
+            //- Find non-empty patch to put exposed internal faces into
+            //  Used when no fields require mapping
+            label findNonEmptyPatch() const;
 
             //- Save boundary fields
             template<class T, class Mesh>
@@ -138,8 +144,11 @@ class fvMeshDistribute
             void correctProcessorPatchFields();
 
             //- Delete all processor patches. Move any processor faces into
-            //  patchi.
-            autoPtr<mapPolyMesh> deleteProcPatches(const label patchi);
+            //  destinationPatch
+            autoPtr<mapPolyMesh> deleteProcPatches
+            (
+                const label destinationPatch
+            );
 
             //- Repatch the mesh. This is only necessary for the proc
             //  boundary faces. newPatchID is over all boundary faces: -1 or
@@ -154,6 +163,12 @@ class fvMeshDistribute
 
             //- Merge any local points that were remotely coupled.
             //  constructPointMap is adapted for the new point labels.
+            //
+            //  Detect shared points. Need processor patches to be present.
+            //  Background: when adding bits of mesh one can get points which
+            //  share the same position but are only detectable to be
+            //  topologically the same point when doing parallel analysis. This
+            //  routine will merge those points.
             autoPtr<mapPolyMesh> mergeSharedPoints
             (
                 const labelList& pointToGlobalMaster,
@@ -290,6 +305,7 @@ class fvMeshDistribute
                 const labelList& sourcePointMaster,
                 Ostream& toDomain
             );
+
             //- Send subset of fields
             template<class GeoField>
             static void sendFields

@@ -64,7 +64,6 @@ fi
 (cd metisDecomp && ./Allwmake $targetType)
 
 wmake $targetType decompositionMethods
-wmake $targetType decompose
 
 
 #------------------------------------------------------------------------------

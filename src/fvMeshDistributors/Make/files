@@ -1,0 +1,3 @@
+distributor/fvMeshDistributorsDistributor.C
+
+LIB = $(FOAM_LIBBIN)/libfvMeshDistributors
