@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,6 +61,26 @@ class Stokes2
 :
     public Airy
 {
+protected:
+
+    // Protected Member Functions
+
+        //- The wave celerity [m/s]
+        static scalar celerity
+        (
+            const scalar depth,
+            const scalar amplitude,
+            const scalar length,
+            const scalar g
+        );
+
+        //- The wave celerity [m/s]
+        virtual scalar celerity() const
+        {
+            return celerity(depth(), amplitude(), length(), g());
+        }
+
+
 public:
 
    //- Runtime type information
@@ -69,8 +89,15 @@ public:
 
     // Constructors
 
-        //- Construct from a database and a dictionary
-        Stokes2(const objectRegistry& db, const dictionary& dict);
+        //- Construct from a dictionary and gravity
+        Stokes2
+        (
+            const dictionary& dict,
+            const scalar g,
+            const word& modelName = Stokes2::typeName,
+            scalar (*modelCelerity)(scalar, scalar, scalar, scalar) =
+                &Stokes2::celerity
+        );
 
         //- Construct a clone
         virtual autoPtr<waveModel> clone() const

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,13 +25,20 @@ Class
     Foam::ePolynomialThermo
 
 Description
-    Thermodynamics package templated on the equation of state, using polynomial
-    functions for \c cv, \c e and \c s.
+    Internal energy based thermodynamics package using a polynomial function
+    of temperature for the constant heat capacity at constant volume:
 
-    Polynomials for \c e and \c s derived from \c cv.
+    \verbatim
+        Cv = CvCoeffs[0] + CvCoeffs[1]*T + CvCoeffs[2]*sqr(T)
+           + CvCoeffs[3]*pow3(T) + CvCoeffs[4]*pow4(T)
+           + CvCoeffs[5]*pow(T, 5) + CvCoeffs[6]*pow(T, 6)
+           + CvCoeffs[7]*pow(T, 7)
+    \endverbatim
+
+    The polynomial function is templated on the order of the polynomial which
+    defaults to 8.
 
 Usage
-
     \table
         Property     | Description
         Hf           | Heat of formation
@@ -45,19 +52,13 @@ Usage
     {
         Hf              0;
         Sf              0;
-        CvCoeffs<8>     ( 1000 -0.05 0.003 0 0 0 0 0 );
+        CvCoeffs<8>     (1000 -0.05 0.003 0 0 0 0 0);
     }
     \endverbatim
 
-    The polynomial expression is evaluated as so:
-
-        \f[
-            Cv = 1000 - 0.05 T + 0.003 T^2
-        \f]
-
 Note
-    - Specific heat at constant volume polynomial coefficients evaluate to an
-      expression in [J/kg/K].
+    Specific heat at constant volume polynomial coefficients evaluate to an
+    expression in [J/kg/K].
 
 SourceFiles
     ePolynomialThermoI.H

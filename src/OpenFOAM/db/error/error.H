@@ -48,6 +48,7 @@ SourceFiles
 #ifndef error_H
 #define error_H
 
+#include "OStringStream.H"
 #include "messageStream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -81,7 +82,9 @@ protected:
         bool abort_;
 
         bool throwExceptions_;
-        OStringStream* messageStreamPtr_;
+
+        OStringStream messageStream_;
+
 
 public:
 
@@ -89,10 +92,6 @@ public:
 
         //- Construct from title string
         error(const string& title);
-
-
-    //- Destructor
-    virtual ~error() throw();
 
 
     // Member Functions
@@ -203,10 +202,6 @@ public:
 
         //- Construct from title string
         IOerror(const string& title);
-
-
-    //- Destructor
-    virtual ~IOerror() throw();
 
 
     // Member Functions
@@ -348,7 +343,7 @@ constexpr bool False = false;
 //  called for this derived class.
 #define notImplemented(functionName)                                           \
     FatalErrorIn(functionName)                                                 \
-        << "Not implemented" << ::Foam::abort(FatalError);
+        << "Not implemented" << ::Foam::abort(::Foam::FatalError);
 
 //- Issue a FatalErrorIn for a function not currently implemented.
 //  The FUNCTION_NAME is printed and then abort is called.

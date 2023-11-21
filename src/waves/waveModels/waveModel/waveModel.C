@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,15 +24,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "waveModel.H"
-#include "Time.T.H"
-#include "uniformDimensionedFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(waveModel, 0);
-    defineRunTimeSelectionTable(waveModel, objectRegistry);
+    defineRunTimeSelectionTable(waveModel, dictionary);
 }
 
 
@@ -40,19 +38,17 @@ namespace Foam
 
 Foam::waveModel::waveModel(const waveModel& wave)
 :
-    db_(wave.db_),
-    amplitude_(wave.amplitude_, false)
+    g_(wave.g_)
 {}
 
 
 Foam::waveModel::waveModel
 (
-    const objectRegistry& db,
-    const dictionary& dict
+    const dictionary& dict,
+    const scalar g
 )
 :
-    db_(db),
-    amplitude_(Function1<scalar>::New("amplitude", dict))
+    g_(g)
 {}
 
 
@@ -64,16 +60,8 @@ Foam::waveModel::~waveModel()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::scalar Foam::waveModel::g() const
-{
-    return mag(db_.lookupObject<uniformDimensionedVectorField>("g").value());
-}
-
-
 void Foam::waveModel::write(Ostream& os) const
-{
-    writeEntry(os, amplitude_());
-}
+{}
 
 
 // ************************************************************************* //

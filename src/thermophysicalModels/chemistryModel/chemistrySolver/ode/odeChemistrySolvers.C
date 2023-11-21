@@ -24,9 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "ode.T.H"
-
-#include "standardChemistryModel.H"
-#include "TDACChemistryModel.T.H"
+#include "chemistryModel.H"
 
 #include "forGases.H"
 #include "forLiquids.H"

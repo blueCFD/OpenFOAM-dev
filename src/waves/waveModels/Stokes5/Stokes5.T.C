@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,8 +33,38 @@ namespace Foam
 namespace waveModels
 {
     defineTypeNameAndDebug(Stokes5, 0);
-    addToRunTimeSelectionTable(waveModel, Stokes5, objectRegistry);
+    addToRunTimeSelectionTable(waveModel, Stokes5, dictionary);
 }
+}
+
+
+// * * * * * * * * * * Static Protected Member Functions  * * * * * * ** * * //
+
+Foam::scalar Foam::waveModels::Stokes5::celerity
+(
+    const scalar depth,
+    const scalar amplitude,
+    const scalar length,
+    const scalar g
+)
+{
+    static const scalar kdGreat = log(great);
+    const scalar kd = min(max(k(length)*depth, - kdGreat), kdGreat);
+    const scalar ka = k(length)*amplitude;
+
+    const scalar S = deep(depth, length) ? 0 : 1/cosh(2*kd);
+
+    const scalar C0 = Airy::celerity(depth, amplitude, length, g);
+    const scalar C4ByC0 =
+        1.0/32/pow5(1 - S)
+       *(4 + 32*S - 116*sqr(S) - 400*pow3(S) - 71*pow4(S) + 146*pow5(S));
+
+    if (debug)
+    {
+        Info<< "C4 = " << C4ByC0*C0 << endl;
+    }
+
+    return Stokes2::celerity(depth, amplitude, length, g) + pow4(ka)*C4ByC0*C0;
 }
 
 
@@ -42,11 +72,13 @@ namespace waveModels
 
 Foam::waveModels::Stokes5::Stokes5
 (
-    const objectRegistry& db,
-    const dictionary& dict
+    const dictionary& dict,
+    const scalar g,
+    const word& modelName,
+    scalar (*modelCelerity)(scalar, scalar, scalar, scalar)
 )
 :
-    Stokes2(db, dict)
+    Stokes2(dict, g, modelName, modelCelerity)
 {}
 
 
@@ -198,7 +230,7 @@ Foam::tmp<Foam::vector2DField> Foam::waveModels::Stokes5::velocity
 
     return
         Stokes2::velocity(t, xz)
-      + celerity()
+      + Airy::celerity()
        *(
             pow3(ka)*(A31ByA11*v1 + A33ByA11*v3)
           + pow4(ka)*(A42ByA11*vi(2, t, xz) + A44ByA11*vi(4, t, xz))

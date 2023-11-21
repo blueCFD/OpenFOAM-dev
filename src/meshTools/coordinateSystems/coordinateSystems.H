@@ -129,8 +129,17 @@ public:
 
     // Member Functions
 
+        //- Is object global
+        virtual bool global() const
+        {
+            return true;
+        }
+
         //- ReadData function required for regIOobject read operation
         virtual bool readData(Istream&);
+
+        //- WriteData function required for regIOobject write operation
+        bool writeData(Ostream&) const;
 
 
     // Member Operators
@@ -142,8 +151,28 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Foam
 } // End namespace coordinateSystems
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+template<>
+inline bool typeGlobal
+<
+    MeshObject
+    <
+        objectRegistry,
+        GeometricMeshObject,
+        coordinateSystems::coordinateSystems
+    >
+>()
+{
+    return true;
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

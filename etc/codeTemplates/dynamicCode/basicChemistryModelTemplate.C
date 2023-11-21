@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "makeChemistrySolver.H"
-#include "${method}ChemistryModel.H"
+#include "${method}.H"
 #include "${solver}.H"
 
 #include "typedefThermo.H"
@@ -82,21 +82,19 @@ namespace Foam
         ${specie}
     );
 
-    defineChemistrySolver(${method}ChemistryModel, ThermoPhysics);
-    makeChemistrySolver(${solver}, ${method}ChemistryModel, ThermoPhysics);
+    defineChemistrySolver(${method}, ThermoPhysics);
+    makeChemistrySolver(${solver}, ${method}, ThermoPhysics);
 }
 
-#define standardChemistryModelCppTest 0
-#define TDACChemistryModelCppTest 1
+#define chemistryModelCppTest 0
 
-#if ${method}CppTest == TDACChemistryModelCppTest
+#if ${method}CppTest == chemistryModelCppTest
 
 #include "makeChemistryReductionMethod.H"
 #include "makeChemistryTabulationMethod.H"
 
 namespace Foam
 {
-    defineChemistrySolver(standardChemistryModel, ThermoPhysics);
     defineChemistryReductionMethod(nullArg, ThermoPhysics);
     defineChemistryTabulationMethod(nullArg, ThermoPhysics);
 }

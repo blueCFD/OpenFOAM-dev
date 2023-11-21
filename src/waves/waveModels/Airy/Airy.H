@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,25 +63,75 @@ class Airy
 {
     // Private Data
 
+        //- Depth [m]
+        const scalar depth_;
+
+        //- Peak-to-peak mean amplitude [m]
+        autoPtr<Function1<scalar>> amplitude_;
+
         //- Peak-to-peak length [m]
         const scalar length_;
 
         //- Phase offset [rad]
         const scalar phase_;
 
-        //- Depth [m]
-        const scalar depth_;
+
+private:
+
+    // Private Member Functions
+
+        //- Read and return the wave length from the dictionary. Either reads
+        //  the length directly, or reads the period and depth and calculates
+        //  the length.
+        static scalar length
+        (
+            const dictionary& dict,
+            const scalar depth,
+            const scalar amplitude,
+            const scalar g,
+            scalar (*celerityPtr)(scalar, scalar, scalar, scalar)
+        );
 
 
 protected:
 
+    // Static Protected Member Functions
+
+        //- The angular wavenumber [rad/m]
+        static scalar k(const scalar length);
+
+        //- Return whether shallow and intermediate effects are to be omitted
+        static bool deep(const scalar length, const scalar depth);
+
+        //- The wave celerity [m/s]
+        static scalar celerity
+        (
+            const scalar depth,
+            const scalar amplitude,
+            const scalar length,
+            const scalar g
+        );
+
+
     // Protected Member Functions
 
         //- The angular wavenumber [rad/m]
-        scalar k() const;
+        scalar k() const
+        {
+            return k(length_);
+        }
+
+        //- Return whether shallow and intermediate effects are to be omitted
+        bool deep() const
+        {
+            return deep(depth(), length());
+        }
 
         //- The wave celerity [m/s]
-        scalar celerity() const;
+        virtual scalar celerity() const
+        {
+            return celerity(depth(), amplitude(), length(), g());
+        }
 
         //- Angle of the oscillation [rad]
         tmp<scalarField> angle
@@ -89,9 +139,6 @@ protected:
             const scalar t,
             const scalarField& x
         ) const;
-
-        //- Return whether shallow and intermediate effects are to be omitted
-        bool deep() const;
 
         //- Return the non-dimensionalised i-th harmonic of the velocity
         tmp<vector2DField> vi
@@ -113,8 +160,15 @@ public:
         //- Construct a copy
         Airy(const Airy& wave);
 
-        //- Construct from a database and a dictionary
-        Airy(const objectRegistry& db, const dictionary& dict);
+        //- Construct from a dictionary and gravity
+        Airy
+        (
+            const dictionary& dict,
+            const scalar g,
+            const word& modelName = Airy::typeName,
+            scalar (*modelCelerity)(scalar, scalar, scalar, scalar) =
+                &Airy::celerity
+        );
 
         //- Construct a clone
         virtual autoPtr<waveModel> clone() const
@@ -131,6 +185,24 @@ public:
 
         // Access
 
+            //- Get the depth
+            scalar depth() const
+            {
+                return depth_;
+            }
+
+            //- Get the amplitude
+            scalar amplitude(const scalar t) const
+            {
+                return amplitude_->value(t);
+            }
+
+            //- Get the amplitude at steady state
+            scalar amplitude() const
+            {
+                return amplitude_->value(great);
+            }
+
             //- Get the length
             scalar length() const
             {
@@ -141,12 +213,6 @@ public:
             scalar phase() const
             {
                 return phase_;
-            }
-
-            //- Get the depth
-            scalar depth() const
-            {
-                return depth_;
             }
 
         //- Get the wave elevation at a given time and local coordinates. Local
@@ -161,15 +227,6 @@ public:
         //  x is aligned with the direction of propagation, and z with negative
         //  gravity.
         virtual tmp<vector2DField> velocity
-        (
-            const scalar t,
-            const vector2DField& xz
-        ) const;
-
-        //- Get the wave pressure at a given time and local coordinates. Local
-        //  x is aligned with the direction of propagation, and z with negative
-        //  gravity.
-        virtual tmp<scalarField> pressure
         (
             const scalar t,
             const vector2DField& xz

@@ -75,12 +75,7 @@ License
 #define defineChemistrySolvers(nullArg, ThermoPhysics)                         \
     defineChemistrySolver                                                      \
     (                                                                          \
-        standardChemistryModel,                                                \
-        ThermoPhysics                                                          \
-    );                                                                         \
-    defineChemistrySolver                                                      \
-    (                                                                          \
-        TDACChemistryModel,                                                    \
+        chemistryModel,                                                        \
         ThermoPhysics                                                          \
     )
 
@@ -88,13 +83,7 @@ License
     makeChemistrySolver                                                        \
     (                                                                          \
         Solver,                                                                \
-        standardChemistryModel,                                                \
-        ThermoPhysics                                                          \
-    );                                                                         \
-    makeChemistrySolver                                                        \
-    (                                                                          \
-        Solver,                                                                \
-        TDACChemistryModel,                                                    \
+        chemistryModel,                                                        \
         ThermoPhysics                                                          \
     )
 

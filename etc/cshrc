@@ -62,8 +62,7 @@ setenv WM_COMPILER_TYPE system
 #- Compiler:
 #    WM_COMPILER = Gcc | Gcc48 ... Gcc62 | Clang | Icx
 setenv WM_COMPILER Gcc
-setenv WM_COMPILER_ARCH # defined but empty
-unsetenv WM_COMPILER_LIB_ARCH
+unsetenv WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
 
 #- Memory addressing:
 #    On a 64bit OS this can be 32bit or 64bit
@@ -151,8 +150,8 @@ alias _foamSource 'if ($?FOAM_VERBOSE && $?prompt) echo "Sourcing: \!*"; if (\!*
 # Add in preset user or site preferences:
 _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile prefs.csh`
 
-# Evaluate command-line parameters and record settings for later
-# these can be used to set/unset values, or specify alternative pref files
+# Evaluate command-line parameters of the form "param=keyword" or unset
+# parameters with "param="
 setenv FOAM_SETTINGS "${*}"
 while ( $#argv > 0 )
     switch ($argv[1])
@@ -171,12 +170,8 @@ while ( $#argv > 0 )
         eval "setenv $argv[1]:s/=/ /"
         breaksw
     default:
-        # filename: source it
-        if ( -f "$1" ) then
-            _foamSource "$1"
-        else
-            _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile -silent "$1"`
-        endif
+        # ignore non-parameter arguments, e.g. filenames
+        break
         breaksw
     endsw
     shift

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,8 +33,36 @@ namespace Foam
 namespace waveModels
 {
     defineTypeNameAndDebug(Stokes2, 0);
-    addToRunTimeSelectionTable(waveModel, Stokes2, objectRegistry);
+    addToRunTimeSelectionTable(waveModel, Stokes2, dictionary);
 }
+}
+
+
+// * * * * * * * * * * Static Protected Member Functions  * * * * * * ** * * //
+
+Foam::scalar Foam::waveModels::Stokes2::celerity
+(
+    const scalar depth,
+    const scalar amplitude,
+    const scalar length,
+    const scalar g
+)
+{
+    static const scalar kdGreat = log(great);
+    const scalar kd = min(max(k(length)*depth, - kdGreat), kdGreat);
+    const scalar ka = k(length)*amplitude;
+
+    const scalar S = deep(depth, length) ? 0 : 1/cosh(2*kd);
+
+    const scalar C0 = Airy::celerity(depth, amplitude, length, g);
+    const scalar C2ByC0 = (2 + 7*sqr(S))/4/sqr(1 - S);
+
+    if (debug)
+    {
+        Info<< "C2 = " << C2ByC0*C0 << endl;
+    }
+
+    return Airy::celerity(depth, amplitude, length, g) + sqr(ka)*C2ByC0*C0;
 }
 
 
@@ -42,11 +70,13 @@ namespace waveModels
 
 Foam::waveModels::Stokes2::Stokes2
 (
-    const objectRegistry& db,
-    const dictionary& dict
+    const dictionary& dict,
+    const scalar g,
+    const word& modelName,
+    scalar (*modelCelerity)(scalar, scalar, scalar, scalar)
 )
 :
-    Airy(db, dict)
+    Airy(dict, g, modelName, modelCelerity)
 {}
 
 
@@ -103,7 +133,7 @@ Foam::tmp<Foam::vector2DField> Foam::waveModels::Stokes2::velocity
 
     return
         Airy::velocity(t, xz)
-      + celerity()*sqr(ka)*A22ByA11*vi(2, t, xz);
+      + Airy::celerity()*sqr(ka)*A22ByA11*vi(2, t, xz);
 }
 
 
