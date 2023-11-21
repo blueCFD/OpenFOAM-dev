@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,32 +21,24 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Description
+    IOList of transformers
+
 \*---------------------------------------------------------------------------*/
 
-#include "noSurfaceWriter.H"
-#include "addToRunTimeSelectionTable.H"
+#include "transformerIOList.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(noSurfaceWriter, 0);
-    addToRunTimeSelectionTable(surfaceWriter, noSurfaceWriter, word);
-}
 
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+defineTemplateTypeNameAndDebugWithName(transformerIOList, "transformerList", 0);
 
-Foam::noSurfaceWriter::noSurfaceWriter(const IOstream::streamFormat writeFormat)
-:
-    surfaceWriter(writeFormat)
-{}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::noSurfaceWriter::~noSurfaceWriter()
-{}
-
+} // End namespace Foam
 
 // ************************************************************************* //

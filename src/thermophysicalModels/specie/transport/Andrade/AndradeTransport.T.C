@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,30 +23,50 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "sampledSurfaces.H"
+#include "AndradeTransport.T.H"
+#include "IOstreams.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::label Foam::functionObjects::sampledSurfaces::classifyFields()
+template<class Thermo>
+Foam::AndradeTransport<Thermo>::AndradeTransport(const dictionary& dict)
+:
+    Thermo(dict),
+    muCoeffs_(dict.subDict("transport").lookup("muCoeffs")),
+    kappaCoeffs_(dict.subDict("transport").lookup("kappaCoeffs"))
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class Thermo>
+void Foam::AndradeTransport<Thermo>::write(Ostream& os) const
 {
-    label nFields = 0;
+    os  << this->name() << endl;
+    os  << token::BEGIN_BLOCK << incrIndent << nl;
 
-    // Check currently available fields
-    forAll(fields_, i)
-    {
-        if (mesh_.objectRegistry::found(fields_[i]))
-        {
-            nFields++;
-        }
-        else
-        {
-            WarningInFunction
-                << "Cannot find registered field matching "
-                << fields_[i] << endl;
-        }
-    }
+    Thermo::write(os);
 
-    return nFields;
+    dictionary dict("transport");
+    dict.add("muCoeffs", muCoeffs_);
+    dict.add("kappaCoeffs", kappaCoeffs_);
+    os  << indent << dict.dictName() << dict;
+
+    os  << decrIndent << token::END_BLOCK << nl;
+}
+
+
+// * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
+
+template<class Thermo>
+Foam::Ostream& Foam::operator<<
+(
+    Ostream& os,
+    const AndradeTransport<Thermo>& pt
+)
+{
+    pt.write(os);
+    return os;
 }
 
 
