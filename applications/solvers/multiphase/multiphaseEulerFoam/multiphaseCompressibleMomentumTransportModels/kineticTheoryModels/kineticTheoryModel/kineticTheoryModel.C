@@ -130,7 +130,6 @@ Foam::RASModels::kineticTheoryModel::kineticTheoryModel
 
     equilibrium_(coeffDict_.lookup("equilibrium")),
     e_("e", dimless, coeffDict_),
-    alphaMax_("alphaMax", dimless, coeffDict_),
     alphaMinFriction_
     (
         "alphaMinFriction",
@@ -245,7 +244,6 @@ bool Foam::RASModels::kineticTheoryModel::read()
     {
         coeffDict().lookup("equilibrium") >> equilibrium_;
         e_.readIfPresent(coeffDict());
-        alphaMax_.readIfPresent(coeffDict());
         alphaMinFriction_.readIfPresent(coeffDict());
 
         viscosityModel_->read();
@@ -316,8 +314,18 @@ Foam::RASModels::kineticTheoryModel::pPrime() const
            *granularPressureModel_->granularPressureCoeffPrime
             (
                 alpha_,
-                radialModel_->g0(alpha_, alphaMinFriction_, alphaMax_),
-                radialModel_->g0prime(alpha_, alphaMinFriction_, alphaMax_),
+                radialModel_->g0
+                (
+                    alpha_,
+                    alphaMinFriction_,
+                    phase_.alphaMax()
+                ),
+                radialModel_->g0prime
+                (
+                    alpha_,
+                    alphaMinFriction_,
+                    phase_.alphaMax()
+                ),
                 rho,
                 e_
             )
@@ -325,7 +333,7 @@ Foam::RASModels::kineticTheoryModel::pPrime() const
             (
                 phase_,
                 alphaMinFriction_,
-                alphaMax_
+                phase_.alphaMax()
             )
         )
     );
@@ -384,7 +392,8 @@ Foam::RASModels::kineticTheoryModel::divDevTau
         (
             (rho_*nut_)*dev2(T(fvc::grad(U)))
           + ((rho_*lambda_)*fvc::div(phi_))
-           *dimensioned<symmTensor>("I", dimless, symmTensor::I)
+           *dimensioned<symmTensor>("I", dimless, symmTensor::I),
+            "divDevTau(" + U_.name() + ')'
         )
     );
 }
@@ -413,7 +422,7 @@ void Foam::RASModels::kineticTheoryModel::correct()
     const volSymmTensorField D(symm(gradU));
 
     // Calculating the radial distribution function
-    gs0_ = radialModel_->g0(alpha, alphaMinFriction_, alphaMax_);
+    gs0_ = radialModel_->g0(alpha, alphaMinFriction_, phase_.alphaMax());
 
     if (!equilibrium_)
     {
@@ -587,7 +596,7 @@ void Foam::RASModels::kineticTheoryModel::correct()
             (
                 phase_,
                 alphaMinFriction_,
-                alphaMax_
+                phase_.alphaMax()
             )
         );
 
@@ -600,7 +609,7 @@ void Foam::RASModels::kineticTheoryModel::correct()
             (
                 phase_,
                 alphaMinFriction_,
-                alphaMax_,
+                phase_.alphaMax(),
                 pf/rho,
                 D
             ),

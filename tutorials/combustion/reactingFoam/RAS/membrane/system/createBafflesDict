@@ -22,18 +22,20 @@ baffles
         type        faceZone;
         zoneName    membrane;
 
-        patches
+        owner
         {
-            master
-            {
-                name            membranePipe;
-                type            wall;
-            }
-            slave
-            {
-                name            membraneSleeve;
-                type            wall;
-            }
+            name        membranePipe;
+            type        mappedWall;
+            sampleMode  nearestPatchFace;
+            samplePatch membraneSleeve;
+        }
+
+        neighbour
+        {
+            name        membraneSleeve;
+            type        mappedWall;
+            sampleMode  nearestPatchFace;
+            samplePatch membranePipe;
         }
     }
 }
