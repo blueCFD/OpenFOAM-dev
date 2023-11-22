@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,6 +27,7 @@ License
 #include "Time.T.H"
 #include "globalIndex.H"
 #include "meshToMeshMethod.H"
+#include "processorPolyPatch.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -43,8 +44,7 @@ void Foam::meshToMesh::mapAndOpSrcToTgt
 (
     const AMIInterpolation& AMI,
     const Field<scalar>& srcField,
-    Field<scalar>& tgtField,
-    const plusEqOp<scalar>& cop
+    Field<scalar>& tgtField
 ) const
 {}
 
@@ -54,8 +54,7 @@ void Foam::meshToMesh::mapAndOpSrcToTgt
 (
     const AMIInterpolation& AMI,
     const Field<vector>& srcField,
-    Field<vector>& tgtField,
-    const plusEqOp<vector>& cop
+    Field<vector>& tgtField
 ) const
 {}
 
@@ -65,8 +64,7 @@ void Foam::meshToMesh::mapAndOpSrcToTgt
 (
     const AMIInterpolation& AMI,
     const Field<sphericalTensor>& srcField,
-    Field<sphericalTensor>& tgtField,
-    const plusEqOp<sphericalTensor>& cop
+    Field<sphericalTensor>& tgtField
 ) const
 {}
 
@@ -76,8 +74,7 @@ void Foam::meshToMesh::mapAndOpSrcToTgt
 (
     const AMIInterpolation& AMI,
     const Field<symmTensor>& srcField,
-    Field<symmTensor>& tgtField,
-    const plusEqOp<symmTensor>& cop
+    Field<symmTensor>& tgtField
 ) const
 {}
 
@@ -87,8 +84,7 @@ void Foam::meshToMesh::mapAndOpSrcToTgt
 (
     const AMIInterpolation& AMI,
     const Field<tensor>& srcField,
-    Field<tensor>& tgtField,
-    const plusEqOp<tensor>& cop
+    Field<tensor>& tgtField
 ) const
 {}
 
@@ -98,8 +94,7 @@ void Foam::meshToMesh::mapAndOpTgtToSrc
 (
     const AMIInterpolation& AMI,
     Field<scalar>& srcField,
-    const Field<scalar>& tgtField,
-    const plusEqOp<scalar>& cop
+    const Field<scalar>& tgtField
 ) const
 {}
 
@@ -109,8 +104,7 @@ void Foam::meshToMesh::mapAndOpTgtToSrc
 (
     const AMIInterpolation& AMI,
     Field<vector>& srcField,
-    const Field<vector>& tgtField,
-    const plusEqOp<vector>& cop
+    const Field<vector>& tgtField
 ) const
 {}
 
@@ -120,8 +114,7 @@ void Foam::meshToMesh::mapAndOpTgtToSrc
 (
     const AMIInterpolation& AMI,
     Field<sphericalTensor>& srcField,
-    const Field<sphericalTensor>& tgtField,
-    const plusEqOp<sphericalTensor>& cop
+    const Field<sphericalTensor>& tgtField
 ) const
 {}
 
@@ -131,8 +124,7 @@ void Foam::meshToMesh::mapAndOpTgtToSrc
 (
     const AMIInterpolation& AMI,
     Field<symmTensor>& srcField,
-    const Field<symmTensor>& tgtField,
-    const plusEqOp<symmTensor>& cop
+    const Field<symmTensor>& tgtField
 ) const
 {}
 
@@ -142,8 +134,7 @@ void Foam::meshToMesh::mapAndOpTgtToSrc
 (
     const AMIInterpolation& AMI,
     Field<tensor>& srcField,
-    const Field<tensor>& tgtField,
-    const plusEqOp<tensor>& cop
+    const Field<tensor>& tgtField
 ) const
 {}
 

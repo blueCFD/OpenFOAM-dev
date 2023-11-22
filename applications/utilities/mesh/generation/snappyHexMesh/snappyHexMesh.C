@@ -719,6 +719,18 @@ int main(int argc, char *argv[])
     Info<< "Read mesh in = "
         << runTime.cpuTimeIncrement() << " s" << endl;
 
+    // Check that the read mesh is fully 3D
+    // as required for mesh relaxation after snapping
+    if (mesh.nSolutionD() != 3)
+    {
+        FatalErrorIn(args.executable())
+            << "Mesh provided is not fully 3D"
+               " as required for mesh relaxation after snapping" << nl
+            << "Convert all empty patches to appropriate types for a 3D mesh,"
+               " current patch types are" << nl << mesh.boundaryMesh().types()
+            << exit(FatalError);
+    }
+
     // Check patches and faceZones are synchronised
     mesh.boundaryMesh().checkParallelSync(true);
     meshRefinement::checkCoupledFaceZones(mesh);
@@ -739,9 +751,6 @@ int main(int argc, char *argv[])
 
     // snap-to-surface parameters
     const dictionary& snapDict = meshDict.subDict("snapControls");
-
-    // layer addition parameters
-    const dictionary& layerDict = meshDict.subDict("addLayersControls");
 
     // absolute merge distance
     const scalar mergeDist = getMergeDistance
@@ -1230,10 +1239,6 @@ int main(int argc, char *argv[])
     // Snap parameters
     const snapParameters snapParams(snapDict);
 
-    // Layer addition parameters
-    const layerParameters layerParams(layerDict, mesh.boundaryMesh());
-
-
     if (wantRefine)
     {
         cpuTime timer;
@@ -1247,12 +1252,10 @@ int main(int argc, char *argv[])
             globalToSlavePatch
         );
 
-
         if (!overwrite && !debugLevel)
         {
             const_cast<Time&>(mesh.time())++;
         }
-
 
         refineDriver.doRefine
         (
@@ -1262,7 +1265,6 @@ int main(int argc, char *argv[])
             refineParams.handleSnapProblems(),
             motionDict
         );
-
 
         if (!keepPatches && !wantSnap && !wantLayers)
         {
@@ -1331,6 +1333,12 @@ int main(int argc, char *argv[])
     {
         cpuTime timer;
 
+        // Layer addition parameters dictionary
+        const dictionary& layersDict = meshDict.subDict("addLayersControls");
+
+        // Layer addition parameters
+        const layerParameters layerParams(layersDict, mesh.boundaryMesh());
+
         snappyLayerDriver layerDriver
         (
             meshRefiner,
@@ -1353,7 +1361,7 @@ int main(int argc, char *argv[])
 
         layerDriver.doLayers
         (
-            layerDict,
+            layersDict,
             motionDict,
             layerParams,
             preBalance,

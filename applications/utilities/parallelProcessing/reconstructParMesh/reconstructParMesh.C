@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -355,7 +355,6 @@ int main(int argc, char *argv[])
             labelListList cellProcAddressing(nProcs);
             labelListList faceProcAddressing(nProcs);
             labelListList pointProcAddressing(nProcs);
-            labelListList boundaryProcAddressing(nProcs);
 
             // Internal faces on the final reconstructed mesh
             label masterInternalFaces;
@@ -403,8 +402,6 @@ int main(int argc, char *argv[])
                     cellProcAddressing[proci] = identity(meshToAdd.nCells());
                     faceProcAddressing[proci] = identity(meshToAdd.nFaces());
                     pointProcAddressing[proci] = identity(meshToAdd.nPoints());
-                    boundaryProcAddressing[proci] =
-                        identity(meshToAdd.boundaryMesh().size());
 
                     // Find shared points/faces
                     autoPtr<faceCoupleInfo> couples = determineCoupledFaces
@@ -440,11 +437,6 @@ int main(int argc, char *argv[])
                     (
                         map().addedPointMap(),
                         pointProcAddressing[proci]
-                    );
-                    inplaceRenumber
-                    (
-                        map().addedPatchMap(),
-                        boundaryProcAddressing[proci]
                     );
                 }
 
@@ -499,11 +491,6 @@ int main(int argc, char *argv[])
                                 map().oldPointMap(),
                                 pointProcAddressing[mergedI]
                             );
-                            inplaceRenumber
-                            (
-                                map().oldPatchMap(),
-                                boundaryProcAddressing[mergedI]
-                            );
                         }
 
                         // Added processor
@@ -528,11 +515,6 @@ int main(int argc, char *argv[])
                             (
                                 map().addedPointMap(),
                                 pointProcAddressing[addedI]
-                            );
-                            inplaceRenumber
-                            (
-                                map().addedPatchMap(),
-                                boundaryProcAddressing[addedI]
                             );
                         }
 
@@ -706,31 +688,6 @@ int main(int argc, char *argv[])
                         false                       // Do not register
                     ),
                     cellProcAddressing[proci]
-                ).write();
-
-
-
-                // From processor patch to reconstructed mesh patch
-
-                Info<< "Writing boundaryProcAddressing to "
-                    << databases[proci].caseName()
-                      /procMesh.facesInstance()
-                      /polyMesh::meshSubDir
-                    << endl;
-
-                labelIOList
-                (
-                    IOobject
-                    (
-                        "boundaryProcAddressing",
-                        procMesh.facesInstance(),
-                        polyMesh::meshSubDir,
-                        procMesh,
-                        IOobject::NO_READ,
-                        IOobject::NO_WRITE,
-                        false                       // Do not register
-                    ),
-                    boundaryProcAddressing[proci]
                 ).write();
 
                 Info<< endl;

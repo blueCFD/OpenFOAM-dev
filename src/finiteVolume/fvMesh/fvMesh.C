@@ -256,8 +256,6 @@ Foam::fvMesh::fvMesh(const IOobject& io, const bool changers)
 :
     polyMesh(io),
     surfaceInterpolation(*this),
-    fvSchemes(static_cast<const objectRegistry&>(*this)),
-    fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this, boundaryMesh()),
     topoChanger_(nullptr),
@@ -354,8 +352,6 @@ Foam::fvMesh::fvMesh
         syncPar
     ),
     surfaceInterpolation(*this),
-    fvSchemes(static_cast<const objectRegistry&>(*this)),
-    fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this, boundaryMesh()),
     topoChanger_(nullptr),
@@ -399,8 +395,6 @@ Foam::fvMesh::fvMesh
         syncPar
     ),
     surfaceInterpolation(*this),
-    fvSchemes(static_cast<const objectRegistry&>(*this)),
-    fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this, boundaryMesh()),
     topoChanger_(nullptr),
@@ -435,8 +429,6 @@ Foam::fvMesh::fvMesh
 :
     polyMesh(io, move(points), move(faces), move(cells), syncPar),
     surfaceInterpolation(*this),
-    fvSchemes(static_cast<const objectRegistry&>(*this)),
-    fvSolution(static_cast<const objectRegistry&>(*this)),
     data(static_cast<const objectRegistry&>(*this)),
     boundary_(*this),
     topoChanger_(nullptr),
@@ -540,6 +532,42 @@ void Foam::fvMesh::removeFvBoundary()
 }
 
 
+void Foam::fvMesh::reset(const fvMesh& newMesh)
+{
+    // Clear the sliced fields
+    clearGeom();
+
+    // Clear the current volume and other geometry factors
+    surfaceInterpolation::clearOut();
+
+    // Clear any non-updateable addressing
+    clearAddressing(true);
+
+    // Clear mesh motion flux
+    deleteDemandDrivenData(phiPtr_);
+
+    const polyPatchList& newBoundary = newMesh.boundaryMesh();
+    labelList patchSizes(newBoundary.size());
+    labelList patchStarts(newBoundary.size());
+
+    forAll(newBoundary, patchi)
+    {
+        patchSizes[patchi] = newBoundary[patchi].size();
+        patchStarts[patchi] = newBoundary[patchi].start();
+    }
+
+    polyMesh::resetPrimitives
+    (
+        pointField(newMesh.points()),
+        faceList(newMesh.faces()),
+        labelList(newMesh.faceOwner()),
+        labelList(newMesh.faceNeighbour()),
+        patchSizes,
+        patchStarts
+    );
+}
+
+
 Foam::polyMesh::readUpdateState Foam::fvMesh::readUpdate()
 {
     if (debug)
@@ -559,7 +587,6 @@ Foam::polyMesh::readUpdateState Foam::fvMesh::readUpdate()
         boundary_.readUpdate(boundaryMesh());
 
         clearOut();
-
     }
     else if (state == polyMesh::TOPO_CHANGE)
     {
@@ -661,40 +688,20 @@ void Foam::fvMesh::mapFields(const mapPolyMesh& meshMap)
     const fvMeshMapper mapper(*this, meshMap);
 
     // Map all the volFields in the objectRegistry
-    MapGeometricFields<scalar, fvPatchField, fvMeshMapper, volMesh>
-    (mapper);
-    MapGeometricFields<vector, fvPatchField, fvMeshMapper, volMesh>
-    (mapper);
-    MapGeometricFields<sphericalTensor, fvPatchField, fvMeshMapper, volMesh>
-    (mapper);
-    MapGeometricFields<symmTensor, fvPatchField, fvMeshMapper, volMesh>
-    (mapper);
-    MapGeometricFields<tensor, fvPatchField, fvMeshMapper, volMesh>
-    (mapper);
+    #define mapVolFieldType(Type, nullArg)                                     \
+        MapGeometricFields<Type, fvPatchField, fvMeshMapper, volMesh>(mapper);
+    FOR_ALL_FIELD_TYPES(mapVolFieldType);
 
     // Map all the surfaceFields in the objectRegistry
-    MapGeometricFields<scalar, fvsPatchField, fvMeshMapper, surfaceMesh>
-    (mapper);
-    MapGeometricFields<vector, fvsPatchField, fvMeshMapper, surfaceMesh>
-    (mapper);
-    MapGeometricFields
-    <
-        sphericalTensor,
-        fvsPatchField,
-        fvMeshMapper,
-        surfaceMesh
-    >(mapper);
-    MapGeometricFields<symmTensor, fvsPatchField, fvMeshMapper, surfaceMesh>
-    (mapper);
-    MapGeometricFields<tensor, fvsPatchField, fvMeshMapper, surfaceMesh>
-    (mapper);
+    #define mapSurfaceFieldType(Type, nullArg)                                 \
+        MapGeometricFields<Type, fvsPatchField, fvMeshMapper, surfaceMesh>     \
+        (mapper);
+    FOR_ALL_FIELD_TYPES(mapSurfaceFieldType);
 
     // Map all the dimensionedFields in the objectRegistry
-    MapDimensionedFields<scalar, fvMeshMapper, volMesh>(mapper);
-    MapDimensionedFields<vector, fvMeshMapper, volMesh>(mapper);
-    MapDimensionedFields<sphericalTensor, fvMeshMapper, volMesh>(mapper);
-    MapDimensionedFields<symmTensor, fvMeshMapper, volMesh>(mapper);
-    MapDimensionedFields<tensor, fvMeshMapper, volMesh>(mapper);
+    #define mapVolInternalFieldType(Type, nullArg)                             \
+        MapDimensionedFields<Type, fvMeshMapper, volMesh>(mapper);
+    FOR_ALL_FIELD_TYPES(mapVolInternalFieldType);
 
     // Map all the clouds in the objectRegistry
     mapClouds(*this, meshMap);
@@ -1213,6 +1220,28 @@ typename Foam::pTraits<Foam::sphericalTensor>::labelType
 Foam::fvMesh::validComponents<Foam::sphericalTensor>() const
 {
     return Foam::pTraits<Foam::sphericalTensor>::labelType(1);
+}
+
+
+const Foam::fvSchemes& Foam::fvMesh::schemes() const
+{
+    if (!fvSchemes_.valid())
+    {
+        fvSchemes_ = new fvSchemes(*this);
+    }
+
+    return fvSchemes_;
+}
+
+
+const Foam::fvSolution& Foam::fvMesh::solution() const
+{
+    if (!fvSolution_.valid())
+    {
+        fvSolution_ = new fvSolution(*this);
+    }
+
+    return fvSolution_;
 }
 
 

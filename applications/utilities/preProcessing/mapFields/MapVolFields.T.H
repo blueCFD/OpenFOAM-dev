@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,13 +35,12 @@ License
 namespace Foam
 {
 
-template<class Type, class CombineOp>
+template<class Type>
 void MapVolFields
 (
     const IOobjectList& objects,
     const meshToMesh0& meshToMesh0Interp,
-    const meshToMesh0::order& mapOrder,
-    const CombineOp& cop
+    const meshToMesh0::order& mapOrder
 )
 {
     typedef GeometricField<Type, fvPatchField, volMesh> fieldType;
@@ -81,8 +80,7 @@ void MapVolFields
             (
                 fieldTarget,
                 fieldSource,
-                mapOrder,
-                cop
+                mapOrder
             );
 
             // Write field

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,13 +46,7 @@ Foam::MultiComponentPhaseModel<BasePhaseModel>::MultiComponentPhaseModel
     const label index
 )
 :
-    BasePhaseModel(fluid, phaseName, referencePhase, index),
-    residualAlpha_
-    (
-        "residualAlpha",
-        dimless,
-        fluid.mesh().solverDict("Yi")
-    )
+    BasePhaseModel(fluid, phaseName, referencePhase, index)
 {
     PtrList<volScalarField>& Y = this->thermo_->composition().Y();
 
@@ -110,8 +104,15 @@ Foam::MultiComponentPhaseModel<BasePhaseModel>::YiEqn(volScalarField& Yi)
      ==
         alpha*this->R(Yi)
 
-      + fvc::ddt(residualAlpha_*rho, Yi)
-      - fvm::ddt(residualAlpha_*rho, Yi)
+      - correction
+        (
+            fvm::Sp
+            (
+                max(this->residualAlpha() - alpha, scalar(0))*rho
+               /this->mesh().time().deltaT(),
+                Yi
+            )
+        )
     );
 }
 

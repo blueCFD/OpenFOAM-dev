@@ -222,7 +222,7 @@ forAll(fluidRegions, i)
         )
     );
 
-    fluidRegions[i].setFluxRequired(p_rghFluid[i].name());
+    fluidRegions[i].schemes().setFluxRequired(p_rghFluid[i].name());
 
     initialMassFluid[i] = fvc::domainIntegrate(rhoFluid[i]).value();
 

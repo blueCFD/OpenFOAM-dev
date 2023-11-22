@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -118,23 +118,6 @@ Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
     const processorCyclicPolyPatch& pp,
     const polyBoundaryMesh& bm,
     const label index,
-    const label newSize,
-    const label newStart,
-    const word& referPatchName
-)
-:
-    processorPolyPatch(pp, bm, index, newSize, newStart),
-    referPatchName_(referPatchName),
-    tag_(-1),
-    referPatchID_(-1)
-{}
-
-
-Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
-(
-    const processorCyclicPolyPatch& pp,
-    const polyBoundaryMesh& bm,
-    const label index,
     const labelUList& mapAddressing,
     const label newStart
 )
@@ -186,13 +169,11 @@ int Foam::processorCyclicPolyPatch::tag() const
     if (tag_ == -1)
     {
         // Get unique tag to use for all comms. Make sure that both sides
-        // use the same tag
-        const cyclicPolyPatch& cycPatch = refCast<const cyclicPolyPatch>
-        (
-            referPatch()
-        );
+        // use the same tag.
+        const cyclicPolyPatch& cycPatch =
+            refCast<const cyclicPolyPatch>(referPatch());
 
-        if (owner())
+        if (processorPolyPatch::owner())
         {
             tag_ = Hash<word>()(cycPatch.name()) % 32768u;
         }
@@ -211,6 +192,7 @@ int Foam::processorCyclicPolyPatch::tag() const
                 << " using the 'tag' entry"
                 << exit(FatalError);
         }
+
         if (debug)
         {
             Pout<< "processorCyclicPolyPatch " << name() << " uses tag " << tag_

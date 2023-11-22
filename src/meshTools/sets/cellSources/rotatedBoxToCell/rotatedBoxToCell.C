@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,26 +43,26 @@ namespace Foam
 void Foam::rotatedBoxToCell::combine(topoSet& set, const bool add) const
 {
     // Define a cell for the box
-    pointField boxPoints(8);
-    boxPoints[0] = origin_;
-    boxPoints[1] = origin_ + i_;
-    boxPoints[2] = origin_ + i_ + j_;
-    boxPoints[3] = origin_ + j_;
-    boxPoints[4] = origin_ + k_;
-    boxPoints[5] = origin_ + k_ + i_;
-    boxPoints[6] = origin_ + k_ + i_ + j_;
-    boxPoints[7] = origin_ + k_ + j_;
+    const pointField boxPoints
+    (
+        {
+            origin_,
+            origin_ + i_,
+            origin_ + i_ + j_,
+            origin_ + j_,
+            origin_ + k_,
+            origin_ + k_ + i_,
+            origin_ + k_ + i_ + j_,
+            origin_ + k_ + j_
+        }
+    );
 
-    labelList boxVerts(8);
-    forAll(boxVerts, i)
-    {
-        boxVerts[i] = i;
-    }
+    const labelList boxVerts({0, 1, 2, 3, 4, 5, 6, 7});
 
     const cellModel& hex = *(cellModeller::lookup("hex"));
 
     // Get outwards pointing faces.
-    faceList boxFaces(cellShape(hex, boxVerts).faces());
+    const faceList boxFaces(cellShape(hex, boxVerts).faces());
 
     // Precalculate normals
     vectorField boxFaceNormals(boxFaces.size());
@@ -81,9 +81,11 @@ void Foam::rotatedBoxToCell::combine(topoSet& set, const bool add) const
 
         forAll(boxFaces, i)
         {
-            const face& f = boxFaces[i];
-
-            if (((ctrs[celli] - boxPoints[f[0]]) & boxFaceNormals[i]) > 0)
+            if
+            (
+                ((ctrs[celli] - boxPoints[boxFaces[i][0]]) & boxFaceNormals[i])
+              > 0
+            )
             {
                 inside = false;
                 break;

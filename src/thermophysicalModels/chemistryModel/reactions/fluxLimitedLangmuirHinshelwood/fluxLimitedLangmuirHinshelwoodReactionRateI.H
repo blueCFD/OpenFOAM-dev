@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -240,7 +240,7 @@ Foam::fluxLimitedLangmuirHinshelwoodReactionRate::operator()
     const scalar TaByT0 = Ta_[0]/T;
     const scalar k0 = A_[0]*pow(T, beta_[0])*exp(-TaByT0);
 
-    scalar r = k0/pow(a_ + sumkc, m_[0]);
+    scalar r = k0/max(pow(a_ + sumkc, m_[0]), rootVSmall);
 
     if (limited_)
     {
@@ -250,8 +250,6 @@ Foam::fluxLimitedLangmuirHinshelwoodReactionRate::operator()
             rc *= pow(c[ra_[i]], exp_[i]);
         }
 
-        const scalar Av = this->Av(li);
-
         if (rc > rootSmall)
         {
             forAll(s_, i)
@@ -259,13 +257,13 @@ Foam::fluxLimitedLangmuirHinshelwoodReactionRate::operator()
                 r = min
                 (
                     r,
-                    (Av*s_[i]*c[ra_[i]]/(nu_[i]*rc))*sqrt(RR*T/(twoPi*W_[i]))
+                    (s_[i]*c[ra_[i]]/(nu_[i]*rc))*sqrt(RR*T/(twoPi*W_[i]))
                 );
             }
         }
     }
 
-    return r;
+    return this->Av(li)*r;
 }
 
 
@@ -295,8 +293,8 @@ inline Foam::scalar Foam::fluxLimitedLangmuirHinshelwoodReactionRate::ddT
     const scalar k0 = A_[0]*pow(T, beta_[0])*exp(-TaByT0);
 
     scalar ddT =
-       ((beta_[0] + TaByT0)*k0 - m_[0]*k0*sumBetaKc/(a_ + sumkc))
-      /(pow(a_ + sumkc, m_[0])*T);
+       ((beta_[0] + TaByT0)*k0*(a_ + sumkc) - m_[0]*k0*sumBetaKc)
+      /(max(pow(a_ + sumkc, m_[0] + 1), rootVSmall)*T);
 
     if (limited_)
     {
@@ -312,12 +310,10 @@ inline Foam::scalar Foam::fluxLimitedLangmuirHinshelwoodReactionRate::ddT
         {
             label l = -1;
 
-            const scalar Av = this->Av(li);
-
             forAll(s_, i)
             {
                 const scalar rl =
-                    (Av*s_[i]*c[ra_[i]]/(nu_[i]*rc))*sqrt(RR*T/(twoPi*W_[i]));
+                    (s_[i]*c[ra_[i]]/(nu_[i]*rc))*sqrt(RR*T/(twoPi*W_[i]));
 
                 if (rl < r)
                 {
@@ -329,13 +325,13 @@ inline Foam::scalar Foam::fluxLimitedLangmuirHinshelwoodReactionRate::ddT
             if (l != -1)
             {
                 ddT =
-                    (Av*s_[l]*c[ra_[l]]/(nu_[l]*rc))
+                    (s_[l]*c[ra_[l]]/(nu_[l]*rc))
                    *0.5*sqrt(RR/(twoPi*W_[l]*T));
             }
         }
     }
 
-    return ddT;
+    return this->Av(li)*ddT;
 }
 
 

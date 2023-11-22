@@ -14,23 +14,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-ignition
-{
-    type            heatSource;
-
-    selectionMode   cellSet;
-    cellSet         ignition;
-
-    q
-    {
-        type        scale;
-        scale       squarePulse;
-        start       0;
-        duration    1;
-        value       5e7;
-    }
-}
-
 radiation
 {
     type    radiation;

@@ -44,9 +44,8 @@ cellClassification/cellInfo.C
 
 cellQuality/cellQuality.C
 
-cellDist/cellDistFuncs.C
-cellDist/patchWave/patchWave.C
-cellDist/wallPoint/wallPoint.C
+patchDist/patchDistFuncs/patchDistFuncs.C
+patchDist/wallPoint/wallPoint.C
 
 cellFeatures/cellFeatures.C
 
@@ -86,11 +85,8 @@ $(patchWave)/patchPatchDist.C
 $(patchWave)/patchEdgeFaceRegion.C
 $(patchWave)/patchEdgeFaceRegions.C
 
-
-meshWave = $(algorithms)/MeshWave
-$(meshWave)/MeshWaveName.T.C
+meshWave = $(algorithms)/FaceCellWave
 $(meshWave)/FaceCellWaveName.T.C
-
 
 regionSplit/regionSplit.C
 regionSplit/localPointRegion.C
@@ -158,6 +154,7 @@ $(faceSources)/pointToFace/pointToFace.C
 $(faceSources)/boundaryToFace/boundaryToFace.C
 $(faceSources)/zoneToFace/zoneToFace.C
 $(faceSources)/boxToFace/boxToFace.C
+$(faceSources)/rotatedBoxToFace/rotatedBoxToFace.C
 $(faceSources)/regionToFace/regionToFace.C
 $(faceSources)/cylinderToFace/cylinderToFace.C
 $(faceSources)/cylinderAnnulusToFace/cylinderAnnulusToFace.C

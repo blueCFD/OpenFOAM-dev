@@ -28,6 +28,7 @@ License
 #include "sinteringModel.H"
 #include "fvm.H"
 #include "fvcDdt.H"
+#include "fvcDiv.H"
 #include "mixedFvPatchField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -204,14 +205,22 @@ void Foam::diameterModels::shapeModels::fractal::correct()
 
     fvScalarMatrix kappaEqn
     (
-        fvm::ddt(alpha, fi, kappa_)
-      + fvm::div(fAlphaPhi, kappa_)
+        fvm::ddt(alpha, fi, kappa_) + fvm::div(fAlphaPhi, kappa_)
+      - fvm::Sp(fvc::ddt(alpha, fi) + fvc::div(fAlphaPhi), kappa_)
       ==
       - sinteringModel_->R()
       + Su_
       - fvm::Sp(popBal.Sp(fi.i()())*fi, kappa_)
-      + fvc::ddt(fi.phase().residualAlpha(), kappa_)
-      - fvm::ddt(fi.phase().residualAlpha(), kappa_)
+
+      - correction
+        (
+            fvm::Sp
+            (
+                max(phase.residualAlpha() - alpha*fi, scalar(0))
+               /sizeGroup_.mesh().time().deltaT(),
+                kappa_
+            )
+        )
     );
 
     kappaEqn.relax();
