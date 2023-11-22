@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,6 +30,8 @@ License
 #include "mergePoints.H"
 #include "indirectPrimitivePatch.H"
 #include "PatchTools.T.H"
+#include "polyTopoChangeMap.H"
+#include "polyMeshMap.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -655,6 +657,7 @@ Foam::functionObjects::fieldValues::surfaceFieldValue::surfaceFieldValue
 )
 :
     fieldValue(name, runTime, dict, typeName),
+    dict_(dict),
     surfaceWriterPtr_(nullptr),
     regionType_(regionTypeNames_.read(dict.lookup("regionType"))),
     operation_(operationTypeNames_.read(dict.lookup("operation"))),
@@ -666,7 +669,7 @@ Foam::functionObjects::fieldValues::surfaceFieldValue::surfaceFieldValue
     facePatchId_(),
     faceSign_()
 {
-    read(dict);
+    read(dict_);
 }
 
 Foam::functionObjects::fieldValues::surfaceFieldValue::surfaceFieldValue
@@ -677,6 +680,7 @@ Foam::functionObjects::fieldValues::surfaceFieldValue::surfaceFieldValue
 )
 :
     fieldValue(name, obr, dict, typeName),
+    dict_(dict),
     surfaceWriterPtr_(nullptr),
     regionType_(regionTypeNames_.read(dict.lookup("regionType"))),
     operation_(operationTypeNames_.read(dict.lookup("operation"))),
@@ -688,7 +692,7 @@ Foam::functionObjects::fieldValues::surfaceFieldValue::surfaceFieldValue
     facePatchId_(),
     faceSign_()
 {
-    read(dict);
+    read(dict_);
 }
 
 
@@ -821,6 +825,43 @@ bool Foam::functionObjects::fieldValues::surfaceFieldValue::write()
     Log << endl;
 
     return true;
+}
+
+
+void Foam::functionObjects::fieldValues::surfaceFieldValue::movePoints
+(
+    const polyMesh& mesh
+)
+{
+    if (&mesh == &mesh_)
+    {
+        // It may be necessary to reset if the mesh moves
+        // initialise(dict_);
+    }
+}
+
+
+void Foam::functionObjects::fieldValues::surfaceFieldValue::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{
+    if (&map.mesh() == &mesh_)
+    {
+        initialise(dict_);
+    }
+}
+
+
+void Foam::functionObjects::fieldValues::surfaceFieldValue::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    if (&map.mesh() == &mesh_)
+    {
+        initialise(dict_);
+    }
 }
 
 

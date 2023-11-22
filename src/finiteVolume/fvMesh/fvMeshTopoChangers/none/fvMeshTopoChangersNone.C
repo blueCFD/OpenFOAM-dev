@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,6 +41,12 @@ namespace fvMeshTopoChangers
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::fvMeshTopoChangers::none::none(fvMesh& mesh)
+:
+    fvMeshTopoChanger(mesh)
+{}
+
+
+Foam::fvMeshTopoChangers::none::none(fvMesh& mesh, const dictionary& dict)
 :
     fvMeshTopoChanger(mesh)
 {}

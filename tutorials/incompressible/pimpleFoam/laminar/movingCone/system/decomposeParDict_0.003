@@ -9,15 +9,34 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      transportProperties;
+    location    "system";
+    object      decomposeParDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-rhoInf          [1 -3 0 0 0 0 0] 1.2;
+numberOfSubdomains 4;
 
-transportModel  Newtonian;
+method          hierarchical;
 
-nu              [0 2 -1 0 0 0 0] 1e-05;
+simpleCoeffs
+{
+    n               (2 1 1);
+}
+
+hierarchicalCoeffs
+{
+    n               (2 2 1);
+    order           xyz;
+}
+
+manualCoeffs
+{
+    dataFile        "";
+}
+
+distributed     no;
+
+roots           ( );
+
 
 // ************************************************************************* //
