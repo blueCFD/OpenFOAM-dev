@@ -145,6 +145,7 @@ void Foam::BlendedInterfacialModel<ModelType>::check() const
     if
     (
         modelGeneral_.valid()
+     && (can1In2 || can2In1 || canS)
      && (!can1In2 || model1DispersedIn2_.valid())
      && (!can2In1 || model2DispersedIn1_.valid())
      && (!canS || model1SegregatedWith2_.valid())
@@ -165,6 +166,7 @@ void Foam::BlendedInterfacialModel<ModelType>::check() const
         if
         (
             modelsGeneralDisplaced_.set(phasei)
+         && (can1In2 || can2In1 || canS)
          && (!can1In2 || models1DispersedIn2Displaced_.set(phasei))
          && (!can2In1 || models2DispersedIn1Displaced_.set(phasei))
          && (!canS || models1SegregatedWith2Displaced_.set(phasei))
@@ -932,7 +934,7 @@ Foam::BlendedInterfacialModel<ModelType>::evaluate
     PtrList<scalarGeoField> fSD(nPhases);
     calculateBlendingCoeffs
     (
-        interface_.fluid().phases().convert<const volScalarField>(),
+        interface_.fluid().phases().template convert<const volScalarField>(),
         fG, f1D2, f2D1, fS,
         fGD, f1D2D, f2D1D, fSD,
         subtract
@@ -1036,7 +1038,7 @@ Foam::BlendedInterfacialModel<ModelType>::evaluate
     PtrList<scalarGeoField> fSD(nPhases);
     calculateBlendingCoeffs
     (
-        interface_.fluid().phases().convert<const volScalarField>(),
+        interface_.fluid().phases().template convert<const volScalarField>(),
         fG, f1D2, f2D1, fS,
         fGD, f1D2D, f2D1D, fSD,
         subtract

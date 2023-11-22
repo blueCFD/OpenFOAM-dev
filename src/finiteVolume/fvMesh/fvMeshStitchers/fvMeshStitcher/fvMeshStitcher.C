@@ -28,6 +28,7 @@ License
 #include "fvcSurfaceIntegrate.H"
 #include "MeshObject.T.H"
 #include "syncTools.H"
+#include "surfaceToVolVelocity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -520,7 +521,7 @@ Foam::fvMeshStitcher::calculateOwnerOrigBoundaryEdgeParts
         ownerOrigBoundaryEdgeMeshEdge,
         ownerOrigBoundaryEdgeNParts,
         plusEqOp<label>(),
-        0
+        label(0)
     );
     syncTools::syncEdgeList
     (
@@ -642,7 +643,7 @@ void Foam::fvMeshStitcher::applyOwnerOrigBoundaryEdgeParts
         ownerOrigBoundaryEdgeMeshEdge,
         ownerOrigBoundaryEdgeNOrigFaces,
         plusEqOp<label>(),
-        0
+        label(0)
     );
 
     // If debugging, check that face changes are in sync
@@ -1367,6 +1368,9 @@ bool Foam::fvMeshStitcher::connect
     // patch fields.
     evaluateVolFields();
 
+    // Do special post-non-conformation for surface velocities.
+    postNonConformSurfaceVelocities();
+
     // Prevent hangs caused by processor cyclic patches using mesh geometry
     mesh_.deltaCoeffs();
 
@@ -1459,6 +1463,7 @@ bool Foam::fvMeshStitcher::connect
                 (
                     isA<nonConformalCyclicFvPatch>(fvp)
                  && refCast<const nonConformalCyclicFvPatch>(fvp).owner()
+                 && nSumMfe[patchi] > 0
                 )
                 {
                     Info<< indent << fvp.name()
