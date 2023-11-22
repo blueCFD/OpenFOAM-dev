@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,7 @@ License
 #include "indirectPrimitivePatch.H"
 #include "polyTopoChange.H"
 #include "removeCells.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "localPointRegion.H"
 #include "pointMesh.H"
 #include "pointFields.H"
@@ -606,7 +606,7 @@ void Foam::meshRefinement::setInstance(const fileName& inst)
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::doRemoveCells
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::meshRefinement::doRemoveCells
 (
     const labelList& cellsToRemove,
     const labelList& exposedFaces,
@@ -626,10 +626,10 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::doRemoveCells
     );
 
     // Change the mesh (no inflation)
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh_, false, true);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh_, false, true);
 
     // Update fields
-    mesh_.updateMesh(map);
+    mesh_.topoChange(map);
 
     // Move mesh (since morphing might not do this)
     if (map().hasMotionPoints())
@@ -647,7 +647,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::doRemoveCells
     setInstance(mesh_.facesInstance());
 
     // Update local mesh data
-    cellRemover.updateMesh(map);
+    cellRemover.topoChange(map);
 
     // Update intersections. Recalculate intersections for exposed faces.
     labelList newExposedFaces = renumber
@@ -659,13 +659,13 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::doRemoveCells
     // Pout<< "removeCells : updating intersections for "
     //    << newExposedFaces.size() << " newly exposed faces." << endl;
 
-    updateMesh(map, newExposedFaces);
+    topoChange(map, newExposedFaces);
 
     return map;
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::splitFaces
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::meshRefinement::splitFaces
 (
     const labelList& splitFaces,
     const labelPairList& splits
@@ -768,10 +768,10 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::splitFaces
 
 
     // Change the mesh (no inflation)
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh_, false, true);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh_, false, true);
 
     // Update fields
-    mesh_.updateMesh(map);
+    mesh_.topoChange(map);
 
     // Move mesh (since morphing might not do this)
     if (map().hasMotionPoints())
@@ -804,7 +804,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::splitFaces
         }
     }
 
-    updateMesh(map, newSplitFaces);
+    topoChange(map, newSplitFaces);
 
     return map;
 }
@@ -1372,7 +1372,7 @@ Foam::label Foam::meshRefinement::countHits() const
 //}
 
 
-Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::meshRefinement::balance
+Foam::autoPtr<Foam::polyDistributionMap> Foam::meshRefinement::balance
 (
     const bool keepZoneFaces,
     const bool keepBaffles,
@@ -1381,7 +1381,7 @@ Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::meshRefinement::balance
     fvMeshDistribute& distributor
 )
 {
-    autoPtr<mapDistributePolyMesh> map;
+    autoPtr<polyDistributionMap> map;
 
     if (Pstream::parRun())
     {
@@ -2203,7 +2203,7 @@ void Foam::meshRefinement::findRegions
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::splitMeshRegions
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::meshRefinement::splitMeshRegions
 (
     const labelList& globalToMasterPatch,
     const labelList& globalToSlavePatch,
@@ -2298,12 +2298,12 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::splitMeshRegions
     }
     else
     {
-        return autoPtr<mapPolyMesh>();
+        return autoPtr<polyTopoChangeMap>();
     }
 }
 
 
-void Foam::meshRefinement::distribute(const mapDistributePolyMesh& map)
+void Foam::meshRefinement::distribute(const polyDistributionMap& map)
 {
     // mesh_ already distributed; distribute my member data
 
@@ -2334,8 +2334,8 @@ void Foam::meshRefinement::distribute(const mapDistributePolyMesh& map)
 
         forAll(geometry, i)
         {
-            autoPtr<mapDistribute> faceMap;
-            autoPtr<mapDistribute> pointMap;
+            autoPtr<distributionMap> faceMap;
+            autoPtr<distributionMap> pointMap;
             geometry[i].distribute
             (
                 meshBb,
@@ -2357,15 +2357,15 @@ void Foam::meshRefinement::distribute(const mapDistributePolyMesh& map)
 }
 
 
-void Foam::meshRefinement::updateMesh
+void Foam::meshRefinement::topoChange
 (
-    const mapPolyMesh& map,
+    const polyTopoChangeMap& map,
     const labelList& changedFaces
 )
 {
     Map<label> dummyMap(0);
 
-    updateMesh(map, changedFaces, dummyMap, dummyMap, dummyMap);
+    topoChange(map, changedFaces, dummyMap, dummyMap, dummyMap);
 }
 
 
@@ -2386,9 +2386,9 @@ void Foam::meshRefinement::storeData
 }
 
 
-void Foam::meshRefinement::updateMesh
+void Foam::meshRefinement::topoChange
 (
-    const mapPolyMesh& map,
+    const polyTopoChangeMap& map,
     const labelList& changedFaces,
     const Map<label>& pointsToRestore,
     const Map<label>& facesToRestore,
@@ -2398,7 +2398,7 @@ void Foam::meshRefinement::updateMesh
     // For now only meshCutter has storable/retrievable data.
 
     // Update numbering of cells/vertices.
-    meshCutter_.updateMesh
+    meshCutter_.topoChange
     (
         map,
         pointsToRestore,

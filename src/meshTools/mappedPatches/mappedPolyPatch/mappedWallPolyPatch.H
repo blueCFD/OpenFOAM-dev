@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,9 +28,9 @@ Description
     Determines a mapping between patch face centres and mesh cell or face
     centres and processors they're on.
 
-Note
-    Storage is not optimal. It stores all face centres and cells on all
-    processors to keep the addressing calculation simple.
+    Note:
+        Storage is not optimal. It stores all face centres and cells on all
+        processors to keep the addressing calculation simple.
 
 SourceFiles
     mappedWallPolyPatch.C
@@ -76,10 +76,10 @@ protected:
         virtual void movePoints(PstreamBuffers&, const pointField&);
 
         //- Initialise the update of the patch topology
-        virtual void initUpdateMesh(PstreamBuffers&);
+        virtual void initTopoChange(PstreamBuffers&);
 
         //- Update of the patch topology
-        virtual void updateMesh(PstreamBuffers&);
+        virtual void topoChange(PstreamBuffers&);
 
 
 public:

@@ -25,37 +25,15 @@ License
 
 #include "pointMesh.H"
 #include "globalMeshData.H"
-#include "pointMeshMapper.H"
 #include "pointFields.H"
-#include "MapGeometricFields.T.H"
-#include "MapPointField.T.H"
 #include "facePointPatch.H"
+#include "MapGeometricFields.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(pointMesh, 0);
-}
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-void Foam::pointMesh::mapFields(const mapPolyMesh& map)
-{
-    if (debug)
-    {
-        Pout<< "void pointMesh::mapFields(const mapPolyMesh&): "
-            << "Mapping all registered pointFields."
-            << endl;
-    }
-
-    // Create the pointMesh mapper
-    const pointMeshMapper mapper(*this, map);
-
-    #define mapPointFieldType(Type, nullArg)                                   \
-        MapGeometricFields<Type, pointPatchField, pointMeshMapper, pointMesh>  \
-        (mapper);
-    FOR_ALL_FIELD_TYPES(mapPointFieldType);
 }
 
 
@@ -112,36 +90,6 @@ void Foam::pointMesh::reset(const bool validBoundary)
 }
 
 
-void Foam::pointMesh::updateMesh(const mapPolyMesh& map)
-{
-    if (debug)
-    {
-        Pout<< "pointMesh::updateMesh(const mapPolyMesh&): "
-            << "Updating for topology changes." << endl;
-        Pout<< endl;
-    }
-    boundary_.updateMesh();
-
-    // Map all registered point fields
-    mapFields(map);
-}
-
-
-void Foam::pointMesh::distribute(const mapDistributePolyMesh& map)
-{
-    if (debug)
-    {
-        Pout<< "pointMesh::distribute(const mapDistributePolyMesh&): "
-            << "Distribute." << endl;
-        Pout<< endl;
-    }
-    boundary_.updateMesh();
-
-    // All registered pointFields are currently distributed by fvMeshDistribute
-    // mapFields(map);
-}
-
-
 bool Foam::pointMesh::movePoints()
 {
     if (debug)
@@ -153,6 +101,42 @@ bool Foam::pointMesh::movePoints()
     boundary_.movePoints(GeoMesh<polyMesh>::mesh_.points());
 
     return true;
+}
+
+
+void Foam::pointMesh::topoChange(const polyTopoChangeMap& map)
+{
+    if (debug)
+    {
+        Pout<< "pointMesh::topoChange(const polyTopoChangeMap&): "
+            << "Topology change." << endl;
+        Pout<< endl;
+    }
+    boundary_.topoChange();
+}
+
+
+void Foam::pointMesh::mapMesh(const polyMeshMap& map)
+{
+    if (debug)
+    {
+        Pout<< "pointMesh::mapMesh(const polyMeshMap&): "
+            << "Mesh mapping." << endl;
+        Pout<< endl;
+    }
+    boundary_.topoChange();
+}
+
+
+void Foam::pointMesh::distribute(const polyDistributionMap& map)
+{
+    if (debug)
+    {
+        Pout<< "pointMesh::distribute(const polyDistributionMap&): "
+            << "Distribute." << endl;
+        Pout<< endl;
+    }
+    boundary_.topoChange();
 }
 
 

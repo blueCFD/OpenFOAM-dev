@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,7 @@ License
 #include "motionDiffusivity.H"
 #include "fvmLaplacian.H"
 #include "addToRunTimeSelectionTable.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "volPointInterpolation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -50,11 +50,12 @@ namespace Foam
 Foam::displacementComponentLaplacianFvMotionSolver::
 displacementComponentLaplacianFvMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    componentDisplacementMotionSolver(mesh, dict, type()),
+    componentDisplacementMotionSolver(name, mesh, dict, type()),
     fvMotionSolver(mesh),
     cellDisplacement_
     (
@@ -239,12 +240,30 @@ void Foam::displacementComponentLaplacianFvMotionSolver::solve()
 }
 
 
-void Foam::displacementComponentLaplacianFvMotionSolver::updateMesh
+void Foam::displacementComponentLaplacianFvMotionSolver::topoChange
 (
-    const mapPolyMesh& mpm
+    const polyTopoChangeMap& map
 )
 {
-    componentDisplacementMotionSolver::updateMesh(mpm);
+    componentDisplacementMotionSolver::topoChange(map);
+
+    // Update diffusivity. Note two stage to make sure old one is de-registered
+    // before creating/registering new one.
+    diffusivityPtr_.reset(nullptr);
+    diffusivityPtr_ = motionDiffusivity::New
+    (
+        fvMesh_,
+        coeffDict().lookup("diffusivity")
+    );
+}
+
+
+void Foam::displacementComponentLaplacianFvMotionSolver::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    componentDisplacementMotionSolver::mapMesh(map);
 
     // Update diffusivity. Note two stage to make sure old one is de-registered
     // before creating/registering new one.

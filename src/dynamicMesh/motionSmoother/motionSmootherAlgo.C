@@ -368,7 +368,7 @@ Foam::motionSmootherAlgo::motionSmootherAlgo
     paramDict_(paramDict),
     isInternalPoint_(mesh_.nPoints(), 1)
 {
-    updateMesh();
+    topoChange();
 }
 
 
@@ -698,7 +698,7 @@ void Foam::motionSmootherAlgo::movePoints()
     // Make sure to clear out tetPtIs since used in checks (sometimes, should
     // really check)
     mesh_.clearTetBasePtIs();
-    pp_.movePoints(mesh_.points());
+    pp_.clearGeom();
 }
 
 
@@ -1032,7 +1032,7 @@ bool Foam::motionSmootherAlgo::scaleMesh
 }
 
 
-void Foam::motionSmootherAlgo::updateMesh()
+void Foam::motionSmootherAlgo::topoChange()
 {
     const pointBoundaryMesh& patches = pMesh_.boundary();
 

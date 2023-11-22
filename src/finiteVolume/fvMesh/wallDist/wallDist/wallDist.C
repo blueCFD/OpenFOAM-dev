@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,9 +38,14 @@ namespace Foam
 
 void Foam::wallDist::constructn() const
 {
-    n_ = volVectorField::New
+    n_ = new volVectorField
     (
-        "n" & patchTypeName_,
+        IOobject
+        (
+            "n" & patchTypeName_,
+            mesh().time().timeName(),
+            mesh()
+        ),
         mesh(),
         dimensionedVector(dimless, Zero),
         patchDistMethod::patchTypes<vector>(mesh(), patchIDs_)
@@ -48,7 +53,7 @@ void Foam::wallDist::constructn() const
 
     const fvPatchList& patches = mesh().boundary();
 
-    volVectorField::Boundary& nbf = n_.ref().boundaryFieldRef();
+    volVectorField::Boundary& nbf = n_->boundaryFieldRef();
 
     forAllConstIter(labelHashSet, patchIDs_, iter)
     {
@@ -91,8 +96,7 @@ Foam::wallDist::wallDist(const fvMesh& mesh, const word& patchTypeName)
     (
         static_cast<const fvSchemes&>(mesh).subDict(patchTypeName_ & "Dist")
        .lookupOrDefault<Switch>("nRequired", false)
-    ),
-    n_(volVectorField::null())
+    )
 {
     if (nRequired_)
     {
@@ -139,8 +143,7 @@ Foam::wallDist::wallDist
     (
         static_cast<const fvSchemes&>(mesh).subDict(patchTypeName_ & "Dist")
        .lookupOrDefault<Switch>("nRequired", false)
-    ),
-    n_(volVectorField::null())
+    )
 {
     if (nRequired_)
     {
@@ -161,7 +164,7 @@ Foam::wallDist::~wallDist()
 
 const Foam::volVectorField& Foam::wallDist::n() const
 {
-    if (isNull(n_()))
+    if (!n_.valid())
     {
         WarningInFunction
             << "n requested but 'nRequired' not specified in the "
@@ -170,24 +173,10 @@ const Foam::volVectorField& Foam::wallDist::n() const
 
         nRequired_ = true;
         constructn();
-        pdm_->correct(y_, n_.ref());
+        pdm_->correct(y_, n_());
     }
 
     return n_();
-}
-
-
-void Foam::wallDist::updateMesh(const mapPolyMesh& map)
-{
-    pdm_->updateMesh(map);
-    movePoints();
-}
-
-
-void Foam::wallDist::distribute(const mapDistributePolyMesh& map)
-{
-    pdm_->distribute(map);
-    movePoints();
 }
 
 
@@ -197,7 +186,7 @@ bool Foam::wallDist::movePoints()
     {
         if (nRequired_)
         {
-            return pdm_->correct(y_, n_.ref());
+            return pdm_->correct(y_, n_());
         }
         else
         {
@@ -208,6 +197,26 @@ bool Foam::wallDist::movePoints()
     {
         return false;
     }
+}
+
+
+void Foam::wallDist::topoChange(const polyTopoChangeMap& map)
+{
+    pdm_->topoChange(map);
+    movePoints();
+}
+
+
+void Foam::wallDist::mapMesh(const polyMeshMap& map)
+{
+    pdm_->mapMesh(map);
+    movePoints();
+}
+
+
+void Foam::wallDist::distribute(const polyDistributionMap& map)
+{
+    // The y and n fields are registered and distributed automatically
 }
 
 

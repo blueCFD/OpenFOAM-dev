@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fvMeshTopoChangersRaw.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "volFields.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -68,7 +68,7 @@ bool Foam::fvMeshTopoChangers::raw::update()
     mesh().topoChanging(false);
 
     // Do any topology changes. Sets topoChanging (through polyTopoChange)
-    autoPtr<mapPolyMesh> topoChangeMap = topoChanger_.changeMesh(true);
+    autoPtr<polyTopoChangeMap> topoChangeMap = topoChanger_.changeMesh(true);
 
     bool hasChanged = topoChangeMap.valid();
 
@@ -166,13 +166,17 @@ bool Foam::fvMeshTopoChangers::raw::update()
 }
 
 
-void Foam::fvMeshTopoChangers::raw::updateMesh(const mapPolyMesh& map)
+void Foam::fvMeshTopoChangers::raw::topoChange(const polyTopoChangeMap& map)
+{}
+
+
+void Foam::fvMeshTopoChangers::raw::mapMesh(const polyMeshMap& map)
 {}
 
 
 void Foam::fvMeshTopoChangers::raw::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {}
 

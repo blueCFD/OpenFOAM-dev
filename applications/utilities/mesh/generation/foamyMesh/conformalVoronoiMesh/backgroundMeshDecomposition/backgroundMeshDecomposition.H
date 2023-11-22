@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,11 +58,11 @@ SourceFiles
 #include "cellSet.H"
 #include "meshTools.H"
 #include "polyTopoChange.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "decompositionMethod.H"
 #include "fvMeshDistribute.H"
 #include "removeCells.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "globalIndex.H"
 #include "treeBoundBox.H"
 #include "primitivePatch.H"
@@ -205,19 +205,22 @@ public:
 
     // Member Functions
 
-        //- Build a mapDistribute for the supplied destination processor data
-        static autoPtr<mapDistribute> buildMap(const List<label>& toProc);
+        //- Build a distributionMap for the supplied destination processor data
+        static autoPtr<distributionMap> buildMap(const List<label>& toProc);
 
         //- Redistribute the background mesh based on a supplied weight field,
         //  returning a map to use to redistribute vertices.
-        autoPtr<mapDistributePolyMesh> distribute
+        autoPtr<polyDistributionMap> distribute
         (
             volScalarField& cellWeights
         );
 
         //- Distribute supplied the points to the appropriate processor
         template<class PointType>
-        autoPtr<mapDistribute> distributePoints(List<PointType>& points) const;
+        autoPtr<distributionMap> distributePoints
+        (
+            List<PointType>& points
+        ) const;
 
         //- Is the given position inside the domain of this decomposition
         bool positionOnThisProcessor(const point& pt) const;

@@ -73,9 +73,6 @@ protected:
         //- Maximum viscosity
         dimensionedScalar muMax_;
 
-        //- Plastic phase fraction
-        const volScalarField& alpha_;
-
 
 public:
 
@@ -85,8 +82,8 @@ public:
 
     // Constructors
 
-        //- Construct from components
-        plastic(const fvMesh& mesh, const word& group);
+        //- Construct from mixture
+        plastic(const incompressibleTwoPhaseInteractingMixture& mixture);
 
 
     //- Destructor

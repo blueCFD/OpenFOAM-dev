@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,11 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fv.H"
 #include "limitedSnGrad.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "localMax.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -39,6 +37,35 @@ namespace Foam
 namespace fv
 {
 
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class Type>
+limitedSnGrad<Type>::limitedSnGrad(const fvMesh& mesh)
+:
+    snGradScheme<Type>(mesh),
+    correctedScheme_(new correctedSnGrad<Type>(this->mesh())),
+    limitCoeff_(1)
+{}
+
+
+template<class Type>
+limitedSnGrad<Type>::limitedSnGrad(const fvMesh& mesh, Istream& schemeData)
+:
+    snGradScheme<Type>(mesh),
+    correctedScheme_(lookupCorrectedScheme(schemeData))
+{
+    if (limitCoeff_ < 0 || limitCoeff_ > 1)
+    {
+        FatalIOErrorInFunction
+        (
+            schemeData
+        )   << "limitCoeff is specified as " << limitCoeff_
+            << " but should be >= 0 && <= 1"
+            << exit(FatalIOError);
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class Type>
@@ -47,6 +74,16 @@ limitedSnGrad<Type>::~limitedSnGrad()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class Type>
+tmp<surfaceScalarField> limitedSnGrad<Type>::deltaCoeffs
+(
+    const GeometricField<Type, fvPatchField, volMesh>& vf
+) const
+{
+    return correctedScheme_->deltaCoeffs(vf);
+}
+
 
 template<class Type>
 tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>

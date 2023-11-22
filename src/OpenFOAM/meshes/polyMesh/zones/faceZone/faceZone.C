@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,7 +29,8 @@ License
 #include "polyMesh.H"
 #include "primitiveMesh.H"
 #include "demandDrivenData.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
+#include "polyMeshMap.H"
 #include "syncTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -386,7 +387,7 @@ void Foam::faceZone::resetAddressing
 }
 
 
-void Foam::faceZone::updateMesh(const mapPolyMesh& mpm)
+void Foam::faceZone::topoChange(const polyTopoChangeMap& map)
 {
     clearAddressing();
 
@@ -394,7 +395,7 @@ void Foam::faceZone::updateMesh(const mapPolyMesh& mpm)
     boolList newFlipMap(flipMap_.size());
     label nFaces = 0;
 
-    const labelList& faceMap = mpm.reverseFaceMap();
+    const labelList& faceMap = map.reverseFaceMap();
 
     forAll(*this, i)
     {
@@ -413,6 +414,12 @@ void Foam::faceZone::updateMesh(const mapPolyMesh& mpm)
 
     transfer(newAddressing);
     flipMap_.transfer(newFlipMap);
+}
+
+
+void Foam::faceZone::mapMesh(const polyMeshMap&)
+{
+    NotImplemented;
 }
 
 
@@ -515,7 +522,7 @@ void Foam::faceZone::movePoints(const pointField& p)
 {
     if (patchPtr_)
     {
-        patchPtr_->movePoints(p);
+        patchPtr_->clearGeom();
     }
 }
 

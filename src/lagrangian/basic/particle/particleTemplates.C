@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,8 +28,7 @@ License
 
 #include "cyclicPolyPatch.H"
 #include "cyclicAMIPolyPatch.H"
-#include "cyclicACMIPolyPatch.H"
-#include "cyclicRepeatAMIPolyPatch.H"
+#include "nonConformalCyclicPolyPatch.H"
 #include "processorPolyPatch.H"
 #include "symmetryPlanePolyPatch.H"
 #include "symmetryPolyPatch.H"
@@ -118,29 +117,6 @@ void Foam::particle::hitFace
         Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
     }
 
-    if (onBoundaryFace())
-    {
-        changeToMasterPatch();
-    }
-
-    hitFaceNoChangeToMasterPatch(displacement, fraction, cloud, td);
-}
-
-
-template<class TrackCloudType>
-void Foam::particle::hitFaceNoChangeToMasterPatch
-(
-    const vector& displacement,
-    const scalar fraction,
-    TrackCloudType& cloud,
-    trackingData& td
-)
-{
-    if (debug)
-    {
-        Info << "Particle " << origId() << nl << FUNCTION_NAME << nl << endl;
-    }
-
     typename TrackCloudType::particleType& p =
         static_cast<typename TrackCloudType::particleType&>(*this);
     typename TrackCloudType::particleType::trackingData& ttd =
@@ -156,6 +132,24 @@ void Foam::particle::hitFaceNoChangeToMasterPatch
     }
     else if (onBoundaryFace())
     {
+        forAll(cloud.patchNonConformalCyclicPatches()[p.patch()], i)
+        {
+            if
+            (
+                p.hitNonConformalCyclicPatch
+                (
+                    displacement,
+                    fraction,
+                    cloud.patchNonConformalCyclicPatches()[p.patch()][i],
+                    cloud,
+                    ttd
+                )
+            )
+            {
+                return;
+            }
+        }
+
         if (!p.hitPatch(cloud, ttd))
         {
             const polyPatch& patch = mesh_.boundaryMesh()[p.patch()];
@@ -176,17 +170,9 @@ void Foam::particle::hitFaceNoChangeToMasterPatch
             {
                 p.hitCyclicPatch(cloud, ttd);
             }
-            else if (isA<cyclicACMIPolyPatch>(patch))
-            {
-                p.hitCyclicACMIPatch(displacement, fraction, cloud, ttd);
-            }
             else if (isA<cyclicAMIPolyPatch>(patch))
             {
                 p.hitCyclicAMIPatch(displacement, fraction, cloud, ttd);
-            }
-            else if (isA<cyclicRepeatAMIPolyPatch>(patch))
-            {
-                p.hitCyclicRepeatAMIPatch(displacement, fraction, cloud, ttd);
             }
             else if (isA<processorPolyPatch>(patch))
             {
@@ -402,84 +388,77 @@ void Foam::particle::hitCyclicAMIPatch
 
 
 template<class TrackCloudType>
-void Foam::particle::hitCyclicACMIPatch
+bool Foam::particle::hitNonConformalCyclicPatch
 (
     const vector& displacement,
     const scalar fraction,
+    const label patchi,
     TrackCloudType& cloud,
     trackingData& td
 )
 {
-    typename TrackCloudType::particleType& p =
-        static_cast<typename TrackCloudType::particleType&>(*this);
-    typename TrackCloudType::particleType::trackingData& ttd =
-        static_cast<typename TrackCloudType::particleType::trackingData&>(td);
+    const nonConformalCyclicPolyPatch& nccpp =
+        static_cast<const nonConformalCyclicPolyPatch&>
+        (mesh_.boundaryMesh()[patchi]);
 
-    const cyclicACMIPolyPatch& cpp =
-        static_cast<const cyclicACMIPolyPatch&>(mesh_.boundaryMesh()[patch()]);
+    const point sendPos = this->position();
 
-    vector patchNormal, patchDisplacement;
-    patchData(patchNormal, patchDisplacement);
+    // Get the send patch data
+    vector sendNormal, sendDisplacement;
+    patchData(sendNormal, sendDisplacement);
 
-    const label localFacei = cpp.whichFace(facei_);
+    // Project the particle through the non-conformal patch
+    point receivePos;
+    const patchToPatch::procFace receiveProcFace =
+        nccpp.ray
+        (
+            stepFractionSpan()[0] + stepFraction_*stepFractionSpan()[1],
+            nccpp.origPatch().whichFace(facei_),
+            sendPos,
+            displacement - fraction*sendDisplacement,
+            receivePos
+        );
 
-    // If the mask is within the patch tolerance at either end, then we can
-    // assume an interaction with the appropriate part of the ACMI pair.
-    const scalar mask = cpp.mask()[localFacei];
-    bool couple = mask >= 1 - cpp.tolerance();
-    bool nonOverlap = mask <= cpp.tolerance();
+    // If we didn't hit anything then this particle is assumed to project to
+    // the orig patch, or another different non-conformal patch. Return, so
+    // these can be tried.
+    if (receiveProcFace.proci == -1) return false;
 
-    // If the mask is an intermediate value, then we search for a location on
-    // the other side of the AMI. If we can't find a location, then we assume
-    // that we have hit the non-overlap patch.
-    if (!couple && !nonOverlap)
+    // If we are transferring between processes then mark as such and return.
+    // The cloud will handle all processor transfers as a single batch.
+    if (receiveProcFace.proci != Pstream::myProcNo())
     {
-        vector pos = position();
-        couple =
-            cpp.pointAMIAndFace
-            (
-                localFacei,
-                displacement - fraction*patchDisplacement,
-                pos
-            ).first() >= 0;
-        nonOverlap = !couple;
+        td.sendFromPatch = nccpp.index();
+        td.sendToProc = receiveProcFace.proci;
+        td.sendToPatch = nccpp.nbrPatchID();
+        td.sendToPatchFace = receiveProcFace.facei;
+
+        return true;
     }
 
-    if (couple)
-    {
-        p.hitCyclicAMIPatch(displacement, fraction, cloud, ttd);
-    }
-    else
-    {
-        // Move to the face associated with the non-overlap patch and redo the
-        // face interaction.
-        tetFacei_ = facei_ = cpp.nonOverlapPatch().start() + localFacei;
-        p.hitFaceNoChangeToMasterPatch(displacement, fraction, cloud, td);
-    }
+    // If both sides are on the same process, then do the local transfer
+    prepareForNonConformalCyclicTransfer
+    (
+        nccpp.index(),
+        receiveProcFace.facei
+    );
+    correctAfterNonConformalCyclicTransfer
+    (
+        nccpp.nbrPatchID()
+    );
+
+    return true;
 }
 
 
 template<class TrackCloudType>
-void Foam::particle::hitCyclicRepeatAMIPatch
-(
-    const vector& displacement,
-    const scalar fraction,
-    TrackCloudType& cloud,
-    trackingData& td
-)
+void Foam::particle::hitProcessorPatch(TrackCloudType& cloud, trackingData& td)
 {
-    typename TrackCloudType::particleType& p =
-        static_cast<typename TrackCloudType::particleType&>(*this);
-    typename TrackCloudType::particleType::trackingData& ttd =
-        static_cast<typename TrackCloudType::particleType::trackingData&>(td);
-
-    p.hitCyclicAMIPatch(displacement, fraction, cloud, ttd);
+    td.sendToProc = cloud.patchNbrProc()[patch()];
+    td.sendFromPatch = patch();
+    td.sendToPatch = cloud.patchNbrProcPatch()[patch()];
+    td.sendToPatchFace = mesh().boundaryMesh()[patch()].whichFace(face());
 }
-
-
-template<class TrackCloudType>
-void Foam::particle::hitProcessorPatch(TrackCloudType&, trackingData&)
-{}
 
 
 template<class TrackCloudType>

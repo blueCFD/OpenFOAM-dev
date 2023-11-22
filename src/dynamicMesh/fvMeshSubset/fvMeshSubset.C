@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,15 @@ Description
 #include "processorPolyPatch.H"
 #include "removeCells.H"
 #include "polyTopoChange.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+    defineTypeNameAndDebug(fvMeshSubset, 0);
+}
+
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -264,7 +272,7 @@ void Foam::fvMeshSubset::doCoupledPatches
         reduce(nUncoupled, sumOp<label>());
     }
 
-    if (nUncoupled > 0)
+    if (debug && nUncoupled > 0)
     {
         Info<< "Uncoupled " << nUncoupled << " faces on coupled patches. "
             << "(processorPolyPatch, cyclicPolyPatch)" << endl;
@@ -470,6 +478,12 @@ Foam::fvMeshSubset::fvMeshSubset(const fvMesh& baseMesh)
     cellMap_(0),
     patchMap_(0),
     faceFlipMapPtr_()
+{}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::fvMeshSubset::~fvMeshSubset()
 {}
 
 
@@ -1523,7 +1537,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
     );
 
     // Create mesh, return map from old to new mesh.
-    autoPtr<mapPolyMesh> map = meshMod.makeMesh
+    autoPtr<polyTopoChangeMap> map = meshMod.makeMesh
     (
         fvMeshSubsetPtr_,
         IOobject

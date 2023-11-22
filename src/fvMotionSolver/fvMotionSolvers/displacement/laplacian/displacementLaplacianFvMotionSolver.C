@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,7 +29,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "OFstream.H"
 #include "meshTools.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "volPointInterpolation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -51,11 +51,12 @@ namespace Foam
 
 Foam::displacementLaplacianFvMotionSolver::displacementLaplacianFvMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    displacementMotionSolver(mesh, dict, typeName),
+    displacementMotionSolver(name, mesh, dict, typeName),
     fvMotionSolver(mesh),
     cellDisplacement_
     (
@@ -240,15 +241,22 @@ void Foam::displacementLaplacianFvMotionSolver::solve()
 }
 
 
-void Foam::displacementLaplacianFvMotionSolver::updateMesh
+void Foam::displacementLaplacianFvMotionSolver::topoChange
 (
-    const mapPolyMesh& mpm
+    const polyTopoChangeMap& map
 )
 {
-    displacementMotionSolver::updateMesh(mpm);
+    displacementMotionSolver::topoChange(map);
+    diffusivityPtr_.clear();
+}
 
-    // Update diffusivity. Note two stage to make sure old one is de-registered
-    // before creating/registering new one.
+
+void Foam::displacementLaplacianFvMotionSolver::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    displacementMotionSolver::mapMesh(map);
     diffusivityPtr_.clear();
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,22 +48,10 @@ namespace mixtureViscosityModels
 
 Foam::mixtureViscosityModels::slurry::slurry
 (
-    const fvMesh& mesh,
-    const word& group
+    const incompressibleTwoPhaseInteractingMixture& mixture
 )
 :
-    mixtureViscosityModel(mesh, group),
-    alpha_
-    (
-        mesh.lookupObject<volScalarField>
-        (
-            IOobject::groupName
-            (
-                lookupOrDefault<word>("alpha", "alpha"),
-                group
-            )
-        )
-    )
+    mixtureViscosityModel(mixture)
 {}
 
 
@@ -76,9 +64,11 @@ Foam::mixtureViscosityModels::slurry::mu
     const volVectorField& U
 ) const
 {
+    const volScalarField& alphad = mixture_.alphad();
+
     return
     (
-        muc*(1.0 + 2.5*alpha_ + 10.05*sqr(alpha_) + 0.00273*exp(16.6*alpha_))
+        muc*(1.0 + 2.5*alphad + 10.05*sqr(alphad) + 0.00273*exp(16.6*alphad))
     );
 }
 

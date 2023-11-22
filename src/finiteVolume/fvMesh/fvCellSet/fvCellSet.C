@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -167,26 +167,33 @@ Foam::fvCellSet::~fvCellSet()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::fvCellSet::updateMesh(const mapPolyMesh&)
-{
-    setCells();
-    setV();
-}
-
-
-void Foam::fvCellSet::distribute(const mapDistributePolyMesh&)
-{
-    setCells();
-    setV();
-}
-
-
 void Foam::fvCellSet::movePoints()
 {
     if (selectionMode_ == selectionModeType::points)
     {
         setCells();
     }
+    setV();
+}
+
+
+void Foam::fvCellSet::topoChange(const polyTopoChangeMap&)
+{
+    setCells();
+    setV();
+}
+
+
+void Foam::fvCellSet::mapMesh(const polyMeshMap&)
+{
+    setCells();
+    setV();
+}
+
+
+void Foam::fvCellSet::distribute(const polyDistributionMap&)
+{
+    setCells();
     setV();
 }
 

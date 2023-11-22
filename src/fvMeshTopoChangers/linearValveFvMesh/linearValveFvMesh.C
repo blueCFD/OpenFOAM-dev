@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "linearValveFvMesh.H"
 #include "Time.T.H"
 #include "slidingInterface.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "polyTopoChange.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -289,9 +289,9 @@ void Foam::linearValveFvMesh::update()
         // Changing topology by hand
         resetMorph();
         setMorphTimeIndex(3*time().timeIndex());
-        updateMesh();
+        topoChange();
 
-        msPtr_->updateMesh();
+        msPtr_->topoChange();
     }
     else
     {
@@ -304,9 +304,9 @@ void Foam::linearValveFvMesh::update()
     // Changing topology by hand
     resetMorph();
     setMorphTimeIndex(3*time().timeIndex() + 1);
-    updateMesh();
+    topoChange();
 
-    msPtr_->updateMesh();
+    msPtr_->topoChange();
 
     if (topoChangeMap.valid())
     {
@@ -327,11 +327,11 @@ void Foam::linearValveFvMesh::update()
     makeSlidersLive();
     resetMorph();
     setMorphTimeIndex(3*time().timeIndex() + 2);
-    updateMesh();
+    topoChange();
 
     Info<< "Moving points post slider attach" << endl;
 
-    msPtr_->updateMesh();
+    msPtr_->topoChange();
 
     Info<< "Sliding interfaces coupled: " << attached() << endl;
 }

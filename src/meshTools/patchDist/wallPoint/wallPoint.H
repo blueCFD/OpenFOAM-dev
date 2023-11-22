@@ -30,17 +30,14 @@ Description
 
 SourceFiles
     wallPointI.H
-    wallPoint.C
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef wallPoint_H
 #define wallPoint_H
 
-#include "point.T.H"
-#include "label.H"
-#include "scalar.H"
-#include "tensor.H"
+#include "pointField.H"
+#include "face.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,18 +47,22 @@ namespace Foam
 // Forward declaration of classes
 class polyPatch;
 class polyMesh;
-class wallPoint;
+class transformer;
 
 // Forward declaration of friend functions and operators
-Ostream& operator<<(Ostream&, const wallPoint&);
-Istream& operator>>(Istream&, wallPoint&);
-
+template<class Derived>
+class WallPointBase;
+template<class Derived>
+Ostream& operator<<(Ostream&, const WallPointBase<Derived>&);
+template<class Derived>
+Istream& operator>>(Istream&, WallPointBase<Derived>&);
 
 /*---------------------------------------------------------------------------*\
-                          Class wallPoint Declaration
+                          Class WallPointBase Declaration
 \*---------------------------------------------------------------------------*/
 
-class wallPoint
+template<class Derived>
+class WallPointBase
 {
     // Private Data
 
@@ -72,7 +73,9 @@ class wallPoint
         scalar distSqr_;
 
 
-    // Private Member Functions
+protected:
+
+    // Protected Member Functions
 
         //- Evaluate distance to point. Update distSqr, origin from whomever
         //  is nearer pt. Return true if w2 is closer to point,
@@ -81,7 +84,7 @@ class wallPoint
         inline bool update
         (
             const point&,
-            const wallPoint& w2,
+            const WallPointBase<Derived>& w2,
             const scalar tol,
             TrackingData& td
         );
@@ -92,10 +95,19 @@ public:
     // Constructors
 
         //- Construct null
-        inline wallPoint();
+        inline WallPointBase();
 
         //- Construct from origin, distance
-        inline wallPoint(const point& origin, const scalar distSqr);
+        inline WallPointBase(const point& origin, const scalar distSqr);
+
+        //- Construct from face, distance
+        inline WallPointBase
+        (
+            const face& f,
+            const pointField& ps,
+            const point& centre,
+            const scalar distSqr
+        );
 
 
     // Member Functions
@@ -126,40 +138,18 @@ public:
             inline bool sameGeometry
             (
                 const polyMesh&,
-                const wallPoint&,
+                const WallPointBase<Derived>&,
                 const scalar,
                 TrackingData& td
             ) const;
 
-            //- Convert any absolute coordinates into relative to (patch)face
-            //  centre
-            template<class TrackingData>
-            inline void leaveDomain
-            (
-                const polyMesh&,
-                const polyPatch&,
-                const label patchFacei,
-                const point& faceCentre,
-                TrackingData& td
-            );
-
-            //- Reverse of leaveDomain
-            template<class TrackingData>
-            inline void enterDomain
-            (
-                const polyMesh&,
-                const polyPatch&,
-                const label patchFacei,
-                const point& faceCentre,
-                TrackingData& td
-            );
-
-            //- Apply rotation matrix to any coordinates
+            //- Transform across an interface
             template<class TrackingData>
             inline void transform
             (
-                const polyMesh&,
-                const tensor&,
+                const polyPatch& patch,
+                const label patchFacei,
+                const transformer& transform,
                 TrackingData& td
             );
 
@@ -170,7 +160,7 @@ public:
                 const polyMesh&,
                 const label thisCelli,
                 const label neighbourFacei,
-                const wallPoint& neighbourInfo,
+                const WallPointBase<Derived>& neighbourInfo,
                 const scalar tol,
                 TrackingData& td
             );
@@ -182,7 +172,7 @@ public:
                 const polyMesh&,
                 const label thisFacei,
                 const label neighbourCelli,
-                const wallPoint& neighbourInfo,
+                const WallPointBase<Derived>& neighbourInfo,
                 const scalar tol,
                 TrackingData& td
             );
@@ -193,27 +183,55 @@ public:
             (
                 const polyMesh&,
                 const label thisFacei,
-                const wallPoint& neighbourInfo,
+                const WallPointBase<Derived>& neighbourInfo,
                 const scalar tol,
                 TrackingData& td
             );
 
             //- Same (like operator==)
             template<class TrackingData>
-            inline bool equal(const wallPoint&, TrackingData& td) const;
+            inline bool equal
+            (
+                const WallPointBase<Derived>&,
+                TrackingData& td
+            ) const;
 
 
     // Member Operators
 
-        // Needed for List IO
-        inline bool operator==(const wallPoint&) const;
-        inline bool operator!=(const wallPoint&) const;
+        inline bool operator==(const WallPointBase<Derived>&) const;
+        inline bool operator!=(const WallPointBase<Derived>&) const;
 
 
     // IOstream Operators
 
-        friend Ostream& operator<<(Ostream&, const wallPoint&);
-        friend Istream& operator>>(Istream&, wallPoint&);
+        friend Ostream& operator<< <Derived>
+        (
+            Ostream&,
+            const WallPointBase<Derived>&
+        );
+
+        friend Istream& operator>> <Derived>
+        (
+            Istream&,
+            WallPointBase<Derived>&
+        );
+};
+
+
+/*---------------------------------------------------------------------------*\
+                          Class wallPoint Declaration
+\*---------------------------------------------------------------------------*/
+
+class wallPoint
+:
+    public WallPointBase<wallPoint>
+{
+    public:
+
+        using WallPointBase<wallPoint>::WallPointBase;
+
+        template<class Derived> using type = WallPointBase<Derived>;
 };
 
 

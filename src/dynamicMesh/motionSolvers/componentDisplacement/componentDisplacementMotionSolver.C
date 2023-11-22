@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "componentDisplacementMotionSolver.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -68,12 +68,13 @@ Foam::direction Foam::componentDisplacementMotionSolver::cmpt
 
 Foam::componentDisplacementMotionSolver::componentDisplacementMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict,
     const word& type
 )
 :
-    motionSolver(mesh, dict, type),
+    motionSolver(name, mesh, dict, type),
     cmptName_(coeffDict().lookup("component")),
     cmpt_(cmpt(cmptName_)),
     points0_
@@ -140,7 +141,10 @@ void Foam::componentDisplacementMotionSolver::movePoints(const pointField& p)
 }
 
 
-void Foam::componentDisplacementMotionSolver::updateMesh(const mapPolyMesh& mpm)
+void Foam::componentDisplacementMotionSolver::topoChange
+(
+    const polyTopoChangeMap& map
+)
 {
     // pointMesh already updates pointFields.
 
@@ -151,8 +155,8 @@ void Foam::componentDisplacementMotionSolver::updateMesh(const mapPolyMesh& mpm)
     // Get the new points either from the map or the mesh
     const scalarField points
     (
-        mpm.hasMotionPoints()
-      ? mpm.preMotionPoints().component(cmpt_)
+        map.hasMotionPoints()
+      ? map.preMotionPoints().component(cmpt_)
       : mesh().points().component(cmpt_)
     );
 
@@ -161,15 +165,15 @@ void Foam::componentDisplacementMotionSolver::updateMesh(const mapPolyMesh& mpm)
         (gMax(points0_)-gMin(points0_))
        /(gMax(points)-gMin(points));
 
-    scalarField newPoints0(mpm.pointMap().size());
+    scalarField newPoints0(map.pointMap().size());
 
     forAll(newPoints0, pointi)
     {
-        label oldPointi = mpm.pointMap()[pointi];
+        label oldPointi = map.pointMap()[pointi];
 
         if (oldPointi >= 0)
         {
-            label masterPointi = mpm.reversePointMap()[oldPointi];
+            label masterPointi = map.reversePointMap()[oldPointi];
 
             if (masterPointi == pointi)
             {
@@ -195,9 +199,16 @@ void Foam::componentDisplacementMotionSolver::updateMesh(const mapPolyMesh& mpm)
 }
 
 
+void Foam::componentDisplacementMotionSolver::mapMesh(const polyMeshMap& map)
+{
+    points0_ == mesh().points().component(cmpt_);
+    pointDisplacement_ == Zero;
+}
+
+
 void Foam::componentDisplacementMotionSolver::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {}
 

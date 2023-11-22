@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,17 +36,20 @@ Description
     \verbatim
     systemCall1
     {
-        type        systemCall;
-        libs        ("libutilityFunctionObjects.so");
-        ...
+        type            systemCall;
+
+        libs            ("libutilityFunctionObjects.so");
+
         executeCalls
         (
             "echo execute"
         );
+
         writeCalls
         (
             "echo \*\*\* writing data \*\*\*"
         );
+
         endCalls
         (
             "echo \*\*\* writing .bashrc \*\*\*"
@@ -65,11 +68,11 @@ Usage
         endCalls     | list of calls on end     | yes         |
     \endtable
 
-Note
-    Since this function object executes system calls, there is a potential
-    security risk.  In order to use the \c systemCall function object, the
-    \c allowSystemOperations must be set to '1'; otherwise, system calls will
-    not be allowed.
+    Note:
+        Since this function object executes system calls, there is a potential
+        security risk.  In order to use the \c systemCall function object, the
+        \c allowSystemOperations must be set to '1'; otherwise, system calls
+        will not be allowed.
 
 See also
     Foam::functionObject

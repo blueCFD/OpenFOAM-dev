@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,10 +31,10 @@ License
 #include "meshSearch.H"
 #include "sampledSet.H"
 #include "globalIndex.H"
-#include "mapDistribute.H"
+#include "distributionMap.H"
 #include "interpolationCellPoint.H"
 #include "PatchTools.T.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "writeFile.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -585,15 +585,6 @@ bool Foam::functionObjects::streamlines::write()
 }
 
 
-void Foam::functionObjects::streamlines::updateMesh(const mapPolyMesh& mpm)
-{
-    if (&mpm.mesh() == &mesh_)
-    {
-        read(dict_);
-    }
-}
-
-
 void Foam::functionObjects::streamlines::movePoints(const polyMesh& mesh)
 {
     if (&mesh == &mesh_)
@@ -601,6 +592,27 @@ void Foam::functionObjects::streamlines::movePoints(const polyMesh& mesh)
         // Moving mesh affects the search tree
         read(dict_);
     }
+}
+
+
+void Foam::functionObjects::streamlines::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{
+    if (&map.mesh() == &mesh_)
+    {
+        read(dict_);
+    }
+}
+
+
+void Foam::functionObjects::streamlines::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    read(dict_);
 }
 
 

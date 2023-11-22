@@ -19,6 +19,8 @@ internalField   uniform 0;
 
 boundaryField
 {
+    #includeEtc "caseDicts/setConstraintTypes"
+
     rotor
     {
         type            zeroGradient;
@@ -29,14 +31,9 @@ boundaryField
         type            zeroGradient;
     }
 
-    front
+    nonCouple
     {
-        type            empty;
-    }
-
-    back
-    {
-        type            empty;
+        type            zeroGradient;
     }
 }
 

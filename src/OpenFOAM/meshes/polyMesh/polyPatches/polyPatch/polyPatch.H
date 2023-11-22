@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,9 +91,6 @@ protected:
 
     // Protected Member Functions
 
-        //- Inherit movePoints from primitivePatch
-        using primitivePatch::movePoints;
-
         // The polyPatch geometry initialisation is called by polyBoundaryMesh
         friend class polyBoundaryMesh;
 
@@ -105,6 +102,9 @@ protected:
         virtual void calcGeometry(PstreamBuffers&)
         {}
 
+        //- Correct patches after moving points
+        virtual void movePoints(const pointField& p);
+
         //- Initialise the patches for moving points
         virtual void initMovePoints(PstreamBuffers&, const pointField&)
         {}
@@ -113,11 +113,11 @@ protected:
         virtual void movePoints(PstreamBuffers&, const pointField& p);
 
         //- Initialise the update of the patch topology
-        virtual void initUpdateMesh(PstreamBuffers&)
+        virtual void initTopoChange(PstreamBuffers&)
         {}
 
         //- Update of the patch topology
-        virtual void updateMesh(PstreamBuffers&);
+        virtual void topoChange(PstreamBuffers&);
 
         //- Clear geometry
         virtual void clearGeom();
@@ -221,9 +221,6 @@ public:
 
         //- Copy constructor
         polyPatch(const polyPatch&);
-
-        // To avoid irritating warnings from clang
-        using primitivePatch::clone;
 
         //- Construct and return a clone, resetting the boundary mesh
         virtual autoPtr<polyPatch> clone(const polyBoundaryMesh& bm) const

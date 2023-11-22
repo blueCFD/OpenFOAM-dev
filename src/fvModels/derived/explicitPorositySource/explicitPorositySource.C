@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -139,25 +139,31 @@ void Foam::fv::explicitPorositySource::addSup
 }
 
 
-void Foam::fv::explicitPorositySource::updateMesh(const mapPolyMesh& map)
+bool Foam::fv::explicitPorositySource::movePoints()
 {
-    set_.updateMesh(map);
+    set_.movePoints();
+    return true;
+}
+
+
+void Foam::fv::explicitPorositySource::topoChange(const polyTopoChangeMap& map)
+{
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::explicitPorositySource::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
 }
 
 
 void Foam::fv::explicitPorositySource::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     set_.distribute(map);
-}
-
-
-bool Foam::fv::explicitPorositySource::movePoints()
-{
-    set_.movePoints();
-    return true;
 }
 
 

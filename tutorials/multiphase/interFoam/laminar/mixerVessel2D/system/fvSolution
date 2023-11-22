@@ -19,51 +19,65 @@ solvers
     alpha.water
     {
         nAlphaCorr      1;
-        nAlphaSubCycles 2;
+        nAlphaSubCycles 3;
     }
 
     "pcorr.*"
     {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-10;
+        solver          GAMG;
+        smoother        DICGaussSeidel;
+        tolerance       0.02;
         relTol          0;
     }
 
     p_rgh
     {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-07;
-        relTol          0.05;
+        $pcorr;
+        tolerance       1e-8;
+        relTol          0.01;
     }
 
     p_rghFinal
     {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-07;
+        $p_rgh;
         relTol          0;
     }
 
     U
     {
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
-        tolerance       1e-06;
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-5;
+        relTol          0.01;
+    }
+
+    UFinal
+    {
+        $U;
         relTol          0;
     }
 }
 
 PIMPLE
 {
-    momentumPredictor no;
-    nCorrectors     3;
+    momentumPredictor   no;
+    nOuterCorrectors    1;
+    nCorrectors         1;
     nNonOrthogonalCorrectors 0;
 
-    pRefCell        0;
-    pRefValue       0;
+    correctPhi          yes;
+    correctMeshPhi      no;
+
+    pRefCell            0;
+    pRefValue           0;
 }
 
+relaxationFactors
+{
+    equations
+    {
+        ".*"            1;
+    }
+}
 
 // ************************************************************************* //

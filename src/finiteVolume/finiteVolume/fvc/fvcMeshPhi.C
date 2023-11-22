@@ -43,6 +43,20 @@ Foam::tmp<Foam::surfaceScalarField> Foam::fvc::meshPhi
 }
 
 
+Foam::tmp<Foam::scalarField> Foam::fvc::meshPhi
+(
+    const volVectorField& vf,
+    const label patchi
+)
+{
+    return fv::ddtScheme<vector>::New
+    (
+        vf.mesh(),
+        vf.mesh().schemes().ddt("ddt(" + vf.name() + ')')
+    ).ref().meshPhi(vf, patchi);
+}
+
+
 Foam::tmp<Foam::surfaceScalarField> Foam::fvc::meshPhi
 (
     const dimensionedScalar& rho,
@@ -264,14 +278,7 @@ void Foam::fvc::correctUf
     const surfaceScalarField& phi
 )
 {
-    const fvMesh& mesh = U.mesh();
-
-    if (mesh.dynamic())
-    {
-        Uf() = fvc::interpolate(U);
-        surfaceVectorField n(mesh.Sf()/mesh.magSf());
-        Uf() += n*(phi/mesh.magSf() - (n & Uf()));
-    }
+    correctUf(Uf, U, phi, NullMRF());
 }
 
 
@@ -283,14 +290,7 @@ void Foam::fvc::correctRhoUf
     const surfaceScalarField& phi
 )
 {
-    const fvMesh& mesh = U.mesh();
-
-    if (mesh.dynamic())
-    {
-        rhoUf() = fvc::interpolate(rho*U);
-        surfaceVectorField n(mesh.Sf()/mesh.magSf());
-        rhoUf() += n*(fvc::absolute(phi, rho, U)/mesh.magSf() - (n & rhoUf()));
-    }
+    correctRhoUf(rhoUf, rho, U, phi, NullMRF());
 }
 
 

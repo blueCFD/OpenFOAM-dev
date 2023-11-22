@@ -131,9 +131,9 @@ bool Foam::sampledSetParticle::move
 )
 {
     td.keepParticle = true;
-    td.switchProcessor = false;
+    td.sendToProc = -1;
 
-    while (td.keepParticle && !td.switchProcessor && seti_ < td.set_.size() - 1)
+    while (td.keepParticle && td.sendToProc == -1 && seti_ < td.set_.size() - 1)
     {
         const vector s = td.set_[seti_ + 1] - td.set_[seti_];
         const scalar magS = mag(s);
@@ -177,12 +177,6 @@ bool Foam::sampledSetParticle::move
     }
 
     return true;
-}
-
-
-bool Foam::sampledSetParticle::hitPatch(sampledSetCloud&, trackingData&)
-{
-    return false;
 }
 
 
@@ -238,33 +232,9 @@ void Foam::sampledSetParticle::hitCyclicAMIPatch
 }
 
 
-void Foam::sampledSetParticle::hitCyclicACMIPatch
-(
-    const vector& displacement,
-    const scalar fraction,
-    sampledSetCloud& cloud,
-    trackingData& td
-)
-{
-    seti_ = labelMax;
-}
-
-
-void Foam::sampledSetParticle::hitCyclicRepeatAMIPatch
-(
-    const vector& displacement,
-    const scalar fraction,
-    sampledSetCloud& cloud,
-    trackingData& td
-)
-{
-    seti_ = labelMax;
-}
-
-
 void Foam::sampledSetParticle::hitProcessorPatch
 (
-    sampledSetCloud&,
+    sampledSetCloud& cloud,
     trackingData& td
 )
 {
@@ -277,7 +247,7 @@ void Foam::sampledSetParticle::hitProcessorPatch
     }
     else
     {
-        td.switchProcessor = true;
+        particle::hitProcessorPatch(cloud, td);
     }
 }
 

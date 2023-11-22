@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -357,13 +357,19 @@ void Foam::twoDPointCorrector::correctDisplacement
 }
 
 
-void Foam::twoDPointCorrector::updateMesh(const mapPolyMesh&)
+void Foam::twoDPointCorrector::topoChange(const polyTopoChangeMap&)
 {
     clearAddressing();
 }
 
 
-void Foam::twoDPointCorrector::distribute(const mapDistributePolyMesh&)
+void Foam::twoDPointCorrector::mapMesh(const polyMeshMap&)
+{
+    clearAddressing();
+}
+
+
+void Foam::twoDPointCorrector::distribute(const polyDistributionMap&)
 {
     clearAddressing();
 }

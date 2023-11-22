@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ Description
     Undo list: contains a refinement tree (of type splitCell; cell labels are
     of no consequence) and a list of visible splitCells, i.e. the top of the
     tree (where the cell labels are valid). Now every cell added gets put on
-    the tree and every updateMesh action updates the labels of visible
+    the tree and every topoChange action updates the labels of visible
     splitcells.
 
     We can now ask this structure for a list of visible split cells or the list
@@ -175,7 +175,7 @@ public:
 
             //- Update stored refinement pattern for changes to mesh. Only
             //  call if undoable set.
-            void updateMesh(const mapPolyMesh& morphMap);
+            void topoChange(const polyTopoChangeMap& map);
 
             //- Calculate split faces from current liveCells. Only
             //  call if undoable set.

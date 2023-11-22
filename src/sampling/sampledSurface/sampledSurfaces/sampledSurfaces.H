@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,6 +61,7 @@ Usage
         surfaceFormat | the format in which to write the surface file | yes   |
         interpolationScheme | the method by which values are interpolated \\
                               from the mesh to the surface | yes
+        writeEmpty   | write out files for empty surfaces | no | no
         surfaces     | the list of surfaces    | yes         |
     \endtable
 
@@ -146,6 +147,9 @@ class sampledSurfaces
 
             //- Interpolation scheme to use
             word interpolationScheme_;
+
+            //- Should we create files for empty surfaces?
+            Switch writeEmpty_;
 
 
         // Surfaces
@@ -235,13 +239,17 @@ public:
         //- Sample and write
         virtual bool write();
 
-        //- Update for changes of mesh - expires the surfaces
-        virtual void updateMesh(const mapPolyMesh&);
-
         //- Update for mesh point-motion - expires the surfaces
         virtual void movePoints(const polyMesh&);
 
-        //- Update for changes of mesh due to readUpdate - expires the surfaces
+        //- Update topology using the given map - expires the surfaces
+        virtual void topoChange(const polyTopoChangeMap&);
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
+
+        //- Update topology using the given map due to readUpdate
+        //  - expires the surfaces
         virtual void readUpdate(const polyMesh::readUpdateState state);
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -334,14 +334,14 @@ void extrudePatchMesh::extrudeMesh(const List<polyPatch*>& regionPatches)
             meshMod
         );
 
-        autoPtr<mapPolyMesh> map = meshMod.changeMesh
+        autoPtr<polyTopoChangeMap> map = meshMod.changeMesh
         (
             *this,              // mesh to change
             false               // inflate
         );
 
         // Update numbering on extruder.
-        extruder.updateMesh(map);
+        extruder.topoChange(map);
 
         this->setInstance(this->thisDb().time().constant());
         this->write();

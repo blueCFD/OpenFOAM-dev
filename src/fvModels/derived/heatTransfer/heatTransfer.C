@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -159,22 +159,28 @@ void Foam::fv::heatTransfer::correct()
 }
 
 
-void Foam::fv::heatTransfer::updateMesh(const mapPolyMesh& map)
-{
-    set_.updateMesh(map);
-}
-
-
-void Foam::fv::heatTransfer::distribute(const mapDistributePolyMesh& map)
-{
-    set_.distribute(map);
-}
-
-
 bool Foam::fv::heatTransfer::movePoints()
 {
     set_.movePoints();
     return true;
+}
+
+
+void Foam::fv::heatTransfer::topoChange(const polyTopoChangeMap& map)
+{
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::heatTransfer::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
+}
+
+
+void Foam::fv::heatTransfer::distribute(const polyDistributionMap& map)
+{
+    set_.distribute(map);
 }
 
 

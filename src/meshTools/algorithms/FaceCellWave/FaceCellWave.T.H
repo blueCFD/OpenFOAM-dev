@@ -88,10 +88,6 @@ protected:
         //- ...
         static scalar propagationTol_;
 
-        //- Used as default trackdata value to satisfy default template
-        //  argument.
-        static int dummyTrackData_;
-
 
     // Protected data
 
@@ -201,46 +197,13 @@ protected:
                 List<Type>& changedPatchFacesInfo
             ) const;
 
-            //- Handle leaving domain. Implementation referred to Type
-            void leaveDomain
+            //- Transform across an interface. Implementation referred to Type
+            void transform
             (
                 const polyPatch& patch,
                 const label nFaces,
                 const labelList& faceLabels,
-                List<Type>& faceInfo
-            ) const;
-
-            //- Handle leaving domain. Implementation referred to Type
-            void enterDomain
-            (
-                const polyPatch& patch,
-                const label nFaces,
-                const labelList& faceLabels,
-                List<Type>& faceInfo
-            ) const;
-
-            //- Offset face labels by constant value
-            static void offset
-            (
-                const polyPatch& patch,
-                const label off,
-                const label nFaces,
-                labelList& faces
-            );
-
-            //- Apply transformation to Type
-            void transform
-            (
-                const tensor& rotTensor,
-                const label nFaces,
-                List<Type>& faceInfo
-            );
-
-            //- Apply transformation to Type
-            void transform
-            (
-                const transformer& trans,
-                const label nFaces,
+                const transformer& transform,
                 List<Type>& faceInfo
             );
 
@@ -259,6 +222,12 @@ protected:
 
 
 public:
+
+    // Static Data
+
+        //- Default tracking data to go with default template argument
+        static int defaultTrackingData_;
+
 
     // Static Functions
 
@@ -284,7 +253,7 @@ public:
             const polyMesh&,
             UList<Type>& allFaceInfo,
             UList<Type>& allCellInfo,
-            TrackingData& td = dummyTrackData_
+            TrackingData& td = defaultTrackingData_
         );
 
         //- Construct from mesh and list of changed faces with the Type
@@ -298,7 +267,7 @@ public:
             UList<Type>& allFaceInfo,
             UList<Type>& allCellInfo,
             const label maxIter,
-            TrackingData& td = dummyTrackData_
+            TrackingData& td = defaultTrackingData_
         );
 
         //- Construct from mesh and explicitly connected boundary faces
@@ -315,7 +284,7 @@ public:
             UList<Type>& allFaceInfo,
             UList<Type>& allCellInfo,
             const label maxIter,
-            TrackingData& td = dummyTrackData_
+            TrackingData& td = defaultTrackingData_
         );
 
         //- Disallow default bitwise copy construction

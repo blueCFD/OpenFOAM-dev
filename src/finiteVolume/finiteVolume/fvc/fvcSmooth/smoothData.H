@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,10 +36,18 @@ SourceFiles
 #ifndef smoothData_H
 #define smoothData_H
 
+#include "scalar.H"
+#include "labelPair.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+// Forward declaration of classes
+class fvPatch;
+class fvMesh;
+class transformer;
 
 /*---------------------------------------------------------------------------*\
                          Class smoothData Declaration
@@ -101,7 +109,7 @@ public:
             }
 
 
-        // Needed by FaceCellWave
+        // Needed by FvFaceCellWave
 
             //- Check whether origin has been changed at all or
             //  still contains original (invalid) value
@@ -113,41 +121,19 @@ public:
             template<class TrackingData>
             inline bool sameGeometry
             (
-                const polyMesh&,
+                const fvMesh&,
                 const smoothData&,
                 const scalar,
                 TrackingData& td
             ) const;
 
-            //- Convert any absolute coordinates into relative to
-            //  (patch)face centre
-            template<class TrackingData>
-            inline void leaveDomain
-            (
-                const polyMesh&,
-                const polyPatch&,
-                const label patchFacei,
-                const point& faceCentre,
-                TrackingData& td
-            );
-
-            //- Reverse of leaveDomain
-            template<class TrackingData>
-            inline void enterDomain
-            (
-                const polyMesh&,
-                const polyPatch&,
-                const label patchFacei,
-                const point& faceCentre,
-                TrackingData& td
-            );
-
-            //- Apply rotation matrix to any coordinates
+            //- Transform across an interface
             template<class TrackingData>
             inline void transform
             (
-                const polyMesh&,
-                const tensor&,
+                const fvPatch& patch,
+                const label patchFacei,
+                const transformer& transform,
                 TrackingData& td
             );
 
@@ -155,9 +141,9 @@ public:
             template<class TrackingData>
             inline bool updateCell
             (
-                const polyMesh&,
+                const fvMesh&,
                 const label thisCelli,
-                const label neighbourFacei,
+                const labelPair& neighbourPatchAndFacei,
                 const smoothData& svf,
                 const scalar tol,
                 TrackingData& td
@@ -167,8 +153,8 @@ public:
             template<class TrackingData>
             inline bool updateFace
             (
-                const polyMesh&,
-                const label thisFacei,
+                const fvMesh&,
+                const labelPair& thisPatchAndFacei,
                 const label neighbourCelli,
                 const smoothData& svf,
                 const scalar tol,
@@ -179,8 +165,8 @@ public:
             template<class TrackingData>
             inline bool updateFace
             (
-                const polyMesh&,
-                const label thisFacei,
+                const fvMesh&,
+                const labelPair& thisPatchAndFacei,
                 const smoothData& svf,
                 const scalar tol,
                 TrackingData& td
@@ -195,7 +181,6 @@ public:
 
             inline void operator=(const scalar value);
 
-            // Needed for List IO
             inline bool operator==(const smoothData&) const;
 
             inline bool operator!=(const smoothData&) const;
@@ -203,11 +188,7 @@ public:
 
         // IOstream Operators
 
-            friend Ostream& operator<<
-            (
-                Ostream& os,
-                const smoothData& svf
-            )
+            friend Ostream& operator<<(Ostream& os, const smoothData& svf)
             {
                 return os  << svf.value_;
             }
@@ -225,7 +206,6 @@ inline bool contiguous<smoothData>()
 {
     return true;
 }
-
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,6 +22,8 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
+
+#include "smoothDelta.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -53,7 +55,9 @@ inline bool Foam::LESModels::smoothDelta::deltaData::update
     else
     {
         // Neighbour is not too big for me or change is too small
-        // Nothing changed.
+        // ...
+
+        // Nothing changed
         return false;
     }
 }
@@ -88,7 +92,7 @@ inline bool Foam::LESModels::smoothDelta::deltaData::valid
 template<class TrackingData>
 inline bool Foam::LESModels::smoothDelta::deltaData::sameGeometry
 (
-    const polyMesh&,
+    const fvMesh&,
     const deltaData&,
     const scalar,
     TrackingData& td
@@ -99,34 +103,11 @@ inline bool Foam::LESModels::smoothDelta::deltaData::sameGeometry
 
 
 template<class TrackingData>
-inline void Foam::LESModels::smoothDelta::deltaData::leaveDomain
-(
-    const polyMesh&,
-    const polyPatch&,
-    const label,
-    const point&,
-    TrackingData& td
-)
-{}
-
-
-template<class TrackingData>
 inline void Foam::LESModels::smoothDelta::deltaData::transform
 (
-    const polyMesh&,
-    const tensor&,
-    TrackingData& td
-)
-{}
-
-
-template<class TrackingData>
-inline void Foam::LESModels::smoothDelta::deltaData::enterDomain
-(
-    const polyMesh&,
-    const polyPatch&,
-    const label,
-    const point&,
+    const fvPatch& patch,
+    const label patchFacei,
+    const transformer& transform,
     TrackingData& td
 )
 {}
@@ -135,9 +116,9 @@ inline void Foam::LESModels::smoothDelta::deltaData::enterDomain
 template<class TrackingData>
 inline bool Foam::LESModels::smoothDelta::deltaData::updateCell
 (
-    const polyMesh&,
+    const fvMesh&,
     const label,
-    const label,
+    const labelPair&,
     const deltaData& neighbourWallInfo,
     const scalar tol,
     TrackingData& td
@@ -151,8 +132,8 @@ inline bool Foam::LESModels::smoothDelta::deltaData::updateCell
 template<class TrackingData>
 inline bool Foam::LESModels::smoothDelta::deltaData::updateFace
 (
-    const polyMesh&,
-    const label,
+    const fvMesh&,
+    const labelPair&,
     const label,
     const deltaData& neighbourWallInfo,
     const scalar tol,
@@ -167,8 +148,8 @@ inline bool Foam::LESModels::smoothDelta::deltaData::updateFace
 template<class TrackingData>
 inline bool Foam::LESModels::smoothDelta::deltaData::updateFace
 (
-    const polyMesh&,
-    const label,
+    const fvMesh&,
+    const labelPair&,
     const deltaData& neighbourWallInfo,
     const scalar tol,
     TrackingData& td

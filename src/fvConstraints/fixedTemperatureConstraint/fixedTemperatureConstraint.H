@@ -46,9 +46,9 @@ Usage
     }
     \endverbatim
 
-Note
-    The 'uniform' option allows the use of a time-varying uniform temperature
-    by means of the Function1 type.
+    Note:
+        The 'uniform' option allows the use of a time-varying uniform
+        temperature by means of the Function1 type.
 
 SourceFiles
     fixedTemperatureConstraint.C
@@ -160,14 +160,17 @@ public:
             const word& fieldName
         ) const;
 
-        //- Update for mesh changes
-        virtual void updateMesh(const mapPolyMesh&);
-
-        //- Update mesh corresponding to the given distribution map
-        virtual void distribute(const mapDistributePolyMesh&);
-
         //- Update for mesh motion
         virtual bool movePoints();
+
+        //- Update topology using the given map
+        virtual void topoChange(const polyTopoChangeMap&);
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
+
+        //- Redistribute or update using the given distribution map
+        virtual void distribute(const polyDistributionMap&);
 
         //- Read dictionary
         virtual bool read(const dictionary& dict);

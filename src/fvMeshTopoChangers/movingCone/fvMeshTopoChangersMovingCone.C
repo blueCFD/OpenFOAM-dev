@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "fvMeshTopoChangersMovingCone.H"
 #include "Time.T.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "layerAdditionRemoval.H"
 #include "meshTools.H"
 #include "OFstream.H"
@@ -289,7 +289,7 @@ Foam::fvMeshTopoChangers::movingCone::~movingCone()
 bool Foam::fvMeshTopoChangers::movingCone::update()
 {
     // Do mesh changes (use inflation - put new points in topoChangeMap)
-    autoPtr<mapPolyMesh> topoChangeMap = topoChanger_.changeMesh(true);
+    autoPtr<polyTopoChangeMap> topoChangeMap = topoChanger_.changeMesh(true);
 
     // Calculate the new point positions depending on whether the
     // topological change has happened or not
@@ -384,13 +384,23 @@ bool Foam::fvMeshTopoChangers::movingCone::update()
 }
 
 
-void Foam::fvMeshTopoChangers::movingCone::updateMesh(const mapPolyMesh& map)
+void Foam::fvMeshTopoChangers::movingCone::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{}
+
+
+void Foam::fvMeshTopoChangers::movingCone::mapMesh
+(
+    const polyMeshMap& map
+)
 {}
 
 
 void Foam::fvMeshTopoChangers::movingCone::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {}
 

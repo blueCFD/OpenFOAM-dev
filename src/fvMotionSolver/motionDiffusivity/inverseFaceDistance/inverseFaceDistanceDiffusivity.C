@@ -25,9 +25,7 @@ License
 
 #include "inverseFaceDistanceDiffusivity.H"
 #include "surfaceFields.H"
-#include "HashSet.T.H"
-#include "wallPoint.H"
-#include "FaceCellWave.T.H"
+#include "fvPatchDistWave.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -69,113 +67,52 @@ Foam::inverseFaceDistanceDiffusivity::~inverseFaceDistanceDiffusivity()
 Foam::tmp<Foam::surfaceScalarField>
 Foam::inverseFaceDistanceDiffusivity::operator()() const
 {
-    tmp<surfaceScalarField> tfaceDiffusivity
+    surfaceScalarField y
     (
-        new surfaceScalarField
+        IOobject
         (
-            IOobject
-            (
-                "faceDiffusivity",
-                mesh().time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh(),
-            dimensionedScalar(dimless, 1.0)
-        )
-    );
-
-    surfaceScalarField& faceDiffusivity = tfaceDiffusivity.ref();
-
-    const polyBoundaryMesh& bdry = mesh().boundaryMesh();
-
-    labelHashSet patchSet(bdry.size());
-
-    label nPatchFaces = 0;
-
-    forAll(patchNames_, i)
-    {
-        const label pID = bdry.findPatchID(patchNames_[i]);
-
-        if (pID > -1)
-        {
-            patchSet.insert(pID);
-            nPatchFaces += bdry[pID].size();
-        }
-    }
-
-    List<wallPoint> faceDist(nPatchFaces);
-    labelList changedFaces(nPatchFaces);
-
-    nPatchFaces = 0;
-
-    forAllConstIter(labelHashSet, patchSet, iter)
-    {
-        const polyPatch& patch = bdry[iter.key()];
-
-        const vectorField::subField fc(patch.faceCentres());
-
-        forAll(fc, patchFacei)
-        {
-            changedFaces[nPatchFaces] = patch.start() + patchFacei;
-
-            faceDist[nPatchFaces] = wallPoint(fc[patchFacei], 0);
-
-            nPatchFaces++;
-        }
-    }
-    faceDist.setSize(nPatchFaces);
-    changedFaces.setSize(nPatchFaces);
-
-    List<wallPoint> faceInfo(mesh().nFaces()), cellInfo(mesh().nCells());
-    FaceCellWave<wallPoint> waveInfo
-    (
+            "y",
+            mesh().time().timeName(),
+            mesh()
+        ),
         mesh(),
-        changedFaces,
-        faceDist,
-        faceInfo,
-        cellInfo,
-        mesh().globalData().nTotalCells() + 1   // max iterations
+        dimensionedScalar(dimless, 1)
     );
 
-    for (label facei=0; facei<mesh().nInternalFaces(); facei++)
+    const labelHashSet patchIDs(mesh().boundaryMesh().patchSet(patchNames_));
+
+    if (patchNames_.size())
     {
-        const scalar dist = faceInfo[facei].distSqr();
+        fvPatchDistWave::calculate
+        (
+            mesh(),
+            patchIDs,
+            -vGreat,
+            y
+        );
 
-        faceDiffusivity[facei] = 1.0/sqrt(dist);
-    }
-
-    surfaceScalarField::Boundary& faceDiffusivityBf =
-        faceDiffusivity.boundaryFieldRef();
-
-    forAll(faceDiffusivityBf, patchi)
-    {
-        fvsPatchScalarField& bfld = faceDiffusivityBf[patchi];
-
-        const labelUList& faceCells = bfld.patch().faceCells();
-
-        if (patchSet.found(patchi))
+        // Use cell distance on faces that are part of the patch set. This
+        // avoids divide-by-zero issues.
+        forAllConstIter(labelHashSet, patchIDs, iter)
         {
-            forAll(bfld, i)
-            {
-                const scalar dist = cellInfo[faceCells[i]].distSqr();
-                bfld[i] = 1.0/sqrt(dist);
-            }
-        }
-        else
-        {
-            const label start = bfld.patch().start();
+            const label patchi = iter.key();
 
-            forAll(bfld, i)
+            const labelUList& patchCells =
+                mesh().boundary()[patchi].faceCells();
+
+            forAll(patchCells, patchFacei)
             {
-                const scalar dist = faceInfo[start+i].distSqr();
-                bfld[i] = 1.0/sqrt(dist);
+                y.boundaryFieldRef()[patchi][patchFacei] =
+                    mag
+                    (
+                       mesh().Cf().boundaryField()[patchi][patchFacei]
+                     - mesh().C()[patchCells[patchFacei]]
+                    );
             }
         }
     }
 
-    return tfaceDiffusivity;
+    return surfaceScalarField::New("faceDiffusivity", 1/y);
 }
 
 

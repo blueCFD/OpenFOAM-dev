@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -222,18 +222,24 @@ void Foam::fv::VoFSolidificationMeltingSource::correct()
 }
 
 
-void Foam::fv::VoFSolidificationMeltingSource::updateMesh
+void Foam::fv::VoFSolidificationMeltingSource::topoChange
 (
-    const mapPolyMesh& map
+    const polyTopoChangeMap& map
 )
 {
-    set_.updateMesh(map);
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::VoFSolidificationMeltingSource::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
 }
 
 
 void Foam::fv::VoFSolidificationMeltingSource::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     set_.distribute(map);

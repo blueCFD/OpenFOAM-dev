@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,16 +48,15 @@ namespace mixtureViscosityModels
 
 Foam::mixtureViscosityModels::plastic::plastic
 (
-    const fvMesh& mesh,
-    const word& group
+    const incompressibleTwoPhaseInteractingMixture& mixture
 )
 :
-    mixtureViscosityModel(mesh, group),
+    mixtureViscosityModel(mixture),
     plasticCoeffs_(optionalSubDict(typeName + "Coeffs")),
     plasticViscosityCoeff_
     (
         "coeff",
-        dimensionSet(1, -1, -1, 0, 0),
+        dimDynamicViscosity,
         plasticCoeffs_.lookup("coeff")
     ),
     plasticViscosityExponent_
@@ -66,23 +65,7 @@ Foam::mixtureViscosityModels::plastic::plastic
         dimless,
         plasticCoeffs_.lookup("exponent")
     ),
-    muMax_
-    (
-        "muMax",
-        dimensionSet(1, -1, -1, 0, 0),
-        plasticCoeffs_.lookup("muMax")
-    ),
-    alpha_
-    (
-        mesh.lookupObject<volScalarField>
-        (
-            IOobject::groupName
-            (
-                lookupOrDefault<word>("alpha", "alpha"),
-                group
-            )
-        )
-    )
+    muMax_("muMax", dimDynamicViscosity, plasticCoeffs_.lookup("muMax"))
 {}
 
 
@@ -103,7 +86,7 @@ Foam::mixtureViscosityModels::plastic::mu
             pow
             (
                 scalar(10),
-                plasticViscosityExponent_*alpha_
+                plasticViscosityExponent_*mixture_.alphad()
             ) - scalar(1)
         ),
         muMax_

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -321,7 +321,7 @@ Foam::polyMesh::polyMesh(const IOobject& io)
     }
 
     // Calculate topology for the patches (processor-processor comms etc.)
-    boundary_.updateMesh();
+    boundary_.topoChange();
 
     // Calculate the geometry for the patches (transformation tensors etc.)
     boundary_.calcGeometry();
@@ -750,7 +750,7 @@ void Foam::polyMesh::resetPrimitives
         // processor-processor comms.
 
         // Calculate topology for the patches (processor-processor comms etc.)
-        boundary_.updateMesh();
+        boundary_.topoChange();
 
         // Calculate the geometry for the patches (transformation tensors etc.)
         boundary_.calcGeometry();
@@ -866,7 +866,7 @@ const Foam::labelIOList& Foam::polyMesh::tetBasePtIs() const
                     instance(),
                     meshSubDir,
                     *this,
-                    IOobject::READ_IF_PRESENT,
+                    IOobject::NO_READ,
                     IOobject::NO_WRITE
                 ),
                 polyMeshTetDecomposition::findFaceBasePts(*this)
@@ -939,7 +939,7 @@ void Foam::polyMesh::addPatches
     if (validBoundary)
     {
         // Calculate topology for the patches (processor-processor comms etc.)
-        boundary_.updateMesh();
+        boundary_.topoChange();
 
         // Calculate the geometry for the patches (transformation tensors etc.)
         boundary_.calcGeometry();
@@ -1119,7 +1119,7 @@ void Foam::polyMesh::addPatch
 
     if (validBoundary)
     {
-        boundary_.updateMesh();
+        boundary_.topoChange();
     }
 
     // Warn mesh objects
@@ -1260,16 +1260,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
         }
     }
 
-    points_.writeOpt() = IOobject::AUTO_WRITE;
-    points_.instance() = time().timeName();
-    points_.eventNo() = getEvent();
-
-    if (tetBasePtIsPtr_.valid())
-    {
-        tetBasePtIsPtr_().writeOpt() = IOobject::AUTO_WRITE;
-        tetBasePtIsPtr_().instance() = time().timeName();
-        tetBasePtIsPtr_().eventNo() = getEvent();
-    }
+    setPointsInstance(time().timeName());
 
     tmp<scalarField> sweptVols = primitiveMesh::movePoints
     (

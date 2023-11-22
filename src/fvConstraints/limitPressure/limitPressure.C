@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -219,18 +219,22 @@ bool Foam::fv::limitPressure::constrain(volScalarField& p) const
 }
 
 
-void Foam::fv::limitPressure::updateMesh(const mapPolyMesh&)
-{}
-
-
-void Foam::fv::limitPressure::distribute(const mapDistributePolyMesh&)
-{}
-
-
 bool Foam::fv::limitPressure::movePoints()
 {
     return true;
 }
+
+
+void Foam::fv::limitPressure::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::limitPressure::mapMesh(const polyMeshMap&)
+{}
+
+
+void Foam::fv::limitPressure::distribute(const polyDistributionMap&)
+{}
 
 
 

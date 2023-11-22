@@ -176,7 +176,7 @@ labelList patchFaces(const polyBoundaryMesh& patches, const wordList& names)
 }
 
 
-void updateFaceLabels(const mapPolyMesh& map, labelList& faceLabels)
+void updateFaceLabels(const polyTopoChangeMap& map, labelList& faceLabels)
 {
     const labelList& reverseMap = map.reverseFaceMap();
 
@@ -197,7 +197,7 @@ void updateFaceLabels(const mapPolyMesh& map, labelList& faceLabels)
 }
 
 
-void updateCellSet(const mapPolyMesh& map, labelHashSet& cellLabels)
+void updateCellSet(const polyTopoChangeMap& map, labelHashSet& cellLabels)
 {
     const labelList& reverseMap = map.reverseCellMap();
 
@@ -421,10 +421,10 @@ int main(int argc, char *argv[])
             }
 
             // Change the mesh. No inflation.
-            autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh, false);
+            autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh, false);
 
             // Update fields
-            mesh.updateMesh(map);
+            mesh.topoChange(map);
 
             // Move mesh (since morphing does not do this)
             if (map().hasMotionPoints())
@@ -693,7 +693,7 @@ int main(int argc, char *argv[])
         createDummyFvMeshFiles(mesh, regionDir);
 
         // Create actual mesh from polyTopoChange container
-        autoPtr<mapPolyMesh> map = meshMod().makeMesh
+        autoPtr<polyTopoChangeMap> map = meshMod().makeMesh
         (
             meshFromMesh,
             IOobject
@@ -708,7 +708,7 @@ int main(int argc, char *argv[])
             mesh
         );
 
-        layerExtrude.updateMesh
+        layerExtrude.topoChange
         (
             map(),
             identity(extrudePatch.size()),
@@ -881,10 +881,10 @@ int main(int argc, char *argv[])
         if (anyChange)
         {
             // Construct new mesh from polyTopoChange.
-            autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh, false);
+            autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh, false);
 
             // Update fields
-            mesh.updateMesh(map);
+            mesh.topoChange(map);
 
             // Update stored data
             updateFaceLabels(map(), frontPatchFaces);
@@ -1013,10 +1013,10 @@ int main(int argc, char *argv[])
         );
 
         // Construct new mesh from polyTopoChange.
-        autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh, false);
+        autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh, false);
 
         // Update fields
-        mesh.updateMesh(map);
+        mesh.topoChange(map);
 
         // Update local data
         updateCellSet(map(), addedCellsSet);

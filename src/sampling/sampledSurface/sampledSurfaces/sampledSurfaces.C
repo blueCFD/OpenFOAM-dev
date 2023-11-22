@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "sampledSurfaces.H"
 #include "PatchTools.T.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "OSspecific.H"
 #include "writeFile.H"
 #include "addToRunTimeSelectionTable.H"
@@ -65,6 +65,7 @@ Foam::functionObjects::sampledSurfaces::sampledSurfaces
     outputPath_(fileName::null),
     fields_(),
     interpolationScheme_(word::null),
+    writeEmpty_(false),
     mergeList_(),
     formatter_(nullptr)
 {
@@ -158,7 +159,11 @@ bool Foam::functionObjects::sampledSurfaces::write()
 
             if (Pstream::parRun())
             {
-                if (Pstream::master() && mergeList_[surfi].faces.size())
+                if
+                (
+                    Pstream::master()
+                 && (mergeList_[surfi].faces.size() || writeEmpty_)
+                )
                 {
                     formatter_->write
                     (
@@ -177,7 +182,7 @@ bool Foam::functionObjects::sampledSurfaces::write()
             }
             else
             {
-                if (s.faces().size())
+                if (s.faces().size() || writeEmpty_)
                 {
                     formatter_->write
                     (
@@ -210,6 +215,8 @@ bool Foam::functionObjects::sampledSurfaces::read(const dictionary& dict)
         dict.lookup("fields") >> fields_;
 
         dict.lookup("interpolationScheme") >> interpolationScheme_;
+
+        dict.readIfPresent("writeEmpty", writeEmpty_);
 
         const word writeType(dict.lookup("surfaceFormat"));
 
@@ -271,9 +278,21 @@ Foam::wordList Foam::functionObjects::sampledSurfaces::fields() const
 }
 
 
-void Foam::functionObjects::sampledSurfaces::updateMesh(const mapPolyMesh& mpm)
+void Foam::functionObjects::sampledSurfaces::movePoints(const polyMesh& mesh)
 {
-    if (&mpm.mesh() == &mesh_)
+    if (&mesh == &mesh_)
+    {
+        expire();
+    }
+}
+
+
+void Foam::functionObjects::sampledSurfaces::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{
+    if (&map.mesh() == &mesh_)
     {
         expire();
     }
@@ -282,12 +301,12 @@ void Foam::functionObjects::sampledSurfaces::updateMesh(const mapPolyMesh& mpm)
 }
 
 
-void Foam::functionObjects::sampledSurfaces::movePoints(const polyMesh& mesh)
+void Foam::functionObjects::sampledSurfaces::mapMesh
+(
+    const polyMeshMap& map
+)
 {
-    if (&mesh == &mesh_)
-    {
-        expire();
-    }
+    expire();
 }
 
 

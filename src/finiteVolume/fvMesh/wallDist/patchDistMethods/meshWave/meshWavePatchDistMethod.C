@@ -26,8 +26,8 @@ License
 #include "meshWavePatchDistMethod.H"
 #include "fvMesh.H"
 #include "volFields.H"
-#include "patchDistWave.H"
-#include "wallPointData.H"
+#include "fvPatchDistWave.H"
+#include "FvWallInfoData.T.H"
 #include "emptyFvPatchFields.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -52,7 +52,8 @@ Foam::patchDistMethods::meshWave::meshWave
 )
 :
     patchDistMethod(mesh, patchIDs),
-    correctWalls_(dict.lookupOrDefault<Switch>("correctWalls", true))
+    nCorrectors_(dict.lookupOrDefault<label>("nCorrectors", 2)),
+    minFaceFraction_(dict.lookupOrDefault<scalar>("minFaceFraction", 1e-1))
 {}
 
 
@@ -60,11 +61,13 @@ Foam::patchDistMethods::meshWave::meshWave
 (
     const fvMesh& mesh,
     const labelHashSet& patchIDs,
-    const bool correctWalls
+    const label nCorrectors,
+    const scalar minFaceFraction
 )
 :
     patchDistMethod(mesh, patchIDs),
-    correctWalls_(correctWalls)
+    nCorrectors_(nCorrectors),
+    minFaceFraction_(minFaceFraction)
 {}
 
 
@@ -75,14 +78,16 @@ bool Foam::patchDistMethods::meshWave::correct(volScalarField& y)
     y = dimensionedScalar(dimLength, great);
 
     const label nUnset =
-        patchDistWave::wave<wallPoint>
+        fvPatchDistWave::calculateAndCorrect
         (
             mesh_,
             patchIDs_,
-            y.primitiveFieldRef(),
-            correctWalls_
+            minFaceFraction_,
+            nCorrectors_,
+            y
         );
 
+    // Update coupled and transform BCs
     y.correctBoundaryConditions();
 
     return nUnset > 0;
@@ -98,16 +103,14 @@ bool Foam::patchDistMethods::meshWave::correct
     y = dimensionedScalar(dimLength, great);
 
     const label nUnset =
-        patchDistWave::wave<wallPointData<vector>, fvPatchField>
+        fvPatchDistWave::calculateAndCorrect<FvWallInfoVector>
         (
             mesh_,
             patchIDs_,
-            n.boundaryField(),
-            y.primitiveFieldRef(),
-            y.boundaryFieldRef(),
-            n.primitiveFieldRef(),
-            n.boundaryFieldRef(),
-            correctWalls_
+            minFaceFraction_,
+            nCorrectors_,
+            y,
+            n
         );
 
     // Update coupled and transform BCs

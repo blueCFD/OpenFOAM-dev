@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,10 +28,10 @@ Description
     IOdictionary wrapper around OutputFilter to allow them to read from
     their associated dictionaries.
 
-Note
-    The IOobject or the objectRegistry will normally have to be
-    derived from a fvMesh for a subsequent cast (within OutputFilter)
-    to work correctly.
+    Note:
+        The IOobject or the objectRegistry will normally have to be
+        derived from a fvMesh for a subsequent cast (within OutputFilter)
+        to work correctly.
 
 SourceFiles
     IOOutputFilter.C
@@ -50,7 +50,8 @@ namespace Foam
 {
 
 // Forward declaration of classes
-class mapPolyMesh;
+class polyTopoChangeMap;
+class polyMeshMap;
 
 /*---------------------------------------------------------------------------*\
                        Class IOOutputFilter Declaration
@@ -125,11 +126,14 @@ public:
         //- Sample and write
         virtual bool write(const bool write = true);
 
-        //- Update for changes of mesh
-        virtual void updateMesh(const mapPolyMesh& mpm);
-
-        //- Update for changes of mesh
+        //- Update topology using the given map
         virtual void movePoints(const polyMesh& mesh);
+
+        //- Update topology using the given map
+        virtual void topoChange(const polyTopoChangeMap& map);
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
 
 
     // Member Operators

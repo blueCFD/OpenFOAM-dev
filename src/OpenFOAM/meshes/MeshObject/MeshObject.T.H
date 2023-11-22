@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,14 +51,14 @@ Description
     - TopologicalMeshObject: mesh object to be deleted on topology change
     - GeometricMeshObject: mesh object to be deleted on geometry change
     - MoveableMeshObject: mesh object to be updated in movePoints
-    - UpdateableMeshObject: mesh object to be updated in updateMesh or
+    - UpdateableMeshObject: mesh object to be updated in topoChange or
         movePoints
     - PatchMeshObject: mesh object to be additionally updated patch changes
 
-Note
-    movePoints must be provided for MeshObjects of type MoveableMeshObject
-    and both movePoints and updateMesh functions must exist, provided for
-    MeshObjects of type UpdateableMeshObject.
+    Note:
+        movePoints must be provided for MeshObjects of type MoveableMeshObject
+        and both movePoints and topoChange functions must exist, provided for
+        MeshObjects of type UpdateableMeshObject.
 
 SourceFiles
     MeshObject.C
@@ -76,8 +76,9 @@ namespace Foam
 {
 
 // Forward declarations
-class mapPolyMesh;
-class mapDistributePolyMesh;
+class polyTopoChangeMap;
+class polyMeshMap;
+class polyDistributionMap;
 
 /*---------------------------------------------------------------------------*\
                          Class MeshObject Declaration
@@ -131,6 +132,9 @@ public:
 
     // Member Functions
 
+        //- Return true if this MeshObject is found in the mesh registry
+        static bool found(const Mesh& mesh);
+
         const Mesh& mesh() const
         {
             return mesh_;
@@ -170,10 +174,13 @@ public:
         static void movePoints(objectRegistry&);
 
         template<class Mesh>
-        static void updateMesh(objectRegistry&, const mapPolyMesh&);
+        static void topoChange(objectRegistry&, const polyTopoChangeMap&);
 
         template<class Mesh>
-        static void distribute(objectRegistry&, const mapDistributePolyMesh&);
+        static void mapMesh(objectRegistry&, const polyMeshMap&);
+
+        template<class Mesh>
+        static void distribute(objectRegistry&, const polyDistributionMap&);
 
         template<class Mesh>
         static void addPatch(objectRegistry&, const label patchi);
@@ -293,7 +300,7 @@ public:
         MoveableMeshObject<Mesh>(typeName, io)
     {}
 
-    virtual void distribute(const mapDistributePolyMesh& map) = 0;
+    virtual void distribute(const polyDistributionMap& map) = 0;
 };
 
 
@@ -318,7 +325,9 @@ public:
         DistributeableMeshObject<Mesh>(typeName, io)
     {}
 
-    virtual void updateMesh(const mapPolyMesh& map) = 0;
+    virtual void topoChange(const polyTopoChangeMap& map) = 0;
+
+    virtual void mapMesh(const polyMeshMap& map) = 0;
 };
 
 

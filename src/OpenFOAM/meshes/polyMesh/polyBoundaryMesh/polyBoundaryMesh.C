@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -209,6 +209,7 @@ void Foam::polyBoundaryMesh::clearAddressing()
 {
     nbrEdgesPtr_.clear();
     patchIDPtr_.clear();
+    patchFaceIDPtr_.clear();
     groupPatchIDsPtr_.clear();
 
     forAll(*this, patchi)
@@ -428,6 +429,35 @@ const Foam::labelList& Foam::polyBoundaryMesh::patchID() const
         }
     }
     return patchIDPtr_();
+}
+
+
+const Foam::labelList& Foam::polyBoundaryMesh::patchFaceID() const
+{
+    if (!patchFaceIDPtr_.valid())
+    {
+        patchFaceIDPtr_.reset
+        (
+            new labelList
+            (
+                mesh_.nFaces()
+              - mesh_.nInternalFaces()
+            )
+        );
+        labelList& patchFaceID = patchFaceIDPtr_();
+
+        const polyBoundaryMesh& bm = *this;
+
+        forAll(bm, patchi)
+        {
+            label bFacei = bm[patchi].start() - mesh_.nInternalFaces();
+            forAll(bm[patchi], i)
+            {
+                patchFaceID[bFacei++] = i;
+            }
+        }
+    }
+    return patchFaceIDPtr_();
 }
 
 
@@ -1056,10 +1086,11 @@ void Foam::polyBoundaryMesh::movePoints(const pointField& p)
 }
 
 
-void Foam::polyBoundaryMesh::updateMesh()
+void Foam::polyBoundaryMesh::topoChange()
 {
     nbrEdgesPtr_.clear();
     patchIDPtr_.clear();
+    patchFaceIDPtr_.clear();
     groupPatchIDsPtr_.clear();
 
     PstreamBuffers pBufs(Pstream::defaultCommsType);
@@ -1072,14 +1103,14 @@ void Foam::polyBoundaryMesh::updateMesh()
     {
         forAll(*this, patchi)
         {
-            operator[](patchi).initUpdateMesh(pBufs);
+            operator[](patchi).initTopoChange(pBufs);
         }
 
         pBufs.finishedSends();
 
         forAll(*this, patchi)
         {
-            operator[](patchi).updateMesh(pBufs);
+            operator[](patchi).topoChange(pBufs);
         }
     }
     else if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
@@ -1095,11 +1126,11 @@ void Foam::polyBoundaryMesh::updateMesh()
 
             if (patchSchedule[patchEvali].init)
             {
-                operator[](patchi).initUpdateMesh(pBufs);
+                operator[](patchi).initTopoChange(pBufs);
             }
             else
             {
-                operator[](patchi).updateMesh(pBufs);
+                operator[](patchi).topoChange(pBufs);
             }
         }
     }
@@ -1123,7 +1154,7 @@ void Foam::polyBoundaryMesh::renamePatches
 
     if (validBoundary)
     {
-        updateMesh();
+        topoChange();
     }
 }
 
@@ -1149,7 +1180,7 @@ void Foam::polyBoundaryMesh::reorderPatches
 
     if (validBoundary)
     {
-        updateMesh();
+        topoChange();
     }
 }
 

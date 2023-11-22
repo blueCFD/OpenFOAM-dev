@@ -56,6 +56,12 @@ edges
 (
 );
 
+defaultPatch
+{
+    name background;
+    type internal;
+}
+
 boundary
 (
 );

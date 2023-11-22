@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -212,18 +212,25 @@ void Foam::fv::interRegionHeatTransfer::correct()
 }
 
 
-void Foam::fv::interRegionHeatTransfer::updateMesh(const mapPolyMesh&)
-{}
-
-
-void Foam::fv::interRegionHeatTransfer::distribute(const mapDistributePolyMesh&)
-{}
-
-
 bool Foam::fv::interRegionHeatTransfer::movePoints()
 {
     return true;
 }
+
+
+void Foam::fv::interRegionHeatTransfer::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::interRegionHeatTransfer::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::interRegionHeatTransfer::distribute
+(
+    const polyDistributionMap&
+)
+{}
 
 
 bool Foam::fv::interRegionHeatTransfer::read(const dictionary& dict)

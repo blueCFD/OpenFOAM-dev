@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -109,18 +109,25 @@ FOR_ALL_FIELD_TYPES
 );
 
 
-void Foam::fv::phaseLimitStabilisation::updateMesh(const mapPolyMesh&)
-{}
-
-
-void Foam::fv::phaseLimitStabilisation::distribute(const mapDistributePolyMesh&)
-{}
-
-
 bool Foam::fv::phaseLimitStabilisation::movePoints()
 {
     return true;
 }
+
+
+void Foam::fv::phaseLimitStabilisation::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::phaseLimitStabilisation::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::phaseLimitStabilisation::distribute
+(
+    const polyDistributionMap&
+)
+{}
 
 
 bool Foam::fv::phaseLimitStabilisation::read(const dictionary& dict)

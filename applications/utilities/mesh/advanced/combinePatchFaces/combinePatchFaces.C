@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ Description
 #include "combineFaces.H"
 #include "removePoints.H"
 #include "polyMesh.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "unitConversion.H"
 #include "motionSmoother.H"
 
@@ -96,7 +96,7 @@ label mergePatchFaces
             );
         }
 
-        autoPtr<mapPolyMesh> map;
+        autoPtr<polyTopoChangeMap> map;
         {
             // Topology changes container
             polyTopoChange meshMod(mesh);
@@ -108,7 +108,7 @@ label mergePatchFaces
             map = meshMod.changeMesh(mesh, false, true);
 
             // Update fields
-            mesh.updateMesh(map);
+            mesh.topoChange(map);
 
             // Move mesh (since morphing does not do this)
             if (map().hasMotionPoints())
@@ -264,7 +264,7 @@ label mergePatchFaces
             map = meshMod.changeMesh(mesh, false, true);
 
             // Update fields
-            mesh.updateMesh(map);
+            mesh.topoChange(map);
 
             // Move mesh (since morphing does not do this)
             if (map().hasMotionPoints())
@@ -314,10 +314,10 @@ label mergeEdges(const scalar minCos, polyMesh& mesh)
         pointRemover.setRefinement(pointCanBeDeleted, meshMod);
 
         // Change the mesh (no inflation)
-        autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh, false, true);
+        autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh, false, true);
 
         // Update fields
-        mesh.updateMesh(map);
+        mesh.topoChange(map);
 
         // Move mesh (since morphing does not do this)
         if (map().hasMotionPoints())

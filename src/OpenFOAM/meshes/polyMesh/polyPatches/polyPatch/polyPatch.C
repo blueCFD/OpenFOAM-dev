@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,13 +54,19 @@ namespace Foam
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-void Foam::polyPatch::movePoints(PstreamBuffers&, const pointField& p)
+void Foam::polyPatch::movePoints(const pointField& p)
 {
-    primitivePatch::movePoints(p);
+    primitivePatch::clearGeom();
 }
 
 
-void Foam::polyPatch::updateMesh(PstreamBuffers&)
+void Foam::polyPatch::movePoints(PstreamBuffers&, const pointField& p)
+{
+    primitivePatch::clearGeom();
+}
+
+
+void Foam::polyPatch::topoChange(PstreamBuffers&)
 {
     primitivePatch::clearGeom();
     clearAddressing();

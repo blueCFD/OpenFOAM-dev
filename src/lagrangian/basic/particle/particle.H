@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,8 +57,6 @@ class polyPatch;
 
 class cyclicPolyPatch;
 class cyclicAMIPolyPatch;
-class cyclicACMIPolyPatch;
-class cyclicRepeatAMIPolyPatch;
 class processorPolyPatch;
 class symmetryPlanePolyPatch;
 class symmetryPolyPatch;
@@ -106,16 +104,32 @@ public:
 
         // Public data
 
-            //- Flag to switch processor
-            bool switchProcessor;
-
             //- Flag to indicate whether to keep particle (false = delete)
             bool keepParticle;
+
+            //- Processor to send the particle to. -1 indicates that this
+            //  particle is not to be transferred.
+            label sendToProc;
+
+            //- Patch from which to send the particle
+            label sendFromPatch;
+
+            //- Patch to which to send the particle
+            label sendToPatch;
+
+            //- Patch face to which to send the particle
+            label sendToPatchFace;
 
 
         // Constructor
         template <class TrackCloudType>
         trackingData(const TrackCloudType& cloud)
+        :
+            keepParticle(false),
+            sendToProc(-1),
+            sendFromPatch(-1),
+            sendToPatch(-1),
+            sendToPatchFace(-1)
         {}
     };
 
@@ -275,13 +289,6 @@ private:
             //- Change cell. Called when the particle hits an internal face.
             void changeCell();
 
-            //- Put the particle on the lowest indexed patch for the current set
-            //  of coincident faces. In the case of an ACMI-wall pair, this will
-            //  move the particle from the wall face to the ACMI face, because
-            //  ACMI patches are always listed before their associated non-
-            //  overlapping patch.
-            void changeToMasterPatch();
-
 
         // Geometry changes
 
@@ -331,24 +338,14 @@ protected:
             trackingData& td
         );
 
-        //- Overridable function to handle the particle hitting a
-        //  cyclicACMIPatch
-        template<class TrackCloudType>
-        void hitCyclicACMIPatch
-        (
-            const vector& displacement,
-            const scalar fraction,
-            TrackCloudType& cloud,
-            trackingData& td
-        );
-
         //- Overridable function to handle the particle hitting an
-        //  cyclicRepeatAMIPolyPatch
+        //  nonConformalCyclicPolyPatch
         template<class TrackCloudType>
-        void hitCyclicRepeatAMIPatch
+        bool hitNonConformalCyclicPatch
         (
             const vector& displacement,
             const scalar fraction,
+            const label patchi,
             TrackCloudType& cloud,
             trackingData& td
         );
@@ -597,17 +594,6 @@ public:
             trackingData& td
         );
 
-        //- As above, but does not change the master patch. Needed in order for
-        //  ACMI to be able to delegate a hit to the non-overlap patch.
-        template<class TrackCloudType>
-        void hitFaceNoChangeToMasterPatch
-        (
-            const vector& displacement,
-            const scalar fraction,
-            TrackCloudType& cloud,
-            trackingData& td
-        );
-
         //- Convenience function. Combines trackToFace and hitFace
         template<class TrackCloudType>
         scalar trackToAndHitFace
@@ -637,27 +623,53 @@ public:
         virtual void transformProperties(const transformer&);
 
 
-    // Parallel transfer
+    // Transfers
 
-        //- Convert global addressing to the processor patch local equivalents
-        void prepareForParallelTransfer();
+        //- Make changes prior to a parallel transfer. Runs either processor or
+        //  nonConformalCyclic variant below.
+        void prepareForParallelTransfer(trackingData& td);
 
-        //- Convert processor patch addressing to the global equivalents
-        //  and set the celli to the face-neighbour
-        void correctAfterParallelTransfer(const label patchi, trackingData& td);
+        //- Make changes following a parallel transfer. Runs either processor
+        //  or nonConformalCyclic variant below.
+        void correctAfterParallelTransfer(trackingData& td);
+
+        //- Make changes prior to a transfer across a processor boundary.
+        //  Stores the local patch face index (in facei_) so that the mesh face
+        //  index can be determined on the other side.
+        void prepareForProcessorTransfer(trackingData& td);
+
+        //- Make changes following a transfer across a processor boundary.
+        //  Converts the stored patch index to a mesh index. Accounts for
+        //  the receiving face being reversed relative to the sending face.
+        void correctAfterProcessorTransfer(trackingData& td);
+
+        //- Make changes prior to a transfer across a non conformal cyclic
+        //  boundary. Stores the receiving patch face (in facei_). Breaks the
+        //  topology and stores the cartesian position.
+        void prepareForNonConformalCyclicTransfer
+        (
+            const label sendToPatch,
+            const label sendToPatchFace
+        );
+
+        //- Make changes following a transfer across a non conformal cyclic
+        //  boundary. Locates the particle using the stored face index and
+        //  cartesian position.
+        void correctAfterNonConformalCyclicTransfer(const label sendToPatch);
 
 
     // Interaction list referral
 
-        //- Break the topology and store the particle position so that the
+        //- Break the topology and store the cartesian position so that the
         //  particle can be referred.
         void prepareForInteractionListReferral
         (
             const transformer& transform
         );
 
-        //- Correct the topology after referral. The particle may still be
-        //  outside the stored tet and therefore not track-able.
+        //- Correct the topology after referral. Locates the particle relative
+        //  to a nearby cell/tet. The particle may end up outside this cell/tet
+        //  and cannot therefore be tracked.
         void correctAfterInteractionListReferral(const label celli);
 
 
@@ -676,7 +688,7 @@ public:
     // Mapping
 
         //- Map after a topology change
-        void autoMap(const vector& position, const mapPolyMesh& mapper);
+        void autoMap(const vector& position, const polyTopoChangeMap& mapper);
 
 
     // I-O

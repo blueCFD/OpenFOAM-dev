@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,6 +130,7 @@ public:
         //- Construct from polyMesh and dictionary
         rigidBodyMeshMotionSolver
         (
+            const word& name,
             const polyMesh&,
             const dictionary& dict
         );
@@ -138,7 +139,7 @@ public:
         rigidBodyMeshMotionSolver
         (
             const rigidBodyMeshMotionSolver&
-        );
+        ) = delete;
 
 
     //- Destructor
@@ -157,10 +158,13 @@ public:
         virtual void movePoints(const pointField&);
 
         //-  Update local data for topology changes
-        virtual void updateMesh(const mapPolyMesh&);
+        virtual void topoChange(const polyTopoChangeMap&);
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
 
         //- Update corresponding to the given distribution map
-        virtual void distribute(const mapDistributePolyMesh&);
+        virtual void distribute(const polyDistributionMap&);
 
         //- Write motion state information for restart
         virtual bool write() const;

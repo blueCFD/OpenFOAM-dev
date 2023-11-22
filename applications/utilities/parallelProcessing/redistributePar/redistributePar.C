@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -63,7 +63,7 @@ Description
 #include "PstreamReduceOps.T.H"
 #include "fvCFD.H"
 #include "fvMeshDistribute.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "IOobjectList.T.H"
 #include "globalIndex.H"
 #include "loadOrCreateMesh.H"
@@ -654,7 +654,7 @@ int main(int argc, char *argv[])
     //    << distributor.countCells(finalDecomp) << nl << endl;
 
     // Do actual sending/receiving of mesh
-    autoPtr<mapDistributePolyMesh> map = distributor.distribute(finalDecomp);
+    autoPtr<polyDistributionMap> map = distributor.distribute(finalDecomp);
 
     //// Distribute any non-registered data accordingly
     // map().distributeFaceData(faceCc);

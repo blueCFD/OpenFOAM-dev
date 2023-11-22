@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "velocityMotionSolver.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -38,12 +38,13 @@ namespace Foam
 
 Foam::velocityMotionSolver::velocityMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict,
     const word& type
 )
 :
-    motionSolver(mesh, dict, type),
+    motionSolver(name, mesh, dict, type),
     pointMotionU_
     (
         IOobject
@@ -73,13 +74,20 @@ void Foam::velocityMotionSolver::movePoints(const pointField& p)
 }
 
 
-void Foam::velocityMotionSolver::updateMesh(const mapPolyMesh& mpm)
+void Foam::velocityMotionSolver::topoChange(const polyTopoChangeMap& map)
 {
-    // pointMesh updates pointFields.
+    // fvMesh updates pointFields.
 }
 
 
-void Foam::velocityMotionSolver::distribute(const mapDistributePolyMesh&)
+void Foam::velocityMotionSolver::mapMesh(const polyMeshMap& map)
+{
+    pointMotionU_ == Zero;
+    pointMotionU_.correctBoundaryConditions();
+}
+
+
+void Foam::velocityMotionSolver::distribute(const polyDistributionMap&)
 {}
 
 

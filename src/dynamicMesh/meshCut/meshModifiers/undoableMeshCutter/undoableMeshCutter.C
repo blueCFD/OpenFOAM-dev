@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,7 +30,7 @@ License
 #include "meshCutter.H"
 #include "cellCuts.H"
 #include "splitCell.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "unitConversion.H"
 #include "meshTools.H"
 
@@ -321,20 +321,20 @@ void Foam::undoableMeshCutter::setRefinement
 }
 
 
-void Foam::undoableMeshCutter::updateMesh(const mapPolyMesh& morphMap)
+void Foam::undoableMeshCutter::topoChange(const polyTopoChangeMap& map)
 {
     // Update mesh cutter for new labels.
-    meshCutter::updateMesh(morphMap);
+    meshCutter::topoChange(map);
 
     // No need to update cell walker for new labels since does not store any.
 
     // Update faceRemover for new labels
-    faceRemover_.updateMesh(morphMap);
+    faceRemover_.topoChange(map);
 
     if (undoable_)
     {
         // Update all live split cells for mesh mapper.
-        updateLabels(morphMap.reverseCellMap(), liveSplitCells_);
+        updateLabels(map.reverseCellMap(), liveSplitCells_);
     }
 }
 

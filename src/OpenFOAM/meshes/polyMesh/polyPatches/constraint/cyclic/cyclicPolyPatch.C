@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,15 +103,15 @@ void Foam::cyclicPolyPatch::movePoints
 }
 
 
-void Foam::cyclicPolyPatch::initUpdateMesh(PstreamBuffers& pBufs)
+void Foam::cyclicPolyPatch::initTopoChange(PstreamBuffers& pBufs)
 {
-    polyPatch::initUpdateMesh(pBufs);
+    polyPatch::initTopoChange(pBufs);
 }
 
 
-void Foam::cyclicPolyPatch::updateMesh(PstreamBuffers& pBufs)
+void Foam::cyclicPolyPatch::topoChange(PstreamBuffers& pBufs)
 {
-    polyPatch::updateMesh(pBufs);
+    polyPatch::topoChange(pBufs);
     deleteDemandDrivenData(coupledPointsPtr_);
     deleteDemandDrivenData(coupledEdgesPtr_);
 }
@@ -155,10 +155,7 @@ Foam::cyclicPolyPatch::cyclicPolyPatch
     ownToNbrOrderDataPtr_(nullptr),
     ownToNbrCyclicOrderDataPtr_(nullptr),
     ownToNbrDebugOrderDataPtr_(nullptr)
-{
-    // Neighbour patch might not be valid yet so no transformation
-    // calculation possible.
-}
+{}
 
 
 Foam::cyclicPolyPatch::cyclicPolyPatch
@@ -169,11 +166,12 @@ Foam::cyclicPolyPatch::cyclicPolyPatch
     const label index,
     const polyBoundaryMesh& bm,
     const word& patchType,
-    const word& nbrPatchName
+    const word& nbrPatchName,
+    const cyclicTransform& transform
 )
 :
     coupledPolyPatch(name, size, start, index, bm, patchType),
-    cyclicTransform(false),
+    cyclicTransform(transform),
     nbrPatchName_(nbrPatchName),
     nbrPatchID_(-1),
     coupledPointsPtr_(nullptr),
@@ -181,10 +179,7 @@ Foam::cyclicPolyPatch::cyclicPolyPatch
     ownToNbrOrderDataPtr_(nullptr),
     ownToNbrCyclicOrderDataPtr_(nullptr),
     ownToNbrDebugOrderDataPtr_(nullptr)
-{
-    // Neighbour patch might not be valid yet so no transformation
-    // calculation possible.
-}
+{}
 
 
 Foam::cyclicPolyPatch::cyclicPolyPatch

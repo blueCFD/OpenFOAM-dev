@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ License
 #include "polyAddPoint.H"
 #include "polyModifyFace.H"
 #include "polyModifyPoint.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "meshTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -829,7 +829,7 @@ void Foam::boundaryCutter::setRefinement
 }
 
 
-void Foam::boundaryCutter::updateMesh(const mapPolyMesh& morphMap)
+void Foam::boundaryCutter::topoChange(const polyTopoChangeMap& map)
 {
     // Update stored labels for mesh change.
 
@@ -845,11 +845,11 @@ void Foam::boundaryCutter::updateMesh(const mapPolyMesh& morphMap)
         {
             label oldFacei = iter.key();
 
-            label newFacei = morphMap.reverseFaceMap()[oldFacei];
+            label newFacei = map.reverseFaceMap()[oldFacei];
 
             label oldPointi = iter();
 
-            label newPointi = morphMap.reversePointMap()[oldPointi];
+            label newPointi = map.reversePointMap()[oldPointi];
 
             if (newFacei >= 0 && newPointi >= 0)
             {
@@ -882,9 +882,9 @@ void Foam::boundaryCutter::updateMesh(const mapPolyMesh& morphMap)
         {
             const edge& e = iter.key();
 
-            label newStart = morphMap.reversePointMap()[e.start()];
+            label newStart = map.reversePointMap()[e.start()];
 
-            label newEnd = morphMap.reversePointMap()[e.end()];
+            label newEnd = map.reversePointMap()[e.end()];
 
             if (newStart >= 0 && newEnd >= 0)
             {
@@ -896,7 +896,7 @@ void Foam::boundaryCutter::updateMesh(const mapPolyMesh& morphMap)
                 forAll(addedPoints, i)
                 {
                     label newAddedPointi =
-                        morphMap.reversePointMap()[addedPoints[i]];
+                        map.reversePointMap()[addedPoints[i]];
 
                     if (newAddedPointi >= 0)
                     {

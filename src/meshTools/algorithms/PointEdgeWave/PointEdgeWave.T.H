@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,6 +70,7 @@ namespace Foam
 // Forward declaration of classes
 class polyMesh;
 class polyPatch;
+class transformer;
 
 /*---------------------------------------------------------------------------*\
                       Class PointEdgeWaveName Declaration
@@ -93,10 +94,6 @@ class PointEdgeWave
         //  less than this tolerance (responsibility for checking this is
         //  up to Type implementation)
         static scalar propagationTol_;
-
-        //- Used as default trackdata value to satisfy default template
-        //  argument.
-        static int dummyTrackData_;
 
 
     // Private Data
@@ -140,27 +137,12 @@ class PointEdgeWave
 
     // Private Member Functions
 
-        //- Adapt pointInfo for leaving domain
-        void leaveDomain
-        (
-            const polyPatch&,
-            const List<label>& patchPointLabels,
-            List<Type>& pointInfo
-        ) const;
-
-        //- Adapt pointInfo for entering domain
-        void enterDomain
-        (
-            const polyPatch&,
-            const List<label>& patchPointLabels,
-            List<Type>& pointInfo
-        ) const;
-
-        //- Transform. Implementation referred to Type
+        //- Transform across an interface. Implementation referred to Type
         void transform
         (
             const polyPatch& patch,
-            const tensor& rotTensor,
+            const List<label>& patchPointLabels,
+            const transformer& transform,
             List<Type>& pointInfo
         ) const;
 
@@ -211,6 +193,12 @@ class PointEdgeWave
 
 public:
 
+    // Static Data
+
+        //- Default tracking data to go with default template argument
+        static int defaultTrackingData_;
+
+
     // Static Functions
 
         //- Access to tolerance
@@ -241,7 +229,7 @@ public:
             UList<Type>& allPointInfo,
             UList<Type>& allEdgeInfo,
             const label maxIter,
-            TrackingData& td = dummyTrackData_
+            TrackingData& td = defaultTrackingData_
         );
 
         //- Construct from mesh. Use setPointInfo and iterate() to do
@@ -251,7 +239,7 @@ public:
             const polyMesh& mesh,
             UList<Type>& allPointInfo,
             UList<Type>& allEdgeInfo,
-            TrackingData& td = dummyTrackData_
+            TrackingData& td = defaultTrackingData_
         );
 
         //- Disallow default bitwise copy construction

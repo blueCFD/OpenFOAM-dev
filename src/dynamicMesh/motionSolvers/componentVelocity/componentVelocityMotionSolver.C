@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "componentVelocityMotionSolver.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -68,12 +68,13 @@ Foam::direction Foam::componentVelocityMotionSolver::cmpt
 
 Foam::componentVelocityMotionSolver::componentVelocityMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict,
     const word& type
 )
 :
-    motionSolver(mesh, dict, type),
+    motionSolver(name, mesh, dict, type),
     cmptName_(coeffDict().lookup("component")),
     cmpt_(cmpt(cmptName_)),
     pointMotionU_
@@ -105,15 +106,28 @@ void Foam::componentVelocityMotionSolver::movePoints(const pointField& p)
 }
 
 
-void Foam::componentVelocityMotionSolver::updateMesh(const mapPolyMesh& mpm)
+void Foam::componentVelocityMotionSolver::topoChange
+(
+    const polyTopoChangeMap& map
+)
 {
-    // pointMesh already updates pointFields.
+    // fvMesh updates pointFields.
+}
+
+
+void Foam::componentVelocityMotionSolver::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    pointMotionU_ == Zero;
+    pointMotionU_.correctBoundaryConditions();
 }
 
 
 void Foam::componentVelocityMotionSolver::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {}
 

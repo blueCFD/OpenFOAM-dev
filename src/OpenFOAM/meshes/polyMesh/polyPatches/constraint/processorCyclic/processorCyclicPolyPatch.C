@@ -41,6 +41,36 @@ namespace Foam
 
 Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
 (
+    const word& name,
+    const label size,
+    const label start,
+    const label index,
+    const polyBoundaryMesh& bm,
+    const int myProcNo,
+    const int neighbProcNo,
+    const word& referPatchName,
+    const word& patchType
+)
+:
+    processorPolyPatch
+    (
+        name,
+        size,
+        start,
+        index,
+        bm,
+        myProcNo,
+        neighbProcNo,
+        patchType
+    ),
+    referPatchName_(referPatchName),
+    tag_(-1),
+    referPatchID_(-1)
+{}
+
+
+Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
+(
     const label size,
     const label start,
     const label index,
@@ -238,16 +268,16 @@ void Foam::processorCyclicPolyPatch::movePoints
 }
 
 
-void Foam::processorCyclicPolyPatch::initUpdateMesh(PstreamBuffers& pBufs)
+void Foam::processorCyclicPolyPatch::initTopoChange(PstreamBuffers& pBufs)
 {
-    processorPolyPatch::initUpdateMesh(pBufs);
+    processorPolyPatch::initTopoChange(pBufs);
 }
 
 
-void Foam::processorCyclicPolyPatch::updateMesh(PstreamBuffers& pBufs)
+void Foam::processorCyclicPolyPatch::topoChange(PstreamBuffers& pBufs)
 {
      referPatchID_ = -1;
-     processorPolyPatch::updateMesh(pBufs);
+     processorPolyPatch::topoChange(pBufs);
 }
 
 

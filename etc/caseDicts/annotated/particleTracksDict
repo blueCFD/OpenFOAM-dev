@@ -1,0 +1,30 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      particleTracksDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Name of the cloud for which to create tracks
+cloudName       cloud;
+
+// Frequency with which tracks are added. E.g., if set to 5, then tracks will
+// be created for every 5th paricle in the cloud. If set to 1 (as below), then
+// tracks will be created for every particle in the cloud.
+sampleFrequency 1;
+
+// Maximum number of positions in a single track
+maxPositions    1000000;
+
+// Format that the tracks are written out in
+setFormat       vtk;
+
+// ************************************************************************* //

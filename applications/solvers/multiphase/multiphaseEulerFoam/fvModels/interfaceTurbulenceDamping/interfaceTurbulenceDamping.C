@@ -304,13 +304,17 @@ void Foam::fv::interfaceTurbulenceDamping::addSup
 }
 
 
-void Foam::fv::interfaceTurbulenceDamping::updateMesh(const mapPolyMesh&)
+void Foam::fv::interfaceTurbulenceDamping::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::interfaceTurbulenceDamping::mapMesh(const polyMeshMap& map)
 {}
 
 
 void Foam::fv::interfaceTurbulenceDamping::distribute
 (
-    const mapDistributePolyMesh&
+    const polyDistributionMap&
 )
 {}
 

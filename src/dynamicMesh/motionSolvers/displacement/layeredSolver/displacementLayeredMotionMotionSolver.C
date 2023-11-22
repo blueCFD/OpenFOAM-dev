@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ License
 #include "syncTools.H"
 #include "Table.T.H"
 #include "pointConstraints.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -490,11 +490,12 @@ void Foam::displacementLayeredMotionMotionSolver::cellZoneSolve
 Foam::displacementLayeredMotionMotionSolver::
 displacementLayeredMotionMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    displacementMotionSolver(mesh, dict, typeName)
+    displacementMotionSolver(name, mesh, dict, typeName)
 {}
 
 
@@ -556,9 +557,9 @@ void Foam::displacementLayeredMotionMotionSolver::solve()
 }
 
 
-void Foam::displacementLayeredMotionMotionSolver::updateMesh
+void Foam::displacementLayeredMotionMotionSolver::topoChange
 (
-    const mapPolyMesh& mpm
+    const polyTopoChangeMap& map
 )
 {
     FatalErrorInFunction
@@ -566,17 +567,17 @@ void Foam::displacementLayeredMotionMotionSolver::updateMesh
         << "    Needs to be updated and tested."
         << exit(FatalError);
 
-    displacementMotionSolver::updateMesh(mpm);
+    displacementMotionSolver::topoChange(map);
 
     const vectorField displacement(this->newPoints() - points0_);
 
     forAll(points0_, pointi)
     {
-        const label oldPointi = mpm.pointMap()[pointi];
+        const label oldPointi = map.pointMap()[pointi];
 
         if (oldPointi >= 0)
         {
-            label masterPointi = mpm.reversePointMap()[oldPointi];
+            label masterPointi = map.reversePointMap()[oldPointi];
 
             if ((masterPointi != pointi))
             {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,6 @@ namespace Foam
 {
 
 class polyMesh;
-class mapDistributePolyMesh;
 
 /*---------------------------------------------------------------------------*\
                       Class pointConstraints Declaration
@@ -130,10 +129,13 @@ public:
             virtual bool movePoints();
 
             //- Update mesh topology using the morph engine
-            virtual void updateMesh(const mapPolyMesh&);
+            virtual void topoChange(const polyTopoChangeMap&);
+
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&);
 
             //- Update corresponding to the given distribution map
-            virtual void distribute(const mapDistributePolyMesh&);
+            virtual void distribute(const polyDistributionMap&);
 
 
         // Interpolation functions
@@ -149,7 +151,7 @@ public:
 
             //- Helper: set patchField values from internal values (on
             //  valuePointPatchFields). Opposite of
-            //  pointPatchField::setInInternalField
+            //  pointPatchField::setInternalField
             template<class Type>
             static void setPatchFields
             (

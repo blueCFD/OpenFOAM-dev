@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,7 +30,7 @@ License
 #include "cellSet.H"
 #include "boolList.H"
 #include "syncTools.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -50,11 +50,12 @@ namespace Foam
 
 Foam::solidBodyMotionSolver::solidBodyMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    points0MotionSolver(mesh, dict, typeName),
+    points0MotionSolver(name, mesh, dict, typeName),
     SBMFPtr_(solidBodyMotionFunction::New(coeffDict(), mesh.time())),
     pointIDs_(),
     moveAllCells_(false),
@@ -180,27 +181,27 @@ Foam::tmp<Foam::pointField> Foam::solidBodyMotionSolver::curPoints() const
 }
 
 
-void Foam::solidBodyMotionSolver::updateMesh(const mapPolyMesh& mpm)
+void Foam::solidBodyMotionSolver::topoChange(const polyTopoChangeMap& map)
 {
     // pointMesh already updates pointFields
 
     // Get the new points either from the map or the mesh
     const pointField& points =
     (
-        mpm.hasMotionPoints()
-      ? mpm.preMotionPoints()
+        map.hasMotionPoints()
+      ? map.preMotionPoints()
       : mesh().points()
     );
 
-    pointField newPoints0(mpm.pointMap().size());
+    pointField newPoints0(map.pointMap().size());
 
     forAll(newPoints0, pointi)
     {
-        label oldPointi = mpm.pointMap()[pointi];
+        label oldPointi = map.pointMap()[pointi];
 
         if (oldPointi >= 0)
         {
-            const label masterPointi = mpm.reversePointMap()[oldPointi];
+            const label masterPointi = map.reversePointMap()[oldPointi];
 
             if (masterPointi == pointi)
             {
@@ -224,12 +225,6 @@ void Foam::solidBodyMotionSolver::updateMesh(const mapPolyMesh& mpm)
     twoDCorrectPoints(newPoints0);
 
     points0_.transfer(newPoints0);
-
-    // points0 changed - set to write and check-in to database
-    points0_.rename("points0");
-    points0_.writeOpt() = IOobject::AUTO_WRITE;
-    points0_.instance() = mesh().time().timeName();
-    points0_.checkIn();
 }
 
 

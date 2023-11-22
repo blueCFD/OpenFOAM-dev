@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,15 +25,15 @@ Class
     Foam::fixedBlended
 
 Description
-    Two-scheme fixed-blending differencing scheme.
+    Two-scheme fixed-blending interpolation scheme.
 
     Similar to localBlended but uses a single (global) constant blending
     factor. The factor applies to the first scheme and 1-factor to the
     second scheme.
 
-Note
-    Although a blending factor of 0 and 1 is permitted, it is more efficient
-    just to use the underlying scheme directly.
+    Note:
+        Although a blending factor of 0 and 1 is permitted, it is more efficient
+        just to use the underlying scheme directly.
 
 SourceFiles
     fixedBlended.C

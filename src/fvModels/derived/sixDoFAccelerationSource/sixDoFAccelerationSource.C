@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -176,21 +176,25 @@ void Foam::fv::sixDoFAccelerationSource::addSup
 }
 
 
-void Foam::fv::sixDoFAccelerationSource::updateMesh(const mapPolyMesh&)
+bool Foam::fv::sixDoFAccelerationSource::movePoints()
+{
+    return true;
+}
+
+
+void Foam::fv::sixDoFAccelerationSource::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::sixDoFAccelerationSource::mapMesh(const polyMeshMap& map)
 {}
 
 
 void Foam::fv::sixDoFAccelerationSource::distribute
 (
-    const mapDistributePolyMesh&
+    const polyDistributionMap&
 )
 {}
-
-
-bool Foam::fv::sixDoFAccelerationSource::movePoints()
-{
-    return true;
-}
 
 
 bool Foam::fv::sixDoFAccelerationSource::read(const dictionary& dict)

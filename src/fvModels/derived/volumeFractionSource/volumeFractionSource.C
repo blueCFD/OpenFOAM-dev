@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -318,18 +318,22 @@ FOR_ALL_FIELD_TYPES
 );
 
 
-void Foam::fv::volumeFractionSource::updateMesh(const mapPolyMesh&)
-{}
-
-
-void Foam::fv::volumeFractionSource::distribute(const mapDistributePolyMesh&)
-{}
-
-
 bool Foam::fv::volumeFractionSource::movePoints()
 {
     return true;
 }
+
+
+void Foam::fv::volumeFractionSource::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::volumeFractionSource::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::volumeFractionSource::distribute(const polyDistributionMap&)
+{}
 
 
 bool Foam::fv::volumeFractionSource::read(const dictionary& dict)

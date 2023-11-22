@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ SourceFiles
 #define meshRefinement_H
 
 #include "hexRef8.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "autoPtr.H"
 #include "labelPair.H"
 #include "indirectPrimitivePatch.H"
@@ -60,7 +60,7 @@ namespace Foam
 
 // Class forward declarations
 class fvMesh;
-class mapDistributePolyMesh;
+class polyDistributionMap;
 class decompositionMethod;
 class refinementSurfaces;
 class refinementFeatures;
@@ -201,7 +201,7 @@ private:
         //  that were marked for refinement.
         static labelList getChangedFaces
         (
-            const mapPolyMesh&,
+            const polyTopoChangeMap&,
             const labelList& oldCellsToRefine
         );
 
@@ -216,7 +216,7 @@ private:
         void updateIntersections(const labelList& changedFaces);
 
         //- Remove cells. Put exposedFaces into exposedPatchIDs.
-        autoPtr<mapPolyMesh> doRemoveCells
+        autoPtr<polyTopoChangeMap> doRemoveCells
         (
             const labelList& cellsToRemove,
             const labelList& exposedFaces,
@@ -230,7 +230,7 @@ private:
         labelList getInsideCells(const word&) const;
 
         // Do all to remove inside cells
-        autoPtr<mapPolyMesh> removeInsideCells
+        autoPtr<polyTopoChangeMap> removeInsideCells
         (
             const string& msg,
             const label exposedPatchi
@@ -694,7 +694,7 @@ public:
             //  keepZoneFaces : find all faceZones from zoned surfaces and keep
             //                  owner and neighbour together
             //  keepBaffles   : find all baffles and keep them together
-            autoPtr<mapDistributePolyMesh> balance
+            autoPtr<polyDistributionMap> balance
             (
                 const bool keepZoneFaces,
                 const bool keepBaffles,
@@ -797,10 +797,10 @@ public:
             ) const;
 
             //- Refine some cells
-            autoPtr<mapPolyMesh> refine(const labelList& cellsToRefine);
+            autoPtr<polyTopoChangeMap> refine(const labelList& cellsToRefine);
 
             //- Refine some cells and rebalance
-            autoPtr<mapDistributePolyMesh> refineAndBalance
+            autoPtr<polyDistributionMap> refineAndBalance
             (
                 const string& msg,
                 decompositionMethod& decomposer,
@@ -810,7 +810,7 @@ public:
             );
 
             //- Balance before refining some cells
-            autoPtr<mapDistributePolyMesh> balanceAndRefine
+            autoPtr<polyDistributionMap> balanceAndRefine
             (
                 const string& msg,
                 decompositionMethod& decomposer,
@@ -846,7 +846,7 @@ public:
 
             //- Split off (with optional buffer layers) unreachable areas
             //  of mesh. Does not introduce baffles.
-            autoPtr<mapPolyMesh> splitMesh
+            autoPtr<polyTopoChangeMap> splitMesh
             (
                 const label nBufferLayers,
                 const labelList& globalToMasterPatch,
@@ -856,16 +856,19 @@ public:
 
             //- Find boundary points that connect to more than one cell
             //  region and split them.
-            autoPtr<mapPolyMesh> dupNonManifoldPoints(const localPointRegion&);
+            autoPtr<polyTopoChangeMap> dupNonManifoldPoints
+            (
+                const localPointRegion&
+            );
 
             //- Find boundary points that connect to more than one cell
             //  region and split them.
-            autoPtr<mapPolyMesh> dupNonManifoldPoints();
+            autoPtr<polyTopoChangeMap> dupNonManifoldPoints();
 
             //- Create baffle for every internal face where ownPatch != -1.
             //  External faces get repatched according to ownPatch (nbrPatch
             //  should be -1 for these)
-            autoPtr<mapPolyMesh> createBaffles
+            autoPtr<polyTopoChangeMap> createBaffles
             (
                 const labelList& ownPatch,
                 const labelList& nbrPatch
@@ -876,7 +879,7 @@ public:
 
             //- Create baffles for faces straddling zoned surfaces. Return
             //  baffles.
-            autoPtr<mapPolyMesh> createZoneBaffles
+            autoPtr<polyTopoChangeMap> createZoneBaffles
             (
                 const labelList& globalToMasterPatch,
                 const labelList& globalToSlavePatch,
@@ -884,12 +887,12 @@ public:
             );
 
             //- Merge baffles. Gets pairs of faces.
-            autoPtr<mapPolyMesh> mergeBaffles(const List<labelPair>&);
+            autoPtr<polyTopoChangeMap> mergeBaffles(const List<labelPair>&);
 
             //- Put faces/cells into zones according to surface specification.
             //  Returns null if no zone surfaces present. Region containing
             //  the insidePoint will not be put into a cellZone.
-            autoPtr<mapPolyMesh> zonify
+            autoPtr<polyTopoChangeMap> zonify
             (
                 const List<point>& insidePoints,
                 const bool allowFreeStandingZoneFaces
@@ -927,7 +930,7 @@ public:
             );
 
             //- Split mesh according to selectionPoints
-            autoPtr<mapPolyMesh> splitMeshRegions
+            autoPtr<polyTopoChangeMap> splitMeshRegions
             (
                 const labelList& globalToMasterPatch,
                 const labelList& globalToSlavePatch,
@@ -935,20 +938,20 @@ public:
             );
 
             //- Split faces into two
-            autoPtr<mapPolyMesh> splitFaces
+            autoPtr<polyTopoChangeMap> splitFaces
             (
                 const labelList& splitFaces,
                 const labelPairList& splits
             );
 
             //- Update local numbering for mesh redistribution
-            void distribute(const mapDistributePolyMesh&);
+            void distribute(const polyDistributionMap&);
 
             //- Update for external change to mesh. changedFaces are in new mesh
             //  face labels.
-            void updateMesh
+            void topoChange
             (
-                const mapPolyMesh&,
+                const polyTopoChangeMap&,
                 const labelList& changedFaces
             );
 
@@ -975,9 +978,9 @@ public:
                 //- Update local numbering + undo
                 //  Data to restore given as new pointlabel + stored pointlabel
                 //  (i.e. what was in pointsToStore)
-                void updateMesh
+                void topoChange
                 (
-                    const mapPolyMesh&,
+                    const polyTopoChangeMap&,
                     const labelList& changedFaces,
                     const Map<label>& pointsToRestore,
                     const Map<label>& facesToRestore,
@@ -997,13 +1000,13 @@ public:
                     const labelList& preserveFaces
                 );
 
-                autoPtr<mapPolyMesh> doRemovePoints
+                autoPtr<polyTopoChangeMap> doRemovePoints
                 (
                     removePoints& pointRemover,
                     const boolList& pointCanBeDeleted
                 );
 
-                autoPtr<mapPolyMesh> doRestorePoints
+                autoPtr<polyTopoChangeMap> doRestorePoints
                 (
                     removePoints& pointRemover,
                     const labelList& facesToRestore

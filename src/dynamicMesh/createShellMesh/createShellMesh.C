@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,14 +26,14 @@ License
 #include "createShellMesh.H"
 #include "polyTopoChange.H"
 #include "meshTools.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "polyAddPoint.H"
 #include "polyAddFace.H"
 #include "polyModifyFace.H"
 #include "polyAddCell.H"
 #include "labelPair.H"
 #include "indirectPrimitivePatch.H"
-#include "mapDistribute.H"
+#include "distributionMap.H"
 #include "globalMeshData.H"
 #include "PatchTools.T.H"
 #include "globalIndex.H"
@@ -74,7 +74,7 @@ void Foam::createShellMesh::syncEdges
     labelPairList& allEdgeData
 )
 {
-    const mapDistribute& map = globalData.globalEdgeSlavesMap();
+    const distributionMap& map = globalData.globalEdgeSlavesMap();
     const PackedBoolList& cppOrientation = globalData.globalEdgeOrientation();
 
     // Convert patch-edge data into cpp-edge data
@@ -903,7 +903,7 @@ void Foam::createShellMesh::setRefinement
 }
 
 
-void Foam::createShellMesh::updateMesh(const mapPolyMesh& map)
+void Foam::createShellMesh::topoChange(const polyTopoChangeMap& map)
 {
     inplaceReorder(map.reverseCellMap(), cellToFaceMap_);
     inplaceReorder(map.reverseFaceMap(), faceToFaceMap_);

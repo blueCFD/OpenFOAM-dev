@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "probes.H"
 #include "volFields.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "OSspecific.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -354,11 +354,22 @@ bool Foam::probes::write()
 }
 
 
-void Foam::probes::updateMesh(const mapPolyMesh& mpm)
+void Foam::probes::movePoints(const polyMesh& mesh)
 {
-    DebugInfo<< "probes: updateMesh" << endl;
+    DebugInfo<< "probes: movePoints" << endl;
 
-    if (&mpm.mesh() != &mesh_)
+    if (fixedLocations_ && &mesh == &mesh_)
+    {
+        findElements(mesh_);
+    }
+}
+
+
+void Foam::probes::topoChange(const polyTopoChangeMap& map)
+{
+    DebugInfo<< "probes: topoChange" << endl;
+
+    if (&map.mesh() != &mesh_)
     {
         return;
     }
@@ -378,7 +389,7 @@ void Foam::probes::updateMesh(const mapPolyMesh& mpm)
         {
             DynamicList<label> elems(elementList_.size());
 
-            const labelList& reverseMap = mpm.reverseCellMap();
+            const labelList& reverseMap = map.reverseCellMap();
             forAll(elementList_, i)
             {
                 label celli = elementList_[i];
@@ -406,7 +417,7 @@ void Foam::probes::updateMesh(const mapPolyMesh& mpm)
         {
             DynamicList<label> elems(faceList_.size());
 
-            const labelList& reverseMap = mpm.reverseFaceMap();
+            const labelList& reverseMap = map.reverseFaceMap();
             forAll(faceList_, i)
             {
                 label facei = faceList_[i];
@@ -433,14 +444,11 @@ void Foam::probes::updateMesh(const mapPolyMesh& mpm)
 }
 
 
-void Foam::probes::movePoints(const polyMesh& mesh)
+void Foam::probes::mapMesh(const polyMeshMap& map)
 {
-    DebugInfo<< "probes: movePoints" << endl;
+    DebugInfo<< "probes: mapMesh" << endl;
 
-    if (fixedLocations_ && &mesh == &mesh_)
-    {
-        findElements(mesh_);
-    }
+    findElements(mesh_);
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,8 +27,8 @@ License
 #include "UList.T.H"
 
 #include "hexRef8Data.H"
-#include "mapPolyMesh.H"
-#include "mapDistributePolyMesh.H"
+#include "polyTopoChangeMap.H"
+#include "polyDistributionMap.H"
 #include "polyMesh.H"
 #include "syncTools.H"
 #include "refinementHistory.H"
@@ -326,7 +326,7 @@ void Foam::hexRef8Data::sync(const IOobject& io)
 }
 
 
-void Foam::hexRef8Data::updateMesh(const mapPolyMesh& map)
+void Foam::hexRef8Data::topoChange(const polyTopoChangeMap& map)
 {
     if (cellLevelPtr_.valid())
     {
@@ -343,13 +343,13 @@ void Foam::hexRef8Data::updateMesh(const mapPolyMesh& map)
 
     if (refHistoryPtr_.valid() && refHistoryPtr_().active())
     {
-        refHistoryPtr_().updateMesh(map);
+        refHistoryPtr_().topoChange(map);
         refHistoryPtr_().instance() = map.mesh().facesInstance();
     }
 }
 
 
-void Foam::hexRef8Data::distribute(const mapDistributePolyMesh& map)
+void Foam::hexRef8Data::distribute(const polyDistributionMap& map)
 {
     if (cellLevelPtr_.valid())
     {

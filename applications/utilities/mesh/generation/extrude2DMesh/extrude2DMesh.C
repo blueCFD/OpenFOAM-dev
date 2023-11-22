@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,8 +28,9 @@ Description
     Takes 2D mesh (all faces 2 points only, no front and back faces) and
     creates a 3D mesh by extruding with specified thickness.
 
-Note
-    Not sure about the walking of the faces to create the front and back faces.
+    Note:
+        Not sure about the walking of the faces to create the front and
+        back faces.
 
 \*---------------------------------------------------------------------------*/
 
@@ -251,9 +252,9 @@ int main(int argc, char *argv[])
     extruder.setRefinement(meshMod());
 
     // Create a mesh from topo changes.
-    autoPtr<mapPolyMesh> morphMap = meshMod().changeMesh(mesh(), false);
+    autoPtr<polyTopoChangeMap> map = meshMod().changeMesh(mesh(), false);
 
-    mesh().updateMesh(morphMap);
+    mesh().topoChange(map);
 
     {
         edgeCollapser collapser(mesh());
@@ -301,10 +302,10 @@ int main(int argc, char *argv[])
         collapser.setRefinement(allPointInfo, meshModCollapse);
 
         // Create a mesh from topo changes.
-        autoPtr<mapPolyMesh> morphMap
+        autoPtr<polyTopoChangeMap> map
             = meshModCollapse.changeMesh(mesh(), false);
 
-        mesh().updateMesh(morphMap);
+        mesh().topoChange(map);
     }
 
     if (!overwrite)

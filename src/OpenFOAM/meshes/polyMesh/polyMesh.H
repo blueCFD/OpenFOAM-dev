@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,8 +63,9 @@ namespace Foam
 
 // Forward declaration of classes
 class globalMeshData;
-class mapPolyMesh;
-class mapDistributePolyMesh;
+class polyTopoChangeMap;
+class polyMeshMap;
+class polyDistributionMap;
 class polyMeshTetDecomposition;
 class treeDataCell;
 template<class Type> class indexedOctree;
@@ -211,6 +212,12 @@ private:
 
         //- Read and return the tetBasePtIs
         autoPtr<labelIOList> readTetBasePtIs() const;
+
+        //- Set the write option of the points
+        void setPointsWrite(const IOobject::writeOption wo);
+
+        //- Set the write option of the topology
+        void setTopologyWrite(const IOobject::writeOption wo);
 
 
         // Helper functions for constructor from cell shapes
@@ -401,6 +408,9 @@ public:
 
             //- Set the instance for mesh files
             void setInstance(const fileName&);
+
+            //- Set the instance for the points files
+            void setPointsInstance(const fileName&);
 
 
         // Access
@@ -606,11 +616,14 @@ public:
             //  time directories
             virtual readUpdateState readUpdate();
 
-            //- Update the mesh corresponding to given map
-            virtual void updateMesh(const mapPolyMesh&);
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap&);
 
-            //- Update mesh corresponding to the given distribution map
-            virtual void distribute(const mapDistributePolyMesh& map);
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap& map);
 
             //- Remove boundary patches
             void removeBoundary();
@@ -747,6 +760,18 @@ public:
             (
                 const point& p,
                 const cellDecomposition = CELL_TETS
+            ) const;
+
+
+        // Write
+
+            //- Write the underlying polyMesh
+            virtual bool writeObject
+            (
+                IOstream::streamFormat fmt,
+                IOstream::versionNumber ver,
+                IOstream::compressionType cmp,
+                const bool write = true
             ) const;
 
 

@@ -49,7 +49,7 @@ Description
 #include "cellSet.H"
 #include "IOobjectList.T.H"
 #include "volFields.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "faceSet.H"
 #include "cellSet.H"
 #include "syncTools.H"
@@ -272,7 +272,7 @@ template<class GeoField>
 void initCreatedPatches
 (
     const fvMesh& mesh,
-    const mapPolyMesh& map,
+    const polyTopoChangeMap& map,
     const typename GeoField::value_type initValue
 )
 {
@@ -1071,10 +1071,11 @@ int main(int argc, char *argv[])
     }
 
     // Change the mesh. Change points directly (no inflation).
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(subsetter.subMesh(), false);
+    autoPtr<polyTopoChangeMap> map =
+        meshMod.changeMesh(subsetter.subMesh(), false);
 
     // Update fields
-    subsetter.subMesh().updateMesh(map);
+    subsetter.subMesh().topoChange(map);
 
     // Fix faces that get mapped to zero-sized patches (these don't get any
     // value)

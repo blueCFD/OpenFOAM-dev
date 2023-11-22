@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,7 @@ License
 #include "slidingInterface.H"
 #include "layerAdditionRemoval.H"
 #include "pointField.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "polyTopoChange.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -360,7 +360,7 @@ void Foam::linearValveLayersFvMesh::update()
         // Changing topology
         resetMorph();
         setMorphTimeIndex(3*time().timeIndex());
-        updateMesh();
+        topoChange();
     }
     else
     {
@@ -373,7 +373,7 @@ void Foam::linearValveLayersFvMesh::update()
     // Changing topology
     resetMorph();
     setMorphTimeIndex(3*time().timeIndex() + 1);
-    updateMesh();
+    topoChange();
 
     if (topoChangeMap.valid())
     {
@@ -394,7 +394,7 @@ void Foam::linearValveLayersFvMesh::update()
     // Changing topology
     resetMorph();
     setMorphTimeIndex(3*time().timeIndex() + 2);
-    updateMesh();
+    topoChange();
 
     // Info<< "Moving points post slider attach" << endl;
     // const pointField p = allPoints();

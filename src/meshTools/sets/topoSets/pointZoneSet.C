@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "pointZoneSet.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "polyMesh.H"
 #include "processorPolyPatch.H"
 #include "cyclicPolyPatch.H"
@@ -290,7 +290,7 @@ bool pointZoneSet::writeObject
 }
 
 
-void pointZoneSet::updateMesh(const mapPolyMesh& morphMap)
+void pointZoneSet::topoChange(const polyTopoChangeMap& map)
 {
     // pointZone
     labelList newAddressing(addressing_.size());
@@ -299,7 +299,7 @@ void pointZoneSet::updateMesh(const mapPolyMesh& morphMap)
     forAll(addressing_, i)
     {
         label pointi = addressing_[i];
-        label newPointi = morphMap.reversePointMap()[pointi];
+        label newPointi = map.reversePointMap()[pointi];
         if (newPointi >= 0)
         {
             newAddressing[n] = newPointi;

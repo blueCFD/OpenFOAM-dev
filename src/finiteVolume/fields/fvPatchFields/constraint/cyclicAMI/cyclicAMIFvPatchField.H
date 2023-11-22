@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,10 +38,10 @@ Usage
     }
     \endverbatim
 
-Note
-    The outer boundary of the patch pairs must be similar, i.e. if the owner
-    patch is transformed to the neighbour patch, the outer perimeter of each
-    patch should be identical (or very similar).
+    Note:
+        The outer boundary of the patch pairs must be similar, i.e. if the owner
+        patch is transformed to the neighbour patch, the outer perimeter of each
+        patch should be identical (or very similar).
 
 See also
     Foam::AMIInterpolation
@@ -152,7 +152,10 @@ public:
             virtual bool coupled() const;
 
             //- Return neighbour coupled internal cell data
-            virtual tmp<Field<Type>> patchNeighbourField() const;
+            virtual tmp<Field<Type>> patchNeighbourField
+            (
+                const Pstream::commsTypes
+            ) const;
 
             //- Return reference to neighbour patchField
             const cyclicAMIFvPatchField<Type>& nbrPatchField() const;

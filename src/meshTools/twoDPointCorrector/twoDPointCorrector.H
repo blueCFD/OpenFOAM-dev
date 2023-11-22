@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -145,10 +145,13 @@ public:
         void correctDisplacement(const pointField& p, vectorField& disp) const;
 
         //- Update topology
-        virtual void updateMesh(const mapPolyMesh&);
+        virtual void topoChange(const polyTopoChangeMap&);
 
-        //- Update mesh corresponding to the given distribution map
-        virtual void distribute(const mapDistributePolyMesh&);
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
+
+        //- Redistribute or update using the given distribution map
+        virtual void distribute(const polyDistributionMap&);
 
         //- Correct weighting factors for moving mesh.
         virtual bool movePoints();

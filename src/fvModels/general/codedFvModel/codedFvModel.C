@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -256,21 +256,27 @@ FOR_ALL_FIELD_TYPES(IMPLEMENT_FV_MODEL_ADD_RHO_SUP, fv::codedFvModel);
 FOR_ALL_FIELD_TYPES(IMPLEMENT_FV_MODEL_ADD_ALPHA_RHO_SUP, fv::codedFvModel);
 
 
-void Foam::fv::codedFvModel::updateMesh(const mapPolyMesh& map)
-{
-    redirectFvModel().updateMesh(map);
-}
-
-
-void Foam::fv::codedFvModel::distribute(const mapDistributePolyMesh& map)
-{
-    redirectFvModel().distribute(map);
-}
-
-
 bool Foam::fv::codedFvModel::movePoints()
 {
     return redirectFvModel().movePoints();
+}
+
+
+void Foam::fv::codedFvModel::topoChange(const polyTopoChangeMap& map)
+{
+    redirectFvModel().topoChange(map);
+}
+
+
+void Foam::fv::codedFvModel::mapMesh(const polyMeshMap& map)
+{
+    redirectFvModel().mapMesh(map);
+}
+
+
+void Foam::fv::codedFvModel::distribute(const polyDistributionMap& map)
+{
+    redirectFvModel().distribute(map);
 }
 
 

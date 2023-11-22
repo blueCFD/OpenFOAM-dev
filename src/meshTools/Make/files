@@ -44,8 +44,7 @@ cellClassification/cellInfo.C
 
 cellQuality/cellQuality.C
 
-patchDist/patchDistFuncs/patchDistFuncs.C
-patchDist/wallPoint/wallPoint.C
+patchDist/patchDistWave/patchDistWave.C
 
 cellFeatures/cellFeatures.C
 
@@ -222,10 +221,6 @@ $(AMI)/faceAreaIntersect/faceAreaIntersect.C
 AMIGAMG=$(AMI)/GAMG
 $(AMIGAMG)/interfaces/cyclicAMIGAMGInterface/cyclicAMIGAMGInterface.C
 $(AMIGAMG)/interfaceFields/cyclicAMIGAMGInterfaceField/cyclicAMIGAMGInterfaceField.C
-$(AMIGAMG)/interfaces/cyclicACMIGAMGInterface/cyclicACMIGAMGInterface.C
-$(AMIGAMG)/interfaceFields/cyclicACMIGAMGInterfaceField/cyclicACMIGAMGInterfaceField.C
-$(AMIGAMG)/interfaces/cyclicRepeatAMIGAMGInterface/cyclicRepeatAMIGAMGInterface.C
-$(AMIGAMG)/interfaceFields/cyclicRepeatAMIGAMGInterfaceField/cyclicRepeatAMIGAMGInterfaceField.C
 
 AMIMethod=$(AMI)/AMIInterpolation/AMIMethod
 $(AMIMethod)/AMIMethod/AMIMethod.C
@@ -243,19 +238,12 @@ $(AMICycPatches)/cyclicAMIPolyPatch/cyclicAMIPolyPatch.C
 $(AMICycPatches)/cyclicAMIPointPatch/cyclicAMIPointPatch.C
 $(AMICycPatches)/cyclicAMIPointPatchField/cyclicAMIPointPatchFields.C
 
-ACMICycPatches=$(AMI)/patches/cyclicACMI
-$(ACMICycPatches)/cyclicACMILduInterfaceField/cyclicACMILduInterface.C
-$(ACMICycPatches)/cyclicACMILduInterfaceField/cyclicACMILduInterfaceField.C
-$(ACMICycPatches)/cyclicACMIPolyPatch/cyclicACMIPolyPatch.C
-$(ACMICycPatches)/cyclicACMIPointPatch/cyclicACMIPointPatch.C
-$(ACMICycPatches)/cyclicACMIPointPatchField/cyclicACMIPointPatchFields.C
-
-AMIOverlapPatches=$(AMI)/patches/cyclicRepeatAMI
-$(AMIOverlapPatches)/cyclicRepeatAMILduInterfaceField/cyclicRepeatAMILduInterface.C
-$(AMIOverlapPatches)/cyclicRepeatAMILduInterfaceField/cyclicRepeatAMILduInterfaceField.C
-$(AMIOverlapPatches)/cyclicRepeatAMIPolyPatch/cyclicRepeatAMIPolyPatch.C
-$(AMIOverlapPatches)/cyclicRepeatAMIPointPatch/cyclicRepeatAMIPointPatch.C
-$(AMIOverlapPatches)/cyclicRepeatAMIPointPatchField/cyclicRepeatAMIPointPatchFields.C
+patchToPatch/patchToPatch/patchToPatch.C
+patchToPatch/patchToPatch/patchToPatchParallelOps.C
+patchToPatch/nearest/nearestPatchToPatch.C
+patchToPatch/inverseDistance/inverseDistancePatchToPatch.C
+patchToPatch/intersection/intersectionPatchToPatch.C
+patchToPatch/rays/raysPatchToPatch.C
 
 mappedPatches/mappedPolyPatch/mappedPatchBase.C
 mappedPatches/mappedPolyPatch/mappedPolyPatch.C
@@ -269,19 +257,25 @@ meshStructure/meshStructure.C
 meshStructure/topoDistanceData.C
 meshStructure/pointTopoDistanceData.C
 
-regionCoupled/patches/regionCoupledPolyPatch/regionCoupledBase.C
-regionCoupled/patches/regionCoupledPolyPatch/regionCoupledPolyPatch.C
-regionCoupled/patches/regionCoupledPolyPatch/regionCoupledWallPolyPatch.C
-regionCoupled/patches/regionCoupledLduInterface/regionCoupledLduInterface.C
-regionCoupled/patches/regionCoupledPointPatch/regionCoupledPointPatch.C
-regionCoupled/patches/regionCoupledPointPatch/regionCoupledWallPointPatch.C
-
-regionCoupled/GAMG/interfaces/regionCoupledGAMGInterface/regionCoupledBaseGAMGInterface.C
-regionCoupled/GAMG/interfaces/regionCoupledGAMGInterface/regionCoupledGAMGInterface.C
-regionCoupled/GAMG/interfaces/regionCoupledGAMGInterface/regionCoupledWallGAMGInterface.C
-regionCoupled/GAMG/interfaceFields/regionCoupledGAMGInterfaceField/regionCoupledGAMGInterfaceField.C
-regionCoupled/GAMG/interfaceFields/regionCoupledGAMGInterfaceField/regionCoupledWallGAMGInterfaceField.C
-
 tetOverlapVolume/tetOverlapVolume.C
+
+triIntersect/triIntersect.C
+triIntersect/triIntersectLocationIO.C
+
+nonConformal/polyPatches/nonConformal/nonConformalPolyPatch.C
+nonConformal/polyPatches/nonConformalCoupled/nonConformalCoupledPolyPatch.C
+nonConformal/polyPatches/nonConformalCyclic/nonConformalCyclicPolyPatch.C
+nonConformal/polyPatches/nonConformalError/nonConformalErrorPolyPatch.C
+nonConformal/polyPatches/nonConformalProcessorCyclic/nonConformalProcessorCyclicPolyPatch.C
+
+nonConformal/pointPatches/nonConformalCyclic/nonConformalCyclicPointPatch.C
+nonConformal/pointPatches/nonConformalError/nonConformalErrorPointPatch.C
+nonConformal/pointPatches/nonConformalProcessorCyclic/nonConformalProcessorCyclicPointPatch.C
+
+nonConformal/pointPatchFields/nonConformalCyclic/nonConformalCyclicPointPatchFields.C
+nonConformal/pointPatchFields/nonConformalError/nonConformalErrorPointPatchFields.C
+nonConformal/pointPatchFields/nonConformalProcessorCyclic/nonConformalProcessorCyclicPointPatchFields.C
+
+nonConformalBoundary/nonConformalBoundary.C
 
 LIB = $(FOAM_LIBBIN)/libmeshTools

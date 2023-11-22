@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -356,25 +356,34 @@ void Foam::fv::solidificationMeltingSource::addSup
 }
 
 
-void Foam::fv::solidificationMeltingSource::updateMesh(const mapPolyMesh& map)
+bool Foam::fv::solidificationMeltingSource::movePoints()
 {
-    set_.updateMesh(map);
+    set_.movePoints();
+    return true;
+}
+
+
+void Foam::fv::solidificationMeltingSource::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::solidificationMeltingSource::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
 }
 
 
 void Foam::fv::solidificationMeltingSource::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     set_.distribute(map);
-}
-
-
-bool Foam::fv::solidificationMeltingSource::movePoints()
-{
-    set_.movePoints();
-    return true;
 }
 
 

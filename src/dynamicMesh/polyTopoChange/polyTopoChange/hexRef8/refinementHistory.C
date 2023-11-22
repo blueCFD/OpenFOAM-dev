@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,8 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "refinementHistory.H"
-#include "mapPolyMesh.H"
-#include "mapDistributePolyMesh.H"
+#include "polyTopoChangeMap.H"
+#include "polyDistributionMap.H"
 #include "polyMesh.H"
 #include "syncTools.H"
 
@@ -1130,7 +1130,7 @@ void Foam::refinementHistory::resize(const label size)
 }
 
 
-void Foam::refinementHistory::updateMesh(const mapPolyMesh& map)
+void Foam::refinementHistory::topoChange(const polyTopoChangeMap& map)
 {
     if (active())
     {
@@ -1164,7 +1164,7 @@ void Foam::refinementHistory::updateMesh(const mapPolyMesh& map)
 
         if (debug)
         {
-            Pout<< "refinementHistory::updateMesh : from "
+            Pout<< "refinementHistory::topoChange : from "
                 << visibleCells_.size()
                 << " to " << newVisibleCells.size()
                 << " cells" << endl;
@@ -1204,7 +1204,7 @@ void Foam::refinementHistory::subset
 
         if (debug)
         {
-            Pout<< "refinementHistory::updateMesh : from "
+            Pout<< "refinementHistory::topoChange : from "
                 << visibleCells_.size()
                 << " to " << newVisibleCells.size()
                 << " cells" << endl;
@@ -1257,7 +1257,7 @@ void Foam::refinementHistory::countProc
 }
 
 
-void Foam::refinementHistory::distribute(const mapDistributePolyMesh& map)
+void Foam::refinementHistory::distribute(const polyDistributionMap& map)
 {
     if (!active())
     {

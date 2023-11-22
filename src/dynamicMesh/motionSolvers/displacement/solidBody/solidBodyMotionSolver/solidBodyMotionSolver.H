@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ class solidBodyMotionSolver
         //- Flag to indicate whether all cells should move
         bool moveAllCells_;
 
-        //- Cache the current transform for updateMesh
+        //- Cache the current transform for topoChange
         mutable septernion transform_;
 
 
@@ -78,6 +78,7 @@ public:
         //- Construct from mesh and dictionary
         solidBodyMotionSolver
         (
+            const word& name,
             const polyMesh&,
             const dictionary&
         );
@@ -100,7 +101,7 @@ public:
         {}
 
         //-  Update local data for topology changes
-        virtual void updateMesh(const mapPolyMesh&);
+        virtual void topoChange(const polyTopoChangeMap&);
 
 
     // Member Operators

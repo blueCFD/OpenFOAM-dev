@@ -31,6 +31,8 @@ License
 #include "dispersedVirtualMassModel.H"
 #include "fixedValueFvPatchFields.H"
 #include "inletOutletFvPatchFields.H"
+#include "epsilonWallFunctionFvPatchScalarField.H"
+#include "epsilonmWallFunctionFvPatchScalarField.H"
 #include "fvmSup.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -187,7 +189,11 @@ wordList mixtureKEpsilon<BasicMomentumTransportModel>::epsilonBoundaryTypes
 
     forAll(ebf, patchi)
     {
-        if (isA<fixedValueFvPatchScalarField>(ebf[patchi]))
+        if (isType<epsilonWallFunctionFvPatchScalarField>(ebf[patchi]))
+        {
+            ebt[patchi] = epsilonmWallFunctionFvPatchScalarField::typeName;
+        }
+        else if (isA<fixedValueFvPatchScalarField>(ebf[patchi]))
         {
             ebt[patchi] = fixedValueFvPatchScalarField::typeName;
         }
@@ -220,6 +226,9 @@ void mixtureKEpsilon<BasicMomentumTransportModel>::correctInletOutlet
             (bf[patchi]).refValue() =
             refCast<const inletOutletFvPatchScalarField>
             (refBf[patchi]).refValue();
+
+            refCast<inletOutletFvPatchScalarField>
+            (bf[patchi]).phiName() = "phim";
         }
     }
 }
@@ -311,6 +320,7 @@ void mixtureKEpsilon<BasicMomentumTransportModel>::initMixtureFields()
             epsilonBoundaryTypes(epsilonl)
         )
     );
+
     correctInletOutlet(epsilonm_(), epsilonl);
 }
 
@@ -686,7 +696,7 @@ void mixtureKEpsilon<BasicMomentumTransportModel>::correct()
     (
         fvm::ddt(epsilonm)
       + fvm::div(phim, epsilonm)
-      - fvm::Sp(fvc::div(phim), epsilonm)
+      + fvm::SuSp(-fvc::div(phim), epsilonm)
       - fvm::laplacian(DepsilonEff(nutm), epsilonm)
      ==
         C1_*Gm*epsilonm/km
@@ -703,13 +713,12 @@ void mixtureKEpsilon<BasicMomentumTransportModel>::correct()
     fvConstraints.constrain(epsilonm);
     bound(epsilonm, this->epsilonMin_);
 
-
     // Turbulent kinetic energy equation
     tmp<fvScalarMatrix> kmEqn
     (
         fvm::ddt(km)
       + fvm::div(phim, km)
-      - fvm::Sp(fvc::div(phim), km)
+      + fvm::SuSp(-fvc::div(phim), km)
       - fvm::laplacian(DkEff(nutm), km)
      ==
         Gm

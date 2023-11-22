@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ namespace Foam
 
 // Forward declaration of classes
 class mapAddedPolyMesh;
-class mapDistributePolyMesh;
+class polyDistributionMap;
 
 /*---------------------------------------------------------------------------*\
                       Class fvMeshDistribute Declaration
@@ -123,7 +123,7 @@ class fvMeshDistribute
             template<class T, class Mesh>
             void mapBoundaryFields
             (
-                const mapPolyMesh& map,
+                const polyTopoChangeMap& map,
                 const PtrList<FieldField<fvsPatchField, T>>& oldBflds
             );
 
@@ -135,7 +135,7 @@ class fvMeshDistribute
             template<class T>
             void mapExposedFaces
             (
-                const mapPolyMesh& map,
+                const polyTopoChangeMap& map,
                 const PtrList<Field<T>>& oldFlds
             );
 
@@ -145,7 +145,7 @@ class fvMeshDistribute
 
             //- Delete all processor patches. Move any processor faces into
             //  destinationPatch
-            autoPtr<mapPolyMesh> deleteProcPatches
+            autoPtr<polyTopoChangeMap> deleteProcPatches
             (
                 const label destinationPatch
             );
@@ -155,7 +155,7 @@ class fvMeshDistribute
             //  new patchID. constructFaceMap is being adapted for the
             //  possible new face position (since proc faces get automatically
             //  matched)
-            autoPtr<mapPolyMesh> repatch
+            autoPtr<polyTopoChangeMap> repatch
             (
                 const labelList& newPatchID,
                 labelListList& constructFaceMap
@@ -169,14 +169,11 @@ class fvMeshDistribute
             //  share the same position but are only detectable to be
             //  topologically the same point when doing parallel analysis. This
             //  routine will merge those points.
-            autoPtr<mapPolyMesh> mergeSharedPoints
+            autoPtr<polyTopoChangeMap> mergeSharedPoints
             (
                 const labelList& pointToGlobalMaster,
                 labelListList& constructPointMap
             );
-
-            //- Map the fields
-            void mapFields(const mapPolyMesh& map);
 
 
         // Coupling information
@@ -263,7 +260,7 @@ class fvMeshDistribute
         // Other
 
             //- Remove cells. Add all exposed faces to patch oldInternalPatchi
-            autoPtr<mapPolyMesh> doRemoveCells
+            autoPtr<polyTopoChangeMap> doRemoveCells
             (
                 const labelList& cellsToRemove,
                 const label oldInternalPatchi
@@ -366,7 +363,7 @@ public:
 
         //- Send cells to neighbours according to distribution
         //  (for every cell the new proc)
-        autoPtr<mapDistributePolyMesh> distribute(const labelList& dist);
+        autoPtr<polyDistributionMap> distribute(const labelList& dist);
 
         // Debugging
 

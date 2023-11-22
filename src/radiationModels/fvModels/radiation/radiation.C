@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,11 +94,15 @@ void Foam::fv::radiation::addSup
 }
 
 
-void Foam::fv::radiation::updateMesh(const mapPolyMesh&)
+void Foam::fv::radiation::topoChange(const polyTopoChangeMap&)
 {}
 
 
-void Foam::fv::radiation::distribute(const mapDistributePolyMesh&)
+void Foam::fv::radiation::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::radiation::distribute(const polyDistributionMap&)
 {}
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,9 +87,9 @@ Usage
         points         | a specified set of locations
     \endplaintable
 
-Note
-    When specifying the track resolution, the \c trackLength OR \c nSubCycle
-    option should be used
+    Note:
+        When specifying the track resolution, the \c trackLength OR \c nSubCycle
+        option should be used
 
 See also
     Foam::functionObject
@@ -238,11 +238,14 @@ public:
         //- Calculate and write the streamlines
         virtual bool write();
 
-        //- Update for changes of mesh
-        virtual void updateMesh(const mapPolyMesh&);
-
         //- Update for mesh point-motion
         virtual void movePoints(const polyMesh&);
+
+        //- Update topology using the given map
+        virtual void topoChange(const polyTopoChangeMap&);
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
 
 
     // Member Operators

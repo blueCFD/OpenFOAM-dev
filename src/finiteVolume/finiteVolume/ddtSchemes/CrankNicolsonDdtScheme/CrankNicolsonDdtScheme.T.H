@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,12 +71,12 @@ Description
     interFoam family of solvers.  Boundedness cannot be guaranteed with the
     backward scheme.
 
-Note
-    The Crank-Nicolson coefficient for the implicit part of the RHS is related
-    to the off-centering coefficient by
-    \verbatim
-        cnCoeff = 1.0/(1.0 + ocCoeff);
-    \endverbatim
+    Note:
+        The Crank-Nicolson coefficient for the implicit part of the RHS
+        is related to the off-centering coefficient by
+        \verbatim
+            cnCoeff = 1.0/(1.0 + ocCoeff);
+        \endverbatim
 
 See also
     Foam::Euler
@@ -309,10 +309,15 @@ public:
             const fluxFieldType& phi
         );
 
-
         virtual tmp<surfaceScalarField> meshPhi
         (
             const GeometricField<Type, fvPatchField, volMesh>&
+        );
+
+        virtual tmp<scalarField> meshPhi
+        (
+            const GeometricField<Type, fvPatchField, volMesh>&,
+            const label patchi
         );
 
 

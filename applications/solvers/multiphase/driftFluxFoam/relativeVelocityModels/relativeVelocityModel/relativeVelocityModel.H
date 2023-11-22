@@ -36,7 +36,6 @@ SourceFiles
 
 #include "incompressibleTwoPhaseInteractingMixture.H"
 #include "uniformDimensionedFields.H"
-#include "MRFZoneList.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -63,29 +62,12 @@ protected:
         //- Mixture properties
         const incompressibleTwoPhaseInteractingMixture& mixture_;
 
-        //- Name of the continuous phase
-        const word continuousPhaseName_;
-
-        //- Continuous phase fraction
-        const volScalarField& alphac_;
-
-        //- Dispersed phase fraction
-        const volScalarField& alphad_;
-
-        //- Continuous density
-        const dimensionedScalar& rhoc_;
-
-        //- Dispersed density
-        const dimensionedScalar& rhod_;
-
         //- Acceleration due to gravity
         const uniformDimensionedVectorField& g_;
 
-        //- MRF zones
-        const MRFZoneList& MRF_;
-
         //- Dispersed diffusion velocity
         mutable volVectorField Udm_;
+
 
 public:
 
@@ -101,10 +83,9 @@ public:
         (
             const dictionary& dict,
             const incompressibleTwoPhaseInteractingMixture& mixture,
-            const uniformDimensionedVectorField& g,
-            const MRFZoneList& MRF
+            const uniformDimensionedVectorField& g
         ),
-        (dict, mixture, g, MRF)
+        (dict, mixture, g)
     );
 
 
@@ -115,8 +96,7 @@ public:
         (
             const dictionary& dict,
             const incompressibleTwoPhaseInteractingMixture& mixture,
-            const uniformDimensionedVectorField& g,
-            const MRFZoneList& MRF
+            const uniformDimensionedVectorField& g
         );
 
         //- Disallow default bitwise copy construction
@@ -128,8 +108,7 @@ public:
     (
         const dictionary& dict,
         const incompressibleTwoPhaseInteractingMixture& mixture,
-        const uniformDimensionedVectorField& g,
-        const MRFZoneList& MRF
+        const uniformDimensionedVectorField& g
     );
 
 
@@ -145,14 +124,15 @@ public:
             return mixture_;
         }
 
-        //- Return the mixture mean density
-        tmp<volScalarField> rho() const;
-
         //- Return the diffusion velocity of the dispersed phase
         const volVectorField& Udm() const
         {
             return Udm_;
         }
+
+        //- Return the dispersed phase acceleration
+        //  Including buoyancy and flow curvature
+        tmp<volVectorField> acceleration() const;
 
         //- Return the stress tensor due to the phase transport
         tmp<volSymmTensorField> tauDm() const;

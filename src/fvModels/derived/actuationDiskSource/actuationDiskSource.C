@@ -206,22 +206,31 @@ void Foam::fv::actuationDiskSource::addSup
 }
 
 
-void Foam::fv::actuationDiskSource::updateMesh(const mapPolyMesh& map)
-{
-    set_.updateMesh(map);
-}
-
-
-void Foam::fv::actuationDiskSource::distribute(const mapDistributePolyMesh& map)
-{
-    set_.distribute(map);
-}
-
-
 bool Foam::fv::actuationDiskSource::movePoints()
 {
     set_.movePoints();
     return true;
+}
+
+
+void Foam::fv::actuationDiskSource::topoChange(const polyTopoChangeMap& map)
+{
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::actuationDiskSource::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
+}
+
+
+void Foam::fv::actuationDiskSource::distribute
+(
+    const polyDistributionMap& map
+)
+{
+    set_.distribute(map);
 }
 
 

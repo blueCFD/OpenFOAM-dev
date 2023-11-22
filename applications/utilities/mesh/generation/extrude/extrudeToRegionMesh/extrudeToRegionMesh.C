@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -104,11 +104,11 @@ becomes
     CCC=polypatch
 
 
-Notes:
-    - when extruding cyclics with only one cell in between it does not
-      detect this as a cyclic since the face is the same face. It will
-      only work if the coupled edge extrudes a different face so if there
-      are more than 1 cell in between.
+    Notes:
+      - when extruding cyclics with only one cell in between it does not
+        detect this as a cyclic since the face is the same face. It will
+        only work if the coupled edge extrudes a different face so if there
+        are more than 1 cell in between.
 
 \endverbatim
 
@@ -581,7 +581,7 @@ void calcEdgeMinMaxZone
     const primitiveFacePatch& extrudePatch,
     const labelList& extrudeMeshEdges,
     const labelList& zoneID,
-    const mapDistribute& extrudeEdgeFacesMap,
+    const distributionMap& extrudeEdgeFacesMap,
     const labelListList& extrudeEdgeGlobalFaces,
 
     labelList& minZoneID,
@@ -838,7 +838,7 @@ void addCoupledPatches
     const primitiveFacePatch& extrudePatch,
     const labelList& extrudeMeshFaces,
     const labelList& extrudeMeshEdges,
-    const mapDistribute& extrudeEdgeFacesMap,
+    const distributionMap& extrudeEdgeFacesMap,
     const labelListList& extrudeEdgeGlobalFaces,
 
     labelList& sidePatchID,
@@ -1786,7 +1786,7 @@ int main(int argc, char *argv[])
         )
     );
     List<Map<label>> compactMap;
-    const mapDistribute extrudeEdgeFacesMap
+    const distributionMap extrudeEdgeFacesMap
     (
         globalExtrudeFaces,
         extrudeEdgeGlobalFaces,
@@ -2235,7 +2235,7 @@ int main(int argc, char *argv[])
     );
 
 
-    autoPtr<mapPolyMesh> shellMap;
+    autoPtr<polyTopoChangeMap> shellMap;
     fvMesh regionMesh
     (
         IOobject
@@ -2312,7 +2312,7 @@ int main(int argc, char *argv[])
 
 
     // Update numbering on extruder.
-    extruder.updateMesh(shellMap);
+    extruder.topoChange(shellMap);
 
 
     // Calculate offsets from shell mesh back to original mesh
@@ -2524,7 +2524,7 @@ int main(int argc, char *argv[])
     // Insert baffles into original mesh
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    autoPtr<mapPolyMesh> addBafflesMap;
+    autoPtr<polyTopoChangeMap> addBafflesMap;
 
     if (adaptMesh)
     {
@@ -2659,7 +2659,7 @@ int main(int argc, char *argv[])
         addBafflesMap = meshMod.changeMesh(mesh, false);
 
         // Update fields
-        mesh.updateMesh(addBafflesMap);
+        mesh.topoChange(addBafflesMap);
 
 
 //XXXXXX

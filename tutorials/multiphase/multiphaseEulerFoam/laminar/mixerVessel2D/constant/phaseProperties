@@ -33,7 +33,7 @@ water
 oil
 {
     type            purePhaseModel;
-    diameterModel   constant;
+    diameterModel constant;
     constantCoeffs
     {
         d               1e-3;
@@ -45,7 +45,7 @@ oil
 mercury
 {
     type            purePhaseModel;
-    diameterModel   constant;
+    diameterModel constant;
     constantCoeffs
     {
         d               1e-3;
@@ -57,10 +57,11 @@ mercury
 air
 {
     type            purePhaseModel;
-    diameterModel   constant;
-    constantCoeffs
+    diameterModel   isothermal;
+    isothermalCoeffs
     {
-        d               1e-3;
+        d0              1e-3;
+        p0              1e5;
     }
 
     residualAlpha 1e-3;
@@ -269,16 +270,31 @@ virtualMass
         Cvm             0.5;
     }
 
+    water_dispersedIn_air
+    {
+        type            none;
+    }
+
     air_dispersedIn_oil
     {
         type            constantCoefficient;
         Cvm             0.5;
     }
 
+    oil_dispersedIn_air
+    {
+        type            none;
+    }
+
     air_dispersedIn_mercury
     {
         type            constantCoefficient;
         Cvm             0.5;
+    }
+
+    mercury_dispersedIn_air
+    {
+        type            none;
     }
 }
 

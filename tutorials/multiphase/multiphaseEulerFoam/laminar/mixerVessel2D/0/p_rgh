@@ -9,6 +9,7 @@ FoamFile
 {
     format      ascii;
     class       volScalarField;
+    location    "0";
     object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -19,6 +20,8 @@ internalField   uniform 0;
 
 boundaryField
 {
+    #includeEtc "caseDicts/setConstraintTypes"
+
     rotor
     {
         type            fixedFluxPressure;
@@ -31,14 +34,10 @@ boundaryField
         value           $internalField;
     }
 
-    front
+    nonCouple
     {
-        type            empty;
-    }
-
-    back
-    {
-        type            empty;
+        type            fixedFluxPressure;
+        value           $internalField;
     }
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -181,13 +181,16 @@ public:
         //- Correct for mesh changes
         void correct();
 
-        //- Update for changes of mesh
-        virtual void updateMesh(const mapPolyMesh&);
-
         //- Update for mesh point-motion
         virtual void movePoints(const polyMesh&);
 
-        //- Update for changes of mesh due to readUpdate
+        //- Update topology using the given map
+        virtual void topoChange(const polyTopoChangeMap&);
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
+
+        //- Update topology using the given map due to readUpdate
         virtual void readUpdate(const polyMesh::readUpdateState state);
 
 

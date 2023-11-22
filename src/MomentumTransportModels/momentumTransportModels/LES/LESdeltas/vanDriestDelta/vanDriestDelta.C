@@ -25,8 +25,8 @@ License
 
 #include "vanDriestDelta.H"
 #include "wallFvPatch.H"
-#include "patchDistWave.H"
-#include "wallPointYPlus.H"
+#include "fvPatchDistWave.H"
+#include "FvWallInfoYPlus.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -51,11 +51,11 @@ void Foam::LESModels::vanDriestDelta::calcDelta()
     const volScalarField& nu = tnu();
     tmp<volScalarField> nuSgs = momentumTransportModel_.nut();
 
-    volScalarField ystar
+    volScalarField yStar
     (
         IOobject
         (
-            "ystar",
+            "yStar",
             mesh.time().constant(),
             mesh
         ),
@@ -64,7 +64,7 @@ void Foam::LESModels::vanDriestDelta::calcDelta()
     );
 
     const fvPatchList& patches = mesh.boundary();
-    volScalarField::Boundary& ystarBf = ystar.boundaryFieldRef();
+    volScalarField::Boundary& yStarBf = yStar.boundaryFieldRef();
 
     forAll(patches, patchi)
     {
@@ -74,33 +74,34 @@ void Foam::LESModels::vanDriestDelta::calcDelta()
             const scalarField& nuw = nu.boundaryField()[patchi];
             const scalarField& nuSgsw = nuSgs().boundaryField()[patchi];
 
-            ystarBf[patchi] =
+            yStarBf[patchi] =
                 nuw/sqrt((nuw + nuSgsw)*mag(Uw.snGrad()) + vSmall);
         }
     }
 
-    scalar cutOff = wallPointYPlus::yPlusCutOff;
-    wallPointYPlus::yPlusCutOff = 500;
     volScalarField y
     (
         volScalarField::New("y", mesh, dimensionedScalar(dimLength, great))
     );
-    patchDistWave::wave<wallPointYPlus, fvPatchField>
+
+    FvWallInfoYPlus<wallPoint>::trackData td;
+    td.yPlusCutOff = yPlusCutOff_;
+
+    fvPatchDistWave::calculateAndCorrect<FvWallInfoYPlus>
     (
         mesh,
         mesh.boundaryMesh().findPatchIDs<wallPolyPatch>(),
-        ystar.boundaryField(),
-        y.primitiveFieldRef(),
-        y.boundaryFieldRef(),
-        ystar.primitiveFieldRef(),
-        ystar.boundaryFieldRef()
+        minWallFaceFraction_,
+        2, // <-- roughly equivalent to old point-cell corrections
+        y,
+        yStar,
+        td
     );
-    wallPointYPlus::yPlusCutOff = cutOff;
 
     delta_ = min
     (
         static_cast<const volScalarField&>(geometricDelta_()),
-        (kappa_/Cdelta_)*((scalar(1) + small) - exp(-y/ystar/Aplus_))*y
+        (kappa_/Cdelta_)*((scalar(1) + small) - exp(-y/yStar/Aplus_))*y
     );
 }
 
@@ -147,6 +148,22 @@ Foam::LESModels::vanDriestDelta::vanDriestDelta
         (
             "calcInterval",
             1
+        )
+    ),
+    yPlusCutOff_
+    (
+        dict.optionalSubDict(type() + "Coeffs").lookupOrDefault<scalar>
+        (
+            "yPlusCutOff",
+            500
+        )
+    ),
+    minWallFaceFraction_
+    (
+        dict.optionalSubDict(type() + "Coeffs").lookupOrDefault<scalar>
+        (
+            "minWallFaceFraction",
+            0.1
         )
     )
 {

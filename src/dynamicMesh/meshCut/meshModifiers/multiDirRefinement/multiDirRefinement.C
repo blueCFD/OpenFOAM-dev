@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ License
 #include "topoSet.H"
 #include "directions.H"
 #include "hexRef8.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "polyTopoChange.H"
 #include "ListOps.T.H"
 #include "cellModeller.H"
@@ -318,12 +318,13 @@ void Foam::multiDirRefinement::refineHex8
     hexRefiner.setRefinement(consistentCells, meshMod);
 
     // Change mesh, no inflation
-    autoPtr<mapPolyMesh> morphMapPtr = meshMod.changeMesh(mesh, false, true);
-    const mapPolyMesh& morphMap = morphMapPtr();
+    autoPtr<polyTopoChangeMap> mapPtr =
+        meshMod.changeMesh(mesh, false, true);
+    const polyTopoChangeMap& map = mapPtr();
 
-    if (morphMap.hasMotionPoints())
+    if (map.hasMotionPoints())
     {
-        mesh.movePoints(morphMap.preMotionPoints());
+        mesh.movePoints(map.preMotionPoints());
     }
 
     if (writeMesh)
@@ -337,7 +338,7 @@ void Foam::multiDirRefinement::refineHex8
             << mesh.time().timeName() << endl;
     }
 
-    hexRefiner.updateMesh(morphMap);
+    hexRefiner.topoChange(map);
 
     // Collect all cells originating from same old cell (original + 7 extra)
 
@@ -347,7 +348,7 @@ void Foam::multiDirRefinement::refineHex8
     }
     labelList nAddedCells(addedCells_.size(), 0);
 
-    const labelList& cellMap = morphMap.cellMap();
+    const labelList& cellMap = map.cellMap();
 
     forAll(cellMap, celli)
     {

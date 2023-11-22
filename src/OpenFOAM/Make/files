@@ -576,15 +576,20 @@ $(cellMatcher)/tetWedgeMatcher.C
 $(cellMatcher)/tetMatcher.C
 $(cellMatcher)/degenerateMatcher.C
 
-mapPolyMesh = $(polyMesh)/mapPolyMesh
-$(mapPolyMesh)/mapPolyMesh.C
-$(mapPolyMesh)/faceMapper/faceMapper.C
-$(mapPolyMesh)/cellMapper/cellMapper.C
-$(mapPolyMesh)/mapDistribute/mapDistribute.C
-$(mapPolyMesh)/mapDistribute/mapDistributeBase.C
-$(mapPolyMesh)/mapDistribute/mapDistributePolyMesh.C
-$(mapPolyMesh)/mapDistribute/IOmapDistribute.C
-$(mapPolyMesh)/mapAddedPolyMesh.C
+polyTopoChangeMap = $(polyMesh)/polyTopoChangeMap
+$(polyTopoChangeMap)/polyTopoChangeMap.C
+$(polyTopoChangeMap)/faceMapper/faceMapper.C
+$(polyTopoChangeMap)/cellMapper/cellMapper.C
+$(polyTopoChangeMap)/mapAddedPolyMesh.C
+
+polyMeshMap = $(polyMesh)/polyMeshMap
+$(polyMeshMap)/polyMeshMap.C
+
+polyDistributionMap = $(polyMesh)/polyDistributionMap
+$(polyDistributionMap)/distributionMap.C
+$(polyDistributionMap)/distributionMapBase.C
+$(polyDistributionMap)/polyDistributionMap.C
+$(polyDistributionMap)/IOdistributionMap.C
 
 PrimitivePatch = $(primitiveMesh)/PrimitivePatch.T
 $(PrimitivePatch)/PrimitivePatchName.T.C

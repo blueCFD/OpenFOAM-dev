@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,8 +37,7 @@ SourceFiles
 
 #include "pointField.H"
 #include "Time.T.H"
-#include "polyMesh.H"
-#include "dictionaryEntry.H"
+#include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,8 +46,9 @@ namespace Foam
 
 // Forward class declarations
 class polyMesh;
-class mapPolyMesh;
-class mapDistributePolyMesh;
+class polyTopoChangeMap;
+class polyMeshMap;
+class polyDistributionMap;
 
 /*---------------------------------------------------------------------------*\
                         Class motionSolver Declaration
@@ -57,6 +57,9 @@ class mapDistributePolyMesh;
 class motionSolver
 {
     // Private Data
+
+        //- Name of coordinate system
+        word name_;
 
         //- Reference to mesh
         const polyMesh& mesh_;
@@ -78,27 +81,24 @@ public:
             autoPtr,
             motionSolver,
             dictionary,
-            (const polyMesh& mesh, const dictionary& dict),
-            (mesh, dict)
+            (
+                const word& name,
+                const polyMesh& mesh,
+                const dictionary& dict
+            ),
+            (name, mesh, dict)
         );
 
 
     // Selectors
 
         //- Select constructed from polyMesh and dictionary
-        static autoPtr<motionSolver> New(const polyMesh&, const dictionary&);
-
-        //- Class used for the construction of PtrLists of motionSolvers
-        class iNew
-        {
-            const polyMesh& mesh_;
-
-        public:
-
-            iNew(const polyMesh& mesh);
-
-            autoPtr<motionSolver> operator()(Istream& is) const;
-        };
+        static autoPtr<motionSolver> New
+        (
+            const word& name,
+            const polyMesh&,
+            const dictionary&
+        );
 
 
     // Constructors
@@ -106,6 +106,7 @@ public:
         //- Construct from polyMesh and dictionary and type.
         motionSolver
         (
+            const word& name,
             const polyMesh& mesh,
             const dictionary&,
             const word& type
@@ -120,6 +121,18 @@ public:
 
 
     // Member Functions
+
+        //- Return name
+        const word& name() const
+        {
+            return name_;
+        }
+
+        //- Return keyword
+        const word& keyword() const
+        {
+            return name();
+        }
 
         //- Return reference to mesh
         const polyMesh& mesh() const
@@ -148,10 +161,13 @@ public:
         virtual void movePoints(const pointField&) = 0;
 
         //-  Update local data for topology changes
-        virtual void updateMesh(const mapPolyMesh&) = 0;
+        virtual void topoChange(const polyTopoChangeMap&) = 0;
 
         //- Update corresponding to the given distribution map
-        virtual void distribute(const mapDistributePolyMesh&) = 0;
+        virtual void distribute(const polyDistributionMap&) = 0;
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&) = 0;
 
         //- Optionally write motion state information for restart
         virtual bool write() const;

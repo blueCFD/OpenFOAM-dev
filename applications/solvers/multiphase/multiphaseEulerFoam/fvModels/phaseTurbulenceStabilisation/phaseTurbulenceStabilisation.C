@@ -235,13 +235,20 @@ void Foam::fv::phaseTurbulenceStabilisation::addSup
 }
 
 
-void Foam::fv::phaseTurbulenceStabilisation::updateMesh(const mapPolyMesh&)
+void Foam::fv::phaseTurbulenceStabilisation::topoChange
+(
+    const polyTopoChangeMap&
+)
+{}
+
+
+void Foam::fv::phaseTurbulenceStabilisation::mapMesh(const polyMeshMap& map)
 {}
 
 
 void Foam::fv::phaseTurbulenceStabilisation::distribute
 (
-    const mapDistributePolyMesh&
+    const polyDistributionMap&
 )
 {}
 

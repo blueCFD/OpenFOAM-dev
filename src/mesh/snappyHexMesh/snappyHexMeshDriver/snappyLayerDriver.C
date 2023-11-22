@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,9 +38,9 @@ Description
 #include "faceSet.H"
 #include "cellSet.H"
 #include "polyTopoChange.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "addPatchCellLayer.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "OBJstream.H"
 #include "layerParameters.H"
 #include "combineFaces.H"
@@ -1042,7 +1042,7 @@ void Foam::snappyLayerDriver::determineSidePatches
         }
 
         mesh.clearOut();
-        const_cast<polyBoundaryMesh&>(mesh.boundaryMesh()).updateMesh();
+        const_cast<polyBoundaryMesh&>(mesh.boundaryMesh()).topoChange();
     }
 }
 
@@ -3224,7 +3224,7 @@ void Foam::snappyLayerDriver::addLayers
                     checkFaces
                 );
 
-                pp().movePoints(mesh.points());
+                pp().clearGeom();
 
                 // Update patchDisp (since not all might have been honoured)
                 patchDisp = oldPatchPos - pp().localPoints();
@@ -3347,7 +3347,7 @@ void Foam::snappyLayerDriver::addLayers
             // undo if necessary.
 
             autoPtr<fvMesh> newMeshPtr;
-            autoPtr<mapPolyMesh> map = meshMod.makeMesh
+            autoPtr<polyTopoChangeMap> map = meshMod.makeMesh
             (
                 newMeshPtr,
                 IOobject
@@ -3365,14 +3365,14 @@ void Foam::snappyLayerDriver::addLayers
             fvMesh& newMesh = newMeshPtr();
 
             //?necessary? Update fields
-            newMesh.updateMesh(map);
+            newMesh.topoChange(map);
 
             newMesh.setInstance(meshRefiner_.timeName());
 
             // Update numbering on addLayer:
             // - cell/point labels to be newMesh.
             // - patchFaces to remain in oldMesh order.
-            addLayer.updateMesh
+            addLayer.topoChange
             (
                 map,
                 identity(pp().size()),
@@ -3489,7 +3489,7 @@ void Foam::snappyLayerDriver::addLayers
 
             // Reset mesh points and start again
             mesh.movePoints(oldPoints);
-            pp().movePoints(mesh.points());
+            pp().clearGeom();
 
             // Grow out region of non-extrusion
             for (label i = 0; i < layerParams.nGrow(); i++)
@@ -3512,13 +3512,13 @@ void Foam::snappyLayerDriver::addLayers
     // current mesh.
 
     // Apply the stored topo changes to the current mesh.
-    autoPtr<mapPolyMesh> map = savedMeshMod.changeMesh(mesh, false);
+    autoPtr<polyTopoChangeMap> map = savedMeshMod.changeMesh(mesh, false);
 
     // Hack to remove meshPhi/V0 - mapped incorrectly. TBD.
     mesh.clearOut();
 
     // Update fields
-    mesh.updateMesh(map);
+    mesh.topoChange(map);
 
     // Move mesh (since morphing does not do this)
     if (map().hasMotionPoints())
@@ -3534,7 +3534,7 @@ void Foam::snappyLayerDriver::addLayers
     // Reset the instance for if in overwrite mode
     mesh.setInstance(meshRefiner_.timeName());
 
-    meshRefiner_.updateMesh(map, labelList(0));
+    meshRefiner_.topoChange(map, labelList(0));
 
     // Update numbering of faceWantedThickness
     meshRefinement::updateList(map().faceMap(), scalar(0), faceWantedThickness);
@@ -3556,7 +3556,7 @@ void Foam::snappyLayerDriver::addLayers
             << " baffles back into zoned faces ..."
             << endl;
 
-        autoPtr<mapPolyMesh> map = meshRefiner_.mergeBaffles(baffles);
+        autoPtr<polyTopoChangeMap> map = meshRefiner_.mergeBaffles(baffles);
 
         inplaceReorder(map().reverseCellMap(), cellNLayers);
         inplaceReorder(map().reverseFaceMap(), faceWantedThickness);
@@ -3587,7 +3587,7 @@ void Foam::snappyLayerDriver::addLayers
         mesh.clearOut();
 
         // Balance. No restriction on face zones and baffles.
-        autoPtr<mapDistributePolyMesh> map = meshRefiner_.balance
+        autoPtr<polyDistributionMap> map = meshRefiner_.balance
         (
             false,
             false,
@@ -3714,7 +3714,7 @@ void Foam::snappyLayerDriver::doLayers
             // Balance mesh (and meshRefinement). Restrict faceZones to
             // be on internal faces only since they will be converted into
             // baffles.
-            autoPtr<mapDistributePolyMesh> map = meshRefiner_.balance
+            autoPtr<polyDistributionMap> map = meshRefiner_.balance
             (
                 true,   // false,    // keepZoneFaces
                 false,

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "motionSolverList.H"
+#include "polyMesh.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -44,17 +45,30 @@ namespace Foam
 
 Foam::motionSolverList::motionSolverList
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    motionSolver(mesh, dict, typeName),
-    motionSolvers_
-    (
-        dict.lookup("solvers"),
-        motionSolver::iNew(mesh)
-    )
-{}
+    motionSolver(name, mesh, dict, typeName)
+{
+    const dictionary& solversDict = dict.subDict("solvers");
+
+    forAllConstIter(dictionary, solversDict, iter)
+    {
+        if (iter().isDict())
+        {
+            const word& name = iter().keyword();
+            const dictionary& dict = iter().dict();
+
+            motionSolvers_.insert
+            (
+                name,
+                motionSolver::New(name, mesh, dict).ptr()
+            );
+        }
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -70,11 +84,11 @@ Foam::tmp<Foam::pointField> Foam::motionSolverList::curPoints() const
     if (motionSolvers_.size())
     {
         // Accumulated displacement
-        pointField disp(motionSolvers_[0].curPoints() - mesh().points());
+        pointField disp(mesh().nPoints(), Zero);
 
-        for (label i = 1; i < motionSolvers_.size(); i++)
+        forAllConstIter(PtrDictionary<motionSolver>, motionSolvers_, iter)
         {
-            disp += motionSolvers_[i].curPoints() - mesh().points();
+            disp += iter().curPoints() - mesh().points();
         }
 
         return mesh().points() + disp;
@@ -88,39 +102,48 @@ Foam::tmp<Foam::pointField> Foam::motionSolverList::curPoints() const
 
 void Foam::motionSolverList::solve()
 {
-    forAll(motionSolvers_, i)
+    forAllIter(PtrDictionary<motionSolver>, motionSolvers_, iter)
     {
-        motionSolvers_[i].solve();
+        iter().solve();
     }
 }
 
 
-void Foam::motionSolverList::movePoints(const pointField& points)
+void Foam::motionSolverList::topoChange(const polyTopoChangeMap& map)
 {
-    forAll(motionSolvers_, i)
+    forAllIter(PtrDictionary<motionSolver>, motionSolvers_, iter)
     {
-        motionSolvers_[i].movePoints(points);
+        iter().topoChange(map);
     }
 }
 
 
-void Foam::motionSolverList::updateMesh(const mapPolyMesh& mpm)
+void Foam::motionSolverList::mapMesh(const polyMeshMap& map)
 {
-    forAll(motionSolvers_, i)
+    forAllIter(PtrDictionary<motionSolver>, motionSolvers_, iter)
     {
-        motionSolvers_[i].updateMesh(mpm);
+        iter().mapMesh(map);
     }
 }
 
 
 void Foam::motionSolverList::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
-    forAll(motionSolvers_, i)
+    forAllIter(PtrDictionary<motionSolver>, motionSolvers_, iter)
     {
-        motionSolvers_[i].distribute(map);
+        iter().distribute(map);
+    }
+}
+
+
+void Foam::motionSolverList::movePoints(const pointField& points)
+{
+    forAllIter(PtrDictionary<motionSolver>, motionSolvers_, iter)
+    {
+        iter().movePoints(points);
     }
 }
 

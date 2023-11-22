@@ -26,7 +26,7 @@ License
 #include "fvMeshDistributorsDistributor.H"
 #include "decompositionMethod.H"
 #include "fvMeshDistribute.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -71,7 +71,7 @@ void Foam::fvMeshDistributors::distributor::distribute
     fvMeshDistribute distributor(mesh);
 
     // Do actual sending/receiving of mesh
-    autoPtr<mapDistributePolyMesh> map
+    autoPtr<polyDistributionMap> map
     (
         distributor.distribute(distribution)
     );
@@ -154,13 +154,17 @@ bool Foam::fvMeshDistributors::distributor::update()
 }
 
 
-void Foam::fvMeshDistributors::distributor::updateMesh(const mapPolyMesh&)
+void Foam::fvMeshDistributors::distributor::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fvMeshDistributors::distributor::mapMesh(const polyMeshMap&)
 {}
 
 
 void Foam::fvMeshDistributors::distributor::distribute
 (
-    const mapDistributePolyMesh&
+    const polyDistributionMap&
 )
 {}
 

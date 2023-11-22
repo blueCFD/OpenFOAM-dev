@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,11 +46,12 @@ namespace Foam
 
 Foam::displacementMeshMoverMotionSolver::displacementMeshMoverMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    displacementMotionSolver(mesh, dict, typeName) // read pointDisplacement
+    displacementMotionSolver(name, mesh, dict, typeName)
 {}
 
 
@@ -126,12 +127,12 @@ void Foam::displacementMeshMoverMotionSolver::movePoints(const pointField& p)
 }
 
 
-void Foam::displacementMeshMoverMotionSolver::updateMesh
+void Foam::displacementMeshMoverMotionSolver::topoChange
 (
-    const mapPolyMesh& map
+    const polyTopoChangeMap& map
 )
 {
-    displacementMotionSolver::updateMesh(map);
+    displacementMotionSolver::topoChange(map);
 
     // Update meshMover for new topology
     meshMoverPtr_.clear();

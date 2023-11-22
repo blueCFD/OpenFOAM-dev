@@ -137,25 +137,31 @@ FOR_ALL_FIELD_TYPES
 );
 
 
-void Foam::fv::fixedValueConstraint::updateMesh(const mapPolyMesh& map)
+bool Foam::fv::fixedValueConstraint::movePoints()
 {
-    set_.updateMesh(map);
+    set_.movePoints();
+    return true;
+}
+
+
+void Foam::fv::fixedValueConstraint::topoChange(const polyTopoChangeMap& map)
+{
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::fixedValueConstraint::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
 }
 
 
 void Foam::fv::fixedValueConstraint::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     set_.distribute(map);
-}
-
-
-bool Foam::fv::fixedValueConstraint::movePoints()
-{
-    set_.movePoints();
-    return true;
 }
 
 

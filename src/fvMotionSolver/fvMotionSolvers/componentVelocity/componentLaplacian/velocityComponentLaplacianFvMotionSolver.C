@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,11 +49,12 @@ namespace Foam
 Foam::velocityComponentLaplacianFvMotionSolver::
 velocityComponentLaplacianFvMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    componentVelocityMotionSolver(mesh, dict, typeName),
+    componentVelocityMotionSolver(name, mesh, dict, typeName),
     fvMotionSolver(mesh),
     cellMotionU_
     (
@@ -130,12 +131,30 @@ void Foam::velocityComponentLaplacianFvMotionSolver::solve()
 }
 
 
-void Foam::velocityComponentLaplacianFvMotionSolver::updateMesh
+void Foam::velocityComponentLaplacianFvMotionSolver::topoChange
 (
-    const mapPolyMesh& mpm
+    const polyTopoChangeMap& map
 )
 {
-    componentVelocityMotionSolver::updateMesh(mpm);
+    componentVelocityMotionSolver::topoChange(map);
+
+    // Update diffusivity. Note two stage to make sure old one is de-registered
+    // before creating/registering new one.
+    diffusivityPtr_.reset(nullptr);
+    diffusivityPtr_ = motionDiffusivity::New
+    (
+        fvMesh_,
+        coeffDict().lookup("diffusivity")
+    );
+}
+
+
+void Foam::velocityComponentLaplacianFvMotionSolver::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    componentVelocityMotionSolver::mapMesh(map);
 
     // Update diffusivity. Note two stage to make sure old one is de-registered
     // before creating/registering new one.

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,9 +52,9 @@ Usage
         points on them as features. The -doNotPreserveFaceZones disables this
         behaviour.
 
-Note
-    It is just a driver for meshDualiser. Substitute your own simpleMarkFeatures
-    to have different behaviour.
+    Note:
+        It is just a driver for meshDualiser. Substitute your own
+        simpleMarkFeatures to have different behaviour.
 
 \*---------------------------------------------------------------------------*/
 
@@ -63,7 +63,7 @@ Note
 #include "fvMesh.H"
 #include "unitConversion.H"
 #include "polyTopoChange.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "PackedBoolList.H"
 #include "meshTools.H"
 #include "OFstream.H"
@@ -509,10 +509,10 @@ int main(int argc, char *argv[])
     );
 
     // Create mesh, return map from old to new mesh.
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh, false);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh, false);
 
     // Update fields
-    mesh.updateMesh(map);
+    mesh.topoChange(map);
 
     // Optionally inflate mesh
     if (map().hasMotionPoints())

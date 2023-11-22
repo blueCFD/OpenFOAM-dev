@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,11 +69,12 @@ Foam::rigidBodyMeshMotionSolver::bodyMesh::bodyMesh
 
 Foam::rigidBodyMeshMotionSolver::rigidBodyMeshMotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    motionSolver(mesh, dict, typeName),
+    motionSolver(name, mesh, dict, typeName),
     RBD::rigidBodyMotion
     (
         coeffDict(),
@@ -108,6 +109,7 @@ Foam::rigidBodyMeshMotionSolver::rigidBodyMeshMotionSolver
     (
         motionSolver::New
         (
+            name,
             mesh,
             IOdictionary
             (
@@ -302,15 +304,21 @@ void Foam::rigidBodyMeshMotionSolver::movePoints(const pointField& points)
 }
 
 
-void Foam::rigidBodyMeshMotionSolver::updateMesh(const mapPolyMesh& map)
+void Foam::rigidBodyMeshMotionSolver::topoChange(const polyTopoChangeMap& map)
 {
-    meshSolverPtr_->updateMesh(map);
+    meshSolverPtr_->topoChange(map);
+}
+
+
+void Foam::rigidBodyMeshMotionSolver::mapMesh(const polyMeshMap& map)
+{
+    meshSolverPtr_->mapMesh(map);
 }
 
 
 void Foam::rigidBodyMeshMotionSolver::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     meshSolverPtr_->distribute(map);

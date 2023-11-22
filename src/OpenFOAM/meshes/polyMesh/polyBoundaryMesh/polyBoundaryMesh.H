@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,6 +69,8 @@ class polyBoundaryMesh
         const polyMesh& mesh_;
 
         mutable autoPtr<labelList> patchIDPtr_;
+
+        mutable autoPtr<labelList> patchFaceIDPtr_;
 
         mutable autoPtr<HashTable<labelList, word>> groupPatchIDsPtr_;
 
@@ -183,6 +185,9 @@ public:
         //- Per boundary face label the patch index
         const labelList& patchID() const;
 
+        //- Per boundary face label the patch face index
+        const labelList& patchFaceID() const;
+
         //- Per patch group the patch indices
         const HashTable<labelList, word>& groupPatchIDs() const;
 
@@ -219,16 +224,16 @@ public:
         void movePoints(const pointField&);
 
         //- Correct polyBoundaryMesh after topology update
-        void updateMesh();
+        void topoChange();
 
-        //- Rename the patches. If validBoundary is set this calls updateMesh()
+        //- Rename the patches. If validBoundary is set this calls topoChange()
         //  after reordering to recalculate data (so the call needs to be
         //  parallel synchronised).
         void renamePatches(const wordUList& newNames, const bool validBoundary);
 
         //- Reorders the patches. Ordering does not have to be done in
         //  ascending or descending order. Reordering has to be unique (is a
-        //  shuffle). If validBoundary is set this calls updateMesh() after
+        //  shuffle). If validBoundary is set this calls topoChange() after
         //  reordering to recalculate data (so the call needs to be parallel
         //  synchronised).
         void reorderPatches

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,18 +117,22 @@ void Foam::fv::isotropicDamping::addSup
 }
 
 
-void Foam::fv::isotropicDamping::updateMesh(const mapPolyMesh&)
-{}
-
-
-void Foam::fv::isotropicDamping::distribute(const mapDistributePolyMesh&)
-{}
-
-
 bool Foam::fv::isotropicDamping::movePoints()
 {
     return true;
 }
+
+
+void Foam::fv::isotropicDamping::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::isotropicDamping::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::isotropicDamping::distribute(const polyDistributionMap&)
+{}
 
 
 bool Foam::fv::isotropicDamping::read(const dictionary& dict)

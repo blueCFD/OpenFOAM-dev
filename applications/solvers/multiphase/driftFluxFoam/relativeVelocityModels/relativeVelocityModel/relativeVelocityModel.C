@@ -27,6 +27,7 @@ License
 #include "fixedValueFvPatchFields.H"
 #include "slipFvPatchFields.H"
 #include "partialSlipFvPatchFields.H"
+#include "fvcGrad.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -71,29 +72,22 @@ Foam::relativeVelocityModel::relativeVelocityModel
 (
     const dictionary& dict,
     const incompressibleTwoPhaseInteractingMixture& mixture,
-    const uniformDimensionedVectorField& g,
-    const MRFZoneList& MRF
+    const uniformDimensionedVectorField& g
 )
 :
     mixture_(mixture),
-    alphac_(mixture.alpha2()),
-    alphad_(mixture.alpha1()),
-    rhoc_(mixture.rhoc()),
-    rhod_(mixture.rhod()),
     g_(g),
-    MRF_(MRF),
-
     Udm_
     (
         IOobject
         (
             "Udm",
-            alphac_.time().timeName(),
-            alphac_.mesh(),
+            mixture.U().time().timeName(),
+            mixture.U().mesh(),
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        alphac_.mesh(),
+        mixture_.U().mesh(),
         dimensionedVector(dimVelocity, Zero),
         UdmPatchFieldTypes()
     )
@@ -106,8 +100,7 @@ Foam::autoPtr<Foam::relativeVelocityModel> Foam::relativeVelocityModel::New
 (
     const dictionary& dict,
     const incompressibleTwoPhaseInteractingMixture& mixture,
-    const uniformDimensionedVectorField& g,
-    const MRFZoneList& MRF
+    const uniformDimensionedVectorField& g
 )
 {
     word modelType(dict.lookup(typeName));
@@ -134,8 +127,7 @@ Foam::autoPtr<Foam::relativeVelocityModel> Foam::relativeVelocityModel::New
             (
                 dict.optionalSubDict(modelType + "Coeffs"),
                 mixture,
-                g,
-                MRF
+                g
             )
         );
 }
@@ -149,16 +141,30 @@ Foam::relativeVelocityModel::~relativeVelocityModel()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::relativeVelocityModel::rho() const
+Foam::tmp<Foam::volVectorField>
+Foam::relativeVelocityModel::acceleration() const
 {
-    return alphac_*rhoc_ + alphad_*rhod_;
+    // Dispersed phase velocity
+    // const volVectorField Ud(mixture_.U() + Udm_);
+
+    // Use the mixture rather than the dispersed-phase velocity to approximate
+    // the dispersed-phase acceleration to improve stability as only the mixture
+    // momentum equation is coupled to continuity and pressure
+    //
+    // This approximation is valid only in the limit of small drift-velocity.
+    // For large drift-velocity an Euler-Euler approach should be used in
+    // which both the continuous and dispersed-phase momentum equations are
+    // solved and coupled to the pressure.
+    const volVectorField& Ud = mixture_.U();
+
+    return g_ - (Ud & fvc::grad(Ud));
 }
 
 
 Foam::tmp<Foam::volSymmTensorField> Foam::relativeVelocityModel::tauDm() const
 {
-    const volScalarField betac(alphac_*rhoc_);
-    const volScalarField betad(alphad_*rhod_);
+    const volScalarField betac(mixture_.alphac()*mixture_.rhoc());
+    const volScalarField betad(mixture_.alphad()*mixture_.rhod());
 
     // Calculate the relative velocity of the continuous phase w.r.t the mean
     const volVectorField Ucm(betad*Udm_/betac);

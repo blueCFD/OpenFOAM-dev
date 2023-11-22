@@ -179,25 +179,31 @@ void ${typeName}FvModel${SourceType}::addSup
 }
 
 
-void ${typeName}FvModel${SourceType}::updateMesh(const mapPolyMesh& map)
+bool ${typeName}FvModel${SourceType}::movePoints()
 {
-    set_.updateMesh(map);
+    set_.movePoints();
+    return true;
+}
+
+
+void ${typeName}FvModel${SourceType}::topoChange(const polyTopoChangeMap& map)
+{
+    set_.topoChange(map);
+}
+
+
+void ${typeName}FvModel${SourceType}::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
 }
 
 
 void ${typeName}FvModel${SourceType}::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     set_.distribute(map);
-}
-
-
-bool ${typeName}FvModel${SourceType}::movePoints()
-{
-    set_.movePoints();
-    return true;
 }
 
 

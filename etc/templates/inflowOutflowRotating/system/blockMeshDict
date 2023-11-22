@@ -185,6 +185,12 @@ edges
     project 23 20  (fixed)
 );
 
+defaultPatch
+{
+    name background;
+    type internal;
+}
+
 boundary
 (
 //  Uncomment below to define patches in background mesh

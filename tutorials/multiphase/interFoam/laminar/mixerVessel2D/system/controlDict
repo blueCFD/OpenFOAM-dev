@@ -22,17 +22,17 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         4;
+endTime         2;
 
 deltaT          1e-3;
 
 writeControl    adjustableRunTime;
 
-writeInterval   0.125;
+writeInterval   0.01;
 
 purgeWrite      0;
 
-writeFormat     binary;
+writeFormat     ascii;
 
 writePrecision  6;
 
@@ -42,14 +42,12 @@ timeFormat      general;
 
 timePrecision   6;
 
-runTimeModifiable yes;
+runTimeModifiable true;
 
 adjustTimeStep  yes;
 
 maxCo           0.5;
 maxAlphaCo      0.5;
-
-maxDeltaT       1;
 
 
 // ************************************************************************* //

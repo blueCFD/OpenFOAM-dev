@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,11 +29,11 @@ Description
     or an already decomposed surface and redistributes it so that each
     processor has all triangles that overlap its mesh.
 
-Note
-    - best decomposition option is hierarchGeomDecomp since
-      guarantees square decompositions.
-    - triangles might be present on multiple processors.
-    - merging uses geometric tolerance so take care with writing precision.
+    Note
+      - best decomposition option is hierarchGeomDecomp since
+        guarantees square decompositions.
+      - triangles might be present on multiple processors.
+      - merging uses geometric tolerance so take care with writing precision.
 
 \*---------------------------------------------------------------------------*/
 
@@ -41,7 +41,7 @@ Note
 #include "Time.T.H"
 #include "polyMesh.H"
 #include "distributedTriSurfaceMesh.H"
-#include "mapDistribute.H"
+#include "distributionMap.H"
 #include "localIOdictionary.H"
 
 using namespace Foam;
@@ -257,8 +257,8 @@ int main(int argc, char *argv[])
 
     // Do redistribution
     Info<< "Redistributing surface" << nl << endl;
-    autoPtr<mapDistribute> faceMap;
-    autoPtr<mapDistribute> pointMap;
+    autoPtr<distributionMap> faceMap;
+    autoPtr<distributionMap> pointMap;
     surfMesh.distribute
     (
         meshBb[Pstream::myProcNo()],

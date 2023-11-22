@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -248,22 +248,28 @@ bool Foam::fv::meanVelocityForce::constrain(volVectorField& U) const
 }
 
 
-void Foam::fv::meanVelocityForce::updateMesh(const mapPolyMesh& map)
-{
-    set_.updateMesh(map);
-}
-
-
-void Foam::fv::meanVelocityForce::distribute(const mapDistributePolyMesh& map)
-{
-    set_.distribute(map);
-}
-
-
 bool Foam::fv::meanVelocityForce::movePoints()
 {
     set_.movePoints();
     return true;
+}
+
+
+void Foam::fv::meanVelocityForce::topoChange(const polyTopoChangeMap& map)
+{
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::meanVelocityForce::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
+}
+
+
+void Foam::fv::meanVelocityForce::distribute(const polyDistributionMap& map)
+{
+    set_.distribute(map);
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -209,12 +209,12 @@ bool Foam::streamlinesParticle::move
     const scalar
 )
 {
-    td.switchProcessor = false;
     td.keepParticle = true;
+    td.sendToProc = -1;
 
     const scalar maxDt = mesh().bounds().mag();
 
-    while (td.keepParticle && !td.switchProcessor && lifeTime_ > 0)
+    while (td.keepParticle && td.sendToProc == -1 && lifeTime_ > 0)
     {
         scalar dt = maxDt;
 
@@ -274,7 +274,7 @@ bool Foam::streamlinesParticle::move
                *dt
                *(1 - trackToAndHitFace(dt*U, 0, cloud, td));
 
-            if (!td.keepParticle || td.switchProcessor || lifeTime_ == 0)
+            if (!td.keepParticle || td.sendToProc != -1 || lifeTime_ == 0)
             {
                 break;
             }
@@ -319,13 +319,6 @@ bool Foam::streamlinesParticle::move
     }
 
     return td.keepParticle;
-}
-
-
-bool Foam::streamlinesParticle::hitPatch(streamlinesCloud&, trackingData&)
-{
-    // Disable generic patch interaction
-    return false;
 }
 
 
@@ -398,41 +391,35 @@ void Foam::streamlinesParticle::hitCyclicAMIPatch
 }
 
 
-void Foam::streamlinesParticle::hitCyclicACMIPatch
+bool Foam::streamlinesParticle::hitNonConformalCyclicPatch
 (
     const vector& displacement,
     const scalar fraction,
+    const label patchi,
     streamlinesCloud& cloud,
     trackingData& td
 )
 {
-    // End this track
-    endTrack(td);
-
     // Move across the cyclic
-    particle::hitCyclicACMIPatch(displacement, fraction, cloud, td);
-}
+    const bool result =
+        particle::hitNonConformalCyclicPatch
+        (
+            displacement,
+            fraction,
+            patchi,
+            cloud,
+            td
+        );
 
-
-void Foam::streamlinesParticle::hitCyclicRepeatAMIPatch
-(
-    const vector& displacement,
-    const scalar fraction,
-    streamlinesCloud& cloud,
-    trackingData& td
-)
-{
     // End this track
-    endTrack(td);
+    if (result) endTrack(td);
 
-    // Move across the cyclic
-    particle::hitCyclicRepeatAMIPatch(displacement, fraction, cloud, td);
+    return result;
 }
-
 
 void Foam::streamlinesParticle::hitProcessorPatch
 (
-    streamlinesCloud&,
+    streamlinesCloud& cloud,
     trackingData& td
 )
 {
@@ -445,8 +432,7 @@ void Foam::streamlinesParticle::hitProcessorPatch
         endTrack(td);
     }
 
-    // Switch processor
-    td.switchProcessor = true;
+    particle::hitProcessorPatch(cloud, td);
 }
 
 

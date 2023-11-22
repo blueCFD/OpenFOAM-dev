@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,13 +25,13 @@ License
 
 #include "polyMeshFilter.H"
 #include "polyMesh.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * Public Member Functions * * * * * * * * * * * * //
 
 template<class SetType>
-void Foam::polyMeshFilter::updateSets(const mapPolyMesh& map)
+void Foam::polyMeshFilter::updateSets(const polyTopoChangeMap& map)
 {
     HashTable<const SetType*> sets =
         map.mesh().objectRegistry::lookupClass<const SetType>();
@@ -39,7 +39,7 @@ void Foam::polyMeshFilter::updateSets(const mapPolyMesh& map)
     forAllIter(typename HashTable<const SetType*>, sets, iter)
     {
         SetType& set = const_cast<SetType&>(*iter());
-        set.updateMesh(map);
+        set.topoChange(map);
         set.sync(map.mesh());
     }
 
@@ -58,7 +58,7 @@ void Foam::polyMeshFilter::updateSets(const mapPolyMesh& map)
         {
             // Not in memory. Load it.
             SetType set(*iter());
-            set.updateMesh(map);
+            set.topoChange(map);
 
             set.write();
         }

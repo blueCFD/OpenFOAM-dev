@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ namespace fvMeshMovers
 Foam::fvMeshMovers::motionSolver::motionSolver(fvMesh& mesh)
 :
     fvMeshMover(mesh),
-    motionPtr_(Foam::motionSolver::New(mesh, dict())),
+    motionPtr_(Foam::motionSolver::New("motionSolver", mesh, dict())),
     velocityMotionCorrection_(mesh, dict())
 {}
 
@@ -72,15 +72,21 @@ bool Foam::fvMeshMovers::motionSolver::update()
 }
 
 
-void Foam::fvMeshMovers::motionSolver::updateMesh(const mapPolyMesh& mpm)
+void Foam::fvMeshMovers::motionSolver::topoChange(const polyTopoChangeMap& map)
 {
-    motionPtr_->updateMesh(mpm);
+    motionPtr_->topoChange(map);
+}
+
+
+void Foam::fvMeshMovers::motionSolver::mapMesh(const polyMeshMap& map)
+{
+    motionPtr_->mapMesh(map);
 }
 
 
 void Foam::fvMeshMovers::motionSolver::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     motionPtr_->distribute(map);

@@ -39,7 +39,7 @@ License
 #include "OFstream.H"
 #include "Time.T.H"
 #include "FaceCellWave.T.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "refinementData.H"
 #include "refinementDistanceData.H"
 #include "degenerateMatcher.H"
@@ -4116,7 +4116,7 @@ Foam::labelListList Foam::hexRef8::setRefinement
     }
 
     // Extend pointLevels and cellLevels for the new cells. Could also be done
-    // in updateMesh but saves passing cellAddedCells out of this routine.
+    // in topoChange but saves passing cellAddedCells out of this routine.
 
     // Check
     if (debug)
@@ -4234,17 +4234,17 @@ void Foam::hexRef8::storeData
 }
 
 
-void Foam::hexRef8::updateMesh(const mapPolyMesh& map)
+void Foam::hexRef8::topoChange(const polyTopoChangeMap& map)
 {
     Map<label> dummyMap(0);
 
-    updateMesh(map, dummyMap, dummyMap, dummyMap);
+    topoChange(map, dummyMap, dummyMap, dummyMap);
 }
 
 
-void Foam::hexRef8::updateMesh
+void Foam::hexRef8::topoChange
 (
-    const mapPolyMesh& map,
+    const polyTopoChangeMap& map,
     const Map<label>& pointsToRestore,
     const Map<label>& facesToRestore,
     const Map<label>& cellsToRestore
@@ -4253,7 +4253,7 @@ void Foam::hexRef8::updateMesh
     // Update celllevel
     if (debug)
     {
-        Pout<< "hexRef8::updateMesh :"
+        Pout<< "hexRef8::topoChange :"
             << " Updating various lists"
             << endl;
     }
@@ -4263,7 +4263,7 @@ void Foam::hexRef8::updateMesh
 
         if (debug)
         {
-            Pout<< "hexRef8::updateMesh :"
+            Pout<< "hexRef8::topoChange :"
                 << " reverseCellMap:" << map.reverseCellMap().size()
                 << " cellMap:" << map.cellMap().size()
                 << " nCells:" << mesh_.nCells()
@@ -4417,14 +4417,14 @@ void Foam::hexRef8::updateMesh
     // Update refinement tree
     if (history_.active())
     {
-        history_.updateMesh(map);
+        history_.topoChange(map);
     }
 
     // Mark files as changed
     setInstance(mesh_.facesInstance());
 
     // Update face removal engine
-    faceRemover_.updateMesh(map);
+    faceRemover_.topoChange(map);
 
     // Clear cell shapes
     cellShapesPtr_.clear();
@@ -4514,7 +4514,7 @@ void Foam::hexRef8::subset
 }
 
 
-void Foam::hexRef8::distribute(const mapDistributePolyMesh& map)
+void Foam::hexRef8::distribute(const polyDistributionMap& map)
 {
     if (debug)
     {
@@ -5625,7 +5625,7 @@ void Foam::hexRef8::setUnrefinement
     // Mark files as changed
     setInstance(mesh_.facesInstance());
 
-    // history_.updateMesh will take care of truncating.
+    // history_.topoChange will take care of truncating.
 }
 
 

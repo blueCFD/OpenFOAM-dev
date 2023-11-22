@@ -23,125 +23,138 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "wallPoint.H"
 #include "polyMesh.H"
-#include "transform.H"
+#include "transformer.H"
+#include "SubField.T.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * *  Protected Member Functions * * * * * * * * * * * //
 
-// Update this with w2 if w2 nearer to pt.
+template<class Derived>
 template<class TrackingData>
-inline bool Foam::wallPoint::update
+inline bool Foam::WallPointBase<Derived>::update
 (
     const point& pt,
-    const wallPoint& w2,
+    const WallPointBase<Derived>& w2,
     const scalar tol,
     TrackingData& td
 )
 {
-    // Already done in calling algorithm
-    // if (w2.origin() == origin_)
-    //{
-    //    // Shortcut. Same input so same distance.
-    //    return false;
-    //}
+    const scalar dist2 = magSqr(pt - w2.origin());
 
-    scalar dist2 = magSqr(pt - w2.origin());
-
-    if (!valid(td))
+    if (valid(td))
     {
-        // current not yet set so use any value
-        distSqr_ = dist2;
-        origin_ = w2.origin();
+        const scalar diff = distSqr() - dist2;
 
-        return true;
+        if (diff < 0)
+        {
+            // already nearer to pt
+            return false;
+        }
+
+        if ((diff < small) || ((distSqr() > small) && (diff/distSqr() < tol)))
+        {
+            // don't propagate small changes
+            return false;
+        }
     }
 
-    scalar diff = distSqr_ - dist2;
+    // Either *this is not yet valid or w2 is closer
+    distSqr() = dist2;
+    origin() = w2.origin();
 
-    if (diff < 0)
-    {
-        // already nearer to pt
-        return false;
-    }
-
-    if ((diff < small) || ((distSqr_ > small) && (diff/distSqr_ < tol)))
-    {
-        // don't propagate small changes
-        return false;
-    }
-    else
-    {
-        // update with new values
-        distSqr_ = dist2;
-        origin_ = w2.origin();
-
-        return true;
-    }
+    return true;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-inline Foam::wallPoint::wallPoint()
+template<class Derived>
+inline Foam::WallPointBase<Derived>::WallPointBase()
 :
     origin_(point::max),
     distSqr_(-great)
 {}
 
 
-inline Foam::wallPoint::wallPoint(const point& origin, const scalar distSqr)
+template<class Derived>
+inline Foam::WallPointBase<Derived>::WallPointBase
+(
+    const point& origin,
+    const scalar distSqr
+)
 :
     origin_(origin),
     distSqr_(distSqr)
 {}
 
 
+template<class Derived>
+inline Foam::WallPointBase<Derived>::WallPointBase
+(
+    const face& f,
+    const pointField& points,
+    const point& centre,
+    const scalar distSqr
+)
+:
+    origin_(centre),
+    distSqr_(distSqr)
+{}
+
+
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-inline const Foam::point& Foam::wallPoint::origin() const
+template<class Derived>
+inline const Foam::point& Foam::WallPointBase<Derived>::origin() const
 {
     return origin_;
 }
 
 
-inline Foam::point& Foam::wallPoint::origin()
+template<class Derived>
+inline Foam::point& Foam::WallPointBase<Derived>::origin()
 {
     return origin_;
 }
 
 
-inline Foam::scalar Foam::wallPoint::distSqr() const
+template<class Derived>
+inline Foam::scalar Foam::WallPointBase<Derived>::distSqr() const
 {
     return distSqr_;
 }
 
 
-inline Foam::scalar& Foam::wallPoint::distSqr()
+template<class Derived>
+inline Foam::scalar& Foam::WallPointBase<Derived>::distSqr()
 {
     return distSqr_;
 }
 
 
+template<class Derived>
 template<class TrackingData>
-inline Foam::scalar Foam::wallPoint::dist(TrackingData& td) const
+inline Foam::scalar Foam::WallPointBase<Derived>::dist(TrackingData& td) const
 {
     return valid(td) ? sqrt(distSqr_) : great;
 }
 
 
+template<class Derived>
 template<class TrackingData>
-inline bool Foam::wallPoint::valid(TrackingData& td) const
+inline bool Foam::WallPointBase<Derived>::valid(TrackingData& td) const
 {
     return distSqr_ > -small;
 }
 
 
-// Checks for cyclic faces
+template<class Derived>
 template<class TrackingData>
-inline bool Foam::wallPoint::sameGeometry
+inline bool Foam::WallPointBase<Derived>::sameGeometry
 (
     const polyMesh&,
-    const wallPoint& w2,
+    const WallPointBase<Derived>& w2,
     const scalar tol,
     TrackingData& td
 ) const
@@ -166,86 +179,58 @@ inline bool Foam::wallPoint::sameGeometry
 }
 
 
+template<class Derived>
 template<class TrackingData>
-inline void Foam::wallPoint::leaveDomain
+inline void Foam::WallPointBase<Derived>::transform
 (
-    const polyMesh&,
-    const polyPatch&,
-    const label,
-    const point& faceCentre,
+    const polyPatch& patch,
+    const label patchFacei,
+    const transformer& transform,
     TrackingData& td
 )
 {
-    origin_ -= faceCentre;
+    // Note that distSqr_ is not affected by crossing an interface
+    origin_ = transform.transformPosition(origin_);
 }
 
 
+template<class Derived>
 template<class TrackingData>
-inline void Foam::wallPoint::transform
-(
-    const polyMesh&,
-    const tensor& rotTensor,
-    TrackingData& td
-)
-{
-    origin_ = Foam::transform(rotTensor, origin_);
-}
-
-
-// Update absolute geometric quantities. Note that distance (distSqr_)
-// is not affected by leaving/entering domain.
-template<class TrackingData>
-inline void Foam::wallPoint::enterDomain
-(
-    const polyMesh&,
-    const polyPatch&,
-    const label,
-    const point& faceCentre,
-    TrackingData& td
-)
-{
-    // back to absolute form
-    origin_ += faceCentre;
-}
-
-
-// Update this with w2 if w2 nearer to pt.
-template<class TrackingData>
-inline bool Foam::wallPoint::updateCell
+inline bool Foam::WallPointBase<Derived>::updateCell
 (
     const polyMesh& mesh,
     const label thisCelli,
     const label neighbourFacei,
-    const wallPoint& neighbourWallInfo,
+    const WallPointBase<Derived>& neighbourWallInfo,
     const scalar tol,
     TrackingData& td
 )
 {
     return
-        update
+        static_cast<Derived&>(*this).update
         (
             mesh.cellCentres()[thisCelli],
             neighbourWallInfo,
             tol,
             td
         );
-    }
+}
 
 
-// Update this with w2 if w2 nearer to pt.
+template<class Derived>
 template<class TrackingData>
-inline bool Foam::wallPoint::updateFace
+inline bool Foam::WallPointBase<Derived>::updateFace
 (
     const polyMesh& mesh,
     const label thisFacei,
     const label neighbourCelli,
-    const wallPoint& neighbourWallInfo,
+    const WallPointBase<Derived>& neighbourWallInfo,
     const scalar tol,
     TrackingData& td
 )
 {
     return
-        update
+        static_cast<Derived&>(*this).update
         (
             mesh.faceCentres()[thisFacei],
             neighbourWallInfo,
@@ -254,19 +239,20 @@ inline bool Foam::wallPoint::updateFace
         );
 }
 
-// Update this with w2 if w2 nearer to pt.
+
+template<class Derived>
 template<class TrackingData>
-inline bool Foam::wallPoint::updateFace
+inline bool Foam::WallPointBase<Derived>::updateFace
 (
     const polyMesh& mesh,
     const label thisFacei,
-    const wallPoint& neighbourWallInfo,
+    const WallPointBase<Derived>& neighbourWallInfo,
     const scalar tol,
     TrackingData& td
 )
 {
     return
-        update
+        static_cast<Derived&>(*this).update
         (
             mesh.faceCentres()[thisFacei],
             neighbourWallInfo,
@@ -276,10 +262,11 @@ inline bool Foam::wallPoint::updateFace
 }
 
 
+template<class Derived>
 template<class TrackingData>
-inline bool Foam::wallPoint::equal
+inline bool Foam::WallPointBase<Derived>::equal
 (
-    const wallPoint& rhs,
+    const WallPointBase<Derived>& rhs,
     TrackingData& td
 ) const
 {
@@ -289,15 +276,39 @@ inline bool Foam::wallPoint::equal
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-inline bool Foam::wallPoint::operator==(const Foam::wallPoint& rhs) const
+template<class Derived>
+inline bool Foam::WallPointBase<Derived>::operator==
+(
+    const Foam::WallPointBase<Derived>& rhs
+) const
 {
     return origin() == rhs.origin();
 }
 
 
-inline bool Foam::wallPoint::operator!=(const Foam::wallPoint& rhs) const
+template<class Derived>
+inline bool Foam::WallPointBase<Derived>::operator!=
+(
+    const Foam::WallPointBase<Derived>& rhs
+) const
 {
     return !(*this == rhs);
+}
+
+
+// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+
+template<class Derived>
+Foam::Ostream& Foam::operator<<(Ostream& os, const WallPointBase<Derived>& w)
+{
+    return os << w.origin() << token::SPACE << w.distSqr();
+}
+
+
+template<class Derived>
+Foam::Istream& Foam::operator>>(Istream& is, WallPointBase<Derived>& w)
+{
+    return is >> w.origin() >> w.distSqr();
 }
 
 

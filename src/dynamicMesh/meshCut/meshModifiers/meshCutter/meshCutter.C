@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,7 @@ License
 #include "polyMesh.H"
 #include "polyTopoChange.H"
 #include "cellCuts.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "meshTools.H"
 #include "polyModifyFace.H"
 #include "polyAddPoint.H"
@@ -995,7 +995,7 @@ void Foam::meshCutter::setRefinement
 }
 
 
-void Foam::meshCutter::updateMesh(const mapPolyMesh& morphMap)
+void Foam::meshCutter::topoChange(const polyTopoChangeMap& map)
 {
     // Update stored labels for mesh change.
 
@@ -1007,11 +1007,11 @@ void Foam::meshCutter::updateMesh(const mapPolyMesh& morphMap)
         forAllConstIter(Map<label>, addedCells_, iter)
         {
             label celli = iter.key();
-            label newCelli = morphMap.reverseCellMap()[celli];
+            label newCelli = map.reverseCellMap()[celli];
 
             label addedCelli = iter();
 
-            label newAddedCelli = morphMap.reverseCellMap()[addedCelli];
+            label newAddedCelli = map.reverseCellMap()[addedCelli];
 
             if (newCelli >= 0 && newAddedCelli >= 0)
             {
@@ -1021,7 +1021,7 @@ void Foam::meshCutter::updateMesh(const mapPolyMesh& morphMap)
                  && (newCelli != celli || newAddedCelli != addedCelli)
                 )
                 {
-                    Pout<< "meshCutter::updateMesh :"
+                    Pout<< "meshCutter::topoChange :"
                         << " updating addedCell for cell " << celli
                         << " from " << addedCelli
                         << " to " << newAddedCelli << endl;
@@ -1040,11 +1040,11 @@ void Foam::meshCutter::updateMesh(const mapPolyMesh& morphMap)
         forAllConstIter(Map<label>, addedFaces_, iter)
         {
             label celli = iter.key();
-            label newCelli = morphMap.reverseCellMap()[celli];
+            label newCelli = map.reverseCellMap()[celli];
 
             label addedFacei = iter();
 
-            label newAddedFacei = morphMap.reverseFaceMap()[addedFacei];
+            label newAddedFacei = map.reverseFaceMap()[addedFacei];
 
             if ((newCelli >= 0) && (newAddedFacei >= 0))
             {
@@ -1054,7 +1054,7 @@ void Foam::meshCutter::updateMesh(const mapPolyMesh& morphMap)
                  && (newCelli != celli || newAddedFacei != addedFacei)
                 )
                 {
-                    Pout<< "meshCutter::updateMesh :"
+                    Pout<< "meshCutter::topoChange :"
                         << " updating addedFace for cell " << celli
                         << " from " << addedFacei
                         << " to " << newAddedFacei
@@ -1081,13 +1081,13 @@ void Foam::meshCutter::updateMesh(const mapPolyMesh& morphMap)
         {
             const edge& e = iter.key();
 
-            label newStart = morphMap.reversePointMap()[e.start()];
+            label newStart = map.reversePointMap()[e.start()];
 
-            label newEnd = morphMap.reversePointMap()[e.end()];
+            label newEnd = map.reversePointMap()[e.end()];
 
             label addedPointi = iter();
 
-            label newAddedPointi = morphMap.reversePointMap()[addedPointi];
+            label newAddedPointi = map.reversePointMap()[addedPointi];
 
             if ((newStart >= 0) && (newEnd >= 0) && (newAddedPointi >= 0))
             {
@@ -1099,7 +1099,7 @@ void Foam::meshCutter::updateMesh(const mapPolyMesh& morphMap)
                  && (e != newE || newAddedPointi != addedPointi)
                 )
                 {
-                    Pout<< "meshCutter::updateMesh :"
+                    Pout<< "meshCutter::topoChange :"
                         << " updating addedPoints for edge " << e
                         << " from " << addedPointi
                         << " to " << newAddedPointi

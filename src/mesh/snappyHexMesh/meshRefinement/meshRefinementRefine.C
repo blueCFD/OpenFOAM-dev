@@ -34,7 +34,7 @@ License
 #include "decompositionMethod.H"
 #include "fvMeshDistribute.H"
 #include "polyTopoChange.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "Cloud.T.H"
 #include "OBJstream.H"
 #include "cellSet.H"
@@ -114,7 +114,7 @@ namespace Foam
 // split but that does not change any face centre or cell centre.
 Foam::labelList Foam::meshRefinement::getChangedFaces
 (
-    const mapPolyMesh& map,
+    const polyTopoChangeMap& map,
     const labelList& oldCellsToRefine
 )
 {
@@ -2226,7 +2226,7 @@ Foam::labelList Foam::meshRefinement::refineCandidates
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::refine
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::meshRefinement::refine
 (
     const labelList& cellsToRefine
 )
@@ -2238,10 +2238,10 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::refine
     meshCutter_.setRefinement(cellsToRefine, meshMod);
 
     // Create mesh (no inflation), return map from old to new mesh.
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh_, false);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh_, false);
 
     // Update fields
-    mesh_.updateMesh(map);
+    mesh_.topoChange(map);
 
     // Optionally inflate mesh
     if (map().hasMotionPoints())
@@ -2258,13 +2258,13 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::meshRefinement::refine
     mesh_.setInstance(timeName());
 
     // Update intersection info
-    updateMesh(map, getChangedFaces(map, cellsToRefine));
+    topoChange(map, getChangedFaces(map, cellsToRefine));
 
     return map;
 }
 
 
-Foam::autoPtr<Foam::mapDistributePolyMesh>
+Foam::autoPtr<Foam::polyDistributionMap>
 Foam::meshRefinement::refineAndBalance
 (
     const string& msg,
@@ -2302,7 +2302,7 @@ Foam::meshRefinement::refineAndBalance
     // Load balancing
     // ~~~~~~~~~~~~~~
 
-    autoPtr<mapDistributePolyMesh> distMap;
+    autoPtr<polyDistributionMap> distMap;
 
     if (Pstream::nProcs() > 1)
     {
@@ -2365,7 +2365,7 @@ Foam::meshRefinement::refineAndBalance
 
 
 // Do load balancing followed by refinement of consistent set of cells.
-Foam::autoPtr<Foam::mapDistributePolyMesh>
+Foam::autoPtr<Foam::polyDistributionMap>
 Foam::meshRefinement::balanceAndRefine
 (
     const string& msg,
@@ -2404,7 +2404,7 @@ Foam::meshRefinement::balanceAndRefine
     // Load balancing
     // ~~~~~~~~~~~~~~
 
-    autoPtr<mapDistributePolyMesh> distMap;
+    autoPtr<polyDistributionMap> distMap;
 
     if (Pstream::nProcs() > 1)
     {

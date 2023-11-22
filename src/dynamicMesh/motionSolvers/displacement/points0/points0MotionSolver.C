@@ -110,12 +110,13 @@ Foam::pointVectorField Foam::points0MotionSolver::readPoints0
 
 Foam::points0MotionSolver::points0MotionSolver
 (
+    const word& name,
     const polyMesh& mesh,
     const dictionary& dict,
     const word& type
 )
 :
-    motionSolver(mesh, dict, type),
+    motionSolver(name, mesh, dict, type),
     points0_(readPoints0(mesh))
 {
     if (points0_.size() != mesh.nPoints())
@@ -151,17 +152,35 @@ void Foam::points0MotionSolver::movePoints(const pointField&)
 {}
 
 
-void Foam::points0MotionSolver::updateMesh(const mapPolyMesh& mpm)
+void Foam::points0MotionSolver::topoChange(const polyTopoChangeMap& map)
 {
     NotImplemented;
 }
 
 
+void Foam::points0MotionSolver::mapMesh(const polyMeshMap& map)
+{
+    points0_ == mesh().points();
+}
+
+
 void Foam::points0MotionSolver::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {}
+
+
+bool Foam::points0MotionSolver::write() const
+{
+    if (mesh().topoChanging())
+    {
+        points0_.instance() = mesh().time().timeName();
+        points0_.write();
+    }
+
+    return motionSolver::write();
+}
 
 
 // ************************************************************************* //

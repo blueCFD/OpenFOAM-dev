@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -183,22 +183,28 @@ bool Foam::fv::limitTemperature::constrain(volScalarField& he) const
 }
 
 
-void Foam::fv::limitTemperature::updateMesh(const mapPolyMesh& map)
-{
-    set_.updateMesh(map);
-}
-
-
-void Foam::fv::limitTemperature::distribute(const mapDistributePolyMesh& map)
-{
-    set_.distribute(map);
-}
-
-
 bool Foam::fv::limitTemperature::movePoints()
 {
     set_.movePoints();
     return true;
+}
+
+
+void Foam::fv::limitTemperature::topoChange(const polyTopoChangeMap& map)
+{
+    set_.topoChange(map);
+}
+
+
+void Foam::fv::limitTemperature::mapMesh(const polyMeshMap& map)
+{
+    set_.mapMesh(map);
+}
+
+
+void Foam::fv::limitTemperature::distribute(const polyDistributionMap& map)
+{
+    set_.distribute(map);
 }
 
 

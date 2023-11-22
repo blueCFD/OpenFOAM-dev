@@ -9,6 +9,7 @@ FoamFile
 {
     format      ascii;
     class       volVectorField;
+    location    "0";
     object      U.water;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -19,10 +20,12 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
+    #includeEtc "caseDicts/setConstraintTypes"
+
     rotor
     {
-        type            fixedValue;
-        value           uniform (0 0 0);
+        type            movingWallVelocity;
+        value           $internalField;
     }
 
     stator
@@ -30,14 +33,10 @@ boundaryField
         type            noSlip;
     }
 
-    front
+    nonCouple
     {
-        type            empty;
-    }
-
-    back
-    {
-        type            empty;
+        type            movingWallSlipVelocity;
+        value           $internalField;
     }
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,13 +79,13 @@ Usage
     }
     \endverbatim
 
-Note
-    - The effectiveness Function2 is described in terms of the primary and
-      secondary mass flow rates and has the same units as the secondary mass
-      flow rate and kg/s for phi.
-    - faceZone is the faces at the inlet of the cellzone, it needs to be
-      created with flip map flags. It is used to integrate the net mass flow
-      rate into the heat exchanger
+    Note:
+      - The effectiveness Function2 is described in terms of the primary and
+        secondary mass flow rates and has the same units as the secondary mass
+        flow rate and kg/s for phi.
+      - faceZone is the faces at the inlet of the cellzone, it needs to be
+        created with flip map flags. It is used to integrate the net mass flow
+        rate into the heat exchanger
 
 SourceFiles
     effectivenessHeatExchangerSource.C
@@ -217,17 +217,26 @@ public:
             const word& fieldName
         ) const;
 
-        //- Update for mesh changes
-        virtual void updateMesh(const mapPolyMesh&);
 
-        //- Update mesh corresponding to the given distribution map
-        virtual void distribute(const mapDistributePolyMesh&);
+        // Mesh changes
 
-        //- Update for mesh motion
-        virtual bool movePoints();
+            //- Update for mesh motion
+            virtual bool movePoints();
 
-        //- Read dictionary
-        virtual bool read(const dictionary& dict);
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap&);
+
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap&);
+
+
+        // IO
+
+            //- Read dictionary
+            virtual bool read(const dictionary& dict);
 
 
     // Member Operators

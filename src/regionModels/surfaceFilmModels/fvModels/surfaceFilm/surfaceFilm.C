@@ -218,11 +218,15 @@ void Foam::fv::surfaceFilm::addSup
 }
 
 
-void Foam::fv::surfaceFilm::updateMesh(const mapPolyMesh&)
+void Foam::fv::surfaceFilm::topoChange(const polyTopoChangeMap&)
 {}
 
 
-void Foam::fv::surfaceFilm::distribute(const mapDistributePolyMesh&)
+void Foam::fv::surfaceFilm::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::surfaceFilm::distribute(const polyDistributionMap&)
 {}
 
 

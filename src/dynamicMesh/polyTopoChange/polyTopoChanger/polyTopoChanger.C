@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -237,14 +237,14 @@ void Foam::polyTopoChanger::modifyMotionPoints(pointField& p) const
 }
 
 
-void Foam::polyTopoChanger::update(const mapPolyMesh& m)
+void Foam::polyTopoChanger::update(const polyTopoChangeMap& m)
 {
     // Go through all mesh modifiers and accumulate the morphing information
     PtrList<polyMeshModifier>& topoChanges = *this;
 
     forAll(topoChanges, morphI)
     {
-        topoChanges[morphI].updateMesh(m);
+        topoChanges[morphI].topoChange(m);
     }
 
     // Force the mesh modifiers to auto-write.  This allows us to
@@ -255,7 +255,7 @@ void Foam::polyTopoChanger::update(const mapPolyMesh& m)
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChanger::changeMesh
 (
     const bool inflate,
     const bool syncParallel,
@@ -267,7 +267,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
     {
         autoPtr<polyTopoChange> ref = topoChangeRequest();
 
-        autoPtr<mapPolyMesh> topoChangeMap = ref().changeMesh
+        autoPtr<polyTopoChangeMap> topoChangeMap = ref().changeMesh
         (
             mesh_,
             inflate,
@@ -277,12 +277,12 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
         );
 
         update(topoChangeMap());
-        mesh_.updateMesh(topoChangeMap());
+        mesh_.topoChange(topoChangeMap());
         return topoChangeMap;
     }
     else
     {
-        return autoPtr<mapPolyMesh>(nullptr);
+        return autoPtr<polyTopoChangeMap>(nullptr);
     }
 }
 

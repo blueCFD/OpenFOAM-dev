@@ -16,30 +16,31 @@ cyclicAMI
     type  cyclicAMI;
 }
 
-cyclicACMI
-{
-    type  cyclicACMI;
-    value $internalField;
-}
-
 cyclicSlip
 {
     type  cyclicSlip;
 }
 
-conformalCoupled
+nonConformalCyclic
 {
-    type  conformalCoupled;
+    type  nonConformalCyclic;
+    value $internalField;
+}
+
+nonConformalError
+{
+    type  nonConformalError;
+}
+
+nonConformalProcessorCyclic
+{
+    type  nonConformalProcessorCyclic;
+    value $internalField;
 }
 
 empty
 {
     type  empty;
-}
-
-cyclicRepeatAMI
-{
-    type  cyclicRepeatAMI;
 }
 
 processor

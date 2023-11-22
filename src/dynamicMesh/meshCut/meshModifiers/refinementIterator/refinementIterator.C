@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,7 +29,7 @@ License
 #include "refineCell.H"
 #include "undoableMeshCutter.H"
 #include "polyTopoChange.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "cellCuts.H"
 #include "OFstream.H"
 #include "meshTools.H"
@@ -164,20 +164,20 @@ Foam::Map<Foam::label> Foam::refinementIterator::setRefinement
         // Do all changes
         //
 
-        autoPtr<mapPolyMesh> morphMap = meshMod.changeMesh
+        autoPtr<polyTopoChangeMap> map = meshMod.changeMesh
         (
             mesh_,
             false
         );
 
         // Move mesh (since morphing does not do this)
-        if (morphMap().hasMotionPoints())
+        if (map().hasMotionPoints())
         {
-            mesh_.movePoints(morphMap().preMotionPoints());
+            mesh_.movePoints(map().preMotionPoints());
         }
 
         // Update stored refinement pattern
-        meshRefiner_.updateMesh(morphMap());
+        meshRefiner_.topoChange(map());
 
         // Write resulting mesh
         if (writeMesh_)
@@ -195,19 +195,19 @@ Foam::Map<Foam::label> Foam::refinementIterator::setRefinement
         // in meshCutter class.
         updateLabels
         (
-            morphMap->reverseCellMap(),
+            map->reverseCellMap(),
             currentRefCells
         );
 
         // Update addedCells for new cell numbers
         updateLabels
         (
-            morphMap->reverseCellMap(),
+            map->reverseCellMap(),
             addedCells
         );
 
         // Get all added cells from cellCutter (already in new numbering
-        // from meshRefiner.updateMesh call) and add to global list of added
+        // from meshRefiner.topoChange call) and add to global list of added
         const Map<label>& addedNow = meshRefiner_.addedCells();
 
         forAllConstIter(Map<label>, addedNow, iter)
@@ -229,7 +229,7 @@ Foam::Map<Foam::label> Foam::refinementIterator::setRefinement
         // Update refCells for new cell numbers.
         updateLabels
         (
-            morphMap->reverseCellMap(),
+            map->reverseCellMap(),
             currentRefCells
         );
 

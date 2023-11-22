@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -163,16 +163,19 @@ public:
             ) const;
 
 
-        // Mesh motion
-
-            //- Update for mesh changes
-            virtual void updateMesh(const mapPolyMesh&);
-
-            //- Update mesh corresponding to the given distribution map
-            virtual void distribute(const mapDistributePolyMesh&);
+        // Mesh changes
 
             //- Update for mesh motion
             virtual bool movePoints();
+
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap&);
+
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap&);
 
 
         // IO

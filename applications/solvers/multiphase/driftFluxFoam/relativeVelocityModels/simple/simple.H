@@ -60,9 +60,6 @@ class simple
         //- Drift velocity coefficient
         dimensionedScalar Vc_;
 
-        //- Residual phase fraction
-        dimensionedScalar residualAlpha_;
-
 
 public:
 
@@ -77,8 +74,7 @@ public:
         (
             const dictionary& dict,
             const incompressibleTwoPhaseInteractingMixture& mixture,
-            const uniformDimensionedVectorField& g,
-            const MRFZoneList& MRF
+            const uniformDimensionedVectorField& g
         );
 
 

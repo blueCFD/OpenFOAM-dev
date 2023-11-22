@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,7 @@ SourceFiles
 #include "dictionary.H"
 #include "HashSet.T.H"
 #include "volFieldsFwd.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "fixedValueFvPatchFields.H"
 #include "zeroGradientFvPatchFields.H"
 #include "runTimeSelectionTables.H"
@@ -137,19 +137,23 @@ public:
             return patchIDs_;
         }
 
-        //- Update cached topology and geometry when the mesh changes
-        virtual void updateMesh(const mapPolyMesh&)
-        {}
-
-        //- Update mesh corresponding to the given distribution map
-        virtual void distribute(const mapDistributePolyMesh&)
-        {}
-
         //- Update cached geometry when the mesh moves
         virtual bool movePoints()
         {
             return true;
         }
+
+        //- Update cached topology and geometry when the mesh changes
+        virtual void topoChange(const polyTopoChangeMap&)
+        {}
+
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&)
+        {}
+
+        //- Redistribute or update using the given distribution map
+        virtual void distribute(const polyDistributionMap&)
+        {}
 
         //- Correct the given distance-to-patch field
         virtual bool correct(volScalarField& y) = 0;

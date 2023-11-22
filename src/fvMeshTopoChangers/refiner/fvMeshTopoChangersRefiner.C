@@ -218,7 +218,7 @@ void Foam::fvMeshTopoChangers::refiner::readDict()
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh>
+Foam::autoPtr<Foam::polyTopoChangeMap>
 Foam::fvMeshTopoChangers::refiner::refine
 (
     const labelList& cellsToRefine
@@ -231,8 +231,8 @@ Foam::fvMeshTopoChangers::refiner::refine
     meshCutter_.setRefinement(cellsToRefine, meshMod);
 
     // Create mesh (with inflation), return map from old to new mesh.
-    // autoPtr<mapPolyMesh> map = meshMod.changeMesh(*this, true);
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh(), false);
+    // autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(*this, true);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh(), false);
 
     Info<< "Refined from "
         << returnReduce(map().nOldCells(), sumOp<label>())
@@ -257,7 +257,7 @@ Foam::fvMeshTopoChangers::refiner::refine
     }
 
     // Update fields
-    mesh().updateMesh(map);
+    mesh().topoChange(map);
 
     {
         // Correct the flux for modified/added faces. All the faces which only
@@ -320,7 +320,7 @@ Foam::fvMeshTopoChangers::refiner::refine
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh>
+Foam::autoPtr<Foam::polyTopoChangeMap>
 Foam::fvMeshTopoChangers::refiner::unrefine
 (
     const labelList& splitPoints
@@ -363,8 +363,8 @@ Foam::fvMeshTopoChangers::refiner::unrefine
 
 
     // Change mesh and generate map.
-    // autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh(), true);
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh(), false);
+    // autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh(), true);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh(), false);
 
     Info<< "Unrefined from "
         << returnReduce(map().nOldCells(), sumOp<label>())
@@ -372,7 +372,7 @@ Foam::fvMeshTopoChangers::refiner::unrefine
         << endl;
 
     // Update fields
-    mesh().updateMesh(map);
+    mesh().topoChange(map);
 
     // Correct the fluxes for modified faces
     unrefineFluxes(faceToSplitPoint, map());
@@ -426,7 +426,7 @@ Foam::word Foam::fvMeshTopoChangers::refiner::Uname
 void Foam::fvMeshTopoChangers::refiner::refineFluxes
 (
     const labelHashSet& masterFaces,
-    const mapPolyMesh& map
+    const polyTopoChangeMap& map
 )
 {
     // Correct the flux for modified/added faces. All the faces which only
@@ -562,7 +562,7 @@ void Foam::fvMeshTopoChangers::refiner::refineFluxes
 void Foam::fvMeshTopoChangers::refiner::refineUfs
 (
     const labelHashSet& masterFaces,
-    const mapPolyMesh& map
+    const polyTopoChangeMap& map
 )
 {
     const labelList& faceMap = map.faceMap();
@@ -667,7 +667,7 @@ void Foam::fvMeshTopoChangers::refiner::refineUfs
 void Foam::fvMeshTopoChangers::refiner::unrefineFluxes
 (
     const Map<label>& faceToSplitPoint,
-    const mapPolyMesh& map
+    const polyTopoChangeMap& map
 )
 {
     const labelList& reversePointMap = map.reversePointMap();
@@ -752,7 +752,7 @@ void Foam::fvMeshTopoChangers::refiner::unrefineFluxes
 void Foam::fvMeshTopoChangers::refiner::unrefineUfs
 (
     const Map<label>& faceToSplitPoint,
-    const mapPolyMesh& map
+    const polyTopoChangeMap& map
 )
 {
     const labelList& reversePointMap = map.reversePointMap();
@@ -1587,7 +1587,7 @@ bool Foam::fvMeshTopoChangers::refiner::update()
             if (nCellsToRefine > 0)
             {
                 // Refine/update mesh and map fields
-                autoPtr<mapPolyMesh> map = refine(cellsToRefine);
+                autoPtr<polyTopoChangeMap> map = refine(cellsToRefine);
 
                 // Update refinableCells. Note that some of the marked ones have
                 // not been refined due to constraints.
@@ -1667,16 +1667,25 @@ bool Foam::fvMeshTopoChangers::refiner::update()
 }
 
 
-void Foam::fvMeshTopoChangers::refiner::updateMesh(const mapPolyMesh& map)
+void Foam::fvMeshTopoChangers::refiner::topoChange(const polyTopoChangeMap& map)
 {
     // Update numbering of cells/vertices.
-    meshCutter_.updateMesh(map);
+    meshCutter_.topoChange(map);
+}
+
+
+void Foam::fvMeshTopoChangers::refiner::mapMesh(const polyMeshMap& map)
+{
+    // meshCutter_ will need to be re-constructed from the new mesh
+    // and protectedCells_ updated.
+    // The constructor should be refactored for the protectedCells_ update.
+    NotImplemented;
 }
 
 
 void Foam::fvMeshTopoChangers::refiner::distribute
 (
-    const mapDistributePolyMesh& map
+    const polyDistributionMap& map
 )
 {
     // Redistribute the mesh cutting engine
@@ -1686,39 +1695,46 @@ void Foam::fvMeshTopoChangers::refiner::distribute
 
 bool Foam::fvMeshTopoChangers::refiner::write(const bool write) const
 {
-    // Force refinement data to go to the current time directory.
-    const_cast<hexRef8&>(meshCutter_).setInstance(mesh().time().timeName());
-
-    bool writeOk = meshCutter_.write(write);
-
-    if (dumpLevel_)
+    if (mesh().topoChanging())
     {
-        volScalarField scalarCellLevel
-        (
-            IOobject
-            (
-                "cellLevel",
-                mesh().time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::AUTO_WRITE,
-                false
-            ),
-            mesh(),
-            dimensionedScalar(dimless, 0)
-        );
+        // Force refinement data to go to the current time directory.
+        const_cast<hexRef8&>(meshCutter_).setInstance(mesh().time().timeName());
 
-        const labelList& cellLevel = meshCutter_.cellLevel();
+        bool writeOk = meshCutter_.write(write);
 
-        forAll(cellLevel, celli)
+        if (dumpLevel_)
         {
-            scalarCellLevel[celli] = cellLevel[celli];
+            volScalarField scalarCellLevel
+            (
+                IOobject
+                (
+                    "cellLevel",
+                    mesh().time().timeName(),
+                    mesh(),
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE,
+                    false
+                ),
+                mesh(),
+                dimensionedScalar(dimless, 0)
+            );
+
+            const labelList& cellLevel = meshCutter_.cellLevel();
+
+            forAll(cellLevel, celli)
+            {
+                scalarCellLevel[celli] = cellLevel[celli];
+            }
+
+            writeOk = writeOk && scalarCellLevel.write();
         }
 
-        writeOk = writeOk && scalarCellLevel.write();
+        return writeOk;
     }
-
-    return writeOk;
+    else
+    {
+        return true;
+    }
 }
 
 

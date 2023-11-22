@@ -239,14 +239,17 @@ public:
             //- Prepare for mesh update
             virtual void preUpdateMesh();
 
-            //- Update for mesh changes
-            virtual void updateMesh(const mapPolyMesh&);
-
-            //- Update mesh corresponding to the given distribution map
-            virtual void distribute(const mapDistributePolyMesh&);
-
             //- Update for mesh motion
             virtual bool movePoints();
+
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap&);
+
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap&);
 
 
         // IO

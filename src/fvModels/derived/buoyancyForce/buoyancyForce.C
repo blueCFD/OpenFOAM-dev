@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,18 +130,22 @@ void Foam::fv::buoyancyForce::addSup
 }
 
 
-void Foam::fv::buoyancyForce::updateMesh(const mapPolyMesh&)
-{}
-
-
-void Foam::fv::buoyancyForce::distribute(const mapDistributePolyMesh&)
-{}
-
-
 bool Foam::fv::buoyancyForce::movePoints()
 {
     return true;
 }
+
+
+void Foam::fv::buoyancyForce::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fv::buoyancyForce::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::buoyancyForce::distribute(const polyDistributionMap&)
+{}
 
 
 bool Foam::fv::buoyancyForce::read(const dictionary& dict)

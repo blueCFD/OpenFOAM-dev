@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -122,6 +122,7 @@ public:
         //- Construct from polyMesh and dictionary
         displacementLayeredMotionMotionSolver
         (
+            const word& name,
             const polyMesh&,
             const dictionary&
         );
@@ -146,7 +147,7 @@ public:
         virtual void solve();
 
         //- Update topology
-        virtual void updateMesh(const mapPolyMesh&);
+        virtual void topoChange(const polyTopoChangeMap&);
 
 
     // Member Operators

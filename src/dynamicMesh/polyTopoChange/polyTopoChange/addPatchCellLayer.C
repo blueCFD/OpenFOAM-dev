@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,7 @@ License
 #include "polyMesh.H"
 #include "polyTopoChange.H"
 #include "meshTools.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "syncTools.H"
 #include "polyAddPoint.H"
 #include "polyAddFace.H"
@@ -1719,9 +1719,9 @@ void Foam::addPatchCellLayer::setRefinement
 }
 
 
-void Foam::addPatchCellLayer::updateMesh
+void Foam::addPatchCellLayer::topoChange
 (
-    const mapPolyMesh& morphMap,
+    const polyTopoChangeMap& map,
     const labelList& faceMap,   // new to old patch faces
     const labelList& pointMap   // new to old patch points
 )
@@ -1741,7 +1741,7 @@ void Foam::addPatchCellLayer::updateMesh
 
             forAll(added, i)
             {
-                label newPointi = morphMap.reversePointMap()[added[i]];
+                label newPointi = map.reversePointMap()[added[i]];
 
                 if (newPointi >= 0)
                 {
@@ -1768,7 +1768,7 @@ void Foam::addPatchCellLayer::updateMesh
 
             forAll(added, i)
             {
-                label newFacei = morphMap.reverseFaceMap()[added[i]];
+                label newFacei = map.reverseFaceMap()[added[i]];
 
                 if (newFacei >= 0)
                 {

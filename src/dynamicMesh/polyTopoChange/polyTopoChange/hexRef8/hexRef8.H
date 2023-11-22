@@ -55,8 +55,8 @@ namespace Foam
 class polyMesh;
 class polyPatch;
 class polyTopoChange;
-class mapPolyMesh;
-class mapDistributePolyMesh;
+class polyTopoChangeMap;
+class polyDistributionMap;
 
 /*---------------------------------------------------------------------------*\
                            Class hexRef8 Declaration
@@ -494,7 +494,7 @@ public:
             //  Called after the mesh change. setRefinement will already have
             //  made sure the pointLevel_ and cellLevel_ are the size of the new
             //  mesh so we only need to account for reordering.
-            void updateMesh(const mapPolyMesh&);
+            void topoChange(const polyTopoChangeMap&);
 
 
             // Restoring : is where other processes delete and reinsert data.
@@ -513,9 +513,9 @@ public:
                 //- Update local numbering + undo
                 //  Data to restore given as new pointlabel + stored pointlabel
                 //  (i.e. what was in pointsToStore)
-                void updateMesh
+                void topoChange
                 (
-                    const mapPolyMesh&,
+                    const polyTopoChangeMap&,
                     const Map<label>& pointsToRestore,
                     const Map<label>& facesToRestore,
                     const Map<label>& cellsToRestore
@@ -532,7 +532,7 @@ public:
             );
 
             //- Update local numbering for mesh redistribution
-            void distribute(const mapDistributePolyMesh&);
+            void distribute(const polyDistributionMap&);
 
             //- Debug: Check coupled mesh for correctness
             void checkMesh() const;

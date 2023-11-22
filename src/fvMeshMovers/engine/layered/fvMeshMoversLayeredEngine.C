@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,15 +95,19 @@ bool Foam::fvMeshMovers::layeredEngine::update()
 }
 
 
-void Foam::fvMeshMovers::layeredEngine::updateMesh(const mapPolyMesh&)
+void Foam::fvMeshMovers::layeredEngine::topoChange(const polyTopoChangeMap&)
 {
     NotImplemented;
 }
 
 
+void Foam::fvMeshMovers::layeredEngine::mapMesh(const polyMeshMap&)
+{}
+
+
 void Foam::fvMeshMovers::layeredEngine::distribute
 (
-    const mapDistributePolyMesh&
+    const polyDistributionMap&
 )
 {
     NotImplemented;

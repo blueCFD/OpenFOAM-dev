@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,20 +26,20 @@ License
 #include "setUpdater.H"
 #include "polyMesh.H"
 #include "Time.T.H"
-#include "mapPolyMesh.H"
+#include "polyTopoChangeMap.H"
 #include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-void Foam::setUpdater::updateSets(const mapPolyMesh& morphMap) const
+void Foam::setUpdater::updateSets(const polyTopoChangeMap& map) const
 {
     //
     // Update all sets in memory.
     //
 
     HashTable<const Type*> memSets =
-        morphMap.mesh().objectRegistry::lookupClass<Type>();
+        map.mesh().objectRegistry::lookupClass<Type>();
 
     forAllIter(typename HashTable<const Type*>, memSets, iter)
     {
@@ -51,7 +51,7 @@ void Foam::setUpdater::updateSets(const mapPolyMesh& morphMap) const
                 << " updated in memory" << endl;
         }
 
-        set.updateMesh(morphMap);
+        set.topoChange(map);
 
         // Write or not? Debatable.
         set.write();
@@ -65,8 +65,8 @@ void Foam::setUpdater::updateSets(const mapPolyMesh& morphMap) const
     // Get last valid mesh (discard points-only change)
     IOobjectList Objects
     (
-        morphMap.mesh().time(),
-        morphMap.mesh().facesInstance(),
+        map.mesh().time(),
+        map.mesh().facesInstance(),
         "polyMesh/sets"
     );
 
@@ -85,7 +85,7 @@ void Foam::setUpdater::updateSets(const mapPolyMesh& morphMap) const
                     << " updated on disk" << endl;
             }
 
-            set.updateMesh(morphMap);
+            set.topoChange(map);
 
             set.write();
         }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -137,8 +137,8 @@ public:
         //  positions in the database for use during mapping.
         virtual void storeGlobalPositions() = 0;
 
-        //- Update mesh corresponding to the given distribution map
-        virtual void distribute(const mapDistributePolyMesh& map)
+        //- Redistribute or update using the given distribution map
+        virtual void distribute(const polyDistributionMap& map)
         {
             NotImplemented;
         }

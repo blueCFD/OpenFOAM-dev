@@ -35,7 +35,7 @@ License
 #include "removeCells.H"
 #include "polyModifyFace.H"
 #include "polyRemovePoint.H"
-#include "mapDistributePolyMesh.H"
+#include "polyDistributionMap.H"
 #include "surfaceFields.H"
 #include "pointFields.H"
 #include "syncTools.H"
@@ -448,7 +448,7 @@ Foam::label Foam::fvMeshDistribute::findNonEmptyPatch() const
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::deleteProcPatches
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::deleteProcPatches
 (
     const label destinationPatch
 )
@@ -487,7 +487,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::deleteProcPatches
     // destinationPatch is at the end and we have visited the patches in
     // incremental order.
     labelListList dummyFaceMaps;
-    autoPtr<mapPolyMesh> map = repatch(newPatchID, dummyFaceMaps);
+    autoPtr<polyTopoChangeMap> map = repatch(newPatchID, dummyFaceMaps);
 
 
     // Delete (now empty) processor patches.
@@ -519,7 +519,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::deleteProcPatches
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::repatch
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::repatch
 (
     const labelList& newPatchID,         // per boundary face -1 or new patchID
     labelListList& constructFaceMap
@@ -562,7 +562,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::repatch
 
 
     // Do mapping of fields from one patchField to the other ourselves since
-    // is currently not supported by updateMesh.
+    // is currently not supported by topoChange.
 
     // Store boundary fields (we only do this for surfaceFields)
     PtrList<FieldField<fvsPatchField, scalar>> sFlds;
@@ -583,10 +583,10 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::repatch
     // shared points (see mergeSharedPoints below). So temporarily points
     // and edges do not match!
 
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh_, false, true);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh_, false, true);
 
-    // Update fields. No inflation, parallel sync.
-    mapFields(map);
+    // Update fields
+    mesh_.mapFields(map);
 
     // Map patch fields using stored boundary fields. Note: assumes order
     // of fields has not changed in object registry!
@@ -595,13 +595,6 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::repatch
     mapBoundaryFields<sphericalTensor, surfaceMesh>(map, sptFlds);
     mapBoundaryFields<symmTensor, surfaceMesh>(map, sytFlds);
     mapBoundaryFields<tensor, surfaceMesh>(map, tFlds);
-
-
-    // Move mesh (since morphing does not do this)
-    if (map().hasMotionPoints())
-    {
-        mesh_.movePoints(map().preMotionPoints());
-    }
 
     // Adapt constructMaps.
 
@@ -635,7 +628,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::repatch
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::mergeSharedPoints
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::mergeSharedPoints
 (
     const labelList& pointToGlobalMaster,
     labelListList& constructPointMap
@@ -681,7 +674,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::mergeSharedPoints
 
     if (returnReduce(pointToMaster.size(), sumOp<label>()) == 0)
     {
-        return autoPtr<mapPolyMesh>(nullptr);
+        return autoPtr<polyTopoChangeMap>(nullptr);
     }
 
     // Create the mesh change engine to merge the points
@@ -775,10 +768,10 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::mergeSharedPoints
     }
 
     // Change the mesh (no inflation). Note: parallel comms allowed.
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh_, false, true);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh_, false, true);
 
-    // Update fields. No inflation, parallel sync.
-    mapFields(map);
+    // Update fields
+    mesh_.mapFields(map);
 
     // Adapt constructMaps for merged points.
     forAll(constructPointMap, proci)
@@ -976,7 +969,7 @@ void Foam::fvMeshDistribute::getCouplingData
         const globalMeshData& gmd = mesh_.globalData();
         const indirectPrimitivePatch& cpp = gmd.coupledPatch();
         const labelList& meshPoints = cpp.meshPoints();
-        const mapDistribute& slavesMap = gmd.globalCoPointSlavesMap();
+        const distributionMap& slavesMap = gmd.globalCoPointSlavesMap();
         const labelListList& slaves = gmd.globalCoPointSlaves();
 
         labelList elems(slavesMap.constructSize(), -1);
@@ -1240,7 +1233,7 @@ Foam::labelList Foam::fvMeshDistribute::mapPointData
 }
 
 
-Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::doRemoveCells
+Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::doRemoveCells
 (
     const labelList& cellsToRemove,
     const label oldInternalPatchi
@@ -1267,9 +1260,6 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::doRemoveCells
     );
 
 
-    //// Generate test field
-    // tmp<surfaceScalarField> sfld(generateTestField(mesh_));
-
     // Save internal fields (note: not as DimensionedFields since would
     // get mapped)
     PtrList<Field<scalar>> sFlds;
@@ -1284,10 +1274,10 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::doRemoveCells
     saveInternalFields(tFlds);
 
     // Change the mesh. No inflation. Note: no parallel comms allowed.
-    autoPtr<mapPolyMesh> map = meshMod.changeMesh(mesh_, false, false);
+    autoPtr<polyTopoChangeMap> map = meshMod.changeMesh(mesh_, false, false);
 
     // Update fields
-    mapFields(map);
+    mesh_.mapFields(map);
 
     // Any exposed faces in a surfaceField will not be mapped. Map the value
     // of these separately (until there is support in all PatchFields for
@@ -1299,28 +1289,7 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::fvMeshDistribute::doRemoveCells
     mapExposedFaces(map(), sytFlds);
     mapExposedFaces(map(), tFlds);
 
-
-    //// Test test field
-    // testField(sfld);
-
-
-    // Move mesh (since morphing does not do this)
-    if (map().hasMotionPoints())
-    {
-        mesh_.movePoints(map().preMotionPoints());
-    }
-
     return map;
-}
-
-
-void Foam::fvMeshDistribute::mapFields(const mapPolyMesh& map)
-{
-    meshObject::updateMesh<polyMesh>(mesh_, map);
-    meshObject::updateMesh<pointMesh>(mesh_, map);
-    mesh_.mapFields(map);
-    meshObject::updateMesh<fvMesh>(mesh_, map);
-    meshObject::updateMesh<lduMesh>(mesh_, map);
 }
 
 
@@ -1780,11 +1749,13 @@ Foam::labelList Foam::fvMeshDistribute::countCells
 }
 
 
-Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::fvMeshDistribute::distribute
+Foam::autoPtr<Foam::polyDistributionMap> Foam::fvMeshDistribute::distribute
 (
     const labelList& distribution
 )
 {
+    const bool topoChanging = mesh_.topoChanging();
+
     // Some checks on distribution
     if (distribution.size() != mesh_.nCells())
     {
@@ -1826,9 +1797,9 @@ Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::fvMeshDistribute::distribute
     if (!Pstream::parRun())
     {
         // Collect all maps and return
-        return autoPtr<mapDistributePolyMesh>
+        return autoPtr<polyDistributionMap>
         (
-            new mapDistributePolyMesh
+            new polyDistributionMap
             (
                 mesh_,
 
@@ -1916,10 +1887,7 @@ Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::fvMeshDistribute::distribute
     );
 
 
-    // Remove meshPhi. Since this would otherwise disappear anyway
-    // during topo changes and we have to guarantee that all the fields
-    // can be sent.
-    //mesh_.clearOut();
+    // Remove old-time geometry to avoid the need to distribute it
     mesh_.resetMotion();
 
     label nFields = 0;
@@ -2022,7 +1990,8 @@ Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::fvMeshDistribute::distribute
     // oldInternalPatchi.
     labelList repatchFaceMap;
     {
-        autoPtr<mapPolyMesh> repatchMap = deleteProcPatches(oldInternalPatchi);
+        autoPtr<polyTopoChangeMap> repatchMap =
+            deleteProcPatches(oldInternalPatchi);
 
         // Store face map (only face ordering that changed)
         repatchFaceMap = repatchMap().faceMap();
@@ -2360,7 +2329,7 @@ Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::fvMeshDistribute::distribute
         const label oldInternalFaces = mesh_.nInternalFaces();
 
         // Remove cells.
-        autoPtr<mapPolyMesh> subMap
+        autoPtr<polyTopoChangeMap> subMap
         (
             doRemoveCells
             (
@@ -3044,6 +3013,10 @@ Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::fvMeshDistribute::distribute
 
     mesh_.setInstance(mesh_.time().timeName());
 
+    // Reset the topoChanging state of the mesh
+    // Distribution is not a topology change
+    mesh_.topoChanging(topoChanging);
+
     // Print a bit
     if (debug)
     {
@@ -3068,9 +3041,9 @@ Foam::autoPtr<Foam::mapDistributePolyMesh> Foam::fvMeshDistribute::distribute
     }
 
     // Collect all maps and return
-    return autoPtr<mapDistributePolyMesh>
+    return autoPtr<polyDistributionMap>
     (
-        new mapDistributePolyMesh
+        new polyDistributionMap
         (
             mesh_,
 

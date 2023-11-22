@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -207,11 +207,15 @@ void Foam::fv::VoFTurbulenceDamping::addSup
 }
 
 
-void Foam::fv::VoFTurbulenceDamping::updateMesh(const mapPolyMesh&)
+void Foam::fv::VoFTurbulenceDamping::topoChange(const polyTopoChangeMap&)
 {}
 
 
-void Foam::fv::VoFTurbulenceDamping::distribute(const mapDistributePolyMesh&)
+void Foam::fv::VoFTurbulenceDamping::mapMesh(const polyMeshMap& map)
+{}
+
+
+void Foam::fv::VoFTurbulenceDamping::distribute(const polyDistributionMap&)
 {}
 
 
