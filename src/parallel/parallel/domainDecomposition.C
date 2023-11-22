@@ -679,10 +679,12 @@ Foam::fvMesh::readUpdateState Foam::domainDecomposition::readUpdate()
     validateProcs();
 
     // Do read-update on all meshes
-    fvMesh::readUpdateState stat = completeMesh_->readUpdate();
+    fvMesh::readUpdateState stat =
+        completeMesh_->readUpdate(fvMesh::stitchType::nonGeometric);
     forAll(runTimes_.procTimes(), proci)
     {
-        fvMesh::readUpdateState procStat = procMeshes_[proci].readUpdate();
+        fvMesh::readUpdateState procStat =
+            procMeshes_[proci].readUpdate(fvMesh::stitchType::nonGeometric);
         if (procStat > stat)
         {
             stat = procStat;
@@ -690,165 +692,6 @@ Foam::fvMesh::readUpdateState Foam::domainDecomposition::readUpdate()
     }
 
     return stat;
-}
-
-
-void Foam::domainDecomposition::readUpdateDecompose
-(
-    const Foam::fvMesh::readUpdateState& stat
-)
-{
-    // Topology changes
-    {
-        const label facesCompare =
-            compareInstances
-            (
-                completeMesh().facesInstance(),
-                procMeshes_[0].facesInstance()
-            );
-
-        // If the complete mesh has newer topology then we need to decompose
-        if (facesCompare == -1)
-        {
-            decompose();
-        }
-
-        // If there has been matching topology change then reload the addressing
-        if (facesCompare == 0 && stat >= fvMesh::TOPO_CHANGE)
-        {
-            procFaceAddressingBf_.clear();
-            readAddressing();
-        }
-
-        // The processor meshes should not have newer topology when decomposing
-        if (facesCompare == +1)
-        {
-            FatalErrorInFunction
-                << "Cannot decompose at time "
-                << procMeshes_[0].facesInstance()
-                << " because the processor mesh topology has evolved further"
-                << " than the complete mesh topology." << exit(FatalError);
-        }
-    }
-
-    // Geometry changes
-    {
-        const label pointsCompare =
-            compareInstances
-            (
-                completeMesh().pointsInstance(),
-                procMeshes_[0].pointsInstance()
-            );
-
-        // If the complete mesh has newer geometry then we need to decompose
-        // the points
-        if (pointsCompare == -1)
-        {
-            decomposePoints();
-        }
-
-        // The processor meshes should not have newer geometry when decomposing
-        if (pointsCompare == +1)
-        {
-            FatalErrorInFunction
-                << "Cannot decompose at time "
-                << procMeshes_[0].pointsInstance()
-                << " because the processor mesh geometry has evolved further"
-                << " than the complete mesh geometry." << exit(FatalError);
-        }
-    }
-
-    // Non-conformal changes
-    {
-        // If the mesh has changed in any way, and the complete mesh is
-        // non-conformal, then we need to re-unconform the processor meshes
-        if (stat != fvMesh::UNCHANGED && !completeConformal())
-        {
-            procFaceAddressingBf_.clear();
-            forAll(procMeshes_, proci) procMeshes_[proci].conform();
-            unconform();
-        }
-    }
-}
-
-
-void Foam::domainDecomposition::readUpdateReconstruct
-(
-    const Foam::fvMesh::readUpdateState& stat
-)
-{
-    // Topology changes
-    {
-        const label facesCompare =
-            compareInstances
-            (
-                completeMesh().facesInstance(),
-                procMeshes_[0].facesInstance()
-            );
-
-        // The complete mesh should not have newer topology when reconstructing
-        if (facesCompare == -1)
-        {
-            FatalErrorInFunction
-                << "Cannot reconstruct at time "
-                << completeMesh().facesInstance()
-                << " because the complete mesh topology has evolved further"
-                << " than the processor mesh topology." << exit(FatalError);
-        }
-
-        // If there has been matching topology change then reload the addressing
-        if (facesCompare == 0 && stat >= fvMesh::TOPO_CHANGE)
-        {
-            procFaceAddressingBf_.clear();
-            readAddressing();
-        }
-
-        // If the processor meshes have newer topology then we need to
-        // reconstruct
-        if (facesCompare == +1)
-        {
-            reconstruct();
-        }
-    }
-
-    // Geometry changes
-    {
-        const label pointsCompare =
-            compareInstances
-            (
-                completeMesh().pointsInstance(),
-                procMeshes_[0].pointsInstance()
-            );
-
-        // The complete mesh should not have newer geometry when reconstructing
-        if (pointsCompare == -1)
-        {
-            FatalErrorInFunction
-                << "Cannot reconstruct at time "
-                << completeMesh().pointsInstance()
-                << " because the complete mesh geometry has evolved further"
-                << " than the processor mesh geometry." << exit(FatalError);
-        }
-
-        // If the processor meshes have newer geometry then we need to
-        // reconstruct the points
-        if (pointsCompare == +1)
-        {
-            reconstructPoints();
-        }
-    }
-
-    // Non-conformal changes
-    {
-        // If the mesh has changed in any way, and the processor meshes are
-        // non-conformal, then we need to re-unconform the complete mesh
-        if (stat != fvMesh::UNCHANGED && !procsConformal())
-        {
-            procFaceAddressingBf_.clear();
-            completeMesh_->conform();
-            unconform();
-        }
-    }
 }
 
 
@@ -921,6 +764,92 @@ void Foam::domainDecomposition::writeAddressing() const
 }
 
 
+void Foam::domainDecomposition::writeProcPoints(const fileName& inst)
+{
+    IOobject completePointsIo
+    (
+        "points",
+        inst,
+        polyMesh::meshSubDir,
+        completeMesh(),
+        IOobject::MUST_READ,
+        IOobject::NO_WRITE,
+        false
+    );
+
+    if (!completePointsIo.headerOk()) return;
+
+    const pointIOField completePoints(completePointsIo);
+
+    for (label proci = 0; proci < nProcs(); proci++)
+    {
+        pointIOField procPoints
+        (
+            IOobject
+            (
+                "points",
+                inst,
+                polyMesh::meshSubDir,
+                procMeshes()[proci],
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            pointField
+            (
+                completePoints,
+                procPointAddressing_[proci]
+            )
+        );
+
+        procPoints.write();
+    }
+}
+
+
+void Foam::domainDecomposition::writeCompletePoints(const fileName& inst)
+{
+    pointIOField completePoints
+    (
+        IOobject
+        (
+            "points",
+            inst,
+            polyMesh::meshSubDir,
+            completeMesh(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE,
+            false
+        ),
+        pointField(completeMesh().nPoints())
+    );
+
+    for (label proci = 0; proci < nProcs(); proci++)
+    {
+        IOobject procPointsIo
+        (
+            "points",
+            inst,
+            polyMesh::meshSubDir,
+            procMeshes()[proci],
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE,
+            false
+        );
+
+        if (!procPointsIo.headerOk()) return;
+
+        completePoints.rmap
+        (
+            pointIOField(procPointsIo),
+            procPointAddressing_[proci]
+        );
+    }
+
+    completePoints.write();
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::domainDecomposition::domainDecomposition
@@ -972,6 +901,10 @@ bool Foam::domainDecomposition::readDecompose(const bool doSets)
     if (addrOk)
     {
         readProcs();
+
+        readAddressing();
+
+        decomposePoints();
     }
     else
     {
@@ -993,11 +926,21 @@ bool Foam::domainDecomposition::readDecompose(const bool doSets)
         }
 
         decompose();
-
-        writeProcs(doSets);
     }
 
-    readUpdateDecompose(fvMesh::TOPO_PATCH_CHANGE);
+    if (!completeConformal())
+    {
+        procFaceAddressingBf_.clear();
+        forAll(procMeshes_, proci) procMeshes_[proci].conform();
+        unconform();
+    }
+
+    writeProcs(doSets);
+
+    if (!addrOk)
+    {
+        writeProcPoints(completeMesh().facesInstance());
+    }
 
     return !addrOk;
 }
@@ -1027,6 +970,10 @@ bool Foam::domainDecomposition::readReconstruct(const bool doSets)
     if (addrOk)
     {
         readComplete();
+
+        readAddressing();
+
+        reconstructPoints();
     }
     else
     {
@@ -1048,11 +995,21 @@ bool Foam::domainDecomposition::readReconstruct(const bool doSets)
         }
 
         reconstruct();
-
-        writeComplete(doSets);
     }
 
-    readUpdateReconstruct(fvMesh::TOPO_PATCH_CHANGE);
+    if (!procsConformal())
+    {
+        procFaceAddressingBf_.clear();
+        completeMesh_->conform();
+        unconform();
+    }
+
+    writeComplete(doSets);
+
+    if (!addrOk)
+    {
+        writeCompletePoints(procMeshes()[0].facesInstance());
+    }
 
     return !addrOk;
 }
@@ -1062,7 +1019,77 @@ Foam::fvMesh::readUpdateState Foam::domainDecomposition::readUpdateDecompose()
 {
     const fvMesh::readUpdateState stat = readUpdate();
 
-    readUpdateDecompose(stat);
+    // Topology changes
+    {
+        const label facesCompare =
+            compareInstances
+            (
+                completeMesh().facesInstance(),
+                procMeshes_[0].facesInstance()
+            );
+
+        // If the complete mesh has newer topology then we need to decompose
+        if (facesCompare == -1)
+        {
+            decompose();
+        }
+
+        // If there has been matching topology change then reload the addressing
+        if (facesCompare == 0 && stat >= fvMesh::TOPO_CHANGE)
+        {
+            procFaceAddressingBf_.clear();
+            readAddressing();
+        }
+
+        // The processor meshes should not have newer topology when decomposing
+        if (facesCompare == +1)
+        {
+            FatalErrorInFunction
+                << "Cannot decompose at time "
+                << procMeshes_[0].facesInstance()
+                << " because the processor mesh topology has evolved further"
+                << " than the complete mesh topology." << exit(FatalError);
+        }
+    }
+
+    // Geometry changes
+    {
+        const label pointsCompare =
+            compareInstances
+            (
+                completeMesh().pointsInstance(),
+                procMeshes_[0].pointsInstance()
+            );
+
+        // If the complete mesh has newer geometry then we need to decompose
+        // the points
+        if (pointsCompare == -1)
+        {
+            decomposePoints();
+        }
+
+        // The processor meshes should not have newer geometry when decomposing
+        if (pointsCompare == +1)
+        {
+            FatalErrorInFunction
+                << "Cannot decompose at time "
+                << procMeshes_[0].pointsInstance()
+                << " because the processor mesh geometry has evolved further"
+                << " than the complete mesh geometry." << exit(FatalError);
+        }
+    }
+
+    // Non-conformal changes
+    {
+        // If the mesh has changed in any way, and the complete mesh is
+        // non-conformal, then we need to re-unconform the processor meshes
+        if (stat != fvMesh::UNCHANGED && !completeConformal())
+        {
+            procFaceAddressingBf_.clear();
+            forAll(procMeshes_, proci) procMeshes_[proci].conform();
+            unconform();
+        }
+    }
 
     return stat;
 }
@@ -1072,7 +1099,78 @@ Foam::fvMesh::readUpdateState Foam::domainDecomposition::readUpdateReconstruct()
 {
     const fvMesh::readUpdateState stat = readUpdate();
 
-    readUpdateReconstruct(stat);
+    // Topology changes
+    {
+        const label facesCompare =
+            compareInstances
+            (
+                completeMesh().facesInstance(),
+                procMeshes_[0].facesInstance()
+            );
+
+        // The complete mesh should not have newer topology when reconstructing
+        if (facesCompare == -1)
+        {
+            FatalErrorInFunction
+                << "Cannot reconstruct at time "
+                << completeMesh().facesInstance()
+                << " because the complete mesh topology has evolved further"
+                << " than the processor mesh topology." << exit(FatalError);
+        }
+
+        // If there has been matching topology change then reload the addressing
+        if (facesCompare == 0 && stat >= fvMesh::TOPO_CHANGE)
+        {
+            procFaceAddressingBf_.clear();
+            readAddressing();
+        }
+
+        // If the processor meshes have newer topology then we need to
+        // reconstruct
+        if (facesCompare == +1)
+        {
+            reconstruct();
+        }
+    }
+
+    // Geometry changes
+    {
+        const label pointsCompare =
+            compareInstances
+            (
+                completeMesh().pointsInstance(),
+                procMeshes_[0].pointsInstance()
+            );
+
+        // The complete mesh should not have newer geometry when reconstructing
+        if (pointsCompare == -1)
+        {
+            FatalErrorInFunction
+                << "Cannot reconstruct at time "
+                << completeMesh().pointsInstance()
+                << " because the complete mesh geometry has evolved further"
+                << " than the processor mesh geometry." << exit(FatalError);
+        }
+
+        // If the processor meshes have newer geometry then we need to
+        // reconstruct the points
+        if (pointsCompare == +1)
+        {
+            reconstructPoints();
+        }
+    }
+
+    // Non-conformal changes
+    {
+        // If the mesh has changed in any way, and the processor meshes are
+        // non-conformal, then we need to re-unconform the complete mesh
+        if (stat != fvMesh::UNCHANGED && !procsConformal())
+        {
+            procFaceAddressingBf_.clear();
+            completeMesh_->conform();
+            unconform();
+        }
+    }
 
     return stat;
 }

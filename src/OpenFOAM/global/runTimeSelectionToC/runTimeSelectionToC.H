@@ -35,7 +35,7 @@ SourceFiles
 #ifndef runTimeSelectionToC_H
 #define runTimeSelectionToC_H
 
-#include "HashSet.T.H"
+#include "HashTable.T.H"
 #include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -47,8 +47,10 @@ namespace debug
     //- Switch to enable runTimeSelectionToC collection and caching
     extern bool enableRunTimeSelectionToC;
 
+    typedef HashTable<Tuple2<word, HashTable<word>>> runTimeSelectionToCType;
+
     //- Run-time selectable objects
-    extern HashTable<Tuple2<word, wordHashSet>> runTimeSelectionToC;
+    extern runTimeSelectionToCType runTimeSelectionToC;
 
 } // End namespace debug
 } // End namespace Foam

@@ -70,7 +70,7 @@ SourceFiles
 #include "ReactionList.T.H"
 #include "ODESystem.H"
 #include "volFields.H"
-#include "multiComponentMixture.H"
+#include "multicomponentMixture.H"
 #include "chemistryReductionMethod.H"
 #include "chemistryTabulationMethod.H"
 #include "DynamicField.T.H"
@@ -135,7 +135,7 @@ class chemistryModel
         const jacobianType jacobianType_;
 
         //- Reference to the multi component mixture
-        const multiComponentMixture<ThermoType>& mixture_;
+        const multicomponentMixture<ThermoType>& mixture_;
 
         //- Thermodynamic data of the species
         const PtrList<ThermoType>& specieThermos_;
@@ -202,7 +202,7 @@ public:
     // Constructors
 
         //- Construct from thermo
-        chemistryModel(const fluidReactionThermo& thermo);
+        chemistryModel(const fluidMulticomponentThermo& thermo);
 
         //- Disallow default bitwise copy construction
         chemistryModel(const chemistryModel&) = delete;
@@ -215,7 +215,7 @@ public:
     // Member Functions
 
         //- Return reference to the mixture
-        inline const multiComponentMixture<ThermoType>& mixture() const;
+        inline const multicomponentMixture<ThermoType>& mixture() const;
 
         //- The reactions
         inline const PtrList<Reaction<ThermoType>>& reactions() const;

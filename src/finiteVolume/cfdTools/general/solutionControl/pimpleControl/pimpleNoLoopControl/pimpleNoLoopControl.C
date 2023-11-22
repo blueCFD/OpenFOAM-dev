@@ -38,8 +38,7 @@ namespace Foam
 Foam::pimpleNoLoopControl::pimpleNoLoopControl
 (
     fvMesh& mesh,
-    const word& algorithmName,
-    const pimpleLoop& loop
+    const word& algorithmName
 )
 :
     pisoControl(mesh, algorithmName),
@@ -52,9 +51,9 @@ Foam::pimpleNoLoopControl::pimpleNoLoopControl
         static_cast<singleRegionSolutionControl&>(*this),
         "outerCorrector"
     ),
-    loop_(loop),
+    pimpleLoopPtr_(nullptr),
     simpleRho_(false),
-    turbOnFinalIterOnly_(true)
+    transportCorrectionFinal_(true)
 {
     read();
 }
@@ -80,6 +79,12 @@ bool Foam::pimpleNoLoopControl::read()
         return false;
     }
 
+    moveMeshOuterCorrectors_ = dict().lookupOrDefault
+    (
+        "moveMeshOuterCorrectors",
+        false
+    );
+
     simpleRho_ =
         dict().lookupOrDefaultBackwardsCompatible<bool>
         (
@@ -87,18 +92,28 @@ bool Foam::pimpleNoLoopControl::read()
             mesh().schemes().steady()
         );
 
-    turbOnFinalIterOnly_ =
-        dict().lookupOrDefault<bool>("turbOnFinalIterOnly", true);
+    transportCorrectionFinal_ =
+        dict().lookupOrDefaultBackwardsCompatible<bool>
+        (
+            {"transportCorrectionFinal", "turbOnFinalIterOnly"},
+            true
+        );
 
     return true;
 }
 
 
-bool Foam::pimpleNoLoopControl::isFinal() const
+
+bool Foam::pimpleNoLoopControl::correct()
 {
-    return
-        (!anyPisoIter() && loop_.finalPimpleIter())
-     || pisoControl::isFinal();
+    return pisoControl::correct(finalIter());
+}
+
+
+bool Foam::pimpleNoLoopControl::correctNonOrthogonal()
+{
+
+    return pisoControl::correctNonOrthogonal(finalIter());
 }
 
 

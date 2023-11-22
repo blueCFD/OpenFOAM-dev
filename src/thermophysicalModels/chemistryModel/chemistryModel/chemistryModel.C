@@ -33,7 +33,7 @@ License
 template<class ThermoType>
 Foam::chemistryModel<ThermoType>::chemistryModel
 (
-    const fluidReactionThermo& thermo
+    const fluidMulticomponentThermo& thermo
 )
 :
     odeChemistryModel(thermo),
@@ -45,7 +45,7 @@ Foam::chemistryModel<ThermoType>::chemistryModel
       ? jacobianTypeNames_.read(this->lookup("jacobian"))
       : jacobianType::fast
     ),
-    mixture_(refCast<const multiComponentMixture<ThermoType>>(this->thermo())),
+    mixture_(refCast<const multicomponentMixture<ThermoType>>(this->thermo())),
     specieThermos_(mixture_.specieThermos()),
     reactions_(mixture_.species(), specieThermos_, this->mesh(), *this),
     RR_(nSpecie_),

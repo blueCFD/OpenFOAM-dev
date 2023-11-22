@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 
 #include "rhoThermo.H"
-#include "rhoReactionThermo.H"
+#include "rhoMulticomponentThermo.H"
 
 #include "combustionModel.H"
 
@@ -35,7 +35,7 @@ License
 #include "IsothermalPhaseModel.T.H"
 #include "AnisothermalPhaseModel.T.H"
 #include "PurePhaseModel.T.H"
-#include "MultiComponentPhaseModel.T.H"
+#include "MulticomponentPhaseModel.T.H"
 #include "InertPhaseModel.T.H"
 #include "ReactingPhaseModel.T.H"
 #include "MovingPhaseModel.T.H"
@@ -144,23 +144,33 @@ namespace Foam
     typedef
         AnisothermalPhaseModel
         <
-            MultiComponentPhaseModel
+            MulticomponentPhaseModel
             <
                 InertPhaseModel
                 <
                     MovingPhaseModel
                     <
-                        ThermoPhaseModel<phaseModel, rhoReactionThermo>
+                        ThermoPhaseModel<phaseModel, rhoMulticomponentThermo>
                     >
                 >
             >
         >
-        multiComponentPhaseModel;
+        multicomponentPhaseModel;
 
     addNamedToRunTimeSelectionTable
     (
         phaseModel,
-        multiComponentPhaseModel,
+        multicomponentPhaseModel,
+        phaseSystem,
+        multicomponentPhaseModel
+    );
+
+    // Also add multicomponentPhaseModel with the name multiComponentPhaseModel
+    // for backward-compatibility
+    addNamedToRunTimeSelectionTable
+    (
+        phaseModel,
+        multicomponentPhaseModel,
         phaseSystem,
         multiComponentPhaseModel
     );
@@ -168,37 +178,37 @@ namespace Foam
     typedef
         IsothermalPhaseModel
         <
-            MultiComponentPhaseModel
+            MulticomponentPhaseModel
             <
                 InertPhaseModel
                 <
                     MovingPhaseModel
                     <
-                        ThermoPhaseModel<phaseModel, rhoReactionThermo>
+                        ThermoPhaseModel<phaseModel, rhoMulticomponentThermo>
                     >
                 >
             >
         >
-        multiComponentIsothermalPhaseModel;
+        multicomponentIsothermalPhaseModel;
 
     addNamedToRunTimeSelectionTable
     (
         phaseModel,
-        multiComponentIsothermalPhaseModel,
+        multicomponentIsothermalPhaseModel,
         phaseSystem,
-        multiComponentIsothermalPhaseModel
+        multicomponentIsothermalPhaseModel
     );
 
     typedef
         AnisothermalPhaseModel
         <
-            MultiComponentPhaseModel
+            MulticomponentPhaseModel
             <
                 ReactingPhaseModel
                 <
                     MovingPhaseModel
                     <
-                        ThermoPhaseModel<phaseModel, rhoReactionThermo>
+                        ThermoPhaseModel<phaseModel, rhoMulticomponentThermo>
                     >
                 >
             >

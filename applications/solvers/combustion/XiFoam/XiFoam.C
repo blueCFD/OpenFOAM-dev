@@ -50,7 +50,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "psiuReactionThermo.H"
+#include "psiuMulticomponentThermo.H"
 #include "compressibleMomentumTransportModels.H"
 #include "fluidThermophysicalTransportModel.H"
 #include "laminarFlameSpeed.H"
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
-            if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
+            if (pimple.firstPimpleIter() || pimple.moveMeshOuterCorrectors())
             {
                 // Move the mesh
                 mesh.move();

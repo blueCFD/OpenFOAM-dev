@@ -139,12 +139,12 @@ public:
             virtual bool executeAtStart() const;
 
             //- Called at each ++ or += of the time-loop.
-            //  postProcess overrides the usual executeControl behaviour and
+            //  foamPostProcess overrides the usual executeControl behaviour and
             //  forces execution (used in post-processing mode)
             virtual bool execute();
 
             //- Called at each ++ or += of the time-loop.
-            //  postProcess overrides the usual writeControl behaviour and
+            //  foamPostProcess overrides the usual writeControl behaviour and
             //  forces writing (used in post-processing mode)
             virtual bool write();
 
@@ -165,6 +165,9 @@ public:
 
             //- Update from another mesh using the given map
             virtual void mapMesh(const polyMeshMap&);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap&);
 
 
     // Member Operators

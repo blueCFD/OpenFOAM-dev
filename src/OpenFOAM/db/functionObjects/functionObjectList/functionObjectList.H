@@ -54,6 +54,7 @@ namespace Foam
 
 class polyTopoChangeMap;
 class polyMeshMap;
+class polyDistributionMap;
 class argList;
 
 /*---------------------------------------------------------------------------*\
@@ -263,7 +264,7 @@ public:
         bool start();
 
         //- Called at each ++ or += of the time-loop.
-        //  postProcess overrides the usual executeControl behaviour and
+        //  foamPostProcess overrides the usual executeControl behaviour and
         //  forces execution (used in post-processing mode)
         bool execute();
 
@@ -281,6 +282,9 @@ public:
 
         //- Update from another mesh using the given map
         virtual void mapMesh(const polyMeshMap&);
+
+        //- Redistribute or update using the given distribution map
+        virtual void distribute(const polyDistributionMap&);
 
 
     // Member Operators
