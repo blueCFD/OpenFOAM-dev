@@ -9,20 +9,23 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      fvConstraints;
+    object      testDict2;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// This dictionary is read by entries in testDict
 
-/*
-fixedTemperature
+internalField 5.6;
+
+active
 {
-    type            fixedTemperatureConstraint;
-    select          all;
-
-    mode            uniform;
-
-    temperature     constant 300; // Set temperature (K)
+    type            fixedValue;
+    value.air       $internalField;
 }
-*/
 
-//************************************************************************** //
+activeWater
+{
+    type            fixedValue;
+    value.water     1000;
+}
+
+// ************************************************************************* //

@@ -33,6 +33,7 @@ Description
 
 Usage
     \b foamDictionary [OPTION] dictionary
+
       - \par -case \<dir\>
         Select a case directory instead of the current working directory
 
@@ -472,7 +473,7 @@ int main(int argc, char *argv[])
         }
 
         dict.dictionary::write(Info, false);
-        IOobject::writeDivider(Info);
+        IOobject::writeEndDivider(Info);
 
         return 0;
     }
