@@ -11,37 +11,30 @@ runApplication decomposePar
 
 runParallel $(getApplication)
 
-if ! isTest "$@"
-then
-    runApplication -a foamDictionary system/controlDict -entry endTime -set 4
-    runApplication -a foamDictionary system/controlDict -entry startTime -set 0.5
-    runParallel -a foamDictionary 0.5/T.liquid -entry boundaryField/wall/q -set "uniform 73890"
-    runParallel -a foamDictionary 0.5/U.liquid -entry boundaryField/inlet/type -set "fixedValue"
-    runParallel -a $(getApplication)
-fi
-
 runApplication reconstructPar -latestTime
+
 runApplication foamPostProcess -latestTime -func "
     graphCell
     (
-        funcName=graph,
+        name=graph,
         start=(3.4901 0 0),
         end=(3.4901 0.0096 0),
         fields=(alpha.gas alpha.gas2 alpha.liquid T.liquid T.gas d.bubbles)
     )"
-
-./validation/createGraphs
-
 runApplication -append foamPostProcess -latestTime -func "
     patchSurface
     (
-        funcName=patchWallBoilingProperties,
+        name=patchWallBoilingProperties,
         patch=wall,
         surfaceFormat=raw,
         interpolate=false,
         fields=(dDeparture.liquid fDeparture.liquid nucleationSiteDensity.liquid wetFraction.liquid qQuenching.liquid qEvaporative.liquid)
     )"
 
-./validation/createWallBoilingPropertiesGraphs
+if ! isTest "$@"
+then
+    ./validation/createGraphs
+    ./validation/createWallBoilingPropertiesGraphs
+fi
 
 #------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,7 +58,10 @@ void Foam::fv::heatTransfer::readCoeffs()
 
     Ta_ = dimensionedScalar("Ta", dimTemperature, coeffs());
 
-    heatTransferModel_ = heatTransferModel::New(coeffs(), mesh());
+    heatTransferAoV_.reset(new heatTransferAoV(coeffs(), mesh()));
+
+    heatTransferCoefficientModel_ =
+        heatTransferCoefficientModel::New(coeffs(), mesh());
 }
 
 
@@ -68,16 +71,17 @@ Foam::fv::heatTransfer::heatTransfer
 (
     const word& name,
     const word& modelType,
-    const dictionary& dict,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const dictionary& dict
 )
 :
-    fvModel(name, modelType, dict, mesh),
+    fvModel(name, modelType, mesh, dict),
     set_(mesh, coeffs()),
     semiImplicit_(false),
     TName_(word::null),
     Ta_("Ta", dimTemperature, NaN),
-    heatTransferModel_(nullptr)
+    heatTransferAoV_(nullptr),
+    heatTransferCoefficientModel_(nullptr)
 {
     readCoeffs();
 }
@@ -116,7 +120,7 @@ void Foam::fv::heatTransfer::addSup
     UIndirectList<scalar>(mask.ref().primitiveFieldRef(), set_.cells()) = 1;
     const volScalarField htcAoV
     (
-        mask*heatTransferModel_->htc()*heatTransferModel_->AoV()
+        mask*heatTransferCoefficientModel_->htc()*heatTransferAoV_->AoV()
     );
 
     if (semiImplicit_)
@@ -155,7 +159,7 @@ void Foam::fv::heatTransfer::addSup
 
 void Foam::fv::heatTransfer::correct()
 {
-    heatTransferModel_->correct();
+    heatTransferCoefficientModel_->correct();
 }
 
 

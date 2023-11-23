@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,9 +57,6 @@ Description
 
     Other dictionary entries may also be specified using named arguments.
 
-See also
-    Foam::functionObjectList
-
 SourceFiles
     includeFuncEntry.C
 
@@ -90,6 +87,13 @@ public:
 
     //- Runtime type information
     ClassName("includeFunc");
+
+
+    // Static Data Members
+
+        //- Default relative path to the directory structure
+        //  containing the functionObject dictionary files
+        static fileName functionObjectDictPath;
 
 
     // Member Functions

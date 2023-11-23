@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,16 +59,18 @@ void Foam::fv::interRegionHeatTransfer::readCoeffs()
 
     if (master())
     {
-        heatTransferModel_ = heatTransferModel::New(coeffs(), *this);
+        heatTransferAoV_.reset(new heatTransferAoV(coeffs(), mesh()));
+
+        heatTransferCoefficientModel_ =
+            heatTransferCoefficientModel::New(coeffs(), *this);
     }
 }
 
 
-const Foam::fv::heatTransferModel&
-Foam::fv::interRegionHeatTransfer::nbrHeatTransferModel() const
+const Foam::fv::interRegionHeatTransfer&
+Foam::fv::interRegionHeatTransfer::nbrHeatTransfer() const
 {
-    return
-        refCast<const interRegionHeatTransfer>(nbrModel()).heatTransferModel_;
+    return refCast<const interRegionHeatTransfer>(nbrModel());
 }
 
 
@@ -78,15 +80,16 @@ Foam::fv::interRegionHeatTransfer::interRegionHeatTransfer
 (
     const word& name,
     const word& modelType,
-    const dictionary& dict,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const dictionary& dict
 )
 :
-    interRegionModel(name, modelType, dict, mesh),
+    interRegionModel(name, modelType, mesh, dict),
     semiImplicit_(false),
     TName_(word::null),
     TNbrName_(word::null),
-    heatTransferModel_(nullptr)
+    heatTransferAoV_(nullptr),
+    heatTransferCoefficientModel_(nullptr)
 {
     readCoeffs();
 }
@@ -149,14 +152,14 @@ void Foam::fv::interRegionHeatTransfer::addSup
         interpolate(oneNbr(), mask.ref().primitiveFieldRef());
         tHtcAoV =
             mask
-           *heatTransferModel_->htc()
-           *heatTransferModel_->AoV();
+           *heatTransferCoefficientModel_->htc()
+           *heatTransferAoV_->AoV();
     }
     else
     {
         tmp<volScalarField> tHtcNbr =
-            nbrHeatTransferModel().htc()
-           *nbrHeatTransferModel().AoV();
+            nbrHeatTransfer().heatTransferCoefficientModel_->htc()
+           *nbrHeatTransfer().heatTransferAoV_->AoV();
         tHtcAoV =
             volScalarField::New
             (
@@ -208,7 +211,7 @@ void Foam::fv::interRegionHeatTransfer::correct()
 {
     if (master())
     {
-        heatTransferModel_->correct();
+        heatTransferCoefficientModel_->correct();
     }
 }
 

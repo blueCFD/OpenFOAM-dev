@@ -14,16 +14,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-clouds
-{
-    type    clouds;
-    libs    ("liblagrangianParcel.so");
-}
-
-surfaceFilms
-{
-    type    surfaceFilms;
-    libs    ("libsurfaceFilmModels.so");
-}
+#includeModel clouds
+#includeModel surfaceFilms
 
 // ************************************************************************* //

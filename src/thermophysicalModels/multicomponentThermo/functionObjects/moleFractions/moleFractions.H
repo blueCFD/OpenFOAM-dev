@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,31 +22,20 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::moleFractions
+    Foam::functionObjects::moleFractions
 
 Description
     This function object calculates mole-fraction fields from the mass-fraction
-    fields of the psi/rhoMulticomponentThermo and caches them for output and
-    further post-processing.
-
-    The names of the mole-fraction fields are obtained from the corresponding
-    mass-fraction fields prepended by "X_"
+    fields of the multicomponent thermo. The names of the mole-fraction fields
+    are obtained from the corresponding mass-fraction fields prepended by "X_".
 
     Example of function object specification:
     \verbatim
     moleFractions
     {
-        type psiMulticomponentThermoMoleFractions;
+        type moleFractions;
     }
     \endverbatim
-    or
-    \verbatim
-    moleFractions
-    {
-        type rhoMulticomponentThermoMoleFractions;
-    }
-    \endverbatim
-    depending on the thermodynamics package used in the solver.
 
     Optionally, the name of the phase can be specified for multiphase cases.
 
@@ -58,8 +47,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef moleFractions_H
-#define moleFractions_H
+#ifndef functionObjects_moleFractions_H
+#define functionObjects_moleFractions_H
 
 #include "fvMeshFunctionObject.H"
 #include "volFieldsFwd.H"
@@ -68,29 +57,24 @@ SourceFiles
 
 namespace Foam
 {
+namespace functionObjects
+{
 
 /*---------------------------------------------------------------------------*\
                         Class moleFractions Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class ThermoType>
 class moleFractions
 :
     public functionObjects::fvMeshFunctionObject
 {
     // Private Data
 
-        //- Species mole fractions
-        PtrList<volScalarField> X_;
-
         //- Optional phase name
         word phaseName_;
 
-
-    // Private Member Functions
-
-        //- Calculate the mole fraction fields
-        virtual void calculateMoleFractions();
+        //- Species mole fractions
+        PtrList<volScalarField> X_;
 
 
 public:
@@ -102,12 +86,7 @@ public:
     // Constructors
 
         //- Construct from Time and dictionary
-        moleFractions
-        (
-            const word& name,
-            const Time& t,
-            const dictionary& dict
-        );
+        moleFractions(const word& name, const Time& t, const dictionary& dict);
 
         //- Disallow default bitwise copy construction
         moleFractions(const moleFractions&) = delete;
@@ -144,13 +123,8 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace functionObjects
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "moleFractions.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

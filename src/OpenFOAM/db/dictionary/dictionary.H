@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ SourceFiles
 #include "entry.H"
 #include "IDLList.H"
 #include "DLList.H"
-#include "HashTable.T.H"
+#include "HashSet.T.H"
 #include "ITstream.H"
 #include "wordReList.H"
 #include "Pair.T.H"
@@ -521,6 +521,10 @@ public:
             //- Find and return a sub-dictionary for manipulation
             dictionary& subDict(const word&);
 
+            //- Find and return a sub-dictionary, trying a list of keywords in
+            //  sequence, otherwise error.
+            const dictionary& subDictBackwardsCompatible(const wordList&) const;
+
             //- Find and return a sub-dictionary as a copy, or
             //  return an empty dictionary if the sub-dictionary does not exist
             dictionary subOrEmptyDict
@@ -746,8 +750,8 @@ dictionary operator|(const dictionary& dict1, const dictionary& dict2);
 //- Parse dictionary substitution argument list
 void dictArgList
 (
-    const string& funcArgs,
-    word& funcName,
+    const string& argString,
+    word& configName,
     wordReList& args,
     List<Tuple2<word, string>>& namedArgs
 );
@@ -755,13 +759,89 @@ void dictArgList
 //- Parse dictionary substitution argument list
 void dictArgList
 (
-    const string& funcArgs,
+    const string& argString,
     wordReList& args,
     List<Tuple2<word, string>>& namedArgs
 );
 
 //- Extracts dict name and keyword
 Pair<word> dictAndKeyword(const word& scopedName);
+
+//- Return the list of configuration files in
+//  user/group/shipped directories.
+//  The search scheme allows for version-specific and
+//  version-independent files using the following hierarchy:
+//  - \b user settings:
+//    - ~/.OpenFOAM/\<VERSION\>/caseDicts/postProcessing
+//    - ~/.OpenFOAM/caseDicts/postProcessing
+//  - \b group (site) settings (when $WM_PROJECT_SITE is set):
+//    - $WM_PROJECT_SITE/\<VERSION\>/etc/caseDicts/postProcessing
+//    - $WM_PROJECT_SITE/etc/caseDicts/postProcessing
+//  - \b group (site) settings (when $WM_PROJECT_SITE is not set):
+//    - $WM_PROJECT_INST_DIR/site/\<VERSION\>/etc/
+//          caseDicts/postProcessing
+//    - $WM_PROJECT_INST_DIR/site/etc/caseDicts/postProcessing
+//  - \b other (shipped) settings:
+//    - $WM_PROJECT_DIR/etc/caseDicts/postProcessing
+wordList listAllConfigFiles
+(
+    const fileName& configFilesPath
+);
+
+//- Search for configuration file for given region
+//  and if not present also search the case directory as well as the
+//  user/group/shipped directories.
+//  The search scheme allows for version-specific and
+//  version-independent files using the following hierarchy:
+//  - \b user settings:
+//    - ~/.OpenFOAM/\<VERSION\>/caseDicts/postProcessing
+//    - ~/.OpenFOAM/caseDicts/postProcessing
+//  - \b group (site) settings (when $WM_PROJECT_SITE is set):
+//    - $WM_PROJECT_SITE/\<VERSION\>/etc/caseDicts/postProcessing
+//    - $WM_PROJECT_SITE/etc/caseDicts/postProcessing
+//  - \b group (site) settings (when $WM_PROJECT_SITE is not set):
+//    - $WM_PROJECT_INST_DIR/site/\<VERSION\>/etc/
+//          caseDicts/postProcessing
+//    - $WM_PROJECT_INST_DIR/site/etc/caseDicts/postProcessing
+//  - \b other (shipped) settings:
+//    - $WM_PROJECT_DIR/etc/caseDicts/postProcessing
+//
+//  \return The path of the configuration file if found
+//  otherwise null
+fileName findConfigFile
+(
+    const word& configName,
+    const fileName& configFilesPath,
+    const word& region = word::null
+);
+
+//- Read the specified configuration file
+//  parsing the optional arguments included in the string
+//  'argString', inserting 'field' or 'fields' entries as required
+//  and merging the resulting configuration dictionary into
+//  'parentDict'.
+//
+//  Parses the optional arguments:
+//      'Q(U)' -> configFileName = Q; args = (U)
+//             -> field U;
+//
+//  Supports named arguments:
+//      'patchAverage(patch=inlet, p,U)'
+//  or
+//      'patchAverage(patch=inlet, field=(p U))'
+//       -> configFileName = patchAverage;
+//          args = (patch=inlet, p,U)
+//       -> patch inlet;
+//          fields (p U);
+bool readConfigFile
+(
+    const word& configType,
+    const string& argString,
+    dictionary& parentDict,
+    const fileName& configFilesPath,
+    const Pair<string>& contextTypeAndValue,
+    const word& region = word::null
+);
 
 //- Write a dictionary entry
 void writeEntry(Ostream& os, const dictionary& dict);

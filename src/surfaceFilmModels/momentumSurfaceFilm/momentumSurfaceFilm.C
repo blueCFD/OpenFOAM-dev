@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -311,11 +311,6 @@ Foam::momentumSurfaceFilm::solveMomentum
     // Evaluate viscosity from user-model
     viscosity_->correct(thermo_->p(), thermo_->T());
 
-    const volScalarField::Internal rVDt
-    (
-        1/(time().deltaT()*mesh().V())
-    );
-
     // Momentum equation
     tmp<fvVectorMatrix> tUEqn
     (
@@ -399,15 +394,9 @@ void Foam::momentumSurfaceFilm::solveAlpha
         )
     );
 
-    surfaceScalarField phid
+    const surfaceScalarField phid
     (
         "phid",
-        // constrainFilmField
-        // (
-        //     rhof
-        //    *constrainPhiHbyA(fvc::flux(HbyA) - alpharAUf*phiu, U_, alpha_),
-        //     0
-        // )
         rhof*constrainPhiHbyA(fvc::flux(HbyA) - alpharAUf*phiu, U_, alpha_)
     );
 
@@ -416,8 +405,6 @@ void Foam::momentumSurfaceFilm::solveAlpha
         "alphaCoeff",
         alphaf*rhof*alpharAUf*rhogf
     );
-
-    mesh().schemes().setFluxRequired(alpha_.name());
 
     while (pimple_.correctNonOrthogonal())
     {
@@ -837,6 +824,8 @@ Foam::momentumSurfaceFilm::momentumSurfaceFilm
     addedMassTotal_(0)
 {
     alpha_ == delta_/VbyA();
+
+    mesh().schemes().setFluxRequired(alpha_.name());
 
     if (readFields)
     {

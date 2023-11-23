@@ -57,7 +57,7 @@ functions
 
     #includeFunc cellMin
     (
-        funcName=min,
+        name=min,
         alpha.liquid,
         alpha.gas,
         p,
@@ -70,7 +70,7 @@ functions
 
     #includeFunc cellMax
     (
-        funcName=max,
+        name=max,
         alpha.liquid,
         alpha.gas,
         p,
@@ -83,7 +83,7 @@ functions
 
     #includeFunc graphPatchCutLayerAverage
     (
-        funcName=hydrofoilLowerPressure,
+        name=hydrofoilLowerPressure,
         patch=hydrofoilLower,
         direction=(0.15 -0.016 0),
         nPoints=100,
@@ -92,7 +92,7 @@ functions
 
     #includeFunc graphPatchCutLayerAverage
     (
-        funcName=hydrofoilUpperPressure,
+        name=hydrofoilUpperPressure,
         patch=hydrofoilUpper,
         direction=(0.15 -0.016 0),
         nPoints=100,

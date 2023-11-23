@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,6 +51,8 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class solver
+:
+    public regIOobject
 {
 public:
 
@@ -74,6 +76,12 @@ public:
         bool LTS;
 
 
+    // Public Static Data
+
+        //- deltaT increase factor
+        static scalar deltaTFactor;
+
+
 private:
 
     // Private Member Data
@@ -83,6 +91,12 @@ private:
 
         //- Pointer to the demand driven fvConstraints MeshObject
         mutable Foam::fvConstraints* fvConstraintsPtr;
+
+
+    // Private Member Functions
+
+        //- Dummy write for regIOobject
+        virtual bool writeData(Ostream&) const;
 
 
 public:

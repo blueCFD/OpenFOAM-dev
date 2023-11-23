@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,13 +42,13 @@ namespace solvers
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::solvers::fluidSolver::read()
+void Foam::solvers::fluidSolver::readControls()
 {
     maxCo =
         runTime.controlDict().lookupOrDefault<scalar>("maxCo", 1.0);
 
     maxDeltaT_ =
-        runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", great);
+        runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", vGreat);
 
     correctPhi = pimple.dict().lookupOrDefault
     (
@@ -191,7 +191,7 @@ Foam::solvers::fluidSolver::fluidSolver(fvMesh& mesh)
     CoNum(0)
 {
     // Read the controls
-    read();
+    readControls();
 }
 
 
@@ -205,15 +205,14 @@ Foam::solvers::fluidSolver::~fluidSolver()
 
 Foam::scalar Foam::solvers::fluidSolver::maxDeltaT() const
 {
+    scalar deltaT = min(fvModels().maxDeltaT(), maxDeltaT_);
+
     if (CoNum > small)
     {
-        const scalar deltaT = maxCo*runTime.deltaTValue()/CoNum;
-        return min(min(deltaT, fvModels().maxDeltaT()), maxDeltaT_);
+        deltaT = min(deltaT, maxCo/CoNum*runTime.deltaTValue());
     }
-    else
-    {
-        return runTime.deltaTValue();
-    }
+
+    return deltaT;
 }
 
 

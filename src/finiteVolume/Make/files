@@ -128,6 +128,7 @@ $(fvMeshStitchers)/stationary/fvMeshStitchersStationary.C
 
 functionObjects/fvMeshFunctionObject/fvMeshFunctionObject.C
 functionObjects/volRegion/volRegion.C
+functionObjects/fvModelFunctionObject/fvModelFunctionObject.C
 
 fvPatchFields = fields/fvPatchFields
 $(fvPatchFields)/fvPatchField/fvPatchFields.C
@@ -443,7 +444,6 @@ laplacianSchemes = finiteVolume/laplacianSchemes
 $(laplacianSchemes)/laplacianScheme/laplacianSchemes.C
 $(laplacianSchemes)/gaussLaplacianScheme/gaussLaplacianSchemes.C
 
-finiteVolume/fvc/fvcFlux.C
 finiteVolume/fvc/fvcMeshPhi.C
 finiteVolume/fvc/fvcSmooth/fvcSmooth.C
 finiteVolume/fvc/fvcReconstructMag.C
@@ -503,10 +503,12 @@ $(MRF)/derivedFvPatchFields/MRFFreestreamVelocity/MRFFreestreamVelocityFvPatchVe
 fvModels = $(general)/fvModels
 $(fvModels)/fvModel.C
 $(fvModels)/fvModels.C
+$(fvModels)/includeFvModelEntry/includeFvModelEntry.C
 
 fvConstraints = $(general)/fvConstraints
 $(fvConstraints)/fvConstraint.C
 $(fvConstraints)/fvConstraints.C
+$(fvConstraints)/includeFvConstraintEntry/includeFvConstraintEntry.C
 
 cellSources = sets/cellSources
 $(cellSources)/fieldToCell/fieldToCell.C

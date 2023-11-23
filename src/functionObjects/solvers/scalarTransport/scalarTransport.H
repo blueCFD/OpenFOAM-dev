@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ Description
 
     Example:
     \verbatim
-        #includeFunc scalarTransport(tracer, diffusion=none)
+        #includeFunc scalarTransport(tracer, diffusivity=none)
 
     with scheme specification:
         div(phi,tracer)     Gauss interfaceCompression vanLeer 1;
@@ -72,7 +72,7 @@ Description
             tolerance       1e-8;
             relTol          0;
 
-            diffusion
+            diffusivity
             {
                 solver          smoothSolver;
                 smoother        symGaussSeidel;
@@ -113,8 +113,8 @@ class scalarTransport
 {
 public:
 
-        //- Enumeration defining the type of the diffusion
-        enum class diffusionType
+        //- Enumeration defining the type of the diffusivity
+        enum class diffusivityType
         {
             none,
             constant,
@@ -135,19 +135,19 @@ private:
         //- Name of density field (optional)
         word rhoName_;
 
-        //- Diffusion type names
-        static const NamedEnum<diffusionType, 3> diffusionTypeNames_;
+        //- diffusivity type names
+        static const NamedEnum<diffusivityType, 3> diffusivityTypeNames_;
 
-        //- The type of diffusion
-        diffusionType diffusion_;
+        //- The type of diffusivity
+        diffusivityType diffusivity_;
 
-        //- Constant diffusion coefficient (optional)
+        //- Constant diffusivity coefficient (optional)
         scalar D_;
 
-        //- Laminar diffusion coefficient (optional)
+        //- Laminar diffusivity coefficient (optional)
         scalar alphal_;
 
-        //- Turbulent diffusion coefficient (optional)
+        //- Turbulent diffusivity coefficient (optional)
         scalar alphat_;
 
         //- Number of corrector iterations (optional)

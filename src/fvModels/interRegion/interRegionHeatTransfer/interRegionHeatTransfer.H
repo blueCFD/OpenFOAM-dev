@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,25 +46,23 @@ Usage
     {
         type            interRegionHeatTransfer;
 
-        interRegionHeatTransferCoeffs
-        {
-            nbrRegion       other;
+        nbrRegion       other;
 
-            interpolationMethod cellVolumeWeight;
-            master          true;
+        interpolationMethod cellVolumeWeight;
+        master          true;
 
-            semiImplicit    no;
+        semiImplicit    no;
 
-            type            constant;
+        AoV             200;
 
-            AoV             200;
-            htc             10;
-        }
+        heatTransferCoefficientModel constant;
+
+        htc             10;
     }
     \endverbatim
 
 See also
-    fv::heatTransferModel
+    Foam::fv::heatTransferCoefficientModel
 
 SourceFiles
     interRegionHeatTransfer.C
@@ -75,7 +73,8 @@ SourceFiles
 #define interRegionHeatTransfer_H
 
 #include "interRegionModel.H"
-#include "heatTransferModel.H"
+#include "heatTransferCoefficientModel.H"
+#include "heatTransferAoV.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -103,8 +102,11 @@ class interRegionHeatTransfer
         //- Name of neighbour temperature field; default = "T"
         word TNbrName_;
 
+        //- The heat transfer area per unit volume
+        autoPtr<heatTransferAoV> heatTransferAoV_;
+
         //- The heat transfer model
-        autoPtr<heatTransferModel> heatTransferModel_;
+        autoPtr<heatTransferCoefficientModel> heatTransferCoefficientModel_;
 
 
     // Private member functions
@@ -112,13 +114,8 @@ class interRegionHeatTransfer
         //- Non-virtual read
         void readCoeffs();
 
-
-protected:
-
-    // Protected member functions
-
-        //- Get the neighbour heat transfer model
-        const heatTransferModel& nbrHeatTransferModel() const;
+        //- Get the neighbour heat transfer
+        const interRegionHeatTransfer& nbrHeatTransfer() const;
 
 
 public:
@@ -134,8 +131,8 @@ public:
         (
             const word& name,
             const word& modelType,
-            const dictionary& dict,
-            const fvMesh& mesh
+            const fvMesh& mesh,
+            const dictionary& dict
         );
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,8 +73,8 @@ Foam::fvModel::fvModel
 (
     const word& name,
     const word& modelType,
-    const dictionary& dict,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const dictionary& dict
 )
 :
     name_(name),
@@ -93,8 +93,8 @@ Foam::fvModel::fvModel
 Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
 (
     const word& name,
-    const dictionary& coeffs,
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const dictionary& coeffs
 )
 {
     const word modelType(coeffs.lookup("type"));
@@ -123,7 +123,7 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
 
     return autoPtr<fvModel>
     (
-        cstrIter()(name, modelType, coeffs, mesh)
+        cstrIter()(name, modelType, mesh, coeffs)
     );
 }
 
@@ -148,7 +148,7 @@ bool Foam::fvModel::addsSupToField(const word& fieldName) const
 
 Foam::scalar Foam::fvModel::maxDeltaT() const
 {
-    return great;
+    return vGreat;
 }
 
 
