@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,9 +55,24 @@ Description
     c #calc "($a)/$b";
     \endverbatim
 
+    Additional include files for the #calc code compilation can be specified
+    using the #calcInclude entry, e.g. if functions from transform.H are used
+    \verbatim
+    angleOfAttack   5; // degs
+
+    angle           #calc "-degToRad($angleOfAttack)";
+
+    #calcInclude    "transform.H"
+    liftDir         #calc "transform(Ry($angle), vector(0, 0, 1))";
+    dragDir         #calc "transform(Ry($angle), vector(1, 0, 0))";
+    \endverbatim
+
     Note:
         Internally this is just a wrapper around codeStream functionality - the
-        #calc string gets used to construct a dictionary for codeStream.
+        #calc string is used to construct a dictionary for codeStream.
+
+See also
+    Foam::functionEntries::calcIncludeEntry
 
 SourceFiles
     calcEntry.C

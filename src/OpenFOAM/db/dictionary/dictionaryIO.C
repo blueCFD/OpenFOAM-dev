@@ -27,6 +27,7 @@ License
 #include "IOobject.T.H"
 #include "inputSyntaxEntry.H"
 #include "inputModeEntry.H"
+#include "calcIncludeEntry.H"
 #include "stringOps.H"
 #include "etcFiles.H"
 #include "wordAndDictionary.H"
@@ -63,6 +64,9 @@ Foam::dictionary::dictionary(Istream& is, const bool keepHeader)
 
     // Reset input mode as this is a "top-level" dictionary
     functionEntries::inputModeEntry::clear();
+
+    // Clear the cache of #calc include files
+    functionEntries::calcIncludeEntry::clear();
 
     read(is, keepHeader);
 }
@@ -190,6 +194,9 @@ Foam::Istream& Foam::operator>>(Istream& is, dictionary& dict)
 
     // Reset input mode assuming this is a "top-level" dictionary
     functionEntries::inputModeEntry::clear();
+
+    // Clear the cache of #calc include files
+    functionEntries::calcIncludeEntry::clear();
 
     dict.clear();
     dict.name() = is.name();
@@ -359,7 +366,7 @@ Foam::fileName Foam::findConfigFile
     {
         const fileName dictFile
         (
-            stringOps::expand("$FOAM_CASE")/"system"/region/configName
+            stringOps::expandEnvVar("$FOAM_CASE")/"system"/region/configName
         );
 
         if (isFile(dictFile))
@@ -374,7 +381,7 @@ Foam::fileName Foam::findConfigFile
     {
         const fileName dictFile
         (
-            stringOps::expand("$FOAM_CASE")/"system"/configName
+            stringOps::expandEnvVar("$FOAM_CASE")/"system"/configName
         );
 
         if (isFile(dictFile))
@@ -470,7 +477,7 @@ bool Foam::readConfigFile
     // Delay processing the functionEntries
     // until after the argument entries have been added
     entry::disableFunctionEntries = true;
-    dictionary funcsDict(funcType, parentDict, fileStream);
+    dictionary funcsDict(fileName(funcType), parentDict, fileStream);
     entry::disableFunctionEntries = false;
 
     dictionary* funcDictPtr = &funcsDict;

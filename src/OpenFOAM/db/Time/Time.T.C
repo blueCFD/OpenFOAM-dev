@@ -123,7 +123,7 @@ void Foam::Time::setControls()
     else
     {
         // Search directory for valid time directories
-        instantList timeDirs = findTimes(path(), constant());
+        const instantList timeDirs = findTimes(path(), constant());
 
         if (startFrom == "firstTime")
         {
@@ -385,7 +385,6 @@ Foam::Time::Time
     writeFormat_(IOstream::ASCII),
     writeVersion_(IOstream::currentVersion),
     writeCompression_(IOstream::UNCOMPRESSED),
-    graphFormat_("raw"),
     cacheTemporaryObjects_(true),
 
     functionObjects_
@@ -484,7 +483,6 @@ Foam::Time::Time
     writeFormat_(IOstream::ASCII),
     writeVersion_(IOstream::currentVersion),
     writeCompression_(IOstream::UNCOMPRESSED),
-    graphFormat_("raw"),
     cacheTemporaryObjects_(true),
 
     functionObjects_(*this, enableFunctionObjects)
@@ -550,7 +548,6 @@ Foam::Time::Time
     writeFormat_(IOstream::ASCII),
     writeVersion_(IOstream::currentVersion),
     writeCompression_(IOstream::UNCOMPRESSED),
-    graphFormat_("raw"),
     cacheTemporaryObjects_(true),
 
     functionObjects_(*this, enableFunctionObjects)
@@ -611,7 +608,6 @@ Foam::Time::Time
     writeFormat_(IOstream::ASCII),
     writeVersion_(IOstream::currentVersion),
     writeCompression_(IOstream::UNCOMPRESSED),
-    graphFormat_("raw"),
     cacheTemporaryObjects_(true),
 
     functionObjects_(*this, enableFunctionObjects)
@@ -687,7 +683,7 @@ Foam::word Foam::Time::findInstancePath
     // bit is the readDir, not the sorting. Tbd: avoid calling findInstancePath
     // from filePath.
 
-    instantList timeDirs = findTimes(path(), constant());
+    const instantList timeDirs = findTimes(path(), constant());
     // Note:
     // - times will include constant (with value 0) as first element.
     //   For backwards compatibility make sure to find 0 in preference
@@ -714,7 +710,7 @@ Foam::word Foam::Time::findInstancePath(const instant& t) const
 
 Foam::instant Foam::Time::findClosestTime(const scalar t) const
 {
-    instantList timeDirs = findTimes(path(), constant());
+    const instantList timeDirs = findTimes(path(), constant());
 
     // There is only one time (likely "constant") so return it
     if (timeDirs.size() == 1)

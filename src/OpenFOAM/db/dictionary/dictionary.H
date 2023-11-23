@@ -268,6 +268,25 @@ public:
         //  reading entries until EOF, optionally keeping the header
         dictionary(Istream&, const bool keepHeader=false);
 
+        //- Construct top-level dictionary with given T entries
+        template<class T, class ... KeysAndTs>
+        dictionary
+        (
+            const keyType& k,
+            const T& t,
+            const KeysAndTs& ... keysAndTs
+        );
+
+        //- Construct top-level dictionary with given name and T entries
+        template<class T, class ... KeysAndTs>
+        dictionary
+        (
+            const fileName& name,
+            const keyType& k,
+            const T& t,
+            const KeysAndTs& ... keysAndTs
+        );
+
         //- Construct as copy given the parent dictionary
         dictionary(const dictionary& parentDict, const dictionary&);
 
@@ -494,14 +513,29 @@ public:
                 bool patternMatch=true
             ) const;
 
-            //- Find and return an entry data stream pointer if present
-            //  otherwise return nullptr. Allows scoping using '/' with
-            //  special handling for '!' and '..'.
+            //- Find and return an entry data stream pointer if present,
+            //  otherwise return nullptr.
+            //  If recursive, search parent dictionaries.
+            //  If patternMatch, use regular expressions.
+            //  Allows scoping using '/' with special handling for '!' and '..'.
             const entry* lookupScopedEntryPtr
             (
                 const word&,
                 bool recursive,
                 bool patternMatch
+            ) const;
+
+            //- Find and return a T,
+            //  if not found throw a fatal error.
+            //  If recursive, search parent dictionaries.
+            //  If patternMatch, use regular expressions.
+            //  Allows scoping using '/' with special handling for '!' and '..'.
+            template<class T>
+            T lookupScoped
+            (
+                const word&,
+                bool recursive=false,
+                bool patternMatch=true
             ) const;
 
             //- Check if entry is a sub-dictionary
@@ -620,6 +654,10 @@ public:
             template<class T>
             void set(const keyType&, const T&);
 
+            //- Assign multiple T entries, overwriting any existing entries
+            template<class T, class ... KeysAndTs>
+            void set(const keyType&, const T&, const KeysAndTs& ...);
+
             //- Remove an entry specified by keyword
             bool remove(const word&);
 
@@ -703,6 +741,7 @@ class dictionary::includedDictionary
         //- Global IO status inherited from the parent dictionary
         bool global_;
 
+
 public:
 
     // Constructors
@@ -714,6 +753,7 @@ public:
             const fileName& fName,
             const dictionary& parentDict
         );
+
 
     //- Destructor
     virtual ~includedDictionary()

@@ -124,7 +124,7 @@ Foam::string Foam::string::replaceAll
 
 Foam::string& Foam::string::expand(const bool allowEmpty)
 {
-    stringOps::inplaceExpand(*this, allowEmpty);
+    stringOps::inplaceExpandEnvVar(*this, allowEmpty);
     return *this;
 }
 
@@ -292,6 +292,28 @@ void Foam::string::strip(const string& str)
     {
         resize(i1 - i0);
     }
+}
+
+
+Foam::string::size_type Foam::string::findClosing
+(
+    const char c,
+    string::size_type i0 = 0
+) const
+{
+    size_t level = 1;
+
+    string::size_type i = i0 + 1;
+
+    while (level > 0 && i < size())
+    {
+        if (operator[](i) == operator[](i0)) ++level;
+        if (operator[](i) == c) --level;
+
+        ++i;
+    }
+
+    return level == 0 ? i - 1 : string::npos;
 }
 
 

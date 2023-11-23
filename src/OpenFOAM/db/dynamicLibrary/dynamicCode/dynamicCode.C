@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 2018-02-26 blueCAPE Lda: Modifications for blueCFD-Core 2017-2
@@ -134,7 +134,7 @@ void Foam::dynamicCode::copyAndFilter
         // Expand according to mapping.
         // Expanding according to env variables might cause too many
         // surprises
-        stringOps::inplaceExpand(line, mapping);
+        stringOps::inplaceExpandCodeTemplate(line, mapping);
         os.writeQuoted(line, false) << nl;
     }
     while (is.good());
@@ -324,8 +324,8 @@ bool Foam::dynamicCode::writeDigest(const std::string& sha1) const
 
 Foam::dynamicCode::dynamicCode(const word& codeName, const word& codeDirName)
 :
-    codeRoot_(stringOps::expand("$FOAM_CASE")/topDirName),
-    libSubDir_(stringOps::expand("platforms/$WM_OPTIONS/lib")),
+    codeRoot_(stringOps::expandEnvVar("$FOAM_CASE")/topDirName),
+    libSubDir_(stringOps::expandEnvVar("platforms/$WM_OPTIONS/lib")),
     codeName_(codeName),
     codeDirName_(codeDirName)
 {
@@ -493,7 +493,7 @@ bool Foam::dynamicCode::copyOrCreateFiles(const bool verbose) const
     {
         const fileName dstFile
         (
-            outputDir/stringOps::expand(createFiles_[fileI].first())
+            outputDir/stringOps::expandEnvVar(createFiles_[fileI].first())
         );
 
         mkDir(dstFile.path());

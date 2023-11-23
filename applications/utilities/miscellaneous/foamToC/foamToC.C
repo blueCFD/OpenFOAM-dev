@@ -37,13 +37,16 @@ Description
 Usage
     \b foamToC [OPTION]
       - \par -noLibs
-        Do not load all libraries
+        Load only the core libOpenFOAM.so library by default
 
       - \par -libs '(\"lib1.so\" ... \"libN.so\")'
-        Specify libraries to load
+        Pre-load additional libraries
+
+      - \par -solvers \<name\>
+        List solvers
 
       - \par -solver \<name\>
-        Specify the solver class
+        Load libraries associated with specified solver
 
       - \par -listLibs
         List libraries as they are loaded
@@ -80,6 +83,11 @@ Usage
         List fvConstraints
 
     Example usage:
+      - Print the list of solvers
+        \verbatim
+            foamToC -solvers
+        \endverbatim
+
       - Print the list of scalar boundary conditions (fvPatchField<scalar>)
         provided by the \c fluid solver without additional libraries:
         \verbatim
@@ -231,24 +239,30 @@ int main(int argc, char *argv[])
 
     argList::initValidTables::clear();
 
-    argList::addOption
+    argList::addBoolOption
     (
-        "solver",
-        "name",
-        "Solver name"
+        "noLibs",
+        "Load only the core libOpenFOAM.so library by default"
     );
 
     argList::addOption
     (
         "libs",
         "'(\"lib1.so\" ... \"libN.so\")'",
-        "Pre-load libraries"
+        "Pre-load additional libraries"
     );
 
     argList::addBoolOption
     (
-        "noLibs",
-        "Do not load all libraries"
+        "solvers",
+        "List solvers"
+    );
+
+    argList::addOption
+    (
+        "solver",
+        "name",
+        "Load libraries associated with specified solver"
     );
 
     argList::addBoolOption
@@ -495,6 +509,12 @@ int main(int argc, char *argv[])
     {
         Info<< "ToC:" << nl
             << debug::runTimeSelectionToC << endl;
+        done = true;
+    }
+
+    if (args.optionFound("solvers"))
+    {
+        printToC("solver");
         done = true;
     }
 

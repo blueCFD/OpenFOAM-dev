@@ -27,8 +27,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "dictionary.H"
+#include "fieldTypes.H"
 #include "Ostream.H"
 #include "Pstream.T.H"
+#include "read.H"
 #include "unitConversion.H"
 
 //{{{ begin codeInclude

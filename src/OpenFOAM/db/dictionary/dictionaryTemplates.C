@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,38 @@ License
 
 #include "dictionary.H"
 #include "primitiveEntry.H"
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class T, class ... KeysAndTs>
+Foam::dictionary::dictionary
+(
+    const keyType& k,
+    const T& t,
+    const KeysAndTs& ... keysAndTs
+)
+:
+    parent_(dictionary::null)
+{
+    set(k, t, keysAndTs ...);
+}
+
+
+template<class T, class ... KeysAndTs>
+Foam::dictionary::dictionary
+(
+    const fileName& name,
+    const keyType& k,
+    const T& t,
+    const KeysAndTs& ... keysAndTs
+)
+:
+    dictionaryName(name),
+    parent_(dictionary::null)
+{
+    set(k, t, keysAndTs ...);
+}
+
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -192,6 +224,31 @@ bool Foam::dictionary::readIfPresent
 
 
 template<class T>
+T Foam::dictionary::lookupScoped
+(
+    const word& keyword,
+    bool recursive,
+    bool patternMatch
+) const
+{
+    const entry* entryPtr =
+        lookupScopedEntryPtr(keyword, recursive, patternMatch);
+
+    if (entryPtr == nullptr)
+    {
+        FatalIOErrorInFunction
+        (
+            *this
+        )   << "keyword " << keyword << " is undefined in dictionary "
+            << name()
+            << exit(FatalIOError);
+    }
+
+    return pTraits<T>(entryPtr->stream());
+}
+
+
+template<class T>
 void Foam::dictionary::add(const keyType& k, const T& t, bool overwrite)
 {
     add(new primitiveEntry(k, t), overwrite);
@@ -202,6 +259,19 @@ template<class T>
 void Foam::dictionary::set(const keyType& k, const T& t)
 {
     set(new primitiveEntry(k, t));
+}
+
+
+template<class T, class ... KeysAndTs>
+void Foam::dictionary::set
+(
+    const keyType& k,
+    const T& t,
+    const KeysAndTs& ... keysAndTs
+)
+{
+    set(new primitiveEntry(k, t));
+    set(keysAndTs ...);
 }
 
 
