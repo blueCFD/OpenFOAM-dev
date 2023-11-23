@@ -79,7 +79,7 @@ Foam::solvers::isothermalFluid::isothermalFluid
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        thermo.rho()
+        thermo.renameRho()
     ),
 
     dpdt
@@ -169,6 +169,21 @@ Foam::solvers::isothermalFluid::isothermalFluid
             buoyancy->pRef,
             thermo,
             pimple.dict()
+        );
+
+        netForce = new volVectorField
+        (
+            IOobject
+            (
+                "netForce",
+                runTime.timeName(),
+                mesh
+            ),
+            fvc::reconstruct
+            (
+                (-buoyancy->ghf*fvc::snGrad(rho) - fvc::snGrad(p_rgh))
+               *mesh.magSf()
+            )
         );
     }
 

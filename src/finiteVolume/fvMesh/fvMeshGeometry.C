@@ -31,7 +31,6 @@ License
 #include "slicedSurfaceFields.H"
 #include "SubField.T.H"
 #include "cyclicFvPatchFields.H"
-#include "cyclicAMIFvPatchFields.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

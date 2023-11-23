@@ -28,7 +28,7 @@ License
 #include "volFields.H"
 #include "compressibleMomentumTransportModels.H"
 #include "addToRunTimeSelectionTable.H"
-#include "surfaceFilmRegionModel.H"
+#include "surfaceFilm.H"
 #include "mappedWallPolyPatch.H"
 #include "distributionMap.H"
 
@@ -51,10 +51,10 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::calcUTau
     tmp<scalarField> tuTau(new scalarField(patch().size(), 0.0));
     scalarField& uTau = tuTau.ref();
 
-    typedef regionModels::surfaceFilmModels::surfaceFilmRegionModel modelType;
+    typedef regionModels::surfaceFilm modelType;
 
     bool foundFilm =
-        db().time().foundObject<modelType>("surfaceFilmProperties");
+        db().time().foundObject<modelType>(filmName_+ "Properties");
 
     if (!foundFilm)
     {
@@ -66,7 +66,7 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::calcUTau
 
     // Retrieve phase change mass from surface film model
     const modelType& filmModel =
-        db().time().lookupObject<modelType>("surfaceFilmProperties");
+        db().time().lookupObject<modelType>(filmName_+ "Properties");
 
     const label filmPatchi = filmModel.regionPatchID(patchi);
 
@@ -74,17 +74,9 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::calcUTau
     scalarField mDotFilmp = mDotFilm().boundaryField()[filmPatchi];
     filmModel.toPrimary(filmPatchi, mDotFilmp);
 
-
     // Retrieve RAS turbulence model
     const momentumTransportModel& turbModel =
-        db().lookupObject<momentumTransportModel>
-        (
-            IOobject::groupName
-            (
-                momentumTransportModel::typeName,
-                internalField().group()
-            )
-        );
+        db().lookupType<momentumTransportModel>(internalField().group());
 
     const scalarField& y = turbModel.y()[patchi];
     const tmp<volScalarField> tk = turbModel.k();
@@ -129,14 +121,7 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::nut() const
     const label patchi = patch().index();
 
     const momentumTransportModel& turbModel =
-        db().lookupObject<momentumTransportModel>
-        (
-            IOobject::groupName
-            (
-                momentumTransportModel::typeName,
-                internalField().group()
-            )
-        );
+        db().lookupType<momentumTransportModel>(internalField().group());
 
     const fvPatchVectorField& Uw = turbModel.U().boundaryField()[patchi];
     const scalarField magGradU(mag(Uw.snGrad()));
@@ -160,6 +145,7 @@ nutkFilmWallFunctionFvPatchScalarField::nutkFilmWallFunctionFvPatchScalarField
 )
 :
     nutkWallFunctionFvPatchScalarField(p, iF),
+    filmName_(regionModels::surfaceFilm::typeName),
     B_(5.5),
     yPlusCrit_(11.05)
 {}
@@ -173,6 +159,14 @@ nutkFilmWallFunctionFvPatchScalarField::nutkFilmWallFunctionFvPatchScalarField
 )
 :
     nutkWallFunctionFvPatchScalarField(p, iF, dict),
+    filmName_
+    (
+        dict.lookupOrDefault<word>
+        (
+            "film",
+            regionModels::surfaceFilm::typeName
+        )
+    ),
     B_(dict.lookupOrDefault("B", 5.5)),
     yPlusCrit_(dict.lookupOrDefault("yPlusCrit", 11.05))
 {}
@@ -187,8 +181,9 @@ nutkFilmWallFunctionFvPatchScalarField::nutkFilmWallFunctionFvPatchScalarField
 )
 :
     nutkWallFunctionFvPatchScalarField(ptf, p, iF, mapper),
-    B_(5.5),
-    yPlusCrit_(11.05)
+    filmName_(ptf.filmName_),
+    B_(ptf.B_),
+    yPlusCrit_(ptf.yPlusCrit_)
 {}
 
 
@@ -199,6 +194,7 @@ nutkFilmWallFunctionFvPatchScalarField::nutkFilmWallFunctionFvPatchScalarField
 )
 :
     nutkWallFunctionFvPatchScalarField(wfpsf, iF),
+    filmName_(wfpsf.filmName_),
     B_(wfpsf.B_),
     yPlusCrit_(wfpsf.yPlusCrit_)
 {}
@@ -211,14 +207,7 @@ tmp<scalarField> nutkFilmWallFunctionFvPatchScalarField::yPlus() const
     const label patchi = patch().index();
 
     const momentumTransportModel& turbModel =
-        db().lookupObject<momentumTransportModel>
-        (
-            IOobject::groupName
-            (
-                momentumTransportModel::typeName,
-                internalField().group()
-            )
-        );
+        db().lookupType<momentumTransportModel>(internalField().group());
 
     const scalarField& y = turbModel.y()[patchi];
     const fvPatchVectorField& Uw = turbModel.U().boundaryField()[patchi];
@@ -233,6 +222,13 @@ void nutkFilmWallFunctionFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchField<scalar>::write(os);
     writeLocalEntries(os);
+    writeEntryIfDifferent
+    (
+        os,
+        "film",
+        regionModels::surfaceFilm::typeName,
+        filmName_
+    );
     writeEntry(os, "B", B_);
     writeEntry(os, "yPlusCrit", yPlusCrit_);
     writeEntry(os, "value", *this);

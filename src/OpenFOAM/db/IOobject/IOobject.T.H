@@ -523,19 +523,19 @@ public:
 template<>
 Ostream& operator<<(Ostream& os, const InfoProxy<IOobject>& ip);
 
-//- Template function for obtaining global status
+//- Trait for obtaining global status
 template<class Type>
-inline bool typeGlobal()
+struct typeGlobal
 {
-    return false;
-}
+    static const bool global = false;
+};
 
-//- Template function for obtaining global write status
+//- Trait for obtaining global write status
 template<class Type>
-inline bool typeGlobalFile()
+struct typeGlobalFile
 {
-    return typeGlobal<Type>();
-}
+    static const bool global = typeGlobal<Type>::global;
+};
 
 inline IOobject unregister(const IOobject& io)
 {
@@ -579,7 +579,7 @@ public:
             //- Return the object path for this Type
             inline fileName objectPath() const
             {
-                return objectPath(typeGlobalFile<Type>());
+                return objectPath(typeGlobalFile<Type>::global);
             }
 
             using IOobject::filePath;
@@ -587,7 +587,7 @@ public:
             //- Return the path for the file for this Type
             inline fileName filePath() const
             {
-                return filePath(Type::typeName, typeGlobalFile<Type>());
+                return filePath(Type::typeName, typeGlobalFile<Type>::global);
             }
 };
 

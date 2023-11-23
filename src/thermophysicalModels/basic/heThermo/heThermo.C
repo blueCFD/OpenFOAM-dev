@@ -53,7 +53,7 @@ Foam::heThermo<BasicThermo, MixtureType>::volScalarFieldProperty
         volScalarField::New
         (
             IOobject::groupName(psiName, this->group()),
-            this->T_.mesh(),
+            this->mesh(),
             psiDim
         )
     );
@@ -264,6 +264,21 @@ Foam::heThermo<BasicThermo, MixtureType>::~heThermo()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class BasicThermo, class MixtureType>
+const Foam::volScalarField&
+Foam::heThermo<BasicThermo, MixtureType>::Cpv() const
+{
+    if (MixtureType::thermoType::enthalpy())
+    {
+        return Cp_;
+    }
+    else
+    {
+        return Cv_;
+    }
+}
+
 
 template<class BasicThermo, class MixtureType>
 Foam::tmp<Foam::volScalarField> Foam::heThermo<BasicThermo, MixtureType>::he
@@ -564,21 +579,6 @@ Foam::tmp<Foam::scalarField> Foam::heThermo<BasicThermo, MixtureType>::Cpv
 
 
 template<class BasicThermo, class MixtureType>
-Foam::tmp<Foam::volScalarField>
-Foam::heThermo<BasicThermo, MixtureType>::Cpv() const
-{
-    if (MixtureType::thermoType::enthalpy())
-    {
-        return Cp_;
-    }
-    else
-    {
-        return Cv_;
-    }
-}
-
-
-template<class BasicThermo, class MixtureType>
 Foam::tmp<Foam::volScalarField> Foam::heThermo<BasicThermo, MixtureType>::THE
 (
     const volScalarField& h,
@@ -667,36 +667,6 @@ Foam::tmp<Foam::scalarField> Foam::heThermo<BasicThermo, MixtureType>::W
         &MixtureType::thermoMixtureType::W,
         patchi
     );
-}
-
-
-template<class BasicThermo, class MixtureType>
-Foam::tmp<Foam::volScalarField>
-Foam::heThermo<BasicThermo, MixtureType>::alphahe() const
-{
-    if (MixtureType::thermoType::enthalpy())
-    {
-        return volScalarField::New("alphahe", this->kappa_/Cp_);
-    }
-    else
-    {
-        return volScalarField::New("alphahe", this->kappa_/Cv_);
-    }
-}
-
-
-template<class BasicThermo, class MixtureType>
-Foam::tmp<Foam::scalarField>
-Foam::heThermo<BasicThermo, MixtureType>::alphahe(const label patchi) const
-{
-    if (MixtureType::thermoType::enthalpy())
-    {
-        return this->kappa_.boundaryField()[patchi]/Cp_.boundaryField()[patchi];
-    }
-    else
-    {
-        return this->kappa_.boundaryField()[patchi]/Cv_.boundaryField()[patchi];
-    }
 }
 
 

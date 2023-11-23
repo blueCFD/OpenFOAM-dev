@@ -243,7 +243,7 @@ void Foam::DSMCCloud<ParcelType>::collisions()
             forAll(cellParcels, i)
             {
                 const ParcelType& p = *cellParcels[i];
-                vector relPos = p.position() - cC;
+                vector relPos = p.position(mesh()) - cC;
 
                 label subCell =
                     pos0(relPos.x()) + 2*pos0(relPos.y()) + 4*pos0(relPos.z());
@@ -1071,12 +1071,9 @@ void Foam::DSMCCloud<ParcelType>::dumpParticlePositions() const
 
     forAllConstIter(typename DSMCCloud<ParcelType>, *this, iter)
     {
-        const ParcelType& p = iter();
+        const point pos = iter().position(mesh());
 
-        pObj<< "v " << p.position().x()
-            << " "  << p.position().y()
-            << " "  << p.position().z()
-            << nl;
+        pObj<< "v " << pos.x() << " "  << pos.y() << " "  << pos.z() << nl;
     }
 
     pObj.flush();
@@ -1084,16 +1081,44 @@ void Foam::DSMCCloud<ParcelType>::dumpParticlePositions() const
 
 
 template<class ParcelType>
-void Foam::DSMCCloud<ParcelType>::autoMap(const polyTopoChangeMap& mapper)
+void Foam::DSMCCloud<ParcelType>::topoChange(const polyTopoChangeMap& map)
 {
-    Cloud<ParcelType>::autoMap(mapper);
+    Cloud<ParcelType>::topoChange(map);
 
     // Update the cell occupancy field
     cellOccupancy_.setSize(mesh_.nCells());
     buildCellOccupancy();
 
     // Update the inflow BCs
-    this->inflowBoundary().autoMap(mapper);
+    this->inflowBoundary().topoChange();
+}
+
+
+template<class ParcelType>
+void Foam::DSMCCloud<ParcelType>::mapMesh(const polyMeshMap& map)
+{
+    Cloud<ParcelType>::mapMesh(map);
+
+    // Update the cell occupancy field
+    cellOccupancy_.setSize(mesh_.nCells());
+    buildCellOccupancy();
+
+    // Update the inflow BCs
+    this->inflowBoundary().topoChange();
+}
+
+
+template<class ParcelType>
+void Foam::DSMCCloud<ParcelType>::distribute(const polyDistributionMap& map)
+{
+    Cloud<ParcelType>::distribute(map);
+
+    // Update the cell occupancy field
+    cellOccupancy_.setSize(mesh_.nCells());
+    buildCellOccupancy();
+
+    // Update the inflow BCs
+    this->inflowBoundary().topoChange();
 }
 
 

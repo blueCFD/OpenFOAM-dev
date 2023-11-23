@@ -709,8 +709,8 @@ void Foam::MomentumCloud<CloudType>::patchData
     vector& Up
 ) const
 {
-    p.patchData(nw, Up);
-    Up /= p.mesh().time().deltaTValue();
+    p.patchData(this->mesh(), nw, Up);
+    Up /= this->mesh().time().deltaTValue();
 
     // If this is a wall patch, then there may be a non-zero tangential velocity
     // component; the lid velocity in a lid-driven cavity case, for example. We
@@ -731,7 +731,7 @@ void Foam::MomentumCloud<CloudType>::patchData
             const vector& Uw0 =
                 U_.oldTime().boundaryField()[patchi][patchFacei];
 
-            const scalar f = p.currentTimeFraction();
+            const scalar f = p.currentTimeFraction(this->mesh());
 
             const vector Uw = Uw0 + f*(Uw1 - Uw0);
 
@@ -744,20 +744,41 @@ void Foam::MomentumCloud<CloudType>::patchData
 
 
 template<class CloudType>
-void Foam::MomentumCloud<CloudType>::topoChange()
+void Foam::MomentumCloud<CloudType>::topoChange(const polyTopoChangeMap& map)
 {
+    Cloud<parcelType>::topoChange(map);
+
     updateCellOccupancy();
+
     injectors_.topoChange();
+
     cellLengthScale_ = mag(cbrt(this->mesh().V()));
 }
 
 
 template<class CloudType>
-void Foam::MomentumCloud<CloudType>::autoMap(const polyTopoChangeMap& mapper)
+void Foam::MomentumCloud<CloudType>::mapMesh(const polyMeshMap& map)
 {
-    Cloud<parcelType>::autoMap(mapper);
+    Cloud<parcelType>::mapMesh(map);
 
-    topoChange();
+    updateCellOccupancy();
+
+    injectors_.topoChange();
+
+    cellLengthScale_ = mag(cbrt(this->mesh().V()));
+}
+
+
+template<class CloudType>
+void Foam::MomentumCloud<CloudType>::distribute(const polyDistributionMap& map)
+{
+    Cloud<parcelType>::distribute(map);
+
+    updateCellOccupancy();
+
+    injectors_.topoChange();
+
+    cellLengthScale_ = mag(cbrt(this->mesh().V()));
 }
 
 

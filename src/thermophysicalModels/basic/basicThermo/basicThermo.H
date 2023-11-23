@@ -200,6 +200,9 @@ public:
         //- Non-const access the properties dictionary
         virtual IOdictionary& properties() = 0;
 
+        //- Return const access to the mesh
+        virtual const fvMesh& mesh() const = 0;
+
         //- Phase name
         virtual const word& phaseName() const = 0;
 
@@ -367,6 +370,9 @@ public:
             //- Heat capacity at constant volume [J/kg/K]
             virtual const volScalarField& Cv() const = 0;
 
+            //- Heat capacity at constant pressure/volume [J/kg/K]
+            virtual const volScalarField& Cpv() const = 0;
+
 
         // Access to transport state variables
 
@@ -397,24 +403,12 @@ public:
                 const label patchi
             ) const = 0;
 
-            //- Heat capacity at constant pressure/volume [J/kg/K]
-            virtual tmp<volScalarField> Cpv() const = 0;
-
             //- Heat capacity at constant pressure/volume for patch [J/kg/K]
             virtual tmp<scalarField> Cpv
             (
                 const scalarField& T,
                 const label patchi
             ) const = 0;
-
-
-        // Fields derived from transport state variables
-
-            //- Thermal diffusivity of energy of mixture [kg/m/s]
-            virtual tmp<volScalarField> alphahe() const = 0;
-
-            //- Thermal diffusivity of energy of mixture for patch [kg/m/s]
-            virtual tmp<scalarField> alphahe(const label patchi) const = 0;
 };
 
 
@@ -427,6 +421,12 @@ class basicThermo::implementation
     virtual public basicThermo,
     public physicalProperties
 {
+    // Private Member Data
+
+        //- Reference to the mesh
+        const fvMesh& mesh_;
+
+
 protected:
 
     // Protected data
@@ -482,6 +482,12 @@ public:
         virtual IOdictionary& properties()
         {
             return *this;
+        }
+
+        //- Return const access to the mesh
+        virtual const fvMesh& mesh() const
+        {
+            return mesh_;
         }
 
         //- Phase name

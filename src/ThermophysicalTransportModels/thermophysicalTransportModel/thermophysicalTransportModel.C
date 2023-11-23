@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "thermophysicalTransportModel.H"
-#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -38,25 +37,21 @@ namespace Foam
 
 Foam::thermophysicalTransportModel::thermophysicalTransportModel
 (
-    const compressibleMomentumTransportModel& momentumTransport
+    const fvMesh& mesh,
+    const word& group
 )
 :
     IOdictionary
     (
         IOobject
         (
-            IOobject::groupName
-            (
-                typeName, momentumTransport.alphaRhoPhi().group()
-            ),
-            momentumTransport.time().constant(),
-            momentumTransport.mesh(),
+            IOobject::groupName(typeName, group),
+            mesh.time().constant(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         )
-    ),
-
-    momentumTransportModel_(momentumTransport)
+    )
 {
     // Add run-time re-reading of thermophysicalTransport dictionary
     // after construction to avoid problems if the dictionary is not present

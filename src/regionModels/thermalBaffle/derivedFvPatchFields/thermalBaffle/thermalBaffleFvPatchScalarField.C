@@ -24,26 +24,19 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "thermalBaffleFvPatchScalarField.H"
-#include "mappedWallPolyPatch.H"
+#include "mappedExtrudedWallPolyPatch.H"
 #include "symmetryPolyPatch.H"
 #include "addToRunTimeSelectionTable.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-namespace compressible
-{
-
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * /
 
-bool thermalBaffleFvPatchScalarField::primary() const
+bool Foam::thermalBaffleFvPatchScalarField::primary() const
 {
     return patch().boundaryMesh().mesh().name() == polyMesh::defaultRegion;
 }
 
 
-bool thermalBaffleFvPatchScalarField::owner() const
+bool Foam::thermalBaffleFvPatchScalarField::owner() const
 {
     return
         primary()
@@ -51,7 +44,7 @@ bool thermalBaffleFvPatchScalarField::owner() const
 }
 
 
-void thermalBaffleFvPatchScalarField::checkPatches() const
+void Foam::thermalBaffleFvPatchScalarField::checkPatches() const
 {
     if (!primary()) return;
 
@@ -74,13 +67,13 @@ void thermalBaffleFvPatchScalarField::checkPatches() const
     checkPatchIsMapped(pp);
     checkPatchIsMapped(nbrPp);
 
-    const mappedPatchBase& mpp = refCast<const mappedPatchBase>(pp);
-    const mappedPatchBase& nbrMpp = refCast<const mappedPatchBase>(nbrPp);
+    const mappedPatchBase& mpb = refCast<const mappedPatchBase>(pp);
+    const mappedPatchBase& nbrMpb = refCast<const mappedPatchBase>(nbrPp);
 
-    // The patches should sample a different region
-    auto checkPatchMapsDifferentRegion = [&](const mappedPatchBase& mpp)
+    // The patches should neighbour a different region
+    auto checkPatchMapsDifferentRegion = [&](const mappedPatchBase& mpb)
     {
-        if (mpp.sameRegion())
+        if (mpb.sameRegion())
         {
             FatalErrorInFunction
                 << "Patch field of type \"" << typeName
@@ -91,42 +84,43 @@ void thermalBaffleFvPatchScalarField::checkPatches() const
                 << exit(FatalError);
         }
     };
-    checkPatchMapsDifferentRegion(mpp);
-    checkPatchMapsDifferentRegion(nbrMpp);
+    checkPatchMapsDifferentRegion(mpb);
+    checkPatchMapsDifferentRegion(nbrMpb);
 
-    // The sample region of this patch and it's neighbour should be the same,
-    // i.e., that of the thermal baffle model
-    if (mpp.sampleRegion() != nbrMpp.sampleRegion())
+    // The neighbour region of this patch and it's neighbour should be the
+    // same, i.e., that of the thermal baffle model
+    if (mpb.nbrRegionName() != nbrMpb.nbrRegionName())
     {
         FatalErrorInFunction
             << "Patch fields of type \"" << typeName
             << "\" specified for patches \"" << pp.name() << "\" and \""
             << nbrPp.name() << "\" of field \"" << internalField().name()
             << "\", but these patches map to different regions \""
-            << mpp.sampleRegion() << "\" and \"" << nbrMpp.sampleRegion()
-            << ". They should map to the same region; i.e., that of the "
-            << "thermal baffle model."
+            << mpb.nbrRegionName() << "\" and \""
+            << nbrMpb.nbrRegionName() << ". They should map to the same "
+            << "region; i.e., that of the thermal baffle model."
             << exit(FatalError);
     }
 
-    // The sample patch of this patch and it's neighbour should be different,
-    // i.e., they should sample opposite ends of the thermal baffle mesh
-    if (mpp.samplePatch() == nbrMpp.samplePatch())
+    // The neighbour patch of this patch and it's neighbour should be
+    // different, i.e., they should map opposite ends of the thermal baffle
+    // mesh
+    if (mpb.nbrPatchName() == nbrMpb.nbrPatchName())
     {
         FatalErrorInFunction
             << "Patch fields of type \"" << typeName
             << "\" specified for patches \"" << pp.name() << "\" and \""
             << nbrPp.name() << "\" of field \"" << internalField().name()
             << "\", but these patches map to the same patch; \""
-            << mpp.samplePatch() << "\" of region \"" << mpp.sampleRegion()
-            << ". They should map to different patches, as these will become "
-            << "the patches at opposite ends of the extruded baffle mesh."
-            << exit(FatalError);
+            << mpb.nbrPatchName() << "\" of region \""
+            << mpb.nbrRegionName() << ". They should map to different "
+            << "patches, as these will become the patches at opposite ends of "
+            << "the extruded baffle mesh." << exit(FatalError);
     }
 }
 
 
-void thermalBaffleFvPatchScalarField::checkPatchFields() const
+void Foam::thermalBaffleFvPatchScalarField::checkPatchFields() const
 {
     if (!primary()) return;
 
@@ -165,8 +159,8 @@ void thermalBaffleFvPatchScalarField::checkPatchFields() const
 }
 
 
-autoPtr<extrudePatchMesh>
-thermalBaffleFvPatchScalarField::initBaffleMesh() const
+Foam::autoPtr<Foam::extrudePatchMesh>
+Foam::thermalBaffleFvPatchScalarField::initBaffleMesh() const
 {
     if (!owner())
     {
@@ -179,24 +173,24 @@ thermalBaffleFvPatchScalarField::initBaffleMesh() const
 
     const fvMesh& mesh = patch().boundaryMesh().mesh();
 
-    const mappedPatchBase& mpp =
+    const mappedPatchBase& mpb =
         refCast<const mappedPatchBase>(patch().patch());
 
-    const mappedPatchBase nbrMpp =
+    const mappedPatchBase nbrMpb =
         refCast<const mappedPatchBase>
         (patch().patch().boundaryMesh()[nbrPatch_]);
 
     const List<word> patchNames
     ({
-        mpp.samplePatch(),
-        nbrMpp.samplePatch(),
+        mpb.nbrPatchName(),
+        nbrMpb.nbrPatchName(),
         "sides"
     });
 
     const List<word> patchTypes
     ({
         mappedWallPolyPatch::typeName,
-        mappedWallPolyPatch::typeName,
+        mappedExtrudedWallPolyPatch::typeName,
         symmetryPolyPatch::typeName
     });
 
@@ -206,12 +200,11 @@ thermalBaffleFvPatchScalarField::initBaffleMesh() const
         patchDicts[patchi].set("nFaces", 0);
         patchDicts[patchi].set("startFace", 0);
     }
-    patchDicts[0].add("sampleMode", mpp.sampleModeNames_[mpp.mode()]);
-    patchDicts[0].add("sampleRegion", mesh.name());
-    patchDicts[0].add("samplePatch", patch().name());
-    patchDicts[1].add("sampleMode", mpp.sampleModeNames_[nbrMpp.mode()]);
-    patchDicts[1].add("sampleRegion", mesh.name());
-    patchDicts[1].add("samplePatch", nbrPatch_);
+    patchDicts[0].add("neighbourRegion", mesh.name());
+    patchDicts[0].add("neighbourPatch", patch().name());
+    patchDicts[1].add("neighbourRegion", mesh.name());
+    patchDicts[1].add("neighbourPatch", nbrPatch_);
+    patchDicts[1].add("bottomPatch", patchNames[0]);
 
     List<polyPatch*> patchPtrs(3);
     forAll(patchPtrs, patchi)
@@ -237,15 +230,15 @@ thermalBaffleFvPatchScalarField::initBaffleMesh() const
                 mesh,
                 patch(),
                 dict,
-                mpp.sampleRegion(),
+                mpb.nbrRegionName(),
                 patchPtrs
             )
         );
 }
 
 
-autoPtr<regionModels::thermalBaffle>
-thermalBaffleFvPatchScalarField::initBaffle() const
+Foam::autoPtr<Foam::regionModels::thermalBaffle>
+Foam::thermalBaffleFvPatchScalarField::initBaffle() const
 {
     if (!owner())
     {
@@ -258,11 +251,11 @@ thermalBaffleFvPatchScalarField::initBaffle() const
 
     const fvMesh& mesh = patch().boundaryMesh().mesh();
 
-    const mappedPatchBase& mpp =
+    const mappedPatchBase& mpb =
         refCast<const mappedPatchBase>(patch().patch());
 
     dictionary dict(dict_);
-    dict.add("regionName", mpp.sampleRegion());
+    dict.add("regionName", mpb.nbrRegionName());
 
     return autoPtr<regionModels::thermalBaffle>
     (
@@ -273,13 +266,13 @@ thermalBaffleFvPatchScalarField::initBaffle() const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
+Foam::thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 (
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField(p, iF),
+    coupledTemperatureFvPatchScalarField(p, iF),
     dict_(dictionary::null),
     nbrPatch_(word::null),
     baffleMeshPtr_(),
@@ -287,14 +280,14 @@ thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 {}
 
 
-thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
+Foam::thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 (
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
     const dictionary& dict
 )
 :
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField(p, iF, dict),
+    coupledTemperatureFvPatchScalarField(p, iF, dict),
     dict_(dict),
     nbrPatch_(primary() ? dict.lookup<word>("neighbourPatch") : word::null),
     baffleMeshPtr_(owner() ? initBaffleMesh().ptr() : nullptr),
@@ -302,7 +295,7 @@ thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 {}
 
 
-thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
+Foam::thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 (
     const thermalBaffleFvPatchScalarField& ptf,
     const fvPatch& p,
@@ -310,7 +303,7 @@ thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
     const fvPatchFieldMapper& mapper
 )
 :
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField
+    coupledTemperatureFvPatchScalarField
     (
         ptf,
         p,
@@ -323,13 +316,13 @@ thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 {}
 
 
-thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
+Foam::thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 (
     const thermalBaffleFvPatchScalarField& ptf,
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField(ptf, iF),
+    coupledTemperatureFvPatchScalarField(ptf, iF),
     dict_(ptf.dict_),
     baffleMeshPtr_(),
     bafflePtr_()
@@ -338,35 +331,35 @@ thermalBaffleFvPatchScalarField::thermalBaffleFvPatchScalarField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void thermalBaffleFvPatchScalarField::autoMap
+void Foam::thermalBaffleFvPatchScalarField::autoMap
 (
     const fvPatchFieldMapper& m
 )
 {
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField::autoMap(m);
+    coupledTemperatureFvPatchScalarField::autoMap(m);
 }
 
 
-void thermalBaffleFvPatchScalarField::rmap
+void Foam::thermalBaffleFvPatchScalarField::rmap
 (
     const fvPatchScalarField& ptf,
     const labelList& addr
 )
 {
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField::rmap(ptf, addr);
+    coupledTemperatureFvPatchScalarField::rmap(ptf, addr);
 }
 
 
-void thermalBaffleFvPatchScalarField::reset
+void Foam::thermalBaffleFvPatchScalarField::reset
 (
     const fvPatchScalarField& ptf
 )
 {
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField::reset(ptf);
+    coupledTemperatureFvPatchScalarField::reset(ptf);
 }
 
 
-void thermalBaffleFvPatchScalarField::updateCoeffs()
+void Foam::thermalBaffleFvPatchScalarField::updateCoeffs()
 {
     if (this->updated())
     {
@@ -380,13 +373,13 @@ void thermalBaffleFvPatchScalarField::updateCoeffs()
         bafflePtr_->evolve();
     }
 
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField::updateCoeffs();
+    coupledTemperatureFvPatchScalarField::updateCoeffs();
 }
 
 
-void thermalBaffleFvPatchScalarField::write(Ostream& os) const
+void Foam::thermalBaffleFvPatchScalarField::write(Ostream& os) const
 {
-    turbulentTemperatureRadCoupledMixedFvPatchScalarField::write(os);
+    coupledTemperatureFvPatchScalarField::write(os);
 
     if (owner())
     {
@@ -404,16 +397,14 @@ void thermalBaffleFvPatchScalarField::write(Ostream& os) const
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makePatchTypeField
-(
-    fvPatchScalarField,
-    thermalBaffleFvPatchScalarField
-);
+namespace Foam
+{
+    makePatchTypeField
+    (
+        fvPatchScalarField,
+        thermalBaffleFvPatchScalarField
+    );
+}
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace compressible
-} // End namespace Foam
 
 // ************************************************************************* //

@@ -69,27 +69,3 @@ epsAvg/bounding epsilon,/average:
 #- gamma bounding
 alpha1Min/Min\(alpha1\) =/Min(alpha1) =
 alpha1Max/Max\(alpha1\) =/Max(alpha1) =
-
-# AMI
-AMIMin/AMI: Patch source sum/average = 
-
-#- inter*Foam related solvers that only use one phase
-AlphaLiquidFrac/Liquid phase volume fraction = /Liquid phase volume fraction = 
-AlphaAirFrac/Air phase volume fraction = /Air phase volume fraction = 
-
-#- mdEquilibriumFoam and mdFoam relevant outputs
-OveNumDen/Overall number density = /Overall number density = 
-OveMassDen/Overall mass density = /Overall mass density = 
-MaxVel/Maximum \|velocity\| = /Maximum |velocity| = 
-AveLinKEpMolec/Average linear KE per molecule = /Average linear KE per molecule = 
-AveAngKEpMolec/Average angular KE per molecule = /Average angular KE per molecule = 
-AvePEpMolec/Average PE per molecule = /Average PE per molecule = 
-AveTEpMolec/Average TE per molecule = /Average TE per molecule = 
-
-#- dsmcFoam relevant outputs
-NumMolec/Number of molecules             = /Number of molecules             = 
-MassSys/Mass in system                  = /Mass in system                  = 
-AveLinMomentum/\|Average linear momentum\|        = /|Average linear momentum|        = 
-AveLinKinEn/Average linear kinetic energy   = /Average linear kinetic energy   = 
-AveIntEn/Average internal energy         = /Average internal energy         = 
-AveTotEn/Average total energy            = /Average total energy            = 

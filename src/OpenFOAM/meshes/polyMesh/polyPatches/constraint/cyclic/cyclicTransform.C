@@ -26,6 +26,35 @@ License
 #include "cyclicTransform.H"
 #include "unitConversion.H"
 #include "IOmanip.H"
+#include "stringOps.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+template<class Type>
+Type sum(const Type& x, const bool global)
+{
+    return global ? returnReduce(x, sumOp<Type>()) : x;
+}
+
+template<class Type>
+Type sum(const Field<Type>& x, const bool global)
+{
+    return global ? gSum(x) : sum(x);
+}
+
+template<class Type>
+Type sum(const tmp<Field<Type>>& x, const bool global)
+{
+    const Type s = sum(x(), global);
+    x.clear();
+    return s;
+}
+
+}
+
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -279,13 +308,14 @@ Foam::cyclicTransform::cyclicTransform
     const cyclicTransform& transform,
     const word& nbrName,
     const cyclicTransform& nbrTransform,
-    const scalar matchTolerance
+    const scalar matchTolerance,
+    const bool global
 )
 :
     cyclicTransform(transform)
 {
     // Calculate the total (vector) areas for the supplied patch data
-    const vector area = sum(areas);
+    const vector area = sum(areas, global);
 
     // Calculate patch length scales
     const scalar lengthScale = sqrt(mag(area));
@@ -335,7 +365,8 @@ Foam::cyclicTransform::cyclicTransform
     const pointField& nbrCtrs,
     const vectorField& nbrAreas,
     const cyclicTransform& nbrTransform,
-    const scalar matchTolerance
+    const scalar matchTolerance,
+    const bool global
 )
 :
     cyclicTransform
@@ -350,20 +381,25 @@ Foam::cyclicTransform::cyclicTransform
 {
     // If there is no geometry from which to calculate the transform then
     // nothing can be calculated
-    if (areas.size() == 0 || nbrAreas.size() == 0) return;
+    if (sum(areas.size(), global) == 0 || sum(nbrAreas.size(), global) == 0)
+    {
+        return;
+    }
 
     // Calculate the total (vector) areas for the supplied patch data
-    const vector area = sum(areas);
-    const vector nbrArea = sum(nbrAreas);
+    const vector area = sum(areas, global);
+    const vector nbrArea = sum(nbrAreas, global);
 
     // Calculate the centroids for the supplied patch data
     const scalarField magAreas(mag(areas));
     const scalarField magNbrAreas(mag(nbrAreas));
-    const point ctr = sum(ctrs*magAreas)/sum(magAreas);
-    const point nbrCtr = sum(nbrCtrs*magNbrAreas)/sum(magNbrAreas);
+    const scalar sumMagAreas = sum(magAreas, global);
+    const scalar sumMagNbrAreas = sum(magNbrAreas, global);
+    const point ctr = sum(ctrs*magAreas, global)/sumMagAreas;
+    const point nbrCtr = sum(nbrCtrs*magNbrAreas, global)/sumMagNbrAreas;
 
     // Calculate patch length scales
-    const scalar lengthScale = sqrt(sum(magAreas));
+    const scalar lengthScale = sqrt(sumMagAreas);
 
     // Calculate the transformation from the patch geometry
     if (!transformComplete_)
@@ -477,19 +513,22 @@ Foam::cyclicTransform::cyclicTransform
 
     if (ctrNbrCtrTDistance > lengthScale*matchTolerance)
     {
-        FatalErrorInFunction
-            << "The distance between the centre of patch " << name
-            << " and the transformed centre of patch " << nbrName << " is "
-            << ctrNbrCtrTDistance << "."
-            << nl
-            << "This is greater than the match tolerance of "
-            << lengthScale*matchTolerance << " for the patch."
-            << nl
+        OStringStream str;
+        str << "Patches " << name << " and " << nbrName << " are potentially "
+            << "not geometrically similar enough to be coupled." << nl << nl
+            << "The distance between the transformed centres of these patches "
+            << "is " << ctrNbrCtrTDistance << ", which is greater than the "
+            << "patch length scale (" << lengthScale << ") multiplied by the "
+            << "match tolerance (" << matchTolerance << ")." << nl << nl
             << "Check that the patches are geometrically similar and that any "
-            << "transformations defined between them are correct"
-            << nl
-            << "It might be possible to fix this problem by increasing the "
-            << "\"matchTolerance\" setting for this patch in the boundary "
+            << "transformations defined between them are correct." << nl << nl
+            << "If the patches and their transformations are defined correctly "
+            << "but small irregularities in the mesh mean this geometric test "
+            << "is failing, then it might be appropriate to relax the failure "
+            << "criteria by increasing the \"matchTolerance\" setting for "
+            << "these patches in the \"polyMesh/boundary\" file.";
+        FatalErrorInFunction
+            << nl << stringOps::breakIntoIndentedLines(str.str()).c_str()
             << exit(FatalError);
     }
 }

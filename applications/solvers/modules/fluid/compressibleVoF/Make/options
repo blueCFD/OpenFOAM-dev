@@ -2,7 +2,6 @@ EXE_INC = \
     -I$(FOAM_SOLVERS)/modules/fluid/fluidSolver/lnInclude \
     -IcompressibleTwoPhaseMixture \
     -IcompressibleInterPhaseTransportModel/lnInclude \
-    -ItwoPhaseChange/lnInclude \
     -I$(LIB_SRC)/physicalProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/twoPhaseModels/twoPhaseMixture/lnInclude \
@@ -21,7 +20,6 @@ LIB_LIBS = \
     -ltwoPhaseMixture \
     -ltwoPhaseProperties \
     -linterfaceProperties \
-    -lcompressibleTwoPhaseChangeModels \
     -lcompressibleInterPhaseTransportModel \
     -lfiniteVolume \
     -lfvModels \

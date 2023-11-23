@@ -129,14 +129,14 @@ functions
 
         objects
         (
-            thermo:rho.gas
-            thermo:mu.gas
-            thermo:psi.gas
-            thermo:alpha.gas
-            thermo:rho.liquid
-            thermo:mu.liquid
-            thermo:psi.liquid
-            thermo:alpha.liquid
+            rho.gas
+            mu.gas
+            psi.gas
+            kappa.gas
+            rho.liquid
+            mu.liquid
+            psi.liquid
+            kappa.liquid
             h.liquid
             h.gas
         );

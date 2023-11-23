@@ -72,6 +72,7 @@ Foam::fvPatchField<Type>::fvPatchField
 )
 :
     Field<Type>(p.size()),
+    libs_(dict.lookupOrDefault("libs", fileNameList::null())),
     patch_(p),
     internalField_(iF),
     updated_(false),
@@ -109,6 +110,7 @@ Foam::fvPatchField<Type>::fvPatchField
 )
 :
     Field<Type>(p.size()),
+    libs_(ptf.libs_),
     patch_(p),
     internalField_(iF),
     updated_(false),
@@ -134,6 +136,7 @@ Foam::fvPatchField<Type>::fvPatchField
 )
 :
     Field<Type>(ptf),
+    libs_(ptf.libs_),
     patch_(ptf.patch_),
     internalField_(iF),
     updated_(false),
@@ -247,6 +250,11 @@ void Foam::fvPatchField<Type>::write(Ostream& os) const
     if (overridesConstraint())
     {
         writeEntry(os, "patchType", patch().type());
+    }
+
+    if (libs_.size())
+    {
+        writeEntry(os, "libs", libs_);
     }
 }
 

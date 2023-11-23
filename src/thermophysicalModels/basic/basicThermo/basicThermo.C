@@ -31,9 +31,7 @@ License
 #include "mixedEnergyFvPatchScalarField.H"
 #include "mixedEnergyCalculatedTemperatureFvPatchScalarField.H"
 #include "fixedJumpFvPatchFields.H"
-#include "fixedJumpAMIFvPatchFields.H"
 #include "energyJumpFvPatchScalarField.H"
-#include "energyJumpAMIFvPatchScalarField.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -209,16 +207,6 @@ Foam::wordList Foam::basicThermo::heBoundaryBaseTypes()
         {
             hbt[patchi] = tbf[patchi].patch().type();
         }
-        else if (isA<fixedJumpAMIFvPatchScalarField>(tbf[patchi]))
-        {
-            const fixedJumpAMIFvPatchScalarField& pf =
-                dynamic_cast<const fixedJumpAMIFvPatchScalarField&>
-                (
-                    tbf[patchi]
-                );
-
-            hbt[patchi] = pf.interfaceFieldType();
-        }
     }
 
     return hbt;
@@ -264,10 +252,6 @@ Foam::wordList Foam::basicThermo::heBoundaryTypes()
         {
             hbt[patchi] = energyJumpFvPatchScalarField::typeName;
         }
-        else if (isA<fixedJumpAMIFvPatchScalarField>(tbf[patchi]))
-        {
-            hbt[patchi] = energyJumpAMIFvPatchScalarField::typeName;
-        }
     }
 
     return hbt;
@@ -283,6 +267,8 @@ Foam::basicThermo::implementation::implementation
 )
 :
     physicalProperties(mesh, phaseName),
+
+    mesh_(mesh),
 
     phaseName_(phaseName),
 
@@ -303,7 +289,7 @@ Foam::basicThermo::implementation::implementation
     (
         IOobject
         (
-            phasePropertyName("thermo:kappa", phaseName),
+            phasePropertyName("kappa", phaseName),
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,

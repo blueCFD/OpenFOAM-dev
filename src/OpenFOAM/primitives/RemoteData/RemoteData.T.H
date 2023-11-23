@@ -36,8 +36,7 @@ SourceFiles
 #ifndef RemoteData_H
 #define RemoteData_H
 
-#include "Istream.T.H"
-#include "Ostream.H"
+#include "remote.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -62,16 +61,12 @@ inline Ostream& operator<<(Ostream&, const RemoteData<Type>&);
 
 template<class Type>
 class RemoteData
+:
+    public remote
 {
 public:
 
     // Public Data
-
-        //- Processor index
-        label proci;
-
-        //- Element index
-        label elementi;
 
         //- Data
         Type data;

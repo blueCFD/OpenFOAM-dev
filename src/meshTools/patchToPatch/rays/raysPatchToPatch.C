@@ -86,56 +86,40 @@ bool Foam::patchToPatches::rays::intersectFaces
 }
 
 
-Foam::tmpNrc<Foam::PrimitiveOldTimePatch<Foam::faceList, Foam::pointField>>
-Foam::patchToPatches::rays::distributeTgt
+Foam::labelList Foam::patchToPatches::rays::trimLocalTgt
 (
-    const primitiveOldTimePatch& srcPatch,
-    const vectorField& srcPointNormals,
-    const vectorField& srcPointNormals0,
-    const primitiveOldTimePatch& tgtPatch
+    const primitiveOldTimePatch& localTgtPatch
 )
 {
-    // Intercept generation of the local patch. Store it. Return a const
-    // reference tmp instead of a pointer.
+    const labelList newToOldLocalTgtFace =
+        patchToPatch::trimLocalTgt(localTgtPatch);
 
-    tmpNrc<PrimitiveOldTimePatch<faceList, pointField>> localTgtPatchPtr =
-        patchToPatch::distributeTgt
+    localTgtPatchPtr_.reset
+    (
+        new PrimitiveOldTimePatch<faceList, pointField>
         (
-            srcPatch,
-            srcPointNormals,
-            srcPointNormals0,
-            tgtPatch
-        );
+            faceList(localTgtPatch, newToOldLocalTgtFace),
+            localTgtPatch.points(),
+            localTgtPatch.points0()
+        )
+    );
 
-    localTgtPatchPtr_.reset(localTgtPatchPtr.ptr());
-
-    return
-        tmpNrc<PrimitiveOldTimePatch<faceList, pointField>>
-        (
-            localTgtPatchPtr_()
-        );
+    return newToOldLocalTgtFace;
 }
 
 
-Foam::tmpNrc<Foam::PrimitiveOldTimePatch<Foam::faceList, Foam::pointField>>
-Foam::patchToPatches::rays::distributeSrc
+void Foam::patchToPatches::rays::distributeSrc
 (
     const primitiveOldTimePatch& srcPatch
 )
 {
-    // Intercept generation of the local patch. Store it. Return a const
-    // reference tmp instead of a pointer.
-
-    tmpNrc<PrimitiveOldTimePatch<faceList, pointField>> localSrcPatchPtr =
-        patchToPatch::distributeSrc(srcPatch);
-
-    localSrcPatchPtr_.reset(localSrcPatchPtr.ptr());
-
-    return
-        tmpNrc<PrimitiveOldTimePatch<faceList, pointField>>
+    localSrcProcFacesPtr_.reset
+    (
+        new List<remote>
         (
-            localSrcPatchPtr_()
-        );
+            distributePatch(srcMapPtr_(), srcPatch, localSrcPatchPtr_)
+        )
+    );
 }
 
 
@@ -181,12 +165,12 @@ Foam::label Foam::patchToPatches::rays::finalise
 }
 
 
-Foam::patchToPatch::procFace Foam::patchToPatches::rays::ray
+Foam::remote Foam::patchToPatches::rays::ray
 (
     const primitiveOldTimePatch& outPatch,
     const autoPtr<PrimitiveOldTimePatch<faceList, pointField>>&
         localOutPatchPtr,
-    const autoPtr<List<procFace>>& localOutProcFacesPtr,
+    const autoPtr<List<remote>>& localOutProcFacesPtr,
     const List<DynamicList<label>>& inLocalOutFaces,
     const scalar fraction,
     const label inFacei,
@@ -229,12 +213,12 @@ Foam::patchToPatch::procFace Foam::patchToPatches::rays::ray
 
             return
                 isSingleProcess()
-              ? procFace({Pstream::myProcNo(), localOutFacei})
+              ? remote({Pstream::myProcNo(), localOutFacei})
               : localOutProcFacesPtr()[localOutFacei];
         }
     }
 
-    return procFace({-1, -1});
+    return remote({-1, -1});
 }
 
 
@@ -273,7 +257,7 @@ Foam::patchToPatches::rays::~rays()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::patchToPatch::procFace Foam::patchToPatches::rays::srcToTgtRay
+Foam::remote Foam::patchToPatches::rays::srcToTgtRay
 (
     const primitiveOldTimePatch& tgtPatch,
     const scalar fraction,
@@ -299,7 +283,7 @@ Foam::patchToPatch::procFace Foam::patchToPatches::rays::srcToTgtRay
 }
 
 
-Foam::patchToPatch::procFace Foam::patchToPatches::rays::tgtToSrcRay
+Foam::remote Foam::patchToPatches::rays::tgtToSrcRay
 (
     const primitiveOldTimePatch& srcPatch,
     const scalar fraction,

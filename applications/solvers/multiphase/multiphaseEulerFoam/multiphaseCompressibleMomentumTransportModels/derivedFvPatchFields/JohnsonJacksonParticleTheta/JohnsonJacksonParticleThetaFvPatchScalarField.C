@@ -25,7 +25,7 @@ License
 
 #include "JohnsonJacksonParticleThetaFvPatchScalarField.H"
 #include "addToRunTimeSelectionTable.H"
-#include "phaseSystem.H"
+#include "kineticTheoryModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,7 +61,7 @@ JohnsonJacksonParticleThetaFvPatchScalarField
     const dictionary& dict
 )
 :
-    mixedFvPatchScalarField(p, iF),
+    mixedFvPatchScalarField(p, iF, dict, false),
     restitutionCoefficient_
     (
         "restitutionCoefficient",
@@ -172,7 +172,11 @@ void Foam::JohnsonJacksonParticleThetaFvPatchScalarField::updateCoeffs()
     (
         patch().lookupPatchField<volScalarField, scalar>
         (
-            IOobject::groupName("gs0", phase.name())
+            IOobject::groupName
+            (
+                Foam::typedName<RASModels::kineticTheoryModel>("gs0"),
+                phase.name()
+            )
         )
     );
 
@@ -180,7 +184,11 @@ void Foam::JohnsonJacksonParticleThetaFvPatchScalarField::updateCoeffs()
     (
         patch().lookupPatchField<volScalarField, scalar>
         (
-            IOobject::groupName("kappa", phase.name())
+            IOobject::groupName
+            (
+                Foam::typedName<RASModels::kineticTheoryModel>("kappa"),
+                phase.name()
+            )
         )
     );
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,6 +31,7 @@ License
 #include "triangle.H"
 #include "cloud.H"
 #include "axesRotation.H"
+#include "OSspecific.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -644,12 +645,20 @@ void Foam::ParticleCollector<CloudType>::postMove
     {
         case mtPolygon:
         {
-            collectParcelPolygon(position0, p.position());
+            collectParcelPolygon
+            (
+                position0,
+                p.position(this->owner().mesh())
+            );
             break;
         }
         case mtConcentricCircle:
         {
-            collectParcelConcentricCircles(position0, p.position());
+            collectParcelConcentricCircles
+            (
+                position0,
+                p.position(this->owner().mesh())
+            );
             break;
         }
         default:

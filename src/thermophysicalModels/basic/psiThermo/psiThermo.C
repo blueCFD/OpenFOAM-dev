@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ Foam::psiThermo::implementation::implementation
     (
         IOobject
         (
-            phasePropertyName("thermo:psi", phaseName),
+            phasePropertyName("psi", phaseName),
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -60,7 +60,7 @@ Foam::psiThermo::implementation::implementation
     (
         IOobject
         (
-            phasePropertyName("thermo:mu", phaseName),
+            phasePropertyName("mu", phaseName),
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -112,6 +112,12 @@ Foam::tmp<Foam::scalarField> Foam::psiThermo::implementation::rho
 ) const
 {
     return p().boundaryField()[patchi]*psi_.boundaryField()[patchi];
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::psiThermo::implementation::renameRho()
+{
+    return rho();
 }
 
 

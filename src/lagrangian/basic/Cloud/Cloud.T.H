@@ -76,26 +76,23 @@ class Cloud
     // Private Data
 
         //- Reference to the mesh
-        const polyMesh& polyMesh_;
+        const polyMesh& pMesh_;
 
         //- Map from patch index to the neighbouring processor index
-        const labelList patchNbrProc_;
+        labelList patchNbrProc_;
 
         //- Map from patch index to the corresponding patch index on the
         //  neighbouring processor
-        const labelList patchNbrProcPatch_;
+        labelList patchNbrProcPatch_;
 
         //- Map from patch index to connected non-conformal cyclics
-        const labelListList patchNonConformalCyclicPatches_;
+        labelListList patchNonConformalCyclicPatches_;
 
         //- Temporary storage for the global particle positions
         mutable autoPtr<vectorField> globalPositionsPtr_;
 
 
     // Private Member Functions
-
-        //- Check patches
-        void checkPatches() const;
 
         //- Initialise cloud on IO constructor
         void initCloud(const bool checkClass);
@@ -165,7 +162,7 @@ public:
             //- Return the polyMesh reference
             const polyMesh& pMesh() const
             {
-                return polyMesh_;
+                return pMesh_;
             }
 
             //- Map from patch index to the neighbouring processor index
@@ -255,9 +252,17 @@ public:
                 const scalar trackTime
             );
 
-            //- Remap the cells of particles corresponding to the
-            //  mesh topology change
-            void autoMap(const polyTopoChangeMap&);
+
+        // Mapping
+
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap&);
+
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap&);
 
 
         // Read
@@ -282,7 +287,7 @@ public:
             void checkFieldFieldIOobject
             (
                 const Cloud<ParticleType>& c,
-                const CompactIOField<Field<DataType>, DataType>& data
+                const CompactIOField<Field<DataType>>& data
             ) const;
 
 

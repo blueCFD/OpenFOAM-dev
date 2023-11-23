@@ -27,7 +27,7 @@ License
 #include "specieTransferVelocityFvPatchVectorField.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "thermophysicalTransportModel.H"
+#include "fluidThermophysicalTransportModel.H"
 #include "fluidMulticomponentThermo.H"
 
 // * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * * //
@@ -100,7 +100,7 @@ specieTransferMassFractionFvPatchScalarField
     const dictionary& dict
 )
 :
-    mixedFvPatchScalarField(p, iF),
+    mixedFvPatchScalarField(p, iF, dict, false),
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
     UName_(dict.lookupOrDefault<word>("U", "U")),
     phiYp_(p.size(), 0),
@@ -235,10 +235,7 @@ void Foam::specieTransferMassFractionFvPatchScalarField::updateCoeffs()
     const scalarField AAlphaEffp
     (
         patch().magSf()
-       *db().lookupObject<thermophysicalTransportModel>
-        (
-            thermophysicalTransportModel::typeName
-        )
+       *db().lookupType<fluidThermophysicalTransportModel>()
        .alphaEff(patch().index())
     );
 

@@ -215,30 +215,7 @@ triSurface/triSurfaceTools/pointToPointPlanarInterpolation.C
 
 twoDPointCorrector/twoDPointCorrector.C
 
-AMI=AMIInterpolation
-$(AMI)/AMIInterpolation/AMIInterpolation.T.C
-$(AMI)/AMIInterpolation/AMIInterpolationParallelOps.T.C
-$(AMI)/faceAreaIntersect/faceAreaIntersect.C
-
-AMIGAMG=$(AMI)/GAMG
-$(AMIGAMG)/interfaces/cyclicAMIGAMGInterface/cyclicAMIGAMGInterface.C
-$(AMIGAMG)/interfaceFields/cyclicAMIGAMGInterfaceField/cyclicAMIGAMGInterfaceField.C
-
-AMIMethod=$(AMI)/AMIInterpolation/AMIMethod
-$(AMIMethod)/AMIMethod/AMIMethod.C
-$(AMIMethod)/AMIMethod/AMIMethodNew.C
-$(AMIMethod)/directAMI/directAMI.C
-$(AMIMethod)/faceAreaWeightAMI/faceAreaWeightAMI.C
-$(AMIMethod)/mapNearestAMI/mapNearestAMI.C
-$(AMIMethod)/partialFaceAreaWeightAMI/partialFaceAreaWeightAMI.C
-$(AMIMethod)/sweptFaceAreaWeightAMI/sweptFaceAreaWeightAMI.C
-
-AMICycPatches=$(AMI)/patches/cyclicAMI
-$(AMICycPatches)/cyclicAMILduInterfaceField/cyclicAMILduInterface.C
-$(AMICycPatches)/cyclicAMILduInterfaceField/cyclicAMILduInterfaceField.C
-$(AMICycPatches)/cyclicAMIPolyPatch/cyclicAMIPolyPatch.C
-$(AMICycPatches)/cyclicAMIPointPatch/cyclicAMIPointPatch.C
-$(AMICycPatches)/cyclicAMIPointPatchField/cyclicAMIPointPatchFields.C
+patchToPatchTools/patchToPatchTools.C
 
 patchToPatch/patchToPatch/patchToPatch.C
 patchToPatch/patchToPatch/patchToPatchParallelOps.C
@@ -248,6 +225,14 @@ patchToPatch/inverseDistance/inverseDistancePatchToPatch.C
 patchToPatch/intersection/intersectionPatchToPatch.C
 patchToPatch/rays/raysPatchToPatch.C
 
+meshToMesh/meshToMesh.C
+meshToMesh/meshToMeshParallelOps.C
+meshToMesh/calcMethod/meshToMeshMethod/meshToMeshMethod.C
+meshToMesh/calcMethod/meshToMeshMethod/meshToMeshMethodNew.C
+meshToMesh/calcMethod/cellVolumeWeight/cellVolumeWeightMethod.C
+meshToMesh/calcMethod/direct/directMethod.C
+meshToMesh/calcMethod/mapNearest/mapNearestMethod.C
+
 mappedPatches/mappedPatchBase/mappedPatchBase.C
 mappedPatches/mappedPolyPatch/mappedPolyPatch.C
 mappedPatches/mappedPolyPatch/mappedWallPolyPatch.C
@@ -255,6 +240,10 @@ mappedPatches/mappedPolyPatch/mappedExtrudedWallPolyPatch.C
 mappedPatches/mappedPointPatch/mappedPointPatch.C
 mappedPatches/mappedPointPatch/mappedWallPointPatch.C
 mappedPatches/mappedPointPatch/mappedExtrudedWallPointPatch.C
+
+mappedPatches/mappedInternalPatchBase/mappedInternalPatchBase.C
+mappedPatches/mappedInternalPolyPatch/mappedInternalPolyPatch.C
+mappedPatches/mappedInternalPointPatch/mappedInternalPointPatch.C
 
 meshStructure/meshStructure.C
 meshStructure/topoDistanceData.C

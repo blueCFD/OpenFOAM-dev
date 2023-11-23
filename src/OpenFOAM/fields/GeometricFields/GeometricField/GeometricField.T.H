@@ -130,6 +130,12 @@ private:
         //- Read the field - create the field dictionary on-the-fly
         void readFields();
 
+        //- Store the old-time field
+        void storeOldTime() const;
+
+        //- Find oldest time and set to nullObject
+        void nullOldestTimeFound();
+
 
 public:
 
@@ -407,9 +413,6 @@ public:
         //- Store the old-time fields
         void storeOldTimes() const;
 
-        //- Store the old-time field
-        void storeOldTime() const;
-
         //- Return the number of old time fields stored
         label nOldTimes() const;
 
@@ -439,6 +442,14 @@ public:
         //- Delete old time and previous iteration fields
         void clearOldTimes();
 
+        //- Set oldest time field pointer to nullObjectPtr
+        //  to remove the oldest time field while maintaining a tag
+        //  so that it is reinstated on the next call to oldTime().
+        //
+        //  This is used to temporarily remove the oldest-time field
+        //  prior to mesh topology change.
+        void nullOldestTime();
+
         //- Correct boundary field
         void correctBoundaryConditions();
 
@@ -462,14 +473,30 @@ public:
         tmp<GeometricField<Type, PatchField, GeoMesh>> T() const;
 
         //- Relax field (for steady-state solution).
-        //  alpha = 1 : no relaxation
-        //  alpha < 1 : relaxation
-        //  alpha = 0 : do nothing
+        //  alpha >= 1 : no relaxation
+        //  alpha < 1  : relaxation
         void relax(const scalar alpha);
 
-        //- Relax field (for steady-state solution).
-        //  alpha is read from controlDict
+        //- Return the field relaxation factor read from fvSolution
+        //  or 1 if not specified
+        scalar relaxationFactor() const;
+
+        //- Relax current field with respect to the cached previous iteration.
+        //  Relaxation factor is read from fvSolution
         void relax();
+
+        //- Relax given field with respect to the current field
+        //  and reset the field to the result
+        void relax
+        (
+            const tmp<GeometricField<Type, PatchField, GeoMesh>>&,
+            const scalar alpha
+        );
+
+        //- Relax given field with respect to the current field
+        //  and reset the field to the result
+        //  Relaxation factor is read from fvSolution
+        void relax(const tmp<GeometricField<Type, PatchField, GeoMesh>>&);
 
         //- Select the final iteration parameters if `final' is true
         //  by returning the field name + "Final"

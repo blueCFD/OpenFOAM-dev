@@ -19,7 +19,7 @@ volScalarField rho
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    thermo.rho()
+    thermo.renameRho()
 );
 
 volScalarField& p = thermo.p();
@@ -59,9 +59,9 @@ autoPtr<compressible::momentumTransportModel> turbulence
 );
 
 Info<< "Creating thermophysical transport model\n" << endl;
-autoPtr<fluidThermophysicalTransportModel> thermophysicalTransport
+autoPtr<fluidThermoThermophysicalTransportModel> thermophysicalTransport
 (
-    fluidThermophysicalTransportModel::New(turbulence(), thermo)
+    fluidThermoThermophysicalTransportModel::New(turbulence(), thermo)
 );
 
 Info<< "Creating field dpdt\n" << endl;

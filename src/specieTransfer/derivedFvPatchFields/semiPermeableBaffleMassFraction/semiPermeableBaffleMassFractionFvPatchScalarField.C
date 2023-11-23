@@ -27,7 +27,7 @@ License
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "thermophysicalTransportModel.H"
+#include "fluidThermophysicalTransportModel.H"
 #include "basicSpecieMixture.H"
 #include "mappedPatchBase.H"
 #include "addToRunTimeSelectionTable.H"
@@ -106,10 +106,10 @@ Foam::semiPermeableBaffleMassFractionFvPatchScalarField::calcPhiYp() const
     // Get the coupling information from the mappedPatchBase
     const mappedPatchBase& mpp =
         refCast<const mappedPatchBase>(patch().patch());
-    const polyMesh& nbrMesh = mpp.sampleMesh();
-    const label samplePatchi = mpp.samplePolyPatch().index();
+    const polyMesh& nbrMesh = mpp.nbrMesh();
+    const label nbrPatchi = mpp.nbrPolyPatch().index();
     const fvPatch& nbrPatch =
-        refCast<const fvMesh>(nbrMesh).boundary()[samplePatchi];
+        refCast<const fvMesh>(nbrMesh).boundary()[nbrPatchi];
 
     const fluidThermo& thermo =
         db().lookupObject<fluidThermo>(physicalProperties::typeName);
@@ -126,15 +126,14 @@ Foam::semiPermeableBaffleMassFractionFvPatchScalarField::calcPhiYp() const
     );
 
     // Get the patch delta coefficients multiplied by the diffusivity
-    const thermophysicalTransportModel& ttm =
-        db().lookupObject<thermophysicalTransportModel>
-        (
-            thermophysicalTransportModel::typeName
-        );
+    const fluidThermophysicalTransportModel& ttm =
+        db().lookupType<fluidThermophysicalTransportModel>();
+
     const scalarField alphaEffDeltap
     (
         ttm.alphaEff(patch().index())*patch().deltaCoeffs()
     );
+
     const scalarField nbrAlphaEffDeltap
     (
         mpp.distribute

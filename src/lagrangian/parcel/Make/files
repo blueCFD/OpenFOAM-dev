@@ -13,7 +13,8 @@ parcelThermo/parcelThermo.C
 parcelCloud/parcelCloudBase.C
 parcelCloud/parcelCloud.C
 parcelCloud/parcelCloudNew.C
-parcelCloudList/parcelCloudList.C
+parcelCloud/parcelCloudList.C
+parcelCloud/parcelClouds.C
 
 # cloud names
 $(CLOUDS)/Templates/MomentumCloud/MomentumCloudName.T.C
@@ -115,6 +116,9 @@ clouds/Templates/MomentumCloud/cloudSolution/cloudSolution.C
 
 # averaging methods
 submodels/MPPIC/AveragingMethods/makeAveragingMethods.C
+
+# surface films
+submodels/Thermodynamic/SurfaceFilmModel/ThermoSurfaceFilm/ThermoSurfaceFilmBase.T.C
 
 # fvModels
 fvModels/clouds/clouds.C

@@ -24,63 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "patchToPatch.H"
-
-// * * * * * * * * * * * Private Static Member Functions * * * * * * * * * * //
-
-template<class SubListA, class SubListB>
-inline void Foam::patchToPatch::transferListList
-(
-    List<SubListA>& a,
-    List<SubListB>& b
-)
-{
-    a.resize(b.size());
-    forAll(a, i)
-    {
-        a[i].transfer(b[i]);
-    }
-}
-
-
-template<class Type>
-inline void Foam::patchToPatch::rDistributeListList
-(
-    const label size,
-    const distributionMap& map,
-    List<List<Type>>& data
-)
-{
-    distributionMapBase::distribute
-    (
-        Pstream::commsTypes::nonBlocking,
-        List<labelPair>(),
-        size,
-        map.constructMap(),
-        false,
-        map.subMap(),
-        false,
-        data,
-        ListAppendEqOp<Type>(),
-        flipOp(),
-        List<Type>()
-    );
-}
-
-
-template<class Type>
-inline void Foam::patchToPatch::rDistributeListList
-(
-    const label size,
-    const distributionMap& map,
-    List<DynamicList<Type>>& data
-)
-{
-    List<List<Type>> tData;
-    transferListList(tData, data);
-    rDistributeListList(size, map, tData);
-    transferListList(data, tData);
-}
-
+#include "patchToPatchTools.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -102,23 +46,31 @@ inline bool Foam::patchToPatch::isSingleProcess() const
 }
 
 
-inline Foam::List<Foam::List<Foam::patchToPatch::procFace>>
+inline Foam::List<Foam::List<Foam::remote>>
 Foam::patchToPatch::srcTgtProcFaces() const
 {
     return
         isSingleProcess()
-      ? localFacesToProcFaces(srcLocalTgtFaces_)
-      : localFacesToProcFaces(srcLocalTgtFaces_, localTgtProcFacesPtr_());
+      ? patchToPatchTools::localToRemote(srcLocalTgtFaces_)
+      : patchToPatchTools::localToRemote
+        (
+            srcLocalTgtFaces_,
+            localTgtProcFacesPtr_()
+        );
 }
 
 
-inline Foam::List<Foam::List<Foam::patchToPatch::procFace>>
+inline Foam::List<Foam::List<Foam::remote>>
 Foam::patchToPatch::tgtSrcProcFaces() const
 {
     return
         isSingleProcess()
-      ? localFacesToProcFaces(tgtLocalSrcFaces_)
-      : localFacesToProcFaces(tgtLocalSrcFaces_, localSrcProcFacesPtr_());
+      ? patchToPatchTools::localToRemote(tgtLocalSrcFaces_)
+      : patchToPatchTools::localToRemote
+        (
+            tgtLocalSrcFaces_,
+            localSrcProcFacesPtr_()
+        );
 }
 
 

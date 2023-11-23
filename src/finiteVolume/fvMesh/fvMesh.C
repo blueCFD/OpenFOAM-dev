@@ -44,7 +44,6 @@ License
 #include "pointMesh.H"
 #include "pointMeshMapper.H"
 #include "MapPointField.T.H"
-#include "mapClouds.H"
 #include "MeshObject.T.H"
 #include "HashPtrTable.T.H"
 #include "CompactListList.T.H"
@@ -252,6 +251,22 @@ void Foam::fvMesh::storeOldVol(const scalarField& V)
             }
         }
     }
+}
+
+
+void Foam::fvMesh::storeOldTimeFields()
+{
+    storeOldTimeFields<PointField>();
+    storeOldTimeFields<VolField>();
+    storeOldTimeFields<SurfaceField>();
+}
+
+
+void Foam::fvMesh::nullOldestTimeFields()
+{
+    nullOldestTimeFields<PointField>();
+    nullOldestTimeFields<VolField>();
+    nullOldestTimeFields<SurfaceField>();
 }
 
 
@@ -585,6 +600,16 @@ bool Foam::fvMesh::update()
 {
     if (!conformal()) stitcher_->disconnect(true, true);
 
+    if
+    (
+        stitcher_->stitches()
+     || topoChanger_->dynamic()
+     || distributor_->dynamic()
+    )
+    {
+        nullOldestTimeFields();
+    }
+
     const bool hasV00 = V00Ptr_;
     deleteDemandDrivenData(V00Ptr_);
 
@@ -625,6 +650,15 @@ bool Foam::fvMesh::update()
 bool Foam::fvMesh::move()
 {
     if (!conformal()) stitcher_->disconnect(true, true);
+
+    if (curTimeIndex_ < time().timeIndex() && stitcher_->stitches())
+    {
+        // Store all old-time fields. If we don't do this then we risk
+        // triggering a store in the middle of mapping and potentially
+        // overwriting a mapped old-time field with a not-yet-mapped new-time
+        // field.
+        storeOldTimeFields();
+    }
 
     // Do not set moving false
     // Once the mesh starts moving it is considered to be moving
@@ -1039,9 +1073,6 @@ void Foam::fvMesh::mapFields(const polyTopoChangeMap& map)
             (mapper);
         FOR_ALL_FIELD_TYPES(mapPointFieldType);
     }
-
-    // Map all the clouds in the objectRegistry
-    mapClouds(*this, map);
 }
 
 
@@ -1311,7 +1342,7 @@ void Foam::fvMesh::distribute(const polyDistributionMap& map)
 }
 
 
-void Foam::fvMesh::conform()
+void Foam::fvMesh::conform(const surfaceScalarField& phi)
 {
     // Clear the geometry fields
     clearGeomNotOldVol();
@@ -1321,6 +1352,15 @@ void Foam::fvMesh::conform()
 
     // Clear any non-updateable addressing
     clearAddressing(true);
+
+    // Modify the mesh fluxes, if necessary
+    if (notNull(phi) && phiPtr_)
+    {
+        for (label i = 0; i <= phi.nOldTimes(); ++ i)
+        {
+            phiRef().oldTime(i) = phi.oldTime(i);
+        }
+    }
 }
 
 
@@ -1417,7 +1457,10 @@ void Foam::fvMesh::unconform
     // Modify the mesh fluxes, if necessary
     if (notNull(phi) && phiPtr_)
     {
-        phiRef() == phi;
+        for (label i = 0; i <= phi.nOldTimes(); ++ i)
+        {
+            phiRef().oldTime(i) = phi.oldTime(i);
+        }
     }
 }
 

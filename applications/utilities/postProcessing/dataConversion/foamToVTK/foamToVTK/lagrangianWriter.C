@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -90,7 +90,7 @@ Foam::lagrangianWriter::lagrangianWriter
         DynamicList<floatScalar> partField(3*parcels.size());
         forAllConstIter(Cloud<passiveParticle>, parcels, elmnt)
         {
-            vtkWriteOps::insert(elmnt().position(), partField);
+            vtkWriteOps::insert(elmnt().position(mesh), partField);
         }
         vtkWriteOps::write(os_, binary_, partField);
 

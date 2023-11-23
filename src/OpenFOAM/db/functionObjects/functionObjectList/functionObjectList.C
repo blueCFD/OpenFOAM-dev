@@ -31,7 +31,6 @@ License
 #include "etcFiles.H"
 #include "wordAndDictionary.H"
 
-
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
 
 Foam::fileName Foam::functionObjectList::functionObjectDictPath
@@ -247,12 +246,25 @@ bool Foam::functionObjectList::readFunctionObject
 
     if (path == fileName::null)
     {
-        FatalIOErrorInFunction(functionsDict)
-            << "Cannot find functionObject configuration file "
-            << funcType << nl << nl
-            << "Available configured functionObjects:"
-            << list()
-            << exit(FatalIOError);
+        if (funcType == word::null)
+        {
+            FatalIOErrorInFunction(functionsDict)
+                << "functionObject configuration file name not specified"
+                << nl << nl
+                << "Available configured functionObjects:"
+                << list()
+                << exit(FatalIOError);
+        }
+        else
+        {
+            FatalIOErrorInFunction(functionsDict)
+                << "Cannot find functionObject configuration file "
+                << funcType << nl << nl
+                << "Available configured functionObjects:"
+                << list()
+                << exit(FatalIOError);
+        }
+
         return false;
     }
 
@@ -791,7 +803,8 @@ bool Foam::functionObjectList::read()
 
                 if
                 (
-                    dict.found("writeControl")
+                    dict.found("executeControl")
+                 || dict.found("writeControl")
                  || dict.found("outputControl")
                 )
                 {

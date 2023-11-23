@@ -35,12 +35,12 @@
 cat <<EOF
 
 pisoFoam has been superseded and replaced by the more general
-fluid solver module executed by the foamRun application:
+incompressibleFluid solver module executed by the foamRun application:
 
     foamRun -solver incompressibleFluid
 
 EOF
 
-foamRun -solver incompressibleFluid "$@"
+exec env foamRun -solver incompressibleFluid "$@"
 
 #------------------------------------------------------------------------------

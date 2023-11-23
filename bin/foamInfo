@@ -58,7 +58,7 @@ which is case-insensitive on the first character.
 Otherwise the user can try a broader keyword match with "-keyword | -k" option.
 
 Examples
-  foamInfo simpleFoam
+  foamInfo incompressibleFluid
   foamInfo interFoam
   foamInfo fixedValue
   foamInfo -k fixedValue
@@ -206,7 +206,7 @@ modelsInFamily () {
         _modelDirs="\
             $(findModelDirs "$_familyDir" 2) \
             $(findModelDirs "$FOAM_SRC/lagrangian/parcel/fvModels") \
-            $(findModelDirs "$FOAM_SRC/regionModels/surfaceFilmModels/fvModels") \
+            $(findModelDirs "$FOAM_SRC/regionModels/surfaceFilm/fvModels") \
             $(findModelDirs "$FOAM_SRC/radiationModels/fvModels/radiation")"
 
     [ "$_modelDirs" ] || return 0

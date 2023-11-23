@@ -42,7 +42,7 @@ SourceFiles
 namespace Foam
 {
 
-class polyMesh;
+class meshToMesh;
 
 /*---------------------------------------------------------------------------*\
                        Class polyMeshMap Declaration
@@ -55,13 +55,16 @@ class polyMeshMap
         //- Reference to polyMesh
         const polyMesh& mesh_;
 
+        //- Reference to the meshToMesh mapper
+        const meshToMesh& mapper_;
+
 
 public:
 
     // Constructors
 
         //- Construct for mesh
-        polyMeshMap(const polyMesh& mesh);
+        polyMeshMap(const polyMesh& mesh, const meshToMesh& mapper);
 
         //- Disallow default bitwise copy construction
         polyMeshMap(const polyMeshMap&) = delete;
@@ -73,6 +76,12 @@ public:
         const polyMesh& mesh() const
         {
             return mesh_;
+        }
+
+        //- Return meshToMesh mapper
+        const meshToMesh& mapper() const
+        {
+            return mapper_;
         }
 };
 
