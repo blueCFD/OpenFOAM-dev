@@ -85,7 +85,7 @@ public:
         //- Return the interpolation weighting factors for the given field
         virtual tmp<surfaceScalarField> deltaCoeffs
         (
-            const GeometricField<Type, fvPatchField, volMesh>& vf
+            const VolField<Type>& vf
         ) const;
 
         //- Return true if this scheme uses an explicit correction
@@ -96,8 +96,8 @@ public:
 
         //- Return the explicit correction to the phaseStabilisedSnGrad
         //  for the given field
-        virtual tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
-        correction(const GeometricField<Type, fvPatchField, volMesh>&) const;
+        virtual tmp<SurfaceField<Type>>
+        correction(const VolField<Type>&) const;
 
 
     // Member Operators

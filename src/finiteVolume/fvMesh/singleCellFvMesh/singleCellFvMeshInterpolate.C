@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,9 +36,9 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-tmp<GeometricField<Type, fvPatchField, volMesh>> singleCellFvMesh::interpolate
+tmp<VolField<Type>> singleCellFvMesh::interpolate
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf
+    const VolField<Type>& vf
 ) const
 {
     // 1. Create the complete field with dummy patch fields
@@ -59,14 +59,14 @@ tmp<GeometricField<Type, fvPatchField, volMesh>> singleCellFvMesh::interpolate
     }
 
     // Create the complete field from the pieces
-    tmp<GeometricField<Type, fvPatchField, volMesh>> tresF
+    tmp<VolField<Type>> tresF
     (
-        new GeometricField<Type, fvPatchField, volMesh>
+        new VolField<Type>
         (
             IOobject
             (
                 vf.name(),
-                time().timeName(),
+                time().name(),
                 *this,
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
@@ -77,13 +77,13 @@ tmp<GeometricField<Type, fvPatchField, volMesh>> singleCellFvMesh::interpolate
             patchFields
         )
     );
-    GeometricField<Type, fvPatchField, volMesh>& resF = tresF.ref();
+    VolField<Type>& resF = tresF.ref();
 
 
     // 2. Change the fvPatchFields to the correct type using a mapper
     //  constructor (with reference to the now correct internal field)
 
-    typename GeometricField<Type, fvPatchField, volMesh>::
+    typename VolField<Type>::
         Boundary& bf = resF.boundaryFieldRef();
 
     if (agglomerate())

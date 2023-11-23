@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -107,14 +107,14 @@ class patch
         template<class Type>
         tmp<Field<Type>> sampleField
         (
-            const GeometricField<Type, fvPatchField, volMesh>& vField
+            const VolField<Type>& vField
         ) const;
 
         //- Sample surface field on faces
         template<class Type>
         tmp<Field<Type>> sampleField
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
+            const SurfaceField<Type>& sField
         ) const;
 
         template<class Type>

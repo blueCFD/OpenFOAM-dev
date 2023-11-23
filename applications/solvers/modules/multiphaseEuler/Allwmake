@@ -1,0 +1,100 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Parse arguments for library compilation
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
+
+if ! onWin; then
+
+wmake $targetType phaseSystems
+wmake $targetType interfacialModels
+wmake $targetType interfacialCompositionModels
+wmake $targetType multiphaseCompressibleMomentumTransportModels
+wmake $targetType multiphaseThermophysicalTransportModels
+wmake $targetType multiphaseReactions
+multiphaseEuler/Allwmake $targetType $*
+wmake $targetType fvModels
+wmake $targetType functionObjects
+
+else
+
+    # Have to create a temporary copy at the user's folder, because that way we
+    # will have shorter paths that fit into Windows' 260 character limit
+    if [ "${PWD/$WM_PROJECT_DIR/}" != "$PWD" ]
+    then
+        originalPath=$PWD
+        originalRelative="${PWD/$WM_PROJECT_DIR/}"
+        temporaryPath="$WM_PROJECT_USER_DIR/$$"
+
+        echo "Handling this solver stack at the temporary path '$temporaryPath'"
+
+        mkdir -p $temporaryPath
+        cp -r . $temporaryPath
+        cd $temporaryPath
+
+        ./Allwmake $@
+        retval=$?
+
+        find . -name $WM_OPTIONS | while read line
+        do
+            mkdir -p $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line
+            cp -r $line/ $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line/
+        done
+
+        # Delete the temporary folder
+        cd ..
+        [ -d "${temporaryPath}" ] && rm -r "${temporaryPath}"
+
+        exit $retval
+    fi
+
+    wmakeLnInclude interfacialModels
+
+    set +x
+
+    echo "Library stub stack is currently being built at" \
+         "multiphaseEulerFoam..."
+    # Going to ommit the first build pass, as it will give a few errors, but
+    # it's the second pass that matters.
+    (
+
+      for libitem in $(grep -h "LIB =" */Make/files | sed 's=.*/=='); do
+        if [ ! -e "$FOAM_LIBBIN/${libitem}.a" ]; then
+          cp $FOAM_LIBBIN/libstubLibrary.a $FOAM_LIBBIN/${libitem}.a
+        fi
+        if [ -e "$FOAM_LIBBIN/${libitem}.dll" ]; then
+          rm $FOAM_LIBBIN/${libitem}.dll
+        fi
+      done
+
+      export WM_CONTINUE_ON_ERROR=1
+      set +e
+
+      wmake $targetType phaseSystems
+      wmake $targetType interfacialModels
+      wmake $targetType interfacialCompositionModels
+      wmake $targetType multiphaseCompressibleMomentumTransportModels
+      wmake $targetType multiphaseThermophysicalTransportModels
+
+      exit 0
+
+    ) 2> /dev/null
+
+    echo "Library stub stack is done being built at" \
+         "multiphaseEulerFoam."
+
+    # Now going to do the second and final linking step.
+    set -x
+
+    wmake $targetType phaseSystems
+    wmake $targetType interfacialModels
+    wmake $targetType interfacialCompositionModels
+    wmake $targetType multiphaseCompressibleMomentumTransportModels
+    wmake $targetType multiphaseThermophysicalTransportModels
+
+    multiphaseEulerFoam/Allwmake $targetType $*
+    wmake $targetType functionObjects
+
+fi
+
+#------------------------------------------------------------------------------

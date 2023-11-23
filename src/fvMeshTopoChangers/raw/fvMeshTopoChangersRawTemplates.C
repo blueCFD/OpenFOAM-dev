@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,26 +66,31 @@ void Foam::fvMeshTopoChangers::raw::zeroUnmappedValues
     const PackedBoolList& mappedFace
 ) const
 {
-    typedef GeometricField<Type, PatchField, GeoMesh> FieldType;
-
-    const wordList fldNames(mesh().names(FieldType::typeName));
+    const wordList fldNames
+    (
+        mesh().names(GeometricField<Type, PatchField, GeoMesh>::typeName)
+    );
 
     forAll(fldNames, i)
     {
         // Pout<< "Checking field " << fldNames[i] << endl;
 
-        FieldType& fld = mesh().lookupObjectRef<FieldType>(fldNames[i]);
+        GeometricField<Type, PatchField, GeoMesh>& fld =
+            mesh().lookupObjectRef<GeometricField<Type, PatchField, GeoMesh>>
+            (
+                fldNames[i]
+            );
 
         setUnmappedValues
         (
             fld,
             mappedFace,
-            FieldType
+            GeometricField<Type, PatchField, GeoMesh>
             (
                 IOobject
                 (
                     "zero",
-                    mesh().time().timeName(),
+                    mesh().time().name(),
                     mesh(),
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,

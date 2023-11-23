@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,38 +61,25 @@ void Foam::fv::cellLimitedGrad<Type, Limiter>::limitGradient
 template<class Type, class Limiter>
 Foam::tmp
 <
-    Foam::GeometricField
-    <
-        typename Foam::outerProduct<Foam::vector, Type>::type,
-        Foam::fvPatchField,
-        Foam::volMesh
-    >
+    Foam::VolField<typename Foam::outerProduct<Foam::vector, Type>::type>
 >
 Foam::fv::cellLimitedGrad<Type, Limiter>::calcGrad
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vsf,
+    const VolField<Type>& vsf,
     const word& name
 ) const
 {
     const fvMesh& mesh = vsf.mesh();
 
-    tmp
-    <
-        GeometricField
-        <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > tGrad = basicGradScheme_().calcGrad(vsf, name);
+    tmp<VolField<typename outerProduct<vector, Type>::type>>
+        tGrad = basicGradScheme_().calcGrad(vsf, name);
 
     if (k_ < small)
     {
         return tGrad;
     }
 
-    GeometricField
-    <
-        typename outerProduct<vector, Type>::type,
-        fvPatchField,
-        volMesh
-    >& g = tGrad.ref();
+    VolField<typename outerProduct<vector, Type>::type>& g = tGrad.ref();
 
     const labelUList& owner = mesh.owner();
     const labelUList& neighbour = mesh.neighbour();
@@ -119,7 +106,7 @@ Foam::fv::cellLimitedGrad<Type, Limiter>::calcGrad
     }
 
 
-    const typename GeometricField<Type, fvPatchField, volMesh>::Boundary& bsf =
+    const typename VolField<Type>::Boundary& bsf =
         vsf.boundaryField();
 
     forAll(bsf, patchi)

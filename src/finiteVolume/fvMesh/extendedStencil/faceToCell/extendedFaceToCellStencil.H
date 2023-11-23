@@ -71,22 +71,22 @@ public:
     // Member Functions
 
         //- Use map to get the data into stencil order
-        template<class T>
+        template<class Type>
         static void collectData
         (
             const distributionMap& map,
             const labelListList& stencil,
-            const GeometricField<T, fvsPatchField, surfaceMesh>& fld,
-            List<List<T>>& stencilFld
+            const SurfaceField<Type>& fld,
+            List<List<Type>>& stencilFld
         );
 
         //- Sum surface field contributions to create cell values
         template<class Type>
-        static tmp<GeometricField<Type, fvPatchField, volMesh>> weightedSum
+        static tmp<VolField<Type>> weightedSum
         (
             const distributionMap& map,
             const labelListList& stencil,
-            const GeometricField<Type, fvsPatchField, surfaceMesh>& fld,
+            const SurfaceField<Type>& fld,
             const List<List<scalar>>& stencilWeights
         );
 };

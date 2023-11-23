@@ -567,7 +567,7 @@ void Foam::domainDecomposition::readComplete()
             IOobject
             (
                 regionName_,
-                runTimes_.completeTime().timeName(),
+                runTimes_.completeTime().name(),
                 runTimes_.completeTime(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
@@ -591,7 +591,7 @@ void Foam::domainDecomposition::readProcs()
                 IOobject
                 (
                     regionName_,
-                    runTimes_.procTimes()[proci].timeName(),
+                    runTimes_.procTimes()[proci].name(),
                     runTimes_.procTimes()[proci],
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
@@ -959,14 +959,14 @@ bool Foam::domainDecomposition::readDecompose(const bool doSets)
         if
         (
             completeMesh().facesInstance()
-         != runTimes_.completeTime().timeName()
+         != runTimes_.completeTime().name()
          && completeMesh().facesInstance()
          != runTimes_.completeTime().constant()
         )
         {
             FatalErrorInFunction
                 << "Cannot begin mesh decomposition at time "
-                << fileName(runTimes_.completeTime().timeName()) << nl
+                << fileName(runTimes_.completeTime().name()) << nl
                 << "The mesh at this instant is that of an earlier"
                 << " time " << completeMesh().facesInstance() << nl
                 << "Decomposition must start from this earlier time"
@@ -1070,14 +1070,14 @@ bool Foam::domainDecomposition::readReconstruct(const bool doSets)
         if
         (
             procMeshes()[0].facesInstance()
-         != runTimes_.procTimes()[0].timeName()
+         != runTimes_.procTimes()[0].name()
          && procMeshes()[0].facesInstance()
          != runTimes_.procTimes()[0].constant()
         )
         {
             FatalErrorInFunction
                 << "Cannot begin mesh reconstruction at time "
-                << fileName(runTimes_.procTimes()[0].timeName()) << nl
+                << fileName(runTimes_.procTimes()[0].name()) << nl
                 << "The mesh at this instant is that of an earlier"
                 << " time " << procMeshes()[0].facesInstance() << nl
                 << "Reconstruction must start from this earlier time"
@@ -1635,7 +1635,7 @@ void Foam::domainDecomposition::writeComplete(const bool doSets) const
             IOobjectList setObjects
             (
                 procMesh,
-                runTimes_.procTimes()[proci].timeName(),
+                runTimes_.procTimes()[proci].name(),
                 polyMesh::meshSubDir/"sets"
             );
             IOobjectList cellSetObjects
@@ -1684,7 +1684,7 @@ void Foam::domainDecomposition::writeComplete(const bool doSets) const
 
                 cellSet& cSet = *cellSets[iter.key()];
 
-                cSet.instance() = runTimes_.completeTime().timeName();
+                cSet.instance() = runTimes_.completeTime().name();
 
                 forAllConstIter(cellSet, procSet, iter)
                 {
@@ -1713,11 +1713,11 @@ void Foam::domainDecomposition::writeComplete(const bool doSets) const
 
                 faceSet& cSet = *faceSets[iter.key()];
 
-                cSet.instance() = runTimes_.completeTime().timeName();
+                cSet.instance() = runTimes_.completeTime().name();
 
                 forAllConstIter(faceSet, procSet, iter)
                 {
-                    cSet.insert(faceMap[iter.key()]);
+                    cSet.insert(mag(faceMap[iter.key()]) - 1);
                 }
             }
             forAllConstIter(IOobjectList, pointSetObjects, iter)
@@ -1742,7 +1742,7 @@ void Foam::domainDecomposition::writeComplete(const bool doSets) const
 
                 pointSet& cSet = *pointSets[iter.key()];
 
-                cSet.instance() = runTimes_.completeTime().timeName();
+                cSet.instance() = runTimes_.completeTime().name();
 
                 forAllConstIter(pointSet, procSet, iter)
                 {
@@ -1907,7 +1907,7 @@ void Foam::domainDecomposition::writeProcs(const bool doSets) const
                 faceSet set(procMesh, cs.name(), cs.size()/nProcs());
                 forAll(procFaceAddressing_[proci], i)
                 {
-                    if (cs.found(mag(procFaceAddressing_[proci][i])-1))
+                    if (cs.found(mag(procFaceAddressing_[proci][i]) - 1))
                     {
                         set.insert(i);
                     }

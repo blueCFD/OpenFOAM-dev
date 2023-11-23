@@ -54,13 +54,15 @@ class GeometricField;
 template<class Type>
 using VolField = GeometricField<Type, fvPatchField, volMesh>;
 
-typedef GeometricField<label, fvPatchField, volMesh> volLabelField;
-typedef GeometricField<scalar, fvPatchField, volMesh> volScalarField;
-typedef GeometricField<vector, fvPatchField, volMesh> volVectorField;
-typedef GeometricField<sphericalTensor, fvPatchField, volMesh>
-    volSphericalTensorField;
-typedef GeometricField<symmTensor, fvPatchField, volMesh> volSymmTensorField;
-typedef GeometricField<tensor, fvPatchField, volMesh> volTensorField;
+template<class Type>
+using VolInternalField = typename VolField<Type>::Internal;
+
+typedef VolField<label> volLabelField;
+typedef VolField<scalar> volScalarField;
+typedef VolField<vector> volVectorField;
+typedef VolField<sphericalTensor> volSphericalTensorField;
+typedef VolField<symmTensor> volSymmTensorField;
+typedef VolField<tensor> volTensorField;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

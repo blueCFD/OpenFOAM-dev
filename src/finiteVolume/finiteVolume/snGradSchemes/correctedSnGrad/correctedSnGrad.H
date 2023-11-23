@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -93,7 +93,7 @@ public:
         //- Return the interpolation weighting factors for the given field
         virtual tmp<surfaceScalarField> deltaCoeffs
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const
         {
             return this->mesh().nonOrthDeltaCoeffs();
@@ -107,16 +107,16 @@ public:
 
         //- Return the explicit correction to the correctedSnGrad
         //  for the given field using the gradient of the field
-        tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
+        tmp<SurfaceField<Type>>
         fullGradCorrection
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const;
 
         //- Return the explicit correction to the correctedSnGrad
         //  for the given field using the gradients of the field components
-        virtual tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
-        correction(const GeometricField<Type, fvPatchField, volMesh>&) const;
+        virtual tmp<SurfaceField<Type>>
+        correction(const VolField<Type>&) const;
 };
 
 

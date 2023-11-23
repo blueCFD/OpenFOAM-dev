@@ -158,7 +158,7 @@ private:
         template<class Type>
         void sampleAndWrite
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
 
@@ -166,7 +166,7 @@ private:
         template<class Type>
         void sampleAndWrite
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>&
+            const SurfaceField<Type>&
         );
 
         //- Sample and write all the fields of the given type
@@ -251,7 +251,7 @@ public:
         template<class Type>
         tmp<Field<Type>> sample
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const;
 
         //- Sample a single vol field on all sample locations
@@ -266,7 +266,7 @@ public:
         template<class Type>
         tmp<Field<Type>> sample
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>&
+            const SurfaceField<Type>&
         ) const;
 
 

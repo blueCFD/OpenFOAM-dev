@@ -115,17 +115,17 @@ public:
         //- Interpolate volField using inverse distance weighting
         //  returning pointField
         template<class Type>
-        tmp<GeometricField<Type, pointPatchField, pointMesh>> interpolate
+        tmp<PointField<Type>> interpolate
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const;
 
         //- Interpolate tmp<volField> using inverse distance weighting
         //  returning pointField
         template<class Type>
-        tmp<GeometricField<Type, pointPatchField, pointMesh>> interpolate
+        tmp<PointField<Type>> interpolate
         (
-            const tmp<GeometricField<Type, fvPatchField, volMesh>>&
+            const tmp<VolField<Type>>&
         ) const;
 
 
@@ -136,8 +136,8 @@ public:
             template<class Type>
             void interpolateUnconstrained
             (
-                const GeometricField<Type, fvPatchField, volMesh>&,
-                GeometricField<Type, pointPatchField, pointMesh>&
+                const VolField<Type>&,
+                PointField<Type>&
             ) const;
 
             //- Interpolate from volField to pointField
@@ -145,16 +145,16 @@ public:
             template<class Type>
             void interpolate
             (
-                const GeometricField<Type, fvPatchField, volMesh>&,
-                GeometricField<Type, pointPatchField, pointMesh>&
+                const VolField<Type>&,
+                PointField<Type>&
             ) const;
 
             //- Interpolate volField using inverse distance weighting
             //  returning pointField with name. Optionally caches.
             template<class Type>
-            tmp<GeometricField<Type, pointPatchField, pointMesh>> interpolate
+            tmp<PointField<Type>> interpolate
             (
-                const GeometricField<Type, fvPatchField, volMesh>&,
+                const VolField<Type>&,
                 const word& name,
                 const bool cache
             ) const;

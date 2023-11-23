@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,16 +43,14 @@ void processField
         return;
     }
 
-    typedef GeometricField<Type, fvPatchField, volMesh> fieldType;
+    const word timeName(mesh.time().name());
 
-    const word timeName(mesh.time().timeName());
-
-    IOobjectList fieldObjbjects(objects.lookupClass(fieldType::typeName));
+    IOobjectList fieldObjbjects(objects.lookupClass(VolField<Type>::typeName));
 
     if (fieldObjbjects.lookup(fieldName) != nullptr)
     {
-        fieldType vtf(*fieldObjbjects.lookup(fieldName), mesh);
-        const typename fieldType::Boundary& bf =
+        VolField<Type> vtf(*fieldObjbjects.lookup(fieldName), mesh);
+        const typename VolField<Type>::Boundary& bf =
             vtf.boundaryField();
 
         forAll(bf, patchi)

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ License
 template<class Type>
 Foam::interpolation<Type>::interpolation
 (
-    const GeometricField<Type, fvPatchField, volMesh>& psi
+    const VolField<Type>& psi
 )
 :
     psi_(psi),
@@ -47,7 +47,7 @@ template<class Type>
 Foam::autoPtr<Foam::interpolation<Type>> Foam::interpolation<Type>::New
 (
     const word& interpolationType,
-    const GeometricField<Type, fvPatchField, volMesh>& psi
+    const VolField<Type>& psi
 )
 {
     typename dictionaryConstructorTable::iterator cstrIter =
@@ -71,7 +71,7 @@ template<class Type>
 Foam::autoPtr<Foam::interpolation<Type>> Foam::interpolation<Type>::New
 (
     const dictionary& interpolationSchemes,
-    const GeometricField<Type, fvPatchField, volMesh>& psi
+    const VolField<Type>& psi
 )
 {
     return New(word(interpolationSchemes.lookup(psi.name())), psi);
@@ -103,8 +103,8 @@ Foam::tmp<Foam::Field<Type>>
 Foam::fieldInterpolation<Type, InterpolationType>::interpolate
 (
     const vectorField& position,
-    const labelField& celli,
-    const labelField& facei
+    const labelList& celli,
+    const labelList& facei
 ) const
 {
     tmp<Field<Type>> tField(new Field<Type>(position.size()));
@@ -131,10 +131,10 @@ Foam::tmp<Foam::Field<Type>>
 Foam::fieldInterpolation<Type, InterpolationType>::interpolate
 (
     const Field<barycentric>& coordinates,
-    const labelField& celli,
-    const labelField& tetFacei,
-    const labelField& tetPti,
-    const labelField& facei
+    const labelList& celli,
+    const labelList& tetFacei,
+    const labelList& tetPti,
+    const labelList& facei
 ) const
 {
     tmp<Field<Type>> tField(new Field<Type>(coordinates.size()));

@@ -29,7 +29,7 @@ License
 #include "treeBoundBox.H"
 #include "indexedOctree.H"
 #include "treeDataCell.H"
-#include "cut.H"
+#include "cutTriTet.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -53,6 +53,8 @@ Foam::scalar Foam::tetOverlapVolume::tetTetOverlapVol
     const tetPointRef& tetB
 ) const
 {
+    typedef cutTriTet::noOp noOp;
+
     // A maximum of three cuts are made (the tets that result from the final cut
     // are not stored), and each cut can create at most three tets. The
     // temporary storage must therefore extend to 3^3 = 27 tets.
@@ -61,9 +63,13 @@ Foam::scalar Foam::tetOverlapVolume::tetTetOverlapVol
 
     // face 0
     const plane pl0(tetB.b(), tetB.d(), tetB.c());
+    if (!pl0.valid())
+    {
+        return 0;
+    }
     const FixedList<point, 4> t({tetA.a(), tetA.b(), tetA.c(), tetA.d()});
     cutTetList1.clear();
-    tetCut(t, pl0, cut::appendOp<tetListType>(cutTetList1), cut::noOp());
+    tetCut(t, pl0, cutTriTet::appendOp<tetListType>(cutTetList1), noOp());
     if (cutTetList1.size() == 0)
     {
         return 0;
@@ -71,11 +77,15 @@ Foam::scalar Foam::tetOverlapVolume::tetTetOverlapVol
 
     // face 1
     const plane pl1(tetB.a(), tetB.c(), tetB.d());
+    if (!pl1.valid())
+    {
+        return 0;
+    }
     cutTetList2.clear();
     for (label i = 0; i < cutTetList1.size(); i++)
     {
         const FixedList<point, 4>& t = cutTetList1[i];
-        tetCut(t, pl1, cut::appendOp<tetListType>(cutTetList2), cut::noOp());
+        tetCut(t, pl1, cutTriTet::appendOp<tetListType>(cutTetList2), noOp());
     }
     if (cutTetList2.size() == 0)
     {
@@ -84,11 +94,15 @@ Foam::scalar Foam::tetOverlapVolume::tetTetOverlapVol
 
     // face 2
     const plane pl2(tetB.a(), tetB.d(), tetB.b());
+    if (!pl2.valid())
+    {
+        return 0;
+    }
     cutTetList1.clear();
     for (label i = 0; i < cutTetList2.size(); i++)
     {
         const FixedList<point, 4>& t = cutTetList2[i];
-        tetCut(t, pl2, cut::appendOp<tetListType>(cutTetList1), cut::noOp());
+        tetCut(t, pl2, cutTriTet::appendOp<tetListType>(cutTetList1), noOp());
     }
     if (cutTetList1.size() == 0)
     {
@@ -97,11 +111,15 @@ Foam::scalar Foam::tetOverlapVolume::tetTetOverlapVol
 
     // face 3
     const plane pl3(tetB.a(), tetB.b(), tetB.c());
+    if (!pl3.valid())
+    {
+        return 0;
+    }
     scalar v = 0;
     for (label i = 0; i < cutTetList1.size(); i++)
     {
         const FixedList<point, 4>& t = cutTetList1[i];
-        v += tetCut(t, pl3, cut::volumeOp(), cut::noOp());
+        v += tetCut(t, pl3, cutTriTet::volumeOp(), noOp());
     }
 
     return v;

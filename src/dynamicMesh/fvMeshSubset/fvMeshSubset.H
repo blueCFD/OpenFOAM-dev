@@ -253,10 +253,10 @@ public:
 
             //- Map volume field
             template<class Type>
-            static tmp<GeometricField<Type, fvPatchField, volMesh>>
+            static tmp<VolField<Type>>
             interpolate
             (
-                const GeometricField<Type, fvPatchField, volMesh>&,
+                const VolField<Type>&,
                 const fvMesh& sMesh,
                 const labelList& patchMap,
                 const labelList& cellMap,
@@ -264,19 +264,19 @@ public:
             );
 
             template<class Type>
-            tmp<GeometricField<Type, fvPatchField, volMesh>>
+            tmp<VolField<Type>>
             interpolate
             (
-                const GeometricField<Type, fvPatchField, volMesh>&
+                const VolField<Type>&
             ) const;
 
             //- Map surface field. Optionally negates value if flipping
             //  a face (from exposing an internal face)
             template<class Type>
-            static tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
+            static tmp<SurfaceField<Type>>
             interpolate
             (
-                const GeometricField<Type, fvsPatchField, surfaceMesh>&,
+                const SurfaceField<Type>&,
                 const fvMesh& sMesh,
                 const labelList& patchMap,
                 const labelList& cellMap,
@@ -284,28 +284,28 @@ public:
             );
 
             template<class Type>
-            tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
+            tmp<SurfaceField<Type>>
             interpolate
             (
-                const GeometricField<Type, fvsPatchField, surfaceMesh>&
+                const SurfaceField<Type>&
             ) const;
 
             //- Map point field
             template<class Type>
-            static tmp<GeometricField<Type, pointPatchField, pointMesh>>
+            static tmp<PointField<Type>>
             interpolate
             (
-                const GeometricField<Type, pointPatchField, pointMesh>&,
+                const PointField<Type>&,
                 const pointMesh& sMesh,
                 const labelList& patchMap,
                 const labelList& pointMap
             );
 
             template<class Type>
-            tmp<GeometricField<Type, pointPatchField, pointMesh>>
+            tmp<PointField<Type>>
             interpolate
             (
-                const GeometricField<Type, pointPatchField, pointMesh>&
+                const PointField<Type>&
             ) const;
 
             //- Map dimensioned field

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -114,7 +114,7 @@ public:
         template<class Type>
         void write
         (
-            const UPtrList<const GeometricField<Type, fvPatchField, volMesh>>&
+            const UPtrList<const VolField<Type>>&
         );
 
         //- Write pointFields
@@ -123,7 +123,7 @@ public:
         (
             const UPtrList
             <
-                const GeometricField<Type, pointPatchField, pointMesh>
+                const PointField<Type>
             >&
         );
 
@@ -132,7 +132,7 @@ public:
         void write
         (
             const PrimitivePatchInterpolation<primitivePatch>&,
-            const UPtrList<const GeometricField<Type, fvPatchField, volMesh>>&
+            const UPtrList<const VolField<Type>>&
         );
 };
 

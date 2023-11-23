@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,7 +66,7 @@ Foam::AveragingMethods::Basic<Type>::~Basic()
 template<class Type>
 void Foam::AveragingMethods::Basic<Type>::updateGrad()
 {
-    GeometricField<Type, fvPatchField, volMesh> tempData
+    VolField<Type> tempData
     (
         IOobject
         (
@@ -112,7 +112,7 @@ Type Foam::AveragingMethods::Basic<Type>::interpolate
 
 
 template<class Type>
-typename Foam::AveragingMethods::Basic<Type>::TypeGrad
+typename Foam::AveragingMethods::Basic<Type>::GradType
 Foam::AveragingMethods::Basic<Type>::interpolateGrad
 (
     const barycentric& coordinates,

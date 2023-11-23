@@ -117,8 +117,15 @@ template<class CloudType>
 void Foam::CloudFunctionObject<CloudType>::postPatch
 (
     const typename CloudType::parcelType&,
-    const polyPatch&,
-    bool&
+    const polyPatch&
+)
+{}
+
+
+template<class CloudType>
+void Foam::CloudFunctionObject<CloudType>::preFace
+(
+    const typename CloudType::parcelType&
 )
 {}
 
@@ -126,8 +133,7 @@ void Foam::CloudFunctionObject<CloudType>::postPatch
 template<class CloudType>
 void Foam::CloudFunctionObject<CloudType>::postFace
 (
-    const typename CloudType::parcelType&,
-    bool&
+    const typename CloudType::parcelType&
 )
 {}
 
@@ -142,7 +148,7 @@ const Foam::fileName& Foam::CloudFunctionObject<CloudType>::outputDir() const
 template<class CloudType>
 Foam::fileName Foam::CloudFunctionObject<CloudType>::writeTimeDir() const
 {
-    return outputDir_/this->owner().time().timeName();
+    return outputDir_/this->owner().time().name();
 }
 
 

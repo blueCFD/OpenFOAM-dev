@@ -98,14 +98,14 @@ void Foam::fv::semiImplicitSource::addSupType
 
     const scalar t = mesh().time().userTimeValue();
 
-    const GeometricField<Type, fvPatchField, volMesh>& psi = eqn.psi();
+    const VolField<Type>& psi = eqn.psi();
 
-    typename GeometricField<Type, fvPatchField, volMesh>::Internal Su
+    VolInternalField<Type> Su
     (
         IOobject
         (
             name() + fieldName + "Su",
-            mesh().time().timeName(),
+            mesh().time().name(),
             mesh(),
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -141,7 +141,7 @@ void Foam::fv::semiImplicitSource::addSupType
         IOobject
         (
             name() + fieldName + "Sp",
-            mesh().time().timeName(),
+            mesh().time().name(),
             mesh(),
             IOobject::NO_READ,
             IOobject::NO_WRITE

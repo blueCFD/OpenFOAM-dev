@@ -83,34 +83,32 @@ Foam::fv::gradScheme<Type>::~gradScheme()
 template<class Type>
 Foam::tmp
 <
-    Foam::GeometricField
-    <
-        typename Foam::outerProduct<Foam::vector, Type>::type,
-        Foam::fvPatchField,
-        Foam::volMesh
-    >
+    Foam::VolField<typename Foam::outerProduct<Foam::vector, Type>::type>
 >
 Foam::fv::gradScheme<Type>::grad
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vsf,
+    const VolField<Type>& vsf,
     const word& name
 ) const
 {
     typedef typename outerProduct<vector, Type>::type GradType;
-    typedef GeometricField<GradType, fvPatchField, volMesh> GradFieldType;
 
     if (!this->mesh().changing() && this->mesh().solution().cache(name))
     {
-        if (!mesh().objectRegistry::template foundObject<GradFieldType>(name))
+        if
+        (
+            !mesh().objectRegistry::template
+            foundObject<VolField<GradType>>(name)
+        )
         {
             solution::cachePrintMessage("Calculating and caching", name, vsf);
-            tmp<GradFieldType> tgGrad = calcGrad(vsf, name);
+            tmp<VolField<GradType>> tgGrad = calcGrad(vsf, name);
             regIOobject::store(tgGrad.ptr());
         }
 
         solution::cachePrintMessage("Retrieving", name, vsf);
-        GradFieldType& gGrad =
-            mesh().objectRegistry::template lookupObjectRef<GradFieldType>
+        VolField<GradType>& gGrad =
+            mesh().objectRegistry::template lookupObjectRef<VolField<GradType>>
             (
                 name
             );
@@ -126,12 +124,13 @@ Foam::fv::gradScheme<Type>::grad
             delete &gGrad;
 
             solution::cachePrintMessage("Recalculating", name, vsf);
-            tmp<GradFieldType> tgGrad = calcGrad(vsf, name);
+            tmp<VolField<GradType>> tgGrad = calcGrad(vsf, name);
 
             solution::cachePrintMessage("Storing", name, vsf);
             regIOobject::store(tgGrad.ptr());
-            GradFieldType& gGrad =
-                mesh().objectRegistry::template lookupObjectRef<GradFieldType>
+            VolField<GradType>& gGrad =
+                mesh().objectRegistry::template
+                lookupObjectRef<VolField<GradType>>
                 (
                     name
                 );
@@ -141,10 +140,15 @@ Foam::fv::gradScheme<Type>::grad
     }
     else
     {
-        if (mesh().objectRegistry::template foundObject<GradFieldType>(name))
+        if
+        (
+            mesh().objectRegistry::template
+            foundObject<VolField<GradType>>(name)
+        )
         {
-            GradFieldType& gGrad =
-                mesh().objectRegistry::template lookupObjectRef<GradFieldType>
+            VolField<GradType>& gGrad =
+                mesh().objectRegistry::template
+                lookupObjectRef<VolField<GradType>>
                 (
                     name
                 );
@@ -166,16 +170,11 @@ Foam::fv::gradScheme<Type>::grad
 template<class Type>
 Foam::tmp
 <
-    Foam::GeometricField
-    <
-        typename Foam::outerProduct<Foam::vector, Type>::type,
-        Foam::fvPatchField,
-        Foam::volMesh
-    >
+    Foam::VolField<typename Foam::outerProduct<Foam::vector, Type>::type>
 >
 Foam::fv::gradScheme<Type>::grad
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vsf
+    const VolField<Type>& vsf
 ) const
 {
     return grad(vsf, "grad(" + vsf.name() + ')');
@@ -185,22 +184,16 @@ Foam::fv::gradScheme<Type>::grad
 template<class Type>
 Foam::tmp
 <
-    Foam::GeometricField
-    <
-        typename Foam::outerProduct<Foam::vector, Type>::type,
-        Foam::fvPatchField,
-        Foam::volMesh
-    >
+    Foam::VolField<typename Foam::outerProduct<Foam::vector, Type>::type>
 >
 Foam::fv::gradScheme<Type>::grad
 (
-    const tmp<GeometricField<Type, fvPatchField, volMesh>>& tvsf
+    const tmp<VolField<Type>>& tvsf
 ) const
 {
     typedef typename outerProduct<vector, Type>::type GradType;
-    typedef GeometricField<GradType, fvPatchField, volMesh> GradFieldType;
 
-    tmp<GradFieldType> tgrad = grad(tvsf());
+    tmp<VolField<GradType>> tgrad = grad(tvsf());
     tvsf.clear();
     return tgrad;
 }

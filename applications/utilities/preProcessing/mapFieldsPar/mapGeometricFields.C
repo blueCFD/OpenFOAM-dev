@@ -36,9 +36,9 @@ namespace Foam
 {
 
 template<class Type>
-void evaluateConstraintTypes(GeometricField<Type, fvPatchField, volMesh>& fld)
+void evaluateConstraintTypes(VolField<Type>& fld)
 {
-    typename GeometricField<Type, fvPatchField, volMesh>::
+    typename VolField<Type>::
         Boundary& fldBf = fld.boundaryFieldRef();
 
     if
@@ -141,7 +141,7 @@ void mapVolTypeFields
             typeIOobject<VolField<Type>> targetIO
             (
                 fieldName,
-                tgtMesh.time().timeName(),
+                tgtMesh.time().name(),
                 tgtMesh,
                 IOobject::MUST_READ
             );
@@ -209,7 +209,7 @@ void Foam::mapGeometricFields
 
     {
         // Search for list of source objects for this time
-        IOobjectList objects(srcMesh, srcMesh.time().timeName());
+        IOobjectList objects(srcMesh, srcMesh.time().name());
 
         // Map the fields
         #define MapVolTypeFields(Type, nullArg)                                \
@@ -225,7 +225,7 @@ void Foam::mapGeometricFields
 
     {
         // Search for list of target objects for this time
-        IOobjectList objects(tgtMesh, tgtMesh.time().timeName());
+        IOobjectList objects(tgtMesh, tgtMesh.time().name());
 
         // Mark surface and point fields as unmapped
         #define UnMappedTypeFields(Type, GeoField)                             \

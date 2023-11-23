@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,7 +59,7 @@ protected:
     // Protected data
 
         //- The vol field to interpolate
-        const GeometricField<Type, fvPatchField, volMesh>& psi_;
+        const VolField<Type>& psi_;
 
         //- Reference to the mesh
         const polyMesh& mesh_;
@@ -79,7 +79,7 @@ public:
             interpolation,
             dictionary,
             (
-                const GeometricField<Type, fvPatchField, volMesh>& psi
+                const VolField<Type>& psi
             ),
             (psi)
         );
@@ -91,14 +91,14 @@ public:
         static autoPtr<interpolation<Type>> New
         (
             const word& interpolationType,
-            const GeometricField<Type, fvPatchField, volMesh>& psi
+            const VolField<Type>& psi
         );
 
         //- Return a reference to the selected interpolation scheme
         static autoPtr<interpolation<Type>> New
         (
             const dictionary& interpolationSchemes,
-            const GeometricField<Type, fvPatchField, volMesh>& psi
+            const VolField<Type>& psi
         );
 
 
@@ -107,7 +107,7 @@ public:
         //- Construct from components
         interpolation
         (
-            const GeometricField<Type, fvPatchField, volMesh>& psi
+            const VolField<Type>& psi
         );
 
 
@@ -119,7 +119,7 @@ public:
     // Member Functions
 
         //- Return the field to be interpolated
-        const GeometricField<Type, fvPatchField, volMesh>& psi() const
+        const VolField<Type>& psi() const
         {
             return psi_;
         }
@@ -136,8 +136,8 @@ public:
         virtual tmp<Field<Type>> interpolate
         (
             const vectorField& position,
-            const labelField& celli,
-            const labelField& facei = NullObjectRef<labelField>()
+            const labelList& celli,
+            const labelList& facei = NullObjectRef<labelList>()
         ) const = 0;
 
         //- Interpolate field to the given coordinates in the tetrahedron
@@ -155,10 +155,10 @@ public:
         virtual tmp<Field<Type>> interpolate
         (
             const Field<barycentric>& coordinates,
-            const labelField& celli,
-            const labelField& tetFacei,
-            const labelField& tetPti,
-            const labelField& facei = NullObjectRef<labelField>()
+            const labelList& celli,
+            const labelList& tetFacei,
+            const labelList& tetPti,
+            const labelList& facei = NullObjectRef<labelList>()
         ) const = 0;
 };
 
@@ -186,18 +186,18 @@ public:
         virtual tmp<Field<Type>> interpolate
         (
             const vectorField& position,
-            const labelField& celli,
-            const labelField& facei = NullObjectRef<labelField>()
+            const labelList& celli,
+            const labelList& facei = NullObjectRef<labelList>()
         ) const;
 
         //- Interpolate field to the given coordinates in the given tetrahedra
         virtual tmp<Field<Type>> interpolate
         (
             const Field<barycentric>& coordinates,
-            const labelField& celli,
-            const labelField& tetFacei,
-            const labelField& tetPti,
-            const labelField& facei = NullObjectRef<labelField>()
+            const labelList& celli,
+            const labelList& tetFacei,
+            const labelList& tetPti,
+            const labelList& facei = NullObjectRef<labelList>()
         ) const;
 };
 
@@ -208,22 +208,13 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeInterpolationType(SS, Type)                                        \
-                                                                               \
-defineNamedTemplateTypeNameAndDebug(SS<Type>, 0);                              \
-                                                                               \
-interpolation<Type>::adddictionaryConstructorToTable<SS<Type>>                 \
-    add##SS##Type##ConstructorToTable_;
+#define defineInterpolation(Type, InterpolationType)                           \
+    defineNamedTemplateTypeNameAndDebug(InterpolationType<Type>, 0);
 
-
-#define makeInterpolation(SS)                                                  \
-                                                                               \
-makeInterpolationType(SS, scalar)                                              \
-makeInterpolationType(SS, vector)                                              \
-makeInterpolationType(SS, sphericalTensor)                                     \
-makeInterpolationType(SS, symmTensor)                                          \
-makeInterpolationType(SS, tensor)
-
+#define makeInterpolation(Type, InterpolationType)                             \
+    interpolation<Type>::                                                      \
+        adddictionaryConstructorToTable<InterpolationType<Type>>               \
+        add##InterpolationType##Type##ConstructorToTable_;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

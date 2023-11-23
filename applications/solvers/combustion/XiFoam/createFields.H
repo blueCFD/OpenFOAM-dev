@@ -14,7 +14,7 @@ volScalarField rho
     IOobject
     (
         "rho",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
@@ -34,7 +34,7 @@ volVectorField U
     IOobject
     (
         "U",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -59,10 +59,17 @@ autoPtr<compressible::momentumTransportModel> turbulence
 );
 
 Info<< "Creating thermophysical transport model\n" << endl;
-autoPtr<fluidThermoThermophysicalTransportModel> thermophysicalTransport
-(
-    fluidThermoThermophysicalTransportModel::New(turbulence(), thermo)
-);
+turbulenceThermophysicalTransportModels::unityLewisEddyDiffusivity
+<
+    RASThermophysicalTransportModel
+    <
+        ThermophysicalTransportModel
+        <
+            compressibleMomentumTransportModel,
+            fluidThermo
+        >
+    >
+> thermophysicalTransport(turbulence(), thermo, true);
 
 Info<< "Creating field dpdt\n" << endl;
 volScalarField dpdt
@@ -70,7 +77,7 @@ volScalarField dpdt
     IOobject
     (
         "dpdt",
-        runTime.timeName(),
+        runTime.name(),
         mesh
     ),
     mesh,
@@ -86,7 +93,7 @@ volScalarField Xi
     IOobject
     (
         "Xi",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -108,7 +115,7 @@ volScalarField Su
     IOobject
     (
         "Su",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -125,7 +132,7 @@ volScalarField St
     IOobject
     (
         "St",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::NO_READ,
         IOobject::AUTO_WRITE

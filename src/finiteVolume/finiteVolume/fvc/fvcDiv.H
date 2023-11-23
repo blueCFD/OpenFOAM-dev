@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,121 +51,105 @@ namespace Foam
 namespace fvc
 {
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
-        const GeometricField<Type, fvsPatchField, surfaceMesh>&
+        const SurfaceField<Type>&
     );
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
-        const tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>&
+        const tmp<SurfaceField<Type>>&
     );
 
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > div
+    tmp<VolField<typename innerProduct<vector, Type>::type>> div
     (
-        const GeometricField<Type, fvPatchField, volMesh>&,
+        const VolField<Type>&,
         const word& name
     );
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > div
+    tmp<VolField<typename innerProduct<vector, Type>::type>> div
     (
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&,
+        const tmp<VolField<Type>>&,
         const word& name
     );
 
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > div
+    tmp<VolField<typename innerProduct<vector, Type>::type>> div
     (
-        const GeometricField<Type, fvPatchField, volMesh>&
+        const VolField<Type>&
     );
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > div
+    tmp<VolField<typename innerProduct<vector, Type>::type>> div
     (
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&
+        const tmp<VolField<Type>>&
     );
 
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const surfaceScalarField&,
-        const GeometricField<Type, fvPatchField, volMesh>&,
+        const VolField<Type>&,
         const word& name
     );
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const tmp<surfaceScalarField>&,
-        const GeometricField<Type, fvPatchField, volMesh>&,
+        const VolField<Type>&,
         const word& name
     );
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const surfaceScalarField&,
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&,
+        const tmp<VolField<Type>>&,
         const word& name
     );
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const tmp<surfaceScalarField>&,
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&,
+        const tmp<VolField<Type>>&,
         const word& name
     );
 
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const surfaceScalarField&,
-        const GeometricField<Type, fvPatchField, volMesh>&
+        const VolField<Type>&
     );
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const tmp<surfaceScalarField>&,
-        const GeometricField<Type, fvPatchField, volMesh>&
+        const VolField<Type>&
     );
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const surfaceScalarField&,
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&
+        const tmp<VolField<Type>>&
     );
 
     template<class Type>
-    tmp<GeometricField<Type, fvPatchField, volMesh>> div
+    tmp<VolField<Type>> div
     (
         const tmp<surfaceScalarField>&,
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&
+        const tmp<VolField<Type>>&
     );
 }
 

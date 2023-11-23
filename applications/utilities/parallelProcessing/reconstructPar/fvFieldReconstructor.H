@@ -152,31 +152,31 @@ public:
 
         //- Reconstruct volume field
         template<class Type>
-        tmp<GeometricField<Type, fvPatchField, volMesh>>
+        tmp<VolField<Type>>
         reconstructFvVolumeField
         (
             const IOobject& fieldIoObject,
-            const PtrList<GeometricField<Type, fvPatchField, volMesh>>&
+            const PtrList<VolField<Type>>&
         ) const;
 
         //- Read and reconstruct volume field
         template<class Type>
-        tmp<GeometricField<Type, fvPatchField, volMesh>>
+        tmp<VolField<Type>>
         reconstructFvVolumeField(const IOobject& fieldIoObject) const;
 
 
         //- Reconstruct surface field
         template<class Type>
-        tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
+        tmp<SurfaceField<Type>>
         reconstructFvSurfaceField
         (
             const IOobject& fieldIoObject,
-            const PtrList<GeometricField<Type, fvsPatchField, surfaceMesh>>&
+            const PtrList<SurfaceField<Type>>&
         ) const;
 
         //- Read and reconstruct surface field
         template<class Type>
-        tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
+        tmp<SurfaceField<Type>>
         reconstructFvSurfaceField(const IOobject& fieldIoObject) const;
 
         //- Read, reconstruct and write all/selected volume internal fields

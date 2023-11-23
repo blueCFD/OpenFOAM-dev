@@ -892,8 +892,6 @@ void Foam::medialAxisMeshMover::syncPatchDisplacement
     const indirectPrimitivePatch& pp = adaptPatchPtr_();
     const labelList& meshPoints = pp.meshPoints();
 
-    label nChangedTotal = 0;
-
     while (true)
     {
         label nChanged = 0;
@@ -920,81 +918,11 @@ void Foam::medialAxisMeshMover::syncPatchDisplacement
             }
         }
 
-        // labelList syncPatchNLayers(patchNLayers);
-        //
-        // syncTools::syncPointList
-        //(
-        //    mesh(),
-        //    meshPoints,
-        //    syncPatchNLayers,
-        //    minEqOp<label>(),
-        //    labelMax            // null value
-        //);
-        //
-        //// Reset if differs
-        //// 1. take max
-        // forAll(syncPatchNLayers, i)
-        //{
-        //    if (syncPatchNLayers[i] != patchNLayers[i])
-        //    {
-        //        if
-        //        (
-        //            unmarkExtrusion
-        //            (
-        //                i,
-        //                patchDisp,
-        //                patchNLayers,
-        //                extrudeStatus
-        //            )
-        //        )
-        //        {
-        //            nChanged++;
-        //        }
-        //    }
-        //}
-        //
-        // syncTools::syncPointList
-        //(
-        //    mesh(),
-        //    meshPoints,
-        //    syncPatchNLayers,
-        //    maxEqOp<label>(),
-        //    labelMin            // null value
-        //);
-        //
-        //// Reset if differs
-        //// 2. take min
-        // forAll(syncPatchNLayers, i)
-        //{
-        //    if (syncPatchNLayers[i] != patchNLayers[i])
-        //    {
-        //        if
-        //        (
-        //            unmarkExtrusion
-        //            (
-        //                i,
-        //                patchDisp,
-        //                patchNLayers,
-        //                extrudeStatus
-        //            )
-        //        )
-        //        {
-        //            nChanged++;
-        //        }
-        //    }
-        //}
-
-        nChangedTotal += nChanged;
-
         if (!returnReduce(nChanged, sumOp<label>()))
         {
             break;
         }
     }
-
-    // Info<< "Prevented extrusion on "
-    //    << returnReduce(nChangedTotal, sumOp<label>())
-    //    << " coupled patch points during syncPatchDisplacement." << endl;
 }
 
 
@@ -1236,7 +1164,7 @@ void Foam::medialAxisMeshMover::findIsolatedRegions
             (
                 mesh().time().path()
               / "islandExcludePoints_"
-              + mesh().time().timeName()
+              + mesh().time().name()
               + ".obj"
             )
         );
@@ -1605,7 +1533,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
         IOobject
         (
             "scale",
-            pointDisplacement.time().timeName(),
+            pointDisplacement.time().name(),
             pointDisplacement.db(),
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
@@ -1630,7 +1558,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
         IOobject
         (
             "dispVec",
-            pointDisplacement.time().timeName(),
+            pointDisplacement.time().name(),
             pointDisplacement.db(),
             IOobject::NO_READ,
             IOobject::NO_WRITE,
@@ -1644,7 +1572,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
         IOobject
         (
             "medialRatio",
-            pointDisplacement.time().timeName(),
+            pointDisplacement.time().name(),
             pointDisplacement.db(),
             IOobject::NO_READ,
             IOobject::NO_WRITE,
@@ -1658,7 +1586,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
         IOobject
         (
             "pointMedialDist",
-            pointDisplacement.time().timeName(),
+            pointDisplacement.time().name(),
             pointDisplacement.db(),
             IOobject::NO_READ,
             IOobject::NO_WRITE,
@@ -1672,7 +1600,7 @@ Foam::medialAxisMeshMover::medialAxisMeshMover
         IOobject
         (
             "medialVec",
-            pointDisplacement.time().timeName(),
+            pointDisplacement.time().name(),
             pointDisplacement.db(),
             IOobject::NO_READ,
             IOobject::NO_WRITE,
@@ -1808,7 +1736,7 @@ void Foam::medialAxisMeshMover::calculateDisplacement
             (
                 mesh().time().path()
               / "thicknessRatioExcludePoints_"
-              + mesh().time().timeName()
+              + mesh().time().name()
               + ".obj"
             )
         );
@@ -1826,7 +1754,7 @@ void Foam::medialAxisMeshMover::calculateDisplacement
             (
                 mesh().time().path()
               / "thicknessRatioExcludeMedialVec_"
-              + mesh().time().timeName()
+              + mesh().time().name()
               + ".obj"
             )
         );

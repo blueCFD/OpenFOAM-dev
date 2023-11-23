@@ -668,6 +668,35 @@ Foam::polyMesh::polyMesh
 }
 
 
+Foam::polyMesh::polyMesh(polyMesh&& mesh)
+:
+    objectRegistry(move(mesh)),
+    primitiveMesh(move(mesh)),
+    points_(move(mesh.points_)),
+    faces_(move(mesh.faces_)),
+    owner_(move(mesh.owner_)),
+    neighbour_(move(mesh.neighbour_)),
+    clearedPrimitives_(mesh.clearedPrimitives_),
+    boundary_(move(mesh.boundary_)),
+    bounds_(move(mesh.bounds_)),
+    comm_(mesh.comm_),
+    geometricD_(mesh.geometricD_),
+    solutionD_(mesh.solutionD_),
+    tetBasePtIsPtr_(move(mesh.tetBasePtIsPtr_)),
+    cellTreePtr_(move(mesh.cellTreePtr_)),
+    pointZones_(move(mesh.pointZones_)),
+    faceZones_(move(mesh.faceZones_)),
+    cellZones_(move(mesh.cellZones_)),
+    globalMeshDataPtr_(move(mesh.globalMeshDataPtr_)),
+    curMotionTimeIndex_(mesh.curMotionTimeIndex_),
+    oldPointsPtr_(move(mesh.oldPointsPtr_)),
+    oldCellCentresPtr_(move(mesh.oldCellCentresPtr_)),
+    storeOldCellCentres_(mesh.storeOldCellCentres_),
+    moving_(mesh.moving_),
+    topoChanged_(mesh.topoChanged_)
+{}
+
+
 void Foam::polyMesh::resetPrimitives
 (
     pointField&& points,
@@ -721,7 +750,7 @@ void Foam::polyMesh::resetPrimitives
 
 
     // Flags the mesh files as being changed
-    setInstance(time().timeName());
+    setInstance(time().name());
 
     // Check if the faces and cells are valid
     forAll(faces_, facei)
@@ -816,7 +845,7 @@ void Foam::polyMesh::reset(const polyMesh& newMesh)
     globalMeshDataPtr_.clear();
 
     // Flags the mesh files as being changed
-    setInstance(time().timeName());
+    setInstance(time().name());
 
     // Check if the faces and cells are valid
     forAll(faces_, facei)
@@ -1159,7 +1188,7 @@ void Foam::polyMesh::reorderPatches
     boundary_.clearGeom();
     clearAddressing(true);
     // Clear all but PatchMeshObjects
-    meshObject::clearUpto
+    meshObjects::clearUpto
     <
         polyMesh,
         TopologicalMeshObject,
@@ -1168,7 +1197,7 @@ void Foam::polyMesh::reorderPatches
     (
         *this
     );
-    meshObject::clearUpto
+    meshObjects::clearUpto
     <
         pointMesh,
         TopologicalMeshObject,
@@ -1181,8 +1210,8 @@ void Foam::polyMesh::reorderPatches
     boundary_.reorderPatches(newToOld, validBoundary);
 
     // Warn mesh objects
-    meshObject::reorderPatches<polyMesh>(*this, newToOld, validBoundary);
-    meshObject::reorderPatches<pointMesh>(*this, newToOld, validBoundary);
+    meshObjects::reorderPatches<polyMesh>(*this, newToOld, validBoundary);
+    meshObjects::reorderPatches<pointMesh>(*this, newToOld, validBoundary);
 }
 
 
@@ -1225,7 +1254,7 @@ void Foam::polyMesh::addPatch
     clearAddressing(true);
 
     // Clear all but PatchMeshObjects
-    meshObject::clearUpto
+    meshObjects::clearUpto
     <
         polyMesh,
         TopologicalMeshObject,
@@ -1234,7 +1263,7 @@ void Foam::polyMesh::addPatch
     (
         *this
     );
-    meshObject::clearUpto
+    meshObjects::clearUpto
     <
         pointMesh,
         TopologicalMeshObject,
@@ -1264,8 +1293,8 @@ void Foam::polyMesh::addPatch
     }
 
     // Warn mesh objects
-    meshObject::addPatch<polyMesh>(*this, insertPatchi);
-    meshObject::addPatch<pointMesh>(*this, insertPatchi);
+    meshObjects::addPatch<polyMesh>(*this, insertPatchi);
+    meshObjects::addPatch<pointMesh>(*this, insertPatchi);
 }
 
 
@@ -1370,7 +1399,7 @@ void Foam::polyMesh::setPoints(const pointField& newPoints)
 
     points_ = newPoints;
 
-    setPointsInstance(time().timeName());
+    setPointsInstance(time().name());
 
     // Adjust parallel shared points
     if (globalMeshDataPtr_.valid())
@@ -1394,8 +1423,8 @@ void Foam::polyMesh::setPoints(const pointField& newPoints)
     geometricD_ = Zero;
     solutionD_ = Zero;
 
-    meshObject::movePoints<polyMesh>(*this);
-    meshObject::movePoints<pointMesh>(*this);
+    meshObjects::movePoints<polyMesh>(*this);
+    meshObjects::movePoints<pointMesh>(*this);
 }
 
 
@@ -1441,7 +1470,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
         }
     }
 
-    setPointsInstance(time().timeName());
+    setPointsInstance(time().name());
 
     tmp<scalarField> sweptVols = primitiveMesh::movePoints
     (
@@ -1471,8 +1500,8 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
     geometricD_ = Zero;
     solutionD_ = Zero;
 
-    meshObject::movePoints<polyMesh>(*this);
-    meshObject::movePoints<pointMesh>(*this);
+    meshObjects::movePoints<polyMesh>(*this);
+    meshObjects::movePoints<pointMesh>(*this);
 
     if (debug && moveError)
     {

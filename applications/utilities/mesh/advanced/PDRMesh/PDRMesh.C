@@ -129,7 +129,7 @@ void subsetVolFields
     const label patchi,
     const Type& exposedValue,
     const word GeomVolType,
-    PtrList<GeometricField<Type, fvPatchField, volMesh>>& subFields
+    PtrList<VolField<Type>>& subFields
 )
 {
     const fvMesh& baseMesh = subsetter.baseMesh();
@@ -144,7 +144,7 @@ void subsetVolFields
 
             Info<< "Subsetting field " << fieldName << endl;
 
-            GeometricField<Type, fvPatchField, volMesh> volField
+            VolField<Type> volField
             (
                 *iter(),
                 baseMesh
@@ -201,7 +201,7 @@ void subsetSurfaceFields
     const label patchi,
     const Type& exposedValue,
     const word GeomSurfType,
-    PtrList<GeometricField<Type, fvsPatchField, surfaceMesh>>& subFields
+    PtrList<SurfaceField<Type>>& subFields
 )
 {
     const fvMesh& baseMesh = subsetter.baseMesh();
@@ -216,7 +216,7 @@ void subsetSurfaceFields
 
             Info<< "Subsetting field " << fieldName << endl;
 
-            GeometricField<Type, fvsPatchField, surfaceMesh> volField
+            SurfaceField<Type> volField
             (
                 *iter(),
                 baseMesh
@@ -752,7 +752,7 @@ int main(int argc, char *argv[])
     )();
 
     // Read all fields in time and constant directories
-    IOobjectList objects(mesh, runTime.timeName());
+    IOobjectList objects(mesh, runTime.name());
     IOobjectList timeObjects(IOobjectList(mesh, mesh.facesInstance()));
     forAllConstIter(IOobjectList, timeObjects, iter)
     {

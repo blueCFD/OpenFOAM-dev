@@ -234,7 +234,12 @@ flowRateInletVelocityFvPatchVectorField
     rhoName_(ptf.rhoName_),
     rhoInlet_(ptf.rhoInlet_),
     alphaName_(ptf.alphaName_),
-    y_(),
+    y_
+    (
+        profile_.valid() && canEvaluate()
+      ? mapper(ptf.y_)
+      : tmp<scalarField>(new scalarField())
+    ),
     area_(NaN)
 {}
 

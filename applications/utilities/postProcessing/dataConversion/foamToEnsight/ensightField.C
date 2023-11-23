@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,16 +40,16 @@ using namespace Foam;
 // * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-tmp<GeometricField<Type, fvPatchField, volMesh>>
+tmp<VolField<Type>>
 volField
 (
     const fvMeshSubset& meshSubsetter,
-    const GeometricField<Type, fvPatchField, volMesh>& vf
+    const VolField<Type>& vf
 )
 {
     if (meshSubsetter.hasSubMesh())
     {
-        tmp<GeometricField<Type, fvPatchField, volMesh>> tfld
+        tmp<VolField<Type>> tfld
         (
             meshSubsetter.interpolate(vf)
         );
@@ -300,7 +300,7 @@ void writePatchField
 template<class Type>
 void ensightField
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf,
+    const VolField<Type>& vf,
     const ensightMesh& eMesh,
     const fileName& postProcPath,
     const word& prepend,
@@ -455,7 +455,7 @@ void ensightField
     {
         // Interpolates cell values to faces - needed only when exporting
         // faceZones...
-        GeometricField<Type, fvsPatchField, surfaceMesh> sf
+        SurfaceField<Type> sf
         (
             linearInterpolate(vf)
         );
@@ -533,7 +533,7 @@ void ensightField
 template<class Type>
 void ensightPointField
 (
-    const GeometricField<Type, pointPatchField, pointMesh>& pf,
+    const PointField<Type>& pf,
     const ensightMesh& eMesh,
     const fileName& postProcPath,
     const word& prepend,
@@ -717,7 +717,7 @@ void ensightPointField
 template<class Type>
 void ensightField
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf,
+    const VolField<Type>& vf,
     const ensightMesh& eMesh,
     const fileName& postProcPath,
     const word& prepend,
@@ -729,7 +729,7 @@ void ensightField
 {
     if (nodeValues)
     {
-        tmp<GeometricField<Type, pointPatchField, pointMesh>> pfld
+        tmp<PointField<Type>> pfld
         (
             volPointInterpolation::New(vf.mesh()).interpolate(vf)
         );

@@ -328,11 +328,15 @@ private:
             const primitiveOldTimePatch& tgtPatch
         );
 
-        //- Trim the local target patch so that only parts that actually
-        //  intersect the source remain
-        virtual labelList trimLocalTgt
+        //- Finalise the intersection locally. Trims the local target patch
+        //  so that only parts that actually intersect the source remain.
+        //  Returns new-to-old map for trimming target-associated data.
+        virtual labelList finaliseLocal
         (
-            const primitiveOldTimePatch& localTgtPatch
+            const primitiveOldTimePatch& srcPatch,
+            const vectorField& srcPointNormals,
+            const vectorField& srcPointNormals0,
+            const primitiveOldTimePatch& tgtPatch
         );
 
         //- Send data that resulted from an intersection between the source
@@ -408,6 +412,12 @@ public:
         //- For each target face, the target and source areas for each
         //  source coupling
         inline const List<DynamicList<couple>>& tgtCouples() const;
+
+        //- Return the proportion of the source faces that are coupled
+        inline const List<scalar>& srcCoverage() const;
+
+        //- Return the proportion of the target faces that are coupled
+        inline const List<scalar>& tgtCoverage() const;
 };
 
 

@@ -70,20 +70,12 @@ public:
 
         //- Sum surface field contributions to create cell values
         template<class Type, class WeightType>
-        static
-        tmp
-        <
-            GeometricField
-            <
-                typename outerProduct<WeightType, Type>::type,
-                fvPatchField,
-                volMesh
-            >
-        > weightedSum
+        static tmp<VolField<typename outerProduct<WeightType, Type>::type>>
+        weightedSum
         (
             const distributionMap& map,
             const labelListList& stencil,
-            const GeometricField<Type, fvPatchField, volMesh>& fld,
+            const VolField<Type>& fld,
             const List<List<WeightType>>& stencilWeights
         );
 };

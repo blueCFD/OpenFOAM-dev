@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,16 +40,10 @@ namespace fvc
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<class Type>
-tmp
-<
-    GeometricField
-    <
-        typename outerProduct<vector,Type>::type, fvPatchField, volMesh
-    >
->
+tmp<VolField<typename outerProduct<vector, Type>::type>>
 reconstruct
 (
-    const GeometricField<Type, fvsPatchField, surfaceMesh>& ssf
+    const SurfaceField<Type>& ssf
 )
 {
     typedef typename outerProduct<vector, Type>::type GradType;
@@ -62,9 +56,9 @@ reconstruct
     const volVectorField& C = mesh.C();
     const surfaceVectorField& Cf = mesh.Cf();
 
-    tmp<GeometricField<GradType, fvPatchField, volMesh>> treconField
+    tmp<VolField<GradType>> treconField
     (
-        GeometricField<GradType, fvPatchField, volMesh>::New
+        VolField<GradType>::New
         (
             "reconstruct("+ssf.name()+')',
             mesh,
@@ -89,7 +83,7 @@ reconstruct
         rf[nei] -= (Cf[facei] - C[nei])*ssf[facei];
     }
 
-    const typename GeometricField<Type, fvsPatchField, surfaceMesh>::
+    const typename SurfaceField<Type>::
     Boundary& bsf = ssf.boundaryField();
 
     forAll(bsf, patchi)
@@ -115,20 +109,14 @@ reconstruct
 
 
 template<class Type>
-tmp
-<
-    GeometricField
-    <
-        typename outerProduct<vector, Type>::type, fvPatchField, volMesh
-    >
->
+tmp<VolField<typename outerProduct<vector, Type>::type>>
 reconstruct
 (
-    const tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>& tssf
+    const tmp<SurfaceField<Type>>& tssf
 )
 {
     typedef typename outerProduct<vector, Type>::type GradType;
-    tmp<GeometricField<GradType, fvPatchField, volMesh>> tvf
+    tmp<VolField<GradType>> tvf
     (
         fvc::reconstruct(tssf())
     );

@@ -53,7 +53,8 @@ unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>::
 unityLewisEddyDiffusivity
 (
     const momentumTransportModel& momentumTransport,
-    const thermoModel& thermo
+    const thermoModel& thermo,
+    const bool allowDefaultPrt
 )
 :
     unityLewisEddyDiffusivity
@@ -61,7 +62,7 @@ unityLewisEddyDiffusivity
         typeName,
         momentumTransport,
         thermo,
-        false
+        allowDefaultPrt
     )
 {
     this->printCoeffs(typeName);
@@ -111,7 +112,7 @@ unityLewisEddyDiffusivity
                 "alphat",
                 this->momentumTransport().alphaRhoPhi().group()
             ),
-            momentumTransport.time().timeName(),
+            momentumTransport.time().name(),
             momentumTransport.mesh(),
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE

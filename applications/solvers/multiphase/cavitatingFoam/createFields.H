@@ -6,7 +6,7 @@ volScalarField p
     IOobject
     (
         "p",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -19,7 +19,7 @@ volScalarField rho
     IOobject
     (
         "rho",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -33,7 +33,7 @@ volVectorField U
     IOobject
     (
         "U",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -51,7 +51,7 @@ surfaceScalarField rhoPhi
     IOobject
     (
         "rhoPhi",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::NO_READ,
         IOobject::NO_WRITE
@@ -61,7 +61,7 @@ surfaceScalarField rhoPhi
 
 Info<< "Reading phaseProperties\n" << endl;
 
-incompressibleTwoPhaseMixture mixture(U, phi);
+incompressibleTwoPhaseMixture mixture(mesh);
 
 volScalarField& alphav(mixture.alpha1());
 alphav.oldTime();

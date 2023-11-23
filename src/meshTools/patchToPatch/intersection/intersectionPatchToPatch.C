@@ -542,13 +542,22 @@ void Foam::patchToPatches::intersection::initialise
 }
 
 
-Foam::labelList Foam::patchToPatches::intersection::trimLocalTgt
+Foam::labelList Foam::patchToPatches::intersection::finaliseLocal
 (
-    const primitiveOldTimePatch& localTgtPatch
+    const primitiveOldTimePatch& srcPatch,
+    const vectorField& srcPointNormals,
+    const vectorField& srcPointNormals0,
+    const primitiveOldTimePatch& tgtPatch
 )
 {
     const labelList newToOldLocalTgtFace =
-        patchToPatch::trimLocalTgt(localTgtPatch);
+        patchToPatch::finaliseLocal
+        (
+            srcPatch,
+            srcPointNormals,
+            srcPointNormals0,
+            tgtPatch
+        );
 
     tgtCouples_ = List<DynamicList<couple>>(tgtCouples_, newToOldLocalTgtFace);
 
@@ -847,7 +856,8 @@ Foam::label Foam::patchToPatches::intersection::finalise
                 "openness", false, srcOpenness,
                 "error", false, srcError,
                 "depth", false, srcDepth,
-                "angle", false, srcAngle
+                "angle", false, srcAngle,
+                "normals", true, srcPointNormals
             );
 
             Info<< indent << "Writing target patch to "

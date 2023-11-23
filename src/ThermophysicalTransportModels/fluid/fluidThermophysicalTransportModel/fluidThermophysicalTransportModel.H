@@ -87,13 +87,6 @@ public:
         //- Access function to fluid thermophysical properties
         virtual const fluidThermo& thermo() const = 0;
 
-        //- Effective thermal turbulent diffusivity of mixture [kg/m/s]
-        virtual tmp<volScalarField> alphaEff() const = 0;
-
-        //- Effective thermal turbulent diffusivity of mixture
-        //  for patch [kg/m/s]
-        virtual tmp<scalarField> alphaEff(const label patchi) const = 0;
-
         //- Effective mass diffusion coefficient
         //  for a given specie mass-fraction [kg/m/s]
         virtual tmp<volScalarField> DEff(const volScalarField& Yi) const = 0;

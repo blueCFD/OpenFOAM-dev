@@ -1,0 +1,26 @@
+EXE_INC = \
+    -I../phaseSystems/lnInclude \
+    -I$(LIB_SRC)/physicalProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+    -I$(LIB_SRC)/twoPhaseModels/twoPhaseMixture/lnInclude \
+    -I$(LIB_SRC)/twoPhaseModels/compressibleTwoPhaseMixture/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/phaseCompressible/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
+
+LIB_LIBS = \
+    -lphaseSystem \
+    -lmultiphaseSystems \
+    -leulerianInterfacialModels \
+    -leulerianInterfacialCompositionModels \
+    -lmultiphaseMomentumTransportModels \
+    -lmultiphaseReactions \
+    -lmultiphaseProperties \
+    -lphaseFluidThermophysicalTransportModels \
+    -lphaseFluidMulticomponentThermophysicalTransportModels \
+    -lcompressibleTwoPhaseMixture \
+    -lfiniteVolume \
+    -lfvModels \
+    -lmeshTools

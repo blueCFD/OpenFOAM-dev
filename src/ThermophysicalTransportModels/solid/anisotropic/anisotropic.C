@@ -115,6 +115,10 @@ Foam::solidThermophysicalTransportModels::anisotropic::anisotropic
 :
     solidThermophysicalTransportModel(typeName, thermo),
     coordinateSystem_(coordinateSystem::New(thermo.mesh(), coeffDict())),
+    boundaryAligned_
+    (
+        coeffDict().lookupOrDefault<Switch>("boundaryAligned", false)
+    ),
     aligned_(thermo.mesh().boundary().size(), true)
 {
     if (coeffDict().found("zones"))
@@ -127,15 +131,15 @@ Foam::solidThermophysicalTransportModels::anisotropic::anisotropic
         {
             if (iter().isDict())
             {
-                const word& name = iter().keyword();
+                const word& zoneName = iter().keyword();
                 const dictionary& dict = iter().dict();
 
-                Info<< "        " << name << endl;
+                Info<< "        " << zoneName << endl;
 
                 zoneCoordinateSystems_.insert
                 (
-                    name,
-                    coordinateSystem::New(name, dict).ptr()
+                    zoneName,
+                    coordinateSystem::New(zoneName, dict).ptr()
                 );
             }
         }
@@ -151,7 +155,11 @@ Foam::solidThermophysicalTransportModels::anisotropic::anisotropic
 
     forAll(bMesh, patchi)
     {
-        if (bMesh[patchi].size())
+        if
+        (
+            !bMesh[patchi].coupled()
+          && returnReduce(bMesh[patchi].size(), sumOp<label>())
+        )
         {
             const vectorField n(bMesh[patchi].nf());
             const vectorField nKappa(n & Kappa(patchi));
@@ -178,6 +186,16 @@ Foam::solidThermophysicalTransportModels::anisotropic::anisotropic
         }
     }
 
+    if (!aligned && boundaryAligned_)
+    {
+        aligned_ = true;
+        aligned = true;
+
+        Info<<
+            "    boundaryAligned is set true, "
+            "boundary alignment of kappa will be enforced." << endl;
+    }
+
     // If Kappa is not aligned with any patch enable grad(T) caching
     // because the patch grad(T) will be required for the heat-flux correction
     if (!aligned)
@@ -197,6 +215,7 @@ Foam::solidThermophysicalTransportModels::anisotropic::anisotropic
 
 bool Foam::solidThermophysicalTransportModels::anisotropic::read()
 {
+
     return true;
 }
 
@@ -212,8 +231,7 @@ Foam::solidThermophysicalTransportModels::anisotropic::Kappa() const
         setZonesPatchFaces();
     }
 
-    const tmp<volVectorField> tmaterialKappa(thermo.Kappa());
-    const volVectorField& materialKappa = tmaterialKappa();
+    const volVectorField& materialKappa = thermo.Kappa();
 
     tmp<volSymmTensorField> tKappa
     (
@@ -248,11 +266,13 @@ Foam::solidThermophysicalTransportModels::anisotropic::Kappa() const
         const labelList& zoneCells = mesh.cellZones()[iter().name()];
         const coordinateSystem& cs = iter();
 
+        symmTensorField& KappaIf = Kappa;
+
         forAll(zoneCells, i)
         {
             const label celli = zoneCells[i];
 
-            Kappa[celli] =
+            KappaIf[celli] =
                 cs.R().transformDiagTensor
                 (
                     mesh.C()[celli],
@@ -299,7 +319,7 @@ Foam::solidThermophysicalTransportModels::anisotropic::Kappa
     const solidThermo& thermo = this->thermo();
     const vectorField& CPf = thermo.mesh().boundary()[patchi].Cf();
 
-    const vectorField materialKappaPf(thermo.Kappa(patchi));
+    const vectorField& materialKappaPf(thermo.Kappa().boundaryField()[patchi]);
 
     tmp<symmTensorField> tKappa
     (

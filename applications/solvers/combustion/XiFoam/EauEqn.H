@@ -8,11 +8,11 @@ if (ign.ignited())
       + (fvc::ddt(rho, K) + fvc::div(phi, K))*rho/thermo.rhou()
       + (
             heau.name() == "eau"
-          ? mvConvection->fvcDiv(fvc::absolute(phi, rho, U), p/rho)
+          ? fvc::div(fvc::absolute(phi, rho, U), p/rho)
            *rho/thermo.rhou()
           : -dpdt*rho/thermo.rhou()
         )
-      - fvm::laplacian(thermophysicalTransport->alphaEff(), heau)
+      + thermophysicalTransport.divq(heau)
 
         // These terms cannot be used in partially-premixed combustion due to
         // the resultant inconsistency between ft and heau transport.

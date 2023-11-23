@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
         IOobject
         (
             "qr",
-            runTime.timeName(),
+            runTime.name(),
             mesh,
             IOobject::MUST_READ,
             IOobject::NO_WRITE
@@ -338,7 +338,7 @@ int main(int argc, char *argv[])
         IOobject
         (
             "coarse:" + mesh.name(),
-            runTime.timeName(),
+            runTime.name(),
             runTime,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -526,11 +526,9 @@ int main(int argc, char *argv[])
 
     labelListList visibleFaceFaces(nCoarseFaces);
 
-    label nViewFactors = 0;
     forAll(nVisibleFaceFaces, facei)
     {
         visibleFaceFaces[facei].setSize(nVisibleFaceFaces[facei]);
-        nViewFactors += nVisibleFaceFaces[facei];
     }
 
 
@@ -847,7 +845,7 @@ int main(int argc, char *argv[])
             IOobject
             (
                 "viewFactorField",
-                mesh.time().timeName(),
+                mesh.time().name(),
                 mesh,
                 IOobject::NO_READ,
                 IOobject::NO_WRITE

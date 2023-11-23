@@ -69,14 +69,14 @@ void Foam::fvMesh::clearGeomNotOldVol()
         Pout<< FUNCTION_NAME << "clearGeomNotOldVol" << endl;
     }
 
-    meshObject::clearUpto
+    meshObjects::clearUpto
     <
         fvMesh,
         GeometricMeshObject,
         MoveableMeshObject
     >(*this);
 
-    meshObject::clearUpto
+    meshObjects::clearUpto
     <
         lduMesh,
         GeometricMeshObject,
@@ -155,7 +155,7 @@ void Foam::fvMesh::clearAddressing(const bool isMeshUpdate)
     {
         // Part of a mesh update. Keep meshObjects that have an topoChange
         // callback
-        meshObject::clearUpto
+        meshObjects::clearUpto
         <
             fvMesh,
             TopologicalMeshObject,
@@ -164,7 +164,7 @@ void Foam::fvMesh::clearAddressing(const bool isMeshUpdate)
         (
             *this
         );
-        meshObject::clearUpto
+        meshObjects::clearUpto
         <
             lduMesh,
             TopologicalMeshObject,
@@ -176,8 +176,8 @@ void Foam::fvMesh::clearAddressing(const bool isMeshUpdate)
     }
     else
     {
-        meshObject::clear<fvMesh, TopologicalMeshObject>(*this);
-        meshObject::clear<lduMesh, TopologicalMeshObject>(*this);
+        meshObjects::clear<fvMesh, TopologicalMeshObject>(*this);
+        meshObjects::clear<lduMesh, TopologicalMeshObject>(*this);
     }
 
     deleteDemandDrivenData(lduPtr_);
@@ -222,7 +222,7 @@ void Foam::fvMesh::storeOldVol(const scalarField& V)
                 IOobject
                 (
                     "V0",
-                    time().timeName(),
+                    time().name(),
                     *this,
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
@@ -381,7 +381,7 @@ Foam::fvMesh::fvMesh
                 IOobject
                 (
                     "V0",
-                    time().timeName(),
+                    time().name(),
                     *this,
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE,
@@ -401,7 +401,7 @@ Foam::fvMesh::fvMesh
                 IOobject
                 (
                     "meshPhi",
-                    time().timeName(),
+                    time().name(),
                     *this,
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE,
@@ -580,6 +580,47 @@ Foam::fvMesh::fvMesh
 }
 
 
+Foam::fvMesh::fvMesh(fvMesh&& mesh)
+:
+    polyMesh(Foam::move(mesh)),
+    surfaceInterpolation(Foam::move(mesh)),
+    data(static_cast<const objectRegistry&>(*this)),
+    boundary_(Foam::move(mesh.boundary_)),
+    stitcher_(Foam::move(mesh.stitcher_)),
+    topoChanger_(Foam::move(mesh.topoChanger_)),
+    distributor_(Foam::move(mesh.distributor_)),
+    mover_(Foam::move(mesh.mover_)),
+    lduPtr_(Foam::move(mesh.lduPtr_)),
+    polyFacesBfPtr_(Foam::move(mesh.polyFacesBfPtr_)),
+    polyBFaceOffsetsPtr_(Foam::move(mesh.polyBFaceOffsetsPtr_)),
+    polyBFaceOffsetPatchesPtr_(Foam::move(mesh.polyBFaceOffsetPatchesPtr_)),
+    polyBFaceOffsetPatchFacesPtr_
+    (
+        Foam::move(mesh.polyBFaceOffsetPatchFacesPtr_)
+    ),
+    polyBFacePatchesPtr_(Foam::move(mesh.polyBFacePatchesPtr_)),
+    polyBFacePatchFacesPtr_(Foam::move(mesh.polyBFacePatchFacesPtr_)),
+    curTimeIndex_(mesh.curTimeIndex_),
+    VPtr_(Foam::move(mesh.VPtr_)),
+    V0Ptr_(Foam::move(mesh.V0Ptr_)),
+    V00Ptr_(Foam::move(mesh.V00Ptr_)),
+    SfSlicePtr_(Foam::move(mesh.SfSlicePtr_)),
+    SfPtr_(Foam::move(mesh.SfPtr_)),
+    magSfSlicePtr_(Foam::move(mesh.magSfSlicePtr_)),
+    magSfPtr_(Foam::move(mesh.magSfPtr_)),
+    CSlicePtr_(Foam::move(mesh.CSlicePtr_)),
+    CPtr_(Foam::move(mesh.CPtr_)),
+    CfSlicePtr_(Foam::move(mesh.CfSlicePtr_)),
+    CfPtr_(Foam::move(mesh.CfPtr_)),
+    phiPtr_(Foam::move(mesh.phiPtr_))
+{
+    if (debug)
+    {
+        Pout<< FUNCTION_NAME << "Moving fvMesh" << endl;
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 Foam::fvMesh::~fvMesh()
@@ -590,6 +631,12 @@ Foam::fvMesh::~fvMesh()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+bool Foam::fvMesh::topoChanging() const
+{
+    return topoChanger_->dynamic();
+}
+
+
 bool Foam::fvMesh::dynamic() const
 {
     return topoChanger_->dynamic() || mover_->dynamic();
@@ -598,8 +645,6 @@ bool Foam::fvMesh::dynamic() const
 
 bool Foam::fvMesh::update()
 {
-    if (!conformal()) stitcher_->disconnect(true, true);
-
     if
     (
         stitcher_->stitches()
@@ -609,6 +654,8 @@ bool Foam::fvMesh::update()
     {
         nullOldestTimeFields();
     }
+
+    if (!conformal()) stitcher_->disconnect(true, true);
 
     const bool hasV00 = V00Ptr_;
     deleteDemandDrivenData(V00Ptr_);
@@ -1086,8 +1133,8 @@ void Foam::fvMesh::setPoints(const pointField& p)
     boundary_.movePoints();
     surfaceInterpolation::movePoints();
 
-    meshObject::movePoints<fvMesh>(*this);
-    meshObject::movePoints<lduMesh>(*this);
+    meshObjects::movePoints<fvMesh>(*this);
+    meshObjects::movePoints<lduMesh>(*this);
 
     const_cast<Time&>(time()).functionObjects().movePoints(*this);
 }
@@ -1114,7 +1161,7 @@ Foam::tmp<Foam::scalarField> Foam::fvMesh::movePoints(const pointField& p)
             IOobject
             (
                 "meshPhi",
-                this->time().timeName(),
+                this->time().name(),
                 *this,
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
@@ -1170,8 +1217,8 @@ Foam::tmp<Foam::scalarField> Foam::fvMesh::movePoints(const pointField& p)
     boundary_.movePoints();
     surfaceInterpolation::movePoints();
 
-    meshObject::movePoints<fvMesh>(*this);
-    meshObject::movePoints<lduMesh>(*this);
+    meshObjects::movePoints<fvMesh>(*this);
+    meshObjects::movePoints<lduMesh>(*this);
 
     const_cast<Time&>(time()).functionObjects().movePoints(*this);
 
@@ -1270,8 +1317,8 @@ void Foam::fvMesh::topoChange(const polyTopoChangeMap& map)
     // Clear any non-updateable addressing
     clearAddressing(true);
 
-    meshObject::topoChange<fvMesh>(*this, map);
-    meshObject::topoChange<lduMesh>(*this, map);
+    meshObjects::topoChange<fvMesh>(*this, map);
+    meshObjects::topoChange<lduMesh>(*this, map);
 
     const_cast<Time&>(time()).functionObjects().topoChange(map);
 
@@ -1306,8 +1353,8 @@ void Foam::fvMesh::mapMesh(const polyMeshMap& map)
     // Clear any non-updateable addressing
     clearAddressing(true);
 
-    meshObject::mapMesh<fvMesh>(*this, map);
-    meshObject::mapMesh<lduMesh>(*this, map);
+    meshObjects::mapMesh<fvMesh>(*this, map);
+    meshObjects::mapMesh<lduMesh>(*this, map);
 
     const_cast<Time&>(time()).functionObjects().mapMesh(map);
 
@@ -1331,8 +1378,8 @@ void Foam::fvMesh::distribute(const polyDistributionMap& map)
     // Clear any non-updateable addressing
     clearAddressing(true);
 
-    meshObject::distribute<fvMesh>(*this, map);
-    meshObject::distribute<lduMesh>(*this, map);
+    meshObjects::distribute<fvMesh>(*this, map);
+    meshObjects::distribute<lduMesh>(*this, map);
 
     const_cast<Time&>(time()).functionObjects().distribute(map);
 

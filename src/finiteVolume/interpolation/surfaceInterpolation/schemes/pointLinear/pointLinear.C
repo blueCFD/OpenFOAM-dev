@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,21 +31,21 @@ License
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::fvsPatchField, Foam::surfaceMesh>>
+Foam::tmp<Foam::SurfaceField<Type>>
 Foam::pointLinear<Type>::
 correction
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf
+    const VolField<Type>& vf
 ) const
 {
     const fvMesh& mesh = this->mesh();
 
-    GeometricField<Type, pointPatchField, pointMesh> pvf
+    PointField<Type> pvf
     (
         volPointInterpolation::New(mesh).interpolate(vf)
     );
 
-    tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> tsfCorr =
+    tmp<SurfaceField<Type>> tsfCorr =
         linearInterpolate(vf);
 
     Field<Type>& sfCorr = tsfCorr.ref().primitiveFieldRef();
@@ -103,7 +103,7 @@ correction
     }
 
 
-    typename GeometricField<Type, fvsPatchField, surfaceMesh>::
+    typename SurfaceField<Type>::
         Boundary& bSfCorr = tsfCorr.ref().boundaryFieldRef();
 
     forAll(bSfCorr, patchi)

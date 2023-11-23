@@ -107,14 +107,20 @@ subModels
     {
         patches
         (
-            "(walls|cyc.*)"
+            walls
             {
+                type        rebound;
+            }
+
+            "cycRight.*"
+            {
+                patchType   cyclic;
                 type        rebound;
             }
 
             "inlet|outlet"
             {
-                type escape;
+                type        escape;
             }
         );
     }
@@ -154,6 +160,8 @@ cloudFunctions
         (
             cycLeft_half0
             cycLeft_half1
+            cycRight_half0
+            cycRight_half1
         );
     }
 
@@ -167,6 +175,7 @@ cloudFunctions
         faceZones
         (
             cycLeft
+            cycRight
         );
     }
 }

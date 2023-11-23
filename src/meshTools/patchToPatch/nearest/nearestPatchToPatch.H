@@ -36,7 +36,7 @@ SourceFiles
 #ifndef nearestPatchToPatch_H
 #define nearestPatchToPatch_H
 
-#include "patchToPatch.H"
+#include "nearbyPatchToPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,7 +51,7 @@ namespace patchToPatches
 
 class nearest
 :
-    public patchToPatch
+    public nearby
 {
 protected:
 
@@ -65,25 +65,6 @@ protected:
 
 
     // Private Member Functions
-
-        //- Get the bound box for a source face
-        virtual treeBoundBox srcBox
-        (
-            const face& srcFace,
-            const pointField& srcPoints,
-            const vectorField& srcPointNormals
-        ) const;
-
-        //- Intersect two faces
-        bool intersectFaces
-        (
-            const primitivePatch& patch,
-            const primitivePatch& otherPatch,
-            const label facei,
-            const label otherFacei,
-            DynamicList<label>& faceOtherFaces,
-            scalar& faceDistance
-        ) const;
 
         //- Intersect two faces
         virtual bool intersectFaces
@@ -105,17 +86,31 @@ protected:
             const primitiveOldTimePatch& tgtPatch
         );
 
-        //- Trim the local target patch so that only parts that actually
-        //  intersect the source remain
-        virtual labelList trimLocalTgt
+        //- Finalise the intersection locally. Trims the local target patch
+        //  so that only parts that actually intersect the source remain.
+        //  Returns new-to-old map for trimming target-associated data.
+        virtual labelList finaliseLocal
         (
-            const primitiveOldTimePatch& localTgtPatch
+            const primitiveOldTimePatch& srcPatch,
+            const vectorField& srcPointNormals,
+            const vectorField& srcPointNormals0,
+            const primitiveOldTimePatch& tgtPatch
         );
 
         //- Send data that resulted from an intersection between the source
         //  patch and a distributed source-local-target patch back to the
         //  original target processes
         virtual void rDistributeTgt(const primitiveOldTimePatch& tgtPatch);
+
+        //- Finalise the intersection
+        virtual label finalise
+        (
+            const primitiveOldTimePatch& srcPatch,
+            const vectorField& srcPointNormals,
+            const vectorField& srcPointNormals0,
+            const primitiveOldTimePatch& tgtPatch,
+            const transformer& tgtToSrc
+        );
 
         //- For each source face, the coupled target weights
         virtual tmpNrc<List<DynamicList<scalar>>> srcWeights() const;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,13 +83,10 @@ public:
 
     // Member Functions
 
-        tmp
-        <
-            GeometricField
-            <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
-        > fvcDiv
+
+        tmp<VolField<typename innerProduct<vector, Type>::type>> fvcDiv
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
 

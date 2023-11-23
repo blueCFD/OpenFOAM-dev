@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,8 +86,8 @@ class fvMeshAdder
         (
             const mapAddedPolyMesh& meshMap,
 
-            GeometricField<Type, fvPatchField, volMesh>& fld,
-            const GeometricField<Type, fvPatchField, volMesh>& fldToAdd
+            VolField<Type>& fld,
+            const VolField<Type>& fldToAdd
         );
 
         //- Update single surfaceField.
@@ -96,8 +96,8 @@ class fvMeshAdder
         (
             const mapAddedPolyMesh& meshMap,
 
-            GeometricField<Type, fvsPatchField, surfaceMesh>& fld,
-            const GeometricField<Type, fvsPatchField, surfaceMesh>& fldToAdd
+            SurfaceField<Type>& fld,
+            const SurfaceField<Type>& fldToAdd
         );
 
         //- Update single pointField.
@@ -108,8 +108,8 @@ class fvMeshAdder
             const mapAddedPolyMesh& meshMap,
             const labelListList& oldMeshPoints,
 
-            GeometricField<Type, pointPatchField, pointMesh>& fld,
-            const GeometricField<Type, pointPatchField, pointMesh>& fldToAdd
+            PointField<Type>& fld,
+            const PointField<Type>& fldToAdd
         );
 
         //- Update single dimensionedField.

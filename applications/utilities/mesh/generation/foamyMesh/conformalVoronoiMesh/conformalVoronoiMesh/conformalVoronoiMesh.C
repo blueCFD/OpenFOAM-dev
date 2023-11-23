@@ -827,7 +827,6 @@ Foam::conformalVoronoiMesh::conformalVoronoiMesh
 :
     DistributedDelaunayMesh<Delaunay>(runTime),
     runTime_(runTime),
-    rndGen_(64293*Pstream::myProcNo()),
     foamyHexMeshControls_(foamyHexMeshDict),
     allGeometry_
     (
@@ -846,7 +845,7 @@ Foam::conformalVoronoiMesh::conformalVoronoiMesh
     geometryToConformTo_
     (
         runTime_,
-        rndGen_,
+        rndGen(),
         allGeometry_,
         foamyHexMeshDict.subDict("surfaceConformation")
     ),
@@ -856,7 +855,7 @@ Foam::conformalVoronoiMesh::conformalVoronoiMesh
       ? new backgroundMeshDecomposition
         (
             runTime_,
-            rndGen_,
+            rndGen(),
             geometryToConformTo_,
             foamyHexMeshControls().foamyHexMeshDict().subDict
             (
@@ -884,7 +883,7 @@ Foam::conformalVoronoiMesh::conformalVoronoiMesh
         (
             foamyHexMeshDict.subDict("initialPoints"),
             runTime_,
-            rndGen_,
+            rndGen(),
             geometryToConformTo_,
             cellShapeControl_,
             decomposition_
@@ -968,7 +967,7 @@ void Foam::conformalVoronoiMesh::initialiseForMotion()
     {
         DelaunayMeshTools::writeOBJ
         (
-            time().path()/"internalPoints_" + time().timeName() + ".obj",
+            time().path()/"internalPoints_" + time().name() + ".obj",
             *this,
             Foam::indexedVertexEnum::vtUnassigned,
             Foam::indexedVertexEnum::vtExternalFeaturePoint
@@ -986,7 +985,7 @@ void Foam::conformalVoronoiMesh::initialiseForConformation()
             new backgroundMeshDecomposition
             (
                 runTime_,
-                rndGen_,
+                rndGen(),
                 geometryToConformTo_,
                 foamyHexMeshControls().foamyHexMeshDict().subDict
                 (
@@ -1527,7 +1526,7 @@ void Foam::conformalVoronoiMesh::move()
         Info<< "Writing point displacement vectors to file." << endl;
         OFstream str
         (
-            time().path()/"displacements_" + runTime_.timeName() + ".obj"
+            time().path()/"displacements_" + runTime_.name() + ".obj"
         );
 
         for
@@ -1613,7 +1612,7 @@ void Foam::conformalVoronoiMesh::move()
     {
         DelaunayMeshTools::writeOBJ
         (
-            time().path()/"internalPoints_" + time().timeName() + ".obj",
+            time().path()/"internalPoints_" + time().name() + ".obj",
             *this,
             Foam::indexedVertexEnum::vtInternal
         );
@@ -1622,13 +1621,13 @@ void Foam::conformalVoronoiMesh::move()
         {
             DelaunayMeshTools::writeBoundaryPoints
             (
-                time().path()/"boundaryPoints_" + time().timeName() + ".obj",
+                time().path()/"boundaryPoints_" + time().name() + ".obj",
                 *this
             );
 
             DelaunayMeshTools::writeOBJ
             (
-                time().path()/"internalBoundaryPoints_" + time().timeName()
+                time().path()/"internalBoundaryPoints_" + time().name()
               + ".obj",
                 *this,
                 Foam::indexedVertexEnum::vtInternalSurface,
@@ -1637,7 +1636,7 @@ void Foam::conformalVoronoiMesh::move()
 
             DelaunayMeshTools::writeOBJ
             (
-                time().path()/"externalBoundaryPoints_" + time().timeName()
+                time().path()/"externalBoundaryPoints_" + time().name()
               + ".obj",
                 *this,
                 Foam::indexedVertexEnum::vtExternalSurface,
@@ -1647,7 +1646,7 @@ void Foam::conformalVoronoiMesh::move()
             OBJstream multipleIntersections
             (
                 "multipleIntersections_"
-              + time().timeName()
+              + time().name()
               + ".obj"
             );
 
@@ -1705,7 +1704,7 @@ void Foam::conformalVoronoiMesh::move()
 
     if (time().writeTime())
     {
-        writeMesh(time().timeName());
+        writeMesh(time().name());
     }
 
     Info<< nl

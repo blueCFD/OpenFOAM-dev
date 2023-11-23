@@ -47,9 +47,9 @@ namespace Foam
 {
 
 template<class Type>
-void evaluateConstraintTypes(GeometricField<Type, fvPatchField, volMesh>& fld)
+void evaluateConstraintTypes(VolField<Type>& fld)
 {
-    typename GeometricField<Type, fvPatchField, volMesh>::
+    typename VolField<Type>::
         Boundary& fldBf = fld.boundaryFieldRef();
 
     if
@@ -135,23 +135,23 @@ void MeshToMeshMapVolFields
     const fvMeshToFvMesh& mapper
 )
 {
-    HashTable<const GeometricField<Type, fvPatchField, volMesh>*> fields
+    HashTable<const VolField<Type>*> fields
     (
         mesh.objectRegistry::template
-            lookupClass<GeometricField<Type, fvPatchField, volMesh>>()
+            lookupClass<VolField<Type>>()
     );
 
     // Deleted old time fields
     for
     (
-        typename HashTable<const GeometricField<Type, fvPatchField, volMesh>*>::
+        typename HashTable<const VolField<Type>*>::
             iterator fieldIter = fields.begin();
         fieldIter != fields.end();
         ++fieldIter
     )
     {
-        GeometricField<Type, fvPatchField, volMesh>& field =
-            const_cast<GeometricField<Type, fvPatchField, volMesh>&>
+        VolField<Type>& field =
+            const_cast<VolField<Type>&>
             (*fieldIter());
 
         field.clearOldTimes();
@@ -160,19 +160,19 @@ void MeshToMeshMapVolFields
     fields =
     (
         mesh.objectRegistry::template
-            lookupClass<GeometricField<Type, fvPatchField, volMesh>>()
+            lookupClass<VolField<Type>>()
     );
 
     for
     (
-        typename HashTable<const GeometricField<Type, fvPatchField, volMesh>*>::
+        typename HashTable<const VolField<Type>*>::
             iterator fieldIter = fields.begin();
         fieldIter != fields.end();
         ++fieldIter
     )
     {
-        GeometricField<Type, fvPatchField, volMesh>& field =
-            const_cast<GeometricField<Type, fvPatchField, volMesh>&>
+        VolField<Type>& field =
+            const_cast<VolField<Type>&>
             (*fieldIter());
 
         if (fvMeshToFvMesh::debug)
@@ -183,7 +183,7 @@ void MeshToMeshMapVolFields
 
         field.reset(mapper.mapSrcToTgt(field));
         evaluateConstraintTypes(field);
-        field.instance() = field.time().timeName();
+        field.instance() = field.time().name();
     }
 }
 
@@ -201,7 +201,7 @@ void NaNGeometricFields
     const fvMeshToFvMesh& mapper
 )
 {
-    typedef GeometricField<Type, PatchField, GeoMesh> Gfield;
+    typedef GeometricField<Type, PatchField, GeoMesh> GField;
 
     //- Mapper for sizing only - does not do any actual mapping.
     class patchFieldResizeMapper
@@ -220,25 +220,25 @@ void NaNGeometricFields
             {}
     };
 
-    HashTable<const Gfield*> fields
+    HashTable<const GField*> fields
     (
-        mesh.objectRegistry::template lookupClass<Gfield>()
+        mesh.objectRegistry::template lookupClass<GField>()
     );
 
     // Deleted old time fields
     for
     (
-        typename HashTable<const Gfield*>::
+        typename HashTable<const GField*>::
             iterator fieldIter = fields.begin();
         fieldIter != fields.end();
         ++fieldIter
     )
     {
-        Gfield& field = const_cast<Gfield&>(*fieldIter());
+        GField& field = const_cast<GField&>(*fieldIter());
         field.clearOldTimes();
     }
 
-    fields = mesh.objectRegistry::template lookupClass<Gfield>();
+    fields = mesh.objectRegistry::template lookupClass<GField>();
 
     Type NaN;
 
@@ -249,12 +249,12 @@ void NaNGeometricFields
 
     for
     (
-        typename HashTable<const Gfield*>::iterator fieldIter = fields.begin();
+        typename HashTable<const GField*>::iterator fieldIter = fields.begin();
         fieldIter != fields.end();
         ++fieldIter
     )
     {
-        Gfield& field = const_cast<Gfield&>(*fieldIter());
+        GField& field = const_cast<GField&>(*fieldIter());
 
         if (fvMeshToFvMesh::debug)
         {
@@ -262,7 +262,7 @@ void NaNGeometricFields
                 << endl;
         }
 
-        const typename Gfield::Mesh& mesh = field.mesh();
+        const typename GField::Mesh& mesh = field.mesh();
 
         field.primitiveFieldRef().setSize(GeoMesh::size(mesh));
         field.primitiveFieldRef() = NaN;
@@ -286,14 +286,14 @@ void NaNGeometricFields
             }
             else
             {
-                typename Gfield::Patch& pf = field.boundaryFieldRef()[patchi];
+                typename GField::Patch& pf = field.boundaryFieldRef()[patchi];
                 pf.autoMap(patchFieldResizeMapper(pf.patch().size()));
             }
 
             field.boundaryFieldRef()[patchi] == NaN;
         }
 
-        field.instance() = field.time().timeName();
+        field.instance() = field.time().name();
     }
 }
 

@@ -146,18 +146,18 @@ public:
 
         //- Decompose volume field
         template<class Type>
-        tmp<GeometricField<Type, fvPatchField, volMesh>>
+        tmp<VolField<Type>>
         decomposeField
         (
-            const GeometricField<Type, fvPatchField, volMesh>& field
+            const VolField<Type>& field
         ) const;
 
         //- Decompose surface field
         template<class Type>
-        tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
+        tmp<SurfaceField<Type>>
         decomposeField
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>& field
+            const SurfaceField<Type>& field
         ) const;
 
         //- Decompose a list of fields

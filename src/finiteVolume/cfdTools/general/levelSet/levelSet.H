@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,14 +73,14 @@ tmp<Field<Type>> levelSetAverage
 
 //- As the above overload, but both in cells and on patch faces
 template<class Type>
-tmp<GeometricField<Type, fvPatchField, volMesh>> levelSetAverage
+tmp<VolField<Type>> levelSetAverage
 (
     const volScalarField& levelC,
     const pointScalarField& levelP,
-    const GeometricField<Type, fvPatchField, volMesh>& positiveC,
-    const GeometricField<Type, pointPatchField, pointMesh>& positiveP,
-    const GeometricField<Type, fvPatchField, volMesh>& negativeC,
-    const GeometricField<Type, pointPatchField, pointMesh>& negativeP
+    const VolField<Type>& positiveC,
+    const PointField<Type>& positiveP,
+    const VolField<Type>& negativeC,
+    const PointField<Type>& negativeP
 );
 
 //- Calculate the volume-fraction that a level set occupies. This gives the

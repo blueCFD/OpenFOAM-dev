@@ -29,10 +29,10 @@ License
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::pointPatchField, Foam::pointMesh>>
+Foam::tmp<Foam::PointField<Type>>
 Foam::pointFieldDecomposer::decomposeField
 (
-    const GeometricField<Type, pointPatchField, pointMesh>& field
+    const PointField<Type>& field
 ) const
 {
     // Create and map the internal field values
@@ -73,14 +73,14 @@ Foam::pointFieldDecomposer::decomposeField
     }
 
     // Create the field for the processor
-    return tmp<GeometricField<Type, pointPatchField, pointMesh>>
+    return tmp<PointField<Type>>
     (
-        new GeometricField<Type, pointPatchField, pointMesh>
+        new PointField<Type>
         (
             IOobject
             (
                 field.name(),
-                procMesh_().time().timeName(),
+                procMesh_().time().name(),
                 procMesh_(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,

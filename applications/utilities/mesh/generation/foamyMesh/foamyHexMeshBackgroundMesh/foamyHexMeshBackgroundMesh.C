@@ -41,7 +41,7 @@ Description
 #include "cellShape.H"
 #include "cellModeller.H"
 #include "DynamicField.T.H"
-#include "isoSurface.H"
+#include "cutPolyIsoSurface.H"
 #include "vtkSurfaceWriter.H"
 #include "syncTools.H"
 
@@ -576,7 +576,7 @@ int main(int argc, char *argv[])
     if (writeMesh)
     {
         runTime++;
-        Info<< "Writing mesh to " << runTime.timeName() << endl;
+        Info<< "Writing mesh to " << runTime.name() << endl;
         backgroundMesh.mesh().write();
     }
 
@@ -600,7 +600,7 @@ int main(int argc, char *argv[])
             IOobject
             (
                 "cellDistance",
-                mesh.time().timeName(),
+                mesh.time().name(),
                 mesh.time(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
@@ -663,7 +663,7 @@ int main(int argc, char *argv[])
             IOobject
             (
                 "pointDistance",
-                mesh.time().timeName(),
+                mesh.time().name(),
                 mesh.time(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
@@ -707,13 +707,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        isoSurface iso
-        (
-            mesh,
-            cellDistance,
-            pointDistance,
-            0
-        );
+        cutPolyIsoSurface iso(mesh, pointDistance, 0);
 
         isoFaces.setSize(iso.size());
         forAll(isoFaces, i)

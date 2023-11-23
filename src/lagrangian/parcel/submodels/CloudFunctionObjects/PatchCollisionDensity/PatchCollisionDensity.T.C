@@ -44,7 +44,7 @@ void Foam::PatchCollisionDensity<CloudType>::write()
         IOobject
         (
             this->owner().name() + ":numberCollisionDensity",
-            this->owner().mesh().time().timeName(),
+            this->owner().mesh().time().name(),
             this->owner().mesh()
         ),
         this->owner().mesh(),
@@ -59,7 +59,7 @@ void Foam::PatchCollisionDensity<CloudType>::write()
         IOobject
         (
             this->owner().name() + ":numberCollisionDensityRate",
-            this->owner().mesh().time().timeName(),
+            this->owner().mesh().time().name(),
             this->owner().mesh()
         ),
         this->owner().mesh(),
@@ -75,7 +75,7 @@ void Foam::PatchCollisionDensity<CloudType>::write()
         IOobject
         (
             this->owner().name() + ":massCollisionDensity",
-            this->owner().mesh().time().timeName(),
+            this->owner().mesh().time().name(),
             this->owner().mesh()
         ),
         this->owner().mesh(),
@@ -90,7 +90,7 @@ void Foam::PatchCollisionDensity<CloudType>::write()
         IOobject
         (
             this->owner().name() + ":massCollisionDensityRate",
-            this->owner().mesh().time().timeName(),
+            this->owner().mesh().time().name(),
             this->owner().mesh()
         ),
         this->owner().mesh(),
@@ -153,7 +153,7 @@ Foam::PatchCollisionDensity<CloudType>::PatchCollisionDensity
     typeIOobject<volScalarField> numberIo
     (
         this->owner().name() + ":numberCollisionDensity",
-        this->owner().mesh().time().timeName(),
+        this->owner().mesh().time().name(),
         this->owner().mesh(),
         IOobject::MUST_READ,
         IOobject::NO_WRITE
@@ -173,7 +173,7 @@ Foam::PatchCollisionDensity<CloudType>::PatchCollisionDensity
     typeIOobject<volScalarField> massIo
     (
         this->owner().name() + ":massCollisionDensity",
-        this->owner().mesh().time().timeName(),
+        this->owner().mesh().time().name(),
         this->owner().mesh(),
         IOobject::MUST_READ,
         IOobject::NO_WRITE
@@ -236,20 +236,7 @@ Foam::PatchCollisionDensity<CloudType>::~PatchCollisionDensity()
 template<class CloudType>
 void Foam::PatchCollisionDensity<CloudType>::preEvolve()
 {
-    CloudFunctionObject<CloudType>::preEvolve();
-
     const fvMesh& mesh = this->owner().mesh();
-
-    struct fvPatchFieldSetSizer
-    :
-        public fvPatchFieldMapper,
-        public setSizeFieldMapper
-    {
-        fvPatchFieldSetSizer(const label size)
-        :
-            setSizeFieldMapper(size)
-        {}
-    };
 
     if (!mesh.conformal())
     {
@@ -259,6 +246,17 @@ void Foam::PatchCollisionDensity<CloudType>::preEvolve()
 
             if (isA<nonConformalFvPatch>(fvp))
             {
+                struct fvPatchFieldSetSizer
+                :
+                    public fvPatchFieldMapper,
+                    public setSizeFieldMapper
+                {
+                    fvPatchFieldSetSizer(const label size)
+                    :
+                        setSizeFieldMapper(size)
+                    {}
+                };
+
                 const fvPatchFieldSetSizer mapper(fvp.size());
 
                 numberCollisionDensity_[patchi].autoMap(mapper);
@@ -280,10 +278,11 @@ template<class CloudType>
 void Foam::PatchCollisionDensity<CloudType>::postPatch
 (
     const parcelType& p,
-    const polyPatch& pp,
-    bool&
+    const polyPatch& pp
 )
 {
+    if (pp.coupled()) return;
+
     const label patchi = pp.index();
     const label patchFacei = p.face() - pp.start();
 
@@ -291,10 +290,12 @@ void Foam::PatchCollisionDensity<CloudType>::postPatch
     this->owner().patchData(p, pp, nw, Up);
 
     const scalar speed = (p.U() - Up) & nw;
+
     if (speed > minSpeed_)
     {
         const scalar magSf =
             this->owner().mesh().magSf().boundaryField()[patchi][patchFacei];
+
         numberCollisionDensity_[patchi][patchFacei] += 1/magSf;
         massCollisionDensity_[patchi][patchFacei] +=
             p.mass()*p.nParticle()/magSf;

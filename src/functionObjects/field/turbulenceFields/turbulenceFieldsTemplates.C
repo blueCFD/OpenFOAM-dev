@@ -31,19 +31,17 @@ template<class Type>
 void Foam::functionObjects::turbulenceFields::processField
 (
     const word& fieldName,
-    const tmp<GeometricField<Type, fvPatchField, volMesh>>& tvalue
+    const tmp<VolField<Type>>& tvalue
 )
 {
-    typedef GeometricField<Type, fvPatchField, volMesh> FieldType;
-
     const word scopedName
     (
         IOobject::groupName(prefix_ + fieldName, phaseName_)
     );
 
-    if (obr_.foundObject<FieldType>(scopedName))
+    if (obr_.foundObject<VolField<Type>>(scopedName))
     {
-        obr_.lookupObjectRef<FieldType>(scopedName) == tvalue();
+        obr_.lookupObjectRef<VolField<Type>>(scopedName) == tvalue();
     }
     else if (obr_.found(scopedName))
     {
@@ -56,12 +54,12 @@ void Foam::functionObjects::turbulenceFields::processField
     {
         obr_.store
         (
-            new FieldType
+            new VolField<Type>
             (
                 IOobject
                 (
                     scopedName,
-                    obr_.time().timeName(),
+                    obr_.time().name(),
                     obr_,
                     IOobject::READ_IF_PRESENT,
                     IOobject::NO_WRITE

@@ -66,7 +66,7 @@ public:
 template<class Type>
 void Foam::probes::sampleAndWrite
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vField
+    const VolField<Type>& vField
 )
 {
     Field<Type> values(sample(vField));
@@ -92,7 +92,7 @@ void Foam::probes::sampleAndWrite
 template<class Type>
 void Foam::probes::sampleAndWrite
 (
-    const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
+    const SurfaceField<Type>& sField
 )
 {
     Field<Type> values(sample(sField));
@@ -126,13 +126,13 @@ void Foam::probes::sampleAndWrite(const fieldGroup<Type>& fields)
         (
             iter != objectRegistry::end()
          && iter()->type()
-         == GeometricField<Type, fvPatchField, volMesh>::typeName
+         == VolField<Type>::typeName
         )
         {
             sampleAndWrite
             (
                 mesh_.lookupObject
-                <GeometricField<Type, fvPatchField, volMesh>>
+                <VolField<Type>>
                 (
                     fields[fieldi]
                 )
@@ -153,13 +153,13 @@ void Foam::probes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
         (
             iter != objectRegistry::end()
          && iter()->type()
-         == GeometricField<Type, fvsPatchField, surfaceMesh>::typeName
+         == SurfaceField<Type>::typeName
         )
         {
             sampleAndWrite
             (
                 mesh_.lookupObject
-                <GeometricField<Type, fvsPatchField, surfaceMesh>>
+                <SurfaceField<Type>>
                 (
                     fields[fieldi]
                 )
@@ -175,7 +175,7 @@ template<class Type>
 Foam::tmp<Foam::Field<Type>>
 Foam::probes::sample
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vField
+    const VolField<Type>& vField
 ) const
 {
     const Type unsetVal(-vGreat*pTraits<Type>::one);
@@ -233,7 +233,7 @@ Foam::probes::sample(const word& fieldName) const
 {
     return sample
     (
-        mesh_.lookupObject<GeometricField<Type, fvPatchField, volMesh>>
+        mesh_.lookupObject<VolField<Type>>
         (
             fieldName
         )
@@ -245,7 +245,7 @@ template<class Type>
 Foam::tmp<Foam::Field<Type>>
 Foam::probes::sample
 (
-    const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
+    const SurfaceField<Type>& sField
 ) const
 {
     const Type unsetVal(-vGreat*pTraits<Type>::one);
@@ -278,7 +278,7 @@ Foam::probes::sampleSurfaceFields(const word& fieldName) const
 {
     return sample
     (
-        mesh_.lookupObject<GeometricField<Type, fvsPatchField, surfaceMesh>>
+        mesh_.lookupObject<SurfaceField<Type>>
         (
             fieldName
         )

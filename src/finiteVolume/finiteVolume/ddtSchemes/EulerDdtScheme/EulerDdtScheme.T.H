@@ -85,100 +85,100 @@ public:
 
         using ddtScheme<Type>::mesh;
 
-        virtual tmp<GeometricField<Type, fvPatchField, volMesh>> fvcDdt
+        virtual tmp<VolField<Type>> fvcDdt
         (
             const dimensioned<Type>&
         );
 
-        virtual tmp<GeometricField<Type, fvPatchField, volMesh>> fvcDdt
+        virtual tmp<VolField<Type>> fvcDdt
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
-        virtual tmp<GeometricField<Type, fvPatchField, volMesh>> fvcDdt
+        virtual tmp<VolField<Type>> fvcDdt
         (
             const dimensionedScalar&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
-        virtual tmp<GeometricField<Type, fvPatchField, volMesh>> fvcDdt
+        virtual tmp<VolField<Type>> fvcDdt
         (
             const volScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
-        virtual tmp<GeometricField<Type, fvPatchField, volMesh>> fvcDdt
+        virtual tmp<VolField<Type>> fvcDdt
         (
             const volScalarField& alpha,
             const volScalarField& rho,
-            const GeometricField<Type, fvPatchField, volMesh>& psi
+            const VolField<Type>& psi
         );
 
-        virtual tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> fvcDdt
+        virtual tmp<SurfaceField<Type>> fvcDdt
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>&
+            const SurfaceField<Type>&
         );
 
         virtual tmp<fvMatrix<Type>> fvmDdt
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
         virtual tmp<fvMatrix<Type>> fvmDdt
         (
             const dimensionedScalar&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
         virtual tmp<fvMatrix<Type>> fvmDdt
         (
             const volScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
         virtual tmp<fvMatrix<Type>> fvmDdt
         (
             const volScalarField& alpha,
             const volScalarField& rho,
-            const GeometricField<Type, fvPatchField, volMesh>& psi
+            const VolField<Type>& psi
         );
 
         typedef typename ddtScheme<Type>::fluxFieldType fluxFieldType;
 
         virtual tmp<fluxFieldType> fvcDdtUfCorr
         (
-            const GeometricField<Type, fvPatchField, volMesh>& U,
-            const GeometricField<Type, fvsPatchField, surfaceMesh>& Uf
+            const VolField<Type>& U,
+            const SurfaceField<Type>& Uf
         );
 
         virtual tmp<fluxFieldType> fvcDdtPhiCorr
         (
-            const GeometricField<Type, fvPatchField, volMesh>& U,
+            const VolField<Type>& U,
             const fluxFieldType& phi
         );
 
         virtual tmp<fluxFieldType> fvcDdtUfCorr
         (
             const volScalarField& rho,
-            const GeometricField<Type, fvPatchField, volMesh>& U,
-            const GeometricField<Type, fvsPatchField, surfaceMesh>& Uf
+            const VolField<Type>& U,
+            const SurfaceField<Type>& Uf
         );
 
         virtual tmp<fluxFieldType> fvcDdtPhiCorr
         (
             const volScalarField& rho,
-            const GeometricField<Type, fvPatchField, volMesh>& U,
+            const VolField<Type>& U,
             const fluxFieldType& phi
         );
 
         virtual tmp<surfaceScalarField> meshPhi
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
         virtual tmp<scalarField> meshPhi
         (
-            const GeometricField<Type, fvPatchField, volMesh>&,
+            const VolField<Type>&,
             const label patchi
         );
 
@@ -193,8 +193,8 @@ public:
 template<>
 tmp<surfaceScalarField> EulerDdtScheme<scalar>::fvcDdtUfCorr
 (
-    const GeometricField<scalar, fvPatchField, volMesh>& U,
-    const GeometricField<scalar, fvsPatchField, surfaceMesh>& Uf
+    const VolField<scalar>& U,
+    const SurfaceField<scalar>& Uf
 );
 
 template<>

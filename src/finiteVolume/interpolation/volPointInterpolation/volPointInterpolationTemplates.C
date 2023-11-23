@@ -38,15 +38,15 @@ License
 template<class Type>
 void Foam::volPointInterpolation::interpolateUnconstrained
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf,
-    GeometricField<Type, pointPatchField, pointMesh>& pf
+    const VolField<Type>& vf,
+    PointField<Type>& pf
 ) const
 {
     if (debug)
     {
         Pout<< "volPointInterpolation::interpolateUnconstrained("
-            << "const GeometricField<Type, fvPatchField, volMesh>&, "
-            << "GeometricField<Type, pointPatchField, pointMesh>&) : "
+            << "const VolField<Type>&, "
+            << "PointField<Type>&) : "
             << "interpolating field from cells to points"
             << endl;
     }
@@ -80,9 +80,9 @@ void Foam::volPointInterpolation::interpolateUnconstrained
     }
 
     // Get the boundary neighbour field
-    const typename GeometricField<Type, fvPatchField, volMesh>::Boundary vfBnf
+    const typename VolField<Type>::Boundary vfBnf
     (
-        GeometricField<Type, fvPatchField, volMesh>::null(),
+        VolField<Type>::null(),
         vf.boundaryField().boundaryNeighbourField()
     );
 
@@ -138,8 +138,8 @@ void Foam::volPointInterpolation::interpolateUnconstrained
 template<class Type>
 void Foam::volPointInterpolation::interpolate
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf,
-    GeometricField<Type, pointPatchField, pointMesh>& pf
+    const VolField<Type>& vf,
+    PointField<Type>& pf
 ) const
 {
     interpolateUnconstrained(vf, pf);
@@ -150,26 +150,24 @@ void Foam::volPointInterpolation::interpolate
 
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::pointPatchField, Foam::pointMesh>>
+Foam::tmp<Foam::PointField<Type>>
 Foam::volPointInterpolation::interpolate
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf,
+    const VolField<Type>& vf,
     const word& name,
     const bool cache
 ) const
 {
-    typedef GeometricField<Type, pointPatchField, pointMesh> PointFieldType;
-
     const pointMesh& pm = pointMesh::New(vf.mesh());
     const objectRegistry& db = pm.thisDb();
 
     if (!cache || vf.mesh().changing())
     {
         // Delete any old occurrences to avoid double registration
-        if (db.objectRegistry::template foundObject<PointFieldType>(name))
+        if (db.objectRegistry::template foundObject<PointField<Type>>(name))
         {
-            PointFieldType& pf =
-                db.objectRegistry::template lookupObjectRef<PointFieldType>
+            PointField<Type>& pf =
+                db.objectRegistry::template lookupObjectRef<PointField<Type>>
                 (
                     name
                 );
@@ -182,9 +180,9 @@ Foam::volPointInterpolation::interpolate
             }
         }
 
-        tmp<GeometricField<Type, pointPatchField, pointMesh>> tpf
+        tmp<PointField<Type>> tpf
         (
-            GeometricField<Type, pointPatchField, pointMesh>::New
+            PointField<Type>::New
             (
                 name,
                 pm,
@@ -198,18 +196,18 @@ Foam::volPointInterpolation::interpolate
     }
     else
     {
-        if (!db.objectRegistry::template foundObject<PointFieldType>(name))
+        if (!db.objectRegistry::template foundObject<PointField<Type>>(name))
         {
             solution::cachePrintMessage("Calculating and caching", name, vf);
-            tmp<PointFieldType> tpf = interpolate(vf, name, false);
-            PointFieldType* pfPtr = tpf.ptr();
+            tmp<PointField<Type>> tpf = interpolate(vf, name, false);
+            PointField<Type>* pfPtr = tpf.ptr();
             regIOobject::store(pfPtr);
             return *pfPtr;
         }
         else
         {
-            PointFieldType& pf =
-                db.objectRegistry::template lookupObjectRef<PointFieldType>
+            PointField<Type>& pf =
+                db.objectRegistry::template lookupObjectRef<PointField<Type>>
                 (
                     name
                 );
@@ -226,10 +224,10 @@ Foam::volPointInterpolation::interpolate
                 delete &pf;
 
                 solution::cachePrintMessage("Recalculating", name, vf);
-                tmp<PointFieldType> tpf = interpolate(vf, name, false);
+                tmp<PointField<Type>> tpf = interpolate(vf, name, false);
 
                 solution::cachePrintMessage("Storing", name, vf);
-                PointFieldType* pfPtr = tpf.ptr();
+                PointField<Type>* pfPtr = tpf.ptr();
                 regIOobject::store(pfPtr);
 
                 return *pfPtr;
@@ -240,10 +238,10 @@ Foam::volPointInterpolation::interpolate
 
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::pointPatchField, Foam::pointMesh>>
+Foam::tmp<Foam::PointField<Type>>
 Foam::volPointInterpolation::interpolate
 (
-    const GeometricField<Type, fvPatchField, volMesh>& vf
+    const VolField<Type>& vf
 ) const
 {
     return interpolate(vf, "volPointInterpolate(" + vf.name() + ')', false);
@@ -251,13 +249,13 @@ Foam::volPointInterpolation::interpolate
 
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::pointPatchField, Foam::pointMesh>>
+Foam::tmp<Foam::PointField<Type>>
 Foam::volPointInterpolation::interpolate
 (
-    const tmp<GeometricField<Type, fvPatchField, volMesh>>& tvf
+    const tmp<VolField<Type>>& tvf
 ) const
 {
-    tmp<GeometricField<Type, pointPatchField, pointMesh>> tpf =
+    tmp<PointField<Type>> tpf =
         interpolate(tvf());
 
     tvf.clear();

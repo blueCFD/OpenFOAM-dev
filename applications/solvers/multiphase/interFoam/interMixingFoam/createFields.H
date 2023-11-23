@@ -6,7 +6,7 @@ volScalarField p_rgh
     IOobject
     (
         "p_rgh",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -20,7 +20,7 @@ volVectorField U
     IOobject
     (
         "U",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -30,7 +30,7 @@ volVectorField U
 
 #include "createPhi.H"
 
-immiscibleIncompressibleThreePhaseMixture mixture(U, phi);
+immiscibleIncompressibleThreePhaseMixture mixture(U);
 
 volScalarField& alpha1(mixture.alpha1());
 volScalarField& alpha2(mixture.alpha2());
@@ -48,7 +48,7 @@ volScalarField rho
     IOobject
     (
         "rho",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::READ_IF_PRESENT
     ),
@@ -65,7 +65,7 @@ surfaceScalarField rhoPhi
     IOobject
     (
         "rhoPhi",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::NO_READ,
         IOobject::NO_WRITE
@@ -91,7 +91,7 @@ volScalarField p
     IOobject
     (
         "p",
-        runTime.timeName(),
+        runTime.name(),
         mesh,
         IOobject::NO_READ,
         IOobject::AUTO_WRITE

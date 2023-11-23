@@ -220,6 +220,7 @@ patchToPatchTools/patchToPatchTools.C
 patchToPatch/patchToPatch/patchToPatch.C
 patchToPatch/patchToPatch/patchToPatchParallelOps.C
 patchToPatch/matching/matchingPatchToPatch.C
+patchToPatch/nearby/nearbyPatchToPatch.C
 patchToPatch/nearest/nearestPatchToPatch.C
 patchToPatch/inverseDistance/inverseDistancePatchToPatch.C
 patchToPatch/intersection/intersectionPatchToPatch.C
@@ -253,6 +254,10 @@ tetOverlapVolume/tetOverlapVolume.C
 
 triIntersect/triIntersect.C
 triIntersect/triIntersectLocationIO.C
+
+cutPoly/cellEdgeAddressing.C
+cutPoly/cutPoly.C
+cutPoly/cutPolyIsoSurface.C
 
 nonConformal/polyPatches/nonConformal/nonConformalPolyPatch.C
 nonConformal/polyPatches/nonConformalCoupled/nonConformalCoupledPolyPatch.C

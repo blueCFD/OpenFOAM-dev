@@ -32,13 +32,13 @@ License
 template<class Type>
 void Foam::fvMeshToFvMesh::mapSrcToTgt
 (
-    const GeometricField<Type, fvPatchField, volMesh>& field,
-    GeometricField<Type, fvPatchField, volMesh>& result
+    const VolField<Type>& field,
+    VolField<Type>& result
 ) const
 {
     meshToMesh::mapSrcToTgt(field, result.primitiveFieldRef());
 
-    typename GeometricField<Type, fvPatchField, volMesh>::
+    typename VolField<Type>::
         Boundary& resultBf = result.boundaryFieldRef();
 
     forAll(srcToTgtPatchIDs(), i)
@@ -80,18 +80,16 @@ void Foam::fvMeshToFvMesh::mapSrcToTgt
 
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh>>
+Foam::tmp<Foam::VolField<Type>>
 Foam::fvMeshToFvMesh::mapSrcToTgt
 (
-    const GeometricField<Type, fvPatchField, volMesh>& field
+    const VolField<Type>& field
 ) const
 {
-    typedef GeometricField<Type, fvPatchField, volMesh> fieldType;
-
     const fvMesh& tgtMesh = static_cast<const fvMesh&>(meshToMesh::tgtMesh());
 
     const fvBoundaryMesh& tgtBm = tgtMesh.boundary();
-    const typename fieldType::Boundary& srcBfld =
+    const typename VolField<Type>::Boundary& srcBfld =
         field.boundaryField();
 
     PtrList<fvPatchField<Type>> tgtPatchFields(tgtBm.size());
@@ -143,14 +141,14 @@ Foam::fvMeshToFvMesh::mapSrcToTgt
         }
     }
 
-    tmp<fieldType> tresult
+    tmp<VolField<Type>> tresult
     (
-        new fieldType
+        new VolField<Type>
         (
             IOobject
             (
                 typedName("interpolate(" + field.name() + ")"),
-                tgtMesh.time().timeName(),
+                tgtMesh.time().name(),
                 tgtMesh,
                 IOobject::NO_READ,
                 IOobject::NO_WRITE

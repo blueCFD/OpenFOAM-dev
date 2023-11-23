@@ -70,7 +70,7 @@ class patchProbes
         template<class Type>
         void sampleAndWrite
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         );
 
 
@@ -78,7 +78,7 @@ class patchProbes
         template<class Type>
         void sampleAndWrite
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>&
+            const SurfaceField<Type>&
         );
 
 
@@ -96,7 +96,7 @@ class patchProbes
         template<class Type>
         tmp<Field<Type>> sample
         (
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const;
 
 
@@ -104,7 +104,7 @@ class patchProbes
         template<class Type>
         tmp<Field<Type>> sample
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>&
+            const SurfaceField<Type>&
         ) const;
 
 

@@ -40,7 +40,6 @@ boundaryField
     wall
     {
         type            coupledTemperature;
-        kappa           kappa;
         value           $internalField;
     }
 

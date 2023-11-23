@@ -32,7 +32,7 @@ void Foam::extendedFaceToCellStencil::collectData
 (
     const distributionMap& map,
     const labelListList& stencil,
-    const GeometricField<Type, fvsPatchField, surfaceMesh>& fld,
+    const SurfaceField<Type>& fld,
     List<List<Type>>& stencilFld
 )
 {
@@ -78,12 +78,12 @@ void Foam::extendedFaceToCellStencil::collectData
 
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh>>
+Foam::tmp<Foam::VolField<Type>>
 Foam::extendedFaceToCellStencil::weightedSum
 (
     const distributionMap& map,
     const labelListList& stencil,
-    const GeometricField<Type, fvsPatchField, surfaceMesh>& fld,
+    const SurfaceField<Type>& fld,
     const List<List<scalar>>& stencilWeights
 )
 {
@@ -93,9 +93,9 @@ Foam::extendedFaceToCellStencil::weightedSum
     List<List<Type>> stencilFld;
     collectData(map, stencil, fld, stencilFld);
 
-    tmp<GeometricField<Type, fvPatchField, volMesh>> tsfCorr
+    tmp<VolField<Type>> tsfCorr
     (
-        GeometricField<Type, fvPatchField, volMesh>::New
+        VolField<Type>::New
         (
             fld.name(),
             mesh,
@@ -107,7 +107,7 @@ Foam::extendedFaceToCellStencil::weightedSum
             )
         )
     );
-    GeometricField<Type, fvPatchField, volMesh>& sf = tsfCorr.ref();
+    VolField<Type>& sf = tsfCorr.ref();
 
     // cells
     forAll(sf, celli)

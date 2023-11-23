@@ -106,17 +106,11 @@ public:
         //- Return non-const access to the local density field [kg/m^3]
         virtual volScalarField& rho() = 0;
 
-        //- Old-time density [kg/m^3]
-        virtual tmp<volScalarField> rho0() const = 0;
-
         //- Return true if thermal conductivity is isotropic
         virtual bool isotropic() const = 0;
 
         //- Anisotropic thermal conductivity [W/m/K]
-        virtual tmp<volVectorField> Kappa() const = 0;
-
-        //- Anisotropic thermal conductivity for patch [W/m/K]
-        virtual tmp<vectorField> Kappa(const label patchi) const = 0;
+        virtual const volVectorField& Kappa() const = 0;
 };
 
 
@@ -176,9 +170,6 @@ public:
 
         //- Return non-const access to the local density field [kg/m^3]
         virtual volScalarField& rho();
-
-        //- Old-time density [kg/m^3]
-        virtual tmp<volScalarField> rho0() const;
 };
 
 

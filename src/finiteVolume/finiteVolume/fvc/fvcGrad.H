@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,65 +51,47 @@ namespace Foam
 namespace fvc
 {
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > grad
+    tmp<VolField<typename outerProduct<vector, Type>::type>>
+    grad
     (
-        const GeometricField<Type, fvsPatchField, surfaceMesh>&
+        const SurfaceField<Type>&
     );
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > grad
+    tmp<VolField<typename outerProduct<vector, Type>::type>>
+    grad
     (
-        const tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>&
+        const tmp<SurfaceField<Type>>&
     );
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > grad
+    tmp<VolField<typename outerProduct<vector, Type>::type>>
+    grad
     (
-        const GeometricField<Type, fvPatchField, volMesh>&,
+        const VolField<Type>&,
         const word& name
     );
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > grad
+    tmp<VolField<typename outerProduct<vector, Type>::type>>
+    grad
     (
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&,
+        const tmp<VolField<Type>>&,
         const word& name
     );
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > grad
+    tmp<VolField<typename outerProduct<vector, Type>::type>>
+    grad
     (
-        const GeometricField<Type, fvPatchField, volMesh>&
+        const VolField<Type>&
     );
 
     template<class Type>
-    tmp
-    <
-        GeometricField
-        <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > grad
+    tmp<VolField<typename outerProduct<vector, Type>::type>>
+    grad
     (
-        const tmp<GeometricField<Type, fvPatchField, volMesh>>&
+        const tmp<VolField<Type>>&
     );
 }
 

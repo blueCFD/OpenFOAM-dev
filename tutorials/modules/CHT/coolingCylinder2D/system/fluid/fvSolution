@@ -1,4 +1,4 @@
-/*--------------------------------*- C++ -*----------------------------------*\
+ /*--------------------------------*- C++ -*----------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
@@ -17,20 +17,16 @@ solvers
 {
     "(rho|rhoFinal)"
     {
-        solver          PCG
-        preconditioner  DIC;
-        tolerance       1e-7;
-        relTol          0;
+        solver          diagonal;
     }
 
     p_rgh
     {
         solver           GAMG;
-        tolerance        1e-7;
-        relTol           0.01;
-
         smoother         GaussSeidel;
 
+        tolerance        1e-7;
+        relTol           0.01;
 
         maxIter          100;
     }
@@ -39,6 +35,7 @@ solvers
     {
         solver          PBiCGStab;
         preconditioner  DILU;
+
         tolerance       1e-6;
         relTol          0.1;
     }

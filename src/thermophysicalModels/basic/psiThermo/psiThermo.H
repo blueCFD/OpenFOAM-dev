@@ -111,21 +111,6 @@ public:
             //- Return the thermodynamic density field [kg/m^3]
             //  This is used by solvers which create a separate continuity rho
             virtual tmp<volScalarField> renameRho() = 0;
-
-            //- Old-time density [kg/m^3]
-            virtual tmp<volScalarField> rho0() const = 0;
-
-            //- Compressibility [s^2/m^2]
-            virtual const volScalarField& psi() const = 0;
-
-
-        // Access to transport state variables
-
-            //- Dynamic viscosity of mixture [kg/m/s]
-            virtual tmp<volScalarField> mu() const = 0;
-
-            //- Dynamic viscosity of mixture for patch [kg/m/s]
-            virtual tmp<scalarField> mu(const label patchi) const = 0;
 };
 
 
@@ -137,18 +122,6 @@ class psiThermo::implementation
 :
     virtual public psiThermo
 {
-protected:
-
-    // Protected data
-
-        // Fields
-
-            //- Compressibility [s^2/m^2]
-            volScalarField psi_;
-
-            //- Dynamic viscosity [kg/m/s]
-            volScalarField mu_;
-
 
 public:
 
@@ -178,21 +151,6 @@ public:
             //- Return the thermodynamic density field [kg/m^3]
             //  This is used by solvers which create a separate continuity rho
             virtual tmp<volScalarField> renameRho();
-
-            //- Old-time density [kg/m^3]
-            virtual tmp<volScalarField> rho0() const;
-
-            //- Compressibility [s^2/m^2]
-            virtual const volScalarField& psi() const;
-
-
-        // Access to transport state variables
-
-            //- Dynamic viscosity of mixture [kg/m/s]
-            virtual tmp<volScalarField> mu() const;
-
-            //- Dynamic viscosity of mixture for patch [kg/m/s]
-            virtual tmp<scalarField> mu(const label patchi) const;
 
 
     // Member Operators

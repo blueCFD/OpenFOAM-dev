@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -152,49 +152,49 @@ bool Foam::AveragingMethod<Type>::write(const bool write) const
     Field<scalar> pointVolume(mesh_.nPoints(), 0);
 
     // output fields
-    GeometricField<Type, fvPatchField, volMesh> cellValue
+    VolField<Type> cellValue
     (
         IOobject
         (
             this->name() + ":cellValue",
-            this->time().timeName(),
+            this->time().name(),
             mesh_
         ),
         mesh_,
         dimensioned<Type>("zero", dimless, Zero)
     );
-    GeometricField<TypeGrad, fvPatchField, volMesh> cellGrad
+    VolField<GradType> cellGrad
     (
         IOobject
         (
             this->name() + ":cellGrad",
-            this->time().timeName(),
+            this->time().name(),
             mesh_
         ),
         mesh_,
-        dimensioned<TypeGrad>("zero", dimless, Zero)
+        dimensioned<GradType>("zero", dimless, Zero)
     );
-    GeometricField<Type, pointPatchField, pointMesh> pointValue
+    PointField<Type> pointValue
     (
         IOobject
         (
             this->name() + ":pointValue",
-            this->time().timeName(),
+            this->time().name(),
             mesh_
         ),
         pointMesh_,
         dimensioned<Type>("zero", dimless, Zero)
     );
-    GeometricField<TypeGrad, pointPatchField, pointMesh> pointGrad
+    PointField<GradType> pointGrad
     (
         IOobject
         (
             this->name() + ":pointGrad",
-            this->time().timeName(),
+            this->time().name(),
             mesh_
         ),
         pointMesh_,
-        dimensioned<TypeGrad>("zero", dimless, Zero)
+        dimensioned<GradType>("zero", dimless, Zero)
     );
 
     // Barycentric coordinates of the tet vertices

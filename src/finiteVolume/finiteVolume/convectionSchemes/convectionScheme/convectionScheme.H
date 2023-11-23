@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -159,29 +159,29 @@ public:
             return mesh_;
         }
 
-        virtual tmp<GeometricField<Type, fvsPatchField, surfaceMesh>>
+        virtual tmp<SurfaceField<Type>>
         interpolate
         (
             const surfaceScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const = 0;
 
-        virtual tmp<GeometricField<Type, fvsPatchField, surfaceMesh>> flux
+        virtual tmp<SurfaceField<Type>> flux
         (
             const surfaceScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const = 0;
 
         virtual tmp<fvMatrix<Type>> fvmDiv
         (
             const surfaceScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const = 0;
 
-        virtual tmp<GeometricField<Type, fvPatchField, volMesh>> fvcDiv
+        virtual tmp<VolField<Type>> fvcDiv
         (
             const surfaceScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&
+            const VolField<Type>&
         ) const = 0;
 
 

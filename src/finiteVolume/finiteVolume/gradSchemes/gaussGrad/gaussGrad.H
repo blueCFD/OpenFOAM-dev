@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,26 +111,19 @@ public:
 
         //- Return the gradient of the given field
         //  calculated using Gauss' theorem on the given surface field
-        static
-        tmp
-        <
-            GeometricField
-            <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-        > gradf
+        static tmp<VolField<typename outerProduct<vector, Type>::type>>
+        gradf
         (
-            const GeometricField<Type, fvsPatchField, surfaceMesh>&,
+            const SurfaceField<Type>&,
             const word& name
         );
 
         //- Return the gradient of the given field to the gradScheme::grad
         //  for optional caching
-        virtual tmp
-        <
-            GeometricField
-            <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>
-        > calcGrad
+        virtual tmp<VolField<typename outerProduct<vector, Type>::type>>
+        calcGrad
         (
-            const GeometricField<Type, fvPatchField, volMesh>& vsf,
+            const VolField<Type>& vsf,
             const word& name
         ) const;
 
@@ -138,9 +131,8 @@ public:
         // snGrad functions
         static void correctBoundaryConditions
         (
-            const GeometricField<Type, fvPatchField, volMesh>&,
-            GeometricField
-            <typename outerProduct<vector, Type>::type, fvPatchField, volMesh>&
+            const VolField<Type>&,
+            VolField<typename outerProduct<vector, Type>::type>&
         );
 
 

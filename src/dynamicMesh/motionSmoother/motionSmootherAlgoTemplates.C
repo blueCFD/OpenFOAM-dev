@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,11 +35,9 @@ License
 template<class Type>
 void Foam::motionSmootherAlgo::checkConstraints
 (
-    GeometricField<Type, pointPatchField, pointMesh>& pf
+    PointField<Type>& pf
 )
 {
-    typedef GeometricField<Type, pointPatchField, pointMesh> FldType;
-
     const polyMesh& mesh = pf.mesh();
 
     const polyBoundaryMesh& bm = mesh.boundaryMesh();
@@ -57,7 +55,7 @@ void Foam::motionSmootherAlgo::checkConstraints
     }
 
 
-    typename FldType::Boundary& bFld = pf.boundaryField();
+    typename PointField<Type>::Boundary& bFld = pf.boundaryField();
 
 
     // Evaluate in reverse order
@@ -134,23 +132,23 @@ void Foam::motionSmootherAlgo::checkConstraints
 
 
 template<class Type>
-Foam::tmp<Foam::GeometricField<Type, Foam::pointPatchField, Foam::pointMesh>>
+Foam::tmp<Foam::PointField<Type>>
 Foam::motionSmootherAlgo::avg
 (
-    const GeometricField<Type, pointPatchField, pointMesh>& fld,
+    const PointField<Type>& fld,
     const scalarField& edgeWeight
 ) const
 {
-    tmp<GeometricField<Type, pointPatchField, pointMesh>> tres
+    tmp<PointField<Type>> tres
     (
-        GeometricField<Type, pointPatchField, pointMesh>::New
+        PointField<Type>::New
         (
             "avg("+fld.name()+')',
             fld.mesh(),
             dimensioned<Type>("zero", fld.dimensions(), Zero)
         )
     );
-    GeometricField<Type, pointPatchField, pointMesh>& res = tres.ref();
+    PointField<Type>& res = tres.ref();
 
     const polyMesh& mesh = fld.mesh()();
 
@@ -226,9 +224,9 @@ Foam::motionSmootherAlgo::avg
 template<class Type>
 void Foam::motionSmootherAlgo::smooth
 (
-    const GeometricField<Type, pointPatchField, pointMesh>& fld,
+    const PointField<Type>& fld,
     const scalarField& edgeWeight,
-    GeometricField<Type, pointPatchField, pointMesh>& newFld
+    PointField<Type>& newFld
 ) const
 {
     tmp<pointVectorField> tavgFld = avg(fld, edgeWeight);
