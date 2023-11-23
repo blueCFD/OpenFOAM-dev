@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,15 +58,6 @@ class cyclicPointPatch
         const cyclicPolyPatch& cyclicPolyPatch_;
 
 
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construction
-        cyclicPointPatch(const cyclicPointPatch&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const cyclicPointPatch&);
-
-
     // Demand driven private data
 
         //- Initialise the calculation of the patch geometry
@@ -102,6 +93,9 @@ public:
             const polyPatch& patch,
             const pointBoundaryMesh& bm
         );
+
+        //- Disallow default bitwise copy construction
+        cyclicPointPatch(const cyclicPointPatch&) = delete;
 
 
     //- Destructor
@@ -139,6 +133,12 @@ public:
             //  and/or mapping. First index is on this patch, second on the
             //  neighbour patch.
             virtual const edgeList& transformPairs() const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const cyclicPointPatch&) = delete;
 };
 
 

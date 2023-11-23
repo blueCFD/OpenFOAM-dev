@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,27 +23,22 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef makeParcelTurbulenceDispersionModels_h
-#define makeParcelTurbulenceDispersionModels_h
+#ifndef makeThermoParcelForces_H
+#define makeThermoParcelForces_H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "GradientDispersionRAS.T.H"
-#include "StochasticDispersionRAS.T.H"
+#include "makeParcelForces.H"
+
+#include "BrownianMotionForce.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeParcelTurbulenceDispersionModels(CloudType)                        \
+#define makeThermoParcelForces(CloudType)                                      \
                                                                                \
-    typedef Foam::CloudType::momentumCloudType momentumCloudType;              \
-    defineNamedTemplateTypeNameAndDebug                                        \
-    (                                                                          \
-        Foam::DispersionRASModel<momentumCloudType>,                           \
-        0                                                                      \
-    );                                                                         \
+    makeParcelForces(CloudType);                                               \
                                                                                \
-    makeDispersionModelType(GradientDispersionRAS, CloudType);                 \
-    makeDispersionModelType(StochasticDispersionRAS, CloudType);               \
+    makeParticleForceModelType(BrownianMotionForce, CloudType);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

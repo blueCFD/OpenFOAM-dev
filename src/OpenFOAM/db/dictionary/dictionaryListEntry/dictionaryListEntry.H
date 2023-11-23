@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,9 +69,6 @@ class dictionaryListEntry
         //- Returns size of dictionary without FoamFile
         static label realSize(const dictionary&);
 
-        //- Disallow bitwise copy
-        dictionaryListEntry(const dictionary&);
-
 
 public:
 
@@ -86,6 +83,9 @@ public:
             const dictionary& parentDict,
             const dictionaryListEntry&
         );
+
+        //- Disallow bitwise copy
+        dictionaryListEntry(const dictionary&) = delete;
 
         autoPtr<entry> clone(const dictionary& parentDict) const
         {

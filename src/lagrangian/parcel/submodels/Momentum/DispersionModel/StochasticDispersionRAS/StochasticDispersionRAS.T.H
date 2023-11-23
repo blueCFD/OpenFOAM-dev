@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,18 +22,19 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::DispersionRASModel
+    Foam::StochasticDispersionRAS
 
 Description
-    Base class for particle dispersion models based on RAS turbulence.
+    The velocity is perturbed in random direction, with a
+    Gaussian random number distribution with variance sigma.
+    where sigma is defined below
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef DispersionRASModel_H
-#define DispersionRASModel_H
+#ifndef StochasticDispersionRAS_H
+#define StochasticDispersionRAS_H
 
-#include "DispersionModel.T.H"
-
+#include "DispersionRASModel.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -41,62 +42,40 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                     Class DispersionRASModel Declaration
+                   Class StochasticDispersionRAS Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class CloudType>
-class DispersionRASModel
+class StochasticDispersionRAS
 :
-    public DispersionModel<CloudType>
+    public DispersionRASModel<CloudType>
 {
-protected:
-
-    // Protected data
-
-        // Locally cached turbulence fields
-
-            //- Turbulence k
-            const volScalarField* kPtr_;
-
-            //- Take ownership of the k field
-            mutable bool ownK_;
-
-            //- Turbulence epsilon
-            const volScalarField* epsilonPtr_;
-
-            //- Take ownership of the epsilon field
-            mutable bool ownEpsilon_;
-
-
-    // Protected Functions
-
-        //- Return the k field from the turbulence model
-        tmp<volScalarField> kModel() const;
-
-        //- Return the epsilon field from the turbulence model
-        tmp<volScalarField> epsilonModel() const;
-
-
 public:
 
     //- Runtime type information
-    TypeName("dispersionRASModel");
+    TypeName("stochasticDispersionRAS");
 
 
     // Constructors
 
         //- Construct from components
-        DispersionRASModel(const dictionary& dict, CloudType& owner);
+        StochasticDispersionRAS(const dictionary& dict, CloudType& owner);
 
         //- Construct copy
-        DispersionRASModel(const DispersionRASModel<CloudType>& dm);
+        StochasticDispersionRAS(const StochasticDispersionRAS<CloudType>& dm);
 
         //- Construct and return a clone
-        virtual autoPtr<DispersionModel<CloudType>> clone() const = 0;
+        virtual autoPtr<DispersionModel<CloudType>> clone() const
+        {
+            return autoPtr<DispersionModel<CloudType>>
+            (
+                new StochasticDispersionRAS<CloudType>(*this)
+            );
+        }
 
 
     //- Destructor
-    virtual ~DispersionRASModel();
+    virtual ~StochasticDispersionRAS();
 
 
     // Member Functions
@@ -110,16 +89,7 @@ public:
             const vector& Uc,
             vector& UTurb,
             scalar& tTurb
-        ) = 0;
-
-        //- Cache carrier fields
-        virtual void cacheFields(const bool store);
-
-
-        // I-O
-
-            //- Write
-            virtual void write(Ostream& os) const;
+        );
 };
 
 
@@ -130,7 +100,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "DispersionRASModel.T.C"
+    #include "StochasticDispersionRAS.T.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

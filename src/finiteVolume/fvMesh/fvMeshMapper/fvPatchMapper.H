@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,8 +94,6 @@ class fvPatchMapper
 
 public:
 
-    // Static Data Members
-
     // Constructors
 
         //- Construct from mappers
@@ -106,10 +104,7 @@ public:
         );
 
         //- Disallow default bitwise copy construction
-        fvPatchMapper
-        (
-            const fvPatchMapper&
-        );
+        fvPatchMapper(const fvPatchMapper&) = delete;
 
 
     //- Destructor

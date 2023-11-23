@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,10 +78,6 @@ class MeshZones
 
         //- Read if IOobject flags set. Return true if read.
         bool read();
-
-        //- Disallow default bitwise assignment
-        void operator=(const MeshZones<ZoneType, MeshType>&);
-
 
         //- Create zone map
         void calcZoneMap() const;
@@ -189,6 +185,9 @@ public:
 
         //- Return reference to ZoneType by name.
         ZoneType& operator[](const word&);
+
+        //- Disallow default bitwise assignment
+        void operator=(const MeshZones<ZoneType, MeshType>&) = delete;
 
 
     // Ostream operator

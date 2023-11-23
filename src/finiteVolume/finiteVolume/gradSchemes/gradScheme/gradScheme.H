@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -67,15 +67,6 @@ class gradScheme
         const fvMesh& mesh_;
 
 
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construction
-        gradScheme(const gradScheme&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const gradScheme&) = delete;
-
-
 public:
 
     //- Runtime type information
@@ -101,6 +92,9 @@ public:
         :
             mesh_(mesh)
         {}
+
+        //- Disallow default bitwise copy construction
+        gradScheme(const gradScheme&) = delete;
 
 
     // Selectors
@@ -161,6 +155,12 @@ public:
         (
             const tmp<VolField<Type>>&
         ) const;
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const gradScheme&) = delete;
 };
 
 

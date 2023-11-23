@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,13 +55,16 @@ template<class Face> class MeshedSurface;
 
 class surfMesh
 :
-    public  surfaceRegistry,
+    public surfaceRegistry,
     private MeshedSurfaceIOAllocator,
-    public  PrimitivePatch<::Foam::UList<face>, ::Foam::SubField<point>>
+    public PrimitivePatch<UList<face>, SubField<point>>
 {
-    // friends
-    template<class Face> friend class MeshedSurface;
-    template<class Face> friend class UnsortedMeshedSurface;
+    // Friendship
+
+        template<class Face> friend class MeshedSurface;
+
+        template<class Face> friend class UnsortedMeshedSurface;
+
 
 public:
 
@@ -85,8 +88,7 @@ private:
 
         typedef MeshedSurfaceIOAllocator Allocator;
 
-        typedef PrimitivePatch<::Foam::UList<face>, ::Foam::SubField<point>>
-            MeshReference;
+        typedef PrimitivePatch<UList<face>, SubField<point>> MeshReference;
 
 
 protected:
@@ -125,17 +127,21 @@ public:
 
     // Public Typedefs
 
-    typedef surfMesh Mesh;
+        typedef surfMesh Mesh;
 
-    //- Placeholder only, but do not remove - it is needed for GeoMesh
-    typedef bool BoundaryMesh;
+        //- Placeholder only, but do not remove - it is needed for GeoMesh
+        typedef bool BoundaryMesh;
+
+
+    // Public Static Data
+
+        //- The mesh sub-directory name (normally "surfMesh")
+        static word meshSubDir;
 
 
     //- Runtime type information
     TypeName("surfMesh");
 
-    //- Return the mesh sub-directory name (normally "surfMesh")
-    static word meshSubDir;
 
     // Constructors
 
@@ -161,7 +167,7 @@ public:
         );
 
         //- Disallow default bitwise copy construction
-        surfMesh(const surfMesh&);
+        surfMesh(const surfMesh&) = delete;
 
 
     //- Destructor
@@ -200,7 +206,6 @@ public:
             {
                 return nFaces();
             }
-
 
             //- Return points
             virtual const pointField& points() const;
@@ -255,6 +260,7 @@ public:
 
         //- Write to file
         void write(const fileName&);
+
 
         //  Storage management
 

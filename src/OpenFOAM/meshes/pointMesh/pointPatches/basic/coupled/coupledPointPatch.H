@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,15 +51,6 @@ class pointBoundaryMesh;
 
 class coupledPointPatch
 {
-    // Private Member Functions
-
-        //- Disallow default bitwise copy construction
-        coupledPointPatch(const coupledPointPatch&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const coupledPointPatch&);
-
-
 protected:
 
     // Protected Member Functions
@@ -94,10 +85,18 @@ public:
         //- Construct from components
         coupledPointPatch(const pointBoundaryMesh& bm);
 
+        //- Disallow default bitwise copy construction
+        coupledPointPatch(const coupledPointPatch&) = delete;
+
 
     //- Destructor
     virtual ~coupledPointPatch();
 
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const coupledPointPatch&) = delete;
 };
 
 

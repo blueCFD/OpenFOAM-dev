@@ -60,6 +60,18 @@ namespace Foam
     defineTypeNameAndDebug(fvMesh, 0);
 }
 
+const Foam::HashSet<Foam::word> Foam::fvMesh::geometryFields
+{
+    "Vc",
+    "Vc0",
+    "Vc00",
+    "Sf",
+    "magSf",
+    "Cc",
+    "Cf",
+    "meshPhi"
+};
+
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -222,12 +234,12 @@ void Foam::fvMesh::storeOldVol(const scalarField& V)
             (
                 IOobject
                 (
-                    "V0",
+                    "Vc0",
                     time().name(),
                     *this,
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
-                    false
+                    true
                 ),
                 *this,
                 dimVolume
@@ -375,18 +387,18 @@ Foam::fvMesh::fvMesh
 
         // Check the existence of the cell volumes and read if present
         // and set the storage of V00
-        if (fileHandler().isFile(time().timePath()/"V0"))
+        if (fileHandler().isFile(time().timePath()/"Vc0"))
         {
             V0Ptr_ = new DimensionedField<scalar, volMesh>
             (
                 IOobject
                 (
-                    "V0",
+                    "Vc0",
                     time().name(),
                     *this,
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE,
-                    false
+                    true
                 ),
                 *this
             );
@@ -634,13 +646,15 @@ Foam::fvMesh::~fvMesh()
 
 bool Foam::fvMesh::topoChanging() const
 {
-    return topoChanger_->dynamic();
+    return topoChanger_.valid() && topoChanger_->dynamic();
 }
 
 
 bool Foam::fvMesh::dynamic() const
 {
-    return topoChanger_->dynamic() || mover_->dynamic();
+    return
+        (topoChanger_.valid() && topoChanger_->dynamic())
+     || (mover_.valid() && mover_->dynamic());
 }
 
 
@@ -671,19 +685,7 @@ bool Foam::fvMesh::update()
     bool updated = topoChanger_->update();
     topoChanged_ = updated;
 
-    // Register V0 for distribution
-    if (V0Ptr_)
-    {
-        V0Ptr_->checkIn();
-    }
-
     updated = distributor_->update() || updated;
-
-    // De-register V0 after distribution
-    if (V0Ptr_)
-    {
-        V0Ptr_->checkOut();
-    }
 
     if (hasV00)
     {
@@ -1151,7 +1153,7 @@ Foam::tmp<Foam::scalarField> Foam::fvMesh::movePoints(const pointField& p)
     // Note: once set it remains true for the rest of the run
     moving_ = true;
 
-    // Grab old time volumes if the time has been incremented
+    // Store old time volumes if the time has been incremented
     // This will update V0, V00
     if (curTimeIndex_ < time().timeIndex())
     {
@@ -1178,8 +1180,8 @@ Foam::tmp<Foam::scalarField> Foam::fvMesh::movePoints(const pointField& p)
     }
     else
     {
-        // Grab old time mesh motion fluxes if the time has been incremented
-        if (phiPtr_->timeIndex() != time().timeIndex())
+        // Store old time mesh motion fluxes if the time has been incremented
+        if (!topoChanging() && phiPtr_->timeIndex() != time().timeIndex())
         {
             phiPtr_->oldTime();
         }
@@ -1249,7 +1251,7 @@ void Foam::fvMesh::topoChange(const polyTopoChangeMap& map)
         if (VPtr_ && (VPtr_->size() != map.nOldCells()))
         {
             FatalErrorInFunction
-                << "V:" << V().size()
+                << "Vc:" << V().size()
                 << " not equal to the number of old cells "
                 << map.nOldCells()
                 << exit(FatalError);
@@ -1258,7 +1260,7 @@ void Foam::fvMesh::topoChange(const polyTopoChangeMap& map)
         if (V0Ptr_ && (V0Ptr_->size() != map.nOldCells()))
         {
             FatalErrorInFunction
-                << "V0:" << V0Ptr_->size()
+                << "Vc0:" << V0Ptr_->size()
                 << " not equal to the number of old cells "
                 << map.nOldCells()
                 << exit(FatalError);
