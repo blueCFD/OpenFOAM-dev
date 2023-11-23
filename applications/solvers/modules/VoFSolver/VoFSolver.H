@@ -94,7 +94,7 @@ protected:
         //- Velocity field
         volVectorField U;
 
-        //- Volumetric-flux field
+        //- Volumetric flux field
         surfaceScalarField phi;
 
 
@@ -212,7 +212,7 @@ public:
         virtual void preSolve();
 
         //- Called at the start of the PIMPLE loop to move the mesh
-        virtual bool moveMesh();
+        virtual void moveMesh();
 
         //- Called at the start of the PIMPLE loop
         virtual void prePredictor() = 0;

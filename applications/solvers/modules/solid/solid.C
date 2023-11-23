@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "solid.H"
+#include "fvMeshMover.H"
 #include "localEulerDdtScheme.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -159,9 +160,20 @@ void Foam::solvers::solid::preSolve()
 }
 
 
-bool Foam::solvers::solid::moveMesh()
+void Foam::solvers::solid::moveMesh()
 {
-    return true;
+    if (pimple.firstIter() || pimple.moveMeshOuterCorrectors())
+    {
+        if (!mesh.mover().solidBody())
+        {
+            FatalErrorInFunction
+                << "Region " << name() << " of type " << type()
+                << " does not support non-solid body mesh motion"
+                << exit(FatalError);
+        }
+
+        mesh.move();
+    }
 }
 
 
