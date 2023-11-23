@@ -900,7 +900,7 @@ void createAndWriteRegion
 
     const label nNewPatches = newI;
 
-    // Move all deleteable patches to the end
+    // Move all delete-able patches to the end
     forAll(oldToNew, patchi)
     {
         if (oldToNew[patchi] == -1)
@@ -1469,10 +1469,7 @@ int main(int argc, char *argv[])
     );
 
     #include "setRootCase.H"
-    #include "createTime.H"
-
-    runTime.functionObjects().off();
-
+    #include "createTimeNoFunctionObjects.H"
     #include "createNamedMesh.H"
 
     const word oldInstance = mesh.pointsInstance();

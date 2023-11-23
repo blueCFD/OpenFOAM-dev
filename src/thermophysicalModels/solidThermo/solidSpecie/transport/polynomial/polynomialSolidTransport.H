@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,7 +113,9 @@ class polynomialSolidTransport
         Polynomial<PolySize> kappaCoeffs_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline polynomialSolidTransport
@@ -122,11 +124,6 @@ class polynomialSolidTransport
             const Polynomial<PolySize>& kappaPoly
         );
 
-
-public:
-
-    // Constructors
-
         //- Construct as named copy
         inline polynomialSolidTransport
         (
@@ -134,17 +131,11 @@ public:
             const polynomialSolidTransport&
         );
 
-        //- Construct from dictionary
-        polynomialSolidTransport(const dictionary& dict);
+        //- Construct from name and dictionary
+        polynomialSolidTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<polynomialSolidTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<polynomialSolidTransport> New
-        (
-            const dictionary&dict
-        );
 
 
     // Member Functions

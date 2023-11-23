@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -123,6 +123,11 @@ class hPowerThermo
         //- Check given temperature is within the range of the fitted coeffs
         inline void checkT(const scalar T) const;
 
+
+public:
+
+    // Constructors
+
         //- Construct from components
         inline hPowerThermo
         (
@@ -133,13 +138,8 @@ class hPowerThermo
             const scalar Hf
         );
 
-
-public:
-
-    // Constructors
-
-        //- Construct from dictionary
-        hPowerThermo(const dictionary&);
+        //- Construct from name and dictionary
+        hPowerThermo(const word& name, const dictionary& dict);
 
         //- Construct as a named copy
         inline hPowerThermo
@@ -150,9 +150,6 @@ public:
 
          //- Construct and return a clone
         inline autoPtr<hPowerThermo> clone() const;
-
-        //- Selector from dictionary
-        inline static autoPtr<hPowerThermo> New(const dictionary& dict);
 
 
     // Member Functions

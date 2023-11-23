@@ -164,15 +164,6 @@ public:
         //- Read and set the function objects if their data have changed
         bool read();
 
-        //- Switch the function objects on
-        void on();
-
-        //- Switch the function objects off
-        void off();
-
-        //- Return the execution status (on/off) of the function objects
-        bool status() const;
-
         //- Called at the start of the time-loop
         bool start();
 
@@ -185,7 +176,7 @@ public:
         bool end();
 
         //- Return the time to the next write
-        scalar timeToNextWrite();
+        scalar timeToNextAction();
 
         //- Update topology using the given map
         virtual void movePoints(const polyMesh& mesh);

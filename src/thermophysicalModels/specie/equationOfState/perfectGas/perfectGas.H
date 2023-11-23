@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,17 +103,14 @@ public:
         //- Construct from components
         inline perfectGas(const Specie& sp);
 
-        //- Construct from dictionary
-        perfectGas(const dictionary& dict);
+        //- Construct from name and dictionary
+        perfectGas(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline perfectGas(const word& name, const perfectGas&);
 
         //- Construct and return a clone
         inline autoPtr<perfectGas> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<perfectGas> New(const dictionary& dict);
 
 
     // Member Functions

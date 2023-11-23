@@ -215,25 +215,6 @@ Foam::label Foam::functionObjectList::findObjectID(const word& name) const
 }
 
 
-void Foam::functionObjectList::on()
-{
-    execution_ = true;
-}
-
-
-void Foam::functionObjectList::off()
-{
-    // For safety, also force a read() when execution is turned back on
-    updated_ = execution_ = false;
-}
-
-
-bool Foam::functionObjectList::status() const
-{
-    return execution_;
-}
-
-
 bool Foam::functionObjectList::start()
 {
     bool ok = read();
@@ -297,7 +278,7 @@ bool Foam::functionObjectList::end()
 }
 
 
-Foam::scalar Foam::functionObjectList::timeToNextWrite()
+Foam::scalar Foam::functionObjectList::timeToNextAction()
 {
     scalar result = vGreat;
 
@@ -310,7 +291,7 @@ Foam::scalar Foam::functionObjectList::timeToNextWrite()
 
         forAll(*this, oi)
         {
-            result = min(result, operator[](oi).timeToNextWrite());
+            result = min(result, operator[](oi).timeToNextAction());
         }
     }
 

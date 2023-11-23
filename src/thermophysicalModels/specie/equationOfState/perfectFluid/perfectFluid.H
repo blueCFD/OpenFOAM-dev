@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -133,17 +133,14 @@ public:
             const scalar rho0
         );
 
-        //- Construct from dictionary
-        perfectFluid(const dictionary& dict);
+        //- Construct from name and dictionary
+        perfectFluid(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline perfectFluid(const word& name, const perfectFluid&);
 
         //- Construct and return a clone
         inline autoPtr<perfectFluid> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<perfectFluid> New(const dictionary& dict);
 
 
     // Member Functions

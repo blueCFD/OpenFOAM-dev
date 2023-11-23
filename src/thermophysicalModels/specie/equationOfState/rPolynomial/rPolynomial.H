@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,13 +111,14 @@ class rPolynomial
 :
     public Specie
 {
-    // Private Data
+    // Private Classes
 
+        //- Coefficient list class
         class coeffList
         :
             public VectorSpace<coeffList, scalar, 5>
         {
-            public:
+        public:
 
             // Constructors
 
@@ -133,6 +134,8 @@ class rPolynomial
         };
 
 
+    // Private Data
+
         //- Density coefficients
         coeffList C_;
 
@@ -142,23 +145,16 @@ public:
     // Constructors
 
         //- Construct from components
-        inline rPolynomial
-        (
-            const Specie& sp,
-            const coeffList& coeffs
-        );
+        inline rPolynomial(const Specie& sp, const coeffList& coeffs);
 
-        //- Construct from dictionary
-        rPolynomial(const dictionary& dict);
+        //- Construct from name and dictionary
+        rPolynomial(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline rPolynomial(const word& name, const rPolynomial&);
 
         //- Construct and return a clone
         inline autoPtr<rPolynomial> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<rPolynomial> New(const dictionary& dict);
 
 
     // Member Functions

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "rhoTabulated.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::rhoTabulated<Specie>::rhoTabulated
@@ -38,8 +38,6 @@ inline Foam::rhoTabulated<Specie>::rhoTabulated
     rho_(rho)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::rhoTabulated<Specie>::rhoTabulated
@@ -60,17 +58,6 @@ Foam::rhoTabulated<Specie>::clone() const
     return autoPtr<rhoTabulated<Specie>>
     (
         new rhoTabulated<Specie>(*this)
-    );
-}
-
-
-template<class Specie>
-inline Foam::autoPtr<Foam::rhoTabulated<Specie>>
-Foam::rhoTabulated<Specie>::New(const dictionary& dict)
-{
-    return autoPtr<rhoTabulated<Specie>>
-    (
-        new rhoTabulated<Specie>(dict)
     );
 }
 

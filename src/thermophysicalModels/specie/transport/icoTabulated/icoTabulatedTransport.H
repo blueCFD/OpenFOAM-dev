@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,7 +97,10 @@ class icoTabulatedTransport
 :
     public Thermo
 {
-    typedef Function1s::NonUniformTable<scalar> nonUniformTable;
+    // Private Typedefs
+
+        //- Table type
+        typedef Function1s::NonUniformTable<scalar> nonUniformTable;
 
 
     // Private Data
@@ -109,7 +112,9 @@ class icoTabulatedTransport
         nonUniformTable kappa_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline icoTabulatedTransport
@@ -119,25 +124,14 @@ class icoTabulatedTransport
             const nonUniformTable& kappa
         );
 
-
-public:
-
-    // Constructors
-
         //- Construct as named copy
         inline icoTabulatedTransport(const word&, const icoTabulatedTransport&);
 
-        //- Construct from dictionary
-        icoTabulatedTransport(const dictionary& dict);
+        //- Construct from name and dictionary
+        icoTabulatedTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<icoTabulatedTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<icoTabulatedTransport> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

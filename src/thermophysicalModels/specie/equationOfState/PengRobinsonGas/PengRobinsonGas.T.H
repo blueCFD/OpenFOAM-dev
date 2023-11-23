@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -144,20 +144,14 @@ public:
             const scalar& omega
         );
 
-        //- Construct from dictionary
-        PengRobinsonGas(const dictionary& dict);
+        //- Construct from name and dictionary
+        PengRobinsonGas(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline PengRobinsonGas(const word& name, const PengRobinsonGas&);
 
         //- Construct and return a clone
         inline autoPtr<PengRobinsonGas> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<PengRobinsonGas> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

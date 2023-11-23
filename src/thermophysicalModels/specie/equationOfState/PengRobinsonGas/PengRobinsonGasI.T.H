@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "PengRobinsonGas.T.H"
 #include "mathematicalConstants.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::PengRobinsonGas<Specie>::PengRobinsonGas
@@ -47,8 +47,6 @@ inline Foam::PengRobinsonGas<Specie>::PengRobinsonGas
     omega_(omega)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::PengRobinsonGas<Specie>::PengRobinsonGas
@@ -73,20 +71,6 @@ Foam::PengRobinsonGas<Specie>::clone() const
     return autoPtr<PengRobinsonGas<Specie>>
     (
         new PengRobinsonGas<Specie>(*this)
-    );
-}
-
-
-template<class Specie>
-inline Foam::autoPtr<Foam::PengRobinsonGas<Specie>>
-Foam::PengRobinsonGas<Specie>::New
-(
-    const dictionary& dict
-)
-{
-    return autoPtr<PengRobinsonGas<Specie>>
-    (
-        new PengRobinsonGas<Specie>(dict)
     );
 }
 

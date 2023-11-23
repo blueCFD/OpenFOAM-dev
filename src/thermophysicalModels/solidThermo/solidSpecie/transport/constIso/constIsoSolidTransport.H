@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,15 +77,12 @@ class constIsoSolidTransport
         scalar kappa_;
 
 
-    // Private Member Functions
-
-        //- Construct from components
-        inline constIsoSolidTransport(const Thermo& t, const scalar kappa);
-
-
 public:
 
     // Constructors
+
+        //- Construct from components
+        inline constIsoSolidTransport(const Thermo& t, const scalar kappa);
 
         //- Construct as named copy
         inline constIsoSolidTransport
@@ -94,17 +91,11 @@ public:
             const constIsoSolidTransport&
         );
 
-        //- Construct from dictionary
-        constIsoSolidTransport(const dictionary& dict);
+        //- Construct from name and dictionary
+        constIsoSolidTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<constIsoSolidTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<constIsoSolidTransport> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

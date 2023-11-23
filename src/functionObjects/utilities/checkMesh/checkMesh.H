@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,76 +22,97 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::rawGraph
+    Foam::functionObjects::checkMesh
 
 Description
-    A raw xy graph output
+    Executes primitiveMesh::checkMesh(true) every execute time for which the
+    mesh changed, i.e. moved or changed topology.
+
+    Useful to check the correctness of changing and morphing meshes.
+
+    Example of checkMesh specification:
+    \verbatim
+    checkMesh
+    {
+        type            checkMesh;
+        libs            ("libutilityFunctionObjects.so");
+
+        executeControl  timeStep;
+        executeInterval 10;
+    }
+    \endverbatim
+    or using the standard configuration file:
+    \verbatim
+    #includeFunc checkMesh(executeInterval=10)
+    \endverbatim
 
 SourceFiles
-    rawGraph.C
+    checkMesh.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef rawGraph_H
-#define rawGraph_H
+#ifndef functionObjects_checkMesh_H
+#define functionObjects_checkMesh_H
 
-#include "graph.H"
+#include "fvMeshFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace functionObjects
+{
 
 /*---------------------------------------------------------------------------*\
-                          Class rawGraph Declaration
+                          Class checkMesh Declaration
 \*---------------------------------------------------------------------------*/
 
-class rawGraph
+class checkMesh
 :
-    public graph::writer
+    public fvMeshFunctionObject
 {
+    // Private Data
 
 public:
 
     //- Runtime type information
-    TypeName("raw");
-
-    //- FileName extension  for this graph format
-    static const word ext_;
+    TypeName("checkMesh");
 
 
     // Constructors
 
-        //- Construct null
-        rawGraph()
-        {}
+        //- Construct from Time and dictionary
+        checkMesh
+        (
+            const word& name,
+            const Time&,
+            const dictionary&
+        );
 
 
     //- Destructor
-    ~rawGraph()
-    {}
+    virtual ~checkMesh();
 
 
     // Member Functions
 
-        // Access
+        //- Return the list of fields required
+        virtual wordList fields() const
+        {
+            return wordList::null();
+        }
 
-            //- Return the appropriate fileName extension
-            //  for this graph format
-            const word& ext() const
-            {
-                return ext_;
-            }
+        //- Execute primitiveMesh::checkMesh(true)
+        virtual bool execute();
 
-
-        // Write
-
-            void write(const graph&, Ostream& os) const;
+        //- Do nothing
+        virtual bool write();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace functionObjects
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

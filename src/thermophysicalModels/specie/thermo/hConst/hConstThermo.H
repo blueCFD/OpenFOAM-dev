@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -121,7 +121,9 @@ class hConstThermo
         scalar Hsref_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline hConstThermo
@@ -133,22 +135,14 @@ class hConstThermo
             const scalar Hsref
         );
 
-
-public:
-
-    // Constructors
-
-        //- Construct from dictionary
-        hConstThermo(const dictionary& dict);
+        //- Construct from name and dictionary
+        hConstThermo(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline hConstThermo(const word&, const hConstThermo&);
 
         //- Construct and return a clone
         inline autoPtr<hConstThermo> clone() const;
-
-        //- Selector from dictionary
-        inline static autoPtr<hConstThermo> New(const dictionary& dict);
 
 
     // Member Functions

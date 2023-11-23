@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "adiabaticPerfectFluid.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::adiabaticPerfectFluid<Specie>::adiabaticPerfectFluid
@@ -44,8 +44,6 @@ inline Foam::adiabaticPerfectFluid<Specie>::adiabaticPerfectFluid
     B_(B)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::adiabaticPerfectFluid<Specie>::adiabaticPerfectFluid
@@ -69,20 +67,6 @@ Foam::adiabaticPerfectFluid<Specie>::clone() const
     return autoPtr<adiabaticPerfectFluid<Specie>>
     (
         new adiabaticPerfectFluid<Specie>(*this)
-    );
-}
-
-
-template<class Specie>
-inline Foam::autoPtr<Foam::adiabaticPerfectFluid<Specie>>
-Foam::adiabaticPerfectFluid<Specie>::New
-(
-    const dictionary& dict
-)
-{
-    return autoPtr<adiabaticPerfectFluid<Specie>>
-    (
-        new adiabaticPerfectFluid<Specie>(dict)
     );
 }
 

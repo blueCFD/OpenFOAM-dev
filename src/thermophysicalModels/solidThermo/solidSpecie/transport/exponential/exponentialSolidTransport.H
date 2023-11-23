@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,7 +80,9 @@ class exponentialSolidTransport
         scalar Tref_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline exponentialSolidTransport
@@ -91,11 +93,6 @@ class exponentialSolidTransport
             const scalar Tref
         );
 
-
-public:
-
-    // Constructors
-
         //- Construct as named copy
         inline exponentialSolidTransport
         (
@@ -103,17 +100,11 @@ public:
             const exponentialSolidTransport&
         );
 
-        //- Construct from dictionary
-        exponentialSolidTransport(const dictionary&);
+        //- Construct from name and dictionary
+        exponentialSolidTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<exponentialSolidTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<exponentialSolidTransport> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

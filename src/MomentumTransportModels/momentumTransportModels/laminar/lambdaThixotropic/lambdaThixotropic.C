@@ -99,7 +99,7 @@ lambdaThixotropic<BasicMomentumTransportModel>::lambdaThixotropic
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        calcNu(strainRate())
+        calcNu(this->strainRate())
     )
 {}
 

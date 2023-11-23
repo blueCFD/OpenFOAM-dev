@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,9 +117,13 @@ class AndradeTransport
 :
     public Thermo
 {
-    // Private Data
+    // Private Typedefs
 
+        //- Coefficient list type
         typedef FixedList<scalar, 5> coeffList;
+
+
+    // Private Data
 
         //- Dynamic viscosity coefficients
         coeffList muCoeffs_;
@@ -128,7 +132,9 @@ class AndradeTransport
         coeffList kappaCoeffs_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline AndradeTransport
@@ -138,29 +144,19 @@ class AndradeTransport
             const coeffList& kappaCoeffs
         );
 
-
-public:
-
-    // Constructors
-
         //- Construct as named copy
         inline AndradeTransport
+
         (
             const word&,
             const AndradeTransport&
         );
 
-        //- Construct from dictionary
-        AndradeTransport(const dictionary& dict);
+        //- Construct from name and dictionary
+        AndradeTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<AndradeTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<AndradeTransport> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

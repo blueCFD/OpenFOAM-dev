@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -131,17 +131,14 @@ public:
             const Polynomial<PolySize>& rhoPoly
         );
 
-        //- Construct from dictionary
-        icoPolynomial(const dictionary& dict);
+        //- Construct from name and dictionary
+        icoPolynomial(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline icoPolynomial(const word& name, const icoPolynomial&);
 
         //- Construct and return a clone
         inline autoPtr<icoPolynomial> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<icoPolynomial> New(const dictionary& dict);
 
 
     // Member Functions

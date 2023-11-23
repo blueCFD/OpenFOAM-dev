@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,7 +91,10 @@ class icoTabulated
 :
     public Specie
 {
-    typedef Function1s::NonUniformTable<scalar> nonUniformTable;
+    // Private Typedefs
+
+        //- Table type
+        typedef Function1s::NonUniformTable<scalar> nonUniformTable;
 
 
     // Private Data
@@ -111,17 +114,14 @@ public:
             const nonUniformTable& rho
         );
 
-        //- Construct from dictionary
-        icoTabulated(const dictionary& dict);
+        //- Construct from name and dictionary
+        icoTabulated(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline icoTabulated(const word& name, const icoTabulated&);
 
         //- Construct and return a clone
         inline autoPtr<icoTabulated> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<icoTabulated> New(const dictionary& dict);
 
 
     // Member Functions

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "rPolynomial.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::rPolynomial<Specie>::rPolynomial
@@ -38,8 +38,6 @@ inline Foam::rPolynomial<Specie>::rPolynomial
     C_(coeffs)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::rPolynomial<Specie>::rPolynomial
@@ -58,17 +56,6 @@ inline Foam::autoPtr<Foam::rPolynomial<Specie>>
 Foam::rPolynomial<Specie>::clone() const
 {
     return autoPtr<rPolynomial<Specie>>(new rPolynomial<Specie>(*this));
-}
-
-
-template<class Specie>
-inline Foam::autoPtr<Foam::rPolynomial<Specie>>
-Foam::rPolynomial<Specie>::New
-(
-    const dictionary& dict
-)
-{
-    return autoPtr<rPolynomial<Specie>>(new rPolynomial<Specie>(dict));
 }
 
 

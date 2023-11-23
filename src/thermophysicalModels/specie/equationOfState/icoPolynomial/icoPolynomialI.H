@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "icoPolynomial.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie, int PolySize>
 inline Foam::icoPolynomial<Specie, PolySize>::icoPolynomial
@@ -38,8 +38,6 @@ inline Foam::icoPolynomial<Specie, PolySize>::icoPolynomial
     rhoCoeffs_(rhoCoeffs)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie, int PolySize>
 inline Foam::icoPolynomial<Specie, PolySize>::icoPolynomial
@@ -60,17 +58,6 @@ Foam::icoPolynomial<Specie, PolySize>::clone() const
     return autoPtr<icoPolynomial<Specie, PolySize>>
     (
         new icoPolynomial<Specie, PolySize>(*this)
-    );
-}
-
-
-template<class Specie, int PolySize>
-inline Foam::autoPtr<Foam::icoPolynomial<Specie, PolySize>>
-Foam::icoPolynomial<Specie, PolySize>::New(const dictionary& dict)
-{
-    return autoPtr<icoPolynomial<Specie, PolySize>>
-    (
-        new icoPolynomial<Specie, PolySize>(dict)
     );
 }
 

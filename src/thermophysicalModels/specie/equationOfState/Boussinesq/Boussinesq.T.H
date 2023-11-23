@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -136,8 +136,8 @@ public:
             const scalar beta
         );
 
-        //- Construct from dictionary
-        Boussinesq(const dictionary& dict);
+        //- Construct from name and dictionary
+        Boussinesq(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline Boussinesq
@@ -148,12 +148,6 @@ public:
 
         //- Construct and return a clone
         inline autoPtr<Boussinesq> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<Boussinesq> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

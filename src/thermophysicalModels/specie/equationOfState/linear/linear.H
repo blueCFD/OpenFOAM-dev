@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -129,17 +129,14 @@ public:
             const scalar rho0
         );
 
-        //- Construct from dictionary
-        linear(const dictionary& dict);
+        //- Construct from name and dictionary
+        linear(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline linear(const word& name, const linear&);
 
         //- Construct and return a clone
         inline autoPtr<linear> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<linear> New(const dictionary& dict);
 
 
     // Member Functions

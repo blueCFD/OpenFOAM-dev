@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -123,7 +123,9 @@ class logPolynomialTransport
         Polynomial<PolySize> kappaCoeffs_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline logPolynomialTransport
@@ -133,11 +135,6 @@ class logPolynomialTransport
             const Polynomial<PolySize>& kappaPoly
         );
 
-
-public:
-
-    // Constructors
-
         //- Construct as named copy
         inline logPolynomialTransport
         (
@@ -145,17 +142,11 @@ public:
             const logPolynomialTransport&
         );
 
-        //- Construct from dictionary
-        logPolynomialTransport(const dictionary& dict);
+        //- Construct from name and dictionary
+        logPolynomialTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<logPolynomialTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<logPolynomialTransport> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

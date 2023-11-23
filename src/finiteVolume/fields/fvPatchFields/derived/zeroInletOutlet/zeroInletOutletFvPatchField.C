@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,26 +23,37 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "rawGraph.H"
-#include "addToRunTimeSelectionTable.H"
+#include "zeroInletOutletFvPatchField.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-namespace Foam
+template<class Type>
+Foam::zeroInletOutletFvPatchField<Type>::zeroInletOutletFvPatchField
+(
+    const fvPatch& p,
+    const DimensionedField<Type, volMesh>& iF,
+    const dictionary& dict
+)
+:
+    inletOutletFvPatchField<Type>(p, iF)
 {
-    defineTypeNameAndDebug(rawGraph, 0);
-    const word rawGraph::ext_("xy");
-
-    typedef graph::writer graphWriter;
-    addToRunTimeSelectionTable(graphWriter, rawGraph, word);
+    if (dict.found("value"))
+    {
+        fvPatchField<Type>::operator=
+        (
+            Field<Type>("value", dict, p.size())
+        );
+    }
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::rawGraph::write(const graph& g, Ostream& os) const
+template<class Type>
+void Foam::zeroInletOutletFvPatchField<Type>::write(Ostream& os) const
 {
-    g.writeTable(os);
+    fvPatchField<Type>::write(os);
+    writeEntry(os, "value", *this);
 }
 
 

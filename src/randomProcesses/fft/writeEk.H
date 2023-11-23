@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,74 +21,36 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::xmgrGraph
+Application
+    writeEk
 
 Description
-    Output and \b agr file for \em xmgrace
-    (http://plasma-gate.weizmann.ac.il/Grace/)
-
-SourceFiles
-    xmgrGraph.C
+    This function evaluates q(k) (McComb, p61) by summing all wavevectors
+    in a k-shell. Then we divide through by the volume of the box
+    - to be accurate, by the volume of the ellipsoid enclosing the
+    box (assume cells even in each direction). Finally, multiply the
+    q(k) values by k^2 to give the full power spectrum E(k). Integrating
+    this over the whole range gives the energy in turbulence.
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef xmgrGraph_H
-#define xmgrGraph_H
+#ifndef writeEk_H
+#define writeEk_H
 
-#include "graph.H"
+#include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-/*---------------------------------------------------------------------------*\
-                          Class xmgrGraph Declaration
-\*---------------------------------------------------------------------------*/
+class Kmesh;
 
-class xmgrGraph
-:
-    public graph::writer
-{
-
-public:
-
-    //- Runtime type information
-    TypeName("xmgr");
-
-    //- FileName extension  for this graph format
-    static const word ext_;
-
-
-    // Constructors
-
-        //- Construct null
-        xmgrGraph()
-        {}
-
-
-    //- Destructor
-    ~xmgrGraph()
-    {}
-
-
-    // Member Functions
-
-        // Access
-
-            //- Return the appropriate fileName extension
-            //  for this graph format
-            const word& ext() const
-            {
-                return ext_;
-            }
-
-
-        // Write
-
-            void write(const graph&, Ostream& os) const;
-};
+void writeEk
+(
+    const volVectorField& U,
+    const Kmesh& K
+);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

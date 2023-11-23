@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -128,7 +128,10 @@ class rhoTabulated
 :
     public Specie
 {
-    typedef Function2s::UniformTable<scalar> table2D;
+    // Private Typedefs
+
+        //- Table type
+        typedef Function2s::UniformTable<scalar> table2D;
 
 
     // Private Data
@@ -148,17 +151,14 @@ public:
             const table2D& rho
         );
 
-        //- Construct from dictionary
-        rhoTabulated(const dictionary& dict);
+        //- Construct from name and dictionary
+        rhoTabulated(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline rhoTabulated(const word& name, const rhoTabulated&);
 
         //- Construct and return a clone
         inline autoPtr<rhoTabulated> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<rhoTabulated> New(const dictionary& dict);
 
 
     // Member Functions

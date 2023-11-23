@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "linear.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::linear<Specie>::linear
@@ -40,8 +40,6 @@ inline Foam::linear<Specie>::linear
     rho0_(rho0)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::linear<Specie>::linear
@@ -61,17 +59,6 @@ inline Foam::autoPtr<Foam::linear<Specie>>
 Foam::linear<Specie>::clone() const
 {
     return autoPtr<linear<Specie>>(new linear<Specie>(*this));
-}
-
-
-template<class Specie>
-inline Foam::autoPtr<Foam::linear<Specie>>
-Foam::linear<Specie>::New
-(
-    const dictionary& dict
-)
-{
-    return autoPtr<linear<Specie>>(new linear<Specie>(dict));
 }
 
 

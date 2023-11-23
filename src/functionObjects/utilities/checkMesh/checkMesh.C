@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,44 +23,61 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "xmgrGraph.H"
+#include "checkMesh.H"
+#include "fvMesh.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(xmgrGraph, 0);
-    const word xmgrGraph::ext_("agr");
-
-    typedef graph::writer graphWriter;
-    addToRunTimeSelectionTable(graphWriter, xmgrGraph, word);
+namespace functionObjects
+{
+    defineTypeNameAndDebug(checkMesh, 0);
+    addToRunTimeSelectionTable(functionObject, checkMesh, dictionary);
 }
+}
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::functionObjects::checkMesh::checkMesh
+(
+    const word& name,
+    const Time& runTime,
+    const dictionary& dict
+)
+:
+    fvMeshFunctionObject(name, runTime, dict)
+{
+    read(dict);
+}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::functionObjects::checkMesh::~checkMesh()
+{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::xmgrGraph::write(const graph& g, Ostream& os) const
+bool Foam::functionObjects::checkMesh::execute()
 {
-    os  << "@title " << g.title() << nl
-        << "@xaxis label " << g.xName() << nl
-        << "@yaxis label " << g.yName() << endl;
-
-    label fieldi = 0;
-
-    forAllConstIter(graph, g, iter)
+    if (mesh_.changing())
     {
-        os  << "@s" << fieldi << " legend "
-            << iter()->name() << nl
-            << "@target G0.S" << fieldi << nl
-            << "@type xy" << endl;
-
-        writeXY(g.x(), *iter(), os);
-
-        os << endl;
-
-        fieldi++;
+        return mesh_.checkMesh(true);
     }
+    else
+    {
+        return true;
+    }
+}
+
+
+bool Foam::functionObjects::checkMesh::write()
+{
+    return true;
 }
 
 

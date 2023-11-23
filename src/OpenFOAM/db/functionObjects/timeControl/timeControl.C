@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ License
 namespace Foam
 {
     template<>
-    const char* NamedEnum<timeControl::timeControls, 8>::
+    const char* NamedEnum<timeControl::timeControls, 9>::
     names[] =
     {
         "timeStep",
@@ -39,13 +39,14 @@ namespace Foam
         "outputTime",
         "adjustableRunTime",
         "runTime",
+        "runTimes",
         "clockTime",
         "cpuTime",
         "none"
     };
 }
 
-const Foam::NamedEnum<Foam::timeControl::timeControls, 8>
+const Foam::NamedEnum<Foam::timeControl::timeControls, 9>
     Foam::timeControl::timeControlNames_;
 
 
@@ -63,6 +64,7 @@ Foam::timeControl::timeControl
     timeControl_(timeControls::timeStep),
     intervalSteps_(0),
     interval_(-1),
+    timeDelta_(0),
     executionIndex_(0)
 {
     read(dict);
@@ -81,6 +83,7 @@ void Foam::timeControl::read(const dictionary& dict)
 {
     word controlName(prefix_ + "Control");
     word intervalName(prefix_ + "Interval");
+    const word timesName(prefix_ + "Times");
 
     // For backward compatibility support the deprecated 'outputControl' option
     // now superseded by 'writeControl' for compatibility with Time
@@ -142,6 +145,23 @@ void Foam::timeControl::read(const dictionary& dict)
             break;
         }
 
+        case timeControls::runTimes:
+        {
+            times_ = dict.lookup<scalarList>(timesName);
+            timeDelta_ = dict.lookupOrDefault("timeDelta", 1e-6);
+
+            forAll(times_, i)
+            {
+                timeIndices_.insert
+                (
+                    int64_t((times_[i] + timeDelta_/2.0)/timeDelta_)
+                );
+            }
+
+            intervalSteps_ = dict.lookupOrDefault<label>(intervalName, 1);
+            break;
+        }
+
         default:
         {
             break;
@@ -178,7 +198,7 @@ bool Foam::timeControl::execute()
         case timeControls::runTime:
         case timeControls::adjustableRunTime:
         {
-            label executionIndex = label
+            const label executionIndex = label
             (
                 (
                     (time_.value() - time_.beginTime().value())
@@ -195,9 +215,19 @@ bool Foam::timeControl::execute()
             break;
         }
 
+        case timeControls::runTimes:
+        {
+            return timeIndices_.found
+            (
+                (time_.userTimeValue() + timeDelta_/2)/timeDelta_
+            );
+
+            break;
+        }
+
         case timeControls::cpuTime:
         {
-            label executionIndex = label
+            const label executionIndex = label
             (
                 returnReduce(time_.elapsedCpuTime(), maxOp<double>())
                /interval_
@@ -212,7 +242,7 @@ bool Foam::timeControl::execute()
 
         case timeControls::clockTime:
         {
-            label executionIndex = label
+            const label executionIndex = label
             (
                 returnReduce(label(time_.elapsedClockTime()), maxOp<label>())
                /interval_
@@ -241,6 +271,69 @@ bool Foam::timeControl::execute()
     }
 
     return false;
+}
+
+
+Foam::scalar Foam::timeControl::timeToNextAction()
+{
+    switch (timeControl_)
+    {
+        case timeControls::timeStep:
+        case timeControls::writeTime:
+        case timeControls::outputTime:
+        case timeControls::runTime:
+        case timeControls::cpuTime:
+        case timeControls::clockTime:
+        case timeControls::none:
+        {
+            return vGreat;
+            break;
+        }
+
+        case timeControls::adjustableRunTime:
+        {
+            return
+                max
+                (
+                    0.0,
+                    (executionIndex_ + 1)*interval_
+                  - (time_.value() - time_.beginTime().value())
+                );
+            break;
+        }
+
+        case timeControls::runTimes:
+        {
+            if (time_.userTimeValue() + timeDelta_ < times_.last())
+            {
+                forAll(times_, i)
+                {
+                    if (times_[i] > time_.userTimeValue() + timeDelta_)
+                    {
+                        return time_.userTimeToTime
+                        (
+                            times_[i] - time_.userTimeValue()
+                        );
+                    }
+                }
+            }
+
+            return vGreat;
+
+            break;
+        }
+
+        default:
+        {
+            FatalErrorInFunction
+                << "Undefined output control: "
+                << timeControlNames_[timeControl_] << nl
+                << abort(FatalError);
+            break;
+        }
+    }
+
+    return vGreat;
 }
 
 

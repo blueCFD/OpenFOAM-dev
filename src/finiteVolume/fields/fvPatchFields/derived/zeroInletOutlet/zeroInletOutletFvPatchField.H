@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,20 +22,36 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::jplotGraph
+    Foam::zeroInletOutletFvPatchField
 
 Description
-    jplot graph output
+    This boundary condition provides a generic outflow condition
+
+    Zero gradient is applied for outflow and a zero value applied for reverse
+    flow.
+
+Usage
+    Example of the boundary condition specification:
+    \verbatim
+    <patchName>
+    {
+        type            zeroInletOutlet;
+    }
+    \endverbatim
+
+See also
+    Foam::inletOutletFvPatchField
+    Foam::zeroGradientFvPatchField
 
 SourceFiles
-    jplotGraph.C
+    zeroInletOutletFvPatchField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef jplotGraph_H
-#define jplotGraph_H
+#ifndef zeroInletOutletFvPatchField_H
+#define zeroInletOutletFvPatchField_H
 
-#include "graph.H"
+#include "inletOutletFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -43,56 +59,62 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                         Class jplotGraph Declaration
+                   Class zeroInletOutletFvPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
-class jplotGraph
+template<class Type>
+class zeroInletOutletFvPatchField
 :
-    public graph::writer
+    public inletOutletFvPatchField<Type>
 {
 
 public:
 
     //- Runtime type information
-    TypeName("jplot");
-
-    //- FileName extension  for this graph format
-    static const word ext_;
+    TypeName("zeroInletOutlet");
 
 
     // Constructors
 
-        //- Construct null
-        jplotGraph()
-        {}
+        using inletOutletFvPatchField<Type>::inletOutletFvPatchField;
 
+        //- Construct from patch, internal field and dictionary
+        zeroInletOutletFvPatchField
+        (
+            const fvPatch&,
+            const DimensionedField<Type, volMesh>&,
+            const dictionary&
+        );
 
-    //- Destructor
-    ~jplotGraph()
-    {}
+        //- Construct and return a clone setting internal field reference
+        virtual tmp<fvPatchField<Type>> clone
+        (
+            const DimensionedField<Type, volMesh>& iF
+        ) const
+        {
+            return tmp<fvPatchField<Type>>
+            (
+                new zeroInletOutletFvPatchField<Type>(*this, iF)
+            );
+        }
 
 
     // Member Functions
 
-        // Access
-
-            //- Return the appropriate fileName extension
-            //  for this graph format
-            const word& ext() const
-            {
-                return ext_;
-            }
-
-
-        // Write
-
-            void write(const graph&, Ostream& os) const;
+        //- Write
+        virtual void write(Ostream&) const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+    #include "zeroInletOutletFvPatchField.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -121,7 +121,9 @@ class eConstThermo
         scalar Esref_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline eConstThermo
@@ -133,22 +135,14 @@ class eConstThermo
             const scalar Esref
         );
 
-
-public:
-
-    // Constructors
-
-        //- Construct from dictionary
-        eConstThermo(const dictionary& dict);
+        //- Construct from name and dictionary
+        eConstThermo(const word& name, const dictionary& dict);
 
         //- Construct as named copy
         inline eConstThermo(const word&, const eConstThermo&);
 
         //- Construct and return a clone
         inline autoPtr<eConstThermo> clone() const;
-
-        //- Selector from dictionary
-        inline static autoPtr<eConstThermo> New(const dictionary& dict);
 
 
     // Member Functions

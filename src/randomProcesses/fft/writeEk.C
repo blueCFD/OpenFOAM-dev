@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,50 +23,60 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "curve.H"
-#include "Ostream.H"
+#include "writeEk.H"
+#include "fft.H"
+#include "kShellIntegration.H"
+#include "volFields.H"
+#include "setWriter.H"
+#include "writeFile.H"
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::curve::curve
-(
-    const string& name,
-    const curveStyle& style,
-    const label l
-)
-:
-    scalarField(l, 0.0),
-    name_(name),
-    style_(style)
-{}
-
-
-Foam::curve::curve
-(
-    const string& name,
-    const curveStyle& style,
-    const scalarField& y
-)
-:
-    scalarField(y),
-    name_(name),
-    style_(style)
-{}
-
-
-// * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
-
-Foam::Ostream& Foam::operator<<(Ostream& os, const curve& c)
+namespace Foam
 {
-    os  << nl
-        << c.name_ << nl
-        << c.style_ << nl
-        << static_cast<const scalarField&>(c);
 
-    os.check("Ostream& operator>>(Ostream&, const curve&)");
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    return os;
+void writeEk
+(
+    const volVectorField& U,
+    const Kmesh& K
+)
+{
+    const Pair<scalarField> Ek
+    (
+        kShellIntegration
+        (
+            fft::forwardTransform
+            (
+                ReComplexField(U.primitiveField()),
+                K.nn()
+            ),
+            K
+        )
+    );
+
+    autoPtr<setWriter> writer
+    (
+        setWriter::New(U.time().graphFormat())
+    );
+
+    writer->write
+    (
+        U.time().path()
+       /functionObjects::writeFile::outputPrefix
+       /"graphs"
+       /U.time().name(),
+        "Ek",
+        coordSet(true,"k", Ek.first()),
+        "E(k)",
+        Ek.second()
+    );
 }
 
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 // ************************************************************************* //

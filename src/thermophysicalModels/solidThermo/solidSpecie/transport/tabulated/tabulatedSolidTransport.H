@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -101,7 +101,9 @@ class tabulatedSolidTransport
         nonUniformTable kappa_;
 
 
-    // Private Member Functions
+public:
+
+    // Constructors
 
         //- Construct from components
         inline tabulatedSolidTransport
@@ -110,11 +112,6 @@ class tabulatedSolidTransport
             const nonUniformTable& kappa
         );
 
-
-public:
-
-    // Constructors
-
         //- Construct as named copy
         inline tabulatedSolidTransport
         (
@@ -122,17 +119,11 @@ public:
             const tabulatedSolidTransport&
         );
 
-        //- Construct from dictionary
-        tabulatedSolidTransport(const dictionary&);
+        //- Construct from name and dictionary
+        tabulatedSolidTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<tabulatedSolidTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<tabulatedSolidTransport> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,38 +23,27 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "jplotGraph.H"
-#include "addToRunTimeSelectionTable.H"
+#ifndef zeroInletOutletFvPatchFields_H
+#define zeroInletOutletFvPatchFields_H
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+#include "zeroInletOutletFvPatchField.H"
+#include "fieldTypes.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(jplotGraph, 0);
-    const word jplotGraph::ext_("dat");
 
-    typedef graph::writer graphWriter;
-    addToRunTimeSelectionTable(graphWriter, jplotGraph, word);
-}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+makePatchTypeFieldTypedefs(zeroInletOutlet);
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-void Foam::jplotGraph::write(const graph& g, Ostream& os) const
-{
-    os  << "# JPlot file" << nl
-        << "# column 1: " << g.xName() << endl;
+} // End namespace Foam
 
-    label fieldi = 0;
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    forAllConstIter(graph, g, iter)
-    {
-        os  << "# column " << fieldi + 2 << ": " << (*iter()).name() << endl;
-        fieldi++;
-    }
-
-    g.writeTable(os);
-}
-
+#endif
 
 // ************************************************************************* //

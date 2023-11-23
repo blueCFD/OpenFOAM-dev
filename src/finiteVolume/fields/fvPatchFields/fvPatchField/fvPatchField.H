@@ -602,12 +602,6 @@ public:
     (                                                                          \
         PatchTypeField,                                                        \
         typePatchTypeField,                                                    \
-        patch                                                                  \
-    );                                                                         \
-    addToRunTimeSelectionTable                                                 \
-    (                                                                          \
-        PatchTypeField,                                                        \
-        typePatchTypeField,                                                    \
         patchMapper                                                            \
     );                                                                         \
     addToRunTimeSelectionTable                                                 \
@@ -618,16 +612,23 @@ public:
     );
 
 
-// Use with caution
-#define addRemovableToPatchFieldRunTimeSelection(                              \
+#define addToNullConstructablePatchFieldRunTimeSelection(                      \
     PatchTypeField, typePatchTypeField)                                        \
                                                                                \
-    addRemovableToRunTimeSelectionTable                                        \
+    addToPatchFieldRunTimeSelection(PatchTypeField, typePatchTypeField)        \
+                                                                               \
+    addToRunTimeSelectionTable                                                 \
     (                                                                          \
         PatchTypeField,                                                        \
         typePatchTypeField,                                                    \
         patch                                                                  \
-    );                                                                         \
+    );
+
+
+// Use with caution
+#define addRemovableToPatchFieldRunTimeSelection(                              \
+    PatchTypeField, typePatchTypeField)                                        \
+                                                                               \
     addRemovableToRunTimeSelectionTable                                        \
     (                                                                          \
         PatchTypeField,                                                        \
@@ -646,6 +647,16 @@ public:
 #define makePatchTypeField(PatchTypeField, typePatchTypeField)                 \
     defineTypeNameAndDebug(typePatchTypeField, 0);                             \
     addToPatchFieldRunTimeSelection(PatchTypeField, typePatchTypeField)
+
+
+// For null-constructable non-templated patch fields
+#define makeNullConstructablePatchTypeField(PatchTypeField, typePatchTypeField)\
+    defineTypeNameAndDebug(typePatchTypeField, 0);                             \
+    addToNullConstructablePatchFieldRunTimeSelection                           \
+    (                                                                          \
+        PatchTypeField,                                                        \
+        typePatchTypeField                                                     \
+    )
 
 
 // For non-templated patch fields - use with caution
@@ -668,8 +679,26 @@ public:
     )
 
 
+// For null-constructable templated patch fields
+#define makeNullConstructableTemplatePatchTypeField(fieldType, type)           \
+    defineNamedTemplateTypeNameAndDebug                                        \
+    (                                                                          \
+        CAT4(type, FvPatch, CAPITALIZE(fieldType), Field),                     \
+        0                                                                      \
+    );                                                                         \
+    addToNullConstructablePatchFieldRunTimeSelection                           \
+    (                                                                          \
+        CAT3(fvPatch, CAPITALIZE(fieldType), Field),                           \
+        CAT4(type, FvPatch, CAPITALIZE(fieldType), Field)                      \
+    )
+
+
 #define makePatchFields(type)                                                  \
     FOR_ALL_FIELD_TYPES(makeTemplatePatchTypeField, type)
+
+
+#define makeNullConstructablePatchFields(type)                                 \
+    FOR_ALL_FIELD_TYPES(makeNullConstructableTemplatePatchTypeField, type)
 
 
 #define makePatchFieldTypeName(fieldType, type)                                \

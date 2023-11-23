@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,7 +75,7 @@ Foam::functionObjects::timeControl::timeControl
     const dictionary& dict
 )
 :
-    functionObject(name),
+    functionObject(name, t),
     time_(t),
     startTime_(-vGreat),
     endTime_(vGreat),
@@ -157,28 +157,13 @@ bool Foam::functionObjects::timeControl::end()
 }
 
 
-Foam::scalar Foam::functionObjects::timeControl::timeToNextWrite()
+Foam::scalar Foam::functionObjects::timeControl::timeToNextAction()
 {
-    if
+    return min
     (
-        active()
-     && writeControl_.control() ==
-        Foam::timeControl::timeControls::adjustableRunTime
-    )
-    {
-        const label  writeTimeIndex = writeControl_.executionIndex();
-        const scalar writeInterval = writeControl_.interval();
-
-        return
-            max
-            (
-                0.0,
-                (writeTimeIndex + 1)*writeInterval
-              - (time_.value() - time_.beginTime().value())
-            );
-    }
-
-    return vGreat;
+        executeControl_.timeToNextAction(),
+        writeControl_.timeToNextAction()
+    );
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,14 +54,15 @@ public:
     //- The time control options
     enum class timeControls
     {
-        timeStep,           //!< execution is coupled to the time-step
-        writeTime,          //!< execution is coupled to the write-time
-        outputTime,         //!< execution is coupled to the output-time
-        adjustableRunTime,  //!< Adjust time step for execution
-        runTime,            //!< run time for execution
-        clockTime,          //!< clock time for execution
-        cpuTime,            //!< cpu time for execution
-        none                //!< no execution
+        timeStep,           //!< Execute/write every 'Interval' time-steps
+        writeTime,          //!< Execute/write every 'Interval' write times
+        outputTime,         //!< Execute/write every 'Interval' write times
+        adjustableRunTime,  //!< Execute/write every 'Interval' run time period
+        runTime,            //!< Execute/write every 'Interval' run time period
+        runTimes,           //!< Execute/write at specified list of run times
+        clockTime,          //!< Execute/write every 'Interval' CPU time period
+        cpuTime,            //!< Execute/write every 'Interval' CPU time period
+        none                //!< No execution
     };
 
 
@@ -69,14 +70,14 @@ private:
 
     // Private Data
 
-        //- Time object
+        //- Reference to time
         const Time& time_;
 
         //- Prefix
         const word prefix_;
 
         //- String representation of timeControls enums
-        static const NamedEnum<timeControls, 8> timeControlNames_;
+        static const NamedEnum<timeControls, 9> timeControlNames_;
 
         //- Type of time control
         timeControls timeControl_;
@@ -88,8 +89,17 @@ private:
         //- Execution interval
         scalar interval_;
 
+        //- List of times (for runTimes option)
+        scalarList times_;
+
+        //- Time delta used for time -> index (for runTimes option)
+        scalar timeDelta_;
+
+        //- Hash set of mesh mapping time indices (for runTimes option)
+        HashSet<int64_t, Hash<int64_t>> timeIndices_;
+
         //- Index of previous execution
-        label executionIndex_;
+        mutable label executionIndex_;
 
 
 public:
@@ -123,14 +133,11 @@ public:
         //- Flag to indicate whether to execute
         bool execute();
 
+        //- Return the time to the next write
+        scalar timeToNextAction();
+
         //- Return control
         inline timeControls control() const;
-
-        //- Return interval
-        inline scalar interval() const;
-
-        //- Return the index of the previous execution
-        inline label executionIndex() const;
 
 
     // Member Operators

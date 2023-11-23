@@ -36,17 +36,17 @@ Description
 
 Usage
     \b foamToC [OPTION]
+      - \par -noLibs
+        Do not load all libraries
+
+      - \par -libs '(\"lib1.so\" ... \"libN.so\")'
+        Specify libraries to load
+
       - \par -solver \<name\>
         Specify the solver class
 
-      - \par -libs '(\"lib1.so\" ... \"libN.so\")'
-        Specify the additional libraries to load
-
-      - \par -allLibs
-        Load all libraries
-
-      - \par -listAllLibs
-        Load and list all libraries
+      - \par -listLibs
+        List libraries as they are loaded
 
       - \par switches,
         List all available debug, info and optimisation switches
@@ -60,8 +60,9 @@ Usage
       - \par table \<name\>
         List the contents of the specified table or the list sub-tables
 
-      - \par search \<name\>
-        Search for and list the tables containing the given entry
+      - \par search \<name\> or \"\<regular expression\>\"
+        Search for and list the tables containing the given name
+        or all matches to the given regular expression
 
       - \par scalarBCs,
         List scalar field boundary conditions (fvPatchField<scalar>)
@@ -101,14 +102,14 @@ Usage
 
       - Print a complete list of all run-time selection tables:
         \verbatim
-            foamToC -allLibs -tables
-            or
-            foamToC -allLibs
+            foamToC -tables
+            or simply
+            foamToC
         \endverbatim
 
       - Print a complete list of all entries in all run-time selection tables:
         \verbatim
-            foamToC -allLibs -all
+            foamToC -all
         \endverbatim
 
 \*---------------------------------------------------------------------------*/
@@ -246,14 +247,14 @@ int main(int argc, char *argv[])
 
     argList::addBoolOption
     (
-        "allLibs",
-        "Load all libraries"
+        "noLibs",
+        "Do not load all libraries"
     );
 
     argList::addBoolOption
     (
-        "listAllLibs",
-        "Load and list all libraries"
+        "listLibs",
+        "List libraries as they are loaded"
     );
 
     argList::addBoolOption
@@ -333,11 +334,11 @@ int main(int argc, char *argv[])
     const string libDir(getEnv("FOAM_LIBBIN"));
     const fileNameList libNames(readDir(libDir));
 
-    const bool listAllLibs = args.optionFound("listAllLibs");
+    const bool listLibs = args.optionFound("listLibs");
 
-    if (args.optionFound("allLibs") || listAllLibs)
+    if (!args.optionFound("noLibs") && solverName == word::null)
     {
-        if (listAllLibs)
+        if (listLibs)
         {
             Info << "Loading libraries:" << nl;
         }
@@ -345,7 +346,7 @@ int main(int argc, char *argv[])
         {
             if (libNames[i].ext() == "so")
             {
-                if (listAllLibs)
+                if (listLibs)
                 {
                     Info << "    " << libNames[i].c_str() << nl;
                 }
@@ -373,72 +374,118 @@ int main(int argc, char *argv[])
     word name;
     if (args.optionReadIfPresent("search", name))
     {
-        HashTable<HashTable<word>> baseTypeNameTables;
+        wordList names(name);
 
-        forAllConstIter
-        (
-            debug::runTimeSelectionToCType,
-            debug::runTimeSelectionToC,
-            iter
-        )
+        // If the name is a regular expression pattern
+        // search for all matching occurrences
+        if (wordRe::isPattern(name))
         {
-            const word& baseType = iter.key();
-            const word& baseTypeName = iter().first();
+            wordRe nameRe(name);
+            nameRe.compile();
 
-            if (iter().second().found(name))
+            HashSet<word> unsortedNames;
+
+            forAllConstIter
+            (
+                debug::runTimeSelectionToCType,
+                debug::runTimeSelectionToC,
+                iter
+            )
             {
-                if (!baseTypeNameTables.found(baseTypeName))
+                forAllConstIter(HashTable<word>, iter().second(), iter2)
                 {
-                    baseTypeNameTables.insert(baseTypeName, HashTable<word>());
-                }
-
-                baseTypeNameTables[baseTypeName].insert
-                (
-                    baseType,
-                    iter().second()[name]
-                );
-            }
-        }
-
-        if (baseTypeNameTables.size())
-        {
-            Info<< name << " is in tables " << endl;
-
-            const wordList toc(baseTypeNameTables.sortedToc());
-
-            forAll(toc, i)
-            {
-                if
-                (
-                    baseTypeNameTables[toc[i]].size() == 1
-                 && toc[i] == baseTypeNameTables[toc[i]].begin().key()
-                )
-                {
-                    Info<< "    " << setf(ios_base::left) << setw(40) << toc[i]
-                        << baseTypeNameTables[toc[i]].begin()()
-                        << endl;
-                }
-                else
-                {
-                    const wordList tocc
-                    (
-                        baseTypeNameTables[toc[i]].sortedToc()
-                    );
-
-                    Info<< "    " << toc[i] << endl;
-                    forAll(tocc, j)
+                    if (nameRe.match(iter2.key()))
                     {
-                        Info<< "        "
-                            << setf(ios_base::left) << setw(40) << tocc[j]
-                            << baseTypeNameTables[toc[i]][tocc[j]]
-                            << endl;
+                        unsortedNames.insert(iter2.key());
                     }
                 }
             }
+
+            names = unsortedNames.toc();
         }
-        else
+
+        forAll(names, i)
         {
-            Info<< name << " not found" << endl;
+            const word& name = names[i];
+
+            HashTable<HashTable<word>> baseTypeNameTables;
+
+            forAllConstIter
+            (
+                debug::runTimeSelectionToCType,
+                debug::runTimeSelectionToC,
+                iter
+            )
+            {
+                const word& baseType = iter.key();
+                const word& baseTypeName = iter().first();
+
+                if (iter().second().found(name))
+                {
+                    if (!baseTypeNameTables.found(baseTypeName))
+                    {
+                        baseTypeNameTables.insert
+                        (
+                            baseTypeName,
+                            HashTable<word>()
+                        );
+                    }
+
+                    baseTypeNameTables[baseTypeName].insert
+                    (
+                        baseType,
+                        iter().second()[name]
+                    );
+                }
+            }
+
+            if (baseTypeNameTables.size())
+            {
+                const wordList toc(baseTypeNameTables.sortedToc());
+
+                if (toc.size() == 1)
+                {
+                    Info<< name << " is in table " << endl;
+                }
+                else if (toc.size() > 1)
+                {
+                    Info<< name << " is in tables " << endl;
+                }
+
+                forAll(toc, i)
+                {
+                    if
+                    (
+                        baseTypeNameTables[toc[i]].size() == 1
+                     && toc[i] == baseTypeNameTables[toc[i]].begin().key()
+                    )
+                    {
+                        Info<< "    " << setf(ios_base::left) << setw(40)
+                            << toc[i] << baseTypeNameTables[toc[i]].begin()()
+                            << endl;
+                    }
+                    else
+                    {
+                        const wordList tocc
+                        (
+                            baseTypeNameTables[toc[i]].sortedToc()
+                        );
+
+                        Info<< "    " << toc[i] << endl;
+                        forAll(tocc, j)
+                        {
+                            Info<< "        "
+                                << setf(ios_base::left) << setw(40) << tocc[j]
+                                << baseTypeNameTables[toc[i]][tocc[j]]
+                                << endl;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Info<< name << " not found" << endl;
+            }
         }
 
         done = true;

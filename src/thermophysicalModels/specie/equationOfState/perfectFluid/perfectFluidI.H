@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "perfectFluid.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::perfectFluid<Specie>::perfectFluid
@@ -40,8 +40,6 @@ inline Foam::perfectFluid<Specie>::perfectFluid
     rho0_(rho0)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Specie>
 inline Foam::perfectFluid<Specie>::perfectFluid
@@ -61,17 +59,6 @@ inline Foam::autoPtr<Foam::perfectFluid<Specie>>
 Foam::perfectFluid<Specie>::clone() const
 {
     return autoPtr<perfectFluid<Specie>>(new perfectFluid<Specie>(*this));
-}
-
-
-template<class Specie>
-inline Foam::autoPtr<Foam::perfectFluid<Specie>>
-Foam::perfectFluid<Specie>::New
-(
-    const dictionary& dict
-)
-{
-    return autoPtr<perfectFluid<Specie>>(new perfectFluid<Specie>(dict));
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class EquationOfState>
 inline Foam::hConstThermo<EquationOfState>::hConstThermo
@@ -42,8 +42,6 @@ inline Foam::hConstThermo<EquationOfState>::hConstThermo
     Hsref_(Href)
 {}
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class EquationOfState>
 inline Foam::hConstThermo<EquationOfState>::hConstThermo
@@ -67,17 +65,6 @@ Foam::hConstThermo<EquationOfState>::clone() const
     return autoPtr<hConstThermo<EquationOfState>>
     (
         new hConstThermo<EquationOfState>(*this)
-    );
-}
-
-
-template<class EquationOfState>
-inline Foam::autoPtr<Foam::hConstThermo<EquationOfState>>
-Foam::hConstThermo<EquationOfState>::New(const dictionary& dict)
-{
-    return autoPtr<hConstThermo<EquationOfState>>
-    (
-        new hConstThermo<EquationOfState>(dict)
     );
 }
 

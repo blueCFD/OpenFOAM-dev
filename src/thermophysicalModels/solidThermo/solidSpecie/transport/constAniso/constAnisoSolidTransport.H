@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,15 +76,12 @@ class constAnisoSolidTransport
         vector kappa_;
 
 
-    // Private Member Functions
-
-        //- Construct from components
-        inline constAnisoSolidTransport(const Thermo& t, const vector kappa);
-
-
 public:
 
     // Constructors
+
+        //- Construct from components
+        inline constAnisoSolidTransport(const Thermo& t, const vector kappa);
 
         //- Construct as named copy
         inline constAnisoSolidTransport
@@ -93,17 +90,11 @@ public:
             const constAnisoSolidTransport&
         );
 
-        //- Construct from dictionary
-        constAnisoSolidTransport(const dictionary&);
+        //- Construct from name and dictionary
+        constAnisoSolidTransport(const word& name, const dictionary& dict);
 
         //- Construct and return a clone
         inline autoPtr<constAnisoSolidTransport> clone() const;
-
-        // Selector from dictionary
-        inline static autoPtr<constAnisoSolidTransport> New
-        (
-            const dictionary& dict
-        );
 
 
     // Member Functions

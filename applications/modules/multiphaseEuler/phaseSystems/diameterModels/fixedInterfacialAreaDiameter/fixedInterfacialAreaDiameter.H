@@ -27,7 +27,7 @@ Class
 Description
     fixedInterfacialArea dispersed-phase diameter model.
     The interfacial are is set by providing phase surface area divided by phase
-    volume, AvbyAlpha, etiher as a constant value or as a field.
+    volume, AvbyAlpha, either as a constant value or as a field.
 
 SourceFiles
     fixedInterfacialAreaDiameter.C
