@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,11 +42,7 @@ Foam::waveModel::waveModel(const waveModel& wave)
 {}
 
 
-Foam::waveModel::waveModel
-(
-    const dictionary& dict,
-    const scalar g
-)
+Foam::waveModel::waveModel(const dictionary& dict, const scalar g)
 :
     g_(g)
 {}

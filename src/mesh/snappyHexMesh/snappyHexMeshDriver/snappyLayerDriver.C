@@ -28,11 +28,12 @@ Description
 
 #include "snappyLayerDriver.H"
 #include "fvMesh.H"
+#include "volFields.H"
 #include "Time.T.H"
 #include "meshRefinement.H"
 #include "removePoints.H"
 #include "pointFields.H"
-#include "motionSmoother.H"
+#include "meshCheck.H"
 #include "unitConversion.H"
 #include "pointSet.H"
 #include "faceSet.H"
@@ -2256,7 +2257,7 @@ Foam::label Foam::snappyLayerDriver::checkAndUnmark
     // Check the resulting mesh for errors
     Info<< nl << "Checking mesh with layer ..." << endl;
     faceSet wrongFaces(newMesh, "wrongFaces", newMesh.nFaces()/1000);
-    motionSmoother::checkMesh
+    meshCheck::checkMesh
     (
         false,
         newMesh,
@@ -3671,7 +3672,7 @@ void Foam::snappyLayerDriver::doLayers
         // Check initial mesh
         Info<< "Checking initial mesh ..." << endl;
         labelHashSet wrongFaces(mesh.nFaces()/100);
-        motionSmoother::checkMesh(false, mesh, motionDict, wrongFaces);
+        meshCheck::checkMesh(false, mesh, motionDict, wrongFaces);
         const label nInitErrors = returnReduce
         (
             wrongFaces.size(),

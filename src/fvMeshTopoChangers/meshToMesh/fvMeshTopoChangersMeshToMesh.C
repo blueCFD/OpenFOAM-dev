@@ -221,15 +221,18 @@ bool Foam::fvMeshTopoChangers::meshToMesh::update()
         return false;
     }
 
-    // Obtain the mesh time from the user time
+    // Obtain the mesh time and index from the user time
     // repeating or cycling the mesh sequence if required
+    scalar meshTime = this->meshTime();
+    const int64_t timeIndex = int64_t((meshTime + timeDelta_/2)/timeDelta_);
 
-    const scalar meshTime = this->meshTime();
-
-    if (timeIndices_.found((meshTime + timeDelta_/2)/timeDelta_))
+    if (timeIndices_.found(timeIndex))
     {
-        const word otherMeshDir =
-            "meshToMesh_" + time.timeName(meshTime);
+        // Reset the meshTime from the timeIndex
+        // to avoid round-off errors at start of cyclic or repeat sequences
+        meshTime = timeIndex*timeDelta_;
+
+        const word otherMeshDir = "meshToMesh_" + time.timeName(meshTime);
 
         Info << "Mapping to mesh " << otherMeshDir << endl;
 
@@ -239,6 +242,7 @@ bool Foam::fvMeshTopoChangers::meshToMesh::update()
             (
                 otherMeshDir,
                 time.constant(),
+                mesh().dbDir(),
                 time,
                 IOobject::MUST_READ
             ),

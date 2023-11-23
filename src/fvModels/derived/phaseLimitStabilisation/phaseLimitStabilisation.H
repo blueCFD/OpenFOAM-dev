@@ -92,14 +92,23 @@ class phaseLimitStabilisation
         //- Non-virtual read
         void readCoeffs();
 
+        //- Add source terms to an incompressible phase equation
+        template<class Type>
+        void addSupType
+        (
+            const volScalarField& alpha,
+            const VolField<Type>& field,
+            fvMatrix<Type>& eqn
+        ) const;
+
         //- Add source terms to a phase equation
         template<class Type>
         void addSupType
         (
             const volScalarField& alpha,
             const volScalarField& rho,
-            fvMatrix<Type>& eqn,
-            const word& fieldName
+            const VolField<Type>& field,
+            fvMatrix<Type>& eqn
         ) const;
 
 
@@ -140,8 +149,11 @@ public:
 
         // Sources
 
+            //- Add a source term to an incompressible phase equation
+            FOR_ALL_FIELD_TYPES(DEFINE_FV_MODEL_ADD_RHO_FIELD_SUP)
+
             //- Add a source term to a phase equation
-            FOR_ALL_FIELD_TYPES(DEFINE_FV_MODEL_ADD_ALPHA_RHO_SUP);
+            FOR_ALL_FIELD_TYPES(DEFINE_FV_MODEL_ADD_ALPHA_RHO_FIELD_SUP)
 
 
         // Mesh changes

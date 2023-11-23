@@ -16,10 +16,10 @@ FoamFile
 
 thermoType
 {
-    type            heRhoThermo;
+    type            heSolidThermo;
     mixture         pureMixture;
-    transport       const;
-    thermo          hConst;
+    transport       constIsoSolid;
+    thermo          eConst;
     equationOfState rhoConst;
     specie          specie;
     energy          sensibleInternalEnergy;
@@ -37,13 +37,12 @@ mixture
     }
     thermodynamics
     {
-        Cp          6000;
+        Cv          6000;
         Hf          0;
     }
     transport
     {
-        mu          0;
-        Pr          1;
+        kappa       0;
     }
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,9 +27,8 @@ License
 #include "polyMesh.H"
 #include "cellSet.H"
 #include "faceSet.H"
-#include "motionSmoother.H"
+#include "meshCheck.H"
 #include "surfaceWriter.H"
-#include "checkTools.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -44,7 +43,7 @@ Foam::label Foam::checkMeshQuality
 
     {
         faceSet faces(mesh, "meshQualityFaces", mesh.nFaces()/100+1);
-        motionSmoother::checkMesh(false, mesh, dict, faces);
+        meshCheck::checkMesh(false, mesh, dict, faces);
 
         label nFaces = returnReduce(faces.size(), sumOp<label>());
 
@@ -58,7 +57,7 @@ Foam::label Foam::checkMeshQuality
             faces.write();
             if (writer.valid())
             {
-                mergeAndWrite(writer(), faces);
+                meshCheck::mergeAndWrite(writer(), faces);
             }
         }
     }

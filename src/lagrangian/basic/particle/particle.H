@@ -122,6 +122,13 @@ public:
             //- Patch face to which to send the particle
             label sendToPatchFace;
 
+            //- Position to which to send
+            vector sendToPosition;
+
+            //- Number of boundary hits that occurred during locate executions
+            //  following (non-conformal) patch transfers. For reporting.
+            labelList patchNLocateBoundaryHits;
+
 
         // Constructor
         template <class TrackCloudType>
@@ -132,7 +139,14 @@ public:
             sendToProc(-1),
             sendFromPatch(-1),
             sendToPatch(-1),
-            sendToPatchFace(-1)
+            sendToPatchFace(-1),
+            sendToPosition(vector::uniform(NaN)),
+            patchNLocateBoundaryHits
+            (
+                mesh.boundaryMesh().size()
+              - mesh.globalData().processorPatches().size(),
+                0
+            )
         {}
     };
 
@@ -298,28 +312,6 @@ private:
             void changeCell(const polyMesh& mesh);
 
 
-        // Geometry changes
-
-            //- Locate the particle at the given position
-            bool locate
-            (
-                const polyMesh& mesh,
-                const vector& position,
-                label celli
-            );
-
-            //- Locate the particle at the given position
-            template<class BoundaryMsg>
-            bool locate
-            (
-                const polyMesh& mesh,
-                const vector& position,
-                label celli,
-                const bool boundaryFail,
-                BoundaryMsg boundaryMsg
-            );
-
-
 public:
 
     // Static Data Members
@@ -358,7 +350,8 @@ public:
         (
             const polyMesh& mesh,
             const vector& position,
-            const label celli
+            const label celli,
+            label& nLocateBoundaryHits
         );
 
         //- Construct from Istream
@@ -466,6 +459,14 @@ public:
             //- Set the step fraction and clear the behind data in preparation
             //  for a new track
             inline void reset(const scalar stepFraction);
+
+            //- Locate the particle at the given position
+            bool locate
+            (
+                const polyMesh& mesh,
+                const vector& position,
+                label celli
+            );
 
             //- Track along the displacement for a given fraction of the overall
             //  step. End when the track is complete, or when a boundary is hit.
@@ -601,7 +602,8 @@ public:
             (
                 const polyMesh& mesh,
                 const label sendToPatch,
-                const label sendToPatchFace
+                const label sendToPatchFace,
+                const vector& sendToPosition
             );
 
             //- Make changes following a transfer across a non conformal cyclic
@@ -610,7 +612,8 @@ public:
             void correctAfterNonConformalCyclicTransfer
             (
                 const polyMesh& mesh,
-                const label sendToPatch
+                const label sendToPatch,
+                labelList& patchNLocateBoundaryHits
             );
 
 
@@ -698,19 +701,6 @@ public:
                 const label procCell,
                 const label procTetFace
             ) const;
-
-
-        // Mapping
-
-            //- Map after a mesh change
-            template<class BoundaryMsg>
-            bool map
-            (
-                const polyMesh& mesh,
-                const point& position,
-                const label celli,
-                BoundaryMsg boundaryMsg
-            );
 
 
         // I-O

@@ -44,6 +44,54 @@ namespace fv
 }
 
 
+// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
+
+void Foam::fv::waveForcing::readCoeffs()
+{
+    if (coeffs().found("lambdaCoeff"))
+    {
+        lambdaCoeff_ = coeffs().lookup<scalar>("lambdaCoeff");
+
+        lambdaBoundaryCoeff_ =
+            coeffs().lookupOrDefault<scalar>("lambdaBoundaryCoeff", 0);
+
+        regionLength_ = this->regionLength();
+
+        Info<< "    Volume average region length "
+            << regionLength_.value() << endl;
+    }
+    else
+    {
+        readLambda();
+    }
+}
+
+
+Foam::tmp<Foam::volScalarField::Internal> Foam::fv::waveForcing::scale() const
+{
+    return tmp<volScalarField::Internal>(scale_());
+}
+
+
+Foam::tmp<Foam::volScalarField::Internal>
+Foam::fv::waveForcing::forceCoeff() const
+{
+    if (lambdaCoeff_ > 0)
+    {
+        const dimensionedScalar waveSpeed
+        (
+            dimVelocity,
+            waves_.maxWaveSpeed(mesh().time().deltaTValue())
+        );
+
+        lambda_ = lambdaCoeff_*waveSpeed/regionLength_;
+        lambdaBoundary_ = lambdaBoundaryCoeff_*waveSpeed/regionLength_;
+    }
+
+    return forcing::forceCoeff();
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::fv::waveForcing::waveForcing
@@ -55,12 +103,18 @@ Foam::fv::waveForcing::waveForcing
 )
 :
     forcing(name, modelType, mesh, dict),
+    lambdaCoeff_(0),
+    lambdaBoundaryCoeff_(0),
+    regionLength_("regionLength", dimLength, 0),
     waves_(waveSuperposition::New(mesh)),
     liquidPhaseName_(coeffs().lookup<word>("liquidPhase")),
     alphaName_(IOobject::groupName("alpha", liquidPhaseName_)),
     UName_(coeffs().lookupOrDefault<word>("U", "U")),
-    scale_(this->scale())
-{}
+    scale_(forcing::scale().ptr())
+{
+    readCoeffs();
+    writeForceFields();
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -73,13 +127,13 @@ Foam::wordList Foam::fv::waveForcing::addSupFields() const
 
 void Foam::fv::waveForcing::addSup
 (
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
+    const volScalarField& alpha,
+    fvMatrix<scalar>& eqn
 ) const
 {
-    if (fieldName == alphaName_)
+    if (alpha.name() == alphaName_ && &alpha == &eqn.psi())
     {
-        const volScalarField::Internal forceCoeff(this->forceCoeff(scale_));
+        const volScalarField::Internal forceCoeff(this->forceCoeff());
 
         eqn -= fvm::Sp(forceCoeff, eqn.psi());
         eqn += forceCoeff*alphaWaves_();
@@ -90,13 +144,13 @@ void Foam::fv::waveForcing::addSup
 void Foam::fv::waveForcing::addSup
 (
     const volScalarField& rho,
-    fvMatrix<vector>& eqn,
-    const word& fieldName
+    const volVectorField& U,
+    fvMatrix<vector>& eqn
 ) const
 {
-    if (fieldName == UName_)
+    if (U.name() == UName_ && &U == &eqn.psi())
     {
-        const volScalarField::Internal forceCoeff(rho*this->forceCoeff(scale_));
+        const volScalarField::Internal forceCoeff(rho*this->forceCoeff());
 
         eqn -= fvm::Sp(forceCoeff, eqn.psi());
         eqn += forceCoeff*Uwaves_();
@@ -115,26 +169,28 @@ void Foam::fv::waveForcing::addSup
 
 bool Foam::fv::waveForcing::movePoints()
 {
-    scale_ = this->scale();
+    // It is unlikely that the wave forcing region is moving
+    // so this update could be removed or made optional
+    scale_ = forcing::scale().ptr();
     return true;
 }
 
 
 void Foam::fv::waveForcing::topoChange(const polyTopoChangeMap&)
 {
-    scale_ = this->scale();
+    scale_ = forcing::scale().ptr();
 }
 
 
 void Foam::fv::waveForcing::mapMesh(const polyMeshMap& map)
 {
-    scale_ = this->scale();
+    scale_ = forcing::scale().ptr();
 }
 
 
 void Foam::fv::waveForcing::distribute(const polyDistributionMap&)
 {
-    scale_ = this->scale();
+    scale_ = forcing::scale().ptr();
 }
 
 
@@ -168,6 +224,22 @@ void Foam::fv::waveForcing::correct()
         dimVelocity,
         levelSetAverage(mesh(), h, hp, uGas, uGasp, uLiq, uLiqp)
     );
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool Foam::fv::waveForcing::read(const dictionary& dict)
+{
+    if (forcing::read(dict))
+    {
+        readCoeffs();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 

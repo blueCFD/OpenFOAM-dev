@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,9 +51,16 @@ class solidThermophysicalTransportModel
 :
     public thermophysicalTransportModel
 {
+public:
+
+    typedef geometricOneField alphaField;
+
+
 protected:
 
     // Protected data
+
+        alphaField alpha_;
 
         //- Reference to the solid thermophysical properties
         const solidThermo& thermo_;
@@ -81,9 +88,10 @@ public:
             solidThermophysicalTransportModel,
             dictionary,
             (
+                const alphaField& alpha,
                 const solidThermo& thermo
             ),
-            (thermo)
+            (alpha, thermo)
         );
 
 
@@ -93,6 +101,7 @@ public:
         solidThermophysicalTransportModel
         (
             const word& type,
+            const alphaField& alpha,
             const solidThermo& thermo
         );
 
@@ -115,6 +124,12 @@ public:
 
         //- Read model coefficients if they have changed
         virtual bool read() = 0;
+
+        //- Return the phase fraction field
+        const alphaField& alpha() const
+        {
+            return alpha_;
+        }
 
         //- Access function to solid thermophysical properties
         virtual const solidThermo& thermo() const

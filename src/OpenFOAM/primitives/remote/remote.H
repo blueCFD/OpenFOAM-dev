@@ -58,6 +58,10 @@ class remote
 {
 public:
 
+    //- Component type
+    typedef remote cmptType;
+
+
     // Public Data
 
         //- Processor index
@@ -95,16 +99,6 @@ public:
 
         //- Read from stream
         friend Istream& operator>>(Istream& is, remote& p);
-};
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-template<>
-class pTraits<remote>
-{
-public:
-    typedef remote cmptType;
 };
 
 

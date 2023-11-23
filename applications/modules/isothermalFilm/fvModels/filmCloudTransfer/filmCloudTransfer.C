@@ -75,7 +75,6 @@ Foam::wordList Foam::fv::filmCloudTransfer::addSupFields() const
 {
     return wordList
     {
-        "pi",
         film_.alpha.name(),
         film_.thermo.he().name(),
         film_.U.name()
@@ -138,39 +137,9 @@ inline Foam::fv::filmCloudTransfer::CloudToFilmTransferRate
 
 void Foam::fv::filmCloudTransfer::addSup
 (
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
-) const
-{
-    if (debug)
-    {
-        Info<< type() << ": applying source to " << eqn.psi().name() << endl;
-    }
-
-    // Droplet impingement pressure
-    if (fieldName == "pi")
-    {
-        eqn +=
-            CloudToFilmTransferRate<scalar>
-            (
-                pressureFromCloud_,
-                dimPressure*dimVolume
-            );
-    }
-    else
-    {
-        FatalErrorInFunction
-            << "Support for field " << fieldName << " is not implemented"
-            << exit(FatalError);
-    }
-}
-
-
-void Foam::fv::filmCloudTransfer::addSup
-(
     const volScalarField& rho,
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
+    const volScalarField& alpha,
+    fvMatrix<scalar>& eqn
 ) const
 {
     if (debug)
@@ -178,7 +147,7 @@ void Foam::fv::filmCloudTransfer::addSup
         Info<< type() << ": applying source to " << eqn.psi().name() << endl;
     }
 
-    if (fieldName == film_.alpha.name())
+    if (&alpha == &film_.alpha && &eqn.psi() == &film_.alpha)
     {
         eqn += CloudToFilmTransferRate<scalar>(massFromCloud_, dimMass);
 
@@ -190,7 +159,7 @@ void Foam::fv::filmCloudTransfer::addSup
     else
     {
         FatalErrorInFunction
-            << "Support for field " << fieldName << " is not implemented"
+            << "Support for field " << alpha.name() << " is not implemented"
             << exit(FatalError);
     }
 }
@@ -200,8 +169,8 @@ void Foam::fv::filmCloudTransfer::addSup
 (
     const volScalarField& alpha,
     const volScalarField& rho,
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
+    const volScalarField& he,
+    fvMatrix<scalar>& eqn
 ) const
 {
     if (debug)
@@ -209,7 +178,7 @@ void Foam::fv::filmCloudTransfer::addSup
         Info<< type() << ": applying source to " << eqn.psi().name() << endl;
     }
 
-    if (fieldName == film_.thermo.he().name())
+    if (&he == &film_.thermo.he() && &eqn.psi() == &film_.thermo.he())
     {
         eqn += CloudToFilmTransferRate<scalar>(energyFromCloud_, dimEnergy);
 
@@ -221,7 +190,7 @@ void Foam::fv::filmCloudTransfer::addSup
     else
     {
         FatalErrorInFunction
-            << "Support for field " << fieldName << " is not implemented"
+            << "Support for field " << he.name() << " is not implemented"
             << exit(FatalError);
     }
 }
@@ -231,8 +200,8 @@ void Foam::fv::filmCloudTransfer::addSup
 (
     const volScalarField& alpha,
     const volScalarField& rho,
-    fvMatrix<vector>& eqn,
-    const word& fieldName
+    const volVectorField& U,
+    fvMatrix<vector>& eqn
 ) const
 {
     if (debug)
@@ -240,11 +209,20 @@ void Foam::fv::filmCloudTransfer::addSup
         Info<< type() << ": applying source to " << eqn.psi().name() << endl;
     }
 
-    eqn += CloudToFilmTransferRate<vector>(momentumFromCloud_, dimMomentum);
-
-    if (ejection_.valid())
+    if (&U == &film_.U && &U == &film_.U)
     {
-        eqn -= fvm::Sp(alpha()*rho()*ejection_->rate(), eqn.psi());
+        eqn += CloudToFilmTransferRate<vector>(momentumFromCloud_, dimMomentum);
+
+        if (ejection_.valid())
+        {
+            eqn -= fvm::Sp(alpha()*rho()*ejection_->rate(), eqn.psi());
+        }
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "Support for field " << U.name() << " is not implemented"
+            << exit(FatalError);
     }
 }
 
@@ -260,13 +238,11 @@ void Foam::fv::filmCloudTransfer::resetFromCloudFields()
     {
         massFromCloud_.setSize(nCloudPatchFaces);
         momentumFromCloud_.setSize(nCloudPatchFaces);
-        pressureFromCloud_.setSize(nCloudPatchFaces);
         energyFromCloud_.setSize(nCloudPatchFaces);
     }
 
     massFromCloud_ = 0;
     momentumFromCloud_ = Zero;
-    pressureFromCloud_ = 0;
     energyFromCloud_ = 0;
 
     cloudFieldsTransferred_ = true;
@@ -281,13 +257,11 @@ void Foam::fv::filmCloudTransfer::parcelFromCloud
     const label facei,
     const scalar mass,
     const vector& momentum,
-    const scalar pressure,
     const scalar energy
 )
 {
     massFromCloud_[facei] += mass;
     momentumFromCloud_[facei] += momentum;
-    pressureFromCloud_[facei] += pressure;
     energyFromCloud_[facei] += energy;
 }
 

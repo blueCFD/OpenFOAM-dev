@@ -4,8 +4,6 @@ EXE_INC = \
     -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/fileFormats/lnInclude \
     -I$(LIB_SRC)/triSurface/lnInclude \
-    -I$(LIB_SRC)/dynamicMesh/lnInclude \
-    -I$(LIB_SRC)/conversion/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude
 
 LIB_LIBS = \
@@ -14,6 +12,4 @@ LIB_LIBS = \
     -lsurfMesh \
     -lfileFormats \
     -ltriSurface \
-    -llagrangian \
-    -ldynamicMesh \
-    -lconversion
+    -llagrangian

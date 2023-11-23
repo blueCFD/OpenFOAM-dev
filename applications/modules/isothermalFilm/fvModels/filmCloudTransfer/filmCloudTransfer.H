@@ -75,7 +75,6 @@ class filmCloudTransfer
 
             scalarField massFromCloud_;
             vectorField momentumFromCloud_;
-            scalarField pressureFromCloud_;
             scalarField energyFromCloud_;
 
         //- Switch to ensure the ejection rate is not updated until
@@ -145,39 +144,32 @@ public:
             virtual void correct();
 
 
-        // Add explicit and implicit contributions to compressible equation
+        // Sources
 
-            //- Add explicit droplet impingement contribution to pressure field
+            //- Add source to phase continuity equation
             virtual void addSup
             (
-                fvMatrix<scalar>& eqn,
-                const word& fieldName
-            ) const;
-
-            //- Add explicit contribution to phase continuity
-            virtual void addSup
-            (
+                const volScalarField& rho,
                 const volScalarField& alpha,
-                fvMatrix<scalar>& eqn,
-                const word& fieldName
+                fvMatrix<scalar>& eqn
             ) const;
 
-            //- Add explicit contribution to phase energy equation
+            //- Add source to phase energy equation
             virtual void addSup
             (
                 const volScalarField& alpha,
                 const volScalarField& rho,
-                fvMatrix<scalar>& eqn,
-                const word& fieldName
+                const volScalarField& he,
+                fvMatrix<scalar>& eqn
             ) const;
 
-            //- Add implicit contribution to mixture momentum equation
+            //- Add source to mixture momentum equation
             virtual void addSup
             (
                 const volScalarField& alpha,
                 const volScalarField& rho,
-                fvMatrix<vector>& eqn,
-                const word& fieldName
+                const volVectorField& U,
+                fvMatrix<vector>& eqn
             ) const;
 
 
@@ -193,7 +185,6 @@ public:
                 const label facei,
                 const scalar mass,
                 const vector& momentum,
-                const scalar pressure,
                 const scalar energy
             );
 

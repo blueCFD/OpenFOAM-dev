@@ -17,30 +17,29 @@ surfMesh/surfMeshIO.C
 surfFields/surfFields/surfFields.C
 surfFields/surfPointFields/surfPointFields.C
 
-surfaceFormats = surfaceFormats
-$(surfaceFormats)/surfaceFormatsCore.C
+surfaceFormats/surfaceFormatsCore.C
 
-$(surfaceFormats)/ac3d/AC3DsurfaceFormatCore.T.C
-$(surfaceFormats)/ac3d/AC3DsurfaceFormatRunTime.T.C
-$(surfaceFormats)/gts/GTSsurfaceFormatRunTime.T.C
-$(surfaceFormats)/nas/NASsurfaceFormatRunTime.T.C
-$(surfaceFormats)/obj/OBJsurfaceFormatRunTime.T.C
-$(surfaceFormats)/off/OFFsurfaceFormatRunTime.T.C
-$(surfaceFormats)/ofs/OFSsurfaceFormatCore.T.C
-$(surfaceFormats)/ofs/OFSsurfaceFormatRunTime.T.C
-$(surfaceFormats)/smesh/SMESHsurfaceFormatRunTime.T.C
-$(surfaceFormats)/starcd/STARCDsurfaceFormatCore.T.C
-$(surfaceFormats)/starcd/STARCDsurfaceFormatRunTime.T.C
-$(surfaceFormats)/stl/STLsurfaceFormatCore.T.C
-$(surfaceFormats)/stl/STLsurfaceFormatRunTime.T.C
-$(surfaceFormats)/stl/STLsurfaceFormatASCII.L
-$(surfaceFormats)/tri/TRIsurfaceFormatCore.T.C
-$(surfaceFormats)/tri/TRIsurfaceFormatRunTime.T.C
-$(surfaceFormats)/vtk/VTKsurfaceFormatCore.T.C
-$(surfaceFormats)/vtk/VTKsurfaceFormatRunTime.T.C
-$(surfaceFormats)/wrl/WRLsurfaceFormatCore.T.C
-$(surfaceFormats)/wrl/WRLsurfaceFormatRunTime.T.C
-$(surfaceFormats)/x3d/X3DsurfaceFormatCore.T.C
-$(surfaceFormats)/x3d/X3DsurfaceFormatRunTime.T.C
+surfaceFormats/ac3d/AC3DsurfaceFormatCore.T.C
+surfaceFormats/ac3d/AC3DsurfaceFormatRunTime.T.C
+surfaceFormats/gts/GTSsurfaceFormatRunTime.T.C
+surfaceFormats/nas/NASsurfaceFormatRunTime.T.C
+surfaceFormats/obj/OBJsurfaceFormatRunTime.T.C
+surfaceFormats/off/OFFsurfaceFormatRunTime.T.C
+surfaceFormats/ofs/OFSsurfaceFormatCore.T.C
+surfaceFormats/ofs/OFSsurfaceFormatRunTime.T.C
+surfaceFormats/smesh/SMESHsurfaceFormatRunTime.T.C
+surfaceFormats/starcd/STARCDsurfaceFormatCore.T.C
+surfaceFormats/starcd/STARCDsurfaceFormatRunTime.T.C
+surfaceFormats/stl/STLsurfaceFormatCore.T.C
+surfaceFormats/stl/STLsurfaceFormatRunTime.T.C
+surfaceFormats/stl/STLsurfaceFormatASCII.L
+surfaceFormats/tri/TRIsurfaceFormatCore.T.C
+surfaceFormats/tri/TRIsurfaceFormatRunTime.T.C
+surfaceFormats/vtk/VTKsurfaceFormatCore.T.C
+surfaceFormats/vtk/VTKsurfaceFormatRunTime.T.C
+surfaceFormats/wrl/WRLsurfaceFormatCore.T.C
+surfaceFormats/wrl/WRLsurfaceFormatRunTime.T.C
+surfaceFormats/x3d/X3DsurfaceFormatCore.T.C
+surfaceFormats/x3d/X3DsurfaceFormatRunTime.T.C
 
 LIB = $(FOAM_LIBBIN)/libsurfMesh

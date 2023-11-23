@@ -38,7 +38,7 @@ License
 #include "PatchPostProcessing.T.H"
 #include "RelativeVelocity.T.H"
 #include "SizeDistribution.T.H"
-#include "VoidFraction.T.H"
+#include "VolumeFraction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,7 +56,7 @@ License
     makeCloudFunctionObjectType(PatchCollisionDensity, CloudType);             \
     makeCloudFunctionObjectType(PatchPostProcessing, CloudType);               \
     makeCloudFunctionObjectType(RelativeVelocity, CloudType);                  \
-    makeCloudFunctionObjectType(VoidFraction, CloudType);                      \
+    makeCloudFunctionObjectType(VolumeFraction, CloudType);                    \
     makeCloudFunctionObjectType(SizeDistribution, CloudType);                  \
     makeCloudFunctionObjectType(VolumeFlux, CloudType);
 

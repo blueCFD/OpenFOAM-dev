@@ -64,6 +64,9 @@ Usage
         value           (2 0 0);            // Value towards which the field is
                                             // relaxed
         lambda          [0 0 -1 0 0 0 0] 1; // Damping coefficient
+
+        // Write the forcing fields: forcing:scale, forcing:forceCoeff
+        writeForceFields true;
     }
     \endverbatim
 
@@ -143,6 +146,10 @@ public:
 
     // Member Functions
 
+        //- Read dictionary
+        virtual bool read(const dictionary& dict);
+
+
         // Checks
 
             //- Return the list of fields for which the fvModel adds source term
@@ -155,16 +162,16 @@ public:
             //- Source term to momentum equation
             virtual void addSup
             (
-                fvMatrix<vector>& eqn,
-                const word& fieldName
+                const volVectorField& U,
+                fvMatrix<vector>& eqn
             ) const;
 
             //- Source term to compressible momentum equation
             virtual void addSup
             (
                 const volScalarField& rho,
-                fvMatrix<vector>& eqn,
-                const word& fieldName
+                const volVectorField& U,
+                fvMatrix<vector>& eqn
             ) const;
 
             //- Source term to phase momentum equation
@@ -172,8 +179,8 @@ public:
             (
                 const volScalarField& alpha,
                 const volScalarField& rho,
-                fvMatrix<vector>& eqn,
-                const word& fieldName
+                const volVectorField& U,
+                fvMatrix<vector>& eqn
             ) const;
 
 
@@ -190,12 +197,6 @@ public:
 
             //- Redistribute or update using the given distribution map
             virtual void distribute(const polyDistributionMap&);
-
-
-        // IO
-
-            //- Read dictionary
-            virtual bool read(const dictionary& dict);
 };
 
 

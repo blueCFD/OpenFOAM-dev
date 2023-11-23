@@ -112,18 +112,28 @@ protected:
             const Args& ... args
         ) const;
 
+        //- Return a scalarField of the given property for a source
+        template<class Mixture, class Method, class ... Args>
+        tmp<scalarField> fieldSourceProperty
+        (
+            Mixture mixture,
+            Method psiMethod,
+            const fvSource& source,
+            const Args& ... args
+        ) const;
+
         //- Return an indirect list of a field for the given set of cells
         static UIndirectList<scalar> cellSetScalarList
         (
             const volScalarField& psi,
-            const labelList& cells
+            const labelUList& cells
         );
 
         //- Return an indirect list of a field for the given set of cells
         static UniformField<scalar> cellSetScalarList
         (
             const uniformGeometricScalarField& psi,
-            const labelList&
+            const labelUList&
         );
 
         //- Correct the enthalpy/internal energy field boundaries
@@ -254,6 +264,13 @@ public:
                 const label patchi
             ) const;
 
+            //- Enthalpy/Internal energy for source [J/kg]
+            virtual tmp<scalarField> he
+            (
+                const scalarField& T,
+                const fvSource& source
+            ) const;
+
             //- Sensible enthalpy [J/kg/K]
             virtual tmp<volScalarField> hs() const;
 
@@ -368,6 +385,9 @@ public:
             //- Molecular weight for patch [kg/kmol]
             virtual tmp<scalarField> W(const label patchi) const;
 
+
+        //- Read thermophysical properties dictionary
+        using BasicThermoType::read;
 
         //- Read thermophysical properties dictionary
         virtual bool read();

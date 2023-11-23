@@ -131,8 +131,8 @@ template<class RhoType>
 void Foam::fv::interfaceTurbulenceDamping::addRhoSup
 (
     const RhoType& rho,
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
+    const volScalarField& field,
+    fvMatrix<scalar>& eqn
 ) const
 {
     if (debug)
@@ -145,21 +145,22 @@ void Foam::fv::interfaceTurbulenceDamping::addRhoSup
 
     volScalarField::Internal aSqrnu
     (
-        movingPhases[0]*sqr(movingPhases[0].thermo().nu()()())
+        movingPhases[0]*sqr(movingPhases[0].fluidThermo().nu()()())
     );
 
     for (label phasei=1; phasei<movingPhases.size(); phasei++)
     {
         aSqrnu +=
-            movingPhases[phasei]*sqr(movingPhases[phasei].thermo().nu()()());
+            movingPhases[phasei]
+           *sqr(movingPhases[phasei].fluidThermo().nu()()());
     }
 
-    if (fieldName == "epsilon")
+    if (field.name() == "epsilon")
     {
         eqn += rho*interfaceFraction(phase_)*C2_*aSqrnu*turbulence_.k()()
             /pow4(delta_);
     }
-    else if (fieldName == "omega")
+    else if (field.name() == "omega")
     {
         eqn += rho*interfaceFraction(phase_)*beta_*aSqrnu
             /(sqr(betaStar_)*pow4(delta_));
@@ -167,7 +168,7 @@ void Foam::fv::interfaceTurbulenceDamping::addRhoSup
     else
     {
         FatalErrorInFunction
-            << "Support for field " << fieldName << " is not implemented"
+            << "Support for field " << field.name() << " is not implemented"
             << exit(FatalError);
     }
 }
@@ -241,22 +242,22 @@ Foam::wordList Foam::fv::interfaceTurbulenceDamping::addSupFields() const
 
 void Foam::fv::interfaceTurbulenceDamping::addSup
 (
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
+    const volScalarField& field,
+    fvMatrix<scalar>& eqn
 ) const
 {
-    addRhoSup(one(), eqn, fieldName);
+    addRhoSup(one(), field, eqn);
 }
 
 
 void Foam::fv::interfaceTurbulenceDamping::addSup
 (
     const volScalarField& rho,
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
+    const volScalarField& field,
+    fvMatrix<scalar>& eqn
 ) const
 {
-    addRhoSup(rho(), eqn, fieldName);
+    addRhoSup(rho(), field, eqn);
 }
 
 
@@ -264,8 +265,8 @@ void Foam::fv::interfaceTurbulenceDamping::addSup
 (
     const volScalarField& alpha,
     const volScalarField& rho,
-    fvMatrix<scalar>& eqn,
-    const word& fieldName
+    const volScalarField& field,
+    fvMatrix<scalar>& eqn
 ) const
 {
     if (debug)
@@ -273,17 +274,17 @@ void Foam::fv::interfaceTurbulenceDamping::addSup
         Info<< type() << ": applying source to " << eqn.psi().name() << endl;
     }
 
-    volScalarField::Internal aSqrnu
+    const volScalarField::Internal aSqrnu
     (
-        alpha*sqr(phase_.thermo().nu()()())
+        alpha*sqr(phase_.fluidThermo().nu()()())
     );
 
-    if (fieldName == IOobject::groupName("epsilon", phaseName_))
+    if (field.name() == IOobject::groupName("epsilon", phaseName_))
     {
         eqn += rho()*interfaceFraction(alpha)
             *C2_*aSqrnu*turbulence_.k()()/pow4(delta_);
     }
-    else if (fieldName == IOobject::groupName("omega", phaseName_))
+    else if (field.name() == IOobject::groupName("omega", phaseName_))
     {
         eqn += rho()*interfaceFraction(alpha)
             *beta_*aSqrnu/(sqr(betaStar_)*pow4(delta_));
@@ -291,7 +292,7 @@ void Foam::fv::interfaceTurbulenceDamping::addSup
     else
     {
         FatalErrorInFunction
-            << "Support for field " << fieldName << " is not implemented"
+            << "Support for field " << field.name() << " is not implemented"
             << exit(FatalError);
     }
 }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,10 +51,12 @@ void Foam::solidThermophysicalTransportModel::printCoeffs
 Foam::solidThermophysicalTransportModel::solidThermophysicalTransportModel
 (
     const word& type,
+    const alphaField& alpha,
     const solidThermo& thermo
 )
 :
     thermophysicalTransportModel(thermo.mesh(), word::null),
+    alpha_(alpha),
     thermo_(thermo),
     printCoeffs_(lookupOrDefault<Switch>("printCoeffs", false)),
     coeffDict_(optionalSubDict(type + "Coeffs"))
@@ -98,18 +100,24 @@ Foam::solidThermophysicalTransportModel::New(const solidThermo& thermo)
 
         return autoPtr<solidThermophysicalTransportModel>
         (
-            cstrIter()(thermo)
+            cstrIter()(geometricOneField(), thermo)
         );
     }
     else
     {
         Info<< "Selecting default solid thermophysical transport model "
-            << solidThermophysicalTransportModels::isotropic::typeName
+            << solidThermophysicalTransportModels::
+               isotropic<solidThermophysicalTransportModel>::typeName
             << endl;
 
         return autoPtr<solidThermophysicalTransportModel>
         (
-            new solidThermophysicalTransportModels::isotropic(thermo)
+            new solidThermophysicalTransportModels::
+            isotropic<solidThermophysicalTransportModel>
+            (
+                geometricOneField(),
+                thermo
+            )
         );
     }
 }

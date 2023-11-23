@@ -42,6 +42,12 @@ namespace fv
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+void Foam::fv::verticalDamping::readCoeffs()
+{
+    readLambda();
+}
+
+
 void Foam::fv::verticalDamping::add
 (
     const volVectorField& alphaRhoU,
@@ -69,7 +75,9 @@ Foam::fv::verticalDamping::verticalDamping
 :
     forcing(name, modelType, mesh, dict),
     UName_(coeffs().lookupOrDefault<word>("U", "U"))
-{}
+{
+    writeForceFields();
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -82,22 +90,22 @@ Foam::wordList Foam::fv::verticalDamping::addSupFields() const
 
 void Foam::fv::verticalDamping::addSup
 (
-    fvMatrix<vector>& eqn,
-    const word& fieldName
+    const volVectorField& U,
+    fvMatrix<vector>& eqn
 ) const
 {
-    add(eqn.psi(), eqn);
+    add(U, eqn);
 }
 
 
 void Foam::fv::verticalDamping::addSup
 (
     const volScalarField& rho,
-    fvMatrix<vector>& eqn,
-    const word& fieldName
+    const volVectorField& U,
+    fvMatrix<vector>& eqn
 ) const
 {
-    add(rho*eqn.psi(), eqn);
+    add(rho*U, eqn);
 }
 
 
@@ -105,11 +113,11 @@ void Foam::fv::verticalDamping::addSup
 (
     const volScalarField& alpha,
     const volScalarField& rho,
-    fvMatrix<vector>& eqn,
-    const word& fieldName
+    const volVectorField& U,
+    fvMatrix<vector>& eqn
 ) const
 {
-    add(alpha*rho*eqn.psi(), eqn);
+    add(alpha*rho*U, eqn);
 }
 
 
@@ -129,6 +137,20 @@ void Foam::fv::verticalDamping::mapMesh(const polyMeshMap& map)
 
 void Foam::fv::verticalDamping::distribute(const polyDistributionMap&)
 {}
+
+
+bool Foam::fv::verticalDamping::read(const dictionary& dict)
+{
+    if (forcing::read(dict))
+    {
+        readCoeffs();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
 
 // ************************************************************************* //

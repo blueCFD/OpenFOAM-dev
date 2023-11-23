@@ -78,6 +78,9 @@ Usage
 
         timeStart       0;
         duration        1e6;
+
+        // Write the forcing fields: forcing:scale, forcing:forceCoeff
+        writeForceFields true;
     }
     \endverbatim
 
@@ -118,6 +121,9 @@ class verticalDamping
 
     // Private Member Functions
 
+        //- Non-virtual read
+        void readCoeffs();
+
         //- Source term to momentum equation
         void add
         (
@@ -151,6 +157,10 @@ public:
 
     // Member Functions
 
+        //- Read dictionary
+        virtual bool read(const dictionary& dict);
+
+
         // Checks
 
             //- Return the list of fields for which the fvModel adds source term
@@ -163,16 +173,16 @@ public:
             //- Source term to momentum equation
             virtual void addSup
             (
-                fvMatrix<vector>& eqn,
-                const word& fieldName
+                const volVectorField& U,
+                fvMatrix<vector>& eqn
             ) const;
 
             //- Source term to compressible momentum equation
             virtual void addSup
             (
                 const volScalarField& rho,
-                fvMatrix<vector>& eqn,
-                const word& fieldName
+                const volVectorField& U,
+                fvMatrix<vector>& eqn
             ) const;
 
             //- Source term to phase momentum equation
@@ -180,8 +190,8 @@ public:
             (
                 const volScalarField& alpha,
                 const volScalarField& rho,
-                fvMatrix<vector>& eqn,
-                const word& fieldName
+                const volVectorField& U,
+                fvMatrix<vector>& eqn
             ) const;
 
 

@@ -33,7 +33,7 @@ License
 #include "indirectPrimitivePatch.H"
 #include "cellSet.H"
 #include "searchableSurfaces.H"
-#include "dynamicMeshCheck.H"
+#include "meshCheck.H"
 #include "IOmanip.H"
 #include "unitConversion.H"
 #include "snappySnapDriver.H"
@@ -1096,7 +1096,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
         // Check initial mesh
         Info<< "Checking initial mesh ..." << endl;
         labelHashSet wrongFaces(mesh_.nFaces()/100);
-        motionSmoother::checkMesh(false, mesh_, motionDict, wrongFaces);
+        meshCheck::checkMesh(false, mesh_, motionDict, wrongFaces);
         const label nInitErrors = returnReduce
         (
             wrongFaces.size(),
@@ -1167,7 +1167,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
     {
         faceSet wrongFaces(mesh_, "wrongFaces", 100);
         {
-            // motionSmoother::checkMesh(false, mesh_, motionDict, wrongFaces);
+            // meshCheck::checkMesh(false, mesh_, motionDict, wrongFaces);
 
             // Just check the errors from squashing
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1178,7 +1178,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             // const scalar minV(motionDict.lookup<scalar>("minVol", true));
             // if (minV > -great)
             //{
-            //    dynamicMeshCheck::checkFacePyramids
+            //    meshCheck::checkFacePyramids
             //    (
             //        false,
             //        minV,
@@ -1207,7 +1207,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             scalar minArea(motionDict.lookup<scalar>("minArea"));
             if (minArea > -small)
             {
-                dynamicMeshCheck::checkFaceArea
+                meshCheck::checkFaceArea
                 (
                     false,
                     minArea,
@@ -1234,7 +1234,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
             scalar minDet(motionDict.lookup<scalar>("minDeterminant"));
             if (minDet > -1)
             {
-                dynamicMeshCheck::checkCellDeterminant
+                meshCheck::checkCellDeterminant
                 (
                     false,
                     minDet,

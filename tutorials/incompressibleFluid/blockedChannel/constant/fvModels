@@ -14,10 +14,19 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-volumeFraction
+volumeBlockage
 {
-    type            volumeFractionSource;
+    type            volumeBlockage;
     volumePhase     volume;
+}
+
+volumeSource
+{
+    type            volumeSource;
+
+    cellZone        volumeSource;
+
+    volumetricFlowRate 0.00064;
 }
 
 // ************************************************************************* //
