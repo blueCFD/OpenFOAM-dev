@@ -8,7 +8,7 @@ EXE_INC = \
 EXE_LIBS = \
     -ldynamicMesh \
     -lsampling \
-    -lgenericPatchFields \
+    -lgenericFvFields \
     -llagrangian
 
 EXE_LIBS += \

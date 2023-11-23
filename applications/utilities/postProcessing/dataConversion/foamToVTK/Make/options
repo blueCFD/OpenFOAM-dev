@@ -10,7 +10,7 @@ EXE_LIBS = \
     -lfoamToVTK \
     -ldynamicMesh \
     -llagrangian \
-    -lgenericPatchFields \
+    -lgenericFvFields \
     -lfileFormats
 
 EXE_LIBS += \

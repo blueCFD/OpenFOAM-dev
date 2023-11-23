@@ -8,7 +8,7 @@ LIB_LIBS = \
     -lOpenFOAM \
     -lfiniteVolume \
     -lmeshTools \
-    -lgenericPatchFields \
+    -lgenericFvFields \
     -llagrangian \
     $(PROJECT_LIBS)
 

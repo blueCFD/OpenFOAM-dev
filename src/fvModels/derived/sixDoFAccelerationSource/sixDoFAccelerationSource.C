@@ -26,6 +26,8 @@ License
 #include "sixDoFAccelerationSource.H"
 #include "fvMatrices.H"
 #include "geometricOneField.H"
+#include "makeFunction1s.H"
+#include "makeTableReaders.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -46,22 +48,6 @@ namespace fv
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "None.T.H"
-#include "Constant.T.H"
-#include "Uniform.T.H"
-#include "ZeroConstant.T.H"
-#include "OneConstant.T.H"
-#include "Polynomial1.T.H"
-#include "Sine.T.H"
-#include "Square.T.H"
-#include "Table.T.H"
-#include "UniformTable1.T.H"
-#include "NonUniformTable1.T.H"
-#include "EmbeddedTableReader.T.H"
-#include "FoamTableReader.T.H"
-#include "Scale.T.H"
-#include "CodedFunction1.T.H"
 
 typedef Foam::fv::sixDoFAccelerationSource::accelerationVectors avType;
 
@@ -97,15 +83,8 @@ const avType avType::vsType::rootMin
 
 namespace Foam
 {
-
     makeFunction1s(avType, nullArg);
-
-    defineTableReader(avType);
-    namespace TableReaders
-    {
-        makeTableReader(Embedded, avType);
-        makeTableReader(Foam, avType);
-    }
+    makeFoamTableReaders(avType, nullArg);
 }
 
 

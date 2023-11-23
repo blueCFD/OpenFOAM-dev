@@ -75,20 +75,20 @@ Description
     oriented along the z-axis along x = y = 0.
 
     The snappyHexMesh configuration is generated automatically, applying a set
-    of defaults to the main configuration parameters. By default, explicit
-    feature capturing is configured, for which a surfaceFeaturesDict file is
-    written for the user to generate the features files with the
-    surfaceFeatures utility. Implicit feature capturing can alternatively be
-    selected with the '-implicitFeatures' option. Refinement levels can be
+    of defaults to the main configuration parameters. By default, implicit
+    feature capturing is configured.  Explicit feature capturing can
+    alternatively be selected with the '-explicitFeatures' option, when an
+    additional surfaceFeaturesDict file is written for the user to generate the
+    features files with the surfaceFeatures utility.  Refinement levels can be
     controlled with a range of options including: '-refinementLevel' for the
     baseline refinement level; '-refinementSurfaces' for levels on specific
     surfaces; '-refinementRegions' for levels inside specific surfaces;
-    '-refinementBoxes' for quick, box-shaped refinement regions specified by
-    min and max bounds; '-refinementDists' for distance-based refinement; and
+    '-refinementBoxes' for quick, box-shaped refinement regions specified by min
+    and max bounds; '-refinementDists' for distance-based refinement; and
     '-nCellsBetweenLevels' to control the transition between refinement
-    levels. A '-layers' option specifies additional layers of cells at wall
-    boundaries. The insidePoint parameter is set to '(0 0 0)' by default but
-    can be overridden using the '-insidePoint' option.
+    levels. A '-layers' option controls additional layers of cells at specified
+    surfaces. The insidePoint parameter is set to '(0 0 0)' by default but can
+    be overridden using the '-insidePoint' option.
 
 Usage
     \b snappyHexMeshConfig [OPTIONS]
@@ -117,10 +117,10 @@ Usage
         Refinement level at specified surfaces, e.g. '((pipe 2) (baffles 1))'
 
       - \par -refinementRegions \<entry\>
-        Refinement regions specfied by '( (<surface> <level>) (...) )'
+        Refinement regions specified by '( (<surface> <level>) (...) )'
 
       - \par -refinementBoxes \<entry\>
-        Refinement boxes specfied by '( (<min> <max> <level>) (...) )'
+        Refinement boxes specified by '( (<min> <max> <level>) (...) )'
 
       - \par -refinementDists \<entry\>
         Refinement distance specified by '( (<surface> <dist> <level>) (...) )'
@@ -134,11 +134,17 @@ Usage
       - \par -clearBoundary,
         Do not set default patch entries, i.e. xMin, xMax, yMin, etc...
 
-      - \par -implicitFeatures,
-        Use implicit feature capturing
+      - \par -explicitFeatures,
+        Use explicit feature capturing, default is implicit
 
-      - \par -layers \<int\>
-        Specify <int> surface layers at wall boundaries, default 0
+      - \par -layers \<entry\>
+        Number of layers on specified surfaces, e.g. '((car 3) (ground 4))'
+
+      - \par -firstLayerThickness \<value\>
+        Specify the thickness of the near wall cells for layer addition
+
+      - \par -layerExpansionRatio \<value\>
+        Specify the expansion ratio between layers, default 1.2
 
       - \par -cellZones \<list\>
         Surfaces that form cellZones, e.g. '(porousZone heatSource)'
@@ -169,6 +175,7 @@ Usage
 #include "blockMeshCartesianConfiguration.H"
 #include "blockMeshCylindricalConfiguration.H"
 #include "snappyHexMeshConfiguration.H"
+#include "meshQualityConfiguration.H"
 #include "surfaceFeaturesConfiguration.H"
 #include "boundBox.H"
 #include "searchableSurface.H"
@@ -196,7 +203,7 @@ void readPatchOption
 
 int main(int argc, char *argv[])
 {
-    argList::usageMin = 30;
+    argList::usageMin = 32;
     argList::usageMax = 105;
 
     argList::addNote
@@ -261,14 +268,14 @@ int main(int argc, char *argv[])
     (
         "refinementRegions",
         "entry",
-        "refinement regions specfied by '( (<surface> <level>) (...) )'"
+        "refinement regions specified by '( (<surface> <level>) (...) )'"
     );
 
     argList::addOption
     (
         "refinementBoxes",
         "entry",
-        "refinement boxes specfied by '( (<min> <max> <level>) (...) )'"
+        "refinement boxes specified by '( (<min> <max> <level>) (...) )'"
     );
 
     argList::addOption
@@ -308,15 +315,29 @@ int main(int argc, char *argv[])
 
     argList::addBoolOption
     (
-        "implicitFeatures",
-        "use implicit feature capturing"
+        "explicitFeatures",
+        "use explicit feature capturing"
     );
 
     argList::addOption
     (
         "layers",
-        "int",
-        "specify <int> surface layers at wall boundaries, default 0"
+        "entry",
+        "number of layers on specified surfaces, e.g. '((car 3) (ground 4))'"
+    );
+
+    argList::addOption
+    (
+        "firstLayerThickness",
+        "value",
+        "specify the thickness of the near wall cells for layer addition"
+    );
+
+    argList::addOption
+    (
+        "layerExpansionRatio",
+        "value",
+        "specify the expansion ratio between layers, default 1.2"
     );
 
     argList::addOption
@@ -482,7 +503,7 @@ int main(int argc, char *argv[])
     );
 
     HashTable<Pair<word>> patchOpts(7);
-    patches.append("defaultPatch");
+    patches.append("default");
     forAll(patches, i)
     {
         readPatchOption(args, patchOpts, patches[i] + "Patch");
@@ -514,6 +535,7 @@ int main(int argc, char *argv[])
             runTime.system(),
             runTime,
             surfaces,
+            args.optionFound("bounds"),
             nCells,
             refineFactor,
             patchOpts,
@@ -568,9 +590,26 @@ int main(int argc, char *argv[])
         );
     }
 
-    const bool implicitFeatures(args.optionFound("implicitFeatures"));
+    const bool explicitFeatures(args.optionFound("explicitFeatures"));
 
-    const label layers(args.optionLookupOrDefault<label>("layers", 0));
+    List<Tuple2<word, label>> layers;
+    if (args.optionFound("layers"))
+    {
+        layers.append
+        (
+            args.optionReadList<Tuple2<word, label>>("layers")
+        );
+    }
+
+    const scalar firstLayerThickness
+    (
+        args.optionLookupOrDefault<scalar>("firstLayerThickness", 0)
+    );
+
+    const scalar layerExpansionRatio
+    (
+        args.optionLookupOrDefault<scalar>("layerExpansionRatio", 1.2)
+    );
 
     const point insidePoint
     (
@@ -582,15 +621,18 @@ int main(int argc, char *argv[])
         args.optionLookupOrDefault<label>("nCellsBetweenLevels", 3)
     );
 
-    surfaceFeaturesConfiguration surfaceFeaturesConfig
-    (
-        "surfaceFeaturesDict",
-        runTime.system(),
-        runTime,
-        surfaces
-    );
+    if (explicitFeatures)
+    {
+        surfaceFeaturesConfiguration surfaceFeaturesConfig
+        (
+            "surfaceFeaturesDict",
+            runTime.system(),
+            runTime,
+            surfaces
+        );
 
-    surfaceFeaturesConfig.write();
+        surfaceFeaturesConfig.write();
+    }
 
     snappyHexMeshConfiguration snappyConfig
     (
@@ -603,13 +645,24 @@ int main(int argc, char *argv[])
         refinementRegions,
         refinementBoxes,
         refinementDists,
-        implicitFeatures,
+        explicitFeatures,
         layers,
+        firstLayerThickness,
+        layerExpansionRatio,
         insidePoint,
         nCellsBetweenLevels
     );
 
     snappyConfig.write();
+
+    meshQualityConfiguration meshQualityConfig
+    (
+        "meshQualityDict",
+        runTime.system(),
+        runTime
+    );
+
+    meshQualityConfig.write();
 
     Info<< "\nEnd\n" << endl;
 

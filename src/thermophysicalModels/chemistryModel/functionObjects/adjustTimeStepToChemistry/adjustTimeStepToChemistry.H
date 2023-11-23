@@ -25,17 +25,18 @@ Class
     Foam::functionObjects::adjustTimeStepToChemistry
 
 Description
-    Adjusts the time step to match a chemistry model's stored chemical time
-    step. This allows the solver to temporally resolve chemical changes, in
-    order to better couple the chemistry and transport, or in order to
-    accurately post-process the chemical changes.
+    Returns the minimum chemistry chemical time scale
+
+    This allows the solver to temporally resolve chemical changes, in order to
+    better couple the chemistry and transport, or in order to accurately
+    post-process the chemical changes.
 
     Note that this function only does anything if time step adjustment is
     enabled in the controlDict.
 
     Example of function object specification:
     \verbatim
-    adjustTimeStepToChemistry1
+    adjustTimeStepToChemistry
     {
         type            adjustTimeStepToChemistry;
         libs            ("libchemistryModel.so");
@@ -114,11 +115,14 @@ public:
             return wordList::null();
         }
 
-        //- Reset the timeStep from the Function1 of time
+        //- Do nothing
         virtual bool execute();
 
         //- Do nothing
         virtual bool write();
+
+        //- Return the minimum chemistry.deltaTChem()
+        virtual scalar maxDeltaT() const;
 
 
     // Member Operators

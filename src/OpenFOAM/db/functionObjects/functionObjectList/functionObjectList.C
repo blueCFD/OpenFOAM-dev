@@ -58,6 +58,13 @@ Foam::functionObject* Foam::functionObjectList::remove
 }
 
 
+bool Foam::functionObjectList::writeData(Ostream&) const
+{
+    NotImplemented;
+    return false;
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::functionObjectList::functionObjectList
@@ -66,6 +73,15 @@ Foam::functionObjectList::functionObjectList
     const bool execution
 )
 :
+    regIOobject
+    (
+        IOobject
+        (
+            "functionObjectList",
+            t.system(),
+            t
+        )
+    ),
     PtrList<functionObject>(),
     digests_(),
     indices_(),
@@ -83,6 +99,15 @@ Foam::functionObjectList::functionObjectList
     const bool execution
 )
 :
+    regIOobject
+    (
+        IOobject
+        (
+            "functionObjectList",
+            t.system(),
+            t
+        )
+    ),
     PtrList<functionObject>(),
     digests_(),
     indices_(),
@@ -148,6 +173,7 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
                 args["func"],
                 functionsDict,
                 functionEntries::includeFuncEntry::functionObjectDictPath,
+                "system",
                 {"command", args.commandLine()},
                 region
             );
@@ -165,6 +191,7 @@ Foam::autoPtr<Foam::functionObjectList> Foam::functionObjectList::New
                     funcs[i],
                     functionsDict,
                     functionEntries::includeFuncEntry::functionObjectDictPath,
+                    "system",
                     {"command", args.commandLine()},
                     region
                 );
@@ -296,6 +323,32 @@ Foam::scalar Foam::functionObjectList::timeToNextAction()
     }
 
     return result;
+}
+
+
+Foam::scalar Foam::functionObjectList::maxDeltaT() const
+{
+    scalar result = vGreat;
+
+    forAll(*this, oi)
+    {
+        result = min(result, operator[](oi).maxDeltaT());
+    }
+
+    return result;
+}
+
+
+bool Foam::functionObjectList::dependenciesModified() const
+{
+    if (&parentDict_ == &time_.controlDict())
+    {
+        return time_.controlDict().modified();
+    }
+    else
+    {
+        return false;
+    }
 }
 
 

@@ -326,12 +326,13 @@ Foam::polyMesh::polyMesh(const IOobject& io)
     boundary_.calcGeometry();
 
     // Warn if global empty mesh
-    if (returnReduce(nPoints(), sumOp<label>()) == 0)
+    const bool complete = Pstream::parRun() || !time().processorCase();
+    if (complete && returnReduce(nPoints(), sumOp<label>()) == 0)
     {
         WarningInFunction
             << "no points in mesh" << endl;
     }
-    if (returnReduce(nCells(), sumOp<label>()) == 0)
+    if (complete && returnReduce(nCells(), sumOp<label>()) == 0)
     {
         WarningInFunction
             << "no cells in mesh" << endl;
@@ -858,12 +859,12 @@ void Foam::polyMesh::swap(polyMesh& otherMesh)
         const polyPatchList patches
         (
             boundary_,
-            boundary_
+            otherMesh.boundary_
         );
         const polyPatchList otherPatches
         (
             otherMesh.boundary_,
-            otherMesh.boundary_
+            boundary_
         );
 
         updatePatches(otherPatches, boundary_);

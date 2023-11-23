@@ -1185,14 +1185,6 @@ bool Foam::fvMeshStitcher::stitches() const
 }
 
 
-void Foam::fvMeshStitcher::updateMesh(const polyTopoChangeMap&)
-{}
-
-
-void Foam::fvMeshStitcher::movePoints()
-{}
-
-
 bool Foam::fvMeshStitcher::disconnect
 (
     const bool changing,
@@ -1537,6 +1529,8 @@ void Foam::fvMeshStitcher::reconnect(const bool geometric) const
         return;
     }
 
+    const bool coupled = Pstream::parRun() || !mesh_.time().processorCase();
+
     // Create a copy of the conformal poly face addressing
     surfaceLabelField::Boundary polyFacesBf
     (
@@ -1552,7 +1546,7 @@ void Foam::fvMeshStitcher::reconnect(const bool geometric) const
     surfaceVectorField Cf(mesh_.Cf().cloneUnSliced()());
 
     // Construct non-conformal geometry
-    if (geometric)
+    if (coupled && geometric)
     {
         // Do the intersection and create the non-conformal cyclic faces
         intersectNonConformalCyclics(polyFacesBf, Sf, Cf, true);
@@ -1592,6 +1586,18 @@ void Foam::fvMeshStitcher::reconnect(const bool geometric) const
 
     const_cast<Time&>(mesh_.time()).functionObjects().topoChange(map);
 }
+
+
+void Foam::fvMeshStitcher::topoChange(const polyTopoChangeMap&)
+{}
+
+
+void Foam::fvMeshStitcher::mapMesh(const polyMeshMap&)
+{}
+
+
+void Foam::fvMeshStitcher::distribute(const polyDistributionMap&)
+{}
 
 
 // ************************************************************************* //

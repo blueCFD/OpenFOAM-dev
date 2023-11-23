@@ -51,9 +51,7 @@ Foam::solvers::XiFluid::XiFluid(fvMesh& mesh)
 
     thermo_(refCast<psiuMulticomponentThermo>(isothermalFluid::thermo_)),
 
-    composition(thermo_.composition()),
-
-    b_(composition.Y("b")),
+    b_(thermo_.Y("b")),
 
     unstrainedLaminarFlameSpeed(laminarFlameSpeed::New(thermo_)),
 
@@ -116,30 +114,18 @@ Foam::solvers::XiFluid::XiFluid(fvMesh& mesh)
         combustionProperties.lookup("SuModel")
     ),
 
-    sigmaExt
-    (
-        combustionProperties.lookup("sigmaExt")
-    ),
+    sigmaExt("sigmaExt", dimless/dimTime, combustionProperties),
 
     XiModel
     (
         combustionProperties.lookup("XiModel")
     ),
 
-    XiCoef
-    (
-        combustionProperties.lookup("XiCoef")
-    ),
+    XiCoef("XiCoef", dimless, combustionProperties),
 
-    XiShapeCoef
-    (
-        combustionProperties.lookup("XiShapeCoef")
-    ),
+    XiShapeCoef("XiShapeCoef", dimless, combustionProperties),
 
-    uPrimeCoef
-    (
-        combustionProperties.lookup("uPrimeCoef")
-    ),
+    uPrimeCoef("uPrimeCoef", dimless, combustionProperties),
 
     ign(combustionProperties, runTime, mesh),
 
@@ -156,9 +142,9 @@ Foam::solvers::XiFluid::XiFluid(fvMesh& mesh)
 {
     thermo.validate(type(), "ha", "ea");
 
-    if (composition.contains("ft"))
+    if (thermo_.containsSpecie("ft"))
     {
-        fields.add(composition.Y("ft"));
+        fields.add(thermo_.Y("ft"));
     }
 
     fields.add(b);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,10 +47,10 @@ Foam::laminarFlameSpeed::laminarFlameSpeed
     fuel_(dict.lookup("fuel")),
     equivalenceRatio_(0)
 {
-    if (!psiuMulticomponentThermo_.composition().contains("ft"))
+    if (!psiuMulticomponentThermo_.containsSpecie("ft"))
     {
         equivalenceRatio_ =
-            dimensionedScalar(dict.lookup("equivalenceRatio")).value();
+            dimensionedScalar("equivalenceRatio", dimless, dict).value();
     }
 }
 

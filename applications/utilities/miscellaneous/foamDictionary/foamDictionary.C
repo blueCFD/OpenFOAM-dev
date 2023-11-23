@@ -79,11 +79,15 @@ Usage
         (or sub entry if -entry specified)
 
       - \par -expand
-        Read the specified dictionary file, expand the macros etc. and write
-        the resulting dictionary to standard output.
+        Read the specified dictionary file, expand the macros etc.
+        Writes the expanded dictionary to the output dictionary if specified
+        otherwise to standard output
 
       - \par -includes
         List the \c #include and \c #includeIfPresent files to standard output
+
+      - \par -output
+        Path name of the output dictionary, defaults to the input dictionary
 
     Example usage:
       - Change simulation to run for one timestep only:
@@ -155,7 +159,6 @@ Usage
 #include "IFstream.H"
 #include "OFstream.H"
 #include "includeEntry.H"
-#include "inputSyntaxEntry.H"
 
 using namespace Foam;
 
@@ -214,31 +217,6 @@ IOstream::streamFormat readDict(dictionary& dict, const fileName& dictFileName)
 }
 
 
-//- Convert keyword syntax to "dot" if the dictionary is "dot" syntax
-word dotToSlash(const fileName& entryName)
-{
-    if
-    (
-        functionEntries::inputSyntaxEntry::dot()
-     && entryName.find('/') != string::npos
-    )
-    {
-        wordList entryNames(entryName.components('/'));
-
-        word entry(entryNames[0]);
-        for (label i = 1; i < entryNames.size(); i++)
-        {
-            entry += word('.') + entryNames[i];
-        }
-        return entry;
-    }
-    else
-    {
-        return entryName;
-    }
-}
-
-
 void remove(dictionary& dict, const dictionary& removeDict)
 {
     forAllConstIter(dictionary, removeDict, iter)
@@ -285,7 +263,7 @@ void substitute(dictionary& dict, string substitutions)
 
     forAll(namedArgs, i)
     {
-        const Pair<word> dAk(dictAndKeyword(dotToSlash(namedArgs[i].first())));
+        const Pair<word> dAk(dictAndKeyword(namedArgs[i].first()));
         dictionary& subDict(dict.scopedDict(dAk.first()));
         IStringStream entryStream
         (
@@ -353,14 +331,19 @@ int main(int argc, char *argv[])
     argList::addBoolOption
     (
         "expand",
-        "Read the specified dictionary file, expand the macros etc. and write "
-        "the resulting dictionary to standard output"
+        "Read the specified dictionary file and expand the macros etc."
     );
     argList::addOption
     (
         "writePrecision",
         "label",
         "Write with the specified precision"
+    );
+    argList::addOption
+    (
+        "output",
+        "path name",
+        "Path name of the output dictionary"
     );
 
     argList args(argc, argv);
@@ -445,7 +428,7 @@ int main(int argc, char *argv[])
     else
     {
         dictPtr = new dictionary(dictPath);
-        dictFormat = readDict(*dictPtr, dictPath);
+        dictFormat = readDict(*dictPtr, args.path()/dictPath);
     }
 
     dictionary& dict = localDictPtr ? *localDictPtr : *dictPtr;
@@ -458,24 +441,31 @@ int main(int argc, char *argv[])
     }
     else if (args.optionFound("expand") && !args.optionFound("entry"))
     {
-        IOobject::writeBanner(Info)
-            <<"//\n// " << dictPath << "\n//\n";
-
-        // Change the format to ASCII
-        if (dict.found(IOobject::foamFile))
+        if (!args.optionFound("output"))
         {
-            dict.subDict(IOobject::foamFile).add
-            (
-                "format",
-                IOstream::ASCII,
-                true
-            );
+            IOobject::writeBanner(Info)
+                <<"//\n// " << dictPath << "\n//\n";
+
+            // Change the format to ASCII
+            if (dict.found(IOobject::foamFile))
+            {
+                dict.subDict(IOobject::foamFile).add
+                (
+                    "format",
+                    IOstream::ASCII,
+                    true
+                );
+            }
+
+            dict.dictionary::write(Info, false);
+            IOobject::writeEndDivider(Info);
+
+            return 0;
         }
-
-        dict.dictionary::write(Info, false);
-        IOobject::writeEndDivider(Info);
-
-        return 0;
+        else
+        {
+            changed = true;
+        }
     }
 
 
@@ -491,7 +481,7 @@ int main(int argc, char *argv[])
     word entryName;
     if (args.optionReadIfPresent("entry", entryName))
     {
-        const word scopedName(dotToSlash(entryName));
+        const word scopedName(entryName);
 
         string newValue;
         if
@@ -661,7 +651,7 @@ int main(int argc, char *argv[])
         remove(dict, diffDict);
         dict.dictionary::write(Info, false);
     }
-    else
+    else if (!args.optionFound("output"))
     {
         dict.dictionary::write(Info, false);
     }
@@ -674,7 +664,13 @@ int main(int argc, char *argv[])
         }
         else if (dictPtr)
         {
-            OFstream os(dictPath, dictFormat);
+            // Set output dict name, defaults to the name of the input dict
+            const fileName outputDictPath
+            (
+                args.optionLookupOrDefault<fileName>("output", dictPath)
+            );
+
+            OFstream os(args.path()/outputDictPath, dictFormat);
             IOobject::writeBanner(os);
             if (dictPtr->found(IOobject::foamFile))
             {

@@ -50,7 +50,7 @@ void Foam::solvers::shockFluid::correctCoNum(const surfaceScalarField& amaxSf)
 {
     const scalarField sumAmaxSf(fvc::surfaceSum(amaxSf)().primitiveField());
 
-    CoNum = 0.5*gMax(sumAmaxSf/mesh.V().field())*runTime.deltaTValue();
+    CoNum_ = 0.5*gMax(sumAmaxSf/mesh.V().field())*runTime.deltaTValue();
 
     const scalar meanCoNum =
         0.5*(gSum(sumAmaxSf)/gSum(mesh.V().field()))*runTime.deltaTValue();
@@ -183,9 +183,6 @@ Foam::solvers::shockFluid::shockFluid(fvMesh& mesh)
     U(U_),
     phi(phi_)
 {
-    // Read the controls
-    readControls();
-
     thermo.validate(type(), "e");
 
     if (momentumTransport.valid())
@@ -240,9 +237,6 @@ Foam::solvers::shockFluid::~shockFluid()
 
 void Foam::solvers::shockFluid::preSolve()
 {
-    // Read the controls
-    readControls();
-
     {
         const surfaceScalarField amaxSf
         (

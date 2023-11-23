@@ -57,7 +57,6 @@ fi
 wmake $targetType fileFormats
 wmake $targetType surfMesh
 wmake $targetType triSurface
-wmake $targetType genericPatches
 wmake $targetType meshTools
 
 # Decomposition methods needed by dummyThirdParty
@@ -76,7 +75,8 @@ dummyThirdParty/Allwmake $targetType $*
 
 wmake $targetType finiteVolume
 wmake $targetType lagrangian/basic
-wmake $targetType genericPatchFields
+
+generic/Allwmake $targetType $*
 
 wmake $targetType mesh/extrudeModel
 wmake $targetType dynamicMesh

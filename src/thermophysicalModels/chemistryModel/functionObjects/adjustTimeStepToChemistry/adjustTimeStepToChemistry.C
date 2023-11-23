@@ -83,9 +83,21 @@ bool Foam::functionObjects::adjustTimeStepToChemistry::read
 
 bool Foam::functionObjects::adjustTimeStepToChemistry::execute()
 {
+    return true;
+}
+
+
+bool Foam::functionObjects::adjustTimeStepToChemistry::write()
+{
+    return true;
+}
+
+
+Foam::scalar Foam::functionObjects::adjustTimeStepToChemistry::maxDeltaT() const
+{
     if (!time_.controlDict().lookupOrDefault("adjustTimeStep", false))
     {
-        return true;
+        return vGreat;
     }
 
     const basicChemistryModel& chemistry =
@@ -94,25 +106,7 @@ bool Foam::functionObjects::adjustTimeStepToChemistry::execute()
             IOobject::groupName("chemistryProperties", phaseName_)
         );
 
-    const scalar deltaT = gMin(chemistry.deltaTChem());
-
-    // The solver has not adjusted the time-step yet. When it does, if it is
-    // within the physical and specified limits it will increase it by a
-    // fixed factor. So, we clip it here to the chemical time-step divided by
-    // that factor. The solver will then increase it to the chemical time-step
-    // if it can.
-    const_cast<Time&>(time_).setDeltaTNoAdjust
-    (
-        min(deltaT/solver::deltaTFactor, time_.deltaTValue())
-    );
-
-    return true;
-}
-
-
-bool Foam::functionObjects::adjustTimeStepToChemistry::write()
-{
-    return true;
+    return gMin(chemistry.deltaTChem());
 }
 
 

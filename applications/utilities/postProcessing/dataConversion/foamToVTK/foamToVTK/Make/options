@@ -8,7 +8,7 @@ EXE_INC = \
 LIB_LIBS = \
     -ldynamicMesh \
     -llagrangian \
-    -lgenericPatchFields \
+    -lgenericFvFields \
     -lfileFormats
 
 LIB_LIBS += \

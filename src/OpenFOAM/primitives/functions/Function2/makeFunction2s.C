@@ -23,41 +23,19 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "None2.T.H"
-#include "Constant2.T.H"
-#include "ZeroConstant2.T.H"
-#include "OneConstant2.T.H"
-#include "Scale2.T.H"
-#include "UniformTable2.T.H"
-#include "CodedFunction2.T.H"
-
+#include "makeFunction2s.H"
 #include "fieldTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeFunction2s(Type, nullArg)                                          \
-                                                                               \
-    makeFunction2(Type);                                                       \
-                                                                               \
-    namespace Function2s                                                       \
-    {                                                                          \
-        makeFunction2Type(None, Type);                                         \
-        makeFunction2Type(Constant, Type);                                     \
-        makeFunction2Type(ZeroConstant, Type);                                 \
-        makeFunction2Type(OneConstant, Type);                                  \
-        makeFunction2Type(Scale, Type);                                        \
-        makeFunction2Type(UniformTable, Type);                                 \
-        makeFunction2Type(Coded, Type);                                        \
-    }
-
 namespace Foam
 {
-    makeFunction2(label);
+    defineFunction2(label);
 
     namespace Function2s
     {
-        makeFunction2Type(None, label);
-        makeFunction2Type(Constant, label);
+        addFunction2(None, label);
+        addStreamConstructableFunction2(Constant, label);
     }
 
     FOR_ALL_FIELD_TYPES(makeFunction2s);

@@ -25,6 +25,8 @@ License
 
 #include "sixDoFMotion.H"
 #include "mathematicalConstants.H"
+#include "makeFunction1s.H"
+#include "makeTableReaders.H"
 #include "addToRunTimeSelectionTable.H"
 
 using namespace Foam::constant::mathematical;
@@ -47,22 +49,6 @@ namespace solidBodyMotionFunctions
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "None.T.H"
-#include "Constant.T.H"
-#include "Uniform.T.H"
-#include "ZeroConstant.T.H"
-#include "OneConstant.T.H"
-#include "Polynomial1.T.H"
-#include "Sine.T.H"
-#include "Square.T.H"
-#include "Table.T.H"
-#include "UniformTable1.T.H"
-#include "NonUniformTable1.T.H"
-#include "EmbeddedTableReader.T.H"
-#include "FoamTableReader.T.H"
-#include "Scale.T.H"
-#include "CodedFunction1.T.H"
 
 typedef Foam::solidBodyMotionFunctions::sixDoFMotion::translationRotationVectors
 trvType;
@@ -103,13 +89,7 @@ const trvType trvType::vsType::rootMin
 namespace Foam
 {
     makeFunction1s(trvType, nullArg);
-
-    defineTableReader(trvType);
-    namespace TableReaders
-    {
-        makeTableReader(Embedded, trvType);
-        makeTableReader(Foam, trvType);
-    }
+    makeFoamTableReaders(trvType, nullArg);
 }
 
 

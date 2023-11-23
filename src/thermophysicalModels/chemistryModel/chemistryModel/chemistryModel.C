@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,9 +45,12 @@ Foam::chemistryModel<ThermoType>::chemistryModel
       ? jacobianTypeNames_.read(this->lookup("jacobian"))
       : jacobianType::fast
     ),
-    mixture_(refCast<const multicomponentMixture<ThermoType>>(this->thermo())),
+    mixture_
+    (
+        dynamicCast<const multicomponentMixture<ThermoType>>(this->thermo())
+    ),
     specieThermos_(mixture_.specieThermos()),
-    reactions_(mixture_.species(), specieThermos_, this->mesh(), *this),
+    reactions_(thermo.species(), specieThermos_, this->mesh(), *this),
     RR_(nSpecie_),
     Y_(nSpecie_),
     c_(nSpecie_),
@@ -94,8 +97,6 @@ Foam::chemistryModel<ThermoType>::chemistryModel
     // species should be initialised (by default 'active' is true)
     if (reduction_)
     {
-        const basicSpecieMixture& composition = this->thermo().composition();
-
         forAll(Yvf_, i)
         {
             typeIOobject<volScalarField> header
@@ -110,7 +111,7 @@ Foam::chemistryModel<ThermoType>::chemistryModel
             // and NO_WRITE
             if (!header.headerOk())
             {
-                composition.setInactive(i);
+                this->thermo().setSpecieInactive(i);
             }
         }
     }
@@ -778,21 +779,9 @@ Foam::scalar Foam::chemistryModel<ThermoType>::solve
     mechRed_.update();
     tabulation_.update();
 
-    if (reduction_ && Pstream::parRun())
+    if (reduction_)
     {
-        const basicSpecieMixture& composition = this->thermo().composition();
-
-        List<bool> active(composition.active());
-        Pstream::listCombineGather(active, orEqOp<bool>());
-        Pstream::listCombineScatter(active);
-
-        forAll(active, i)
-        {
-            if (active[i])
-            {
-                composition.setActive(i);
-            }
-        }
+        this->thermo().syncSpeciesActive();
     }
 
     return deltaTMin;
@@ -865,7 +854,7 @@ Foam::chemistryModel<ThermoType>::tc() const
             c_[i] = rho*Yvf_[i][celli]/specieThermos_[i].W();
         }
 
-        // A reaction's rate scale is calculated as it's molar
+        // A reaction's rate scale is calculated as its molar
         // production rate divided by the total number of moles in the
         // system.
         //

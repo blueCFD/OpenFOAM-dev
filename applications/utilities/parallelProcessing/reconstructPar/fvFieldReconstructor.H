@@ -29,7 +29,7 @@ Description
 
 SourceFiles
     fvFieldReconstructor.C
-    fvFieldReconstructorReconstructFields.C
+    fvFieldReconstructorTemplates.C
 
 \*---------------------------------------------------------------------------*/
 
@@ -71,11 +71,16 @@ class fvFieldReconstructor
         //- Boundary field of face addressing
         const PtrList<surfaceLabelField::Boundary>& faceProcAddressingBf_;
 
-        //- Number of fields reconstructed
-        label nReconstructed_;
-
 
     // Private Member Functions
+
+        //- Return whether anything in the object list gets reconstructed
+        template<class FieldType>
+        static bool reconstructs
+        (
+            const IOobjectList& objects,
+            const HashSet<word>& selectedFields
+        );
 
         //- Convert a processor patch to the corresponding complete patch index
         label completePatchID(const label proci, const label procPatchi) const;
@@ -89,6 +94,21 @@ class fvFieldReconstructor
             const labelUList& addressing,
             const bool isFlux
         );
+
+        //- Read and reconstruct a volume internal field
+        template<class Type>
+        tmp<DimensionedField<Type, volMesh>>
+        reconstructVolInternalField(const IOobject& fieldIoObject) const;
+
+        //- Read and reconstruct a volume field
+        template<class Type>
+        tmp<VolField<Type>>
+        reconstructVolField(const IOobject& fieldIoObject) const;
+
+        //- Read and reconstruct a surface field
+        template<class Type>
+        tmp<SurfaceField<Type>>
+        reconstructFvSurfaceField(const IOobject& fieldIoObject) const;
 
 
 public:
@@ -111,59 +131,16 @@ public:
 
     // Member Functions
 
-        //- Return number of fields reconstructed
-        label nReconstructed() const
-        {
-            return nReconstructed_;
-        }
-
-        //- Reconstruct volume internal field
-        template<class Type>
-        tmp<DimensionedField<Type, volMesh>>
-        reconstructFvVolumeInternalField
+        //- Return whether anything in the object list gets reconstructed
+        static bool reconstructs
         (
-            const IOobject& fieldIoObject,
-            const PtrList<DimensionedField<Type, volMesh>>& procFields
-        ) const;
-
-        //- Read and reconstruct volume internal field
-        template<class Type>
-        tmp<DimensionedField<Type, volMesh>>
-        reconstructFvVolumeInternalField(const IOobject& fieldIoObject) const;
-
-
-        //- Reconstruct volume field
-        template<class Type>
-        tmp<VolField<Type>>
-        reconstructFvVolumeField
-        (
-            const IOobject& fieldIoObject,
-            const PtrList<VolField<Type>>&
-        ) const;
-
-        //- Read and reconstruct volume field
-        template<class Type>
-        tmp<VolField<Type>>
-        reconstructFvVolumeField(const IOobject& fieldIoObject) const;
-
-
-        //- Reconstruct surface field
-        template<class Type>
-        tmp<SurfaceField<Type>>
-        reconstructFvSurfaceField
-        (
-            const IOobject& fieldIoObject,
-            const PtrList<SurfaceField<Type>>&
-        ) const;
-
-        //- Read and reconstruct surface field
-        template<class Type>
-        tmp<SurfaceField<Type>>
-        reconstructFvSurfaceField(const IOobject& fieldIoObject) const;
+            const IOobjectList& objects,
+            const HashSet<word>& selectedFields
+        );
 
         //- Read, reconstruct and write all/selected volume internal fields
         template<class Type>
-        void reconstructFvVolumeInternalFields
+        void reconstructVolInternalFields
         (
             const IOobjectList& objects,
             const HashSet<word>& selectedFields
@@ -171,7 +148,7 @@ public:
 
         //- Read, reconstruct and write all/selected volume fields
         template<class Type>
-        void reconstructFvVolumeFields
+        void reconstructVolFields
         (
             const IOobjectList& objects,
             const HashSet<word>& selectedFields
@@ -200,7 +177,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "fvFieldReconstructorReconstructFields.C"
+    #include "fvFieldReconstructorTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

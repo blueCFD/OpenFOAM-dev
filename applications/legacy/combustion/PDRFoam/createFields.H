@@ -14,8 +14,6 @@ autoPtr<psiuMulticomponentThermo> pThermo
 psiuMulticomponentThermo& thermo = pThermo();
 thermo.validate(args.executable(), "ha", "ea");
 
-basicCombustionMixture& composition = thermo.composition();
-
 volScalarField rho
 (
     IOobject
@@ -31,7 +29,7 @@ volScalarField rho
 
 volScalarField& p = thermo.p();
 
-volScalarField& b = composition.Y("b");
+volScalarField& b = thermo.Y("b");
 Info<< "min(b) = " << min(b).value() << endl;
 
 Info<< "\nReading field U\n" << endl;
@@ -236,9 +234,9 @@ volScalarField St
 
 multivariateSurfaceInterpolationScheme<scalar>::fieldTable fields;
 
-if (composition.contains("ft"))
+if (thermo.containsSpecie("ft"))
 {
-    fields.add(composition.Y("ft"));
+    fields.add(thermo.Y("ft"));
 }
 
 fields.add(b);

@@ -37,7 +37,7 @@ void Foam::snappyHexMeshConfiguration::writeSnappySwitches()
     dict.add
     (
         "addLayers",
-        layers_ == 0 ? "off" : "on",
+        layers_.empty() ? "off" : "on",
         true
     );
 
@@ -133,7 +133,7 @@ void Foam::snappyHexMeshConfiguration::writeFeatures()
 {
     beginList(os_, "features");
 
-    if (!implicitFeatures_)
+    if (explicitFeatures_)
     {
         forAll(surfaces_, i)
         {
@@ -422,9 +422,9 @@ void Foam::snappyHexMeshConfiguration::writeSnapControls()
     beginDict(os_, "snapControls");
 
     os_ << indent << "explicitFeatureSnap    "
-        << (implicitFeatures_ ? "off" : "on") << ";" << endl;
+        << (explicitFeatures_ ? "on" : "off") << ";" << endl;
     os_ << indent << "implicitFeatureSnap    "
-        << (implicitFeatures_ ? "on" : "off") << ";" << endl;
+        << (explicitFeatures_ ? "off" : "on") << ";" << endl;
 
     endDict(os_);
 }
@@ -432,42 +432,75 @@ void Foam::snappyHexMeshConfiguration::writeSnapControls()
 
 void Foam::snappyHexMeshConfiguration::writeAddLayersControls()
 {
-    if (layers_ == 0)
-    {
-        return;
-    }
+    // Include addLayersControls sub-dict with zero layers when layers are
+    // switched off, so they can be conveniently switched on later.
 
     beginDict(os_, "addLayersControls");
 
     beginDict(os_, "layers");
 
-    forAll(surfaces_, i)
+    if (layers_.empty())
     {
-        switch (surfaces_[i].type())
+        // Add convenient entries with zero layers if layers are switched off.
+        forAll(surfaces_, i)
         {
-            case surfaceType::wall:
-            case surfaceType::external:
-            case surfaceType::baffle:
+            switch (surfaces_[i].type())
             {
-                os_ << indent << "\"" << surfaces_[i].name()
-                    << ".*\" { nSurfaceLayers "
-                    << layers_ << "; }" << endl;
-                break;
+                case surfaceType::wall:
+                case surfaceType::external:
+                case surfaceType::baffle:
+                {
+                    os_ << indent << "\"" << surfaces_[i].name()
+                        << ".*\" { nSurfaceLayers 0; }" << endl;
+                    break;
+                }
+                default: break;
             }
-
-            default: break;
+        }
+    }
+    else
+    {
+        // Add entries for specified surfaces.
+        forAll(layers_, i)
+        {
+            os_ << indent << "\"" << layers_[i].first()
+                << ".*\" { nSurfaceLayers "
+                << layers_[i].second() << "; }" << endl;
         }
     }
 
     endDict(os_);
 
-    os_ << indent << "relativeSizes       on; "
-        << "// off, usually with firstLayerThickness" << nl
-        << indent << "expansionRatio      1.2;" << nl
-        << indent << "finalLayerThickness 0.5;" << nl
-        << indent << "minThickness        1e-3;" << nl
-        << indent << "firstLayerThickness-disabled 0.01;" << nl << nl
-        << indent << "maxThicknessToMedialRatio-disabled 0.3;" << endl;
+    bool relativeSizes(firstLayerThickness_ == 0);
+
+    // relativeSizes
+    os_ << indent << "relativeSizes       "
+        << (
+                relativeSizes
+              ? "on; // off, usually with firstLayerThickness"
+              : "off; // on, usually with finalLayerThickness"
+           ) << endl;
+
+    // expansionRatio
+    os_ << indent << "expansionRatio      "<< layerExpansionRatio_
+        << ";" << endl;
+
+    // finalLayerThickness
+    os_ << indent << "finalLayerThickness"
+        << (relativeSizes ? " " : "-disabled ") << "0.5;" << endl;
+
+    // minimumThickness
+    os_ << indent << "minThickness        "
+        << (relativeSizes ? scalar(0.001) : 0.5*firstLayerThickness_)
+        << ";" << endl;
+
+    // firstLayerThickness
+    os_ << indent << "firstLayerThickness"
+        << (relativeSizes ? "-disabled " : " ")
+        << firstLayerThickness_ << ";" << endl;
+
+    // maxThicknessToMedialRatio
+    os_ << indent << "maxThicknessToMedialRatio-disabled 0.3;" << endl;
 
     endDict(os_);
 }
@@ -499,8 +532,10 @@ Foam::snappyHexMeshConfiguration::snappyHexMeshConfiguration
     const List<Tuple2<word, label>>& refinementRegions,
     const List<Tuple3<vector, vector, label>>& refinementBoxes,
     const List<Tuple3<word, scalar, label>>& refinementDists,
-    const bool implicitFeatures,
-    const label layers,
+    const bool explicitFeatures,
+    const List<Tuple2<word, label>>& layers,
+    const scalar firstLayerThickness,
+    const scalar layerExpansionRatio,
     const point& insidePoint,
     const label nCellsBetweenLevels
 )
@@ -512,8 +547,10 @@ Foam::snappyHexMeshConfiguration::snappyHexMeshConfiguration
     refinementRegions_(refinementRegions),
     refinementBoxes_(refinementBoxes),
     refinementDists_(refinementDists),
-    implicitFeatures_(implicitFeatures),
+    explicitFeatures_(explicitFeatures),
     layers_(layers),
+    firstLayerThickness_(firstLayerThickness),
+    layerExpansionRatio_(layerExpansionRatio),
     insidePoint_(insidePoint),
     nCellsBetweenLevels_(nCellsBetweenLevels)
 {}

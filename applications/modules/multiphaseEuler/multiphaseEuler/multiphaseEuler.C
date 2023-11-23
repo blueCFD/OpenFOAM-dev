@@ -45,9 +45,12 @@ namespace solvers
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::solvers::multiphaseEuler::readControls()
+bool Foam::solvers::multiphaseEuler::read()
 {
-    fluidSolver::readControls();
+    fluidSolver::read();
+
+    predictMomentum =
+        pimple.dict().lookupOrDefault<bool>("momentumPredictor", false);
 
     faceMomentum =
         pimple.dict().lookupOrDefault<Switch>("faceMomentum", false);
@@ -55,11 +58,10 @@ void Foam::solvers::multiphaseEuler::readControls()
     dragCorrection =
         pimple.dict().lookupOrDefault<Switch>("dragCorrection", false);
 
-    partialElimination =
-        pimple.dict().lookupOrDefault<Switch>("partialElimination", false);
-
     nEnergyCorrectors =
         pimple.dict().lookupOrDefault<int>("nEnergyCorrectors", 1);
+
+    return true;
 }
 
 
@@ -79,7 +81,7 @@ void Foam::solvers::multiphaseEuler::correctCoNum()
         );
     }
 
-    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+    CoNum_ = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
 
     const scalar meanCoNum =
         0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
@@ -95,6 +97,11 @@ Foam::solvers::multiphaseEuler::multiphaseEuler(fvMesh& mesh)
 :
     fluidSolver(mesh),
 
+    predictMomentum
+    (
+        pimple.dict().lookupOrDefault<Switch>("momentumPredictor", false)
+    ),
+
     faceMomentum
     (
         pimple.dict().lookupOrDefault<Switch>("faceMomentum", false)
@@ -103,11 +110,6 @@ Foam::solvers::multiphaseEuler::multiphaseEuler(fvMesh& mesh)
     dragCorrection
     (
         pimple.dict().lookupOrDefault<Switch>("dragCorrection", false)
-    ),
-
-    partialElimination
-    (
-        pimple.dict().lookupOrDefault<Switch>("partialElimination", false)
     ),
 
     nEnergyCorrectors
@@ -184,7 +186,7 @@ Foam::solvers::multiphaseEuler::multiphaseEuler(fvMesh& mesh)
     phi(phi_)
 {
     // Read the controls
-    readControls();
+    read();
 
     mesh.schemes().setFluxRequired(p_rgh.name());
 
@@ -205,9 +207,6 @@ Foam::solvers::multiphaseEuler::~multiphaseEuler()
 
 void Foam::solvers::multiphaseEuler::preSolve()
 {
-    // Read the controls
-    readControls();
-
     if (transient())
     {
         correctCoNum();
@@ -244,7 +243,7 @@ void Foam::solvers::multiphaseEuler::prePredictor()
 {
     if (pimple.thermophysics() || pimple.flow())
     {
-        fluid_.solve(rAUs, rAUfs);
+        fluid_.solve(rAs);
         fluid_.correct();
         fluid_.correctContinuityError();
     }

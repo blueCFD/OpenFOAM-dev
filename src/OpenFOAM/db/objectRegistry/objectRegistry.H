@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,6 +79,8 @@ class objectRegistry
         //  Used to provide diagnostics in case the requested object is not
         //  available
         mutable HashSet<word> temporaryObjects_;
+
+        mutable List<regIOobject*> dependents_;
 
 
     // Private Member Functions
@@ -208,6 +210,10 @@ public:
             template<class Type>
             const Type& lookupObject(const word& name) const;
 
+            //- Lookup and return the object reference of the given Type
+            template<class Type>
+            Type& lookupObjectRef(const word& name) const;
+
             //- Is the Type in registry
             //  the name is derived from the type name and given group
             template<class Type>
@@ -217,10 +223,6 @@ public:
             //  the name is derived from the type name and given group
             template<class Type>
             const Type& lookupType(const word& group = word::null) const;
-
-            //- Lookup and return the object reference of the given Type
-            template<class Type>
-            Type& lookupObjectRef(const word& name) const;
 
             //- Return new event number.
             label getEvent() const;
@@ -270,21 +272,26 @@ public:
             //- Return true if any of the object's files have been modified
             virtual bool modified() const;
 
-            //- Read the objects that have been modified
-            void readModifiedObjects();
+            //- Cache pointers to objects who's dependencies have been modified
+            virtual bool dependenciesModified() const;
 
             //- Read object if modified
             virtual bool readIfModified();
+
+            //- Read dependent objects
+            virtual bool read();
+
+            //- Read the objects that have been modified
+            void readModifiedObjects();
 
 
         // Writing
 
             //- writeData function required by regIOobject but not used
-            //  for this class, write is used instead
+            //  for this class, writeObject is used instead
             virtual bool writeData(Ostream&) const
             {
                 NotImplemented;
-
                 return false;
             }
 

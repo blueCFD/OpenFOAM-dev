@@ -68,7 +68,7 @@ class snappyHexMeshConfiguration
         //- Refinement level applied across the snappyHexMeshDict file
         const label refinementLevel_;
 
-        //- Level of refinement on speficied surfaces
+        //- Level of refinement on specified surfaces
         const List<Tuple2<word, label>>& surfaceLevels_;
 
         //- Refinement regions specified by surface and level
@@ -80,11 +80,17 @@ class snappyHexMeshConfiguration
         //- Refinement distances with level of refinement
         const List<Tuple3<word, scalar, label>>& refinementDists_;
 
-        //- Using implicit feature capturing?
-        const bool implicitFeatures_;
+        //- Using explicit feature capturing?
+        const bool explicitFeatures_;
 
-        //- Number of layers at wall patches, default 0
-        const label layers_;
+        //- Number of layers on specified surfaces
+        const List<Tuple2<word, label>> layers_;
+
+        //- Thickness of the near wall cells with layer addition
+        const scalar firstLayerThickness_;
+
+        //- Expansion ratio used with layer addition
+        const scalar layerExpansionRatio_;
 
         //- insidePoint parameter
         point insidePoint_;
@@ -173,8 +179,10 @@ public:
             const List<Tuple2<word, label>>& refinementRegions,
             const List<Tuple3<vector, vector, label>>& refinementBoxes,
             const List<Tuple3<word, scalar, label>>& refinementDists,
-            const bool implicitFeatures,
-            const label layers,
+            const bool explicitFeatures,
+            const List<Tuple2<word, label>>& layers,
+            const scalar firstLayerThickness,
+            const scalar layerExpansionRatio,
             const point& insidePoint,
             const label nCellsBetweenLevels
         );

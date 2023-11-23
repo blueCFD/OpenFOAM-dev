@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,6 +30,14 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(pimpleSingleRegionControl, 0);
+}
+
+
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+bool Foam::pimpleSingleRegionControl::read()
+{
+    return pimple_.read() && pimpleLoop::read();
 }
 
 
@@ -82,16 +90,8 @@ Foam::pimpleSingleRegionControl::~pimpleSingleRegionControl()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-bool Foam::pimpleSingleRegionControl::read()
-{
-    return pimple_.read() && pimpleLoop::read();
-}
-
-
 bool Foam::pimpleSingleRegionControl::loop()
 {
-    read();
-
     if (!pimpleLoop::loop(pimple_))
     {
         pimple_.updateFinal(pimple_.isFinal(finalIter()));
@@ -109,8 +109,6 @@ bool Foam::pimpleSingleRegionControl::loop()
 
 bool Foam::pimpleSingleRegionControl::run(Time& time)
 {
-    read();
-
     if (!pimple_.endIfConverged(time))
     {
         pimple_.storePrevIterFields();
@@ -122,8 +120,6 @@ bool Foam::pimpleSingleRegionControl::run(Time& time)
 
 bool Foam::pimpleSingleRegionControl::loop(Time& time)
 {
-    read();
-
     if (!pimple_.endIfConverged(time))
     {
         pimple_.storePrevIterFields();

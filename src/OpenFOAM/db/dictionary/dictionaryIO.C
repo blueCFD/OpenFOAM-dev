@@ -25,7 +25,6 @@ License
 
 #include "dictionary.H"
 #include "IOobject.T.H"
-#include "inputSyntaxEntry.H"
 #include "inputModeEntry.H"
 #include "calcIncludeEntry.H"
 #include "stringOps.H"
@@ -59,9 +58,6 @@ Foam::dictionary::dictionary(Istream& is, const bool keepHeader)
     dictionaryName(is.name()),
     parent_(dictionary::null)
 {
-    // Reset input syntax as this is a "top-level" dictionary
-    functionEntries::inputSyntaxEntry::clear();
-
     // Reset input mode as this is a "top-level" dictionary
     functionEntries::inputModeEntry::clear();
 
@@ -189,9 +185,6 @@ bool Foam::dictionary::substituteKeyword(const word& keyword)
 
 Foam::Istream& Foam::operator>>(Istream& is, dictionary& dict)
 {
-    // Reset input syntax as this is a "top-level" dictionary
-    functionEntries::inputSyntaxEntry::clear();
-
     // Reset input mode assuming this is a "top-level" dictionary
     functionEntries::inputModeEntry::clear();
 
@@ -358,15 +351,17 @@ Foam::fileName Foam::findConfigFile
 (
     const word& configName,
     const fileName& configFilesPath,
+    const word& configFilesDir,
     const word& region
 )
 {
     // First check if there is a configuration file in the
-    // region system directory
+    // region configFilesDir directory
     {
         const fileName dictFile
         (
-            stringOps::expandEnvVar("$FOAM_CASE")/"system"/region/configName
+            stringOps::expandEnvVar("$FOAM_CASE")
+           /configFilesDir/region/configName
         );
 
         if (isFile(dictFile))
@@ -376,12 +371,12 @@ Foam::fileName Foam::findConfigFile
     }
 
     // Next, if the region is specified, check if there is a configuration file
-    // in the global system directory
+    // in the global configFilesDir directory
     if (region != word::null)
     {
         const fileName dictFile
         (
-            stringOps::expandEnvVar("$FOAM_CASE")/"system"/configName
+            stringOps::expandEnvVar("$FOAM_CASE")/configFilesDir/configName
         );
 
         if (isFile(dictFile))
@@ -433,6 +428,7 @@ bool Foam::readConfigFile
     const string& argString,
     dictionary& parentDict,
     const fileName& configFilesPath,
+    const word& configFilesDir,
     const Pair<string>& contextTypeAndValue,
     const word& region
 )
@@ -444,7 +440,13 @@ bool Foam::readConfigFile
     dictArgList(argString, funcType, args, namedArgs);
 
     // Search for the configuration file
-    fileName path = findConfigFile(funcType, configFilesPath, region);
+    fileName path = findConfigFile
+    (
+        funcType,
+        configFilesPath,
+        configFilesDir,
+        region
+    );
 
     if (path == fileName::null)
     {

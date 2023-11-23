@@ -47,6 +47,14 @@ bool Foam::solver::writeData(Ostream&) const
 }
 
 
+// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
+
+bool Foam::solver::read()
+{
+    return true;
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::solver::solver(fvMesh& mesh)
@@ -71,7 +79,10 @@ Foam::solver::solver(fvMesh& mesh)
     mesh(mesh_),
     runTime(mesh_.time()),
     pimple(mesh_)
-{}
+{
+    deltaTFactor =
+        mesh.time().controlDict().lookupOrDefault<scalar>("deltaTFactor", 1.2);
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

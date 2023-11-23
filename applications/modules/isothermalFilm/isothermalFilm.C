@@ -51,66 +51,6 @@ namespace solvers
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::solvers::isothermalFilm::readControls()
-{
-    maxCo =
-        runTime.controlDict().lookupOrDefault<scalar>("maxCo", 1.0);
-
-    maxDeltaT_ =
-        runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", vGreat);
-}
-
-
-void Foam::solvers::isothermalFilm::correctCoNum()
-{
-    const scalarField sumPhi(fvc::surfaceSum(mag(phi))().primitiveField());
-
-    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
-
-    const scalar meanCoNum =
-        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
-
-    Info<< "Courant Number mean: " << meanCoNum
-        << " max: " << CoNum << endl;
-}
-
-
-void Foam::solvers::isothermalFilm::continuityErrors()
-{
-    const dimensionedScalar mass = fvc::domainIntegrate(rho()*delta()*magSf);
-
-    correctContinuityError();
-
-    if (mass.value() > small)
-    {
-        const volScalarField::Internal massContErr
-        (
-            runTime.deltaT()*magSf*contErr()
-        );
-
-        const scalar sumLocalContErr =
-            (fvc::domainIntegrate(mag(massContErr))/mass).value();
-
-        const scalar globalContErr =
-            (fvc::domainIntegrate(massContErr)/mass).value();
-
-        Info<< "time step continuity errors : sum local = " << sumLocalContErr
-            << ", global = " << globalContErr;
-
-        if (pimple.finalPisoIter() && pimple.finalIter())
-        {
-            cumulativeContErr += globalContErr;
-
-            Info<< ", cumulative = " << cumulativeContErr;
-        }
-
-        Info<< endl;
-    }
-}
-
-
-// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
-
 bool Foam::solvers::isothermalFilm::initFilmMesh()
 {
     // Search for film wall patches
@@ -228,12 +168,87 @@ Foam::wordList Foam::solvers::isothermalFilm::alphaTypes() const
 }
 
 
+void Foam::solvers::isothermalFilm::correctCoNum()
+{
+    const scalarField sumPhi(fvc::surfaceSum(mag(phi))().primitiveField());
+
+    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+
+    const scalar meanCoNum =
+        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
+
+    Info<< "Courant Number mean: " << meanCoNum
+        << " max: " << CoNum << endl;
+}
+
+
+void Foam::solvers::isothermalFilm::continuityErrors()
+{
+    const dimensionedScalar mass = fvc::domainIntegrate(rho()*delta()*magSf);
+
+    correctContinuityError();
+
+    if (mass.value() > small)
+    {
+        const volScalarField::Internal massContErr
+        (
+            runTime.deltaT()*magSf*contErr()
+        );
+
+        const scalar sumLocalContErr =
+            (fvc::domainIntegrate(mag(massContErr))/mass).value();
+
+        const scalar globalContErr =
+            (fvc::domainIntegrate(massContErr)/mass).value();
+
+        Info<< "time step continuity errors : sum local = " << sumLocalContErr
+            << ", global = " << globalContErr;
+
+        if (pimple.finalPisoIter() && pimple.finalIter())
+        {
+            cumulativeContErr += globalContErr;
+
+            Info<< ", cumulative = " << cumulativeContErr;
+        }
+
+        Info<< endl;
+    }
+}
+
+
+// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
+
+bool Foam::solvers::isothermalFilm::dependenciesModified() const
+{
+    return runTime.controlDict().modified();
+}
+
+
+bool Foam::solvers::isothermalFilm::read()
+{
+    solver::read();
+
+    maxCo =
+        runTime.controlDict().lookupOrDefault<scalar>("maxCo", vGreat);
+
+    maxDeltaT_ =
+        runTime.controlDict().found("maxDeltaT")
+      ? runTime.userTimeToTime
+        (
+            runTime.controlDict().lookup<scalar>("maxDeltaT")
+        )
+      : vGreat;
+
+    return true;
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::solvers::isothermalFilm::isothermalFilm
 (
     fvMesh& mesh,
-    autoPtr<rhoThermo> thermoPtr
+    autoPtr<rhoFluidThermo> thermoPtr
 )
 :
     solver(mesh),
@@ -394,7 +409,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
     )
 {
     // Read the controls
-    readControls();
+    read();
 
     mesh.schemes().setFluxRequired(alpha.name());
     momentumTransport->validate();
@@ -403,7 +418,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
 
 Foam::solvers::isothermalFilm::isothermalFilm(fvMesh& mesh)
 :
-    isothermalFilm(mesh, rhoThermo::New(mesh))
+    isothermalFilm(mesh, rhoFluidThermo::New(mesh))
 {}
 
 
@@ -443,7 +458,6 @@ Foam::scalar Foam::solvers::isothermalFilm::maxDeltaT() const
 
 void Foam::solvers::isothermalFilm::preSolve()
 {
-    readControls();
     correctCoNum();
 }
 
