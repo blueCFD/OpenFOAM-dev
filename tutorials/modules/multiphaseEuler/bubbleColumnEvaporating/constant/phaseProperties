@@ -83,13 +83,11 @@ drag
     gas_dispersedIn_liquid
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     liquid_dispersedIn_gas
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 }
 
@@ -151,24 +149,11 @@ diffusiveMassTransfer
     gas_dispersedIn_liquid_inThe_gas
     {
         type spherical;
-        Le 1.0;
-    }
-
-    gas_dispersedIn_liquid_inThe_liquid
-    {
-        type Frossling;
-        Le 1.0;
     }
 
     liquid_dispersedIn_gas_inThe_gas
     {
         type Frossling;
-        Le 1.0;
-    }
-
-    liquid_dispersedIn_gas_inThe_liquid
-    {
-        type spherical;
         Le 1.0;
     }
 }

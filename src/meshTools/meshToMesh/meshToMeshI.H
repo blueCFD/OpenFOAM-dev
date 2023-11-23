@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,23 +27,98 @@ License
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-inline const Foam::List<Foam::labelPair>&
-Foam::meshToMesh::srcToTgtPatchIDs() const
+inline const Foam::cellsToCells& Foam::meshToMesh::cellsInterpolation() const
 {
-    return srcToTgtPatchIDs_;
+    return cellsInterpolation_();
 }
 
 
-inline const Foam::PtrList<Foam::patchToPatch>&
-Foam::meshToMesh::srcToTgtPatchToPatches() const
+inline const Foam::cellsToCellsStabilisation&
+Foam::meshToMesh::srcCellsStabilisation() const
 {
-    return srcToTgtPatchToPatches_;
+    if (!srcCellsStabilisation_.valid())
+    {
+        srcCellsStabilisation_.reset(new cellsToCellsStabilisation());
+        srcCellsStabilisation_->update
+        (
+            srcMesh_,
+            cellsInterpolation_->srcCoupled()
+        );
+    }
+
+    return srcCellsStabilisation_();
 }
 
 
-inline const Foam::labelList& Foam::meshToMesh::tgtCuttingPatchIDs() const
+inline const Foam::cellsToCellsStabilisation&
+Foam::meshToMesh::tgtCellsStabilisation() const
 {
-    return tgtCuttingPatchIDs_;
+    if (!tgtCellsStabilisation_.valid())
+    {
+        tgtCellsStabilisation_.reset(new cellsToCellsStabilisation());
+        tgtCellsStabilisation_->update
+        (
+            tgtMesh_,
+            cellsInterpolation_->tgtCoupled()
+        );
+    }
+
+    return tgtCellsStabilisation_();
+}
+
+
+inline const Foam::List<Foam::labelPair>& Foam::meshToMesh::patchIDs() const
+{
+    return patchIDs_;
+}
+
+
+inline const Foam::patchToPatch& Foam::meshToMesh::patchInterpolation
+(
+    const label i
+) const
+{
+    return patchInterpolations_[i];
+}
+
+
+inline const Foam::patchToPatchStabilisation&
+Foam::meshToMesh::srcPatchStabilisation(const label i) const
+{
+    if (!srcPatchStabilisations_.set(i))
+    {
+        const label srcPatchi = patchIDs_[i].first();
+        const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
+
+        srcPatchStabilisations_.set(i, new patchToPatchStabilisation());
+        srcPatchStabilisations_[i].update
+        (
+            srcPp,
+            patchInterpolations_[i].srcCoupled()
+        );
+    }
+
+    return srcPatchStabilisations_[i];
+}
+
+
+inline const Foam::patchToPatchStabilisation&
+Foam::meshToMesh::tgtPatchStabilisation(const label i) const
+{
+    if (!tgtPatchStabilisations_.set(i))
+    {
+        const label tgtPatchi = patchIDs_[i].first();
+        const polyPatch& tgtPp = tgtMesh_.boundaryMesh()[tgtPatchi];
+
+        tgtPatchStabilisations_.set(i, new patchToPatchStabilisation());
+        tgtPatchStabilisations_[i].update
+        (
+            tgtPp,
+            patchInterpolations_[i].tgtCoupled()
+        );
+    }
+
+    return tgtPatchStabilisations_[i];
 }
 
 
@@ -58,18 +133,6 @@ inline const Foam::polyMesh& Foam::meshToMesh::srcMesh() const
 inline const Foam::polyMesh& Foam::meshToMesh::tgtMesh() const
 {
     return tgtMesh_;
-}
-
-
-inline Foam::label Foam::meshToMesh::singleProcess() const
-{
-    return singleProcess_;
-}
-
-
-inline bool Foam::meshToMesh::isSingleProcess() const
-{
-    return singleProcess_ != -1;
 }
 
 

@@ -25,8 +25,9 @@ License
 
 #include "VoFSolver.H"
 #include "localEulerDdtScheme.H"
-#include "CorrectPhi.T.H"
-#include "geometricZeroField.H"
+#include "linear.H"
+#include "fvcDiv.H"
+#include "fvcMeshPhi.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -49,6 +50,28 @@ void Foam::solvers::VoFSolver::continuityErrors()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+void Foam::solvers::VoFSolver::setrAU(const fvVectorMatrix& UEqn)
+{
+    if (rAU.valid())
+    {
+        rAU() = 1.0/UEqn.A();
+    }
+    else
+    {
+        rAU = (1.0/UEqn.A()).ptr();
+    }
+}
+
+
+void Foam::solvers::VoFSolver::clearrAU()
+{
+    if (!(correctPhi || mesh.topoChanging()))
+    {
+        rAU.clear();
+    }
+}
+
+
 void Foam::solvers::VoFSolver::correctCoNum()
 {
     fluidSolver::correctCoNum(phi);
@@ -70,7 +93,7 @@ Foam::solvers::VoFSolver::VoFSolver
 
     divAlphaName("div(phi,alpha)"),
 
-    U
+    U_
     (
         IOobject
         (
@@ -93,7 +116,7 @@ Foam::solvers::VoFSolver::VoFSolver
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        linearInterpolate(U) & mesh.Sf()
+        linearInterpolate(U_) & mesh.Sf()
     ),
 
     buoyancy(mesh),
@@ -115,13 +138,18 @@ Foam::solvers::VoFSolver::VoFSolver
         fvc::interpolate(rho)*phi
     ),
 
-    MRF(mesh)
+    MRF(mesh),
+
+    U(U_)
 {
     mesh.schemes().setFluxRequired(p_rgh.name());
 
-    if (mesh.dynamic())
+    if (mesh.dynamic() || MRF.size())
     {
         Info<< "Constructing face momentum Uf" << endl;
+
+        // Ensure the U BCs are up-to-date before constructing Uf
+        U_.correctBoundaryConditions();
 
         Uf = new surfaceVectorField
         (
@@ -133,7 +161,7 @@ Foam::solvers::VoFSolver::VoFSolver
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
             ),
-            fvc::interpolate(U)
+            fvc::interpolate(U_)
         );
     }
 
@@ -216,7 +244,7 @@ void Foam::solvers::VoFSolver::preSolve()
     }
 
     // Update the mesh for topology change, mesh to mesh mapping
-    mesh.update();
+    mesh_.update();
 }
 
 

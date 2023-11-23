@@ -71,21 +71,10 @@ meshSearch/meshSearchMeshObject.C
 
 meshTools/meshTools.C
 
-algorithms = algorithms
-
-pWave = $(algorithms)/PointEdgeWave
-$(pWave)/PointEdgeWaveName.T.C
-$(pWave)/pointEdgePoint.C
-
-patchWave = $(algorithms)/PatchEdgeFaceWave
-$(patchWave)/PatchEdgeFaceWaveName.T.C
-$(patchWave)/patchEdgeFaceInfo.C
-$(patchWave)/patchPatchDist.C
-$(patchWave)/patchEdgeFaceRegion.C
-$(patchWave)/patchEdgeFaceRegions.C
-
-meshWave = $(algorithms)/FaceCellWave
-$(meshWave)/FaceCellWaveName.T.C
+algorithms/FaceCellWave/FaceCellWaveName.T.C
+algorithms/PointEdgeWave/PointEdgeWaveName.T.C
+algorithms/PatchEdgeFaceWave/PatchEdgeFaceWaveName.T.C
+algorithms/PatchEdgeFaceWave/patchPatchDist.C
 
 regionSplit/regionSplit.C
 regionSplit/localPointRegion.C
@@ -226,21 +215,27 @@ patchToPatch/inverseDistance/inverseDistancePatchToPatch.C
 patchToPatch/intersection/intersectionPatchToPatch.C
 patchToPatch/rays/raysPatchToPatch.C
 
+patchToPatch/patchToPatchStabilisation/patchToPatchStabilisation.C
+
+cellsToCells/cellsToCells/cellsToCells.C
+cellsToCells/cellsToCells/cellsToCellsParallelOps.C
+cellsToCells/matching/matchingCellsToCells.C
+cellsToCells/nearest/nearestCellsToCells.C
+cellsToCells/intersection/intersectionCellsToCells.C
+
+cellsToCells/cellsToCellsStabilisation/cellsToCellsStabilisation.C
+
 meshToMesh/meshToMesh.C
-meshToMesh/meshToMeshParallelOps.C
-meshToMesh/calcMethod/meshToMeshMethod/meshToMeshMethod.C
-meshToMesh/calcMethod/meshToMeshMethod/meshToMeshMethodNew.C
-meshToMesh/calcMethod/cellVolumeWeight/cellVolumeWeightMethod.C
-meshToMesh/calcMethod/direct/directMethod.C
-meshToMesh/calcMethod/mapNearest/mapNearestMethod.C
 
 mappedPatches/mappedPatchBase/mappedPatchBase.C
 mappedPatches/mappedPolyPatch/mappedPolyPatch.C
 mappedPatches/mappedPolyPatch/mappedWallPolyPatch.C
-mappedPatches/mappedPolyPatch/mappedExtrudedWallPolyPatch.C
 mappedPatches/mappedPointPatch/mappedPointPatch.C
 mappedPatches/mappedPointPatch/mappedWallPointPatch.C
-mappedPatches/mappedPointPatch/mappedExtrudedWallPointPatch.C
+
+mappedPatches/mappedExtrudedPatchBase/mappedExtrudedPatchBase.C
+mappedPatches/mappedExtrudedPolyPatch/mappedExtrudedWallPolyPatch.C
+mappedPatches/mappedExtrudedPointPatch/mappedExtrudedWallPointPatch.C
 
 mappedPatches/mappedInternalPatchBase/mappedInternalPatchBase.C
 mappedPatches/mappedInternalPolyPatch/mappedInternalPolyPatch.C
@@ -273,6 +268,6 @@ nonConformal/pointPatchFields/nonConformalCyclic/nonConformalCyclicPointPatchFie
 nonConformal/pointPatchFields/nonConformalError/nonConformalErrorPointPatchFields.C
 nonConformal/pointPatchFields/nonConformalProcessorCyclic/nonConformalProcessorCyclicPointPatchFields.C
 
-nonConformalBoundary/nonConformalBoundary.C
+nonConformal/boundary/nonConformalBoundary.C
 
 LIB = $(FOAM_LIBBIN)/libmeshTools

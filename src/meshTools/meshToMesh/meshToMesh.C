@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,12 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "meshToMesh.H"
-#include "globalIndex.H"
-#include "meshToMeshMethod.H"
 #include "PatchTools.T.H"
-#include "patchToPatchTools.H"
+#include "emptyPolyPatch.H"
+#include "wedgePolyPatch.H"
 #include "processorPolyPatch.H"
-#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -39,211 +37,48 @@ namespace Foam
 }
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::scalar Foam::meshToMesh::calculateCellToCells(const word& methodName)
-{
-    Info<< "Creating mesh-to-mesh addressing for " << srcMesh_.name()
-        << " and " << tgtMesh_.name() << " regions using "
-        << methodName << endl;
-
-    singleProcess_ =
-        patchToPatchTools::singleProcess
-        (
-            srcMesh_.nCells(),
-            tgtMesh_.nCells()
-        );
-
-    autoPtr<meshToMeshMethod> methodPtr;
-
-    scalar V = 0;
-
-    if (isSingleProcess())
-    {
-        // Do the intersection
-        methodPtr = meshToMeshMethod::New(methodName, srcMesh_, tgtMesh_);
-        V = methodPtr->calculate
-            (
-                srcLocalTgtCells_,
-                srcWeights_,
-                tgtLocalSrcCells_,
-                tgtWeights_
-            );
-
-        // Normalise the weights
-        methodPtr->normalise(srcMesh_, srcLocalTgtCells_, srcWeights_);
-        methodPtr->normalise(tgtMesh_, tgtLocalSrcCells_, tgtWeights_);
-    }
-    else
-    {
-        // Create the target map of overlapping cells. This map gets remote
-        // parts of the target mesh so that everything needed to compute an
-        // intersection is available locally to the source. Use it to create a
-        // source-local target mesh.
-        tgtMapPtr_ =
-            patchToPatchTools::constructDistributionMap
-            (
-                tgtMeshSendCells(srcMesh_, tgtMesh_)
-            );
-        localTgtProcCellsPtr_.reset
-        (
-            new List<remote>
-            (
-                distributeMesh
-                (
-                    tgtMapPtr_(),
-                    tgtMesh_,
-                    localTgtMeshPtr_
-                )
-            )
-        );
-        const polyMesh& localTgtMesh = localTgtMeshPtr_();
-
-        if (debug > 1)
-        {
-            Pout<< "Writing local target mesh: "
-                << localTgtMesh.name() << endl;
-            localTgtMesh.write();
-        }
-
-        // Do the intersection
-        methodPtr = meshToMeshMethod::New(methodName, srcMesh_, localTgtMesh);
-        V = methodPtr->calculate
-            (
-                srcLocalTgtCells_,
-                srcWeights_,
-                tgtLocalSrcCells_,
-                tgtWeights_
-            );
-
-        // Trim the local target mesh
-        trimLocalTgt();
-
-        if (debug > 1)
-        {
-            Pout<< "Writing trimmed local target mesh: "
-                << localTgtMesh.name() << endl;
-            localTgtMesh.write();
-        }
-
-        // Construct the source map
-        srcMapPtr_ =
-            patchToPatchTools::constructDistributionMap
-            (
-                patchToPatchTools::procSendIndices
-                (
-                    tgtLocalSrcCells_,
-                    localTgtProcCellsPtr_()
-                )
-            );
-        localSrcProcCellsPtr_.reset
-        (
-            new List<remote>
-            (
-                patchToPatchTools::distributeAddressing(srcMapPtr_())
-            )
-        );
-
-        // Collect the addressing on the target
-        patchToPatchTools::rDistributeTgtAddressing
-        (
-            tgtMesh_.nCells(),
-            tgtMapPtr_(),
-            localSrcProcCellsPtr_(),
-            tgtLocalSrcCells_
-        );
-
-        // Collect the weights on the target
-        patchToPatchTools::rDistributeListList
-        (
-            tgtMesh_.nCells(),
-            tgtMapPtr_(),
-            tgtWeights_
-        );
-
-        // Normalise the weights
-        methodPtr->normalise(srcMesh_, srcLocalTgtCells_, srcWeights_);
-        methodPtr->normalise(tgtMesh_, tgtLocalSrcCells_, tgtWeights_);
-
-        // collect volume intersection contributions
-        reduce(V, sumOp<scalar>());
-    }
-
-    Info<< "    Overlap volume: " << V << endl;
-
-    return V;
-}
-
-
-void Foam::meshToMesh::calculatePatchToPatches(const word& methodName)
-{
-    if (!srcToTgtPatchToPatches_.empty())
-    {
-        FatalErrorInFunction
-            << "srcToTgtPatchToPatches already calculated"
-            << exit(FatalError);
-    }
-
-    const word& patchToPatchType =
-        meshToMeshMethod::New
-        (
-            methodName,
-            NullObjectRef<polyMesh>(),
-            NullObjectRef<polyMesh>()
-        )->patchToPatchMethod();
-
-    srcToTgtPatchToPatches_.setSize(srcToTgtPatchIDs_.size());
-
-    forAll(srcToTgtPatchIDs_, i)
-    {
-        const label srcPatchi = srcToTgtPatchIDs_[i].first();
-        const label tgtPatchi = srcToTgtPatchIDs_[i].second();
-
-        const polyPatch& srcPP = srcMesh_.boundaryMesh()[srcPatchi];
-        const polyPatch& tgtPP = tgtMesh_.boundaryMesh()[tgtPatchi];
-
-        Info<< "Creating patchToPatch between source patch "
-            << srcPP.name() << " and target patch " << tgtPP.name()
-            << " using " << patchToPatchType << endl;
-
-        Info<< incrIndent;
-
-        srcToTgtPatchToPatches_.set
-        (
-            i,
-            patchToPatch::New(patchToPatchType, true)
-        );
-
-        srcToTgtPatchToPatches_[i].update
-        (
-            srcPP,
-            PatchTools::pointNormals(srcMesh_, srcPP),
-            tgtPP
-        );
-
-        Info<< decrIndent;
-    }
-}
-
-
-void Foam::meshToMesh::constructNoCuttingPatches
+Foam::meshToMesh::meshToMesh
 (
-    const word& methodName,
-    const bool interpAllPatches
+    const polyMesh& srcMesh,
+    const polyMesh& tgtMesh,
+    const word& engineType,
+    const HashTable<word>& patchMap
 )
+:
+    srcMesh_(srcMesh),
+    tgtMesh_(tgtMesh),
+    cellsInterpolation_(),
+    srcCellsStabilisation_(),
+    tgtCellsStabilisation_(),
+    patchIDs_(),
+    patchInterpolations_(),
+    srcPatchStabilisations_(),
+    tgtPatchStabilisations_()
 {
-    if (interpAllPatches)
+    // If no patch map was supplied, then assume a consistent pair of meshes in
+    // which corresponding patches have the same name
+    if (isNull(patchMap))
     {
-        DynamicList<labelPair> srcToTgtPatchIDs;
+        DynamicList<labelPair> patchIDs;
 
         forAll(srcMesh_.boundaryMesh(), srcPatchi)
         {
             const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
 
-            // We want to map all the global patches, including constraint
-            // patches (since they might have mappable properties, e.g.
-            // jumpCyclic). We'll fix the value afterwards.
-            if (!isA<processorPolyPatch>(srcPp))
+            // We don't want to map empty or wedge patches, as by definition
+            // these do not hold relevant values. We also don't want to map
+            // processor patches as these are likely to differ between cases.
+            // In general, though, we do want to map constraint patches as they
+            // might have additional mappable properties; e.g., the jump field
+            // of a jump cyclic.
+            if
+            (
+                !isA<emptyPolyPatch>(srcPp)
+             && !isA<wedgePolyPatch>(srcPp)
+             && !isA<processorPolyPatch>(srcPp)
+            )
             {
                 const label tgtPatchi =
                     tgtMesh_.boundaryMesh().findPatchID(srcPp.name());
@@ -258,122 +93,95 @@ void Foam::meshToMesh::constructNoCuttingPatches
                         << exit(FatalError);
                 }
 
-                srcToTgtPatchIDs.append(labelPair(srcPatchi, tgtPatchi));
+                patchIDs.append(labelPair(srcPatchi, tgtPatchi));
             }
         }
 
-        srcToTgtPatchIDs_.transfer(srcToTgtPatchIDs);
+        patchIDs_.transfer(patchIDs);
     }
 
-    // calculate patch addressing and weights
-    calculatePatchToPatches(methodName);
-
-    // calculate cell addressing and weights
-    calculateCellToCells(methodName);
-}
-
-
-void Foam::meshToMesh::constructFromCuttingPatches
-(
-    const word& methodName,
-    const HashTable<word>& patchMap,
-    const wordList& tgtCuttingPatches
-)
-{
-    srcToTgtPatchIDs_.setSize(patchMap.size());
-    label i = 0;
-    forAllConstIter(HashTable<word>, patchMap, iter)
+    // If a patch mas was supplied then convert it to pairs of patch indices
+    else
     {
-        const word& tgtPatchName = iter.key();
-        const word& srcPatchName = iter();
+        patchIDs_.setSize(patchMap.size());
+        label i = 0;
+        forAllConstIter(HashTable<word>, patchMap, iter)
+        {
+            const word& tgtPatchName = iter.key();
+            const word& srcPatchName = iter();
 
-        srcToTgtPatchIDs_[i++] =
-            labelPair
-            (
-                srcMesh_.boundaryMesh().findPatchID(srcPatchName),
-                tgtMesh_.boundaryMesh().findPatchID(tgtPatchName)
-            );
+            const label srcPatchi =
+                srcMesh_.boundaryMesh().findPatchID(srcPatchName);
+            const label tgtPatchi =
+                tgtMesh_.boundaryMesh().findPatchID(tgtPatchName);
+
+            if (srcPatchi == -1)
+            {
+                FatalErrorInFunction
+                    << "Patch " << srcPatchName
+                    << " not found in source mesh. "
+                    << "Available source patches are "
+                    << srcMesh_.boundaryMesh().names()
+                    << exit(FatalError);
+            }
+            if (tgtPatchi == -1)
+            {
+                FatalErrorInFunction
+                    << "Patch " << tgtPatchName
+                    << " not found in target mesh. "
+                    << "Available target patches are "
+                    << tgtMesh_.boundaryMesh().names()
+                    << exit(FatalError);
+            }
+
+            patchIDs_[i ++] = labelPair(srcPatchi, tgtPatchi);
+        }
     }
 
-    // calculate patch addressing and weights
-    calculatePatchToPatches(methodName);
+    // Calculate cell addressing and weights
+    Info<< "Creating cellsToCells between source mesh "
+        << srcMesh_.name() << " and target mesh " << tgtMesh_.name()
+        << " using " << engineType << endl << incrIndent;
 
-    // calculate cell addressing and weights
-    calculateCellToCells(methodName);
+    cellsInterpolation_ = cellsToCells::New(engineType);
+    cellsInterpolation_->update(srcMesh_, tgtMesh_);
 
-    // set IDs of cutting patches on target mesh
-    tgtCuttingPatchIDs_.setSize(tgtCuttingPatches.size());
-    forAll(tgtCuttingPatchIDs_, i)
+    srcCellsStabilisation_.clear();
+    tgtCellsStabilisation_.clear();
+
+    Info<< decrIndent;
+
+    // Calculate patch addressing and weights
+    patchInterpolations_.setSize(patchIDs_.size());
+    srcPatchStabilisations_.setSize(patchIDs_.size());
+    tgtPatchStabilisations_.setSize(patchIDs_.size());
+    forAll(patchIDs_, i)
     {
-        const word& patchName = tgtCuttingPatches[i];
-        tgtCuttingPatchIDs_[i] = tgtMesh_.boundaryMesh().findPatchID(patchName);
+        const label srcPatchi = patchIDs_[i].first();
+        const label tgtPatchi = patchIDs_[i].second();
+
+        const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
+        const polyPatch& tgtPp = tgtMesh_.boundaryMesh()[tgtPatchi];
+
+        Info<< "Creating patchToPatch between source patch "
+            << srcPp.name() << " and target patch " << tgtPp.name()
+            << " using " << engineType << endl << incrIndent;
+
+        patchInterpolations_.set
+        (
+            i,
+            patchToPatch::New(engineType, true)
+        );
+
+        patchInterpolations_[i].update
+        (
+            srcPp,
+            PatchTools::pointNormals(srcMesh_, srcPp),
+            tgtPp
+        );
+
+        Info<< decrIndent;
     }
-}
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::meshToMesh::meshToMesh
-(
-    const polyMesh& src,
-    const polyMesh& tgt,
-    const word& methodName,
-    bool interpAllPatches
-)
-:
-    srcMesh_(src),
-    tgtMesh_(tgt),
-    srcToTgtPatchIDs_(),
-    srcToTgtPatchToPatches_(),
-    tgtCuttingPatchIDs_(),
-    srcLocalTgtCells_(),
-    tgtLocalSrcCells_(),
-    srcWeights_(),
-    tgtWeights_(),
-    singleProcess_(-1),
-    srcMapPtr_(nullptr),
-    tgtMapPtr_(nullptr),
-    localSrcProcCellsPtr_(nullptr),
-    localTgtProcCellsPtr_(nullptr),
-    localTgtMeshPtr_(nullptr)
-{
-    constructNoCuttingPatches
-    (
-        methodName,
-        interpAllPatches
-    );
-}
-
-
-Foam::meshToMesh::meshToMesh
-(
-    const polyMesh& src,
-    const polyMesh& tgt,
-    const word& methodName,
-    const HashTable<word>& patchMap,
-    const wordList& tgtCuttingPatches
-)
-:
-    srcMesh_(src),
-    tgtMesh_(tgt),
-    srcToTgtPatchIDs_(),
-    srcToTgtPatchToPatches_(),
-    tgtCuttingPatchIDs_(),
-    srcLocalTgtCells_(),
-    tgtLocalSrcCells_(),
-    srcWeights_(),
-    tgtWeights_(),
-    singleProcess_(-1),
-    srcMapPtr_(nullptr),
-    tgtMapPtr_(nullptr),
-    localTgtMeshPtr_(nullptr)
-{
-    constructFromCuttingPatches
-    (
-        methodName,
-        patchMap,
-        tgtCuttingPatches
-    );
 }
 
 
@@ -385,29 +193,65 @@ Foam::meshToMesh::~meshToMesh()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+bool Foam::meshToMesh::consistent() const
+{
+    boolList srcPatchIsMapped(srcMesh_.boundaryMesh().size(), false);
+    boolList tgtPatchIsMapped(tgtMesh_.boundaryMesh().size(), false);
+
+    // Mark anything paired as mapped
+    forAll(patchIDs_, i)
+    {
+        const label srcPatchi = patchIDs_[i].first();
+        const label tgtPatchi = patchIDs_[i].second();
+
+        srcPatchIsMapped[srcPatchi] = true;
+        tgtPatchIsMapped[tgtPatchi] = true;
+    }
+
+    // Filter out un-mappable patches
+    forAll(srcMesh_.boundaryMesh(), srcPatchi)
+    {
+        const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
+
+        if
+        (
+            isA<emptyPolyPatch>(srcPp)
+         || isA<wedgePolyPatch>(srcPp)
+         || isA<processorPolyPatch>(srcPp)
+        )
+        {
+            srcPatchIsMapped[srcPp.index()] = true;
+        }
+    }
+    forAll(tgtMesh_.boundaryMesh(), tgtPatchi)
+    {
+        const polyPatch& tgtPp = tgtMesh_.boundaryMesh()[tgtPatchi];
+
+        if
+        (
+            isA<emptyPolyPatch>(tgtPp)
+         || isA<wedgePolyPatch>(tgtPp)
+         || isA<processorPolyPatch>(tgtPp)
+        )
+        {
+            tgtPatchIsMapped[tgtPp.index()] = true;
+        }
+    }
+
+    // Return whether or not everything is mapped
+    return
+        findIndex(srcPatchIsMapped, false) == -1
+     && findIndex(tgtPatchIsMapped, false) == -1;
+}
+
+
 Foam::remote Foam::meshToMesh::srcToTgtPoint
 (
     const label srcCelli,
     const point& p
 ) const
 {
-    forAll(srcLocalTgtCells_[srcCelli], i)
-    {
-        const label tgtCelli = srcLocalTgtCells_[srcCelli][i];
-
-        const polyMesh& tgtMesh =
-            singleProcess_ == -1 ? localTgtMeshPtr_() : tgtMesh_;
-
-        if (tgtMesh.pointInCell(p, tgtCelli))
-        {
-            return
-                singleProcess_ == -1
-              ? localTgtProcCellsPtr_()[tgtCelli]
-              : remote(Pstream::myProcNo(), tgtCelli);
-        }
-    }
-
-    return remote();
+    return cellsInterpolation_().srcToTgtPoint(tgtMesh_, srcCelli, p);
 }
 
 

@@ -20,7 +20,7 @@ phases (water oil mercury air);
 
 water
 {
-    type            purePhaseModel;
+    type            pureIsothermalPhaseModel;
     diameterModel   constant;
     constantCoeffs
     {
@@ -32,7 +32,7 @@ water
 
 oil
 {
-    type            purePhaseModel;
+    type            pureIsothermalPhaseModel;
     diameterModel   constant;
     constantCoeffs
     {
@@ -44,7 +44,7 @@ oil
 
 mercury
 {
-    type            purePhaseModel;
+    type            pureIsothermalPhaseModel;
     diameterModel   constant;
     constantCoeffs
     {
@@ -56,7 +56,7 @@ mercury
 
 air
 {
-    type            purePhaseModel;
+    type            pureIsothermalPhaseModel;
     diameterModel   constant;
     constantCoeffs
     {
@@ -149,13 +149,11 @@ drag
     air_dispersedIn_water
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     water_dispersedIn_air
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     air_segregatedWith_water
@@ -168,13 +166,11 @@ drag
     air_dispersedIn_oil
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     oil_dispersedIn_air
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     air_segregatedWith_oil
@@ -187,13 +183,11 @@ drag
     air_dispersedIn_mercury
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     mercury_dispersedIn_air
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     air_segregatedWith_mercury
@@ -206,13 +200,11 @@ drag
     water_dispersedIn_oil
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     oil_dispersedIn_water
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     water_segregatedWith_oil
@@ -225,13 +217,11 @@ drag
     water_dispersedIn_mercury
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     mercury_dispersedIn_water
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     water_segregatedWith_mercury
@@ -244,13 +234,11 @@ drag
     oil_dispersedIn_mercury
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     mercury_dispersedIn_oil
     {
         type            SchillerNaumann;
-        residualRe      1e-3;
     }
 
     oil_segregatedWith_mercury
@@ -279,6 +267,21 @@ virtualMass
     {
         type            constantCoefficient;
         Cvm             0.5;
+    }
+
+    water_dispersedIn_air
+    {
+        type            none;
+    }
+
+    oil_dispersedIn_air
+    {
+        type            none;
+    }
+
+    mercury_dispersedIn_air
+    {
+        type            none;
     }
 }
 

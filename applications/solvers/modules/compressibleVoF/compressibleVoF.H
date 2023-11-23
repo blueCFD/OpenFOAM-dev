@@ -84,7 +84,7 @@ protected:
     // Phase properties
 
         //- The compressible two-phase mixture
-        compressibleTwoPhaseVoFMixture& mixture;
+        compressibleTwoPhaseVoFMixture& mixture_;
 
 
     // Thermophysical properties
@@ -140,8 +140,6 @@ protected:
         tmp<volScalarField::Internal> contErr2;
 
 
-protected:
-
     // Protected Member Functions
 
         //- Return the pressure reference
@@ -150,10 +148,25 @@ protected:
             return pressureReference_;
         }
 
-        //- Compressible flow is divergent
-        virtual bool divergent()
+        //- The fluid is incompressible if both phases are incompressible
+        virtual bool incompressible() const
         {
-            return true;
+            return mixture.incompressible();
+        }
+
+        //- Compressible flow is divergent
+        virtual bool divergent() const
+        {
+            return
+               !incompressible()
+             || fvModels().addsSupToField(alpha1.name());
+        }
+
+        //- Return the mixture compressibility/density
+        //  Used by CorrectPhi for compressible mixtures following mesh change
+        virtual tmp<volScalarField> psiByRho() const
+        {
+            return mixture.psiByRho();
         }
 
         //- Calculate the alpha equation sources
@@ -165,6 +178,13 @@ protected:
 
         //- Return the momentum equation stress term
         virtual tmp<fvVectorMatrix> divDevTau(volVectorField& U);
+
+public:
+
+    // Access to the physical state
+
+        //- The compressible two-phase mixture
+        const compressibleTwoPhaseVoFMixture& mixture;
 
 
 public:

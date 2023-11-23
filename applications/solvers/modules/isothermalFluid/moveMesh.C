@@ -24,7 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "isothermalFluid.H"
-#include "CorrectPhi.T.H"
+#include "fvCorrectPhi.H"
+#include "fvcMeshPhi.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
@@ -33,7 +34,7 @@ void Foam::solvers::isothermalFluid::moveMesh()
     if (pimple.firstIter() || pimple.moveMeshOuterCorrectors())
     {
         // Move the mesh
-        mesh.move();
+        mesh_.move();
 
         // The rhoU and rhoU0 fields can be cleared following mesh-motion
         // now the mesh has been re-stitched as necessary
@@ -57,19 +58,15 @@ void Foam::solvers::isothermalFluid::moveMesh()
 
                 correctUphiBCs(rho, U, phi, true);
 
-                if (correctPhi)
-                {
-                    CorrectPhi
-                    (
-                        phi,
-                        buoyancy.valid() ? p_rgh : p,
-                        rho,
-                        thermo.psi(),
-                        dimensionedScalar("rAUf", dimTime, 1),
-                        divrhoU(),
-                        pimple
-                    );
-                }
+                fv::correctPhi
+                (
+                    phi,
+                    buoyancy.valid() ? p_rgh : p,
+                    thermo.psi(),
+                    autoPtr<volScalarField>(),
+                    divrhoU(),
+                    pimple
+                );
 
                 // Make the fluxes relative to the mesh-motion
                 fvc::makeRelative(phi, rho, U);

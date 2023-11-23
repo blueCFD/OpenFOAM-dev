@@ -52,6 +52,9 @@ void Foam::solvers::multiphaseEuler::readControls()
     faceMomentum =
         pimple.dict().lookupOrDefault<Switch>("faceMomentum", false);
 
+    dragCorrection =
+        pimple.dict().lookupOrDefault<Switch>("dragCorrection", false);
+
     partialElimination =
         pimple.dict().lookupOrDefault<Switch>("partialElimination", false);
 
@@ -95,6 +98,11 @@ Foam::solvers::multiphaseEuler::multiphaseEuler(fvMesh& mesh)
     faceMomentum
     (
         pimple.dict().lookupOrDefault<Switch>("faceMomentum", false)
+    ),
+
+    dragCorrection
+    (
+        pimple.dict().lookupOrDefault<Switch>("dragCorrection", false)
     ),
 
     partialElimination
@@ -207,7 +215,7 @@ void Foam::solvers::multiphaseEuler::preSolve()
     // Store divU from the previous mesh so that it can be
     // mapped and used in correctPhi to ensure the corrected phi
     // has the same divergence
-    if (correctPhi)
+    if (correctPhi || mesh.topoChanging())
     {
         // Construct and register divU for mapping
         divU = new volScalarField
@@ -223,7 +231,7 @@ void Foam::solvers::multiphaseEuler::preSolve()
     fvModels().preUpdateMesh();
 
     // Update the mesh for topology change, mesh to mesh mapping
-    mesh.update();
+    mesh_.update();
 }
 
 
@@ -244,11 +252,6 @@ void Foam::solvers::multiphaseEuler::prePredictor()
     if (pimple.flow() && pimple.predictTransport())
     {
         fluid.predictMomentumTransport();
-    }
-
-    if (pimple.thermophysics())
-    {
-        compositionPredictor();
     }
 }
 

@@ -144,33 +144,40 @@ void VoFPatchTransfer::correct
     // Do not correct if no patches selected
     if (!patchIDs_.size()) return;
 
+    // Film properties
+
     const thermoSurfaceFilm& film = filmType<thermoSurfaceFilm>();
 
     const scalarField& delta = film.delta();
     const scalarField& rho = film.rho();
+    const vectorField& U = film.U();
+    const scalarField& he = film.thermo().he();
+
     const scalarField& magSf = film.magSf();
 
     const polyBoundaryMesh& pbm = film.mesh().boundaryMesh();
 
 
+    // Primary region properties
+
+    const fvMesh& primaryMesh = film.primaryMesh();
+
     const compressibleTwoPhaseVoFMixture& thermo
     (
-        film.primaryMesh().lookupObject<compressibleTwoPhaseVoFMixture>
+        primaryMesh.lookupObject<compressibleTwoPhaseVoFMixture>
         (
             "phaseProperties"
         )
     );
 
-    const volVectorField& UVoF
-    (
-        film.primaryMesh().lookupObject<volVectorField>("U")
-    );
-
     const volScalarField& alphaVoF = thermo.alpha1();
     const volScalarField& rhoVoF = thermo.thermo1().rho()();
     const volScalarField& heVoF = thermo.thermo1().he();
-    const volScalarField& TVoF = thermo.thermo1().T();
-    const volScalarField CpVoF(thermo.thermo1().Cp());
+
+    const volVectorField& UVoF
+    (
+        primaryMesh.lookupObject<volVectorField>("U")
+    );
 
     forAll(patchIDs_, pidi)
     {
@@ -189,42 +196,47 @@ void VoFPatchTransfer::correct
 
         if (primaryPatchi != -1)
         {
-            scalarField deltaCoeffs
+            const scalarField deltaCoeffsVoF
             (
-                film.primaryMesh().boundary()[primaryPatchi].deltaCoeffs()
+                film.toFilm
+                (
+                    patchi,
+                    primaryMesh.boundary()[primaryPatchi].deltaCoeffs()
+                )
             );
-            film.toRegion(patchi, deltaCoeffs);
 
-            scalarField alphap(alphaVoF.boundaryField()[primaryPatchi]);
-            film.toRegion(patchi, alphap);
-
-            scalarField rhop(rhoVoF.boundaryField()[primaryPatchi]);
-            film.toRegion(patchi, rhop);
-
-            vectorField Up(UVoF.boundaryField()[primaryPatchi]);
-            film.toRegion(patchi, Up);
-
-            scalarField hp(heVoF.boundaryField()[primaryPatchi]);
-            film.toRegion(patchi, hp);
-
-            scalarField Tp(TVoF.boundaryField()[primaryPatchi]);
-            film.toRegion(patchi, Tp);
-
-            scalarField Cpp(CpVoF.boundaryField()[primaryPatchi]);
-            film.toRegion(patchi, Cpp);
-
-            scalarField Vp
+            const scalarField alphaVoFp
             (
-                film.primaryMesh().boundary()[primaryPatchi]
-               .patchInternalField(film.primaryMesh().V())
+                film.toFilm(patchi, alphaVoF.boundaryField()[primaryPatchi])
             );
-            film.toRegion(patchi, Vp);
+
+            const scalarField rhoVoFp
+            (
+                film.toFilm(patchi, rhoVoF.boundaryField()[primaryPatchi])
+            );
+
+            const vectorField UVoFp
+            (
+                film.toFilm(patchi, UVoF.boundaryField()[primaryPatchi])
+            );
+
+            const scalarField heVoFp
+            (
+                film.toFilm(patchi, heVoF.boundaryField()[primaryPatchi])
+            );
+
+            const scalarField VVoFp
+            (
+                film.toFilm
+                (
+                    patchi,
+                    primaryMesh.boundary()[primaryPatchi]
+                   .patchInternalField(primaryMesh.V())
+                )
+            );
 
             const polyPatch& pp = pbm[patchi];
             const labelList& faceCells = pp.faceCells();
-
-            const vectorField& U = film.U();
-            const scalarField& he = film.thermo().he();
 
             // Accumulate the total mass removed from patch
             scalar dMassPatch = 0;
@@ -235,10 +247,11 @@ void VoFPatchTransfer::correct
 
                 scalar dMass = 0;
 
+                // Film->VoF transfer
                 if
                 (
-                    delta[celli] > 2*deltaFactorToVoF_/deltaCoeffs[facei]
-                 || alphap[facei] > alphaToVoF_
+                    delta[celli] > 2*deltaFactorToVoF_/deltaCoeffsVoF[facei]
+                 || alphaVoFp[facei] > alphaToVoF_
                 )
                 {
                     dMass =
@@ -249,19 +262,21 @@ void VoFPatchTransfer::correct
                     energyToTransfer[celli] += dMass*he[celli];
                 }
 
+                // VoF->film transfer
                 if
                 (
-                    alphap[facei] > 0
-                 && delta[celli] < 2*deltaFactorToFilm_/deltaCoeffs[facei]
-                 && alphap[facei] < alphaToFilm_
+                    alphaVoFp[facei] > 0
+                 && delta[celli] < 2*deltaFactorToFilm_/deltaCoeffsVoF[facei]
+                 && alphaVoFp[facei] < alphaToFilm_
                 )
                 {
                     dMass =
-                        -transferRateCoeff_*alphap[facei]*rhop[facei]*Vp[facei];
+                        -transferRateCoeff_
+                        *alphaVoFp[facei]*rhoVoFp[facei]*VVoFp[facei];
 
                     massToTransfer[celli] += dMass;
-                    momentumToTransfer[celli] += dMass*Up[facei];
-                    energyToTransfer[celli] += dMass*hp[facei];
+                    momentumToTransfer[celli] += dMass*UVoFp[facei];
+                    energyToTransfer[celli] += dMass*heVoFp[facei];
                 }
 
                 availableMass[celli] -= dMass;

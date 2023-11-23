@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ Description
 #include "fvMesh.H"
 #include "volFields.H"
 #include "PatchEdgeFaceWave.T.H"
-#include "patchEdgeFaceInfo.H"
+#include "patchEdgeFacePoint.H"
 #include "patchPatchDist.H"
 
 using namespace Foam;
@@ -55,12 +55,12 @@ int main(int argc, char *argv[])
     // 1. Walk from a single edge
     {
         // Data on all edges and faces
-        List<patchEdgeFaceInfo> allEdgeInfo(patch.nEdges());
-        List<patchEdgeFaceInfo> allFaceInfo(patch.size());
+        List<patchEdgeFacePoint> allEdgeInfo(patch.nEdges());
+        List<patchEdgeFacePoint> allFaceInfo(patch.size());
 
         // Initial seed
         DynamicList<label> initialEdges;
-        DynamicList<patchEdgeFaceInfo> initialEdgesInfo;
+        DynamicList<patchEdgeFacePoint> initialEdgesInfo;
 
 
         // Just set an edge on the master
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
             const edge& e = patch.edges()[edgeI];
             initialEdgesInfo.append
             (
-                patchEdgeFaceInfo
+                patchEdgeFacePoint
                 (
                     e.centre(patch.localPoints()),
                     0.0
@@ -83,11 +83,7 @@ int main(int argc, char *argv[])
 
 
         // Walk
-        PatchEdgeFaceWave
-        <
-            primitivePatch,
-            patchEdgeFaceInfo
-        > calc
+        PatchEdgeFaceWave<primitivePatch, patchEdgeFacePoint> calc
         (
             mesh,
             patch,
@@ -129,7 +125,7 @@ int main(int argc, char *argv[])
 
     // 2. Use a wrapper to walk from all boundary edges on selected patches
     {
-        labelHashSet otherPatchIDs(identity(mesh.boundaryMesh().size()));
+        labelHashSet otherPatchIDs(identityMap(mesh.boundaryMesh().size()));
         otherPatchIDs.erase(patch.index());
 
         Info<< "Walking on patch " << patch.index()

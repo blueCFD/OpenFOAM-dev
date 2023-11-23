@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -225,7 +225,7 @@ void Foam::medialAxisMeshMover::smoothNormals
 
 
     // Correspondence between local edges/points and mesh edges/points
-    const labelList meshPoints(identity(mesh().nPoints()));
+    const labelList meshPoints(identityMap(mesh().nPoints()));
 
     // Calculate inverse sum of weights
 
@@ -1435,7 +1435,7 @@ void Foam::medialAxisMeshMover::smoothLambdaMuDisplacement
     const edgeList& edges = mesh().edges();
 
     // Correspondence between local edges/points and mesh edges/points
-    const labelList meshPoints(identity(mesh().nPoints()));
+    const labelList meshPoints(identityMap(mesh().nPoints()));
 
     // Calculate inverse sum of weights
     scalarField edgeWeights(mesh().nEdges());
@@ -1964,14 +1964,11 @@ bool Foam::medialAxisMeshMover::shrinkMesh
 (
     const dictionary& meshQualityDict,
     const label nAllowableErrors,
-    labelList& checkFaces
+    const labelList& checkFaces
 )
 {
     //- Number of attempts shrinking the mesh
     const label nSnap  = meshQualityDict.lookup<label>("nRelaxIter");
-
-
-
 
     // Make sure displacement boundary conditions is up-to-date with
     // internal field
@@ -2028,7 +2025,7 @@ bool Foam::medialAxisMeshMover::move
 (
     const dictionary& moveDict,
     const label nAllowableErrors,
-    labelList& checkFaces
+    const labelList& checkFaces
 )
 {
     // Read a few settings

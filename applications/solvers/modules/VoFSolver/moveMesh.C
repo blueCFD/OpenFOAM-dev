@@ -24,8 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "VoFSolver.H"
-#include "CorrectPhi.T.H"
-#include "geometricZeroField.H"
+#include "fvCorrectPhi.H"
+#include "fvcMeshPhi.H"
+#include "fvcDiv.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
@@ -35,7 +36,7 @@ void Foam::solvers::VoFSolver::moveMesh()
     {
         if
         (
-            correctPhi
+            (correctPhi || mesh.topoChanged())
          && divergent()
          && !divU.valid()
         )
@@ -49,7 +50,7 @@ void Foam::solvers::VoFSolver::moveMesh()
         }
 
         // Move the mesh
-        mesh.move();
+        mesh_.move();
 
         if (mesh.changing())
         {
@@ -63,36 +64,32 @@ void Foam::solvers::VoFSolver::moveMesh()
                 // from the mapped surface velocity
                 phi = mesh.Sf() & Uf();
 
-                correctUphiBCs(U, phi, true);
+                correctUphiBCs(U_, phi, true);
 
-                if (correctPhi)
+                if (incompressible())
                 {
-                    if (divU.valid())
-                    {
-                        CorrectPhi
-                        (
-                            phi,
-                            U,
-                            p_rgh,
-                            surfaceScalarField("rAUf", fvc::interpolate(rAU())),
-                            divU(),
-                            pressureReference(),
-                            pimple
-                        );
-                    }
-                    else
-                    {
-                        CorrectPhi
-                        (
-                            phi,
-                            U,
-                            p_rgh,
-                            surfaceScalarField("rAUf", fvc::interpolate(rAU())),
-                            geometricZeroField(),
-                            pressureReference(),
-                            pimple
-                        );
-                    }
+                    fv::correctPhi
+                    (
+                        phi,
+                        U,
+                        p_rgh,
+                        rAU,
+                        divU,
+                        pressureReference(),
+                        pimple
+                    );
+                }
+                else
+                {
+                    fv::correctPhi
+                    (
+                        phi,
+                        p_rgh,
+                        psiByRho(),
+                        rAU,
+                        divU(),
+                        pimple
+                    );
                 }
 
                 // Make the fluxes relative to the mesh motion

@@ -40,7 +40,7 @@ namespace fv
 }
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::fv::massSource::readCoeffs()
 {
@@ -85,6 +85,12 @@ void Foam::fv::massSource::readCoeffs()
 }
 
 
+Foam::scalar Foam::fv::massSource::massFlowRate() const
+{
+    return massFlowRate_->value(mesh().time().userTimeValue());
+}
+
+
 template<class Type>
 void Foam::fv::massSource::addGeneralSupType
 (
@@ -92,16 +98,28 @@ void Foam::fv::massSource::addGeneralSupType
     const word& fieldName
 ) const
 {
-    const scalar t = mesh().time().userTimeValue();
-    const scalar massFlowRate = massFlowRate_->value(t);
-    const Type value = fieldValues_[fieldName]->value<Type>(t);
+    const labelUList cells = set_.cells();
 
-    const labelList& cells = set_.cells();
+    const scalar massFlowRate = this->massFlowRate();
 
-    forAll(cells, i)
+    if (massFlowRate > 0)
     {
-        eqn.source()[cells[i]] -=
-            mesh().V()[cells[i]]/set_.V()*massFlowRate*value;
+        const Type value =
+            fieldValues_[fieldName]->value<Type>(mesh().time().userTimeValue());
+
+        forAll(cells, i)
+        {
+            eqn.source()[cells[i]] -=
+                mesh().V()[cells[i]]/set_.V()*massFlowRate*value;
+        }
+    }
+    else
+    {
+        forAll(cells, i)
+        {
+            eqn.diag()[cells[i]] +=
+                mesh().V()[cells[i]]/set_.V()*massFlowRate;
+        }
     }
 }
 
@@ -123,12 +141,11 @@ void Foam::fv::massSource::addSupType
     const word& fieldName
 ) const
 {
-    const labelList& cells = set_.cells();
+    const labelUList cells = set_.cells();
 
     if (fieldName == rhoName_)
     {
-        const scalar t = mesh().time().userTimeValue();
-        const scalar massFlowRate = massFlowRate_->value(t);
+        const scalar massFlowRate = this->massFlowRate();
 
         forAll(cells, i)
         {
@@ -138,31 +155,52 @@ void Foam::fv::massSource::addSupType
     }
     else if (fieldName == heName_ && fieldValues_.found(TName_))
     {
-        if (fieldValues_.found(heName_))
-        {
-            WarningInFunction
-                << "Source " << name() << " defined for both field " << heName_
-                << " and " << TName_ << ". Only one of these should be present."
-                << endl;
-        }
+        const scalar massFlowRate = this->massFlowRate();
 
-        const scalar t = mesh().time().userTimeValue();
-        const scalar massFlowRate = massFlowRate_->value(t);
-        const scalar T = fieldValues_[TName_]->value<scalar>(t);
-        const basicThermo& thermo =
-            mesh().lookupObject<basicThermo>
+        if (massFlowRate > 0)
+        {
+            if (fieldValues_.found(heName_))
+            {
+                WarningInFunction
+                    << "Source " << name() << " defined for both field "
+                    << heName_ << " and " << TName_
+                    << ". Only one of these should be present." << endl;
+            }
+
+            const basicThermo& thermo =
+                mesh().lookupObject<basicThermo>
+                (
+                    IOobject::groupName
+                    (
+                        physicalProperties::typeName,
+                        phaseName_
+                    )
+                );
+
+            const scalar T =
+                fieldValues_[TName_]->value<scalar>
+                (
+                    mesh().time().userTimeValue()
+                );
+
+            const scalarField hs
             (
-                IOobject::groupName(physicalProperties::typeName, phaseName_)
+                thermo.hs(scalarField(cells.size(), T), cells)
             );
-        const scalarField hs
-        (
-            thermo.hs(scalarField(cells.size(), T), cells)
-        );
 
-        forAll(cells, i)
+            forAll(cells, i)
+            {
+                eqn.source()[cells[i]] -=
+                    mesh().V()[cells[i]]/set_.V()*massFlowRate*hs[i];
+            }
+        }
+        else
         {
-            eqn.source()[cells[i]] -=
-                mesh().V()[cells[i]]/set_.V()*massFlowRate*hs[i];
+            forAll(cells, i)
+            {
+                eqn.diag()[cells[i]] +=
+                    mesh().V()[cells[i]]/set_.V()*massFlowRate;
+            }
         }
     }
     else
@@ -204,11 +242,12 @@ Foam::fv::massSource::massSource
     const word& name,
     const word& modelType,
     const fvMesh& mesh,
-    const dictionary& dict
+    const dictionary& dict,
+    const bool all
 )
 :
     fvModel(name, modelType, mesh, dict),
-    set_(mesh, coeffs()),
+    set_(all ? fvCellSet(mesh) : fvCellSet(mesh, coeffs())),
     phaseName_(),
     rhoName_(),
     heName_(),
@@ -229,6 +268,7 @@ bool Foam::fv::massSource::addsSupToField(const word& fieldName) const
     if
     (
         isThisPhase
+     && massFlowRate() > 0
      && !(fieldName == rhoName_)
      && !(fieldName == heName_ && fieldValues_.found(TName_))
      && !fieldValues_.found(fieldName)

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,8 +36,8 @@ SourceFiles
 #ifndef FvWallInfo_H
 #define FvWallInfo_H
 
-#include "wallPoint.H"
-#include "wallFace.H"
+#include "fieldTypes.H"
+#include "labelPair.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,25 +50,35 @@ class fvMesh;
 class transformer;
 
 /*---------------------------------------------------------------------------*\
-                          Class FvWallInfoBase Declaration
+                          Class FvWallInfo Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class WallInfo, class Derived>
-class FvWallInfoBase
+template<class WallLocation>
+class FvWallInfo
 :
-    public WallInfo::template type<Derived>
+    public WallLocation
 {
 public:
 
     // Constructors
 
         //- Inherit constructors
-        using WallInfo::template type<Derived>::type;
+        using WallLocation::WallLocation;
 
 
     // Member Functions
 
         // Needed by FvFaceCellWave
+
+            //- Check for identical geometrical data. Used for cyclics checking.
+            template<class TrackingData>
+            inline bool sameGeometry
+            (
+                const fvMesh& mesh,
+                const FvWallInfo<WallLocation>& w2,
+                const scalar tol,
+                TrackingData& td
+            ) const;
 
             //- Transform across an interface
             template<class TrackingData>
@@ -87,7 +97,7 @@ public:
                 const fvMesh&,
                 const label thisCelli,
                 const labelPair& neighbourPatchAndFacei,
-                const FvWallInfoBase<WallInfo, Derived>& neighbourInfo,
+                const FvWallInfo<WallLocation>& neighbourInfo,
                 const scalar tol,
                 TrackingData& td
             );
@@ -99,7 +109,7 @@ public:
                 const fvMesh&,
                 const labelPair& thisPatchAndFacei,
                 const label neighbourCelli,
-                const FvWallInfoBase<WallInfo, Derived>& neighbourInfo,
+                const FvWallInfo<WallLocation>& neighbourInfo,
                 const scalar tol,
                 TrackingData& td
             );
@@ -110,27 +120,41 @@ public:
             (
                 const fvMesh&,
                 const labelPair& thisPatchAndFacei,
-                const FvWallInfoBase<WallInfo, Derived>& neighbourInfo,
+                const FvWallInfo<WallLocation>& neighbourInfo,
                 const scalar tol,
                 TrackingData& td
             );
 };
 
-/*---------------------------------------------------------------------------*\
-                          Class FvWallInfo Declaration
-\*---------------------------------------------------------------------------*/
 
-template<class WallInfo>
-class FvWallInfo
-:
-    public FvWallInfoBase<WallInfo, FvWallInfo<WallInfo>>
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+class wallPoint;
+
+template<>
+inline bool contiguous<FvWallInfo<wallPoint>>()
 {
-    public:
+    return true;
+}
 
-        using
-            FvWallInfoBase<WallInfo, FvWallInfo<WallInfo>>::
-            FvWallInfoBase;
-};
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+template<class WallLocation, class Type>
+class WallLocationData;
+
+#define DefineContiguousFvWallLocationDataType(Type, nullArg)                 \
+    template<>                                                                \
+    inline bool contiguous<FvWallInfo<WallLocationData<wallPoint, Type>>>()   \
+    {                                                                         \
+        return true;                                                          \
+    }
+
+DefineContiguousFvWallLocationDataType(bool, );
+DefineContiguousFvWallLocationDataType(label, );
+FOR_ALL_FIELD_TYPES(DefineContiguousFvWallLocationDataType);
+
+#undef DefineContiguousFvWallLocationDataType
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -81,6 +81,10 @@ protected:
         //  Defaults to false, i.e. uses the cell momentum equation
         Switch faceMomentum;
 
+        //- Cell/face drag correction for cell momentum corrector
+        //  Defaults to false
+        Switch dragCorrection;
+
         //- Partial elimination drag contribution optimisation
         //  Defaults to false
         Switch partialElimination;
@@ -149,7 +153,7 @@ protected:
         //- Stored divU from the previous mesh so that it can be
         //  mapped and used in correctPhi to ensure the corrected phi
         //  has the same divergence
-        tmp<volScalarField> divU;
+        autoPtr<volScalarField> divU;
 
         //- Read controls
         void readControls();

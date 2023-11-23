@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,8 +78,8 @@ Usage
       - \par -noLinks
         (in parallel) do not link processor files to master
 
-      - \par poly
-        write polyhedral cells without tet/pyramid decomposition
+      - \par -polyhedra
+        Which cell types to write as polyhedra - 'none', 'polyhedra', or 'all'
 
       - \par -allPatches
         Combine all patches into a single file
@@ -133,7 +133,8 @@ Usage
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvCFD.H"
+#include "argList.H"
+#include "timeSelector.H"
 #include "pointMesh.H"
 #include "volPointInterpolation.H"
 #include "emptyPolyPatch.H"
@@ -161,6 +162,7 @@ Usage
 #include "surfaceMeshWriter.H"
 #include "writeSurfFields.H"
 
+using namespace Foam;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -269,10 +271,11 @@ int main(int argc, char *argv[])
         "ascii",
         "write in ASCII format instead of binary"
     );
-    argList::addBoolOption
+    argList::addOption
     (
-        "poly",
-        "write polyhedral cells without tet/pyramid decomposition"
+        "polyhedra",
+        "types",
+        "cell types to write as polyhedra - 'none', 'polyhedra', or 'all'"
     );
     argList::addBoolOption
     (
@@ -329,9 +332,15 @@ int main(int argc, char *argv[])
     const bool doLinks         = !args.optionFound("noLinks");
     bool binary                = !args.optionFound("ascii");
     const bool useTimeName     = args.optionFound("useTimeName");
-
-    // Decomposition of polyhedral cells into tets/pyramids cells
-    vtkTopo::decomposePoly     = !args.optionFound("poly");
+    const vtkTopo::vtkPolyhedra polyhedra =
+        vtkTopo::vtkPolyhedraNames_
+        [
+            args.optionLookupOrDefault<word>
+            (
+                "polyhedra",
+                vtkTopo::vtkPolyhedraNames_[vtkTopo::vtkPolyhedra::none]
+            )
+        ];
 
     if (binary && (sizeof(floatScalar) != 4 || sizeof(label) != 4))
     {
@@ -435,7 +444,7 @@ int main(int argc, char *argv[])
 
 
     // Mesh wrapper; does subsetting and decomposition
-    vtkMesh vMesh(mesh, cellSetName);
+    vtkMesh vMesh(mesh, polyhedra, cellSetName);
 
 
     // Scan for all possible lagrangian clouds

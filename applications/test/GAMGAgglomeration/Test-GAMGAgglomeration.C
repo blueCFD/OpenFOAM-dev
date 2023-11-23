@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,10 +29,13 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvCFD.H"
+#include "argList.H"
+#include "volFields.H"
 #include "GAMGAgglomeration.T.H"
 #include "OFstream.H"
 #include "meshTools.H"
+
+using namespace Foam;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -67,7 +70,7 @@ int main(int argc, char *argv[])
         pDict
     );
 
-    labelList cellToCoarse(identity(mesh.nCells()));
+    labelList cellToCoarse(identityMap(mesh.nCells()));
     labelListList coarseToCell(invertOneToMany(mesh.nCells(), cellToCoarse));
 
     runTime++;

@@ -92,7 +92,7 @@ protected:
     // Kinematic properties
 
         //- Velocity field
-        volVectorField U;
+        volVectorField U_;
 
         //- Volumetric flux field
         surfaceScalarField phi;
@@ -125,7 +125,9 @@ protected:
 
     // Cached temporary fields
 
-        tmp<volScalarField> rAU;
+        //- Inverse momentum equation diagonal
+        //  Used to correct phi following mesh changes
+        autoPtr<volScalarField> rAU;
 
         //- Pointer to the surface momentum field
         //  used to recreate the flux after mesh-change
@@ -157,6 +159,12 @@ protected:
 
     // Protected Member Functions
 
+        //- Set or update the cached rAU
+        void setrAU(const fvVectorMatrix& UEqn);
+
+        //- Clear the cached rAU is no longer needed
+        void clearrAU();
+
         //- Correct the cached Courant numbers
         virtual void correctCoNum() = 0;
 
@@ -169,9 +177,16 @@ protected:
         //- Return the pressure reference
         virtual const Foam::pressureReference& pressureReference() const = 0;
 
+        //- Is the flow incompressible?
+        virtual bool incompressible() const = 0;
+
         //- Is the flow divergent?
         //  i.e. compressible or include phase-fraction sources
-        virtual bool divergent() = 0;
+        virtual bool divergent() const = 0;
+
+        //- Return the mixture compressibility/density
+        //  Used by CorrectPhi for compressible mixtures following mesh change
+        virtual tmp<volScalarField> psiByRho() const = 0;
 
         //- Return the momentum equation stress term
         virtual tmp<fvVectorMatrix> divDevTau(volVectorField& U) = 0;
@@ -182,6 +197,14 @@ protected:
 
         //- Return the interface surface tension force for the momentum equation
         virtual tmp<surfaceScalarField> surfaceTensionForce() const = 0;
+
+
+public:
+
+    // Access to the physical state
+
+        //- Velocity field
+        const volVectorField& U;
 
 
 public:

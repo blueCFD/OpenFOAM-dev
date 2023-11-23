@@ -112,6 +112,10 @@ protected:
         //- Matching tolerance
         const scalar matchTol_;
 
+        //- Do we need to re-calculate the mapping if mesh motion takes place?
+        //  Defaults to true.
+        const bool reMapAfterMove_;
+
 
     // Protected Member Functions
 
@@ -216,20 +220,22 @@ public:
 
             //- Validate that the map exists and is appropriate for the given
             //  set of permitted configurations
-            template<class PatchField>
+            template<class PatchFieldType, class FieldType>
             static void validateMapForField
             (
-                const PatchField& field,
+                const PatchFieldType& field,
+                const FieldType& iF,
                 const dictionary& context,
                 const label froms = from::any
             );
 
             //- Validate that the map is appropriate for the given
             //  set of permitted configurations
-            template<class PatchField>
+            template<class PatchFieldType, class FieldType>
             void validateForField
             (
-                const PatchField& field,
+                const PatchFieldType& field,
+                const FieldType& iF,
                 const dictionary& context,
                 const label froms = from::any
             ) const;
@@ -238,26 +244,26 @@ public:
         // Edit
 
             //- Clear out data on mesh change
-            void clearOut();
+            virtual void clearOut();
 
 
         // Distribute
 
-            //- Wrapper around map/interpolate data distribution
+            //- Map/interpolate the neighbour patch field to this patch
             template<class Type>
-            tmp<Field<Type>> distribute(const Field<Type>& fld) const;
+            tmp<Field<Type>> fromNeigbour(const Field<Type>& nbrFld) const;
 
-            //- Wrapper around map/interpolate data distribution
+            //- Map/interpolate the neighbour patch field to this patch
             template<class Type>
-            tmp<Field<Type>> distribute(const tmp<Field<Type>>& fld) const;
+            tmp<Field<Type>> fromNeigbour(const tmp<Field<Type>>& nbrFld) const;
 
-            //- Wrapper around map/interpolate data distribution
+            //- Map/interpolate patch field to the neighbour patch
             template<class Type>
-            tmp<Field<Type>> reverseDistribute(const Field<Type>& fld) const;
+            tmp<Field<Type>> toNeigbour(const Field<Type>& fld) const;
 
-            //- Wrapper around map/interpolate data distribution
+            //- Map/interpolate patch field to the neighbour patch
             template<class Type>
-            tmp<Field<Type>> reverseDistribute
+            tmp<Field<Type>> toNeigbour
             (
                 const tmp<Field<Type>>& fld
             ) const;

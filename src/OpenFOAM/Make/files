@@ -478,7 +478,6 @@ $(polyPatches)/polyPatch/polyPatchNew.C
 
 basicPolyPatches = $(polyPatches)/basic
 $(basicPolyPatches)/coupled/coupledPolyPatch.C
-$(basicPolyPatches)/generic/genericPolyPatch.C
 
 constraintPolyPatches = $(polyPatches)/constraint
 $(constraintPolyPatches)/cyclic/cyclicTransform.C
@@ -606,7 +605,6 @@ $(pointPatches)/facePointPatch/facePointPatchNew.C
 
 basicPointPatches = $(pointPatches)/basic
 $(basicPointPatches)/coupled/coupledPointPatch.C
-$(basicPointPatches)/generic/genericPointPatch.C
 
 constraintPointPatches = $(pointPatches)/constraint
 $(constraintPointPatches)/cyclic/cyclicPointPatch.C
@@ -640,7 +638,9 @@ fields/UniformGeometricFields/uniformGeometricFields.C
 Fields = fields/Fields
 
 $(Fields)/fieldMappers/directFieldMapper/directFieldMapper.C
+$(Fields)/fieldMappers/identityFieldMapper/identityFieldMapper.C
 $(Fields)/fieldMappers/generalFieldMapper/generalFieldMapper.C
+$(Fields)/fieldMappers/reverseFieldMapper/reverseFieldMapper.C
 $(Fields)/fieldMappers/setSizeFieldMapper/setSizeFieldMapper.C
 $(Fields)/labelField/labelField.C
 $(Fields)/scalarField/scalarField.C
@@ -706,11 +706,7 @@ fields/GeometricFields/pointFields/pointFields.C
 meshes/bandCompression/bandCompression.C
 meshes/preservePatchTypes/preservePatchTypes.C
 
-interpolations = interpolations
-interpolation = $(interpolations)/interpolation
-$(interpolations)/patchToPatchInterpolation/PatchToPatchInterpolationName.T.C
-
-interpolationWeights = $(interpolations)/interpolationWeights
+interpolationWeights = interpolations/interpolationWeights
 $(interpolationWeights)/interpolationWeights/interpolationWeights.C
 $(interpolationWeights)/linearInterpolationWeights/linearInterpolationWeights.C
 $(interpolationWeights)/splineInterpolationWeights/splineInterpolationWeights.C

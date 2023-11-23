@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,6 +70,7 @@ Usage
 
 \*---------------------------------------------------------------------------*/
 
+#include "argList.H"
 #include "pointMesh.H"
 #include "volPointInterpolation.H"
 #include "emptyPolyPatch.H"
@@ -91,7 +92,7 @@ Usage
 
 // Note: needs to be after TECIO to prevent Foam::Time conflicting with
 // Xlib Time.
-#include "fvCFD.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -947,7 +948,7 @@ int main(int argc, char *argv[])
 
                 const indirectPrimitivePatch ipp
                 (
-                    IndirectList<face>(pp, identity(pp.size())),
+                    IndirectList<face>(pp, identityMap(pp.size())),
                     pp.points()
                 );
 

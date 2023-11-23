@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -102,7 +102,7 @@ public:
 
             //- Return the face velocity
             //  Required for moving mesh cases
-            virtual tmp<surfaceVectorField> Uf() const;
+            virtual const autoPtr<surfaceVectorField>& Uf() const;
 
             //- Access the face velocity
             //  Required for moving mesh cases
@@ -136,7 +136,7 @@ public:
         // Compressibility (variable density)
 
             //- Return the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
-            virtual tmp<volScalarField> divU() const;
+            virtual const autoPtr<volScalarField>& divU() const;
 
             //- Set the phase dilatation rate (d(alpha)/dt + div(alpha*phi))
             virtual void divU(tmp<volScalarField> divU);

@@ -1,0 +1,59 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvModels;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+airToporous
+{
+    type            interRegionHeatTransfer;
+
+    nbrRegion       porous;
+    master          false;
+
+    interpolationMethod intersection;
+
+    semiImplicit    no;
+}
+
+porosityBlockage
+{
+    type            interRegionExplicitPorositySource;
+
+    interRegionExplicitPorositySourceCoeffs
+    {
+        nbrRegion       porous;
+
+        interpolationMethod intersection;
+
+        type            DarcyForchheimer;
+
+        d   (-1000 -1000 1e4);
+        f   (0 0 0);
+
+        coordinateSystem
+        {
+            type    cartesian;
+            origin  (0 0 0);
+            coordinateRotation
+            {
+                type    axesRotation;
+                e1      (0 1 0);
+                e2      (0 0 1);
+            }
+        }
+    }
+}
+
+
+// ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -167,7 +167,8 @@ public:
         (
             const fvPatch&,
             const DimensionedField<Type, surfaceMesh>&,
-            const dictionary&
+            const dictionary&,
+            const bool valueRequired=true
         );
 
         //- Construct by mapping the given fvsPatchField onto a new patch
@@ -176,7 +177,8 @@ public:
             const fvsPatchField<Type>&,
             const fvPatch&,
             const DimensionedField<Type, surfaceMesh>&,
-            const fvPatchFieldMapper&
+            const fvPatchFieldMapper&,
+            const bool mappingRequired=true
         );
 
         //- Disallow copy without setting internal field reference
@@ -380,13 +382,12 @@ public:
 
         // Mapping functions
 
-            //- Map (and resize as needed) from self given a mapping object
-            //  Used to update fields following mesh topology change
-            virtual void autoMap(const fvPatchFieldMapper&);
-
-            //- Reverse map the given fvsPatchField onto this fvsPatchField
-            //  Used to reconstruct fields
-            virtual void rmap(const fvsPatchField<Type>&, const labelList&);
+            //- Map the given fvsPatchField onto this fvsPatchField
+            virtual void map
+            (
+                const fvsPatchField<Type>&,
+                const fvPatchFieldMapper&
+            );
 
             //- Reset the fvsPatchField to the given fvsPatchField
             //  Used for mesh to mesh mapping

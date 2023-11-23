@@ -29,6 +29,7 @@ License
 #include "fvcMeshPhi.H"
 #include "fvcVolumeIntegrate.H"
 #include "fvcReconstruct.H"
+#include "fvcDiv.H"
 #include "fvcSnGrad.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -216,9 +217,12 @@ Foam::solvers::isothermalFluid::isothermalFluid
         );
     }
 
-    if (mesh.dynamic())
+    if (mesh.dynamic() || MRF.size())
     {
         Info<< "Constructing face momentum rhoUf" << endl;
+
+        // Ensure the U BCs are up-to-date before constructing Uf
+        U.correctBoundaryConditions();
 
         rhoUf = new surfaceVectorField
         (
@@ -294,7 +298,7 @@ void Foam::solvers::isothermalFluid::preSolve()
     // Store divrhoU from the previous mesh so that it can be mapped
     // and used in correctPhi to ensure the corrected phi has the
     // same divergence
-    if (correctPhi)
+    if (correctPhi || mesh.topoChanging())
     {
         divrhoU = new volScalarField
         (
@@ -317,7 +321,7 @@ void Foam::solvers::isothermalFluid::preSolve()
     }
 
     // Update the mesh for topology change, mesh to mesh mapping
-    mesh.update();
+    mesh_.update();
 }
 
 
@@ -361,6 +365,9 @@ void Foam::solvers::isothermalFluid::postSolve()
     if (!mesh.schemes().steady())
     {
         rho = thermo.rho();
+
+        // Correct rhoUf with the updated density if the mesh is moving
+        fvc::correctRhoUf(rhoUf, rho, U, phi, MRF);
     }
 }
 

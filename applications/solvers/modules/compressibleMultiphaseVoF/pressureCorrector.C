@@ -31,24 +31,20 @@ License
 #include "fvcMeshPhi.H"
 #include "fvcFlux.H"
 #include "fvcDdt.H"
+#include "fvcDiv.H"
 #include "fvcSnGrad.H"
 #include "fvcSup.H"
 #include "fvcReconstruct.H"
+#include "fvmLaplacian.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
 {
-    fvVectorMatrix& UEqn = tUEqn.ref();
+    volVectorField& U = U_;
 
-    if (rAU.valid())
-    {
-        rAU.ref() = 1.0/UEqn.A();
-    }
-    else
-    {
-        rAU = 1.0/UEqn.A();
-    }
+    fvVectorMatrix& UEqn = tUEqn.ref();
+    setrAU(UEqn);
 
     const surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU()));
 
@@ -59,7 +55,7 @@ void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
         (
             "phiHbyA",
             fvc::flux(HbyA)
-          + MRF.zeroFilter(fvc::interpolate(rho*rAU())*fvc::ddtCorr(U, phi, Uf))
+          + fvc::interpolate(rho*rAU())*fvc::ddtCorr(U, phi, Uf)
         );
 
         MRF.makeRelative(phiHbyA);
@@ -169,6 +165,7 @@ void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
 
     K = 0.5*magSqr(U);
 
+    clearrAU();
     tUEqn.clear();
 }
 

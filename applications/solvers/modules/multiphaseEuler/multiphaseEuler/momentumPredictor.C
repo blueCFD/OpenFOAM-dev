@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "multiphaseEuler.H"
+#include "fvmSup.H"
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 
@@ -36,6 +37,8 @@ void Foam::solvers::multiphaseEuler::cellMomentumPredictor()
 
     phaseSystem::momentumTransferTable&
         momentumTransfer(momentumTransferPtr());
+
+    const PtrList<volScalarField> Kds(fluid.Kds());
 
     forAll(fluid.movingPhases(), movingPhasei)
     {
@@ -54,6 +57,7 @@ void Foam::solvers::multiphaseEuler::cellMomentumPredictor()
              ==
                *momentumTransfer[phase.name()]
               + fvModels().source(alpha, rho, U)
+                // - fvm::Sp(Kds[phase.index()], U)
             )
         );
 
@@ -68,10 +72,6 @@ void Foam::solvers::multiphaseEuler::cellMomentumPredictor()
 void Foam::solvers::multiphaseEuler::faceMomentumPredictor()
 {
     Info<< "Constructing face momentum equations" << endl;
-
-    // !!! Update coefficients shouldn't be necessary
-    //     This should be done on demand
-    fluid.momentumTransfer();
 
     autoPtr<phaseSystem::momentumTransferTable>
         momentumTransferPtr(fluid.momentumTransferf());

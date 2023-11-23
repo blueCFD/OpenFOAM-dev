@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,9 +30,23 @@ License
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class WallInfo, class Derived>
+template<class WallLocation>
 template<class TrackingData>
-inline void Foam::FvWallInfoBase<WallInfo, Derived>::transform
+inline bool Foam::FvWallInfo<WallLocation>::sameGeometry
+(
+    const fvMesh& mesh,
+    const FvWallInfo<WallLocation>& w2,
+    const scalar tol,
+    TrackingData& td
+) const
+{
+    return WallLocation::sameGeometry(w2, tol, td);
+}
+
+
+template<class WallLocation>
+template<class TrackingData>
+inline void Foam::FvWallInfo<WallLocation>::transform
 (
     const fvPatch& patch,
     const label patchFacei,
@@ -40,47 +54,41 @@ inline void Foam::FvWallInfoBase<WallInfo, Derived>::transform
     TrackingData& td
 )
 {
-    WallInfo::template type<Derived>::transform
-    (
-        patch.patch(),
-        patchFacei,
-        transform,
-        td
-    );
+    WallLocation::transform(transform, td);
 }
 
 
-template<class WallInfo, class Derived>
+template<class WallLocation>
 template<class TrackingData>
-inline bool Foam::FvWallInfoBase<WallInfo, Derived>::updateCell
+inline bool Foam::FvWallInfo<WallLocation>::updateCell
 (
     const fvMesh& mesh,
     const label thisCelli,
     const labelPair& neighbourPatchAndFacei,
-    const FvWallInfoBase<WallInfo, Derived>& neighbourWallInfo,
+    const FvWallInfo<WallLocation>& neighbourWallInfo,
     const scalar tol,
     TrackingData& td
 )
 {
     return
-        static_cast<Derived&>(*this).update
+        WallLocation::update
         (
             mesh.C()[thisCelli],
-            static_cast<const Derived&>(neighbourWallInfo),
+            neighbourWallInfo,
             tol,
             td
         );
 }
 
 
-template<class WallInfo, class Derived>
+template<class WallLocation>
 template<class TrackingData>
-inline bool Foam::FvWallInfoBase<WallInfo, Derived>::updateFace
+inline bool Foam::FvWallInfo<WallLocation>::updateFace
 (
     const fvMesh& mesh,
     const labelPair& thisPatchAndFacei,
     const label neighbourCelli,
-    const FvWallInfoBase<WallInfo, Derived>& neighbourWallInfo,
+    const FvWallInfo<WallLocation>& neighbourWallInfo,
     const scalar tol,
     TrackingData& td
 )
@@ -89,25 +97,25 @@ inline bool Foam::FvWallInfoBase<WallInfo, Derived>::updateFace
     const label thisFacei = thisPatchAndFacei.second();
 
     return
-        static_cast<Derived&>(*this).update
+        WallLocation::update
         (
             thisPatchi == -1
           ? mesh.Cf()[thisFacei]
           : mesh.Cf().boundaryField()[thisPatchi][thisFacei],
-            static_cast<const Derived&>(neighbourWallInfo),
+            neighbourWallInfo,
             tol,
             td
         );
 }
 
 
-template<class WallInfo, class Derived>
+template<class WallLocation>
 template<class TrackingData>
-inline bool Foam::FvWallInfoBase<WallInfo, Derived>::updateFace
+inline bool Foam::FvWallInfo<WallLocation>::updateFace
 (
     const fvMesh& mesh,
     const labelPair& thisPatchAndFacei,
-    const FvWallInfoBase<WallInfo, Derived>& neighbourWallInfo,
+    const FvWallInfo<WallLocation>& neighbourWallInfo,
     const scalar tol,
     TrackingData& td
 )
@@ -116,12 +124,12 @@ inline bool Foam::FvWallInfoBase<WallInfo, Derived>::updateFace
     const label thisFacei = thisPatchAndFacei.second();
 
     return
-        static_cast<Derived&>(*this).update
+        WallLocation::update
         (
             thisPatchi == -1
           ? mesh.Cf()[thisFacei]
           : mesh.Cf().boundaryField()[thisPatchi][thisFacei],
-            static_cast<const Derived&>(neighbourWallInfo),
+            neighbourWallInfo,
             tol,
             td
         );

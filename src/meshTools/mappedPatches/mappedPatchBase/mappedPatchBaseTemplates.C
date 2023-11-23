@@ -28,10 +28,11 @@ License
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class PatchField>
+template<class PatchFieldType, class FieldType>
 void Foam::mappedPatchBase::validateMapForField
 (
-    const PatchField& field,
+    const PatchFieldType& field,
+    const FieldType& iF,
     const dictionary& context,
     const label froms
 )
@@ -41,7 +42,7 @@ void Foam::mappedPatchBase::validateMapForField
     if (!isA<mappedPatchBase>(pp))
     {
         OStringStream str;
-        str << "Field " << field.internalField().name() << " of type "
+        str << "Field " << iF.name() << " of type "
             << field.type() << " cannot apply to patch " << pp.name()
             << " because the patch is not of " << typeName << " type";
         FatalIOErrorInFunction(context)
@@ -49,14 +50,21 @@ void Foam::mappedPatchBase::validateMapForField
             << exit(FatalIOError);
     }
 
-    refCast<const mappedPatchBase>(pp).validateForField(field, context, froms);
+    refCast<const mappedPatchBase>(pp).validateForField
+    (
+        field,
+        iF,
+        context,
+        froms
+    );
 }
 
 
-template<class PatchField>
+template<class PatchFieldType, class FieldType>
 void Foam::mappedPatchBase::validateForField
 (
-    const PatchField& field,
+    const PatchFieldType& field,
+    const FieldType& iF,
     const dictionary& context,
     const label froms
 ) const
@@ -69,7 +77,7 @@ void Foam::mappedPatchBase::validateForField
 
     if (isNotRegion || isRegion || isPatch)
     {
-        str << "Field " << field.internalField().name() << " of type "
+        str << "Field " << iF.name() << " of type "
             << field.type() << " cannot apply to patch " << patch_.name()
             << " because values are mapped from ";
     }
@@ -98,11 +106,11 @@ void Foam::mappedPatchBase::validateForField
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::distribute(const Field<Type>& fld) const
+Foam::mappedPatchBase::fromNeigbour(const Field<Type>& nbrFld) const
 {
     if (sameUntransformedPatch())
     {
-        return fld;
+        return nbrFld;
     }
 
     if (!patchToPatchIsUsed_)
@@ -112,7 +120,7 @@ Foam::mappedPatchBase::distribute(const Field<Type>& fld) const
             calcMapping();
         }
 
-        tmp<Field<Type>> tResult(new Field<Type>(fld, nbrPatchFaceIndices_));
+        tmp<Field<Type>> tResult(new Field<Type>(nbrFld, nbrPatchFaceIndices_));
         mapPtr_->distribute(tResult.ref());
         return transform_.transform().transform(tResult);
     }
@@ -136,8 +144,8 @@ Foam::mappedPatchBase::distribute(const Field<Type>& fld) const
             transform_.transform().transform
             (
                 patchToPatchIsValid_
-              ? patchToPatchPtr_->tgtToSrc(fld)
-              : nbrMappedPatch().patchToPatchPtr_->srcToTgt(fld)
+              ? patchToPatchPtr_->tgtToSrc(nbrFld)
+              : nbrMappedPatch().patchToPatchPtr_->srcToTgt(nbrFld)
             );
     }
 }
@@ -145,17 +153,17 @@ Foam::mappedPatchBase::distribute(const Field<Type>& fld) const
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::distribute(const tmp<Field<Type>>& fld) const
+Foam::mappedPatchBase::fromNeigbour(const tmp<Field<Type>>& nbrFld) const
 {
-    tmp<Field<Type>> tResult = distribute(fld());
-    fld.clear();
+    tmp<Field<Type>> tResult = fromNeigbour(nbrFld());
+    nbrFld.clear();
     return tResult;
 }
 
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::reverseDistribute(const Field<Type>& fld) const
+Foam::mappedPatchBase::toNeigbour(const Field<Type>& fld) const
 {
     if (sameUntransformedPatch())
     {
@@ -199,9 +207,9 @@ Foam::mappedPatchBase::reverseDistribute(const Field<Type>& fld) const
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::reverseDistribute(const tmp<Field<Type>>& fld) const
+Foam::mappedPatchBase::toNeigbour(const tmp<Field<Type>>& fld) const
 {
-    tmp<Field<Type>> tResult = reverseDistribute(fld());
+    tmp<Field<Type>> tResult = toNeigbour(fld());
     fld.clear();
     return tResult;
 }

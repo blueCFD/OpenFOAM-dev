@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,10 +30,12 @@ License
 #include "fvcMeshPhi.H"
 #include "fvcFlux.H"
 #include "fvcDdt.H"
+#include "fvcGrad.H"
 #include "fvcSnGrad.H"
 #include "fvcReconstruct.H"
 #include "fvcVolumeIntegrate.H"
 #include "fvmDiv.H"
+#include "fvmLaplacian.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
@@ -48,6 +50,8 @@ void Foam::solvers::isothermalFluid::correctPressure()
     // Thermodynamic density needs to be updated by psi*d(p) after the
     // pressure solution
     const volScalarField psip0(psi*p);
+
+    const surfaceScalarField rhof(fvc::interpolate(rho));
 
     const volScalarField rAU("rAU", 1.0/UEqn.A());
     const surfaceScalarField rhorAUf("rhorAUf", fvc::interpolate(rho*rAU));
@@ -80,11 +84,11 @@ void Foam::solvers::isothermalFluid::correctPressure()
     surfaceScalarField phiHbyA
     (
         "phiHbyA",
-        fvc::interpolate(rho)*fvc::flux(HbyA)
-      + MRF.zeroFilter(rhorAUf*fvc::ddtCorr(rho, U, phi, rhoUf))
+        rhof*fvc::flux(HbyA)
+      + rhorAUf*fvc::ddtCorr(rho, U, phi, rhoUf)
     );
 
-    MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
+    MRF.makeRelative(rhof, phiHbyA);
 
     bool adjustMass = false;
 
@@ -94,7 +98,7 @@ void Foam::solvers::isothermalFluid::correctPressure()
         (
             constrainPhid
             (
-                fvc::relative(phiHbyA, rho, U)/fvc::interpolate(rho),
+                fvc::relative(phiHbyA, rho, U)/rhof,
                 p
             )
         );
@@ -234,13 +238,13 @@ void Foam::solvers::isothermalFluid::correctPressure()
         rho = thermo.rho();
     }
 
-    // Correct rhoUf if the mesh is moving
-    fvc::correctRhoUf(rhoUf, rho, U, phi, MRF);
-
     if (mesh.schemes().steady() || pimple.simpleRho())
     {
         rho.relax();
     }
+
+    // Correct rhoUf if the mesh is moving
+    fvc::correctRhoUf(rhoUf, rho, U, phi, MRF);
 
     if (thermo.dpdt())
     {

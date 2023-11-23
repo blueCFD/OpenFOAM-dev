@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -58,15 +58,18 @@ Description
     \endverbatim
 \*---------------------------------------------------------------------------*/
 
-#include "fvMesh.H"
+#include "argList.H"
+#include "timeSelector.H"
 #include "decompositionMethod.H"
 #include "PstreamReduceOps.T.H"
-#include "fvCFD.H"
 #include "fvMeshDistribute.H"
 #include "polyDistributionMap.H"
 #include "IOobjectList.T.H"
 #include "globalIndex.H"
 #include "loadOrCreateMesh.H"
+#include "extrapolatedCalculatedFvPatchFields.H"
+
+using namespace Foam;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

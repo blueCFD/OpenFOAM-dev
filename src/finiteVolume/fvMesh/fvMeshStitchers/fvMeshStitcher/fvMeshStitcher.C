@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -359,6 +359,7 @@ void Foam::fvMeshStitcher::intersectNonConformalCyclic
                                 )
                             );
                     }
+
                     if (!owner)
                     {
                         c.nbr = c;
@@ -367,15 +368,18 @@ void Foam::fvMeshStitcher::intersectNonConformalCyclic
                     SfBf[patchi][patchFacei] = c.nbr.area;
                     CfBf[patchi][patchFacei] = c.nbr.centre;
 
-                    part origP
-                    (
-                        SfBf[origPp.index()][origFacei],
-                        CfBf[origPp.index()][origFacei]
-                    );
-                    origP -= c;
+                    if (i != -1)
+                    {
+                        part origP
+                        (
+                            SfBf[origPp.index()][origFacei],
+                            CfBf[origPp.index()][origFacei]
+                        );
+                        origP -= c;
 
-                    SfBf[origPp.index()][origFacei] = origP.area;
-                    CfBf[origPp.index()][origFacei] = origP.centre;
+                        SfBf[origPp.index()][origFacei] = origP.area;
+                        CfBf[origPp.index()][origFacei] = origP.centre;
+                    }
                 }
             }
         }
@@ -1302,23 +1306,12 @@ bool Foam::fvMeshStitcher::connect
 
         if (fileHandler().isFile(polyFacesBfIO.objectPath(false)))
         {
-            haveTopology = true;
-
-            // Read the boundary field but then set default values for conformal
-            // patches as these patches will have had a uniform invalid index
-            // set in order to save disk space
-            surfaceLabelField::Boundary polyFacesBfRead
+            polyFacesBf.reset
             (
-                surfaceLabelField::null(),
                 surfaceLabelField(polyFacesBfIO, mesh_).boundaryField()
             );
-            forAll(mesh_.boundary(), patchi)
-            {
-                if (isA<nonConformalFvPatch>(mesh_.boundary()[patchi]))
-                {
-                    polyFacesBf[patchi] = polyFacesBfRead[patchi];
-                }
-            }
+
+            haveTopology = true;
         }
     }
 

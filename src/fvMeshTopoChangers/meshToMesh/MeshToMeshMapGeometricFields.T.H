@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,87 +47,6 @@ namespace Foam
 {
 
 template<class Type>
-void evaluateConstraintTypes(VolField<Type>& fld)
-{
-    typename VolField<Type>::Boundary& fldBf = fld.boundaryFieldRef();
-
-    if
-    (
-        Pstream::defaultCommsType == Pstream::commsTypes::blocking
-     || Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
-    )
-    {
-        label nReq = Pstream::nRequests();
-
-        forAll(fldBf, patchi)
-        {
-            fvPatchField<Type>& tgtField = fldBf[patchi];
-
-            if
-            (
-                tgtField.type() == tgtField.patch().patch().type()
-             && polyPatch::constraintType(tgtField.patch().patch().type())
-            )
-            {
-                tgtField.initEvaluate(Pstream::defaultCommsType);
-            }
-        }
-
-        // Block for any outstanding requests
-        if
-        (
-            Pstream::parRun()
-         && Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
-        )
-        {
-            Pstream::waitRequests(nReq);
-        }
-
-        forAll(fldBf, patchi)
-        {
-            fvPatchField<Type>& tgtField = fldBf[patchi];
-
-            if
-            (
-                tgtField.type() == tgtField.patch().patch().type()
-             && polyPatch::constraintType(tgtField.patch().patch().type())
-            )
-            {
-                tgtField.evaluate(Pstream::defaultCommsType);
-            }
-        }
-    }
-    else if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
-    {
-        const lduSchedule& patchSchedule =
-            fld.mesh().globalData().patchSchedule();
-
-        forAll(patchSchedule, patchEvali)
-        {
-            label patchi = patchSchedule[patchEvali].patch;
-            fvPatchField<Type>& tgtField = fldBf[patchi];
-
-            if
-            (
-                tgtField.type() == tgtField.patch().patch().type()
-             && polyPatch::constraintType(tgtField.patch().patch().type())
-            )
-            {
-                if (patchSchedule[patchEvali].init)
-                {
-                    tgtField.initEvaluate(Pstream::commsTypes::scheduled);
-                }
-                else
-                {
-                    tgtField.evaluate(Pstream::commsTypes::scheduled);
-                }
-            }
-        }
-    }
-}
-
-
-template<class Type>
 void MeshToMeshMapVolFields
 (
     const fvMesh& mesh,
@@ -169,8 +88,7 @@ void MeshToMeshMapVolFields
     )
     {
         VolField<Type>& field =
-            const_cast<VolField<Type>&>
-            (*fieldIter());
+            const_cast<VolField<Type>&>(*fieldIter());
 
         if (fvMeshToFvMesh::debug)
         {
@@ -178,8 +96,8 @@ void MeshToMeshMapVolFields
                 << endl;
         }
 
-        field.reset(mapper.mapSrcToTgt(field));
-        evaluateConstraintTypes(field);
+        field.reset(mapper.srcToTgt(field));
+
         field.instance() = field.time().name();
     }
 }
@@ -207,8 +125,7 @@ void MeshToMeshMapVolInternalFields
     )
     {
         VolInternalField<Type>& field =
-            const_cast<VolInternalField<Type>&>
-            (*fieldIter());
+            const_cast<VolInternalField<Type>&>(*fieldIter());
 
         if (fvMeshToFvMesh::debug)
         {
@@ -216,7 +133,8 @@ void MeshToMeshMapVolInternalFields
                 << endl;
         }
 
-        field.reset(mapper.mapSrcToTgt<Type>(field));
+        field.reset(mapper.srcToTgt<Type>(field));
+
         field.instance() = field.time().name();
     }
 }
@@ -227,7 +145,7 @@ template
     class Type,
     template<class> class PatchField,
     class GeoMesh,
-    class PatchMapper
+    class SetSizePatchFieldMapper
 >
 void NaNGeometricFields
 (
@@ -236,23 +154,6 @@ void NaNGeometricFields
 )
 {
     typedef GeometricField<Type, PatchField, GeoMesh> GField;
-
-    //- Mapper for sizing only - does not do any actual mapping.
-    class patchFieldResizeMapper
-    :
-        public PatchMapper,
-        public setSizeFieldMapper
-    {
-    public:
-
-        // Constructors
-
-            //- Construct given size
-            patchFieldResizeMapper(const label size)
-            :
-                setSizeFieldMapper(size)
-            {}
-    };
 
     HashTable<const GField*> fields
     (
@@ -321,7 +222,7 @@ void NaNGeometricFields
             else
             {
                 typename GField::Patch& pf = field.boundaryFieldRef()[patchi];
-                pf.autoMap(patchFieldResizeMapper(pf.patch().size()));
+                pf.map(pf, SetSizePatchFieldMapper(pf.patch().size()));
             }
 
             field.boundaryFieldRef()[patchi] == NaN;

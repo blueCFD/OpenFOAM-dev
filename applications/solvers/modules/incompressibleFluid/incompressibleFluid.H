@@ -56,7 +56,7 @@ See also
 
 #include "fluidSolver.H"
 #include "viscosityModel.H"
-#include "incompressibleMomentumTransportModels.H"
+#include "incompressibleMomentumTransportModel.H"
 #include "pressureReference.H"
 #include "IOMRFZoneList.H"
 
@@ -105,12 +105,6 @@ protected:
         autoPtr<incompressible::momentumTransportModel> momentumTransport;
 
 
-    // Continuity properties
-
-        //- Current cumulative continuity error
-        scalar cumulativeContErr;
-
-
     // Optional models
 
         //- MRF zone list
@@ -131,9 +125,7 @@ protected:
         tmp<fvVectorMatrix> tUEqn;
 
 
-private:
-
-    // Private Member Functions
+    // Protected Member Functions
 
         //- Set rDeltaT for LTS
         void setRDeltaT();
@@ -146,7 +138,7 @@ private:
 
         //- Construct the pressure equation
         //  and correct the pressure and velocity
-        void correctPressure();
+        virtual void correctPressure();
 
 
 public:

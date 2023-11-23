@@ -82,6 +82,7 @@ thermalBaffle1DFvPatchScalarField
     mappedPatchBase::validateMapForField
     (
         *this,
+        iF,
         dict,
         mappedPatchBase::from::sameRegion
       & mappedPatchBase::from::differentPatch
@@ -238,7 +239,7 @@ baffleThickness() const
     else
     {
         const mappedPatchBase& mpp = mappedPatchBase::getMap(patch().patch());
-        return mpp.distribute(nbrField().baffleThickness());
+        return mpp.fromNeigbour(nbrField().baffleThickness());
     }
 }
 
@@ -253,43 +254,27 @@ tmp<scalarField> thermalBaffle1DFvPatchScalarField<solidType>::qs() const
     else
     {
         const mappedPatchBase& mpp = mappedPatchBase::getMap(patch().patch());
-        return mpp.distribute(nbrField().qs());
+        return mpp.fromNeigbour(nbrField().qs());
     }
 }
 
 
 template<class solidType>
-void thermalBaffle1DFvPatchScalarField<solidType>::autoMap
-(
-    const fvPatchFieldMapper& m
-)
-{
-    mixedFvPatchScalarField::autoMap(m);
-
-    if (this->owner())
-    {
-        m(thickness_, thickness_);
-        m(qs_, qs_);
-    }
-}
-
-
-template<class solidType>
-void thermalBaffle1DFvPatchScalarField<solidType>::rmap
+void thermalBaffle1DFvPatchScalarField<solidType>::map
 (
     const fvPatchScalarField& ptf,
-    const labelList& addr
+    const fvPatchFieldMapper& mapper
 )
 {
-    mixedFvPatchScalarField::rmap(ptf, addr);
+    mixedFvPatchScalarField::map(ptf, mapper);
 
     const thermalBaffle1DFvPatchScalarField& tiptf =
         refCast<const thermalBaffle1DFvPatchScalarField>(ptf);
 
     if (this->owner())
     {
-        thickness_.rmap(tiptf.thickness_, addr);
-        qs_.rmap(tiptf.qs_, addr);
+        mapper(thickness_, tiptf.thickness_);
+        mapper(qs_, tiptf.qs_);
     }
 }
 
@@ -363,7 +348,7 @@ void thermalBaffle1DFvPatchScalarField<solidType>::updateCoeffs()
         const scalarField kappaDelta(kappap*patch().deltaCoeffs());
 
         // Neighbour properties
-        const scalarField nbrTp(mpp.distribute(nbrField()));
+        const scalarField nbrTp(mpp.fromNeigbour(nbrField()));
 
         // Solid properties
         scalarField kappas(patch().size(), 0.0);

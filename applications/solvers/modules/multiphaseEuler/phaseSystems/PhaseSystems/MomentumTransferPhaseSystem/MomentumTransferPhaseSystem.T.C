@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,18 +31,18 @@ License
 #include "wallLubricationModel.H"
 #include "turbulentDispersionModel.H"
 
-#include "HashPtrTable.T.H"
-
 #include "fvmDdt.H"
 #include "fvmDiv.H"
 #include "fvmSup.H"
-#include "fvcAverage.H"
+
 #include "fvcDdt.H"
 #include "fvcDiv.H"
 #include "fvcFlux.H"
 #include "fvcSnGrad.H"
 #include "fvcMeshPhi.H"
-#include "fvMatrix.H"
+#include "fvcReconstruct.H"
+
+#include "pimpleNoLoopControl.H"
 
 // * * * * * * * * * * * * Protected Member Functions * * * * * * * * * * * //
 
@@ -120,90 +120,6 @@ MomentumTransferPhaseSystem
     this->generateInterfacialModels(liftModels_);
     this->generateInterfacialModels(wallLubricationModels_);
     this->generateInterfacialModels(turbulentDispersionModels_);
-
-    forAllConstIter
-    (
-        dragModelTable,
-        dragModels_,
-        dragModelIter
-    )
-    {
-        const phaseInterface& interface = dragModelIter()->interface();
-
-        Kds_.insert
-        (
-            dragModelIter.key(),
-            new volScalarField
-            (
-                IOobject
-                (
-                    IOobject::groupName("Kd", interface.name()),
-                    this->mesh().time().name(),
-                    this->mesh()
-                ),
-                this->mesh(),
-                dimensionedScalar(dragModel::dimK, 0)
-            )
-        );
-
-        Kdfs_.insert
-        (
-            dragModelIter.key(),
-            new surfaceScalarField
-            (
-                IOobject
-                (
-                    IOobject::groupName("Kdf", interface.name()),
-                    this->mesh().time().name(),
-                    this->mesh()
-                ),
-                this->mesh(),
-                dimensionedScalar(dragModel::dimK, 0)
-            )
-        );
-    }
-
-    forAllConstIter
-    (
-        virtualMassModelTable,
-        virtualMassModels_,
-        virtualMassModelIter
-    )
-    {
-        const phaseInterface& interface = virtualMassModelIter()->interface();
-
-        Vms_.insert
-        (
-            interface,
-            new volScalarField
-            (
-                IOobject
-                (
-                    IOobject::groupName("Vm", interface.name()),
-                    this->mesh().time().name(),
-                    this->mesh()
-                ),
-                this->mesh(),
-                dimensionedScalar(virtualMassModel::dimK, 0)
-            )
-        );
-
-        Vmfs_.insert
-        (
-            interface,
-            new surfaceScalarField
-            (
-                IOobject
-                (
-                    IOobject::groupName("Vmf", interface.name()),
-                    this->mesh().time().name(),
-                    this->mesh()
-                ),
-                this->mesh(),
-                dimensionedScalar(virtualMassModel::dimK, 0)
-            )
-        );
-    }
 }
 
 
@@ -240,6 +156,36 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransfer()
         );
     }
 
+    // Initialise Kds table if required
+    if (!Kds_.size())
+    {
+        forAllConstIter
+        (
+            dragModelTable,
+            dragModels_,
+            dragModelIter
+        )
+        {
+            const phaseInterface& interface = dragModelIter()->interface();
+
+            Kds_.insert
+            (
+                dragModelIter.key(),
+                new volScalarField
+                (
+                    IOobject
+                    (
+                        IOobject::groupName("Kd", interface.name()),
+                        this->mesh().time().name(),
+                        this->mesh()
+                    ),
+                    this->mesh(),
+                    dimensionedScalar(dragModel::dimK, 0)
+                )
+            );
+        }
+    }
+
     // Update the drag coefficients
     forAllConstIter
     (
@@ -249,23 +195,36 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransfer()
     )
     {
         *Kds_[dragModelIter.key()] = dragModelIter()->K();
-        *Kdfs_[dragModelIter.key()] = dragModelIter()->Kf();
     }
 
-    // Add the implicit part of the drag force
-    forAllConstIter(KdTable, Kds_, KdIter)
+    // Initialise Vms table if required
+    if (!Vms_.size())
     {
-        const volScalarField& K(*KdIter());
-        const phaseInterface interface(*this, KdIter.key());
-
-        forAllConstIter(phaseInterface, interface, iter)
+        forAllConstIter
+        (
+            virtualMassModelTable,
+            virtualMassModels_,
+            virtualMassModelIter
+        )
         {
-            if (!iter().stationary())
-            {
-                fvVectorMatrix& eqn = *eqns[iter().name()];
+            const phaseInterface& interface =
+                virtualMassModelIter()->interface();
 
-                eqn -= fvm::Sp(K, eqn.psi());
-            }
+            Vms_.insert
+            (
+                interface,
+                new volScalarField
+                (
+                    IOobject
+                    (
+                        IOobject::groupName("Vm", interface.name()),
+                        this->mesh().time().name(),
+                        this->mesh()
+                    ),
+                    this->mesh(),
+                    dimensionedScalar(virtualMassModel::dimK, 0)
+                )
+            );
         }
     }
 
@@ -278,7 +237,6 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransfer()
     )
     {
         *Vms_[virtualMassModelIter.key()] = virtualMassModelIter()->K();
-        *Vmfs_[virtualMassModelIter.key()] = virtualMassModelIter()->Kf();
     }
 
     // Add the virtual mass force
@@ -301,14 +259,20 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransfer()
                 const tmp<surfaceScalarField> taphi(fvc::absolute(phi, U));
                 const surfaceScalarField& aphi(taphi());
 
+                const volScalarField VmPhase
+                (
+                    (otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+                   *Vm
+                );
+
                 eqn -=
-                    Vm
+                    VmPhase
                    *(
                         fvm::ddt(U)
                       + fvm::div(aphi, U) - fvm::Sp(fvc::div(aphi), U)
                       - otherPhase.DUDt()
                     )
-                  + this->MRF_.DDt(Vm, U - otherPhase.U());
+                  + this->MRF_.DDt(VmPhase, U - otherPhase.U());
             }
         }
     }
@@ -338,6 +302,89 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransferf()
             phase.name(),
             new fvVectorMatrix(phase.U(), dimMass*dimVelocity/dimTime)
         );
+    }
+
+    // Initialise Kdfs table if required
+    if (!Kdfs_.size())
+    {
+        forAllConstIter
+        (
+            dragModelTable,
+            dragModels_,
+            dragModelIter
+        )
+        {
+            const phaseInterface& interface = dragModelIter()->interface();
+
+            Kdfs_.insert
+            (
+                dragModelIter.key(),
+                new surfaceScalarField
+                (
+                    IOobject
+                    (
+                        IOobject::groupName("Kdf", interface.name()),
+                        this->mesh().time().name(),
+                        this->mesh()
+                    ),
+                    this->mesh(),
+                    dimensionedScalar(dragModel::dimK, 0)
+                )
+            );
+        }
+    }
+
+    // Update the drag coefficients
+    forAllConstIter
+    (
+        dragModelTable,
+        dragModels_,
+        dragModelIter
+    )
+    {
+        *Kdfs_[dragModelIter.key()] = dragModelIter()->Kf();
+    }
+
+    // Initialise Vms table if required
+    if (!Vms_.size())
+    {
+        forAllConstIter
+        (
+            virtualMassModelTable,
+            virtualMassModels_,
+            virtualMassModelIter
+        )
+        {
+            const phaseInterface& interface =
+                virtualMassModelIter()->interface();
+
+            Vms_.insert
+            (
+                interface,
+                new volScalarField
+                (
+                    IOobject
+                    (
+                        IOobject::groupName("Vm", interface.name()),
+                        this->mesh().time().name(),
+                        this->mesh()
+                    ),
+                    this->mesh(),
+                    dimensionedScalar(virtualMassModel::dimK, 0)
+                )
+            );
+        }
+    }
+
+    // Update the virtual mass coefficients
+    forAllConstIter
+    (
+        virtualMassModelTable,
+        virtualMassModels_,
+        virtualMassModelIter
+    )
+    {
+        *Vms_[virtualMassModelIter.key()] = virtualMassModelIter()->K();
     }
 
     // Create U & grad(U) fields
@@ -378,8 +425,14 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransferf()
 
             if (!phase.stationary())
             {
+                const volScalarField VmPhase
+                (
+                    (otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+                   *Vm
+                );
+
                 *eqns[phase.name()] -=
-                    Vm
+                    VmPhase
                    *(
                         UgradUs[phase.index()]
                       - (UgradUs[otherPhase.index()] & otherPhase.U())
@@ -394,9 +447,9 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransferf()
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::AFfs() const
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::KdVmfs() const
 {
-    PtrList<surfaceScalarField> AFfs(this->phaseModels_.size());
+    PtrList<surfaceScalarField> KdVmfs(this->phaseModels_.size());
 
     // Add the implicit part of the drag force
     forAllConstIter(KdfTable, Kdfs_, KdfIter)
@@ -406,36 +459,57 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::AFfs() const
 
         forAllConstIter(phaseInterface, interface, iter)
         {
-            addField(iter(), "AFf", Kf, AFfs);
+            const phaseModel& phase = iter();
+            const phaseModel& otherPhase = iter.otherPhase();
+
+            const surfaceScalarField alphaf
+            (
+                fvc::interpolate(otherPhase)
+            );
+
+            addField
+            (
+                phase,
+                "KdVmf",
+                (alphaf/max(alphaf, otherPhase.residualAlpha()))
+               *Kf,
+                KdVmfs
+            );
         }
     }
 
     // Add the implicit part of the virtual mass force
-    forAllConstIter(VmfTable, Vmfs_, VmfIter)
+    forAllConstIter(VmTable, Vms_, VmIter)
     {
-        const surfaceScalarField& Vmf(*VmfIter());
-        const phaseInterface interface(*this, VmfIter.key());
+        const volScalarField& Vm(*VmIter());
+        const phaseInterface interface(*this, VmIter.key());
 
         forAllConstIter(phaseInterface, interface, iter)
         {
-            addField(iter(), "AFf", byDt(Vmf), AFfs);
+            const phaseModel& phase = iter();
+            const phaseModel& otherPhase = iter.otherPhase();
+
+            const volScalarField VmPhase
+            (
+                (otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+               *Vm
+            );
+
+            addField(phase, "KdVmf", byDt(fvc::interpolate(VmPhase)), KdVmfs);
         }
     }
 
-    this->fillFields("AFf", dimDensity/dimTime, AFfs);
+    this->fillFields("KdVmf", dimDensity/dimTime, KdVmfs);
 
-    return AFfs;
+    return KdVmfs;
 }
 
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiFs
-(
-    const PtrList<volScalarField>& rAUs
-)
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Fs()
 {
-    PtrList<surfaceScalarField> phiFs(this->phaseModels_.size());
+    PtrList<surfaceScalarField> Fs(this->phaseModels_.size());
 
     // Add the lift force
     forAllConstIter
@@ -452,16 +526,16 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiFs
         addField
         (
             interface.phase1(),
-            "phiF",
-            fvc::flux(rAUs[interface.phase1().index()]*F),
-            phiFs
+            "F",
+            fvc::flux(F),
+            Fs
         );
         addField
         (
             interface.phase2(),
-            "phiF",
-           -fvc::flux(rAUs[interface.phase2().index()]*F),
-            phiFs
+            "F",
+           -fvc::flux(F),
+            Fs
         );
     }
 
@@ -481,16 +555,16 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiFs
         addField
         (
             interface.phase1(),
-            "phiF",
-            fvc::flux(rAUs[interface.phase1().index()]*F),
-            phiFs
+            "F",
+            fvc::flux(F),
+            Fs
         );
         addField
         (
             interface.phase2(),
-            "phiF",
-           -fvc::flux(rAUs[interface.phase2().index()]*F),
-            phiFs
+            "F",
+           -fvc::flux(F),
+            Fs
         );
     }
 
@@ -504,173 +578,10 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiFs
         addField
         (
             phase,
-            "phiF",
-            fvc::interpolate(rAUs[phasei]*pPrime(), pPrime().name())
+            "F",
+            fvc::interpolate(pPrime(), pPrime().name())
            *fvc::snGrad(phase)*this->mesh_.magSf(),
-            phiFs
-        );
-    }
-
-    // Add the turbulent dispersion force
-    forAllConstIter
-    (
-        turbulentDispersionModelTable,
-        turbulentDispersionModels_,
-        turbulentDispersionModelIter
-    )
-    {
-        const phaseInterface& interface =
-            turbulentDispersionModelIter()->interface();
-
-        const volScalarField D(turbulentDispersionModelIter()->D());
-
-        const surfaceScalarField DByA1f
-        (
-            fvc::interpolate(rAUs[interface.phase1().index()]*D)
-        );
-        const surfaceScalarField DByA2f
-        (
-            fvc::interpolate(rAUs[interface.phase2().index()]*D)
-        );
-
-        const volScalarField alpha12(interface.phase1() + interface.phase2());
-        const surfaceScalarField snGradAlpha1By12
-        (
-            fvc::snGrad
-            (
-                interface.phase1()
-               /max(alpha12, interface.phase1().residualAlpha())
-            )*this->mesh_.magSf()
-        );
-        const surfaceScalarField snGradAlpha2By12
-        (
-            fvc::snGrad
-            (
-                interface.phase2()
-               /max(alpha12, interface.phase2().residualAlpha())
-            )*this->mesh_.magSf()
-        );
-
-        addField(interface.phase1(), "phiF", DByA1f*snGradAlpha1By12, phiFs);
-        addField(interface.phase2(), "phiF", DByA2f*snGradAlpha2By12, phiFs);
-    }
-
-    if (this->fillFields_)
-    {
-        this->fillFields("phiF", dimForce/dimDensity/dimVelocity, phiFs);
-    }
-
-    return phiFs;
-}
-
-
-template<class BasePhaseSystem>
-Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiFfs
-(
-    const PtrList<surfaceScalarField>& rAUfs
-)
-{
-    PtrList<surfaceScalarField> phiFfs(this->phaseModels_.size());
-
-    // Add the explicit part of the virtual mass force
-    forAllConstIter(VmfTable, Vmfs_, VmfIter)
-    {
-        const surfaceScalarField& Vmf(*VmfIter());
-        const phaseInterface interface(*this, VmfIter.key());
-
-        forAllConstIter(phaseInterface, interface, iter)
-        {
-            addField
-            (
-                iter(),
-                "phiFf",
-               -rAUfs[iter().index()]*Vmf
-               *(
-                   byDt
-                   (
-                       fvc::absolute
-                       (
-                           this->MRF().absolute(iter().phi()().oldTime()),
-                           iter().U()
-                       )
-                   )
-                 + iter.otherPhase().DUDtf()
-                ),
-                phiFfs
-            );
-        }
-    }
-
-    // Add the lift force
-    forAllConstIter
-    (
-        liftModelTable,
-        liftModels_,
-        liftModelIter
-    )
-    {
-        const phaseInterface& interface = liftModelIter()->interface();
-
-        const surfaceScalarField Ff(liftModelIter()->Ff());
-
-        addField
-        (
-            interface.phase1(),
-            "phiFf",
-            rAUfs[interface.phase1().index()]*Ff,
-            phiFfs
-        );
-        addField
-        (
-            interface.phase2(),
-            "phiFf",
-           -rAUfs[interface.phase2().index()]*Ff,
-            phiFfs
-        );
-    }
-
-    // Add the wall lubrication force
-    forAllConstIter
-    (
-        wallLubricationModelTable,
-        wallLubricationModels_,
-        wallLubricationModelIter
-    )
-    {
-        const phaseInterface& interface =
-            wallLubricationModelIter()->interface();
-
-        const surfaceScalarField Ff(wallLubricationModelIter()->Ff());
-
-        addField
-        (
-            interface.phase1(),
-            "phiFf",
-            rAUfs[interface.phase1().index()]*Ff,
-            phiFfs
-        );
-        addField
-        (
-            interface.phase2(),
-            "phiFf",
-           -rAUfs[interface.phase2().index()]*Ff,
-            phiFfs
-        );
-    }
-
-    // Add the phase pressure
-    forAll(this->phaseModels_, phasei)
-    {
-        const phaseModel& phase = this->phaseModels_[phasei];
-
-        addField
-        (
-            phase,
-            "phiFf",
-            rAUfs[phasei]*fvc::interpolate(phase.pPrime())
-           *fvc::snGrad(phase)*this->mesh_.magSf(),
-            phiFfs
+            Fs
         );
     }
 
@@ -690,8 +601,168 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiFfs
             fvc::interpolate(turbulentDispersionModelIter()->D())
         );
 
-        const surfaceScalarField DByA1f(rAUfs[interface.phase1().index()]*Df);
-        const surfaceScalarField DByA2f(rAUfs[interface.phase2().index()]*Df);
+        const volScalarField alpha12(interface.phase1() + interface.phase2());
+        const surfaceScalarField snGradAlpha1By12
+        (
+            fvc::snGrad
+            (
+                interface.phase1()
+               /max(alpha12, interface.phase1().residualAlpha())
+            )*this->mesh_.magSf()
+        );
+        const surfaceScalarField snGradAlpha2By12
+        (
+            fvc::snGrad
+            (
+                interface.phase2()
+               /max(alpha12, interface.phase2().residualAlpha())
+            )*this->mesh_.magSf()
+        );
+
+        addField(interface.phase1(), "F", Df*snGradAlpha1By12, Fs);
+        addField(interface.phase2(), "F", Df*snGradAlpha2By12, Fs);
+    }
+
+    if (this->fillFields_)
+    {
+        this->fillFields("F", dimArea*dimDensity*dimAcceleration, Fs);
+    }
+
+    return Fs;
+}
+
+
+template<class BasePhaseSystem>
+Foam::PtrList<Foam::surfaceScalarField>
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Ffs()
+{
+    PtrList<surfaceScalarField> Ffs(this->phaseModels_.size());
+
+    // Add the explicit part of the virtual mass force
+    forAllConstIter(VmTable, Vms_, VmIter)
+    {
+        const volScalarField& Vm(*VmIter());
+        const phaseInterface interface(*this, VmIter.key());
+
+        forAllConstIter(phaseInterface, interface, iter)
+        {
+            const phaseModel& phase = iter();
+            const phaseModel& otherPhase = iter.otherPhase();
+
+            const volScalarField VmPhase
+            (
+                (otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+               *Vm
+            );
+
+            addField
+            (
+                phase,
+                "Ff",
+               -fvc::interpolate(VmPhase)
+               *(
+                   byDt
+                   (
+                       fvc::absolute
+                       (
+                           this->MRF().absolute(iter().phi()().oldTime()),
+                           iter().U()
+                       )
+                   )
+                 + otherPhase.DUDtf()
+                ),
+                Ffs
+            );
+        }
+    }
+
+    // Add the lift force
+    forAllConstIter
+    (
+        liftModelTable,
+        liftModels_,
+        liftModelIter
+    )
+    {
+        const phaseInterface& interface = liftModelIter()->interface();
+
+        const surfaceScalarField Ff(liftModelIter()->Ff());
+
+        addField
+        (
+            interface.phase1(),
+            "Ff",
+            Ff,
+            Ffs
+        );
+        addField
+        (
+            interface.phase2(),
+            "Ff",
+           -Ff,
+            Ffs
+        );
+    }
+
+    // Add the wall lubrication force
+    forAllConstIter
+    (
+        wallLubricationModelTable,
+        wallLubricationModels_,
+        wallLubricationModelIter
+    )
+    {
+        const phaseInterface& interface =
+            wallLubricationModelIter()->interface();
+
+        const surfaceScalarField Ff(wallLubricationModelIter()->Ff());
+
+        addField
+        (
+            interface.phase1(),
+            "Ff",
+            Ff,
+            Ffs
+        );
+        addField
+        (
+            interface.phase2(),
+            "Ff",
+           -Ff,
+            Ffs
+        );
+    }
+
+    // Add the phase pressure
+    forAll(this->phaseModels_, phasei)
+    {
+        const phaseModel& phase = this->phaseModels_[phasei];
+
+        addField
+        (
+            phase,
+            "Ff",
+            fvc::interpolate(phase.pPrime())
+           *fvc::snGrad(phase)*this->mesh_.magSf(),
+            Ffs
+        );
+    }
+
+    // Add the turbulent dispersion force
+    forAllConstIter
+    (
+        turbulentDispersionModelTable,
+        turbulentDispersionModels_,
+        turbulentDispersionModelIter
+    )
+    {
+        const phaseInterface& interface =
+            turbulentDispersionModelIter()->interface();
+
+        const surfaceScalarField Df
+        (
+            fvc::interpolate(turbulentDispersionModelIter()->D())
+        );
 
         const volScalarField alpha12(interface.phase1() + interface.phase2());
         const surfaceScalarField snGradAlpha1By12
@@ -711,27 +782,24 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiFfs
             )*this->mesh_.magSf()
         );
 
-        addField(interface.phase1(), "phiF", DByA1f*snGradAlpha1By12, phiFfs);
-        addField(interface.phase2(), "phiF", DByA2f*snGradAlpha2By12, phiFfs);
+        addField(interface.phase1(), "F", Df*snGradAlpha1By12, Ffs);
+        addField(interface.phase2(), "F", Df*snGradAlpha2By12, Ffs);
     }
 
     if (this->fillFields_)
     {
-        this->fillFields("phiFf", dimForce/dimDensity/dimVelocity, phiFfs);
+        this->fillFields("Ff", dimArea*dimDensity*dimAcceleration, Ffs);
     }
 
-    return phiFfs;
+    return Ffs;
 }
 
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiKdPhis
-(
-    const PtrList<volScalarField>& rAUs
-) const
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::KdPhis() const
 {
-    PtrList<surfaceScalarField> phiKdPhis(this->phaseModels_.size());
+    PtrList<surfaceScalarField> KdPhis(this->phaseModels_.size());
 
     // Add the explicit part of the drag force
     forAllConstIter(KdTable, Kds_, KdIter)
@@ -741,17 +809,24 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiKdPhis
 
         forAllConstIter(phaseInterface, interface, iter)
         {
+            const phaseModel& phase = iter();
+            const phaseModel& otherPhase = iter.otherPhase();
+
             addField
             (
-                iter(),
-                "phiKdPhi",
-               -fvc::interpolate(rAUs[iter().index()]*K)
+                phase,
+                "KdPhi",
+                fvc::interpolate
+                (
+                  -(otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+                  *K
+                )
                *fvc::absolute
                 (
-                    this->MRF().absolute(iter.otherPhase().phi()),
-                    iter.otherPhase().U()
+                    this->MRF().absolute(otherPhase.phi()),
+                    otherPhase.U()
                 ),
-                phiKdPhis
+                KdPhis
             );
         }
     }
@@ -760,24 +835,21 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiKdPhis
     {
         this->fillFields
         (
-            "phiKdPhi",
-            dimForce/dimDensity/dimVelocity,
-            phiKdPhis
+            "KdPhi",
+            dimArea*dimDensity*dimAcceleration,
+            KdPhis
         );
     }
 
-    return phiKdPhis;
+    return KdPhis;
 }
 
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiKdPhifs
-(
-    const PtrList<surfaceScalarField>& rAUfs
-) const
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::KdPhifs() const
 {
-    PtrList<surfaceScalarField> phiKdPhifs(this->phaseModels_.size());
+    PtrList<surfaceScalarField> KdPhifs(this->phaseModels_.size());
 
     // Add the explicit part of the drag force
     forAllConstIter(KdfTable, Kdfs_, KdfIter)
@@ -787,17 +859,26 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiKdPhifs
 
         forAllConstIter(phaseInterface, interface, iter)
         {
+            const phaseModel& phase = iter();
+            const phaseModel& otherPhase = iter.otherPhase();
+
+            const surfaceScalarField alphaf
+            (
+                fvc::interpolate(otherPhase)
+            );
+
             addField
             (
-                iter(),
-                "phiKdPhif",
-               -rAUfs[iter().index()]*Kf
+                phase,
+                "KdPhif",
+               -(alphaf/max(alphaf, otherPhase.residualAlpha()))
+               *Kf
                *fvc::absolute
                 (
-                    this->MRF().absolute(iter.otherPhase().phi()),
-                    iter.otherPhase().U()
+                    this->MRF().absolute(otherPhase.phi()),
+                    otherPhase.U()
                 ),
-                phiKdPhifs
+                KdPhifs
             );
         }
     }
@@ -806,24 +887,57 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::phiKdPhifs
     {
         this->fillFields
         (
-            "phiKdPhif",
-            dimForce/dimDensity/dimVelocity,
-            phiKdPhifs
+            "KdPhif",
+            dimArea*dimDensity*dimAcceleration,
+            KdPhifs
         );
     }
 
-    return phiKdPhifs;
+    return KdPhifs;
+}
+
+
+template<class BasePhaseSystem>
+Foam::PtrList<Foam::volScalarField>
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Kds() const
+{
+    PtrList<volScalarField> Kds(this->phaseModels_.size());
+
+    forAllConstIter(KdTable, Kds_, KdIter)
+    {
+        const volScalarField& K(*KdIter());
+        const phaseInterface interface(*this, KdIter.key());
+
+        forAllConstIter(phaseInterface, interface, iter)
+        {
+            const phaseModel& phase = iter();
+            const phaseModel& otherPhase = iter.otherPhase();
+
+            addField
+            (
+                phase,
+                "Kd",
+                (otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+               *K,
+                Kds
+            );
+        }
+    }
+
+    if (this->fillFields_)
+    {
+        this->fillFields("Kd", dimDensity/dimTime, Kds);
+    }
+
+    return Kds;
 }
 
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::volVectorField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::KdUByAs
-(
-    const PtrList<volScalarField>& rAUs
-) const
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::KdUs() const
 {
-    PtrList<volVectorField> KdUByAs(this->phaseModels_.size());
+    PtrList<volVectorField> KdUs(this->phaseModels_.size());
 
     // Add the explicit part of the drag force
     forAllConstIter(KdTable, Kds_, KdIter)
@@ -833,22 +947,26 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::KdUByAs
 
         forAllConstIter(phaseInterface, interface, iter)
         {
+            const phaseModel& phase = iter();
+            const phaseModel& otherPhase = iter.otherPhase();
+
             addField
             (
-                iter(),
-                "KdUByA",
-               -rAUs[iter().index()]*K*iter.otherPhase().U(),
-                KdUByAs
+                phase,
+                "KdU",
+               -(otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+               *K*otherPhase.U(),
+                KdUs
             );
         }
     }
 
     if (this->fillFields_)
     {
-        this->fillFields("KdUByA", dimVelocity, KdUByAs);
+        this->fillFields("KdU", dimDensity*dimAcceleration, KdUs);
     }
 
-    return KdUByAs;
+    return KdUs;
 }
 
 
@@ -973,79 +1091,67 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::alphaDByAf
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::ddtCorrByAs
-(
-    const PtrList<volScalarField>& rAUs,
-    const bool includeVirtualMass
-) const
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::ddtCorrs() const
 {
-    PtrList<surfaceScalarField> ddtCorrByAs(this->phaseModels_.size());
-
-    // Construct phi differences
-    PtrList<surfaceScalarField> phiCorrs(this->phaseModels_.size());
-
-    forAll(this->movingPhases(), movingPhasei)
-    {
-        const phaseModel& phase = this->movingPhases()[movingPhasei];
-        const label phasei = phase.index();
-
-        phiCorrs.set
-        (
-            phasei,
-            this->MRF().zeroFilter
-            (
-                (
-                    phase.Uf().valid()
-                  ? (this->mesh_.Sf() & phase.Uf()().oldTime())()
-                  : phase.phi()().oldTime()
-                )
-              - fvc::flux(phase.U()().oldTime())
-            )()
-        );
-    }
+    PtrList<surfaceScalarField> ddtCorrs(this->phaseModels_.size());
 
     // Add correction
     forAll(this->movingPhases(), movingPhasei)
     {
         const phaseModel& phase = this->movingPhases()[movingPhasei];
-        const label phasei = phase.index();
-        const volScalarField& alpha = phase;
-
-        // Apply ddtPhiCorr filter in pure(ish) phases
-        surfaceScalarField alphafBar
-        (
-            fvc::interpolate(fvc::average(fvc::interpolate(alpha)))
-        );
-
-        tmp<surfaceScalarField> phiCorrCoeff = pos0(alphafBar - 0.99);
-
-        surfaceScalarField::Boundary& phiCorrCoeffBf =
-            phiCorrCoeff.ref().boundaryFieldRef();
-
-        forAll(this->mesh_.boundary(), patchi)
-        {
-            // Set ddtPhiCorr to 0 on non-coupled boundaries
-            if (!this->mesh_.boundary()[patchi].coupled())
-            {
-                phiCorrCoeffBf[patchi] = 0;
-            }
-        }
 
         addField
         (
             phase,
-            "ddtCorrByA",
-           -phiCorrCoeff*phiCorrs[phasei]*fvc::interpolate
+            "ddtCorr",
+            fvc::ddtCorr
             (
-                byDt(alpha.oldTime()*phase.rho()().oldTime()*rAUs[phasei])
+                phase,
+                phase.rho()(),
+                phase.U()(),
+                phase.phi()(),
+                phase.Uf()
             ),
-            ddtCorrByAs
+            ddtCorrs
         );
     }
 
-    // Add virtual mass correction
-    if (includeVirtualMass)
+
+    const pimpleNoLoopControl& pimple = this->pimple();
+    const Switch VmDdtCorr
+    (
+        pimple.dict().lookupOrDefault<Switch>("VmDdtCorrection", false)
+    );
+
+    // Optionally ddd virtual mass correction
+    if (VmDdtCorr)
     {
+        PtrList<volScalarField> VmDdtCoeffs(this->phaseModels_.size());
+        PtrList<surfaceScalarField> VmDdtCorrs(this->phaseModels_.size());
+
+        forAll(this->movingPhases(), movingPhasei)
+        {
+            const phaseModel& phase = this->movingPhases()[movingPhasei];
+            const label phasei = phase.index();
+
+            VmDdtCoeffs.set
+            (
+                phasei,
+                fvm::ddt(phase.U()())().A()
+            );
+
+            VmDdtCorrs.set
+            (
+                phasei,
+                fvc::ddtCorr
+                (
+                    phase.U()(),
+                    phase.phi()(),
+                    phase.Uf()
+                )
+            );
+        }
+
         forAllConstIter(VmTable, Vms_, VmIter)
         {
             const volScalarField& Vm(*VmIter());
@@ -1054,30 +1160,146 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::ddtCorrByAs
             forAllConstIter(phaseInterface, interface, iter)
             {
                 const phaseModel& phase = iter();
+                const label phasei = phase.index();
                 const phaseModel& otherPhase = iter.otherPhase();
+                const label otherPhasei = otherPhase.index();
+
+                const volScalarField VmPhase
+                (
+                    (otherPhase/max(otherPhase, otherPhase.residualAlpha()))
+                   *Vm
+                );
 
                 addField
                 (
-                    iter(),
-                    "ddtCorrByA",
-                   -fvc::interpolate(Vm*byDt(rAUs[phase.index()]))
+                    phase,
+                    "ddtCorr",
+                    fvc::interpolate(VmPhase)
                    *(
-                       phiCorrs[phase.index()]
-                     + fvc::absolute
-                       (
-                           this->MRF().absolute(otherPhase.phi()),
-                           otherPhase.U()
-                       )
-                     - fvc::flux(otherPhase.U())
-                     - phiCorrs[otherPhase.index()]
+                        VmDdtCorrs[phasei]
+                      + (
+                            fvc::interpolate(VmDdtCoeffs[otherPhasei])
+                           *(
+                               otherPhase.Uf().valid()
+                             ? (this->mesh_.Sf() & otherPhase.Uf()())()
+                             : otherPhase.phi()()
+                            )
+                          - fvc::flux(VmDdtCoeffs[otherPhasei]*otherPhase.U())
+                        )
+                      - VmDdtCorrs[otherPhase.index()]
                     ),
-                    ddtCorrByAs
+                    ddtCorrs
                 );
             }
         }
     }
 
-    return ddtCorrByAs;
+    return ddtCorrs;
+}
+
+
+template<class BasePhaseSystem>
+void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::dragCorrs
+(
+    PtrList<volVectorField>& dragCorrs,
+    PtrList<surfaceScalarField>& dragCorrfs
+) const
+{
+    const phaseSystem::phaseModelList& phases = this->phaseModels_;
+
+    PtrList<volVectorField> Uphis(phases.size());
+
+    forAll(phases, i)
+    {
+        if (!phases[i].stationary())
+        {
+            Uphis.set
+            (
+                i,
+                fvc::reconstruct(phases[i].phi())
+            );
+        }
+    }
+
+    forAllConstIter(KdTable, Kds_, KdIter)
+    {
+        const volScalarField& K(*KdIter());
+        const phaseInterface interface(*this, KdIter.key());
+
+        const phaseModel& phase1 = interface.phase1();
+        const phaseModel& phase2 = interface.phase2();
+
+        const label phase1i = phase1.index();
+        const label phase2i = phase2.index();
+
+        if (!phase1.stationary())
+        {
+            const volScalarField K1
+            (
+                (phase2/max(phase2, phase2.residualAlpha()))*K
+            );
+
+            addField
+            (
+                phase1,
+                "dragCorr",
+                K1
+               *(
+                    phase2.stationary()
+                 ? -Uphis[phase1i]
+                 :  (Uphis[phase2i] - Uphis[phase1i])
+                ),
+                dragCorrs
+            );
+
+            addField
+            (
+                phase1,
+                "dragCorrf",
+                fvc::interpolate(K1)
+               *(
+                    phase2.stationary()
+                 ? -phase1.phi()
+                 :  (phase2.phi() - phase1.phi())
+                ),
+                dragCorrfs
+            );
+        }
+
+        if (!phase2.stationary())
+        {
+            const volScalarField K2
+            (
+                (phase1/max(phase1, phase1.residualAlpha()))*K
+            );
+
+            addField
+            (
+                phase2,
+                "dragCorr",
+                K2
+               *(
+                    phase1.stationary()
+                 ? -Uphis[phase2i]
+                 : (Uphis[phase1i] - Uphis[phase2i])
+                ),
+                dragCorrs
+            );
+
+            addField
+            (
+                phase2,
+                "dragCorrf",
+                fvc::interpolate(K2)
+               *(
+                    phase1.stationary()
+                 ? -phase2.phi()
+                 :  (phase1.phi() - phase2.phi())
+                ),
+                dragCorrfs
+            );
+        }
+    }
 }
 
 
@@ -1085,9 +1307,10 @@ template<class BasePhaseSystem>
 void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialElimination
 (
     const PtrList<volScalarField>& rAUs,
-    const PtrList<volVectorField>& KdUByAs,
+    const PtrList<volVectorField>& KdUs,
     const PtrList<surfaceScalarField>& alphafs,
-    const PtrList<surfaceScalarField>& phiKdPhis
+    const PtrList<surfaceScalarField>& rAUfs,
+    const PtrList<surfaceScalarField>& KdPhis
 )
 {
     Info<< "Inverting drag systems: ";
@@ -1116,15 +1339,15 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialElimination
     {
         if (!phases[i].stationary())
         {
-            phases[i].URef() += KdUByAs[i];
-            phases[i].phiRef() += phiKdPhis[i];
+            phases[i].URef() += rAUs[i]*KdUs[i];
+            phases[i].phiRef() += rAUfs[i]*KdPhis[i];
         }
     }
 
     {
         // Create drag coefficient matrices
         PtrList<PtrList<volScalarField>> KdByAs(phases.size());
-        PtrList<PtrList<surfaceScalarField>> phiKds(phases.size());
+        PtrList<PtrList<surfaceScalarField>> KdByAfs(phases.size());
 
         forAll(phases, i)
         {
@@ -1134,7 +1357,7 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialElimination
                 new PtrList<volScalarField>(phases.size())
             );
 
-            phiKds.set
+            KdByAfs.set
             (
                 i,
                 new PtrList<surfaceScalarField>(phases.size())
@@ -1149,44 +1372,58 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialElimination
             const label phase1i = interface.phase1().index();
             const label phase2i = interface.phase2().index();
 
+            const volScalarField K1
+            (
+                interface.phase2()
+               /max(interface.phase2(), interface.phase2().residualAlpha())
+               *K
+            );
+
+            const volScalarField K2
+            (
+                interface.phase1()
+               /max(interface.phase1(), interface.phase1().residualAlpha())
+               *K
+            );
+
             addField
             (
                 interface.phase2(),
                 "KdByA",
-                -rAUs[phase1i]*K,
+               -rAUs[phase1i]*K1,
                 KdByAs[phase1i]
             );
             addField
             (
                 interface.phase1(),
                 "KdByA",
-                -rAUs[phase2i]*K,
+               -rAUs[phase2i]*K2,
                 KdByAs[phase2i]
             );
 
             addField
             (
                 interface.phase2(),
-                "phiKd",
-                fvc::interpolate(KdByAs[phase1i][phase2i]),
-                phiKds[phase1i]
+                "KdByAf",
+               -rAUfs[phase1i]*fvc::interpolate(K1),
+                KdByAfs[phase1i]
             );
             addField
             (
                 interface.phase1(),
-                "phiKd",
-                fvc::interpolate(KdByAs[phase2i][phase1i]),
-                phiKds[phase2i]
+                "KdByAf",
+               -rAUfs[phase2i]*fvc::interpolate(K2),
+                KdByAfs[phase2i]
             );
         }
 
         forAll(phases, i)
         {
             this->fillFields("KdByAs", dimless, KdByAs[i]);
-            this->fillFields("phiKds", dimless, phiKds[i]);
+            this->fillFields("KdByAfs", dimless, KdByAfs[i]);
 
             KdByAs[i][i] = 1;
-            phiKds[i][i] = 1;
+            KdByAfs[i][i] = 1;
         }
 
         // Decompose
@@ -1195,23 +1432,23 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialElimination
             for (label j = i + 1; j < phases.size(); j++)
             {
                 KdByAs[i][j] /= KdByAs[i][i];
-                phiKds[i][j] /= phiKds[i][i];
+                KdByAfs[i][j] /= KdByAfs[i][i];
                 for (label k = i + 1; k < phases.size(); ++ k)
                 {
                     KdByAs[j][k] -= KdByAs[j][i]*KdByAs[i][k];
-                    phiKds[j][k] -= phiKds[j][i]*phiKds[i][k];
+                    KdByAfs[j][k] -= KdByAfs[j][i]*KdByAfs[i][k];
                 }
             }
         }
 
         {
             volScalarField detKdByAs(KdByAs[0][0]);
-            surfaceScalarField detPhiKdfs(phiKds[0][0]);
+            surfaceScalarField detPhiKdfs(KdByAfs[0][0]);
 
             for (label i = 1; i < phases.size(); i++)
             {
                 detKdByAs *= KdByAs[i][i];
-                detPhiKdfs *= phiKds[i][i];
+                detPhiKdfs *= KdByAfs[i][i];
             }
 
             Info<< "Min cell/face det = " << gMin(detKdByAs.primitiveField())
@@ -1226,7 +1463,7 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialElimination
                 for (label j = 0; j < i; j ++)
                 {
                     phases[i].URef() -= KdByAs[i][j]*phases[j].U();
-                    phases[i].phiRef() -= phiKds[i][j]*phases[j].phi();
+                    phases[i].phiRef() -= KdByAfs[i][j]*phases[j].phi();
                 }
             }
         }
@@ -1237,10 +1474,10 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialElimination
                 for (label j = phases.size() - 1; j > i; j--)
                 {
                     phases[i].URef() -= KdByAs[i][j]*phases[j].U();
-                    phases[i].phiRef() -= phiKds[i][j]*phases[j].phi();
+                    phases[i].phiRef() -= KdByAfs[i][j]*phases[j].phi();
                 }
                 phases[i].URef() /= KdByAs[i][i];
-                phases[i].phiRef() /= phiKds[i][i];
+                phases[i].phiRef() /= KdByAfs[i][i];
             }
         }
     }
@@ -1255,7 +1492,7 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialEliminationf
 (
     const PtrList<surfaceScalarField>& rAUfs,
     const PtrList<surfaceScalarField>& alphafs,
-    const PtrList<surfaceScalarField>& phiKdPhifs
+    const PtrList<surfaceScalarField>& KdPhifs
 )
 {
     Info<< "Inverting drag system: ";
@@ -1268,7 +1505,7 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialEliminationf
     {
         if (!phases[i].stationary())
         {
-            phases[i].phiRef() += phiKdPhifs[i];
+            phases[i].phiRef() += rAUfs[i]*KdPhifs[i];
         }
     }
 
@@ -1293,18 +1530,32 @@ void Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::partialEliminationf
             const label phase1i = interface.phase1().index();
             const label phase2i = interface.phase2().index();
 
+            const surfaceScalarField alpha1f
+            (
+                fvc::interpolate(interface.phase1())
+            );
+
+            const surfaceScalarField alpha2f
+            (
+                fvc::interpolate(interface.phase2())
+            );
+
             addField
             (
                 interface.phase2(),
                 "phiKdf",
-                -rAUfs[phase1i]*Kf,
+               -rAUfs[phase1i]
+               *alpha2f/max(alpha2f, interface.phase2().residualAlpha())
+               *Kf,
                 phiKdfs[phase1i]
             );
             addField
             (
                 interface.phase1(),
                 "phiKdf",
-                -rAUfs[phase2i]*Kf,
+               -rAUfs[phase2i]
+               *alpha1f/max(alpha1f, interface.phase1().residualAlpha())
+               *Kf,
                 phiKdfs[phase2i]
             );
         }

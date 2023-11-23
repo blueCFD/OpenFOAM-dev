@@ -65,19 +65,11 @@ drag
     solids_dispersedIn_gas
     {
         type            GidaspowErgunWenYu;
-        residualAlpha   1e-5;
-        residualRe      1e-5;
     }
 }
 
 virtualMass
-{
-    solids_dispersedIn_gas
-    {
-        type            constantCoefficient;
-        Cvm             0;
-    }
-}
+{}
 
 heatTransfer
 {

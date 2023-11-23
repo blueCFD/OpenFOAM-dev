@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,36 +28,13 @@ License
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class Type>
-void Foam::patchToPatchFvPatchFieldMapper::map
-(
-    Field<Type>& f,
-    const Field<Type>& mapF
-) const
-{
-    f = forward_ ? pToP_.srcToTgt(mapF) : pToP_.tgtToSrc(mapF);
-}
-
-
-template<class Type>
-Foam::tmp<Foam::Field<Type>> Foam::patchToPatchFvPatchFieldMapper::map
-(
-    const Field<Type>& mapF
-) const
-{
-    tmp<Field<Type>> tf(new Field<Type>(size_));
-    map(tf.ref(), mapF);
-    return tf;
-}
-
-
-template<class Type>
 void Foam::patchToPatchFvPatchFieldMapper::operator()
 (
     Field<Type>& f,
     const tmp<Field<Type>>& tmapF
 ) const
 {
-    map(f, tmapF());
+    operator()(f, tmapF());
     tmapF.clear();
 }
 
@@ -69,8 +46,60 @@ Foam::patchToPatchFvPatchFieldMapper::operator()
     const tmp<Field<Type>>& tmapF
 ) const
 {
-    tmp<Foam::Field<Type>> tf(map(tmapF()));
+    tmp<Foam::Field<Type>> tf(operator()(tmapF()));
     tmapF.clear();
+    return tf;
+}
+
+
+template<class Type>
+void Foam::patchToPatchLeftOverFvPatchFieldMapper::map
+(
+    Field<Type>& f,
+    const Field<Type>& mapF
+) const
+{
+    f = pToP_.srcToTgt(mapF, f);
+}
+
+
+template<class Type>
+Foam::tmp<Foam::Field<Type>>
+Foam::patchToPatchLeftOverFvPatchFieldMapper::map
+(
+    const Field<Type>& mapF
+) const
+{
+    FatalErrorInFunction
+        << "Not a valid operation for this mapper, which should only be "
+        << "used for modifying an existing, valid, field"
+        << exit(FatalError);
+    return tmp<Field<Type>>(nullptr);
+}
+
+
+template<class Type>
+void Foam::patchToPatchNormalisedFvPatchFieldMapper::map
+(
+    Field<Type>& f,
+    const Field<Type>& mapF
+) const
+{
+    f = pToP_.srcToTgt(mapF);
+
+    pS_.stabilise(f);
+}
+
+
+template<class Type>
+Foam::tmp<Foam::Field<Type>>
+Foam::patchToPatchNormalisedFvPatchFieldMapper::map
+(
+    const Field<Type>& mapF
+) const
+{
+    tmp<Field<Type>> tf(new Field<Type>());
+    map(tf.ref(), mapF);
     return tf;
 }
 

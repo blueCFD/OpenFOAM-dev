@@ -16,7 +16,6 @@ $(fvPatches)/fvPatch/fvPatchNew.C
 
 basicFvPatches = $(fvPatches)/basic
 $(basicFvPatches)/coupled/coupledFvPatch.C
-$(basicFvPatches)/generic/genericFvPatch.C
 
 constraintFvPatches = $(fvPatches)/constraint
 $(constraintFvPatches)/cyclic/cyclicFvPatch.C
@@ -127,7 +126,6 @@ $(fvMeshStitchers)/fvMeshStitcher/fvMeshStitcherNew.C
 $(fvMeshStitchers)/stationary/fvMeshStitchersStationary.C
 
 functionObjects/fvMeshFunctionObject/fvMeshFunctionObject.C
-functionObjects/volRegion/volRegion.C
 functionObjects/fvModelFunctionObject/fvModelFunctionObject.C
 
 fvPatchFields = fields/fvPatchFields
@@ -197,6 +195,7 @@ $(derivedFvPatchFields)/inletOutlet/inletOutletFvPatchFields.C
 $(derivedFvPatchFields)/inletOutletTotalTemperature/inletOutletTotalTemperatureFvPatchScalarField.C
 $(derivedFvPatchFields)/mappedFlowRateVelocity/mappedFlowRateVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/mappedInternalValue/mappedInternalValueFvPatchFields.C
+$(derivedFvPatchFields)/mapped/mappedFvPatchFields.C
 $(derivedFvPatchFields)/mappedValue/mappedValueFvPatchFields.C
 $(derivedFvPatchFields)/mappedValueAndPatchInternalValue/mappedValueAndPatchInternalValueFvPatchFields.C
 $(derivedFvPatchFields)/mappedVelocityFlux/mappedVelocityFluxFvPatchField.C
@@ -262,7 +261,6 @@ $(fvsPatchFields)/fvsPatchField/fvsPatchFields.C
 
 basicFvsPatchFields = $(fvsPatchFields)/basic
 $(basicFvsPatchFields)/calculated/calculatedFvsPatchFields.C
-$(basicFvsPatchFields)/nonConformalCalculated/nonConformalCalculatedFvsPatchFields.C
 $(basicFvsPatchFields)/coupled/coupledFvsPatchFields.C
 $(basicFvsPatchFields)/fixedValue/fixedValueFvsPatchFields.C
 $(basicFvsPatchFields)/sliced/slicedFvsPatchFields.C
@@ -280,6 +278,10 @@ $(constraintFvsPatchFields)/internal/internalFvsPatchFields.C
 $(constraintFvsPatchFields)/nonConformalCyclic/nonConformalCyclicFvsPatchFields.C
 $(constraintFvsPatchFields)/nonConformalError/nonConformalErrorFvsPatchFields.C
 $(constraintFvsPatchFields)/nonConformalProcessorCyclic/nonConformalProcessorCyclicFvsPatchFields.C
+
+derivedFvsPatchFields = $(fvsPatchFields)/derived
+$(derivedFvsPatchFields)/polyFaces/polyFacesFvsPatchLabelField.C
+$(derivedFvsPatchFields)/nonConformalPolyFaces/nonConformalPolyFacesFvsPatchLabelField.C
 
 fields/volFields/volFields.C
 fields/surfaceFields/surfaceFields.C
@@ -453,7 +455,8 @@ $(general)/findRefCell/findRefCell.C
 $(general)/constrainHbyA/constrainHbyA.C
 $(general)/adjustPhi/adjustPhi.C
 $(general)/bound/bound.C
-$(general)/CorrectPhi/correctUphiBCs.C
+$(general)/correctPhi/fvCorrectPhi.C
+$(general)/correctPhi/correctUphiBCs.C
 $(general)/pressureReference/pressureReference.C
 $(general)/levelSet/levelSet.C
 $(general)/surfaceToVolVelocity/surfaceToVolVelocity.C

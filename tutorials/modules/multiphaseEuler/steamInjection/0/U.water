@@ -7,7 +7,7 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    format      binary;
+    format      ascii;
     class       volVectorField;
     location    "0";
     object      U.water;
@@ -25,12 +25,14 @@ boundaryField
         type            fixedValue;
         value           uniform (0 0.1 0);
     }
+
     outlet
     {
         type            pressureInletOutletVelocity;
         phi             phi.water;
         value           $internalField;
     }
+
     walls
     {
         type            noSlip;

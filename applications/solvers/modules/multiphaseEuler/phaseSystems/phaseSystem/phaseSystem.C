@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,9 +31,8 @@ License
 #include "fvcDiv.H"
 #include "fvcGrad.H"
 #include "fvcSnGrad.H"
-#include "CorrectPhi.T.H"
+#include "fvCorrectPhi.H"
 #include "fvcMeshPhi.H"
-#include "alphaContactAngleFvPatchScalarField.H"
 #include "correctContactAngle.H"
 #include "dragModel.H"
 #include "movingWallVelocityFvPatchVectorField.H"
@@ -226,6 +225,10 @@ Foam::phaseSystem::phaseSystem
 
     mesh_(mesh),
 
+    pimple_(mesh_.lookupObject<pimpleNoLoopControl>("solutionControl")),
+
+    MRF_(mesh_),
+
     referencePhaseName_(lookupOrDefault("referencePhase", word::null)),
 
     phaseModels_
@@ -247,8 +250,6 @@ Foam::phaseSystem::phaseSystem
         mesh,
         dimensionedScalar(dimPressure/dimTime, 0)
     ),
-
-    MRF_(mesh_),
 
     deltaN_
     (
@@ -727,8 +728,7 @@ void Foam::phaseSystem::correctBoundaryFlux()
 void Foam::phaseSystem::correctPhi
 (
     const volScalarField& p_rgh,
-    const tmp<volScalarField>& divU,
-    const bool correctPhi,
+    const autoPtr<volScalarField>& divU,
     const pressureReference& pressureReference,
     nonOrthogonalSolutionControl& pimple
 )
@@ -761,42 +761,69 @@ void Foam::phaseSystem::correctPhi
     // Correct fixed-flux BCs to be consistent with the velocity BCs
     correctBoundaryFlux();
 
+    phi_ = Zero;
+    PtrList<surfaceScalarField> alphafs(phaseModels_.size());
+    forAll(movingPhases(), movingPhasei)
     {
-        phi_ = Zero;
-        PtrList<surfaceScalarField> alphafs(phaseModels_.size());
-        forAll(movingPhases(), movingPhasei)
+        phaseModel& phase = movingPhases()[movingPhasei];
+        const label phasei = phase.index();
+        const volScalarField& alpha = phase;
+
+        alphafs.set(phasei, fvc::interpolate(alpha).ptr());
+
+        // Calculate absolute flux
+        // from the mapped surface velocity
+        phi_ += alphafs[phasei]*(mesh_.Sf() & phase.UfRef());
+    }
+
+    if (incompressible())
+    {
+        fv::correctPhi
+        (
+            phi_,
+            movingPhases()[0].U(),
+            p_rgh,
+            autoPtr<volScalarField>(),
+            divU,
+            pressureReference,
+            pimple
+        );
+    }
+    else
+    {
+        volScalarField psi
+        (
+            volScalarField::New
+            (
+                "psi",
+                mesh_,
+                dimensionedScalar(dimless/dimPressure, 0)
+            )
+        );
+
+        forAll(phases(), phasei)
         {
-            phaseModel& phase = movingPhases()[movingPhasei];
-            const label phasei = phase.index();
+            phaseModel& phase = phases()[phasei];
             const volScalarField& alpha = phase;
 
-            alphafs.set(phasei, fvc::interpolate(alpha).ptr());
-
-            // Calculate absolute flux
-            // from the mapped surface velocity
-            phi_ += alphafs[phasei]*(mesh_.Sf() & phase.Uf());
+            psi += alpha*phase.thermo().psi()/phase.thermo().rho();
         }
 
-        if (correctPhi)
-        {
-            CorrectPhi
-            (
-                phi_,
-                movingPhases()[0].U(),
-                p_rgh,
-                // surfaceScalarField("rAUf", fvc::interpolate(rAU())),
-                dimensionedScalar(dimTime/dimDensity, 1),
-                divU(),
-                pressureReference,
-                pimple
-            );
-        }
-
-        // Make the flux relative to the mesh motion
-        fvc::makeRelative(phi_, movingPhases()[0].U());
-
-        setMixturePhi(alphafs, phi_);
+        fv::correctPhi
+        (
+            phi_,
+            p_rgh,
+            psi,
+            autoPtr<volScalarField>(),
+            divU(),
+            pimple
+        );
     }
+
+    // Make the flux relative to the mesh motion
+    fvc::makeRelative(phi_, movingPhases()[0].U());
+
+    setMixturePhi(alphafs, phi_);
 }
 
 

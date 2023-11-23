@@ -21,17 +21,5 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lcombustionModels \
-    -lphaseSystem
-
-LIB_LIBS += \
-    -lfiniteVolume \
-    -leulerianInterfacialModels \
-    -leulerianInterfacialCompositionModels \
-    -lmultiphaseMomentumTransportModels \
-    -lfluidThermophysicalModels \
-    -lspecie \
-    -lreactionThermophysicalModels \
-    -lmomentumTransportModels \
-    -lfluidThermoMomentumTransportModels \
-    -lmeshTools \
-    -lsampling
+    -lphaseSystem \
+    -leulerianInterfacialModels

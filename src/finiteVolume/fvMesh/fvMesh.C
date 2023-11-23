@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,8 @@ License
 #include "fvMeshMover.H"
 #include "fvMeshStitcher.H"
 #include "nonConformalFvPatch.H"
-#include "nonConformalCalculatedFvsPatchFields.H"
+#include "polyFacesFvsPatchLabelField.H"
+#include "nonConformalPolyFacesFvsPatchLabelField.H"
 #include "polyTopoChangeMap.H"
 #include "MapFvFields.T.H"
 #include "fvMeshMapper.H"
@@ -287,7 +288,7 @@ Foam::wordList Foam::fvMesh::polyFacesPatchTypes() const
     wordList wantedPatchTypes
     (
         boundary().size(),
-        calculatedFvsPatchLabelField::typeName
+        polyFacesFvsPatchLabelField::typeName
     );
 
     forAll(boundary(), patchi)
@@ -297,7 +298,7 @@ Foam::wordList Foam::fvMesh::polyFacesPatchTypes() const
         if (isA<nonConformalFvPatch>(fvp))
         {
             wantedPatchTypes[patchi] =
-                nonConformalCalculatedFvsPatchLabelField::typeName;
+                nonConformalPolyFacesFvsPatchLabelField::typeName;
         }
     }
 
@@ -755,7 +756,7 @@ void Foam::fvMesh::removeFvBoundary()
 }
 
 
-void Foam::fvMesh::reset(const fvMesh& newMesh)
+void Foam::fvMesh::swap(fvMesh& otherMesh)
 {
     // Clear the sliced fields
     clearGeom();
@@ -766,27 +767,38 @@ void Foam::fvMesh::reset(const fvMesh& newMesh)
     // Clear any non-updateable addressing
     clearAddressing(true);
 
-    polyMesh::reset(newMesh);
+    polyMesh::swap(otherMesh);
 
-    // Reset the number of patches in case the decomposition changed
-    boundary_.setSize(boundaryMesh().size());
-
-    forAll(boundaryMesh(), patchi)
+    auto updatePatches = []
+    (
+        const polyPatchList& patches,
+        fvBoundaryMesh& boundaryMesh
+    )
     {
-        // Construct new processor patches in case the decomposition changed
-        if (isA<processorPolyPatch>(boundaryMesh()[patchi]))
+        boundaryMesh.setSize(patches.size());
+
+        forAll(patches, patchi)
         {
-            boundary_.set
-            (
-                patchi,
-                fvPatch::New
+            // Construct new processor patches, as the decomposition may have
+            // changed. Leave other patches as is.
+
+            if (isA<processorPolyPatch>(patches[patchi]))
+            {
+                boundaryMesh.set
                 (
-                    boundaryMesh()[patchi],
-                    boundary_
-                )
-            );
+                    patchi,
+                    fvPatch::New
+                    (
+                        patches[patchi],
+                        boundaryMesh
+                    )
+                );
+            }
         }
-    }
+    };
+
+    updatePatches(boundaryMesh(), boundary_);
+    updatePatches(otherMesh.boundaryMesh(), otherMesh.boundary_);
 }
 
 
@@ -929,13 +941,6 @@ const Foam::surfaceLabelField::Boundary& Foam::fvMesh::polyFacesBf() const
                 polyFacesPatchTypes(),
                 boundaryMesh().types()
             );
-
-        forAll(boundary(), patchi)
-        {
-            const polyPatch& pp = boundaryMesh()[patchi];
-            (*polyFacesBfPtr_)[patchi] =
-                labelList(identity(pp.size()) + pp.start());
-        }
     }
 
     return *polyFacesBfPtr_;
@@ -1679,10 +1684,10 @@ bool Foam::fvMesh::writeObject
 {
     bool ok = true;
 
-    if (!conformal())
+    if (!conformal() && pointsWriteOpt() == IOobject::AUTO_WRITE)
     {
-        // Create a full surface field with the polyFacesBf boundary field then
-        // overwrite all conformal faces with an index of -1 to save disk space
+        // Create a full surface field with the polyFacesBf boundary field to
+        // write to disk. Make the internal field uniform to save disk space.
 
         surfaceLabelField polyFaces
         (
@@ -1692,15 +1697,6 @@ bool Foam::fvMesh::writeObject
             labelField(nInternalFaces(), -1),
             *polyFacesBfPtr_
         );
-
-        forAll(boundary(), patchi)
-        {
-            const fvPatch& fvp = boundary()[patchi];
-            if (!isA<nonConformalFvPatch>(fvp))
-            {
-                polyFaces.boundaryFieldRef()[patchi] = -1;
-            }
-        }
 
         ok = ok & polyFaces.write(write);
     }

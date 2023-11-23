@@ -62,6 +62,7 @@ mappedFlowRateVelocityFvPatchVectorField
     mappedPatchBase::validateMapForField
     (
         *this,
+        iF,
         dict,
         mappedPatchBase::from::differentPatch
     );
@@ -122,7 +123,7 @@ void Foam::mappedFlowRateVelocityFvPatchVectorField::updateCoeffs()
 
     const scalarField phip
     (
-        mapper.distribute
+        mapper.fromNeigbour
         (
             nbrPatch.lookupPatchField<surfaceScalarField, scalar>(nbrPhiName_)
         )

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -152,7 +152,7 @@ namespace fvc
     (
         const volScalarField& rho,
         const VolField<Type>& U,
-        const SurfaceField<Type>& Uf
+        const SurfaceField<Type>& rhoUf
     );
 
     template<class Type>
@@ -166,6 +166,34 @@ namespace fvc
     template<class Type>
     tmp<SurfaceField<typename Foam::flux<Type>::type>> ddtCorr
     (
+        const volScalarField& rho,
+        const VolField<Type>& U,
+        const SurfaceField<typename Foam::flux<Type>::type>& phi,
+        const autoPtr<SurfaceField<Type>>& rhoUf
+    );
+
+    template<class Type>
+    tmp<SurfaceField<typename Foam::flux<Type>::type>> ddtCorr
+    (
+        const volScalarField& alpha,
+        const volScalarField& rho,
+        const VolField<Type>& U,
+        const SurfaceField<Type>& Uf
+    );
+
+    template<class Type>
+    tmp<SurfaceField<typename Foam::flux<Type>::type>> ddtCorr
+    (
+        const volScalarField& alpha,
+        const volScalarField& rho,
+        const VolField<Type>& U,
+        const SurfaceField<typename Foam::flux<Type>::type>& phi
+    );
+
+    template<class Type>
+    tmp<SurfaceField<typename Foam::flux<Type>::type>> ddtCorr
+    (
+        const volScalarField& alpha,
         const volScalarField& rho,
         const VolField<Type>& U,
         const SurfaceField<typename Foam::flux<Type>::type>& phi,

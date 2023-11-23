@@ -54,18 +54,12 @@ class solver
 :
     public regIOobject
 {
-public:
+protected:
 
-    // Public Data
+    // Protected Data
 
         //- Region mesh
-        fvMesh& mesh;
-
-        //- Time
-        const Time& runTime;
-
-        //- PIMPLE inner-loop controls
-        pimpleNoLoopControl pimple;
+        fvMesh& mesh_;
 
         //- Switch for steady-state
         //  Set automatically from the selected ddt scheme
@@ -76,7 +70,18 @@ public:
         bool LTS;
 
 
-    // Public Static Data
+public:
+
+    // Public Data
+
+        //- Region mesh
+        const fvMesh& mesh;
+
+        //- Time
+        const Time& runTime;
+
+        //- PIMPLE inner-loop controls
+        pimpleNoLoopControl pimple;
 
         //- deltaT increase factor
         static scalar deltaTFactor;
@@ -134,6 +139,9 @@ public:
             const word& solverName,
             fvMesh& mesh
         );
+
+        //- Load the specified solver library
+        static void load(const word& solverName);
 
 
     //- Destructor

@@ -25,6 +25,7 @@ License
 
 #include "incompressibleFluid.H"
 #include "localEulerDdtScheme.H"
+#include "linear.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -118,9 +119,12 @@ Foam::solvers::incompressibleFluid::incompressibleFluid(fvMesh& mesh)
 
     momentumTransport->validate();
 
-    if (mesh.dynamic())
+    if (mesh.dynamic() || MRF.size())
     {
         Info<< "Constructing face momentum Uf" << endl;
+
+        // Ensure the U BCs are up-to-date before constructing Uf
+        U.correctBoundaryConditions();
 
         Uf = new surfaceVectorField
         (
@@ -190,7 +194,7 @@ void Foam::solvers::incompressibleFluid::preSolve()
     }
 
     // Update the mesh for topology change, mesh to mesh mapping
-    mesh.update();
+    mesh_.update();
 }
 
 

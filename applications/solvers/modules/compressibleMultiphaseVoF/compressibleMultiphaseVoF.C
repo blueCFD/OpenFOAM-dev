@@ -24,9 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "compressibleMultiphaseVoF.H"
-#include "CorrectPhi.T.H"
 #include "geometricZeroField.H"
 #include "fvcDdt.H"
+#include "fvcDiv.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -102,7 +102,7 @@ Foam::solvers::compressibleMultiphaseVoF::compressibleMultiphaseVoF
     // Read the controls
     readControls();
 
-    if (correctPhi)
+    if (correctPhi || mesh.topoChanging())
     {
         rAU = new volScalarField
         (
