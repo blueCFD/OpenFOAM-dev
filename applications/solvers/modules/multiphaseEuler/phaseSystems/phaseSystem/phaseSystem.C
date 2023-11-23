@@ -644,20 +644,38 @@ void Foam::phaseSystem::correctSpecies()
 }
 
 
-void Foam::phaseSystem::correctTurbulence()
+void Foam::phaseSystem::predictMomentumTransport()
 {
     forAll(phaseModels_, phasei)
     {
-        phaseModels_[phasei].correctTurbulence();
+        phaseModels_[phasei].predictMomentumTransport();
     }
 }
 
 
-void Foam::phaseSystem::correctEnergyTransport()
+void Foam::phaseSystem::predictThermophysicalTransport()
 {
     forAll(phaseModels_, phasei)
     {
-        phaseModels_[phasei].correctEnergyTransport();
+        phaseModels_[phasei].predictThermophysicalTransport();
+    }
+}
+
+
+void Foam::phaseSystem::correctMomentumTransport()
+{
+    forAll(phaseModels_, phasei)
+    {
+        phaseModels_[phasei].correctMomentumTransport();
+    }
+}
+
+
+void Foam::phaseSystem::correctThermophysicalTransport()
+{
+    forAll(phaseModels_, phasei)
+    {
+        phaseModels_[phasei].correctThermophysicalTransport();
     }
 }
 

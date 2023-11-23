@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,6 +46,9 @@ SourceFiles
 namespace Foam
 {
 
+template<class T>
+class UPtrListDictionary;
+
 /*---------------------------------------------------------------------------*\
                       Class PtrListDictionary Declaration
 \*---------------------------------------------------------------------------*/
@@ -57,6 +60,12 @@ class PtrListDictionary
 {
 
 public:
+
+    // Related types
+
+        //- Declare friendship with the UPtrListDictionary class
+        friend class UPtrListDictionary<T>;
+
 
     // Constructors
 
@@ -87,6 +96,13 @@ public:
 
         //- Set element to tmp value provided and return old element
         autoPtr<T> set(const label, const word& key, tmp<T>&);
+
+
+        // Conversion
+
+            //- Convert to list of different pointer type
+            template<class T2>
+            UPtrListDictionary<T2> convert();
 
 
     // Member Operators

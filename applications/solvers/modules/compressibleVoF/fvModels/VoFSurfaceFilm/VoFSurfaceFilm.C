@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "VoFSurfaceFilm.H"
-#include "compressibleTwoPhaseMixture.H"
+#include "compressibleTwoPhaseVoFMixture.H"
 #include "fvmSup.H"
 #include "uniformDimensionedFields.H"
 #include "addToRunTimeSelectionTable.H"
@@ -78,7 +78,7 @@ Foam::wordList Foam::fv::VoFSurfaceFilm::addSupFields() const
         {
             surfaceFilm_.rhoPrimary().name(),
             surfaceFilm_.UPrimary().name(),
-            surfaceFilm_.TPrimary().name()
+            surfaceFilm_.primaryThermo().he().name()
         }
     );
 }
@@ -105,7 +105,7 @@ void Foam::fv::VoFSurfaceFilm::correct()
 
 void Foam::fv::VoFSurfaceFilm::addSup
 (
-    const volScalarField& rho,
+    const volScalarField& alpha,
     fvMatrix<scalar>& eqn,
     const word& fieldName
 ) const
@@ -119,14 +119,31 @@ void Foam::fv::VoFSurfaceFilm::addSup
     {
         eqn += surfaceFilm_.Srho();
     }
-    else if (fieldName == surfaceFilm_.TPrimary().name())
+    else
     {
-        const volScalarField::Internal Cv(surfaceFilm_.primaryThermo().Cv());
+        FatalErrorInFunction
+            << "Support for field " << fieldName << " is not implemented"
+            << exit(FatalError);
+    }
+}
 
-        eqn +=
-            surfaceFilm_.Sh()()/Cv
-          + surfaceFilm_.Srho()
-           *(eqn.psi() - surfaceFilm_.primaryThermo().he()/Cv);
+
+void Foam::fv::VoFSurfaceFilm::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const word& fieldName
+) const
+{
+    if (debug)
+    {
+        Info<< type() << ": applying source to " << eqn.psi().name() << endl;
+    }
+
+    if (fieldName == surfaceFilm_.primaryThermo().he().name())
+    {
+        eqn += surfaceFilm_.Sh();
     }
     else
     {

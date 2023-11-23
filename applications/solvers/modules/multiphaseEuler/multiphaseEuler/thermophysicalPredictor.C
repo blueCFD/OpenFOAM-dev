@@ -76,7 +76,10 @@ void Foam::solvers::multiphaseEuler::energyPredictor()
 {
     for (int Ecorr=0; Ecorr<nEnergyCorrectors; Ecorr++)
     {
-        fluid.correctEnergyTransport();
+        if (pimple.predictTransport())
+        {
+            fluid.predictThermophysicalTransport();
+        }
 
         autoPtr<phaseSystem::heatTransferTable>
             heatTransferPtr(fluid.heatTransfer());
@@ -120,7 +123,6 @@ void Foam::solvers::multiphaseEuler::thermophysicalPredictor()
 {
     if (pimple.thermophysics())
     {
-        // compositionPredictor();
         energyPredictor();
 
         forAll(phases, phasei)

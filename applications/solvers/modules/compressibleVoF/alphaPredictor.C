@@ -32,78 +32,59 @@ License
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::solvers::compressibleVoF::alphaPredictor()
+void Foam::solvers::compressibleVoF::alphaSuSp
+(
+    const surfaceScalarField& phiCN,
+    tmp<volScalarField>& divU,
+    tmp<volScalarField::Internal>& Su,
+    tmp<volScalarField::Internal>& Sp
+)
 {
-    #include "alphaControls.H"
+    Sp = volScalarField::Internal::New
+    (
+        "Sp",
+        mesh,
+        dimensionedScalar(dgdt.dimensions(), 0)
+    );
 
-    volScalarField& alpha2(mixture.alpha2());
+    Su = volScalarField::Internal::New
+    (
+        "Su",
+        mesh,
+        dimensionedScalar(dgdt.dimensions(), 0)
+    );
 
-    const volScalarField& rho1 = mixture.thermo1().rho();
-    const volScalarField& rho2 = mixture.thermo2().rho();
-
-    tmp<surfaceScalarField> talphaPhi1(alphaPhi1);
-
-    if (nAlphaSubCycles > 1)
+    if (fvModels().addsSupToField(alpha1.name()))
     {
-        dimensionedScalar totalDeltaT = runTime.deltaT();
+        // Phase change alpha1 source
+        const fvScalarMatrix alphaSup(fvModels().source(alpha1));
 
-        talphaPhi1 = new surfaceScalarField
-        (
-            IOobject
-            (
-                "alphaPhi1",
-                runTime.name(),
-                mesh
-            ),
-            mesh,
-            dimensionedScalar(alphaPhi1.dimensions(), 0)
-        );
-
-        surfaceScalarField rhoPhiSum
-        (
-            IOobject
-            (
-                "rhoPhiSum",
-                runTime.name(),
-                mesh
-            ),
-            mesh,
-            dimensionedScalar(rhoPhi.dimensions(), 0)
-        );
-
-        tmp<volScalarField> trSubDeltaT;
-
-        if (LTS)
-        {
-            trSubDeltaT =
-                fv::localEulerDdt::localRSubDeltaT(mesh, nAlphaSubCycles);
-        }
-
-        for
-        (
-            subCycle<volScalarField> alphaSubCycle(alpha1, nAlphaSubCycles);
-            !(++alphaSubCycle).end();
-        )
-        {
-            #include "alphaEqn.H"
-            talphaPhi1.ref() += (runTime.deltaT()/totalDeltaT)*alphaPhi1;
-            rhoPhiSum += (runTime.deltaT()/totalDeltaT)*rhoPhi;
-        }
-
-        alphaPhi1 = talphaPhi1();
-        rhoPhi = rhoPhiSum;
-    }
-    else
-    {
-        #include "alphaEqn.H"
+        Su = alphaSup.Su();
+        Sp = alphaSup.Sp();
     }
 
-    contErr =
-        (
-            fvc::ddt(rho)()() + fvc::div(rhoPhi)()()
-          - (fvModels().source(alpha1, rho1)&rho1)()
-          - (fvModels().source(alpha2, rho2)&rho2)()
-        );
+    volScalarField::Internal& SpRef = Sp.ref();
+    volScalarField::Internal& SuRef = Su.ref();
+
+    forAll(dgdt, celli)
+    {
+        if (dgdt[celli] > 0.0)
+        {
+            SpRef[celli] -= dgdt[celli]/max(1.0 - alpha1[celli], 1e-4);
+            SuRef[celli] += dgdt[celli]/max(1.0 - alpha1[celli], 1e-4);
+        }
+        else if (dgdt[celli] < 0.0)
+        {
+            SpRef[celli] += dgdt[celli]/max(alpha1[celli], 1e-4);
+        }
+    }
+
+    divU =
+    (
+        mesh.moving()
+      ? fvc::div(phiCN + mesh.phi())
+      : fvc::div(phiCN)
+    );
 }
 
 

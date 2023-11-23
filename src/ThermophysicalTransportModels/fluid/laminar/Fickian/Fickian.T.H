@@ -57,7 +57,8 @@ namespace Foam
 template<class BasicThermophysicalTransportModel>
 class Fickian
 :
-    public BasicThermophysicalTransportModel
+    public BasicThermophysicalTransportModel,
+    public UpdateableMeshObject<fvMesh>
 {
     // Private data
 
@@ -142,7 +143,22 @@ public:
         virtual tmp<fvScalarMatrix> divj(volScalarField& Yi) const;
 
         //- Update the diffusion coefficients
-        virtual void correct();
+        virtual void predict();
+
+
+        // Mesh changes
+
+            //- Update for mesh motion
+            virtual bool movePoints();
+
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap& map);
+
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap& map);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap& map);
 };
 
 

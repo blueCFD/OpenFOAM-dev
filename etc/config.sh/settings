@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -345,10 +345,6 @@ OpenFOAM | ThirdParty)
         then
             _foamAddLib     $mpcDir/lib$WM_COMPILER_LIB_ARCH
         fi
-
-        # Used by boost/CGAL:
-        export MPFR_ARCH_PATH=$mpfrDir
-        export GMP_ARCH_PATH=$gmpDir
     fi
     unset gcc_version gccDir
     unset gmp_version gmpDir  mpfr_version mpfrDir  mpc_version mpcDir

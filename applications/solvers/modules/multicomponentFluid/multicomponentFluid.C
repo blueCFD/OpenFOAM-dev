@@ -66,6 +66,8 @@ Foam::solvers::multicomponentFluid::multicomponentFluid(fvMesh& mesh)
         )
     )
 {
+    thermo.validate(type(), "h", "e");
+
     forAll(Y, i)
     {
         fields.add(Y[i]);
@@ -82,9 +84,22 @@ Foam::solvers::multicomponentFluid::~multicomponentFluid()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::solvers::multicomponentFluid::thermophysicalTransportCorrector()
+void Foam::solvers::multicomponentFluid::prePredictor()
 {
-    if (pimple.transportCorr())
+    isothermalFluid::prePredictor();
+
+    if (pimple.predictTransport())
+    {
+        thermophysicalTransport->predict();
+    }
+}
+
+
+void Foam::solvers::multicomponentFluid::postCorrector()
+{
+    isothermalFluid::postCorrector();
+
+    if (pimple.correctTransport())
     {
         thermophysicalTransport->correct();
     }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,8 +44,7 @@ SourceFiles
 #ifndef compressibleInterPhaseTransportModel_H
 #define compressibleInterPhaseTransportModel_H
 
-#include "twoPhaseMixture.H"
-#include "immiscibleCompressibleTwoPhaseMixture.H"
+#include "compressibleTwoPhaseVoFMixture.H"
 #include "compressibleMomentumTransportModels.H"
 #include "phaseCompressibleMomentumTransportModel.H"
 
@@ -68,7 +67,7 @@ class compressibleInterPhaseTransportModel
         Switch twoPhaseTransport_;
 
         //- Two-phase mixture
-        const compressibleTwoPhaseMixture& mixture_;
+        const compressibleTwoPhaseVoFMixture& mixture_;
 
         //- Mixture volumetric flux
         const surfaceScalarField& phi_;
@@ -77,10 +76,10 @@ class compressibleInterPhaseTransportModel
         const surfaceScalarField& alphaPhi1_;
 
         //- Phase-1 mass-flux (constructed for two-phase transport)
-        tmp<surfaceScalarField> alphaRhoPhi1_;
+        const surfaceScalarField& alphaRhoPhi1_;
 
         //- Phase-2 mass-flux (constructed for two-phase transport)
-        tmp<surfaceScalarField> alphaRhoPhi2_;
+        const surfaceScalarField& alphaRhoPhi2_;
 
         //- Mixture transport model (constructed for mixture transport)
         autoPtr<compressible::momentumTransportModel> mixtureMomentumTransport_;
@@ -106,7 +105,9 @@ public:
             const surfaceScalarField& phi,
             const surfaceScalarField& rhoPhi,
             const surfaceScalarField& alphaPhi1,
-            const compressibleTwoPhaseMixture& mixture
+            const surfaceScalarField& alphaRhoPhi1,
+            const surfaceScalarField& alphaRhoPhi2,
+            const compressibleTwoPhaseVoFMixture& mixture
         );
 
         //- Disallow default bitwise copy construction
@@ -121,9 +122,8 @@ public:
         //- Return the effective momentum stress divergence
         tmp<fvVectorMatrix> divDevTau(volVectorField& U) const;
 
-        //- Correct the phase mass-fluxes
-        // (required for the two-phase transport option)
-        void correctPhasePhi();
+        //- Predict the phase or mixture transport models
+        void predict();
 
         //- Correct the phase or mixture transport models
         void correct();

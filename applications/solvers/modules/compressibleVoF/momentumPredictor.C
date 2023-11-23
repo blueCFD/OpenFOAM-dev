@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,43 +24,27 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "compressibleVoF.H"
+#include "fvmSup.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
+Foam::tmp<Foam::fvVectorMatrix> Foam::solvers::compressibleVoF::divDevTau
+(
+    volVectorField& U
+)
+{
+    return
+        momentumTransport.divDevTau(U)
+      - fvm::Sp(contErr1() + contErr2(), U);
+}
+
+
 void Foam::solvers::compressibleVoF::momentumPredictor()
 {
-    tUEqn =
-    (
-        fvm::ddt(rho, U) + fvm::div(rhoPhi, U) - fvm::Sp(contErr(), U)
-      + MRF.DDt(rho, U)
-      + momentumTransport.divDevTau(U)
-     ==
-        fvModels().source(rho, U)
-    );
-    fvVectorMatrix& UEqn = tUEqn.ref();
-
-    UEqn.relax();
-
-    fvConstraints().constrain(UEqn);
+    twoPhaseVoFSolver::momentumPredictor();
 
     if (pimple.momentumPredictor())
     {
-        solve
-        (
-            UEqn
-         ==
-            fvc::reconstruct
-            (
-                (
-                    mixture.surfaceTensionForce()
-                  - buoyancy.ghf*fvc::snGrad(rho)
-                  - fvc::snGrad(p_rgh)
-                ) * mesh.magSf()
-            )
-        );
-
-        fvConstraints().constrain(U);
-
         K = 0.5*magSqr(U);
     }
 }

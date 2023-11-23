@@ -38,16 +38,16 @@ void Foam::CellZoneInjection<CloudType>::setPositions
 )
 {
     const fvMesh& mesh = this->owner().mesh();
-    const scalarField& V = mesh.V();
-    const label nCells = cellZoneCells.size();
+
     Random& rnd = this->owner().rndGen();
 
-    DynamicList<vector> positions(nCells);          // initial size only
-    DynamicList<label> injectorCells(nCells);       // initial size only
-    DynamicList<label> injectorTetFaces(nCells);    // initial size only
-    DynamicList<label> injectorTetPts(nCells);      // initial size only
+    const label nCells = cellZoneCells.size();
+    DynamicList<barycentric> injectorCoordinates(nCells);
+    DynamicList<label> injectorCells(nCells);
+    DynamicList<label> injectorTetFaces(nCells);
+    DynamicList<label> injectorTetPts(nCells);
 
-    scalar newParticlesTotal = 0.0;
+    scalar newParticlesTotal = 0;
     label addParticlesTotal = 0;
 
     forAll(cellZoneCells, i)
@@ -55,7 +55,7 @@ void Foam::CellZoneInjection<CloudType>::setPositions
         const label celli = cellZoneCells[i];
 
         // Calc number of particles to add
-        const scalar newParticles = V[celli]*numberDensity_;
+        const scalar newParticles = mesh.V()[celli]*numberDensity_;
         newParticlesTotal += newParticles;
         label addParticles = floor(newParticles);
         addParticlesTotal += addParticles;
@@ -95,33 +95,33 @@ void Foam::CellZoneInjection<CloudType>::setPositions
                     break;
                 }
             }
-            positions.append(cellTetIs[tetI].tet(mesh).randomPoint(rnd));
 
+            injectorCoordinates.append(barycentric01(rnd));
             injectorCells.append(celli);
             injectorTetFaces.append(cellTetIs[tetI].face());
             injectorTetPts.append(cellTetIs[tetI].tetPt());
         }
     }
 
-    // Parallel operation manipulations
-    globalIndex globalPositions(positions.size());
-    List<vector> allPositions(globalPositions.size(), point::max);
+    // Accumulate into global lists. Set the coordinates and topology for local
+    // particles, and leave remote ones with invalid data.
+    globalIndex globalPositions(injectorCoordinates.size());
+
+    List<barycentric> allInjectorCoordinates
+    (
+        globalPositions.size(),
+        barycentric::uniform(NaN)
+    );
     List<label> allInjectorCells(globalPositions.size(), -1);
     List<label> allInjectorTetFaces(globalPositions.size(), -1);
     List<label> allInjectorTetPts(globalPositions.size(), -1);
 
-    // Gather all positions on to all processors
-    SubList<vector>
+    SubList<barycentric>
     (
-        allPositions,
+        allInjectorCoordinates,
         globalPositions.localSize(Pstream::myProcNo()),
         globalPositions.offset(Pstream::myProcNo())
-    ) = positions;
-
-    Pstream::listCombineGather(allPositions, minEqOp<point>());
-    Pstream::listCombineScatter(allPositions);
-
-    // Gather local cell tet and tet-point Ids, but leave non-local ids set -1
+    ) = injectorCoordinates;
     SubList<label>
     (
         allInjectorCells,
@@ -142,20 +142,10 @@ void Foam::CellZoneInjection<CloudType>::setPositions
     ) = injectorTetPts;
 
     // Transfer data
-    positions_.transfer(allPositions);
+    injectorCoordinates_.transfer(allInjectorCoordinates);
     injectorCells_.transfer(allInjectorCells);
     injectorTetFaces_.transfer(allInjectorTetFaces);
     injectorTetPts_.transfer(allInjectorTetPts);
-
-
-    if (debug)
-    {
-        OFstream points("points.obj");
-        forAll(positions_, i)
-        {
-            meshTools::writeOBJ(points, positions_[i]);
-        }
-    }
 }
 
 
@@ -172,7 +162,7 @@ Foam::CellZoneInjection<CloudType>::CellZoneInjection
     InjectionModel<CloudType>(dict, owner, modelName, typeName),
     cellZoneName_(this->coeffDict().lookup("cellZone")),
     numberDensity_(this->coeffDict().template lookup<scalar>("numberDensity")),
-    positions_(),
+    injectorCoordinates_(),
     injectorCells_(),
     injectorTetFaces_(),
     injectorTetPts_(),
@@ -199,7 +189,7 @@ Foam::CellZoneInjection<CloudType>::CellZoneInjection
     InjectionModel<CloudType>(im),
     cellZoneName_(im.cellZoneName_),
     numberDensity_(im.numberDensity_),
-    positions_(im.positions_),
+    injectorCoordinates_(im.injectorCoordinates_),
     injectorCells_(im.injectorCells_),
     injectorTetFaces_(im.injectorTetFaces_),
     injectorTetPts_(im.injectorTetPts_),
@@ -252,10 +242,11 @@ void Foam::CellZoneInjection<CloudType>::topoChange()
         setPositions(cellZoneCells);
 
         Info<< "    number density      = " << numberDensity_ << nl
-            << "    number of particles = " << positions_.size() << endl;
+            << "    number of particles = " << injectorCoordinates_.size()
+            << endl;
 
         // Construct parcel diameters
-        diameters_.setSize(positions_.size());
+        diameters_.setSize(injectorCoordinates_.size());
         forAll(diameters_, i)
         {
             diameters_[i] = sizeDistribution_->sample();
@@ -284,7 +275,7 @@ Foam::label Foam::CellZoneInjection<CloudType>::parcelsToInject
 {
     if ((0.0 >= time0) && (0.0 < time1))
     {
-        return positions_.size();
+        return injectorCoordinates_.size();
     }
     else
     {
@@ -318,14 +309,15 @@ void Foam::CellZoneInjection<CloudType>::setPositionAndCell
     const label parcelI,
     const label nParcels,
     const scalar time,
-    vector& position,
-    label& cellOwner,
+    barycentric& coordinates,
+    label& celli,
     label& tetFacei,
-    label& tetPti
+    label& tetPti,
+    label& facei
 )
 {
-    position = positions_[parcelI];
-    cellOwner = injectorCells_[parcelI];
+    coordinates = injectorCoordinates_[parcelI];
+    celli = injectorCells_[parcelI];
     tetFacei = injectorTetFaces_[parcelI];
     tetPti = injectorTetPts_[parcelI];
 }

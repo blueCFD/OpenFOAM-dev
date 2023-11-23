@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,6 +72,14 @@ void Foam::mappedPatchBase::calcMapping() const
             << "Mapping already calculated" << exit(FatalError);
     }
 
+    if (sameUntransformedPatch())
+    {
+        FatalErrorInFunction
+            << "Patch " << patch_.name() << " is mapping itself with no "
+            << "transform. Mapping data does not need to be constructed."
+            << exit(FatalError);
+    }
+
     // Calculate the transform as necessary
     transform_ =
         cyclicTransform
@@ -89,22 +97,6 @@ void Foam::mappedPatchBase::calcMapping() const
             matchTol_,
             true
         );
-
-    // Do a sanity check. Am I sampling my own patch? This only makes sense if
-    // the position is transformed.
-    if
-    (
-        nbrRegionName() == patch_.boundaryMesh().mesh().name()
-     && nbrPatchName() == patch_.name()
-     && !transform_.transform().transformsPosition()
-    )
-    {
-        FatalErrorInFunction
-            << "Patch " << patch_.name() << " is sampling itself with no "
-            << "transform. The patch face values are undefined."
-            << exit(FatalError);
-
-    }
 
     // Build the mapping...
     //
@@ -313,15 +305,12 @@ void Foam::mappedPatchBase::calcMapping() const
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
-Foam::mappedPatchBase::mappedPatchBase
-(
-    const polyPatch& pp
-)
+Foam::mappedPatchBase::mappedPatchBase(const polyPatch& pp)
 :
     patch_(pp),
-    nbrRegionName_(patch_.boundaryMesh().mesh().name()),
-    nbrPatchName_(word::null),
     coupleGroup_(),
+    nbrRegionName_(patch_.boundaryMesh().mesh().name()),
+    nbrPatchName_(patch_.name()),
     transform_(true),
     mapPtr_(nullptr),
     nbrPatchFaceIndices_(),
@@ -341,9 +330,9 @@ Foam::mappedPatchBase::mappedPatchBase
 )
 :
     patch_(pp),
+    coupleGroup_(),
     nbrRegionName_(nbrRegionName),
     nbrPatchName_(nbrPatchName),
-    coupleGroup_(),
     transform_(transform),
     mapPtr_(nullptr),
     nbrPatchFaceIndices_(),
@@ -362,23 +351,22 @@ Foam::mappedPatchBase::mappedPatchBase
 )
 :
     patch_(pp),
+    coupleGroup_(dict),
     nbrRegionName_
     (
-        dict.lookupOrDefaultBackwardsCompatible<word>
+        coupleGroup_.valid() ? word::null
+      : dict.lookupOrDefaultBackwardsCompatible<word>
         (
             {"neighbourRegion", "sampleRegion"},
-            word::null
+            pp.boundaryMesh().mesh().name()
         )
     ),
     nbrPatchName_
     (
-        dict.lookupOrDefaultBackwardsCompatible<word>
-        (
-            {"neighbourPatch", "samplePatch"},
-            word::null
-        )
+        coupleGroup_.valid() ? word::null
+      : dict.lookupOrDefault<bool>("samePatch", false) ? pp.name()
+      : dict.lookupBackwardsCompatible<word>({"neighbourPatch", "samplePatch"})
     ),
-    coupleGroup_(dict),
     transform_
     (
         transformIsNone
@@ -401,9 +389,27 @@ Foam::mappedPatchBase::mappedPatchBase
     ),
     matchTol_(dict.lookupOrDefault("matchTolerance", defaultMatchTol_))
 {
-    if (!coupleGroup_.valid() && nbrRegionName_.empty())
+    const bool haveCoupleGroup = coupleGroup_.valid();
+
+    const bool haveNbrRegion =
+        dict.found("neighbourRegion") || dict.found("sampleRegion");
+    const bool haveNbrPatch =
+        dict.found("neighbourPatch") || dict.found("samplePatch");
+
+    const bool isSamePatch = dict.lookupOrDefault<bool>("samePatch", false);
+
+    if ((haveNbrRegion || haveNbrPatch || isSamePatch) && haveCoupleGroup)
     {
-        nbrRegionName_ = patch_.boundaryMesh().mesh().name();
+        FatalIOErrorInFunction(dict)
+            << "Either neighbourRegion/Patch information or a coupleGroup "
+            << "should be specified, not both" << exit(FatalIOError);
+    }
+
+    if (haveNbrPatch && isSamePatch)
+    {
+        FatalIOErrorInFunction(dict)
+            << "Either a neighbourPatch should be specified, or samePatch "
+            << "should be set to true, not both" << exit(FatalIOError);
     }
 }
 
@@ -415,9 +421,9 @@ Foam::mappedPatchBase::mappedPatchBase
 )
 :
     patch_(pp),
+    coupleGroup_(mpb.coupleGroup_),
     nbrRegionName_(mpb.nbrRegionName_),
     nbrPatchName_(mpb.nbrPatchName_),
-    coupleGroup_(mpb.coupleGroup_),
     transform_(mpb.transform_),
     mapPtr_(nullptr),
     nbrPatchFaceIndices_(),
@@ -469,6 +475,22 @@ const Foam::polyPatch& Foam::mappedPatchBase::nbrPolyPatch() const
 }
 
 
+const Foam::mappedPatchBase& Foam::mappedPatchBase::getMap
+(
+    const polyPatch& patch
+)
+{
+    if (!isA<mappedPatchBase>(patch))
+    {
+        FatalErrorInFunction
+            << "Patch " << patch.name() << " is not of type "
+            << typeName << exit(FatalError);
+    }
+
+    return refCast<const mappedPatchBase>(patch);
+}
+
+
 void Foam::mappedPatchBase::clearOut()
 {
     mapPtr_.clear();
@@ -480,9 +502,12 @@ void Foam::mappedPatchBase::clearOut()
 bool Foam::mappedPatchBase::specified(const dictionary& dict)
 {
     return
-        dict.found("neighbourRegion")
+        dict.found("coupleGroup")
+     || dict.found("neighbourRegion")
+     || dict.found("sampleRegion")
      || dict.found("neighbourPatch")
-     || dict.found("coupleGroup");
+     || dict.found("samplePatch")
+     || dict.found("samePatch");
 }
 
 

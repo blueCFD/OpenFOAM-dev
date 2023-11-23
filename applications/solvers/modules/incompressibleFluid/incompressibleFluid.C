@@ -197,6 +197,11 @@ void Foam::solvers::incompressibleFluid::preSolve()
 void Foam::solvers::incompressibleFluid::prePredictor()
 {
     fvModels().correct();
+
+    if (pimple.predictTransport())
+    {
+        momentumTransport->predict();
+    }
 }
 
 
@@ -215,18 +220,14 @@ void Foam::solvers::incompressibleFluid::pressureCorrector()
 }
 
 
-void Foam::solvers::incompressibleFluid::momentumTransportCorrector()
+void Foam::solvers::incompressibleFluid::postCorrector()
 {
-    if (pimple.transportCorr())
+    if (pimple.correctTransport())
     {
         viscosity->correct();
         momentumTransport->correct();
     }
 }
-
-
-void Foam::solvers::incompressibleFluid::thermophysicalTransportCorrector()
-{}
 
 
 void Foam::solvers::incompressibleFluid::postSolve()

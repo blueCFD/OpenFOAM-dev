@@ -44,7 +44,7 @@ License
 #include "pointMesh.H"
 #include "pointMeshMapper.H"
 #include "MapPointField.T.H"
-#include "MeshObject.T.H"
+#include "meshObjects.H"
 #include "HashPtrTable.T.H"
 #include "CompactListList.T.H"
 

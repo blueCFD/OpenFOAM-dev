@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "compressibleInterPhaseThermophysicalTransportModel.H"
 #include "compressibleInterPhaseTransportModel.H"
+#include "fvcSnGrad.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -57,7 +58,8 @@ Foam::compressibleInterPhaseThermophysicalTransportModel::coeffDict() const
 Foam::tmp<Foam::volScalarField>
 Foam::compressibleInterPhaseThermophysicalTransportModel::kappaEff() const
 {
-    const compressibleTwoPhaseMixture& mixture_ = momentumTransport_.mixture_;
+    const compressibleTwoPhaseVoFMixture& mixture_ =
+        momentumTransport_.mixture_;
 
     if (momentumTransport_.twoPhaseTransport_)
     {
@@ -100,7 +102,8 @@ Foam::compressibleInterPhaseThermophysicalTransportModel::kappaEff
     const label patchi
 ) const
 {
-    const compressibleTwoPhaseMixture& mixture_ = momentumTransport_.mixture_;
+    const compressibleTwoPhaseVoFMixture& mixture_ =
+        momentumTransport_.mixture_;
 
     if (momentumTransport_.twoPhaseTransport_)
     {
@@ -115,20 +118,22 @@ Foam::compressibleInterPhaseThermophysicalTransportModel::kappaEff
           + mixture_.alpha2().boundaryField()[patchi]
            *(
                 mixture_.thermo2().kappa().boundaryField()[patchi]
-              + mixture_.thermo2().rho(patchi)*mixture_.thermo2().Cp()
+              + mixture_.thermo2().rho(patchi)
+               *mixture_.thermo2().Cp().boundaryField()[patchi]
                *momentumTransport_.momentumTransport2_->nut(patchi)
             );
     }
     else
     {
         return
-            mixture_.alpha1()
+            mixture_.alpha1().boundaryField()[patchi]
            *(
                 mixture_.thermo1().kappa().boundaryField()[patchi]
-              + mixture_.thermo1().rho(patchi)*mixture_.thermo1().Cp()
+              + mixture_.thermo1().rho(patchi)
+               *mixture_.thermo1().Cp().boundaryField()[patchi]
                *momentumTransport_.mixtureMomentumTransport_->nut(patchi)
             )
-          + mixture_.alpha2()
+          + mixture_.alpha2().boundaryField()[patchi]
            *(
                 mixture_.thermo2().kappa().boundaryField()[patchi]
               + mixture_.thermo2().rho(patchi)
@@ -142,7 +147,8 @@ Foam::compressibleInterPhaseThermophysicalTransportModel::kappaEff
 Foam::tmp<Foam::volScalarField>
 Foam::compressibleInterPhaseThermophysicalTransportModel::alphaEff() const
 {
-    const compressibleTwoPhaseMixture& mixture_ = momentumTransport_.mixture_;
+    const compressibleTwoPhaseVoFMixture& mixture_ =
+        momentumTransport_.mixture_;
 
     if (momentumTransport_.twoPhaseTransport_)
     {
@@ -211,6 +217,10 @@ Foam::compressibleInterPhaseThermophysicalTransportModel::divq
 
     return tmp<fvScalarMatrix>(nullptr);
 }
+
+
+void Foam::compressibleInterPhaseThermophysicalTransportModel::predict()
+{}
 
 
 void Foam::compressibleInterPhaseThermophysicalTransportModel::correct()

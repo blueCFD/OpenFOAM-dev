@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "ThermalPhaseChangePhaseSystem.T.H"
 #include "heatTransferModel.H"
-#include "alphatPhaseChangeWallFunctionFvPatchScalarField.H"
+#include "alphatPhaseChangeWallFunctionBase.H"
 #include "fvcVolumeIntegrate.H"
 #include "fvmSup.H"
 #include "rhoMulticomponentThermo.H"
@@ -420,9 +420,9 @@ Foam::ThermalPhaseChangePhaseSystem<BasePhaseSystem>::heatTransfer() const
 
         addDmdts(dmdts);
 
-        forAllConstIter(phaseSystem::phaseModelList, this->phases(), phaseIter)
+        forAll(this->phases(), phasei)
         {
-            const phaseModel& phase = phaseIter();
+            const phaseModel& phase = this->phases()[phasei];
 
             if (dmdt0s_.set(phase.index()))
             {
@@ -513,9 +513,6 @@ template<class BasePhaseSystem>
 void
 Foam::ThermalPhaseChangePhaseSystem<BasePhaseSystem>::correctInterfaceThermo()
 {
-    typedef compressible::alphatPhaseChangeWallFunctionFvPatchScalarField
-        alphatPhaseChangeWallFunction;
-
     forAllConstIter
     (
         saturationModelTable,
@@ -607,9 +604,9 @@ Foam::ThermalPhaseChangePhaseSystem<BasePhaseSystem>::correctInterfaceThermo()
             Tf = (H1*T1 + H2*T2 + dmdtfNew*L)/(H1 + H2);
 
             Info<< Tf.name()
-                << ": min = " << min(Tf.primitiveField())
-                << ", mean = " << average(Tf.primitiveField())
-                << ", max = " << max(Tf.primitiveField())
+                << ": min = " << gMin(Tf.primitiveField())
+                << ", mean = " << gAverage(Tf.primitiveField())
+                << ", max = " << gMax(Tf.primitiveField())
                 << endl;
 
             const scalar dmdtfRelax =
@@ -618,17 +615,18 @@ Foam::ThermalPhaseChangePhaseSystem<BasePhaseSystem>::correctInterfaceThermo()
             dmdtf = (1 - dmdtfRelax)*dmdtf + dmdtfRelax*dmdtfNew;
 
             Info<< dmdtf.name()
-                << ": min = " << min(dmdtf.primitiveField())
-                << ", mean = " << average(dmdtf.primitiveField())
-                << ", max = " << max(dmdtf.primitiveField())
+                << ": min = " << gMin(dmdtf.primitiveField())
+                << ", mean = " << gAverage(dmdtf.primitiveField())
+                << ", max = " << gMax(dmdtf.primitiveField())
                 << ", integral = " << fvc::domainIntegrate(dmdtf).value()
                 << endl;
         }
 
         // Nucleation mass transfer update
         {
-            volScalarField& nDmdtf(*this->nDmdtfs_[interface]);
+            typedef compressible::alphatPhaseChangeWallFunctionBase alphatwType;
 
+            volScalarField& nDmdtf(*this->nDmdtfs_[interface]);
             nDmdtf = Zero;
 
             bool wallBoilingActive = false;
@@ -640,52 +638,45 @@ Foam::ThermalPhaseChangePhaseSystem<BasePhaseSystem>::correctInterfaceThermo()
                 const word alphatName =
                     IOobject::groupName("alphat", phase.name());
 
-                if (phase.mesh().foundObject<volScalarField>(alphatName))
+                if (!phase.mesh().foundObject<volScalarField>(alphatName))
+                    continue;
+
+                const volScalarField& alphat =
+                    phase.mesh().lookupObject<volScalarField>(alphatName);
+
+                forAll(alphat.boundaryField(), patchi)
                 {
-                    const volScalarField& alphat =
-                        phase.mesh().lookupObject<volScalarField>(alphatName);
+                    const fvPatchScalarField& alphatp =
+                        alphat.boundaryField()[patchi];
 
-                    forAll(alphat.boundaryField(), patchi)
-                    {
-                        const fvPatchScalarField& alphatp =
-                            alphat.boundaryField()[patchi];
+                    if (!isA<alphatwType>(alphatp)) continue;
 
-                        if (isA<alphatPhaseChangeWallFunction>(alphatp))
-                        {
-                            const alphatPhaseChangeWallFunction& alphatw =
-                                refCast<const alphatPhaseChangeWallFunction>
-                                (
-                                    alphatp
-                                );
+                    const alphatwType& alphatw =
+                        refCast<const alphatwType>(alphatp);
 
-                            if (alphatw.activeInterface(interface))
-                            {
-                                wallBoilingActive = true;
+                    if (!alphatw.activeInterface(interface)) continue;
 
-                                const scalarField& patchDmdtf =
-                                    alphatw.dmdtf(interface);
+                    wallBoilingActive = true;
 
-                                const scalar sign =
-                                    interfaceIter.index() == 0 ? +1 : -1;
+                    UIndirectList<scalar> nDmdtfp
+                    (
+                        nDmdtf.primitiveFieldRef(),
+                        alphatp.patch().faceCells()
+                    );
 
-                                forAll(patchDmdtf, facei)
-                                {
-                                    const label celli =
-                                        alphatw.patch().faceCells()[facei];
-                                    nDmdtf[celli] -= sign*patchDmdtf[facei];
-                                }
-                            }
-                        }
-                    }
+                    nDmdtfp =
+                        scalarField(nDmdtfp)
+                      - (interfaceIter.index() == 0 ? +1 : -1)
+                       *alphatw.dmdtf(interface);
                 }
             }
 
             if (wallBoilingActive)
             {
                 Info<< nDmdtf.name()
-                    << ": min = " << min(nDmdtf.primitiveField())
-                    << ", mean = " << average(nDmdtf.primitiveField())
-                    << ", max = " << max(nDmdtf.primitiveField())
+                    << ": min = " << gMin(nDmdtf.primitiveField())
+                    << ", mean = " << gAverage(nDmdtf.primitiveField())
+                    << ", max = " << gMax(nDmdtf.primitiveField())
                     << ", integral = " << fvc::domainIntegrate(nDmdtf).value()
                     << endl;
             }

@@ -59,6 +59,7 @@ See also
 #include "compressibleMomentumTransportModels.H"
 #include "buoyancy.H"
 #include "pressureReference.H"
+#include "IOMRFZoneList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -94,7 +95,7 @@ protected:
 
         //- Rate of change of the pressure
         //  Used in the enthalpy equation
-        volScalarField dpdt;
+        volScalarField::Internal dpdt;
 
 
     // Optional buoyancy
@@ -204,7 +205,10 @@ private:
 protected:
 
         //- Adds the mesh-motion work to the pressure work term provided
-        tmp<volScalarField> pressureWork(const tmp<volScalarField>&) const;
+        tmp<volScalarField::Internal> pressureWork
+        (
+            const tmp<volScalarField::Internal>&
+        ) const;
 
 
 public:
@@ -251,12 +255,8 @@ public:
         //- Construct and solve the pressure equation in the PISO loop
         virtual void pressureCorrector();
 
-        //- Correct the momentum transport modelling
-        //  Newtonian, non-Newtonian or turbulent
-        virtual void momentumTransportCorrector();
-
-        //- Correct the thermophysical transport modelling
-        virtual void thermophysicalTransportCorrector();
+        //- Correct the momentum and thermophysical transport modelling
+        virtual void postCorrector();
 
         //- Called after the PIMPLE loop at the end of the time-step
         virtual void postSolve();

@@ -52,7 +52,9 @@ Foam::solvers::fluid::fluid(fvMesh& mesh)
             thermo
         )
     )
-{}
+{
+    thermo.validate(type(), "h", "e");
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -63,9 +65,22 @@ Foam::solvers::fluid::~fluid()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::solvers::fluid::thermophysicalTransportCorrector()
+void Foam::solvers::fluid::prePredictor()
 {
-    if (pimple.transportCorr())
+    isothermalFluid::prePredictor();
+
+    if (pimple.predictTransport())
+    {
+        thermophysicalTransport->predict();
+    }
+}
+
+
+void Foam::solvers::fluid::postCorrector()
+{
+    isothermalFluid::postCorrector();
+
+    if (pimple.correctTransport())
     {
         thermophysicalTransport->correct();
     }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,29 +66,27 @@ Description
 
 Usage
     \table
-        Property     | Description             | Required    | Default value
-        phaseType    | 'vapor' or 'liquid'     | yes         |
-        relax        | wall boiling model relaxation| yes     |
-        Prt   | inherited from alphatPhaseChangeJayatillekeWallFunction | yes |
-        Cmu   | inherited from alphatPhaseChangeJayatillekeWallFunction | yes |
-        kappa | inherited from alphatPhaseChangeJayatillekeWallFunction | yes |
-        E     | inherited from alphatPhaseChangeJayatillekeWallFunction | yes |
-        dmdt         | phase change mass flux  | yes         |
-        value        | initial alphat value    | yes         |
+        Property       | Description              | Required    | Default value
+        phaseType      | 'vapor' or 'liquid'      | yes         |
+        useLiquidTemperatureWallFunction | \\
+        Use wall function to calculate liquid temperature? | no | yes
+        relax          | relaxation factor        | no          | 1
+        dmdt           | phase change mass flux   | no          | uniform 0
+        Prt            | turbulent Prandtl number | no          | 0.85
     \endtable
 
         if phaseType 'vapor':
     \table
-        partitioningModel|                     | yes         |
+        partitioningModel |                       | yes         |
     \endtable
 
         if phaseType 'liquid':
     \table
-        partitioningModel|                     | yes         |
-        nucleationSiteModel|                   | yes         |
-        departureDiamModel|                    | yes         |
-        departureFreqModel|                    | yes         |
-        bubbleWaitingTime|                     | no          | yes
+        partitioningModel |                       | yes         |
+        nucleationSiteModel |                     | yes         |
+        departureDiamModel |                      | yes         |
+        departureFreqModel |                      | yes         |
+        bubbleWaitingTimeRatio |                  | no          | 0.8
     \endtable
 
     NOTE: Runtime selectable submodels may require model specific entries
@@ -99,12 +97,9 @@ Usage
     {
         type            compressible::alphatWallBoiling2WallFunction;
         phaseType       liquid;
-        Prt             0.85;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
         relax           0.1;
         dmdt            uniform 0;
+        Prt             0.85;
         partitioningModel
         {
             type        Lavieville;
@@ -125,9 +120,6 @@ Usage
         value           uniform 0.01;
     \endverbatim
 
-See also
-    Foam::alphatPhaseChangeJayatillekeWallFunctionFvPatchField
-
 SourceFiles
     alphatWallBoilingWallFunctionFvPatchScalarField.C
 
@@ -136,7 +128,8 @@ SourceFiles
 #ifndef compressible_alphatWallBoilingWallFunctionFvPatchScalarField_H
 #define compressible_alphatWallBoilingWallFunctionFvPatchScalarField_H
 
-#include "alphatPhaseChangeWallFunctionFvPatchScalarField.H"
+#include "alphatPhaseChangeWallFunctionBase.H"
+#include "fixedValueFvPatchFields.H"
 #include "partitioningModel.H"
 #include "nucleationSiteModel.H"
 #include "departureDiameterModel.H"
@@ -155,7 +148,8 @@ namespace compressible
 
 class alphatWallBoilingWallFunctionFvPatchScalarField
 :
-    public alphatPhaseChangeWallFunctionFvPatchScalarField
+    public fixedValueFvPatchScalarField,
+    public alphatPhaseChangeWallFunctionBase
 {
 public:
 
@@ -176,51 +170,65 @@ private:
 
     // Private Data
 
-        //- Heat source type
-        phaseType phaseType_;
+        // Controls
 
-        //- Patch face area by cell volume
-        scalarField AbyV_;
+            //- Heat source type
+            phaseType phaseType_;
 
-        //- Convective turbulent thermal diffusivity
-        scalarField alphatConv_;
+            //- Estimate liquid temperature using logarithmic wall function?
+            Switch useLiquidTemperatureWallFunction_;
 
-        //- Departure diameter
-        scalarField dDep_;
+            //- Relaxation factor
+            scalar relax_;
 
-        //- Departure frequency
-        scalarField fDep_;
+            //- Turbulent Prandtl number
+            scalar Prt_;
 
-        //- Nucleation site density
-        scalarField N_;
+            //- Bubble waiting time ratio
+            scalar tau_;
 
-        //- Wall liquid fraction
-        scalarField fLiquid_;
 
-        //- Quenching surface heat flux
-        scalarField qq_;
+        // Sub-Models
 
-        //- Evaporative surface heat flux
-        scalarField qe_;
+            //- Heat flux partitioning model
+            autoPtr<wallBoilingModels::partitioningModel>
+                partitioningModel_;
 
-        //- Bubble waiting time ratio
-        scalar tau_;
+            //- Nucleation site density model
+            autoPtr<wallBoilingModels::nucleationSiteModel>
+                nucleationSiteModel_;
 
-        //- Run-time selected heat flux partitioning model
-        autoPtr<wallBoilingModels::partitioningModel>
-            partitioningModel_;
+            //- Bubble departure diameter model
+            autoPtr<wallBoilingModels::departureDiameterModel>
+                departureDiameterModel_;
 
-        //- Run-time selected nucleation site density model
-        autoPtr<wallBoilingModels::nucleationSiteModel>
-            nucleationSiteModel_;
+            //- Bubble departure frequency model
+            autoPtr<wallBoilingModels::departureFrequencyModel>
+                departureFrequencyModel_;
 
-        //- Run-time selected bubble departure diameter model
-        autoPtr<wallBoilingModels::departureDiameterModel>
-            departureDiamModel_;
 
-        //- Run-time selected bubble departure frequency model
-        autoPtr<wallBoilingModels::departureFrequencyModel>
-            departureFreqModel_;
+        // State
+
+            //- Wall liquid fraction
+            scalarField fLiquid_;
+
+            //- Departure diameter
+            scalarField dDep_;
+
+            //- Departure frequency
+            scalarField fDep_;
+
+            //- Nucleation site density
+            scalarField N_;
+
+            //- Quenching surface heat flux
+            scalarField qq_;
+
+            //- Evaporative surface heat flux
+            scalarField qe_;
+
+            //- Mass transfer rate
+            scalarField dmdtf_;
 
 
 public:
@@ -285,6 +293,12 @@ public:
 
     // Member Functions
 
+        //- Return the wall liquid fraction field [-]
+        const scalarField& wetFraction() const
+        {
+            return fLiquid_;
+        }
+
         //- Return the departure diameter field [m]
         const scalarField& dDeparture() const
         {
@@ -303,12 +317,6 @@ public:
             return N_;
         }
 
-        //- Return the wall liquid fraction field [-]
-        const scalarField& wetFraction() const
-        {
-            return fLiquid_;
-        }
-
         //- Return the quenching surface heat flux field [W/m^2]
         const scalarField& qQuenching() const
         {
@@ -319,6 +327,12 @@ public:
         const scalarField& qEvaporative() const
         {
             return qe_;
+        }
+
+        //- Return the rate of phase change
+        virtual const scalarField& dmdtf() const
+        {
+            return dmdtf_;
         }
 
 

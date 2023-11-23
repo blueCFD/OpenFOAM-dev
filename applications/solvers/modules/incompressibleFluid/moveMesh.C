@@ -25,6 +25,7 @@ License
 
 #include "incompressibleFluid.H"
 #include "CorrectPhi.T.H"
+#include "geometricZeroField.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 

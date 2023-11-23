@@ -65,8 +65,6 @@ Foam::PatchInjection<CloudType>::PatchInjection
 {
     duration_ = owner.db().time().userTimeToTime(duration_);
 
-    patchInjectionBase::topoChange(owner.mesh());
-
     // Set total volume/mass to inject
     this->volumeTotal_ = flowRateProfile_.integral(0.0, duration_);
 }
@@ -170,20 +168,22 @@ void Foam::PatchInjection<CloudType>::setPositionAndCell
     const label,
     const label,
     const scalar,
-    vector& position,
-    label& cellOwner,
+    barycentric& coordinates,
+    label& celli,
     label& tetFacei,
-    label& tetPti
+    label& tetPti,
+    label& facei
 )
 {
     patchInjectionBase::setPositionAndCell
     (
         this->owner().mesh(),
         this->owner().rndGen(),
-        position,
-        cellOwner,
+        coordinates,
+        celli,
         tetFacei,
-        tetPti
+        tetPti,
+        facei
     );
 }
 

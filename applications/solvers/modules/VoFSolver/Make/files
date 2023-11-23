@@ -1,0 +1,7 @@
+VoFMixture/VoFMixture.C
+setRDeltaT.C
+moveMesh.C
+momentumPredictor.C
+VoFSolver.C
+
+LIB = $(FOAM_LIBBIN)/libVoFSolver

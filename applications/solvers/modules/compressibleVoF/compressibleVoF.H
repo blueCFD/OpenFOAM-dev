@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,19 +49,19 @@ SourceFiles
     compressibleVoF.C
 
 See also
-    Foam::solvers::fluidSolver
-    Foam::solvers::incompressibleFluid
+    Foam::solvers::VoFSolver
+    Foam::solvers::twoPhaseVoFSolver
+    Foam::solvers::incompressibleVoF
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef compressibleVoF_H
 #define compressibleVoF_H
 
-#include "fluidSolver.H"
+#include "twoPhaseVoFSolver.H"
+#include "compressibleTwoPhaseVoFMixture.H"
 #include "compressibleInterPhaseTransportModel.H"
 #include "compressibleInterPhaseThermophysicalTransportModel.H"
-#include "buoyancy.H"
-#include "pressureReference.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -76,45 +76,21 @@ namespace solvers
 
 class compressibleVoF
 :
-    public fluidSolver
+    public twoPhaseVoFSolver
 {
 
 protected:
 
-    // Kinematic properties
-
-        //- Velocity field
-        volVectorField U;
-
-        //- Volumetric-flux field
-        surfaceScalarField phi;
-
-
     // Phase properties
 
         //- The compressible two-phase mixture
-        immiscibleCompressibleTwoPhaseMixture mixture;
-
-        //- Reference to the primary phase-fraction
-        volScalarField& alpha1;
-
-        //- Switch indicating if this is a restart
-        bool alphaRestart;
-
-        scalar alphaCoNum;
+        compressibleTwoPhaseVoFMixture& mixture;
 
 
     // Thermophysical properties
 
-        //- Buoyancy force
-        solvers::buoyancy buoyancy;
-
-        //- Reference to the buoyant pressure for buoyant cases
-        //  otherwise to the pressure
-        volScalarField& p_rgh;
-
-        //- Reference to the mixture continuity density field
-        const volScalarField& rho;
+        //- Reference to the mixture static pressure field
+        volScalarField& p;
 
         //- Compressibility source
         volScalarField::Internal dgdt;
@@ -123,7 +99,7 @@ protected:
     // Pressure reference
 
         //- Pressure reference
-        Foam::pressureReference pressureReference;
+        Foam::pressureReference pressureReference_;
 
         //- Minimum pressure
         dimensionedScalar pMin;
@@ -131,11 +107,11 @@ protected:
 
     // Kinematic properties
 
-        //- Mass flux field
-        surfaceScalarField rhoPhi;
+        // Phase-1 mass-flux
+        surfaceScalarField alphaRhoPhi1;
 
-        // Phase-1 volumetric flux
-        surfaceScalarField alphaPhi1;
+        // Phase-2 mass-flux
+        surfaceScalarField alphaRhoPhi2;
 
         //- Kinetic energy field
         //  Used in the energy equation
@@ -150,54 +126,45 @@ protected:
 
     // Thermophysical transport
 
+        //- Thermophysical transport model
         compressibleInterPhaseThermophysicalTransportModel
             thermophysicalTransport;
 
 
-    // Optional models
-
-        //- MRF zone list
-        IOMRFZoneList MRF;
-
-
     // Cached temporary fields
 
-        tmp<volScalarField> rAU;
+        //- Phase-1 continuity error
+        tmp<volScalarField::Internal> contErr1;
 
-        tmp<volScalarField::Internal> contErr;
-
-        //- MULES Correction
-        tmp<surfaceScalarField> talphaPhi1Corr0;
-
-        //- Pointer to the surface momentum field
-        //  used to recreate the flux after mesh-change
-        autoPtr<surfaceVectorField> Uf;
-
-        //- Pointer to the momentum divergence field
-        //  used in correctPhi to ensure the corrected phi has the
-        //  same divergence
-        autoPtr<volScalarField> divU;
-
-        //- Optional LTS reciprocal time-step field
-        tmp<volScalarField> trDeltaT;
-
-        //- Cached momentum matrix
-        //  shared between the momentum predictor and pressure corrector
-        tmp<fvVectorMatrix> tUEqn;
+        //- Phase-2 continuity error
+        tmp<volScalarField::Internal> contErr2;
 
 
-private:
+protected:
 
-    // Private Member Functions
+    // Protected Member Functions
 
-        //- Set rDeltaT for LTS
-        virtual void setRDeltaT();
+        //- Return the pressure reference
+        virtual const Foam::pressureReference& pressureReference() const
+        {
+            return pressureReference_;
+        }
 
-        //- Correct the cached Courant numbers
-        void correctCoNum();
+        //- Compressible flow is divergent
+        virtual bool divergent()
+        {
+            return true;
+        }
 
-        //- Solve for the phase-fractions
-        void alphaPredictor();
+        //- Calculate the alpha equation sources
+        virtual void alphaSuSp
+        (
+            tmp<volScalarField::Internal>& Su,
+            tmp<volScalarField::Internal>& Sp
+        );
+
+        //- Return the momentum equation stress term
+        virtual tmp<fvVectorMatrix> divDevTau(volVectorField& U);
 
 
 public:
@@ -221,15 +188,6 @@ public:
 
     // Member Functions
 
-        //- Return the current maximum time-step for stable solution
-        virtual scalar maxDeltaT() const;
-
-        //- Called at the start of the time-step, before the PIMPLE loop
-        virtual void preSolve();
-
-        //- Called at the start of the PIMPLE loop to move the mesh
-        virtual bool moveMesh();
-
         //- Called at the start of the PIMPLE loop
         virtual void prePredictor();
 
@@ -244,15 +202,8 @@ public:
         //- Construct and solve the pressure equation in the PISO loop
         virtual void pressureCorrector();
 
-        //- Correct the momentum transport modelling
-        //  Newtonian, non-Newtonian or turbulent
-        virtual void momentumTransportCorrector();
-
-        //- Correct the thermophysical transport modelling
-        virtual void thermophysicalTransportCorrector();
-
-        //- Called after the PIMPLE loop at the end of the time-step
-        virtual void postSolve();
+        //- Correct the momentum and thermophysical transport modelling
+        virtual void postCorrector();
 
 
     // Member Operators

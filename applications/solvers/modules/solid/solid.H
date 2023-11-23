@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,9 +25,9 @@ Class
     Foam::solvers::solid
 
 Description
-    Solver module for turbulent flow of compressible fluids for conjugate heat
-    transfer, HVAC and similar applications, with optional mesh motion and mesh
-    topology changes.
+    Solver module for thermal transport is solid domains and regions for
+    conjugate heat transfer, HVAC and similar applications, with optional mesh
+    motion and mesh topology changes.
 
 SourceFiles
     solid.C
@@ -67,7 +67,7 @@ protected:
 
     // Thermophysical properties
 
-        autoPtr<solidThermo> pThermo;
+        autoPtr<solidThermo> thermo_;
 
         solidThermo& thermo;
 
@@ -85,15 +85,15 @@ protected:
         scalar DiNum;
 
 
+    // Protected Member Functions
+
+        //- Read controls
+        virtual void read();
+
+
 private:
 
     // Private Member Functions
-
-        //- Read controls
-        void read();
-
-        //- Set rDeltaT for LTS
-        // void setRDeltaT();
 
         //- Correct the cached Courant numbers
         void correctDiNum();
@@ -106,6 +106,9 @@ public:
 
 
     // Constructors
+
+        //- Construct from region mesh and thermophysical properties
+        solid(fvMesh& mesh, autoPtr<solidThermo>);
 
         //- Construct from region mesh
         solid(fvMesh& mesh);
@@ -143,12 +146,8 @@ public:
         //- Construct and solve the pressure equation in the PISO loop
         virtual void pressureCorrector();
 
-        //- Correct the momentum transport modelling
-        //  Newtonian, non-Newtonian or turbulent
-        virtual void momentumTransportCorrector();
-
         //- Correct the thermophysical transport modelling
-        virtual void thermophysicalTransportCorrector();
+        virtual void postCorrector();
 
         //- Called after the PIMPLE loop at the end of the time-step
         virtual void postSolve();

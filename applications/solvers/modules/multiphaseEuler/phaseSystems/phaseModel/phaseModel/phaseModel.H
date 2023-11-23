@@ -215,11 +215,17 @@ public:
         //- Correct the species concentrations
         virtual void correctSpecies();
 
+        //- Predict the momentumTransport
+        virtual void predictMomentumTransport();
+
+        //- Predict the energy transport
+        virtual void predictThermophysicalTransport();
+
         //- Correct the momentumTransport
-        virtual void correctTurbulence();
+        virtual void correctMomentumTransport();
 
         //- Correct the energy transport
-        virtual void correctEnergyTransport();
+        virtual void correctThermophysicalTransport();
 
         //- Correct the face velocity for moving meshes
         virtual void correctUf();

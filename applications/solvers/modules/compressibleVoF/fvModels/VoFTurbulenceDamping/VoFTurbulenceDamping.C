@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,8 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "VoFTurbulenceDamping.H"
-#include "immiscibleCompressibleTwoPhaseMixture.H"
-#include "interfaceProperties.H"
+#include "compressibleTwoPhaseVoFMixture.H"
 #include "compressibleMomentumTransportModel.H"
 #include "fvMatrix.H"
 #include "addToRunTimeSelectionTable.H"
@@ -66,12 +65,11 @@ Foam::fv::compressible::VoFTurbulenceDamping::VoFTurbulenceDamping
     delta_("delta", dimLength, dict),
     mixture_
     (
-        mesh.lookupObject<immiscibleCompressibleTwoPhaseMixture>
+        mesh.lookupObject<compressibleTwoPhaseVoFMixture>
         (
             "phaseProperties"
         )
     ),
-    interface_(mixture_),
     momentumTransport_
     (
         mesh.lookupType<compressibleMomentumTransportModel>(phaseName_)
@@ -146,13 +144,13 @@ void Foam::fv::compressible::VoFTurbulenceDamping::addSup
 
     if (fieldName == "epsilon")
     {
-        eqn += interface_.fraction()*C2_*aRhoSqrnu*momentumTransport_.k()()
-           /pow4(delta_);
+        eqn += mixture_.interfaceFraction()
+           *C2_*aRhoSqrnu*momentumTransport_.k()()/pow4(delta_);
     }
     else if (fieldName == "omega")
     {
-        eqn += interface_.fraction()*beta_*aRhoSqrnu
-           /(sqr(betaStar_)*pow4(delta_));
+        eqn += mixture_.interfaceFraction()
+           *beta_*aRhoSqrnu/(sqr(betaStar_)*pow4(delta_));
     }
     else
     {
@@ -197,13 +195,13 @@ void Foam::fv::compressible::VoFTurbulenceDamping::addSup
 
     if (fieldName == IOobject::groupName("epsilon", phaseName_))
     {
-        eqn += interface_.fraction()*C2_*taRhoSqrnu*momentumTransport_.k()()
-           /pow4(delta_);
+        eqn += mixture_.interfaceFraction()
+           *C2_*taRhoSqrnu*momentumTransport_.k()()/pow4(delta_);
     }
     else if (fieldName == IOobject::groupName("omega", phaseName_))
     {
-        eqn += interface_.fraction()*beta_*taRhoSqrnu
-           /(sqr(betaStar_)*pow4(delta_));
+        eqn += mixture_.interfaceFraction()
+           *beta_*taRhoSqrnu/(sqr(betaStar_)*pow4(delta_));
     }
     else
     {

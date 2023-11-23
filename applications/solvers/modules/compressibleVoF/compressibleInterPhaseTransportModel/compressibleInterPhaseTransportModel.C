@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,13 +34,17 @@ Foam::compressibleInterPhaseTransportModel::compressibleInterPhaseTransportModel
     const surfaceScalarField& phi,
     const surfaceScalarField& rhoPhi,
     const surfaceScalarField& alphaPhi1,
-    const compressibleTwoPhaseMixture& mixture
+    const surfaceScalarField& alphaRhoPhi1,
+    const surfaceScalarField& alphaRhoPhi2,
+    const compressibleTwoPhaseVoFMixture& mixture
 )
 :
     twoPhaseTransport_(false),
     mixture_(mixture),
     phi_(phi),
-    alphaPhi1_(alphaPhi1)
+    alphaPhi1_(alphaPhi1),
+    alphaRhoPhi1_(alphaRhoPhi1),
+    alphaRhoPhi2_(alphaRhoPhi2)
 {
     {
         IOdictionary momentumTransport
@@ -68,38 +72,14 @@ Foam::compressibleInterPhaseTransportModel::compressibleInterPhaseTransportModel
 
     if (twoPhaseTransport_)
     {
-        const volScalarField& alpha1(mixture_.alpha1());
-        const volScalarField& alpha2(mixture_.alpha2());
-
-        const volScalarField& rho1 = mixture_.thermo1().rho();
-        const volScalarField& rho2 = mixture_.thermo2().rho();
-
-        alphaRhoPhi1_ =
-        (
-            new surfaceScalarField
-            (
-                IOobject::groupName("alphaRhoPhi", alpha1.group()),
-                fvc::interpolate(rho1)*alphaPhi1_
-            )
-        );
-
-        alphaRhoPhi2_ =
-        (
-            new surfaceScalarField
-            (
-                IOobject::groupName("alphaRhoPhi", alpha2.group()),
-                fvc::interpolate(rho2)*(phi_ - alphaPhi1_)
-            )
-        );
-
         momentumTransport1_ =
         (
             phaseCompressible::momentumTransportModel::New
             (
-                alpha1,
-                rho1,
+                mixture_.alpha1(),
+                mixture_.thermo1().rho(),
                 U,
-                alphaRhoPhi1_(),
+                alphaRhoPhi1_,
                 phi,
                 mixture.thermo1()
             )
@@ -109,10 +89,10 @@ Foam::compressibleInterPhaseTransportModel::compressibleInterPhaseTransportModel
         (
             phaseCompressible::momentumTransportModel::New
             (
-                alpha2,
-                rho2,
+                mixture_.alpha2(),
+                mixture_.thermo2().rho(),
                 U,
-                alphaRhoPhi2_(),
+                alphaRhoPhi2_,
                 phi,
                 mixture.thermo2()
             )
@@ -154,15 +134,16 @@ Foam::compressibleInterPhaseTransportModel::divDevTau
 }
 
 
-void Foam::compressibleInterPhaseTransportModel::correctPhasePhi()
+void Foam::compressibleInterPhaseTransportModel::predict()
 {
     if (twoPhaseTransport_)
     {
-        const volScalarField& rho1 = mixture_.thermo1().rho();
-        const volScalarField& rho2 = mixture_.thermo2().rho();
-
-        alphaRhoPhi1_.ref() = fvc::interpolate(rho1)*alphaPhi1_;
-        alphaRhoPhi2_.ref() = fvc::interpolate(rho2)*(phi_ - alphaPhi1_);
+        momentumTransport1_->predict();
+        momentumTransport2_->predict();
+    }
+    else
+    {
+        mixtureMomentumTransport_->predict();
     }
 }
 

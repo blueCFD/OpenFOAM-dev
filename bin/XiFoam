@@ -1,0 +1,63 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# =========                 |
+# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+#  \\    /   O peration     | Website:  https://openfoam.org
+#   \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+#    \\/     M anipulation  |
+#------------------------------------------------------------------------------
+# 2017-09-13 blueCAPE Lda: Modifications for blueCFD-Core 2017
+# 2020-09-11 blueCAPE Lda: Modifications for blueCFD-Core 2020
+#------------------------------------------------------------------------------
+# License
+#     This file is a derivative work of OpenFOAM.
+#
+#     OpenFOAM is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#     for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     XiFoam
+#
+# Description
+#     Script to inform the user that XiFoam has been superseded
+#     and replaced by the more general XiFluid solver module
+#     executed by the foamRun application.
+#
+#------------------------------------------------------------------------------
+
+cat <<EOF
+
+XiFoam has been superseded and replaced by the more general
+XiFluid solver module executed by the foamRun application:
+
+    foamRun -solver XiFluid
+
+EOF
+
+exec env foamRun -solver XiFluid "$@"
+
+# Dirty hack for overriding path for when building with MSys2
+if onWin
+then
+    export CGAL_ARCH_PATH=/mingw64
+    export BOOST_ARCH_PATH=/mingw64
+fi
+
+if [ "$FOAM_VERBOSE" -a "$PS1" ]
+then
+    echo "Using BOOST and CGAL" 1>&2
+    echo "    $boost_version at $BOOST_ARCH_PATH" 1>&2
+    echo "    $cgal_version at $CGAL_ARCH_PATH" 1>&2
+fi
+
+#------------------------------------------------------------------------------

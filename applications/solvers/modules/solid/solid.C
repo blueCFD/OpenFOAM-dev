@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,19 +71,23 @@ void Foam::solvers::solid::correctDiNum()
     const scalar meanDiNum =
         average(kapparhoCpbyDelta).value()*runTime.deltaTValue();
 
-    Info<< "Region: " << mesh.name() << " Diffusion Number mean: " << meanDiNum
+    Info<< "Diffusion Number mean: " << meanDiNum
         << " max: " << DiNum << endl;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::solvers::solid::solid(fvMesh& mesh)
+Foam::solvers::solid::solid
+(
+    fvMesh& mesh,
+    autoPtr<solidThermo> thermoPtr
+)
 :
     solver(mesh),
 
-    pThermo(solidThermo::New(mesh)),
-    thermo(pThermo()),
+    thermo_(thermoPtr),
+    thermo(thermo_()),
 
     T(thermo.T()),
 
@@ -91,9 +95,6 @@ Foam::solvers::solid::solid(fvMesh& mesh)
 
     DiNum(0)
 {
-    // Read the controls
-    read();
-
     thermo.validate("solid", "h", "e");
 
     if (transient())
@@ -107,6 +108,16 @@ Foam::solvers::solid::solid(fvMesh& mesh)
             << " solver does not support LTS, use 'steadyState' ddtScheme"
             << exit(FatalError);
     }
+}
+
+
+
+Foam::solvers::solid::solid(fvMesh& mesh)
+:
+    solid(mesh, solidThermo::New(mesh))
+{
+    // Read the controls
+    read();
 }
 
 
@@ -156,7 +167,12 @@ bool Foam::solvers::solid::moveMesh()
 
 
 void Foam::solvers::solid::prePredictor()
-{}
+{
+    if (pimple.predictTransport())
+    {
+        thermophysicalTransport->predict();
+    }
+}
 
 
 void Foam::solvers::solid::momentumPredictor()
@@ -195,12 +211,13 @@ void Foam::solvers::solid::pressureCorrector()
 {}
 
 
-void Foam::solvers::solid::momentumTransportCorrector()
-{}
-
-
-void Foam::solvers::solid::thermophysicalTransportCorrector()
-{}
+void Foam::solvers::solid::postCorrector()
+{
+    if (pimple.correctTransport())
+    {
+        thermophysicalTransport->correct();
+    }
+}
 
 
 void Foam::solvers::solid::postSolve()

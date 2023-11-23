@@ -53,6 +53,8 @@ Fickian<BasicThermophysicalTransportModel>::Fickian
         thermo
     ),
 
+    UpdateableMeshObject(*this, thermo.mesh()),
+
     mixtureDiffusionCoefficients_(true),
 
     DFuncs_(this->thermo().composition().species().size()),
@@ -64,9 +66,7 @@ Fickian<BasicThermophysicalTransportModel>::Fickian
         this->coeffDict_.found("DT")
       ? this->thermo().composition().species().size()
       : 0
-    ),
-
-    Dm_(this->thermo().composition().species().size())
+    )
 {}
 
 
@@ -435,14 +435,16 @@ tmp<fvScalarMatrix> Fickian<BasicThermophysicalTransportModel>::divj
 
 
 template<class BasicThermophysicalTransportModel>
-void Fickian<BasicThermophysicalTransportModel>::correct()
+void Fickian<BasicThermophysicalTransportModel>::predict()
 {
-    BasicThermophysicalTransportModel::correct();
+    BasicThermophysicalTransportModel::predict();
 
     const basicSpecieMixture& composition = this->thermo().composition();
     const PtrList<volScalarField>& Y = composition.Y();
     const volScalarField& p = this->thermo().p();
     const volScalarField& T = this->thermo().T();
+
+    Dm_.setSize(Y.size());
 
     if (mixtureDiffusionCoefficients_)
     {
@@ -501,6 +503,46 @@ void Fickian<BasicThermophysicalTransportModel>::correct()
             );
         }
     }
+}
+
+
+template<class BasicThermophysicalTransportModel>
+bool Fickian<BasicThermophysicalTransportModel>::movePoints()
+{
+    return true;
+}
+
+
+template<class BasicThermophysicalTransportModel>
+void Fickian<BasicThermophysicalTransportModel>::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{
+    // Delete the cached Dm, will be re-created in predict
+    Dm_.clear();
+}
+
+
+template<class BasicThermophysicalTransportModel>
+void Fickian<BasicThermophysicalTransportModel>::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    // Delete the cached Dm, will be re-created in predict
+    Dm_.clear();
+}
+
+
+template<class BasicThermophysicalTransportModel>
+void Fickian<BasicThermophysicalTransportModel>::distribute
+(
+    const polyDistributionMap& map
+)
+{
+    // Delete the cached Dm, will be re-created in predict
+    Dm_.clear();
 }
 
 

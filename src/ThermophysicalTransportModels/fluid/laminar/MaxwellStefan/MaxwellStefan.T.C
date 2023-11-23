@@ -53,6 +53,8 @@ MaxwellStefan<BasicThermophysicalTransportModel>::MaxwellStefan
         thermo
     ),
 
+    UpdateableMeshObject(*this, thermo.mesh()),
+
     DFuncs_(this->thermo().composition().species().size()),
 
     DTFuncs_
@@ -61,9 +63,6 @@ MaxwellStefan<BasicThermophysicalTransportModel>::MaxwellStefan
       ? this->thermo().composition().species().size()
       : 0
     ),
-
-    Dii_(this->thermo().composition().species().size()),
-    jexp_(this->thermo().composition().species().size()),
 
     W(this->thermo().composition().species().size()),
 
@@ -608,9 +607,9 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::transform
 
 
 template<class BasicThermophysicalTransportModel>
-void MaxwellStefan<BasicThermophysicalTransportModel>::correct()
+void MaxwellStefan<BasicThermophysicalTransportModel>::predict()
 {
-    BasicThermophysicalTransportModel::correct();
+    BasicThermophysicalTransportModel::predict();
 
     const basicSpecieMixture& composition = this->thermo().composition();
     const label d = composition.defaultSpecie();
@@ -619,6 +618,9 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::correct()
     const volScalarField& p = this->thermo().p();
     const volScalarField& T = this->thermo().T();
     const volScalarField& rho = this->momentumTransport().rho();
+
+    Dii_.setSize(Y.size());
+    jexp_.setSize(Y.size());
 
     List<PtrList<volScalarField>> Dij(Y.size());
 
@@ -702,6 +704,49 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::correct()
             }
         }
     }
+}
+
+
+template<class BasicThermophysicalTransportModel>
+bool MaxwellStefan<BasicThermophysicalTransportModel>::movePoints()
+{
+    return true;
+}
+
+
+template<class BasicThermophysicalTransportModel>
+void MaxwellStefan<BasicThermophysicalTransportModel>::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{
+    // Delete the cached Dii and jexp, will be re-created in predict
+    Dii_.clear();
+    jexp_.clear();
+}
+
+
+template<class BasicThermophysicalTransportModel>
+void MaxwellStefan<BasicThermophysicalTransportModel>::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    // Delete the cached Dii and jexp, will be re-created in predict
+    Dii_.clear();
+    jexp_.clear();
+}
+
+
+template<class BasicThermophysicalTransportModel>
+void MaxwellStefan<BasicThermophysicalTransportModel>::distribute
+(
+    const polyDistributionMap& map
+)
+{
+    // Delete the cached Dii and jexp, will be re-created in predict
+    Dii_.clear();
+    jexp_.clear();
 }
 
 

@@ -269,18 +269,33 @@ void Foam::MovingPhaseModel<BasePhaseModel>::correctKinematics()
 
 
 template<class BasePhaseModel>
-void Foam::MovingPhaseModel<BasePhaseModel>::correctTurbulence()
+void Foam::MovingPhaseModel<BasePhaseModel>::predictMomentumTransport()
 {
-    BasePhaseModel::correctTurbulence();
+    BasePhaseModel::predictMomentumTransport();
+    momentumTransport_->predict();
+}
 
+
+template<class BasePhaseModel>
+void Foam::MovingPhaseModel<BasePhaseModel>::predictThermophysicalTransport()
+{
+    BasePhaseModel::predictThermophysicalTransport();
+    thermophysicalTransport_->predict();
+}
+
+
+template<class BasePhaseModel>
+void Foam::MovingPhaseModel<BasePhaseModel>::correctMomentumTransport()
+{
+    BasePhaseModel::correctMomentumTransport();
     momentumTransport_->correct();
 }
 
 
 template<class BasePhaseModel>
-void Foam::MovingPhaseModel<BasePhaseModel>::correctEnergyTransport()
+void Foam::MovingPhaseModel<BasePhaseModel>::correctThermophysicalTransport()
 {
-    BasePhaseModel::correctEnergyTransport();
+    BasePhaseModel::correctThermophysicalTransport();
     thermophysicalTransport_->correct();
 }
 

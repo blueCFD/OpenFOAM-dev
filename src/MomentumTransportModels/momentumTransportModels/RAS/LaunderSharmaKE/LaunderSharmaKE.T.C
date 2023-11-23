@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "LaunderSharmaKE.T.H"
+#include "fvcMagSqrGradGrad.H"
 #include "fvModels.H"
 #include "fvConstraints.H"
 #include "bound.H"

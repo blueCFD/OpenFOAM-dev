@@ -51,6 +51,8 @@ namespace solidThermophysicalTransportModels
 void Foam::solidThermophysicalTransportModels::anisotropic::
 setZonesPatchFaces() const
 {
+    if (!zoneCoordinateSystems_.size()) return;
+
     // Find all the patch faces adjacent to zones
 
     const fvMesh& mesh = thermo().mesh();
@@ -114,6 +116,7 @@ Foam::solidThermophysicalTransportModels::anisotropic::anisotropic
 )
 :
     solidThermophysicalTransportModel(typeName, thermo),
+    UpdateableMeshObject(*this, thermo.mesh()),
     coordinateSystem_(coordinateSystem::New(thermo.mesh(), coeffDict())),
     boundaryAligned_
     (
@@ -225,11 +228,6 @@ Foam::solidThermophysicalTransportModels::anisotropic::Kappa() const
 {
     const solidThermo& thermo = this->thermo();
     const fvMesh& mesh = thermo.mesh();
-
-    if (zoneCoordinateSystems_.size() && mesh.topoChanged())
-    {
-        setZonesPatchFaces();
-    }
 
     const volVectorField& materialKappa = thermo.Kappa();
 
@@ -436,9 +434,52 @@ Foam::solidThermophysicalTransportModels::anisotropic::divq
 }
 
 
-void Foam::solidThermophysicalTransportModels::anisotropic::correct()
+void Foam::solidThermophysicalTransportModels::anisotropic::predict()
 {
-    solidThermophysicalTransportModel::correct();
+    solidThermophysicalTransportModel::predict();
+
+    // Recalculate zonesPatchFaces if they have been deleted
+    // following mesh changes
+    if (!zonesPatchFaces_.size())
+    {
+        setZonesPatchFaces();
+    }
+}
+
+
+bool Foam::solidThermophysicalTransportModels::anisotropic::movePoints()
+{
+    return true;
+}
+
+
+void Foam::solidThermophysicalTransportModels::anisotropic::topoChange
+(
+    const polyTopoChangeMap& map
+)
+{
+    // Delete the cached zonesPatchFaces, will be re-created in predict
+    zonesPatchFaces_.clear();
+}
+
+
+void Foam::solidThermophysicalTransportModels::anisotropic::mapMesh
+(
+    const polyMeshMap& map
+)
+{
+    // Delete the cached zonesPatchFaces, will be re-created in predict
+    zonesPatchFaces_.clear();
+}
+
+
+void Foam::solidThermophysicalTransportModels::anisotropic::distribute
+(
+    const polyDistributionMap& map
+)
+{
+    // Delete the cached zonesPatchFaces, will be re-created in predict
+    zonesPatchFaces_.clear();
 }
 
 

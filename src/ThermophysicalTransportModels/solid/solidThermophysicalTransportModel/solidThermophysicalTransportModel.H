@@ -158,9 +158,13 @@ public:
         //- Return the source term for the energy equation
         virtual tmp<fvScalarMatrix> divq(volScalarField& he) const = 0;
 
+        //- Predict the thermophysical transport coefficients if possible
+        //  without solving thermophysical transport model equations
+        virtual void predict() = 0;
+
         //- Solve the thermophysical transport model equations
-        //  and correct the transport coefficients
-        virtual void correct() = 0;
+        //  and correct the thermophysical transport coefficients
+        virtual void correct();
 };
 
 

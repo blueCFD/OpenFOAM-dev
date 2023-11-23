@@ -34,11 +34,12 @@ inline Foam::MPPICParcel<ParcelType>::MPPICParcel
     const barycentric& coordinates,
     const label celli,
     const label tetFacei,
-    const label tetPti
+    const label tetPti,
+    const label facei
 )
 :
-    ParcelType(mesh, coordinates, celli, tetFacei, tetPti),
-    UCorrect_(Zero)
+    ParcelType(mesh, coordinates, celli, tetFacei, tetPti, facei),
+    id_(-1, -1)
 {}
 
 
@@ -51,23 +52,23 @@ inline Foam::MPPICParcel<ParcelType>::MPPICParcel
 )
 :
     ParcelType(mesh, position, celli),
-    UCorrect_(Zero)
+    id_(-1, -1)
 {}
 
 
 // * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * * //
 
 template<class ParcelType>
-inline const Foam::vector& Foam::MPPICParcel<ParcelType>::UCorrect() const
+inline const Foam::labelPair& Foam::MPPICParcel<ParcelType>::id() const
 {
-    return UCorrect_;
+    return id_;
 }
 
 
 template<class ParcelType>
-inline Foam::vector& Foam::MPPICParcel<ParcelType>::UCorrect()
+inline Foam::labelPair& Foam::MPPICParcel<ParcelType>::id()
 {
-    return UCorrect_;
+    return id_;
 }
 
 

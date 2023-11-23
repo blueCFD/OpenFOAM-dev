@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "StationaryPhaseModel.T.H"
+#include "fvcLaplacian.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,15 +27,18 @@ License
 #include "constrainHbyA.H"
 #include "constrainPressure.H"
 #include "adjustPhi.H"
+#include "fvcMeshPhi.H"
+#include "fvcFlux.H"
+#include "fvcDdt.H"
+#include "fvcSnGrad.H"
+#include "fvmDiv.H"
+#include "fvmSup.H"
+#include "fvcReconstruct.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 void Foam::solvers::compressibleVoF::pressureCorrector()
 {
-    volScalarField& p = mixture.p();
-
-    const volScalarField& alpha2(mixture.alpha2());
-
     const volScalarField& rho1 = mixture.rho1();
     const volScalarField& rho2 = mixture.rho2();
 
@@ -53,13 +56,13 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
         rAU = 1.0/UEqn.A();
     }
 
-    surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU()));
+    const surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU()));
 
     const surfaceScalarField alphaPhi2("alphaPhi2", phi - alphaPhi1);
 
     while (pimple.correct())
     {
-        volVectorField HbyA(constrainHbyA(rAU()*UEqn.H(), U, p_rgh));
+        const volVectorField HbyA(constrainHbyA(rAU()*UEqn.H(), U, p_rgh));
         surfaceScalarField phiHbyA
         (
             "phiHbyA",
@@ -69,10 +72,10 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
 
         MRF.makeRelative(phiHbyA);
 
-        surfaceScalarField phig
+        const surfaceScalarField phig
         (
             (
-                mixture.surfaceTensionForce()
+                interface.surfaceTensionForce()
               - buoyancy.ghf*fvc::snGrad(rho)
             )*rAUf*mesh.magSf()
         );
@@ -176,7 +179,7 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
         }
 
         // Cache p_rgh prior to solve for density update
-        volScalarField p_rgh_0(p_rgh);
+        const volScalarField p_rgh_0(p_rgh);
 
         while (pimple.correctNonOrthogonal())
         {

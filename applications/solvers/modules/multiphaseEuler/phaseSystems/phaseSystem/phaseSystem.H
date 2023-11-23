@@ -635,11 +635,17 @@ public:
             //- Correct the species mass fractions
             virtual void correctSpecies();
 
+            //- Predict the momentumTransport
+            virtual void predictMomentumTransport();
+
+            //- Predict the energy transport e.g. alphat
+            virtual void predictThermophysicalTransport();
+
             //- Correct the momentumTransport
-            virtual void correctTurbulence();
+            virtual void correctMomentumTransport();
 
             //- Correct the energy transport e.g. alphat
-            virtual void correctEnergyTransport();
+            virtual void correctThermophysicalTransport();
 
             //- Update the fluid properties for mesh changes
             virtual void meshUpdate();

@@ -46,6 +46,7 @@ SourceFiles
 #include "vectorList.H"
 #include "faceList.H"
 #include "triFaceList.H"
+#include "barycentric.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,26 +74,14 @@ protected:
         //- Patch ID
         const label patchId_;
 
-        //- Patch area - total across all processors
-        scalar patchArea_;
+        //- Cumulative sum of the total patch areas in each process
+        scalarList sumProcArea_;
 
-        //- Patch face normal directions
-        vectorList patchNormal_;
+        //- Cumulative sum of the face areas in the patch
+        scalarList sumFaceArea_;
 
-        //- List of cell labels corresponding to injector positions
-        labelList cellOwners_;
-
-        //- Decomposed patch faces as a list of triangles
-        triFaceList triFace_;
-
-        //- Addressing from per triangle to patch face
-        labelList triToFace_;
-
-        //- Cumulative triangle area per triangle face
-        scalarList triCumulativeMagSf_;
-
-        //- Cumulative area fractions per processor
-        scalarList sumTriMagSf_;
+        //- Cumulative sum of the triangle areas in each patch face
+        scalarListList sumFaceTriArea_;
 
 
 public:
@@ -120,10 +109,11 @@ public:
         (
             const fvMesh& mesh,
             Random& rnd,
-            vector& position,
-            label& cellOwner,
+            barycentric& coordinates,
+            label& celli,
             label& tetFacei,
-            label& tetPti
+            label& tetPti,
+            label& facei
         );
 };
 
