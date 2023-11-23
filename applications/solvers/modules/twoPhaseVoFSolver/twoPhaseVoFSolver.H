@@ -55,8 +55,7 @@ See also
 #ifndef twoPhaseVoFSolver_H
 #define twoPhaseVoFSolver_H
 
-#include "VoFSolver.H"
-#include "twoPhaseVoFMixture.H"
+#include "twoPhaseSolver.H"
 #include "interfaceProperties.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -72,41 +71,14 @@ namespace solvers
 
 class twoPhaseVoFSolver
 :
-    public VoFSolver
+    public twoPhaseSolver
 {
 
 protected:
 
-    // Phase properties
-
-        //- Reference to the twoPhaseVoFMixture
-        twoPhaseVoFMixture& mixture;
-
-        //- Reference to the phase1-fraction
-        volScalarField& alpha1;
-
-        //- Reference to the phase2-fraction
-        volScalarField& alpha2;
-
-        //- Switch indicating if this is a restart
-        bool alphaRestart;
-
-
     // Interface properties
 
         interfaceProperties interface;
-
-
-    // Kinematic properties
-
-        // Phase-1 volumetric flux
-        surfaceScalarField alphaPhi1;
-
-
-    // Cached temporary fields
-
-        //- MULES Correction
-        tmp<surfaceScalarField> talphaPhi1Corr0;
 
 
 private:
@@ -114,13 +86,7 @@ private:
     // Private Member Functions
 
         //- Correct the cached Courant numbers
-        void correctCoNum();
-
-        //- Solve for the phase-fractions
-        void alphaSolve(const dictionary& alphaControls);
-
-        //- Solve for the phase-fractions
-        void alphaPredictor();
+        virtual void correctCoNum();
 
 
 protected:
@@ -129,13 +95,6 @@ protected:
 
         //- Adjust the rDeltaT in the vicinity of the interface
         virtual void setInterfaceRDeltaT(volScalarField& rDeltaT);
-
-        //- Calculate the alpha equation sources
-        virtual void alphaSuSp
-        (
-            tmp<volScalarField::Internal>& Su,
-            tmp<volScalarField::Internal>& Sp
-        ) = 0;
 
         //- Correct the interface properties following mesh-change
         //  and phase-fraction update
@@ -165,12 +124,6 @@ public:
 
 
     // Member Functions
-
-        //- Called at the start of the time-step, before the PIMPLE loop
-        virtual void preSolve();
-
-        //- Called at the start of the PIMPLE loop
-        virtual void prePredictor();
 
 
     // Member Operators

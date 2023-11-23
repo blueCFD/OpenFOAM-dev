@@ -32,12 +32,19 @@ License
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
+Foam::tmp<Foam::volScalarField>
+Foam::solvers::isothermalFilm::sigma() const
+{
+    return constrainedField(surfaceTension->sigma());
+}
+
+
 Foam::tmp<Foam::surfaceScalarField>
 Foam::solvers::isothermalFilm::pbByAlphaRhof() const
 {
     return fvc::interpolate
     (
-        max(nHat & -g, dimensionedScalar(g.dimensions(), 0))*VbyA
+        max(nHat & g, dimensionedScalar(g.dimensions(), 0))*VbyA
     );
 }
 
@@ -69,6 +76,9 @@ Foam::solvers::isothermalFilm::pe() const
     // Update the pressure, mapping from the fluid region as required
     p.correctBoundaryConditions();
 
+    // Add the droplet impingement pressure
+    p.ref() += mesh.time().deltaT()*fvModels().source(p, "pi")().Su();
+
     return p;
 }
 
@@ -78,11 +88,12 @@ void Foam::solvers::isothermalFilm::momentumPredictor()
     volVectorField& U = U_;
 
     // Calculate the surface tension coefficient
-    const volScalarField sigma(constrainedField(surfaceTension->sigma()));
+    const volScalarField sigma(this->sigma());
 
     tUEqn =
     (
         fvm::ddt(alpha, rho, U) + fvm::div(alphaRhoPhi, U)
+      - fvm::Sp(contErr(), U)
       + momentumTransport->divDevTau(U)
      ==
         contactForce(sigma)

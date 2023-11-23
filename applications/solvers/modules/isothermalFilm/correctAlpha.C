@@ -37,7 +37,6 @@ License
 void Foam::solvers::isothermalFilm::correctAlpha()
 {
     volScalarField& alpha = alpha_;
-    volVectorField& U = U_;
 
     fvVectorMatrix& UEqn = tUEqn.ref();
 
@@ -66,7 +65,7 @@ void Foam::solvers::isothermalFilm::correctAlpha()
 
         const surfaceScalarField alphaf
         (
-            constrainedField(max(fvc::interpolate(alpha), 0.0))
+            constrainedField(fvc::interpolate(alpha))
         );
 
         const surfaceScalarField alpharAUf
@@ -76,7 +75,7 @@ void Foam::solvers::isothermalFilm::correctAlpha()
 
         const surfaceScalarField phig("phig", phip + pbByAlphaGradRhof*alphaf);
 
-        phi = constrainPhiHbyA(fvc::flux(HbyA) - alpharAUf*phig, U, alpha);
+        phi_ = constrainedField(fvc::flux(HbyA) - alpharAUf*phig);
 
         const surfaceScalarField phid("phid", rhof*phi);
 
@@ -102,7 +101,7 @@ void Foam::solvers::isothermalFilm::correctAlpha()
 
             if (pimple.finalNonOrthogonalIter())
             {
-                alphaRhoPhi = alphaEqn.flux();
+                alphaRhoPhi_ = alphaEqn.flux();
             }
         }
 
@@ -111,16 +110,16 @@ void Foam::solvers::isothermalFilm::correctAlpha()
             constrainedField(pbByAlphaf*fvc::snGrad(alpha)*mesh.magSf())
         );
 
-        phi -= alpharAUf*phiGradAlpha;
+        phi_ -= alpharAUf*phiGradAlpha;
 
-        U = HbyA - rAU*fvc::reconstruct(alphaf*(phig + phiGradAlpha));
+        U_ = HbyA - rAU*fvc::reconstruct(alphaf*(phig + phiGradAlpha));
 
         // Remove film-normal component of velocity
-        U -= nHat*(nHat & U);
+        U_ -= nHat*(nHat & U);
 
-        U.correctBoundaryConditions();
+        U_.correctBoundaryConditions();
 
-        fvConstraints().constrain(U);
+        fvConstraints().constrain(U_);
 
         fvConstraints().constrain(alpha);
 

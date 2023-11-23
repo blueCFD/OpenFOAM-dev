@@ -96,6 +96,9 @@ $(MPPICTIMESCALE)/equilibrium/equilibrium.C
 $(MPPICTIMESCALE)/nonEquilibrium/nonEquilibrium.C
 $(MPPICTIMESCALE)/isotropic/isotropic.C
 
+# injection model
+submodels/Momentum/InjectionModel/InjectionModel/injectionModel.C
+
 # integration schemes
 integrationScheme/integrationScheme/integrationScheme.C
 integrationScheme/integrationScheme/integrationSchemeNew.C
@@ -112,9 +115,6 @@ clouds/Templates/MomentumCloud/cloudSolution/cloudSolution.C
 
 # averaging methods
 submodels/MPPIC/AveragingMethods/makeAveragingMethods.C
-
-# surface films
-submodels/Thermodynamic/SurfaceFilmModel/ThermoSurfaceFilm/ThermoSurfaceFilmBase.T.C
 
 # fvModels
 fvModels/clouds/clouds.C

@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      epsilon;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -3 0 0 0 0];
+
+internalField   uniform 20;
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    rotor
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+
+    stator
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+
+    nonCouple
+    {
+        type            zeroGradient;
+    }
+}
+
+
+// ************************************************************************* //

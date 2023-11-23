@@ -76,7 +76,6 @@ dummyThirdParty/Allwmake $targetType $*
 
 wmake $targetType finiteVolume
 wmake $targetType lagrangian/basic
-wmake $targetType lagrangian/distributionModels
 wmake $targetType genericPatchFields
 
 wmake $targetType mesh/extrudeModel
@@ -105,7 +104,6 @@ MomentumTransportModels/Allwmake $targetType $*
 ThermophysicalTransportModels/Allwmake $targetType $*
 wmake $targetType radiationModels
 wmake $targetType combustionModels
-wmake $targetType surfaceFilmModels
 mesh/Allwmake $targetType $*
 renumber/Allwmake $targetType $*
 fvAgglomerationMethods/Allwmake $targetType $*
@@ -116,6 +114,9 @@ wmake $targetType fvConstraints
 functionObjects/Allwmake $targetType $*
 
 lagrangian/Allwmake $targetType $*
+
+wmake $targetType surfaceFilmModels
+wmake $targetType parcelSurfaceFilmModels
 
 wmake $targetType sixDoFRigidBodyMotion
 wmake $targetType sixDoFRigidBodyState

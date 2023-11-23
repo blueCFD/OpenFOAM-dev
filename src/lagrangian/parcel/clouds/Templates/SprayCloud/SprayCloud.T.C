@@ -26,6 +26,7 @@ License
 #include "SprayCloud.T.H"
 #include "AtomisationModel.T.H"
 #include "BreakupModel.T.H"
+#include "ConeInjection.T.H"
 #include "parcelThermo.H"
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
@@ -163,19 +164,22 @@ template<class CloudType>
 void Foam::SprayCloud<CloudType>::checkParcelProperties
 (
     parcelType& parcel,
-    const bool fullyDescribed
+    const label injectori
 )
 {
-    CloudType::checkParcelProperties(parcel, fullyDescribed);
+    CloudType::checkParcelProperties(parcel, injectori);
 
-    // store the injection position and initial drop size
-    parcel.position0() = parcel.position(this->mesh());
+    // store the initial size and position
     parcel.d0() = parcel.d();
+    parcel.mass0() = parcel.mass();
+    parcel.position0() = parcel.position(this->mesh());
 
     parcel.y() = breakup().y0();
     parcel.yDot() = breakup().yDot0();
 
     parcel.liquidCore() = atomisation().initLiquidCore();
+
+    parcel.injector() = injectori;
 }
 
 
@@ -218,7 +222,7 @@ void Foam::SprayCloud<CloudType>::info()
     CloudType::info();
     scalar d32 = 1.0e+6*this->Dij(3, 2);
     scalar d10 = 1.0e+6*this->Dij(1, 0);
-    scalar dMax = 1.0e+6*this->Dmax();
+    scalar dMax = 1.0e+6*max(scalar(0), this->Dmax());
     scalar pen = this->penetration(0.95);
 
     Info<< "    D10, D32, Dmax (mu)             = " << d10 << ", " << d32

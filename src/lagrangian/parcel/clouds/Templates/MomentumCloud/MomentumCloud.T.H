@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -505,6 +505,9 @@ public:
             //- Mean diameter Dij
             inline scalar Dij(const label i, const label j) const;
 
+            //- Min diameter
+            inline scalar Dmin() const;
+
             //- Max diameter
             inline scalar Dmax() const;
 
@@ -536,7 +539,7 @@ public:
             void checkParcelProperties
             (
                 parcelType& parcel,
-                const bool fullyDescribed
+                const label injectori
             );
 
             //- Store the current cloud state

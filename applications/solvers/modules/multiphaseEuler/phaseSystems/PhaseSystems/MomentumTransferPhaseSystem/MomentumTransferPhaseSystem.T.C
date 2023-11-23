@@ -195,6 +195,31 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::momentumTransfer()
     )
     {
         *Kds_[dragModelIter.key()] = dragModelIter()->K();
+
+        // Zero-gradient the drag coefficient to boundaries with fixed velocity
+        const phaseInterface& interface = dragModelIter()->interface();
+        volScalarField& K = *Kds_[dragModelIter.key()];
+
+        forAll(K.boundaryField(), patchi)
+        {
+            if
+            (
+                (
+                    !interface.phase1().stationary()
+                 && interface.phase1().U()()
+                   .boundaryField()[patchi].fixesValue()
+                )
+             && (
+                    !interface.phase2().stationary()
+                 && interface.phase2().U()()
+                   .boundaryField()[patchi].fixesValue()
+                )
+            )
+            {
+                K.boundaryFieldRef()[patchi] =
+                    K.boundaryField()[patchi].patchInternalField();
+            }
+        }
     }
 
     // Initialise Vms table if required
@@ -507,7 +532,7 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::KdVmfs() const
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Fs()
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Fs() const
 {
     PtrList<surfaceScalarField> Fs(this->phaseModels_.size());
 
@@ -634,7 +659,7 @@ Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Fs()
 
 template<class BasePhaseSystem>
 Foam::PtrList<Foam::surfaceScalarField>
-Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Ffs()
+Foam::MomentumTransferPhaseSystem<BasePhaseSystem>::Ffs() const
 {
     PtrList<surfaceScalarField> Ffs(this->phaseModels_.size());
 

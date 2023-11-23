@@ -14,9 +14,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-VoFToFilmTransfer
+VoFFilmTransfer
 {
-    type        VoFtoFilmTransfer;
+    type        VoFFilmTransfer;
 
     libs        ("libfilmVoFTransfer.so");
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,6 +37,7 @@ License
 #include "PatchCollisionDensity.T.H"
 #include "PatchPostProcessing.T.H"
 #include "RelativeVelocity.T.H"
+#include "SizeDistribution.T.H"
 #include "VoidFraction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -56,6 +57,7 @@ License
     makeCloudFunctionObjectType(PatchPostProcessing, CloudType);               \
     makeCloudFunctionObjectType(RelativeVelocity, CloudType);                  \
     makeCloudFunctionObjectType(VoidFraction, CloudType);                      \
+    makeCloudFunctionObjectType(SizeDistribution, CloudType);                  \
     makeCloudFunctionObjectType(VolumeFlux, CloudType);
 
 

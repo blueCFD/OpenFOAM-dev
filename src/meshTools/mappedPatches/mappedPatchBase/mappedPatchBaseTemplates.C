@@ -106,22 +106,33 @@ void Foam::mappedPatchBase::validateForField
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::fromNeigbour(const Field<Type>& nbrFld) const
+Foam::mappedPatchBase::fromNeighbour(const Field<Type>& nbrFld) const
 {
     if (sameUntransformedPatch())
     {
         return nbrFld;
     }
 
-    if (!patchToPatchIsUsed_)
+    if (nbrPatchIsMapped() && nbrMappedPatch().reMapNbr_)
     {
-        if (mapPtr_.empty())
+        treeMapPtr_.clear();
+        treeNbrPatchFaceIndices_.clear();
+        patchToPatchIsValid_ = false;
+        nbrMappedPatch().reMapNbr_ = false;
+    }
+
+    if (usingTree_)
+    {
+        if (treeMapPtr_.empty())
         {
             calcMapping();
         }
 
-        tmp<Field<Type>> tResult(new Field<Type>(nbrFld, nbrPatchFaceIndices_));
-        mapPtr_->distribute(tResult.ref());
+        tmp<Field<Type>> tResult
+        (
+            new Field<Type>(nbrFld, treeNbrPatchFaceIndices_)
+        );
+        treeMapPtr_->distribute(tResult.ref());
         return transform_.transform().transform(tResult);
     }
     else
@@ -131,11 +142,6 @@ Foam::mappedPatchBase::fromNeigbour(const Field<Type>& nbrFld) const
             !patchToPatchIsValid_
          && !(symmetric() && nbrMappedPatch().patchToPatchIsValid_)
         )
-        {
-            calcMapping();
-        }
-
-        if (!patchToPatchIsValid_ && !symmetric())
         {
             calcMapping();
         }
@@ -153,9 +159,9 @@ Foam::mappedPatchBase::fromNeigbour(const Field<Type>& nbrFld) const
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::fromNeigbour(const tmp<Field<Type>>& nbrFld) const
+Foam::mappedPatchBase::fromNeighbour(const tmp<Field<Type>>& nbrFld) const
 {
-    tmp<Field<Type>> tResult = fromNeigbour(nbrFld());
+    tmp<Field<Type>> tResult = fromNeighbour(nbrFld());
     nbrFld.clear();
     return tResult;
 }
@@ -163,24 +169,32 @@ Foam::mappedPatchBase::fromNeigbour(const tmp<Field<Type>>& nbrFld) const
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::toNeigbour(const Field<Type>& fld) const
+Foam::mappedPatchBase::toNeighbour(const Field<Type>& fld) const
 {
     if (sameUntransformedPatch())
     {
         return fld;
     }
 
-    if (!patchToPatchIsUsed_)
+    if (nbrPatchIsMapped() && nbrMappedPatch().reMapNbr_)
     {
-        if (mapPtr_.empty())
+        treeMapPtr_.clear();
+        treeNbrPatchFaceIndices_.clear();
+        patchToPatchIsValid_ = false;
+        nbrMappedPatch().reMapNbr_ = false;
+    }
+
+    if (usingTree_)
+    {
+        if (treeMapPtr_.empty())
         {
             calcMapping();
         }
 
         Field<Type> nbrFld(fld);
-        mapPtr_->reverseDistribute(nbrPatchFaceIndices_.size(), nbrFld);
+        treeMapPtr_->reverseDistribute(treeNbrPatchFaceIndices_.size(), nbrFld);
         tmp<Field<Type>> tResult(new Field<Type>(nbrPolyPatch().size()));
-        tResult.ref().rmap(nbrFld, nbrPatchFaceIndices_);
+        tResult.ref().rmap(nbrFld, treeNbrPatchFaceIndices_);
         return transform_.transform().invTransform(tResult);
     }
     else
@@ -207,9 +221,9 @@ Foam::mappedPatchBase::toNeigbour(const Field<Type>& fld) const
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::mappedPatchBase::toNeigbour(const tmp<Field<Type>>& fld) const
+Foam::mappedPatchBase::toNeighbour(const tmp<Field<Type>>& fld) const
 {
-    tmp<Field<Type>> tResult = toNeigbour(fld());
+    tmp<Field<Type>> tResult = toNeighbour(fld());
     fld.clear();
     return tResult;
 }

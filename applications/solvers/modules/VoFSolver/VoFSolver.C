@@ -88,8 +88,8 @@ Foam::solvers::VoFSolver::VoFSolver
 :
     fluidSolver(mesh),
 
-    mixture_(mixturePtr),
-    mixture(mixture_()),
+    mixturePtr_(mixturePtr),
+    mixture_(mixturePtr_()),
 
     divAlphaName("div(phi,alpha)"),
 
@@ -106,7 +106,7 @@ Foam::solvers::VoFSolver::VoFSolver
         mesh
     ),
 
-    phi
+    phi_
     (
         IOobject
         (
@@ -123,7 +123,7 @@ Foam::solvers::VoFSolver::VoFSolver
 
     p_rgh(buoyancy.p_rgh),
 
-    rho(mixture.rho()),
+    rho(mixture_.rho()),
 
     rhoPhi
     (
@@ -135,12 +135,14 @@ Foam::solvers::VoFSolver::VoFSolver
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        fvc::interpolate(rho)*phi
+        fvc::interpolate(rho)*phi_
     ),
 
     MRF(mesh),
 
-    U(U_)
+    mixture(mixture_),
+    U(U_),
+    phi(phi_)
 {
     mesh.schemes().setFluxRequired(p_rgh.name());
 

@@ -26,9 +26,9 @@ gradSchemes
 
 divSchemes
 {
-    default         none;
+    default             none;
 
-    div(phid,alpha) Gauss upwind; // vanLeer;
+    div(phid,alpha)     Gauss upwind; // vanLeer;
     div(alphaRhoPhi,U)  Gauss upwind;
     div(alphaRhoPhi,e)  Gauss upwind;
 }

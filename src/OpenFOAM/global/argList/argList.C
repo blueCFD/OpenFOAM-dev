@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 Symscape: Reinterpret path in 'getRootCase()'.
@@ -1246,14 +1246,14 @@ void Foam::argList::printNotes() const
 
 void Foam::argList::printUsage() const
 {
-    Info<< "\nUsage: " << executable_ << " [OPTIONS]";
+    Info<< nl << "Usage: " << executable_ << " [OPTIONS]";
 
     forAllConstIter(SLList<string>, validArgs, iter)
     {
         Info<< " <" << iter().c_str() << '>';
     }
 
-    Info<< "\noptions:\n";
+    Info<< nl << "options:" << nl;
 
     wordList opts = validOptions.sortedToc();
     forAll(opts, optI)

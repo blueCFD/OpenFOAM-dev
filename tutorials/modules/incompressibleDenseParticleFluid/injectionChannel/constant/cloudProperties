@@ -1,0 +1,184 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      cloudProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type        MPPICCloud;
+
+solution
+{
+    coupled         true;
+    transient       yes;
+    cellValueSourceCorrection on;
+
+    interpolationSchemes
+    {
+        rho.air         cell;
+        U.air           cellPoint;
+        mu.air          cell;
+        alpha.air       cell;
+    }
+
+    averagingMethod basic;
+
+    integrationSchemes
+    {
+        U               Euler;
+    }
+
+    sourceTerms
+    {
+        schemes
+        {
+            U semiImplicit 1;
+        }
+    }
+}
+
+constantProperties
+{
+    rho0            1000;
+}
+
+subModels
+{
+    particleForces
+    {
+        WenYuDrag
+        {
+            alphac alpha.air;
+        }
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            type            patchInjection;
+            patchName       lowerInlet;
+            U0              (18.7939 6.8404 0);
+            nParticle       1;
+            parcelsPerSecond 1390885;
+            sizeDistribution
+            {
+                type            normal;
+                Q               0;
+                min             500e-6;
+                max             800e-6;
+                mu              650e-6;
+                sigma           25e-6;
+            }
+            flowRateProfile constant 1;
+            SOI             0;
+            duration        60;
+        }
+
+        model2
+        {
+            type            patchInjection;
+            patchName       upperInlet;
+            U0              (18.7939 -6.8404 0);
+            nParticle       1;
+            parcelsPerSecond 1390885;
+            sizeDistribution
+            {
+                type            normal;
+                Q               0;
+                min             500e-6;
+                max             800e-6;
+                mu              650e-6;
+                sigma           25e-6;
+            }
+            flowRateProfile constant 1;
+            massTotal       0;
+            SOI             0;
+            duration        60;
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel localInteraction;
+
+    localInteractionCoeffs
+    {
+        patches
+        (
+            frontAndBack
+            {
+                type rebound;
+                e    1;
+                mu   0;
+            }
+
+            walls
+            {
+                type rebound;
+                e    1;
+                mu   0;
+            }
+
+            "lowerInlet|upperInlet|outlet"
+            {
+                type escape;
+            }
+        );
+    }
+
+    heatTransferModel none;
+
+    surfaceFilmModel none;
+
+    packingModel none;
+
+    dampingModel relaxation;
+
+    relaxationCoeffs
+    {
+        timeScaleModel
+        {
+            type nonEquilibrium;
+            alphaPacked 0.58;
+            e 0.9;
+        }
+    }
+
+    isotropyModel stochastic;
+
+    stochasticCoeffs
+    {
+        timeScaleModel
+        {
+            type isotropic;
+            alphaPacked 0.58;
+            e 0.9;
+        }
+    }
+
+    stochasticCollisionModel none;
+
+    radiation off;
+}
+
+
+cloudFunctions
+{
+    massFlux1
+    {
+        type massFlux;
+    }
+}
+
+
+// ************************************************************************* //

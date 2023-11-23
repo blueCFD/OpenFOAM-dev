@@ -112,13 +112,13 @@ protected:
         label surfacePatchID;
 
         //- Film wall normal
-        volVectorField nHat;
+        volVectorField nHat_;
 
         //- Film cell cross-sectional area magnitude
-        volScalarField::Internal magSf;
+        volScalarField::Internal magSf_;
 
         //- Film cell volume/wall face area
-        volScalarField VbyA;
+        volScalarField VbyA_;
 
         //- Bool returned by initFilmMesh()
         bool initialised_;
@@ -133,22 +133,16 @@ protected:
         dimensionedScalar deltaWet;
 
 
-    // Buoyancy
-
-        //- Acceleration due to gravity
-        uniformDimensionedVectorField g;
-
-
     // Kinematic properties
 
         //- Film velocity field
         volVectorField U_;
 
         //- Film mass-flux field
-        surfaceScalarField alphaRhoPhi;
+        surfaceScalarField alphaRhoPhi_;
 
         //- Film volumetric-flux field
-        surfaceScalarField phi;
+        surfaceScalarField phi_;
 
 
     // Interface properties
@@ -173,26 +167,8 @@ protected:
         //  shared between the momentum predictor and pressure corrector
         tmp<fvVectorMatrix> tUEqn;
 
-
-public:
-
-    // Constant access to the physical state
-
-        //- Film thickness
-        const volScalarField& delta;
-
-        //- Film volume fraction in the cell layer
-        const volScalarField& alpha;
-
-        //- Reference to the fluid thermophysical properties
-        const fluidThermo& thermo;
-
-        //- The thermodynamic density field
-        const volScalarField& rho;
-
-        //- Film velocity field
-        const volVectorField& U;
-
+        //- Continuity error
+        tmp<volScalarField::Internal> contErr;
 
 
 private:
@@ -227,7 +203,10 @@ private:
         //- Correct the cached Courant number
         void correctCoNum();
 
-        //- Calculate and print the continuity errors
+        // Calculate the continuity error caused by limiting alpha
+        void correctContinuityError();
+
+        //- Print the continuity errors
         void continuityErrors();
 
         //- Construct the explicit film volume-fraction prediction equation
@@ -268,8 +247,48 @@ private:
 
 protected:
 
+    // Protected Member Functions
+
         //- Read controls
         void readControls();
+
+
+public:
+
+    // Public Data
+
+        //- Acceleration due to gravity
+        const uniformDimensionedVectorField g;
+
+        //- Film wall normal
+        const volVectorField& nHat;
+
+        //- Film cell cross-sectional area magnitude
+        const volScalarField::Internal& magSf;
+
+        //- Film cell volume/wall face area
+        const volScalarField& VbyA;
+
+        //- Film thickness
+        const volScalarField& delta;
+
+        //- Film volume fraction in the cell layer
+        const volScalarField& alpha;
+
+        //- Reference to the fluid thermophysical properties
+        const fluidThermo& thermo;
+
+        //- Reference to the thermodynamic density field
+        const volScalarField& rho;
+
+        //- Reference to the film velocity field
+        const volVectorField& U;
+
+        //- Reference to the film mass-flux field
+        const surfaceScalarField& alphaRhoPhi;
+
+        //- Reference to the film volumetric-flux field
+        const surfaceScalarField& phi;
 
 
 public:
@@ -301,6 +320,9 @@ public:
 
         //- Return the film surface patch region-region map
         const mappedPatchBase& surfacePatchMap() const;
+
+        //- Return the film surface tension coefficient field
+        tmp<volScalarField> sigma() const;
 
         //- Return the current maximum time-step for stable solution
         virtual scalar maxDeltaT() const;

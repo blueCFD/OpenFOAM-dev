@@ -79,17 +79,13 @@ void Foam::solvers::isothermalFilm::continuityErrors()
 {
     const dimensionedScalar mass = fvc::domainIntegrate(rho()*delta()*magSf);
 
+    correctContinuityError();
+
     if (mass.value() > small)
     {
-        const volScalarField::Internal contErr
-        (
-            fvc::ddt(alpha, rho)()() + fvc::div(alphaRhoPhi)()()
-          - (fvModels().source(rho, alpha) & alpha)()()
-        );
-
         const volScalarField::Internal massContErr
         (
-            runTime.deltaT()*magSf*contErr
+            runTime.deltaT()*magSf*contErr()
         );
 
         const scalar sumLocalContErr =
@@ -138,8 +134,10 @@ bool Foam::solvers::isothermalFilm::initFilmMesh()
     if (nWallFaces != mesh.nCells())
     {
         FatalErrorInFunction
-            << "The number of filmWall faces in the mesh "
-               "is not equal to the number of cells"
+            << "The number of film wall faces in the mesh "
+            << nWallFaces
+            << " is not equal to the number of cells "
+            << mesh.nCells()
             << exit(FatalError);
     }
 
@@ -191,14 +189,14 @@ bool Foam::solvers::isothermalFilm::initFilmMesh()
         const polyPatch& wallp = bm[patchi];
         const labelList& fCells = wallp.faceCells();
 
-        UIndirectList<vector>(nHat, fCells) = wallp.faceNormals();
-        UIndirectList<scalar>(magSf, fCells) = wallp.magFaceAreas();
+        UIndirectList<vector>(nHat_, fCells) = wallp.faceNormals();
+        UIndirectList<scalar>(magSf_, fCells) = wallp.magFaceAreas();
     }
 
-    nHat.correctBoundaryConditions();
+    nHat_.correctBoundaryConditions();
 
-    VbyA.primitiveFieldRef() = mesh.V()/magSf;
-    VbyA.correctBoundaryConditions();
+    VbyA_.primitiveFieldRef() = mesh.V()/magSf_;
+    VbyA_.correctBoundaryConditions();
 
     return true;
 }
@@ -248,7 +246,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
 
     p(thermo_.p()),
 
-    nHat
+    nHat_
     (
         IOobject
         (
@@ -261,7 +259,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
         zeroGradientFvPatchField<vector>::typeName
     ),
 
-    magSf
+    magSf_
     (
         IOobject
         (
@@ -273,7 +271,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
         dimensionedScalar(dimArea, 0)
     ),
 
-    VbyA
+    VbyA_
     (
         IOobject
         (
@@ -311,23 +309,11 @@ Foam::solvers::isothermalFilm::isothermalFilm
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        delta_/VbyA,
+        delta_/VbyA_,
         alphaTypes()
     ),
 
     deltaWet("deltaWet", dimLength, thermo_.properties()),
-
-    g
-    (
-        IOobject
-        (
-            "g",
-            runTime.constant(),
-            mesh,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        )
-    ),
 
     U_
     (
@@ -342,7 +328,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
         mesh
     ),
 
-    alphaRhoPhi
+    alphaRhoPhi_
     (
         IOobject
         (
@@ -355,7 +341,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
         fvc::flux(alpha_*thermo_.rho()*U_)
     ),
 
-    phi
+    phi_
     (
         IOobject
         (
@@ -378,17 +364,34 @@ Foam::solvers::isothermalFilm::isothermalFilm
             alpha_,
             thermo_.rho(),
             U_,
-            alphaRhoPhi,
-            phi,
+            alphaRhoPhi_,
+            phi_,
             thermo_
         )
     ),
 
+    g
+    (
+        IOobject
+        (
+            "g",
+            runTime.constant(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        )
+    ),
+
+    nHat(nHat_),
+    magSf(magSf_),
+    VbyA(VbyA_),
     delta(delta_),
     alpha(alpha_),
     thermo(thermo_),
     rho(thermo_.rho()),
-    U(U_)
+    U(U_),
+    alphaRhoPhi(alphaRhoPhi_),
+    phi(phi_)
 {
     // Read the controls
     readControls();

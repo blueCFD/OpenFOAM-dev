@@ -381,23 +381,25 @@ void Foam::momentumSurfaceFilm::solveAlpha
     const surfaceScalarField phiu
     (
         "phiu",
+        constrainFilmField
         (
-            constrainFilmField
             (
-                (
-                    fvc::snGrad(pe + pc, "snGrad(p)")
-                  + gGradRho()*alphaf
-                )*mesh().magSf()
-              - rhof*(g() & mesh().Sf()),
-                0
-            )
+                fvc::snGrad(pe + pc, "snGrad(p)")
+              + gGradRho()*alphaf
+            )*mesh().magSf()
+          - rhof*(g() & mesh().Sf()),
+            0
         )
     );
 
     const surfaceScalarField phid
     (
         "phid",
-        rhof*constrainPhiHbyA(fvc::flux(HbyA) - alpharAUf*phiu, U_, alpha_)
+        constrainFilmField
+        (
+            rhof*(fvc::flux(HbyA) - alpharAUf*phiu),
+            0
+        )
     );
 
     const surfaceScalarField ddrhorAUrhogf
@@ -894,7 +896,8 @@ void Foam::momentumSurfaceFilm::addSources
 )
 {
     DebugInFunction
-        << "\nSurface film: " << type() << ": adding to film source:" << nl
+        << nl
+        << "Surface film: " << type() << ": adding to film source:" << nl
         << "    mass     = " << massSource << nl
         << "    momentum = " << momentumSource << nl
         << "    pressure = " << pressureSource << endl;
@@ -1018,7 +1021,7 @@ Foam::momentumSurfaceFilm::primaryMomentumTrans() const
 
 void Foam::momentumSurfaceFilm::info()
 {
-    Info<< "\nSurface film: " << type() << endl;
+    Info<< nl << "Surface film: " << type() << endl;
 
     const scalarField& deltaInternal = delta_;
     const vectorField& Uinternal = U_;

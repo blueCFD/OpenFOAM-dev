@@ -55,7 +55,7 @@ boundary
         type            mappedExtrudedWall;
         neighbourRegion film;
         neighbourPatch  surface;
-        transformType   none;
+        isExtrudedRegion no;
 
         faces
         (

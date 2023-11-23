@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -124,10 +124,8 @@ namespace Foam
 
 namespace Foam
 {
+    //- Read a single scalar from an input stream
     scalar readScalar(Istream& is);
-
-    //- Inverse normalised incomplete gamma function
-    scalar invIncGamma(const scalar a, const scalar P);
 
     //- Normalised upper incomplete gamma function
     scalar incGammaRatio_Q(const scalar a, const scalar x);
@@ -140,8 +138,21 @@ namespace Foam
 
     //- Lower incomplete gamma function
     scalar incGamma_P(const scalar a, const scalar x);
+
+    //- Inverse normalised lower incomplete gamma function
+    scalar invIncGammaRatio_P(const scalar a, const scalar P);
+
+    //- Compute the power of the number x to the integer e
+    inline scalar integerPow(const scalar x, const label e);
+
+    //- Compute the power of the number x to the reciprocal integer 1/e
+    inline scalar integerRoot(const scalar x, const label e);
 }
 
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "scalarI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

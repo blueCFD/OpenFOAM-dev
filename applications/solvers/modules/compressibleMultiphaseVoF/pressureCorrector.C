@@ -42,6 +42,7 @@ License
 void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
 {
     volVectorField& U = U_;
+    surfaceScalarField& phi(phi_);
 
     fvVectorMatrix& UEqn = tUEqn.ref();
     setrAU(UEqn);
@@ -63,7 +64,7 @@ void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
         const surfaceScalarField phig
         (
             (
-                mixture.surfaceTensionForce(U)
+                surfaceTensionForce()
               - buoyancy.ghf*fvc::snGrad(rho)
             )*rAUf*mesh.magSf()
         );
@@ -125,7 +126,13 @@ void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
                 }
             }
 
-            solve(p_rghEqnComp + p_rghEqnIncomp);
+            {
+                fvScalarMatrix p_rghEqn(p_rghEqnComp + p_rghEqnIncomp);
+
+                fvConstraints().constrain(p_rghEqn);
+
+                p_rghEqn.solve();
+            }
 
             if (pimple.finalNonOrthogonalIter())
             {
@@ -140,7 +147,8 @@ void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
 
                 phi = phiHbyA + p_rghEqnIncomp.flux();
 
-                p = max(p_rgh + mixture.rho()*buoyancy.gh, pMin);
+                p = p_rgh + rho*buoyancy.gh;
+                fvConstraints().constrain(p);
                 p_rgh = p - rho*buoyancy.gh;
                 p_rgh.correctBoundaryConditions();
 
@@ -151,9 +159,6 @@ void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
             }
         }
 
-        // Correct Uf if the mesh is moving
-        fvc::correctUf(Uf, U, fvc::absolute(phi, U), MRF);
-
         // Update densities from change in p_rgh
         mixture.correctRho(p_rgh - p_rgh_0);
         mixture.correct();
@@ -162,6 +167,9 @@ void Foam::solvers::compressibleMultiphaseVoF::pressureCorrector()
         p_rgh = p - rho*buoyancy.gh;
         p_rgh.correctBoundaryConditions();
     }
+
+    // Correct Uf if the mesh is moving
+    fvc::correctUf(Uf, U, fvc::absolute(phi, U), MRF);
 
     K = 0.5*magSqr(U);
 

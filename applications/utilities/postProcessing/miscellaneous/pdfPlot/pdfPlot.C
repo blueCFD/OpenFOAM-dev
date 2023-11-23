@@ -31,7 +31,7 @@ Description
 
 #include "argList.H"
 #include "Time.T.H"
-#include "distributionModel.H"
+#include "distribution.H"
 #include "setWriter.H"
 #include "writeFile.H"
 #include "OFstream.H"

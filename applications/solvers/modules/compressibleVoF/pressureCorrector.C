@@ -41,6 +41,7 @@ License
 void Foam::solvers::compressibleVoF::pressureCorrector()
 {
     volVectorField& U = U_;
+    surfaceScalarField& phi(phi_);
 
     const volScalarField& rho1 = mixture.rho1();
     const volScalarField& rho2 = mixture.rho2();
@@ -70,7 +71,7 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
         const surfaceScalarField phig
         (
             (
-                interface.surfaceTensionForce()
+                surfaceTensionForce()
               - buoyancy.ghf*fvc::snGrad(rho)
             )*rAUf*mesh.magSf()
         );
@@ -184,10 +185,16 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
              == Sp_rgh
             );
 
-            solve
-            (
-                p_rghEqnComp1() + p_rghEqnComp2() + p_rghEqnIncomp
-            );
+            {
+                fvScalarMatrix p_rghEqn
+                (
+                    p_rghEqnComp1() + p_rghEqnComp2() + p_rghEqnIncomp
+                );
+
+                fvConstraints().constrain(p_rghEqn);
+
+                p_rghEqn.solve();
+            }
 
             if (pimple.finalNonOrthogonalIter())
             {
@@ -199,8 +206,9 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
 
                 phi = phiHbyA + p_rghEqnIncomp.flux();
 
-                p = max(p_rgh + (alpha1*rho1 + alpha2*rho2)*buoyancy.gh, pMin);
-                p_rgh = p - (alpha1*rho1 + alpha2*rho2)*buoyancy.gh;
+                p = p_rgh + rho*buoyancy.gh;
+                fvConstraints().constrain(p);
+                p_rgh = p - rho*buoyancy.gh;
                 p_rgh.correctBoundaryConditions();
 
                 U = HbyA
@@ -209,9 +217,6 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
                 fvConstraints().constrain(U);
             }
         }
-
-        // Correct Uf if the mesh is moving
-        fvc::correctUf(Uf, U, fvc::absolute(phi, U), MRF);
 
         // Update densities from change in p_rgh
         mixture_.thermo1().correctRho(psi1*(p_rgh - p_rgh_0));
@@ -222,6 +227,9 @@ void Foam::solvers::compressibleVoF::pressureCorrector()
         p_rgh = p - rho*buoyancy.gh;
         p_rgh.correctBoundaryConditions();
     }
+
+    // Correct Uf if the mesh is moving
+    fvc::correctUf(Uf, U, fvc::absolute(phi, U), MRF);
 
     K = 0.5*magSqr(U);
 

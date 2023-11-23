@@ -14,10 +14,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-pressureConstraintSource1
+zeroDimensionalFixedPressure1
 {
-    type            pressureConstraintSource;
-    p               1.36789e6;
+    type            zeroDimensionalFixedPressure;
 }
 
 //************************************************************************* //

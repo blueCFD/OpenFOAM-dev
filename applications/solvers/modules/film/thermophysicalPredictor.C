@@ -36,6 +36,7 @@ void Foam::solvers::film::thermophysicalPredictor()
     fvScalarMatrix heEqn
     (
         fvm::ddt(alpha, rho, he) + fvm::div(alphaRhoPhi, he)
+      - fvm::Sp(contErr(), he)
       + thermophysicalTransport->divq(he)
      ==
         fvModels().source(alpha, rho, he)

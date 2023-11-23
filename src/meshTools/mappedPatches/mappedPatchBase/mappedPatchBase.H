@@ -89,15 +89,19 @@ protected:
         //- The transformation between the patches
         mutable cyclicTransform transform_;
 
-        //- Distributor (if not using patch-to-patch)
-        mutable autoPtr<distributionMap> mapPtr_;
+        //- Are we using the tree mapping method, or a patch-to-patch
+        //  intersection engine? The former is typically faster on small,
+        //  pairs of patches with identical meshes. The latter is better
+        //  parallelised and provides options for connecting patches with
+        //  differing surface meshes.
+        const bool usingTree_;
 
-        //- Indices of the neighbouring patch faces who's values have to be
-        //  supplied to the distribution map (if not using patch-to-patch)
-        mutable labelList nbrPatchFaceIndices_;
+        //- Distributor (if using tree)
+        mutable autoPtr<distributionMap> treeMapPtr_;
 
-        //- Is the patch-to-patch intersection engine being used?
-        const bool patchToPatchIsUsed_;
+        //- Indices of the neighbouring patch faces who's values
+        //  have to be supplied to the distribution map (if using tree)
+        mutable labelList treeNbrPatchFaceIndices_;
 
         //- Is the patch-to-patch intersection engine up to date? (if using
         //  patch-to-patch)
@@ -116,6 +120,9 @@ protected:
         //  Defaults to true.
         const bool reMapAfterMove_;
 
+        //- Do we need to re-map the neighbour because this patch moved?
+        mutable bool reMapNbr_;
+
 
     // Protected Member Functions
 
@@ -127,6 +134,15 @@ protected:
 
         //- Get the local points for this patch
         virtual tmp<pointField> patchLocalPoints() const;
+
+        //- Get the face-areas for the neighbour patch
+        tmp<vectorField> nbrPatchFaceAreas() const;
+
+        //- Get the face-centres for the neighbour patch
+        tmp<pointField> nbrPatchFaceCentres() const;
+
+        //- Get the local points for the neighbour patch
+        tmp<pointField> nbrPatchLocalPoints() const;
 
         //- Calculate mapping
         void calcMapping() const;
@@ -167,7 +183,7 @@ public:
         (
             const polyPatch& pp,
             const dictionary& dict,
-            const bool transformisNone
+            const bool defaultTransformIsNone
         );
 
         //- Construct as copy, resetting patch
@@ -251,19 +267,22 @@ public:
 
             //- Map/interpolate the neighbour patch field to this patch
             template<class Type>
-            tmp<Field<Type>> fromNeigbour(const Field<Type>& nbrFld) const;
+            tmp<Field<Type>> fromNeighbour(const Field<Type>& nbrFld) const;
 
             //- Map/interpolate the neighbour patch field to this patch
             template<class Type>
-            tmp<Field<Type>> fromNeigbour(const tmp<Field<Type>>& nbrFld) const;
+            tmp<Field<Type>> fromNeighbour
+            (
+                const tmp<Field<Type>>& nbrFld
+            ) const;
 
             //- Map/interpolate patch field to the neighbour patch
             template<class Type>
-            tmp<Field<Type>> toNeigbour(const Field<Type>& fld) const;
+            tmp<Field<Type>> toNeighbour(const Field<Type>& fld) const;
 
             //- Map/interpolate patch field to the neighbour patch
             template<class Type>
-            tmp<Field<Type>> toNeigbour
+            tmp<Field<Type>> toNeighbour
             (
                 const tmp<Field<Type>>& fld
             ) const;

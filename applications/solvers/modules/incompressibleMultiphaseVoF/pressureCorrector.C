@@ -41,6 +41,7 @@ License
 void Foam::solvers::incompressibleMultiphaseVoF::pressureCorrector()
 {
     volVectorField& U = U_;
+    surfaceScalarField& phi(phi_);
 
     fvVectorMatrix& UEqn = tUEqn.ref();
     setrAU(UEqn);
@@ -69,7 +70,7 @@ void Foam::solvers::incompressibleMultiphaseVoF::pressureCorrector()
         surfaceScalarField phig
         (
             (
-                mixture.surfaceTensionForce(U)
+                surfaceTensionForce()
               - buoyancy.ghf*fvc::snGrad(rho)
             )*rAUf*mesh.magSf()
         );
