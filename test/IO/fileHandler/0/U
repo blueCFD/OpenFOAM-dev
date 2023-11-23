@@ -19,10 +19,15 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
+    inlet
+    {
+        type            pressureInletOutletVelocity;
+        value           $internalField;
+    }
     outlet
     {
-        type            zeroGradient;
-        value           uniform (0 0 0);
+        type            pressureInletOutletVelocity;
+        value           $internalField;
     }
     walls
     {

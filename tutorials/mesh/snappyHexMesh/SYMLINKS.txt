@@ -1,2 +1,2 @@
-The original source for 'iglooWithFridges' was '../../modules/fluid/iglooWithFridges'
-The original source for 'motorBike' was '../../modules/incompressibleFluid/motorBike'
+The original source for 'iglooWithFridges' was '../../fluid/iglooWithFridges'
+The original source for 'motorBike' was '../../incompressibleFluid/motorBike'

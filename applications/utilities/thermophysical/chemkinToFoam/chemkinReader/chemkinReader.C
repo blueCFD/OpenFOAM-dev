@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -753,9 +753,9 @@ void Foam::chemkinReader::addReaction
         default:
         {
             FatalErrorInFunction
-                << "Reaction rate type " << reactionRateTypeNames[rrType]
+                << "Reaction rate type index " << rrType
                 << " on line " << lineNo_-1
-                << " not implemented"
+                << " unknown"
                 << exit(FatalError);
         }
     }

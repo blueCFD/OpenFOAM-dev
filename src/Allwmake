@@ -115,9 +115,6 @@ functionObjects/Allwmake $targetType $*
 
 lagrangian/Allwmake $targetType $*
 
-wmake $targetType surfaceFilmModels
-wmake $targetType parcelSurfaceFilmModels
-
 wmake $targetType sixDoFRigidBodyMotion
 wmake $targetType sixDoFRigidBodyState
 wmake $targetType rigidBodyDynamics
