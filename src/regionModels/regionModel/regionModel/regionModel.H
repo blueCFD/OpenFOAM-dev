@@ -39,13 +39,11 @@ SourceFiles
 
 #include "fvMesh.H"
 #include "timeIOdictionary.H"
-#include "regionModelFunctionObjectList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
 namespace regionModels
 {
 
@@ -109,9 +107,6 @@ protected:
 
         //- Region name
         word regionName_;
-
-        //- Region model function objects
-        regionModelFunctionObjectList functions_;
 
 
     // Protected member functions
@@ -230,16 +225,7 @@ public:
             void toPrimary
             (
                 const label regionPatchi,
-                List<Type>& regionField
-            ) const;
-
-            //- Convert a local region field to the primary region with op
-            template<class Type, class CombineOp>
-            void toPrimary
-            (
-                const label regionPatchi,
-                List<Type>& regionField,
-                const CombineOp& cop
+                Field<Type>& regionField
             ) const;
 
             //- Convert a primary region field to the local region
@@ -247,16 +233,7 @@ public:
             void toRegion
             (
                 const label regionPatchi,
-                List<Type>& primaryFieldField
-            ) const;
-
-            //- Return a primary patch field mapped the region internal field
-            template<class Type>
-            void toRegion
-            (
-                Field<Type>& regionField,
-                const label regionPatchi,
-                const fvPatchField<Type>& primaryPatchField
+                Field<Type>& primaryFieldField
             ) const;
 
             //- Return a primary patch field mapped the local region

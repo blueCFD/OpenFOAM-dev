@@ -39,6 +39,7 @@ derivedFvPatches = $(fvPatches)/derived
 $(derivedFvPatches)/wall/wallFvPatch.C
 $(derivedFvPatches)/mapped/mappedFvPatch.C
 $(derivedFvPatches)/mapped/mappedWallFvPatch.C
+$(derivedFvPatches)/mapped/mappedExtrudedWallFvPatch.C
 
 
 meshWave = algorithms/FvFaceCellWave
@@ -460,6 +461,7 @@ $(general)/CorrectPhi/correctUphiBCs.C
 $(general)/pressureReference/pressureReference.C
 $(general)/levelSet/levelSet.C
 $(general)/surfaceToVolVelocity/surfaceToVolVelocity.C
+$(general)/buoyancy/buoyancy.C
 
 solutionControl = $(general)/solutionControl
 $(solutionControl)/solutionControl/solutionControl/solutionControl.C
@@ -497,14 +499,9 @@ MRF = $(general)/MRF
 $(MRF)/MRFZone.T.C
 $(MRF)/MRFZoneList.T.C
 $(MRF)/IOMRFZoneList.C
-
-SRF = $(general)/SRF
-$(SRF)/SRFModel/SRFModel/SRFModel.C
-$(SRF)/SRFModel/SRFModel/SRFModelNew.C
-$(SRF)/SRFModel/rpm/rpm.C
-$(SRF)/derivedFvPatchFields/SRFVelocityFvPatchVectorField/SRFVelocityFvPatchVectorField.C
-$(SRF)/derivedFvPatchFields/SRFWallVelocityFvPatchVectorField/SRFWallVelocityFvPatchVectorField.C
-$(SRF)/derivedFvPatchFields/SRFFreestreamVelocityFvPatchVectorField/SRFFreestreamVelocityFvPatchVectorField.C
+$(MRF)/derivedFvPatchFields/MRFPatchField/MRFPatchField.C
+$(MRF)/derivedFvPatchFields/MRFnoSlip/MRFnoSlipFvPatchVectorField.C
+$(MRF)/derivedFvPatchFields/MRFFreestreamVelocity/MRFFreestreamVelocityFvPatchVectorField.C
 
 fvModels = $(general)/fvModels
 $(fvModels)/fvModel.C

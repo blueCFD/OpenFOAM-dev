@@ -23,7 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "mappedPatchFieldBase.H"
+#include "regionModel.H"
+#include "mappedPatchBase.H"
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
@@ -31,7 +32,7 @@ template<class Type>
 void Foam::regionModels::regionModel::toPrimary
 (
     const label regionPatchi,
-    List<Type>& regionField
+    Field<Type>& regionField
 ) const
 {
     forAll(intCoupledPatchIDs_, i)
@@ -43,35 +44,7 @@ void Foam::regionModels::regionModel::toPrimary
                 (
                     regionMesh().boundaryMesh()[regionPatchi]
                 );
-            mpb.reverseDistribute(regionField);
-            return;
-        }
-    }
-
-    FatalErrorInFunction
-        << "Region patch ID " << regionPatchi << " not found in region mesh"
-        << abort(FatalError);
-}
-
-
-template<class Type, class CombineOp>
-void Foam::regionModels::regionModel::toPrimary
-(
-    const label regionPatchi,
-    List<Type>& regionField,
-    const CombineOp& cop
-) const
-{
-    forAll(intCoupledPatchIDs_, i)
-    {
-        if (intCoupledPatchIDs_[i] == regionPatchi)
-        {
-            const mappedPatchBase& mpb =
-                refCast<const mappedPatchBase>
-                (
-                    regionMesh().boundaryMesh()[regionPatchi]
-                );
-            mpb.reverseDistribute(regionField, cop);
+            regionField = mpb.reverseDistribute(regionField);
             return;
         }
     }
@@ -86,7 +59,7 @@ template<class Type>
 void Foam::regionModels::regionModel::toRegion
 (
     const label regionPatchi,
-    List<Type>& primaryField
+    Field<Type>& primaryField
 ) const
 {
     forAll(intCoupledPatchIDs_, i)
@@ -98,7 +71,7 @@ void Foam::regionModels::regionModel::toRegion
                 (
                     regionMesh().boundaryMesh()[regionPatchi]
                 );
-            mpb.distribute(primaryField);
+            primaryField = mpb.distribute(primaryField);
             return;
         }
     }
@@ -106,24 +79,6 @@ void Foam::regionModels::regionModel::toRegion
     FatalErrorInFunction
         << "Region patch ID " << regionPatchi << " not found in region mesh"
         << abort(FatalError);
-}
-
-
-template<class Type>
-void Foam::regionModels::regionModel::toRegion
-(
-    Field<Type>& regionField,
-    const label regionPatchi,
-    const fvPatchField<Type>& primaryPatchField
-) const
-{
-    const polyPatch& regionPatch = regionMesh().boundaryMesh()[regionPatchi];
-    const mappedPatchBase& mpb = refCast<const mappedPatchBase>(regionPatch);
-
-    mappedPatchFieldBase<Type> mpf(mpb, primaryPatchField);
-
-    UIndirectList<Type>(regionField, regionPatch.faceCells())
-        = mpf.mappedField();
 }
 
 
@@ -139,7 +94,14 @@ void Foam::regionModels::regionModel::toRegion
         const label regionPatchi = intCoupledPatchIDs_[i];
         const label primaryPatchi = primaryPatchIDs_[i];
 
-        toRegion(rf, regionPatchi, pBf[primaryPatchi]);
+        const polyPatch& regionPatch =
+            regionMesh().boundaryMesh()[regionPatchi];
+
+        const mappedPatchBase& mpb =
+            refCast<const mappedPatchBase>(regionPatch);
+
+        UIndirectList<Type>(rf, regionPatch.faceCells()) =
+            mpb.distribute(pBf[primaryPatchi]);
     }
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,28 +25,9 @@ License
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-inline const Foam::fvCellSet::selectionModeType&
-Foam::fvCellSet::selectionMode() const
-{
-    return selectionMode_;
-}
-
-
-inline const Foam::word& Foam::fvCellSet::cellSetName() const
-{
-    return cellSetName_;
-}
-
-
 inline Foam::scalar Foam::fvCellSet::V() const
 {
     return V_;
-}
-
-
-inline const Foam::labelList& Foam::fvCellSet::cells() const
-{
-    return cells_;
 }
 
 

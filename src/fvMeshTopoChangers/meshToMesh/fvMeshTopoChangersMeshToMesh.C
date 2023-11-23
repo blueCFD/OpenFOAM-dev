@@ -91,7 +91,7 @@ Foam::fvMeshTopoChangers::meshToMesh::meshToMesh
 {
     forAll(times_, i)
     {
-        timeIndices_.insert(label(times_[i]/timeDelta_));
+        timeIndices_.insert(label((times_[i] + timeDelta_/2.0)/timeDelta_));
     }
 }
 
@@ -202,6 +202,8 @@ bool Foam::fvMeshTopoChangers::meshToMesh::update()
         }
 
         mesh().reset(newMesh);
+
+        mesh().deltaCoeffs();
 
         // Map all the volFields in the objectRegistry
         #define mapVolFieldType(Type, nullArg)                                 \

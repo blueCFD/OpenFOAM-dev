@@ -1,0 +1,113 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      createBafflesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+internalFacesOnly true;
+
+fields true;
+
+baffles
+{
+    baffle
+    {
+        type        faceZone;
+        zoneName    baffle;
+
+        owner
+        {
+            name        baffle0;
+            type        wall;
+
+            patchFields
+            {
+                epsilon
+                {
+                    type        epsilonWallFunction;
+                    Cmu         0.09;
+                    kappa       0.41;
+                    E           9.8;
+                    value       uniform 0;
+                }
+                k
+                {
+                    type        kqRWallFunction;
+                    value       uniform 0;
+                }
+                nut
+                {
+                    type        nutkWallFunction;
+                    Cmu         0.09;
+                    kappa       0.41;
+                    E           9.8;
+                    value       uniform 0;
+                }
+                nuTilda
+                {
+                    type        zeroGradient;
+                }
+                p
+                {
+                    type        zeroGradient;
+                }
+                U
+                {
+                    type        fixedValue;
+                    value       uniform (0 0 0);
+                }
+            }
+        }
+
+        neighbour
+        {
+            name        baffle1;
+            type        wall;
+
+            patchFields
+            {
+                $../../owner/patchFields;
+            }
+        }
+    }
+
+    fan
+    {
+        type        faceZone;
+        zoneName    fan;
+
+        owner
+        {
+            name        fan0;
+            type        wall;
+
+            patchFields
+            {
+                $../../../baffle/owner/patchFields;
+            }
+        }
+
+        neighbour
+        {
+            name        fan1;
+            type        wall;
+
+            patchFields
+            {
+                $../../owner/patchFields;
+            }
+        }
+    }
+}
+
+
+// ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,10 @@ Usage
         psi          | compressibility field name | no       | none
         gamma        | ratio of specific heats (Cp/Cv) | yes |
         p0           | static pressure reference | yes       |
-        omega        | angular velocity of the frame [rad/s] | yes    |
+        origin       | origin of rotation in Cartesian co-ordinates | yes|
+        axis         | axis of rotation        | yes         |
+        omega        | angular velocity of the frame [rad/s] | no |
+        rpm          | angular velocity of the frame [rpm]   | no |
     \endtable
 
     Example of the boundary condition specification:
@@ -51,12 +54,13 @@ Usage
         psi             psi;
         gamma           1.4;
         p0              uniform 1e5;
-        omega           100;
+        origin          (0 0 0);
+        axis            (0 0 1);
+        rpm             100;
     }
     \endverbatim
 
-    The \c omega entry is a Function1 type, able to describe time varying
-    functions.
+    The \c omega or \c rpm entries are Function1 of time, see Foam::Function1s.
 
 See also
     Foam::totalPressureFvPatchScalarField
@@ -71,7 +75,7 @@ SourceFiles
 #define rotatingTotalPressureFvPatchScalarField_H
 
 #include "totalPressureFvPatchScalarField.H"
-#include "Function1.T.H"
+#include "omega.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -88,8 +92,14 @@ class rotatingTotalPressureFvPatchScalarField
 {
     // Private Data
 
-        //- Angular velocity of the frame
-        const autoPtr<Function1<vector>> omega_;
+        //- Origin of the rotation
+        vector origin_;
+
+        //- Axis of the rotation
+        vector axis_;
+
+        //- Angular velocity of the frame (rad/sec)
+        Function1s::omega omega_;
 
 
 public:

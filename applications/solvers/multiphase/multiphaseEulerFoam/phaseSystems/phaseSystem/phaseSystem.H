@@ -58,7 +58,7 @@ SourceFiles
 namespace Foam
 {
 
-class surfaceTensionModel;
+class interfaceSurfaceTensionModel;
 class pressureReference;
 class nonOrthogonalSolutionControl;
 
@@ -111,11 +111,11 @@ protected:
         typedef
             HashTable
             <
-                autoPtr<surfaceTensionModel>,
+                autoPtr<interfaceSurfaceTensionModel>,
                 phaseInterfaceKey,
                 phaseInterfaceKey::hash
             >
-            surfaceTensionModelTable;
+            interfaceSurfaceTensionModelTable;
 
         typedef HashTable<scalar, phaseInterfaceKey, phaseInterfaceKey::hash>
             cAlphaTable;
@@ -164,7 +164,7 @@ protected:
         // Sub Models
 
             //- Surface tension models
-            surfaceTensionModelTable surfaceTensionModels_;
+            interfaceSurfaceTensionModelTable interfaceSurfaceTensionModels_;
 
 
         //- Flag to indicate that returned lists of fields are "complete"; i.e.,
@@ -180,10 +180,6 @@ protected:
         (
             const phaseModelList& phaseModels
         ) const;
-
-        //- Check that mass transfer is supported across the given interface
-        template<class ModelType>
-        void validateMassTransfer(const phaseInterface& interface) const;
 
         //- Return the sum of the phase fractions of the moving phases
         tmp<volScalarField> sumAlphaMoving() const;
@@ -412,6 +408,10 @@ public:
             //  returns it.
             template<class ModelType>
             static const dictionary& modelSubDict(const dictionary& dict);
+
+            //- Check that mass transfer is supported across the given interface
+            template<class ModelType>
+            void validateMassTransfer(const phaseInterface& interface) const;
 
 
         // Sub-model lookup

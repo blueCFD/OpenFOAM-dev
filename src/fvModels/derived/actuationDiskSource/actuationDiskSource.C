@@ -106,7 +106,7 @@ Foam::fv::actuationDiskSource::actuationDiskSource
 )
 :
     fvModel(name, modelType, dict, mesh),
-    set_(coeffs(), mesh),
+    set_(mesh, coeffs()),
     phaseName_(word::null),
     UName_(word::null),
     diskDir_(vector::uniform(NaN)),
@@ -138,18 +138,15 @@ void Foam::fv::actuationDiskSource::addSup
     vectorField& Usource = eqn.source();
     const vectorField& U = eqn.psi();
 
-    if (set_.V() > vSmall)
-    {
-        addActuationDiskAxialInertialResistance
-        (
-            Usource,
-            set_.cells(),
-            cellsV,
-            geometricOneField(),
-            geometricOneField(),
-            U
-        );
-    }
+    addActuationDiskAxialInertialResistance
+    (
+        Usource,
+        set_.cells(),
+        cellsV,
+        geometricOneField(),
+        geometricOneField(),
+        U
+    );
 }
 
 
@@ -164,18 +161,15 @@ void Foam::fv::actuationDiskSource::addSup
     vectorField& Usource = eqn.source();
     const vectorField& U = eqn.psi();
 
-    if (set_.V() > vSmall)
-    {
-        addActuationDiskAxialInertialResistance
-        (
-            Usource,
-            set_.cells(),
-            cellsV,
-            geometricOneField(),
-            rho,
-            U
-        );
-    }
+    addActuationDiskAxialInertialResistance
+    (
+        Usource,
+        set_.cells(),
+        cellsV,
+        geometricOneField(),
+        rho,
+        U
+    );
 }
 
 
@@ -191,18 +185,15 @@ void Foam::fv::actuationDiskSource::addSup
     vectorField& Usource = eqn.source();
     const vectorField& U = eqn.psi();
 
-    if (set_.V() > vSmall)
-    {
-        addActuationDiskAxialInertialResistance
-        (
-            Usource,
-            set_.cells(),
-            cellsV,
-            alpha,
-            rho,
-            U
-        );
-    }
+    addActuationDiskAxialInertialResistance
+    (
+        Usource,
+        set_.cells(),
+        cellsV,
+        alpha,
+        rho,
+        U
+    );
 }
 
 

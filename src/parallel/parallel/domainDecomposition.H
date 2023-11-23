@@ -183,6 +183,12 @@ class domainDecomposition
         void readProcs();
 
         //- Read the addressing
+        void readCompleteAddressing();
+
+        //- Read the addressing
+        void readProcsAddressing();
+
+        //- Read the addressing
         void readAddressing();
 
         //- Read-update the complete and processor meshes for a change in time
@@ -195,6 +201,12 @@ class domainDecomposition
         //- Reconstruct the processor meshes to create the complete mesh and
         //  populate the addressing
         void reconstruct();
+
+        //- Write the decomposition addressing
+        void writeCompleteAddressing() const;
+
+        //- Write the decomposition addressing
+        void writeProcsAddressing() const;
 
         //- Write the decomposition addressing
         void writeAddressing() const;

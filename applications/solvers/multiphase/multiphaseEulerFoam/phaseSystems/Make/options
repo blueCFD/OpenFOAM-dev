@@ -17,19 +17,4 @@ EXE_INC = \
     -I$(LIB_SRC)/sampling/lnInclude
 
 LIB_LIBS = \
-    -lcombustionModels
-
-LIB_LIBS += \
-    -lfiniteVolume \
-    -leulerianInterfacialModels \
-    -leulerianInterfacialCompositionModels \
-    -lmultiphaseMomentumTransportModels \
-    -lmultiphaseThermophysicalTransportModels \
-    -lfluidThermophysicalModels \
-    -lspecie \
-    -lreactionThermophysicalModels \
-    -lmomentumTransportModels \
-    -lfluidThermoMomentumTransportModels \
-    -lthermophysicalTransportModels \
-    -lmeshTools \
-    -lsampling
+    -lfiniteVolume
