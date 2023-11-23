@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ License
 
 #include "sixDoFRigidBodyMotionSolver.H"
 #include "polyMesh.H"
-#include "pointPatchDist.H"
+#include "pointDist.H"
 #include "pointConstraints.H"
 #include "timeIOdictionary.H"
 #include "uniformDimensionedFields.H"
@@ -117,7 +117,7 @@ Foam::sixDoFRigidBodyMotionSolver::sixDoFRigidBodyMotionSolver
     {
         const pointMesh& pMesh = pointMesh::New(mesh);
 
-        pointPatchDist pDist(pMesh, patchSet_, points0());
+        pointDist pDist(pMesh, patchSet_, points0());
 
         // Scaling: 1 up to di then linear down to 0 at do away from patches
         scale_.primitiveFieldRef() =
@@ -216,15 +216,19 @@ void Foam::sixDoFRigidBodyMotionSolver::solve()
     }
     else
     {
-        dictionary forcesDict;
-
-        forcesDict.add("type", functionObjects::forces::typeName);
-        forcesDict.add("patches", patches_);
-        forcesDict.add("rhoInf", rhoInf_);
-        forcesDict.add("rho", rhoName_);
-        forcesDict.add("CofR", centreOfRotation());
-
-        functionObjects::forces f("forces", t, forcesDict);
+        functionObjects::forces f
+        (
+            functionObjects::forces::typeName,
+            t,
+            dictionary
+            (
+                "type", functionObjects::forces::typeName,
+                "patches", patches_,
+                "rhoInf", rhoInf_,
+                "rho", rhoName_,
+                "CofR", centreOfRotation()
+            )
+        );
 
         f.calcForcesMoment();
 

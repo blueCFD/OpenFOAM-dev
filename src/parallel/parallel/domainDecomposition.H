@@ -42,6 +42,7 @@ SourceFiles
 #include "processorRunTimes.H"
 #include "volFields.H"
 #include "surfaceFields.H"
+#include "regionName.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -133,8 +134,7 @@ class domainDecomposition
             labelList distributeCells();
 
             //- Generate sub patch info for processor cyclics
-            template<class BinaryOp>
-            inline void processInterCyclics
+            void processInterCyclics
             (
                 const labelList& cellProc,
                 const polyBoundaryMesh& patches,
@@ -143,7 +143,7 @@ class domainDecomposition
                 List<labelListList>& subPatchIDs,
                 List<labelListList>& subPatchStarts,
                 bool owner,
-                BinaryOp bop
+                bool first
             ) const;
 
             //- Decompose the complete mesh to create the processor meshes and
@@ -359,6 +359,16 @@ public:
         //- Write the decomposed meshes and associated data
         void writeProcs(const bool doSets) const;
 };
+
+
+template<>
+inline const word& regionName<domainDecomposition>
+(
+    const domainDecomposition& region
+)
+{
+    return regionName(region.regionName());
+}
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

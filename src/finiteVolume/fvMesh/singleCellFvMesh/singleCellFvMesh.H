@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,7 @@ SourceFiles
 #ifndef singleCellFvMesh_H
 #define singleCellFvMesh_H
 
-#include "fvPatchFieldMapper.H"
+#include "generalFieldMapper.H"
 #include "fvMesh.H"
 #include "labelListIOList.H"
 
@@ -80,19 +80,25 @@ class singleCellFvMesh
 
 public:
 
+    // Public Classes
+
         //- Patch field mapper class for agglomerated meshes
         class agglomPatchFieldMapper
         :
-            public generalFvPatchFieldMapper
+            public generalFieldMapper
         {
             // Private Data
 
+                //- Interpolated addressing
                 const labelListList& addressing_;
+
+                //- Interpolation weights
                 const scalarListList& weights_;
-                bool hasUnmapped_;
 
 
         public:
+
+            // Constructors
 
                 //- Construct given addressing
                 agglomPatchFieldMapper
@@ -102,45 +108,30 @@ public:
                 )
                 :
                     addressing_(addressing),
-                    weights_(weights),
-                    hasUnmapped_(false)
-                {
-                    forAll(addressing_, i)
-                    {
-                        if (addressing_[i].empty())
-                        {
-                            hasUnmapped_ = true;
-                            break;
-                        }
-                    }
-                }
+                    weights_(weights)
+                {}
 
-                virtual label size() const
-                {
-                    return addressing_.size();
-                }
 
+            // Member Functions
+
+                //- Is the mapping direct?
                 virtual bool direct() const
                 {
                     return false;
                 }
 
-                bool hasUnmapped() const
-                {
-                    return hasUnmapped_;
-                }
-
+                //- Return interpolated addressing
                 virtual const labelListList& addressing() const
                 {
                     return addressing_;
                 }
 
+                //- Return interpolation weights
                 virtual const scalarListList& weights() const
                 {
                     return weights_;
                 }
         };
-
 
 
     // Constructors

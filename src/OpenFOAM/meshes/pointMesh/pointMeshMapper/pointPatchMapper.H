@@ -36,7 +36,6 @@ SourceFiles
 #define pointPatchMapper_H
 
 #include "pointMapper.H"
-#include "pointPatchFieldMapper.H"
 #include "pointPatch.H"
 #include "primitiveFields.H"
 
@@ -55,7 +54,7 @@ class polyTopoChangeMap;
 
 class pointPatchMapper
 :
-    public generalPointPatchFieldMapper
+    public generalFieldMapper
 {
     // Private Data
 
@@ -73,8 +72,6 @@ class pointPatchMapper
 
 
     // Demand-driven private data
-
-        mutable bool hasUnmapped_;
 
         //- Direct addressing (only one for of addressing is used)
         mutable labelList* directAddrPtr_;
@@ -120,18 +117,13 @@ public:
 
     // Member Functions
 
-        virtual bool hasUnmapped() const
-        {
-            return hasUnmapped_;
-        }
-
         //- Return size of field before mapping
-        virtual label sizeBeforeMapping() const
+        label sizeBeforeMapping() const
         {
             return sizeBeforeMapping_;
         }
 
-        //- Is the mapping direct
+        //- Is the mapping direct?
         virtual bool direct() const
         {
             return pointMapper_.direct();

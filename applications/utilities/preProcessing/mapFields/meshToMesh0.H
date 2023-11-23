@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,6 @@ SourceFiles
 
 #include "fvMesh.H"
 #include "HashTable.T.H"
-#include "fvPatchMapper.H"
 #include "scalarList.H"
 #include "className.H"
 
@@ -174,54 +173,6 @@ public:
 
     //- Destructor
     ~meshToMesh0();
-
-
-    //- Patch-field interpolation class
-    class patchFieldInterpolator
-    :
-        public generalFvPatchFieldMapper
-    {
-        const labelList& directAddressing_;
-
-
-    public:
-
-        // Constructors
-
-            //- Construct given addressing
-            patchFieldInterpolator(const labelList& addr)
-            :
-                directAddressing_(addr)
-            {}
-
-
-        //- Destructor
-        virtual ~patchFieldInterpolator()
-        {}
-
-
-        // Member Functions
-
-            label size() const
-            {
-                return directAddressing_.size();
-            }
-
-            bool direct() const
-            {
-                return true;
-            }
-
-            bool hasUnmapped() const
-            {
-                return false;
-            }
-
-            const labelList& directAddressing() const
-            {
-                return directAddressing_;
-            }
-    };
 
 
     // Member Functions

@@ -36,8 +36,7 @@ Description
 
 #include "polyMesh.H"
 #include "fvMeshToFvMesh.H"
-#include "fvPatchFieldMapper.H"
-#include "pointPatchFieldMapper.H"
+#include "fieldMapper.H"
 #include "setSizeFieldMapper.H"
 #include "processorPolyPatch.H"
 
@@ -104,13 +103,7 @@ void MeshToMeshMapVolInternalFields
 }
 
 
-template
-<
-    class Type,
-    template<class> class PatchField,
-    class GeoMesh,
-    class SetSizePatchFieldMapper
->
+template<class Type, template<class> class PatchField, class GeoMesh>
 void NaNGeometricFields
 (
     const fvMesh& mesh,
@@ -118,13 +111,6 @@ void NaNGeometricFields
 )
 {
     typedef GeometricField<Type, PatchField, GeoMesh> GField;
-
-    Type NaN;
-
-    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
-    {
-        setComponent(NaN, cmpt) = std::numeric_limits<scalar>::signaling_NaN();
-    }
 
     UPtrList<GField> fields(mesh.curFields<GField>());
 
@@ -144,7 +130,7 @@ void NaNGeometricFields
         const typename GField::Mesh& mesh = field.mesh();
 
         field.primitiveFieldRef().setSize(GeoMesh::size(mesh));
-        field.primitiveFieldRef() = NaN;
+        field.primitiveFieldRef() = pTraits<Type>::nan;
 
         field.boundaryFieldRef().setSize(mesh.boundary().size());
 
@@ -166,10 +152,10 @@ void NaNGeometricFields
             else
             {
                 typename GField::Patch& pf = field.boundaryFieldRef()[patchi];
-                pf.map(pf, SetSizePatchFieldMapper(pf.patch().size()));
+                pf.map(pf, setSizeFieldMapper(pf.patch().size()));
             }
 
-            field.boundaryFieldRef()[patchi] == NaN;
+            field.boundaryFieldRef()[patchi] == pTraits<Type>::nan;
         }
 
         field.instance() = field.time().name();

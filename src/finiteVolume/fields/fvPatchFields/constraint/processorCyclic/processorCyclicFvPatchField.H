@@ -111,7 +111,7 @@ public:
             const processorCyclicFvPatchField<Type>&,
             const fvPatch&,
             const DimensionedField<Type, volMesh>&,
-            const fvPatchFieldMapper&
+            const fieldMapper&
         );
 
         //- Disallow copy without setting internal field reference
@@ -136,6 +136,20 @@ public:
             return tmp<fvPatchField<Type>>
             (
                 new processorCyclicFvPatchField<Type>(*this, iF)
+            );
+        }
+
+        //- Construct and return a clone onto a new patch
+        //  setting internal field reference
+        virtual tmp<fvPatchField<Type>> clone
+        (
+            const fvPatch& patch,
+            const DimensionedField<Type, volMesh>& iF
+        ) const
+        {
+            return tmp<fvPatchField<Type>>
+            (
+                new processorCyclicFvPatchField<Type>(patch, iF, *this)
             );
         }
 

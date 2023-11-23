@@ -54,7 +54,6 @@ SourceFiles
 #include "surfaceInterpolation.H"
 #include "fvSchemes.H"
 #include "fvSolution.H"
-#include "data.H"
 #include "DimensionedField.T.H"
 #include "SlicedDimensionedField.T.H"
 #include "volFieldsFwd.H"
@@ -97,12 +96,23 @@ class fvMesh
 :
     public polyMesh,
     public lduMesh,
-    public surfaceInterpolation,
-    public data
+    public surfaceInterpolation
 {
 public:
 
     // Public data types
+
+        //- Enumeration defining the state of the mesh after a read update.
+        //  Used for post-processing applications, where the mesh
+        //  needs to update based on the files written in time directories.
+        enum readUpdateState
+        {
+            UNCHANGED,
+            POINTS_MOVED,
+            STITCHED,
+            TOPO_CHANGE,
+            TOPO_PATCH_CHANGE
+        };
 
         //- Extent to which to stitch on read and readUpdate. By default, a
         //  full geometric stitch is performed. A non-geometric stitch can be
@@ -418,6 +428,12 @@ public:
 
             //- Return reference to boundary mesh
             const fvBoundaryMesh& boundary() const;
+
+            //- Return reference to polyMesh
+            const polyMesh& mesh() const
+            {
+                return *this;
+            }
 
             //- Return reference to polyMesh
             const polyMesh& operator()() const

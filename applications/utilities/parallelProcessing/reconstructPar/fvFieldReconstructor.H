@@ -39,8 +39,6 @@ SourceFiles
 #include "PtrList.T.H"
 #include "surfaceFields.H"
 #include "IOobjectList.T.H"
-#include "fvPatchFieldMapper.H"
-#include "setSizeFvPatchFieldMapper.H"
 #include "labelIOList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

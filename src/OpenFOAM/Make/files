@@ -627,7 +627,7 @@ fields/UniformGeometricFields/uniformGeometricFields.C
 
 Fields = fields/Fields
 
-$(Fields)/fieldMappers/directFieldMapper/directFieldMapper.C
+$(Fields)/fieldMappers/forwardFieldMapper/forwardFieldMapper.C
 $(Fields)/fieldMappers/identityFieldMapper/identityFieldMapper.C
 $(Fields)/fieldMappers/generalFieldMapper/generalFieldMapper.C
 $(Fields)/fieldMappers/reverseFieldMapper/reverseFieldMapper.C
@@ -708,8 +708,8 @@ algorithms/indexedOctree/volumeType.C
 algorithms/dynamicIndexedOctree/dynamicIndexedOctreeName.C
 algorithms/dynamicIndexedOctree/dynamicTreeDataPoint.C
 algorithms/polygonTriangulate/polygonTriangulate.C
+algorithms/solutionControl/solutionControl.C
 
-meshes/data/data.C
 meshes/Residuals/residuals.C
 
 distributions/distribution/distribution.C

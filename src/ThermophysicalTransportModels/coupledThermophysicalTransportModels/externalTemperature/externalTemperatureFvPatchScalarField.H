@@ -168,19 +168,21 @@ class externalTemperatureFvPatchScalarField
 
 protected:
 
-    //- Get the patch kappa, kappa*Tc/delta, kappa/delta,
-    //  reference T, current wall T and also the
-    //  heat-flux/delta obtained from the sum heat-flux provided
-    virtual void getKappa
-    (
-        scalarField& kappa,
-        scalarField& sumKappaTByDelta,
-        scalarField& sumKappaByDelta,
-        scalarField& Tref,
-        scalarField& Tw,
-        scalarField& sumq,
-        scalarField& qByKappa
-    ) const;
+    // Protected Member Functions
+
+        //- Get the patch kappa, kappa*Tc/delta, kappa/delta,
+        //  reference T, current wall T and also the
+        //  heat-flux/delta obtained from the sum heat-flux provided
+        virtual void getKappa
+        (
+            scalarField& kappa,
+            scalarField& sumKappaTByDelta,
+            scalarField& sumKappaByDelta,
+            scalarField& Tref,
+            scalarField& Tw,
+            scalarField& sumq,
+            scalarField& qByKappa
+        ) const;
 
 
 public:
@@ -207,7 +209,7 @@ public:
             const externalTemperatureFvPatchScalarField&,
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
-            const fvPatchFieldMapper&
+            const fieldMapper&
         );
 
         //- Disallow copy without setting internal field reference
@@ -252,11 +254,7 @@ public:
         // Mapping functions
 
             //- Map the given fvPatchField onto this fvPatchField
-            virtual void map
-            (
-                const fvPatchScalarField&,
-                const fvPatchFieldMapper&
-            );
+            virtual void map(const fvPatchScalarField&, const fieldMapper&);
 
             //- Reset the fvPatchField to the given fvPatchField
             //  Used for mesh to mesh mapping

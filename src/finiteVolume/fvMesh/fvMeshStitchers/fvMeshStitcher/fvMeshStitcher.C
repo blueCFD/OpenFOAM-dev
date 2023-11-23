@@ -27,8 +27,15 @@ License
 #include "globalIndex.H"
 #include "fvcSurfaceIntegrate.H"
 #include "meshObjects.H"
+#include "nonConformalBoundary.H"
+#include "nonConformalCyclicFvPatch.H"
+#include "nonConformalProcessorCyclicFvPatch.H"
+#include "nonConformalErrorFvPatch.H"
 #include "polyTopoChangeMap.H"
+#include "polyMeshMap.H"
+#include "polyDistributionMap.H"
 #include "syncTools.H"
+#include "surfaceInterpolate.H"
 #include "surfaceToVolVelocity.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -60,10 +67,6 @@ namespace Foam
     defineTypeNameAndDebug(fvMeshStitcher, 0);
     defineRunTimeSelectionTable(fvMeshStitcher, fvMesh);
 }
-
-
-const Foam::word Foam::fvMeshStitcher::nccFieldPrefix_ =
-    fvMeshStitcher::typeName + ":";
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -1084,6 +1087,59 @@ inline void Foam::fvMeshStitcher::createNonConformalStabilisationGeometry
 }
 
 
+void Foam::fvMeshStitcher::preConformSurfaceFields()
+{
+    #define PreConformSurfaceFields(Type, nullArg) \
+        preConformSurfaceFields<Type>();
+    FOR_ALL_FIELD_TYPES(PreConformSurfaceFields);
+    #undef PreConformSurfaceFields
+}
+
+
+void Foam::fvMeshStitcher::postUnconformSurfaceFields()
+{
+    #define PostUnconformSurfaceFields(Type, nullArg) \
+        postUnconformSurfaceFields<Type>();
+    FOR_ALL_FIELD_TYPES(PostUnconformSurfaceFields);
+    #undef PostUnconformSurfaceFields
+}
+
+
+void Foam::fvMeshStitcher::evaluateVolFields()
+{
+    #define EvaluateVolFields(Type, nullArg) \
+        evaluateVolFields<Type>();
+    FOR_ALL_FIELD_TYPES(EvaluateVolFields);
+    #undef EvaluateVolFields
+}
+
+
+void Foam::fvMeshStitcher::postUnconformSurfaceVelocities()
+{
+    UPtrList<surfaceVectorField> Ufs(mesh_.fields<surfaceVectorField>());
+
+    forAll(Ufs, i)
+    {
+        surfaceVectorField& Uf = Ufs[i];
+
+        const volVectorField& U = surfaceToVolVelocity(Uf);
+
+        if (isNull(U)) continue;
+
+        const surfaceVectorField UfInterpolated(fvc::interpolate(U));
+
+        forAll(Uf.boundaryField(), patchi)
+        {
+            if (isA<nonConformalFvPatch>(mesh_.boundary()[patchi]))
+            {
+                boundaryFieldRefNoUpdate(Uf)[patchi] ==
+                    UfInterpolated.boundaryField()[patchi];
+            }
+        }
+    }
+}
+
+
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 bool Foam::fvMeshStitcher::geometric() const
@@ -1378,7 +1434,7 @@ bool Foam::fvMeshStitcher::connect
     if (mesh_.moving())
     {
         surfaceScalarField phi(mesh_.phi());
-        for (label i = 1; i < mesh_.phi().nOldTimes(false); ++ i)
+        for (label i = 1; i <= mesh_.phi().nOldTimes(false); ++ i)
         {
             phi.oldTime(i) == mesh_.phi().oldTime(i);
         }
@@ -1396,11 +1452,11 @@ bool Foam::fvMeshStitcher::connect
 
     if (changing)
     {
-        // Post-non-conform surface fields. This reconstructs the original and
+        // Post-unconform surface fields. This reconstructs the original and
         // cyclic parts of the interface fields from separate original and
         // cyclic parts. The original part was store in the same field, whilst
         // the cyclic part was separately registered.
-        postNonConformSurfaceFields();
+        postUnconformSurfaceFields();
 
         // Volume fields are assumed to be intensive. So, the value on a face
         // which has changed in size can be retained without modification. New
@@ -1408,8 +1464,8 @@ bool Foam::fvMeshStitcher::connect
         // nonConformalCoupled patch fields.
         evaluateVolFields();
 
-        // Do special post-non-conformation for surface velocities.
-        postNonConformSurfaceVelocities();
+        // Do special post-unconform for surface velocities.
+        postUnconformSurfaceVelocities();
     }
 
     // Prevent hangs caused by processor cyclic patches using mesh geometry
@@ -1605,7 +1661,7 @@ void Foam::fvMeshStitcher::topoChange(const polyTopoChangeMap&)
 {}
 
 
-void Foam::fvMeshStitcher::mapMesh(const polyMeshMap&)
+void Foam::fvMeshStitcher::mapMesh(const polyMeshMap& map)
 {}
 
 

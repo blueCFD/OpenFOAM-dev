@@ -24,9 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "fvMeshToFvMesh.H"
-#include "directFvPatchFieldMapper.H"
-#include "identityFvPatchFieldMapper.H"
-#include "patchToPatchFvPatchFieldMapper.H"
+#include "setSizeFieldMapper.H"
+#include "identityFieldMapper.H"
+#include "patchToPatchLeftOverFieldMapper.H"
+#include "patchToPatchNormalisedFieldMapper.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -139,10 +140,7 @@ Foam::tmp<Foam::VolField<Type>> Foam::fvMeshToFvMesh::srcToTgt
                     srcFld.boundaryField()[srcPatchi],
                     tgtMesh.boundary()[tgtPatchi],
                     DimensionedField<Type, volMesh>::null(),
-                    directFvPatchFieldMapper
-                    (
-                        labelList(tgtMesh.boundary()[tgtPatchi].size(), -1)
-                    )
+                    setSizeFieldMapper(tgtMesh.boundary()[tgtPatchi].size())
                 )
             );
         }
@@ -195,7 +193,7 @@ Foam::tmp<Foam::VolField<Type>> Foam::fvMeshToFvMesh::srcToTgt
         tgtBfld[tgtPatchi].map
         (
             srcFld.boundaryField()[srcPatchi],
-            patchToPatchNormalisedFvPatchFieldMapper
+            patchToPatchNormalisedFieldMapper
             (
                 patchInterpolation(i),
                 tgtPatchStabilisation(i)
@@ -248,12 +246,12 @@ Foam::tmp<Foam::VolField<Type>> Foam::fvMeshToFvMesh::srcToTgt
         tgtBfld[tgtPatchi].map
         (
             leftOverTgtFld.boundaryField()[tgtPatchi],
-            identityFvPatchFieldMapper()
+            identityFieldMapper()
         );
         tgtBfld[tgtPatchi].map
         (
             srcFld.boundaryField()[srcPatchi],
-            patchToPatchLeftOverFvPatchFieldMapper(patchInterpolation(i))
+            patchToPatchLeftOverFieldMapper(patchInterpolation(i))
         );
     }
 
@@ -307,6 +305,73 @@ Foam::tmp<Foam::VolInternalField<Type>> Foam::fvMeshToFvMesh::srcToTgt
             static_cast<const fvMesh&>(meshToMesh::tgtMesh()),
             leftOverTgtFld.dimensions(),
             cellsInterpolation().srcToTgt(srcFld, leftOverTgtFld)
+        );
+}
+
+
+template<class Type>
+Foam::tmp<Foam::fvMeshToFvMesh::SurfaceFieldBoundary<Type>>
+Foam::fvMeshToFvMesh::srcToTgt
+(
+    const SurfaceFieldBoundary<Type>& srcBfld
+) const
+{
+    const fvMesh& tgtMesh = static_cast<const fvMesh&>(meshToMesh::tgtMesh());
+
+    // Map all patch fields
+    PtrList<fvsPatchField<Type>> tgtPatchFields(tgtMesh.boundary().size());
+    forAll(patchIDs(), i)
+    {
+        const label srcPatchi = patchIDs()[i].first();
+        const label tgtPatchi = patchIDs()[i].second();
+
+        if (!tgtPatchFields.set(tgtPatchi))
+        {
+            tgtPatchFields.set
+            (
+                tgtPatchi,
+                fvsPatchField<Type>::New
+                (
+                    srcBfld[srcPatchi],
+                    tgtMesh.boundary()[tgtPatchi],
+                    DimensionedField<Type, surfaceMesh>::null(),
+                    patchToPatchNormalisedFieldMapper
+                    (
+                        patchInterpolation(i),
+                        tgtPatchStabilisation(i)
+                    )
+                )
+            );
+        }
+    }
+
+    // Create any patch fields not explicitly mapped; e.g., constraints
+    forAll(tgtPatchFields, tgtPatchi)
+    {
+        if (!tgtPatchFields.set(tgtPatchi))
+        {
+            tgtPatchFields.set
+            (
+                tgtPatchi,
+                fvsPatchField<Type>::New
+                (
+                    calculatedFvPatchField<Type>::typeName,
+                    tgtMesh.boundary()[tgtPatchi],
+                    DimensionedField<Type, surfaceMesh>::null()
+                )
+            );
+        }
+    }
+
+    return
+        tmp<SurfaceFieldBoundary<Type>>
+        (
+            new SurfaceFieldBoundary<Type>
+            (
+                tgtMesh.boundary(),
+                DimensionedField<Type, surfaceMesh>::null(),
+                tgtPatchFields
+            )
         );
 }
 

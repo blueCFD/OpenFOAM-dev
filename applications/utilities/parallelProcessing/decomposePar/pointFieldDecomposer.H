@@ -38,7 +38,7 @@ SourceFiles
 
 #include "pointMesh.H"
 #include "pointFields.H"
-#include "pointPatchFieldMapperPatchRef.H"
+#include "forwardFieldMapper.H"
 #include "IOobjectList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -61,49 +61,31 @@ public:
         //- Point patch field decomposer class
         class patchFieldDecomposer
         :
-            public pointPatchFieldMapperPatchRef
+            public labelList,
+            public forwardFieldMapper
         {
-            // Private Data
+            // Private Member Functions
 
-                labelList directAddressing_;
+                //- Generate the addressing
+                static labelList addressing
+                (
+                    const pointPatch& completePatch,
+                    const pointPatch& procPatch,
+                    const labelList& pointProcAddressing
+                );
 
-                //- Does map contain any unmapped values
-                bool hasUnmapped_;
 
         public:
 
             // Constructors
 
-                //- Construct given addressing
+                //- Construct given patches and addressing
                 patchFieldDecomposer
                 (
-                    const pointPatch& completeMeshPatch,
-                    const pointPatch& procMeshPatch,
-                    const labelList& directAddr
+                    const pointPatch& completePatch,
+                    const pointPatch& procPatch,
+                    const labelList& pointProcAddressing
                 );
-
-
-            // Member Functions
-
-                label size() const
-                {
-                    return directAddressing_.size();
-                }
-
-                bool direct() const
-                {
-                    return true;
-                }
-
-                bool hasUnmapped() const
-                {
-                    return hasUnmapped_;
-                }
-
-                const labelUList& directAddressing() const
-                {
-                    return directAddressing_;
-                }
         };
 
 

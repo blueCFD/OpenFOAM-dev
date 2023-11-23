@@ -28,7 +28,6 @@ License
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-// Update this with w2 if w2 nearer to pt.
 template<class TrackingData>
 inline bool Foam::pointEdgePoint::update
 (
@@ -66,48 +65,6 @@ inline bool Foam::pointEdgePoint::update
     {
         // update with new values
         distSqr_ = dist2;
-        origin_ = w2.origin();
-
-        return true;
-    }
-}
-
-
-// Update this with w2 (information on same point)
-template<class TrackingData>
-inline bool Foam::pointEdgePoint::update
-(
-    const pointEdgePoint& w2,
-    const scalar tol,
-    TrackingData& td
-)
-{
-    if (!valid(td))
-    {
-        // current not yet set so use any value
-        distSqr_ = w2.distSqr();
-        origin_ = w2.origin();
-
-        return true;
-    }
-
-    scalar diff = distSqr_ - w2.distSqr();
-
-    if (diff < 0)
-    {
-        // already nearer to pt
-        return false;
-    }
-
-    if ((diff < small) || ((distSqr_ > small) && (diff/distSqr_ < tol)))
-    {
-        // don't propagate small changes
-        return false;
-    }
-    else
-    {
-        // update with new values
-        distSqr_ =  w2.distSqr();
         origin_ = w2.origin();
 
         return true;
@@ -156,35 +113,6 @@ inline bool Foam::pointEdgePoint::valid(TrackingData& td) const
 }
 
 
-// Checks for cyclic points
-template<class TrackingData>
-inline bool Foam::pointEdgePoint::sameGeometry
-(
-    const pointEdgePoint& w2,
-    const scalar tol,
-    TrackingData& td
-) const
-{
-    scalar diff = Foam::mag(distSqr() - w2.distSqr());
-
-    if (diff < small)
-    {
-        return true;
-    }
-    else
-    {
-        if ((distSqr() > small) && ((diff/distSqr()) < tol))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-
 template<class TrackingData>
 inline void Foam::pointEdgePoint::transform
 (
@@ -227,19 +155,6 @@ inline bool Foam::pointEdgePoint::updatePoint
 )
 {
     return update(mesh.points()[pointi], newPointInfo, tol, td);
-}
-
-
-// Update this with new information on same point. No extra information.
-template<class TrackingData>
-inline bool Foam::pointEdgePoint::updatePoint
-(
-    const pointEdgePoint& newPointInfo,
-    const scalar tol,
-    TrackingData& td
-)
-{
-    return update(newPointInfo, tol, td);
 }
 
 

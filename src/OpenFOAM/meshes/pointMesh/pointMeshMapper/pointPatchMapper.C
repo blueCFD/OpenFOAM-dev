@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,21 +45,10 @@ void Foam::pointPatchMapper::calcAddressing() const
             << abort(FatalError);
     }
 
-    hasUnmapped_ = false;
-
     if (direct())
     {
         // Direct mapping.
         directAddrPtr_ = new labelList(map_.patchPointMap()[patch_.index()]);
-        labelList& addr = *directAddrPtr_;
-
-        forAll(addr, i)
-        {
-            if (addr[i] < 0)
-            {
-                hasUnmapped_ = true;
-            }
-        }
     }
     else
     {
@@ -91,7 +80,6 @@ void Foam::pointPatchMapper::calcAddressing() const
                 ///// Map from point0 (arbitrary choice)
                 // addr[i] = labelList(1, label(0));
                 // w[i] = scalarList(1, 1.0);
-                hasUnmapped_ = true;
             }
         }
     }
@@ -103,7 +91,6 @@ void Foam::pointPatchMapper::clearOut()
     deleteDemandDrivenData(directAddrPtr_);
     deleteDemandDrivenData(interpolationAddrPtr_);
     deleteDemandDrivenData(weightsPtr_);
-    hasUnmapped_ = false;
 }
 
 
@@ -116,7 +103,7 @@ Foam::pointPatchMapper::pointPatchMapper
     const polyTopoChangeMap& map
 )
 :
-    generalPointPatchFieldMapper(),
+    generalFieldMapper(),
     patch_(patch),
     pointMapper_(pointMap),
     map_(map),
@@ -126,7 +113,6 @@ Foam::pointPatchMapper::pointPatchMapper
       ? map_.oldPatchNMeshPoints()[patch_.index()]
       : 0
     ),
-    hasUnmapped_(false),
     directAddrPtr_(nullptr),
     interpolationAddrPtr_(nullptr),
     weightsPtr_(nullptr)
