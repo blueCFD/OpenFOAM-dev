@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,64 +23,68 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "patchDistMethod.H"
+#include "Prandtl.H"
+#include "dragModel.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(patchDistMethod, 0);
-    defineRunTimeSelectionTable(patchDistMethod, dictionary);
+namespace heatTransferModels
+{
+    defineTypeNameAndDebug(Prandtl, 0);
+    addToRunTimeSelectionTable
+    (
+        heatTransferModel,
+        Prandtl,
+        dictionary
+    );
+}
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::patchDistMethod::patchDistMethod
-(
-    const fvMesh& mesh,
-    const labelHashSet& patchIDs
-)
-:
-    mesh_(mesh),
-    patchIDs_(patchIDs)
-{}
-
-
-// * * * * * * * * * * * * * * * * Selector  * * * * * * * * * * * * * * * * //
-
-Foam::autoPtr<Foam::patchDistMethod> Foam::patchDistMethod::New
+Foam::heatTransferModels::Prandtl::Prandtl
 (
     const dictionary& dict,
-    const fvMesh& mesh,
-    const labelHashSet& patchIDs
+    const phaseInterface& interface,
+    const bool registerObject
 )
-{
-    word patchDistMethodType(dict.lookup("method"));
-
-    Info<< "Selecting patchDistMethod " << patchDistMethodType << endl;
-
-    dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(patchDistMethodType);
-
-    if (cstrIter == dictionaryConstructorTablePtr_->end())
-    {
-        FatalErrorInFunction
-            << "Unknown patchDistMethod type "
-            << patchDistMethodType << endl << endl
-            << "Valid patchDistMethod types are : " << endl
-            << dictionaryConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
-    }
-
-    return cstrIter()(dict, mesh, patchIDs);
-}
+:
+    heatTransferModel(dict, interface, registerObject),
+    interfacePtr_(interface.clone()),
+    interface_(interfacePtr_()),
+    Pr_("Pr", dimless, dict)
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::patchDistMethod::~patchDistMethod()
+Foam::heatTransferModels::Prandtl::~Prandtl()
 {}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField>
+Foam::heatTransferModels::Prandtl::K
+(
+    const scalar residualAlpha
+) const
+{
+    const dragModel& drag =
+        interface_.fluid().lookupInterfacialModel<dragModel>(interface_);
+
+    const volScalarField CpAvg
+    (
+        interface_.thermo1().Cp()*interface_.thermo2().Cp()
+       /(interface_.thermo1().Cp() + interface_.thermo2().Cp())
+    );
+
+    return drag.K()*CpAvg/Pr_;
+}
 
 
 // ************************************************************************* //
