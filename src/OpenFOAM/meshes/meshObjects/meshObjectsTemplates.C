@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,9 +55,9 @@ void Foam::meshObjects::Delete(regIOobject& io)
 template<class Mesh>
 void Foam::meshObjects::movePoints(objectRegistry& obr)
 {
-    HashTable<GeometricMeshObject<Mesh>*> meshObjects
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
     (
-        obr.lookupClass<GeometricMeshObject<Mesh>>()
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
     );
 
     if (meshObjects::debug)
@@ -69,7 +69,7 @@ void Foam::meshObjects::movePoints(objectRegistry& obr)
 
     forAllIter
     (
-        typename HashTable<GeometricMeshObject<Mesh>*>,
+        typename HashTable<DeletableMeshObject<Mesh>*>,
         meshObjects,
         iter
     )
@@ -97,9 +97,9 @@ void Foam::meshObjects::distribute
     const polyDistributionMap& map
 )
 {
-    HashTable<GeometricMeshObject<Mesh>*> meshObjects
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
     (
-        obr.lookupClass<GeometricMeshObject<Mesh>>()
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
     );
 
     if (meshObjects::debug)
@@ -112,12 +112,12 @@ void Foam::meshObjects::distribute
 
     forAllIter
     (
-        typename HashTable<GeometricMeshObject<Mesh>*>,
+        typename HashTable<DeletableMeshObject<Mesh>*>,
         meshObjects,
         iter
     )
     {
-        if (isA<UpdateableMeshObject<Mesh>>(*iter()))
+        if (isA<TopoChangeableMeshObject<Mesh>>(*iter()))
         {
             if (meshObjects::debug)
             {
@@ -141,9 +141,9 @@ void Foam::meshObjects::topoChange
     const polyTopoChangeMap& map
 )
 {
-    HashTable<GeometricMeshObject<Mesh>*> meshObjects
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
     (
-        obr.lookupClass<GeometricMeshObject<Mesh>>()
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
     );
 
     if (meshObjects::debug)
@@ -155,18 +155,19 @@ void Foam::meshObjects::topoChange
 
     forAllIter
     (
-        typename HashTable<GeometricMeshObject<Mesh>*>,
+        typename HashTable<DeletableMeshObject<Mesh>*>,
         meshObjects,
         iter
     )
     {
-        if (isA<UpdateableMeshObject<Mesh>>(*iter()))
+        if (isA<TopoChangeableMeshObject<Mesh>>(*iter()))
         {
             if (meshObjects::debug)
             {
                 Pout<< "    Updating " << iter()->io_.name() << endl;
             }
-            dynamic_cast<UpdateableMeshObject<Mesh>*>(iter())->topoChange(map);
+            dynamic_cast<TopoChangeableMeshObject<Mesh>*>(iter())
+                ->topoChange(map);
         }
         else
         {
@@ -183,9 +184,9 @@ void Foam::meshObjects::mapMesh
     const polyMeshMap& map
 )
 {
-    HashTable<GeometricMeshObject<Mesh>*> meshObjects
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
     (
-        obr.lookupClass<GeometricMeshObject<Mesh>>()
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
     );
 
     if (meshObjects::debug)
@@ -197,18 +198,18 @@ void Foam::meshObjects::mapMesh
 
     forAllIter
     (
-        typename HashTable<GeometricMeshObject<Mesh>*>,
+        typename HashTable<DeletableMeshObject<Mesh>*>,
         meshObjects,
         iter
     )
     {
-        if (isA<UpdateableMeshObject<Mesh>>(*iter()))
+        if (isA<TopoChangeableMeshObject<Mesh>>(*iter()))
         {
             if (meshObjects::debug)
             {
                 Pout<< "    Updating " << iter()->io_.name() << endl;
             }
-            dynamic_cast<UpdateableMeshObject<Mesh>*>(iter())->mapMesh(map);
+            dynamic_cast<TopoChangeableMeshObject<Mesh>*>(iter())->mapMesh(map);
         }
         else
         {
@@ -221,9 +222,9 @@ void Foam::meshObjects::mapMesh
 template<class Mesh>
 void Foam::meshObjects::addPatch(objectRegistry& obr, const label patchi)
 {
-    HashTable<GeometricMeshObject<Mesh>*> meshObjects
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
     (
-        obr.lookupClass<GeometricMeshObject<Mesh>>()
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
     );
 
     if (meshObjects::debug)
@@ -235,18 +236,19 @@ void Foam::meshObjects::addPatch(objectRegistry& obr, const label patchi)
 
     forAllIter
     (
-        typename HashTable<GeometricMeshObject<Mesh>*>,
+        typename HashTable<DeletableMeshObject<Mesh>*>,
         meshObjects,
         iter
     )
     {
-        if (isA<PatchMeshObject<Mesh>>(*iter()))
+        if (isA<RepatchableMeshObject<Mesh>>(*iter()))
         {
             if (meshObjects::debug)
             {
                 Pout<< "    Adding patch to " << iter()->io_.name() << endl;
             }
-            dynamic_cast<PatchMeshObject<Mesh>*>(iter())->addPatch(patchi);
+            dynamic_cast<RepatchableMeshObject<Mesh>*>(iter())
+                ->addPatch(patchi);
         }
         else
         {
@@ -264,9 +266,9 @@ void Foam::meshObjects::reorderPatches
     const bool validBoundary
 )
 {
-    HashTable<GeometricMeshObject<Mesh>*> meshObjects
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
     (
-        obr.lookupClass<GeometricMeshObject<Mesh>>()
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
     );
 
     if (meshObjects::debug)
@@ -278,18 +280,18 @@ void Foam::meshObjects::reorderPatches
 
     forAllIter
     (
-        typename HashTable<GeometricMeshObject<Mesh>*>,
+        typename HashTable<DeletableMeshObject<Mesh>*>,
         meshObjects,
         iter
     )
     {
-        if (isA<PatchMeshObject<Mesh>>(*iter()))
+        if (isA<RepatchableMeshObject<Mesh>>(*iter()))
         {
             if (meshObjects::debug)
             {
                 Pout<< "    Adding patch to " << iter()->io_.name() << endl;
             }
-            dynamic_cast<PatchMeshObject<Mesh>*>(iter())->reorderPatches
+            dynamic_cast<RepatchableMeshObject<Mesh>*>(iter())->reorderPatches
             (
                 newToOld,
                 validBoundary

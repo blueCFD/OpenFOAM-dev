@@ -1187,15 +1187,15 @@ void Foam::polyMesh::reorderPatches
 )
 {
     // Clear local fields and e.g. polyMesh parallelInfo. Do not clearGeom
-    // so we keep PatchMeshObjects intact.
+    // so we keep RepatchableMeshObjects intact.
     boundary_.clearGeom();
     clearAddressing(true);
-    // Clear all but PatchMeshObjects
+    // Clear all but RepatchableMeshObjects
     meshObjects::clearUpto
     <
         polyMesh,
-        TopologicalMeshObject,
-        PatchMeshObject
+        DeletableMeshObject,
+        RepatchableMeshObject
     >
     (
         *this
@@ -1203,8 +1203,8 @@ void Foam::polyMesh::reorderPatches
     meshObjects::clearUpto
     <
         pointMesh,
-        TopologicalMeshObject,
-        PatchMeshObject
+        DeletableMeshObject,
+        RepatchableMeshObject
     >
     (
         *this
@@ -1256,12 +1256,12 @@ void Foam::polyMesh::addPatch
     boundary_.clearGeom();
     clearAddressing(true);
 
-    // Clear all but PatchMeshObjects
+    // Clear all but RepatchableMeshObjects
     meshObjects::clearUpto
     <
         polyMesh,
-        TopologicalMeshObject,
-        PatchMeshObject
+        DeletableMeshObject,
+        RepatchableMeshObject
     >
     (
         *this
@@ -1269,8 +1269,8 @@ void Foam::polyMesh::addPatch
     meshObjects::clearUpto
     <
         pointMesh,
-        TopologicalMeshObject,
-        PatchMeshObject
+        DeletableMeshObject,
+        RepatchableMeshObject
     >
     (
         *this

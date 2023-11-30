@@ -29,10 +29,10 @@ Description
     automate their allocation to the mesh database and the mesh-modifier
     event-loop.
 
-    DemandDrivenMeshObject is templated on the type of mesh it is allocated
-    to, the type of the mesh object (TopologicalMeshObject, GeometricMeshObject,
-    MoveableMeshObject, DistributeableMeshObject, UpdateableMeshObject) and the
-    type of the actual object it is created for example:
+    DemandDrivenMeshObject is templated on the type of mesh it is allocated to,
+    the type of the mesh object (DeletableMeshObject, MoveableMeshObject,
+    DistributeableMeshObject, TopoChangeableMeshObject) and the type of the
+    actual object it is created for example:
 
     \verbatim
     class leastSquaresVectors
@@ -54,12 +54,19 @@ Description
 
     MeshObject types:
 
-    - TopologicalMeshObject: mesh object to be deleted on topology change
-    - GeometricMeshObject: mesh object to be deleted on geometry change
-    - MoveableMeshObject: mesh object to be updated in movePoints
-    - UpdateableMeshObject: mesh object to be updated in topoChange or
-        movePoints
-    - PatchMeshObject: mesh object to be additionally updated patch changes
+    - DeletableMeshObject:
+        mesh object to be deleted after any mesh change
+    - MoveableMeshObject:
+        mesh object to be updated after mesh motion otherwise deleted
+    - DistributeableMeshObject
+        mesh object to be updated after mesh redistribution or motion
+        otherwise deleted
+    - TopoChangeableMeshObject:
+        mesh object to be updated after mesh topology change,
+        mesh-to-mesh mapping, redistribution or motion otherwise deleted
+    - RepatchableMeshObject:
+        mesh object to be updated on patch or topology change,
+        mesh-to-mesh mapping, redistribution or motion otherwise deleted
 
     DemandDrivenMeshObject should always be constructed and accessed via the New
     methods provided so that they are held and maintained by the objectRegistry.

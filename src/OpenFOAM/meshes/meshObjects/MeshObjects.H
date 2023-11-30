@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,17 +22,24 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::TopologicalMeshObject
+    Foam::DeletableMeshObject
 
 Description
     MeshObject types:
 
-    - TopologicalMeshObject: mesh object to be deleted on topology change
-    - GeometricMeshObject: mesh object to be deleted on geometry change
-    - MoveableMeshObject: mesh object to be updated in movePoints
-    - UpdateableMeshObject: mesh object to be updated in topoChange or
-        movePoints
-    - PatchMeshObject: mesh object to be additionally updated patch changes
+    - DeletableMeshObject:
+        mesh object to be deleted after any mesh change
+    - MoveableMeshObject:
+        mesh object to be updated after mesh motion otherwise deleted
+    - DistributeableMeshObject
+        mesh object to be updated after mesh redistribution or motion
+        otherwise deleted
+    - TopoChangeableMeshObject:
+        mesh object to be updated after mesh topology change,
+        mesh-to-mesh mapping, redistribution or motion otherwise deleted
+    - RepatchableMeshObject:
+        mesh object to be updated on patch or topology change,
+        mesh-to-mesh mapping, redistribution or motion otherwise deleted
 
 \*---------------------------------------------------------------------------*/
 
@@ -53,11 +60,11 @@ class polyDistributionMap;
 class meshObjects;
 
 /*---------------------------------------------------------------------------*\
-                    Class TopologicalMeshObject Declaration
+                    Class DeletableMeshObject Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Mesh>
-class TopologicalMeshObject
+class DeletableMeshObject
 {
     //- Reference to the regIOobject of the base-class
     regIOobject& io_;
@@ -67,31 +74,13 @@ class TopologicalMeshObject
 
 public:
 
-    TopologicalMeshObject(regIOobject& io, const Mesh& mesh)
+    DeletableMeshObject(regIOobject& io, const Mesh& mesh)
     :
         io_(io)
     {}
 
     //- Virtual destructor to make class polymorphic
-    virtual ~TopologicalMeshObject() = default;
-};
-
-
-/*---------------------------------------------------------------------------*\
-                     Class GeometricMeshObject Declaration
-\*---------------------------------------------------------------------------*/
-
-template<class Mesh>
-class GeometricMeshObject
-:
-    public TopologicalMeshObject<Mesh>
-{
-public:
-
-    GeometricMeshObject(regIOobject& io, const Mesh& mesh)
-    :
-        TopologicalMeshObject<Mesh>(io, mesh)
-    {}
+    virtual ~DeletableMeshObject() = default;
 };
 
 
@@ -102,13 +91,13 @@ public:
 template<class Mesh>
 class MoveableMeshObject
 :
-    public GeometricMeshObject<Mesh>
+    public DeletableMeshObject<Mesh>
 {
 public:
 
     MoveableMeshObject(regIOobject& io, const Mesh& mesh)
     :
-        GeometricMeshObject<Mesh>(io, mesh)
+        DeletableMeshObject<Mesh>(io, mesh)
     {}
 
     //- Update for mesh motion
@@ -138,17 +127,17 @@ public:
 
 
 /*---------------------------------------------------------------------------*\
-                    Class UpdateableMeshObject Declaration
+                    Class TopoChangeableMeshObject Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Mesh>
-class UpdateableMeshObject
+class TopoChangeableMeshObject
 :
     public DistributeableMeshObject<Mesh>
 {
 public:
 
-    UpdateableMeshObject(regIOobject& io, const Mesh& mesh)
+    TopoChangeableMeshObject(regIOobject& io, const Mesh& mesh)
     :
         DistributeableMeshObject<Mesh>(io, mesh)
     {}
@@ -162,19 +151,19 @@ public:
 
 
 /*---------------------------------------------------------------------------*\
-                       Class PatchMeshObject Declaration
+                       Class RepatchableMeshObject Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Mesh>
-class PatchMeshObject
+class RepatchableMeshObject
 :
-    public UpdateableMeshObject<Mesh>
+    public TopoChangeableMeshObject<Mesh>
 {
 public:
 
-    PatchMeshObject(regIOobject& io, const Mesh& mesh)
+    RepatchableMeshObject(regIOobject& io, const Mesh& mesh)
     :
-        UpdateableMeshObject<Mesh>(io, mesh)
+        TopoChangeableMeshObject<Mesh>(io, mesh)
     {}
 
     //- Reordered/removed trailing patches. If validBoundary call is parallel
