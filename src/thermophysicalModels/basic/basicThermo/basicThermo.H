@@ -252,20 +252,48 @@ public:
         virtual Switch dpdt() const = 0;
 
 
-        // Access to thermodynamic state variables
+        // Molecular properties
+
+            //- Molecular weight [kg/kmol]
+            virtual tmp<volScalarField> W() const = 0;
+
+            //- Molecular weight for patch [kg/kmol]
+            virtual tmp<scalarField> W(const label patchi) const = 0;
+
+
+        // Thermodynamic state
+
+            //- Temperature [K]
+            virtual const volScalarField& T() const = 0;
+
+            //- Temperature [K]
+            //  Non-const access allowed for transport equations
+            virtual volScalarField& T() = 0;
+
+            //- Enthalpy/Internal energy [J/kg]
+            virtual const volScalarField& he() const = 0;
+
+            //- Enthalpy/Internal energy [J/kg]
+            //  Non-const access allowed for transport equations
+            virtual volScalarField& he() = 0;
+
+            //- Heat capacity at constant pressure [J/kg/K]
+            virtual const volScalarField& Cp() const = 0;
+
+            //- Heat capacity at constant volume [J/kg/K]
+            virtual const volScalarField& Cv() const = 0;
+
+            //- Heat capacity at constant pressure/volume [J/kg/K]
+            virtual const volScalarField& Cpv() const = 0;
+
+
+        // Derived Thermodynamic Properties
 
             //- Density [kg/m^3]
             virtual tmp<volScalarField> rho() const = 0;
 
             //- Density for patch [kg/m^3]
             virtual tmp<scalarField> rho(const label patchi) const = 0;
-
-            //- Enthalpy/Internal energy [J/kg]
-            //  Non-const access allowed for transport equations
-            virtual volScalarField& he() = 0;
-
-            //- Enthalpy/Internal energy [J/kg]
-            virtual const volScalarField& he() const = 0;
 
             //- Enthalpy/Internal energy
             //  for given pressure and temperature [J/kg]
@@ -346,58 +374,6 @@ public:
                 const label patchi
             ) const = 0;
 
-            //- Enthalpy of formation [J/kg]
-            virtual tmp<volScalarField> hc() const = 0;
-
-            //- Temperature from enthalpy/internal energy
-            virtual tmp<volScalarField> THE
-            (
-                const volScalarField& h,
-                const volScalarField& p,
-                const volScalarField& T0    // starting temperature
-            ) const = 0;
-
-            //- Temperature from enthalpy/internal energy for cell-set
-            virtual tmp<scalarField> THE
-            (
-                const scalarField& h,
-                const scalarField& T0,      // starting temperature
-                const labelList& cells
-            ) const = 0;
-
-            //- Temperature from enthalpy/internal energy for patch
-            virtual tmp<scalarField> THE
-            (
-                const scalarField& h,
-                const scalarField& T0,      // starting temperature
-                const label patchi
-            ) const = 0;
-
-            //- Heat capacity at constant pressure [J/kg/K]
-            virtual const volScalarField& Cp() const = 0;
-
-            //- Heat capacity at constant volume [J/kg/K]
-            virtual const volScalarField& Cv() const = 0;
-
-            //- Heat capacity at constant pressure/volume [J/kg/K]
-            virtual const volScalarField& Cpv() const = 0;
-
-
-        // Access to transport state variables
-
-            //- Thermal conductivity of mixture [W/m/K]
-            virtual const volScalarField& kappa() const = 0;
-
-
-        // Fields derived from thermodynamic state variables
-
-            //- Temperature [K]
-            virtual const volScalarField& T() const = 0;
-
-            //- Temperature [K]
-            //  Non-const access allowed for transport equations
-            virtual volScalarField& T() = 0;
-
             //- Heat capacity at constant pressure for patch [J/kg/K]
             virtual tmp<scalarField> Cp
             (
@@ -418,6 +394,49 @@ public:
                 const scalarField& T,
                 const label patchi
             ) const = 0;
+
+            //- Gamma = Cp/Cv []
+            tmp<volScalarField> gamma() const;
+
+            //- Gamma = Cp/Cv for patch []
+            tmp<scalarField> gamma
+            (
+                const scalarField& T,
+                const label patchi
+            ) const;
+
+
+        // Temperature-energy inversion functions
+
+            //- Temperature from enthalpy/internal energy
+            virtual tmp<volScalarField> The
+            (
+                const volScalarField& h,
+                const volScalarField& p,
+                const volScalarField& T0    // starting temperature
+            ) const = 0;
+
+            //- Temperature from enthalpy/internal energy for cell-set
+            virtual tmp<scalarField> The
+            (
+                const scalarField& h,
+                const scalarField& T0,      // starting temperature
+                const labelList& cells
+            ) const = 0;
+
+            //- Temperature from enthalpy/internal energy for patch
+            virtual tmp<scalarField> The
+            (
+                const scalarField& h,
+                const scalarField& T0,      // starting temperature
+                const label patchi
+            ) const = 0;
+
+
+        // Transport state
+
+            //- Thermal conductivity of mixture [W/m/K]
+            virtual const volScalarField& kappa() const = 0;
 };
 
 
@@ -493,7 +512,7 @@ public:
         }
 
 
-        // Fields derived from thermodynamic state variables
+        // Thermodynamic state
 
             //- Temperature [K]
             virtual const volScalarField& T() const;
@@ -503,7 +522,7 @@ public:
             virtual volScalarField& T();
 
 
-        // Access to transport state variables
+        // Transport state
 
             //- Thermal conductivity of mixture [W/m/K]
             virtual const volScalarField& kappa() const;
