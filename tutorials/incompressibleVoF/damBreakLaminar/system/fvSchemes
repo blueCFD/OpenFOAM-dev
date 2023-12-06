@@ -7,7 +7,6 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       dictionary;
     location    "system";
@@ -27,23 +26,22 @@ gradSchemes
 
 divSchemes
 {
-    default         none;
+    div(phi,alpha)  Gauss interfaceCompression vanLeer 1;
 
-    div(phi,U)      Gauss upwind;
-    div(phi,h)      Gauss upwind;
+    div(rhoPhi,U)   Gauss linearUpwind grad(U);
+
     div(phi,k)      Gauss upwind;
     div(phi,epsilon) Gauss upwind;
-    div(phi,age)    Gauss upwind;
+    div(phi,omega)  Gauss upwind;
 
-    div(phi,K)      Gauss linear;
     div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 
-    div(phaseScalarTransport:alphaPhi.dummy,h) Gauss upwind;
+    div(alphaPhi,tracer) Gauss vanLeer;
 }
 
 laplacianSchemes
 {
-    default         Gauss linear orthogonal;
+    default         Gauss linear uncorrected;
 }
 
 interpolationSchemes
@@ -53,12 +51,7 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         orthogonal;
-}
-
-wallDist
-{
-    method meshWave;
+    default         uncorrected;
 }
 
 
