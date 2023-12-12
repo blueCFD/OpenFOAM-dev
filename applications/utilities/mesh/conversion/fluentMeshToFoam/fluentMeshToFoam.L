@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -65,7 +65,7 @@ Description
 
 #include "readHexLabel.H"
 #include "cellShapeRecognition.H"
-#include "repatchPolyTopoChanger.H"
+#include "repatcher.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -1544,7 +1544,7 @@ int main(int argc, char *argv[])
 
     // Use facePatchIDs map to reorder boundary faces into compact regions
 
-    repatchPolyTopoChanger repatcher(pShapeMesh);
+    repatcher repatcher(pShapeMesh);
 
     // Add new list of patches
     repatcher.changePatches(newPatches);
@@ -1552,8 +1552,7 @@ int main(int argc, char *argv[])
     // Change patch ids
     forAll(facePatchID, idI)
     {
-        label facei = idI + pShapeMesh.nInternalFaces();
-
+        const label facei = idI + pShapeMesh.nInternalFaces();
         repatcher.changePatchID(facei, facePatchID[idI]);
     }
     repatcher.repatch();

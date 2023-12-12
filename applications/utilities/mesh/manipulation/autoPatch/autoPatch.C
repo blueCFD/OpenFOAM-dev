@@ -34,7 +34,7 @@ Description
 #include "polyMesh.H"
 #include "Time.T.H"
 #include "repatchMesh.H"
-#include "repatchPolyTopoChanger.H"
+#include "repatcher.H"
 #include "unitConversion.H"
 #include "OFstream.H"
 #include "ListOps.T.H"
@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
 
 
     // Change patches
-    repatchPolyTopoChanger polyMeshRepatcher(mesh);
+    repatcher polyMeshRepatcher(mesh);
     polyMeshRepatcher.changePatches(newPatchPtrList);
 
 
