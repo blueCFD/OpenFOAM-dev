@@ -104,7 +104,7 @@ void Foam::fv::coefficientMassTransfer::addSup
     }
     else
     {
-        massTransferBase::addSupType(alpha, eqn);
+        massTransferBase::addSup(alpha, eqn);
     }
 }
 
@@ -123,10 +123,7 @@ void Foam::fv::coefficientMassTransfer::addSup
         const volScalarField& alpha1 =
             mesh().lookupObject<volScalarField>(alphaNames().first());
 
-        const volScalarField::Internal SByAlpha1
-        (
-            C_*mag(fvc::grad(alpha1))
-        );
+        const volScalarField::Internal SByAlpha1(C_*mag(fvc::grad(alpha1)));
 
         if (i == 0)
         {
@@ -139,7 +136,7 @@ void Foam::fv::coefficientMassTransfer::addSup
     }
     else
     {
-        massTransferBase::addSupType(alpha, rho, eqn);
+        massTransferBase::addSup(alpha, rho, eqn);
     }
 }
 

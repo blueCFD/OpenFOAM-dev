@@ -294,74 +294,6 @@ bool Foam::MeshZones<ZoneType, MeshType>::found
 template<class ZoneType, class MeshType>
 Foam::label Foam::MeshZones<ZoneType, MeshType>::findIndex
 (
-    const wordRe& key
-) const
-{
-    if (!key.empty())
-    {
-        if (key.isPattern())
-        {
-            labelList indices = this->findIndices(key);
-
-            // return first element
-            if (!indices.empty())
-            {
-                return indices[0];
-            }
-        }
-        else
-        {
-            forAll(*this, i)
-            {
-                if (key == operator[](i).name())
-                {
-                    return i;
-                }
-            }
-        }
-    }
-
-    // not found
-    return -1;
-}
-
-
-template<class ZoneType, class MeshType>
-Foam::labelList Foam::MeshZones<ZoneType, MeshType>::findIndices
-(
-    const wordRe& key
-) const
-{
-    labelList indices;
-
-    if (!key.empty())
-    {
-        if (key.isPattern())
-        {
-            indices = findStrings(key, this->names());
-        }
-        else
-        {
-            indices.setSize(this->size());
-            label nFound = 0;
-            forAll(*this, i)
-            {
-                if (key == operator[](i).name())
-                {
-                    indices[nFound++] = i;
-                }
-            }
-            indices.setSize(nFound);
-        }
-    }
-
-    return indices;
-}
-
-
-template<class ZoneType, class MeshType>
-Foam::label Foam::MeshZones<ZoneType, MeshType>::findZoneID
-(
     const word& zoneName
 ) const
 {
@@ -582,7 +514,7 @@ void Foam::MeshZones<ZoneType, MeshType>::swap(MeshZones& otherZones)
 
     forAll(zones, zi)
     {
-        const label ozi = otherZones.findZoneID(zones[zi].name());
+        const label ozi = otherZones.findIndex(zones[zi].name());
 
         if (ozi < 0)
         {
@@ -592,7 +524,7 @@ void Foam::MeshZones<ZoneType, MeshType>::swap(MeshZones& otherZones)
 
     forAll(otherZones, ozi)
     {
-        const label zi = findZoneID(otherZones[ozi].name());
+        const label zi = findIndex(otherZones[ozi].name());
 
         if (zi < 0)
         {
@@ -632,7 +564,7 @@ const ZoneType& Foam::MeshZones<ZoneType, MeshType>::operator[]
     const word& zoneName
 ) const
 {
-    const label zi = findZoneID(zoneName);
+    const label zi = findIndex(zoneName);
 
     if (zi < 0)
     {
@@ -652,7 +584,7 @@ ZoneType& Foam::MeshZones<ZoneType, MeshType>::operator[]
     const word& zoneName
 )
 {
-    const label zi = findZoneID(zoneName);
+    const label zi = findIndex(zoneName);
 
     if (zi < 0)
     {
