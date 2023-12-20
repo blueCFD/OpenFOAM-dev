@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -108,7 +108,7 @@ protected:
         PtrList<subBody> mergedBodies_;
 
         //- Lookup-table of the IDs of the bodies
-        HashTable<label, word> bodyIDs_;
+        HashTable<label, word> bodyIndices_;
 
         //- List of indices of the parent of each body
         DynamicList<label> lambda_;
@@ -314,7 +314,7 @@ public:
         inline const subBody& mergedBody(label mergedBodyID) const;
 
         //- Return the ID of the body with the given name
-        inline label bodyID(const word& name) const;
+        inline label bodyIndex(const word& name) const;
 
         //- Return the current transform to the global frame for the given body
         spatialTransform X0(const label bodyId) const;

@@ -103,11 +103,11 @@ void Foam::fvMeshStitcher::intersectNonConformalCyclic
             const nonConformalProcessorCyclicFvPatch& ncpcFvp =
                 refCast<const nonConformalProcessorCyclicFvPatch>(fvp);
 
-            if (ncpcFvp.referPatchID() == nccFvp.index())
+            if (ncpcFvp.referPatchIndex() == nccFvp.index())
             {
                 patchis[ncpcFvp.neighbProcNo()] = patchj;
             }
-            if (ncpcFvp.referPatchID() == nbrNccFvp.index())
+            if (ncpcFvp.referPatchIndex() == nbrNccFvp.index())
             {
                 nbrPatchis[ncpcFvp.neighbProcNo()] = patchj;
             }
@@ -606,7 +606,7 @@ void Foam::fvMeshStitcher::applyOwnerOrigBoundaryEdgeParts
     const polyBoundaryMesh& pbMesh = mesh_.boundaryMesh();
 
     const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh_);
-    const labelList ownerOrigPatchIDs = ncb.ownerOrigPatchIDs();
+    const labelList ownerOrigPatchIDs = ncb.ownerOrigPatchIndices();
     const labelList& ownerOrigBoundaryEdgeMeshEdge =
         ncb.ownerOrigBoundaryEdgeMeshEdge();
     const edgeList& ownerOrigBoundaryMeshEdges =
@@ -845,7 +845,7 @@ void Foam::fvMeshStitcher::stabiliseOrigPatchFaces
 ) const
 {
     const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh_);
-    const labelList allOrigPatchIDs = ncb.allOrigPatchIDs();
+    const labelList allOrigPatchIDs = ncb.allOrigPatchIndices();
 
     forAll(allOrigPatchIDs, i)
     {
@@ -854,22 +854,35 @@ void Foam::fvMeshStitcher::stabiliseOrigPatchFaces
 
         forAll(origPp, origPatchFacei)
         {
-            part p
-            (
-                SfBf[origPatchi][origPatchFacei],
-                CfBf[origPatchi][origPatchFacei]
-            );
+            const vector& a = origPp.faceAreas()[origPatchFacei];
+            const point& c = origPp.faceCentres()[origPatchFacei];
 
-            const part smallP
-            (
-                small*origPp.faceAreas()[origPatchFacei],
-                origPp.faceCentres()[origPatchFacei]
-            );
+            vector& Sf = SfBf[origPatchi][origPatchFacei];
+            point& Cf = CfBf[origPatchi][origPatchFacei];
 
-            p += smallP;
+            // Determine the direction in which to stabilise. If the fv-face
+            // points in the same direction as the poly-face, then stabilise in
+            // the direction of the poly-face. If it is reversed, then
+            // construct a tangent to both faces, and stabilise in the average
+            // direction to this tangent and the poly-face.
+            vector dSfHat;
+            if ((Sf & a) >= 0)
+            {
+                dSfHat = normalised(a);
+            }
+            else
+            {
+                dSfHat = (Sf & Sf)*a - (Sf & a)*Sf;
+                if ((dSfHat & a) <= 0) dSfHat = perpendicular(a);
+                dSfHat = normalised(normalised(dSfHat) + normalised(a));
+            }
 
-            SfBf[origPatchi][origPatchFacei] = p.area;
-            CfBf[origPatchi][origPatchFacei] = p.centre;
+            part SAndCf(Sf, Cf);
+
+            SAndCf += part(small*mag(a)*dSfHat, c);
+
+            Sf = SAndCf.area;
+            Cf = SAndCf.centre;
         }
     }
 }
@@ -886,7 +899,7 @@ void Foam::fvMeshStitcher::intersectNonConformalCyclics
     const polyBoundaryMesh& pbMesh = mesh_.boundaryMesh();
 
     const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh_);
-    const labelList ownerOrigPatchIDs = ncb.ownerOrigPatchIDs();
+    const labelList ownerOrigPatchIDs = ncb.ownerOrigPatchIndices();
 
     // Alias the boundary geometry fields
     surfaceVectorField::Boundary& SfBf = SfSf.boundaryFieldRef();
@@ -998,7 +1011,7 @@ void Foam::fvMeshStitcher::intersectNonConformalCyclics
             tOrigFacesNbrBf,
             tOrigSfNbrBf,
             tOrigCfNbrBf,
-            patchEdgeParts[nccFvp.origPatchID()]
+            patchEdgeParts[nccFvp.origPatchIndex()]
         );
     }
 
@@ -1537,7 +1550,7 @@ bool Foam::fvMeshStitcher::connect
                    .index()
                   : isA<nonConformalProcessorCyclicFvPatch>(fvp)
                   ? refCast<const nonConformalProcessorCyclicFvPatch>(fvp)
-                   .referPatchID()
+                   .referPatchIndex()
                   : -1;
 
                 if (nccPatchi != -1)

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -211,13 +211,13 @@ void Foam::starMesh::clearExtraStorage()
     Info<< "Clearing extra storage" << endl;
 
     starPointLabelLookup_.setSize(0);
-    starPointID_.setSize(0);
-    starCellID_.setSize(0);
+    starPointIndex_.setSize(0);
+    starCellIndex_.setSize(0);
     starCellLabelLookup_.setSize(0);
     starCellPermutation_.setSize(0);
     cellFaces_.setSize(0);
-    boundaryCellIDs_.setSize(0);
-    boundaryCellFaceIDs_.setSize(0);
+    boundaryCellIndices_.setSize(0);
+    boundaryCellFaceIndices_.setSize(0);
     couples_.clear();
 
     deleteDemandDrivenData(pointCellsPtr_);
@@ -244,13 +244,13 @@ Foam::starMesh::starMesh
     patchNames_(0),
     patchPhysicalTypes_(0),
     starPointLabelLookup_(0),
-    starPointID_(0),
-    starCellID_(0),
+    starPointIndex_(0),
+    starCellIndex_(0),
     starCellLabelLookup_(0),
     starCellPermutation_(0),
     cellFaces_(0),
-    boundaryCellIDs_(0),
-    boundaryCellFaceIDs_(0),
+    boundaryCellIndices_(0),
+    boundaryCellFaceIndices_(0),
     meshFaces_(0),
     cellPolys_(0),
     nInternalFaces_(0),

@@ -39,7 +39,6 @@ Description
 #include "viscosityModel.H"
 #include "incompressibleMomentumTransportModels.H"
 #include "wallDist.H"
-#include "bound.H"
 #include "fvcFlux.H"
 
 using namespace Foam;
@@ -191,11 +190,7 @@ int main(int argc, char *argv[])
         {
             volScalarField omega(omegaHeader, mesh);
 
-            const incompressible::RASModel& rasModel =
-                refCast<const incompressible::RASModel>(turbulence());
-
             omega = (1 - mask)*omega + mask*ce0*sqrt(k)/(Cmu*min(y, ybl));
-            bound(omega, rasModel.omegaMin());
 
             // Do not correct BC - G set by the wall-functions is not available
             // omega.correctBoundaryConditions();

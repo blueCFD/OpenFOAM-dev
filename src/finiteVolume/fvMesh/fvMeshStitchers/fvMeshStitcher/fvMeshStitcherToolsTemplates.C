@@ -127,7 +127,7 @@ Foam::fvMeshStitcherTools::conformedNcBoundaryField
     );
 
     const labelList origPatchIDs =
-        nonConformalBoundary::New(fvbm.mesh()).allOrigPatchIDs();
+        nonConformalBoundary::New(fvbm.mesh()).allOrigPatchIndices();
 
     // Accumulate the non-conformal parts of the field into the original faces
     forAll(fvbm, ncPatchi)
@@ -139,7 +139,7 @@ Foam::fvMeshStitcherTools::conformedNcBoundaryField
         const nonConformalFvPatch& ncFvp =
             refCast<const nonConformalFvPatch>(fvbm[ncPatchi]);
 
-        const label origPatchi = ncFvp.origPatchID();
+        const label origPatchi = ncFvp.origPatchIndex();
         const fvPatch& origFvp = ncFvp.origPatch();
 
         const scalarField& ncNcMagSf = ncFvp.patch().magSf();
@@ -215,7 +215,7 @@ Foam::fvMeshStitcherTools::conformedOrigBoundaryField
     );
 
     const labelList origPatchIDs =
-        nonConformalBoundary::New(fvbm.mesh()).allOrigPatchIDs();
+        nonConformalBoundary::New(fvbm.mesh()).allOrigPatchIndices();
 
     // Scale or average as appropriate
     forAll(origPatchIDs, i)
@@ -278,7 +278,7 @@ Foam::fvMeshStitcherTools::unconformedBoundaryField
         const nonConformalFvPatch& ncFvp =
             refCast<const nonConformalFvPatch>(fvp);
 
-        const label origPatchi = ncFvp.origPatchID();
+        const label origPatchi = ncFvp.origPatchIndex();
         const fvPatch& origFvp = ncFvp.origPatch();
 
         fieldb[ncPatchi] =
@@ -291,7 +291,7 @@ Foam::fvMeshStitcherTools::unconformedBoundaryField
     }
 
     const labelList origPatchIDs =
-        nonConformalBoundary::New(fvbm.mesh()).allOrigPatchIDs();
+        nonConformalBoundary::New(fvbm.mesh()).allOrigPatchIndices();
 
     // If a flux then scale down to the part face area
     if (isFluxField)
@@ -325,7 +325,7 @@ Foam::fvMeshStitcherTools::unconformedBoundaryField
             const nonConformalFvPatch& ncFvp =
                 refCast<const nonConformalFvPatch>(fvp);
 
-            const label origPatchi = ncFvp.origPatchID();
+            const label origPatchi = ncFvp.origPatchIndex();
             const fvPatch& origFvp = ncFvp.origPatch();
 
             const scalarField ncTotalMagSf
@@ -352,7 +352,7 @@ Foam::fvMeshStitcherTools::unconformedBoundaryField
         const nonConformalErrorFvPatch& errorFvp =
             refCast<const nonConformalErrorFvPatch>(fvp);
 
-        const label origPatchi = errorFvp.origPatchID();
+        const label origPatchi = errorFvp.origPatchIndex();
         const fvPatch& origFvp = errorFvp.origPatch();
 
         if (isFluxField)
