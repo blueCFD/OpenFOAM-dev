@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -391,8 +391,8 @@ Foam::Time::Time
     (
         *this,
         enableFunctionObjects
-      ? argList::validOptions.found("withFunctionObjects")
-        ? args.optionFound("withFunctionObjects")
+      ? argList::validOptions.found("functionObjects")
+        ? args.optionFound("functionObjects")
         : !args.optionFound("noFunctionObjects")
       : false
     )
@@ -431,8 +431,10 @@ Foam::Time::Time
 
     setControls();
 
-    // Add a watch on the controlDict file after runTimeModifiable_ is set
+    // Add a watch on the controlDict and functions files
+    // after runTimeModifiable_ is set
     controlDict_.addWatch();
+    functionObjects_.addWatch();
 }
 
 
@@ -495,8 +497,10 @@ Foam::Time::Time
 
     setControls();
 
-    // Add a watch on the controlDict file after runTimeModifiable_ is set
+    // Add a watch on the controlDict and functions files
+    // after runTimeModifiable_ is set
     controlDict_.addWatch();
+    functionObjects_.addWatch();
 }
 
 
@@ -560,8 +564,10 @@ Foam::Time::Time
 
     setControls();
 
-    // Add a watch on the controlDict file after runTimeModifiable_ is set
+    // Add a watch on the controlDict and functions files
+    // after runTimeModifiable_ is set
     controlDict_.addWatch();
+    functionObjects_.addWatch();
 }
 
 

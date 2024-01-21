@@ -50,14 +50,4 @@ adjustTimeStep  yes;
 
 maxCo           0.9;
 
-functions
-{
-    sixDoFRigidBodyState
-    {
-        type           sixDoFRigidBodyState;
-        libs           ("libsixDoFRigidBodyState.so");
-        angleUnits     degrees;
-    }
-}
-
 // ************************************************************************* //

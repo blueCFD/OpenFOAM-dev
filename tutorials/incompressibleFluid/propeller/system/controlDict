@@ -53,11 +53,4 @@ adjustTimeStep  yes;
 
 maxCo           2;
 
-functions
-{
-    #includeFunc Q
-    #include "surfaces"
-    #include "forces"
-}
-
 // ************************************************************************* //
