@@ -52,10 +52,10 @@ Foam::tmp<Foam::Field<Type>> Foam::reverseFieldMapper::map
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-FOR_ALL_FIELD_TYPES(IMPLEMENT_FIELD_MAPPER_OPERATOR, reverseFieldMapper)
+FOR_ALL_FIELD_TYPES(IMPLEMENT_FIELD_MAPPER_MAP_OPERATOR, reverseFieldMapper)
 
 
-IMPLEMENT_FIELD_MAPPER_OPERATOR(label, reverseFieldMapper)
+IMPLEMENT_FIELD_MAPPER_MAP_OPERATOR(label, reverseFieldMapper)
 
 
 // ************************************************************************* //

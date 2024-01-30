@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,6 @@ License
 #include "fvMeshStitcher.H"
 #include "nonConformalFvPatch.H"
 #include "polyFacesFvsPatchLabelField.H"
-#include "nonConformalPolyFacesFvsPatchLabelField.H"
 #include "polyTopoChangeMap.H"
 #include "MapFvFields.T.H"
 #include "fvMeshMapper.H"
@@ -194,6 +193,7 @@ void Foam::fvMesh::clearAddressing(const bool isMeshUpdate)
     }
 
     deleteDemandDrivenData(lduPtr_);
+    deleteDemandDrivenData(polyFacesBfIOPtr_);
     deleteDemandDrivenData(polyFacesBfPtr_);
     deleteDemandDrivenData(polyBFaceOffsetsPtr_);
     deleteDemandDrivenData(polyBFaceOffsetPatchesPtr_);
@@ -246,7 +246,7 @@ Foam::wordList Foam::fvMesh::polyFacesPatchTypes() const
         if (isA<nonConformalFvPatch>(fvp))
         {
             wantedPatchTypes[patchi] =
-                nonConformalPolyFacesFvsPatchLabelField::typeName;
+                refCast<const nonConformalFvPatch>(fvp).polyFacesType();
         }
     }
 
@@ -261,27 +261,25 @@ Foam::surfaceLabelField::Boundary& Foam::fvMesh::polyFacesBfRef()
         polyFacesBf();
     }
 
+    setPolyFacesBfInstance(time().name());
+
     return *polyFacesBfPtr_;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::fvMesh::fvMesh
-(
-    const IOobject& io,
-    const bool changers,
-    const stitchType stitch
-)
+Foam::fvMesh::fvMesh(const IOobject& io, const bool doPost)
 :
     polyMesh(io),
     surfaceInterpolation(*this),
     boundary_(*this, boundaryMesh()),
-    stitcher_(fvMeshStitcher::New(*this, changers).ptr()),
+    stitcher_(nullptr),
     topoChanger_(nullptr),
     distributor_(nullptr),
     mover_(nullptr),
     lduPtr_(nullptr),
+    polyFacesBfIOPtr_(nullptr),
     polyFacesBfPtr_(nullptr),
     polyBFaceOffsetsPtr_(nullptr),
     polyBFaceOffsetPatchesPtr_(nullptr),
@@ -307,54 +305,9 @@ Foam::fvMesh::fvMesh
         Pout<< FUNCTION_NAME << "Constructing fvMesh from IOobject" << endl;
     }
 
-    // Stitch or Re-stitch if necessary
-    if (stitch != stitchType::none)
+    if (doPost)
     {
-        stitcher_->connect(false, stitch == stitchType::geometric, true);
-    }
-
-    // Construct changers
-    if (changers)
-    {
-        topoChanger_.set(fvMeshTopoChanger::New(*this).ptr());
-        distributor_.set(fvMeshDistributor::New(*this).ptr());
-        mover_.set(fvMeshMover::New(*this).ptr());
-
-        // Check the existence of the cell volumes and read if present
-        if (fileHandler().isFile(time().timePath()/"Vc0"))
-        {
-            V0Ptr_ = new DimensionedField<scalar, volMesh>
-            (
-                IOobject
-                (
-                    "Vc0",
-                    time().name(),
-                    *this,
-                    IOobject::MUST_READ,
-                    IOobject::NO_WRITE,
-                    true
-                ),
-                *this
-            );
-        }
-
-        // Check the existence of the mesh fluxes and read if present
-        if (fileHandler().isFile(time().timePath()/"meshPhi"))
-        {
-            phiPtr_ = new surfaceScalarField
-            (
-                IOobject
-                (
-                    "meshPhi",
-                    time().name(),
-                    *this,
-                    IOobject::MUST_READ,
-                    IOobject::NO_WRITE,
-                    true
-                ),
-                *this
-            );
-        }
+        postConstruct(true, stitchType::geometric);
     }
 }
 
@@ -391,6 +344,7 @@ Foam::fvMesh::fvMesh
     distributor_(nullptr),
     mover_(nullptr),
     lduPtr_(nullptr),
+    polyFacesBfIOPtr_(nullptr),
     polyFacesBfPtr_(nullptr),
     polyBFaceOffsetsPtr_(nullptr),
     polyBFaceOffsetPatchesPtr_(nullptr),
@@ -444,6 +398,7 @@ Foam::fvMesh::fvMesh
     distributor_(nullptr),
     mover_(nullptr),
     lduPtr_(nullptr),
+    polyFacesBfIOPtr_(nullptr),
     polyFacesBfPtr_(nullptr),
     polyBFaceOffsetsPtr_(nullptr),
     polyBFaceOffsetPatchesPtr_(nullptr),
@@ -495,6 +450,7 @@ Foam::fvMesh::fvMesh
     distributor_(nullptr),
     mover_(nullptr),
     lduPtr_(nullptr),
+    polyFacesBfIOPtr_(nullptr),
     polyFacesBfPtr_(nullptr),
     polyBFaceOffsetsPtr_(nullptr),
     polyBFaceOffsetPatchesPtr_(nullptr),
@@ -532,6 +488,7 @@ Foam::fvMesh::fvMesh(fvMesh&& mesh)
     distributor_(Foam::move(mesh.distributor_)),
     mover_(Foam::move(mesh.mover_)),
     lduPtr_(Foam::move(mesh.lduPtr_)),
+    polyFacesBfIOPtr_(Foam::move(mesh.polyFacesBfIOPtr_)),
     polyFacesBfPtr_(Foam::move(mesh.polyFacesBfPtr_)),
     polyBFaceOffsetsPtr_(Foam::move(mesh.polyBFaceOffsetsPtr_)),
     polyBFaceOffsetPatchesPtr_(Foam::move(mesh.polyBFaceOffsetPatchesPtr_)),
@@ -571,6 +528,66 @@ Foam::fvMesh::~fvMesh()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::fvMesh::postConstruct(const bool changers, const stitchType stitch)
+{
+    // Construct the stitcher
+    stitcher_.set(fvMeshStitcher::New(*this, changers).ptr());
+
+    // Stitch or Re-stitch if necessary
+    if (stitch != stitchType::none)
+    {
+        stitcher_->connect(false, stitch == stitchType::geometric, true);
+    }
+
+    // Construct changers
+    if (changers)
+    {
+        topoChanger_.set(fvMeshTopoChanger::New(*this).ptr());
+        distributor_.set(fvMeshDistributor::New(*this).ptr());
+        mover_.set(fvMeshMover::New(*this).ptr());
+
+        // Check the existence of the cell volumes and read if present
+        // and set the storage of V00
+        if (fileHandler().isFile(time().timePath()/"Vc0"))
+        {
+            V0Ptr_ = new DimensionedField<scalar, volMesh>
+            (
+                IOobject
+                (
+                    "Vc0",
+                    time().name(),
+                    *this,
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE,
+                    true
+                ),
+                *this
+            );
+
+            V00();
+        }
+
+        // Check the existence of the mesh fluxes and read if present
+        if (fileHandler().isFile(time().timePath()/"meshPhi"))
+        {
+            phiPtr_ = new surfaceScalarField
+            (
+                IOobject
+                (
+                    "meshPhi",
+                    time().name(),
+                    *this,
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE,
+                    true
+                ),
+                *this
+            );
+        }
+    }
+}
+
 
 bool Foam::fvMesh::topoChanging() const
 {
@@ -649,7 +666,7 @@ bool Foam::fvMesh::move()
 
 void Foam::fvMesh::addFvPatches
 (
-    const List<polyPatch*> & p,
+    const List<polyPatch*>& p,
     const bool validBoundary
 )
 {
@@ -738,21 +755,34 @@ Foam::fvMesh::readUpdateState Foam::fvMesh::readUpdate
         Pout<< FUNCTION_NAME << "Updating fvMesh.  ";
     }
 
-    polyMesh::readUpdateState state = polyMesh::readUpdate();
+    const polyMesh::readUpdateState state = polyMesh::readUpdate();
+
+    const fileName polyFacesInst =
+        time().findInstance
+        (
+            dbDir()/typeName,
+            "polyFaces",
+            IOobject::READ_IF_PRESENT
+        );
+
+    const bool reStitch =
+        stitcher_.valid()
+     && stitcher_->stitches()
+     && stitch != stitchType::none
+     && (!conformal() || polyFacesInst != polyFacesBfIOPtr_->instance());
+
+    if (reStitch)
+    {
+        stitcher_->disconnect(false, false);
+    }
+    else if (state != polyMesh::UNCHANGED)
+    {
+        conform();
+    }
 
     if (state == polyMesh::TOPO_PATCH_CHANGE)
     {
         boundary_.readUpdate(boundaryMesh());
-    }
-
-    if
-    (
-        stitcher_.valid()
-     && stitch != stitchType::none
-     && state != polyMesh::UNCHANGED
-    )
-    {
-        stitcher_->disconnect(false, stitch == stitchType::geometric);
     }
 
     if (state == polyMesh::TOPO_PATCH_CHANGE)
@@ -790,12 +820,7 @@ Foam::fvMesh::readUpdateState Foam::fvMesh::readUpdate
         }
     }
 
-    if
-    (
-        stitcher_.valid()
-     && stitch != stitchType::none
-     && state != polyMesh::UNCHANGED
-    )
+    if (reStitch && stitch != stitchType::none)
     {
         stitcher_->connect(false, stitch == stitchType::geometric, true);
     }
@@ -804,14 +829,9 @@ Foam::fvMesh::readUpdateState Foam::fvMesh::readUpdate
     switch (state)
     {
         case polyMesh::UNCHANGED:
-            return UNCHANGED;
+            return reStitch ? STITCHED : UNCHANGED;
         case polyMesh::POINTS_MOVED:
-            return
-                stitcher_.valid()
-             && stitch != stitchType::none
-             && stitcher_->stitches()
-              ? STITCHED
-              : POINTS_MOVED;
+            return reStitch ? STITCHED : POINTS_MOVED;
         case polyMesh::TOPO_CHANGE:
             return TOPO_CHANGE;
         case polyMesh::TOPO_PATCH_CHANGE:
@@ -845,26 +865,22 @@ bool Foam::fvMesh::conformal() const
 }
 
 
-Foam::IOobject Foam::fvMesh::polyFacesBfIO(const IOobject::readOption r) const
-{
-    return
-        IOobject
-        (
-            "polyFaces",
-            pointsInstance(),
-            typeName,
-            *this,
-            r,
-            IOobject::NO_WRITE,
-            false
-        );
-}
-
-
 const Foam::surfaceLabelField::Boundary& Foam::fvMesh::polyFacesBf() const
 {
     if (!polyFacesBfPtr_)
     {
+        polyFacesBfIOPtr_ =
+            new IOobject
+            (
+                "polyFaces",
+                facesInstance(),
+                typeName,
+                *this,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            );
+
         polyFacesBfPtr_ =
             new surfaceLabelField::Boundary
             (
@@ -968,6 +984,12 @@ Foam::fvMesh::polyBFacePatchFaces() const
 
 
 const Foam::fvMeshStitcher& Foam::fvMesh::stitcher() const
+{
+    return stitcher_();
+}
+
+
+Foam::fvMeshStitcher& Foam::fvMesh::stitcher()
 {
     return stitcher_();
 }
@@ -1306,6 +1328,29 @@ void Foam::fvMesh::distribute(const polyDistributionMap& map)
 }
 
 
+void Foam::fvMesh::setPolyFacesBfInstance(const fileName& inst)
+{
+    if (!polyFacesBfPtr_)
+    {
+        polyFacesBf();
+    }
+
+    polyFacesBfIOPtr_->instance() = inst;
+    polyFacesBfIOPtr_->writeOpt() = IOobject::AUTO_WRITE;
+}
+
+
+const Foam::fileName& Foam::fvMesh::polyFacesBfInstance() const
+{
+    if (!polyFacesBfPtr_)
+    {
+        return facesInstance();
+    }
+
+    return polyFacesBfIOPtr_->instance();
+}
+
+
 void Foam::fvMesh::conform(const surfaceScalarField& phi)
 {
     // Clear the geometry fields
@@ -1353,7 +1398,10 @@ void Foam::fvMesh::unconform
     CfRef();
 
     // Set the topology
-    polyFacesBfRef() == polyFacesBf;
+    forAll(polyFacesBf, patchi)
+    {
+        polyFacesBfRef()[patchi].reset(polyFacesBf[patchi]);
+    }
 
     // Set the face geometry
     SfRef() == Sf;
@@ -1596,14 +1644,14 @@ bool Foam::fvMesh::writeObject
 {
     bool ok = true;
 
-    if (!conformal() && pointsWriteOpt() == IOobject::AUTO_WRITE)
+    if (!conformal() && polyFacesBfIOPtr_->writeOpt() == IOobject::AUTO_WRITE)
     {
         // Create a full surface field with the polyFacesBf boundary field to
         // write to disk. Make the internal field uniform to save disk space.
 
         surfaceLabelField polyFaces
         (
-            polyFacesBfIO(IOobject::NO_READ),
+            *polyFacesBfIOPtr_,
             *this,
             dimless,
             labelField(nInternalFaces(), -1),

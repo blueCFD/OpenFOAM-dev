@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -152,6 +152,9 @@ private:
 
         //- Matrix addressing
         mutable fvMeshLduAddressing* lduPtr_;
+
+        //- Face-poly-face IO
+        mutable IOobject* polyFacesBfIOPtr_;
 
         //- Face-poly-face addressing
         mutable GeometricBoundaryField<label, fvsPatchField, surfaceMesh>*
@@ -327,15 +330,10 @@ public:
 
     // Constructors
 
-        //- Construct from IOobject
-        //  with the option to not instantiate the mesh changers and the option
-        //  to prevent some or all of the stitching
-        explicit fvMesh
-        (
-            const IOobject& io,
-            const bool changers = true,
-            const stitchType stitch = stitchType::geometric
-        );
+        //- Construct from IOobject. Optionally prevent post-construction, so
+        //  that postConstruct may be called manually for finer control of
+        //  construction of mesh changes and the level of stitching.
+        explicit fvMesh(const IOobject& io, const bool doPost = true);
 
         //- Construct from cellShapes with boundary.
         fvMesh
@@ -364,7 +362,7 @@ public:
         );
 
         //- Construct without boundary from cells rather than owner/neighbour.
-        //  Boundary is added using addPatches() member function
+        //  Boundary is added using addFvPatches() member function
         fvMesh
         (
             const IOobject& io,
@@ -388,6 +386,13 @@ public:
     // Member Functions
 
         // Helpers
+
+            //- Complete construction of the mesh
+            void postConstruct
+            (
+                const bool changers,
+                const stitchType stitch
+            );
 
             //- Add boundary patches. Constructor helper
             void addFvPatches
@@ -472,9 +477,6 @@ public:
             //- Return whether the fvMesh is conformal with the polyMesh
             bool conformal() const;
 
-            //- Get the poly faces IO object
-            IOobject polyFacesBfIO(IOobject::readOption r) const;
-
             //- Return face-poly-face addressing
             const GeometricBoundaryField<label, fvsPatchField, surfaceMesh>&
                 polyFacesBf() const;
@@ -487,6 +489,9 @@ public:
 
             //- Return the stitcher function class
             const fvMeshStitcher& stitcher() const;
+
+            //- Return the stitcher function class
+            fvMeshStitcher& stitcher();
 
             //- Return the topo-changer function class
             const fvMeshTopoChanger& topoChanger() const;
@@ -586,6 +591,12 @@ public:
 
             //- Move points, returns volumes swept by faces in motion
             virtual tmp<scalarField> movePoints(const pointField&);
+
+            //- Get the current instance for the poly faces boundary field
+            const fileName& polyFacesBfInstance() const;
+
+            //- Set the instance for the poly faces boundary field
+            void setPolyFacesBfInstance(const fileName&);
 
             //- Conform the fvMesh to the polyMesh
             void conform

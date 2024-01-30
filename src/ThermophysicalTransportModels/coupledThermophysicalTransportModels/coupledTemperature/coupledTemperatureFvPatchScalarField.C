@@ -27,7 +27,7 @@ License
 #include "thermophysicalTransportModel.H"
 #include "volFields.H"
 #include "fieldMapper.H"
-#include "mappedPatchBase.H"
+#include "mappedFvPatchBaseBase.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
@@ -145,12 +145,12 @@ coupledTemperatureFvPatchScalarField
     Qs_(0),
     wallKappaByDelta_(0)
 {
-    mappedPatchBase::validateMapForField
+    mappedPatchBaseBase::validateMapForField
     (
         *this,
         iF,
         dict,
-        mappedPatchBase::from::differentPatch
+        mappedPatchBaseBase::from::differentPatch
     );
 
     if (dict.found("thicknessLayers"))
@@ -220,10 +220,12 @@ coupledTemperatureFvPatchScalarField
     qrName_(psf.qrName_),
     thicknessLayers_(psf.thicknessLayers_),
     kappaLayers_(psf.kappaLayers_),
-    qs_(psf.qs_.valid() ? mapper(psf.qs_()).ptr() : nullptr),
+    qs_(psf.qs_.valid() ? new scalarField(p.size()) : nullptr),
     Qs_(psf.Qs_),
     wallKappaByDelta_(psf.wallKappaByDelta_)
-{}
+{
+    map(psf, mapper);
+}
 
 
 Foam::coupledTemperatureFvPatchScalarField::
@@ -249,19 +251,31 @@ coupledTemperatureFvPatchScalarField
 
 void Foam::coupledTemperatureFvPatchScalarField::map
 (
+    const coupledTemperatureFvPatchScalarField& ptf,
+    const fieldMapper& mapper
+)
+{
+    // Unmapped faces are considered zero-gradient/adiabatic
+    mapper(*this, ptf, [&](){ return patchInternalField(); });
+    mapper(refValue(), ptf.refValue(), [&](){ return patchInternalField(); });
+    mapper(refGrad(), ptf.refGrad(), scalar(0));
+    mapper(valueFraction(), ptf.valueFraction(), scalar(0));
+
+    // Map the heat flux, if present
+    if (ptf.qs_.valid())
+    {
+        mapper(qs_(), ptf.qs_());
+    }
+}
+
+
+void Foam::coupledTemperatureFvPatchScalarField::map
+(
     const fvPatchScalarField& ptf,
     const fieldMapper& mapper
 )
 {
-    mixedFvPatchScalarField::map(ptf, mapper);
-
-    const coupledTemperatureFvPatchScalarField& tiptf =
-        refCast<const coupledTemperatureFvPatchScalarField>(ptf);
-
-    if (tiptf.qs_.valid())
-    {
-        mapper(qs_(), tiptf.qs_());
-    }
+    map(refCast<const coupledTemperatureFvPatchScalarField>(ptf), mapper);
 }
 
 
@@ -294,11 +308,10 @@ void Foam::coupledTemperatureFvPatchScalarField::updateCoeffs()
     int oldTag = UPstream::msgType();
     UPstream::msgType() = oldTag + 1;
 
-    // Get the coupling information from the mappedPatchBase
-    const mappedPatchBase& mpp = mappedPatchBase::getMap(patch().patch());
-    const label patchiNbr = mpp.nbrPolyPatch().index();
-    const fvPatch& patchNbr =
-        refCast<const fvMesh>(mpp.nbrMesh()).boundary()[patchiNbr];
+    // Get the mapper and the neighbouring patch
+    const mappedFvPatchBaseBase& mapper =
+        mappedFvPatchBaseBase::getMap(patch());
+    const fvPatch& patchNbr = mapper.nbrFvPatch();
 
     const fvPatchScalarField& TpNbr =
         patchNbr.lookupPatchField<volScalarField, scalar>(TnbrName_);
@@ -332,7 +345,7 @@ void Foam::coupledTemperatureFvPatchScalarField::updateCoeffs()
 
     if (qrNbrName_ != "none")
     {
-        sumq += mpp.fromNeighbour
+        sumq += mapper.fromNeighbour
         (
             patchNbr.lookupPatchField<volScalarField, scalar>(qrNbrName_)
         );
@@ -361,8 +374,8 @@ void Foam::coupledTemperatureFvPatchScalarField::updateCoeffs()
                 qNbr
             );
 
-            add(sumKappaTByDelta, mpp.fromNeighbour(sumKappaTByDeltaNbr));
-            add(sumKappaByDelta, mpp.fromNeighbour(sumKappaByDeltaNbr));
+            add(sumKappaTByDelta, mapper.fromNeighbour(sumKappaTByDeltaNbr));
+            add(sumKappaByDelta, mapper.fromNeighbour(sumKappaByDeltaNbr));
         }
         else
         {
@@ -371,12 +384,16 @@ void Foam::coupledTemperatureFvPatchScalarField::updateCoeffs()
             coupledTemperatureNbr.getNbr(TwNbr, qNbr);
 
             add(sumKappaByDelta, scalarField(size(), wallKappaByDelta_));
-            add(sumKappaTByDelta, wallKappaByDelta_*mpp.fromNeighbour(TwNbr));
+            add
+            (
+                sumKappaTByDelta,
+                wallKappaByDelta_*mapper.fromNeighbour(TwNbr)
+            );
         }
 
         if (qNbr.valid())
         {
-            sumq += mpp.fromNeighbour(qNbr);
+            sumq += mapper.fromNeighbour(qNbr);
         }
     }
 
@@ -396,7 +413,7 @@ void Foam::coupledTemperatureFvPatchScalarField::updateCoeffs()
         Info<< patch().boundaryMesh().mesh().name() << ':'
             << patch().name() << ':'
             << this->internalField().name() << " <- "
-            << mpp.nbrMesh().name() << ':'
+            << mapper.nbrMesh().name() << ':'
             << patchNbr.name() << ':'
             << this->internalField().name() << " :"
             << " heat transfer rate:" << Q
