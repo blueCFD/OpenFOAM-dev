@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,17 +47,14 @@ inline void Foam::PtrList<T>::append(T* ptr)
 template<class T>
 inline void Foam::PtrList<T>::append(const autoPtr<T>& aptr)
 {
-    return append(const_cast<autoPtr<T>&>(aptr).ptr());
+    append(const_cast<autoPtr<T>&>(aptr).ptr());
 }
 
 
 template<class T>
-inline void Foam::PtrList<T>::append
-(
-    const tmp<T>& t
-)
+inline void Foam::PtrList<T>::append(const tmp<T>& t)
 {
-    return append(const_cast<tmp<T>&>(t).ptr());
+    append(const_cast<tmp<T>&>(t).ptr());
 }
 
 
