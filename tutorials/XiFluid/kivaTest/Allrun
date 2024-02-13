@@ -9,6 +9,8 @@ application=$(getApplication)
 
 runApplication kivaToFoam -file otape17
 
+runApplication createEngineZones -cylinderHead -pistonBowl
+
 runApplication $application
 
 #------------------------------------------------------------------------------

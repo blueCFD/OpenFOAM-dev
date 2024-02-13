@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      createNonConformalCouplesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+fields no;
+
+nonConformalCouples
+{
+    NCC_iv
+    {
+        patches         (nonCouple_iv_cyl nonCouple_cyl_iv);
+        transform       none;
+    }
+
+    NCC_ev
+    {
+        patches         (nonCouple_ev_cyl nonCouple_cyl_ev);
+        transform       none;
+    }
+
+    NCC_iv_port
+    {
+        patches         (nonCouple_ip_iv nonCouple_iv_ip);
+        transform       none;
+    }
+
+    NCC_ev_port
+    {
+        patches         (nonCouple_ep_ev nonCouple_ev_ep);
+        transform       none;
+    }
+
+}
+
+// ************************************************************************* //
