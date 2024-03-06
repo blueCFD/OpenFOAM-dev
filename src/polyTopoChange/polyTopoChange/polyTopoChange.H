@@ -352,15 +352,6 @@ class polyTopoChange
             List<objectMap>&
         ) const;
 
-        void calcCellInflationMaps
-        (
-            const polyMesh&,
-            List<objectMap>&,
-            List<objectMap>&,
-            List<objectMap>&,
-            List<objectMap>&
-        ) const;
-
         void resetZones
         (
             const polyMesh&,        // mesh to get existing info from
@@ -401,9 +392,6 @@ class polyTopoChange
             List<objectMap>& facesFromPoints,
             List<objectMap>& facesFromEdges,
             List<objectMap>& facesFromFaces,
-            List<objectMap>& cellsFromPoints,
-            List<objectMap>& cellsFromEdges,
-            List<objectMap>& cellsFromFaces,
             List<objectMap>& cellsFromCells,
             List<Map<label>>& oldPatchMeshPointMaps,
             labelList& oldPatchNMeshPoints,
@@ -411,11 +399,11 @@ class polyTopoChange
             List<Map<label>>& oldMeshFaceZonesPointMaps
         );
 
+
 public:
 
     //- Runtime type information
     ClassName("polyTopoChange");
-
 
 
     // Constructors
@@ -472,17 +460,6 @@ public:
 
             //- Clear all storage
             void clear();
-
-            //- Add all points/faces/cells of mesh. Additional offset for patch
-            //  or zone ids.
-            void addMesh
-            (
-                const polyMesh&,
-                const labelList& patchMap,
-                const labelList& pointZoneMap,
-                const labelList& faceZoneMap,
-                const labelList& cellZoneMap
-            );
 
             //- Explicitly pre-size the dynamic storage for expected mesh
             //  size for if construct-without-mesh
@@ -582,9 +559,6 @@ public:
             //- Add cell. Return new cell label.
             label addCell
             (
-                const label masterPointID,
-                const label masterEdgeID,
-                const label masterFaceID,
                 const label masterCellID,
                 const label zoneID
             );
@@ -633,7 +607,6 @@ public:
                 const bool orderCells = false,
                 const bool orderPoints = false
             );
-
 };
 
 
