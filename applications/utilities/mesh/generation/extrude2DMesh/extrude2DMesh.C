@@ -42,7 +42,6 @@ Description
 #include "polyTopoChange.H"
 #include "MeshedSurface.T.H"
 #include "edgeCollapser.H"
-#include "addPatchCellLayer.H"
 #include "patchToPoly2DMesh.H"
 #include "globalIndex.H"
 #include "IOdictionary.H"
