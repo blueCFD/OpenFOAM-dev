@@ -796,12 +796,6 @@ void Foam::polyTopoChange::getFaceOrder
         }
     }
 
-    // if (debug)
-    //{
-    //    Pout<< "patchSizes:" << patchSizes << nl
-    //        << "patchStarts:" << patchStarts << endl;
-    //}
-
     labelList workPatchStarts(patchStarts);
 
     for (label facei = 0; facei < nActiveFaces; facei++)
@@ -899,7 +893,6 @@ void Foam::polyTopoChange::compact
 
     cellMap_.shrink();
     reverseCellMap_.shrink();
-    cellZone_.shrink();
 
 
     // Compact points
@@ -1148,9 +1141,6 @@ void Foam::polyTopoChange::compact
             reorder(localCellMap, cellMap_);
             cellMap_.setCapacity(newCelli);
             renumberReverseMap(localCellMap, reverseCellMap_);
-
-            reorder(localCellMap, cellZone_);
-            cellZone_.setCapacity(newCelli);
 
             // Renumber owner/neighbour. Take into account if neighbour suddenly
             // gets lower cell than owner.
@@ -1412,69 +1402,6 @@ void Foam::polyTopoChange::resetZones
             );
         }
     }
-
-
-    // cellZones
-    // ~~~~~~~~~
-
-    {
-        const meshCellZones& cellZones = mesh.cellZones();
-
-        labelList nCells(cellZones.size(), 0);
-
-        forAll(cellZone_, celli)
-        {
-            label zoneI = cellZone_[celli];
-
-            if (zoneI >= cellZones.size())
-            {
-                FatalErrorInFunction
-                    << "Illegal zoneID " << zoneI << " for cell "
-                    << celli << abort(FatalError);
-            }
-
-            if (zoneI >= 0)
-            {
-                nCells[zoneI]++;
-            }
-        }
-
-        labelListList addressing(cellZones.size());
-        forAll(addressing, zoneI)
-        {
-            addressing[zoneI].setSize(nCells[zoneI]);
-        }
-        nCells = 0;
-
-        forAll(cellZone_, celli)
-        {
-            label zoneI = cellZone_[celli];
-
-            if (zoneI >= 0)
-            {
-                addressing[zoneI][nCells[zoneI]++] = celli;
-            }
-        }
-        // Sort the addressing
-        forAll(addressing, zoneI)
-        {
-            stableSort(addressing[zoneI]);
-        }
-
-        // Reset the addressing on the zone
-        forAll(newMesh.cellZones(), zoneI)
-        {
-            if (debug)
-            {
-                Pout<< "cellZone:" << zoneI
-                    << "  name:" << newMesh.cellZones()[zoneI].name()
-                    << "  size:" << addressing[zoneI].size()
-                    << endl;
-            }
-
-            newMesh.cellZones()[zoneI] = addressing[zoneI];
-        }
-    }
 }
 
 
@@ -1663,6 +1590,7 @@ void Foam::polyTopoChange::compactAndReorder
     List<objectMap>& cellsFromCells,
     List<Map<label>>& oldPatchMeshPointMaps,
     labelList& oldPatchNMeshPoints,
+    labelList& oldPatchSizes,
     labelList& oldPatchStarts,
     List<Map<label>>& oldMeshFaceZonesPointMaps
 )
@@ -1734,6 +1662,7 @@ void Foam::polyTopoChange::compactAndReorder
     // Grab patch mesh point maps
     oldPatchMeshPointMaps.setSize(boundary.size());
     oldPatchNMeshPoints.setSize(boundary.size());
+    oldPatchSizes.setSize(boundary.size());
     oldPatchStarts.setSize(boundary.size());
 
     forAll(boundary, patchi)
@@ -1741,6 +1670,7 @@ void Foam::polyTopoChange::compactAndReorder
         // Copy old face zone point maps
         oldPatchMeshPointMaps[patchi] = boundary[patchi].meshPointMap();
         oldPatchNMeshPoints[patchi] = boundary[patchi].meshPoints().size();
+        oldPatchSizes[patchi] = boundary[patchi].size();
         oldPatchStarts[patchi] = boundary[patchi].start();
     }
 
@@ -1780,8 +1710,7 @@ Foam::polyTopoChange::polyTopoChange(const label nPatches, const bool strict)
     faceZoneFlip_(0),
     nActiveFaces_(0),
     cellMap_(0),
-    reverseCellMap_(0),
-    cellZone_(0)
+    reverseCellMap_(0)
 {}
 
 
@@ -1809,8 +1738,7 @@ Foam::polyTopoChange::polyTopoChange
     faceZoneFlip_(0),
     nActiveFaces_(0),
     cellMap_(0),
-    reverseCellMap_(0),
-    cellZone_(0)
+    reverseCellMap_(0)
 {
     // Add points
     {
@@ -1825,19 +1753,12 @@ Foam::polyTopoChange::polyTopoChange
         // Add points in mesh order
         for (label pointi = 0; pointi < mesh.nPoints(); pointi++)
         {
-            addPoint
-            (
-                points[pointi],
-                pointi,
-                true
-            );
+            addPoint(points[pointi], pointi, true);
         }
     }
 
     // Add cells
     {
-        const meshCellZones& cellZones = mesh.cellZones();
-
         // Resize
 
         // Note: polyMesh does not allow retired cells anymore. So allCells
@@ -1846,43 +1767,11 @@ Foam::polyTopoChange::polyTopoChange
 
         cellMap_.setCapacity(cellMap_.size() + nAllCells);
         reverseCellMap_.setCapacity(reverseCellMap_.size() + nAllCells);
-        cellZone_.setCapacity(cellZone_.size() + nAllCells);
-
-
-        // Precalc offset zones
-        labelList newZoneID(nAllCells, -1);
-
-        forAll(cellZones, zoneI)
-        {
-            const labelList& cellLabels = cellZones[zoneI];
-
-            forAll(cellLabels, j)
-            {
-                label celli = cellLabels[j];
-
-                if (newZoneID[celli] != -1)
-                {
-                    WarningInFunction
-                        << "Cell:" << celli
-                        << " centre:" << mesh.cellCentres()[celli]
-                        << " is in two zones:"
-                        << cellZones[newZoneID[celli]].name()
-                        << " and " << cellZones[zoneI].name() << endl
-                        << "    This is not supported."
-                        << " Continuing with first zone only." << endl;
-                }
-                else
-                {
-                    newZoneID[celli] = zoneI;
-                }
-            }
-        }
 
         // Add cells in mesh order
         for (label celli = 0; celli < nAllCells; celli++)
         {
-            // Add cell from cell
-            addCell(celli, newZoneID[celli]);
+            addCell(celli);
         }
     }
 
@@ -2001,7 +1890,6 @@ void Foam::polyTopoChange::clear()
 
     cellMap_.clearStorage();
     reverseCellMap_.clearStorage();
-    cellZone_.clearStorage();
 }
 
 
@@ -2028,7 +1916,6 @@ void Foam::polyTopoChange::setCapacity
 
     cellMap_.setCapacity(nCells);
     reverseCellMap_.setCapacity(nCells);
-    cellZone_.setCapacity(nCells);
 }
 
 
@@ -2276,16 +2163,11 @@ void Foam::polyTopoChange::removeFace(const label facei, const label mergeFacei)
 }
 
 
-Foam::label Foam::polyTopoChange::addCell
-(
-    const label masterCellID,
-    const label zoneID
-)
+Foam::label Foam::polyTopoChange::addCell(const label masterCellID)
 {
     const label celli = cellMap_.size();
     cellMap_.append(masterCellID);
     reverseCellMap_.append(celli);
-    cellZone_.append(zoneID);
 
     return celli;
 }
@@ -2318,7 +2200,6 @@ void Foam::polyTopoChange::removeCell(const label celli, const label mergeCelli)
     {
         reverseCellMap_[celli] = -1;
     }
-    cellZone_[celli] = -1;
 }
 
 
@@ -2345,18 +2226,23 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::changeMesh
 
     // new mesh points
     pointField newPoints;
+
     // number of internal points
     label nInternalPoints;
+
     // patch slicing
     labelList patchSizes;
     labelList patchStarts;
+
     // maps
     List<objectMap> pointsFromPoints;
     List<objectMap> facesFromFaces;
     List<objectMap> cellsFromCells;
+
     // old mesh info
     List<Map<label>> oldPatchMeshPointMaps;
     labelList oldPatchNMeshPoints;
+    labelList oldPatchSizes;
     labelList oldPatchStarts;
     List<Map<label>> oldMeshFaceZonesPointMaps;
 
@@ -2377,6 +2263,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::changeMesh
         cellsFromCells,
         oldPatchMeshPointMaps,
         oldPatchNMeshPoints,
+        oldPatchSizes,
         oldPatchStarts,
         oldMeshFaceZonesPointMaps
     );
@@ -2465,7 +2352,6 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::changeMesh
     {
         faceZone_.clearStorage();
         faceZoneFlip_.clearStorage();
-        cellZone_.clearStorage();
     }
 
 
@@ -2495,29 +2381,28 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::changeMesh
             nOldFaces,
             nOldCells,
 
-            pointMap_,
-            pointsFromPoints,
+            move(pointMap_),
+            move(pointsFromPoints),
 
-            faceMap_,
-            facesFromFaces,
+            move(faceMap_),
+            move(facesFromFaces),
 
-            cellMap_,
-            cellsFromCells,
+            move(cellMap_),
+            move(cellsFromCells),
 
-            reversePointMap_,
-            reverseFaceMap_,
-            reverseCellMap_,
+            move(reversePointMap_),
+            move(reverseFaceMap_),
+            move(reverseCellMap_),
 
-            flipFaceFluxSet,
+            move(flipFaceFluxSet),
 
-            patchPointMap,
+            move(patchPointMap),
 
-            oldPatchStarts,
-            oldPatchNMeshPoints,
+            move(oldPatchSizes),
+            move(oldPatchStarts),
+            move(oldPatchNMeshPoints),
 
-            oldCellVolumes,
-
-            true                // steal storage.
+            move(oldCellVolumes)
         )
     );
 
@@ -2565,6 +2450,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
     // old mesh info
     List<Map<label>> oldPatchMeshPointMaps;
     labelList oldPatchNMeshPoints;
+    labelList oldPatchSizes;
     labelList oldPatchStarts;
     List<Map<label>> oldMeshFaceZonesPointMaps;
 
@@ -2585,6 +2471,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
         cellsFromCells,
         oldPatchMeshPointMaps,
         oldPatchNMeshPoints,
+        oldPatchSizes,
         oldPatchStarts,
         oldMeshFaceZonesPointMaps
     );
@@ -2683,22 +2570,17 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
     // Zones
     // ~~~~~
 
-    // Start off from empty zones.
+    // Copy pointZone from old mesh
     const meshPointZones& oldPointZones = mesh.pointZones();
     List<pointZone*> pZonePtrs(oldPointZones.size());
     {
         forAll(oldPointZones, i)
         {
-            // pZonePtrs[i] = new pointZone
-            // (
-            //     oldPointZones[i].name(),
-            //     labelList(0),
-            //     newMesh.pointZones()
-            // );
             pZonePtrs[i] = oldPointZones[i].clone(newMesh.pointZones()).ptr();
         }
     }
 
+    // Start with empty faceZone
     const meshFaceZones& oldFaceZones = mesh.faceZones();
     List<faceZone*> fZonePtrs(oldFaceZones.size());
     {
@@ -2714,17 +2596,13 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
         }
     }
 
+    // Copy cellZone from old mesh
     const meshCellZones& oldCellZones = mesh.cellZones();
     List<cellZone*> cZonePtrs(oldCellZones.size());
     {
         forAll(oldCellZones, i)
         {
-            cZonePtrs[i] = new cellZone
-            (
-                oldCellZones[i].name(),
-                labelList(0),
-                newMesh.cellZones()
-            );
+            cZonePtrs[i] = oldCellZones[i].clone(newMesh.cellZones()).ptr();
         }
     }
 
@@ -2735,7 +2613,6 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
     {
         faceZone_.clearStorage();
         faceZoneFlip_.clearStorage();
-        cellZone_.clearStorage();
     }
 
     // Patch point renumbering
@@ -2770,27 +2647,28 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
             nOldFaces,
             nOldCells,
 
-            pointMap_,
-            pointsFromPoints,
+            move(pointMap_),
+            move(pointsFromPoints),
 
-            faceMap_,
-            facesFromFaces,
+            move(faceMap_),
+            move(facesFromFaces),
 
-            cellMap_,
-            cellsFromCells,
+            move(cellMap_),
+            move(cellsFromCells),
 
-            reversePointMap_,
-            reverseFaceMap_,
-            reverseCellMap_,
+            move(reversePointMap_),
+            move(reverseFaceMap_),
+            move(reverseCellMap_),
 
-            flipFaceFluxSet,
+            move(flipFaceFluxSet),
 
-            patchPointMap,
+            move(patchPointMap),
 
-            oldPatchStarts,
-            oldPatchNMeshPoints,
-            oldCellVolumes,
-            true                // steal storage.
+            move(oldPatchSizes),
+            move(oldPatchStarts),
+            move(oldPatchNMeshPoints),
+
+            move(oldCellVolumes)
         )
     );
 
