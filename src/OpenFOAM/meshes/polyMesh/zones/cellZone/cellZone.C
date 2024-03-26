@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cellZone.H"
-#include "meshCellZones.H"
+#include "cellZones.H"
 #include "polyMesh.H"
 #include "polyTopoChangeMap.H"
 #include "addToRunTimeSelectionTable.H"
@@ -33,98 +33,31 @@ License
 
 namespace Foam
 {
+    typedef Zone<cellZone, cellZones> cellZoneType;
+    defineTemplateRunTimeSelectionTable(cellZoneType, dictionary);
+
     defineTypeNameAndDebug(cellZone, 0);
-    defineRunTimeSelectionTable(cellZone, dictionary);
     addToRunTimeSelectionTable(cellZone, cellZone, dictionary);
 }
 
 const char * const Foam::cellZone::labelsName = "cellLabels";
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::cellZone::cellZone
-(
-    const word& name,
-    const labelUList& addr,
-    const meshCellZones& mz
-)
-:
-    zone(name, addr),
-    meshZones_(mz)
-{}
-
-
-Foam::cellZone::cellZone
-(
-    const word& name,
-    labelList&& addr,
-    const meshCellZones& mz
-)
-:
-    zone(name, move(addr)),
-    meshZones_(mz)
-{}
-
-
-Foam::cellZone::cellZone
-(
-    const word& name,
-    const dictionary& dict,
-    const meshCellZones& mz
-)
-:
-    zone(name, dict, this->labelsName),
-    meshZones_(mz)
-{}
-
-
-Foam::cellZone::cellZone
-(
-    const cellZone& cz,
-    const labelUList& addr,
-    const meshCellZones& mz
-)
-:
-    zone(cz, addr),
-    meshZones_(mz)
-{}
-
-
-Foam::cellZone::cellZone
-(
-    const cellZone& cz,
-    labelList&& addr,
-    const meshCellZones& mz
-)
-:
-    zone(cz, move(addr)),
-    meshZones_(mz)
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::cellZone::~cellZone()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::label Foam::cellZone::whichCell(const label globalCellID) const
 {
-    return zone::localIndex(globalCellID);
-}
-
-
-const Foam::meshCellZones& Foam::cellZone::meshZones() const
-{
-    return meshZones_;
+    return Zone<cellZone, cellZones>::localIndex(globalCellID);
 }
 
 
 bool Foam::cellZone::checkDefinition(const bool report) const
 {
-    return zone::checkDefinition(meshZones_.mesh().nCells(), report);
+    return Zone<cellZone, cellZones>::checkDefinition
+    (
+        zones_.mesh().nCells(),
+        report
+    );
 }
 
 
@@ -164,20 +97,6 @@ void Foam::cellZone::writeDict(Ostream& os) const
     writeEntry(os, this->labelsName, *this);
 
     os  << token::END_BLOCK << endl;
-}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-void Foam::cellZone::operator=(const cellZone& zn)
-{
-    zone::operator=(zn);
-}
-
-
-void Foam::cellZone::operator=(cellZone&& zn)
-{
-    zone::operator=(move(zn));
 }
 
 

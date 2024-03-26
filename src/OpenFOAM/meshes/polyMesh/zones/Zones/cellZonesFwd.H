@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,23 +22,25 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Typedef
-    Foam::indirectPointList
+    Foam::cellZones
 
 Description
+    A Zones with the type cellZone
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef indirectPointList_H
-#define indirectPointList_H
-
-#include "point.T.H"
-#include "IndirectList.T.H"
+#ifndef cellZonesFwd_H
+#define cellZonesFwd_H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    typedef IndirectList<point> indirectPointList;
+    template<class Zone, class MeshType> class Zones;
+    class cellZone;
+    class polyMesh;
+
+    typedef Zones<cellZone, polyMesh> cellZones;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

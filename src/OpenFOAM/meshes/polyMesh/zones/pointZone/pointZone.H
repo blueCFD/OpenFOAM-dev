@@ -30,7 +30,7 @@ Description
     list.
 
     For quick check whether a point belongs to the zone use the lookup
-    mechanism in meshPointZones, where all the zoned points are registered
+    mechanism in pointZones, where all the zoned points are registered
     with their zone number.
 
 SourceFiles
@@ -42,8 +42,8 @@ SourceFiles
 #ifndef pointZone_H
 #define pointZone_H
 
-#include "zone.H"
-#include "meshPointZonesFwd.H"
+#include "Zone.T.H"
+#include "pointZonesFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,16 +56,8 @@ namespace Foam
 
 class pointZone
 :
-    public zone
+    public Zone<pointZone, pointZones>
 {
-
-protected:
-
-    // Protected data
-
-        //- Reference to zone list
-        const meshPointZones& meshZones_;
-
 
 public:
 
@@ -79,72 +71,12 @@ public:
     TypeName("pointZone");
 
 
-    // Declare run-time constructor selection tables
-
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            pointZone,
-            dictionary,
-            (
-                const word& name,
-                const dictionary& dict,
-                const meshPointZones& mz
-            ),
-            (name, dict, mz)
-        );
-
-
     // Constructors
 
-        //- Construct from components
-        pointZone
-        (
-            const word& name,
-            const labelUList& addr,
-            const meshPointZones&
-        );
-
-        //- Construct from components, transferring contents
-        pointZone
-        (
-            const word& name,
-            labelList&& addr,
-            const meshPointZones&
-        );
-
-        //- Construct from dictionary
-        pointZone
-        (
-            const word& name,
-            const dictionary&,
-            const meshPointZones&
-        );
-
-        //- Construct given the original zone and resetting the
-        //  point list and mesh zones information
-        pointZone
-        (
-            const pointZone&,
-            const labelUList& addr,
-            const meshPointZones&
-        );
-
-        //- Construct given the original zone, resetting the
-        //  face list and mesh zones information
-        pointZone
-        (
-            const pointZone&,
-            labelList&& addr,
-            const meshPointZones&
-        );
-
-        //- Disallow default bitwise copy construction
-        pointZone(const pointZone&) = delete;
-
+        using Zone<pointZone, pointZones>::Zone;
 
         //- Construct and return a clone, resetting the mesh zones
-        virtual autoPtr<pointZone> clone(const meshPointZones& mz) const
+        virtual autoPtr<pointZone> clone(const pointZones& mz) const
         {
             return autoPtr<pointZone>
             (
@@ -156,8 +88,8 @@ public:
         //  and mesh zones
         virtual autoPtr<pointZone> clone
         (
-            const meshPointZones& mz,
-            const labelUList& addr
+            const labelUList& addr,
+            const pointZones& mz
         ) const
         {
             return autoPtr<pointZone>
@@ -167,26 +99,7 @@ public:
         }
 
 
-    // Selectors
-
-        //- Return a pointer to a new point zone
-        //  created on freestore from dictionary
-        static autoPtr<pointZone> New
-        (
-            const word& name,
-            const dictionary&,
-            const meshPointZones&
-        );
-
-
-    //- Destructor
-    virtual ~pointZone();
-
-
     // Member Functions
-
-        //- Return meshZones reference
-        const meshPointZones& meshZones() const;
 
         //- Convenient renaming of zone::localIndex(globalIndex)
         label whichPoint(const label globalIndex) const;
@@ -207,13 +120,7 @@ public:
 
     // Member Operators
 
-        using zone::operator=;
-
-        //- Assignment to zone, clearing demand-driven data
-        void operator=(const pointZone&);
-
-        //- Move assignment to zone, clearing demand-driven data
-        void operator=(pointZone&&);
+        using Zone<pointZone, pointZones>::operator=;
 };
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,16 +22,16 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Foam::meshFaceZones
+    Foam::cellZones
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef meshFaceZones_H
-#define meshFaceZones_H
+#ifndef cellZones_H
+#define cellZones_H
 
-#include "MeshZones.T.H"
-#include "faceZone.H"
-#include "meshFaceZonesFwd.H"
+#include "Zones.T.H"
+#include "cellZone.H"
+#include "cellZonesFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

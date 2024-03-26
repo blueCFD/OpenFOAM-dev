@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "pointZone.H"
-#include "meshPointZones.H"
+#include "pointZones.H"
 #include "polyMesh.H"
 #include "polyTopoChangeMap.H"
 #include "syncTools.H"
@@ -34,106 +34,39 @@ License
 
 namespace Foam
 {
+    typedef Zone<pointZone, pointZones> pointZoneType;
+    defineTemplateRunTimeSelectionTable(pointZoneType, dictionary);
+
     defineTypeNameAndDebug(pointZone, 0);
-    defineRunTimeSelectionTable(pointZone, dictionary);
     addToRunTimeSelectionTable(pointZone, pointZone, dictionary);
 }
 
 const char* const Foam::pointZone::labelsName = "pointLabels";
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::pointZone::pointZone
-(
-    const word& name,
-    const labelUList& addr,
-    const meshPointZones& mz
-)
-:
-    zone(name, addr),
-    meshZones_(mz)
-{}
-
-
-Foam::pointZone::pointZone
-(
-    const word& name,
-    labelList&& addr,
-    const meshPointZones& mz
-)
-:
-    zone(name, move(addr)),
-    meshZones_(mz)
-{}
-
-
-Foam::pointZone::pointZone
-(
-    const word& name,
-    const dictionary& dict,
-    const meshPointZones& mz
-)
-:
-    zone(name, dict, this->labelsName),
-    meshZones_(mz)
-{}
-
-
-Foam::pointZone::pointZone
-(
-    const pointZone& pz,
-    const labelUList& addr,
-    const meshPointZones& mz
-)
-:
-    zone(pz, addr),
-    meshZones_(mz)
-{}
-
-
-Foam::pointZone::pointZone
-(
-    const pointZone& pz,
-    labelList&& addr,
-    const meshPointZones& mz
-)
-:
-    zone(pz, move(addr)),
-    meshZones_(mz)
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::pointZone::~pointZone()
-{}
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-const Foam::meshPointZones& Foam::pointZone::meshZones() const
-{
-    return meshZones_;
-}
-
-
 Foam::label Foam::pointZone::whichPoint(const label globalPointID) const
 {
-    return zone::localIndex(globalPointID);
+    return Zone<pointZone, pointZones>::localIndex(globalPointID);
 }
 
 
 bool Foam::pointZone::checkDefinition(const bool report) const
 {
-    return zone::checkDefinition(meshZones_.mesh().points().size(), report);
+    return Zone<pointZone, pointZones>::checkDefinition
+    (
+        zones_.mesh().points().size(),
+        report
+    );
 }
 
 
 bool Foam::pointZone::checkParallelSync(const bool report) const
 {
-    const polyMesh& mesh = meshZones().mesh();
+    const polyMesh& mesh = zones().mesh();
 
-    const label index = meshZones_.findIndex(name());
+    const label index = zones_.findIndex(name());
 
     labelList maxZone(mesh.nPoints(), -1);
     labelList minZone(mesh.nPoints(), labelMax);
@@ -217,20 +150,6 @@ void Foam::pointZone::writeDict(Ostream& os) const
     writeEntry(os, this->labelsName, *this);
 
     os  << token::END_BLOCK << endl;
-}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-void Foam::pointZone::operator=(const pointZone& zn)
-{
-    zone::operator=(zn);
-}
-
-
-void Foam::pointZone::operator=(pointZone&& zn)
-{
-    zone::operator=(move(zn));
 }
 
 

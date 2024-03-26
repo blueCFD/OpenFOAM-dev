@@ -21,44 +21,34 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Description
+    Foam::faceZones
+
 \*---------------------------------------------------------------------------*/
 
-#include "pointZone.H"
-#include "dictionary.H"
+#ifndef faceZones_H
+#define faceZones_H
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+#include "Zones.T.H"
+#include "faceZone.H"
+#include "faceZonesFwd.H"
 
-Foam::autoPtr<Foam::pointZone> Foam::pointZone::New
-(
-    const word& name,
-    const dictionary& dict,
-    const meshPointZones& mz
-)
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
 {
-    if (debug)
-    {
-        InfoInFunction << "Constructing pointZone " << name << endl;
-    }
+    // class faceZones
+    // :
+    //     public Zones<faceZone, polyMesh>
+    // {
+    // public:
 
-    const word zoneType(dict.lookup("type"));
-
-    dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(zoneType);
-
-    if (cstrIter == dictionaryConstructorTablePtr_->end())
-    {
-        FatalIOErrorInFunction
-        (
-            dict
-        )   << "Unknown pointZone type "
-            << zoneType << nl << nl
-            << "Valid pointZone types are:" << nl
-            << dictionaryConstructorTablePtr_->sortedToc()
-            << exit(FatalIOError);
-    }
-
-    return autoPtr<pointZone>(cstrIter()(name, dict, mz));
+    //     using Zones<faceZone, polyMesh>::Zones;
+    // };
 }
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

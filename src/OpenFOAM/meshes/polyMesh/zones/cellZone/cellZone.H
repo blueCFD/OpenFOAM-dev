@@ -29,7 +29,7 @@ Description
 
     Currently set up as an indirect list but will be extended to use a
     primitive mesh.  For quick check whether a cell belongs to the zone use
-    the lookup mechanism in meshCellZones, where all the zoned cells are
+    the lookup mechanism in cellZones, where all the zoned cells are
     registered with their zone number.
 
 SourceFiles
@@ -41,8 +41,8 @@ SourceFiles
 #ifndef cellZone_H
 #define cellZone_H
 
-#include "zone.H"
-#include "meshCellZonesFwd.H"
+#include "Zone.T.H"
+#include "cellZonesFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,16 +55,8 @@ namespace Foam
 
 class cellZone
 :
-    public zone
+    public Zone<cellZone, cellZones>
 {
-
-protected:
-
-    // Protected data
-
-        //- Reference to zone list
-        const meshCellZones& meshZones_;
-
 
 public:
 
@@ -73,77 +65,16 @@ public:
         //- The name associated with the zone-labels dictionary entry
         static const char* const labelsName;
 
-
     //- Runtime type information
     TypeName("cellZone");
 
 
-    // Declare run-time constructor selection tables
-
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            cellZone,
-            dictionary,
-            (
-                const word& name,
-                const dictionary& dict,
-                const meshCellZones& mz
-            ),
-            (name, dict, mz)
-        );
-
-
     // Constructors
 
-        //- Construct from components
-        cellZone
-        (
-            const word& name,
-            const labelUList& addr,
-            const meshCellZones&
-        );
-
-        //- Construct from components, transferring contents
-        cellZone
-        (
-            const word& name,
-            labelList&& addr,
-            const meshCellZones&
-        );
-
-        //- Construct from dictionary
-        cellZone
-        (
-            const word& name,
-            const dictionary&,
-            const meshCellZones&
-        );
-
-        //- Construct given the original zone and resetting the
-        //  cell list and mesh zones information
-        cellZone
-        (
-            const cellZone&,
-            const labelUList& addr,
-            const meshCellZones&
-        );
-
-        //- Construct given the original zone, resetting the
-        //  cell list and mesh zones information
-        cellZone
-        (
-            const cellZone&,
-            labelList&& addr,
-            const meshCellZones&
-        );
-
-        //- Disallow default bitwise copy construction
-        cellZone(const cellZone&) = delete;
-
+        using Zone<cellZone, cellZones>::Zone;
 
         //- Construct and return a clone, resetting the mesh zones
-        virtual autoPtr<cellZone> clone(const meshCellZones& mz) const
+        virtual autoPtr<cellZone> clone(const cellZones& mz) const
         {
             return autoPtr<cellZone>
             (
@@ -156,7 +87,7 @@ public:
         virtual autoPtr<cellZone> clone
         (
             const labelUList& addr,
-            const meshCellZones& mz
+            const cellZones& mz
         ) const
         {
             return autoPtr<cellZone>
@@ -166,29 +97,10 @@ public:
         }
 
 
-    // Selectors
-
-        //- Return a pointer to a new cell zone
-        //  created on freestore from dictionary
-        static autoPtr<cellZone> New
-        (
-            const word& name,
-            const dictionary&,
-            const meshCellZones&
-        );
-
-
-    //- Destructor
-    virtual ~cellZone();
-
-
     // Member Functions
 
         //- Convenient renaming of zone::localIndex(globalIndex)
         label whichCell(const label globalIndex) const;
-
-        //- Return meshZones reference
-        const meshCellZones& meshZones() const;
 
         //- Check zone definition. Return true if in error.
         virtual bool checkDefinition(const bool report = false) const;
@@ -209,13 +121,7 @@ public:
 
     // Member Operators
 
-        using zone::operator=;
-
-        //- Assignment to zone, clearing demand-driven data
-        void operator=(const cellZone&);
-
-        //- Move assignment to zone, clearing demand-driven data
-        void operator=(cellZone&&);
+        using Zone<cellZone, cellZones>::operator=;
 };
 
 

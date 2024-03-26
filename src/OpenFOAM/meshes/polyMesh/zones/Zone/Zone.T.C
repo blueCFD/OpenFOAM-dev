@@ -23,22 +23,15 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "zone.H"
+#include "Zone.T.H"
 #include "IOstream.H"
 #include "demandDrivenData.H"
 #include "HashSet.T.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-namespace Foam
-{
-    defineTypeNameAndDebug(zone, 0);
-}
-
-
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
-const Foam::Map<Foam::label>& Foam::zone::lookupMap() const
+template<class ZoneType, class ZonesType>
+const Foam::Map<Foam::label>& Foam::Zone<ZoneType, ZonesType>::lookupMap() const
 {
     if (!lookupMapPtr_)
     {
@@ -49,13 +42,9 @@ const Foam::Map<Foam::label>& Foam::zone::lookupMap() const
 }
 
 
-void Foam::zone::calcLookupMap() const
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::calcLookupMap() const
 {
-    if (debug)
-    {
-        InfoInFunction << "Calculating lookup map" << endl;
-    }
-
     if (lookupMapPtr_)
     {
         FatalErrorInFunction
@@ -72,80 +61,125 @@ void Foam::zone::calcLookupMap() const
     {
         lm.insert(indices[i], i);
     }
-
-    if (debug)
-    {
-        InfoInFunction << "Finished calculating lookup map" << endl;
-    }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::zone::zone
+template<class ZoneType, class ZonesType>
+Foam::Zone<ZoneType, ZonesType>::Zone
 (
     const word& name,
-    const labelUList& indices
+    const labelUList& indices,
+    const ZonesType& zones
 )
 :
     labelList(indices),
     name_(name),
+    zones_(zones),
     lookupMapPtr_(nullptr)
 {}
 
 
-Foam::zone::zone
+template<class ZoneType, class ZonesType>
+Foam::Zone<ZoneType, ZonesType>::Zone
 (
     const word& name,
-    labelList&& indices
+    labelList&& indices,
+    const ZonesType& zones
 )
 :
     labelList(move(indices)),
     name_(name),
+    zones_(zones),
     lookupMapPtr_(nullptr)
 {}
 
 
-Foam::zone::zone
+template<class ZoneType, class ZonesType>
+Foam::Zone<ZoneType, ZonesType>::Zone
 (
     const word& name,
     const dictionary& dict,
-    const word& labelsName
+    const ZonesType& zones
 )
 :
-    labelList(dict.lookup(labelsName)),
+    labelList(dict.lookup(ZoneType::labelsName)),
     name_(name),
+    zones_(zones),
     lookupMapPtr_(nullptr)
 {}
 
 
-Foam::zone::zone
+template<class ZoneType, class ZonesType>
+Foam::Zone<ZoneType, ZonesType>::Zone
 (
-    const zone& z,
-    const labelUList& indices
+    const Zone& z,
+    const labelUList& indices,
+    const ZonesType& zones
 )
 :
     labelList(indices),
     name_(z.name()),
+    zones_(zones),
     lookupMapPtr_(nullptr)
 {}
 
 
-Foam::zone::zone
+template<class ZoneType, class ZonesType>
+Foam::Zone<ZoneType, ZonesType>::Zone
 (
-    const zone& z,
-    labelList&& indices
+    const Zone& z,
+    labelList&& indices,
+    const ZonesType& zones
 )
 :
     labelList(move(indices)),
     name_(z.name()),
+    zones_(zones),
     lookupMapPtr_(nullptr)
 {}
+
+
+template<class ZoneType, class ZonesType>
+Foam::autoPtr<ZoneType> Foam::Zone<ZoneType, ZonesType>::New
+(
+    const word& name,
+    const dictionary& dict,
+    const ZonesType& mz
+)
+{
+    if (ZoneType::debug)
+    {
+        InfoInFunction
+            << "Constructing " << ZoneType::typeName << " " << name << endl;
+    }
+
+    const word type(dict.lookup("type"));
+
+    typename dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(type);
+
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        FatalIOErrorInFunction
+        (
+            dict
+        )   << "Unknown " << ZoneType::typeName << " type "
+            << type << nl << nl
+            << "Valid " << ZoneType::typeName << " types are:" << nl
+            << dictionaryConstructorTablePtr_->sortedToc()
+            << exit(FatalIOError);
+    }
+
+    return autoPtr<ZoneType>(cstrIter()(name, dict, mz));
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::zone::~zone()
+template<class ZoneType, class ZonesType>
+Foam::Zone<ZoneType, ZonesType>::~Zone()
 {
     clearAddressing();
 }
@@ -153,7 +187,18 @@ Foam::zone::~zone()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::label Foam::zone::localIndex(const label globalIndex) const
+template<class ZoneType, class ZonesType>
+const ZonesType& Foam::Zone<ZoneType, ZonesType>::zones() const
+{
+    return zones_;
+}
+
+
+template<class ZoneType, class ZonesType>
+Foam::label Foam::Zone<ZoneType, ZonesType>::localIndex
+(
+    const label globalIndex
+) const
 {
     const Map<label>& lm = lookupMap();
 
@@ -170,13 +215,19 @@ Foam::label Foam::zone::localIndex(const label globalIndex) const
 }
 
 
-void Foam::zone::clearAddressing()
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::clearAddressing()
 {
     deleteDemandDrivenData(lookupMapPtr_);
 }
 
 
-bool Foam::zone::checkDefinition(const label maxSize, const bool report) const
+template<class ZoneType, class ZonesType>
+bool Foam::Zone<ZoneType, ZonesType>::checkDefinition
+(
+    const label maxSize,
+    const bool report
+) const
 {
     const labelList& indices = *this;
 
@@ -220,7 +271,8 @@ bool Foam::zone::checkDefinition(const label maxSize, const bool report) const
 }
 
 
-void Foam::zone::insert(const labelHashSet& newIndices)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::insert(const labelHashSet& newIndices)
 {
     labelHashSet indices(*this);
     indices.insert(newIndices);
@@ -228,56 +280,56 @@ void Foam::zone::insert(const labelHashSet& newIndices)
 }
 
 
-void Foam::zone::swap(zone& z)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::swap(Zone& z)
 {
     clearAddressing();
     labelList::swap(z);
 }
 
 
-void Foam::zone::mapMesh(const polyMeshMap&)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::mapMesh(const polyMeshMap&)
 {
     clearAddressing();
 }
 
 
-void Foam::zone::distribute(const polyDistributionMap&)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::distribute(const polyDistributionMap&)
 {
     clearAddressing();
-}
-
-
-void Foam::zone::write(Ostream& os) const
-{
-    os  << nl << name_
-        << nl << static_cast<const labelList&>(*this);
 }
 
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-void Foam::zone::operator=(const zone& zn)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::operator=(const Zone& zn)
 {
     clearAddressing();
     labelList::operator=(zn);
 }
 
 
-void Foam::zone::operator=(zone&& zn)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::operator=(Zone&& zn)
 {
     clearAddressing();
     labelList::operator=(move(zn));
 }
 
 
-void Foam::zone::operator=(const labelUList& indices)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::operator=(const labelUList& indices)
 {
     clearAddressing();
     labelList::operator=(indices);
 }
 
 
-void Foam::zone::operator=(labelList&& indices)
+template<class ZoneType, class ZonesType>
+void Foam::Zone<ZoneType, ZonesType>::operator=(labelList&& indices)
 {
     clearAddressing();
     labelList::operator=(move(indices));
@@ -286,10 +338,11 @@ void Foam::zone::operator=(labelList&& indices)
 
 // * * * * * * * * * * * * * * * Ostream Operator  * * * * * * * * * * * * * //
 
-Foam::Ostream& Foam::operator<<(Ostream& os, const zone& z)
+template<class ZoneType, class ZonesType>
+Foam::Ostream& Foam::operator<<(Ostream& os, const Zone<ZoneType, ZonesType>& z)
 {
-    z.write(os);
-    os.check("Ostream& operator<<(Ostream& f, const zone& z");
+    z.writeDict(os);
+    os.check("Ostream& operator<<(Ostream& f, const Zone& z");
     return os;
 }
 
