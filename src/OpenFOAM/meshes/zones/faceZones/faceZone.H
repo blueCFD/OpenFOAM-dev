@@ -33,7 +33,6 @@ Description
 
 SourceFiles
     faceZone.C
-    faceZoneNew.C
 
 \*---------------------------------------------------------------------------*/
 
@@ -41,7 +40,6 @@ SourceFiles
 #define faceZone_H
 
 #include "Zone.T.H"
-#include "faceZonesFwd.H"
 #include "boolList.H"
 #include "primitiveFacePatch.H"
 
@@ -50,11 +48,7 @@ SourceFiles
 namespace Foam
 {
 
-// Forward declaration of friend functions and operators
-
-class faceZone;
-Ostream& operator<<(Ostream&, const faceZone&);
-
+class faceZones;
 
 /*---------------------------------------------------------------------------*\
                           Class faceZone Declaration
@@ -213,11 +207,8 @@ public:
             return flipMap_;
         }
 
-        //- Convenient renaming of zone::localIndex(globalIndex)
-        label whichFace(const label globalIndex) const;
-
         //- Return reference to primitive patch
-        const primitiveFacePatch& operator()() const;
+        const primitiveFacePatch& patch() const;
 
 
         // Addressing into mesh

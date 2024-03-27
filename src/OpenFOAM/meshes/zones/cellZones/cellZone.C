@@ -21,20 +21,55 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Description
-    Foam::cellZones
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef cellZones_H
-#define cellZones_H
-
-#include "Zones.T.H"
 #include "cellZone.H"
-#include "cellZonesFwd.H"
+#include "cellZones.H"
+#include "polyMesh.H"
+#include "polyTopoChangeMap.H"
+#include "addToRunTimeSelectionTable.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-#endif
+namespace Foam
+{
+    typedef Zone<cellZone, cellZones> cellZoneType;
+    defineTemplateRunTimeSelectionTable(cellZoneType, dictionary);
+
+    defineTypeNameAndDebug(cellZone, 0);
+    addToRunTimeSelectionTable(cellZone, cellZone, dictionary);
+}
+
+const char * const Foam::cellZone::labelsName = "cellLabels";
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool Foam::cellZone::checkDefinition(const bool report) const
+{
+    return Zone::checkDefinition
+    (
+        zones_.mesh().nCells(),
+        report
+    );
+}
+
+
+void Foam::cellZone::topoChange(const polyTopoChangeMap& map)
+{
+    Zone::topoChange(map.cellMap(), map.reverseCellMap());
+}
+
+
+void Foam::cellZone::writeDict(Ostream& os) const
+{
+    os  << nl << name() << nl << token::BEGIN_BLOCK << nl
+        << "    type " << type() << token::END_STATEMENT << nl;
+
+    writeEntry(os, this->labelsName, *this);
+
+    os  << token::END_BLOCK << endl;
+}
+
 
 // ************************************************************************* //

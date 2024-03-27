@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,16 +22,40 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Foam::pointZones
+    Foam::cellZones
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef pointZones_H
-#define pointZones_H
+#ifndef cellZones_H
+#define cellZones_H
 
+#include "cellZone.H"
 #include "Zones.T.H"
-#include "pointZone.H"
-#include "pointZonesFwd.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+class polyMesh;
+
+/*---------------------------------------------------------------------------*\
+                          Class cellZones Declaration
+\*---------------------------------------------------------------------------*/
+
+class cellZones
+:
+    public Zones<cellZone, cellZones, polyMesh>
+{
+public:
+
+    using Zones<cellZone, cellZones, polyMesh>::Zones;
+};
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

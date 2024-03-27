@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,30 +21,48 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::pointZones
-
-Description
-    A Zones with the type pointZone
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef pointZonesFwd_H
-#define pointZonesFwd_H
+#include "faceZones.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-namespace Foam
+Foam::boolList Foam::faceZones::zonesFlipFace
+(
+    const label facei,
+    const labelList& faceiZones
+)
 {
-    template<class Zone, class MeshType> class Zones;
-    class pointZone;
-    class polyMesh;
+    labelList zones(whichZones(facei));
+    boolList flipFaces(zones.size());
 
-    typedef Zones<pointZone, polyMesh> pointZones;
+    forAll(zones, zi)
+    {
+        const faceZone& fz = this->operator[](zi);
+        flipFaces[zi] = fz.flipMap()[fz.localIndex(facei)];
+    }
+
+    return flipFaces;
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+void Foam::faceZones::insert(const List<Map<bool>>& zonesIndices)
+{
+    PtrList<faceZone>& zones = *this;
+
+    if (zonesIndices.size() != zones.size())
+    {
+        FatalErrorInFunction
+            << "zonesIndices.size() " << zonesIndices.size()
+            << " != number of zones " << zones.size()
+            << exit(FatalError);
+    }
+
+    forAll(zonesIndices, zonei)
+    {
+        zones[zonei].insert(zonesIndices[zonei]);
+    }
+}
+
 
 // ************************************************************************* //

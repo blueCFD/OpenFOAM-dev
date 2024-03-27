@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,29 +21,55 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::faceZones
-
 Description
-    A Zones with the type faceZone
+    Foam::faceZones
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef faceZonesFwd_H
-#define faceZonesFwd_H
+#ifndef faceZones_H
+#define faceZones_H
 
+#include "faceZone.H"
 #include "Zones.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    template<class Zone, class MeshType> class Zones;
-    class faceZone;
-    class polyMesh;
 
-    typedef Zones<faceZone, polyMesh> faceZones;
-}
+class polyMesh;
+
+/*---------------------------------------------------------------------------*\
+                          Class cellZones Declaration
+\*---------------------------------------------------------------------------*/
+
+class faceZones
+:
+    public Zones<faceZone, faceZones, polyMesh>
+{
+public:
+
+    using Zones<faceZone, faceZones, polyMesh>::Zones;
+
+
+    // Member Functions
+
+        //- Return the list of flips for the facei
+        //  for each of the face zones in faceiZones
+        boolList zonesFlipFace
+        (
+            const label facei,
+            const labelList& faceiZones
+        );
+
+        //- Insert given indices and corresponding face flips into zones
+        void insert(const List<Map<bool>>& zonesIndices);
+};
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
