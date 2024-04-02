@@ -21,58 +21,48 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Description
-    Foam::faceZones
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef faceZones_H
-#define faceZones_H
+#include "faceZoneList.H"
 
-#include "faceZone.H"
-#include "Zones.T.H"
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
+Foam::boolList Foam::faceZoneList::zonesFlipFace
+(
+    const label facei,
+    const labelList& faceiZones
+)
 {
+    labelList zones(whichZones(facei));
+    boolList flipFaces(zones.size());
 
-class polyMesh;
+    forAll(zones, zi)
+    {
+        const faceZone& fz = this->operator[](zi);
+        flipFaces[zi] = fz.flipMap()[fz.localIndex(facei)];
+    }
 
-/*---------------------------------------------------------------------------*\
-                          Class cellZones Declaration
-\*---------------------------------------------------------------------------*/
+    return flipFaces;
+}
 
-class faceZones
-:
-    public Zones<faceZone, faceZones, polyMesh>
+
+void Foam::faceZoneList::insert(const List<Map<bool>>& zonesIndices)
 {
-public:
+    PtrList<faceZone>& zones = *this;
 
-    using Zones<faceZone, faceZones, polyMesh>::Zones;
+    if (zonesIndices.size() != zones.size())
+    {
+        FatalErrorInFunction
+            << "zonesIndices.size() " << zonesIndices.size()
+            << " != number of zones " << zones.size()
+            << exit(FatalError);
+    }
 
+    forAll(zonesIndices, zonei)
+    {
+        zones[zonei].insert(zonesIndices[zonei]);
+    }
+}
 
-    // Member Functions
-
-        //- Return the list of flips for the facei
-        //  for each of the face zones in faceiZones
-        boolList zonesFlipFace
-        (
-            const label facei,
-            const labelList& faceiZones
-        );
-
-        //- Insert given indices and corresponding face flips into zones
-        void insert(const List<Map<bool>>& zonesIndices);
-};
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
 
 // ************************************************************************* //

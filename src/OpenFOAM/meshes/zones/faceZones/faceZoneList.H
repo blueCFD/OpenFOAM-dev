@@ -22,15 +22,15 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Foam::pointZones
+    Foam::faceZoneList
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef pointZones_H
-#define pointZones_H
+#ifndef faceZoneList_H
+#define faceZoneList_H
 
-#include "pointZone.H"
-#include "Zones.T.H"
+#include "faceZone.H"
+#include "ZoneList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -40,16 +40,30 @@ namespace Foam
 class polyMesh;
 
 /*---------------------------------------------------------------------------*\
-                          Class pointZones Declaration
+                          Class cellZones Declaration
 \*---------------------------------------------------------------------------*/
 
-class pointZones
+class faceZoneList
 :
-    public Zones<pointZone, pointZones, polyMesh>
+    public ZoneList<faceZone, faceZoneList, polyMesh>
 {
 public:
 
-    using Zones<pointZone, pointZones, polyMesh>::Zones;
+    using ZoneList<faceZone, faceZoneList, polyMesh>::ZoneList;
+
+
+    // Member Functions
+
+        //- Return the list of flips for the facei
+        //  for each of the face zones in faceiZones
+        boolList zonesFlipFace
+        (
+            const label facei,
+            const labelList& faceiZones
+        );
+
+        //- Insert given indices and corresponding face flips into zones
+        void insert(const List<Map<bool>>& zonesIndices);
 };
 
 

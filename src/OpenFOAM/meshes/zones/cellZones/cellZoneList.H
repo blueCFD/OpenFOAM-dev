@@ -21,48 +21,44 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Description
+    Foam::cellZoneList
+
 \*---------------------------------------------------------------------------*/
 
-#include "faceZones.H"
+#ifndef cellZoneList_H
+#define cellZoneList_H
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+#include "cellZone.H"
+#include "ZoneList.T.H"
 
-Foam::boolList Foam::faceZones::zonesFlipFace
-(
-    const label facei,
-    const labelList& faceiZones
-)
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
 {
-    labelList zones(whichZones(facei));
-    boolList flipFaces(zones.size());
 
-    forAll(zones, zi)
-    {
-        const faceZone& fz = this->operator[](zi);
-        flipFaces[zi] = fz.flipMap()[fz.localIndex(facei)];
-    }
+class polyMesh;
 
-    return flipFaces;
-}
+/*---------------------------------------------------------------------------*\
+                          Class cellZoneList Declaration
+\*---------------------------------------------------------------------------*/
 
-
-void Foam::faceZones::insert(const List<Map<bool>>& zonesIndices)
+class cellZoneList
+:
+    public ZoneList<cellZone, cellZoneList, polyMesh>
 {
-    PtrList<faceZone>& zones = *this;
+public:
 
-    if (zonesIndices.size() != zones.size())
-    {
-        FatalErrorInFunction
-            << "zonesIndices.size() " << zonesIndices.size()
-            << " != number of zones " << zones.size()
-            << exit(FatalError);
-    }
+    using ZoneList<cellZone, cellZoneList, polyMesh>::ZoneList;
+};
 
-    forAll(zonesIndices, zonei)
-    {
-        zones[zonei].insert(zonesIndices[zonei]);
-    }
-}
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //
