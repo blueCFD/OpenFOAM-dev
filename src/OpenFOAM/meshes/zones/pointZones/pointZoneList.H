@@ -49,7 +49,13 @@ class pointZoneList
 {
 public:
 
-    using ZoneList<pointZone, pointZoneList, polyMesh>::ZoneList;
+    //- Runtime type information
+    TypeName("pointZoneList");
+
+
+    // Constructors
+
+        using ZoneList<pointZone, pointZoneList, polyMesh>::ZoneList;
 };
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,30 +21,24 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Global
-    CourantNo
-
-Description
-    Calculates and outputs the mean and maximum Courant Numbers.
-
 \*---------------------------------------------------------------------------*/
 
+#include "OldTimeField.T.H"
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class FieldType>
+inline Foam::label Foam::OldTimeField<FieldType>::timeIndex() const
 {
-    const scalarField sumPhi
-    (
-        fvc::surfaceSum(mag(phiSt))().primitiveField()
-       /rho.primitiveField()
-    );
-
-    StCoNum = 0.5*gMax(sumPhi/mesh.V().primitiveField())*runTime.deltaTValue();
-
-    const scalar meanStCoNum =
-        0.5
-       *(gSum(sumPhi)/gSum(mesh.V().primitiveField()))
-       *runTime.deltaTValue();
-
-    Info<< "St courant Number mean: " << meanStCoNum
-        << " max: " << StCoNum << endl;
+    return timeIndex_;
 }
+
+
+template<class FieldType>
+inline Foam::label& Foam::OldTimeField<FieldType>::timeIndex()
+{
+    return timeIndex_;
+}
+
 
 // ************************************************************************* //

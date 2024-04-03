@@ -215,7 +215,7 @@ Foam::wordList Foam::fvMeshDistribute::fieldNames
     label& nFields
 ) const
 {
-    wordList fieldNames(mesh_.names(typeName));
+    wordList fieldNames(mesh_.toc(typeName));
 
     if (fieldNames.size())
     {
@@ -1637,8 +1637,8 @@ void Foam::fvMeshDistribute::sendMesh
         << mesh.boundaryMesh()
 
         //*** Write the old-time volumes if present
-        // << mesh.V0().field()
-        // << mesh.V0().field()
+        // << mesh.V0().primitiveField()
+        // << mesh.V00().primitiveField()
 
         << zonePoints
         << zoneFaces

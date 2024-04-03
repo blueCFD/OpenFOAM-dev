@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "objectRegistry.H"
 #include "Time.T.H"
+#include "IOmanip.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -160,19 +161,8 @@ Foam::fileName Foam::objectRegistry::path
     return rootPath()/caseName()/instance/dbDir()/local;
 }
 
-Foam::wordList Foam::objectRegistry::names() const
-{
-    return HashTable<regIOobject*>::toc();
-}
 
-
-Foam::wordList Foam::objectRegistry::sortedNames() const
-{
-    return HashTable<regIOobject*>::sortedToc();
-}
-
-
-Foam::wordList Foam::objectRegistry::names(const word& ClassName) const
+Foam::wordList Foam::objectRegistry::toc(const word& ClassName) const
 {
     wordList objectNames(size());
 
@@ -191,9 +181,9 @@ Foam::wordList Foam::objectRegistry::names(const word& ClassName) const
 }
 
 
-Foam::wordList Foam::objectRegistry::sortedNames(const word& ClassName) const
+Foam::wordList Foam::objectRegistry::sortedToc(const word& ClassName) const
 {
-    wordList sortedLst = names(ClassName);
+    wordList sortedLst = toc(ClassName);
     sort(sortedLst);
 
     return sortedLst;
@@ -563,6 +553,23 @@ void Foam::objectRegistry::readModifiedObjects()
     if (modified)
     {
         objectRegistry::read();
+    }
+}
+
+
+void Foam::objectRegistry::printToc(Ostream& os) const
+{
+    const List<HashTable<regIOobject*>::const_iterator> sortedObjects
+    (
+        sorted()
+    );
+
+    forAll(sortedObjects, i)
+    {
+        os  << "    " << setf(ios_base::left)
+            << setw(39) << sortedObjects[i].key()
+            << ' ' << sortedObjects[i]()->type()
+            << endl;
     }
 }
 
