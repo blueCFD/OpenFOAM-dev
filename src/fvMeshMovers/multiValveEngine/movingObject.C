@@ -317,50 +317,15 @@ Foam::fvMeshMovers::multiValveEngine::movingObject::movingObject
         dimensionedScalar(dimless, 0)
     ),
     cosine_(dict.lookupOrDefault("cosineScaling", false)),
-    fractionalTravelInterval_
+    travelInterval_
     (
-        dict.lookupOrDefault<scalar>("fractionalTravelInterval", 1)
+        dict.lookupOrDefault<scalar>("travelInterval", great)
     ),
     executionCount_(0),
     position0_(-great),
     patchSet(patchSet_)
 {
     Info << indent << "Setting motion for " << name << endl;
-
-    scalar maxTravel = -great;
-    scalar minTravel = great;
-
-    const scalar userBeginTime
-    (
-        meshMover_.mesh().time().timeToUserTime
-        (
-            meshMover_.mesh().time().beginTime().value()
-        )
-    );
-
-    const scalar userEndTime
-    (
-        meshMover_.mesh().time().timeToUserTime
-        (
-            meshMover_.mesh().time().endTime().value()
-        )
-    );
-
-    const scalar userDeltaT = meshMover_.userDeltaT();
-
-    scalar userTime = userBeginTime;
-
-    while (userTime <= userEndTime)
-    {
-        const scalar position = motion_->value(userTime);
-
-        maxTravel = max(maxTravel, position);
-        minTravel = min(minTravel, position);
-
-        userTime += userDeltaT;
-    }
-
-    travel_ = maxTravel - minTravel;
 
     initPatchSets();
 }
