@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,50 +23,58 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Random.H"
+#include "randomGenerator.H"
+#include "Hash.T.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-inline Foam::Random::type Foam::Random::sample()
+inline uint64_t Foam::randomGenerator::sample()
 {
     x_ = (A*x_ + C) % M;
-
     return x_ >> 17;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-inline Foam::Random::Random(const label s)
+inline Foam::randomGenerator::randomGenerator(const label s)
 :
-    x_((type(s) << 16) + 0x330E),
-    scalarNormalStored_(false),
-    scalarNormalValue_(0)
+    x_((uint64_t(s) << 16) + 0x330E)
+{}
+
+
+inline Foam::randomGenerator::randomGenerator(const word& s)
+:
+    x_((uint64_t(Hash<word>()(s)) << 16) + 0x330E)
 {}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-inline Foam::Random::~Random()
+inline Foam::randomGenerator::~randomGenerator()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-inline Foam::scalar Foam::Random::scalar01()
+inline Foam::scalar Foam::randomGenerator::scalar01()
 {
     return scalar(sample())/(M >> 17);
 }
 
 
-inline Foam::scalar Foam::Random::scalarAB(const scalar a, const scalar b)
+inline Foam::scalar Foam::randomGenerator::scalarAB
+(
+    const scalar a,
+    const scalar b
+)
 {
     return a + scalar01()*(b - a);
 }
 
 
 template<class Type>
-inline Type Foam::Random::sample01()
+inline Type Foam::randomGenerator::sample01()
 {
     Type value;
 
@@ -80,63 +88,50 @@ inline Type Foam::Random::sample01()
 
 
 template<>
-inline Foam::scalar Foam::Random::sample01()
+inline Foam::scalar Foam::randomGenerator::sample01()
 {
     return scalar01();
 }
 
 
 template<>
-inline Foam::label Foam::Random::sample01()
+inline Foam::label Foam::randomGenerator::sample01()
 {
     return sample() % 2;
 }
 
 
 template<class Type>
-inline Type Foam::Random::sampleAB(const Type& a, const Type& b)
+inline Type Foam::randomGenerator::sampleAB(const Type& a, const Type& b)
 {
     return a + cmptMultiply(sample01<Type>(), b - a);
 }
 
 
 template<>
-inline Foam::scalar Foam::Random::sampleAB(const scalar& a, const scalar& b)
+inline Foam::scalar Foam::randomGenerator::sampleAB
+(
+    const scalar& a,
+    const scalar& b
+)
 {
     return scalarAB(a, b);
 }
 
 
 template<>
-inline Foam::label Foam::Random::sampleAB(const label& a, const label& b)
+inline Foam::label Foam::randomGenerator::sampleAB
+(
+    const label& a,
+    const label& b
+)
 {
     return a + sample() % (b - a);
 }
 
 
-template<class Type>
-inline Type Foam::Random::sampleNormal()
-{
-    Type value;
-
-    for (direction i = 0; i < pTraits<Type>::nComponents; ++ i)
-    {
-        value.component(i) = scalarNormal();
-    }
-
-    return value;
-}
-
-
-template<>
-inline Foam::scalar Foam::Random::sampleNormal()
-{
-    return scalarNormal();
-}
-
-
 template<class Container>
-inline void Foam::Random::permute(Container& l)
+inline void Foam::randomGenerator::permute(Container& l)
 {
     for (label i = 0; i < l.size(); ++ i)
     {

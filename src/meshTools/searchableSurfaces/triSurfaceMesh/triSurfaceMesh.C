@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "triSurfaceMesh.H"
-#include "Random.H"
+#include "randomGenerator.H"
 #include "addToRunTimeSelectionTable.H"
 #include "EdgeMap.T.H"
 #include "triSurfaceFields.H"

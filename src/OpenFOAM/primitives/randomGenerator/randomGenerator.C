@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,52 +21,49 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::barycentric
-
-Description
-    A scalar version of the templated Barycentric
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef barycentric_H
-#define barycentric_H
+#include "randomGenerator.H"
+#include "uint64.H"
+#include "PstreamReduceOps.T.H"
 
-#include "scalar.H"
-#include "Barycentric.T.H"
-#include "contiguous.H"
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Foam::randomGenerator::randomGenerator(Istream& is)
+:
+    x_(pTraits<uint64_t>(is))
+{}
 
-namespace Foam
+
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+
+Foam::scalar Foam::randomGenerator::globalScalar01()
 {
+    scalar value = - vGreat;
 
-// Forward declaration of classes
-class randomGenerator;
+    if (Pstream::master())
+    {
+        value = scalar01();
+    }
 
+    Pstream::scatter(value);
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-typedef Barycentric<scalar> barycentric;
-
-
-//- Generate a random barycentric coordinate within the unit tetrahedron
-barycentric barycentric01(randomGenerator& rndGen);
-
-
-template<>
-inline bool contiguous<barycentric>()
-{
-    return true;
+    return value;
 }
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Friend Operators * * * * * * * * * * * * * * //
 
-} // End namespace Foam
+Foam::Istream& Foam::operator>>(Istream& is, randomGenerator& rndGen)
+{
+    return is >> rndGen.x_;
+}
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+Foam::Ostream& Foam::operator<<(Ostream& os, const randomGenerator& rndGen)
+{
+    return os << rndGen.x_;
+}
+
 
 // ************************************************************************* //

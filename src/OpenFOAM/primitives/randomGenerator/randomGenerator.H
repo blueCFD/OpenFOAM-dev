@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::Random
+    Foam::randomGenerator
 
 Description
     Random number generator
@@ -37,12 +37,13 @@ Description
     details of the seeding and iteration sequence.
 
 SourceFiles
-    RandomI.H
+    randomGenerator.C
+    randomGeneratorI.H
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef Random_H
-#define Random_H
+#ifndef randomGenerator_H
+#define randomGenerator_H
 
 #include "scalar.H"
 
@@ -51,52 +52,55 @@ SourceFiles
 namespace Foam
 {
 
+// Forward declaration of classes
+class Istream;
+class Ostream;
+
+// Forward declaration of friend functions and operators
+class randomGenerator;
+Istream& operator>>(Istream&, randomGenerator&);
+Ostream& operator<<(Ostream&, const randomGenerator&);
+
 /*---------------------------------------------------------------------------*\
-                           Class Random Declaration
+                       Class randomGenerator Declaration
 \*---------------------------------------------------------------------------*/
 
-class Random
+class randomGenerator
 {
-    // Private Typedefs
-
-        //- Working type
-        typedef uint64_t type;
-
-
     // Private static data
 
         //- The parameters of the linear congruential iteration
-        static const type A = 0x5DEECE66D, C = 0xB, M = type(1) << 48;
+        static const uint64_t A = 0x5DEECE66D, C = 0xB, M = uint64_t(1) << 48;
 
 
     // Private Data
 
         //- The stored integer
-        type x_;
-
-        //- Is a normal scalar sample stored?
-        bool scalarNormalStored_;
-
-        //- A stored normal scalar sample
-        scalar scalarNormalValue_;
+        uint64_t x_;
 
 
     // Private Member Functions
 
         //- Advance the state and return an integer sample
-        inline type sample();
+        inline uint64_t sample();
 
 
 public:
 
     // Constructors
 
-        //- Construct from a seed
-        inline Random(const label s);
+        //- Construct from a label seed
+        inline randomGenerator(const label s);
+
+        //- Construct from a word seed
+        inline randomGenerator(const word& s);
+
+        //- Construct from a stream
+        randomGenerator(Istream& is);
 
 
     //- Destructor
-    inline ~Random();
+    inline ~randomGenerator();
 
 
     // Member Functions
@@ -111,10 +115,6 @@ public:
             //  distribution between two limits
             inline scalar scalarAB(const scalar a, const scalar b);
 
-            //- Advance the state and return a scalar sample from a normal
-            //  distribution with mean zero and standard deviation one
-            scalar scalarNormal();
-
 
         // Other types
 
@@ -127,11 +127,6 @@ public:
             //  uniform distribution between two limits
             template<class Type>
             inline Type sampleAB(const Type& a, const Type& b);
-
-            //- Advance the state and return a sample of a given type from a
-            //  normal distribution with mean zero and standard deviation one
-            template<class Type>
-            inline Type sampleNormal();
 
 
         // Global scalars
@@ -146,23 +141,29 @@ public:
         //- Randomly permute a list
         template<class Container>
         inline void permute(Container& l);
+
+
+    // IOstream Operators
+
+        //- Read from stream
+        friend Istream& operator>>(Istream&, randomGenerator&);
+
+        //- Write to stream
+        friend Ostream& operator<<(Ostream&, const randomGenerator&);
 };
 
 
 template<>
-inline scalar Random::sample01();
+inline scalar randomGenerator::sample01();
 
 template<>
-inline label Random::sample01();
+inline label randomGenerator::sample01();
 
 template<>
-inline scalar Random::sampleAB(const scalar& a, const scalar& b);
+inline scalar randomGenerator::sampleAB(const scalar& a, const scalar& b);
 
 template<>
-inline label Random::sampleAB(const label& a, const label& b);
-
-template<>
-inline scalar Random::sampleNormal();
+inline label randomGenerator::sampleAB(const label& a, const label& b);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -171,7 +172,7 @@ inline scalar Random::sampleNormal();
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "RandomI.H"
+#include "randomGeneratorI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

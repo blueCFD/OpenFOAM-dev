@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "OUprocess.H"
 #include "Kmesh.H"
+#include "standardNormal.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -35,11 +36,13 @@ namespace Foam
 
 complexVector OUprocess::WeinerProcess(const scalar deltaT) const
 {
+    distributions::standardNormal stdNormal(rndGen_);
+
     return sqrt(deltaT)*complexVector
     (
-        complex(GaussGen_.scalarNormal(), GaussGen_.scalarNormal()),
-        complex(GaussGen_.scalarNormal(), GaussGen_.scalarNormal()),
-        complex(GaussGen_.scalarNormal(), GaussGen_.scalarNormal())
+        complex(stdNormal.sample(), stdNormal.sample()),
+        complex(stdNormal.sample(), stdNormal.sample()),
+        complex(stdNormal.sample(), stdNormal.sample())
     );
 }
 
@@ -53,7 +56,7 @@ OUprocess::OUprocess
     const dictionary& OUdict
 )
 :
-    GaussGen_(label(0)),
+    rndGen_(label(0)),
     Kmesh_(kmesh),
     OUfield_(Kmesh_.size()),
 

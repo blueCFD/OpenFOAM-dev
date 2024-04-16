@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "MixedDiffuseSpecular.T.H"
+#include "standardNormal.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -78,7 +79,8 @@ void Foam::MixedDiffuseSpecular<CloudType>::correct
 
     CloudType& cloud(this->owner());
 
-    Random& rndGen(cloud.rndGen());
+    randomGenerator& rndGen(cloud.rndGen());
+    distributions::standardNormal stdNormal(rndGen);
 
     if (diffuseFraction_ > rndGen.scalar01())
     {
@@ -120,8 +122,8 @@ void Foam::MixedDiffuseSpecular<CloudType>::correct
         U =
             sqrt(physicoChemical::k.value()*T/mass)
            *(
-                rndGen.scalarNormal()*tw1
-              + rndGen.scalarNormal()*tw2
+                stdNormal.sample()*tw1
+              + stdNormal.sample()*tw2
               - sqrt(-2.0*log(max(1 - rndGen.scalar01(), vSmall)))*nw
             );
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,45 +22,27 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::distributions::tabulatedCumulative
+    Foam::distributions::standardNormal
 
 Description
-    Distribution in which the cumulative distribution function is given as a
-    table of values
+    Standard normal distribution. Not selectable.
 
-Usage
-    Example usage:
-    \verbatim
-    {
-        type    tabulatedCumulative;
-        Q       0;
-        values
-        (
-            (10e-6 0)
-            (12e-6 0.1972235)
-            (15e-6 2.6711166)
-            (19e-6 11.643361)
-            (25e-6 28.968245)
-            (31e-6 52.155796)
-            (39e-6 74.381959)
-            (50e-6 91.162850)
-            (63e-6 100)
-        );
-    }
-    \endverbatim
+    \f[
+        PDF(x) = \frac{1}{\sqrt{2 \pi}} \exp \left( - \frac{1}{2} x^2 \right)
+    \f]
 
 SourceFiles
-    tabulatedCumulative.C
+    standardNormal.C
 
 See also
     Foam::distribution
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef tabulatedCumulative_H
-#define tabulatedCumulative_H
+#ifndef standardNormal_H
+#define standardNormal_H
 
-#include "distribution.H"
+#include "unintegrable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,58 +52,55 @@ namespace distributions
 {
 
 /*---------------------------------------------------------------------------*\
-                     Class tabulatedCumulative Declaration
+                        Class standardNormal Declaration
 \*---------------------------------------------------------------------------*/
 
-class tabulatedCumulative
+class standardNormal
 :
-    public FieldDistribution<distribution, tabulatedCumulative>
+    public FieldDistribution<distribution, standardNormal>
 {
-private:
-
     // Private Data
 
-        //- X-coordinates
-        scalarField x_;
-
-        //- Probability Density Function
-        scalarField PDF_;
-
-        //- Cumulative Distribution Function
-        scalarField CDF_;
+        //- Constant for approximate error function and inverse error function
+        static const scalar a_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("tabulatedCumulative");
+    TypeName("standardNormal");
+
+
+    //- Permit the multiNormal distribution to use private parts of this class
+    friend class multiNormal;
+
+
+    // Static Member Functions
+
+        //- Approximate error function
+        static tmp<scalarField> approxErf(const scalarField& x);
+
+        //- Approximate error function inverse
+        static scalar approxErfInv(const scalar y);
 
 
     // Constructors
 
-        //- Construct from a dictionary
-        tabulatedCumulative
-        (
-            const dictionary& dict,
-            randomGenerator& rndGen,
-            const label sampleQ
-        );
+        //- Construct from a random generator
+        standardNormal(randomGenerator& rndGen);
 
         //- Construct copy
-        tabulatedCumulative(const tabulatedCumulative& d, const label sampleQ);
+        standardNormal(const standardNormal& d);
 
         //- Construct and return a clone
         virtual autoPtr<distribution> clone(const label sampleQ) const
         {
-            return autoPtr<distribution>
-            (
-                new tabulatedCumulative(*this, sampleQ)
-            );
+            return autoPtr<distribution>(new standardNormal(*this));
         }
 
 
     //- Destructor
-    virtual ~tabulatedCumulative();
+    virtual ~standardNormal();
 
 
     // Member Functions
@@ -130,7 +109,7 @@ public:
         virtual scalar sample() const;
 
         //- Sample the distribution
-        using FieldDistribution<distribution, tabulatedCumulative>::sample;
+        using FieldDistribution<distribution, standardNormal>::sample;
 
         //- Return the minimum value
         virtual scalar min() const;

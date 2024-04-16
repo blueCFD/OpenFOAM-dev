@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,8 +29,8 @@ Description
     minimum and maximum value, rather than from zero to infinity
 
     \f[
-        PDF(x) = \frac{1}{\sigma \sqrt{2 \pi}} \\
-        \exp \left( \frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2 \right)
+        PDF(x) = \frac{1}{\sigma \sqrt{2 \pi}} \exp \\
+        \left( - \frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2 \right)
     \f]
 
 Usage
@@ -88,17 +88,8 @@ class normal
         //- Standard deviation
         const scalar sigma_;
 
-        //- Constant for approximate error function and inverse error function
-        static const scalar a_;
-
 
     // Private Member Functions
-
-        //- Approximate error function
-        static tmp<scalarField> approxErf(const scalarField& x);
-
-        //- Approximate error function inverse
-        static scalar approxErfInv(const scalar y);
 
         //- Return values of the un-normalised PDF for the given size exponent
         //  and x-coordinates.
@@ -136,14 +127,14 @@ public:
         normal
         (
             const dictionary& dict,
-            Random& rndGen,
+            randomGenerator& rndGen,
             const label sampleQ
         );
 
         //- Construct from components
         normal
         (
-            Random& rndGen,
+            randomGenerator& rndGen,
             const label Q,
             const label sampleQ,
             const label n,

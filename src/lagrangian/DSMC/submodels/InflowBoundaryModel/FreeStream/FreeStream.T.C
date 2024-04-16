@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,6 +27,7 @@ License
 #include "constants.H"
 #include "triPointRef.H"
 #include "tetIndices.H"
+#include "standardNormal.H"
 
 using namespace Foam::constant::mathematical;
 
@@ -145,7 +146,8 @@ void Foam::FreeStream<CloudType>::inflow()
 
     const scalar deltaT = mesh.time().deltaTValue();
 
-    Random& rndGen(cloud.rndGen());
+    randomGenerator& rndGen(cloud.rndGen());
+    distributions::standardNormal stdNormal(rndGen);
 
     scalar sqrtPi = sqrt(pi);
 
@@ -388,10 +390,7 @@ void Foam::FreeStream<CloudType>::inflow()
 
                     vector U =
                         sqrt(physicoChemical::k.value()*faceTemperature/mass)
-                       *(
-                            rndGen.scalarNormal()*t1
-                          + rndGen.scalarNormal()*t2
-                        )
+                       *(stdNormal.sample()*t1 + stdNormal.sample()*t2)
                       + (t1 & faceVelocity)*t1
                       + (t2 & faceVelocity)*t2
                       + mostProbableSpeed*uNormal*n;
