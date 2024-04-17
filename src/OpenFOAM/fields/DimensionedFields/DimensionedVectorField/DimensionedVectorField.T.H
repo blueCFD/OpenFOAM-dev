@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,15 +21,48 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+InClass
+    Foam::DimensionedVectorField
+
+Description
+    Specialisation of DimensionedField<T, GeoMesh> for vector.
+
+SourceFiles
+    DimensionedVectorField.C
+
 \*---------------------------------------------------------------------------*/
 
-#ifndef DimensionedFields_H
-#define DimensionedFields_H
+#ifndef DimensionedVectorField_H
+#define DimensionedVectorField_H
 
-#include "DimensionedScalarField.T.H"
-#include "DimensionedVectorField.T.H"
-#include "DimensionedTensorField.T.H"
-#include "DimensionedSphericalTensorField.T.H"
+#include "DimensionedField.T.H"
+#include "vector.H"
+
+#define TEMPLATE template<class GeoMesh>
+#include "DimensionedFieldFunctionsM.T.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+UNARY_FUNCTION(vector, vector, normalised, normalised)
+UNARY_FUNCTION(vector, vector, perpendicular, perpendicular)
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "undefFieldFunctionsM.H"
+
+#ifdef NoRepository
+    #include "DimensionedVectorField.T.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

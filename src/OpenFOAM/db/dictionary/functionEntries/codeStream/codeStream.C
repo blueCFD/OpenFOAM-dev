@@ -28,6 +28,7 @@ License
 #include "dynamicCodeContext.H"
 #include "Time.T.H"
 #include "OSspecific.H"
+#include "PstreamReduceOps.T.H"
 #include "addToMemberFunctionSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,18 +21,33 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Description
+    Specialisation of FieldField<Field, T> for vector.
+
 \*---------------------------------------------------------------------------*/
 
-#ifndef DimensionedFields_H
-#define DimensionedFields_H
+#include "vectorFieldField.H"
 
-#include "DimensionedScalarField.T.H"
-#include "DimensionedVectorField.T.H"
-#include "DimensionedTensorField.T.H"
-#include "DimensionedSphericalTensorField.T.H"
+#define TEMPLATE template<template<class> class Field>
+#include "FieldFieldFunctionsM.T.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+namespace Foam
+{
+
+// * * * * * * * * * * * * * * * global functions  * * * * * * * * * * * * * //
+
+UNARY_FUNCTION(vector, vector, normalised)
+UNARY_FUNCTION(vector, vector, perpendicular)
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "undefFieldFunctionsM.H"
 
 // ************************************************************************* //

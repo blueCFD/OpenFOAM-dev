@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,16 +23,28 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef DimensionedFields_H
-#define DimensionedFields_H
-
-#include "DimensionedScalarField.T.H"
 #include "DimensionedVectorField.T.H"
-#include "DimensionedTensorField.T.H"
-#include "DimensionedSphericalTensorField.T.H"
+
+#define TEMPLATE template<class GeoMesh>
+#include "DimensionedFieldFunctionsM.T.C"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+namespace Foam
+{
+
+// * * * * * * * * * * * * * * * global functions  * * * * * * * * * * * * * //
+
+UNARY_FUNCTION(vector, vector, normalised, normalised)
+UNARY_FUNCTION(vector, vector, perpendicular, perpendicular)
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "undefFieldFunctionsM.H"
 
 // ************************************************************************* //
