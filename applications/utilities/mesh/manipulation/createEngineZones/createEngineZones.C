@@ -210,6 +210,8 @@ void calcPistonBowlPoints(const fvMeshMovers::multiValveEngine& mve)
 
 int main(int argc, char *argv[])
 {
+    argList::noParallel();
+
     #include "addRegionOption.H"
 
     argList::addBoolOption
@@ -258,7 +260,7 @@ int main(int argc, char *argv[])
     Info<< "Writing pointZones" << endl;
     mesh.pointZones().write();
 
-    Pout<< "End\n" << endl;
+    Info<< "End\n" << endl;
 
     return 0;
 }
