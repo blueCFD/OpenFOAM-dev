@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,73 +22,109 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::AverageField
+    Foam::Function2s::Radial
 
 Description
-    A primitive field with a separate average value.
+    Function2 which returns a Function1 of the magnitude of the two-dimensional
+    vector with components equal to the input arguments.
+
+    Example
+    \verbatim
+        <name>
+        {
+            type    radial;
+            value   table
+            (
+                (0.00 (0 0 0))
+                (0.35 (0 0 1))
+                (0.71 (0 0 0))
+            );
+        }
+    \endverbatim
 
 SourceFiles
-    AverageField.C
+    Radial.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef AverageField_H
-#define AverageField_H
+#ifndef Radial2_H
+#define Radial2_H
 
-#include "Field.T.H"
+#include "Function1.T.H"
+#include "Function2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace Function2s
+{
 
 /*---------------------------------------------------------------------------*\
-                        Class AverageField Declaration
+                            Class Radial Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
-class AverageField
+class Radial
 :
-    public Field<Type>
+    public FieldFunction2<Type, Radial<Type>>
 {
     // Private Data
 
-        //- The average of the field
-        Type average_;
+        //- Function of the radius
+        autoPtr<Function1<Type>> value_;
 
 
 public:
 
+    // Runtime type information
+    TypeName("radial");
+
+
     // Constructors
 
-        //- Construct from size (does not set values)
-        AverageField(const label size);
+        //- Construct from name and dictionary
+        Radial
+        (
+            const word& name,
+            const dictionary& dict
+        );
 
-        //- Construct from components
-        AverageField(const Field<Type>&, const Type& average);
+        //- Copy constructor
+        Radial(const Radial<Type>& se);
 
-        //- Construct from Istream
-        AverageField(Istream&);
+
+    //- Destructor
+    virtual ~Radial();
 
 
     // Member Functions
 
-        const Type& average() const;
+        //- Return value
+        virtual inline Type value(const scalar x, const scalar y) const;
 
-        Type& average();
+        //- Write data to dictionary stream
+        virtual void write(Ostream& os) const;
 
-        bool writeData(Ostream& os) const;
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const Radial<Type>&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace Function2s
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include "Radial2I.T.H"
+
 #ifdef NoRepository
-    #include "AverageField.T.C"
+    #include "Radial2.T.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

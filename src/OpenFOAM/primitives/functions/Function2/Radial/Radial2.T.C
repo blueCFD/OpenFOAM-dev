@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,62 +23,43 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "AverageField.T.H"
+#include "Radial2.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::AverageField<Type>::AverageField(const label size)
-:
-    Field<Type>(size),
-    average_(Zero)
-{}
-
-
-template<class Type>
-Foam::AverageField<Type>::AverageField
+Foam::Function2s::Radial<Type>::Radial
 (
-    const Field<Type>& f,
-    const Type& average
+    const word& name,
+    const dictionary& dict
 )
 :
-    Field<Type>(f),
-    average_(average)
+    FieldFunction2<Type, Radial<Type>>(name),
+    value_(Function1<Type>::New("value", dict))
 {}
 
 
 template<class Type>
-Foam::AverageField<Type>::AverageField(Istream& is)
+Foam::Function2s::Radial<Type>::Radial(const Radial<Type>& se)
 :
-    Field<Type>(is),
-    average_(pTraits<Type>(is))
+    FieldFunction2<Type, Radial<Type>>(se),
+    value_(se.value_, false)
+{}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+template<class Type>
+Foam::Function2s::Radial<Type>::~Radial()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-const Type& Foam::AverageField<Type>::average() const
+void Foam::Function2s::Radial<Type>::write(Ostream& os) const
 {
-    return average_;
-}
-
-
-template<class Type>
-Type&Foam::AverageField<Type>::average()
-{
-    return average_;
-}
-
-
-template<class Type>
-bool Foam::AverageField<Type>::writeData(Ostream& os) const
-{
-    os  << static_cast<const Field<Type>&>(*this)
-        << token::NL
-        << average_;
-
-    return os.good();
+    value_->write(os);
 }
 
 
