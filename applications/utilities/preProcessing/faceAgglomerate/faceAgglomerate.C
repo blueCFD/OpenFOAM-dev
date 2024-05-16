@@ -36,7 +36,6 @@ Description
 #include "Time.T.H"
 #include "volFields.H"
 #include "CompactListList.T.H"
-#include "unitConversion.H"
 #include "pairPatchAgglomeration.H"
 #include "labelListIOList.H"
 #include "syncTools.H"

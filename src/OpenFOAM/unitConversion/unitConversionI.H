@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,33 +21,35 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Description
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef dimensionedScalarFwd_H
-#define dimensionedScalarFwd_H
+#include "unitConversion.H"
+#include "mathematicalConstants.H"
 
-#include "scalar.H"
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
+inline const Foam::dimensionSet& Foam::unitConversion::dimensions() const
 {
+    return dimensions_;
+}
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class Type>
-class dimensioned;
+inline bool Foam::unitConversion::any() const
+{
+    return multiplier_ == 0;
+}
 
-typedef dimensioned<scalar> dimensionedScalar;
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+inline bool Foam::unitConversion::none() const
+{
+    return multiplier_ == -1;
+}
 
-} // End namespace Foam
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+inline bool Foam::unitConversion::standard() const
+{
+    return multiplier_ == 1 || any() || none();
+}
 
-#endif
 
 // ************************************************************************* //

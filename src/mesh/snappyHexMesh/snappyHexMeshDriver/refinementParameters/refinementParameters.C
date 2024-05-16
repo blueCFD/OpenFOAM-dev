@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,8 @@ Foam::refinementParameters::refinementParameters(const dictionary& dict)
         dict.lookupOrDefault
         (
             "planarAngle",
-            dict.lookup<scalar>("resolveFeatureAngle")
+            unitDegrees,
+            dict.lookup<scalar>("resolveFeatureAngle", unitDegrees)
         )
     ),
     nBufferLayers_(dict.lookup<label>("nCellsBetweenLevels")),
@@ -56,15 +57,15 @@ Foam::refinementParameters::refinementParameters(const dictionary& dict)
         dict.lookupOrDefault<Switch>("handleSnapProblems", true)
     )
 {
-    scalar featAngle(dict.lookup<scalar>("resolveFeatureAngle"));
+    scalar featAngle(dict.lookup<scalar>("resolveFeatureAngle", unitDegrees));
 
-    if (featAngle < 0 || featAngle > 180)
+    if (featAngle < 0 || featAngle > degToRad(180))
     {
         curvature_ = -great;
     }
     else
     {
-        curvature_ = Foam::cos(degToRad(featAngle));
+        curvature_ = Foam::cos(featAngle);
     }
 }
 
@@ -77,20 +78,20 @@ Foam::refinementParameters::cellSelectionPoints::cellSelectionPoints
     inside_
     (
         dict.found("insidePoints")
-      ? List<point>(dict.lookup("insidePoints"))
+      ? dict.lookup<List<point>>("insidePoints", dimLength)
       : dict.found("insidePoint")
-          ? List<point>(1, dict.lookup("insidePoint"))
-          : dict.found("locationInMesh")
-              ? List<point>(1, dict.lookup("locationInMesh"))
-              : List<point>::null()
+      ? List<point>(1, dict.lookup<point>("insidePoint", dimLength))
+      : dict.found("locationInMesh")
+      ? List<point>(1, dict.lookup<point>("locationInMesh", dimLength))
+      : List<point>::null()
     ),
     outside_
     (
         dict.found("outsidePoints")
-      ? List<point>(dict.lookup("outsidePoints"))
+      ? dict.lookup<List<point>>("outsidePoints", dimLength)
       : dict.found("outsidePoint")
-          ? List<point>(1, dict.lookup("outsidePoint"))
-          : List<point>::null()
+      ? List<point>(1, dict.lookup<point>("outsidePoint", dimLength))
+      : List<point>::null()
     )
 {
     if (inside_.size())
