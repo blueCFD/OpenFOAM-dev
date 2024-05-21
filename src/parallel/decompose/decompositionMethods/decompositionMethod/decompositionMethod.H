@@ -38,6 +38,7 @@ SourceFiles
 #include "polyMesh.H"
 #include "CompactListList.T.H"
 #include "decompositionConstraint.H"
+#include "IOdictionary.H"
 
 namespace Foam
 {
@@ -53,6 +54,7 @@ protected:
     // Protected data
 
         dictionary decompositionDict_;
+
         label nProcessors_;
 
         //- Optional constraints
@@ -127,7 +129,7 @@ public:
         }
 
         //- Read and return the decomposeParDict
-        static dictionary decomposeParDict(const Time& time);
+        static IOdictionary decomposeParDict(const Time& time);
 
 
         // No topology (implemented by geometric decomposers)
@@ -213,6 +215,15 @@ public:
 
 
         // Other
+
+            //- Convert the given scalar weights to labels
+            //  in the range 0-labelMax/2
+            static labelList scaleWeights
+            (
+                const scalarField& weights,
+                const label nWeights,
+                const bool distributed = true
+            );
 
             //- Helper: determine (local or global) cellCells from mesh
             //  agglomeration. Agglomeration is local to the processor.
@@ -301,7 +312,7 @@ public:
             labelList decompose
             (
                 const polyMesh& mesh,
-                const scalarField& cWeights
+                const scalarField& cellWeights
             );
 
 

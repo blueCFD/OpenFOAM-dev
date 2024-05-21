@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 blueCAPE: Avoid defining 'GNU_SOURCE' for MinGW builds.
@@ -95,11 +95,10 @@ void Foam::scotchDecomp::check(const int retVal, const char* str)
 Foam::label Foam::scotchDecomp::decompose
 (
     const fileName& meshPath,
-    const List<label>& adjncy,
-    const List<label>& xadj,
-    const scalarField& cWeights,
-
-    List<label>& finalDecomp
+    const labelList& adjncy,
+    const labelList& xadj,
+    const scalarField& cellWeights,
+    labelList& decomp
 )
 {
     if (!Pstream::parRun())
@@ -109,8 +108,8 @@ Foam::label Foam::scotchDecomp::decompose
             meshPath,
             adjncy,
             xadj,
-            cWeights,
-            finalDecomp
+            cellWeights,
+            decomp
         );
     }
     else
@@ -132,10 +131,10 @@ Foam::label Foam::scotchDecomp::decompose
 
             // Insert my own
             label nTotalCells = 0;
-            forAll(cWeights, celli)
+            forAll(cellWeights, celli)
             {
                 allXadj[nTotalCells] = xadj[celli];
-                allWeights[nTotalCells++] = cWeights[celli];
+                allWeights[nTotalCells++] = cellWeights[celli];
             }
             nTotalConnections = 0;
             forAll(adjncy, i)
@@ -189,7 +188,7 @@ Foam::label Foam::scotchDecomp::decompose
                 );
             }
             // Get my own part (always first)
-            finalDecomp = SubField<label>
+            decomp = SubField<label>
             (
                 allFinalDecomp,
                 globalCells.localSize()
@@ -205,7 +204,7 @@ Foam::label Foam::scotchDecomp::decompose
                     Pstream::masterNo()
                 );
                 toMaster<< adjncy << SubField<label>(xadj, xadj.size()-1)
-                    << cWeights;
+                    << cellWeights;
             }
 
             // Receive back decomposition
@@ -214,22 +213,21 @@ Foam::label Foam::scotchDecomp::decompose
                 Pstream::commsTypes::scheduled,
                 Pstream::masterNo()
             );
-            fromMaster >> finalDecomp;
+            fromMaster >> decomp;
         }
     }
     return 0;
 }
 
 
-// Call scotch with options from dictionary.
 Foam::label Foam::scotchDecomp::decomposeOneProc
 (
     const fileName& meshPath,
-    const List<label>& adjncy,
-    const List<label>& xadj,
-    const scalarField& cWeights,
+    const labelList& adjncy,
+    const labelList& xadj,
+    const scalarField& cellWeights,
 
-    List<label>& finalDecomp
+    labelList& decomp
 )
 {
     // Dump graph
@@ -305,54 +303,21 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
     // Graph
     // ~~~~~
 
-    List<label> velotab;
-
+    labelList velotab;
 
     // Check for externally provided cellweights and if so initialise weights
-    // Note: min, not gMin since routine runs on master only.
-    scalar minWeights = min(cWeights);
-    if (!cWeights.empty())
+    if (!cellWeights.empty())
     {
-        if (minWeights <= 0)
-        {
-            WarningInFunction
-                << "Illegal minimum weight " << minWeights
-                << endl;
-        }
-
-        if (cWeights.size() != xadj.size()-1)
+        if (cellWeights.size() != xadj.size()-1)
         {
             FatalErrorInFunction
-                << "Number of cell weights " << cWeights.size()
+                << "Number of cell weights " << cellWeights.size()
                 << " does not equal number of cells " << xadj.size()-1
                 << exit(FatalError);
         }
 
-        scalar velotabSum = sum(cWeights)/minWeights;
-
-        scalar rangeScale(1.0);
-
-        if (velotabSum > scalar(labelMax - 1))
-        {
-            // 0.9 factor of safety to avoid floating point round-off in
-            // rangeScale tipping the subsequent sum over the integer limit.
-            rangeScale = 0.9*scalar(labelMax - 1)/velotabSum;
-
-            WarningInFunction
-                << "Sum of weights has overflowed integer: " << velotabSum
-                << ", compressing weight scale by a factor of " << rangeScale
-                << endl;
-        }
-
-        // Convert to integers.
-        velotab.setSize(cWeights.size());
-
-        forAll(velotab, i)
-        {
-            velotab[i] = int((cWeights[i]/minWeights - 1)*rangeScale) + 1;
-        }
+        velotab = scaleWeights(cellWeights, 1, false);
     }
-
 
 
     SCOTCH_Graph grafdat;
@@ -384,7 +349,7 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
     SCOTCH_Arch archdat;
     check(SCOTCH_archInit(&archdat), "SCOTCH_archInit");
 
-    List<label> processorWeights;
+    labelList processorWeights;
     if (decompositionDict_.found("scotchCoeffs"))
     {
         const dictionary& scotchCoeffs =
@@ -424,8 +389,8 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
     );
     #endif
 
-    finalDecomp.setSize(xadj.size()-1);
-    finalDecomp = 0;
+    decomp.setSize(xadj.size()-1);
+    decomp = 0;
     check
     (
         SCOTCH_graphMap
@@ -433,7 +398,7 @@ Foam::label Foam::scotchDecomp::decomposeOneProc
             &grafdat,
             &archdat,
             &stradat,           // const SCOTCH_Strat *
-            finalDecomp.begin() // parttab
+            decomp.begin() // parttab
         ),
         "SCOTCH_graphMap"
     );
@@ -495,22 +460,16 @@ Foam::labelList Foam::scotchDecomp::decompose
     );
 
     // Decompose using default weights
-    List<label> finalDecomp;
+    labelList decomp;
     decompose
     (
         mesh.time().path()/mesh.name(),
         cellCells.m(),
         cellCells.offsets(),
         pointWeights,
-        finalDecomp
+        decomp
     );
 
-    // Copy back to labelList
-    labelList decomp(finalDecomp.size());
-    forAll(decomp, i)
-    {
-        decomp[i] = finalDecomp[i];
-    }
     return decomp;
 }
 
@@ -543,14 +502,14 @@ Foam::labelList Foam::scotchDecomp::decompose
     );
 
     // Decompose using weights
-    List<label> finalDecomp;
+    labelList decomp;
     decompose
     (
         mesh.time().path()/mesh.name(),
         cellCells.m(),
         cellCells.offsets(),
         pointWeights,
-        finalDecomp
+        decomp
     );
 
     // Rework back into decomposition for original mesh_
@@ -558,7 +517,7 @@ Foam::labelList Foam::scotchDecomp::decompose
 
     forAll(fineDistribution, i)
     {
-        fineDistribution[i] = finalDecomp[agglom[i]];
+        fineDistribution[i] = decomp[agglom[i]];
     }
 
     return fineDistribution;
@@ -569,7 +528,7 @@ Foam::labelList Foam::scotchDecomp::decompose
 (
     const labelListList& globalCellCells,
     const pointField& cellCentres,
-    const scalarField& cWeights
+    const scalarField& cellWeights
 )
 {
     if (cellCentres.size() != globalCellCells.size())
@@ -588,22 +547,16 @@ Foam::labelList Foam::scotchDecomp::decompose
     CompactListList<label> cellCells(globalCellCells);
 
     // Decompose using weights
-    List<label> finalDecomp;
+    labelList decomp;
     decompose
     (
         "scotch",
         cellCells.m(),
         cellCells.offsets(),
-        cWeights,
-        finalDecomp
+        cellWeights,
+        decomp
     );
 
-    // Copy back to labelList
-    labelList decomp(finalDecomp.size());
-    forAll(decomp, i)
-    {
-        decomp[i] = finalDecomp[i];
-    }
     return decomp;
 }
 
