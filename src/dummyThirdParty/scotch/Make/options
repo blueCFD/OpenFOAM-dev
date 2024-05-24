@@ -1,0 +1,9 @@
+EXE_INC = \
+    -I$(FOAM_SRC)/parallel/decompose/decompositionMethods/lnInclude \
+    -I$(FOAM_SRC)/parallel/decompose/scotch/lnInclude
+
+LIB_LIBS =
+
+#if defined( WIN32 ) || defined( WIN64 )
+LIB_LIBS += -ldecompositionMethods
+#endif
