@@ -323,7 +323,8 @@ Foam::label Foam::decompositionMethods::scotch::decomposeOneProc
                 << exit(FatalError);
         }
 
-        velotab = scaleWeights(cellWeights, 1, false);
+        label nWeights = 1;
+        velotab = scaleWeights(cellWeights, nWeights, false);
     }
 
 
@@ -339,10 +340,10 @@ Foam::label Foam::decompositionMethods::scotch::decomposeOneProc
             xadj.begin(),           // verttab, start index per cell into adjncy
             &xadj[1],               // vendtab, end index  ,,
             velotab.begin(),        // velotab, vertex weights
-            nullptr,                   // vlbltab
+            nullptr,                // vlbltab
             adjncy.size(),          // edgenbr, number of arcs
             adjncy.begin(),         // edgetab
-            nullptr                    // edlotab, edge weights
+            nullptr                 // edlotab, edge weights
         ),
         "SCOTCH_graphBuild"
     );
