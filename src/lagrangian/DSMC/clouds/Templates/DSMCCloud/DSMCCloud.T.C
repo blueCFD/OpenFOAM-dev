@@ -30,7 +30,6 @@ License
 #include "constants.H"
 #include "zeroGradientFvPatchFields.H"
 #include "polyMeshTetDecomposition.H"
-#include "standardNormal.H"
 
 using namespace Foam::constant;
 
@@ -650,7 +649,8 @@ Foam::DSMCCloud<ParcelType>::DSMCCloud
         mesh_
     ),
     constProps_(),
-    rndGen_(label(149382906) + 7183*Pstream::myProcNo()),
+    rndGen_(label(149382906)),
+    stdNormal_(rndGen_.generator()),
     boundaryT_
     (
         volScalarField
@@ -904,7 +904,8 @@ Foam::DSMCCloud<ParcelType>::DSMCCloud
         )
     ),
     constProps_(),
-    rndGen_(label(971501) + 1526*Pstream::myProcNo()),
+    rndGen_(label(971501)),
+    stdNormal_(rndGen_.generator()),
     boundaryT_
     (
         volScalarField
@@ -1043,7 +1044,7 @@ Foam::vector Foam::DSMCCloud<ParcelType>::equipartitionLinearVelocity
 {
     return
         sqrt(physicoChemical::k.value()*temperature/mass)
-       *distributions::standardNormal(rndGen_).sample<vector>();
+       *stdNormal_.sample<vector>();
 }
 
 
