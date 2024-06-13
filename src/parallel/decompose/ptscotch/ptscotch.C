@@ -104,7 +104,7 @@ Foam::label Foam::decompositionMethods::ptscotch::decompose
 ) const
 {
     labelList dummyAdjncy(1);
-    labelList dummyXadj(1, 0);
+    labelList dummyXadj(1, label(0));
 
     return decompose
     (
