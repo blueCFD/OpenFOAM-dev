@@ -13,11 +13,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-cacheTemporaryObjects
-(
-    SpalartAllmarasDDES:LESRegion
-);
-
 writeCachedObjects
 {
     type        writeObjects;
