@@ -8,20 +8,14 @@
 FoamFile
 {
     format      ascii;
-    class       dictionary;
+    class       uniformDimensionedVectorField;
     location    "constant";
-    object      MRFProperties;
+    object      g;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-MRF
-{
-    cellZone    rotor;
+dimensions      [0 1 -2 0 0 0 0];
+value           (0 -9.81 0);
 
-    origin     (0 0 0);
-    axis       (0 0 1);
-
-    omega      60 [rpm];
-}
 
 // ************************************************************************* //

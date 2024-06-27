@@ -8,20 +8,32 @@
 FoamFile
 {
     format      ascii;
-    class       dictionary;
-    location    "constant";
-    object      MRFProperties;
+    class       volScalarField;
+    location    "0";
+    object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-MRF
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
 {
-    cellZone    rotor;
+    #includeEtc "caseDicts/setConstraintTypes"
 
-    origin     (0 0 0);
-    axis       (0 0 1);
+    wall
+    {
+        type            fixedFluxPressure;
+        value           $internalField;
+    }
 
-    omega      60 [rpm];
+    atmosphere
+    {
+        type            prghTotalPressure;
+        p0              $internalField;
+    }
 }
+
 
 // ************************************************************************* //
