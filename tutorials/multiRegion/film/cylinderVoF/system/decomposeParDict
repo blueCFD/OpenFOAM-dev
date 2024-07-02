@@ -8,34 +8,15 @@
 FoamFile
 {
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      CO.gas;
+    class       dictionary;
+    location    "system";
+    object      decomposeParDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [];
+numberOfSubdomains 4;
 
-internalField   uniform 0;
+method          scotch;
 
-boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform 0.1;
-    }
-    outlet
-    {
-        type            inletOutlet;
-        phi             phi.gas;
-        inletValue      $internalField;
-        value           $internalField;
-    }
-    walls
-    {
-        type            zeroGradient;
-    }
-}
 
 // ************************************************************************* //
