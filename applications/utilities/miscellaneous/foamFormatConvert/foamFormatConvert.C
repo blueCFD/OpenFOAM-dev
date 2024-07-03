@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,6 +130,7 @@ bool writeZones(const word& name, const fileName& meshDir, Time& runTime)
         }
 
         const_cast<word&>(IOPtrList<entry>::typeName) = oldTypeName;
+
         // Fake type back to what was in field
         const_cast<word&>(meshObject.type()) = io.headerClassName();
 
@@ -199,7 +200,7 @@ bool writeOptionalMeshObject
 
     bool writeOk = false;
 
-    bool haveFile = io.headerOk();
+    const bool haveFile = io.headerOk();
 
     // Make sure all know if there is a valid class name
     stringList classNames(1, io.headerClassName());
@@ -243,16 +244,14 @@ int main(int argc, char *argv[])
         Info<< "Excluding the constant directory." << nl << endl;
     }
 
-
     #include "createTime.H"
+
     // Optional mesh (used to read Clouds)
     autoPtr<polyMesh> meshPtr;
-
 
     // Make sure we do not use the master-only reading since we read
     // fields (different per processor) as dictionaries.
     regIOobject::fileModificationChecking = regIOobject::timeStamp;
-
 
     fileName meshDir = polyMesh::meshSubDir;
     fileName regionPrefix = "";
@@ -264,7 +263,7 @@ int main(int argc, char *argv[])
         meshDir = regionName/polyMesh::meshSubDir;
     }
 
-    Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
+    const instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
     forAll(timeDirs, timeI)
     {
@@ -280,12 +279,15 @@ int main(int argc, char *argv[])
         );
         writeMeshObject<labelIOList>("owner", meshDir, runTime);
         writeMeshObject<labelIOList>("neighbour", meshDir, runTime);
-        writeMeshObject<faceCompactIOList, faceIOList>
-        (
-            "faces",
-            meshDir,
-            runTime
-        );
+        if (!writeMeshObject<faceCompactIOList>("faces", meshDir, runTime))
+        {
+            writeMeshObject<faceCompactIOList, faceIOList>
+            (
+                "faces",
+                meshDir,
+                runTime
+            );
+        }
         writeMeshObject<pointIOField>("points", meshDir, runTime);
         // Write boundary in ascii. This is only needed for fileHandler to
         // kick in. Should not give problems since always writing ascii.
@@ -347,16 +349,12 @@ int main(int argc, char *argv[])
             }
         }
 
-
-
         // Check for lagrangian
         const fileName lagrangianDir
         (
             fileHandler().filePath
             (
-                runTime.timePath()
-              / regionPrefix
-              / cloud::prefix
+                runTime.timePath()/regionPrefix/cloud::prefix
             )
         );
         stringList lagrangianDirs
@@ -406,7 +404,7 @@ int main(int argc, char *argv[])
 
             forAll(cloudDirs, i)
             {
-                fileName dir(cloud::prefix/cloudDirs[i]);
+                const fileName dir(cloud::prefix/cloudDirs[i]);
 
                 Cloud<passiveParticle> parcels(meshPtr(), cloudDirs[i], false);
 
