@@ -21,8 +21,8 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::typeInfo
+InNamespace
+    Foam
 
 Description
     Basic run-time type information using word as the type's name.
@@ -171,7 +171,7 @@ inline bool isA(const Type& t)
 
 
 //- Return the name of the object within the given type
-//  as <typeName>:<name>
+//  as \<typeName\>:\<name\>
 template<class TypeName, class Name>
 inline word typedName(Name name)
 {
