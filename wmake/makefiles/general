@@ -267,6 +267,9 @@ lnInclude: $(MAKE_DIR)/files $(OPTIONS)
 #------------------------------------------------------------------------------
 
 $(OBJECTS): $(OPTIONS)
+ifdef LFN_WORKAROUND
+$(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(shell basename -a $(basename $S)).o : $(OBJECTS_DIR)/$S.dep))
+else
 $(foreach S,$(SOURCE),$(eval $(OBJECTS_DIR)/$(basename $S).o : $(OBJECTS_DIR)/$S.dep))
 endif
 

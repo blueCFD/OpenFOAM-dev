@@ -60,12 +60,17 @@ OBJECTS_DIR     = $(MAKE_DIR)/$(WM_OPTIONS)
 OPTIONS         = $(MAKE_DIR)/options
 FILES           = $(OBJECTS_DIR)/files
 
+VERSIONFILE = $(OBJECTS_DIR)/version_of_build.rc
+LOCAL_PATHS_INCLUDE = $(OBJECTS_DIR)/includeHeaderPaths
+
 include $(OPTIONS)
 
 
 #------------------------------------------------------------------------------
 # Scan Make/files for source file names and create the SOURCE entry
 #------------------------------------------------------------------------------
+
+.PHONY: reviseSourceFilesListWithVersion
 
 # Create a sed pattern from the source file suffix list
 SUFFIX_SED = \
@@ -74,14 +79,21 @@ SUFFIX_SED = \
 # Prepend SOURCE += to each of the source file names
 $(FILES): $(MAKE_DIR)/files
 	@sed $(SUFFIX_SED) $(MAKE_DIR)/files > $(FILES)
+ifneq ($(WM_TARGET_ARCH),)
+	$(WM_SCRIPTS)/wmakeAddForceLoadDependencies $(OPTIONS) $(FILES)
+endif
+
+versioning : $(VERSIONFILE) reviseSourceFilesListWithVersion $(VERSIONFILE).dep
+
+localHeaderPaths : $(LOCAL_PATHS_INCLUDE)
 
 $(VERSIONFILE): $(MAKE_DIR)/files $(WM_PROJECT_DIR)/.build
 	$(WM_SCRIPTS)/makeVersionResourceFile $(OBJECTS_DIR) $(VERSIONFILE) \
-		$(VARS)
+		$(FILES)
 
 reviseSourceFilesListWithVersion: $(VERSIONFILE)
 	$(WM_SCRIPTS)/makeVersionResourceSListFile $(OBJECTS_DIR) $(VERSIONFILE) \
-		$(SFILES)
+		$(FILES)
 
 $(VERSIONFILE).dep: $(VERSIONFILE)
 	$(WM_SCRIPTS)/makeVersionResourceDepFile $(OBJECTS_DIR) $(VERSIONFILE) \
