@@ -45,7 +45,7 @@
 [ "$ZSH_NAME" ] && bashrcFile=$0
 if [ -n "$bashrcFile" ]
 then
-    export REF_OF_ETC=$(cd $(dirname $bashrcFile)/../.. && pwd -P)
+    export REF_OF_ETC=$(cd $(dirname $bashrcFile) && pwd -P)
 fi
 unset bashrcFile
 
@@ -57,5 +57,6 @@ source $REF_OF_ETC/bashrc \
     WM_COMPILER_LIB_ARCH= \
     WM_COMPILER=Gcc47
 
+unset REF_OF_ETC
 
 # ----------------------------------------------------------------- end-of-file

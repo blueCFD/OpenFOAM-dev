@@ -45,7 +45,7 @@
 [ "$ZSH_NAME" ] && bashrcFile=$0
 if [ -n "$bashrcFile" ]
 then
-    export REF_OF_ETC=$(cd $(dirname $bashrcFile)/../.. && pwd -P)
+    export REF_OF_ETC=$(cd $(dirname $bashrcFile) && pwd -P)
 fi
 unset bashrcFile
 
@@ -57,6 +57,9 @@ source $REF_OF_ETC/bashrc \
     WM_TARGET_ARCH=mingw_w32 \
     WM_COMPILER_ARCH= \
     WM_COMPILER_LIB_ARCH= \
-    WM_ARCH_OPTION=32
+    WM_ARCH_OPTION=32 \
+    $@
+
+unset REF_OF_ETC
 
 # ----------------------------------------------------------------- end-of-file
