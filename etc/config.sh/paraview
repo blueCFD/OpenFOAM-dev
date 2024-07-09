@@ -128,7 +128,8 @@ system)
         export ParaView_DIR=$(dirname $paraviewBinDir)
         export ParaView_LIB_DIR=$(unset LD_LIBRARY_PATH && \
                                   ldd $paraviewBinDir/paraview | \
-                                  grep -o "/.*/libpqCore-pv.*.so" | \
+                                  grep -o -e "/.*/libpqCore-pv.*.so" \
+                                          -e "/.*/pqCore-pv.*.dll" | \
                                   xargs dirname)
         export ParaView_VERSION=$(unset LD_LIBRARY_PATH && \
                                   pvserver --version 2> /dev/null | \
