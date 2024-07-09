@@ -2,7 +2,7 @@
 #
 # License
 #
-#     Copyright (C) 2011-2016 blueCAPE Lda
+#     Copyright (C) 2011-2024 blueCAPE Lda
 #     blueCFD(R) is a registered trade mark of blueCAPE Lda
 #     OpenFOAM(R) is a registered trade mark of ESI-OpenCFD
 #
@@ -30,36 +30,33 @@
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
 # File
-#     etc/prefs-mingw32.sh
+#     etc/pre-bashrc-mingw-w32.sh
 #
 # Description
 #     Preset variables for the OpenFOAM configuration - POSIX shell syntax.
 #
-#     This file will only be sourced if set when calling bashrc. Example:
-#       source $HOME/OpenFOAM/OpenFOAM-2.0/etc/bashrc prefs-mingw32.sh
+#     This file should be sourced instead of bashrc. Example:
+#       source $HOME/OpenFOAM/OpenFOAM-dev/etc/pre-bashrc-mingw-w32.sh
 #
 #------------------------------------------------------------------------------
 
-#- Operating System:
-#    WM_OSTYPE = POSIX | MSwindows
-export WM_OSTYPE=MSwindows
+# Precursor retrieved from bashrc
+[ "$BASH" ] && bashrcFile=${BASH_SOURCE}
+[ "$ZSH_NAME" ] && bashrcFile=$0
+if [ -n "$bashrcFile" ]
+then
+    export REF_OF_ETC=$(cd $(dirname $bashrcFile)/../.. && pwd -P)
+fi
+unset bashrcFile
 
-# Specify compiler mode: system or ThirdParty
-# ~~~~~~~~~~~~~~~~~~~~~~~
-foamCompiler=ThirdParty
-
-# Specify openmpi
-# ~~~~~~~~~~~~~~~~~~~~~~
-export WM_MPLIB=OPENMPI
-
-#- Target architecture (e.g. for cross-compiling): WM_TARGET_ARCH = 
-#       mingw_w32  - 32-bit Gcc+mingw-w32 (cross-)compiler
-#       mingw_w64  - 64-bit Gcc+mingw-w64 (cross-)compiler
-export WM_TARGET_ARCH=mingw32
-unset WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
-
-#- Architecture:
-#    WM_ARCH_OPTION = 32 | 64
-export WM_ARCH_OPTION=32
+# Source with our own settings
+source $REF_OF_ETC/bashrc \
+    WM_OSTYPE=MSwindows \
+    foamCompiler=ThirdParty \
+    WM_MPLIB=OPENMPI \
+    WM_TARGET_ARCH=mingw_w32 \
+    WM_COMPILER_ARCH= \
+    WM_COMPILER_LIB_ARCH= \
+    WM_ARCH_OPTION=32
 
 # ----------------------------------------------------------------- end-of-file
