@@ -82,7 +82,7 @@ SourceFiles
 #ifndef DemandDrivenMeshObject_H
 #define DemandDrivenMeshObject_H
 
-#include "MeshObjects.H"
+#include "MeshObjects.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

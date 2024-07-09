@@ -418,6 +418,18 @@ fi
 
 mkdir -p "$objectsDir"
 
+# Need to override the temporary folder on Windows
+# See https://github.com/blueCFD/Core/issues/35 for more details.
+if onWin
+then
+    export TEMP=$objectsDir/tempDir
+    export TMP=$objectsDir/tempDir
+    mkdir -p $TMP
+fi
+
+# If on Windows, check if we need to activate the workaround
+onWin && figureOutIfLongFileNameSupportIsNeeded
+
 
 #------------------------------------------------------------------------------
 # Create $objectsDir/files from $MakeDir/files if necessary
@@ -432,6 +444,20 @@ if ! grep -q "SOURCE" "$MakeDir/files"; then
 
         $make -s -f "$WM_DIR/makefiles/files" MAKE_DIR="$MakeDir" \
               OBJECTS_DIR="$objectsDir"
+
+        if isMinGW && \
+           [ "$targetType" = "libso" -o "$targetType" = "all" -o \
+             "$targetType" = "dep" -o -z "$targetType" ]
+        then
+            make -s -f $WM_DIR/makefiles/files versioning MAKE_DIR="$MakeDir" \
+                OBJECTS_DIR="$objectsDir"
+        fi
+
+        if isMinGW
+        then
+            make -s -f $WM_DIR/makefiles/files localHeaderPaths MAKE_DIR="$MakeDir" \
+                OBJECTS_DIR="$objectsDir"
+        fi
     )
 
     # Check the $objectsDir/files file was created successfully

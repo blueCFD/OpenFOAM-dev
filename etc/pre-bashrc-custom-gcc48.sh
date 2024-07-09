@@ -2,7 +2,7 @@
 #
 # License
 #
-#     Copyright (C) 2011-2016 blueCAPE Lda
+#     Copyright (C) 2011-2024 blueCAPE Lda
 #     blueCFD(R) is a registered trade mark of blueCAPE Lda
 #     OpenFOAM(R) is a registered trade mark of ESI-OpenCFD
 #
@@ -30,27 +30,33 @@
 #     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 #
 # File
-#     etc/prefs-custom-gcc47.sh
+#     etc/pre-bashrc-custom-gcc48.sh
 #
 # Description
 #     Preset variables for the OpenFOAM configuration - POSIX shell syntax.
 #
-#     This file will only be sourced if set when calling bashrc. Example:
-#       source $HOME/OpenFOAM/OpenFOAM-2.3/etc/bashrc prefs-custom-gcc47.sh
+#     This file should be sourced instead of bashrc. Example:
+#       source $HOME/OpenFOAM/OpenFOAM-dev/etc/pre-bashrc-custom-gcc48.sh
 #
 #------------------------------------------------------------------------------
 
-# Specify compiler mode: system or ThirdParty
-# ~~~~~~~~~~~~~~~~~~~~~~~
-foamCompiler=ThirdParty
+# Precursor retrieved from bashrc
+[ "$BASH" ] && bashrcFile=${BASH_SOURCE}
+[ "$ZSH_NAME" ] && bashrcFile=$0
+if [ -n "$bashrcFile" ]
+then
+    export REF_OF_ETC=$(cd $(dirname $bashrcFile) && pwd -P)
+fi
+unset bashrcFile
 
-# Specify openmpi
-# ~~~~~~~~~~~~~~~~~~~~~~
-export WM_MPLIB=OPENMPI
+# Source with our own settings
+source $REF_OF_ETC/bashrc \
+    foamCompiler=ThirdParty \
+    WM_MPLIB=OPENMPI \
+    WM_COMPILER=Gcc48 \
+    WM_COMPILER_ARCH= \
+    WM_COMPILER_LIB_ARCH=
 
-#- Compiler:
-#    WM_COMPILER = Gcc | Gcc45 | Gcc46 | Gcc47 | Clang | Icc (Intel icc)
-export WM_COMPILER=Gcc47
-unset WM_COMPILER_ARCH WM_COMPILER_LIB_ARCH
+unset REF_OF_ETC
 
 # ----------------------------------------------------------------- end-of-file
