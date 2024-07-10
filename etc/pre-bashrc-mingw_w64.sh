@@ -58,6 +58,10 @@ source $REF_OF_ETC/bashrc \
     WM_COMPILER_ARCH= \
     WM_COMPILER_LIB_ARCH= \
     WM_ARCH_OPTION=64 \
+    SCOTCH_TYPE=MSYS2 \
+    METIS_TYPE=MSYS2 \
+    PARMETIS_TYPE=MSYS2 \
+    ZOLTAN_TYPE=none \
     $@
 
 unset REF_OF_ETC
