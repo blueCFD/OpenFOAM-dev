@@ -5,6 +5,8 @@
 # 2016-07-xx blueCAPE Lda: More modifications for blueCFD-Core 2016-1
 # 2016-10-16/23 blueCAPE Lda: More modifications for blueCFD-Core 2016-2
 # 2016-12-07 blueCAPE Lda: More modifications for blueCFD-Core 2016-2
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -54,7 +56,7 @@
 # Provided by makefiles/files
 OBJECTS_DIR=$1
 VERSIONFILE=$2
-VARS=$3
+MF_FILES=$3
 
 # Change to the $OBJECTS_DIR directory
 if [ ! -d "$OBJECTS_DIR" ]
@@ -69,8 +71,8 @@ then
     cp "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" tmpver.rc
 
     #Extract the binary name
-    MGW_EXENAME=$(grep -e "^EXE =" $VARS)
-    MGW_LIBNAME=$(grep -e "^LIB =" $VARS)
+    MGW_EXENAME=$(grep -e "^EXE =" $MF_FILES)
+    MGW_LIBNAME=$(grep -e "^LIB =" $MF_FILES)
     MGW_FINALNAME="NONAME"
 
     if [ -n "$MGW_EXENAME" ]

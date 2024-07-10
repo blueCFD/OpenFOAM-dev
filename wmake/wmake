@@ -9,6 +9,8 @@
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
 # 2016-07-13&26 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 # 2017-10-07 FSD blueCAPE Lda: Modifications for blueCFD-Core 2017-1
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.

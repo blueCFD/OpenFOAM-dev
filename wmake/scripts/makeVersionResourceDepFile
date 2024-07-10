@@ -1,6 +1,8 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
 # 2016-12-07 blueCAPE Lda: Moved functionality from makeVersionResourceFile
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
