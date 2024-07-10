@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # License
 #
-#    Copyright (C) 2011-2020 blueCAPE Lda
+#    Copyright (C) 2011-2025 FS Dynamics Portugal (FSD blueCAPE Lda)
 #
 #    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
 #    For more information about these patches, visit:
@@ -101,7 +101,7 @@ LIBSMUSTLOAD=$(echo $LIBSMUSTLOAD | sed -e 's=\ =,=g')
 if [ $(echo $LIBSMUSTLOAD | sed 's=,=\n=g' | wc -l) -gt 0 \
      -a -n "$LIBSMUSTLOAD" ]
 then
-  echo 'EXE_INC += -DLIBS_TO_LOAD="\"'$LIBSMUSTLOAD'\""' >> $opFile
+  echo 'EXE_INC += -DLIBS_TO_LOAD="\"'$LIBSMUSTLOAD'\""' >> $fiFile
 
   echo "Forced DLL loading dependencies added to: $exeName"
 fi

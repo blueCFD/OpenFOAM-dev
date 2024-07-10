@@ -1,6 +1,8 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
 # 2016-12-07 blueCAPE Lda: Moved functionality from makeVersionResourceFile
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -32,15 +34,15 @@
 #     makeVersionResourceSListFile
 #
 # Description
-#     Updates the 'sourceFiles' file, to ensure that the version resource file
-#     is compiled.
+#     Updates the '$(OBJECTS_DIR)/files' file, to ensure that the version
+#     resource file is compiled.
 #
 #------------------------------------------------------------------------------
 
 # Provided by makefiles/files
 OBJECTS_DIR=$1
 VERSIONFILE=$2
-SFILES=$3
+MF_FILES=$3
 
 # Change to the $OBJECTS_DIR directory
 if [ ! -d "$OBJECTS_DIR" ]
@@ -52,12 +54,10 @@ fi
 # Plug in the version resource file for being compiled along
 FILE_NAMEwEXT=${VERSIONFILE##*/}
 
-if ! grep -q "$FILE_NAMEwEXT" $SFILES
+if ! grep -q "$FILE_NAMEwEXT" $MF_FILES
 then
-  # Update sourceFiles
-  sed -i -e '$s/$/\\/' $SFILES
-
-  echo "$FILE_NAMEwEXT" >> $SFILES
+  # Update $(OBJECTS_DIR)/files
+  echo "SOURCE += $FILE_NAMEwEXT" >> $MF_FILES
 fi
 
 #------------------------------------------------------------------------------
