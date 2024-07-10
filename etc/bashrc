@@ -139,7 +139,7 @@ export WM_MPLIB=SYSTEMOPENMPI
 export WM_OSTYPE=POSIX
 
 #- Decomposition libraries:
-#    <library>_TYPE = none | system | ThirdParty (OpenFOAM)
+#    <library>_TYPE = none | system | ThirdParty (OpenFOAM) | MSYS2 | blueCFDCore
 export SCOTCH_TYPE=ThirdParty
 export METIS_TYPE=none
 export PARMETIS_TYPE=none

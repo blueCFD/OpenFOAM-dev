@@ -62,6 +62,16 @@ OpenFOAM | ThirdParty)
     # Clean up
     unset parMetisSrcDir
     ;;
+
+MSYS2)
+    export PARMETIS_VERSION=parmetis-$(pacman -Q mingw-w64-x86_64-parmetis | sed -e 's=.* ==')
+    export PARMETIS_ARCH_PATH=/mingw64
+    ;;
+
+blueCFDCore)
+    export PARMETIS_VERSION=parmetis-5.1.0
+    export PARMETIS_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER$WM_PRECISION_OPTION$WM_LABEL_OPTION/parmetis-$PARMETIS_VERSION
+    ;;
 esac
 
 # Unload functions
