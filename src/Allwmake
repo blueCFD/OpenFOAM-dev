@@ -59,6 +59,17 @@ wmake $targetType surfMesh
 wmake $targetType triSurface
 wmake $targetType meshTools
 
+# Build libraries needed by the other libraries after these
+if isMinGW; then
+  # finiteVolume, extrudeModel and polyTopoChange are needed by the Decomposition methods
+  wmake $targetType finiteVolume
+  wmake $targetType mesh/extrudeModel
+  wmake $targetType polyTopoChange
+
+  # Decomposition methods are needed for dummyThirdParty
+  wmake $targetType parallel/decompose/decompositionMethods
+fi
+
 # Decomposition methods needed by dummyThirdParty
 # (dummy metis, scotch etc) needed by e.g. meshTools
 dummyThirdParty/Allwmake $targetType $*
