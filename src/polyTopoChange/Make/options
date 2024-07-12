@@ -13,6 +13,3 @@ LIB_LIBS = \
     -lmeshCheck \
     -ltriSurface \
     -lextrudeModel
-
-LIB_LIBS += \
-    -lmeshTools
