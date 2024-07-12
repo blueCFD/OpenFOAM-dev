@@ -97,6 +97,8 @@ done > "${TMP_SCRIPT}"
 if [ $(cat "${TMP_SCRIPT}" | wc -l) -gt 0 ]
 then
 
+    sed -i -e '$ s= \\$==' "${TMP_SCRIPT}"
+
     echo "Libraries not listed in Make/options and which were expected to exist:"
     cat "${TMP_SCRIPT}"
 
