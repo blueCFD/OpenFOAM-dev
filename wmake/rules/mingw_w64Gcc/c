@@ -12,5 +12,7 @@ ctoo        = $(WM_SCHEDULER) $(cc) $(cFLAGS) -c $< -o $@
 
 LINK_LIBS   = $(cDBUG)
 
-LINKLIBSO   = $(cc) $(cFLAGS) -Wl,--output-def,$(LIB).def -Wl,--out-implib,$(LIB).a -Wl,--enable-auto-import -shared
+LINKLIBSO   = $(cc) $(cFLAGS) -Wl,--output-def,$(LIB).def \
+                -Wl,--out-implib,$(LIB).a -Wl,--enable-auto-import -shared
+
 LINKEXE     = $(cc) $(cFLAGS) -Wl,--enable-auto-import,--force-exe-suffix

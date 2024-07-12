@@ -1,20 +1,23 @@
 SUFFIXES += .C
 
-c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter \
-              -Wno-invalid-offsetof -Wno-attributes
+c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor \
+              -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes
 
-# Suppress some warnings for flex++ and CGAL
+# Suppress some warnings for flex++
 c++LESSWARN = -Wno-old-style-cast -Wno-unused-local-typedefs -Wno-array-bounds
 
-CC          = $$($(WM_DIR)/scripts/makeReinterpretExePath $(WM_CXX)) -std=c++11
+CC          = $$($(WM_DIR)/scripts/makeReinterpretExePath $(WM_CXX)) -std=c++14
 
 include $(DEFAULT_RULES)/c++$(WM_COMPILE_OPTION)
 
-ptFLAGS     = -DNoRepository -ftemplate-depth-100 -D_FILE_OFFSET_BITS=64 -D_MODE_T_
+ptFLAGS     = -DNoRepository -ftemplate-depth-100 -D_FILE_OFFSET_BITS=64 \
+              -D_MODE_T_
 
-c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) $(LIB_HEADER_DIRS)
+c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) \
+              $(LIB_HEADER_DIRS)
 
-Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $(shell $(WM_DIR)/scripts/makeFileLongPath $@)
+Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o \
+                  $(shell $(WM_DIR)/scripts/makeFileLongPath $@)
 cxxtoo      = $(Ctoo)
 cctoo       = $(Ctoo)
 cpptoo      = $(Ctoo)
@@ -23,5 +26,7 @@ LINK_LIBS   = $(c++DBUG)
 
 # Tried using -Wl,-no-undefined,--enable-runtime-pseudo-reloc
 # but didn't forgive undefined symbols during linking
-LINKLIBSO   = $(CC) $(c++FLAGS) -Wl,--output-def,$(LIB).def -Wl,--out-implib,$(LIB).a -Wl,--enable-auto-import -shared
+LINKLIBSO   = $(CC) $(c++FLAGS) -Wl,--output-def,$(LIB).def \
+                -Wl,--out-implib,$(LIB).a -Wl,--enable-auto-import -shared
+
 LINKEXE     = $(CC) $(c++FLAGS) -Wl,--enable-auto-import,--force-exe-suffix
