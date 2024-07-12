@@ -45,7 +45,7 @@ Modifications
 
 #include "sigWriteNow.H"
 #include "error.H"
-#include "jobInfo_.H"
+#include "jobInfo.H"
 #include "IOstreams.H"
 #include "Time.T.H"
 
