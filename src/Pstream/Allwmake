@@ -13,16 +13,10 @@ wmakeMpiLib()
     for libName
     do
     (
-        export WM_OPTIONS="$WM_OPTIONS$WM_MPLIB"
+        WM_OPTIONS="$WM_OPTIONS$WM_MPLIB"
         whichmpi="$WM_PROJECT_DIR/platforms/$WM_OPTIONS/src/Pstream/$libName/using:$FOAM_MPI"
         [ -e "$whichmpi" ] || wclean $libName
         wmake $targetType $libName
-
-        if [ ! -d "${whichmpi%/*}" ]
-        then
-            mkdir -p "${whichmpi%/*}"
-        fi
-
         touch "$whichmpi"
     )
     done
