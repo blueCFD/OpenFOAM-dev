@@ -9,6 +9,8 @@
 # 2016-07-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-1
 # 2017-09-xx blueCAPE Lda: Modifications for blueCFD-Core 2016-2
 # 2017-10-xx blueCAPE Lda: Modifications for blueCFD-Core 2017-1
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -193,8 +195,8 @@ $(EXE)$(EXE_EXT): $(OBJECTS)
 	    $(EXE_LIBS) $(PROJECT_LIBS) $(SYS_LIBS) \
 	    $(LINK_LIBS) $(GLIBS) -o $(EXE)$(EXE_EXT)
 ifneq ($(CV2PDB_PATH),)
-	$(call QUIET_MESSAGE,cv2pdb,$(EXE)$(EXE_EXT))
-	$E $(CV2PDB_PATH)/cv2pdb.exe $(EXE)$(EXE_EXT) || \
+	$(call QUIET_MESSAGE,cv2pdb$(WM_ARCH_OPTION),$(EXE)$(EXE_EXT))
+	$E $(CV2PDB_PATH)/cv2pdb$(WM_ARCH_OPTION).exe $(EXE)$(EXE_EXT) || \
 		(strip --strip-unneeded $(EXE)$(EXE_EXT); \
 		$(WM_SCRIPTS)/infoCV2PDBworkaround)
 endif
@@ -227,8 +229,8 @@ $(LIB).$(SO): $(OBJECTS)
 	$E $(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
 	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
 ifneq ($(CV2PDB_PATH),)
-	$(call QUIET_MESSAGE,cv2pdb,$(LIB).$(SO))
-	$E $(CV2PDB_PATH)/cv2pdb.exe $(LIB).$(SO) || \
+	$(call QUIET_MESSAGE,cv2pdb$(WM_ARCH_OPTION),$(LIB).$(SO))
+	$E $(CV2PDB_PATH)/cv2pdb$(WM_ARCH_OPTION).exe $(LIB).$(SO) || \
 		(strip --strip-unneeded $(LIB).$(SO); \
 		$(WM_SCRIPTS)/infoCV2PDBworkaround)
 endif
