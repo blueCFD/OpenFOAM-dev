@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # License
 #
-#    Copyright (C) 2020 blueCAPE Lda
+#    Copyright (C) 2020-24 FS Dynamics Portugal (FSD blueCAPE Lda)
 #
 #    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
 #    For more information about these patches, visit:
@@ -27,7 +27,7 @@
 #     wmakeListAllIncludedLibraries
 #
 # Description
-#     Script for listing 
+#     Script for listing libraries that should be listed to be included.
 #
 #   NOTE: this script was partially based on the wmake script.
 #
@@ -54,12 +54,24 @@ done
 
 findObjectDir .
 
-EXE_INC=$(grep -e "EXE_INC.*=" $objectsDir/options | sed 's=EXE\_INC.*\=[ ]*==')
+EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' Make/options | grep -e "EXE_INC.*=" | sed 's=EXE\_INC.*\=[ ]*==')
 FILES_INC=$(echo $EXE_INC | \
             sed -e "s/\-I\([a-zA-Z0-9]*\ *\)/\1/g" \
-                -e 's/(LIB_SRC)/FOAM_SRC/g' | \
+                -e 's/(LIB_SRC)/FOAM_SRC/g' \
+                -e 's/(FOAM_MODULES)/FOAM_MODULES/g' | \
             sed -e 's=[ ]=\n=g' -e 's=lnInclude=Make/files=g' | \
             grep -v -e "=" -e "EXE_INC")
 
 # Use only the libraries that we can find
-eval 'grep -e "^LIB ="' $FILES_INC | sed -e 's=.*/lib=-l='
+EXPECTED_LIBS=$(eval 'grep -e "^LIB ="' $FILES_INC | sed -e 's=.*/lib=-l=')
+
+echo "Libraries not listed in Make/options and which were expected to exist:"
+for lib in ${EXPECTED_LIBS}
+do
+
+    if ! grep -q -e "${lib}[ \\$]" Make/options
+    then
+        echo "    ${lib}"
+    fi
+
+done
