@@ -61,7 +61,8 @@ Foam::patchWriter::patchWriter
     nearCellValue_(nearCellValue),
     fName_(fName),
     patchIndices_(patchIDs),
-    os_(fName.c_str())
+    os_(fName.c_str(),
+        std::ios_base::out|std::ios_base::binary) //a must for Windows!
 {
     const fvMesh& mesh = vMesh_.mesh();
     const polyBoundaryMesh& patches = mesh.boundaryMesh();
