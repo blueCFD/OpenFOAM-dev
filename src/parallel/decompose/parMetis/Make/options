@@ -12,3 +12,7 @@ LIB_LIBS =  \
     $(if $(PARMETIS_LIB_DIR),-L$(PARMETIS_LIB_DIR)) \
     -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
     -lparmetis
+
+LIB_LIBS += \
+    -ldecompositionMethods
+

@@ -12,3 +12,6 @@ LIB_LIBS = \
     $(if $(ZOLTAN_LIB_DIR),-L$(ZOLTAN_LIB_DIR)) \
     -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
     -lzoltan
+
+LIB_LIBS += \
+    -ldecompositionMethods
