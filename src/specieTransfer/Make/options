@@ -19,3 +19,8 @@ LIB_LIBS = \
     -lmomentumTransportModels \
     -lcompressibleMomentumTransportModels \
     -lfluidThermoThermophysicalTransportModels
+
+LIB_LIBS += \
+    -lphysicalProperties \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel

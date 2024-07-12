@@ -18,3 +18,8 @@ LIB_LIBS = \
     -lsampling \
     -lfvModels \
     -lfvConstraints
+
+LIB_LIBS += \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lthermophysicalTransportModel

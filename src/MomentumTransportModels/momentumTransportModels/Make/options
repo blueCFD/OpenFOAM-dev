@@ -6,3 +6,6 @@ EXE_INC = \
 LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools
+
+LIB_LIBS += \
+    -lphysicalProperties

@@ -47,3 +47,10 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lfvModels \
     -lfvConstraints
+
+EXE_LIBS += \
+    -lphysicalProperties \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels \
+    -ltriSurface

@@ -22,3 +22,10 @@ LIB_LIBS = \
     -lsampling \
     -lfvModels \
     -lfvConstraints
+
+LIB_LIBS += \
+    -lfilmCompressibleMomentumTransportModels \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel

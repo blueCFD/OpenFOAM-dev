@@ -7,3 +7,6 @@ EXE_LIBS = \
     -lgenericFvFields \
     -lfiniteVolume \
     -lmeshTools
+
+EXE_LIBS += \
+    -lgenericFields

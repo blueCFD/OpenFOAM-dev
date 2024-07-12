@@ -7,3 +7,7 @@ EXE_INC = \
 LIB_LIBS = \
     -ldecompositionMethods \
     -lpolyTopoChange
+
+LIB_LIBS += \
+    -lfiniteVolume \
+    -lmeshTools

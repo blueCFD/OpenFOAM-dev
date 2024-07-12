@@ -13,3 +13,7 @@ LIB_LIBS = \
     -lspecie \
     -lfiniteVolume \
     -lmeshTools
+
+LIB_LIBS += \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels

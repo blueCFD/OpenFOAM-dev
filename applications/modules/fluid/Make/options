@@ -19,3 +19,13 @@ LIB_LIBS = \
     -lfluidThermophysicalModels \
     -lcompressibleMomentumTransportModels \
     -lcoupledThermophysicalTransportModels
+
+LIB_LIBS += \
+    -lphysicalProperties \
+    -lmomentumTransportModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lsampling

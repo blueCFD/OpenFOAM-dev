@@ -22,4 +22,6 @@ LIB_LIBS += \
     -lspecie \
     -lreactionThermophysicalModels \
     -lpsiReactionThermophysicalTransportModels \
-    -lrhoReactionThermophysicalTransportModels
+    -lrhoReactionThermophysicalTransportModels \
+    -lphysicalProperties \
+    -lmulticomponentThermophysicalModels

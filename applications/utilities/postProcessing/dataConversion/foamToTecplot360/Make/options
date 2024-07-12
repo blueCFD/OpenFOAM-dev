@@ -12,3 +12,7 @@ EXE_LIBS = \
     -lpolyTopoChange \
     -lgenericFvFields \
     -L$(FOAM_EXT_LIBBIN) -ltecio
+
+EXE_LIBS += \
+    -lfiniteVolume \
+    -lmeshTools

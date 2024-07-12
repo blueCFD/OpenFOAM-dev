@@ -8,3 +8,10 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lfluidSolver
+
+LIB_LIBS += \
+    -lmomentumTransportModels \
+    -lincompressibleMomentumTransportModels \
+    -lphysicalProperties \
+    -lfiniteVolume \
+    -lmeshTools
