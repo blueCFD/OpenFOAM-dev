@@ -7,4 +7,5 @@ EXE_LIBS = \
     -lchemistryModel
 
 EXE_LIBS += \
-    -lspecie
+    -lspecie \
+    -lmulticomponentThermophysicalModels

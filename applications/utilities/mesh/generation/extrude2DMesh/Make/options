@@ -11,3 +11,6 @@ EXE_LIBS = \
     -lextrude2DMesh \
     -lgenericPatches \
     -lextrudeModel
+
+EXE_LIBS += \
+    -lfiniteVolume

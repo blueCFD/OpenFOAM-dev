@@ -26,3 +26,7 @@ LIB_LIBS = \
     -lfvModels \
     -lfvConstraints \
     -lsampling
+
+LIB_LIBS += \
+    -lVoFSolver \
+    -lfluidSolver

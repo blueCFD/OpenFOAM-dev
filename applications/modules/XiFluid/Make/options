@@ -33,3 +33,9 @@ LIB_LIBS = \
     -lfvConstraints \
     -lsampling \
     -lmeshTools
+
+LIB_LIBS += \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels

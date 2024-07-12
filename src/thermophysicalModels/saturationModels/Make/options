@@ -18,4 +18,11 @@ LIB_LIBS = \
 
 LIB_LIBS += \
     -lfiniteVolume \
-    -lphaseSystem
+    -lphaseSystem \
+    -lphysicalProperties \
+    -lthermophysicalProperties \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels \
+    -lmeshTools \
+    -lsampling

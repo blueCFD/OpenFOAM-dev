@@ -19,3 +19,7 @@ LIB_LIBS = \
     -llagrangian \
     -L$(FOAM_LIBBIN) \
     $(GLIBS)
+
+LIB_LIBS += \
+    -lmeshTools \
+    -lfiniteVolume

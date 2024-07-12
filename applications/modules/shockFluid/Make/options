@@ -21,3 +21,9 @@ LIB_LIBS = \
     -lmeshTools \
     -lfvModels \
     -lfvConstraints
+
+LIB_LIBS += \
+    -lphysicalProperties \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels

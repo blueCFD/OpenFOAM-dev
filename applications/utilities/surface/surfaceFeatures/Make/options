@@ -11,3 +11,7 @@ EXE_LIBS = \
     -ltriSurface \
     -lsampling \
     -lfileFormats
+
+EXE_LIBS += \
+    -lfiniteVolume \
+    -lsurfMesh

@@ -31,3 +31,9 @@ LIB_LIBS = \
     -lfvModels \
     -lfvConstraints \
     -lsampling
+
+LIB_LIBS += \
+    -ltwoPhaseSolver \
+    -lVoFSolver \
+    -lfluidSolver \
+    -ltwoPhaseMixture

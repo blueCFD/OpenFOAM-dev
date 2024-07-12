@@ -14,4 +14,8 @@ EXE_LIBS = \
 
 EXE_LIBS += \
     -lfluidThermophysicalModels \
-    -lreactionThermophysicalModels
+    -lreactionThermophysicalModels \
+    -lphysicalProperties \
+    -lspecie \
+    -lmulticomponentThermophysicalModels \
+    -lODE \

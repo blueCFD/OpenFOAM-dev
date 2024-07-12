@@ -9,3 +9,7 @@ LIB_LIBS = \
     -lphysicalProperties \
     -lfiniteVolume \
     -lmeshTools
+
+LIB_LIBS += \
+    -lmomentumTransportModels \
+    -lincompressibleMomentumTransportModels

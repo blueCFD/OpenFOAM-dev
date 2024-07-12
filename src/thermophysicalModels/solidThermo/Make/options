@@ -12,3 +12,6 @@ LIB_LIBS = \
     -lspecie \
     -lfluidThermophysicalModels \
     -lmulticomponentThermophysicalModels
+
+LIB_LIBS += \
+    -lphysicalProperties

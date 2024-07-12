@@ -26,4 +26,6 @@ LIB_LIBS = \
     -lsampling
 
 LIB_LIBS += \
+    -lVoFSolver \
+    -lfluidSolver \
     -linterfaceProperties

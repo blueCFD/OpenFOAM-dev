@@ -14,3 +14,6 @@ LIB_LIBS = \
     -lfvMeshMoversMotionSolver \
     -lfiniteVolume \
     -lfileFormats
+
+LIB_LIBS += \
+    -lforces
