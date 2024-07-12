@@ -67,6 +67,12 @@ LOCAL_PATHS_INCLUDE = $(OBJECTS_DIR)/includeHeaderPaths
 
 include $(OPTIONS)
 
+#------------------------------------------------------------------------------
+# Set the directory containing the wmake scripts
+#------------------------------------------------------------------------------
+
+WM_SCRIPTS   = $(WM_DIR)/scripts
+
 
 #------------------------------------------------------------------------------
 # Scan Make/files for source file names and create the SOURCE entry
