@@ -45,7 +45,7 @@ Modifications
 
 #include "sigWriteNow.H"
 #include "error.H"
-#include "JobInfo.H"
+#include "jobInfo_.H"
 #include "IOstreams.H"
 #include "Time.T.H"
 
@@ -59,36 +59,6 @@ int sigWriteNow::signal_
 (
     debug::optimisationSwitch("writeNowSignal", -1)
 );
-
-// Register re-reader
-class addwriteNowSignalToOpt
-:
-    public ::Foam::simpleRegIOobject
-{
-
-public:
-
-    addwriteNowSignalToOpt(const char* name)
-    :
-        ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
-    {}
-
-    virtual ~addwriteNowSignalToOpt()
-    {}
-
-    virtual void readData(Foam::Istream& is)
-    {
-        sigWriteNow::signal_ = readLabel(is);
-        sigWriteNow::set(writeInfoHeader);
-    }
-
-    virtual void writeData(Foam::Ostream& os) const
-    {
-        os << sigWriteNow::signal_;
-    }
-};
-
-addwriteNowSignalToOpt addwriteNowSignalToOpt_("writeNowSignal");
 
 } // End namespace Foam
 

@@ -48,7 +48,7 @@ Class
 
 #include "error.H"
 #include "sigSegv.H"
-#include "JobInfo.H"
+#include "jobInfo_.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -72,7 +72,7 @@ void Foam::sigSegv::sigSegvHandler(int)
     }
 
     // Update jobInfo file
-    jobInfo.signalEnd();
+    jobInfo_.signalEnd();
 
     error::printStack(Perr);
 

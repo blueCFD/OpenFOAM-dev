@@ -505,11 +505,11 @@ bool chDir(const fileName& dir)
 }
 
 
-bool mkDir(const fileName& pathName, const mode_t mode)
+bool mkDir(const fileName& filePath, const mode_t mode)
 {
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : pathName:" << pathName << " mode:" << mode
+        Pout<< FUNCTION_NAME << " : filePath:" << filePath << " mode:" << mode
             << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
@@ -517,15 +517,15 @@ bool mkDir(const fileName& pathName, const mode_t mode)
         }
     }
 
-    if (pathName.empty())
+    if (filePath.empty())
     {
         return false;
     }
 
-    bool success = ::CreateDirectory(pathName.c_str(), NULL);
+    bool success = ::CreateDirectory(filePath.c_str(), NULL);
     if (success)
     {
-        chMod(pathName, mode);
+        chMod(filePath, mode);
     }
     else 
     {
@@ -541,11 +541,11 @@ bool mkDir(const fileName& pathName, const mode_t mode)
             case ERROR_PATH_NOT_FOUND:
             {
                 // Part of the path does not exist so try to create it
-                const fileName& parentName = pathName.path();
+                const fileName& parentName = filePath.path();
 
                 if (parentName.size() && mkDir(parentName, mode))
                 {
-                    success = mkDir(pathName, mode);
+                    success = mkDir(filePath, mode);
                 }
                 
                 break;
@@ -555,7 +555,7 @@ bool mkDir(const fileName& pathName, const mode_t mode)
         if (!success) 
         {
             FatalErrorInFunction
-              << "Couldn't create directory: " << pathName
+              << "Couldn't create directory: " << filePath
               << " " << MSwindows::getLastError()
               << exit(FatalError);
         }
@@ -935,14 +935,10 @@ bool cp(const fileName& src, const fileName& dest, const bool followLink)
         }
 
         // Copy character data.
-        char ch;
-        while (srcStream.get(ch))
-        {
-            destStream.put(ch);
-        }
+        destStream << srcStream.rdbuf();
 
         // Final check.
-        if (!srcStream.eof() || !destStream)
+        if (!destStream)
         {
             return false;
         }
@@ -1434,7 +1430,7 @@ fileNameList dlLoaded()
         InfoInFunction
             << "determined loaded libraries :" << libs.size() << endl;
     }
-    return move(libs);
+    return libs;
 }
 
 string toUnixPath(const string & path)
