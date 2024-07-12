@@ -49,7 +49,7 @@ Class
 #include "error.H"
 #include "sigFpe.H"
 
-#include "jobInfo_.H"
+#include "jobInfo.H"
 #include "OSspecific.H"
 #include "IOstreams.H"
 

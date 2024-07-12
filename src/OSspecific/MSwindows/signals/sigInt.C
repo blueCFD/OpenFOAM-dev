@@ -48,7 +48,7 @@ Class
 
 #include "error.H"
 #include "sigInt.H"
-#include "jobInfo_.H"
+#include "jobInfo.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

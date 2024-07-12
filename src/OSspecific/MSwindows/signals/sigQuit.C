@@ -48,7 +48,7 @@ Class
 
 #include "error.H"
 #include "sigQuit.H"
-#include "jobInfo_.H"
+#include "jobInfo.H"
 #include "IOstreams.H"
 
 // SIGBREAK is best alternative to SIGQUIT on windows
