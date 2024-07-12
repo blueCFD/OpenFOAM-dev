@@ -23,5 +23,5 @@ LIB_LIBS = \
     -lsampling \
     -lmeshTools
 
-EXE_LIBS += \
+LIB_LIBS += \
      -lsurfaceFilmModels

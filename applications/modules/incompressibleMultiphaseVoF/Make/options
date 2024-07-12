@@ -25,5 +25,5 @@ LIB_LIBS = \
     -lfvConstraints \
     -lsampling
 
-EXE_LIBS += \
+LIB_LIBS += \
     -linterfaceProperties
