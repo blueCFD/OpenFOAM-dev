@@ -37,10 +37,6 @@
 #------------------------------------------------------------------------------
 Script=${0##*/}
 
-# Source the wmake functions
-# shellcheck source=scripts/wmakeFunctions
-. "${0%/*}/scripts/wmakeFunctions"
-
 #
 # Check environment variables
 #
@@ -52,21 +48,42 @@ do
     }
 done
 
-findObjectDir .
+if [ $(cat Make/options | wc -l) -eq 0 ]
+then
+    echo "WARNING: Make/options is empty."
+    exit 0
+fi
+
+CODE=0
 
 EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' Make/options | grep -e "EXE_INC.*=" | sed 's=EXE\_INC.*\=[ ]*==')
-FILES_INC=$(echo $EXE_INC | \
+FILES_INC=
+
+if [ -n "${EXE_INC}" ]
+then
+    FILES_INC=$(echo $EXE_INC | \
             sed -e "s/\-I\([a-zA-Z0-9]*\ *\)/\1/g" \
+                -e 's/(FOAM_SRC)/FOAM_SRC/g' \
                 -e 's/(LIB_SRC)/FOAM_SRC/g' \
-                -e 's/(FOAM_MODULES)/FOAM_MODULES/g' | \
+                -e 's/(WM_THIRD_PARTY_DIR)/WM_THIRD_PARTY_DIR/g' \
+                -e 's/(FOAM_MODULES)/FOAM_MODULES/g' \
+                -e 's/\$(.*)//g' \
+                | \
             sed -e 's=[ ]=\n=g' -e 's=lnInclude=Make/files=g' | \
             grep -v -e "=" -e "EXE_INC")
+fi
 
 # Use only the libraries that we can find
+if [ -z "${FILES_INC}" ]
+then
+    echo "WARNING: Make/options as good as empty."
+    exit 0
+fi
+
 EXPECTED_LIBS=$(eval 'grep -e "^LIB ="' $FILES_INC | sed -e 's=.*/lib=-l=')
 
-echo "Libraries not listed in Make/options and which were expected to exist:"
-echo "LIB_LIBS += \\"
+TMP_SCRIPT="Make/options.tmp"
+
 for lib in ${EXPECTED_LIBS}
 do
 
@@ -75,4 +92,25 @@ do
         echo "    ${lib} \\"
     fi
 
-done
+done > "${TMP_SCRIPT}"
+
+if [ $(cat "${TMP_SCRIPT}" | wc -l) -gt 0 ]
+then
+
+    echo "Libraries not listed in Make/options and which were expected to exist:"
+    cat "${TMP_SCRIPT}"
+
+    echo -e "\nLIB_LIBS += \\" >> Make/options
+    cat "${TMP_SCRIPT}" >> Make/options
+
+    echo -e "\nHacked this into the Make/options file for convenience."
+    CODE=2
+
+else
+
+    echo "Note: No change required."
+
+fi
+
+rm "${TMP_SCRIPT}"
+exit $CODE
