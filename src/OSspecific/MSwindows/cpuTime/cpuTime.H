@@ -74,10 +74,8 @@ class cpuTime
     // Private data
 
         std::clock_t startTime_;
-        mutable std::clock_t lastTime_;
-        mutable std::clock_t newTime_;
-
-        static void getTime(std::clock_t& t);
+        mutable std::clock_t prevTime_;
+        mutable std::clock_t curTime_;
 
         static double timeDifference
         (

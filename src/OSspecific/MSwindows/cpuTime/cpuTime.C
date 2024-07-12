@@ -58,31 +58,24 @@ namespace Foam
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 inline
-void cpuTime::getTime(std::clock_t& t)
-{
-    t = std::clock();
-}
-
-
-inline
 double cpuTime::timeDifference
 (
     const std::clock_t& start,
     const std::clock_t& end
 )
 {
-    const double difference = std::difftime(end, start)/CLOCKS_PER_SEC;
-    return difference;
+    return std::difftime(end, start)/CLOCKS_PER_SEC;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 cpuTime::cpuTime()
+:
+    startTime_(std::clock()),
+    prevTime_(startTime_),
+    curTime_(startTime_)
 {
-    getTime(startTime_);
-    lastTime_ = startTime_;
-    newTime_ = startTime_;
 }
 
 
@@ -90,18 +83,16 @@ cpuTime::cpuTime()
 
 double cpuTime::elapsedCpuTime() const
 {
-    getTime(newTime_);
-    const double elapsed = timeDifference(startTime_, newTime_);
-    return elapsed;
+    curTime_ = std::clock();
+    return timeDifference(startTime_, curTime_);
 }
 
 
 double cpuTime::cpuTimeIncrement() const
 {
-    lastTime_ = newTime_;
-    getTime(newTime_);
-    const double increment = timeDifference(lastTime_, newTime_);
-    return increment;
+    prevTime_ = curTime_;
+    curTime_ = std::clock();
+    return timeDifference(prevTime_, curTime_);
 }
 
 
