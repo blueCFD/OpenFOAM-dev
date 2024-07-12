@@ -7,3 +7,7 @@ LIB_LIBS = \
     -L$(METIS_ARCH_PATH)/lib \
     $(if $(METIS_LIB_DIR),-L$(METIS_LIB_DIR)) \
     -lmetis
+
+LIB_LIBS += \
+    -ldecompositionMethods
+
