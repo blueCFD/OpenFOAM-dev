@@ -4,20 +4,8 @@ EXE_INC = \
     -I$(LIB_SRC)/parallel/decompose/decompositionMethods/lnInclude \
     -I$(LIB_SRC)/renumber/renumberMethods/lnInclude
 
-#if !defined(WIN32) && !defined(WIN64)
-
 LIB_LIBS = \
     -L$(BOOST_ARCH_PATH)/lib -lboost_system \
     -lmeshTools \
     -ldecompositionMethods \
     -lrenumberMethods
-
-#else
-
-LIB_LIBS = \
-    -L$(BOOST_ARCH_PATH)/lib -lboost_system \
-    -lmeshTools \
-    -ldecompositionMethods \
-    -lrenumberMethods
-
-#endif

@@ -11,5 +11,5 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools
 
-EXE_LIBS += \
+LIB_LIBS += \
     -lincompressibleTransportModels
