@@ -6,11 +6,8 @@
 #   \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
-# 2017-09-13 blueCAPE Lda: Modifications for blueCFD-Core 2017
-# 2020-09-11 blueCAPE Lda: Modifications for blueCFD-Core 2020
-#------------------------------------------------------------------------------
 # License
-#     This file is a derivative work of OpenFOAM.
+#     This file is part of OpenFOAM.
 #
 #     OpenFOAM is free software: you can redistribute it and/or modify it
 #     under the terms of the GNU General Public License as published by
@@ -45,19 +42,5 @@ XiFluid solver module executed by the foamRun application:
 EOF
 
 exec env foamRun -solver XiFluid "$@"
-
-# Dirty hack for overriding path for when building with MSys2
-if onWin
-then
-    export CGAL_ARCH_PATH=/mingw64
-    export BOOST_ARCH_PATH=/mingw64
-fi
-
-if [ "$FOAM_VERBOSE" -a "$PS1" ]
-then
-    echo "Using BOOST and CGAL" 1>&2
-    echo "    $boost_version at $BOOST_ARCH_PATH" 1>&2
-    echo "    $cgal_version at $CGAL_ARCH_PATH" 1>&2
-fi
 
 #------------------------------------------------------------------------------
