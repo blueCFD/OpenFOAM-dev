@@ -48,7 +48,7 @@ Class
 
 #include "error.H"
 #include "sigInt.H"
-#include "JobInfo.H"
+#include "jobInfo_.H"
 #include "IOstreams.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -72,7 +72,7 @@ void Foam::sigInt::sigIntHandler(int)
     }
 
     // Update jobInfo file
-    jobInfo.signalEnd();
+    jobInfo_.signalEnd();
 
     // Throw signal (to old handler)
     ::raise(SIGINT);

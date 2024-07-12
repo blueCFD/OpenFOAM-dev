@@ -45,7 +45,7 @@ Modifications
 
 #include "sigStopAtWriteNow.H"
 #include "error.H"
-#include "JobInfo.H"
+#include "jobInfo_.H"
 #include "IOstreams.H"
 #include "Time.T.H"
 
@@ -58,39 +58,6 @@ namespace Foam
 int sigStopAtWriteNow::signal_
 (
     debug::optimisationSwitch("stopAtWriteNowSignal", -1)
-);
-
-// Register re-reader
-class addstopAtWriteNowSignalToOpt
-:
-    public ::Foam::simpleRegIOobject
-{
-
-public:
-
-    addstopAtWriteNowSignalToOpt(const char* name)
-    :
-        ::Foam::simpleRegIOobject(Foam::debug::addOptimisationObject, name)
-    {}
-
-    virtual ~addstopAtWriteNowSignalToOpt()
-    {}
-
-    virtual void readData(Foam::Istream& is)
-    {
-        sigStopAtWriteNow::signal_ = readLabel(is);
-        sigStopAtWriteNow::set(writeInfoHeader);
-    }
-
-    virtual void writeData(Foam::Ostream& os) const
-    {
-        os << sigStopAtWriteNow::signal_;
-    }
-};
-
-addstopAtWriteNowSignalToOpt addstopAtWriteNowSignalToOpt_
-(
-    "stopAtWriteNowSignal"
 );
 
 } // End namespace Foam
@@ -117,7 +84,7 @@ void Foam::sigStopAtWriteNow::sigHandler(int)
     }
 
     // Update jobInfo file
-    jobInfo.signalEnd();
+    jobInfo_.signalEnd();
 
     Info<< "sigStopAtWriteNow :"
         << " setting up write and stop at end of the next iteration"
