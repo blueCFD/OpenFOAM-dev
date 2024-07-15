@@ -434,6 +434,25 @@ Foam::fileName Foam::IOobject::filePath
 }
 
 
+void Foam::IOobject::replaceFileName(const Foam::word & from, 
+                                     const Foam::word & to)
+{
+    replacedFileNames_.insert(from, to);
+}
+
+
+const Foam::word & Foam::IOobject::uniqueFileName() const
+{
+    ListHashTable<word>::const_iterator findIt =
+        replacedFileNames_.find(name());
+
+    const word & diskFileName = (findIt == replacedFileNames_.end()) ?
+        name() : *findIt;
+
+    return diskFileName;
+}
+
+
 void Foam::IOobject::setBad(const string& s)
 {
     if (objState_ != GOOD)
