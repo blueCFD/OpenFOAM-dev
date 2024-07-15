@@ -16,9 +16,11 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools
 
-#if (defined( WIN32 ) || defined( WIN64 ))
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
+
 c++OPT := $(c++OPT:-gdwarf=) -Wa,-mbig-obj
-#endif
+
+endif
 
 LIB_LIBS += \
     -lphysicalProperties

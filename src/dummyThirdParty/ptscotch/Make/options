@@ -4,6 +4,8 @@ EXE_INC = \
 
 LIB_LIBS =
 
-#if defined( WIN32 ) || defined( WIN64 )
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
+
 LIB_LIBS += -ldecompositionMethods
-#endif
+
+endif

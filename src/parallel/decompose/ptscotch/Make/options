@@ -11,7 +11,7 @@ EXE_INC = \
     -I$(or $(PTSCOTCH_INCLUDE_DIR),/usr/include/scotch) \
     -I../decompositionMethods/lnInclude
 
-#if !defined( WIN32 ) && !defined( WIN64 )
+ifeq (,$(filter $(GFLAGS), WIN32 WIN64))
 
 LIB_LIBS = \
     -L$(SCOTCH_ARCH_PATH)/lib \
@@ -22,7 +22,7 @@ LIB_LIBS = \
     -lscotch \
     -lrt
 
-#else
+else
 
 PROJECT_LIBS = \
     -L$(FOAM_LIBBIN)  -l$(WM_PROJECT)  \
@@ -40,4 +40,4 @@ LIB_LIBS = \
     -ldecompositionMethods \
     $(PLIBS)
 
-#endif
+endif

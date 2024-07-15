@@ -3,6 +3,8 @@
 EXE_INC  = $(PFLAGS) $(PINC)
 LIB_LIBS = $(PLIBS)
 
-#if defined( WIN32 ) || defined( WIN64 )
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
+
 LIB_LIBS += -l$(WM_PROJECT)
-#endif
+
+endif

@@ -11,14 +11,14 @@ EXE_LIBS = \
     -lmeshTools \
     -lpolyTopoChange
 
-#if (defined( WIN32 ) || defined( WIN64 ))
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
 
 EXE_LIBS += \
     -lptscotchDecomp
 
-#else
+else
 
 EXE_LIBS += \
     -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp
 
-#endif
+endif

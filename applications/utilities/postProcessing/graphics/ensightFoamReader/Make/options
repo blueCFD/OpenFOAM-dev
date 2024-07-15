@@ -12,9 +12,9 @@ LIB_LIBS = \
     -llagrangian \
     $(PROJECT_LIBS)
 
-#if (defined( WIN64 ))
+ifneq (,$(filter $(GFLAGS), WIN64))
 
 EXE_INC += \
     -DWIN32
 
-#endif
+endif
