@@ -26,10 +26,20 @@ License
 #include "hydrostaticInitialisation.H"
 
 #include "fluidThermo.H"
+
+#if defined(WIN32) || defined(WIN64)
+#define FINITE_VOLUME_LOAD
+#endif
+
 #include "fvmLaplacian.H"
 #include "fvcDiv.H"
 #include "fvcSnGrad.H"
 #include "surfaceInterpolate.H"
+
+#if defined(WIN32) || defined(WIN64)
+#undef FINITE_VOLUME_LOAD
+#endif
+
 #include "constrainPressure.H"
 #include "uniformDimensionedFields.H"
 
