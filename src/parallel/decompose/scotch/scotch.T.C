@@ -33,7 +33,7 @@ Modifications
 
 \*---------------------------------------------------------------------------*/
 
-#include "scotch.H"
+#include "scotch.T.H"
 #include "addToRunTimeSelectionTable.H"
 #include "floatScalar.H"
 #include "Time.T.H"
