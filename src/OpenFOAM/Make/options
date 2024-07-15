@@ -1,7 +1,7 @@
 EXE_INC = \
     -I$(OBJECTS_DIR)
 
-ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
+ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
 
 # neutralize unwanted lib includes...
 PROJECT_LIBS =
