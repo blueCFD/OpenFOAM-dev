@@ -157,10 +157,7 @@ $(constraintFvPatchFields)/cyclicSlip/cyclicSlipFvPatchFields.C
 $(constraintFvPatchFields)/empty/emptyFvPatchFields.C
 $(constraintFvPatchFields)/jumpCyclic/jumpCyclicFvPatchFields.C
 $(constraintFvPatchFields)/processor/processorFvPatchFields.C
-/*
-# This one is included into $(constraintFvPatchFields)/processor/processorFvPatchField.H
 $(constraintFvPatchFields)/processor/processorFvPatchScalarField.C
-*/
 $(constraintFvPatchFields)/processorCyclic/processorCyclicFvPatchFields.C
 $(constraintFvPatchFields)/symmetryPlane/symmetryPlaneFvPatchFields.C
 $(constraintFvPatchFields)/symmetryPlane/symmetryPlaneFvPatchScalarField.C
