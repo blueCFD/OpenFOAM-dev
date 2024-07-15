@@ -19,6 +19,8 @@ if isMinGW; then
             echo "#else" >> $hackThisHeader
             echo "#include_next \"linear.H\"" >> $hackThisHeader
             echo "#endif" >> $hackThisHeader
+
+            rm ${hackThisHeader}.tmp
         )
     fi
 fi
