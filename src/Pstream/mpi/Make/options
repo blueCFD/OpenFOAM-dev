@@ -3,8 +3,8 @@
 EXE_INC  = $(PFLAGS) $(PINC)
 LIB_LIBS = $(PLIBS)
 
-#if defined( WIN32 ) || defined( WIN64 )
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
 PROJECT_LIBS = -L$(FOAM_LIBBIN) -l$(WM_PROJECT)
-#else
-PROJECT_LIBS =
-#endif
+else
+PROJECT_LIBS = 
+endif

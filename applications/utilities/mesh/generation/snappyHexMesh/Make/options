@@ -21,15 +21,15 @@ EXE_LIBS = \
     -lsnappyHexMesh
 
 
-#if (defined( WIN32 ) || defined( WIN64 ))
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
 
 EXE_LIBS += \
     -lscotchDecomp -lptscotchDecomp \
     -ltriSurface
 
-#else
+else
 
 EXE_LIBS += \
     -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp
 
-#endif
+endif

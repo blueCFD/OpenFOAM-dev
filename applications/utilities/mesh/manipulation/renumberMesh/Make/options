@@ -15,14 +15,14 @@ EXE_LIBS = \
     $(LINK_FLAGS) \
     -ldecompositionMethods
 
-#if (defined( WIN32 ) || defined( WIN64 ))
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
 
 EXE_LIBS += \
     -lscotchDecomp
 
-#else
+else
 
 EXE_LIBS += \
     -L$(FOAM_LIBBIN)/dummy -lmetisDecomp -lscotchDecomp
 
-#endif
+endif

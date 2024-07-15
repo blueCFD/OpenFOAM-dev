@@ -1,12 +1,12 @@
 EXE_INC = \
     -I$(OBJECTS_DIR)
 
-#if defined( WIN32 ) || defined( WIN64 )
+ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
 
-/*neutralize unwanted lib includes...*/
+# neutralize unwanted lib includes...
 PROJECT_LIBS =
 
-/* whole-archive is needed to ensure the static library is embedded */ 
+# whole-archive is needed to ensure the static library is embedded
 LIB_LIBS = \
     -Wl,-whole-archive -lOSspecific -Wl,-no-whole-archive \
     -L$(FOAM_LIBBIN)/dummy -lPstream \
@@ -14,11 +14,11 @@ LIB_LIBS = \
     -lregex \
     -L$(FOAM_EXT_LIBBIN) -lstack_trace
 
-#else
+else
 
 LIB_LIBS = \
     $(FOAM_LIBBIN)/libOSspecific.o \
     -L$(FOAM_LIBBIN)/dummy -lPstream \
     -lz
 
-#endif
+endif
