@@ -1,9 +1,4 @@
-// This hack was developed by Symscape, circa 2009 -------
-#if defined( WIN32 ) || defined( WIN64 )
-// Rename B to B_ to prevent name clashes on Windows with B
-IOobject::replaceFileName("B", "B_");
-#endif
-// End of hack --------------------------------------------
+#include "readCombustionProperties.H"
 
 Info<< "Reading thermophysical properties\n" << endl;
 
@@ -95,7 +90,11 @@ volScalarField K("K", 0.5*magSqr(U));
 Info<< "Creating the unstrained laminar flame speed\n" << endl;
 autoPtr<laminarFlameSpeed> unstrainedLaminarFlameSpeed
 (
-    laminarFlameSpeed::New(thermo)
+    laminarFlameSpeed::New
+    (
+        combustionProperties.subDict("laminarFlameSpeed"),
+        thermo
+    )
 );
 
 

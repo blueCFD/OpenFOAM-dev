@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,85 +23,66 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Gulder.H"
-#include "addToRunTimeSelectionTable.H"
+#include "SuModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiEqModels
-{
-    defineTypeNameAndDebug(Gulder, 0);
-    addToRunTimeSelectionTable(XiEqModel, Gulder, dictionary);
-}
+    defineTypeNameAndDebug(SuModel, 0);
+    defineRunTimeSelectionTable(SuModel, dictionary);
 }
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-bool Foam::XiEqModels::Gulder::readCoeffs(const dictionary& dict)
+bool Foam::SuModel::readCoeffs(const dictionary&)
 {
-    XiEqModel::readCoeffs(dict);
-
-    XiEqCoeff_ = dict.lookupOrDefault<scalar>("XiEqCoeff", 0.62);
-    uPrimeCoeff_ = dict.lookupOrDefault<scalar>("uPrimeCoeff", 1);
-
-    if (dict.found("SuMin"))
-    {
-        SuMin_.read(dict);
-    }
-
     return true;
 }
 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::Gulder::Gulder
+Foam::SuModel::SuModel
 (
-    const dictionary& dict,
     const psiuMulticomponentThermo& thermo,
-    const fluidThermoThermophysicalTransportModel& turbulence,
-    const volScalarField& Su
+    const fluidThermoThermophysicalTransportModel& thermoTransport
 )
 :
-    XiEqModel(thermo, turbulence, Su),
-    SuMin_("SuMin", 0.01*Su.average())
-{
-    readCoeffs(dict);
-}
+    thermo_(thermo),
+    thermoTransport_(thermoTransport),
+    turbulence_(thermoTransport.momentumTransport()),
+    Su_
+    (
+        IOobject
+        (
+            "Su",
+            thermo_.mesh().time().name(),
+            thermo_.mesh(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        thermo_.mesh(),
+        dimensionedScalar("0", dimVelocity, 0)
+    )
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::Gulder::~Gulder()
+Foam::SuModel::~SuModel()
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::XiEqModels::Gulder::XiEq() const
+bool Foam::SuModel::read(const dictionary& combustionProperties)
 {
-    const volScalarField up(sqrt((2.0/3.0)*turbulence_.k()));
-
-    tmp<volScalarField> tepsilon = turbulence_.epsilon();
-    const volScalarField& epsilon = tepsilon();
-
-    const volScalarField tauEta
+    return readCoeffs
     (
-        sqrt(mag(thermo_.muu()/(thermo_.rhou()*epsilon)))
+        combustionProperties.subDict("Su").optionalSubDict(type() + "Coeffs")
     );
-
-    const volScalarField Reta
-    (
-        up
-       /(
-            sqrt(epsilon*tauEta)
-          + dimensionedScalar(up.dimensions(), 1e-8)
-        )
-    );
-
-    return (1 + XiEqCoeff_*sqrt(up/max(Su_, SuMin_))*Reta);
 }
 
 

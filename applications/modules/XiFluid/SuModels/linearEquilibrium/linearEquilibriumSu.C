@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,85 +23,74 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Gulder.H"
+#include "linearEquilibriumSu.H"
+#include "laminarFlameSpeed.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiEqModels
+namespace SuModels
 {
-    defineTypeNameAndDebug(Gulder, 0);
-    addToRunTimeSelectionTable(XiEqModel, Gulder, dictionary);
+    defineTypeNameAndDebug(linearEquilibrium, 0);
+    addToRunTimeSelectionTable(SuModel, linearEquilibrium, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-bool Foam::XiEqModels::Gulder::readCoeffs(const dictionary& dict)
+bool Foam::SuModels::linearEquilibrium::readCoeffs(const dictionary& dict)
 {
-    XiEqModel::readCoeffs(dict);
+    return SuModel::readCoeffs(dict);
 
-    XiEqCoeff_ = dict.lookupOrDefault<scalar>("XiEqCoeff", 0.62);
-    uPrimeCoeff_ = dict.lookupOrDefault<scalar>("uPrimeCoeff", 1);
-
-    if (dict.found("SuMin"))
-    {
-        SuMin_.read(dict);
-    }
-
-    return true;
+    sigmaExt_.read(dict);
 }
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::Gulder::Gulder
+Foam::SuModels::linearEquilibrium::linearEquilibrium
 (
     const dictionary& dict,
     const psiuMulticomponentThermo& thermo,
-    const fluidThermoThermophysicalTransportModel& turbulence,
-    const volScalarField& Su
+    const fluidThermoThermophysicalTransportModel& turbulence
 )
 :
-    XiEqModel(thermo, turbulence, Su),
-    SuMin_("SuMin", 0.01*Su.average())
+    unstrained(dict, thermo, turbulence),
+    sigmaExt_("sigmaExt", dimless/dimTime, dict)
 {
-    readCoeffs(dict);
+    Su_.writeOpt() = IOobject::AUTO_WRITE;
 }
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::Gulder::~Gulder()
+Foam::SuModels::linearEquilibrium::~linearEquilibrium()
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::XiEqModels::Gulder::XiEq() const
+void Foam::SuModels::linearEquilibrium::correct()
 {
-    const volScalarField up(sqrt((2.0/3.0)*turbulence_.k()));
+    const fvMesh& mesh(thermo_.mesh());
 
-    tmp<volScalarField> tepsilon = turbulence_.epsilon();
-    const volScalarField& epsilon = tepsilon();
+    const volVectorField& U(turbulence_.U());
+    const volVectorField& n = mesh.lookupObject<volVectorField>("n");
+    const volScalarField& Xi = mesh.lookupObject<volScalarField>("Xi");
 
-    const volScalarField tauEta
+    const volScalarField sigmas
     (
-        sqrt(mag(thermo_.muu()/(thermo_.rhou()*epsilon)))
+        ((n & n)*fvc::div(U) - (n & fvc::grad(U) & n))/Xi
+      + (
+            (n & n)*fvc::div(Su_*n)
+          - (n & fvc::grad(Su_*n) & n)
+        )*(Xi + scalar(1))/(2*Xi)
     );
 
-    const volScalarField Reta
-    (
-        up
-       /(
-            sqrt(epsilon*tauEta)
-          + dimensionedScalar(up.dimensions(), 1e-8)
-        )
-    );
-
-    return (1 + XiEqCoeff_*sqrt(up/max(Su_, SuMin_))*Reta);
+    Su_ == Su0_()()*max(scalar(1) - sigmas/sigmaExt_, scalar(0.01));
 }
 
 

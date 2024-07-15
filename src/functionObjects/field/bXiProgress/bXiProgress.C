@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,85 +23,104 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Gulder.H"
+#include "bXiProgress.H"
+#include "volFields.H"
+#include "fvcGrad.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiEqModels
+namespace functionObjects
 {
-    defineTypeNameAndDebug(Gulder, 0);
-    addToRunTimeSelectionTable(XiEqModel, Gulder, dictionary);
+    defineTypeNameAndDebug(bXiProgress, 0);
+    addToRunTimeSelectionTable(functionObject, bXiProgress, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-bool Foam::XiEqModels::Gulder::readCoeffs(const dictionary& dict)
+void Foam::functionObjects::bXiProgress::writeFileHeader(const label i)
 {
-    XiEqModel::readCoeffs(dict);
-
-    XiEqCoeff_ = dict.lookupOrDefault<scalar>("XiEqCoeff", 0.62);
-    uPrimeCoeff_ = dict.lookupOrDefault<scalar>("uPrimeCoeff", 1);
-
-    if (dict.found("SuMin"))
+    if (Pstream::master())
     {
-        SuMin_.read(dict);
-    }
+        writeHeader(file(), "Combustion progress");
+        writeCommented(file(), "Time");
 
-    return true;
+        file() << tab << "progress";
+
+        file() << endl;
+    }
 }
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::Gulder::Gulder
+Foam::functionObjects::bXiProgress::bXiProgress
 (
-    const dictionary& dict,
-    const psiuMulticomponentThermo& thermo,
-    const fluidThermoThermophysicalTransportModel& turbulence,
-    const volScalarField& Su
+    const word& name,
+    const Time& runTime,
+    const dictionary& dict
 )
 :
-    XiEqModel(thermo, turbulence, Su),
-    SuMin_("SuMin", 0.01*Su.average())
+    fvMeshFunctionObject(name, runTime, dict),
+    logFiles(obr_, name)
 {
-    readCoeffs(dict);
+    read(dict);
 }
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::Gulder::~Gulder()
+Foam::functionObjects::bXiProgress::~bXiProgress()
 {}
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::XiEqModels::Gulder::XiEq() const
+bool Foam::functionObjects::bXiProgress::read(const dictionary& dict)
 {
-    const volScalarField up(sqrt((2.0/3.0)*turbulence_.k()));
+    functionObject::read(dict);
 
-    tmp<volScalarField> tepsilon = turbulence_.epsilon();
-    const volScalarField& epsilon = tepsilon();
+    resetName(typeName);
 
-    const volScalarField tauEta
-    (
-        sqrt(mag(thermo_.muu()/(thermo_.rhou()*epsilon)))
-    );
+    return true;
+}
 
-    const volScalarField Reta
-    (
-        up
-       /(
-            sqrt(epsilon*tauEta)
-          + dimensionedScalar(up.dimensions(), 1e-8)
-        )
-    );
 
-    return (1 + XiEqCoeff_*sqrt(up/max(Su_, SuMin_))*Reta);
+Foam::wordList Foam::functionObjects::bXiProgress::fields() const
+{
+    return wordList{"b"};
+}
+
+
+bool Foam::functionObjects::bXiProgress::execute()
+{
+    return true;
+}
+
+
+bool Foam::functionObjects::bXiProgress::write()
+{
+    const volScalarField& b =
+        mesh_.lookupObject<volScalarField>("b");
+
+    const scalar progress((scalar(1) - b)().weightedAverage(mesh_.V()).value());
+
+    logFiles::write();
+
+    if (Pstream::master())
+    {
+        writeTime(file());
+
+        file() << tab << progress;
+
+        file() << endl;
+    }
+
+    return true;
 }
 
 

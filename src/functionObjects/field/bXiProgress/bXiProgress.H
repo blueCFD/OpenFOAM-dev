@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,116 +22,118 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::XiEqModels::Gulder
+    Foam::functionObjects::bXiProgress
 
 Description
-    Simple model for the equilibrium flame wrinkling \c XiEq
-    based on Gulder's turbulent flame speed correlation
+    Writes the combustion progress of the Weller b-Xi combustion models.
 
-    References:
+    Example of function object specification:
     \verbatim
-        Gülder, Ö. L. (1991, January).
-        Turbulent premixed flame propagation models
-        for different combustion regimes.
-        In Symposium (International) on Combustion
-        (Vol. 23, No. 1, pp. 743-750). Elsevier.
-
-        Weller, H. G. (1993).
-        The development of a new flame area combustion model
-        using conditional averaging.
-        Thermo-fluids section report TF 9307.
-
-        Weller, H. G., Tabor, G., Gosman, A. D., & Fureby, C. (1998, January).
-        Application of a flame-wrinkling LES combustion model
-        to a turbulent mixing layer.
-        In Symposium (International) on combustion
-        (Vol. 27, No. 1, pp. 899-907). Elsevier.
+    bXiProgress
+    {
+        type        bXiProgress;
+        libs        ("libfieldFunctionObjects.so");
+    }
     \endverbatim
 
+Usage
+    \table
+        Property  | Description                 | Required  | Default value
+        type      | type name: bXiProgress      | yes       |
+    \endtable
+
+    Or, using the standard configuration:
+    \verbatim
+    #includeFunc bXiProgress
+    \endverbatim
+
+See also
+    Foam::functionObjects::fvMeshFunctionObject
+
 SourceFiles
-    Gulder.C
+    bXiProgress.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef Gulder_H
-#define Gulder_H
+#ifndef functionObjects_bXiProgress_H
+#define functionObjects_bXiProgress_H
 
-#include "XiEqModel.H"
+#include "fvMeshFunctionObject.H"
+#include "logFiles.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiEqModels
+namespace functionObjects
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class Gulder Declaration
+                       Class bXiProgress Declaration
 \*---------------------------------------------------------------------------*/
 
-class Gulder
+class bXiProgress
 :
-    public XiEqModel
+    public fvMeshFunctionObject,
+    public logFiles
 {
-    // Private Data
-
-        //- Model constant
-        scalar XiEqCoeff_;
-
-        //- Schelkin effect Model constant
-        scalar uPrimeCoeff_;
-
-        //- Minimum laminar burning velocity
-        dimensionedScalar SuMin_;
-
-
 protected:
 
-        //- Update coefficients from given dictionary
-        virtual bool readCoeffs(const dictionary& dict);
+    // Protected Member Functions
+
+        //- Output file header information
+        virtual void writeFileHeader(const label i);
 
 
 public:
 
     //- Runtime type information
-    TypeName("Gulder");
+    TypeName("bXiProgress");
 
 
     // Constructors
 
-        //- Construct from components
-        Gulder
+        //- Construct from Time and dictionary
+        bXiProgress
         (
-            const dictionary& dict,
-            const psiuMulticomponentThermo& thermo,
-            const fluidThermoThermophysicalTransportModel& turbulence,
-            const volScalarField& Su
+            const word& name,
+            const Time& runTime,
+            const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        Gulder(const Gulder&) = delete;
+        bXiProgress(const bXiProgress&) = delete;
 
 
     //- Destructor
-    virtual ~Gulder();
+    virtual ~bXiProgress();
 
 
     // Member Functions
 
-        //- Return the flame-wrinkling XiEq
-        virtual tmp<volScalarField> XiEq() const;
+        //- Read the controls
+        virtual bool read(const dictionary&);
+
+        //- Return the list of fields required
+        virtual wordList fields() const;
+
+        //- Do nothing
+        virtual bool execute();
+
+        //- Write the cell-centre fields
+        virtual bool write();
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const Gulder&) = delete;
+        void operator=(const bXiProgress&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace XiEqModels
+} // End namespace functionObjects
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,20 +22,13 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::XiEqModels::Gulder
+    Foam::SuModel
 
 Description
-    Simple model for the equilibrium flame wrinkling \c XiEq
-    based on Gulder's turbulent flame speed correlation
+    Base-class for all Su models used by the b-Xi combustion model
 
     References:
     \verbatim
-        Gülder, Ö. L. (1991, January).
-        Turbulent premixed flame propagation models
-        for different combustion regimes.
-        In Symposium (International) on Combustion
-        (Vol. 23, No. 1, pp. 743-750). Elsevier.
-
         Weller, H. G. (1993).
         The development of a new flame area combustion model
         using conditional averaging.
@@ -49,89 +42,127 @@ Description
     \endverbatim
 
 SourceFiles
-    Gulder.C
+    SuModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef Gulder_H
-#define Gulder_H
+#ifndef SuModel_H
+#define SuModel_H
 
-#include "XiEqModel.H"
+#include "psiuMulticomponentThermo.H"
+#include "fluidThermoThermophysicalTransportModels.H"
+#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiEqModels
-{
 
 /*---------------------------------------------------------------------------*\
-                           Class Gulder Declaration
+                           Class SuModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class Gulder
-:
-    public XiEqModel
+class SuModel
 {
-    // Private Data
-
-        //- Model constant
-        scalar XiEqCoeff_;
-
-        //- Schelkin effect Model constant
-        scalar uPrimeCoeff_;
-
-        //- Minimum laminar burning velocity
-        dimensionedScalar SuMin_;
-
 
 protected:
 
+    // Protected data
+
+        //- Thermo
+        const psiuMulticomponentThermo& thermo_;
+
+        //- Thermo-physical transport
+        const fluidThermoThermophysicalTransportModel& thermoTransport_;
+
+        //- Turbulence
+        const compressibleMomentumTransportModel& turbulence_;
+
+        //- Laminar flame speed
+        volScalarField Su_;
+
         //- Update coefficients from given dictionary
-        virtual bool readCoeffs(const dictionary& dict);
+        virtual bool readCoeffs(const dictionary& dict) = 0;
 
 
 public:
 
     //- Runtime type information
-    TypeName("Gulder");
+    TypeName("SuModel");
+
+
+    // Declare run-time constructor selection table
+
+        declareRunTimeSelectionTable
+        (
+            autoPtr,
+            SuModel,
+            dictionary,
+            (
+                const dictionary& dict,
+                const psiuMulticomponentThermo& thermo,
+                const fluidThermoThermophysicalTransportModel& turbulence
+            ),
+            (
+                dict,
+                thermo,
+                turbulence
+            )
+        );
 
 
     // Constructors
 
         //- Construct from components
-        Gulder
+        SuModel
         (
-            const dictionary& dict,
             const psiuMulticomponentThermo& thermo,
-            const fluidThermoThermophysicalTransportModel& turbulence,
-            const volScalarField& Su
+            const fluidThermoThermophysicalTransportModel& turbulence
         );
 
         //- Disallow default bitwise copy construction
-        Gulder(const Gulder&) = delete;
+        SuModel(const SuModel&) = delete;
+
+
+    // Selectors
+
+        //- Return a reference to the selected Su model
+        static autoPtr<SuModel> New
+        (
+            const dictionary& combustionProperties,
+            const psiuMulticomponentThermo& thermo,
+            const fluidThermoThermophysicalTransportModel& turbulence
+        );
 
 
     //- Destructor
-    virtual ~Gulder();
+    virtual ~SuModel();
 
 
     // Member Functions
 
-        //- Return the flame-wrinkling XiEq
-        virtual tmp<volScalarField> XiEq() const;
+        //- Return the laminar flame speed
+        virtual const volScalarField& Su() const
+        {
+            return Su_;
+        }
+
+        //- Correct the laminar flame speed
+        virtual void correct() = 0;
+
+        //- Update properties from the given combustionProperties dictionary
+        bool read(const dictionary& combustionProperties);
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const Gulder&) = delete;
+        void operator=(const SuModel&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace XiEqModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

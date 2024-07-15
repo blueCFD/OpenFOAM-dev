@@ -62,12 +62,12 @@ Foam::XiModel::XiModel
         IOobject
         (
             "Xi",
-            b_.time().name(),
-            b_.db(),
+            thermo_.mesh().time().name(),
+            thermo_.mesh(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        b_.mesh(),
+        thermo_.mesh(),
         dimensionedScalar("1", dimless, 1)
     )
 {}

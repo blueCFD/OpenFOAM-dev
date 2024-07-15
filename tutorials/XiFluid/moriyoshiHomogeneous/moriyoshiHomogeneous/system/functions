@@ -8,41 +8,12 @@
 FoamFile
 {
     format      ascii;
-    class       volScalarField;
-    object      Su;
+    class       dictionary;
+    object      functions;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
-
-internalField   uniform 0.434;
-
-boundaryField
-{
-    left
-    {
-        type            symmetryPlane;
-    }
-
-    right
-    {
-        type            symmetryPlane;
-    }
-
-    top
-    {
-        type            symmetryPlane;
-    }
-
-    bottom
-    {
-        type            symmetryPlane;
-    }
-
-    frontAndBack
-    {
-        type            empty;
-    }
-}
+#includeFunc bXiProgress
+#includeFunc cellMin(b)
 
 // ************************************************************************* //
