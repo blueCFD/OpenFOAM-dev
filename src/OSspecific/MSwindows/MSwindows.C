@@ -3,7 +3,7 @@ License
     Copyright            : (C) 2011 Symscape
     Website              : www.symscape.com
 
-    Copyright            : (C) 2011-2017 FSD blueCAPE Lda
+    Copyright            : (C) 2011-2024 FS Dynamics Portugal (FSD blueCAPE)
     Website              : www.bluecape.com.pt
 
     Copyright            : (C) 2011-2017 OpenFOAM Foundation
