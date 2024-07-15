@@ -1,3 +1,3 @@
-metis.C
+metis.T.C
 
 LIB = $(FOAM_LIBBIN)/libmetisDecomp

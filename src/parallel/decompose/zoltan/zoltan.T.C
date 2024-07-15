@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "zoltan.H"
+#include "zoltan.T.H"
 #include "globalIndex.H"
 #include "PstreamGlobals.T.H"
 #include "Tuple3.T.H"

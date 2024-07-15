@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "parMetis.H"
+#include "parMetis.T.H"
 #include "Time.T.H"
 #include "globalIndex.H"
 #include "labelIOField.H"

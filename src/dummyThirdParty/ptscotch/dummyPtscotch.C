@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "ptscotch.H"
+#include "ptscotch.T.H"
 #include "addToRunTimeSelectionTable.H"
 #include "Time.T.H"
 
