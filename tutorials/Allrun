@@ -8,6 +8,8 @@
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added passing on command line options
 # 2017-09-26 FSD blueCAPE Lda: Added more verbosity
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -99,7 +101,7 @@ logReportDir()
 
 
 # Recursively run all cases
-foamRunTutorials -test -skipFirst $@
+foamRunTutorials -skipFirst $@
 
 
 # Analyse all log files
