@@ -11,7 +11,7 @@ EXE_INC = \
     -I$(or $(PTSCOTCH_INCLUDE_DIR),/usr/include/scotch) \
     -I../decompositionMethods/lnInclude
 
-ifeq (,$(filter $(GFLAGS), WIN32 WIN64))
+ifeq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
 
 LIB_LIBS = \
     -L$(SCOTCH_ARCH_PATH)/lib \
