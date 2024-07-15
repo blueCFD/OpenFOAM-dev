@@ -9,6 +9,8 @@
 # 2016-08-03 blueCAPE Lda: Added -target and -jobs
 # 2017-09-26 FSD blueCAPE Lda: Added more verbosity
 # 2020-09-28 FSD blueCAPE Lda: Ability to test in function of wall clock
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -46,8 +48,18 @@ options:
   -from <dir>       specify directory to run tests from
   -to <dir>         specify directory to run tests in
   -help             print the usage
+  -jobs N    | -j     for running multiple cases in parallel with N cores
+  -parallel  | -p     run only cases that are configured to run in parallel
+  -nonParallel | -n   run only cases that are configured to run in serial
+  -wallClock <sec> | -w <sec>
+                      run the solvers for a limited amount of wall clock time
+                    in second, instead of just running a single time step
 
 * quickly tests the tutorials
+
+Currently defined paths:
+  from:  $(realpath $fromDir)
+  to:    $(realpath $toDir)
 
 USAGE
     exit 1
@@ -76,11 +88,6 @@ do
     -t | -to)
         [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
         toDir="$2"
-        shift
-        ;;
-    -t | -target)
-        [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
-        testDir="$2"
         shift
         ;;
     -j | -jobs)
@@ -121,6 +128,11 @@ do
     shift
 done
 
+if $serialOnly && $parallelOnly
+then
+    usage "Cannot use -parallel and -nonParallel options at the same time."
+fi
+
 if [ $(readlink -f $fromDir) != $(readlink -f $toDir) ]
 then
     # Create a copy of the cases for which to run the test loop
@@ -144,6 +156,19 @@ do
         foamDictionary -entry writeInterval -set 1 "$controlDict"
         foamDictionary -entry DebugSwitches \
             -merge "{ fvSchemes 1; solution 1; }" "$controlDict"
+
+        if [ "$wallClockLimit" != "-1" ]
+        then
+            functionsDict="${controlDict/controlDict/functions}"
+            if [ ! -e "${functionsDict}" ]
+            then
+                cp "${FOAM_ETC}/caseDicts/functions/functions" \
+                   "${functionsDict}"
+                foamDictionary -entry \
+                    "#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
+                    -set "" "$functionsDict"
+            fi
+        fi
     ) > /dev/null
 done
 
@@ -159,6 +184,6 @@ then
 fi
 
 # Run everything
-./Allrun && exit 0 || exit 1
+./Allrun -test $RUN_ARGUMENTS && exit 0 || exit 1
 
 #------------------------------------------------------------------------------
