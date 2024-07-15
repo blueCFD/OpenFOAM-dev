@@ -9,7 +9,7 @@ LIB_LIBS = \
     -lspecie \
     -lfiniteVolume
 
-ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
+ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
 
 c++OPT := $(c++OPT:-gdwarf=) -Wa,-mbig-obj
 

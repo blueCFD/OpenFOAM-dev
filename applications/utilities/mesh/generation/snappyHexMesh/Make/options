@@ -21,7 +21,7 @@ EXE_LIBS = \
     -lsnappyHexMesh
 
 
-ifneq (,$(filter $(GFLAGS), WIN32 WIN64))
+ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
 
 EXE_LIBS += \
     -lscotchDecomp -lptscotchDecomp \
