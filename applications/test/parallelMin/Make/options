@@ -1,5 +1,5 @@
 
-/*neutralize unwanted lib includes...*/
+# neutralize unwanted lib includes...
 PROJECT_LIBS =
 
 sinclude $(GENERAL_RULES)/mplib$(WM_MPLIB)
