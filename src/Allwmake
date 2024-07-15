@@ -64,6 +64,8 @@ if isMinGW; then
   # finiteVolume, extrudeModel and polyTopoChange are needed by the Decomposition methods
   wmake $targetType finiteVolume
   wmake $targetType mesh/extrudeModel
+  wmake $targetType lagrangian/basic
+  wmake $targetType sampling
   wmake $targetType meshCheck
   wmake $targetType polyTopoChange
 
