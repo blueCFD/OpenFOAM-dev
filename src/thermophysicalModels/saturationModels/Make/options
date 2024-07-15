@@ -17,8 +17,4 @@ LIB_LIBS = \
     -lspecie
 
 LIB_LIBS += \
-    -lfiniteVolume \
-    -lphysicalProperties \
-    -lthermophysicalProperties \
-    -lmeshTools \
-    -lsampling
+    -lfiniteVolume
