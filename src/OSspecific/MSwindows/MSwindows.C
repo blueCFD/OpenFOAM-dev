@@ -581,14 +581,19 @@ bool chMod(const fileName& name, const mode_t m)
 }
 
 
-mode_t mode(const fileName& name, const bool followLink)
+mode_t mode
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
         Pout<< FUNCTION_NAME << " : name:" << name << endl;
     }
 
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
     if (fileStatus.isValid())
     {
         return fileStatus.status().st_mode;
@@ -635,7 +640,7 @@ fileType type
 bool exists
 (
     const fileName& name,
-    const bool checkGzip,
+    const bool checkVariants,
     const bool followLink
 )
 {
@@ -644,9 +649,8 @@ bool exists
 
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name
-            << " checkGzip:" << checkGzip
-            << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
@@ -673,7 +677,8 @@ bool isDir(const fileName& name, const bool followLink)
 
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " followLink:"
+            << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
@@ -691,18 +696,17 @@ bool isDir(const fileName& name, const bool followLink)
 bool isFile
 (
     const fileName& name,
-    const bool checkGzip,
+    const bool checkVariants,
     const bool followLink
 )
 {
     //FIXME: 'followLink' can't be used with 'GetFileAttributes'.
     //Task for fixing this detail: https://github.com/blueCFD/Core/issues/60
 
-   if (MSwindows::debug)
+    if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name
-            << " checkGzip:" << checkGzip
-            << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
@@ -726,18 +730,24 @@ bool isFile
 }
 
 
-off_t fileSize(const fileName& name, const bool followLink)
+off_t fileSize
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
-        if ((MSwindows::debug & 2) && !Pstream::master())
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
+         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
         }
     }
 
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
 
     if (fileStatus.isValid())
     {
@@ -750,18 +760,24 @@ off_t fileSize(const fileName& name, const bool followLink)
 }
 
 
-time_t lastModified(const fileName& name, const bool followLink)
+time_t lastModified
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
         }
     }
 
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
     if (fileStatus.isValid())
     {
         return fileStatus.status().st_mtime;
@@ -773,17 +789,23 @@ time_t lastModified(const fileName& name, const bool followLink)
 }
 
 
-double highResLastModified(const fileName& name, const bool followLink)
+double highResLastModified
+(
+    const fileName& name,
+    const bool checkVariants,
+    const bool followLink
+)
 {
     if (MSwindows::debug)
     {
-        Pout<< FUNCTION_NAME << " : name:" << name << endl;
+        Pout<< FUNCTION_NAME << " : name:" << name << " checkVariants:"
+            << bool(checkVariants) << " followLink:" << followLink << endl;
         if ((MSwindows::debug & 2) && !Pstream::master())
         {
             error::printStack(Pout);
         }
     }
-    fileStat fileStatus(name, followLink);
+    fileStat fileStatus(name, checkVariants, followLink);
     if (fileStatus.isValid())
     {
         return
@@ -844,7 +866,7 @@ fileNameList readDir
                     )
                 )
                 {
-                    if ((directory/fName).type(followLink) == type)
+                    if ((directory/fName).type(false, followLink) == type)
                     {
                         bool filtered = false;
 
@@ -1077,7 +1099,7 @@ bool mvBak(const fileName& src, const std::string& ext)
         }
     }
 
-    if (exists(src, false))
+    if (exists(src, false, false))
     {
         const int maxIndex = 99;
         char index[3];
@@ -1093,7 +1115,7 @@ bool mvBak(const fileName& src, const std::string& ext)
 
             // avoid overwriting existing files, except for the last
             // possible index where we have no choice
-            if (!exists(dstName, false) || n == maxIndex)
+            if (!exists(dstName, false, false) || n == maxIndex)
             {
                 return (0 == std::rename(src.c_str(), dstName.c_str()));
             }
@@ -1119,16 +1141,22 @@ bool rm(const fileName& file)
         }
     }
 
-    bool success = (0 == std::remove(file.c_str()));
-
-    // If deleting plain file name failed try with .gz
-    if (!success) 
+    if(0 == std::remove(file.c_str()))
     {
-        const string fileGz = file + ".gz";
-        success = (0 == std::remove(fileGz.c_str()));
+        return true;
     }
 
-    return success;
+    // If deleting plain file name failed try variants
+    for (label i = 0; i < fileStat::nVariants_; ++ i)
+    {
+        const fileName fileVar = file + "." + fileStat::variantExts_[i];
+        if (std::remove(string(fileVar).c_str()) == 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
