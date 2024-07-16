@@ -20,7 +20,7 @@ LIB_LIBS = \
     -lmeshTools
 
 LIB_LIBS += \
-    -lthermophysicalTransportModels \
+    -lthermophysicalTransportModel \
     -lfluidThermophysicalTransportModel \
     -lcompressibleMomentumTransportModels \
     -lphysicalProperties
