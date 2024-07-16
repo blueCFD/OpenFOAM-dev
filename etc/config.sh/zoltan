@@ -45,7 +45,7 @@ system)
     export ZOLTAN_VERSION=system
     export ZOLTAN_ARCH_PATH=/usr
     ;;
-OpenFOAM | ThirdParty)
+OpenFOAM | ThirdParty | blueCFDCore)
     # Look for the source directory
     if [ -z "$ZOLTAN_VERSION" ]
     then
