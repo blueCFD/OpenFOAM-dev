@@ -27,7 +27,17 @@ License
 #include "absorptionEmissionModel.H"
 #include "scatterModel.H"
 #include "constants.H"
+
+#if defined(WIN32) || defined(WIN64)
+#define FINITE_VOLUME_LOAD
+#endif
+
 #include "fvm.H"
+
+#if defined(WIN32) || defined(WIN64)
+#undef FINITE_VOLUME_LOAD
+#endif
+
 #include "wedgePolyPatch.H"
 #include "cyclicTransform.H"
 #include "addToRunTimeSelectionTable.H"

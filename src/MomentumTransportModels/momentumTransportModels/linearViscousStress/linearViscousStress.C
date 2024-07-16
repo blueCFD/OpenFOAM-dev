@@ -24,9 +24,18 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "linearViscousStress.H"
+
+#if defined(WIN32) || defined(WIN64)
+#define FINITE_VOLUME_LOAD
+#endif
+
 #include "fvcGrad.H"
 #include "fvcDiv.H"
 #include "fvmLaplacian.H"
+
+#if defined(WIN32) || defined(WIN64)
+#undef FINITE_VOLUME_LOAD
+#endif
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
