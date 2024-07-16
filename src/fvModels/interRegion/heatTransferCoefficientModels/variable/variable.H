@@ -61,8 +61,18 @@ Usage
 
 \*---------------------------------------------------------------------------*/
 
+//Hack needed for allowing the correct variable.H to be picked up on Windows
+#ifndef INTER_REGION_VAR
+
+#include_next "variable.H"
+
+#else
+
 #ifndef heatTransferCoefficientModels_variable_H
 #define heatTransferCoefficientModels_variable_H
+
+//Hack needed for allowing the correct variable.H to be picked up on Windows
+#undef INTER_REGION_VAR
 
 #include "heatTransferCoefficientModel.H"
 
@@ -157,5 +167,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif
+
+#endif //ifdef INTER_REGION_VAR
 
 // ************************************************************************* //
