@@ -13,5 +13,14 @@ LIB_LIBS = \
     -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
     -lzoltan
 
+ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
+
+PROJECT_LIBS = \
+    -L$(FOAM_LIBBIN)  -l$(WM_PROJECT)  \
+    -L$(FOAM_LIBBIN)/$(FOAM_MPI)  -lPstream
+
 LIB_LIBS += \
-    -ldecompositionMethods
+    -ldecompositionMethods \
+    $(PLIBS)
+
+endif
