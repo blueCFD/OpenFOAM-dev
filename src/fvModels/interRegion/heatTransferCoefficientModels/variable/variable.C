@@ -23,6 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+//Hack needed for allowing the correct variable.H to be picked up on Windows
+#define INTER_REGION_VAR
+
 #include "variable.H"
 #include "fluidThermophysicalTransportModel.H"
 #include "zeroGradientFvPatchFields.H"
