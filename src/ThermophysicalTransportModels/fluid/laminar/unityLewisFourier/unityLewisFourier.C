@@ -24,8 +24,18 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "unityLewisFourier.H"
+
+#if defined(WIN32) || defined(WIN64)
+#define FINITE_VOLUME_LOAD
+#endif
+
 #include "fvmLaplacian.H"
 #include "fvcSnGrad.H"
+
+#if defined(WIN32) || defined(WIN64)
+#undef FINITE_VOLUME_LOAD
+#endif
+
 #include "surfaceInterpolate.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
