@@ -12,5 +12,4 @@ LIB_LIBS = \
     -lmeshTools
 
 LIB_LIBS += \
-    -lincompressibleTransportModels \
     -ltwoPhaseMixture
