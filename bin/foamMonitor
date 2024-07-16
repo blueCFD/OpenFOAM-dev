@@ -142,6 +142,11 @@ refresh=10
 once=""
 columns=""
 
+if isMinGW
+then
+    term='windows 1 font "helvetica,17" linewidth 1.5'
+fi
+
 # Options
 while [ "$#" -gt 0 ]
 do
