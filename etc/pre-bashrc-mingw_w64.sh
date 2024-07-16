@@ -61,7 +61,7 @@ source $REF_OF_ETC/bashrc \
     SCOTCH_TYPE=MSYS2 \
     METIS_TYPE=MSYS2 \
     PARMETIS_TYPE=MSYS2 \
-    ZOLTAN_TYPE=none \
+    ZOLTAN_TYPE=blueCFDCore \
     $@
 
 unset REF_OF_ETC
