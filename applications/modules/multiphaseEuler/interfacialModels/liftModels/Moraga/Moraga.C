@@ -24,7 +24,17 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "Moraga.H"
+
+#if defined(WIN32) || defined(WIN64)
+#define FINITE_VOLUME_LOAD
+#endif
+
 #include "fvcGrad.H"
+
+#if defined(WIN32) || defined(WIN64)
+#undef FINITE_VOLUME_LOAD
+#endif
+
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

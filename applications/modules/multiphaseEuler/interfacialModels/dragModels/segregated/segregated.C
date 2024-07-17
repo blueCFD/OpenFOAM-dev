@@ -24,8 +24,18 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "segregated.H"
+
+#if defined(WIN32) || defined(WIN64)
+#define FINITE_VOLUME_LOAD
+#endif
+
 #include "fvcGrad.H"
 #include "surfaceInterpolate.H"
+
+#if defined(WIN32) || defined(WIN64)
+#undef FINITE_VOLUME_LOAD
+#endif
+
 #include "zeroGradientFvPatchFields.H"
 #include "addToRunTimeSelectionTable.H"
 
