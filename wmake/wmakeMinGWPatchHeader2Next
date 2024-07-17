@@ -55,7 +55,7 @@ if ! grep -q -e "$MACRO_NAME" $hackThisHeader
 then
     mv $hackThisHeader ${hackThisHeader}.tmp && \
     (
-        echo "#ifndef $MACRO_NAME" > $hackThisHeader
+        echo "#ifdef $MACRO_NAME" > $hackThisHeader
         cat ${hackThisHeader}.tmp >> $hackThisHeader
         echo "#else" >> $hackThisHeader
         echo "#include_next \"$headerFileName\"" >> $hackThisHeader
