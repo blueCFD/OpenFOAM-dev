@@ -22,6 +22,3 @@ LIB_LIBS = \
     -lfvConstraints \
     -lsampling \
     -lmeshTools
-
-LIB_LIBS += \
-     -lsurfaceFilmModels

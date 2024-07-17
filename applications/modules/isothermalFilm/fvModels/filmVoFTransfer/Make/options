@@ -28,3 +28,25 @@ EXE_INC = \
 LIB_LIBS = \
     -lisothermalFilm \
     -lcompressibleVoF
+
+LIB_LIBS += \
+    -lfilmCompressibleMomentumTransportModels \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -linterfaceProperties \
+    -ltwoPhaseVoFSolver \
+    -ltwoPhaseSolver \
+    -lVoFSolver \
+    -lfluidSolver \
+    -linterfaceCompression \
+    -linterfaceProperties \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels \
+    -lthermophysicalTransportModel \
+    -lfiniteVolume \
+    -lmeshTools

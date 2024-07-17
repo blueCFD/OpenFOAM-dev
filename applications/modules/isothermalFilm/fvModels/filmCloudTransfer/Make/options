@@ -20,3 +20,16 @@ LIB_LIBS = \
     -lisothermalFilm \
     -llagrangian \
     -llagrangianParcel
+
+LIB_LIBS += \
+    -lfilmCompressibleMomentumTransportModels \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -linterfaceProperties \
+    -lthermophysicalProperties \
+    -lmulticomponentThermophysicalModels \
+    -lfiniteVolume \
+    -lmeshTools
