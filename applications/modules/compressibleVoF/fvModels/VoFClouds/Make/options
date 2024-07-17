@@ -14,3 +14,14 @@ EXE_INC = \
 LIB_LIBS = \
     -llagrangian \
     -llagrangianParcel
+
+LIB_LIBS += \
+    -ltwoPhaseVoFSolver \
+    -ltwoPhaseSolver \
+    -lVoFSolver \
+    -lcompressibleVoF \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lfiniteVolume
