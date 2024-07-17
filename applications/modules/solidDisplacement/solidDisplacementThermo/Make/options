@@ -11,3 +11,7 @@ LIB_LIBS = \
 
 LIB_LIBS += \
     -lfluidThermophysicalModels
+
+LIB_LIBS += \
+    -lphysicalProperties \
+    -lmeshTools
