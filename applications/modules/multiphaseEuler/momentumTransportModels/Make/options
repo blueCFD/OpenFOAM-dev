@@ -19,3 +19,17 @@ LIB_LIBS = \
     -lphaseSystem \
     -lmultiphaseEulerInterfacialModels \
     -lphaseCompressibleMomentumTransportModels
+
+LIB_LIBS += \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lsampling \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lmulticomponentThermophysicalModels \
+    -lsaturationModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels

@@ -14,3 +14,14 @@ EXE_INC = \
 LIB_LIBS =  \
     -lphaseSystem \
     -lchemistryModel
+
+LIB_LIBS += \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lsampling \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lmulticomponentThermophysicalModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases
