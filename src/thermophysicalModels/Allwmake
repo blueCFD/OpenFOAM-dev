@@ -8,21 +8,7 @@ wmake $targetType specie
 wmake $targetType thermophysicalProperties
 
 if isMinGW; then
-    hackThisHeader="specie/lnInclude/linear.H"
-    
-    if ! grep -q -e "FINITE_VOLUME_LOAD" $hackThisHeader
-    then
-        mv $hackThisHeader ${hackThisHeader}.tmp && \
-        (
-            echo "#ifndef FINITE_VOLUME_LOAD" > $hackThisHeader
-            cat ${hackThisHeader}.tmp >> $hackThisHeader
-            echo "#else" >> $hackThisHeader
-            echo "#include_next \"linear.H\"" >> $hackThisHeader
-            echo "#endif" >> $hackThisHeader
-
-            rm ${hackThisHeader}.tmp
-        )
-    fi
+    wmakeMinGWPatchHeader2Next specie/lnInclude/linear.H FINITE_VOLUME_LOAD
 fi
 
 wmake $targetType basic
