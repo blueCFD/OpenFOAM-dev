@@ -19,3 +19,19 @@ EXE_INC = \
 LIB_LIBS = \
     -lfvModels \
     -lphaseSystems
+
+LIB_LIBS += \
+    -lpopulationBalance \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lsampling \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lmulticomponentThermophysicalModels \
+    -lsaturationModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels

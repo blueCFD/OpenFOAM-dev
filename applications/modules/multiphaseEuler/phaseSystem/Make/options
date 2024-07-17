@@ -32,3 +32,18 @@ LIB_LIBS = \
     -lphaseFluidMulticomponentThermophysicalTransportModels \
     -lphaseSolidThermophysicalTransportModels \
     -lcombustionModels
+
+LIB_LIBS += \
+    -lmultiphaseEulerInterfacialModels \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lsolidThermo \
+    -ltwoPhaseMixture \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lsolidThermophysicalTransportModels
