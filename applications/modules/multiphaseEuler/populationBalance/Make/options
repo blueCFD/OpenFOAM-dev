@@ -22,3 +22,22 @@ EXE_INC = \
 LIB_LIBS = \
     -lphaseSystem \
     -lmultiphaseEulerInterfacialModels
+
+LIB_LIBS += \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lsampling \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lmulticomponentThermophysicalModels \
+    -lsaturationModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmultiphaseProperties \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lcombustionModels

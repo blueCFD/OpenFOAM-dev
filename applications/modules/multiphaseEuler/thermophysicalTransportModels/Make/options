@@ -26,3 +26,20 @@ LIB_LIBS = \
     -lphaseFluidThermophysicalTransportModels \
     -lphaseFluidMulticomponentThermophysicalTransportModels \
     -lcoupledThermophysicalTransportModels
+
+LIB_LIBS += \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lsampling \
+    -lphysicalProperties \
+    -lfluidThermophysicalModels \
+    -lspecie \
+    -lmulticomponentThermophysicalModels \
+    -lsaturationModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel
