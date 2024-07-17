@@ -1,0 +1,83 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2024 FS Dynamics Portugal (FSD blueCAPE Lda)
+#
+#    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#    For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     wmakeForceIncludeHeaderInLink
+#
+# Description
+#     Script for patching symbolic link header files that depend on indentical
+#   headers as in other libraries, as to rely on the namespaces to tell them
+#   apart when loading them forcefully.
+#
+# Usage
+#     wmakeForceIncludeHeaderInLink <targetLibraryFolder> <headerToInclude>
+#
+#------------------------------------------------------------------------------
+Script=${0##*/}
+
+#
+# Check environment variables
+#
+for check in WM_OPTIONS WM_LINK_LANGUAGE WM_DIR WM_PROJECT WM_PROJECT_DIR
+do
+    eval test "\$$check" || {
+        echo "$Script error: environment variable \$$check not set" 1>&2
+        exit 1
+    }
+done
+
+WMKDEP_BIN=${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdep
+
+targetLibrary=$1
+headerFileName2Include=$2
+
+echo "$Script: Processing folder '${targetLibrary}' to include '${headerFileName2Include}'"
+
+cd "${targetLibrary}" || exit 1
+
+dummyDepFile=lnInclude/test.dep
+headerFileName2IncludeFullPath=".$(find -name "$headerFileName2Include" -not -path "./lnInclude/*")"
+
+for header in lnInclude/*.H
+do
+    if [ "$header" != "$headerFileName2Include" ]
+    then
+    
+        if ! grep -q -e "/${headerFileName2Include}\"" "$header"
+        then
+            $WMKDEP_BIN ./ $header $dummyDepFile 1> /dev/null 2>&1 
+
+            if grep -q -e "/${headerFileName2Include} " $dummyDepFile
+            then
+                sed -i -e 's=^=#include "'${headerFileName2IncludeFullPath}'"\n=' "$header"
+                echo "Added '$headerFileName2Include' to file '$header'."
+            fi
+        else
+            echo "WARNING: Header file '$header' already includes the header '$headerFileName2Include'"
+        fi
+    fi
+done
+
+[ -e $dummyDepFile ] && rm $dummyDepFile
