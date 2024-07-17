@@ -61,16 +61,21 @@ wmake $targetType meshTools
 
 # Build libraries needed by the other libraries after these
 if isMinGW; then
-  # finiteVolume, extrudeModel and polyTopoChange are needed by the Decomposition methods
-  wmake $targetType finiteVolume
-  wmake $targetType mesh/extrudeModel
-  wmake $targetType lagrangian/basic
-  wmake $targetType sampling
-  wmake $targetType meshCheck
-  wmake $targetType polyTopoChange
+    # finiteVolume, extrudeModel and polyTopoChange are needed by the Decomposition methods
+    wmake $targetType finiteVolume
+    wmake $targetType mesh/extrudeModel
+    wmake $targetType lagrangian/basic
+    wmake $targetType sampling
+    wmake $targetType meshCheck
+    wmake $targetType polyTopoChange
 
-  # Decomposition methods are needed for dummyThirdParty
-  wmake $targetType parallel/decompose/decompositionMethods
+    # Decomposition methods are needed for dummyThirdParty
+    wmake $targetType parallel/decompose/decompositionMethods
+
+    # Forcefully include the linear.H file into the header files that depend on
+    # it, so to avoid issues with loading the wrong same-name file from another
+    # library
+    wmakeForceIncludeHeaderInLink finiteVolume linear.H
 fi
 
 # Decomposition methods needed by dummyThirdParty
