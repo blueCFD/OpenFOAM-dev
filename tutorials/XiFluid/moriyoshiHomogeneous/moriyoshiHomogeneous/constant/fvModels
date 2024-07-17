@@ -10,33 +10,20 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "constant";
-    object      combustionProperties;
+    object      fvModels;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include        "combustionPropertiesInclude"
-
-flameWrinkling
+ignition
 {
-    model           transport;
+    type            constantIgnition;
 
-    equilibrium
-    {
-        model           Gulder;
-    }
+    select          cellZone;
+    cellZone        ignition;
 
-    generationRate
-    {
-        model           KTS;
-    }
+    duration        0.003;
+    strength        2;
 }
-
-ignitionStart       0;
-
-ignitionThickness   0.001;
-ignitionCircleFraction 0.5;
-
-maxKernelCorrRadius 0.015;
 
 
 // ************************************************************************* //

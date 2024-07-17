@@ -9,34 +9,29 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      combustionProperties;
+    object      topoSetDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include        "combustionPropertiesInclude"
-
-flameWrinkling
-{
-    model           transport;
-
-    equilibrium
+actions
+(
     {
-        model           Gulder;
+        name    ignition;
+        type    cellSet;
+        action  new;
+        source  cylinderToCell;
+        point1  (0 0 -1);
+        point2  (0 0 1);
+        radius  0.0015;
     }
 
-    generationRate
     {
-        model           KTS;
+        name    ignition;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     ignition;
     }
-}
-
-ignitionStart       0;
-
-ignitionThickness   0.001;
-ignitionCircleFraction 0.5;
-
-maxKernelCorrRadius 0.015;
-
+);
 
 // ************************************************************************* //

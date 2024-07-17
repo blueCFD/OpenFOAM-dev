@@ -54,107 +54,129 @@ void Foam::solvers::XiFluid::ftSolve
 }
 
 
-Foam::dimensionedScalar Foam::solvers::XiFluid::StCorr
+Foam::tmp<Foam::volScalarField> Foam::solvers::XiFluid::XiCorr
 (
     const volScalarField& c,
     const surfaceScalarField& nf,
-    const dimensionedScalar& dMgb
+    const dimensionedScalar& dMgb,
+    const volScalarField& Xi
 ) const
 {
-    dimensionedScalar StCorr("StCorr", dimless, 1.0);
+    // Calculate volume of ignition kernel
+    const dimensionedScalar Vk
+    (
+        "Vk",
+        dimVolume,
+        gSum(c*mesh.V().primitiveField())
+    );
 
-    if (ign.igniting())
+    // Radius of the ignition kernel
+    dimensionedScalar rk("rk", dimLength, 0.0);
+
+    // Area of the ignition kernel
+    dimensionedScalar Ak("Ak", dimArea, 0.0);
+
+    if (Vk.value() > small)
     {
-        // Calculate volume of ignition kernel
-        const dimensionedScalar Vk
-        (
-            "Vk",
-            dimVolume,
-            gSum(c*mesh.V().primitiveField())
-        );
-        dimensionedScalar Ak("Ak", dimArea, 0.0);
+        // Calculate kernel area from its volume
+        // and the dimensionality of the case
 
-        if (Vk.value() > small)
+        switch(mesh.nGeometricD())
         {
-            // Calculate kernel area from its volume
-            // and the dimensionality of the case
-
-            switch(mesh.nGeometricD())
+            case 3:
             {
-                case 3:
-                {
-                    // Assume it is part-spherical
-                    const scalar sphereFraction
+                // Assume it is part-spherical
+                const dimensionedScalar sphereFraction
+                (
+                    "ignitionSphereFraction",
+                    dimless,
+                    combustionProperties
+                );
+
+                rk = pow
                     (
-                        combustionProperties.lookup<scalar>
-                        (
-                            "ignitionSphereFraction"
-                        )
+                        (3.0/4.0)*Vk
+                       /(sphereFraction*constant::mathematical::pi),
+                        1.0/3.0
                     );
 
-                    Ak = sphereFraction*4.0*constant::mathematical::pi
-                       *pow
-                        (
-                            3.0*Vk
-                           /(sphereFraction*4.0*constant::mathematical::pi),
-                            2.0/3.0
-                        );
-                }
-                break;
-
-                case 2:
-                {
-                    // Assume it is part-circular
-                    const dimensionedScalar thickness
-                    (
-                        combustionProperties.lookup("ignitionThickness")
-                    );
-
-                    const scalar circleFraction
-                    (
-                        combustionProperties.lookup<scalar>
-                        (
-                            "ignitionCircleFraction"
-                        )
-                    );
-
-                    Ak = circleFraction*constant::mathematical::pi*thickness
-                       *sqrt
-                        (
-                            4.0*Vk
-                           /(
-                               circleFraction
-                              *thickness
-                              *constant::mathematical::pi
-                            )
-                        );
-                }
-                break;
-
-                case 1:
-                    // Assume it is plane or two planes
-                    Ak = dimensionedScalar
-                    (
-                        combustionProperties.lookup("ignitionKernelArea")
-                    );
-                break;
+                Ak = sphereFraction*4*constant::mathematical::pi*sqr(rk);
             }
+            break;
 
+            case 2:
+            {
+                // Assume it is part-cylindrical
+                const dimensionedScalar thickness
+                (
+                    "ignitionThickness",
+                    dimLength,
+                    combustionProperties
+                );
+
+                const dimensionedScalar circleFraction
+                (
+                    "ignitionCircleFraction",
+                    dimless,
+                    combustionProperties
+                );
+
+                rk = sqrt
+                (
+                    Vk
+                   /(
+                       circleFraction
+                      *constant::mathematical::pi
+                      *thickness
+                    )
+                );
+
+                Ak = circleFraction*2*constant::mathematical::pi*rk
+                    *thickness;
+            }
+            break;
+
+            case 1:
+                // Assume it is planar with given area
+                Ak = dimensionedScalar
+                (
+                    "ignitionKernelArea",
+                    dimArea,
+                    combustionProperties
+                );
+
+                rk = Vk/Ak;
+            break;
+        }
+
+        const dimensionedScalar maxXiCorrRadius
+        (
+            "maxKernelCorrRadius",
+            dimLength,
+            combustionProperties
+        );
+
+        if (rk.value() < maxXiCorrRadius.value())
+        {
             // Calculate kernel area from b field consistent with the
             // discretisation of the b equation.
             const volScalarField mgb
             (
                 fvc::div(nf, b, "div(phiSt,b)") - b*fvc::div(nf) + dMgb
             );
-            const dimensionedScalar AkEst = gSum(mgb*mesh.V().primitiveField());
+            const dimensionedScalar AkEst
+            (
+                gSum(mgb*mesh.V().primitiveField())
+            );
 
-            StCorr.value() = max(min((Ak/AkEst).value(), 10.0), 1.0);
+            const scalar XiCorr = max(min((Ak/AkEst).value(), 10.0), 1.0);
+            Info<< "XiCorr = " << XiCorr << endl;
 
-            Info<< "StCorr = " << StCorr.value() << endl;
+            return XiCorr*Xi;
         }
     }
 
-    return StCorr;
+    return Xi;
 }
 
 
@@ -170,7 +192,7 @@ void Foam::solvers::XiFluid::bSolve
     const volScalarField c("c", scalar(1) - b);
 
     // Unburnt gas density
-    const volScalarField rhou(thermo.rhou());
+    const volScalarField rhou("rhou", thermo.rhou());
 
     // Calculate flame normal etc.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -201,7 +223,7 @@ void Foam::solvers::XiFluid::bSolve
     const surfaceScalarField phiSt
     (
         "phiSt",
-        fvc::interpolate(rhou*StCorr(c, nf, dMgb)*Su*Xi)*nf
+        fvc::interpolate(rhou*Su*XiCorr(c, nf, dMgb, Xi))*nf
     );
 
     // Create b equation
@@ -216,36 +238,7 @@ void Foam::solvers::XiFluid::bSolve
         fvModels().source(rho, b)
     );
 
-
-    // Add ignition cell contribution to b-equation
-    forAll(ign.sites(), i)
-    {
-        const ignitionSite& ignSite = ign.sites()[i];
-
-        if (ignSite.igniting())
-        {
-            forAll(ignSite.cells(), icelli)
-            {
-                label ignCell = ignSite.cells()[icelli];
-                Info<< "Igniting cell " << ignCell;
-
-                Info<< " state :"
-                    << ' ' << b[ignCell]
-                    << ' ' << Xi[ignCell]
-                    << ' ' << Su[ignCell]
-                    << ' ' << mgb[ignCell]
-                    << endl;
-
-                bEqn.diag()[ignSite.cells()[icelli]] +=
-                (
-                    ignSite.strength()*ignSite.cellVolumes()[icelli]
-                   *rhou[ignSite.cells()[icelli]]/ignSite.duration()
-                )/(b[ignSite.cells()[icelli]] + 0.001);
-            }
-        }
-    }
-
-    // Solve for and constrain b
+    // Solve for b and constrain
     bEqn.relax();
     fvConstraints().constrain(bEqn);
     bEqn.solve();
@@ -341,6 +334,9 @@ void Foam::solvers::XiFluid::EaSolve
 
 void Foam::solvers::XiFluid::thermophysicalPredictor()
 {
+    ignited_ =
+        mesh().time().value() - mesh().time().deltaTValue() >= ignitionStart_;
+
     tmp<fv::convectionScheme<scalar>> mvConvection
     (
         fv::convectionScheme<scalar>::New
@@ -355,7 +351,7 @@ void Foam::solvers::XiFluid::thermophysicalPredictor()
     const volScalarField Db
     (
         "Db",
-        ign.igniting() ? XiModel_->Db() : thermophysicalTransport.DEff(b)
+        ignited_ ? XiModel_->Db() : thermophysicalTransport.DEff(b)
     );
 
     if (thermo_.containsSpecie("ft"))
@@ -363,7 +359,7 @@ void Foam::solvers::XiFluid::thermophysicalPredictor()
         ftSolve(mvConvection(), Db);
     }
 
-    if (ign.ignited())
+    if (ignited_)
     {
         bSolve(mvConvection(), Db);
         EauSolve(mvConvection(), Db);
@@ -371,7 +367,7 @@ void Foam::solvers::XiFluid::thermophysicalPredictor()
 
     EaSolve(mvConvection(), Db);
 
-    if (!ign.ignited())
+    if (!ignited_)
     {
         thermo_.heu() == thermo.he();
     }

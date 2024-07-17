@@ -35,4 +35,7 @@ setDeltaT
 
 #includeFunc multiValveEngineState
 
+#includeFunc bXiProgress
+#includeFunc cellMin(b)
+
 // ************************************************************************* //

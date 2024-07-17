@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,34 +23,50 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Time.T.H"
 #include "ignition.H"
+#include "fvMesh.H"
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::ignition::ignition
-(
-    const dictionary& combustionProperties,
-    const Time& db,
-    const fvMesh& mesh
-)
-:
-    mesh_(mesh),
-    ignite_(combustionProperties.lookup("ignite")),
-    ignSites_
-    (
-        combustionProperties.lookup("ignitionSites"),
-        ignitionSite::iNew(db, mesh)
-    )
+bool Foam::ignition::igniting() const
 {
-    if (ignite_)
+    if (!ignite())
     {
-        Info<< nl << "Ignition on" << endl;
+        return false;
     }
-    else
+
+    bool igning = false;
+
+    forAll(ignSites_, i)
     {
-        Info<< nl << "Ignition switched off" << endl;
+        if (ignSites_[i].igniting())
+        {
+            igning = true;
+        }
     }
+
+    return igning;
+}
+
+
+bool Foam::ignition::ignited() const
+{
+    if (!ignite())
+    {
+        return false;
+    }
+
+    bool igned = false;
+
+    forAll(ignSites_, i)
+    {
+        if (ignSites_[i].ignited())
+        {
+            igned = true;
+        }
+    }
+
+    return igned;
 }
 
 

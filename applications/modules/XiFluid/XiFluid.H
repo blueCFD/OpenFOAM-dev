@@ -107,7 +107,6 @@ See also
 #include "unityLewisEddyDiffusivity.H"
 #include "SuModel.H"
 #include "XiModel.H"
-#include "ignition.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -161,14 +160,17 @@ protected:
         //- Dictionary of combustion model coefficients
         IOdictionary combustionProperties;
 
+        //- Ignition start time
+        scalar ignitionStart_;
+
+        //- Ignition state
+        bool ignited_;
+
         //- Strained laminar flame-speed model
         autoPtr<SuModel> SuModel_;
 
         //- Flame wrinkling model
         autoPtr<XiModel> XiModel_;
-
-        //- Ignition model
-        ignition ign;
 
 
     // Protected member functions
@@ -180,12 +182,16 @@ protected:
             const volScalarField& Db
         );
 
-        //- Calculate and return the turbulent flame-speed kernel correction
-        dimensionedScalar StCorr
+        //- Apply the early kernel growth correction to the flame-wrinkling Xi
+        //  to compensate for the inaccurate flame surface area estimate
+        //  when the kernel is not fully-developed,
+        //  i.e. does not have a completely burnt side
+        tmp<volScalarField> XiCorr
         (
             const volScalarField& c,
             const surfaceScalarField& nf,
-            const dimensionedScalar& dMgb
+            const dimensionedScalar& dMgb,
+            const volScalarField& Xi
         ) const;
 
         //- Solve the Xi and regress variable equations
@@ -214,6 +220,12 @@ public:
 
         //- Reference to the fluid thermophysical properties
         const psiuMulticomponentThermo& thermo;
+
+        //- Reference to the ignition start time
+        const scalar& ignitionStart;
+
+        //- Reference to the ignition state
+        const bool& ignited;
 
         //- Reference to the combustion regress variable
         //  obtained from the combustion mixture
