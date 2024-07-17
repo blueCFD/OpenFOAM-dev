@@ -24,17 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "radiativeIntensityRay.H"
-
-#if defined(WIN32) || defined(WIN64)
-#define FINITE_VOLUME_LOAD
-#endif
-
 #include "fvm.H"
-
-#if defined(WIN32) || defined(WIN64)
-#undef FINITE_VOLUME_LOAD
-#endif
-
 #include "fvDOM.H"
 #include "constants.H"
 
