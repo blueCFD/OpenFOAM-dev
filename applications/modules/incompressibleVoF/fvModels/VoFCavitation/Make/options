@@ -11,3 +11,13 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lincompressibleCavitationModels
+
+LIB_LIBS += \
+    -ltwoPhaseVoFSolver \
+    -ltwoPhaseSolver \
+    -lVoFSolver \
+    -lincompressibleVoF \
+    -lphysicalProperties \
+    -ltwoPhaseMixture \
+    -lincompressibleTwoPhases \
+    -lfiniteVolume
