@@ -19,3 +19,19 @@ EXE_INC = \
 LIB_LIBS = \
     -lphaseSystem \
     -lcompressibleCavitationModels
+
+LIB_LIBS += \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lsampling \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lthermophysicalProperties \
+    -lmulticomponentThermophysicalModels \
+    -lsaturationModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels
