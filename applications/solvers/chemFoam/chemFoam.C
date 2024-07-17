@@ -41,18 +41,8 @@ Description
 #include "physicoChemicalConstants.H"
 #include "OFstream.H"
 #include "thermoTypeFunctions.H"
-
-#if defined(WIN32) || defined(WIN64)
-#define FINITE_VOLUME_LOAD
-#endif
-
 #include "fvcFlux.H"
-
 #include "fvmDdt.H"
-
-#if defined(WIN32) || defined(WIN64)
-#undef FINITE_VOLUME_LOAD
-#endif
 
 using namespace Foam;
 

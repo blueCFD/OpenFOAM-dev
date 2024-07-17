@@ -6,11 +6,6 @@ cd ${0%/*} || exit 1    # Run from this directory
 
 wmake $targetType specie
 wmake $targetType thermophysicalProperties
-
-if isMinGW; then
-    wmakeMinGWPatchHeader2Next specie/lnInclude/linear.H FINITE_VOLUME_LOAD
-fi
-
 wmake $targetType basic
 wmake $targetType multicomponentThermo
 wmake $targetType laminarFlameSpeed
