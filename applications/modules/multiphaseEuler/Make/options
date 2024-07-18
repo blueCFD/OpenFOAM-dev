@@ -21,6 +21,7 @@ LIB_LIBS = \
     -lfvConstraints
 
 LIB_LIBS += \
+    -lphaseSystem \
     -lmultiphaseEulerInterfacialModels \
     -lmeshTools \
     -lfiniteVolume \
