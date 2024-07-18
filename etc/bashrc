@@ -57,7 +57,7 @@
 
 export WM_PROJECT=OpenFOAM
 export WM_THIRD_PARTY=ThirdParty
-export WM_PROJECT_VERSION=dev
+export WM_PROJECT_VERSION=12
 
 # blueCFD-Core: Speed up flag for faster start on Windows
 if [ -z "$WM_PROJECT_DIR" ]
