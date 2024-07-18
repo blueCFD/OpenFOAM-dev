@@ -5,8 +5,11 @@
     \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+2024 FS Dynamics Portugal: Changes are tracked at:
+                 https://github.com/blueCFD/OpenFOAM-dev
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -84,6 +87,34 @@ bool Foam::dlLibraryTable::open
     const bool verbose
 )
 {
+    //Lets check if this is a list of libraries to be loaded
+    //NOTE: should only be used for "force loading libraries"
+    if (libName.find_first_of(',')!=Foam::string::npos)
+    {
+        bool status(true);
+        string libsToLoad=libName;
+        libsToLoad.removeTrailing(' '); //removes spaces from both ends
+        libsToLoad.removeRepeated(',');
+        libsToLoad += ',';
+
+        if (debug)
+        {
+            InfoInFunction
+                << "Libraries to be loaded: " <<  libsToLoad << endl;
+        }
+
+        //generate the word list
+        size_t stposstr=0, found=libsToLoad.find_first_of(',');
+        while (found!=string::npos)
+        {
+            string libToLoad = libsToLoad.substr(stposstr,found-stposstr);
+            status = open(libToLoad, verbose) && status;
+            stposstr=found+1; found=libsToLoad.find_first_of(',',stposstr);
+        }
+
+        return status;
+    } else //end of hack
+
     if (libName.size())
     {
         void* libPtr = dlOpen
