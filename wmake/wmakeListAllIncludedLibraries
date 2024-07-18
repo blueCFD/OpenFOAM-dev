@@ -87,7 +87,7 @@ TMP_SCRIPT="Make/options.tmp"
 for lib in ${EXPECTED_LIBS}
 do
 
-    if ! grep -q -e "${lib}[ \\$]*" Make/options
+    if ! grep -q -e "${lib}[ \\]*$" Make/options
     then
         echo "    ${lib} \\"
     fi
