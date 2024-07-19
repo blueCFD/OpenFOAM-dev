@@ -5,8 +5,6 @@ IOobject::replaceFileName("B", "B_");
 #endif
 // End of hack --------------------------------------------
 
-#include "readCombustionProperties.H"
-
 Info<< "Reading thermophysical properties\n" << endl;
 
 autoPtr<psiuMulticomponentThermo> pThermo
