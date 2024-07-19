@@ -56,7 +56,9 @@ fi
 
 CODE=0
 
-EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' Make/options | grep -e "EXE_INC.*=" | sed 's=EXE\_INC.*\=[ ]*==')
+EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' Make/options | \
+          grep -e "EXE_INC.*=" | \
+          sed 's=EXE\_INC.*\=[ ]*==')
 FILES_INC=
 
 if [ -n "${EXE_INC}" ]
