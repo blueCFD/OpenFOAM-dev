@@ -7,6 +7,6 @@ EXE_LIBS = \
     -lpolyTopoChange \
     -lgenericFvFields
 
-LIB_LIBS += \
+EXE_LIBS += \
     -lfiniteVolume \
     -lmeshTools
