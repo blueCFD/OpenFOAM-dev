@@ -21,6 +21,7 @@ LIB_LIBS = \
     -lphaseSystems
 
 LIB_LIBS += \
+    -lphaseSystem \
     -lpopulationBalance \
     -lmeshTools \
     -lfiniteVolume \
