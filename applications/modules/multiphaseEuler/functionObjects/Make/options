@@ -23,6 +23,7 @@ LIB_LIBS = \
     -lfieldFunctionObjects
 
 LIB_LIBS += \
+    -lphaseSystem \
     -lmultiphaseEulerInterfacialModels \
     -lpopulationBalance \
     -lmultiphaseEulerMomentumTransportModels \
