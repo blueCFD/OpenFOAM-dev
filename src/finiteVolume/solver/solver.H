@@ -5,8 +5,11 @@
     \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+2024 FS Dynamics Portugal: Changes are tracked at:
+                 https://github.com/blueCFD/OpenFOAM-dev
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -92,6 +95,12 @@ protected:
 
         //- Read controls
         virtual bool read();
+
+        //- Get list of libraries to be forcefully loaded in
+        #if defined( WIN32 ) || defined( WIN64 )
+        //virtual fileName librariesToForceLoad() { return LIBS_TO_LOAD; }
+        virtual fileName librariesToForceLoad() = 0;
+        #endif
 
 
 public:
