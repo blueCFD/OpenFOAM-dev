@@ -74,7 +74,6 @@ public:
             PsiThermo<BasicThermo<MixtureType, composite>>;
 
         //- The derived name
-        static word derivedThermoName_() {return "hePsiThermo";}
         static const word derivedThermoName;
 
 

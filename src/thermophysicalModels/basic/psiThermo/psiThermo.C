@@ -33,10 +33,7 @@ namespace Foam
     defineRunTimeSelectionTable(psiThermo, fvMesh);
 }
 
-const ::Foam::word Foam::psiThermo::derivedThermoName
-(
-    Foam::psiThermo::derivedThermoName_()
-);
+const Foam::word Foam::psiThermo::derivedThermoName("hePsiThermo");
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
