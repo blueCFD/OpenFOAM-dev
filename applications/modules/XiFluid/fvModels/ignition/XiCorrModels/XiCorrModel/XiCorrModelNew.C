@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,54 +23,45 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "ULPtrList.T.H"
+#include "XiCorrModel.H"
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class LListBase, class T>
-Foam::ULPtrList<LListBase, T>::ULPtrList(const ULPtrList<LListBase, T>& lst)
-:
-    LList<LListBase, T*>()
-{
-    for (const_iterator iter = lst.begin(); iter != lst.end(); ++iter)
-    {
-        this->append(&iter());
-    }
-}
-
-
-template<class LListBase, class T>
-Foam::ULPtrList<LListBase, T>::ULPtrList(ULPtrList<LListBase, T>&& lst)
-{
-    transfer(lst);
-}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-template<class LListBase, class T>
-void Foam::ULPtrList<LListBase, T>::operator=
+Foam::autoPtr<Foam::XiCorrModel> Foam::XiCorrModel::New
 (
-    const ULPtrList<LListBase, T>& lst
+    const fvMesh& mesh,
+    const dictionary& dict
 )
 {
-    for (const_iterator iter = lst.begin(); iter != lst.end(); ++iter)
+    const dictionary& XiCorrDict = dict.subDict("XiCorr");
+
+    const word type(XiCorrDict.lookup("type"));
+
+    Info<< "Selecting flame-wrinkling correction type "
+        << type << endl;
+
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(type);
+
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        this->append(&iter());
+        FatalErrorInFunction
+            << "Unknown XiCorrModel "
+            << type << nl << nl
+            << "Valid XiCorrModels are : " << endl
+            << dictionaryConstructorTablePtr_->sortedToc()
+            << exit(FatalError);
     }
+
+    return autoPtr<XiCorrModel>
+    (
+        cstrIter()
+        (
+            mesh,
+            XiCorrDict.optionalSubDict(type + "Coeffs")
+        )
+    );
 }
-
-
-template<class LListBase, class T>
-void Foam::ULPtrList<LListBase, T>::operator=(ULPtrList<LListBase, T>&& lst)
-{
-    transfer(lst);
-}
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
-
-#include "ULPtrListIO.T.C"
 
 
 // ************************************************************************* //

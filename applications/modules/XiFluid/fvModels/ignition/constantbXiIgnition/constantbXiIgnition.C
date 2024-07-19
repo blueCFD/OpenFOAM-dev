@@ -23,8 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "constantIgnition.H"
-#include "addToRunTimeSelectionTable.H"
+#include "constantbXiIgnition.H"
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
@@ -32,12 +31,12 @@ namespace Foam
 {
     namespace fv
     {
-        defineTypeNameAndDebug(constantIgnition, 0);
+        defineTypeNameAndDebug(constantbXiIgnition, 0);
 
         addToRunTimeSelectionTable
         (
             fvModel,
-            constantIgnition,
+            constantbXiIgnition,
             dictionary
         );
     }
@@ -46,8 +45,9 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::fv::constantIgnition::readCoeffs()
+void Foam::fv::constantbXiIgnition::readCoeffs()
 {
+    start_ = coeffs().lookup<scalar>("start", mesh().time().userUnits());
     duration_ = coeffs().lookup<scalar>("duration", mesh().time().userUnits());
     strength_ = coeffs().lookup<scalar>("strength", dimless);
 }
@@ -55,7 +55,7 @@ void Foam::fv::constantIgnition::readCoeffs()
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::fv::constantIgnition::constantIgnition
+Foam::fv::constantbXiIgnition::constantbXiIgnition
 (
     const word& name,
     const word& modelType,
@@ -63,9 +63,9 @@ Foam::fv::constantIgnition::constantIgnition
     const dictionary& dict
 )
 :
-    fvModel(name, modelType, mesh, dict),
-    XiFluid_(mesh.lookupObject<solvers::XiFluid>(solver::typeName)),
-    set_(mesh, coeffs())
+    bXiIgnition(name, modelType, mesh, dict),
+    set_(mesh, coeffs()),
+    XiCorrModel_(XiCorrModel::New(mesh, coeffs()))
 {
     readCoeffs();
 }
@@ -73,35 +73,36 @@ Foam::fv::constantIgnition::constantIgnition
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::wordList Foam::fv::constantIgnition::addSupFields() const
+bool Foam::fv::constantbXiIgnition::igniting() const
 {
-    if (XiFluid_.ignited)
-    {
-        return wordList({"b"});
-    }
-    else
-    {
-        return wordList::null();
-    }
+    const scalar curTime = mesh().time().value();
+    const scalar deltaT = mesh().time().deltaTValue();
+
+    return
+    (
+        (curTime > start_ - 0.5*deltaT)
+     && (curTime < start_ + max(duration_, deltaT))
+    );
 }
 
 
-void Foam::fv::constantIgnition::addSup
+bool Foam::fv::constantbXiIgnition::ignited() const
+{
+    const scalar curTime = mesh().time().value();
+    const scalar deltaT = mesh().time().deltaTValue();
+
+    return (curTime > start_ - 0.5*deltaT);
+}
+
+
+void Foam::fv::constantbXiIgnition::addSup
 (
     const volScalarField& rho,
     const volScalarField& b,
     fvMatrix<scalar>& eqn
 ) const
 {
-    const scalar curTime = mesh().time().value();
-    const scalar deltaT = mesh().time().deltaTValue();
-
-    const bool igniting =
-        XiFluid_.ignited
-     && (curTime - deltaT
-          < XiFluid_.ignitionStart + max(duration_, deltaT) + small);
-
-    if (!igniting) return;
+    if (!igniting()) return;
 
     if (debug)
     {
@@ -124,42 +125,61 @@ void Foam::fv::constantIgnition::addSup
 }
 
 
-void Foam::fv::constantIgnition::topoChange
+void Foam::fv::constantbXiIgnition::XiCorr
+(
+    volScalarField& Xi,
+    const volScalarField& b,
+    const volScalarField& mgb
+) const
+{
+    if (igniting())
+    {
+        XiCorrModel_->XiCorr(Xi, b, mgb);
+    }
+}
+
+
+void Foam::fv::constantbXiIgnition::topoChange
 (
     const polyTopoChangeMap& map
 )
 {
     set_.topoChange(map);
+    XiCorrModel_->topoChange(map);
 }
 
 
-void Foam::fv::constantIgnition::mapMesh(const polyMeshMap& map)
+void Foam::fv::constantbXiIgnition::mapMesh(const polyMeshMap& map)
 {
     set_.mapMesh(map);
+    XiCorrModel_->mapMesh(map);
 }
 
 
-void Foam::fv::constantIgnition::distribute
+void Foam::fv::constantbXiIgnition::distribute
 (
     const polyDistributionMap& map
 )
 {
     set_.distribute(map);
+    XiCorrModel_->distribute(map);
 }
 
 
-bool Foam::fv::constantIgnition::movePoints()
+bool Foam::fv::constantbXiIgnition::movePoints()
 {
     set_.movePoints();
+    XiCorrModel_->movePoints();
     return true;
 }
 
 
-bool Foam::fv::constantIgnition::read(const dictionary& dict)
+bool Foam::fv::constantbXiIgnition::read(const dictionary& dict)
 {
     if (fvModel::read(dict))
     {
         set_.read(coeffs());
+        XiCorrModel_->read(coeffs());
         readCoeffs();
         return true;
     }

@@ -22,43 +22,21 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fv::constantIgnition
+    Foam::fv::bXiIgnition
 
 Description
-    Simple constant rate ignition model for the Weller b-Xi combustion models
-
-Usage
-    Example usage:
-    \verbatim
-    constantIgnition1
-    {
-        type            constantIgnition;
-
-        select          cellZone;
-        cellZone        ignition;
-
-        duration        0.003;
-        strength        2;
-    }
-    \endverbatim
-
-    Where:
-    \table
-        Property     | Description             | Required    | Default value
-        duration     | Ignition duration       | yes         |
-        strength     | Ignition strength [1/s] | yes         |
-    \endtable
+    Abstract base-class for ignition models
+    for the Weller b-Xi combustion models
 
 SourceFiles
-    constantIgnition.C
+    bXiIgnition.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef constantIgnition_H
-#define constantIgnition_H
+#ifndef bXiIgnition_H
+#define bXiIgnition_H
 
 #include "fvModel.H"
-#include "fvCellSet.H"
 #include "XiFluid.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -69,10 +47,10 @@ namespace fv
 {
 
 /*---------------------------------------------------------------------------*\
-               Class constantIgnition Declaration
+               Class bXiIgnition Declaration
 \*---------------------------------------------------------------------------*/
 
-class constantIgnition
+class bXiIgnition
 :
     public fvModel
 {
@@ -81,32 +59,17 @@ class constantIgnition
         //- The XiFluid solver
         const solvers::XiFluid& XiFluid_;
 
-        //- The set of ignition cells
-        fvCellSet set_;
-
-        //- Ignition duration
-        scalar duration_;
-
-        //- Ignition strength
-        scalar strength_;
-
-
-    // Private Member Functions
-
-        //- Non-virtual read
-        void readCoeffs();
-
 
 public:
 
     //- Runtime type information
-    TypeName("constantIgnition");
+    TypeName("bXiIgnition");
 
 
     // Constructors
 
         //- Construct from explicit source name and mesh
-        constantIgnition
+        bXiIgnition
         (
             const word& name,
             const word& modelType,
@@ -115,9 +78,9 @@ public:
         );
 
         //- Disallow default bitwise copy construction
-        constantIgnition
+        bXiIgnition
         (
-            const constantIgnition&
+            const bXiIgnition&
         ) = delete;
 
 
@@ -129,43 +92,25 @@ public:
             //  to the transport equation
             virtual wordList addSupFields() const;
 
+            virtual bool igniting() const = 0;
+
+            virtual bool ignited() const = 0;
+
 
         // Add explicit and implicit contributions to compressible equation
 
-            //- Add ignition contribution to b equation
-            virtual void addSup
+            virtual void XiCorr
             (
-                const volScalarField& rho,
+                volScalarField& Xi,
                 const volScalarField& b,
-                fvMatrix<scalar>& eqn
-            ) const;
-
-
-        // Mesh motion
-
-            //- Update topology using the given map
-            virtual void topoChange(const polyTopoChangeMap&);
-
-            //- Update from another mesh using the given map
-            virtual void mapMesh(const polyMeshMap&);
-
-            //- Redistribute or update using the given distribution map
-            virtual void distribute(const polyDistributionMap&);
-
-            //- Update for mesh motion
-            virtual bool movePoints();
-
-
-        // IO
-
-            //- Read source dictionary
-            virtual bool read(const dictionary& dict);
+                const volScalarField& mgb
+            ) const = 0;
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const constantIgnition&) = delete;
+        void operator=(const bXiIgnition&) = delete;
 };
 
 

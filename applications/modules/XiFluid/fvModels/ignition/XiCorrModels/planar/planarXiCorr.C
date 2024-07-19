@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,54 +23,60 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "ULPtrList.T.H"
+#include "planarXiCorr.H"
+#include "addToRunTimeSelectionTable.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+namespace XiCorrModels
+{
+    defineTypeNameAndDebug(planar, 0);
+    addToRunTimeSelectionTable(XiCorrModel, planar, dictionary);
+}
+}
+
+
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+bool Foam::XiCorrModels::planar::readCoeffs(const dictionary& dict)
+{
+    XiCorrModel::readCoeffs(dict);
+    area_.read(dict);
+    return true;
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class LListBase, class T>
-Foam::ULPtrList<LListBase, T>::ULPtrList(const ULPtrList<LListBase, T>& lst)
-:
-    LList<LListBase, T*>()
-{
-    for (const_iterator iter = lst.begin(); iter != lst.end(); ++iter)
-    {
-        this->append(&iter());
-    }
-}
-
-
-template<class LListBase, class T>
-Foam::ULPtrList<LListBase, T>::ULPtrList(ULPtrList<LListBase, T>&& lst)
-{
-    transfer(lst);
-}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-template<class LListBase, class T>
-void Foam::ULPtrList<LListBase, T>::operator=
+Foam::XiCorrModels::planar::planar
 (
-    const ULPtrList<LListBase, T>& lst
+    const fvMesh& mesh,
+    const dictionary& dict
 )
+:
+    XiCorrModel(mesh, dict)
 {
-    for (const_iterator iter = lst.begin(); iter != lst.end(); ++iter)
-    {
-        this->append(&iter());
-    }
+    readCoeffs(dict);
 }
 
 
-template<class LListBase, class T>
-void Foam::ULPtrList<LListBase, T>::operator=(ULPtrList<LListBase, T>&& lst)
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::XiCorrModels::planar::~planar()
+{}
+
+
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+
+Foam::dimensionedScalar Foam::XiCorrModels::planar::Ak
+(
+    const dimensionedScalar& Vk
+) const
 {
-    transfer(lst);
+    return area_;
 }
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
-
-#include "ULPtrListIO.T.C"
 
 
 // ************************************************************************* //
