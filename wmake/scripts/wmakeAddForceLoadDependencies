@@ -97,7 +97,7 @@ LIBSTOLOAD=$(echo $EXE_LIBS | \
              sed -e "s/\-l\([a-zA-Z0-9]*\ *\)/\1/g" | \
              sed -e 's=[ ]=\n=g' | \
              sed -e "s/\-L.*//g" -e 's/\$.*\.o//g' -e 's/^\$.*)$//g' | \
-             grep -v -e "=" -e "${LIB_LIST_PREFIX}_LIBS")
+             grep -v -e "=" -e "${LIB_LIST_PREFIX}_LIBS" | sort -u)
 
 # Use only the libraries that we can find
 LIBSMUSTLOAD=""
