@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # License
 #
-#    Copyright (C) 2011-2025 FS Dynamics Portugal (FSD blueCAPE Lda)
+#    Copyright (C) 2011-2024 FS Dynamics Portugal (FSD blueCAPE Lda)
 #
 #    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
 #    For more information about these patches, visit:
@@ -66,18 +66,38 @@ fiFile=$2
 # Retrieve the name of the binary application
 exeName=$(grep -e "EXE.*=" $fiFile | sed 's=.*/==')
 
+# Retrieve the name of the library application, if MOD found
+modName=$(grep -q -e "MOD.*=" $fiFile && grep -e "LIB.*=" $fiFile | sed 's=.*/==')
+
+LIB_LIST_PREFIX=
+
 # If it didn't find anything, then cancel search for this one
-if [ -z "$exeName" ]
+if [ -z "$exeName" -a -z "$modName" ]
 then
     exit 0
+
+elif [ -n "$exeName" ]
+then
+
+    LIB_LIST_PREFIX="EXE"
+
+elif [ -n "$modName" ]
+then
+
+    LIB_LIST_PREFIX="LIB"
+    exeName=$modName
+
 fi
 
-EXE_LIBS=$(grep -e "EXE_LIBS.*=" $opFile | sed 's=EXE\_LIBS.*\=[ ]*==')
+EXE_LIBS=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' $opFile | \
+             grep -e "${LIB_LIST_PREFIX}_LIBS.*=" | \
+             sed 's=${LIB_LIST_PREFIX}\_LIBS.*\=[ ]*==')
+
 LIBSTOLOAD=$(echo $EXE_LIBS | \
              sed -e "s/\-l\([a-zA-Z0-9]*\ *\)/\1/g" | \
              sed -e 's=[ ]=\n=g' | \
              sed -e "s/\-L.*//g" -e 's/\$.*\.o//g' -e 's/^\$.*)$//g' | \
-             grep -v -e "=" -e "EXE_LIBS")
+             grep -v -e "=" -e "${LIB_LIST_PREFIX}_LIBS")
 
 # Use only the libraries that we can find
 LIBSMUSTLOAD=""
