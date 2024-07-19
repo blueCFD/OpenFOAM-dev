@@ -73,6 +73,7 @@ public:
             RhoFluidThermo<BasicThermo<MixtureType, composite>>;
 
         //- The derived name
+        static word derivedThermoName_() {return "heRhoThermo";}
         static const word derivedThermoName;
 
 
