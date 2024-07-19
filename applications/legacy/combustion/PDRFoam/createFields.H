@@ -90,11 +90,7 @@ volScalarField K("K", 0.5*magSqr(U));
 Info<< "Creating the unstrained laminar flame speed\n" << endl;
 autoPtr<laminarFlameSpeed> unstrainedLaminarFlameSpeed
 (
-    laminarFlameSpeed::New
-    (
-        combustionProperties.subDict("laminarFlameSpeed"),
-        thermo
-    )
+    laminarFlameSpeed::New(thermo)
 );
 
 
