@@ -10,5 +10,4 @@ fi
 
 wmake decomposePar
 wmake reconstructPar
-wmake reconstructParMesh
 wmake redistributePar
