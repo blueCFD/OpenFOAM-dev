@@ -1,0 +1,114 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+# License
+#
+#    Copyright (C) 2024 FS Dynamics Portugal (FSD blueCAPE Lda)
+#
+#    This file is part of blueCAPE's unofficial mingw patches for OpenFOAM.
+#    For more information about these patches, visit:
+#         http://bluecfd.com/Core
+#
+#    This file is a derivative work of OpenFOAM.
+#
+#    OpenFOAM is free software: you can redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#    for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Script
+#     wmakeHackModuleToLoadLibraries
+#
+# Description
+#     Script for patching header file and Make/files for a solver module.
+#
+# Usage
+#     wmakeHackModuleToLoadLibraries <targetLibraryFolder>
+#
+#------------------------------------------------------------------------------
+Script=${0##*/}
+
+#
+# Check environment variables
+#
+for check in WM_OPTIONS WM_LINK_LANGUAGE WM_DIR WM_PROJECT WM_PROJECT_DIR
+do
+    eval test "\$$check" || {
+        echo "$Script error: environment variable \$$check not set" 1>&2
+        exit 1
+    }
+done
+
+WMKDEP_BIN=${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdep
+
+targetLibrary=$1
+headerFileName="${targetLibrary}.H"
+headerFileName2LookFor="solver.H"
+
+echo "$Script: Processing folder '${targetLibrary}'"
+
+cd "${targetLibrary}" || exit 1
+
+dummyDepFile=${headerFileName}.dep
+
+if ! grep -q -e "defineLibrariesToForceLoad\.H" "$headerFileName"
+then
+    EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' Make/options | \
+              grep -e "EXE_INC.*=" | \
+              sed -e 's=EXE\_INC.*\=[ ]*==' \
+                -e 's/(FOAM_SRC)/FOAM_SRC/g' \
+                -e 's/(LIB_SRC)/FOAM_SRC/g' \
+                -e 's/(WM_THIRD_PARTY_DIR)/WM_THIRD_PARTY_DIR/g' \
+                -e 's/(FOAM_MODULES)/FOAM_MODULES/g' \
+                -e 's/\$(.*)//g' \
+             )
+
+    eval $WMKDEP_BIN ./ ${EXE_INC} \
+        $headerFileName $dummyDepFile 1> /dev/null 2>&1 
+
+    if grep -q -e "/${headerFileName2LookFor} " $dummyDepFile
+    then
+        PARENT_CLASS=$(grep -e "public " "$headerFileName" | sed -e 's=.*public ==')
+
+        INJECT_STRING="\n    // Semi-automatically applied hack for blueCFD-Core\n"
+
+        if [ "${PARENT_CLASS}" != "solver" ]
+        then
+            INJECT_STRING="${INJECT_STRING}    #define PARENT_CLASS \"${PARENT_CLASS}\"\n"
+        fi
+
+        INJECT_STRING="${INJECT_STRING}    #include \"defineLibrariesToForceLoad.H\""
+
+        sed -i -e "s=\(TypeName.*\)=\1\n$INJECT_STRING=" "$headerFileName"
+        echo "Added hack to file '$headerFileName'."
+
+        if [ -e "Make/files" ]
+        then
+            if ! grep -q -e "^MOD = " "Make/files"
+            then
+
+                sed -i -e "s/^\(LIB =\)/MOD = $targetLibrary\n\1/" "Make/files"
+                echo "Added hack to 'Make/files' as well."
+
+            else
+
+                echo "WARNING: Hack already added to 'Make/files'."
+
+            fi
+        fi
+    fi
+
+else
+
+    echo "WARNING: Header file '$headerFileName' already has the hack."
+
+fi
+
+[ -e $dummyDepFile ] && rm $dummyDepFile
