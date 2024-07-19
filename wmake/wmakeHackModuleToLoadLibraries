@@ -81,7 +81,7 @@ then
 
         if [ "${PARENT_CLASS}" != "solver" ]
         then
-            INJECT_STRING="${INJECT_STRING}    #define PARENT_CLASS \"${PARENT_CLASS}\"\n"
+            INJECT_STRING="${INJECT_STRING}    #define PARENT_CLASS ${PARENT_CLASS}\n"
         fi
 
         INJECT_STRING="${INJECT_STRING}    #include \"defineLibrariesToForceLoad.H\""
