@@ -7,6 +7,8 @@
 -------------------------------------------------------------------------------
  2011 Symscape: Always access files in binary mode.
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+ 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+       https://github.com/blueCFD/OpenFOAM-dev
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -59,7 +61,10 @@ Foam::IFstreamAllocator::IFstreamAllocator(const fileName& filePath)
         }
     }
 
-    ifPtr_ = new ifstream(filePath.c_str());
+    // Use binary mode in case we read binary.
+    // Causes windows reading to fail if we don't.
+    ifPtr_ = new ifstream(filePath.c_str(),
+                          ios_base::in|ios_base::binary);
 
     // If the file is compressed, decompress it before reading.
     if (!ifPtr_->good())
@@ -84,7 +89,10 @@ Foam::IFstreamAllocator::IFstreamAllocator(const fileName& filePath)
         {
             delete ifPtr_;
 
-            ifPtr_ = new ifstream((filePath + ".orig").c_str());
+            // Use binary mode in case we read binary.
+            // Causes windows reading to fail if we don't.
+            ifPtr_ = new ifstream((filePath + ".orig").c_str(),
+                                  ios_base::in|ios_base::binary);
         }
     }
 }
