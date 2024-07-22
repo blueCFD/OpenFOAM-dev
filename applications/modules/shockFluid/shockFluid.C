@@ -66,6 +66,11 @@ void Foam::solvers::shockFluid::correctCoNum(const surfaceScalarField& amaxSf)
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::shockFluid
+#define PARENT_CLASS fluidSolver
+#include "defineLibrariesToForceLoad.H"
+
 void Foam::solvers::shockFluid::clearTemporaryFields()
 {
     rho_pos.clear();

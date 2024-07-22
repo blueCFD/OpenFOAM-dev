@@ -1,4 +1,5 @@
 setInterfaceRDeltaT.C
 twoPhaseVoFSolver.C
 
+MOD = twoPhaseVoFSolver
 LIB = $(FOAM_LIBBIN)/libtwoPhaseVoFSolver

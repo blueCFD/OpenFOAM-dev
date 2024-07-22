@@ -40,6 +40,11 @@ namespace solvers
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::fluid
+#define PARENT_CLASS isothermalFluid
+#include "defineLibrariesToForceLoad.H"
+
 Foam::solvers::fluid::fluid(fvMesh& mesh)
 :
     isothermalFluid(mesh),

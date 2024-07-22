@@ -64,6 +64,11 @@ void Foam::solvers::twoPhaseVoFSolver::correctCoNum()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::twoPhaseVoFSolver
+#define PARENT_CLASS twoPhaseSolver
+#include "defineLibrariesToForceLoad.H"
+
 void Foam::solvers::twoPhaseVoFSolver::correctInterface()
 {
     interface.correct();

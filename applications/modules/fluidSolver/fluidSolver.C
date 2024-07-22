@@ -42,6 +42,10 @@ namespace solvers
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::fluidSolver
+#include "defineLibrariesToForceLoad.H"
+
 bool Foam::solvers::fluidSolver::dependenciesModified() const
 {
     return runTime.controlDict().modified() || mesh.solution().modified();

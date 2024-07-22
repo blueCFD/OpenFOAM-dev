@@ -301,6 +301,10 @@ public:
     //- Runtime type information
     TypeName("isothermalFilm");
 
+    // Semi-automatically applied hack for blueCFD-Core
+    #define LFL_HEADER_MODE 1
+    #include "defineLibrariesToForceLoad.H"
+
 
     // Constructors
 

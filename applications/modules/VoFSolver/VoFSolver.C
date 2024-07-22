@@ -50,6 +50,11 @@ void Foam::solvers::VoFSolver::continuityErrors()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::VoFSolver
+#define PARENT_CLASS fluidSolver
+#include "defineLibrariesToForceLoad.H"
+
 void Foam::solvers::VoFSolver::setrAU(const fvVectorMatrix& UEqn)
 {
     if (rAU.valid())
