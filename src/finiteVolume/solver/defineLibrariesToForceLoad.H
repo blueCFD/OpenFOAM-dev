@@ -5,18 +5,32 @@
 // This allows to forcefully load libraries crucial to the application to run
 // on Windows
 
-protected:
 #if defined(WIN32) || defined(WIN64)
+
+#ifdef LFL_HEADER_MODE
+#undef LFL_HEADER_MODE
+protected:
+    virtual fileName librariesToForceLoad();
+
+public:
+
+#else //LFL_HEADER_MODE
+
 #ifdef PARENT_CLASS
-    virtual fileName librariesToForceLoad()
+    Foam::fileName LFL_CLASS_PREFIX::librariesToForceLoad()
     {
         return PARENT_CLASS::librariesToForceLoad() + LIBS_TO_LOAD;
     }
 #else
-    virtual fileName librariesToForceLoad()
+    Foam::fileName LFL_CLASS_PREFIX::librariesToForceLoad()
     {
         return LIBS_TO_LOAD;
     }
-#endif
-#endif
-public:
+#endif //PARENT_CLASS
+
+#undef PARENT_CLASS
+#undef LFL_CLASS_PREFIX
+
+#endif //LFL_HEADER_MODE
+
+#endif //WIN*
