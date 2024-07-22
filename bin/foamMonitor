@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -92,6 +92,10 @@ plotFileHeader() {
     _title="$5"
     _label="$6"
 
+    # Have to enforce an infinite loop in order to be able to re-plot with
+    # updated data
+    [ "$idle" -eq 0 ] || echo "while (1) {"
+
     _ticFormat="%g"
     [ "$logscale" = yes ] && _ticFormat="%1.e"
     _otherAxis="$([ "$AXIS" = x ] && echo y || echo x)"
@@ -112,7 +116,7 @@ plotFileFooter() {
     cat<<EOF
 
 pause $refresh
-reread
+}
 EOF
 }
 
@@ -291,7 +295,7 @@ do
     echo "$plot_line" >> "$gp_file"
 done
 
-# Add re-read footer if re-reading file
+# Add closing footer if infinite wait loop
 [ "$idle" -eq 0 ] || plotFileFooter >> "$gp_file"
 # END Gnuplot file
 
@@ -313,8 +317,8 @@ pid=$!
 ch_pid="$(pgrep -P $pid)"
 
 # Kill gnuplot/gnuplot_x11 and delete tmp file, then kill foamMonitor on trap
-trap 'kill -9 $pid $ch_pid; rm -f $gp_file; kill -9 $$' INT TERM
-trap 'rm -f $gp_file' EXIT
+trap 'kill -9 $pid $ch_pid; sleep 2; rm -f $gp_file; kill -9 $$' INT TERM
+trap 'sleep 2; rm -f $gp_file' EXIT
 
 # Display graph once only
 [ "$idle" -eq 0 ] && exit 0
