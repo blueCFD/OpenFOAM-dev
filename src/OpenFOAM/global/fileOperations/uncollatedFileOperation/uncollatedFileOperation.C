@@ -96,7 +96,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
     else
     {
         fileName path = io.path(globalFile);
-        fileName objectPath = path/io.name();
+        fileName objectPath = path/diskFileName;
 
         if (isFileOrDir(isFile, objectPath))
         {
@@ -161,7 +161,7 @@ Foam::fileName Foam::fileOperations::uncollatedFileOperation::filePathInfo
                     fileName fName
                     (
                         io.rootPath()/io.caseName(globalFile)
-                       /newInstancePath/io.db().dbDir()/io.local()/io.name()
+                       /newInstancePath/io.db().dbDir()/io.local()/diskFileName
                     );
 
                     if (isFileOrDir(isFile, fName))
