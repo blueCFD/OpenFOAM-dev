@@ -4,4 +4,5 @@ moveMesh.C
 momentumPredictor.C
 VoFSolver.C
 
+MOD = VoFSolver
 LIB = $(FOAM_LIBBIN)/libVoFSolver

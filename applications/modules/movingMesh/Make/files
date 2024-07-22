@@ -1,3 +1,4 @@
 movingMesh.C
 
+MOD = movingMesh
 LIB = $(FOAM_LIBBIN)/libmovingMesh

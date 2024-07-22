@@ -45,6 +45,11 @@ namespace solvers
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::solidDisplacement
+#define PARENT_CLASS solid
+#include "defineLibrariesToForceLoad.H"
+
 bool Foam::solvers::solidDisplacement::dependenciesModified() const
 {
     return solid::dependenciesModified() || mesh.solution().modified();

@@ -220,6 +220,10 @@ void Foam::solvers::isothermalFilm::continuityErrors()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::isothermalFilm
+#include "defineLibrariesToForceLoad.H"
+
 bool Foam::solvers::isothermalFilm::dependenciesModified() const
 {
     return runTime.controlDict().modified();

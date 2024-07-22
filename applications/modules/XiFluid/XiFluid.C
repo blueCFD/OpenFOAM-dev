@@ -41,6 +41,11 @@ namespace solvers
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::XiFluid
+#define PARENT_CLASS isothermalFluid
+#include "defineLibrariesToForceLoad.H"
+
 Foam::solvers::XiFluid::XiFluid(fvMesh& mesh)
 :
     isothermalFluid

@@ -40,6 +40,10 @@ namespace solvers
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::movingMesh
+#include "defineLibrariesToForceLoad.H"
+
 Foam::solvers::movingMesh::movingMesh(fvMesh& mesh)
 :
     solver(mesh),

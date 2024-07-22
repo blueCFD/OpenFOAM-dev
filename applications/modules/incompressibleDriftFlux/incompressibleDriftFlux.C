@@ -53,6 +53,11 @@ void Foam::solvers::incompressibleDriftFlux::correctCoNum()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::incompressibleDriftFlux
+#define PARENT_CLASS twoPhaseSolver
+#include "defineLibrariesToForceLoad.H"
+
 void Foam::solvers::incompressibleDriftFlux::setInterfaceRDeltaT
 (
     volScalarField& rDeltaT

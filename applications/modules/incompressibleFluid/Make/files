@@ -4,4 +4,5 @@ momentumPredictor.C
 correctPressure.C
 incompressibleFluid.C
 
+MOD = incompressibleFluid
 LIB = $(FOAM_LIBBIN)/libincompressibleFluid

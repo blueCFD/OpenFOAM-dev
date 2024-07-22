@@ -184,6 +184,10 @@ public:
     //- Runtime type information
     TypeName("incompressibleDriftFlux");
 
+    // Semi-automatically applied hack for blueCFD-Core
+    #define LFL_HEADER_MODE 1
+    #include "defineLibrariesToForceLoad.H"
+
 
     // Constructors
 

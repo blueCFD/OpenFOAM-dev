@@ -38,6 +38,11 @@ namespace solvers
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+// Semi-automatically applied hack for blueCFD-Core
+#define LFL_CLASS_PREFIX Foam::solvers::twoPhaseSolver
+#define PARENT_CLASS VoFSolver
+#include "defineLibrariesToForceLoad.H"
+
 Foam::solvers::twoPhaseSolver::twoPhaseSolver
 (
     fvMesh& mesh,
