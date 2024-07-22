@@ -9,4 +9,9 @@ wmake $targetType forces
 wmake $targetType utilities
 wmake $targetType solvers
 
+if isMinGW
+then
+    wmake $targetType blueCFDCoreFOs
+fi
+
 #------------------------------------------------------------------------------
