@@ -1,12 +1,3 @@
-// This hack method was originally developed by Symscape, circa 2009 -------
-// This has been implemented in potentialFoam in 2016 by blueCAPE Lda for
-// blueCFD-Core 2016-1
-#if defined( WIN32 ) || defined( WIN64 )
-// Rename Phi to Phi_ to prevent name clashes on Windows with phi
-IOobject::replaceFileName("Phi", "Phi_");
-#endif
-// End of hack --------------------------------------------
-
 Info<< "Reading velocity field U\n" << endl;
 volVectorField U
 (

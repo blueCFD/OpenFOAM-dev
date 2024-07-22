@@ -1,0 +1,30 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+Description
+    Renames objects based on a pattern, specifically designed to work on
+  MS Windows.
+
+\*---------------------------------------------------------------------------*/
+
+type            filterObjectsAsFiles;
+
+libs            ("libblueCFDCoreFOs.so");
+
+pattern
+(
+    // Needed for PDRFoam
+    ("B"    "upper_B")
+    
+    // Needed for potentialFoam
+    ("Phi"  "upper_Phi")
+
+    // Needed for all objects that have collons
+    (":"    "_collon_")
+);
+
+// ************************************************************************* //
