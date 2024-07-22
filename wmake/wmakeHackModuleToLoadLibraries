@@ -55,7 +55,7 @@ headerFileName2LookFor="solver.H"
 
 echo "$Script: Processing folder '${targetLibrary}'"
 
-pushd "${targetLibrary}" || exit 1
+cd "${targetLibrary}" || exit 1
 
 dummyDepFile=${headerFileName}.dep
 
@@ -151,10 +151,10 @@ then
         fi
     fi
 
+    [ -e $dummyDepFile ] && rm $dummyDepFile
+
 else
 
     echo "WARNING: Header file '$headerFileName' already has the hack."
 
 fi
-
-[ -e $dummyDepFile ] && rm $dummyDepFile
