@@ -86,6 +86,17 @@ then
                sed -e "s=\(.*\)::${targetLibrary}::${targetLibrary}.*=\1="
             )
 
+        # Try to remove line break from the constructor line
+        if [ -z "$CLASS_PREFIX" ]
+        then
+            CLASS_PREFIX=$(
+                sed -e :a -e '/::$/N; s/\(::\)\n/\1/; ta' $sourceFileName | \
+                   grep -e ".*::${targetLibrary}::${targetLibrary}" | \
+                   head -1 | \
+                   sed -e "s=\(.*\)::${targetLibrary}::${targetLibrary}.*=\1="
+               )
+        fi
+
         INJECT_STRING_HEADER="\n    // Semi-automatically applied hack for blueCFD-Core\n"
 
         # First patch the header file
