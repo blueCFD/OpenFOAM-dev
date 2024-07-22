@@ -15,7 +15,7 @@ type            filterObjectsAsFiles;
 
 libs            ("libblueCFDCoreFOs.so");
 
-pattern
+patterns
 (
     // Needed for PDRFoam
     ("B"    "upper_B")
