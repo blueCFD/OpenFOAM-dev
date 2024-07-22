@@ -311,7 +311,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
                 fileName fName
                 (
                    io.rootPath()/io.caseName(false)
-                  /newInstancePath/io.db().dbDir()/io.local()/io.name()
+                  /newInstancePath/io.db().dbDir()/io.local()/diskFileName
                 );
                 if (isFileOrDir(isFile, fName))
                 {
@@ -350,7 +350,7 @@ Foam::fileOperations::masterUncollatedFileOperation::relativeObjectPath
 
         case fileOperation::OBJECT:
         {
-            return io.path(false)/io.name();
+            return io.path(false)/diskFileName;
         }
         break;
 
@@ -413,7 +413,7 @@ Foam::fileOperations::masterUncollatedFileOperation::relativeObjectPath
         {
             return
                 io.rootPath()/io.caseName(false)
-               /instancePath/io.db().dbDir()/io.local()/io.name();
+               /instancePath/io.db().dbDir()/io.local()/diskFileName;
         }
         break;
 
