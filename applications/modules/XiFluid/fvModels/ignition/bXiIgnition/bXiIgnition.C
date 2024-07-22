@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,54 +23,47 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "ULPtrList.T.H"
+#include "bXiIgnition.H"
+
+// * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
+
+namespace Foam
+{
+    namespace fv
+    {
+        defineTypeNameAndDebug(bXiIgnition, 0);
+    }
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class LListBase, class T>
-Foam::ULPtrList<LListBase, T>::ULPtrList(const ULPtrList<LListBase, T>& lst)
-:
-    LList<LListBase, T*>()
-{
-    for (const_iterator iter = lst.begin(); iter != lst.end(); ++iter)
-    {
-        this->append(&iter());
-    }
-}
-
-
-template<class LListBase, class T>
-Foam::ULPtrList<LListBase, T>::ULPtrList(ULPtrList<LListBase, T>&& lst)
-{
-    transfer(lst);
-}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-template<class LListBase, class T>
-void Foam::ULPtrList<LListBase, T>::operator=
+Foam::fv::bXiIgnition::bXiIgnition
 (
-    const ULPtrList<LListBase, T>& lst
+    const word& name,
+    const word& modelType,
+    const fvMesh& mesh,
+    const dictionary& dict
 )
+:
+    fvModel(name, modelType, mesh, dict),
+    XiFluid_(mesh.lookupObject<solvers::XiFluid>(solver::typeName))
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::wordList Foam::fv::bXiIgnition::addSupFields() const
 {
-    for (const_iterator iter = lst.begin(); iter != lst.end(); ++iter)
+    if (ignited())
     {
-        this->append(&iter());
+        return wordList({"b"});
+    }
+    else
+    {
+        return wordList::null();
     }
 }
-
-
-template<class LListBase, class T>
-void Foam::ULPtrList<LListBase, T>::operator=(ULPtrList<LListBase, T>&& lst)
-{
-    transfer(lst);
-}
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
-
-#include "ULPtrListIO.T.C"
 
 
 // ************************************************************************* //
