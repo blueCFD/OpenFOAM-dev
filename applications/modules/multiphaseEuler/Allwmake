@@ -21,36 +21,6 @@ wmake $targetType functionObjects
 
 else
 
-#    # Have to create a temporary copy at the user's folder, because that way we
-#    # will have shorter paths that fit into Windows' 260 character limit
-#    if [ "${PWD/$WM_PROJECT_DIR/}" != "$PWD" ]
-#    then
-#        originalPath=$PWD
-#        originalRelative="${PWD/$WM_PROJECT_DIR/}"
-#        temporaryPath="$WM_PROJECT_USER_DIR/$$"
-#
-#        echo "Handling this solver stack at the temporary path '$temporaryPath'"
-#
-#        mkdir -p $temporaryPath
-#        cp -r . $temporaryPath
-#        cd $temporaryPath
-#
-#        ./Allwmake $@
-#        retval=$?
-#
-#        find . -name $WM_OPTIONS | while read line
-#        do
-#            mkdir -p $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line
-#            cp -r $line/ $WM_PROJECT_DIR/platforms/$WM_OPTIONS/$originalRelative/$line/
-#        done
-#
-#        # Delete the temporary folder
-#        cd ..
-#        [ -d "${temporaryPath}" ] && rm -r "${temporaryPath}"
-#
-#        exit $retval
-#    fi
-
     wmakeLnInclude interfacialModels
 
     set +x
@@ -64,10 +34,10 @@ else
         for libitem in $(grep -h "LIB =" */Make/files | sed 's=.*/=='); do
             if [ ! -e "$FOAM_LIBBIN/${libitem}.a" ]; then
                 cp $FOAM_LIBBIN/libstubLibrary.a $FOAM_LIBBIN/${libitem}.a
-            fi
 
-            if [ -e "$FOAM_LIBBIN/${libitem}.dll" ]; then
-                rm $FOAM_LIBBIN/${libitem}.dll
+                if [ -e "$FOAM_LIBBIN/${libitem}.dll" ]; then
+                    rm $FOAM_LIBBIN/${libitem}.dll
+                fi
             fi
         done
   
