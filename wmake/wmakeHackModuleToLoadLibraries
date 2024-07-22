@@ -50,11 +50,12 @@ WMKDEP_BIN=${WM_DIR}/platforms/${WM_ARCH}${WM_COMPILER}/wmkdep
 
 targetLibrary=$1
 headerFileName="${targetLibrary}.H"
+sourceFileName="${targetLibrary}.C"
 headerFileName2LookFor="solver.H"
 
 echo "$Script: Processing folder '${targetLibrary}'"
 
-cd "${targetLibrary}" || exit 1
+pushd "${targetLibrary}" || exit 1
 
 dummyDepFile=${headerFileName}.dep
 
@@ -75,19 +76,53 @@ then
 
     if grep -q -e "/${headerFileName2LookFor} " $dummyDepFile
     then
-        PARENT_CLASS=$(grep -e "public " "$headerFileName" | sed -e 's=.*public ==')
+        PARENT_CLASS=$(
+            grep -e "public " "$headerFileName" | sed -e 's=.*public =='
+            )
 
-        INJECT_STRING="\n    // Semi-automatically applied hack for blueCFD-Core\n"
+        CLASS_PREFIX=$(
+            grep -e ".*::${targetLibrary}::${targetLibrary}" $sourceFileName | \
+               head -1 | \
+               sed -e "s=\(.*\)::${targetLibrary}::${targetLibrary}.*=\1="
+            )
 
-        if [ "${PARENT_CLASS}" != "solver" ]
-        then
-            INJECT_STRING="${INJECT_STRING}    #define PARENT_CLASS ${PARENT_CLASS}\n"
-        fi
+        INJECT_STRING_HEADER="\n    // Semi-automatically applied hack for blueCFD-Core\n"
 
+        # First patch the header file
+        INJECT_STRING="${INJECT_STRING_HEADER}"
+        INJECT_STRING="${INJECT_STRING}    #define LFL_HEADER_MODE 1\n"
         INJECT_STRING="${INJECT_STRING}    #include \"defineLibrariesToForceLoad.H\""
 
         sed -i -e "s=\(TypeName.*\)=\1\n$INJECT_STRING=" "$headerFileName"
         echo "Added hack to file '$headerFileName'."
+
+        # Then patch the source file
+        INJECT_STRING="${INJECT_STRING_HEADER/    /}"
+        INJECT_STRING="${INJECT_STRING}#define LFL_CLASS_PREFIX ${CLASS_PREFIX}::${targetLibrary}\n"
+
+        if [ "${PARENT_CLASS}" != "solver" ]
+        then
+            INJECT_STRING="${INJECT_STRING}#define PARENT_CLASS ${PARENT_CLASS}\n"
+        fi
+
+        INJECT_STRING="${INJECT_STRING}#include \"defineLibrariesToForceLoad.H\""
+        
+        if grep -q -e "Protected Member Functions" "$sourceFileName"
+        then
+            INJECTION_POINT="Protected Member Functions"
+
+        elif grep -q -e "Private Member Functions" "$sourceFileName"
+        then
+            INJECTION_POINT="Private Member Functions"
+
+        else
+            INJECTION_POINT="Constructors"
+
+        fi
+
+        sed -i -e "s=\(.*${INJECTION_POINT}.*\)=\1\n$INJECT_STRING=" \
+            "$sourceFileName"
+        echo "Added hack to file '$sourceFileName'."
 
         if [ -e "Make/files" ]
         then
