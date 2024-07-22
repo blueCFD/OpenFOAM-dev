@@ -1,0 +1,3 @@
+filterObjectsAsFiles/filterObjectsAsFiles.C
+
+LIB = $(FOAM_LIBBIN)/libblueCFDCoreFOs
