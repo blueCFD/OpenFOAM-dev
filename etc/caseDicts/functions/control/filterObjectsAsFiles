@@ -9,6 +9,15 @@ Description
     Renames objects based on a pattern, specifically designed to work on
   MS Windows.
 
+    Usage:
+
+        #includeFunc filterObjectsAsFiles
+
+    WARNING: Keep in mind that function objects must be turned on, e.g. needed
+  with potentialFoam:
+
+        potentialFoam -functionObjects
+
 \*---------------------------------------------------------------------------*/
 
 type            filterObjectsAsFiles;
