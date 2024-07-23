@@ -330,7 +330,7 @@ public:
             }
 
             //- Unique on disk file name.
-            const word& uniqueFileName() const;
+            const word uniqueFileName() const;
 
             //- Return name of the class name read from header
             const word& headerClassName() const
