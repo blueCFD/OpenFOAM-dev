@@ -161,6 +161,12 @@ public:
                 return path()/name();
             }
 
+            //- Return complete path + object name
+            fileName objectUniqueNamePath() const
+            {
+                return path()/uniqueFileName();
+            }
+
             using IOobject::filePath;
 
             //- Return complete path + object name if the file exists
