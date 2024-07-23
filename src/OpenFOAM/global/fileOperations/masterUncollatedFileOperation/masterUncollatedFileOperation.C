@@ -2235,7 +2235,7 @@ bool Foam::fileOperations::masterUncollatedFileOperation::writeObject
     const bool write
 ) const
 {
-    fileName filePath(io.objectPath());
+    fileName filePath(io.objectUniqueNamePath());
 
     if (debug)
     {
