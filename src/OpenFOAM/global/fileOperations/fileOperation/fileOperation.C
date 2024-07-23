@@ -458,7 +458,7 @@ bool Foam::fileOperation::writeObject
 {
     if (write)
     {
-        const fileName filePath(io.objectPath());
+        const fileName filePath(io.objectUniqueNamePath());
 
         mkDir(filePath.path());
 
