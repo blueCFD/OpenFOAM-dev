@@ -47,6 +47,7 @@ Modifications
 #include "OSspecific.H"
 #include "wordRe.H"
 #include "objectRegistry.H"
+#include <regExp.H>
 #include <regex>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -69,7 +70,10 @@ void Foam::IOobject::replaceFileName(const Foam::wordRe & from,
             << endl;
     }
 
-    replacedFileNames_.append(Pair<wordRe>(from, to));
+    Pair<wordRe> newItem(from, to);
+    newItem.first().compile();
+
+    replacedFileNames_.append(newItem);
 }
 
 
@@ -89,6 +93,11 @@ const Foam::word Foam::IOobject::uniqueFileName() const
                 std::regex(rfn.first()),
                 rfn.second()
             );
+            break;
+        }
+        else if(regExp(rfn.first()).search(diskFileName))
+        {
+            diskFileName.replace(rfn.first(), rfn.second());
             break;
         }
     }
