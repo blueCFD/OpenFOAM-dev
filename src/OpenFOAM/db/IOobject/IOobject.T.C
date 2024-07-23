@@ -437,6 +437,14 @@ Foam::fileName Foam::IOobject::filePath
 void Foam::IOobject::replaceFileName(const Foam::word & from, 
                                      const Foam::word & to)
 {
+    if (objectRegistry::debug)
+    {
+        InfoInFunction
+            << "Adding renaming pattern '" << from
+            << "' to '"<< to << "'"
+            << endl;
+    }
+
     replacedFileNames_.insert(from, to);
 }
 
@@ -448,6 +456,14 @@ const Foam::word & Foam::IOobject::uniqueFileName() const
 
     const word & diskFileName = (findIt == replacedFileNames_.end()) ?
         name() : *findIt;
+
+    if (objectRegistry::debug)
+    {
+        InfoInFunction
+            << "Applying renaming pattern '" << name()
+            << "' to '"<< diskFileName << "'"
+            << endl;
+    }
 
     return diskFileName;
 }
