@@ -59,7 +59,7 @@ class codedBase
         const word codeName_;
 
         //- Dictionary contents for the CodedType
-        const dictionary dict_;
+        mutable dictionary dict_;
 
         //- Previously loaded library
         mutable fileName oldLibPath_;
@@ -97,17 +97,20 @@ protected:
 
     // Protected Member Functions
 
+        //- Name of the dynamically generated CodedType
+        const word& codeName() const;
+
+        //- Return a description (type + name) for the output
+        string description() const;
+
+        //- Get the dictionary to initialise the codeContext
+        const dictionary& codeDict() const;
+
         //- Update library as required
         void updateLibrary() const;
 
-        //- Name of the dynamically generated CodedType
-        virtual const word& codeName() const;
-
-        //- Return a description (type + name) for the output
-        virtual string description() const;
-
-        //- Get the dictionary to initialise the codeContext
-        virtual const dictionary& codeDict() const;
+        //- Update library from given updated dictionary as required
+        void updateLibrary(const dictionary& dict) const;
 
         //- Get the keywords associated with source code
         virtual wordList codeKeys() const = 0;
@@ -129,9 +132,6 @@ public:
 
 
     // Constructors
-
-        //- Construct null
-        codedBase();
 
         //- Construct from name and dictionary
         codedBase(const word& name, const dictionary& dict);

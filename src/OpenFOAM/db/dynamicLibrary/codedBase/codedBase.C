@@ -24,12 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "codedBase.H"
-#include "SHA1Digest.H"
 #include "dynamicCode.H"
 #include "dynamicCodeContext.H"
 #include "dlLibraryTable.H"
 #include "regIOobject.H"
-#include "PstreamReduceOps.T.H"
 #include "OSspecific.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -77,20 +75,20 @@ void* Foam::codedBase::loadLibrary
 {
     void* lib = 0;
 
-    // avoid compilation by loading an existing library
+    // Avoid compilation by loading an existing library
     if (!libPath.empty())
     {
         if (libs.open(libPath, false))
         {
             lib = libs.findLibrary(libPath);
 
-            // verify the loaded version and unload if needed
+            // Verify the loaded version and unload if needed
             if (lib)
             {
-                // provision for manual execution of code after loading
+                // Provision for manual execution of code after loading
                 if (dlSymFound(lib, globalFuncName))
                 {
-                    loaderFunctionType function =
+                    const loaderFunctionType function =
                         reinterpret_cast<loaderFunctionType>
                         (
                             dlSym(lib, globalFuncName)
@@ -98,7 +96,7 @@ void* Foam::codedBase::loadLibrary
 
                     if (function)
                     {
-                        (*function)(true);    // force load
+                        (*function)(true);    // Force load
                     }
                     else
                     {
@@ -157,10 +155,10 @@ void Foam::codedBase::unloadLibrary
         return;
     }
 
-    // provision for manual execution of code before unloading
+    // Provision for manual execution of code before unloading
     if (dlSymFound(lib, globalFuncName))
     {
-        loaderFunctionType function =
+        const loaderFunctionType function =
             reinterpret_cast<loaderFunctionType>
             (
                 dlSym(lib, globalFuncName)
@@ -168,7 +166,7 @@ void Foam::codedBase::unloadLibrary
 
         if (function)
         {
-            (*function)(false);    // force unload
+            (*function)(false);    // Force unload
         }
         else
         {
@@ -193,28 +191,22 @@ void Foam::codedBase::unloadLibrary
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-Foam::string Foam::codedBase::description() const
-{
-    return this->type() + " " + codeName();
-}
-
-
 void Foam::codedBase::createLibrary
 (
     dynamicCode& dynCode,
     const dynamicCodeContext& context
 ) const
 {
-    bool create =
+    const bool create =
         Pstream::master()
-     || (regIOobject::fileModificationSkew <= 0);   // not NFS
+     || (regIOobject::fileModificationSkew <= 0);   // Not NFS
 
     if (create)
     {
         // Write files for new library
         if (!dynCode.upToDate(context))
         {
-            // filter with this context
+            // Filter with this context
             dynCode.reset(context);
 
             this->prepare(dynCode, context);
@@ -241,7 +233,7 @@ void Foam::codedBase::createLibrary
     }
 
 
-    // all processes must wait for compile to finish
+    // All processes must wait for compile to finish
     if (regIOobject::fileModificationSkew > 0)
     {
         //- Since the library has only been compiled on the master the
@@ -251,7 +243,7 @@ void Foam::codedBase::createLibrary
 
         const fileName libPath = dynCode.libPath();
 
-        off_t mySize = Foam::fileSize(libPath);
+        off_t mySize = fileSize(libPath);
         off_t masterSize = mySize;
         Pstream::scatter(masterSize);
 
@@ -262,7 +254,6 @@ void Foam::codedBase::createLibrary
                 << " and localSize:" << mySize
                 << endl;
         }
-
 
         if (mySize < masterSize)
         {
@@ -275,7 +266,7 @@ void Foam::codedBase::createLibrary
                     << regIOobject::fileModificationSkew
                     << " seconds." << endl;
             }
-            Foam::sleep(regIOobject::fileModificationSkew);
+            sleep(regIOobject::fileModificationSkew);
 
             // Recheck local size
             mySize = Foam::fileSize(libPath);
@@ -311,6 +302,24 @@ void Foam::codedBase::createLibrary
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
+const Foam::word& Foam::codedBase::codeName() const
+{
+    return codeName_;
+}
+
+
+Foam::string Foam::codedBase::description() const
+{
+    return this->type() + " " + codeName();
+}
+
+
+const Foam::dictionary& Foam::codedBase::codeDict() const
+{
+    return dict_;
+}
+
+
 void Foam::codedBase::updateLibrary() const
 {
     const word& name = codeName();
@@ -322,7 +331,7 @@ void Foam::codedBase::updateLibrary() const
         dict
     );
 
-    dynamicCodeContext context(dict, codeKeys(), codeDictVars());
+    const dynamicCodeContext context(dict, codeKeys(), codeDictVars());
 
     // codeName: name + _<sha1>
     // codeDir : name
@@ -334,7 +343,7 @@ void Foam::codedBase::updateLibrary() const
     const fileName libPath = dynCode.libPath();
 
 
-    // the correct library was already loaded => we are done
+    // The correct library was already loaded => we are done
     if (libs.findLibrary(libPath))
     {
         return;
@@ -345,10 +354,10 @@ void Foam::codedBase::updateLibrary() const
         << " in " << dict.name() << endl;
 
 
-    // remove instantiation of fvPatchField provided by library
+    // Remove instantiation of fvPatchField provided by library
     this->clearRedirect();
 
-    // may need to unload old library
+    // May need to unload old library
     unloadLibrary
     (
         oldLibPath_,
@@ -356,7 +365,7 @@ void Foam::codedBase::updateLibrary() const
         context.dict()
     );
 
-    // try loading an existing library (avoid compilation when possible)
+    // Try loading an existing library (avoid compilation when possible)
     if (!loadLibrary(libPath, dynCode.codeName(), context.dict()))
     {
         createLibrary(dynCode, context);
@@ -368,28 +377,19 @@ void Foam::codedBase::updateLibrary() const
         }
     }
 
-    // retain for future reference
+    // Retain for future reference
     oldLibPath_ = libPath;
 }
 
 
-const Foam::word& Foam::codedBase::codeName() const
+void Foam::codedBase::updateLibrary(const dictionary& dict) const
 {
-    return codeName_;
-}
-
-
-const Foam::dictionary& Foam::codedBase::codeDict() const
-{
-    return dict_;
+    dict_ = dict;
+    updateLibrary();
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::codedBase::codedBase()
-{}
-
 
 Foam::codedBase::codedBase(const word& name, const dictionary& dict)
 :
