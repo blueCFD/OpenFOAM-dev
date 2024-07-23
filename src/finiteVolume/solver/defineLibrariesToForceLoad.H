@@ -19,7 +19,14 @@ public:
 #ifdef PARENT_CLASS
     Foam::fileName LFL_CLASS_PREFIX::librariesToForceLoad()
     {
-        return PARENT_CLASS::librariesToForceLoad() + LIBS_TO_LOAD;
+        fileName libraries(PARENT_CLASS::librariesToForceLoad());
+
+        libraries.removeTrailing(",");
+        libraries += ",";
+
+        libraries += LIBS_TO_LOAD;
+
+        return libraries;
     }
 #else
     Foam::fileName LFL_CLASS_PREFIX::librariesToForceLoad()
