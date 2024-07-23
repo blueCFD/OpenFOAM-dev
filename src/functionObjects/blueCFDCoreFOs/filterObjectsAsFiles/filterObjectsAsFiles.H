@@ -96,7 +96,7 @@ private:
     // Private Data
 
         //- List of renaming patterns retrieved from dict
-        List<Pair<word>> patterns_;
+        List<Pair<wordRe>> patterns_;
 
 
     // Private Member Functions
