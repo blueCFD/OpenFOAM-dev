@@ -28,11 +28,12 @@
 #
 # Description
 #     Script for listing libraries that should be listed to be included.
+#     Defaults to using 'Make/options'.
 #
 #   NOTE: this script was partially based on the wmake script.
 #
 # Usage
-#     wmakeListAllIncludedLibraries
+#     wmakeListAllIncludedLibraries [targetFile]
 #
 #------------------------------------------------------------------------------
 Script=${0##*/}
@@ -48,15 +49,22 @@ do
     }
 done
 
-if [ $(cat Make/options | wc -l) -eq 0 ]
+TARGET_FILE=Make/options
+
+if [ $# -gt 0 ] 
 then
-    echo "WARNING: Make/options is empty."
+    TARGET_FILE=$1
+fi
+
+if [ $(cat "${TARGET_FILE}" | wc -l) -eq 0 ]
+then
+    echo "WARNING: "${TARGET_FILE}" is empty."
     exit 0
 fi
 
 CODE=0
 
-EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' Make/options | \
+EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' "${TARGET_FILE}" | \
           grep -e "EXE_INC.*=" | \
           sed 's=EXE\_INC.*\=[ ]*==')
 FILES_INC=
@@ -78,18 +86,18 @@ fi
 # Use only the libraries that we can find
 if [ -z "${FILES_INC}" ]
 then
-    echo "WARNING: Make/options as good as empty."
+    echo "WARNING: "${TARGET_FILE}" as good as empty."
     exit 0
 fi
 
 EXPECTED_LIBS=$(eval 'grep -e "^LIB ="' $FILES_INC | sed -e 's=.*/lib=-l=')
 
-TMP_SCRIPT="Make/options.tmp"
+TMP_SCRIPT="${TARGET_FILE}.tmp"
 
 for lib in ${EXPECTED_LIBS}
 do
 
-    if ! grep -q -e "${lib}[ \\]*$" Make/options
+    if ! grep -q -e "${lib}[ \\]*$" "${TARGET_FILE}"
     then
         echo "    ${lib} \\"
     fi
@@ -101,13 +109,13 @@ then
 
     sed -i -e '$ s= \\$==' "${TMP_SCRIPT}"
 
-    echo "Libraries not listed in Make/options and which were expected to exist:"
+    echo "Libraries not listed in ${TARGET_FILE} and which were expected to exist:"
     cat "${TMP_SCRIPT}"
 
-    echo -e "\nLIB_LIBS += \\" >> Make/options
-    cat "${TMP_SCRIPT}" >> Make/options
+    echo -e "\nLIB_LIBS += \\" >> "${TARGET_FILE}"
+    cat "${TMP_SCRIPT}" >> "${TARGET_FILE}"
 
-    echo -e "\nHacked this into the Make/options file for convenience."
+    echo -e "\nHacked this into the ${TARGET_FILE} file for convenience."
     CODE=2
 
 else
