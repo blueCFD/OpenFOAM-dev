@@ -53,7 +53,7 @@ namespace functionObjects
 
 void Foam::functionObjects::filterObjectsAsFiles::transferPatterns()
 {
-    forAll(patterns_, index)
+    forAll (patterns_, index)
     {
         IOobject::replaceFileName
         (
@@ -92,7 +92,7 @@ Foam::functionObjects::filterObjectsAsFiles::~filterObjectsAsFiles()
 bool Foam::functionObjects::filterObjectsAsFiles::read(const dictionary& dict)
 {
 
-    patterns_ = List<Pair<word>>
+    patterns_ = List<Pair<wordRe>>
     (
         dict.lookup("patterns")
     );
