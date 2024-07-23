@@ -10,7 +10,7 @@ FoamFile
     format      ascii;
     class       volSymmTensorField;
     location    "0";
-    object      B_;
+    object      upper_B;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
