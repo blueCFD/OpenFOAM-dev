@@ -9,4 +9,4 @@
 
 // blueCFD-Core: must read the dictionary before creating the fields, so
 // that the user-selected renaming mechanism works as intended
-runTime.functionObjects().read();
+#include "readFunctionObjects.H"
