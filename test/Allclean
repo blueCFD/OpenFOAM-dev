@@ -1,1 +1,21 @@
-../tutorials/Allclean
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial clean functions
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+dir=${PWD##*/}
+
+echo "--------"
+echo "Cleaning ${dir}s ..."
+echo "Removing backup files"
+find . -type f \( -name "*~" -o -name "*.bak" \) -exec rm {} \;
+find . \( -name core -o -name 'core.[1-9]*' \) -exec rm {} \;
+find . \( -name '*.pvs' -o -name '*.OpenFOAM' \) -exec rm {} \;
+rm -rf logs testLoopReport
+
+foamCleanTutorials cases
+
+echo "--------"
+
+#------------------------------------------------------------------------------
