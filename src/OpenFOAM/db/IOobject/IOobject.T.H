@@ -6,6 +6,8 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+ 2016-2024 FS Dynamics Portugal: Changes are tracked at:
+                 https://github.com/blueCFD/OpenFOAM-dev
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
@@ -515,8 +517,8 @@ public:
     // Static functions
 
         //- Set unique on disk file name 
-        //- e.g., b -> b_ to avoid upper/lowercase clash with B
-        static void replaceFileName(const word& from, const word& to);
+        //- e.g., B -> B_ to avoid upper/lowercase clash with b
+        static void replaceFileName(const wordRe& from, const wordRe& to);
 };
 
 

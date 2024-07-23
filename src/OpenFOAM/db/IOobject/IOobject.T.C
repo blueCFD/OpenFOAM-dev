@@ -5,11 +5,8 @@
     \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
- 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
- 2017-09-xx FSD blueCFD Lda: Modifications for blueCFD-Core 2017-1
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -24,20 +21,6 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Modifications
-    This file has been modified by blueCAPE's unofficial mingw patches for
-    OpenFOAM.
-    For more information about these patches, visit:
-        http://bluecfd.com/Core
-
-    Modifications made:
-      - These changes are technically from Symscape's own patches for Windows,
-        circa 2009.
-      - The adaptation derived from the patches for blueCFD 2.1, adjusted to
-        OpenFOAM 2.2.
-      - Further adaptation was done for re-adapting to OpenFOAM 5 collated file
-        management.
-
 \*---------------------------------------------------------------------------*/
 
 #include "IOobject.T.H"
@@ -45,15 +28,11 @@ Modifications
 #include "IFstream.H"
 #include "OSspecific.H"
 
-#include "ListHashTable.T.H"
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(IOobject, 0);
-
-    static ListHashTable<Foam::word> replacedFileNames_;
 
     template<>
     const char* NamedEnum<IOobject::fileCheckTypes, 4>::names[] =
@@ -431,41 +410,6 @@ Foam::fileName Foam::IOobject::filePath
 ) const
 {
     return fileHandler().filePath(global, *this, typeName);
-}
-
-
-void Foam::IOobject::replaceFileName(const Foam::word & from, 
-                                     const Foam::word & to)
-{
-    if (objectRegistry::debug)
-    {
-        InfoInFunction
-            << "Adding renaming pattern '" << from
-            << "' to '"<< to << "'"
-            << endl;
-    }
-
-    replacedFileNames_.insert(from, to);
-}
-
-
-const Foam::word & Foam::IOobject::uniqueFileName() const
-{
-    ListHashTable<word>::const_iterator findIt =
-        replacedFileNames_.find(name());
-
-    const word & diskFileName = (findIt == replacedFileNames_.end()) ?
-        name() : *findIt;
-
-    if (objectRegistry::debug)
-    {
-        InfoInFunction
-            << "Applying renaming pattern '" << name()
-            << "' to '"<< diskFileName << "'"
-            << endl;
-    }
-
-    return diskFileName;
 }
 
 

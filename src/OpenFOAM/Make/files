@@ -258,6 +258,7 @@ $(IOobject)/IOobject.T.C
 $(IOobject)/IOobjectIO.T.C
 $(IOobject)/IOobjectReadHeader.T.C
 $(IOobject)/IOobjectWriteHeader.T.C
+$(IOobject)/IOobjectFilter.T.C
 
 regIOobject = db/regIOobject
 $(regIOobject)/regIOobject.C
