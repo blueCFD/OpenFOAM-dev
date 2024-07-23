@@ -6,6 +6,8 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2017-09-xx FSD blueCFD Lda: Modifications for blueCFD-Core 2017-1
+ 2016-2024 FS Dynamics Portugal: Changes are tracked at:
+                 https://github.com/blueCFD/OpenFOAM-dev
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
