@@ -53,6 +53,8 @@ MACRO_NAME=$2
 
 if ! grep -q -e "$MACRO_NAME" $hackThisHeader
 then
+    ORIG_STAMP=$(stat -c "%Y" $hackThisHeader)
+
     mv $hackThisHeader ${hackThisHeader}.tmp && \
     (
         echo "#ifdef $MACRO_NAME" > $hackThisHeader
@@ -60,6 +62,8 @@ then
         echo "#else" >> $hackThisHeader
         echo "#include_next \"$headerFileName\"" >> $hackThisHeader
         echo "#endif" >> $hackThisHeader
+
+        touch -d @${ORIG_STAMP} $hackThisHeader
 
         rm ${hackThisHeader}.tmp
     )
