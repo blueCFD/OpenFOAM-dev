@@ -112,8 +112,12 @@ then
     echo "Libraries not listed in ${TARGET_FILE} and which were expected to exist:"
     cat "${TMP_SCRIPT}"
 
+    ORIG_STAMP=$(stat -c "%Y" "${TARGET_FILE}")
+
     echo -e "\nLIB_LIBS += \\" >> "${TARGET_FILE}"
     cat "${TMP_SCRIPT}" >> "${TARGET_FILE}"
+
+    touch -d @${ORIG_STAMP} "${TARGET_FILE}"
 
     echo -e "\nHacked this into the ${TARGET_FILE} file for convenience."
     CODE=2

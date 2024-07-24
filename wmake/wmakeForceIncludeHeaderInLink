@@ -71,7 +71,10 @@ do
 
             if grep -q -e "/${headerFileName2Include} " $dummyDepFile
             then
-                sed -i -e 's=^=#include "'${headerFileName2IncludeFullPath}'"\n=' "$header"
+                ORIG_STAMP=$(stat -c "%Y" "${header}")
+                sed -i -e 's=^=#include "'${headerFileName2IncludeFullPath}'"\n=' "${header}"
+                
+                touch -d @${ORIG_STAMP} "${header}"
                 echo "Added '$headerFileName2Include' to file '$header'."
             fi
         else

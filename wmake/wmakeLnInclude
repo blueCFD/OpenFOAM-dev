@@ -239,7 +239,9 @@ else
         \) -print | \
     while read newItemToCreate; do
 
-      echo "#include \"$newItemToCreate\"" > ${newItemToCreate##*/}
+      theNewItem="${newItemToCreate##*/}"
+      echo "#include \"$newItemToCreate\"" > "${theNewItem}"
+      touch -r "${newItemToCreate}" "${theNewItem}"
 
     done    
 
