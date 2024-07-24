@@ -14,6 +14,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#includeFunc filterObjectsAsFiles
+
 #includeFunc fieldAverage(U, p, prime2Mean = yes)
 
 // ************************************************************************* //

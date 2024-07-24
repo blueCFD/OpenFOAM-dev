@@ -13,6 +13,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#includeFunc filterObjectsAsFiles
+
 #includeFunc    residuals(p_rgh, k.water, omega.water)
 #includeFunc    timeStep
 #includeFunc    writeObjects(d.air1)

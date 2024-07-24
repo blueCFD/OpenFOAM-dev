@@ -14,6 +14,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#includeFunc filterObjectsAsFiles
+
 #includeFunc volIntegrate(cloud:alpha)
 #includeFunc patchFlowRate(patch=lowerInlet, cloud:massFlux)
 #includeFunc patchFlowRate(patch=upperInlet, cloud:massFlux)

@@ -14,6 +14,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#includeFunc filterObjectsAsFiles
+
 age
 {
     libs            ("libfieldFunctionObjects.so");
