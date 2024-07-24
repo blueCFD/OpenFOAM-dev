@@ -164,10 +164,11 @@ do
             then
                 cp "${FOAM_ETC}/caseDicts/functions/functions" \
                    "${functionsDict}"
-                foamDictionary -entry \
-                    "#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
-                    -set "" "$functionsDict"
             fi
+
+            foamDictionary -entry \
+                "#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
+                -set "" "$functionsDict"
         fi
     ) > /dev/null
 done

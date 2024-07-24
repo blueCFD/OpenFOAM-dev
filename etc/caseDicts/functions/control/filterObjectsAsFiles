@@ -27,10 +27,10 @@ libs            ("libblueCFDCoreFOs.so");
 patterns
 (
     // Needed for PDRFoam
-    ("B"    "upper_B")
+    ("^B$"    "upper_B")
     
     // Needed for potentialFoam
-    ("Phi"  "upper_Phi")
+    ("^Phi"  "upper_Phi")
 
     // Needed for all objects that have collons
     (":"    "_collon_")
