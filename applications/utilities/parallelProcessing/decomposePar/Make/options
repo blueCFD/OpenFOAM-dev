@@ -12,3 +12,11 @@ EXE_LIBS = \
     -ldecompositionMethods \
     -llagrangian \
     -lgenericFvFields
+
+ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
+
+EXE_LIBS += \
+    -lscotchDecomp \
+    -lmetisDecomp
+
+endif
