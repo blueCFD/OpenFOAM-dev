@@ -59,7 +59,7 @@ cd "${targetLibrary}" || exit 1
 
 dummyDepFile=${headerFileName}.dep
 
-if ! grep -q -e "defineLibrariesToForceLoad\.H" "$headerFileName"
+if ! grep -q -e "definePublicDlLibraryLoader\.H" "$headerFileName"
 then
     EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' Make/options | \
               grep -e "EXE_INC.*=" | \
