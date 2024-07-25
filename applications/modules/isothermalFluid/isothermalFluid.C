@@ -61,11 +61,6 @@ void Foam::solvers::isothermalFluid::continuityErrors()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
-// Semi-automatically applied hack for blueCFD-Core
-#define LFL_CLASS_PREFIX Foam::solvers::isothermalFluid
-#define PARENT_CLASS fluidSolver
-#include "defineLibrariesToForceLoad.H"
-
 Foam::tmp<Foam::volScalarField::Internal>
 Foam::solvers::isothermalFluid::pressureWork
 (

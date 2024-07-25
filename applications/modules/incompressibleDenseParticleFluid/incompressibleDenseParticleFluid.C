@@ -49,11 +49,6 @@ namespace solvers
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-// Semi-automatically applied hack for blueCFD-Core
-#define LFL_CLASS_PREFIX Foam::solvers::incompressibleDenseParticleFluid
-#define PARENT_CLASS fluidSolver
-#include "defineLibrariesToForceLoad.H"
-
 void Foam::solvers::incompressibleDenseParticleFluid::correctCoNum()
 {
     fluidSolver::correctCoNum(phic);
