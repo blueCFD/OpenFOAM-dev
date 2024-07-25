@@ -68,6 +68,7 @@ namespace solvers
 
 class isothermalFilm
 :
+#include "definePublicDlLibraryLoader.H"
     public solver
 {
     // Control parameters

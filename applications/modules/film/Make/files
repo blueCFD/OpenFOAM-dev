@@ -1,4 +1,5 @@
 film.C
 thermophysicalPredictor.C
 
+MOD = film
 LIB = $(FOAM_LIBBIN)/libfilm

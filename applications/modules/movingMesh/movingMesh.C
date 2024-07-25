@@ -42,6 +42,7 @@ namespace solvers
 
 Foam::solvers::movingMesh::movingMesh(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     solver(mesh),
     maxDeltaT_
     (

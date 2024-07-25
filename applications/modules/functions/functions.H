@@ -67,6 +67,7 @@ namespace solvers
 
 class functions
 :
+#include "definePublicDlLibraryLoader.H"
     public movingMesh
 {
 

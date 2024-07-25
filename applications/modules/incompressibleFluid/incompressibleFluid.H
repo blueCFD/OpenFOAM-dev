@@ -73,6 +73,7 @@ namespace solvers
 
 class incompressibleFluid
 :
+#include "definePublicDlLibraryLoader.H"
     public fluidSolver
 {
 

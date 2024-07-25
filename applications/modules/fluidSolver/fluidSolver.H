@@ -59,6 +59,7 @@ namespace solvers
 
 class fluidSolver
 :
+#include "definePublicDlLibraryLoader.H"
     public solver
 {
     // Control parameters

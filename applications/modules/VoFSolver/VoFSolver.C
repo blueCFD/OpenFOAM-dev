@@ -86,6 +86,7 @@ Foam::solvers::VoFSolver::VoFSolver
     autoPtr<VoFMixture> mixturePtr
 )
 :
+#include "constructPublicDlLibraryLoader.H"
     fluidSolver(mesh),
 
     mixturePtr_(mixturePtr),

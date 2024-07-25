@@ -69,6 +69,7 @@ incompressibleDenseParticleFluid
     fvMesh& mesh
 )
 :
+#include "constructPublicDlLibraryLoader.H"
     fluidSolver(mesh),
 
     continuousPhaseName

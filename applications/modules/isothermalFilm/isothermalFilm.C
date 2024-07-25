@@ -250,6 +250,7 @@ Foam::solvers::isothermalFilm::isothermalFilm
     autoPtr<rhoFluidThermo> thermoPtr
 )
 :
+#include "constructPublicDlLibraryLoader.H"
     solver(mesh),
 
     CoNum(0),

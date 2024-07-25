@@ -74,6 +74,7 @@ namespace solvers
 
 class multicomponentFluid
 :
+#include "definePublicDlLibraryLoader.H"
     public isothermalFluid
 {
 

@@ -53,6 +53,7 @@ namespace solvers
 
 class solid
 :
+#include "definePublicDlLibraryLoader.H"
     public solver
 {
 

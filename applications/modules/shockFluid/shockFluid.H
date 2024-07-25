@@ -70,6 +70,7 @@ namespace solvers
 
 class shockFluid
 :
+#include "definePublicDlLibraryLoader.H"
     public fluidSolver
 {
 
