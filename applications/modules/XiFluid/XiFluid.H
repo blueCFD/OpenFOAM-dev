@@ -121,6 +121,7 @@ namespace solvers
 
 class XiFluid
 :
+#include "definePublicDlLibraryLoader.H"
     public isothermalFluid
 {
 

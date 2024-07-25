@@ -98,6 +98,7 @@ void Foam::solvers::multiphaseEuler::correctCoNum()
 
 Foam::solvers::multiphaseEuler::multiphaseEuler(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     fluidSolver(mesh),
 
     predictMomentum

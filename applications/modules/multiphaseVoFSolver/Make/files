@@ -4,4 +4,5 @@ setInterfaceRDeltaT.C
 #alphaPredictor.C
 multiphaseVoFSolver.C
 
+MOD = multiphaseVoFSolver
 LIB = $(FOAM_LIBBIN)/libmultiphaseVoFSolver

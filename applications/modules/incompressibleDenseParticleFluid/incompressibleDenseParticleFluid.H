@@ -76,6 +76,7 @@ namespace solvers
 
 class incompressibleDenseParticleFluid
 :
+#include "definePublicDlLibraryLoader.H"
     public fluidSolver
 {
 

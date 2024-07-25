@@ -70,6 +70,7 @@ namespace solvers
 
 class twoPhaseSolver
 :
+#include "definePublicDlLibraryLoader.H"
     public VoFSolver
 {
 

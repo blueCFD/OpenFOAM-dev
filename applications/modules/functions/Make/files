@@ -1,3 +1,4 @@
 functions.C
 
+MOD = functions
 LIB = $(FOAM_LIBBIN)/libfunctions

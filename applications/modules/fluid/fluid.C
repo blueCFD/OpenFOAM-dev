@@ -42,6 +42,7 @@ namespace solvers
 
 Foam::solvers::fluid::fluid(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     isothermalFluid(mesh),
 
     thermophysicalTransport

@@ -70,6 +70,7 @@ namespace solvers
 
 class multiphaseEuler
 :
+#include "definePublicDlLibraryLoader.H"
     public fluidSolver
 {
 
