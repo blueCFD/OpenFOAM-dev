@@ -14,6 +14,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#includeFunc filterObjectsAsFiles
+
 #includeFunc fieldAverage(U.air, U.water, alpha.air, p)
 
 // ************************************************************************* //
