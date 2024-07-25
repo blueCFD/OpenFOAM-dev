@@ -91,6 +91,15 @@ then
         
         sed -i -e "s=\( *${PARENT_CLASS}(mesh).*\)=${INJECT_STRING}\n\1=" \
             "$sourceFileName"
+            
+        if ! grep -q -e "${INJECT_STRING}" "$sourceFileName"
+        then
+            # Use the alternative of getting the separate colon as per
+            # OpenFOAM's coding conventions
+            sed -i -e "s=\(^:$\)=\1\n${INJECT_STRING}=" \
+                "$sourceFileName"
+        fi
+
         echo "Added hack to file '$sourceFileName'."
 
         if [ -e "Make/files" ]
