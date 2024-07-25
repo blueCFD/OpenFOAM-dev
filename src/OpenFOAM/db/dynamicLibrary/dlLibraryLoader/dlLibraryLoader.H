@@ -69,6 +69,10 @@ public:
 
     //- Destructor
     ~dlLibraryLoader();
+    
+    // Methos
+        // Dummy method for skipping warning about unused variable
+        void dummy() {}
 };
 
 
