@@ -80,6 +80,7 @@ Foam::solvers::incompressibleDriftFlux::surfaceTensionForce() const
 
 Foam::solvers::incompressibleDriftFlux::incompressibleDriftFlux(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     twoPhaseSolver
     (
         mesh,

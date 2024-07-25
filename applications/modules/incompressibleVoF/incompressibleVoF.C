@@ -45,6 +45,7 @@ namespace solvers
 
 Foam::solvers::incompressibleVoF::incompressibleVoF(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     twoPhaseVoFSolver
     (
         mesh,

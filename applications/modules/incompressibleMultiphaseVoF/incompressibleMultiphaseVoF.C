@@ -47,6 +47,7 @@ Foam::solvers::incompressibleMultiphaseVoF::incompressibleMultiphaseVoF
     fvMesh& mesh
 )
 :
+#include "constructPublicDlLibraryLoader.H"
     multiphaseVoFSolver
     (
         mesh,

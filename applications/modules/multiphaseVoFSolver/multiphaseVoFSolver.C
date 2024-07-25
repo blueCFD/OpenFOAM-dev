@@ -84,6 +84,7 @@ Foam::solvers::multiphaseVoFSolver::multiphaseVoFSolver
     autoPtr<multiphaseVoFMixture> mixturePtr
 )
 :
+#include "constructPublicDlLibraryLoader.H"
     VoFSolver(mesh, autoPtr<VoFMixture>(mixturePtr.ptr())),
 
     mixture(refCast<multiphaseVoFMixture>(VoFSolver::mixture_)),
