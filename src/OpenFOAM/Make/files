@@ -276,6 +276,11 @@ $(dll)/dynamicCode/dynamicCodeContext.C
 $(dll)/codedBase/codedBase.C
 $(dll)/compileTemplate/compileTemplate.C
 
+# Only blueCFD-Core needs this class, not used on Linux
+ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
+$(dll)/dlLibraryLoader/dlLibraryLoader.C
+endif
+
 db/functionObjects/functionObject/functionObject.C
 db/functionObjects/functionObjectList/functionObjectList.C
 db/functionObjects/functionObjectList/wordAndDictionary.C
