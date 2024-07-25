@@ -81,13 +81,13 @@ then
             )
 
         # First patch the header file
-        INJECT_STRING="    public dlLibraryLoader,"
+        INJECT_STRING='#include "definePublicDlLibraryLoader.H"'
 
         sed -i -e "s=\( *public .*\)=$INJECT_STRING\n\1=" "$headerFileName"
         echo "Added hack to file '$headerFileName'."
 
         # Then patch the source file
-        INJECT_STRING="    dlLibraryLoader(fileName(LIBS_TO_LOAD)),"
+        INJECT_STRING='#include "constructPublicDlLibraryLoader.H"'
         
         sed -i -e "s=\( *${PARENT_CLASS}(mesh).*\)=${INJECT_STRING}\n\1=" \
             "$sourceFileName"
