@@ -68,6 +68,7 @@ bool Foam::solvers::solidDisplacement::read()
 
 Foam::solvers::solidDisplacement::solidDisplacement(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     solid
     (
         mesh,

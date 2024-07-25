@@ -85,6 +85,7 @@ Foam::solvers::twoPhaseVoFSolver::twoPhaseVoFSolver
     autoPtr<twoPhaseVoFMixture> mixturePtr
 )
 :
+#include "constructPublicDlLibraryLoader.H"
     twoPhaseSolver(mesh, mixturePtr),
 
     interface(mixture, alpha1, alpha2, U)

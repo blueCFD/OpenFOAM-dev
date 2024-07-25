@@ -43,6 +43,7 @@ namespace solvers
 
 Foam::solvers::XiFluid::XiFluid(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     isothermalFluid
     (
         mesh,
