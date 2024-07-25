@@ -43,6 +43,7 @@ namespace solvers
 
 Foam::solvers::multicomponentFluid::multicomponentFluid(fvMesh& mesh)
 :
+#include "constructPublicDlLibraryLoader.H"
     isothermalFluid
     (
         mesh,
