@@ -1294,50 +1294,80 @@ static std::unordered_map<void*, std::string> libsLoaded;
 
 void* dlOpen(const fileName& libName, const bool check)
 {
-    if (MSwindows::debug)
+    //Lets check if this is a list of libraries to be loaded
+    //NOTE: should only be used for "force loading libraries"
+    if (libName.find_first_of(',')!=Foam::string::npos)
     {
-        InfoInFunction
-            << " : LoadLibrary of " << libName << endl;
-    }
+        void *moduleh=NULL;
+        string libsToLoad=libName;
+        libsToLoad.removeTrailing(' '); //removes spaces from both ends
+        libsToLoad.removeRepeated(',');
+        libsToLoad += ',';
 
-    const char* dllExt = ".dll";
+        if (MSwindows::debug)
+        {
+            InfoInFunction
+                << "Libraries to be loaded: " <<  libsToLoad << endl;
+        }
 
-    // Assume libName is of the form, lib<name>.so
-    Foam::string winLibName(libName);
-    winLibName.replace(".so", dllExt);
-    void* libHandle = ::LoadLibrary(winLibName.c_str());
+        //generate the word list
+        size_t stposstr=0, found=libsToLoad.find_first_of(',');
+        while (found!=string::npos)
+        {
+            string libToLoad = libsToLoad.substr(stposstr,found-stposstr);
+            moduleh = dlOpen(libToLoad);
+            stposstr=found+1; found=libsToLoad.find_first_of(',',stposstr);
+        }
 
-    if (NULL == libHandle)
-    {
-        // Assumes libName = name
-        winLibName = "lib";
-        winLibName += libName;
-        winLibName += dllExt;
-
-        libHandle = ::LoadLibrary(winLibName.c_str());
-    }
-
-    if (NULL == libHandle && check)
-    {
-        WarningInFunction
-            << "LoadLibrary failed. "
-            << MSwindows::getLastError()
-            << endl;
+        return moduleh;
     }
     else
     {
-        libsLoaded[libHandle] = libName;
-    }
+        if (MSwindows::debug)
+        {
+            InfoInFunction
+                << " : LoadLibrary of " << libName << endl;
+        }
 
-    if (MSwindows::debug)
-    {
-        InfoInFunction
-            << "Library " <<  libName << " loaded "
-            << (libHandle != NULL ? "with success!" : "without success.")
-            << endl;
-    }
+        const char* dllExt = ".dll";
 
-    return libHandle;
+        // Assume libName is of the form, lib<name>.so
+        Foam::string winLibName(libName);
+        winLibName.replace(".so", dllExt);
+        void* libHandle = ::LoadLibrary(winLibName.c_str());
+
+        if (NULL == libHandle)
+        {
+            // Assumes libName = name
+            winLibName = "lib";
+            winLibName += libName;
+            winLibName += dllExt;
+
+            libHandle = ::LoadLibrary(winLibName.c_str());
+        }
+
+        if (NULL == libHandle && check)
+        {
+            WarningInFunction
+                << "LoadLibrary failed. "
+                << MSwindows::getLastError()
+                << endl;
+        }
+        else
+        {
+            libsLoaded[libHandle] = libName;
+        }
+
+        if (MSwindows::debug)
+        {
+            InfoInFunction
+                << "Library " <<  libName << " loaded "
+                << (libHandle != NULL ? "with success!" : "without success.")
+                << endl;
+        }
+
+        return libHandle;
+    }
 }
 
 
