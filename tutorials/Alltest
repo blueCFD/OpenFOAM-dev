@@ -160,7 +160,12 @@ do
         if [ "$wallClockLimit" != "-1" ]
         then
             functionsDict="${controlDict/controlDict/functions}"
-            if [ ! -e "${functionsDict}" ]
+
+            if [ -e "${functionsDict}.orig" ]
+            then
+                functionsDict="${functionsDict}.orig"
+
+            elif [ ! -e "${functionsDict}" ]
             then
                 cp "${FOAM_ETC}/caseDicts/functions/functions" \
                    "${functionsDict}"
