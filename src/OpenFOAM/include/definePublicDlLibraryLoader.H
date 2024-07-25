@@ -8,5 +8,5 @@
 // Must always define on Windows, just in case there is a module that does not
 // need extra libraries
 #if defined(WIN32) || defined(WIN64)
-    public virtual dlLibraryLoader,
+    private dlLibraryLoader,
 #endif
