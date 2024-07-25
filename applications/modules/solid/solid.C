@@ -76,10 +76,6 @@ void Foam::solvers::solid::correctDiNum()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
-// Semi-automatically applied hack for blueCFD-Core
-#define LFL_CLASS_PREFIX Foam::solvers::solid
-#include "defineLibrariesToForceLoad.H"
-
 bool Foam::solvers::solid::dependenciesModified() const
 {
     return runTime.controlDict().modified();

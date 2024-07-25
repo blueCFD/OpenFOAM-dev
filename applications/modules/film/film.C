@@ -40,11 +40,6 @@ namespace solvers
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Semi-automatically applied hack for blueCFD-Core
-#define LFL_CLASS_PREFIX Foam::solvers::film
-#define PARENT_CLASS isothermalFilm
-#include "defineLibrariesToForceLoad.H"
-
 Foam::solvers::film::film(fvMesh& mesh)
 :
     isothermalFilm(mesh),
