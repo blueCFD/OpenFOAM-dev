@@ -29,8 +29,6 @@ Description
 #include "runTimeSelectionToC.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include <iostream>
-
 // * * * * * * * * * * * * * * * * Static Data * * * * * * * * * * * * * * * //
 
 bool Foam::debug::enableRunTimeSelectionToC = false;
@@ -47,13 +45,6 @@ bool Foam::addToRunTimeSelectionTableToC
     const char* libName
 )
 {
-    std::cerr << (debug::enableRunTimeSelectionToC ? "eRTC true" : "eRTC false")
-         << " baseType: " << baseType
-         << " baseTypeName: " << baseTypeName
-         << " thisTypeName: " << thisTypeName
-         << " libName: " << libName
-         << std::endl;
-
     if (debug::enableRunTimeSelectionToC)
     {
         if (!debug::runTimeSelectionToC.found(baseType))
