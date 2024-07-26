@@ -7,6 +7,8 @@
 -------------------------------------------------------------------------------
  2011 Symscape: Allow spaces for file names and paths.
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
+ 2016-202X FS Dynamics Portugal: Changes are tracked at:
+                 https://github.com/blueCFD/OpenFOAM-dev
 ------------------------------------------------------------------------------
 License
     This file is a derivative work of OpenFOAM.
