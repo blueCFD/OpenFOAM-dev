@@ -89,29 +89,26 @@ class Coded
 {
     // Private Data
 
-        //- The dynamically generated Function1 pointer
-        mutable autoPtr<Function1<Type>> redirectFunction1Ptr_;
+        //- Keywords associated with source code
+        static const wordList codeKeys;
+
+        //- Name of the dictionary variables in the source code
+        static const wordList codeDictVars;
 
         //- Cache of the unit conversions
         const unitConversions units_;
 
+        //- The dynamically generated Function1 pointer
+        mutable autoPtr<Function1<Type>> redirectFunction1Ptr_;
+
 
     // Private Member Functions
-
-        //- Get the keywords associated with source code
-        virtual wordList codeKeys() const;
-
-        //- Get the name of the dictionary variables in the source code
-        virtual wordList codeDictVars() const;
 
         //- Adapt the context for the current object
         virtual void prepare(dynamicCode&, const dynamicCodeContext&) const;
 
-        //- Clear the ptr to the redirected object
-        virtual void clearRedirect() const;
-
         //- Compile, link and return the now coded Function1
-        autoPtr<Function1<Type>> compileNew();
+        autoPtr<Function1<Type>> compile();
 
 
 public:

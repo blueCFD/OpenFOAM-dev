@@ -27,21 +27,22 @@ License
 #include "dynamicCode.H"
 #include "dynamicCodeContext.H"
 
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+template<class Type>
+const Foam::wordList Foam::Function2s::Coded<Type>::codeKeys
+(
+    {"code", "codeInclude"}
+);
+
+template<class Type>
+const Foam::wordList Foam::Function2s::Coded<Type>::codeDictVars
+(
+    {word::null, word::null}
+);
+
+
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-template<class Type>
-Foam::wordList Foam::Function2s::Coded<Type>::codeKeys() const
-{
-    return {"code", "codeInclude"};
-}
-
-
-template<class Type>
-Foam::wordList Foam::Function2s::Coded<Type>::codeDictVars() const
-{
-    return {word::null, word::null};
-}
-
 
 template<class Type>
 void Foam::Function2s::Coded<Type>::prepare
@@ -82,20 +83,12 @@ void Foam::Function2s::Coded<Type>::prepare
 
 
 template<class Type>
-void Foam::Function2s::Coded<Type>::clearRedirect() const
-{
-    // Remove instantiation of Function2 provided by library
-    redirectFunction2Ptr_.clear();
-}
-
-
-template<class Type>
 Foam::autoPtr<Foam::Function2<Type>>
-Foam::Function2s::Coded<Type>::compileNew()
+Foam::Function2s::Coded<Type>::compile()
 {
     this->updateLibrary();
 
-    dictionary redirectDict(codeDict());
+    dictionary redirectDict(dict());
     redirectDict.set(codeName(), codeName());
 
     return Function2<Type>::New(codeName(), this->units_, redirectDict);
@@ -113,11 +106,10 @@ Foam::Function2s::Coded<Type>::Coded
 )
 :
     Function2<Type>(name),
-    codedBase(name, dict),
-    units_(units)
-{
-    redirectFunction2Ptr_ = compileNew();
-}
+    codedBase(name, dict, codeKeys, codeDictVars),
+    units_(units),
+    redirectFunction2Ptr_(compile())
+{}
 
 
 
@@ -126,10 +118,9 @@ Foam::Function2s::Coded<Type>::Coded(const Coded<Type>& cf2)
 :
     Function2<Type>(cf2),
     codedBase(cf2),
-    units_(cf2.units_)
-{
-    redirectFunction2Ptr_ = compileNew();
-}
+    units_(cf2.units_),
+    redirectFunction2Ptr_(compile())
+{}
 
 
 template<class Type>
@@ -174,7 +165,7 @@ void Foam::Function2s::Coded<Type>::write
     const unitConversions& units
 ) const
 {
-    writeCode(os);
+    codedBase::write(os);
 }
 
 

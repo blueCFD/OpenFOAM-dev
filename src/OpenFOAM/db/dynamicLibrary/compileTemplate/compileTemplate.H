@@ -44,6 +44,12 @@ class compileTemplate
 {
     // Private Member Data
 
+        //- Keywords associated with source code
+        static const wordList codeKeys;
+
+        //- Name of the dictionary variables in the source code
+        static const wordList codeDictVars;
+
         //- Name of the class Thermo basicThermo is instantiated on
         const word templateName_;
 
@@ -67,24 +73,8 @@ class compileTemplate
             const Pair<word>& substitution
         ) const;
 
-        //- Get the keywords associated with source code
-        virtual wordList codeKeys() const
-        {
-            return wordList::null();
-        }
-
-        //- Get the name of the dictionary variables in the source code
-        virtual wordList codeDictVars() const
-        {
-            return wordList::null();
-        }
-
         //- Adapt the context for the current object
         virtual void prepare(dynamicCode&, const dynamicCodeContext&) const;
-
-        //- Clear the ptr to the redirected object
-        virtual void clearRedirect() const
-        {}
 
 
 public:

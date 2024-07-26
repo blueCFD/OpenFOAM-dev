@@ -41,6 +41,25 @@ namespace fv
 }
 
 
+const Foam::wordList Foam::fv::codedFvModel::codeKeys
+{
+    "codeAddSup",
+    "codeAddRhoSup",
+    "codeAddAlphaRhoSup",
+    "codeInclude",
+    "localCode"
+};
+
+const Foam::wordList Foam::fv::codedFvModel::codeDictVars
+{
+    word::null,
+    word::null,
+    word::null,
+    word::null,
+    word::null
+};
+
+
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 void Foam::fv::codedFvModel::readCoeffs()
@@ -98,38 +117,6 @@ void Foam::fv::codedFvModel::prepare
         + "    -lfiniteVolume \\\n"
         + context.libs()
     );
-}
-
-
-void Foam::fv::codedFvModel::clearRedirect() const
-{
-    redirectFvModelPtr_.clear();
-}
-
-
-Foam::wordList Foam::fv::codedFvModel::codeKeys() const
-{
-    return
-    {
-        "codeAddSup",
-        "codeAddRhoSup",
-        "codeAddAlphaRhoSup",
-        "codeInclude",
-        "localCode"
-    };
-}
-
-
-Foam::wordList Foam::fv::codedFvModel::codeDictVars() const
-{
-    return
-    {
-        word::null,
-        word::null,
-        word::null,
-        word::null,
-        word::null
-    };
 }
 
 
@@ -221,7 +208,7 @@ Foam::fv::codedFvModel::codedFvModel
 )
 :
     fvModel(name, modelType, mesh, dict),
-    codedBase(name, coeffs()),
+    codedBase(name, coeffs(), codeKeys, codeDictVars),
     fieldName_(word::null)
 {
     readCoeffs();
@@ -284,6 +271,7 @@ bool Foam::fv::codedFvModel::read(const dictionary& dict)
         readCoeffs();
         if (fieldPrimitiveTypeName() != word::null)
         {
+            redirectFvModelPtr_.clear();
             updateLibrary(coeffs());
         }
         return true;
