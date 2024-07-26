@@ -45,6 +45,7 @@ SourceFiles
 #include "pureThermo.H"
 #include "rhoThermo.H"
 #include "fluidThermo.H"
+#include "thermoDerivedMacros.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

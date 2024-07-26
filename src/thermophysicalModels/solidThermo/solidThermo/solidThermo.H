@@ -5,8 +5,11 @@
     \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+2024 FS Dynamics Portugal: Changes are tracked at:
+                 https://github.com/blueCFD/OpenFOAM-dev
+------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -43,6 +46,7 @@ SourceFiles
 #include "rhoThermo.H"
 #include "uniformGeometricFields.H"
 #include "fvScalarMatrix.H"
+#include "thermoDerivedMacros.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -77,7 +81,7 @@ public:
             SolidThermo<BasicThermo<MixtureType, composite>>;
 
         //- The derived name
-        static const word derivedThermoName;
+        DerivedThermoName;
 
 
     //- Runtime type information

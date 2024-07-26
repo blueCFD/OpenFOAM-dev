@@ -34,7 +34,7 @@ namespace Foam
     defineRunTimeSelectionTable(solidThermo, fvMesh);
 }
 
-const Foam::word Foam::solidThermo::derivedThermoName("heSolidThermo");
+defineDerivedThermoName(solidThermo, "heSolidThermo");
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
