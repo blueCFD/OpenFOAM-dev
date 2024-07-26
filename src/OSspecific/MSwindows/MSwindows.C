@@ -217,7 +217,7 @@ void MSwindows::toUnixSlash(Foam::string & arg)
     const string UNC("//");
 
     // Preserve UNC i.e., \\machine-name\...
-    if (0 == arg.find(UNC)) 
+    if (0 == arg.find(UNC))
     {
         arg.replace(UNC, "\\\\");
     }
