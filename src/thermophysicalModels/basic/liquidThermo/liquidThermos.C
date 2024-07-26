@@ -47,6 +47,10 @@ License
 
 namespace Foam
 {
+    #if defined( WIN32 ) || defined( WIN64 )
+    #define derivedThermoName derivedThermoName_()
+    #endif
+
     typedef
         species::thermo<liquidPropertiesSelector, sensibleInternalEnergy>
         liquidSensibleInternalEnergy;

@@ -44,6 +44,7 @@ SourceFiles
 #include "PsiThermo.T.H"
 #include "pureThermo.H"
 #include "fluidThermo.H"
+#include "thermoDerivedMacros.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
