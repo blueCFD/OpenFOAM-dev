@@ -133,10 +133,19 @@ Usage
 
 using namespace Foam;
 
+#if defined(WIN64) || defined(WIN32)
+
+__attribute__((constructor)) void init(void) {
+    Foam::debug::enableRunTimeSelectionToC = true;
+}
+
+#else
+
 // Enable run-time selection table of contents caching
 // Overrides the enableRunTimeSelectionToC = false in libOpenFOAM
 bool Foam::debug::enableRunTimeSelectionToC = true;
 
+#endif
 
 HashTable<HashTable<wordHashSet>> baseTypeNameToC()
 {
