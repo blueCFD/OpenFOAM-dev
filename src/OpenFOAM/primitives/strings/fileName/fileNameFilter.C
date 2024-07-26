@@ -39,31 +39,82 @@ Modifications
         OpenFOAM 2.2.
       - Further adaptation was done for re-adapting to OpenFOAM 5 collated file
         management.
-      - Moved out from IOobject main source file to a separate one.
+      - Moved out from fileName main source file to a separate one.
+      - Then move to fileName for generalizing file and folder renaming.
 
 \*---------------------------------------------------------------------------*/
 
-#include "IOobject.T.H"
+#include "fileName.H"
+#include "OSspecific.H"
+#include "wordRe.H"
 #include "objectRegistry.H"
+#include <regExp.H>
+#include <regex>
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+    static List<Pair<wordRe>> replacedFileNames_;
+}
 
 // * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * * //
 
-const Foam::word Foam::IOobject::uniqueFileName() const
+void Foam::fileName::addFileNameFilter
+(
+    const Foam::wordRe & from, 
+    const Foam::wordRe & to
+)
 {
-    fileName diskFileName(name());
-
-    // false = filter non-absolute name
-    diskFileName.filterName(false);
-
-    if (objectRegistry::debug)
+    if (debug)
     {
         InfoInFunction
-            << "Applying renaming pattern '" << name()
+            << "Adding renaming pattern '" << from
+            << "' to '"<< to << "'"
+            << endl;
+    }
+
+    Pair<wordRe> newItem(from, to);
+    newItem.first().compile();
+
+    replacedFileNames_.append(newItem);
+}
+
+
+bool Foam::fileName::filterName(const bool absoluteOnly)
+{
+    fileName newName(*this);
+
+    forAll (replacedFileNames_, index)
+    {
+        const Pair<wordRe> & rfn = replacedFileNames_[index];
+
+        if(rfn.first().match(diskFileName))
+        {
+            diskFileName = std::regex_replace
+            (
+                *this,
+                std::regex(rfn.first()),
+                rfn.second()
+            );
+            break;
+        }
+        else if(regExp(rfn.first()).search(diskFileName))
+        {
+            diskFileName.replace(rfn.first(), rfn.second());
+            break;
+        }
+    }
+
+    if (debug)
+    {
+        InfoInFunction
+            << "Applying renaming pattern '" << *this
             << "' to '"<< diskFileName << "'"
             << endl;
     }
 
-    return diskFileName;
+    *this = diskFileName;
 }
 
 // ************************************************************************* //

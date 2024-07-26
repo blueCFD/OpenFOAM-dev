@@ -123,6 +123,7 @@ $(strings)/word/wordIO.C
 $(strings)/word/wordIOList.C
 $(strings)/fileName/fileName.C
 $(strings)/fileName/fileNameIO.C
+$(strings)/fileName/fileNameFilter.C
 $(strings)/variable/variable.C
 $(strings)/variable/variableIO.C
 $(strings)/functionName/functionName.C
