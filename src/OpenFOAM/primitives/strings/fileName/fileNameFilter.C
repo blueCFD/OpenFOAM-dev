@@ -83,25 +83,32 @@ void Foam::fileName::addFileNameFilter
 
 bool Foam::fileName::filterName(const bool absoluteOnly)
 {
-    fileName newName(*this);
+    bool renamed(false);
+
+    if(absoluteOnly && !isAbsolute())
+    {
+        return renamed;
+    }
+
+    fileName newName(name());
 
     forAll (replacedFileNames_, index)
     {
         const Pair<wordRe> & rfn = replacedFileNames_[index];
 
-        if(rfn.first().match(diskFileName))
+        if(rfn.first().match(newName))
         {
-            diskFileName = std::regex_replace
+            newName = std::regex_replace
             (
-                *this,
+                name(),
                 std::regex(rfn.first()),
                 rfn.second()
             );
             break;
         }
-        else if(regExp(rfn.first()).search(diskFileName))
+        else if(regExp(rfn.first()).search(newName))
         {
-            diskFileName.replace(rfn.first(), rfn.second());
+            newName.replace(rfn.first(), rfn.second());
             break;
         }
     }
@@ -110,11 +117,15 @@ bool Foam::fileName::filterName(const bool absoluteOnly)
     {
         InfoInFunction
             << "Applying renaming pattern '" << *this
-            << "' to '"<< diskFileName << "'"
+            << "' to '"<< path()/newName << "'"
             << endl;
     }
 
-    *this = diskFileName;
+    renamed = (name().compare(newName) != 0);
+
+    *this = path()/newName;
+
+    return renamed;
 }
 
 // ************************************************************************* //
