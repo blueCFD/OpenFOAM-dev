@@ -47,17 +47,6 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define defineDerivedThermoName(className, classNameString)               \
-    const Foam::word Foam::className::derivedThermoName(classNameString); \
-    const Foam::word Foam::className::derivedThermoName_()                \
-    {                                                                     \
-        return classNameString;                                           \
-    }
-
-#define DerivedThermoName                       \
-        static const word derivedThermoName_(); \
-        static const word derivedThermoName;
-
 namespace Foam
 {
 
