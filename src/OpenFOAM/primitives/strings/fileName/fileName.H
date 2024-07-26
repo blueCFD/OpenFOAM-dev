@@ -61,6 +61,7 @@ typedef List<word> wordList;
 // Forward declaration of friend functions and operators
 
 class fileName;
+class wordRe;
 
 Istream& operator>>(Istream&, fileName&);
 Ostream& operator<<(Ostream&, const fileName&);
