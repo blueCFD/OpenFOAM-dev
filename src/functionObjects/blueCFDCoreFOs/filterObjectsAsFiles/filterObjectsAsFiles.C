@@ -28,7 +28,6 @@ License
 
 #include "filterObjectsAsFiles.H"
 #include "Time.T.H"
-#include "polyMesh.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -55,7 +54,7 @@ void Foam::functionObjects::filterObjectsAsFiles::transferPatterns()
 {
     forAll (patterns_, index)
     {
-        IOobject::replaceFileName
+        fileName::addFileNameFilter
         (
             patterns_[index].first(), patterns_[index].second()
         );

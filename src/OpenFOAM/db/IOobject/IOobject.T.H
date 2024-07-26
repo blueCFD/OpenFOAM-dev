@@ -513,12 +513,6 @@ public:
 
         void operator=(const IOobject&);
 
-
-    // Static functions
-
-        //- Set unique on disk file name 
-        //- e.g., B -> B_ to avoid upper/lowercase clash with b
-        static void replaceFileName(const wordRe& from, const wordRe& to);
 };
 
 

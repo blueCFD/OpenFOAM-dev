@@ -185,6 +185,8 @@ public:
             //- Convert from relative to absolute
             fileName& toAbsolute();
 
+            //- Filter the current name, returns if changed
+            bool filterName(bool absoluteOnly=true);
 
         // Decomposition
 
@@ -258,6 +260,14 @@ public:
 
         friend Istream& operator>>(Istream&, fileName&);
         friend Ostream& operator<<(Ostream&, const fileName&);
+
+
+    // Static functions
+
+        //- Set unique on disk file name 
+        //- e.g., B -> B_ to avoid upper/lowercase clash with b
+        static void addFileNameFilter(const wordRe& from, const wordRe& to);
+
 };
 
 
