@@ -29,6 +29,7 @@ License
 #include "dlLibraryTable.H"
 #include "regIOobject.H"
 #include "OSspecific.H"
+#include "stringOps.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -191,8 +192,51 @@ void Foam::codedBase::unloadLibrary
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+Foam::verbatimString Foam::codedBase::expandCodeString
+(
+    const word& codeKey,
+    const word& codeDictVar,
+    const dictionary& dict
+) const
+{
+    verbatimString codeString;
+
+    if (dict.found(codeKey))
+    {
+        codeString = dict.lookupOrDefault<verbatimString>
+        (
+            codeKey,
+            verbatimString::null
+        );
+
+        stringOps::inplaceExpandCodeString
+        (
+            codeString,
+            dict,
+            codeDictVar
+        );
+    }
+
+    return codeString;
+}
+
+
+void Foam::codedBase::read(const dictionary& dict) const
+{
+    codeOptions_ = expandCodeString("codeOptions", word::null, dict);
+    codeLibs_ = expandCodeString("codeLibs", word::null, dict);
+
+    forAll(codeKeys_, i)
+    {
+        codeStrings_[i] =
+            expandCodeString(codeKeys_[i], codeDictVars_[i], dict);
+    }
+}
+
+
 void Foam::codedBase::createLibrary
 (
+    const dictionary& dict,
     dynamicCode& dynCode,
     const dynamicCodeContext& context
 ) const
@@ -215,7 +259,7 @@ void Foam::codedBase::createLibrary
             {
                 FatalIOErrorInFunction
                 (
-                    dict_
+                    dict
                 )   << "Failed writing files for" << nl
                     << dynCode.libRelPath() << nl
                     << exit(FatalIOError);
@@ -226,7 +270,7 @@ void Foam::codedBase::createLibrary
         {
             FatalIOErrorInFunction
             (
-                dict_
+                dict
             )   << "Failed wmake " << dynCode.libRelPath() << nl
                 << exit(FatalIOError);
         }
@@ -275,7 +319,7 @@ void Foam::codedBase::createLibrary
             {
                 FatalIOErrorInFunction
                 (
-                    dict_
+                    dict
                 )   << "Cannot read (NFS mounted) library " << nl
                     << libPath << nl
                     << "on processor " << Pstream::myProcNo()
@@ -311,10 +355,12 @@ Foam::codedBase::codedBase
 )
 :
     codeName_(codeName(name)),
-    dict_(dict),
     codeKeys_(codeKeys),
-    codeDictVars_(codeDictVars)
-{}
+    codeDictVars_(codeDictVars),
+    codeStrings_(codeKeys.size())
+{
+    read(dict);
+}
 
 
 Foam::codedBase::codedBase
@@ -324,19 +370,16 @@ Foam::codedBase::codedBase
     const wordList& codeDictVars
 )
 :
-    codeName_(codeName(dict.lookup("name"))),
-    dict_(dict),
-    codeKeys_(codeKeys),
-    codeDictVars_(codeDictVars)
+    codedBase(codeName(dict.lookup("name")), dict, codeKeys, codeDictVars)
 {}
 
 
 Foam::codedBase::codedBase(const codedBase& cb)
 :
     codeName_(cb.codeName_),
-    dict_(cb.dict_),
     codeKeys_(cb.codeKeys_),
-    codeDictVars_(cb.codeDictVars_)
+    codeDictVars_(cb.codeDictVars_),
+    codeStrings_(cb.codeStrings_)
 {}
 
 
@@ -372,17 +415,19 @@ Foam::word Foam::codedBase::codeTemplateH(const word& baseTypeName) const
 }
 
 
-bool Foam::codedBase::updateLibrary() const
+bool Foam::codedBase::updateLibrary(const dictionary& dict) const
 {
+    read(dict);
+
     const word& name = codeName();
 
     dynamicCode::checkSecurity
     (
         "codedBase::updateLibrary()",
-        dict_
+        dict
     );
 
-    const dynamicCodeContext context(dict_, codeKeys_, codeDictVars_);
+    const dynamicCodeContext context(dict, codeKeys_, codeDictVars_);
 
     // codeName: name + _<sha1>
     // codeDir : name
@@ -401,25 +446,25 @@ bool Foam::codedBase::updateLibrary() const
     }
 
     Info<< "Using dynamicCode for " << this->description().c_str()
-        << " at line " << dict_.startLineNumber()
-        << " in " << dict_.name() << endl;
+        << " at line " << dict.startLineNumber()
+        << " in " << dict.name() << endl;
 
     // May need to unload old library
     unloadLibrary
     (
         oldLibPath_,
         dynamicCode::libraryBaseName(oldLibPath_),
-        dict_
+        dict
     );
 
     // Try loading an existing library (avoid compilation when possible)
-    if (!loadLibrary(libPath, dynCode.codeName(), dict_))
+    if (!loadLibrary(libPath, dynCode.codeName(), dict))
     {
-        createLibrary(dynCode, context);
+        createLibrary(dict, dynCode, context);
 
-        if (!loadLibrary(libPath, dynCode.codeName(), dict_))
+        if (!loadLibrary(libPath, dynCode.codeName(), dict))
         {
-            FatalIOErrorInFunction(dict_)
+            FatalIOErrorInFunction(dict)
                 << "Failed to load " << libPath << exit(FatalIOError);
         }
     }
@@ -431,13 +476,6 @@ bool Foam::codedBase::updateLibrary() const
 }
 
 
-bool Foam::codedBase::updateLibrary(const dictionary& dict) const
-{
-    dict_ = dict;
-    return updateLibrary();
-}
-
-
 void Foam::codedBase::write(Ostream& os) const
 {
     if (codeName().size())
@@ -445,18 +483,22 @@ void Foam::codedBase::write(Ostream& os) const
         writeEntry(os, "name", codeName());
     }
 
-    wordList codeAndBuildKeys(codeKeys_);
-    codeAndBuildKeys.append("codeOptions");
-    codeAndBuildKeys.append("codeLibs");
-
-    forAll(codeAndBuildKeys, i)
+    forAll(codeStrings_, i)
     {
-        if (dict_.found(codeAndBuildKeys[i]))
+        if (codeStrings_[i] != verbatimString::null)
         {
-            writeKeyword(os, codeAndBuildKeys[i]);
-            os.write(verbatimString(dict_[codeAndBuildKeys[i]]))
-                << token::END_STATEMENT << nl;
+            writeEntry(os, codeKeys_[i], codeStrings_[i]);
         }
+    }
+
+    if (codeOptions_ != verbatimString::null)
+    {
+        writeEntry(os, "codeOptions", codeOptions_);
+    }
+
+    if (codeLibs_ != verbatimString::null)
+    {
+        writeEntry(os, "codeLibs", codeLibs_);
     }
 }
 

@@ -13,6 +13,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#includeFunc filterObjectsAsFiles
+
 // adjustTimeStep  yes;
 
 // maxCo           1;
