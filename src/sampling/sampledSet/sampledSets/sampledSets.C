@@ -122,6 +122,7 @@ Foam::functionObjects::sampledSets::sampledSets
     interpolationScheme_(word::null),
     formatter_(nullptr)
 {
+    outputPath_.filterName();
     read(dict);
 }
 

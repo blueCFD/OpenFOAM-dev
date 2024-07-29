@@ -192,11 +192,15 @@ Foam::label Foam::probes::prepare()
                 << endl;
         }
 
-        const fileName probeDir =
+        fileName foOutputPath =
             mesh_.time().globalPath()
            /functionObjects::writeFile::outputPrefix
            /(mesh_.name() != polyMesh::defaultRegion ? mesh_.name() : word())
-           /name()
+           /name();
+        foOutputPath.filterName();
+
+        const fileName probeDir =
+            foOutputPath
            /mesh_.time().name();
 
         // ignore known fields, close streams for fields that no longer exist

@@ -178,6 +178,7 @@ Foam::functionObjects::sampledSurfaces::sampledSurfaces
     mergeList_(),
     formatter_(nullptr)
 {
+    outputPath_.filterName();
     read(dict);
 }
 
