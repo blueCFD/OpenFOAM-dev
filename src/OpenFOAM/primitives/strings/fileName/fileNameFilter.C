@@ -51,6 +51,7 @@ Modifications
 #include <regExp.H>
 #include <regex>
 
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -90,40 +91,56 @@ bool Foam::fileName::filterName(const bool absoluteOnly)
         return renamed;
     }
 
-    fileName newName(name());
+    word oldName(name()), newName(oldName);
 
     forAll (replacedFileNames_, index)
     {
         const Pair<wordRe> & rfn = replacedFileNames_[index];
+        regExp rE(rfn.first());
 
-        if(rfn.first().match(newName))
+        if(rfn.first().match(oldName))
         {
             newName = std::regex_replace
             (
-                name(),
+                oldName,
                 std::regex(rfn.first()),
                 rfn.second()
             );
             break;
         }
-        else if(regExp(rfn.first()).search(newName))
+        else if(rE.search(oldName))
         {
-            newName.replace(rfn.first(), rfn.second());
+            if(rfn.first().isPattern())
+            {
+                newName = std::regex_replace
+                (
+                    oldName,
+                    std::regex(rfn.first()),
+                    rfn.second()
+                );
+            }
+            else
+            {
+                newName.replace(rfn.first(), rfn.second());
+            }
             break;
         }
     }
 
-    if (debug)
+    renamed = (oldName.compare(newName) != 0);
+
+    if(renamed)
     {
-        InfoInFunction
-            << "Applying renaming pattern '" << *this
-            << "' to '"<< path()/newName << "'"
-            << endl;
+        if (debug)
+        {
+            InfoInFunction
+                << "Renamed '" << oldName
+                << "' to '"<< newName << "'"
+                << endl;
+        }
+
+        *this = path()/newName;
     }
-
-    renamed = (name().compare(newName) != 0);
-
-    *this = path()/newName;
 
     return renamed;
 }
