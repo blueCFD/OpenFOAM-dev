@@ -9,29 +9,14 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
+    location    "system";
     object      functions;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #includeFunc filterObjectsAsFiles
 
-writeCachedObjects
-{
-    type        writeObjects;
-
-    libs        ("libutilityFunctionObjects.so");
-
-    writeControl writeTime;
-    writeOption anyWrite;
-
-    objects
-    (
-        SpalartAllmarasDDES:LESRegion
-    );
-}
-
-#include "cutPlane"
-#include "streamlines"
-#include "forceCoeffs"
+// include packaged functionObjects using #includeFunc
+// #includeFunc
 
 // ************************************************************************* //
