@@ -606,11 +606,15 @@ void Foam::functionObjects::patchCutLayerAverage::initialise()
 
 Foam::fileName Foam::functionObjects::patchCutLayerAverage::outputPath() const
 {
-    return
+    fileName foOutputPath =
         time_.globalPath()
        /writeFile::outputPrefix
        /(mesh_.name() != polyMesh::defaultRegion ? mesh_.name() : word())
-       /name()
+       /name();
+    foOutputPath.filterName();
+
+    return
+        foOutputPath
        /time_.name();
 }
 

@@ -357,11 +357,15 @@ bool Foam::functionObjects::layerAverage::write()
     if (Pstream::master() && layerCentre_.size())
     {
         // Make output directory
-        const fileName outputPath =
+        fileName foOutputPath =
             time_.globalPath()
            /writeFile::outputPrefix
            /(mesh_.name() != polyMesh::defaultRegion ? mesh_.name() : word())
-           /name()
+           /name();
+        foOutputPath.filterName();
+
+        const fileName outputPath =
+            foOutputPath
            /time_.name();
         mkDir(outputPath);
 
