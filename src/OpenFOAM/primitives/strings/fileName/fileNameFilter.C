@@ -67,7 +67,7 @@ void Foam::fileName::addFileNameFilter
     const Foam::wordRe & to
 )
 {
-    if (debug)
+    if (debug > 2)
     {
         InfoInFunction
             << "Adding renaming pattern '" << from
@@ -131,7 +131,7 @@ bool Foam::fileName::filterName(const bool absoluteOnly)
 
     if(renamed)
     {
-        if (debug)
+        if (debug > 2)
         {
             InfoInFunction
                 << "Renamed '" << oldName
