@@ -87,6 +87,7 @@ do
       esac
       ;;
    -test)
+      nRefine=0
       shift
       ;;
    -*)
