@@ -171,9 +171,9 @@ do
                    "${functionsDict}"
             fi
 
-            foamDictionary -entry \
-                "#includeFunc stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)" \
-                -set "" "$functionsDict"
+            FUNCTION="stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)"
+            sed -i -e "s|\(^// \* \*.*$\)|\1\n\n#includeFunc ${FUNCTION}|" \
+                "${functionsDict}"
         fi
     ) > /dev/null
 done
