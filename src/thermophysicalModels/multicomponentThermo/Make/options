@@ -11,7 +11,7 @@ LIB_LIBS = \
 
 ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
 
-c++OPT := $(c++OPT:-gdwarf=) -Wa,-mbig-obj
+c++OPT += -Wa,-mbig-obj
 
 endif
 
