@@ -32,7 +32,11 @@ License
 Foam::fileName Foam::functionObjects::logFile::filePathName() const
 {
     const word timeName = fileObr_.time().name();
-    const fileName outputDir(baseFileDir()/prefix_/timeName);
+
+    fileName foOutputPath(baseFileDir()/prefix_);
+    foOutputPath.filterName();
+
+    const fileName outputDir(foOutputPath/timeName);
     mkDir(outputDir);
     return outputDir/(name_ + ".dat");
 }
