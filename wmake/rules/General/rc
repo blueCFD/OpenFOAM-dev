@@ -1,3 +1,5 @@
 SUFFIXES += .rc
 
-rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) $(@D)/$(<F) $@
+rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) \
+        -I ${LIB_SRC}/OSspecific/${WM_OSTYPE}/lnInclude \
+        $(@D)/$(<F) $@
