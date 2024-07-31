@@ -93,7 +93,6 @@ Foam::solvers::isothermalFluid::isothermalFluid
     autoPtr<fluidThermo> thermoPtr
 )
 :
-#include "constructPublicDlLibraryLoader.H"
     fluidSolver(mesh),
 
     thermoPtr_(thermoPtr),

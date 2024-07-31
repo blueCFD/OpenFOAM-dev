@@ -106,7 +106,6 @@ Foam::solvers::solid::solid
     autoPtr<solidThermo> thermoPtr
 )
 :
-#include "constructPublicDlLibraryLoader.H"
     solver(mesh),
 
     thermoPtr_(thermoPtr),

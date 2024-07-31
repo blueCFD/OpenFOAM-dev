@@ -42,7 +42,6 @@ namespace solvers
 
 Foam::solvers::film::film(fvMesh& mesh)
 :
-#include "constructPublicDlLibraryLoader.H"
     isothermalFilm(mesh),
 
     thermophysicalTransport

@@ -35,5 +35,4 @@ fvModels/ignition/constantbXiIgnition/constantbXiIgnition.C
 XiFluid.C
 thermophysicalPredictor.C
 
-MOD = XiFluid
 LIB = $(FOAM_LIBBIN)/libXiFluid

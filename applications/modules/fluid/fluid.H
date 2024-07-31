@@ -67,7 +67,6 @@ namespace solvers
 
 class fluid
 :
-#include "definePublicDlLibraryLoader.H"
     public isothermalFluid
 {
 

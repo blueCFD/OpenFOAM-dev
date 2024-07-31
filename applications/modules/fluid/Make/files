@@ -1,5 +1,4 @@
 fluid.C
 thermophysicalPredictor.C
 
-MOD = fluid
 LIB = $(FOAM_LIBBIN)/libfluid

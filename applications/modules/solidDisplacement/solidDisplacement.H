@@ -56,7 +56,6 @@ namespace solvers
 
 class solidDisplacement
 :
-#include "definePublicDlLibraryLoader.H"
     public solid
 {
 

@@ -30,5 +30,4 @@ momentumPredictor.C
 correctAlpha.C
 isothermalFilm.C
 
-MOD = isothermalFilm
 LIB = $(FOAM_LIBBIN)/libisothermalFilm

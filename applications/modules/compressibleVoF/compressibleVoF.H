@@ -76,7 +76,6 @@ namespace solvers
 
 class compressibleVoF
 :
-#include "definePublicDlLibraryLoader.H"
     public twoPhaseVoFSolver
 {
 

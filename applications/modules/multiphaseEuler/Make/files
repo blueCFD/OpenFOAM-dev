@@ -8,5 +8,4 @@ cellPressureCorrector.C
 pressureCorrector.C
 multiphaseEuler.C
 
-MOD = multiphaseEuler
 LIB = $(FOAM_LIBBIN)/libmultiphaseEuler

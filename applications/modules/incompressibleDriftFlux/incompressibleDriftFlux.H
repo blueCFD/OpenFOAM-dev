@@ -73,7 +73,6 @@ namespace solvers
 
 class incompressibleDriftFlux
 :
-#include "definePublicDlLibraryLoader.H"
     public twoPhaseSolver
 {
 

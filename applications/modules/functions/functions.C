@@ -42,7 +42,6 @@ namespace solvers
 
 Foam::solvers::functions::functions(fvMesh& mesh)
 :
-#include "constructPublicDlLibraryLoader.H"
     movingMesh(mesh)
 {
     // Read the solverName from the subSolver or solver entry in controlDict
