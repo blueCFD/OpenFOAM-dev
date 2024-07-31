@@ -43,7 +43,7 @@ vertices #codeStream
     codeInclude
     #{
         #include "pointField.H"
-        #include "SubField.H"
+        #include "SubField.T.H"
         #include "transformField.H"
     #};
 
