@@ -7,7 +7,6 @@
 #ifdef LIBS_TO_LOAD
   //example of LIBS_TO_LOAD: "OpenFOAM,incompressibleRASModels,Pstream"
   const Foam::fileName libs_to_load(LIBS_TO_LOAD);
-  Foam::dlLibraryLoader loadTheLibs(libs_to_load);
-  loadTheLibs.dummy(); //skip the warning
+  Foam::dlOpen(libs_to_load);
 #endif
 #endif
