@@ -67,12 +67,13 @@ fiFile=$2
 exeName=$(grep -e "EXE.*=" $fiFile | sed 's=.*/==')
 
 # Retrieve the name of the library application, if MOD found
-modName=$(grep -q -e "MOD.*=" $fiFile && grep -e "LIB.*=" $fiFile | sed 's=.*/==')
+libName=$(grep -e "LIB.*=" $fiFile | sed 's=.*/==')
 
 LIB_LIST_PREFIX=
+MAKE_PREFIX=
 
 # If it didn't find anything, then cancel search for this one
-if [ -z "$exeName" -a -z "$modName" ]
+if [ -z "$exeName" -a -z "$libName" ]
 then
     exit 0
 
@@ -80,12 +81,15 @@ elif [ -n "$exeName" ]
 then
 
     LIB_LIST_PREFIX="EXE"
+    MAKE_PREFIX='EXE_INC += -D'
 
-elif [ -n "$modName" ]
+elif [ -n "$libName" ]
 then
 
+    exeName=$libName
+
     LIB_LIST_PREFIX="LIB"
-    exeName=$modName
+    MAKE_PREFIX='RESOURCE_ONLY = '
 
 fi
 
@@ -121,14 +125,7 @@ LIBSMUSTLOAD=$(echo $LIBSMUSTLOAD | sed -e 's=\ =,=g')
 if [ $(echo $LIBSMUSTLOAD | sed 's=,=\n=g' | wc -l) -gt 0 \
      -a -n "$LIBSMUSTLOAD" ]
 then
-    echo 'EXE_INC += -DLIBS_TO_LOAD="\"'$LIBSMUSTLOAD'\""' >> $fiFile
-
-    # Modules rely on inheriting from the same class directly for forefully
-    # loading libraries
-    if [ -n "$modName" ]
-    then
-        echo 'EXE_INC += -Wno-inaccessible-base' >> $fiFile
-    fi
+    echo ''${MAKE_PREFIX}'LIBS_TO_LOAD="\"'$LIBSMUSTLOAD'\""' >> $fiFile
 
     echo "Forced DLL loading dependencies added to: $exeName"
 fi
