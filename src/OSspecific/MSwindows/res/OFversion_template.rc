@@ -1,7 +1,4 @@
-#define IDR_VERSION1 1
-
-// variable name as number https://opendsa-server.cs.vt.edu/embed/StringSimple
-#define LIBRARY_DEPENDENCIES 1499
+#include "OSResourceIDs.H"
 
 IDR_VERSION1 VERSIONINFO
 FILEVERSION 12,0,2024,0
