@@ -70,7 +70,7 @@ if [ -e "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" ]
 then
     cp "$FOAM_SRC/OSspecific/$WM_OSTYPE/res/OFversion_template.rc" tmpver.rc
 
-    #Extract the binary name
+    # Extract the binary name
     MGW_EXENAME=$(grep -e "^EXE =" $MF_FILES)
     MGW_LIBNAME=$(grep -e "^LIB =" $MF_FILES)
     MGW_FINALNAME="NONAME"
@@ -85,16 +85,27 @@ then
         MGW_FINALNAME=$(echo $MGW_LIBNAME | sed -e 's=.*/==').dll
     fi
 
-    #get current OpenFOAM version
+    # Get current OpenFOAM version
     MGW_OFversion=$(wmakePrintBuild)
 
-    #apply values to template
+    LIBRARIES_TO_LOAD=""
+    # Replace the library loading string
+    if grep -q -e "LIBS_TO_LOAD" "${MF_FILES}"
+    then
+        LIBRARIES_TO_LOAD=$(
+            grep -e "LIBS_TO_LOAD" "${MF_FILES}" | \
+            sed -e 's/.*LIBS_TO_LOAD="\\"\(.*\)\\""/\1/'
+            )
+    fi
+
+    # Apply values to template
     sed -e 's=2\.0\.\0\.0='$MGW_OFversion'=g' \
         -e 's=tmpintname='$MGW_FINALNAME'=' \
         -e 's=tmporigname='$MGW_FINALNAME'=' \
+        -e 's=LIBRARY_LIST_THEM_HERE='${LIBRARIES_TO_LOAD}'=' \
         tmpver.rc > "${VERSIONFILE}"
 
-    #clean up
+    # Clean up
     unset MGW_OFversion MGW_EXENAME MGW_LIBNAME MGW_FINALNAME
     rm tmpver.rc
 
