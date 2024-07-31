@@ -6,7 +6,8 @@ c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor \
 # Suppress some warnings for flex++
 c++LESSWARN = -Wno-old-style-cast -Wno-unused-local-typedefs -Wno-array-bounds
 
-CC          = $$($(WM_DIR)/scripts/makeReinterpretExePath $(WM_CXX)) -std=c++14
+CC          = $$($(WM_DIR)/scripts/makeReinterpretExePath $(WM_CXX)) \
+                  -std=c++14 -m$(WM_ARCH_OPTION)
 
 include $(DEFAULT_RULES)/c++$(WM_COMPILE_OPTION)
 

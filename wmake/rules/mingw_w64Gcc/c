@@ -2,7 +2,8 @@ SUFFIXES += .c
 
 cWARN        = -Wall
 
-cc          = $$($(WM_DIR)/scripts/makeReinterpretExePath $(WM_CC)) -m$(WM_ARCH_OPTION)
+cc          = $$($(WM_DIR)/scripts/makeReinterpretExePath $(WM_CC)) \
+                  -m$(WM_ARCH_OPTION)
 
 include $(DEFAULT_RULES)/c$(WM_COMPILE_OPTION)
 
