@@ -4,14 +4,6 @@ cd ${0%/*} || exit 1    # Run from this directory
 # Parse arguments for library compilation
 . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 
-if isMinGW
-then
-    for item in *
-    do
-        [ -d $item ] && wmakeHackModuleToLoadLibraries $item
-    done
-fi
-
 wmake $targetType movingMesh
 wmake $targetType functions
 wmake $targetType fluidSolver
