@@ -69,12 +69,6 @@ class fvModel
         //- Reference to the mesh database
         const fvMesh& mesh_;
 
-        //- Top level source dictionary
-        dictionary dict_;
-
-        //- Dictionary containing source coefficients
-        dictionary coeffs_;
-
 
 protected:
 
@@ -253,8 +247,8 @@ public:
             //- Return const access to the mesh database
             inline const fvMesh& mesh() const;
 
-            //- Return dictionary
-            inline const dictionary& coeffs() const;
+            //- Return the coefficients sub-dictionary
+            inline const dictionary& coeffs(const dictionary&) const;
 
 
         // Checks
