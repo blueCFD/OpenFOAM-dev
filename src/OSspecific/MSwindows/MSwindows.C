@@ -72,6 +72,7 @@ Details
 #include <windows.h>
 #include <signal.h>
 
+#include "OSResourceIDs.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -1291,6 +1292,23 @@ int system(const std::string& command)
 // Using the convention from OpenFOAM.com
 static std::unordered_map<void*, std::string> libsLoaded;
 
+bool isLibraryAlreadyLoaded(const std::string &name)
+{
+    auto it = std::find_if
+    (
+        std::begin(libsLoaded),
+        std::end(libsLoaded),
+        [&name](auto&& p)
+        {
+            return p.second == name;
+        }
+    );
+
+    if (it == std::end(libsLoaded))
+        return false;
+    else
+        return true;
+}
 
 void* dlOpen(const fileName& libName, const bool check)
 {
@@ -1302,7 +1320,8 @@ void* dlOpen(const fileName& libName, const bool check)
         string libsToLoad=libName;
         libsToLoad.removeTrailing(' '); //removes spaces from both ends
         libsToLoad.removeRepeated(',');
-        libsToLoad += ',';
+        libsToLoad.removeTrailing(',');
+        libsToLoad += ','; //so that we know where to stop
 
         if (MSwindows::debug)
         {
@@ -1315,10 +1334,17 @@ void* dlOpen(const fileName& libName, const bool check)
         while (found!=string::npos)
         {
             string libToLoad = libsToLoad.substr(stposstr,found-stposstr);
-            moduleh = dlOpen(libToLoad);
-            stposstr=found+1; found=libsToLoad.find_first_of(',',stposstr);
+
+            if (!isLibraryAlreadyLoaded(libToLoad))
+            {
+                moduleh = dlOpen(libToLoad, check);
+            }
+
+            stposstr=found+1;
+            found=libsToLoad.find_first_of(',',stposstr);
         }
 
+        //am returning the last library to be loaded
         return moduleh;
     }
     else
@@ -1344,6 +1370,24 @@ void* dlOpen(const fileName& libName, const bool check)
             winLibName += dllExt;
 
             libHandle = ::LoadLibrary(winLibName.c_str());
+        }
+
+        if (NULL != libHandle)
+        {
+            TCHAR buffer[1024];
+            int buffer_len = LoadString
+            (
+                HINSTANCE(libHandle),
+                LIBRARY_DEPENDENCIES,
+                buffer,
+                sizeof(buffer)
+            );
+
+            if (buffer_len > 0)
+            {
+                // We will ignore the returned value
+                dlOpen(fileName(string(buffer)), check);
+            }
         }
 
         if (NULL == libHandle && check)
