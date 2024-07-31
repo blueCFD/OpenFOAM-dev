@@ -68,7 +68,6 @@ namespace solvers
 
 class incompressibleMultiphaseVoF
 :
-#include "definePublicDlLibraryLoader.H"
     public multiphaseVoFSolver
 {
 

@@ -61,7 +61,6 @@ namespace solvers
 
 class film
 :
-#include "definePublicDlLibraryLoader.H"
     public isothermalFilm
 {
 

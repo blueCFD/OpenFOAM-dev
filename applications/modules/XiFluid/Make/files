@@ -1,5 +1,4 @@
 XiFluid.C
 thermophysicalPredictor.C
 
-MOD = XiFluid
 LIB = $(FOAM_LIBBIN)/libXiFluid

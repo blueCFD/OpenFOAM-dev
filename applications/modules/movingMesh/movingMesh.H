@@ -53,7 +53,6 @@ namespace solvers
 
 class movingMesh
 :
-#include "definePublicDlLibraryLoader.H"
     public solver
 {
     // Control parameters

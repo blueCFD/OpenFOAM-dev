@@ -3,5 +3,4 @@ alphaPredictor.C
 pressureCorrector.C
 twoPhaseSolver.C
 
-MOD = twoPhaseSolver
 LIB = $(FOAM_LIBBIN)/libtwoPhaseSolver

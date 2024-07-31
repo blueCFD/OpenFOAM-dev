@@ -58,7 +58,6 @@ void Foam::solvers::incompressibleFluid::continuityErrors()
 
 Foam::solvers::incompressibleFluid::incompressibleFluid(fvMesh& mesh)
 :
-#include "constructPublicDlLibraryLoader.H"
     fluidSolver(mesh),
 
     p_

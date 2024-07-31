@@ -206,7 +206,6 @@ void Foam::solvers::fluidSolver::continuityErrors
 
 Foam::solvers::fluidSolver::fluidSolver(fvMesh& mesh)
 :
-#include "constructPublicDlLibraryLoader.H"
     solver(mesh),
     maxCo(0),
     maxDeltaT_(0),

@@ -70,7 +70,6 @@ namespace solvers
 
 class VoFSolver
 :
-#include "definePublicDlLibraryLoader.H"
     public fluidSolver
 {
 

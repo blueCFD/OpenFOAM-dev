@@ -2,5 +2,4 @@ derivedFvPatchFields/tractionDisplacement/tractionDisplacementFvPatchVectorField
 derivedFvPatchFields/hydrostaticDisplacement/hydrostaticDisplacementFvPatchVectorField.C
 solidDisplacement.C
 
-MOD = solidDisplacement
 LIB = $(FOAM_LIBBIN)/libsolidDisplacement
