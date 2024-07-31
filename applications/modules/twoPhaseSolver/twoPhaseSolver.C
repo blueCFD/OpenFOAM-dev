@@ -44,7 +44,6 @@ Foam::solvers::twoPhaseSolver::twoPhaseSolver
     autoPtr<twoPhaseVoFMixture> mixturePtr
 )
 :
-#include "constructPublicDlLibraryLoader.H"
     VoFSolver(mesh, autoPtr<VoFMixture>(mixturePtr.ptr())),
 
     mixture(refCast<twoPhaseVoFMixture>(VoFSolver::mixture_)),
