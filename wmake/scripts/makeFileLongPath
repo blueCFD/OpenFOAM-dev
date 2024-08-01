@@ -36,10 +36,30 @@
 #
 #------------------------------------------------------------------------------
 
+CYGPATH_EXTRA=
+MUST_FIT=
+
+if [ "$1" = "-fit" ]
+then
+    shift
+    MUST_FIT=yes
+fi
+
 if onWin
 then
 
-    cygpath -a -w -m $1 | sed 's=\\=\\\\=g'
+    if [ -n "${MUST_FIT}" ]
+    then
+        FULL_PATH=$(cygpath -a -w -m "${1}" | sed -e 's=^//?/=\\\\?\\=')
+        CHAR_COUNT=$(echo "${FULL_PATH}" | wc -m)
+        if [ $CHAR_COUNT -gt 259 ]
+        then
+            CYGPATH_EXTRA="-s"
+            touch "${FULL_PATH/^\\\\\?\\/}"
+        fi
+    fi
+
+    cygpath -a $CYGPATH_EXTRA -w -m "${1}" | sed 's=\\=\\\\=g'
 
 else
 
