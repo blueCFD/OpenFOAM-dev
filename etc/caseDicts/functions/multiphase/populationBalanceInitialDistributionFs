@@ -27,7 +27,7 @@ initialDistributionFile <initialDistributionFileName>; // The file containing
 codeInclude
 #{
     #include "stringOps.H"
-    #include "Table.H"
+    #include "Table.T.H"
     #include "volFields.H"
 #};
 
