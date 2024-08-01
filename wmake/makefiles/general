@@ -222,16 +222,18 @@ objects: $(OBJECTS) | silent
 libso: $(LIB).$(SO) | silent
 
 $(LIB).$(SO): $(OBJECTS)
-	@$(WM_SCRIPTS)/makeTargetDir $(LIB)
+	$(shell $(WM_SCRIPTS)/makeTargetDir $(LIB))
+	$(eval LIBSO := $(shell $(WM_DIR)/scripts/makeFileLongPath -fit $(LIB).$(SO)))
 	@$(WM_SCRIPTS)/makeReinterpretObjectPaths $(OBJECTS_DIR)/objectList \
       $(OBJECTS)
-	$(call QUIET_MESSAGE,ld,$(LIB).$(SO))
+	$(call QUIET_MESSAGE,ld,$(LIBSO))
 	$E $(LINKLIBSO) @$(OBJECTS_DIR)/objectList -L$(LIB_PLATFORMS) \
-	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIB).$(SO)
+	    $(PROJECT_LIBS) $(LIB_LIBS) $(GLIB_LIBS) -o $(LIBSO)
 ifneq ($(CV2PDB_PATH),)
+	@$(WM_DIR)/scripts/makeFileLongPath -fit $(LIB).pdb
 	$(call QUIET_MESSAGE,cv2pdb$(WM_ARCH_OPTION),$(LIB).$(SO))
-	$E $(CV2PDB_PATH)/cv2pdb$(WM_ARCH_OPTION).exe $(LIB).$(SO) || \
-		(strip --strip-unneeded $(LIB).$(SO); \
+	$E $(CV2PDB_PATH)/cv2pdb$(WM_ARCH_OPTION).exe $(LIBSO) || \
+		(strip --strip-unneeded $(LIBSO); \
 		$(WM_SCRIPTS)/infoCV2PDBworkaround)
 endif
 
