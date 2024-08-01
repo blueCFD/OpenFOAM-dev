@@ -71,7 +71,7 @@ class KTS
     // Private Data
 
         //- Generation rate coefficient, default: 0.28
-        scalar Geta_;
+        dimensionedScalar Geta_;
 
 
 protected:

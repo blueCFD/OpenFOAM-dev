@@ -22,11 +22,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SuModels::linearEquilibrium
+    Foam::SuModels::transport
 
 Description
-    Equilibrium model for strained laminar flame speed
-    with linear dependence on the strain-rate
+    Transport model for the strained laminar flame speed
 
     References:
     \verbatim
@@ -38,12 +37,12 @@ Description
     \endverbatim
 
 SourceFiles
-    linearEquilibrium.C
+    transport_SuModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef linearEquilibriumSu_H
-#define linearEquilibriumSu_H
+#ifndef transport_SuModel_H
+#define transport_SuModel_H
 
 #include "unstrained.H"
 
@@ -55,16 +54,23 @@ namespace SuModels
 {
 
 /*---------------------------------------------------------------------------*\
-                          Class linearEquilibrium Declaration
+                          Class transport Declaration
 \*---------------------------------------------------------------------------*/
 
-class linearEquilibrium
+class transport
 :
     public unstrained
 {
     // Private Data
 
+        //- Laminar flame extinction strain-rate
         dimensionedScalar sigmaExt_;
+
+        //- Minimum laminar flame-speed allowed for numerical stability
+        dimensionedScalar SuMin_;
+
+        //- Maximum laminar flame-speed allowed for numerical stability
+        dimensionedScalar SuMax_;
 
 
 protected:
@@ -76,13 +82,13 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("linearEquilibrium");
+    TypeName("transport");
 
 
     // Constructors
 
         //- Construct from components
-        linearEquilibrium
+        transport
         (
             const dictionary& dict,
             const psiuMulticomponentThermo& thermo,
@@ -90,11 +96,11 @@ public:
         );
 
         //- Disallow default bitwise copy construction
-        linearEquilibrium(const linearEquilibrium&) = delete;
+        transport(const transport&) = delete;
 
 
     //- Destructor
-    virtual ~linearEquilibrium();
+    virtual ~transport();
 
 
     // Member Functions
@@ -106,7 +112,7 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const linearEquilibrium&) = delete;
+        void operator=(const transport&) = delete;
 };
 
 

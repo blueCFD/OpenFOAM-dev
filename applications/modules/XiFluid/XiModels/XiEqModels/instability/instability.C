@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,54 +23,77 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "uniformConstantSu.H"
+#include "instability.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace SuModels
+namespace XiEqModels
 {
-    defineTypeNameAndDebug(uniformConstant, 0);
-    addToRunTimeSelectionTable(SuModel, uniformConstant, dictionary);
+    defineTypeNameAndDebug(instability, 0);
+    addToRunTimeSelectionTable(XiEqModel, instability, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-bool Foam::SuModels::uniformConstant::readCoeffs(const dictionary& dict)
+bool Foam::XiEqModels::instability::readCoeffs(const dictionary& dict)
 {
-    SuModel::readCoeffs(dict);
+    XiEqModel::readCoeffs(dict);
 
-    Su_.read(dict);
-    SuModel::Su_ == Su_;
+    XiEqIn_.read(dict);
+    lambdaIn_.read(dict);
 
-    return true;
+    return XiEqModel_->read(dict);
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::SuModels::uniformConstant::uniformConstant
+Foam::XiEqModels::instability::instability
 (
     const dictionary& dict,
     const psiuMulticomponentThermo& thermo,
-    const fluidThermoThermophysicalTransportModel& turbulence
+    const fluidThermoThermophysicalTransportModel& turbulence,
+    const volScalarField& Su
 )
 :
-    SuModel(thermo, turbulence),
-    Su_("Su", dimVelocity, dict)
-{
-    SuModel::Su_ == Su_;
-}
+    XiEqModel(thermo, turbulence, Su),
+    XiEqIn_("XiEqIn", dimless, dict),
+    lambdaIn_("lambdaIn", dimLength, dict),
+    XiEqModel_(XiEqModel::New(dict, thermo, turbulence, Su))
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::SuModels::uniformConstant::~uniformConstant()
+Foam::XiEqModels::instability::~instability()
 {}
+
+
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField> Foam::XiEqModels::instability::XiEq() const
+{
+    const volScalarField turbXiEq(XiEqModel_->XiEq());
+    return XiEqIn_/turbXiEq + turbXiEq;
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::XiEqModels::instability::Db() const
+{
+    const volScalarField& rho = turbulence_.rho();
+
+    const objectRegistry& db = Su_.db();
+    const volScalarField& Xi = db.lookupObject<volScalarField>("Xi");
+    const volScalarField& mgb = db.lookupObject<volScalarField>("mgb");
+
+    return XiEqModel_->Db()
+        + rho*Su_*(Xi - 1.0)*mgb*(0.5*lambdaIn_)/(mgb + 1.0/lambdaIn_);
+}
 
 
 // ************************************************************************* //

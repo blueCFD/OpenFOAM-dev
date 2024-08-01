@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,115 +22,101 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::laminarFlameSpeedModels::GuldersEGR
+    Foam::functionObjects::meshToMeshAdjustTimeStep
 
 Description
-    Laminar flame speed obtained from Gulder's correlation with EGR modelling.
+    Adjusts time-step for meshToMesh mapping.
 
 SourceFiles
-    GuldersEGR.C
+    meshToMeshAdjustTimeStep.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef GuldersEGR_H
-#define GuldersEGR_H
+#ifndef meshToMeshAdjustTimeStep_H
+#define meshToMeshAdjustTimeStep_H
 
-#include "laminarFlameSpeed.H"
+#include "fvMeshFunctionObject.H"
+#include "meshToMesh_fvMeshTopoChanger.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace laminarFlameSpeedModels
+namespace functionObjects
 {
 
 /*---------------------------------------------------------------------------*\
-                         Class GuldersEGR Declaration
+           Class meshToMeshAdjustTimeStep Declaration
 \*---------------------------------------------------------------------------*/
 
-class GuldersEGR
+class meshToMeshAdjustTimeStep
 :
-    public laminarFlameSpeed
+    public fvMeshFunctionObject
 {
     // Private Data
 
-        dictionary coeffDict_;
-
-        scalar W_;
-        scalar eta_;
-        scalar xi_;
-        scalar f_;
-        scalar alpha_;
-        scalar beta_;
-
-
-    // Private Member Functions
-
-        inline scalar SuRef
-        (
-            scalar phi
-        ) const;
-
-        inline scalar Su0pTphi
-        (
-            scalar p,
-            scalar Tu,
-            scalar phi,
-            scalar Yres
-        ) const;
-
-        tmp<volScalarField> Su0pTphi
-        (
-            const volScalarField& p,
-            const volScalarField& Tu,
-            scalar phi
-        ) const;
-
-        tmp<volScalarField> Su0pTphi
-        (
-            const volScalarField& p,
-            const volScalarField& Tu,
-            const volScalarField& phi,
-            const volScalarField& egr
-        ) const;
+        //- Reference to the meshToMesh fvMeshTopoChanger
+        const fvMeshTopoChangers::meshToMesh& meshToMesh_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("GuldersEGR");
+    TypeName("meshToMeshAdjustTimeStep");
 
 
     // Constructors
 
-        //- Construct from dictionary and psiuMulticomponentThermo
-        GuldersEGR
+        //- Construct from components
+        meshToMeshAdjustTimeStep
         (
-            const dictionary&,
-            const psiuMulticomponentThermo&
+            const word& name,
+            const Time& runTime,
+            const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        GuldersEGR(const GuldersEGR&) = delete;
+        meshToMeshAdjustTimeStep
+        (
+            const meshToMeshAdjustTimeStep&
+        ) = delete;
 
 
-    //- Destructor
-    virtual ~GuldersEGR();
+    // Destructor
+    virtual ~meshToMeshAdjustTimeStep();
+
+
+    // Member Functions
+
+        //-  Read and reset the timeStep Function1
+        virtual bool read(const dictionary&);
+
+        //- Return the list of fields required
+        virtual wordList fields() const
+        {
+            return wordList::null();
+        }
+
+        //- Return the time to the next write
+        virtual scalar timeToNextAction();
+
+        //- Do nothing
+        virtual bool execute();
+
+        //- Do nothing
+        virtual bool write();
 
 
     // Member Operators
 
-        //- Return the laminar flame speed [m/s]
-        tmp<volScalarField> operator()() const;
-
         //- Disallow default bitwise assignment
-        void operator=(const GuldersEGR&) = delete;
+        void operator=(const meshToMeshAdjustTimeStep&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End laminarFlameSpeedModels
+} // End namespace functionObjects
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

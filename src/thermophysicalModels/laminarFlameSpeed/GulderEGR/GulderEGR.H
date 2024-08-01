@@ -22,92 +22,115 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::XiGModels::instabilityG
+    Foam::laminarFlameSpeedModels::GulderEGR
 
 Description
-    Flame instability flame wrinkling generation rate model
+    Laminar flame speed obtained from Gulder's correlation with EGR modelling.
 
 SourceFiles
-    instabilityG.C
+    GulderEGR.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef instabilityG_H
-#define instabilityG_H
+#ifndef GulderEGR_H
+#define GulderEGR_H
 
-#include "XiGModel.H"
+#include "laminarFlameSpeed.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiGModels
+namespace laminarFlameSpeedModels
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class instabilityG Declaration
+                         Class GulderEGR Declaration
 \*---------------------------------------------------------------------------*/
 
-class instabilityG
+class GulderEGR
 :
-    public XiGModel
+    public laminarFlameSpeed
 {
     // Private Data
 
-        //- Flame instabilityG wrinkling generation rate coefficient
-        dimensionedScalar Gin_;
+        dictionary coeffDict_;
 
-        //- Xi generation rate model due to all other processes
-        autoPtr<XiGModel> XiGModel_;
+        scalar W_;
+        scalar eta_;
+        scalar xi_;
+        scalar f_;
+        scalar alpha_;
+        scalar beta_;
 
 
-protected:
+    // Private Member Functions
 
-        //- Update coefficients from given dictionary
-        virtual bool readCoeffs(const dictionary& dict);
+        inline scalar SuRef
+        (
+            scalar phi
+        ) const;
+
+        inline scalar Su0pTphi
+        (
+            scalar p,
+            scalar Tu,
+            scalar phi,
+            scalar Yres
+        ) const;
+
+        tmp<volScalarField> Su0pTphi
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            scalar phi
+        ) const;
+
+        tmp<volScalarField> Su0pTphi
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& phi,
+            const volScalarField& egr
+        ) const;
 
 
 public:
 
     //- Runtime type information
-    TypeName("instabilityG");
+    TypeName("GulderEGR");
 
 
     // Constructors
 
-        //- Construct from components
-        instabilityG
+        //- Construct from dictionary and psiuMulticomponentThermo
+        GulderEGR
         (
-            const dictionary& dict,
-            const psiuMulticomponentThermo& thermo,
-            const fluidThermoThermophysicalTransportModel& turbulence,
-            const volScalarField& Su
+            const dictionary&,
+            const psiuMulticomponentThermo&
         );
 
         //- Disallow default bitwise copy construction
-        instabilityG(const instabilityG&) = delete;
+        GulderEGR(const GulderEGR&) = delete;
 
 
     //- Destructor
-    virtual ~instabilityG();
-
-
-    // Member Functions
-
-        //- Return the flame-wrinkling generation rate
-        virtual tmp<volScalarField> G() const;
+    virtual ~GulderEGR();
 
 
     // Member Operators
 
+        //- Return the laminar flame speed [m/s]
+        tmp<volScalarField> operator()() const;
+
         //- Disallow default bitwise assignment
-        void operator=(const instabilityG&) = delete;
+        void operator=(const GulderEGR&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace XiGModels
+} // End laminarFlameSpeedModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

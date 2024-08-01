@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,101 +22,97 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::functionObjects::meshToMeshAdjustTimeStepFunctionObject
+    Foam::SuModels::linearEquilibrium
 
 Description
-    Adjusts time-step for meshToMesh mapping.
+    Equilibrium model for strained laminar flame speed
+    with linear dependence on the strain-rate
+
+    References:
+    \verbatim
+        Weller, H. G., Tabor, G., Gosman, A. D., & Fureby, C. (1998, January).
+        Application of a flame-wrinkling LES combustion model
+        to a turbulent mixing layer.
+        In Symposium (International) on combustion
+        (Vol. 27, No. 1, pp. 899-907). Elsevier.
+    \endverbatim
 
 SourceFiles
-    meshToMeshAdjustTimeStepFunctionObject.C
+    linearEquilibrium_SuModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef functionObjects_meshToMeshAdjustTimeStepFunctionObject_H
-#define functionObjects_meshToMeshAdjustTimeStepFunctionObject_H
+#ifndef linearEquilibrium_SuModel_H
+#define linearEquilibrium_SuModel_H
 
-#include "fvMeshFunctionObject.H"
-#include "fvMeshTopoChangersMeshToMesh.H"
+#include "unstrained.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace functionObjects
+namespace SuModels
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class meshToMeshAdjustTimeStepFunctionObject Declaration
+                          Class linearEquilibrium Declaration
 \*---------------------------------------------------------------------------*/
 
-class meshToMeshAdjustTimeStepFunctionObject
+class linearEquilibrium
 :
-    public fvMeshFunctionObject
+    public unstrained
 {
     // Private Data
 
-        //- Reference to the meshToMesh fvMeshTopoChanger
-        const fvMeshTopoChangers::meshToMesh& meshToMesh_;
+        dimensionedScalar sigmaExt_;
+
+
+protected:
+
+        //- Update coefficients from given dictionary
+        virtual bool readCoeffs(const dictionary& dict);
 
 
 public:
 
     //- Runtime type information
-    TypeName("meshToMeshAdjustTimeStep");
+    TypeName("linearEquilibrium");
 
 
     // Constructors
 
         //- Construct from components
-        meshToMeshAdjustTimeStepFunctionObject
+        linearEquilibrium
         (
-            const word& name,
-            const Time& runTime,
-            const dictionary& dict
+            const dictionary& dict,
+            const psiuMulticomponentThermo& thermo,
+            const fluidThermoThermophysicalTransportModel& turbulence
         );
 
         //- Disallow default bitwise copy construction
-        meshToMeshAdjustTimeStepFunctionObject
-        (
-            const meshToMeshAdjustTimeStepFunctionObject&
-        ) = delete;
+        linearEquilibrium(const linearEquilibrium&) = delete;
 
 
-    // Destructor
-    virtual ~meshToMeshAdjustTimeStepFunctionObject();
+    //- Destructor
+    virtual ~linearEquilibrium();
 
 
     // Member Functions
 
-        //-  Read and reset the timeStep Function1
-        virtual bool read(const dictionary&);
-
-        //- Return the list of fields required
-        virtual wordList fields() const
-        {
-            return wordList::null();
-        }
-
-        //- Return the time to the next write
-        virtual scalar timeToNextAction();
-
-        //- Do nothing
-        virtual bool execute();
-
-        //- Do nothing
-        virtual bool write();
+        //- Correct the laminar flame speed
+        virtual void correct();
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const meshToMeshAdjustTimeStepFunctionObject&) = delete;
+        void operator=(const linearEquilibrium&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace functionObjects
+} // End namespace SuModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

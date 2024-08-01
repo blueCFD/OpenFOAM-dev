@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,61 +23,74 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "instabilityG.H"
+#include "linearEquilibrium_SuModel.H"
+#include "laminarFlameSpeed.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiGModels
+namespace SuModels
 {
-    defineTypeNameAndDebug(instabilityG, 0);
-    addToRunTimeSelectionTable(XiGModel, instabilityG, dictionary);
+    defineTypeNameAndDebug(linearEquilibrium, 0);
+    addToRunTimeSelectionTable(SuModel, linearEquilibrium, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-bool Foam::XiGModels::instabilityG::readCoeffs(const dictionary& dict)
+bool Foam::SuModels::linearEquilibrium::readCoeffs(const dictionary& dict)
 {
-    XiGModel::readCoeffs(dict);
+    return SuModel::readCoeffs(dict);
 
-    dict.lookup("Gin") >> Gin_;
-
-    return true;
+    sigmaExt_.read(dict);
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::XiGModels::instabilityG::instabilityG
+Foam::SuModels::linearEquilibrium::linearEquilibrium
 (
     const dictionary& dict,
     const psiuMulticomponentThermo& thermo,
-    const fluidThermoThermophysicalTransportModel& thermoTransport,
-    const volScalarField& Su
+    const fluidThermoThermophysicalTransportModel& turbulence
 )
 :
-    XiGModel(thermo, thermoTransport, Su),
-    Gin_(dict.lookup("Gin")),
-    XiGModel_(XiGModel::New(dict, thermo, thermoTransport, Su))
-{}
+    unstrained(dict, thermo, turbulence),
+    sigmaExt_("sigmaExt", dimless/dimTime, dict)
+{
+    Su_.writeOpt() = IOobject::AUTO_WRITE;
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::XiGModels::instabilityG::~instabilityG()
+Foam::SuModels::linearEquilibrium::~linearEquilibrium()
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::XiGModels::instabilityG::G() const
+void Foam::SuModels::linearEquilibrium::correct()
 {
-    volScalarField turbXiG(XiGModel_->G());
-    return (Gin_*Gin_/(Gin_ + turbXiG) + turbXiG);
+    const fvMesh& mesh(thermo_.mesh());
+
+    const volVectorField& U(turbulence_.U());
+    const volVectorField& n = mesh.lookupObject<volVectorField>("n");
+    const volScalarField& Xi = mesh.lookupObject<volScalarField>("Xi");
+
+    const volScalarField sigmas
+    (
+        ((n & n)*fvc::div(U) - (n & fvc::grad(U) & n))/Xi
+      + (
+            (n & n)*fvc::div(Su_*n)
+          - (n & fvc::grad(Su_*n) & n)
+        )*(Xi + scalar(1))/(2*Xi)
+    );
+
+    Su_ == Su0_()()*max(scalar(1) - sigmas/sigmaExt_, scalar(0.01));
 }
 
 

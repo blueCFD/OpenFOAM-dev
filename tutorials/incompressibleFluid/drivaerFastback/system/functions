@@ -15,10 +15,6 @@ FoamFile
 
 #includeFunc filterObjectsAsFiles
 
-// adjustTimeStep  yes;
-
-// maxCo           1;
-
 #includeFunc forceCoeffsIncompressible
 
 #includeFunc time

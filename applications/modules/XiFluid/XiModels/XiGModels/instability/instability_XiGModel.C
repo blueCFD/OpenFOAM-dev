@@ -23,76 +23,61 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "instabilityXiEq.H"
+#include "instability_XiGModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace XiEqModels
+namespace XiGModels
 {
     defineTypeNameAndDebug(instability, 0);
-    addToRunTimeSelectionTable(XiEqModel, instability, dictionary);
+    addToRunTimeSelectionTable(XiGModel, instability, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-bool Foam::XiEqModels::instability::readCoeffs(const dictionary& dict)
+bool Foam::XiGModels::instability::readCoeffs(const dictionary& dict)
 {
-    XiEqModel::readCoeffs(dict);
+    XiGModel::readCoeffs(dict);
 
-    dict.lookup("XiEqIn") >> XiEqIn;
-    dict.lookup("lambdaIn") >> lambdaIn_;
+    Gin_.read(dict);
 
-    return XiEqModel_->read(dict);
+    return true;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::instability::instability
+Foam::XiGModels::instability::instability
 (
     const dictionary& dict,
     const psiuMulticomponentThermo& thermo,
-    const fluidThermoThermophysicalTransportModel& turbulence,
+    const fluidThermoThermophysicalTransportModel& thermoTransport,
     const volScalarField& Su
 )
 :
-    XiEqModel(thermo, turbulence, Su),
-    XiEqIn(dict.lookup<scalar>("XiEqIn")),
-    lambdaIn_(dict.lookup("lambdaIn")),
-    XiEqModel_(XiEqModel::New(dict, thermo, turbulence, Su))
+    XiGModel(thermo, thermoTransport, Su),
+    Gin_("Gin", dimless/dimTime, dict),
+    XiGModel_(XiGModel::New(dict, thermo, thermoTransport, Su))
 {}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::XiEqModels::instability::~instability()
+Foam::XiGModels::instability::~instability()
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::XiEqModels::instability::XiEq() const
+Foam::tmp<Foam::volScalarField> Foam::XiGModels::instability::G() const
 {
-    const volScalarField turbXiEq(XiEqModel_->XiEq());
-    return XiEqIn/turbXiEq + turbXiEq;
-}
-
-
-Foam::tmp<Foam::volScalarField> Foam::XiEqModels::instability::Db() const
-{
-    const volScalarField& rho = turbulence_.rho();
-
-    const objectRegistry& db = Su_.db();
-    const volScalarField& Xi = db.lookupObject<volScalarField>("Xi");
-    const volScalarField& mgb = db.lookupObject<volScalarField>("mgb");
-
-    return XiEqModel_->Db()
-        + rho*Su_*(Xi - 1.0)*mgb*(0.5*lambdaIn_)/(mgb + 1.0/lambdaIn_);
+    const volScalarField turbXiG(XiGModel_->G());
+    return (Gin_*Gin_/(Gin_ + turbXiG) + turbXiG);
 }
 
 

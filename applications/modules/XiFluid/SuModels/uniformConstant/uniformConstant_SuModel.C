@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,52 +23,54 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceFieldValue.H"
-#include "Time.T.H"
+#include "uniformConstant_SuModel.H"
+#include "addToRunTimeSelectionTable.H"
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-inline
-const Foam::functionObjects::fieldValues::surfaceFieldValue::selectionTypes&
-Foam::functionObjects::fieldValues::surfaceFieldValue::selectionType() const
+namespace Foam
 {
-    return selectionType_;
+namespace SuModels
+{
+    defineTypeNameAndDebug(uniformConstant, 0);
+    addToRunTimeSelectionTable(SuModel, uniformConstant, dictionary);
+}
 }
 
 
-inline const Foam::word&
-Foam::functionObjects::fieldValues::surfaceFieldValue::selectionName() const
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+bool Foam::SuModels::uniformConstant::readCoeffs(const dictionary& dict)
 {
-    return selectionName_;
+    SuModel::readCoeffs(dict);
+
+    Su_.read(dict);
+    SuModel::Su_ == Su_;
+
+    return true;
 }
 
 
-inline const Foam::labelList&
-Foam::functionObjects::fieldValues::surfaceFieldValue::faceId() const
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::SuModels::uniformConstant::uniformConstant
+(
+    const dictionary& dict,
+    const psiuMulticomponentThermo& thermo,
+    const fluidThermoThermophysicalTransportModel& turbulence
+)
+:
+    SuModel(thermo, turbulence),
+    Su_("Su", dimVelocity, dict)
 {
-    return faceId_;
+    SuModel::Su_ == Su_;
 }
 
 
-inline const Foam::labelList&
-Foam::functionObjects::fieldValues::surfaceFieldValue::facePatch() const
-{
-    return facePatchId_;
-}
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-
-inline const Foam::labelList&
-Foam::functionObjects::fieldValues::surfaceFieldValue::faceSign() const
-{
-    return faceSign_;
-}
-
-
-inline Foam::fileName
-Foam::functionObjects::fieldValues::surfaceFieldValue::outputDir() const
-{
-    return baseFileDir()/name()/"surface"/time_.name();
-}
+Foam::SuModels::uniformConstant::~uniformConstant()
+{}
 
 
 // ************************************************************************* //
