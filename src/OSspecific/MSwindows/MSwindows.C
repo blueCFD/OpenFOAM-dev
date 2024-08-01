@@ -1372,8 +1372,17 @@ void* dlOpen(const fileName& libName, const bool check)
             libHandle = ::LoadLibrary(winLibName.c_str());
         }
 
-        if (NULL != libHandle)
+        if (NULL == libHandle && check)
         {
+            WarningInFunction
+                << "LoadLibrary failed. "
+                << MSwindows::getLastError()
+                << endl;
+        }
+        else
+        {
+            libsLoaded[libHandle] = libName;
+
             TCHAR buffer[1024];
             int buffer_len = LoadString
             (
@@ -1388,18 +1397,6 @@ void* dlOpen(const fileName& libName, const bool check)
                 // We will ignore the returned value
                 dlOpen(fileName(string(buffer)), check);
             }
-        }
-
-        if (NULL == libHandle && check)
-        {
-            WarningInFunction
-                << "LoadLibrary failed. "
-                << MSwindows::getLastError()
-                << endl;
-        }
-        else
-        {
-            libsLoaded[libHandle] = libName;
         }
 
         if (MSwindows::debug)
