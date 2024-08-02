@@ -4,9 +4,18 @@ phaseModel/phaseModelNew.C
 phaseModels/phaseModels.C
 
 phaseInterface/phaseInterfaceKey/phaseInterfaceKey.C
+ifeq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
 phaseInterface/phaseInterface/phaseInterface.C
+endif
 phaseInterface/dispersedPhaseInterface/dispersedPhaseInterface.C
 phaseInterface/segregatedPhaseInterface/segregatedPhaseInterface.C
+
+# Have to define this object after the other two, so that it is loaded first
+# in the DLL.
+ifneq (,$(filter $(GFLAGS),-DWIN32 -DWIN64))
+phaseInterface/phaseInterface/phaseInterface.C
+endif
+
 phaseInterface/displacedPhaseInterface/displacedPhaseInterface.C
 phaseInterface/dispersedDisplacedPhaseInterface/dispersedDisplacedPhaseInterface.C
 phaseInterface/segregatedDisplacedPhaseInterface/segregatedDisplacedPhaseInterface.C
