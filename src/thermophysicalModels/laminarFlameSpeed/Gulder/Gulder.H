@@ -54,8 +54,6 @@ class Gulder
 {
     // Private Data
 
-        dictionary coeffDict_;
-
         scalar W_;
         scalar eta_;
         scalar xi_;
@@ -105,7 +103,8 @@ public:
         //- Construct from dictionary and psiuMulticomponentThermo
         Gulder
         (
-            const dictionary&,
+            const dictionary& dict,
+            const dictionary& coeffDict,
             const psiuMulticomponentThermo&
         );
 

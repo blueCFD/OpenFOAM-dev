@@ -49,21 +49,21 @@ namespace laminarFlameSpeedModels
 Foam::laminarFlameSpeedModels::RaviPetersen::RaviPetersen
 (
     const dictionary& dict,
+    const dictionary& coeffDict,
     const psiuMulticomponentThermo& ct
 )
 :
     laminarFlameSpeed(dict, ct),
-    coeffDict_(dict.optionalSubDict(typeName + "Coeffs").subDict(fuel_)),
-    pPoints_(coeffDict_.lookup("pPoints")),
-    EqRPoints_(coeffDict_.lookup("EqRPoints")),
-    alpha_(coeffDict_.lookup("alpha")),
-    beta_(coeffDict_.lookup("beta")),
-    TRef_(coeffDict_.lookup<scalar>("TRef"))
+    pPoints_(coeffDict.lookup("pPoints")),
+    EqRPoints_(coeffDict.lookup("EqRPoints")),
+    alpha_(coeffDict.lookup("alpha")),
+    beta_(coeffDict.lookup("beta")),
+    TRef_(coeffDict.lookup<scalar>("TRef"))
 {
-    checkPointsMonotonicity("equivalenceRatio", EqRPoints_);
-    checkPointsMonotonicity("pressure", pPoints_);
-    checkCoefficientArrayShape("alpha", alpha_);
-    checkCoefficientArrayShape("beta", beta_);
+    checkPointsMonotonicity(coeffDict, "equivalenceRatio", EqRPoints_);
+    checkPointsMonotonicity(coeffDict, "pressure", pPoints_);
+    checkCoefficientArrayShape(coeffDict, "alpha", alpha_);
+    checkCoefficientArrayShape(coeffDict, "beta", beta_);
 }
 
 
@@ -77,6 +77,7 @@ Foam::laminarFlameSpeedModels::RaviPetersen::~RaviPetersen()
 
 void Foam::laminarFlameSpeedModels::RaviPetersen::checkPointsMonotonicity
 (
+    const dictionary& coeffDict,
     const word& name,
     const List<scalar>& x
 ) const
@@ -87,7 +88,7 @@ void Foam::laminarFlameSpeedModels::RaviPetersen::checkPointsMonotonicity
         {
             FatalIOErrorInFunction
             (
-                coeffDict_
+                coeffDict
             )   << "Data points for the " << name
                 << " do not increase monotonically" << endl
                 << exit(FatalIOError);
@@ -98,6 +99,7 @@ void Foam::laminarFlameSpeedModels::RaviPetersen::checkPointsMonotonicity
 
 void Foam::laminarFlameSpeedModels::RaviPetersen::checkCoefficientArrayShape
 (
+    const dictionary& coeffDict,
     const word& name,
     const List<List<List<scalar>>>& x
 ) const
@@ -120,7 +122,7 @@ void Foam::laminarFlameSpeedModels::RaviPetersen::checkCoefficientArrayShape
     {
         FatalIOErrorInFunction
         (
-            coeffDict_
+            coeffDict
         )   << "Inconsistent size of " << name << " coefficients array" << endl
             << exit(FatalIOError);
     }

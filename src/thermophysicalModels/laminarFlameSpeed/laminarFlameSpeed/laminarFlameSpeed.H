@@ -44,7 +44,6 @@ SourceFiles
 #define laminarFlameSpeed_H
 
 #include "psiuMulticomponentThermo.H"
-#include "autoPtr.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -63,9 +62,6 @@ protected:
     // Protected data
 
         const psiuMulticomponentThermo& psiuMulticomponentThermo_;
-
-        //- Fuel
-        word fuel_;
 
         //- Equivalence ratio of a homogeneous mixture
         scalar equivalenceRatio_;
@@ -86,9 +82,10 @@ public:
             dictionary,
             (
                 const dictionary& dict,
+                const dictionary& coeffDict,
                 const psiuMulticomponentThermo& ct
             ),
-            (dict, ct)
+            (dict, coeffDict, ct)
         );
 
 

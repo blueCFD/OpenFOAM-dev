@@ -106,9 +106,6 @@ class SCOPE
             polynomial(const dictionary& polyDict);
         };
 
-
-        dictionary coeffDict_;
-
         //- Lower flammability limit
         scalar LFL_;
 
@@ -184,7 +181,8 @@ public:
         //- Construct from dictionary and psiuMulticomponentThermo
         SCOPE
         (
-            const dictionary&,
+            const dictionary& dict,
+            const dictionary& coeffDict,
             const psiuMulticomponentThermo&
         );
 
