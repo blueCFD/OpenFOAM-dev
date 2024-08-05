@@ -40,6 +40,7 @@ License
 
 namespace Foam
 {
+/*
     forCoeffGases
     (
         makeFluidMulticomponentThermos,
@@ -60,7 +61,7 @@ namespace Foam
         rhoFluidMulticomponentThermo,
         singleComponentMixture
     );
-/*
+*/
     forCoeffLiquids
     (
         makeFluidMulticomponentThermos,
@@ -95,7 +96,6 @@ namespace Foam
         rhoFluidMulticomponentThermo,
         singleComponentMixture
     );
-    */
 }
 
 // ************************************************************************* //
