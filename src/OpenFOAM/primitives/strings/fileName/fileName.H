@@ -89,7 +89,7 @@ class fileName
 
         //- Strip invalid characters
         inline void stripInvalid();
-        
+
         //- Change the path to POSIX path
         void toUnixPath();
 
