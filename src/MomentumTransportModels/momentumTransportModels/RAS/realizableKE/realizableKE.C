@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -158,42 +158,12 @@ realizableKE<BasicMomentumTransportModel>::realizableKE
         phi,
         viscosity
     ),
-    A0_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "A0",
-            this->coeffDict_,
-            4.0
-        )
-    ),
+
+    A0_("A0", this->coeffDict(), 4.0),
     C2_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C2",
-            this->coeffDict_,
-            1.9
-        )
-    ),
-    sigmak_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "sigmak",
-            this->coeffDict_,
-            1.0
-        )
-    ),
-    sigmaEps_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "sigmaEps",
-            this->coeffDict_,
-            1.2
-        )
-    ),
+    ("C2", this->coeffDict(), 1.9),
+    sigmak_("sigmak", this->coeffDict(), 1.0),
+    sigmaEps_("sigmaEps", this->coeffDict(), 1.2),
 
     k_
     (
@@ -222,11 +192,6 @@ realizableKE<BasicMomentumTransportModel>::realizableKE
 {
     bound(k_, this->kMin_);
     boundEpsilon();
-
-    if (type == typeName)
-    {
-        this->printCoeffs(type);
-    }
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,95 +22,86 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fvMeshMovers::none
+    Foam::fvMeshTopoChangers::list
 
 Description
-    Dummy fvMeshMover which does not move the mesh points
+    Sequence of mesh topology changes applied in order.
 
 SourceFiles
-    none.C
+    list_fvMeshTopoChanger.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fvMeshMoversNone_H
-#define fvMeshMoversNone_H
+#ifndef list_fvMeshTopoChanger_H
+#define list_fvMeshTopoChanger_H
 
-#include "fvMeshMover.H"
+#include "fvMeshTopoChanger.H"
+#include "PtrDictionary.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace fvMeshMovers
+namespace fvMeshTopoChangers
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class fvMeshMovers::none Declaration
+                   Class fvMeshTopoChangers::list Declaration
 \*---------------------------------------------------------------------------*/
 
-class none
+class list
 :
-    public fvMeshMover
+    public fvMeshTopoChanger
 {
+    // Private Data
+
+        PtrDictionary<fvMeshTopoChanger> list_;
+
+
 public:
 
     //- Runtime type information
-    TypeName("none");
+    TypeName("list");
 
 
     // Constructors
 
-        //- Construct from fvMesh
-        none(fvMesh& mesh);
+        //- Construct from fvMesh and dictionary
+        list(fvMesh& mesh, const dictionary& dict);
 
         //- Disallow default bitwise copy construction
-        none(const none&) = delete;
+        list(const list&) = delete;
 
 
     //- Destructor
-    virtual ~none();
+    virtual ~list();
 
 
     // Member Functions
 
-        //- The mesh is static and does not change so return false
-        virtual bool dynamic() const
-        {
-            return false;
-        }
-
-        //- The mesh is static, which meets the criteria of a solid body motion
-        virtual bool solidBody() const
-        {
-            return true;
-        }
-
-        //- Dummy update function which does not change the mesh
+        //- Update the mesh for both mesh motion and topology change
         virtual bool update();
 
-        //-  Update local data for topology changes
-        virtual void topoChange(const polyTopoChangeMap&)
-        {}
+        //- Update corresponding to the given map
+        virtual void topoChange(const polyTopoChangeMap&);
 
         //- Update from another mesh using the given map
-        virtual void mapMesh(const polyMeshMap&)
-        {}
+        virtual void mapMesh(const polyMeshMap&);
 
         //- Update corresponding to the given distribution map
-        virtual void distribute(const polyDistributionMap&)
-        {}
+        virtual void distribute(const polyDistributionMap&);
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const none&) = delete;
+        void operator=(const list&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace fvMeshMovers
+} // End namespace fvMeshTopoChangers
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

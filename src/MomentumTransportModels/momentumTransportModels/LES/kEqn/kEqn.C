@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,22 +98,9 @@ kEqn<BasicMomentumTransportModel>::kEqn
         this->mesh_
     ),
 
-    Ck_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Ck",
-            this->coeffDict_,
-            0.094
-        )
-    )
+    Ck_("Ck", this->coeffDict(), 0.094)
 {
     bound(k_, this->kMin_);
-
-    if (type == typeName)
-    {
-        this->printCoeffs(type);
-    }
 }
 
 

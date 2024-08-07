@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,115 +94,19 @@ SSG<BasicMomentumTransportModel>::SSG
         viscosity
     ),
 
-    Cmu_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Cmu",
-            this->coeffDict_,
-            0.09
-        )
-    ),
-    C1_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C1",
-            this->coeffDict_,
-            3.4
-        )
-    ),
-    C1s_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C1s",
-            this->coeffDict_,
-            1.8
-        )
-    ),
-    C2_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C2",
-            this->coeffDict_,
-            4.2
-        )
-    ),
-    C3_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C3",
-            this->coeffDict_,
-            0.8
-        )
-    ),
-    C3s_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C3s",
-            this->coeffDict_,
-            1.3
-        )
-    ),
-    C4_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C4",
-            this->coeffDict_,
-            1.25
-        )
-    ),
-    C5_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C5",
-            this->coeffDict_,
-            0.4
-        )
-    ),
+    Cmu_("Cmu", this->coeffDict(), 0.09),
+    C1_("C1", this->coeffDict(), 3.4),
+    C1s_("C1s", this->coeffDict(), 1.8),
+    C2_("C2", this->coeffDict(), 4.2),
+    C3_("C3", this->coeffDict(), 0.8),
+    C3s_("C3s", this->coeffDict(), 1.3),
+    C4_("C4", this->coeffDict(), 1.25),
+    C5_("C5", this->coeffDict(), 0.4),
 
-    Ceps1_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Ceps1",
-            this->coeffDict_,
-            1.44
-        )
-    ),
-    Ceps2_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Ceps2",
-            this->coeffDict_,
-            1.92
-        )
-    ),
-    Cs_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Cs",
-            this->coeffDict_,
-            0.25
-        )
-    ),
-    Ceps_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Ceps",
-            this->coeffDict_,
-            0.15
-        )
-    ),
+    Ceps1_("Ceps1", this->coeffDict(), 1.44),
+    Ceps2_("Ceps2", this->coeffDict(), 1.92),
+    Cs_("Cs", this->coeffDict(), 0.25),
+    Ceps_("Ceps", this->coeffDict(), 0.15),
 
     k_
     (
@@ -231,8 +135,6 @@ SSG<BasicMomentumTransportModel>::SSG
 {
     if (type == typeName)
     {
-        this->printCoeffs(type);
-
         this->boundNormalStress(this->R_);
         boundEpsilon();
         k_ = 0.5*tr(this->R_);

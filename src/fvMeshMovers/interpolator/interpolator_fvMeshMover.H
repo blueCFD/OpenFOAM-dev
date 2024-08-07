@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,59 +22,92 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fvMeshTopoChangers::list
+    Foam::fvMeshMovers::interpolator
 
 Description
-    Sequence of mesh topology changes applied in order.
+    Interpolates pre-specified motion specified as a set of pointVectorFields.
+
+    The motion can be provided either as a set of displacement or position
+    fields and the entry \c displacement specified accordingly.
+
+Usage
+    Example:
+    \verbatim
+    mover   interpolator;
+
+    displacementLaplacianCoeffs
+    {
+        field               wantedDisplacement;
+        displacement        yes;
+        interpolationScheme linear;
+    }
+    \endverbatim
+
+    This will scan the case for \c wantedDisplacement \c pointVectorFields in
+    the time directories and interpolate those in time (using \c linear
+    interpolation) to obtain the current displacement.  The advantage of
+    specifying displacement in this way is that it automatically works in
+    parallel using \c decomposePar to decompose the set of \c pointVectorFields
+    provided.
 
 SourceFiles
-    fvMeshTopoChangersList.C
+    interpolator.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fvMeshTopoChangersList_H
-#define fvMeshTopoChangersList_H
+#ifndef interpolator_fvMeshMover_H
+#define interpolator_fvMeshMover_H
 
-#include "fvMeshTopoChanger.H"
-#include "PtrDictionary.T.H"
+#include "fvMeshMover.H"
+#include "dynamicMeshPointInterpolator.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace fvMeshTopoChangers
+namespace fvMeshMovers
 {
 
 /*---------------------------------------------------------------------------*\
-                   Class fvMeshTopoChangers::list Declaration
+                  Class interpolator Declaration
 \*---------------------------------------------------------------------------*/
 
-class list
+class interpolator
 :
-    public fvMeshTopoChanger
+    public fvMeshMover
 {
     // Private Data
 
-        PtrDictionary<fvMeshTopoChanger> list_;
+        dynamicMeshPointInterpolator pointInterpolator_;
+
+        const Switch displacement_;
+
+        //- Starting points
+        autoPtr<pointVectorField> points0_;
+
+        //- Optional list of vectorFields to update for mesh motion
+        //  For modern solvers using Uf and correctPhi to update the flux
+        //  after motion it is not necessary to specify a "velocityFields" list
+        velocityMotionCorrection velocityMotionCorrection_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("list");
+    TypeName("interpolator");
 
 
     // Constructors
 
         //- Construct from fvMesh and dictionary
-        list(fvMesh& mesh, const dictionary& dict);
+        interpolator(fvMesh& mesh, const dictionary& dict);
 
         //- Disallow default bitwise copy construction
-        list(const list&) = delete;
+        interpolator(const interpolator&) = delete;
 
 
     //- Destructor
-    virtual ~list();
+    ~interpolator();
 
 
     // Member Functions
@@ -95,13 +128,13 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const list&) = delete;
+        void operator=(const interpolator&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace fvMeshTopoChangers
+} // End namespace fvMeshMovers
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

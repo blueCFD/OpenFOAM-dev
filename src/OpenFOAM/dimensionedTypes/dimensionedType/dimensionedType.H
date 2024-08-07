@@ -39,6 +39,7 @@ SourceFiles
 #include "direction.H"
 #include "dimensionSet.H"
 #include "VectorSpace.T.H"
+#include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -139,45 +140,35 @@ public:
         dimensioned(const word&, const unitConversion&, const dictionary&);
 
         //- Construct from dictionary lookup with a given name and dimensions
-        //  or if not found set to the given default value
+        //  and if not found set to the given default value
         dimensioned
         (
-            const word&,
-            const dimensionSet&,
-            const dictionary&,
-            const Type&
+            const word& name,
+            const dimensionSet& dimensions,
+            const dictionary& dict,
+            const Type& defaultValue,
+            const bool writeDefault = dictionary::writeOptionalEntries > 0
         );
 
-        //- Construct from dictionary lookup with a given name and units
-        //  or if not found set to the given default value
+        //- Construct from dictionary lookup with the given name, dimensionless,
+        //  and if not found set to the given default value
         dimensioned
         (
-            const word&,
+            const word& name,
+            const dictionary& dict,
+            const Type& defaultValue,
+            const bool writeDefault = dictionary::writeOptionalEntries > 0
+        );
+
+        //- Construct from dictionary lookup with the given name and units
+        //  and if not found set to the given default value
+        dimensioned
+        (
+            const word& name,
             const unitConversion&,
             const dictionary&,
-            const Type&
-        );
-
-
-    // Static member functions
-
-        //- Construct from dictionary, with default value.
-        //  If the value is not found, it is added into the dictionary.
-        static dimensioned<Type> lookupOrAddToDict
-        (
-            const word&,
-            dictionary&,
-            const dimensionSet& dims = dimless,
-            const Type& defaultValue = pTraits<Type>::zero
-        );
-
-        //- Construct from dictionary, dimensionless with default value.
-        //  If the value is not found, it is added into the dictionary.
-        static dimensioned<Type> lookupOrAddToDict
-        (
-            const word&,
-            dictionary&,
-            const Type& defaultValue = pTraits<Type>::zero
+            const Type& defaultValue,
+            const bool writeDefault = dictionary::writeOptionalEntries > 0
         );
 
 

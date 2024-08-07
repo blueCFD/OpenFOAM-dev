@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -107,22 +107,9 @@ kOmegaSSTDES<BasicMomentumTransportModel>::kOmegaSSTDES
         viscosity
     ),
 
-    CDES_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "CDES",
-            this->coeffDict_,
-            0.61
-        )
-    ),
-    FSST_(this->coeffDict_.lookupOrDefault("FSST", 2))
-{
-    if (type == typeName)
-    {
-        this->printCoeffs(type);
-    }
-}
+    CDES_("CDES", this->coeffDict(), 0.61),
+    FSST_(this->coeffDict().lookupOrDefault("FSST", 2))
+{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

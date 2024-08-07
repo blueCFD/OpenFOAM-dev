@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,30 +36,34 @@ Foam::laminarModels::generalisedNewtonianViscosityModel::New
     const volVectorField& U
 )
 {
-    const word modelType
-    (
-        viscosityProperties.lookup("viscosityModel")
-    );
+    const word modelType(viscosityProperties.lookup("viscosityModel"));
 
-    Info<< "Selecting generalised Newtonian model " << modelType << endl;
+    Info<< indent
+        << "Selecting generalised Newtonian model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorInFunction
+        FatalIOErrorInFunction(viscosityProperties)
             << "Unknown generalisedNewtonianViscosityModel type "
             << modelType << nl << nl
             << "Valid generalisedNewtonianViscosityModels are : " << endl
             << dictionaryConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            << exit(FatalIOError);
     }
 
-    return autoPtr<generalisedNewtonianViscosityModel>
+    Info<< incrIndent;
+
+    autoPtr<generalisedNewtonianViscosityModel> modelPtr
     (
         cstrIter()(viscosityProperties, viscosity, U)
     );
+
+    Info<< decrIndent;
+
+    return modelPtr;
 }
 
 

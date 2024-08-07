@@ -22,17 +22,18 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fvMeshMovers::motionSolver
+    Foam::fvMeshMovers::none
 
 Description
+    Dummy fvMeshMover which does not move the mesh points
 
 SourceFiles
-    motionSolver.C
+    none.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fvMeshMoversMotionSolver_H
-#define fvMeshMoversMotionSolver_H
+#ifndef none_fvMeshMover_H
+#define none_fvMeshMover_H
 
 #include "fvMeshMover.H"
 
@@ -40,77 +41,73 @@ SourceFiles
 
 namespace Foam
 {
-
-class motionSolver;
-
 namespace fvMeshMovers
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class motionSolver Declaration
+                      Class fvMeshMovers::none Declaration
 \*---------------------------------------------------------------------------*/
 
-class motionSolver
+class none
 :
     public fvMeshMover
 {
-    // Private Data
-
-        autoPtr<Foam::motionSolver> motionPtr_;
-
-        //- Optional list of vectorFields to update for mesh motion
-        //  For modern solvers using Uf and correctPhi to update the flux
-        //  after motion it is not necessary to specify a "velocityFields" list
-        velocityMotionCorrection velocityMotionCorrection_;
-
-
 public:
 
     //- Runtime type information
-    TypeName("motionSolver");
+    TypeName("none");
 
 
     // Constructors
 
         //- Construct from fvMesh
-        motionSolver(fvMesh& mesh);
+        none(fvMesh& mesh);
+
+        //- Construct from fvMesh and dictionary
+        none(fvMesh& mesh, const dictionary& dict);
 
         //- Disallow default bitwise copy construction
-        motionSolver(const motionSolver&) = delete;
+        none(const none&) = delete;
 
 
     //- Destructor
-    ~motionSolver();
+    virtual ~none();
 
 
     // Member Functions
 
-        //- Return the motionSolver
-        const Foam::motionSolver& motion() const;
+        //- The mesh is static and does not change so return false
+        virtual bool dynamic() const
+        {
+            return false;
+        }
 
-        //- Is this motion solid body? Delegate to the motion solver.
-        virtual bool solidBody() const;
+        //- The mesh is static, which meets the criteria of a solid body motion
+        virtual bool solidBody() const
+        {
+            return true;
+        }
 
-        //- Update the mesh for both mesh motion and topology change
+        //- Dummy update function which does not change the mesh
         virtual bool update();
 
-        //- Update corresponding to the given map
-        virtual void topoChange(const polyTopoChangeMap&);
+        //-  Update local data for topology changes
+        virtual void topoChange(const polyTopoChangeMap&)
+        {}
 
         //- Update from another mesh using the given map
-        virtual void mapMesh(const polyMeshMap&);
+        virtual void mapMesh(const polyMeshMap&)
+        {}
 
         //- Update corresponding to the given distribution map
-        virtual void distribute(const polyDistributionMap&);
-
-        //- Write the motion solver state
-        virtual bool write(const bool write = true) const;
+        virtual void distribute(const polyDistributionMap&)
+        {}
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const motionSolver&) = delete;
+        void operator=(const none&) = delete;
 };
 
 

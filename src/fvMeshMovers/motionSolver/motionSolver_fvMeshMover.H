@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,89 +22,101 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fvMeshDistributors::none
+    Foam::fvMeshMovers::motionSolver
 
 Description
-    Dummy fvMeshDistributor which does not move the mesh points
 
 SourceFiles
-    none.C
+    motionSolver.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fvMeshDistributorsNone_H
-#define fvMeshDistributorsNone_H
+#ifndef motionSolver_fvMeshMover_H
+#define motionSolver_fvMeshMover_H
 
-#include "fvMeshDistributor.H"
+#include "fvMeshMover.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace fvMeshDistributors
+
+class motionSolver;
+
+namespace fvMeshMovers
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class none Declaration
+                  Class motionSolver Declaration
 \*---------------------------------------------------------------------------*/
 
-class none
+class motionSolver
 :
-    public fvMeshDistributor
+    public fvMeshMover
 {
+    // Private Data
+
+        autoPtr<Foam::motionSolver> motionPtr_;
+
+        //- Optional list of vectorFields to update for mesh motion
+        //  For modern solvers using Uf and correctPhi to update the flux
+        //  after motion it is not necessary to specify a "velocityFields" list
+        velocityMotionCorrection velocityMotionCorrection_;
+
+
 public:
 
     //- Runtime type information
-    TypeName("none");
+    TypeName("motionSolver");
 
 
     // Constructors
 
         //- Construct from fvMesh
-        none(fvMesh& mesh);
+        motionSolver(fvMesh& mesh, const dictionary& dict);
 
         //- Disallow default bitwise copy construction
-        none(const none&) = delete;
+        motionSolver(const motionSolver&) = delete;
 
 
     //- Destructor
-    ~none();
+    ~motionSolver();
 
 
     // Member Functions
 
-        //- The mesh is static and does not change so return false
-        virtual bool dynamic() const
-        {
-            return false;
-        }
+        //- Return the motionSolver
+        const Foam::motionSolver& motion() const;
 
-        //- Dummy update function which does not change the mesh
+        //- Is this motion solid body? Delegate to the motion solver.
+        virtual bool solidBody() const;
+
+        //- Update the mesh for both mesh motion and topology change
         virtual bool update();
 
         //- Update corresponding to the given map
-        virtual void topoChange(const polyTopoChangeMap&)
-        {}
+        virtual void topoChange(const polyTopoChangeMap&);
 
         //- Update from another mesh using the given map
-        virtual void mapMesh(const polyMeshMap&)
-        {}
+        virtual void mapMesh(const polyMeshMap&);
 
         //- Update corresponding to the given distribution map
-        virtual void distribute(const polyDistributionMap&)
-        {}
+        virtual void distribute(const polyDistributionMap&);
+
+        //- Write the motion solver state
+        virtual bool write(const bool write = true) const;
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const none&) = delete;
+        void operator=(const motionSolver&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace fvMeshDistributors
+} // End namespace fvMeshMovers
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
