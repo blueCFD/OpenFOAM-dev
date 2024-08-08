@@ -17,8 +17,13 @@ ptFLAGS     = -DNoRepository -ftemplate-depth-100 -D_FILE_OFFSET_BITS=64 \
 c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) \
               $(LIB_HEADER_DIRS)
 
+ifdef LFN_WORKAROUND
 Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o \
                   $(shell $(WM_DIR)/scripts/makeFileLongPath -fit $@)
+else
+Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $@
+endif
+
 cxxtoo      = $(Ctoo)
 cctoo       = $(Ctoo)
 cpptoo      = $(Ctoo)
@@ -27,9 +32,16 @@ LINK_LIBS   = $(c++DBUG)
 
 # Tried using -Wl,-no-undefined,--enable-runtime-pseudo-reloc
 # but didn't forgive undefined symbols during linking
+ifdef LFN_WORKAROUND
 LINKLIBSO   = $(CC) $(c++FLAGS) \
                 -Wl,--output-def,$(shell $(WM_DIR)/scripts/makeFileLongPath -fit $(LIB).def) \
                 -Wl,--out-implib,$(shell $(WM_DIR)/scripts/makeFileLongPath -fit $(LIB).a) \
                 -Wl,--enable-auto-import -shared
+else
+LINKLIBSO   = $(CC) $(c++FLAGS) \
+                -Wl,--output-def,$(LIB).def \
+                -Wl,--out-implib,$(LIB).a \
+                -Wl,--enable-auto-import -shared
+endif
 
 LINKEXE     = $(CC) $(c++FLAGS) -Wl,--enable-auto-import,--force-exe-suffix
