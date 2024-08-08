@@ -174,7 +174,7 @@ fromDepToSource()
 
 figureOutIfLongFileNameSupportIsNeeded()
 {
-    objectPathSize=$(cygpath -w -m ${objectsDir} | wc -c)
+    objectPathSize=$(cygpath -a -w -m ${objectsDir} | wc -c)
     longestRelativeFilePath=$(find . -type f | wc -L)
     totalMaximumPath=$(expr $objectPathSize + $longestRelativeFilePath)
     if [ $totalMaximumPath -gt 259 ]
