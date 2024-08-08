@@ -8,6 +8,6 @@ rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) \
 else
 rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) \
         -I ${LIB_SRC}/OSspecific/${WM_OSTYPE}/lnInclude \
-        $(@D)/$(<F)) $@
+        $(@D)/$(<F) $@
 endif
 
