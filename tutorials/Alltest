@@ -53,7 +53,8 @@ options:
   -nonParallel | -n   run only cases that are configured to run in serial
   -wallClock <sec> | -w <sec>
                       run the solvers for a limited amount of wall clock time
-                    in second, instead of just running a single time step
+                      in second, instead of just running a single time step;
+                      will disable the running of a single time step
 
 * quickly tests the tutorials
 
@@ -150,16 +151,18 @@ cd ${toDir} || exit 1
 find . -name "controlDict*" | while read -r controlDict
 do
     (
-        foamDictionary -entry startFrom -set latestTime "$controlDict"
-        foamDictionary -entry stopAt -set nextWrite "$controlDict"
-        foamDictionary -entry writeControl -set timeStep "$controlDict"
-        foamDictionary -entry writeInterval -set 1 "$controlDict"
-        foamDictionary -entry DebugSwitches \
-            -merge "{ fvSchemes 1; solution 1; }" "$controlDict"
-
-        if [ "$wallClockLimit" != "-1" ]
+        if [ "$wallClockLimit" = "-1" ]
         then
+
+            foamDictionary -entry startFrom -set latestTime "$controlDict"
+            foamDictionary -entry stopAt -set nextWrite "$controlDict"
+            foamDictionary -entry writeControl -set timeStep "$controlDict"
+            foamDictionary -entry writeInterval -set 1 "$controlDict"
+
+        else
+
             functionsDict="${controlDict/controlDict/functions}"
+            functionsDict="${functionsDict/.orig/}"
 
             if [ -e "${functionsDict}.orig" ]
             then
@@ -175,6 +178,9 @@ do
             sed -i -e "s|\(^// \* \*.*$\)|\1\n\n#includeFunc ${FUNCTION}|" \
                 "${functionsDict}"
         fi
+
+        foamDictionary -entry DebugSwitches \
+            -merge "{ fvSchemes 1; solution 1; }" "$controlDict"
     ) > /dev/null
 done
 
