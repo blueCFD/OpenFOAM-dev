@@ -57,12 +57,22 @@ touch "${objectListPath}"
 if onWin
 then
 
-    for object in $@
-    do
+    if [ -n "$LFN_WORKAROUND" ]
+    then
+        for object in $@
+        do
 
-      ${ScriptFolder}/makeFileLongPath -fit $object >> "${objectListPath}"
+          ${ScriptFolder}/makeFileLongPath -fit $object >> "${objectListPath}"
 
-    done
+        done
+    else
+        for object in $@
+        do
+
+          cygpath -w -m $object >> "${objectListPath}"
+
+        done
+    fi
 
 else
 
