@@ -1,6 +1,13 @@
 SUFFIXES += .rc
 
+ifdef LFN_WORKAROUND
 rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) \
         -I ${LIB_SRC}/OSspecific/${WM_OSTYPE}/lnInclude \
         $(shell $(WM_DIR)/scripts/makeFileLongPath -fit $(@D)/$(<F)) \
         $(shell $(WM_DIR)/scripts/makeFileLongPath -fit $@)
+else
+rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) \
+        -I ${LIB_SRC}/OSspecific/${WM_OSTYPE}/lnInclude \
+        $(@D)/$(<F)) $@
+endif
+
