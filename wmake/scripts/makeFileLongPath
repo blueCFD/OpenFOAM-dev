@@ -1,6 +1,8 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
 # 2016-07-18/19 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -32,18 +34,53 @@
 #     makeFileLongPath
 #
 # Description
-#     Translates the file path, but only on Windows.
+#     Translates the file/folder path, but meant to be used only on Windows.
 #
 #------------------------------------------------------------------------------
 
+Script=${0##*/}
+
+usage() {
+    cat<<USAGE
+
+Usage: $Script [OPTION] [file]
+
+options:
+  -fit      | -f    fit the address within 259 characters... using short path names
+  -folder   | -o    it's not a file, it's a folder
+  -help     | -h    Print the usage
+
+
+This script will reinterpret the paths for a single object file from the MSys2
+path to Windows long paths
+
+USAGE
+}
+
 CYGPATH_EXTRA=
 MUST_FIT=
+IS_A_FOLDER=
 
-if [ "$1" = "-fit" ]
-then
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+        # Print help
+        -h | -help)
+            usage && exit 0
+            ;;
+        -f | -fit)
+            MUST_FIT=yes
+            ;;
+        -o | -folder)
+            IS_A_FOLDER=yes
+            ;;
+        *)
+            break
+            ;;
+    esac
     shift
-    MUST_FIT=yes
-fi
+done
+
 
 if onWin
 then
@@ -52,10 +89,22 @@ then
     then
         FULL_PATH=$(cygpath -a -w -m "${1}" | sed -e 's=^//?/=\\\\?\\=')
         CHAR_COUNT=$(echo "${FULL_PATH}" | wc -m)
+
+        if [ -n "${IS_A_FOLDER}" ]
+        then
+            CHAR_COUNT=$(expr $CHAR_COUNT + 15)
+        fi
+
         if [ $CHAR_COUNT -gt 259 ]
         then
             CYGPATH_EXTRA="-s"
-            touch "${FULL_PATH/^\\\\\?\\/}"
+
+            if [ -z "${IS_A_FOLDER}" ]
+            then
+                touch "${FULL_PATH/^\\\\\?\\/}"
+            else
+                mkdir -p "${FULL_PATH/^\\\\\?\\/}"
+            fi
         fi
     fi
 

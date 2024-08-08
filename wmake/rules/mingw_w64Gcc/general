@@ -16,4 +16,5 @@ EXE_EXT = .exe
 GFLAGS  += -DWIN64 -DLITTLE_ENDIAN
 
 # For including the local folder paths
-LOCAL_INCLUDE = @$(OBJECTS_DIR)/includeHeaderPaths
+LOCAL_INCLUDE = @$(shell $(WM_DIR)/scripts/makeFileLongPath -fit \
+                    $(OBJECTS_DIR)/includeHeaderPaths)
