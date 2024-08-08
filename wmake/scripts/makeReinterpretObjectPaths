@@ -1,6 +1,8 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
 # 2016-07-15 blueCAPE Lda: Modifications for blueCFD-Core 2016-1
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -38,6 +40,10 @@
 #
 #------------------------------------------------------------------------------
 
+Script=${0##*/}
+ScriptFolder=${0%/*}
+
+
 objectListPath=$1
 shift
 
@@ -54,7 +60,7 @@ then
     for object in $@
     do
 
-      cygpath -w -m $object >> "${objectListPath}"
+      ${ScriptFolder}/makeFileLongPath -fit $object >> "${objectListPath}"
 
     done
 

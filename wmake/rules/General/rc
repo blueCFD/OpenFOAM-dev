@@ -2,4 +2,5 @@ SUFFIXES += .rc
 
 rctoo = $$($(WM_SCRIPTS)/makeReinterpretExePath windres) \
         -I ${LIB_SRC}/OSspecific/${WM_OSTYPE}/lnInclude \
-        $(@D)/$(<F) $@
+        $(shell $(WM_DIR)/scripts/makeFileLongPath -fit $(@D)/$(<F)) \
+        $(shell $(WM_DIR)/scripts/makeFileLongPath -fit $@)
