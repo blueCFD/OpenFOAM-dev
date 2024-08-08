@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,21 +51,16 @@ Foam::RASModels::phasePressureModel::phasePressureModel
 
     phase_(refCast<const phaseModel>(viscosity)),
 
-    preAlphaExp_(coeffDict_.lookup<scalar>("preAlphaExp")),
-    expMax_(coeffDict_.lookup<scalar>("expMax")),
+    preAlphaExp_(coeffDict().lookup<scalar>("preAlphaExp")),
+    expMax_(coeffDict().lookup<scalar>("expMax")),
     g0_
     (
         "g0",
         dimensionSet(1, -1, -2, 0, 0),
-        coeffDict_.lookup("g0")
+        coeffDict().lookup("g0")
     )
 {
     nut_ == dimensionedScalar(nut_.dimensions(), 0);
-
-    if (type == typeName)
-    {
-        printCoeffs(type);
-    }
 }
 
 

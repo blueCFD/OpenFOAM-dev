@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,41 +63,10 @@ NicenoKEqn<BasicMomentumTransportModel>::NicenoKEqn
 
     gasTurbulencePtr_(nullptr),
 
-    alphaInversion_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "alphaInversion",
-            this->coeffDict_,
-            0.3
-        )
-    ),
-
-    Cp_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Cp",
-            this->coeffDict_,
-            this->Ck_.value()
-        )
-    ),
-
-    Cmub_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Cmub",
-            this->coeffDict_,
-            0.6
-        )
-    )
-{
-    if (type == typeName)
-    {
-        this->printCoeffs(type);
-    }
-}
+    alphaInversion_("alphaInversion", this->coeffDict(), 0.3),
+    Cp_("Cp", this->coeffDict(), this->Ck_.value()),
+    Cmub_("Cmub", this->coeffDict(), 0.6)
+{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

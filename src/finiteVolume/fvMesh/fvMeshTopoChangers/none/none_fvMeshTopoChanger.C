@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,37 +23,46 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "cavitationModel.H"
+#include "none_fvMeshTopoChanger.H"
+#include "addToRunTimeSelectionTable.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::cavitationModel> Foam::cavitationModel::New
-(
-    const dictionary& dict,
-    const incompressibleTwoPhases& phases
-)
+namespace Foam
 {
-    const word modelType(dict.lookup("model"));
+namespace fvMeshTopoChangers
+{
+    defineTypeNameAndDebug(none, 0);
+    addToRunTimeSelectionTable(fvMeshTopoChanger, none, fvMesh);
+}
+}
 
-    Info<< "Selecting cavitation model " << modelType << endl;
 
-    dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(modelType);
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-    if (cstrIter == dictionaryConstructorTablePtr_->end())
-    {
-        FatalIOErrorInFunction(dict)
-            << "Unknown cavitation model "
-            << modelType << nl << nl
-            << "Valid cavitation models are : " << nl
-            << dictionaryConstructorTablePtr_->sortedToc()
-            << exit(FatalIOError);
-    }
+Foam::fvMeshTopoChangers::none::none(fvMesh& mesh)
+:
+    fvMeshTopoChanger(mesh)
+{}
 
-    return autoPtr<cavitationModel>
-    (
-        cstrIter()(dict.optionalSubDict(modelType + "Coeffs"), phases)
-    );
+
+Foam::fvMeshTopoChangers::none::none(fvMesh& mesh, const dictionary& dict)
+:
+    fvMeshTopoChanger(mesh)
+{}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::fvMeshTopoChangers::none::~none()
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool Foam::fvMeshTopoChangers::none::update()
+{
+    return false;
 }
 
 

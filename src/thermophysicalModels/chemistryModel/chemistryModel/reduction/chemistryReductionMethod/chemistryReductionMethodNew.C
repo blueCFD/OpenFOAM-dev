@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -33,7 +33,7 @@ template<class ThermoType>
 Foam::autoPtr<Foam::chemistryReductionMethod<ThermoType>>
 Foam::chemistryReductionMethod<ThermoType>::New
 (
-    const IOdictionary& dict,
+    const dictionary& dict,
     chemistryModel<ThermoType>& chemistry
 )
 {
@@ -53,7 +53,7 @@ Foam::chemistryReductionMethod<ThermoType>::New
 
         if (cstrIter == dictionaryConstructorTablePtr_->end())
         {
-            FatalErrorInFunction
+            FatalIOErrorInFunction(dict)
                 << "Unknown " << typeName_() << " type " << methodName << endl
                 << endl;
 
@@ -80,10 +80,10 @@ Foam::chemistryReductionMethod<ThermoType>::New
                 }
             }
 
-            FatalErrorInFunction
+            FatalIOErrorInFunction(dict)
                 << "Valid " << typeName_()
                 << " types are:" << validNames << endl
-                << exit(FatalError);
+                << exit(FatalIOError);
         }
 
         autoPtr<chemistryReductionMethod<ThermoType>> crmPtr

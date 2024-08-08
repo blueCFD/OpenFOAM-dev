@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,38 +23,44 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvMeshMoversNone.H"
+#include "none_fvMeshDistributor.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace fvMeshMovers
+namespace fvMeshDistributors
 {
     defineTypeNameAndDebug(none, 0);
-    addToRunTimeSelectionTable(fvMeshMover, none, fvMesh);
+    addToRunTimeSelectionTable(fvMeshDistributor, none, fvMesh);
 }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::fvMeshMovers::none::none(fvMesh& mesh)
+Foam::fvMeshDistributors::none::none(fvMesh& mesh)
 :
-    fvMeshMover(mesh)
+    fvMeshDistributor(mesh)
+{}
+
+
+Foam::fvMeshDistributors::none::none(fvMesh& mesh, const dictionary& dict)
+:
+    fvMeshDistributor(mesh)
 {}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::fvMeshMovers::none::~none()
+Foam::fvMeshDistributors::none::~none()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::fvMeshMovers::none::update()
+bool Foam::fvMeshDistributors::none::update()
 {
     return false;
 }

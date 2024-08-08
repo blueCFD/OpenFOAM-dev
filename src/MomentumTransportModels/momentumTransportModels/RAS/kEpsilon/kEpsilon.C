@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -110,60 +110,12 @@ kEpsilon<BasicMomentumTransportModel>::kEpsilon
         viscosity
     ),
 
-    Cmu_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Cmu",
-            this->coeffDict_,
-            0.09
-        )
-    ),
-    C1_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C1",
-            this->coeffDict_,
-            1.44
-        )
-    ),
-    C2_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C2",
-            this->coeffDict_,
-            1.92
-        )
-    ),
-    C3_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "C3",
-            this->coeffDict_,
-            0
-        )
-    ),
-    sigmak_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "sigmak",
-            this->coeffDict_,
-            1.0
-        )
-    ),
-    sigmaEps_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "sigmaEps",
-            this->coeffDict_,
-            1.3
-        )
-    ),
+    Cmu_("Cmu", this->coeffDict(), 0.09),
+    C1_("C1", this->coeffDict(), 1.44),
+    C2_("C2", this->coeffDict(), 1.92),
+    C3_("C3", this->coeffDict(), 0),
+    sigmak_("sigmak", this->coeffDict(), 1.0),
+    sigmaEps_("sigmaEps", this->coeffDict(), 1.3),
 
     k_
     (
@@ -192,11 +144,6 @@ kEpsilon<BasicMomentumTransportModel>::kEpsilon
 {
     bound(k_, this->kMin_);
     boundEpsilon();
-
-    if (type == typeName)
-    {
-        this->printCoeffs(type);
-    }
 }
 
 

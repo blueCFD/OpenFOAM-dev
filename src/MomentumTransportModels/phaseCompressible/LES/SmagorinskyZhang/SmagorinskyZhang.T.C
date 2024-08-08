@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,21 +61,8 @@ SmagorinskyZhang<BasicMomentumTransportModel>::SmagorinskyZhang
 
     gasTurbulencePtr_(nullptr),
 
-    Cmub_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "Cmub",
-            this->coeffDict_,
-            0.6
-        )
-    )
-{
-    if (type == typeName)
-    {
-        this->printCoeffs(type);
-    }
-}
+    Cmub_("Cmub", this->coeffDict(), 0.6)
+{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

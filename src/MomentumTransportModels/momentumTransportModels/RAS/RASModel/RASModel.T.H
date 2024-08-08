@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,17 +60,8 @@ protected:
 
     // Protected data
 
-        //- RAS coefficients dictionary
-        dictionary RASDict_;
-
         //- Turbulence on/off flag
         Switch turbulence_;
-
-        //- Flag to print the model coeffs at run-time
-        Switch printCoeffs_;
-
-        //- Model coefficients dictionary
-        dictionary coeffDict_;
 
         //- Lower limit of k
         dimensionedScalar kMin_;
@@ -83,10 +74,13 @@ protected:
             viscosityModel_;
 
 
-    // Protected Member Functions
+    // Protected member functions
 
-        //- Print model coefficients
-        virtual void printCoeffs(const word& type);
+        //- Const access to the RAS dictionary
+        const dictionary& RASDict() const;
+
+        //- Const access to the coefficients dictionary
+        const dictionary& coeffDict() const;
 
 
 public:
@@ -159,12 +153,6 @@ public:
 
         //- Read model coefficients if they have changed
         virtual bool read();
-
-        //- Const access to the coefficients dictionary
-        virtual const dictionary& coeffDict() const
-        {
-            return coeffDict_;
-        }
 
         //- Return the laminar viscosity
         virtual tmp<volScalarField> nu() const

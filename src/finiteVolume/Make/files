@@ -107,20 +107,20 @@ fvMeshTopoChangers = fvMesh/fvMeshTopoChangers
 
 $(fvMeshTopoChangers)/fvMeshTopoChanger/fvMeshTopoChanger.C
 $(fvMeshTopoChangers)/fvMeshTopoChanger/fvMeshTopoChangerNew.C
-$(fvMeshTopoChangers)/none/fvMeshTopoChangersNone.C
-$(fvMeshTopoChangers)/list/fvMeshTopoChangersList.C
+$(fvMeshTopoChangers)/none/none_fvMeshTopoChanger.C
+$(fvMeshTopoChangers)/list/list_fvMeshTopoChanger.C
 
 fvMeshDistributors = fvMesh/fvMeshDistributors
 
 $(fvMeshDistributors)/fvMeshDistributor/fvMeshDistributor.C
 $(fvMeshDistributors)/fvMeshDistributor/fvMeshDistributorNew.C
-$(fvMeshDistributors)/none/fvMeshDistributorsNone.C
+$(fvMeshDistributors)/none/none_fvMeshDistributor.C
 
 fvMeshMovers = fvMesh/fvMeshMovers
 
 $(fvMeshMovers)/fvMeshMover/fvMeshMover.C
 $(fvMeshMovers)/fvMeshMover/fvMeshMoverNew.C
-$(fvMeshMovers)/none/fvMeshMoversNone.C
+$(fvMeshMovers)/none/none_fvMeshMover.C
 
 fvMeshStitchers = fvMesh/fvMeshStitchers
 

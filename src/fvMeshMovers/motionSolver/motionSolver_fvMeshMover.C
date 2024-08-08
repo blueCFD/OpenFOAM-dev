@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,96 +23,95 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvMeshTopoChangersList.H"
-#include "polyTopoChangeMap.H"
-#include "volFields.H"
+#include "motionSolver_fvMeshMover.H"
+#include "motionSolver.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace fvMeshTopoChangers
+namespace fvMeshMovers
 {
-    defineTypeNameAndDebug(list, 0);
-    addToRunTimeSelectionTable(fvMeshTopoChanger, list, fvMesh);
+    defineTypeNameAndDebug(motionSolver, 0);
+    addToRunTimeSelectionTable(fvMeshMover, motionSolver, fvMesh);
 }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::fvMeshTopoChangers::list::list(fvMesh& mesh, const dictionary& dict)
+Foam::fvMeshMovers::motionSolver::motionSolver
+(
+    fvMesh& mesh,
+    const dictionary& dict
+)
 :
-    fvMeshTopoChanger(mesh)
-{
-    const dictionary& solversDict = dict.subDict("topoChangers");
-
-    forAllConstIter(dictionary, solversDict, iter)
-    {
-        if (iter().isDict())
-        {
-            const word& name = iter().keyword();
-            const dictionary& dict = iter().dict();
-
-            list_.insert
-            (
-                name,
-                fvMeshTopoChanger::New(mesh, dict).ptr()
-            );
-        }
-    }
-}
+    fvMeshMover(mesh),
+    motionPtr_(Foam::motionSolver::New("motionSolver", mesh, dict)),
+    velocityMotionCorrection_(mesh, dict)
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::fvMeshTopoChangers::list::~list()
+Foam::fvMeshMovers::motionSolver::~motionSolver()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::fvMeshTopoChangers::list::update()
+const Foam::motionSolver& Foam::fvMeshMovers::motionSolver::motion() const
 {
-    bool updated = false;
-
-    forAllIter(PtrDictionary<fvMeshTopoChanger>, list_, iter)
-    {
-        updated = iter().update() || updated;
-        mesh().topoChanged_ = updated;
-    }
-
-    return updated;
+    return motionPtr_();
 }
 
 
-void Foam::fvMeshTopoChangers::list::topoChange(const polyTopoChangeMap& map)
+bool Foam::fvMeshMovers::motionSolver::solidBody() const
 {
-    forAllIter(PtrDictionary<fvMeshTopoChanger>, list_, iter)
-    {
-        iter().topoChange(map);
-    }
+    return motion().solidBody();
 }
 
 
-void Foam::fvMeshTopoChangers::list::mapMesh(const polyMeshMap& map)
+bool Foam::fvMeshMovers::motionSolver::update()
 {
-    forAllIter(PtrDictionary<fvMeshTopoChanger>, list_, iter)
-    {
-        iter().mapMesh(map);
-    }
+    mesh().movePoints(motionPtr_->newPoints());
+    velocityMotionCorrection_.update();
+
+    return true;
 }
 
 
-void Foam::fvMeshTopoChangers::list::distribute
+void Foam::fvMeshMovers::motionSolver::topoChange(const polyTopoChangeMap& map)
+{
+    motionPtr_->topoChange(map);
+}
+
+
+void Foam::fvMeshMovers::motionSolver::mapMesh(const polyMeshMap& map)
+{
+    motionPtr_->mapMesh(map);
+}
+
+
+void Foam::fvMeshMovers::motionSolver::distribute
 (
     const polyDistributionMap& map
 )
 {
-    forAllIter(PtrDictionary<fvMeshTopoChanger>, list_, iter)
+    motionPtr_->distribute(map);
+}
+
+
+bool Foam::fvMeshMovers::motionSolver::write(const bool write) const
+{
+    if (write)
     {
-        iter().distribute(map);
+        return motionPtr_->write();
+    }
+    else
+    {
+        return true;
     }
 }
 

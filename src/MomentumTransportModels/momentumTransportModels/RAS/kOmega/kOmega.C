@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -107,51 +107,11 @@ kOmega<BasicMomentumTransportModel>::kOmega
         viscosity
     ),
 
-    betaStar_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "betaStar",
-            this->coeffDict_,
-            0.09
-        )
-    ),
-    beta_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "beta",
-            this->coeffDict_,
-            0.072
-        )
-    ),
-    gamma_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "gamma",
-            this->coeffDict_,
-            0.52
-        )
-    ),
-    alphaK_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "alphaK",
-            this->coeffDict_,
-            0.5
-        )
-    ),
-    alphaOmega_
-    (
-        dimensioned<scalar>::lookupOrAddToDict
-        (
-            "alphaOmega",
-            this->coeffDict_,
-            0.5
-        )
-    ),
+    betaStar_("betaStar", this->coeffDict(), 0.09),
+    beta_("beta", this->coeffDict(), 0.072),
+    gamma_("gamma", this->coeffDict(), 0.52),
+    alphaK_("alphaK", this->coeffDict(), 0.5),
+    alphaOmega_("alphaOmega", this->coeffDict(), 0.5),
 
     k_
     (
@@ -180,11 +140,6 @@ kOmega<BasicMomentumTransportModel>::kOmega
 {
     bound(k_, this->kMin_);
     boundOmega();
-
-    if (type == typeName)
-    {
-        this->printCoeffs(type);
-    }
 }
 
 
