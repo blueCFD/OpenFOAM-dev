@@ -10,3 +10,7 @@ LIB_LIBS = \
     -lmeshTools \
     -lfileFormats \
     -lmotionSolver_fvMeshMover
+
+LIB_LIBS += \
+    -lfiniteVolume \
+    -lmotionSolvers
