@@ -397,6 +397,7 @@ esac
 
 # Cleanup environment:
 # ~~~~~~~~~~~~~~~~~~~~
-unset WM_COMPILER_TYPE
+
+# Note: Do not unset WM_COMPILER_TYPE
 
 #------------------------------------------------------------------------------

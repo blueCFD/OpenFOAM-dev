@@ -52,7 +52,8 @@ unset bashrcFile
 # Source with our own settings
 source $REF_OF_ETC/bashrc \
     WM_OSTYPE=MSwindows \
-    foamCompiler=ThirdParty \
+    WM_COMPILER_TYPE=ThirdParty \
+    WM_COMPILER=Gcc122 \
     WM_MPLIB=OPENMPI \
     WM_TARGET_ARCH=mingw_w64 \
     WM_COMPILER_ARCH= \
