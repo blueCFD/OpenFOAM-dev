@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -92,9 +92,9 @@ public:
     powerLawLopesdaCostaZone
     (
         const word& name,
-        const word& modelType,
         const fvMesh& mesh,
-        const dictionary& dict
+        const dictionary& dict,
+        const dictionary& coeffDict
     );
 
     // Member Functions
@@ -114,6 +114,9 @@ class powerLawLopesdaCosta
     public porosityModel
 {
     // Private Data
+
+        //- Coefficients dictionary cached for kEpsilonLopesdaCosta
+        dictionary coeffDict_;
 
         //- Cd coefficient
         scalar Cd_;
@@ -157,9 +160,9 @@ public:
         powerLawLopesdaCosta
         (
             const word& name,
-            const word& modelType,
             const fvMesh& mesh,
             const dictionary& dict,
+            const dictionary& coeffDict,
             const word& cellZoneName
         );
 
@@ -172,6 +175,11 @@ public:
 
 
     // Member Functions
+
+        const dictionary& dict() const
+        {
+            return coeffDict_;
+        }
 
         //- Transform the model data wrt mesh changes
         virtual void calcTransformModelData();
@@ -202,12 +210,6 @@ public:
             const fvVectorMatrix& UEqn,
             volTensorField& AU
         ) const;
-
-
-    // I-O
-
-        //- Write
-        bool writeData(Ostream& os) const;
 
 
     // Member Operators
