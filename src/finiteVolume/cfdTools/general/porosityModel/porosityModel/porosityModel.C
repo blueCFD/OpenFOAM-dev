@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,9 +79,9 @@ Foam::label Foam::porosityModel::fieldIndex(const label i) const
 Foam::porosityModel::porosityModel
 (
     const word& name,
-    const word& modelType,
     const fvMesh& mesh,
     const dictionary& dict,
+    const dictionary& coeffDict,
     const word& cellZoneName
 )
 :
@@ -98,15 +98,13 @@ Foam::porosityModel::porosityModel
     ),
     name_(name),
     mesh_(mesh),
-    dict_(dict),
-    coeffs_(dict.optionalSubDict(modelType + "Coeffs")),
     zoneName_
     (
         cellZoneName != word::null
       ? cellZoneName
-      : dict_.lookup<word>("cellZone")
+      : dict.lookup<word>("cellZone")
     ),
-    coordSys_(coordinateSystem::New(mesh, coeffs_))
+    coordSys_(coordinateSystem::New(mesh, coeffDict))
 {
     Info<< "    creating porous zone: " << zoneName_ << endl;
 
@@ -127,18 +125,6 @@ Foam::porosityModel::~porosityModel()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::porosityModel::transformModelData()
-{
-    if (!mesh_.upToDatePoints(*this))
-    {
-        calcTransformModelData();
-
-        // set model up-to-date wrt points
-        mesh_.setUpToDatePoints(*this);
-    }
-}
-
-
 Foam::tmp<Foam::vectorField> Foam::porosityModel::porosityModel::force
 (
     const volVectorField& U,
@@ -146,8 +132,6 @@ Foam::tmp<Foam::vectorField> Foam::porosityModel::porosityModel::force
     const volScalarField& mu
 ) const
 {
-    const_cast<porosityModel&>(*this).transformModelData();
-
     tmp<vectorField> tforce(new vectorField(U.size(), Zero));
     this->calcForce(U, rho, mu, tforce.ref());
 
@@ -157,7 +141,6 @@ Foam::tmp<Foam::vectorField> Foam::porosityModel::porosityModel::force
 
 void Foam::porosityModel::addResistance(fvVectorMatrix& UEqn)
 {
-    transformModelData();
     this->correct(UEqn);
 }
 
@@ -169,7 +152,6 @@ void Foam::porosityModel::addResistance
     bool correctAUprocBC
 )
 {
-    transformModelData();
     this->correct(UEqn, AU);
 
     if (correctAUprocBC)
@@ -182,16 +164,37 @@ void Foam::porosityModel::addResistance
 }
 
 
-bool Foam::porosityModel::writeData(Ostream& os) const
+bool Foam::porosityModel::movePoints()
 {
+    calcTransformModelData();
+
     return true;
+}
+
+
+void Foam::porosityModel::topoChange(const polyTopoChangeMap& map)
+{
+    calcTransformModelData();
+}
+
+
+void Foam::porosityModel::mapMesh(const polyMeshMap& map)
+{
+    calcTransformModelData();
+}
+
+
+void Foam::porosityModel::distribute
+(
+    const polyDistributionMap& map
+)
+{
+    calcTransformModelData();
 }
 
 
 bool Foam::porosityModel::read(const dictionary& dict)
 {
-    coeffs_ = dict.optionalSubDict(type() + "Coeffs");
-
     dict.lookup("cellZone") >> zoneName_;
 
     return true;
