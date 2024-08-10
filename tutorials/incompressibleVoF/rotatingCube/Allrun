@@ -16,7 +16,7 @@ runApplication reconstructPar -cellProc
 # Link cellProc files at unchanged times back to cellProc files at previous
 # changed times. This allows them to be visualised continuously.
 tPrev=0
-foamListTimes | while read -r t
+foamListTimes | sed -e 's=\r==g' | while read -r t
 do
     if [ -f "$t"/cellProc ]
     then
