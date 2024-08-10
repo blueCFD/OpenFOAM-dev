@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,37 +22,35 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::sampledSets::triSurfaceMeshSampledSet
+    Foam::sampledSets::faceSet
 
 Description
-    Samples from all the points of a triSurfaceMesh. Surface files are read
-    from constant/triSurface.
+    Samples at the face-centres of a given face set
 
 Usage
     \table
         Property    | Description                            | Req'd? | Default
-        surface     | The surface file name                  | yes    |
-        axis        | The coordinate axis that is written    | yes    |
+        set         | Name of the face set                   | yes    |
     \endtable
 
     Example specification:
     \verbatim
     {
-        type        triSurfaceMesh;
-        surface     "surface.stl";
-        axis        x;
+        type        faceSet;
+        set         c0;
     }
     \endverbatim
 
 SourceFiles
-    triSurfaceMeshSampledSet.C
+    faceSet.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef triSurfaceMeshSampledSet_H
-#define triSurfaceMeshSampledSet_H
+#ifndef faceSet_sampledSet_H
+#define faceSet_sampledSet_H
 
 #include "sampledSet.H"
+#include "DynamicList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -62,47 +60,35 @@ namespace sampledSets
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class triSurfaceMeshSampledSet Declaration
+                      Class faceSet Declaration
 \*---------------------------------------------------------------------------*/
 
-class triSurfaceMeshSampledSet
+class faceSet
 :
     public sampledSet
 {
     // Private Data
 
-        //- Name of triSurfaceMesh
-        const word surface_;
-
-        //- Sampling points
-        const List<point> points_;
+        //- Name of the face set
+        const word setName_;
 
 
     // Private Member Functions
 
-        //- Samples all points in sampleCoords.
-        void calcSamples
-        (
-            DynamicList<point>& samplingPositions,
-            DynamicList<label>& samplingSegments,
-            DynamicList<label>& samplingCells,
-            DynamicList<label>& samplingFaces
-        ) const;
-
-        //- Uses calcSamples to obtain samples. Copies them into *this.
-        void genSamples();
+        //- Generate the samples
+        virtual void genSamples();
 
 
 public:
 
     //- Runtime type information
-    TypeName("triSurfaceMesh");
+    TypeName("faceSet");
 
 
     // Constructors
 
         //- Construct from dictionary
-        triSurfaceMeshSampledSet
+        faceSet
         (
             const word& name,
             const polyMesh& mesh,
@@ -112,7 +98,7 @@ public:
 
 
     //- Destructor
-    virtual ~triSurfaceMeshSampledSet();
+    virtual ~faceSet();
 };
 
 
