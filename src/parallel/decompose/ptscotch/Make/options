@@ -32,7 +32,7 @@ EXE_INC += \
     $(GFLAGS) -DSCOTCH_PTSCOTCH
 
 LIB_LIBS = \
-    -L$(SCOTCH_ROOT)/lib \
+    -L$(SCOTCH_ARCH_PATH)/lib \
     -L$(FOAM_EXT_LIBBIN)/$(FOAM_MPI) \
     -lptscotch \
     -lptscotcherrexit \
