@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include "products.H"
 #include "VectorSpaceOps.T.H"
 #include "ops.H"

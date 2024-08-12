@@ -28,7 +28,7 @@ License
 #include "mgridgen.h"
 //}
 
-#include "error.H"
+#include "error.T.H"
 
 using namespace Foam;
 

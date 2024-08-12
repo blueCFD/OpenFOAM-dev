@@ -44,7 +44,7 @@ Modifications
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include "MSwindows.H"
 #include "timer.H"
 

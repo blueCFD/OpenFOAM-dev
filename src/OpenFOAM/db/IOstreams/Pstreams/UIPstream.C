@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include "UIPstream.H"
 #include "int.H"
 #include "token.T.H"

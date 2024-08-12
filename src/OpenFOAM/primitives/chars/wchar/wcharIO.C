@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 
 #include "wchar.T.H"
 #include "IOstreams.H"

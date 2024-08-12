@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include <typeinfo>
 
 // * * * * * * * * * * * * * Private Member Operators  * * * * * * * * * * * //

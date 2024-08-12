@@ -29,7 +29,7 @@ License
 
 #include "chemkinReader.H"
 
-#include "error.H"
+#include "error.T.H"
 #include "IStringStream.H"
 // For EOF only
 #include <cstdio>

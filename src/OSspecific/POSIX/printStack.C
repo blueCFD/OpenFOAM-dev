@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include "OStringStream.H"
 #include "OSspecific.H"
 #include "IFstream.H"

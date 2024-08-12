@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "IOstream.H"
-#include "error.H"
+#include "error.T.H"
 #include "Switch.H"
 #include <sstream>
 

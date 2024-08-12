@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "refineCell.H"
-#include "error.H"
+#include "error.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
