@@ -62,14 +62,6 @@ OpenFOAM | ThirdParty)
         ;;
     Gcc122)
         gcc_version=gcc-12.2.0
-
-        # for MSYS2 only
-        if [ -n "$WM_TARGET_ARCH" ]
-        then
-            MSYS2_GCC_PATCH=11
-            MSYS2_BINUTILS_VERSION=2.39-3
-            export CPATH=/mingw64/include
-        fi
         ;;
     Clang)
         # Using clang - not gcc
