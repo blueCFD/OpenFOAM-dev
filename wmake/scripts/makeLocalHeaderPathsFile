@@ -1,6 +1,8 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
 # 2016-07-28 blueCAPE Lda: Created for blueCFD-Core 2016-1
+# 2016-202X FS Dynamics Portugal: Subsequent changes are tracked at:
+#       https://github.com/blueCFD/OpenFOAM-dev
 #------------------------------------------------------------------------------
 # License
 #     This file is a derivative work of OpenFOAM.
@@ -42,9 +44,12 @@ HEADER_PATHS_FILE=$1
 touch $HEADER_PATHS_FILE
 
 # First we need to sort out which folders we should not use
-TO_SIFT_OUT=$(find . -name Make -type d -printf '%h\n' | grep -v "^\.$" | sed -e 's=\(.*\)=-e "^\1" =g')
+TO_SIFT_OUT=$(find . -name Make -type d -printf '%h\n' | \
+                grep -v "^\.$" | \
+                sed -e 's=\(.*\)=-e "^\1" =g')
 
-# Next we get the full list of possible folders and exclude those that don't matter
+# Next we get the full list of possible folders and exclude those that don't
+# matter
 
 find . \
     \( -name lnInclude  \
