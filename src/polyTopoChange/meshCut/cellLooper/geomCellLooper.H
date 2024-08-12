@@ -47,7 +47,7 @@ SourceFiles
 #define geomCellLooper_H
 
 #include "cellLooper.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

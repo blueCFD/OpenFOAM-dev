@@ -103,7 +103,7 @@ SourceFiles
 #define addPatchCellLayer_H
 
 #include "labelList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "labelPair.H"
 #include "indirectPrimitivePatch.H"
 

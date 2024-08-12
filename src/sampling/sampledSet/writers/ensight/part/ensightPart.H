@@ -39,7 +39,7 @@ SourceFiles
 
 #include "ensightFile.H"
 #include "ensightGeoFile.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "labelList.H"
 #include "polyMesh.H"
 #include "Field.T.H"

@@ -117,7 +117,7 @@ SourceFiles
 #ifndef functionObject_H
 #define functionObject_H
 
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 #include "Switch.H"
 #include "runTimeSelectionTables.H"

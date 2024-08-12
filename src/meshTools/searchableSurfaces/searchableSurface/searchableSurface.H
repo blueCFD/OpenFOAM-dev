@@ -43,7 +43,7 @@ SourceFiles
 
 #include "pointField.H"
 #include "boundBox.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 #include "pointIndexHit.H"
 #include "linePointRef.H"

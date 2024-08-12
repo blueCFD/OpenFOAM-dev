@@ -36,7 +36,7 @@ SourceFiles
 #define faceSelection_H
 
 #include "dictionary.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 #include "autoPtr.H"
 #include "boolList.H"

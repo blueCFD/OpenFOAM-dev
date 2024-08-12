@@ -54,7 +54,7 @@ SourceFiles
 #include "primitiveFieldsFwd.H"
 #include "FieldField.T.H"
 #include "lduInterfaceFieldPtrsList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"
 #include "solverPerformance.H"

@@ -37,7 +37,7 @@ SourceFiles
 #define chemkinReader_H
 
 #include "fileName.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "Switch.H"
 #include "HashPtrTable.T.H"
 #include "ReactionList.T.H"

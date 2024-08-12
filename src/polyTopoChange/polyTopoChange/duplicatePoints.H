@@ -36,7 +36,7 @@ SourceFiles
 #define duplicatePoints_H
 
 #include "labelList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -31,7 +31,7 @@ License
 #include "IPstream.H"
 #include "PstreamCombineReduceOps.T.H"
 #include "debug.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "globalMeshData.H"
 #include "pointFields.H"
 

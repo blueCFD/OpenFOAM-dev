@@ -40,7 +40,7 @@ SourceFiles
 #define meshTriangulation_H
 
 #include "triSurface.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -63,7 +63,7 @@ SourceFiles
 
 #include "triSurface.H"
 #include "Map.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

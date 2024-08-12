@@ -40,7 +40,7 @@ SourceFiles
 #include "pointIndexHit.H"
 #include "scalarField.H"
 #include "pointField.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "boolList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

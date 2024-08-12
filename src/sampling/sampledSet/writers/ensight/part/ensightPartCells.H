@@ -36,7 +36,7 @@ SourceFiles
 #define ensightPartCells_H
 
 #include "ensightPart.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

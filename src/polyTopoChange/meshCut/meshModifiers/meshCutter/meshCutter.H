@@ -107,7 +107,7 @@ SourceFiles
 
 #include "edgeVertex.H"
 #include "labelList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "Map.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -36,7 +36,7 @@ SourceFiles
 #define pairPotential_H
 
 #include "IOdictionary.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 #include "autoPtr.H"
 #include "List.T.H"

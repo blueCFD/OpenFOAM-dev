@@ -39,7 +39,7 @@ SourceFiles
 #include "volFieldsFwd.H"
 #include "surfaceFieldsFwd.H"
 #include "linear.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

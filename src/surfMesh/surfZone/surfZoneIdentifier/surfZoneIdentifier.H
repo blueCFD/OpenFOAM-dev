@@ -40,7 +40,7 @@ SourceFiles
 
 #include "word.H"
 #include "label.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -384,7 +384,7 @@ constexpr bool False = false;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "errorManip.T.H"
+#include "errorManip.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

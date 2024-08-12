@@ -44,7 +44,7 @@ SourceFiles
 #include "Map.T.H"
 #include "labelPair.H"
 #include "HashSet.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "Switch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

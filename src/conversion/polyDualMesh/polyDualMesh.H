@@ -42,7 +42,7 @@ SourceFiles
 
 #include "polyMesh.H"
 #include "labelIOList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

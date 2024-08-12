@@ -35,7 +35,7 @@ Description
 
 #include "lduAddressing.H"
 #include "lduInterfacePtrsList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

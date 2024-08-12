@@ -36,7 +36,7 @@ SourceFiles
 #define tetherPotential_H
 
 #include "IOdictionary.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 #include "autoPtr.H"
 #include "vector.H"

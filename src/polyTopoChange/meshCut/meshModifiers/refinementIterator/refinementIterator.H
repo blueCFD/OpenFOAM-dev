@@ -44,7 +44,7 @@ SourceFiles
 #include "edgeVertex.H"
 #include "labelList.H"
 #include "Map.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

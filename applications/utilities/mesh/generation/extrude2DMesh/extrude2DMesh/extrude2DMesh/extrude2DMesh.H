@@ -36,7 +36,7 @@ SourceFiles
 #ifndef extrude2DMesh_H
 #define extrude2DMesh_H
 
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "label.H"
 #include "scalar.H"
 #include "labelList.H"

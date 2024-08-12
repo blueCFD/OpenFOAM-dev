@@ -96,7 +96,7 @@ SourceFiles
 #define IOobject_H
 
 #include "fileName.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 #include "InfoProxy.T.H"
 #include "NamedEnum.T.H"

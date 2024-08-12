@@ -32,7 +32,7 @@ Description
 #ifndef NamedThermo_H
 #define NamedThermo_H
 
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

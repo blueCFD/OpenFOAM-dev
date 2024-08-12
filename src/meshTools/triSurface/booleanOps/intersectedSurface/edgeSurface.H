@@ -56,7 +56,7 @@ SourceFiles
 #include "edgeList.H"
 #include "labelList.H"
 #include "pointField.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

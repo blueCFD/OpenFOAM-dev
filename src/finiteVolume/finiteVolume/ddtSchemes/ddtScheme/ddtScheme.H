@@ -40,7 +40,7 @@ SourceFiles
 #include "scalarField.H"
 #include "volFieldsFwd.H"
 #include "surfaceFieldsFwd.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

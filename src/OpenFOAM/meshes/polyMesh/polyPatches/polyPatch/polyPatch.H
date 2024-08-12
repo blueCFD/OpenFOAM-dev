@@ -41,7 +41,7 @@ SourceFiles
 
 #include "patchIdentifier.H"
 #include "primitivePatch.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
