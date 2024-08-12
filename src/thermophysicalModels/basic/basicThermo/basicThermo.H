@@ -61,7 +61,7 @@ SourceFiles
 #define basicThermo_H
 
 #include "volFields.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "physicalProperties.H"
 #include "autoPtr.H"
 #include "wordIOList.H"

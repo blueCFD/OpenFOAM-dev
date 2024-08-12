@@ -39,7 +39,7 @@ SourceFiles
 #include "polyPatch.H"
 #include "labelList.H"
 #include "SubList.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "tmp.H"
 #include "tmpNrc.H"
 #include "primitiveFields.H"

@@ -53,7 +53,7 @@ Description
 #ifndef typeInfo_H
 #define typeInfo_H
 
-#include "error.H"
+#include "error.T.H"
 #include "className.H"
 #include "nullObject.H"
 #include <type_traits>

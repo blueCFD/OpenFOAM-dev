@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include "sootModel.H"
 #include "noSoot.H"
 #include "basicThermo.H"

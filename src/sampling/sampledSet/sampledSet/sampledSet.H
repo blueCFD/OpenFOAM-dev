@@ -42,7 +42,7 @@ SourceFiles
 #define sampledSet_H
 
 #include "coordSet.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 #include "autoPtr.H"
 

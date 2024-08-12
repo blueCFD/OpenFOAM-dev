@@ -42,7 +42,7 @@ SourceFiles
 #include "scalarField.H"
 #include "simpleMatrix.H"
 #include "Tuple2.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

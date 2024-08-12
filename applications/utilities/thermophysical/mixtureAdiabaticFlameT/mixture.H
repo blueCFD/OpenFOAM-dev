@@ -36,7 +36,7 @@ SourceFiles
 #ifndef mixture_H
 #define mixture_H
 
-#include "error.H"
+#include "error.T.H"
 
 #include "List.T.H"
 #include "substance.H"

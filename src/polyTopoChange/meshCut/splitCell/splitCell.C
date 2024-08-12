@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "splitCell.H"
-#include "error.H"
+#include "error.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

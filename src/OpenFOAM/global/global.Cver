@@ -61,7 +61,7 @@ bool Foam::jobInfo::constructed(false);
 // Global error definitions (initialised by construction)
 
 #include "messageStream.C"
-#include "error.C"
+#include "error.T.C"
 #include "IOerror.C"
 #include "token.T.C"
 

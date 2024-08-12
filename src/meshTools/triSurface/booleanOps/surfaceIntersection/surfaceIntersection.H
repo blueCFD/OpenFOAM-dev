@@ -60,7 +60,7 @@ SourceFiles
 #include "point.T.H"
 #include "edge.H"
 #include "labelPairLookup.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "edgeList.H"
 #include "pointIndexHit.H"
 

@@ -51,7 +51,7 @@ SourceFiles
 
 #include "triSurface.H"
 #include "surfaceIntersection.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

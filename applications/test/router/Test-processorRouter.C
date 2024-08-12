@@ -37,7 +37,7 @@ Description
 #include "fvMesh.H"
 #include "router.H"
 #include "processorPolyPatch.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "Gather.T.H"
 
 

@@ -41,7 +41,7 @@ SourceFiles
 #include "HashSet.T.H"
 #include "regIOobject.H"
 #include "labelList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 #include "pointField.H"
 

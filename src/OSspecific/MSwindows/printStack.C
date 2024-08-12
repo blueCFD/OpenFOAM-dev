@@ -35,7 +35,7 @@ Modifications
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include "OSspecific.H"
 
 //Undefine this macro, otherwise it will collide with Windows' definitions

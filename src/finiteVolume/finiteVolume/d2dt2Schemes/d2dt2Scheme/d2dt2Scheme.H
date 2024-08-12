@@ -39,7 +39,7 @@ SourceFiles
 #include "dimensionedType.H"
 #include "volFieldsFwd.H"
 #include "surfaceFieldsFwd.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -36,7 +36,7 @@ SourceFiles
 #ifndef removePoints_H
 #define removePoints_H
 
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "boolList.H"
 #include "pointField.H"
 #include "faceList.H"

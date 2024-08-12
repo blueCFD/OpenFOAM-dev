@@ -46,7 +46,7 @@ Class
 
 \*---------------------------------------------------------------------------*/
 
-#include "error.H"
+#include "error.T.H"
 #include "sigFpe.H"
 
 #include "jobInfo.H"

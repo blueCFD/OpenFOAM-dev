@@ -37,7 +37,7 @@ SourceFiles
 #define LESfilter_H
 
 #include "volFields.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"
 

@@ -42,7 +42,7 @@ SourceFiles
 #include "dictionary.H"
 #include "unitConversion.H"
 #include "tmp.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "Field.T.H"
 #include "addToRunTimeSelectionTable.H"
 

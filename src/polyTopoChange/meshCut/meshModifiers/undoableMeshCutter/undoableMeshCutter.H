@@ -73,7 +73,7 @@ SourceFiles
 #include "cellLooper.H"
 #include "meshCutter.H"
 #include "Map.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "removeFaces.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

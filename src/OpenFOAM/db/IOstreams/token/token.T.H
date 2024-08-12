@@ -46,7 +46,7 @@ SourceFiles
 #include "verbatimString.H"
 #include "InfoProxy.T.H"
 #include "refCount.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 #define NoHashTableC
 #include "runTimeSelectionTables.H"

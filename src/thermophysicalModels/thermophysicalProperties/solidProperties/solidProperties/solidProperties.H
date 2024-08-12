@@ -35,7 +35,7 @@ SourceFiles
 #ifndef solidProperties_H
 #define solidProperties_H
 
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"
 #include "dictionary.H"

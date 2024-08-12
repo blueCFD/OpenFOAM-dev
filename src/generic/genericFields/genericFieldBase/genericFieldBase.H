@@ -36,7 +36,7 @@ SourceFiles
 #ifndef genericFieldBase_H
 #define genericFieldBase_H
 
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -42,7 +42,7 @@ SourceFiles
 #ifndef localPointRegion_H
 #define localPointRegion_H
 
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "Map.T.H"
 #include "labelList.H"
 #include "HashSet.T.H"

@@ -36,7 +36,7 @@ SourceFiles
 #define ODESolver_H
 
 #include "ODESystem.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

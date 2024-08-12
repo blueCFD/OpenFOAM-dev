@@ -89,7 +89,7 @@ SourceFiles
 #include "scalarField.H"
 #include "pointField.H"
 #include "DynamicList.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

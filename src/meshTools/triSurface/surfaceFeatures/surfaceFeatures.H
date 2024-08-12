@@ -50,7 +50,7 @@ SourceFiles
 #include "HashSet.T.H"
 #include "pointIndexHit.H"
 #include "edgeList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "boundBox.H"
 #include "plane.H"
 

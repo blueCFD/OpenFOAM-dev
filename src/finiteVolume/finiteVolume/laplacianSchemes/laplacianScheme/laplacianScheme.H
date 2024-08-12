@@ -40,7 +40,7 @@ SourceFiles
 #include "surfaceFieldsFwd.H"
 #include "linear.H"
 #include "correctedSnGrad.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

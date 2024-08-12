@@ -29,7 +29,7 @@ License
 #include "polygonTriangulate.H"
 #include "treeBoundBox.H"
 #include "OFstream.H"
-#include "error.H"
+#include "error.T.H"
 #include "meshTools.H"
 #include "edgeSurface.H"
 #include "DynamicList.T.H"

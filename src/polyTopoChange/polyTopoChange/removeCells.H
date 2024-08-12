@@ -41,7 +41,7 @@ SourceFiles
 #define removeCells_H
 
 #include "labelList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -50,7 +50,7 @@ SourceFiles
 #include "DynamicList.T.H"
 #include "PackedBoolList.H"
 #include "boolList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

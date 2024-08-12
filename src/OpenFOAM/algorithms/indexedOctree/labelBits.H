@@ -37,7 +37,7 @@ SourceFiles
 #include "label.H"
 //#include "uLabel.H"
 #include "direction.H"
-#include "error.H"
+#include "error.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

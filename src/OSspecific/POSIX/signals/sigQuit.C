@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "sigQuit.H"
-#include "error.H"
+#include "error.T.H"
 #include "jobInfo.H"
 #include "IOstreams.H"
 

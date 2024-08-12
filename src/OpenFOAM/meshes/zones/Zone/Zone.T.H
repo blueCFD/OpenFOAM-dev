@@ -36,7 +36,7 @@ SourceFiles
 #define Zone_H
 
 #include "labelList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "dictionary.H"
 #include "Map.T.H"
 #include "pointFieldFwd.H"

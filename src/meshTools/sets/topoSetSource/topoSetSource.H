@@ -42,7 +42,7 @@ SourceFiles
 #include "word.H"
 #include "labelList.H"
 #include "faceList.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 #include "autoPtr.H"
 #include "NamedEnum.T.H"

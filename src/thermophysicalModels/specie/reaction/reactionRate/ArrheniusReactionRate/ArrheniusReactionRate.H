@@ -39,7 +39,7 @@ SourceFiles
 
 #include "speciesTable.H"
 #include "scalarField.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

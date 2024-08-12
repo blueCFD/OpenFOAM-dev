@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "sigStopAtWriteNow.H"
-#include "error.H"
+#include "error.T.H"
 #include "jobInfo.H"
 #include "IOstreams.H"
 #include "Time.T.H"

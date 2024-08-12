@@ -37,7 +37,7 @@ SourceFiles
 
 #include "primitiveFieldsFwd.H"
 #include "transformer.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

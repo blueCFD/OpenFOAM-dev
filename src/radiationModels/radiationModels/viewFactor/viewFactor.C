@@ -27,7 +27,7 @@ License
 #include "surfaceFields.H"
 #include "constants.H"
 #include "greyDiffusiveViewFactorFixedValueFvPatchScalarField.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 using namespace Foam::constant;

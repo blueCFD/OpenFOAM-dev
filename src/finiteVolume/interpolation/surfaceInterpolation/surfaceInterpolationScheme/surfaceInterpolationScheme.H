@@ -38,7 +38,7 @@ SourceFiles
 #include "tmp.H"
 #include "volFieldsFwd.H"
 #include "surfaceFieldsFwd.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

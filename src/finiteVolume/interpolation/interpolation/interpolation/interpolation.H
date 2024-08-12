@@ -35,7 +35,7 @@ Description
 #include "faceList.H"
 #include "volFieldsFwd.H"
 #include "pointFields.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "autoPtr.H"
 #include "tetIndices.H"
 #include "addToRunTimeSelectionTable.H"

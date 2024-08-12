@@ -49,7 +49,7 @@ SourceFiles
 #include "Switch.H"
 #include "instantList.H"
 #include "NamedEnum.T.H"
-#include "typeInfo.H"
+#include "typeInfo.T.H"
 #include "dlLibraryTable.H"
 #include "functionObjectList.H"
 #include "sigWriteNow.H"
