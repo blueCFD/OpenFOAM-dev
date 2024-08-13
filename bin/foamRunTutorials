@@ -107,6 +107,8 @@ checkIfDefaultRunCanBeExecuted()
 skipFirst=false
 serialOnly=false
 parallelOnly=false
+passArgsMake=
+passArgsAllrun=
 
 # Parse options
 while [ "$#" -gt 0 ]
@@ -120,17 +122,18 @@ do
         shift
         ;;
     -t | -test)
-        passArgs="${passArgs} -test"
+        passArgsMake="${passArgsMake} -test"
+        passArgsAllrun="${passArgsAllrun} -test"
         shift
         ;;
     -n | -nonParallel)
         serialOnly=true
-        passArgs="${passArgs} $1"
+        passArgsMake="${passArgsMake} $1"
         shift
         ;;
     -p | -parallel)
         parallelOnly=true
-        passArgs="${passArgs} $1"
+        passArgsMake="${passArgsMake} $1"
         shift
         ;;
     -j | -jobs)
@@ -167,7 +170,12 @@ then
     checkIfAllrunCanBeExecuted
 
     # Run specialised Allrun script.
-    ./Allrun $passArgs
+    if $parallelOnly && [ -e "Allrun-parallel" ]
+    then
+        ./Allrun-parallel $passArgsAllrun
+    else
+        ./Allrun $passArgsAllrun
+    fi
 elif [ -d system ]
 then
     # Need to assess if this case can be executed in serial or parallel
@@ -191,7 +199,7 @@ else
     # Run all cases which have not already been run
     $make -k -f "$WM_PROJECT_DIR/bin/tools/MakefileDirs" \
           FOAM_TARGETS="$FOAM_TARGETS" \
-          FOAM_APP="$Script" FOAM_ARGS="$passArgs"
+          FOAM_APP="$Script" FOAM_ARGS="$passArgsMake"
 fi
 
 #------------------------------------------------------------------------------
