@@ -142,7 +142,7 @@ then
     then
         rm -rf "$toDir" || exit 1
     fi
-    cp -a "${fromDir}" "${toDir}" || exit 1
+    cp -r "${fromDir}" "${toDir}" || exit 1
 fi
 
 # Change the control dict to make the tests quick
