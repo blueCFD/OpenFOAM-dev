@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 2024 FS Dynamics Portugal: Changes are tracked at:
@@ -30,8 +30,8 @@ License
 
 #include "egrMixture.H"
 #include "homogeneousMixture.H"
+#include "leanInhomogeneousMixture.H"
 #include "inhomogeneousMixture.H"
-#include "veryInhomogeneousMixture.H"
 
 #include "forAbsoluteGases.H"
 
@@ -62,8 +62,8 @@ namespace Foam
 
     forAbsoluteGases(makePsiuMulticomponentThermos, egrMixture);
     forAbsoluteGases(makePsiuMulticomponentThermos, homogeneousMixture);
+    forAbsoluteGases(makePsiuMulticomponentThermos, leanInhomogeneousMixture);
     forAbsoluteGases(makePsiuMulticomponentThermos, inhomogeneousMixture);
-    forAbsoluteGases(makePsiuMulticomponentThermos, veryInhomogeneousMixture);
 }
 
 // ************************************************************************* //

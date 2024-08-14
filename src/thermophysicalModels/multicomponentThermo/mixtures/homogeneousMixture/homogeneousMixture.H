@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,9 @@ Class
     Foam::homogeneousMixture
 
 Description
-    Foam::homogeneousMixture
+    Combustion mixture for homogeneous lean, stoichiometric or rich conditions
+
+    in which the regress variable \c b defines the composition.
 
 SourceFiles
     homogeneousMixture.C
@@ -112,6 +114,12 @@ public:
         static wordList specieNames()
         {
             return {"b"};
+        }
+
+        //- Return the residual fraction of fuel in the burnt mixture
+        scalar fres(const scalarFieldListSlice& Y) const
+        {
+            return 0;
         }
 
         //- Return the mixture for the given composition
