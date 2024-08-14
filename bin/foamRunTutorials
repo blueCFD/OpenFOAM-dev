@@ -73,10 +73,16 @@ checkIfAllrunCanBeExecuted()
     if $serialOnly || $parallelOnly
     then
         # Check both inside Allrun and Allrun.*, given that Allrun-* are
-        # optional
-        if grep -sve "^#" Allrun Allrun.* | grep -qe "runParallel"
+        # optional, including first checking if subfolders do it as well or not
+        if [ ! -d "./system" ] && \
+            grep -sve "^#" */Allrun */Allrun.* | grep -qe "runParallel"
         then
             hasGotRunParallel=true
+
+        elif grep -sve "^#" Allrun Allrun.* | grep -qe "runParallel"
+        then
+            hasGotRunParallel=true
+
         else
             hasGotRunParallel=false
         fi
