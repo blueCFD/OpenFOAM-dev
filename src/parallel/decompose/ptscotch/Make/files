@@ -1,3 +1,4 @@
 ptscotch.T.C
 
+MPILIB = scotch_$(SCOTCH_VERSION)
 LIB = $(FOAM_LIBBIN)/$(FOAM_MPI)/libptscotchDecomp

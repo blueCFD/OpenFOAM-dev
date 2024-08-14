@@ -1,3 +1,4 @@
 zoltan.T.C
 
+MPILIB = Zoltan-$(ZOLTAN_VERSION)
 LIB = $(FOAM_LIBBIN)/$(FOAM_MPI)/libzoltanDecomp

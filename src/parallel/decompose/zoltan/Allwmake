@@ -9,10 +9,9 @@ case $ZOLTAN_TYPE in
 none)
     ;;
 *)
-    . $WM_PROJECT_DIR/wmake/scripts/AllwmakeMpiLib
     . $($WM_PROJECT_DIR/bin/foamEtcFile config.sh/zoltan)
     echo "    using ZOLTAN_ARCH_PATH=$ZOLTAN_ARCH_PATH"
-    wmakeMpiLib Zoltan-$ZOLTAN_VERSION zoltan
+    wmake $targetType
     ;;
 esac
 

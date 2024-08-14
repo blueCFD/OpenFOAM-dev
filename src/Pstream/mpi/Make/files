@@ -3,4 +3,5 @@ UIPread.C
 UPstream.C
 PstreamGlobals.T.C
 
+MPILIB = $(WM_PROJECT)-$(WM_PROJECT_VERSION)
 LIB = $(FOAM_LIBBIN)/$(FOAM_MPI)/libPstream

@@ -9,10 +9,9 @@ case $PARMETIS_TYPE in
 none)
     ;;
 *)
-    . $WM_PROJECT_DIR/wmake/scripts/AllwmakeMpiLib
     . $($WM_PROJECT_DIR/bin/foamEtcFile config.sh/parMetis)
     echo "    using PARMETIS_ARCH_PATH=$PARMETIS_ARCH_PATH"
-    wmakeMpiLib parmetis-$PARMETIS_VERSION parMetis
+    wmake $targetType
     ;;
 esac
 

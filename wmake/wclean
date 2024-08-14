@@ -265,6 +265,16 @@ unset targetType
 
 if [ -d "$MakeDir" ]
 then
+
+    # Detect if MPILIB is defined
+    if grep -q -e '^ *MPILIB *=' "$MakeDir/files"
+    then
+        if [ "${WM_MPLIB}" != "${WM_MPLIB/MPI/}" ]
+        then
+            export WM_OPTIONS="$WM_OPTIONS$WM_MPLIB"
+        fi
+    fi
+
     objectsDir=$MakeDir/$WM_OPTIONS
     expandPath "$PWD"
     if [[ "$exPath" = *"$WM_PROJECT_DIR"* ]]
