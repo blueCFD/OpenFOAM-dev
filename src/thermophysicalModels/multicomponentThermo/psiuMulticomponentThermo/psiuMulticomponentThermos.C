@@ -28,10 +28,10 @@ License
 
 #include "psiuMulticomponentThermo.H"
 
-#include "egrMixture.H"
 #include "homogeneousMixture.H"
 #include "leanInhomogeneousMixture.H"
 #include "inhomogeneousMixture.H"
+#include "inhomogeneousEGRMixture.H"
 
 #include "forAbsoluteGases.H"
 
@@ -56,14 +56,10 @@ License
 
 namespace Foam
 {
-    #if defined( WIN32 ) || defined( WIN64 )
-    #define derivedThermoName derivedThermoName_()
-    #endif
-
-    forAbsoluteGases(makePsiuMulticomponentThermos, egrMixture);
     forAbsoluteGases(makePsiuMulticomponentThermos, homogeneousMixture);
     forAbsoluteGases(makePsiuMulticomponentThermos, leanInhomogeneousMixture);
     forAbsoluteGases(makePsiuMulticomponentThermos, inhomogeneousMixture);
+    forAbsoluteGases(makePsiuMulticomponentThermos, inhomogeneousEGRMixture);
 }
 
 // ************************************************************************* //
