@@ -56,6 +56,10 @@ License
 
 namespace Foam
 {
+    #if defined( WIN32 ) || defined( WIN64 )
+    #define derivedThermoName derivedThermoName_()
+    #endif
+
     forAbsoluteGases(makePsiuMulticomponentThermos, homogeneousMixture);
     forAbsoluteGases(makePsiuMulticomponentThermos, leanInhomogeneousMixture);
     forAbsoluteGases(makePsiuMulticomponentThermos, inhomogeneousMixture);
