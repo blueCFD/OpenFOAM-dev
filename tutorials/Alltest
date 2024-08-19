@@ -73,6 +73,7 @@ fromDir="./"
 toDir=../tutorialsTest
 
 RUN_ARGUMENTS=""
+MODIFY_MESSAGE="one time step"
 serialOnly=false
 parallelOnly=false
 wallClockLimit=-1
@@ -113,6 +114,7 @@ do
     -w | -wallClock)
         [ "$#" -ge 2 ] || usage "'$1' option requires an argument"
         wallClockLimit=$2
+        MODIFY_MESSAGE="$wallClockLimit seconds (wall-clock)"
         [ "$2" -ge 1 ] || usage "'$1' option requires an argument as an integer"
         shift
         ;;
@@ -146,7 +148,7 @@ then
 fi
 
 # Change the control dict to make the tests quick
-echo "Modifying the controlDicts to run only one time step"
+echo "Modifying the controlDicts to run only $MODIFY_MESSAGE"
 cd ${toDir} || exit 1
 find . -name "controlDict*" | while read -r controlDict
 do
