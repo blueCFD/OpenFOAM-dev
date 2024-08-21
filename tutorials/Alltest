@@ -136,7 +136,7 @@ then
     usage "Cannot use -parallel and -nonParallel options at the same time."
 fi
 
-if [ $(readlink -f $fromDir) != $(readlink -f $toDir) ]
+if [ "$(readlink -f "${fromDir}")" != "$(readlink -f "${toDir}")" ]
 then
     # Create a copy of the cases for which to run the test loop
     echo "Copying cases"
