@@ -281,10 +281,17 @@ then
     # Specified alternative name for the Make sub-directory:
     [ $# -ge 3 ] && MakeDir=$3
 
-    if [ "$dir" ]
+    if [ "${dir}" ]
     then
-        cd "$dir" 2>/dev/null || {
-            echo "$Script error: could not change to directory '$dir'" 1>&2
+        # If the path has spaces in the name, then convert the folder path to
+        # the short-name mode
+        if onWin
+        then
+            dir=$("${WM_DIR}/scripts/makeFileLongPath" -fit -folder "${dir}")
+        fi
+
+        cd "${dir}" 2>/dev/null || {
+            echo "$Script error: could not change to directory '${dir}'" 1>&2
             exit 1
         }
     fi
@@ -424,7 +431,7 @@ mkdir -p "$objectsDir"
 # See https://github.com/blueCFD/Core/issues/35 for more details.
 if onWin
 then
-    export TEMP=$(${WM_DIR}/scripts/makeFileLongPath -folder -fit $objectsDir/tempDir)
+    export TEMP=$(${WM_DIR}/scripts/makeFileLongPath -folder -fit "${objectsDir}"/tempDir)
     export TMP=$TEMP
     mkdir -p $TMP
 fi

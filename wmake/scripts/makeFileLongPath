@@ -47,6 +47,7 @@ Usage: $Script [OPTION] [file]
 
 options:
   -fit      | -f    fit the address within 259 characters... using short path names
+  -shorten  | -s    force using short path names either way
   -folder   | -o    it's not a file, it's a folder
   -help     | -h    Print the usage
 
@@ -59,6 +60,7 @@ USAGE
 
 CYGPATH_EXTRA=
 MUST_FIT=
+SHORTEN=
 IS_A_FOLDER=
 
 while [ "$#" -gt 0 ]
@@ -90,12 +92,17 @@ then
         FULL_PATH=$(cygpath -a -w -m "${1}" | sed -e 's=^//?/=\\\\?\\=')
         CHAR_COUNT=$(echo "${FULL_PATH}" | wc -m)
 
+        if [ "${FULL_PATH/ /}" != "${FULL_PATH}" ]
+        then
+            SHORTEN=yes
+        fi
+
         if [ -n "${IS_A_FOLDER}" ]
         then
             CHAR_COUNT=$(expr $CHAR_COUNT + 15)
         fi
 
-        if [ $CHAR_COUNT -gt 259 ]
+        if [ -n "${SHORTEN}" -o $CHAR_COUNT -gt 259 ]
         then
             CYGPATH_EXTRA="-s"
 
