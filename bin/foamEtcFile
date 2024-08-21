@@ -85,6 +85,15 @@ error() {
     exit 1
 }
 
+# If on Windows, must use workaround for pwd
+if "${0%/*}/onWin"
+then
+pwd()
+{
+    bash -c pwd
+}
+fi
+
 #-------------------------------------------------------------------------------
 
 # the bin dir:
