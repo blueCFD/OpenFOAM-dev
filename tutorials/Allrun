@@ -52,6 +52,8 @@ logReport()
     UySS=`grep -E "Uy[:| ]*solution singularity" $1`
     UzSS=`grep -E "Uz[:| ]*solution singularity" $1`
     completed=`grep -E "^[\t ]*[eE]nd" $1`
+    crashed=$(grep -e "but the application crashed" $1)
+    MPI_Failed=$(grep -e "failed to communicate with smpd manager" $1)
 
     if [ "$fatalError" ]
     then
@@ -70,6 +72,14 @@ logReport()
         fi
         echo "$appAndCase: completed $completionTime"
         return 0
+    elif [ "$crashed" ]
+    then
+        echo "$appAndCase: CRASHED"
+        return 1
+    elif [ "$MPI_Failed" ]
+    then
+        echo "$appAndCase: MPI FAILED"
+        return 1
     else
         echo "$appAndCase: unconfirmed completion"
         return 1
