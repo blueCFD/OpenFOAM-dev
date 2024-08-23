@@ -34,9 +34,9 @@ gnuplot << EOF
     set ytics 250
     plot \
         "postProcessing/probe/0/T" t "OpenFOAM" w p lt 1 pt 6 ps 1.5, \
-        "<(sed -n \
+        "< sed -n \
         's/ Time (sec) =  \\\\(.*\\\\)   T (K) =  \\\\(.*\\\\)/\\\\1 \\\\2/p' \
-        $chemkin/senk.out)" t "Chemkin II" w l lt -1
+        $chemkin/senk.out" t "Chemkin II" w l lt -1
 EOF
 
 #------------------------------------------------------------------------------
