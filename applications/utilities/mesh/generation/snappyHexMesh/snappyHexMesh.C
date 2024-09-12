@@ -677,11 +677,12 @@ int main(int argc, char *argv[])
         "name of the file to save the simplified surface to"
     );
     #include "addDictOption.H"
+    #include "addMeshOption.H"
     #include "addRegionOption.H"
 
     #include "setRootCase.H"
     #include "createTimeNoFunctionObjects.H"
-    #include "createRegionMeshNoChangers.H"
+    #include "createSpecifiedMeshNoChangers.H"
 
     Info<< "Read mesh in = "
         << runTime.cpuTimeIncrement() << " s" << endl;
