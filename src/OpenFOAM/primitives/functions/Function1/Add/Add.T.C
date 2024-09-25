@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,50 +23,51 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "simple.H"
-#include "addToRunTimeSelectionTable.H"
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-namespace Foam
-{
-namespace relativeVelocityModels
-{
-    defineTypeNameAndDebug(simple, 0);
-    addToRunTimeSelectionTable(relativeVelocityModel, simple, dictionary);
-}
-}
-
+#include "Add.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::relativeVelocityModels::simple::simple
+template<class Type>
+Foam::Function1s::Add<Type>::Add
 (
-    const dictionary& dict,
-    const incompressibleDriftFluxMixture& mixture,
-    const uniformDimensionedVectorField& g
+    const word& name,
+    const unitConversions& units,
+    const dictionary& dict
 )
 :
-    relativeVelocityModel(dict, mixture, g),
-    a_("a", dimless, dict),
-    Vc_("Vc", dimTime, dict)
+    FieldFunction1<Type, Add<Type>>(name),
+    value1_(Function1<Type>::New("value1", units, dict)),
+    value2_(Function1<Type>::New("value2", units, dict))
+{}
+
+
+template<class Type>
+Foam::Function1s::Add<Type>::Add(const Add<Type>& se)
+:
+    FieldFunction1<Type, Add<Type>>(se),
+    value1_(se.value1_, false),
+    value2_(se.value2_, false)
 {}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::relativeVelocityModels::simple::~simple()
+template<class Type>
+Foam::Function1s::Add<Type>::~Add()
 {}
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField>
-Foam::relativeVelocityModels::simple::UdmCoeff() const
+template<class Type>
+void Foam::Function1s::Add<Type>::write
+(
+    Ostream& os,
+    const unitConversions& units
+) const
 {
-    return
-        (mixture_.rhoc()/mixture_.rho())*Vc_
-       *pow(scalar(10), -a_*max(mixture_.alphad(), scalar(0)));
+    writeEntry(os, units, value1_());
+    writeEntry(os, units, value2_());
 }
 
 

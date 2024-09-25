@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,50 +23,32 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "simple.H"
-#include "addToRunTimeSelectionTable.H"
+#include "Add.T.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-namespace Foam
+template<class Type>
+inline Type Foam::Function1s::Add<Type>::value(const scalar x) const
 {
-namespace relativeVelocityModels
-{
-    defineTypeNameAndDebug(simple, 0);
-    addToRunTimeSelectionTable(relativeVelocityModel, simple, dictionary);
-}
+    return value1_->value(x) + value2_->value(x);
 }
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::relativeVelocityModels::simple::simple
+template<class Type>
+inline Type Foam::Function1s::Add<Type>::integral
 (
-    const dictionary& dict,
-    const incompressibleDriftFluxMixture& mixture,
-    const uniformDimensionedVectorField& g
-)
-:
-    relativeVelocityModel(dict, mixture, g),
-    a_("a", dimless, dict),
-    Vc_("Vc", dimTime, dict)
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::relativeVelocityModels::simple::~simple()
-{}
-
-
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-Foam::tmp<Foam::volScalarField>
-Foam::relativeVelocityModels::simple::UdmCoeff() const
+    const scalar x1,
+    const scalar x2
+) const
 {
-    return
-        (mixture_.rhoc()/mixture_.rho())*Vc_
-       *pow(scalar(10), -a_*max(mixture_.alphad(), scalar(0)));
+    return value1_->integral(x1, x2) + value2_->integral(x1, x2);
+}
+
+
+template<class Type>
+inline bool Foam::Function1s::Add<Type>::constant() const
+{
+    return value1_->constant() && value2_->constant();
 }
 
 

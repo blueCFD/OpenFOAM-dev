@@ -38,6 +38,7 @@ Description
 #include "ZeroConstant.T.H"
 #include "OneConstant.T.H"
 #include "Polynomial1.T.H"
+#include "Add.T.H"
 #include "Repeat.T.H"
 #include "Scale.T.H"
 #include "Shift.T.H"
@@ -68,6 +69,7 @@ Description
         addFunction1(ZeroConstant, Type);                                      \
         addFunction1(OneConstant, Type);                                       \
         addStreamConstructableFunction1(Polynomial, Type);                     \
+        addFunction1(Add, Type);                                               \
         addFunction1(Repeat, Type);                                            \
         addFunction1(Scale, Type);                                             \
         addFunction1(Shift, Type);                                             \

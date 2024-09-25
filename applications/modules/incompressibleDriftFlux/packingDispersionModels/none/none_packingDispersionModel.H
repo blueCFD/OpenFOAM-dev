@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,101 +22,82 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::mixtureViscosityModels::Quemada
+    Foam::packingDispersionModels::none
 
 Description
-    Quemada viscosity model for colloidal dispersions.
-
-    Reference:
-    \verbatim
-        Quemada, D. (1998).
-        Rheological modelling of complex fluids. I.
-        The concept of effective volume fraction revisited.
-        The European Physical Journal-Applied Physics, 1(1), 119-127.
-    \endverbatim
+    Dummy packing dispersion model
 
 Usage
     Example usage:
     \verbatim
-        viscosityModel  Quemada;
-
-        rho         1996; // Dispersed phase density
-
-        q           2;    // Exponent, defaults to 2
-        muMax       1e-2; // Maximum viscosity (for numerical stability)
-
+        packingDispersionModel none;
     \endverbatim
 
 SourceFiles
-    Quemada.C
+    none.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef Quemada_H
-#define Quemada_H
+#ifndef none_packingDispersionModel_H
+#define none_packingDispersionModel_H
 
-#include "mixtureViscosityModel.H"
-#include "dimensionedScalar.H"
+#include "packingDispersionModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace mixtureViscosityModels
+namespace packingDispersionModels
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class Quemada Declaration
+                           Class none Declaration
 \*---------------------------------------------------------------------------*/
 
-class Quemada
+class none
 :
-    public mixtureViscosityModel
+    public packingDispersionModel
 {
-    // Private data
-
-        //- Exponent (defaults to 2)
-        scalar q_;
-
-        //- Maximum viscosity
-        dimensionedScalar muMax_;
-
 
 public:
 
     //- Runtime type information
-    TypeName("Quemada");
+    TypeName("none");
 
 
     // Constructors
 
-        //- Construct from mixture
-        Quemada(const incompressibleDriftFluxMixture& mixture);
+        //- Construct from relativeVelocity
+        none
+        (
+            const relativeVelocityModel& relativeVelocity
+        );
+
+        //- Construct from components
+        none
+        (
+            const dictionary& dict,
+            const relativeVelocityModel& relativeVelocity
+        );
 
 
     //- Destructor
-    virtual ~Quemada()
-    {}
+    ~none();
 
 
     // Member Functions
 
-        //- Return the mixture viscosity
-        //  given the viscosity of the continuous phase
-        virtual tmp<volScalarField> mu
-        (
-            const volScalarField& muc,
-            const volVectorField& U
-        ) const;
+        //- Return the derivative of the packing stress w.r.t. phase-fraction
+        virtual tmp<volScalarField> sigmaPrime() const;
 
-        //- Read phaseProperties dictionary
-        virtual bool read();
+        //- Return the diffusion coefficient of the dispersed phase
+        virtual tmp<volScalarField> Dd() const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace mixtureViscosityModels
+} // End namespace packingDispersionModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

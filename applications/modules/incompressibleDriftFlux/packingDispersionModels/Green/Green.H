@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,101 +22,94 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::mixtureViscosityModels::Quemada
+    Foam::packingDispersionModels::Green
 
 Description
-    Quemada viscosity model for colloidal dispersions.
+    Green packing dispersion model for industrial separations
 
     Reference:
     \verbatim
-        Quemada, D. (1998).
-        Rheological modelling of complex fluids. I.
-        The concept of effective volume fraction revisited.
-        The European Physical Journal-Applied Physics, 1(1), 119-127.
-    \endverbatim
+        Green, M. D., Eberl, M., & Landman, K. A. (1996).
+        Compressive yield stress of flocculated suspensions:
+        determination via experiment.
+        AIChE journal, 42(8), 2308-2318.
+   \endverbatim
 
 Usage
     Example usage:
     \verbatim
-        viscosityModel  Quemada;
+        packingDispersionModel Green;
 
-        rho         1996; // Dispersed phase density
-
-        q           2;    // Exponent, defaults to 2
-        muMax       1e-2; // Maximum viscosity (for numerical stability)
-
+        GreenCoeffs
+        {
+            sigma0          2.11e-3;
+            n               9;
+            alphaGel        0.1;
+        }
     \endverbatim
 
 SourceFiles
-    Quemada.C
+    Green.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef Quemada_H
-#define Quemada_H
+#ifndef Green_H
+#define Green_H
 
-#include "mixtureViscosityModel.H"
-#include "dimensionedScalar.H"
+#include "packingDispersionModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace mixtureViscosityModels
+namespace packingDispersionModels
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class Quemada Declaration
+                           Class Green Declaration
 \*---------------------------------------------------------------------------*/
 
-class Quemada
+class Green
 :
-    public mixtureViscosityModel
+    public packingDispersionModel
 {
-    // Private data
+    // Private Data
 
-        //- Exponent (defaults to 2)
-        scalar q_;
-
-        //- Maximum viscosity
-        dimensionedScalar muMax_;
+        dimensionedScalar sigma0_;
+        dimensionedScalar n_;
+        dimensionedScalar alphaGel_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("Quemada");
+    TypeName("Green");
 
 
     // Constructors
 
-        //- Construct from mixture
-        Quemada(const incompressibleDriftFluxMixture& mixture);
+        //- Construct from components
+        Green
+        (
+            const dictionary& dict,
+            const relativeVelocityModel& relativeVelocity
+        );
 
 
     //- Destructor
-    virtual ~Quemada()
-    {}
+    ~Green();
 
 
     // Member Functions
 
-        //- Return the mixture viscosity
-        //  given the viscosity of the continuous phase
-        virtual tmp<volScalarField> mu
-        (
-            const volScalarField& muc,
-            const volVectorField& U
-        ) const;
-
-        //- Read phaseProperties dictionary
-        virtual bool read();
+        //- Return the derivative of the packing stress w.r.t. phase-fraction
+        virtual tmp<volScalarField> sigmaPrime() const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace mixtureViscosityModels
+} // End namespace packingDispersionModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
