@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,6 +85,12 @@ public:
         inline SubList(const SubList<T>& sl) = default;
 
 
+    // Member Functions
+
+        //- Transfer the contents of the argument List into this list
+        inline void transfer(UList<T>&);
+
+
     // Member Operators
 
         //- Allow cast to a const List<T>&
@@ -98,6 +104,9 @@ public:
 
         //- Assignment of all entries to the given value
         inline void operator=(const T&);
+
+        //- Assignment of all entries to zero
+        inline void operator=(const zero);
 };
 
 
