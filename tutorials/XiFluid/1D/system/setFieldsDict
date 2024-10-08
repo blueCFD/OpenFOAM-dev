@@ -10,52 +10,30 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "system";
-    object      controlDict;
+    object      setFieldsDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     foamRun;
+defaultFieldValues
+(
+    volScalarFieldValue b 1
+    volScalarFieldValue T 300
+    volVectorFieldValue U (-1.5 0 0)
+);
 
-solver          fluid;
+regions
+(
+    boxToCell
+    {
+        box (0 -1 -1) (0.025 1 1);
+        fieldValues
+        (
+            volScalarFieldValue b 0
+            volScalarFieldValue T 2000
+            volVectorFieldValue U (-10 0 0)
+        );
+    }
+);
 
-startFrom       latestTime;
-
-startTime       0;
-
-stopAt          endTime;
-
-endTime         1440;
-
-deltaT          0.1;
-
-writeControl    adjustableRunTime;
-
-writeInterval   5;
-
-purgeWrite      0;
-
-writeFormat     binary;
-
-writePrecision  10;
-
-writeCompression off;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable true;
-
-adjustTimeStep  no;
-
-maxCo           5;
-
-maxDeltaT       1;
-
-userTime
-{
-    type            engine;
-    omega           60 [rpm];
-}
 
 // ************************************************************************* //

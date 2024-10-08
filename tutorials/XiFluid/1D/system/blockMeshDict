@@ -9,53 +9,55 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      controlDict;
+    object      blockMeshDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     foamRun;
+convertToMeters 0.001;
 
-solver          fluid;
+vertices
+(
+    (0 0 0)
+    (0 1 0)
+    (50 0 0)
+    (50 1 0)
+    (0 0 1)
+    (0 1 1)
+    (50 0 1)
+    (50 1 1)
+);
 
-startFrom       latestTime;
+blocks
+(
+    hex (0 2 3 1 4 6 7 5) (200 1 1) simpleGrading (1 1 1)
+);
 
-startTime       0;
-
-stopAt          endTime;
-
-endTime         1440;
-
-deltaT          0.1;
-
-writeControl    adjustableRunTime;
-
-writeInterval   5;
-
-purgeWrite      0;
-
-writeFormat     binary;
-
-writePrecision  10;
-
-writeCompression off;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable true;
-
-adjustTimeStep  no;
-
-maxCo           5;
-
-maxDeltaT       1;
-
-userTime
+defaultPatch
 {
-    type            engine;
-    omega           60 [rpm];
+    name    sides;
+    type    empty;
 }
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (2 3 7 6)
+        );
+    }
+
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 5 1)
+        );
+    }
+);
+
 
 // ************************************************************************* //
