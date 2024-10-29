@@ -49,6 +49,7 @@ namespace Foam
 void Foam::fv::multiCycleConstantbXiIgnition::readCoeffs(const dictionary& dict)
 {
     period_.read(dict, mesh().time().userUnits());
+    combustionDuration_.read(dict, mesh().time().userUnits());
 }
 
 
@@ -119,15 +120,12 @@ bool Foam::fv::multiCycleConstantbXiIgnition::ignited() const
     {
         reset_ = true;
 
-        psiuMulticomponentThermo& thermo
+        mesh().lookupObjectRef<psiuMulticomponentThermo>
         (
-            mesh().lookupObjectRef<psiuMulticomponentThermo>
-            (
-                physicalProperties::typeName
-            )
-        );
+            physicalProperties::typeName
+        ).reset();
 
-        thermo.reset();
+        mesh().lookupObjectRef<XiModel>(XiModel::typeName).reset();
     }
 
     return ignited;

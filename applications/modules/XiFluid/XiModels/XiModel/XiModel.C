@@ -90,4 +90,13 @@ bool Foam::XiModel::read(const dictionary& combustionProperties)
 }
 
 
+void Foam::XiModel::reset()
+{
+    for (label i=0; i<=Xi_.nOldTimes(); i++)
+    {
+        Xi_.oldTimeRef(i) = 1;
+    }
+}
+
+
 // ************************************************************************* //
