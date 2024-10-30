@@ -186,6 +186,9 @@ public:
                 const label patchi
             ) const = 0;
 
+            //- Enthalpy of formation [J/kg]
+            virtual tmp<volScalarField> hf() const = 0;
+
             //- Burnt gas temperature [K]
             virtual tmp<volScalarField> Tb() const = 0;
 
