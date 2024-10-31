@@ -98,7 +98,7 @@ TMP_SCRIPT="${TARGET_FILE}.tmp"
 for lib in ${EXPECTED_LIBS}
 do
 
-    if ! grep -q -e "${lib}[ \\]*$" "${TARGET_FILE}"
+    if ! grep -q -e "${lib} " -e "${lib} *$" "${TARGET_FILE}"
     then
         echo "    ${lib} \\"
     fi
