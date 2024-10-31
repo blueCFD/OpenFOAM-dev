@@ -68,6 +68,7 @@ EXE_INC=$(sed -e :a -e '/\\$/N; s/\\\n//; ta' "${TARGET_FILE}" | \
           grep -e "EXE_INC.*=" | \
           sed 's=EXE\_INC.*\=[ ]*==')
 FILES_INC=
+PREFIX="LIB"
 
 if [ -n "${EXE_INC}" ]
 then
@@ -114,7 +115,13 @@ then
 
     ORIG_STAMP=$(stat -c "%Y" "${TARGET_FILE}")
 
-    echo -e "\nLIB_LIBS += \\" >> "${TARGET_FILE}"
+    # Assess if current is executable or library
+    if grep -q -e "^EXE =" Make/files
+    then
+        PREFIX="EXE"
+    fi
+
+    echo -e "\n${PREFIX}_LIBS += \\" >> "${TARGET_FILE}"
     cat "${TMP_SCRIPT}" >> "${TARGET_FILE}"
 
     touch -d @${ORIG_STAMP} "${TARGET_FILE}"
