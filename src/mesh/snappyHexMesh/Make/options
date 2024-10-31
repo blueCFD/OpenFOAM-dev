@@ -23,4 +23,6 @@ LIB_LIBS = \
     -ltriSurface \
     -ldistributed
 
-LIB_LIBS += -ldecompositionMethods
+LIB_LIBS += \
+    -ldecompositionMethods \
+    -ltracking

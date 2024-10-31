@@ -8,3 +8,6 @@ LIB_LIBS = \
     -llagrangian \
     -lmeshTools \
     -lfiniteVolume
+
+LIB_LIBS += \
+    -ltracking

@@ -39,3 +39,6 @@ LIB_LIBS = \
 LIB_LIBS += \
     -lspecie \
     -lthermophysicalTransportModel
+
+LIB_LIBS += \
+    -ltracking
