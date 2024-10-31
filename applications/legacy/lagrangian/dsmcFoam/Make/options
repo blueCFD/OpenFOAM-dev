@@ -10,3 +10,6 @@ EXE_LIBS = \
     -lfiniteVolume \
     -llagrangian \
     -lDSMC
+
+EXE_LIBS += \
+    -ltracking
