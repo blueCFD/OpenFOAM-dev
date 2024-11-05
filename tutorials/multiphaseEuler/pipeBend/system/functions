@@ -15,8 +15,6 @@ FoamFile
 
 #includeFunc filterObjectsAsFiles
 
-#includeFunc writeObjects(d.particles)
-
 #includeFunc populationBalanceSizeDistribution
 (
     name=probabilityDensity.afterBend_1d,

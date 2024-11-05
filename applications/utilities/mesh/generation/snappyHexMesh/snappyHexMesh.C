@@ -1122,6 +1122,9 @@ int main(int argc, char *argv[])
 
             Info<< nl;
         }
+
+        meshRefiner.addedMeshedPatches();
+
         Info<< "Added patches in = "
             << mesh.time().cpuTimeIncrement() << " s" << nl << endl;
     }
