@@ -180,7 +180,7 @@ Foam::fileOperations::masterUncollatedFileOperation::filePathInfo
     else
     {
         // 1. Check the writing fileName
-        fileName writePath(objectPath(io, io.headerClassName()));
+        fileName writePath(objectPath(io));
 
         if (isFileOrDir(isFile, writePath))
         {
@@ -359,7 +359,7 @@ Foam::fileOperations::masterUncollatedFileOperation::relativeObjectPath
 
         case fileOperation::WRITEOBJECT:
         {
-            return objectPath(io, io.headerClassName());
+            return objectPath(io);
         }
         break;
 
@@ -1139,8 +1139,7 @@ bool Foam::fileOperations::masterUncollatedFileOperation::mv
 Foam::fileName Foam::fileOperations::masterUncollatedFileOperation::filePath
 (
     const bool globalFile,
-    const IOobject& io,
-    const word& typeName
+    const IOobject& io
 ) const
 {
     if (debug)
@@ -1412,7 +1411,7 @@ bool Foam::fileOperations::masterUncollatedFileOperation::exists
     const bool isFile = !io.name().empty();
 
     // Generate output filename for object
-    const fileName writePath(objectPath(io, word::null));
+    const fileName writePath(objectPath(io));
 
     // 1. Test writing name for either directory or a (valid) file
     if (isFileOrDir(isFile, writePath))

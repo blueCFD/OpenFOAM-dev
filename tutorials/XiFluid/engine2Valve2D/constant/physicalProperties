@@ -9,14 +9,29 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      functions;
+    location    "constant";
+    object      physicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#includeFunc filterObjectsAsFiles
+thermoType
+{
+    type            heheuPsiThermo;
+    mixture         inhomogeneousEGRMixture;
+    transport       polynomial;
+    thermo          janaf;
+    equationOfState perfectGas;
+    specie          specie;
+    energy          absoluteEnthalpy;
+}
 
-#includeFunc multiValveEngineState
-#includeFunc checkMesh(executeControl=adjustableRunTime, executeInterval=5)
+stoichiometricAirFuelMassRatio 17.23;
+
+#include "$FOAM_CASE/constant/fuel_thermo.foam"
+
+#include "$FOAM_CASE/constant/oxidant_thermo.foam"
+
+#include "$FOAM_CASE/constant/products_thermo.foam"
+
 
 // ************************************************************************* //
