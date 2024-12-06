@@ -169,6 +169,9 @@ class dictionary
         //- Parent dictionary
         const dictionary& parent_;
 
+        //- Current stream/file pointer
+        mutable const Istream* filePtr_;
+
         //- Entries of matching patterns
         DLList<entry*> patternEntries_;
 
@@ -1008,7 +1011,6 @@ bool readConfigFile
     dictionary& parentDict,
     const fileName& configFilesPath,
     const word& configFilesDir,
-    const Pair<string>& contextTypeAndValue,
     const word& region = word::null
 );
 

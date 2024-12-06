@@ -47,7 +47,8 @@ Foam::dictionary::dictionary
       ? parentDict.name()/name
       : name
     ),
-    parent_(parentDict)
+    parent_(parentDict),
+    filePtr_(nullptr)
 {
     read(is);
 }
@@ -56,7 +57,8 @@ Foam::dictionary::dictionary
 Foam::dictionary::dictionary(Istream& is, const bool keepHeader)
 :
     dictionaryName(is.name()),
-    parent_(dictionary::null)
+    parent_(dictionary::null),
+    filePtr_(nullptr)
 {
     // Reset input mode as this is a "top-level" dictionary
     functionEntries::inputModeEntry::clear();
@@ -122,6 +124,14 @@ bool Foam::dictionary::read(Istream& is, const bool keepHeader)
         return false;
     }
 
+    // Cache the current name and file/stream pointer
+    const fileName name0(name());
+    const Istream* filePtr0 = filePtr_;
+
+    // Set the name and file/stream pointer to the given stream
+    name() = is.name();
+    filePtr_ = &is;
+
     token currToken(is);
     if (currToken != token::BEGIN_BLOCK)
     {
@@ -145,6 +155,10 @@ bool Foam::dictionary::read(Istream& is, const bool keepHeader)
 
         return false;
     }
+
+    // Reset the name and file/stream pointer to the original
+    name() = name0;
+    filePtr_ = filePtr0;
 
     return true;
 }
@@ -443,7 +457,6 @@ bool Foam::readConfigFile
     dictionary& parentDict,
     const fileName& configFilesPath,
     const word& configFilesDir,
-    const Pair<string>& contextTypeAndValue,
     const word& region
 )
 {
@@ -565,6 +578,7 @@ bool Foam::readConfigFile
               + expandArg(namedArgs[i].second(), funcDict)
               + ';'
             );
+            entryStream.lineNumber() = parentDict.endLineNumber();
             subDict.set(entry::New(entryStream).ptr());
         }
     }
@@ -659,8 +673,8 @@ bool Foam::readConfigFile
         FatalIOErrorInFunction(funcDict0)
             << nl << "In " << configType << " entry:" << nl
             << "    " << argString.c_str() << nl
-            << nl << "In " << contextTypeAndValue.first().c_str() << ":" << nl
-            << "    " << contextTypeAndValue.second().c_str() << nl;
+            << nl << "In dictionary " << parentDict.name().c_str()
+            << " at line " << parentDict.endLineNumber() << nl;
 
         word funcType;
         wordReList args;

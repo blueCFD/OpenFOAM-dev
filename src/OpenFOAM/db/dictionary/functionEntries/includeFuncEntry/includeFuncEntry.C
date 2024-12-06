@@ -75,8 +75,7 @@ bool Foam::functionEntries::includeFuncEntry::execute
         fNameArgs,
         parentDict,
         functionObjectDictPath,
-        "system",
-        {"file", is.name() + " at line " + Foam::name(is.lineNumber())}
+        "system"
     );
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,7 +94,7 @@ Foam::string Foam::functionEntries::negEntry::negateVariable
         FatalIOErrorInFunction
         (
             parentDict
-        )   << "Illegal dictionary variable name " << varName << endl
+        )   << "Unknown dictionary variable name " << varName << endl
             << "Valid dictionary entries are " << parentDict.toc()
             << exit(FatalIOError);
 

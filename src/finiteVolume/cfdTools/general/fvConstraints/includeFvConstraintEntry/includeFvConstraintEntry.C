@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,8 +69,7 @@ bool Foam::functionEntries::includeFvConstraintEntry::execute
         fNameArgs,
         parentDict,
         fvConstraintDictPath,
-        "system",
-        {"file", is.name() + " at line " + Foam::name(is.lineNumber())}
+        "system"
     );
 }
 

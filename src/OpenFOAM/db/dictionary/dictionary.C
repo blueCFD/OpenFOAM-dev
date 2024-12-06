@@ -326,14 +326,16 @@ FOR_ALL_FIELD_TYPES(IMPLEMENT_SPECIALISED_READ_LIST_TYPE)
 
 Foam::dictionary::dictionary()
 :
-    parent_(dictionary::null)
+    parent_(dictionary::null),
+    filePtr_(nullptr)
 {}
 
 
 Foam::dictionary::dictionary(const fileName& name)
 :
     dictionaryName(name),
-    parent_(dictionary::null)
+    parent_(dictionary::null),
+    filePtr_(nullptr)
 {}
 
 
@@ -344,7 +346,8 @@ Foam::dictionary::dictionary
 )
 :
     dictionaryName(name),
-    parent_(parentDict)
+    parent_(parentDict),
+    filePtr_(nullptr)
 {}
 
 
@@ -356,7 +359,8 @@ Foam::dictionary::dictionary
 :
     dictionaryName(dict.name()),
     IDLList<entry>(dict, *this),
-    parent_(parentDict)
+    parent_(parentDict),
+    filePtr_(nullptr)
 {
     forAllIter(IDLList<entry>, *this, iter)
     {
@@ -378,7 +382,8 @@ Foam::dictionary::dictionary(const dictionary& dict)
 :
     dictionaryName(dict.name()),
     IDLList<entry>(dict, *this),
-    parent_(dictionary::null)
+    parent_(dictionary::null),
+    filePtr_(nullptr)
 {
     forAllIter(IDLList<entry>, *this, iter)
     {
@@ -398,7 +403,8 @@ Foam::dictionary::dictionary(const dictionary& dict)
 
 Foam::dictionary::dictionary(const dictionary* dictPtr)
 :
-    parent_(dictionary::null)
+    parent_(dictionary::null),
+    filePtr_(nullptr)
 {
     if (dictPtr)
     {
@@ -473,13 +479,20 @@ Foam::label Foam::dictionary::startLineNumber() const
 
 Foam::label Foam::dictionary::endLineNumber() const
 {
-    if (size())
+    if (filePtr_)
     {
-        return last()->endLineNumber();
+        return filePtr_->lineNumber();
     }
     else
     {
-        return -1;
+        if (size())
+        {
+            return last()->endLineNumber();
+        }
+        else
+        {
+            return -1;
+        }
     }
 }
 
