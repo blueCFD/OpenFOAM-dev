@@ -56,6 +56,7 @@ SourceFiles
 #include "sampledSet.H"
 #include "DynamicList.T.H"
 #include "HashSet.T.H"
+#include "wordReList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

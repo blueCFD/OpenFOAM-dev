@@ -795,30 +795,6 @@ const Foam::entry* Foam::dictionary::lookupScopedEntryPtr
 }
 
 
-bool Foam::dictionary::substituteScopedKeyword(const word& keyword)
-{
-    word varName = keyword(1, keyword.size() - 1);
-
-    // Lookup the variable name in the given dictionary
-    const entry* ePtr = lookupScopedEntryPtr(varName, true, true);
-
-    // If defined insert its entries into this dictionary
-    if (ePtr != nullptr)
-    {
-        const dictionary& addDict = ePtr->dict();
-
-        forAllConstIter(IDLList<entry>, addDict, iter)
-        {
-            add(iter());
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-
 bool Foam::dictionary::isDict(const word& keyword) const
 {
     // Find non-recursive with patterns
@@ -982,7 +958,7 @@ const Foam::dictionary& Foam::dictionary::scopedDict(const word& keyword) const
                 << name() << " or is not a dictionary"
                 << endl
                 << "Valid keywords are " << keys()
-                << exit(FatalIOError);
+                << abort(FatalIOError);
         }
         return entPtr->dict();
     }
@@ -1512,12 +1488,15 @@ Foam::dictionary Foam::operator|
 
 void Foam::dictArgList
 (
-    const string& argString,
+    const Tuple2<string, label>& argStringLine,
     word& funcName,
-    wordReList& args,
-    List<Tuple2<word, string>>& namedArgs
+    List<Tuple2<wordRe, label>>& args,
+    List<Tuple3<word, string, label>>& namedArgs
 )
 {
+    const string& argString = argStringLine.first();
+    label lineNumber = argStringLine.second();
+
     funcName = argString;
 
     int argLevel = 0;
@@ -1536,12 +1515,16 @@ void Foam::dictArgList
     {
         char c = *iter;
 
-        if (c == '(')
+        if (c == '\n')
+        {
+            lineNumber++;
+        }
+        else if (c == '(')
         {
             if (argLevel == 0)
             {
                 funcName = argString(start, i - start);
-                start = i+1;
+                start = i + 1;
             }
             ++argLevel;
         }
@@ -1553,19 +1536,27 @@ void Foam::dictArgList
                 {
                     namedArgs.append
                     (
-                        Tuple2<word, string>
+                        Tuple3<word, string, label>
                         (
                             argName,
-                            argString(start, i - start)
+                            argString(start, i - start),
+                            lineNumber
                         )
                     );
                     namedArg = false;
                 }
                 else
                 {
-                    args.append(wordRe(argString(start, i - start)));
+                    args.append
+                    (
+                        Tuple2<wordRe, label>
+                        (
+                            wordRe(argString(start, i - start)),
+                            lineNumber
+                        )
+                    );
                 }
-                start = i+1;
+                start = i + 1;
             }
 
             if (c == ')')
@@ -1581,11 +1572,11 @@ void Foam::dictArgList
         {
             argName = argString(start, i - start);
             string::stripInvalid<variable>(argName);
-            start = i+1;
+            start = i + 1;
             namedArg = true;
         }
 
-        ++i;
+        i++;
     }
 
     // Strip whitespace from the function name
@@ -1595,11 +1586,14 @@ void Foam::dictArgList
 
 void Foam::dictArgList
 (
-    const string& argString,
-    wordReList& args,
-    List<Tuple2<word, string>>& namedArgs
+    const Tuple2<string, label>& argStringLine,
+    List<Tuple2<wordRe, label>>& args,
+    List<Tuple3<word, string, label>>& namedArgs
 )
 {
+    const string& argString = argStringLine.first();
+    label lineNumber = argStringLine.second();
+
     int argLevel = 0;
     bool namedArg = false;
     word argName;
@@ -1616,7 +1610,11 @@ void Foam::dictArgList
     {
         char c = *iter;
 
-        if (c == '(')
+        if (c == '\n')
+        {
+            lineNumber++;
+        }
+        else if (c == '(')
         {
             ++argLevel;
         }
@@ -1638,17 +1636,25 @@ void Foam::dictArgList
                 {
                     namedArgs.append
                     (
-                        Tuple2<word, string>
+                        Tuple3<word, string, label>
                         (
                             argName,
-                            argString(start, i - start)
+                            argString(start, i - start),
+                            lineNumber
                         )
                     );
                     namedArg = false;
                 }
                 else
                 {
-                    args.append(wordRe(argString(start, i - start)));
+                    args.append
+                    (
+                        Tuple2<wordRe, label>
+                        (
+                            wordRe(argString(start, i - start)),
+                            lineNumber
+                        )
+                    );
                 }
                 start = i+1;
             }
@@ -1679,7 +1685,7 @@ Foam::Pair<Foam::word> Foam::dictAndKeyword(const word& scopedName)
         return Pair<word>
         (
             scopedName.substr(0, i),
-            scopedName.substr(i+1, string::npos)
+            scopedName.substr(i + 1, string::npos)
         );
     }
     else

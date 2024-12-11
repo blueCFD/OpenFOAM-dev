@@ -37,6 +37,7 @@ SourceFiles
 
 #include "topoSetSource.H"
 #include "NamedEnum.T.H"
+#include "wordReList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
