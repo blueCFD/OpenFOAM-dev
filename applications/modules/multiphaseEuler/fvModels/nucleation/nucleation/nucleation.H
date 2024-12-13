@@ -36,16 +36,13 @@ SourceFiles
 #ifndef nucleation_H
 #define nucleation_H
 
+#include "DimensionedFieldFwd.T.H"
 #include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-template<class Type, class GeoMesh>
-class DimensionedField;
-
 namespace fv
 {
 
