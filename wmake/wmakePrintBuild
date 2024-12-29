@@ -119,7 +119,7 @@ build="$WM_PROJECT_DIR/.build"
 unset oldPackage oldVersion
 getOldValues()
 {
-    set -- "$(tail -1 "$build" 2>/dev/null)"
+    set -- $(tail -1 "$build" 2>/dev/null)
     oldVersion="$1"
     [ "$#" -gt 0 ] && shift
     oldPackage="$*"
