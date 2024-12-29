@@ -25,7 +25,12 @@ wmakeCheckPwd "$WM_PROJECT_DIR" || {
 # Create the .build file sooner than libOpenFOAM
 if isMinGW
 then
-    wmakePrintBuild -update -pkg blueCFD-Core
+    # Update OpenFOAM version strings if required
+    if ! wmakePrintBuild -check
+    then
+        wrmo src/OpenFOAM/global/global.o 2>/dev/null
+        wmakePrintBuild -update -pkg blueCFD-Core
+    fi
 fi
 
 # Compile ThirdParty libraries and applications
