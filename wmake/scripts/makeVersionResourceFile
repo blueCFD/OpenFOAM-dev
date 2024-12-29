@@ -86,7 +86,7 @@ then
     fi
 
     # Get current OpenFOAM version
-    MGW_OFversion=$(wmakePrintBuild)
+    MGW_OFversion=$(wmakePrintBuild -short)
 
     LIBRARIES_TO_LOAD=""
     # Replace the library loading string
