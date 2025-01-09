@@ -92,6 +92,7 @@ thermophysicalModels/Allwmake $targetType $*
 
 wmake $targetType tracking
 wmake $targetType lagrangian/basic
+wmake $targetType Lagrangian/Lagrangian
 
 generic/Allwmake $targetType $*
 
@@ -131,6 +132,7 @@ fvModels/Allwmake $targetType $*
 functionObjects/Allwmake $targetType $*
 
 lagrangian/Allwmake $targetType $*
+Lagrangian/Allwmake $targetType $*
 rigidBodyMotion/Allwmake $targetType $*
 
 wmake $targetType fvModels/propellerDisk

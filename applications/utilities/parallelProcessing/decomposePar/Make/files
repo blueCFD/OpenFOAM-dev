@@ -2,5 +2,6 @@ decomposePar.C
 fvFieldDecomposer.C
 pointFieldDecomposer.C
 lagrangianFieldDecomposer.C
+LagrangianFieldDecomposer.T.C
 
 EXE = $(FOAM_APPBIN)/decomposePar
