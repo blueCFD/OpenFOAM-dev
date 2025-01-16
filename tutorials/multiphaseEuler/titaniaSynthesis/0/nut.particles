@@ -9,21 +9,34 @@ FoamFile
 {
     format      ascii;
     class       volScalarField;
-    object      T;
+    object      nut.particles;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions          [0 0 0 1 0 0 0];
+dimensions      [0 2 -1 0 0 0 0];
 
-internalField       uniform 800;
+internalField   uniform 0;
 
 boundaryField
 {
     #includeEtc "caseDicts/setConstraintTypes"
 
-    walls
+    inlet
     {
-        type                zeroGradient;
+        type            calculated;
+        value           $internalField;
+    }
+
+    outlet
+    {
+        type            calculated;
+        value           $internalField;
+    }
+
+    wall
+    {
+        type            calculated;
+        value           $internalField;
     }
 }
 

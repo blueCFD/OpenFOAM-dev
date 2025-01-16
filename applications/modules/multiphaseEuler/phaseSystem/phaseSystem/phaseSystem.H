@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,15 +111,21 @@ protected:
     // Protected typedefs
 
         typedef
-            HashTable
+            HashPtrTable
             <
-                autoPtr<interfaceSurfaceTensionModel>,
+                interfaceSurfaceTensionModel,
                 phaseInterfaceKey,
                 phaseInterfaceKey::hash
             >
             interfaceSurfaceTensionModelTable;
 
-        typedef HashTable<scalar, phaseInterfaceKey, phaseInterfaceKey::hash>
+        typedef
+            HashTable
+            <
+                scalar,
+                phaseInterfaceKey,
+                phaseInterfaceKey::hash
+            >
             cAlphaTable;
 
 
@@ -160,7 +166,7 @@ protected:
         volScalarField dpdt_;
 
         //- Interface compression coefficients
-        cAlphaTable cAlphas_;
+        const cAlphaTable cAlphas_;
 
         //- Stabilisation for normalisation of the interface normal
         const dimensionedScalar deltaN_;
@@ -169,7 +175,8 @@ protected:
         // Sub Models
 
             //- Surface tension models
-            interfaceSurfaceTensionModelTable interfaceSurfaceTensionModels_;
+            const interfaceSurfaceTensionModelTable
+                interfaceSurfaceTensionModels_;
 
 
     // Protected member functions
@@ -215,7 +222,11 @@ protected:
             //  settings for the given name. Performs backwards compatibility
             //  conversions.
             template<class Type>
-            dictionary interfacialDict(const word& name) const;
+            dictionary interfacialDict
+            (
+                const word& name,
+                const bool defaultIsEmpty
+            ) const;
 
 
 public:
@@ -350,54 +361,21 @@ public:
 
             //- Generate interfacial-model tables
             template<class ModelType>
-            void generateInterfacialModels
-            (
-                const dictionary& dict,
-                HashTable
-                <
-                    autoPtr<ModelType>,
-                    phaseInterfaceKey,
-                    phaseInterfaceKey::hash
-                >& models
-            ) const;
+            HashPtrTable
+            <
+                ModelType,
+                phaseInterfaceKey,
+                phaseInterfaceKey::hash
+            > generateInterfacialModels() const;
 
-            //- Generate interfacial-model tables
-            template<class ModelType>
-            void generateInterfacialModels
-            (
-                HashTable
-                <
-                    autoPtr<ModelType>,
-                    phaseInterfaceKey,
-                    phaseInterfaceKey::hash
-                >& models
-            ) const;
-
-            //- Generate interfacial-model tables
+            //- Generate interfacial-value tables
             template<class ValueType>
-            void generateInterfacialValues
-            (
-                const dictionary& dict,
-                HashTable
-                <
-                    ValueType,
-                    phaseInterfaceKey,
-                    phaseInterfaceKey::hash
-                >& values
-            ) const;
-
-            //- Generate interfacial-model tables
-            template<class ValueType>
-            void generateInterfacialValues
-            (
-                const word& valueName,
-                HashTable
-                <
-                    ValueType,
-                    phaseInterfaceKey,
-                    phaseInterfaceKey::hash
-                >& values
-            ) const;
+            HashTable
+            <
+                ValueType,
+                phaseInterfaceKey,
+                phaseInterfaceKey::hash
+            > generateInterfacialValues(const word& valueName) const;
 
             //- Return the dictionary from which to construct a low-level
             //  sub-model. Checks that there is just one sub-dictionary then

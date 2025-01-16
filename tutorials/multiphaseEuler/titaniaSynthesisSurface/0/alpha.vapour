@@ -9,21 +9,32 @@ FoamFile
 {
     format      ascii;
     class       volScalarField;
-    object      T;
+    object      alpha.vapour;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions          [0 0 0 1 0 0 0];
+dimensions      [];
 
-internalField       uniform 800;
+internalField   uniform 1.0;
 
 boundaryField
 {
     #includeEtc "caseDicts/setConstraintTypes"
 
-    walls
+    inlet
     {
-        type                zeroGradient;
+        type            fixedValue;
+        value           uniform 1.0;
+    }
+
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    wall
+    {
+        type            zeroGradient;
     }
 }
 

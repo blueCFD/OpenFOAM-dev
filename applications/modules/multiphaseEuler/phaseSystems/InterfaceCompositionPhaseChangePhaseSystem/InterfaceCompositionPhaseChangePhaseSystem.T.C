@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,7 +43,7 @@ correctDmdtfs()
     )
     {
         const sidedInterfaceCompositionModel& compositionModel =
-            interfaceCompositionModelIter();
+            *interfaceCompositionModelIter();
 
         const phaseInterface& interface = compositionModel.interface();
 
@@ -95,7 +95,7 @@ totalDmidtfs() const
     )
     {
         const sidedInterfaceCompositionModel& compositionModel =
-            interfaceCompositionModelIter();
+            *interfaceCompositionModelIter();
 
         const phaseInterface& interface = compositionModel.interface();
 
@@ -157,11 +157,18 @@ InterfaceCompositionPhaseChangePhaseSystem
     nInterfaceCorrectors_
     (
         this->template lookupOrDefault<label>("nInterfaceCorrectors", 1)
+    ),
+    diffusiveMassTransferModels_
+    (
+        this->template
+        generateInterfacialModels<sidedBlendedDiffusiveMassTransferModel>()
+    ),
+    interfaceCompositionModels_
+    (
+        this->template
+        generateInterfacialModels<sidedInterfaceCompositionModel>()
     )
 {
-    this->generateInterfacialModels(interfaceCompositionModels_);
-    this->generateInterfacialModels(diffusiveMassTransferModels_);
-
     // Check that models have been specified in the correct combinations
     forAllConstIter
     (
@@ -171,7 +178,7 @@ InterfaceCompositionPhaseChangePhaseSystem
     )
     {
         const sidedInterfaceCompositionModel& sidedCompositionModel =
-            interfaceCompositionModelIter();
+            *interfaceCompositionModelIter();
 
         const phaseInterface& interface = sidedCompositionModel.interface();
         const phaseModel& phase1 = interface.phase1();
@@ -233,7 +240,7 @@ InterfaceCompositionPhaseChangePhaseSystem
     )
     {
         const sidedInterfaceCompositionModel& sidedCompositionModel =
-            interfaceCompositionModelIter();
+            *interfaceCompositionModelIter();
 
         const phaseInterface& interface = sidedCompositionModel.interface();
 
@@ -483,7 +490,7 @@ specieTransfer() const
     )
     {
         const sidedInterfaceCompositionModel& compositionModel =
-            interfaceCompositionModelIter();
+            *interfaceCompositionModelIter();
 
         const phaseInterface& interface = compositionModel.interface();
 
@@ -538,7 +545,7 @@ correct()
     )
     {
         const sidedInterfaceCompositionModel& compositionModel =
-            interfaceCompositionModelIter();
+            *interfaceCompositionModelIter();
 
         const phaseInterface& interface = compositionModel.interface();
 
@@ -634,11 +641,11 @@ correctInterfaceThermo()
         const phaseModel& phase2 = interface.phase2();
 
         const sidedBlendedHeatTransferModel& heatTransferModel =
-            this->heatTransferModels_[interface];
+            *this->heatTransferModels_[interface];
 
         const sidedBlendedDiffusiveMassTransferModel&
             diffusiveMassTransferModel =
-            diffusiveMassTransferModels_[interface];
+            *diffusiveMassTransferModels_[interface];
 
         const volScalarField H1(heatTransferModel.modelInThe(phase1).K());
         const volScalarField H2(heatTransferModel.modelInThe(phase2).K());

@@ -9,13 +9,15 @@ FoamFile
 {
     format      ascii;
     class       volScalarField;
-    object      Ar.vapour;
+    object      Theta.particles;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [];
+dimensions          [0 2 -2 0 0 0 0];
 
-internalField   uniform 1.0;
+internalField       uniform 0;
+
+referenceLevel      1e-4;
 
 boundaryField
 {
@@ -24,7 +26,7 @@ boundaryField
     inlet
     {
         type            fixedValue;
-        value           uniform 9.759118E-01;
+        value           uniform 1e-4;
     }
 
     outlet
@@ -37,6 +39,5 @@ boundaryField
         type            zeroGradient;
     }
 }
-
 
 // ************************************************************************* //
