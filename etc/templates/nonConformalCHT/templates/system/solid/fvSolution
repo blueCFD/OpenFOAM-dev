@@ -2,44 +2,45 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  12
+    \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     format      ascii;
-    class       volScalarField;
-    object      p;
+    class       dictionary;
+    object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "$FOAM_CASE/constant/initialConditions"
-
-dimensions      [1 -1 -2 0 0 0 0];
-
-internalField   uniform $pInitial;
-
-boundaryField
+solvers
 {
-    outlet
+    "(h|e)"
     {
-        type            calculated;
-        value           $internalField;
+        solver           GAMG;
+        tolerance        1e-6;
+        relTol           0.1;
+        smoother         GaussSeidel;
     }
 
-    inlet
+    "(h|e)Final"
     {
-        type            calculated;
-        value           $internalField;
+        $h;
+        relTol         0;
     }
+}
 
-    wall
+PIMPLE
+{
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    equations
     {
-        type            calculated;
-        value           $internalField;
+        ".*"   0.7;
     }
-
-    #includeEtc "caseDicts/setConstraintTypes"
 }
 
 // ************************************************************************* //

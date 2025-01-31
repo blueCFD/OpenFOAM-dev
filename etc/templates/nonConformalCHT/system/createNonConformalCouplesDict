@@ -2,44 +2,27 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  12
+    \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     format      ascii;
-    class       volScalarField;
-    object      p;
+    class       dictionary;
+    location    "system";
+    object      createNonConformalCouplesDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "$FOAM_CASE/constant/initialConditions"
+fields  no;
 
-dimensions      [1 -1 -2 0 0 0 0];
-
-internalField   uniform $pInitial;
-
-boundaryField
+nonConformalCouples
 {
-    outlet
+    NCC1
     {
-        type            calculated;
-        value           $internalField;
+        regions         (solid fluid);
+        patches         (solid solid);
     }
-
-    inlet
-    {
-        type            calculated;
-        value           $internalField;
-    }
-
-    wall
-    {
-        type            calculated;
-        value           $internalField;
-    }
-
-    #includeEtc "caseDicts/setConstraintTypes"
 }
 
 // ************************************************************************* //

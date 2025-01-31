@@ -2,48 +2,44 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  12
+    \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     format      ascii;
     class       volScalarField;
-    object      T;
+    object      epsilon;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "$FOAM_CASE/constant/initialConditions"
+epsilonInlet      0.001;
+mixingLengthInlet 0.007;
 
-dimensions      [0 0 0 1 0 0 0];
+dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform $Tinitial;
+internalField   uniform $epsilonInlet;
 
 boundaryField
 {
     inlet
     {
-        type            fixedValue;
-        value           uniform $Tinitial;
+        type            turbulentMixingLengthDissipationRateInlet;
+        mixingLength    $mixingLengthInlet;
+        value           uniform $epsilonInlet;
     }
 
     outlet
     {
         type            inletOutlet;
-        inletValue      uniform $Tinitial;
-        value           uniform $Tinitial;
+        value           uniform $epsilonInlet;
+        inletValue      uniform $epsilonInlet;
     }
 
     wall
     {
-        type            coupledTemperature;
-        value           uniform $Tinitial;
-    }
-
-    externalWall
-    {
-        type            fixedValue;
-        value           uniform $Tinitial;
+        type            compressible::epsilonWallFunction;
+        value           uniform $epsilonInlet;
     }
 
     #includeEtc "caseDicts/setConstraintTypes"

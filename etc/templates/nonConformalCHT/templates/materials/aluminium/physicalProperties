@@ -2,46 +2,50 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  12
+    \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      momentumTransport;
+    object      physicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-simulationType RAS;
-
-RAS
+thermoType
 {
-    model               kOmegaSST;
-
-    turbulence          on;
+    type            heSolidThermo;
+    mixture         pureMixture;
+    transport       constIsoSolid;
+    thermo          eConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleInternalEnergy;
 }
 
-LES
+mixture
 {
-    model               SpalartAllmarasDDES;
-    delta               cubeRootVol;
-
-    turbulence          on;
-
-    cubeRootVolCoeffs
+    specie
     {
-        deltaCoeff      1;
+        nMoles      1;
+        molWeight   27; // [kg/kmol]
     }
 
-    smoothCoeffs
+    transport
     {
-        delta           cubeRootVol;
-        cubeRootVolCoeffs
-        {
-            deltaCoeff      1;
-        }
-        maxDeltaRatio   1.1;
+        kappa   240;    // [W/m/K]
+    }
+
+    thermodynamics
+    {
+        hf      0;
+        Cv      896;    // [J/kg/K]
+    }
+
+    equationOfState
+    {
+        rho     2712;   // [kg/m^3]
     }
 }
 

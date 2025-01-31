@@ -2,18 +2,31 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  12
+    \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     format      ascii;
-    class       uniformDimensionedVectorField;
-    object      g;
+    class       dictionary;
+    object      decomposeParDict;
 }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -2 0 0 0 0];
-value           (0 0 -9.81);
+numberOfSubdomains  4;
+
+method          scotch;
+
+simpleCoeffs
+{
+    n           (2 2 1);
+}
+
+hierarchicalCoeffs
+{
+    n           (2 2 1);
+    order       xyz;
+}
 
 // ************************************************************************* //
