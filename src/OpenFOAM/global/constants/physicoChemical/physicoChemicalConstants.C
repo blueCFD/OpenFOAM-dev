@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -62,7 +62,29 @@ const Foam::dimensionedScalar physicoChemical::RR
     (
         physicoChemical::group,
         "RR",
+        physicoChemical::NNA*physicoChemical::k
+    )
+);
+
+
+const Foam::dimensionedScalar physicoChemical::R
+(
+    dimensionedConstant
+    (
+        physicoChemical::group,
+        "R",
         physicoChemical::NA*physicoChemical::k
+    )
+);
+
+
+const Foam::dimensionedScalar physicoChemical::FF
+(
+    dimensionedConstant
+    (
+        physicoChemical::group,
+        "FF",
+        physicoChemical::NNA*electromagnetic::e
     )
 );
 
