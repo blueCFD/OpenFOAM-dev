@@ -22,42 +22,86 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::IsothermalPhaseModel
+    Foam::ThermophysicalTransportPhaseModel
 
 Description
-    Class which represents a phase for which the temperature remains
-    constant. Returns an empty energy equation and updates the energy
-    corresponding to pressure changes only when correctThermo is called.
+    Class which makes thermophysical transport modelling available to derived
+    classes
 
 SourceFiles
-    IsothermalPhaseModel.C
+    ThermophysicalTransportPhaseModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef IsothermalPhaseModel_H
-#define IsothermalPhaseModel_H
+#ifndef ThermophysicalTransportPhaseModel_H
+#define ThermophysicalTransportPhaseModel_H
 
-#include "ThermophysicalTransportPhaseModel.T.H"
+#include "phaseModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
+#include "PhaseThermophysicalTransportModel.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
+class fluidThermo;
+class rhoFluidThermo;
+class fluidMulticomponentThermo;
+class rhoFluidMulticomponentThermo;
+
+// Trait for converting the ThermoModel's thermo type to the thermo type needed
+// for the thermophysical transport model type; i.e., from rho-type thermo to
+// fluid-type thermo.
+
+template<class ThermoModel>
+struct MovingPhaseModelTransportThermoModel;
+
+template<>
+struct MovingPhaseModelTransportThermoModel<rhoFluidThermo>
+{
+    typedef fluidThermo type;
+};
+
+template<>
+struct MovingPhaseModelTransportThermoModel<rhoFluidMulticomponentThermo>
+{
+    typedef fluidMulticomponentThermo type;
+};
+
+
 /*---------------------------------------------------------------------------*\
-                    Class IsothermalPhaseModel Declaration
+                   Class ThermophysicalTransportPhaseModel Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class BasePhaseModel>
-class IsothermalPhaseModel
+class ThermophysicalTransportPhaseModel
 :
     public BasePhaseModel
 {
+    // Private Member Data
+
+        //- Thermophysical transport model type
+        typedef
+            PhaseThermophysicalTransportModel
+            <
+                phaseCompressible::momentumTransportModel,
+                typename MovingPhaseModelTransportThermoModel
+                <
+                    typename BasePhaseModel::thermoModel
+                >::type
+            >
+            thermophysicalTransportModel;
+
+        //- Thermophysical transport model
+        autoPtr<thermophysicalTransportModel> thermophysicalTransport_;
+
+
 public:
 
     // Constructors
 
-        IsothermalPhaseModel
+        ThermophysicalTransportPhaseModel
         (
             const phaseSystem& fluid,
             const word& phaseName,
@@ -67,32 +111,26 @@ public:
 
 
     //- Destructor
-    virtual ~IsothermalPhaseModel();
+    virtual ~ThermophysicalTransportPhaseModel();
 
 
     // Member Functions
 
-        //- Correct the thermodynamics
-        virtual void correctThermo();
+        //- Predict the energy transport e.g. alphat
+        virtual void predictThermophysicalTransport();
 
-        //- Return whether the phase is isothermal
-        virtual bool isothermal() const;
+        //- Correct the energy transport e.g. alphat
+        virtual void correctThermophysicalTransport();
 
         //- Return the effective thermal conductivity on a patch
         virtual tmp<scalarField> kappaEff(const label patchi) const;
 
-        //- Return the enthalpy equation
-        virtual tmp<fvScalarMatrix> heEqn();
+        //- Return the source term for the energy equation
+        virtual tmp<fvScalarMatrix> divq(volScalarField& he) const;
+
+        //- Return the source term for a specie mass-fraction equation
+        virtual tmp<fvScalarMatrix> divj(volScalarField& Yi) const;
 };
-
-
-/*---------------------------------------------------------------------------*\
-        Typedef IsothermalThermophysicalTransportPhaseModel Declaration
-\*---------------------------------------------------------------------------*/
-
-template<class BasePhaseModel>
-using IsothermalThermophysicalTransportPhaseModel =
-    IsothermalPhaseModel<ThermophysicalTransportPhaseModel<BasePhaseModel>>;
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -102,7 +140,7 @@ using IsothermalThermophysicalTransportPhaseModel =
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "IsothermalPhaseModel.T.C"
+    #include "ThermophysicalTransportPhaseModel.T.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

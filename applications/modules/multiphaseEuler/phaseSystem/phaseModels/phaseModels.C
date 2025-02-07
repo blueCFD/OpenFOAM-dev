@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,14 +30,12 @@ License
 
 #include "solidThermo.H"
 
-#include "combustionModel.H"
-
 #include "phaseModel.H"
 #include "ThermoPhaseModel.T.H"
 #include "SolidThermoPhaseModel.T.H"
 #include "IsothermalPhaseModel.T.H"
-#include "AnisothermalPhaseModel.T.H"
-#include "IsothermalSolidPhaseModel.T.H"
+#include "SolidIsothermalPhaseModel.T.H"
+#include "ThermalPhaseModel.T.H"
 #include "SolidThermalPhaseModel.T.H"
 #include "PurePhaseModel.T.H"
 #include "MulticomponentPhaseModel.T.H"
@@ -51,9 +49,9 @@ License
 namespace Foam
 {
     typedef
-        AnisothermalPhaseModel
+        PurePhaseModel
         <
-            PurePhaseModel
+            ThermalPhaseModel
             <
                 InertPhaseModel
                 <
@@ -79,9 +77,9 @@ namespace Foam
     );
 
     typedef
-        SolidThermalPhaseModel
+        PurePhaseModel
         <
-            PurePhaseModel
+            SolidThermalPhaseModel
             <
                 InertPhaseModel
                 <
@@ -107,9 +105,9 @@ namespace Foam
     );
 
     typedef
-        IsothermalPhaseModel
+        PurePhaseModel
         <
-            PurePhaseModel
+            IsothermalPhaseModel
             <
                 InertPhaseModel
                 <
@@ -135,9 +133,9 @@ namespace Foam
     );
 
     typedef
-        IsothermalSolidPhaseModel
+        PurePhaseModel
         <
-            PurePhaseModel
+            SolidIsothermalPhaseModel
             <
                 InertPhaseModel
                 <
@@ -165,7 +163,7 @@ namespace Foam
     typedef
         MulticomponentPhaseModel
         <
-            AnisothermalPhaseModel
+            ThermalPhaseModel
             <
                 InertPhaseModel
                 <
@@ -203,7 +201,7 @@ namespace Foam
     typedef
         MulticomponentPhaseModel
         <
-            IsothermalPhaseModel
+            IsothermalThermophysicalTransportPhaseModel
             <
                 InertPhaseModel
                 <
@@ -231,7 +229,7 @@ namespace Foam
     typedef
         MulticomponentPhaseModel
         <
-            AnisothermalPhaseModel
+            ThermalPhaseModel
             <
                 ReactingPhaseModel
                 <

@@ -23,13 +23,14 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "IsothermalPhaseModel.T.H"
+#include "ThermophysicalTransportPhaseModel.T.H"
 #include "phaseSystem.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class BasePhaseModel>
-Foam::IsothermalPhaseModel<BasePhaseModel>::IsothermalPhaseModel
+Foam::ThermophysicalTransportPhaseModel<BasePhaseModel>::
+ThermophysicalTransportPhaseModel
 (
     const phaseSystem& fluid,
     const word& phaseName,
@@ -37,65 +38,76 @@ Foam::IsothermalPhaseModel<BasePhaseModel>::IsothermalPhaseModel
     const label index
 )
 :
-    BasePhaseModel(fluid, phaseName, referencePhase, index)
+    BasePhaseModel(fluid, phaseName, referencePhase, index),
+    thermophysicalTransport_
+    (
+        thermophysicalTransportModel::New
+        (
+            this->momentumTransport_,
+            this->thermo_
+        )
+    )
 {}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class BasePhaseModel>
-Foam::IsothermalPhaseModel<BasePhaseModel>::~IsothermalPhaseModel()
+Foam::ThermophysicalTransportPhaseModel<BasePhaseModel>::
+~ThermophysicalTransportPhaseModel()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class BasePhaseModel>
-void Foam::IsothermalPhaseModel<BasePhaseModel>::correctThermo()
+void Foam::ThermophysicalTransportPhaseModel<BasePhaseModel>::
+predictThermophysicalTransport()
 {
-    BasePhaseModel::correctThermo();
-
-    // Correct the thermo for pressure changes
-    // ensuring the temperature remains constant
-    tmp<volScalarField> TCopy
-    (
-        volScalarField::New
-        (
-            this->thermo().T().name() + ":Copy",
-            this->thermo().T()
-        )
-    );
-    this->thermo_->he() = this->thermo().he(this->fluidThermo().p(), TCopy);
-    this->thermo_->correct();
-    this->thermo_->T() = TCopy;
+    BasePhaseModel::predictThermophysicalTransport();
+    thermophysicalTransport_->predict();
 }
 
 
 template<class BasePhaseModel>
-bool Foam::IsothermalPhaseModel<BasePhaseModel>::isothermal() const
+void Foam::ThermophysicalTransportPhaseModel<BasePhaseModel>::
+correctThermophysicalTransport()
 {
-    return true;
+    BasePhaseModel::correctThermophysicalTransport();
+    thermophysicalTransport_->correct();
 }
 
 
 template<class BasePhaseModel>
 Foam::tmp<Foam::scalarField>
-Foam::IsothermalPhaseModel<BasePhaseModel>::kappaEff(const label patchi) const
+Foam::ThermophysicalTransportPhaseModel<BasePhaseModel>::kappaEff
+(
+    const label patchi
+) const
 {
-    NotImplemented;
-    return this->thermo().kappa().boundaryField()[patchi];
+    return thermophysicalTransport_->kappaEff(patchi);
 }
 
 
 template<class BasePhaseModel>
 Foam::tmp<Foam::fvScalarMatrix>
-Foam::IsothermalPhaseModel<BasePhaseModel>::heEqn()
+Foam::ThermophysicalTransportPhaseModel<BasePhaseModel>::divq
+(
+    volScalarField& he
+) const
 {
-    FatalErrorInFunction
-        << "Cannot construct an energy equation for an isothermal phase"
-        << exit(FatalError);
+    return thermophysicalTransport_->divq(he);
+}
 
-    return tmp<fvScalarMatrix>();
+
+template<class BasePhaseModel>
+Foam::tmp<Foam::fvScalarMatrix>
+Foam::ThermophysicalTransportPhaseModel<BasePhaseModel>::divj
+(
+    volScalarField& Yi
+) const
+{
+    return thermophysicalTransport_->divj(Yi);
 }
 
 

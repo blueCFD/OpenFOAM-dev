@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -96,7 +96,7 @@ Foam::PtrList<Foam::volScalarField>&
 Foam::PurePhaseModel<BasePhaseModel>::YRef()
 {
     FatalErrorInFunction
-        << "Cannot access the species fractions of for a pure phase"
+        << "Cannot access the species fractions of a pure phase"
         << exit(FatalError);
 
     return Y_;
