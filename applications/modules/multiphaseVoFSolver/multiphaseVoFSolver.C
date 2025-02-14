@@ -65,6 +65,25 @@ void Foam::solvers::multiphaseVoFSolver::correctCoNum()
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
+bool Foam::solvers::multiphaseVoFSolver::read()
+{
+    VoFSolver::read();
+
+    const dictionary& alphaControls = mesh.solution().solverDict("alpha");
+
+    nAlphaSubCyclesPtr =
+        Function1<scalar>::New
+        (
+            "nAlphaSubCycles",
+            mesh.time().userUnits(),
+            dimless,
+            alphaControls
+        );
+
+    return true;
+}
+
+
 void Foam::solvers::multiphaseVoFSolver::correctInterface()
 {}
 
@@ -90,6 +109,8 @@ Foam::solvers::multiphaseVoFSolver::multiphaseVoFSolver
 
     phases(mixture.phases())
 {
+    read();
+
     if (transient())
     {
         correctCoNum();
