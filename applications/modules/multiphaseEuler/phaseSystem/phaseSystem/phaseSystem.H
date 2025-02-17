@@ -54,6 +54,7 @@ SourceFiles
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "fvMatricesFwd.H"
+#include "MULES.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,6 +74,37 @@ class phaseSystem
     public IOdictionary
 {
 public:
+
+    // Public Types
+
+        //- alpha solution control structure
+        struct alphaControl
+        {
+            //- Function to calculate the number of explicit MULES sub-cycles
+            //  from the alpha Courant number
+            autoPtr<Function1<scalar>> nAlphaSubCyclesPtr;
+
+            //- Number of alpha equation sub-cycles
+            label nAlphaSubCycles;
+
+            //- Number of alpha correctors
+            //  Usually used to improve the accuracy at high Courant numbers
+            //  with semi-implicit MULES, MULESCorr = true
+            label nAlphaCorr;
+
+            //- Compressibility source stabilisation tolerance
+            scalar vDotResidualAlpha;
+
+            //- MULES controls
+            MULES::control MULES;
+
+            //- Read the alpha and MULES controls from dict
+            void read(const dictionary& dict);
+
+            //- Correct nAlphaSubCycles for the current Courant number
+            void correct(const scalar CoNum);
+        };
+
 
     // Public Typedefs
 
@@ -528,7 +560,11 @@ public:
         // Evolution
 
             //- Solve for the phase fractions
-            virtual void solve(const PtrList<volScalarField>& rAs);
+            virtual void solve
+            (
+                const alphaControl& alphaControls,
+                const PtrList<volScalarField>& rAs
+            );
 
             //- Correct the fluid properties other than those listed below
             virtual void correct();
