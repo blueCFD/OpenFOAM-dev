@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,23 +22,26 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::Function2s::APIdiffCoefFunc
+    Foam::Function2s::binaryDiffusionCoefficient
 
 Description
-    API function for vapour mass diffusivity
+    Binary diffusion coefficient polynomial function of the log of temperature
+    correcting the standard kinetic theory temperature dependence.
 
-    Source:
     \verbatim
-        API (American Petroleum Institute)
-               Technical Data Book
+        Dji = T^(3/2)*(c0 + c1*lnT + c2*lnT^2 + c3*lnT^3 + c4*lnT^4)/p
     \endverbatim
+
+SourceFiles
+    binaryDiffusionCoefficient.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef APIdiffCoef_H
-#define APIdiffCoef_H
+#ifndef binaryDiffusionCoefficient_H
+#define binaryDiffusionCoefficient_H
 
 #include "Function2.T.H"
+#include "Polynomial.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,42 +51,36 @@ namespace Function2s
 {
 
 /*---------------------------------------------------------------------------*\
-                         Class APIdiffCoef Declaration
+          Class binaryDiffusionCoefficient Declaration
 \*---------------------------------------------------------------------------*/
 
-class APIdiffCoef
+class binaryDiffusionCoefficient
 :
-    public FieldFunction2<scalar, APIdiffCoef>
+    public FieldFunction2<scalar, binaryDiffusionCoefficient>
 {
     // Private Data
 
-        // API vapour mass diffusivity function coefficients
-        scalar a_, b_, wf_, wa_;
-
-        // Helper variables
-        scalar alpha_, beta_;
+        //- Polynomial coefficients
+        Polynomial<5> coeffs_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("APIdiffCoef");
+    TypeName("binaryDiffusionCoefficient");
 
 
     // Constructors
 
         //- Construct from name and coefficients
-        APIdiffCoef
+        binaryDiffusionCoefficient
         (
             const word& name,
-            const scalar a,
-            const scalar b,
-            const scalar wf,
-            const scalar wa
+            const Polynomial<5> coeffs
         );
 
         //- Construct from name and dictionary
-        APIdiffCoef
+        binaryDiffusionCoefficient
         (
             const word& name,
             const unitConversions& units,
@@ -93,27 +90,19 @@ public:
         //- Construct and return a clone
         virtual tmp<Function2<scalar>> clone() const
         {
-            return tmp<Function2<scalar>>(new APIdiffCoef(*this));
+            return tmp<Function2<scalar>>
+            (
+                new binaryDiffusionCoefficient(*this)
+            );
         }
 
 
     // Member Functions
 
-        //- API vapour mass diffusivity function of pressure and temperature
+        //- Binary diffusion coefficient function of pressure and temperature
         virtual scalar value(scalar p, scalar T) const
         {
-            return 3.6059e-3*(pow(1.8*T, 1.75))*alpha_/(p*beta_);
-        }
-
-        //- Inherit base class value methods to prevent clang warnings
-        using FieldFunction2<scalar, APIdiffCoef>::value;
-
-        //- API vapour mass diffusivity function using properties from
-        //  construction - with specified binary pair
-        scalar value(scalar p, scalar T, scalar  Wa) const
-        {
-            const scalar alphaBinary = sqrt(1/wf_ + 1/Wa);
-            return 3.6059e-3*(pow(1.8*T, 1.75))*alphaBinary/(p*beta_);
+            return T*sqrt(T)*coeffs_.value(log(T))/p;
         }
 
         //- Write the function coefficients
