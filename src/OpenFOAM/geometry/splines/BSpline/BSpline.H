@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,47 +22,39 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::CatmullRomSpline
+    Foam::BSpline
 
 Description
-    An implementation of Catmull-Rom splines
-    (sometimes known as Overhauser splines).
-
-    In this implementation, the end tangents are created automatically
-    by reflection.
+    An implementation of B-splines. This is a piecewise cubic spline that
+    intersects its given end points, but does not intersect and of its
+    intermediate control points.
 
     In matrix form, the \e local interpolation on the interval t=[0..1] is
     described as follows:
+
     \verbatim
-    P(t) = 1/2 * [ t^3 t^2 t 1 ] * [ -1  3 -3  1 ] * [ P-1 ]
-                                   [  2 -5  4 -1 ]   [ P0 ]
-                                   [ -1  0  1  0 ]   [ P1 ]
-                                   [  0  2  0  0 ]   [ P2 ]
+    P(t) = 1/6 * [ t^3 t^2 t 1 ] * [ -1  3 -3  1 ] * [ P-1 ]
+                                   [  3 -6  3  0 ]   [ P0 ]
+                                   [ -3  0  3  0 ]   [ P1 ]
+                                   [  1  4  1  0 ]   [ P2 ]
     \endverbatim
 
     Where P-1 and P2 represent the neighbouring points or the extrapolated
-    end points. Simple reflection is used to automatically create the end
+    end points. Reflection is used to automatically create the extrapolated end
     points.
 
-    The spline is discretised based on the chord length of the individual
-    segments. In rare cases (sections with very high curvatures), the
-    resulting distribution may be sub-optimal.
-
-    A future implementation could also handle closed splines.
-
 See also
-    http://www.algorithmist.net/catmullrom.html provides a nice
-    introduction
+    CatmullRomSpline
 
 SourceFiles
-    CatmullRomSpline.C
+    BSpline.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef CatmullRomSpline_H
-#define CatmullRomSpline_H
+#ifndef BSpline_H
+#define BSpline_H
 
-#include "polyLine.H"
+#include "Spline.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,46 +62,28 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class CatmullRomSpline Declaration
+                           Class BSpline Declaration
 \*---------------------------------------------------------------------------*/
 
-class CatmullRomSpline
+class BSpline
 :
-    public polyLine
+    public Spline<BSpline>
 {
 public:
 
     // Constructors
 
-        //- Construct from components
-        CatmullRomSpline
-        (
-            const pointField& knots,
-            const bool notImplementedClosed = false
-        );
-
-        //- Disallow default bitwise copy construction
-        CatmullRomSpline(const CatmullRomSpline&) = delete;
+        //- Inherit constructors
+        using Spline::Spline;
 
 
     // Member Functions
 
-        //- Return the point position corresponding to the curve parameter
-        //  0 <= lambda <= 1
-        point position(const scalar lambda) const;
+        //- Return the point position corresponding to the segment parameter
+        point position(const label segmenti, const scalar segmentLambda) const;
 
-        //- Return the point position corresponding to the local parameter
-        //  0 <= lambda <= 1 on the given segment
-        point position(const label segment, const scalar lambda) const;
-
-        //- Return the length of the curve
-        scalar length() const;
-
-
-    // Member Operators
-
-        //- Disallow default bitwise assignment
-        void operator=(const CatmullRomSpline&) = delete;
+        //- Inherit the base class' position methods
+        using Spline<BSpline>::position;
 };
 
 

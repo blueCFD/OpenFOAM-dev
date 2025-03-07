@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,45 +22,21 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::BSpline
+    Foam::Spline
 
 Description
-    An implementation of B-splines.
-
-    In this implementation, the end tangents are created automatically
-    by reflection.
-
-    In matrix form, the \e local interpolation on the interval t=[0..1] is
-    described as follows:
-    \verbatim
-    P(t) = 1/6 * [ t^3 t^2 t 1 ] * [ -1  3 -3  1 ] * [ P-1 ]
-                                   [  3 -6  3  0 ]   [ P0 ]
-                                   [ -3  0  3  0 ]   [ P1 ]
-                                   [  1  4  1  0 ]   [ P2 ]
-    \endverbatim
-
-    Where P-1 and P2 represent the neighbouring points or the extrapolated
-    end points. Simple reflection is used to automatically create the end
-    points.
-
-    The spline is discretised based on the chord length of the individual
-    segments. In rare cases (sections with very high curvatures), the
-    resulting distribution may be sub-optimal.
-
-    A future implementation could also handle closed splines.
-
-See also
-    CatmullRomSpline
+    Base class for splines
 
 SourceFiles
-    BSpline.C
+    Spline.C
+    SplineI.H
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef BSpline_H
-#define BSpline_H
+#ifndef Spline_H
+#define Spline_H
 
-#include "polyLine.H"
+#include "pointField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,52 +44,82 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class BSpline Declaration
+                           Class Spline Declaration
 \*---------------------------------------------------------------------------*/
 
-class BSpline
-:
-    public polyLine
+template<class Derived>
+class Spline
 {
+    // Private Data
+
+        //- The end points and control points
+        const pointField knots_;
+
+        //- Tolerance to which to improve the spacing
+        const scalar tol_;
+
+        //- Number of iterations over which to improve the spacing
+        const label nIter_;
+
+
+protected:
+
+    // Protected Member Functions
+
+        //- Access the end points and control points
+        inline const pointField& knots() const;
+
+
 public:
 
     // Constructors
 
         //- Construct from components
-        BSpline
-        (
-            const pointField& knots,
-            const bool notImplementedClosed = false
-        );
+        Spline(const pointField& knots, const scalar tol, const label nIter);
+
+        //- Construct from knots with default iteration settings
+        Spline(const pointField& knots);
 
         //- Disallow default bitwise copy construction
-        BSpline(const BSpline&) = delete;
+        Spline(const Spline&) = delete;
 
 
     // Member Functions
 
+        //- Return the number of segments
+        inline label nSegments() const;
+
+        //- Return the start point
+        inline const point& start() const;
+
+        //- Return the end point
+        inline const point& end() const;
+
         //- Return the point position corresponding to the curve parameter
-        //  0 <= lambda <= 1
         point position(const scalar lambda) const;
 
-        //- Return the point position corresponding to the local parameter
-        //  0 <= lambda <= 1 on the given segment
-        point position(const label segment, const scalar lambda) const;
-
-        //- Return the length of the curve
-        scalar length() const;
+        //- Return the point positions corresponding to the curve parameters
+        tmp<pointField> position(const scalarList& lambdas) const;
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const BSpline&) = delete;
+        void operator=(const Spline&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "SplineI.T.H"
+
+#ifdef NoRepository
+    #include "Spline.T.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
