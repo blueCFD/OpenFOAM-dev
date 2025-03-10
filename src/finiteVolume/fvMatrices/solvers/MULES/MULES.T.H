@@ -43,6 +43,7 @@ SourceFiles
 #ifndef MULES_H
 #define MULES_H
 
+#include "Switch.H"
 #include "volFieldsFwd.H"
 #include "surfaceFieldsFwd.H"
 #include "primitiveFieldsFwd.H"
@@ -76,6 +77,10 @@ struct control
     //  but 1e-3 can be used for very tight convergence
     //  Defaults to 0, i.e. unused and nIter iterations are performed
     scalar tol;
+
+    //- Optional switch to select global bounds only
+    //  rather than local and global bounds
+    Switch globalBounds;
 
     //- Optional coefficient to relax the local boundedness constraint
     //  by adding extremaCoeff*local_range to the allowed range
@@ -118,7 +123,7 @@ void explicitSolve
     const RdeltaTType& rDeltaT,
     const RhoType& rho,
     volScalarField& psi,
-    const surfaceScalarField& phiPsi,
+    const surfaceScalarField& psiPhi,
     const SpType& Sp,
     const SuType& Su
 );
@@ -128,7 +133,7 @@ void explicitSolve
 (
     const RhoType& rho,
     volScalarField& psi,
-    const surfaceScalarField& phiPsi
+    const surfaceScalarField& psiPhi
 );
 
 template<class RhoType, class SpType, class SuType>
@@ -136,7 +141,7 @@ void explicitSolve
 (
     const RhoType& rho,
     volScalarField& psi,
-    const surfaceScalarField& phiPsi,
+    const surfaceScalarField& psiPhi,
     const SpType& Sp,
     const SuType& Su
 );
@@ -148,7 +153,7 @@ void explicitSolve
     const RhoType& rho,
     volScalarField& psi,
     const surfaceScalarField& phiBD,
-    surfaceScalarField& phiPsi,
+    surfaceScalarField& psiPhi,
     const PsiMaxType& psiMax,
     const PsiMinType& psiMin
 );
@@ -167,7 +172,7 @@ void explicitSolve
     const RhoType& rho,
     volScalarField& psi,
     const surfaceScalarField& phiBD,
-    surfaceScalarField& phiPsi,
+    surfaceScalarField& psiPhi,
     const SpType& Sp,
     const SuType& Su,
     const PsiMaxType& psiMax,
@@ -213,7 +218,32 @@ void limit
     const RhoType& rho,
     const volScalarField& psi,
     const surfaceScalarField& phi,
-    surfaceScalarField& phiPsi,
+    surfaceScalarField& psiPhi,
+    const SpType& Sp,
+    const SuType& Su,
+    const PsiMaxType& psiMax,
+    const PsiMinType& psiMin,
+    const bool returnCorr
+);
+
+template
+<
+    class RdeltaTType,
+    class RhoType,
+    class SpType,
+    class SuType,
+    class PsiMaxType,
+    class PsiMinType
+>
+void limit
+(
+    const control& controls,
+    const RdeltaTType& rDeltaT,
+    const RhoType& rho,
+    const volScalarField& psi,
+    const surfaceScalarField& phi,
+    const surfaceScalarField& phiBD,
+    surfaceScalarField& psiPhi,
     const SpType& Sp,
     const SuType& Su,
     const PsiMaxType& psiMax,
@@ -235,7 +265,7 @@ void limit
     const RhoType& rho,
     const volScalarField& psi,
     const surfaceScalarField& phi,
-    surfaceScalarField& phiPsi,
+    surfaceScalarField& psiPhi,
     const SpType& Sp,
     const SuType& Su,
     const PsiMaxType& psiMax,
@@ -243,13 +273,78 @@ void limit
     const bool returnCorr
 );
 
-void limitSum(UPtrList<scalarField>& phiPsiCorrs);
+template
+<
+    class RhoType,
+    class SpType,
+    class SuType,
+    class PsiMaxType,
+    class PsiMinType
+>
+void limit
+(
+    const control& controls,
+    const RhoType& rho,
+    const volScalarField& psi,
+    const surfaceScalarField& phi,
+    const surfaceScalarField& phiBD,
+    surfaceScalarField& psiPhi,
+    const SpType& Sp,
+    const SuType& Su,
+    const PsiMaxType& psiMax,
+    const PsiMinType& psiMin,
+    const bool returnCorr
+);
 
-template<template<class> class AlphaList, template<class> class PhiList>
+void limitSum(UPtrList<scalarField>& psiPhiCorrs);
+
+void limitSum
+(
+    UPtrList<scalarField>& phiPsiCorrs,
+    UPtrList<scalarField>& phiPsiFixedCorrs
+);
+
+template
+<
+    template<class> class ConstraintList,
+    class ConstraintField,
+    template<class> class PsiPhiList
+>
+void limitSum
+(
+    const PtrList<surfaceScalarField>& alphaPhiBDs,
+    const ConstraintList<const ConstraintField>& constraints,
+    PsiPhiList<surfaceScalarField>& psiPhis,
+    const surfaceScalarField& phi
+);
+
+template
+<
+    template<class> class AlphaList,
+    template<class> class ConstraintList,
+    class ConstraintField,
+    template<class> class PsiPhiList
+>
 void limitSum
 (
     const AlphaList<const volScalarField>& alphas,
-    PhiList<surfaceScalarField>& phiPsis,
+    const ConstraintList<const ConstraintField>& constraints,
+    PsiPhiList<surfaceScalarField>& psiPhis,
+    const surfaceScalarField& phi
+);
+
+template
+<
+    template<class> class AlphaList,
+    template<class> class ConstraintList,
+    class ConstraintField,
+    template<class> class PsiPhiList
+>
+void limitSumLin
+(
+    const AlphaList<const volScalarField>& alphas,
+    const ConstraintList<const ConstraintField>& constraints,
+    PsiPhiList<surfaceScalarField>& psiPhis,
     const surfaceScalarField& phi
 );
 
@@ -262,6 +357,7 @@ void limitSum
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
+    #include "MULESlimiter.T.C"
     #include "MULESTemplates.T.C"
 #endif
 

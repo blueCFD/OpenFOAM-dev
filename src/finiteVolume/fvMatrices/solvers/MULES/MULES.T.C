@@ -45,6 +45,8 @@ void Foam::MULES::control::read(const dictionary& dict)
 {
     const dictionary& MULEScontrols = dict.optionalSubDict("MULES");
 
+    globalBounds = MULEScontrols.lookupOrDefault<Switch>("globalBounds", false);
+
     smoothingCoeff = MULEScontrols.lookupOrDefault<scalar>("smoothingCoeff", 0);
 
     extremaCoeff = MULEScontrols.lookupOrDefault<scalar>("extremaCoeff", 0);
@@ -80,7 +82,7 @@ void Foam::MULES::limitSum(UPtrList<scalarField>& phiPsiCorrs)
         scalar sumPos = 0;
         scalar sumNeg = 0;
 
-        for (int phasei=0; phasei<phiPsiCorrs.size(); phasei++)
+        forAll(phiPsiCorrs, phasei)
         {
             if (phiPsiCorrs[phasei][facei] > 0)
             {
@@ -98,7 +100,7 @@ void Foam::MULES::limitSum(UPtrList<scalarField>& phiPsiCorrs)
         {
             const scalar lambda = -sumNeg/sumPos;
 
-            forAll (phiPsiCorrs, phasei)
+            forAll(phiPsiCorrs, phasei)
             {
                 if (phiPsiCorrs[phasei][facei] > 0)
                 {
@@ -110,11 +112,71 @@ void Foam::MULES::limitSum(UPtrList<scalarField>& phiPsiCorrs)
         {
             const scalar lambda = -sumPos/sumNeg;
 
-            forAll (phiPsiCorrs, phasei)
+            forAll(phiPsiCorrs, phasei)
             {
                 if (phiPsiCorrs[phasei][facei] < 0)
                 {
                     phiPsiCorrs[phasei][facei] *= lambda;
+                }
+            }
+        }
+    }
+}
+
+
+void Foam::MULES::limitSum
+(
+    UPtrList<scalarField>& phiPsiCorrs,
+    UPtrList<scalarField>& phiPsiFixedCorrs
+)
+{
+    forAll(phiPsiCorrs[0], facei)
+    {
+        scalar sumFixed = 0;
+
+        forAll(phiPsiFixedCorrs, i)
+        {
+            sumFixed += phiPsiFixedCorrs[i][facei];
+        }
+
+        scalar sumPos = 0;
+        scalar sumNeg = 0;
+
+        forAll (phiPsiCorrs, i)
+        {
+            if (phiPsiCorrs[i][facei] > 0)
+            {
+                sumPos += phiPsiCorrs[i][facei];
+            }
+            else
+            {
+                sumNeg += phiPsiCorrs[i][facei];
+            }
+        }
+
+        const scalar sum = sumPos + sumNeg;
+
+        if (sum > 0 && sumPos > vSmall)
+        {
+            const scalar lambda = -(sumNeg + sumFixed)/sumPos;
+
+            forAll (phiPsiCorrs, i)
+            {
+                if (phiPsiCorrs[i][facei] > 0)
+                {
+                    phiPsiCorrs[i][facei] *= lambda;
+                }
+            }
+        }
+        else if (sum < 0 && sumNeg < -vSmall)
+        {
+            const scalar lambda = -(sumPos + sumFixed)/sumNeg;
+
+            forAll (phiPsiCorrs, i)
+            {
+                if (phiPsiCorrs[i][facei] < 0)
+                {
+                    phiPsiCorrs[i][facei] *= lambda;
                 }
             }
         }
