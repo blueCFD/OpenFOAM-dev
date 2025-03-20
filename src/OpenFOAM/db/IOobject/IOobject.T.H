@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -195,9 +195,6 @@ private:
 protected:
 
     // Protected Member Functions
-
-        //- Set the object state to bad
-        void setBad(const string&);
 
         //- Read header using typeGlobalFile to find file
         //  and optionally check the headerClassName against Type
