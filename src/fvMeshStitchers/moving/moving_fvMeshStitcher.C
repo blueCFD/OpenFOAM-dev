@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvMeshStitchersMoving.H"
+#include "moving_fvMeshStitcher.H"
 #include "FvFaceCellWave.T.H"
 #include "fvMeshSubset.H"
 #include "fvmLaplacian.H"
