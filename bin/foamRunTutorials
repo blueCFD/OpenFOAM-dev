@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added -jobs and usage information
@@ -188,9 +188,8 @@ then
     checkIfDefaultRunCanBeExecuted
 
     # Run normal case.
-    application=$(getApplication)
     runApplication blockMesh
-    runApplication "$application"
+    runApplication "$(getApplication)"
 else
     # Loop over sub-directories and compile any applications
     for caseName in *
