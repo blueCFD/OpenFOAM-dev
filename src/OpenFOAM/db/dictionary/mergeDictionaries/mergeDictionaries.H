@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,82 +21,47 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::diameterModels::driftModels::densityChangeDrift
+InNamespace
+    Foam
 
 Description
-    Drift rate induced by changes in density.
+    Function with which to merge one dictionary into another. Intended for
+    user-facing dictionary merging (e.g., by foamDictionary or similar).
+
+    Supports prepending entries in the source dictionary with '~' to indicate
+    that they should be removed in the result. Also supports deactivating
+    wildcards and treating regex keywords as literal strings. Also permits a
+    table of shortcuts to be provided with which to rename entries.
+
+    Returns whether or not anything changed.
 
 SourceFiles
-    densityChange.C
+    mergeDictionaries.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef densityChange_H
-#define densityChange_H
+#ifndef mergeDictionaries_H
+#define mergeDictionaries_H
 
-#include "driftModel.H"
+#include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace diameterModels
-{
-namespace driftModels
-{
-
-/*---------------------------------------------------------------------------*\
-                     Class densityChangeDrift Declaration
-\*---------------------------------------------------------------------------*/
-
-class densityChangeDrift
-:
-    public driftModel
-{
-    // Private Data
-
-        //- ...
-        PtrList<volScalarField> dRhoDts_;
-
-
-public:
-
-    //- Runtime type information
-    TypeName("densityChange");
-
-    // Constructor
-
-        densityChangeDrift
-        (
-            const populationBalanceModel& popBal,
-            const dictionary& dict
-        );
-
-
-    //- Destructor
-    virtual ~densityChangeDrift()
-    {}
-
-
-    // Member Functions
-
-        //- Precompute diameter independent expressions
-        virtual void precompute();
-
-        //- Add to driftRate
-        virtual void addToDriftRate
-        (
-            volScalarField& driftRate,
-            const label i
-        );
-};
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace driftModels
-} // End namespace diameterModels
+bool mergeDictionaries
+(
+    dictionary& tgtDict,
+    const dictionary& srcDict,
+    const bool wildcards = true,
+    const HashTable<wordList, word>& shortcuts = HashTable<wordList, word>(0)
+);
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
