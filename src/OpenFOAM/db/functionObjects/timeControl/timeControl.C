@@ -189,16 +189,16 @@ void Foam::timeControl::read(const dictionary& dict)
             }
             else if (dict.found(frequenciesName))
             {
-                List<Pair<scalar>> frequencies
-                (
-                    dict.lookup(frequenciesName)
-                );
+                List<Pair<scalar>> frequencies(dict.lookup(frequenciesName));
+
+                const scalar userEndTime =
+                    time_.timeToUserTime(time_.endTime().value());
 
                 if (!repeat)
                 {
                     frequencies.append
                     (
-                        {time_.endTime().value(), frequencies.last().second()}
+                        {userEndTime, frequencies.last().second()}
                     );
                 }
 
@@ -208,7 +208,7 @@ void Foam::timeControl::read(const dictionary& dict)
                 DynamicList<scalar> times(1, frequencies[0].first());
                 label i = 0;
                 label repeati = 0;
-                while (times[i] < time_.endTime().value())
+                while (times[i] < userEndTime)
                 {
                     for(label pi=0; pi<frequencies.size()-1; pi++)
                     {
@@ -398,28 +398,30 @@ Foam::scalar Foam::timeControl::timeToNextAction()
                   - (time_.value() - startTime_)
                 );
             }
-
             break;
         }
 
         case timeControls::runTimes:
         {
-            if (time_.userTimeValue() + timeDelta_ < times_.last())
+            scalar realTimeToNextAction = vGreat;
+
+            forAll(times_, i)
             {
-                forAll(times_, i)
+                const scalar userTimeToThisAction =
+                    times_[i] - time_.userTimeValue();
+
+                if (userTimeToThisAction > timeDelta_)
                 {
-                    if (times_[i] > time_.userTimeValue() + timeDelta_)
-                    {
-                        return time_.userTimeToTime
+                    realTimeToNextAction =
+                        min
                         (
-                            times_[i] - time_.userTimeValue()
+                            realTimeToNextAction,
+                            time_.userTimeToTime(userTimeToThisAction)
                         );
-                    }
                 }
             }
 
-            return vGreat;
-
+            return realTimeToNextAction;
             break;
         }
 
