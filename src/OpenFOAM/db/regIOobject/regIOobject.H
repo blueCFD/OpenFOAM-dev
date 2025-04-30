@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2016-2024 FS Dynamics Portugal: Changes are tracked at:
@@ -115,7 +115,7 @@ public:
 
         //- Move constructor
         //  Registers copy if the object is registered
-        regIOobject(const regIOobject&&);
+        regIOobject(regIOobject&&);
 
         //- Copy constructor, transferring registry registration to copy
         //  if registerCopy is true

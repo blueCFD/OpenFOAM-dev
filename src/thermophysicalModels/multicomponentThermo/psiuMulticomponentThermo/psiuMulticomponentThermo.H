@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 2024 FS Dynamics Portugal: Changes are tracked at:
@@ -45,6 +45,7 @@ SourceFiles
 #include "psiThermo.H"
 #include "PsiuMulticomponentThermo.T.H"
 #include "speciesTable.H"
+#include "DimensionedFieldListSlicer.T.H"
 #include "GeometricFieldListSlicer.T.H"
 #include "thermoDerivedMacros.H"
 
@@ -282,7 +283,26 @@ public:
         ) const;
 
         //- Get the slicer for the given source
-        inline PtrList<scalarField> Yslicer(const fvSource& source) const;
+        inline DimensionedFieldListAndSlicer<scalar, volMesh> Yslicer
+        (
+            const fvSource& model,
+            const volScalarField::Internal& source
+        ) const;
+
+        //- Get the composition of a source cell
+        inline scalarFieldListSlice sourceCellComposition
+        (
+            const DimensionedFieldListAndSlicer<scalar, volMesh>& Yslicer,
+            const label i
+        ) const;
+
+        //- Get the slicer for the given source
+        inline PtrList<scalarField> Yslicer
+        (
+            const fvSource& model,
+            const scalarField& source,
+            const labelUList& cells
+        ) const;
 
         //- Get the composition of a source cell
         inline scalarFieldListSlice sourceCellComposition
