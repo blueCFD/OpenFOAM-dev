@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,37 +22,29 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::uniformFixedEnergyTemperatureFvScalarFieldSource
+    Foam::NaNFvFieldSource
 
 Description
-    This source condition is applied to the temperature field, but provides a
-    uniform fixed energy into the energy equation
+    This source condition provides a NaN value.
 
 Usage
-    \table
-        Property       | Description                | Required | Default value
-        uniformHe      | uniform energy value       | yes      |
-    \endtable
-
-    Example of the boundary condition specification:
+    Example specification:
     \verbatim
     <sourceName>
     {
-        type            uniformFixedEnergyTemperature;
-        uniformHe       3700000;
+        type            NaN;
     }
     \endverbatim
 
 SourceFiles
-    uniformFixedEnergyTemperatureFvScalarFieldSource.C
+    NaNFvFieldSource.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef uniformFixedEnergyTemperatureFvScalarFieldSource_H
-#define uniformFixedEnergyTemperatureFvScalarFieldSource_H
+#ifndef NaNFvFieldSource_H
+#define NaNFvFieldSource_H
 
-#include "energyCalculatedTemperatureFvScalarFieldSource.H"
-#include "Function1.T.H"
+#include "fvFieldSource.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,78 +52,71 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-      Class uniformFixedEnergyTemperatureFvScalarFieldSource Declaration
+               Class NaNFvFieldSource Declaration
 \*---------------------------------------------------------------------------*/
 
-class uniformFixedEnergyTemperatureFvScalarFieldSource
+template<class Type>
+class NaNFvFieldSource
 :
-    public energyCalculatedTemperatureFvScalarFieldSource
+    public fvFieldSource<Type>
 {
-private:
-
-    // Private Data
-
-        //- Uniform value
-        autoPtr<Function1<scalar>> uniformHe_;
-
-
 public:
 
     //- Runtime type information
-    TypeName("uniformFixedEnergyTemperature");
+    TypeName("NaN");
 
 
     // Constructors
 
         //- Construct from internal field and dictionary
-        uniformFixedEnergyTemperatureFvScalarFieldSource
+        NaNFvFieldSource
         (
-            const DimensionedField<scalar, volMesh>&,
+            const DimensionedField<Type, volMesh>&,
             const dictionary& dict
         );
 
         //- Copy constructor setting internal field reference
-        uniformFixedEnergyTemperatureFvScalarFieldSource
+        NaNFvFieldSource
         (
-            const uniformFixedEnergyTemperatureFvScalarFieldSource&,
-            const DimensionedField<scalar, volMesh>&
+            const NaNFvFieldSource<Type>&,
+            const DimensionedField<Type, volMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
-        virtual autoPtr<fvScalarFieldSource> clone
+        virtual autoPtr<fvFieldSource<Type>> clone
         (
-            const DimensionedField<scalar, volMesh>& iF
+            const DimensionedField<Type, volMesh>& iF
         ) const
         {
-            return autoPtr<fvScalarFieldSource>
+            return autoPtr<fvFieldSource<Type>>
             (
-                new uniformFixedEnergyTemperatureFvScalarFieldSource(*this, iF)
+                new NaNFvFieldSource<Type>(*this, iF)
             );
         }
 
 
     //- Destructor
-    virtual ~uniformFixedEnergyTemperatureFvScalarFieldSource();
+    virtual ~NaNFvFieldSource();
 
 
     // Member Functions
 
-        //- Return the source energy value
-        virtual tmp<DimensionedField<scalar, volMesh>> sourceHeValue
+        //- Return the source value
+        virtual tmp<DimensionedField<Type, volMesh>> sourceValue
         (
             const fvSource& model,
             const DimensionedField<scalar, volMesh>& source
         ) const;
 
-        //- Return the source energy value
-        virtual tmp<scalarField> sourceHeValue
+        //- Return the source value
+        virtual tmp<Field<Type>> sourceValue
         (
             const fvSource& model,
             const scalarField& source,
             const labelUList& cells
         ) const;
 
-        //- Return the internal coefficient
+        //- Return the source value
         virtual tmp<DimensionedField<scalar, volMesh>> internalCoeff
         (
             const fvSource& model,
@@ -145,15 +130,18 @@ public:
             const scalarField& source,
             const labelUList& cells
         ) const;
-
-        //- Write
-        virtual void write(Ostream&) const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+    #include "NaNFvFieldSource.T.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

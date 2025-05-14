@@ -52,7 +52,7 @@ Usage
 
     Example of the boundary condition specification:
     \verbatim
-    <patchName>
+    <sourceName>
     {
         type        turbulentIntensityKineticEnergyInlet;
         intensity   0.05;           // 5% turbulence
