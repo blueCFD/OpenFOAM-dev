@@ -22,75 +22,92 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::zoneGenerators::lookup
+    Foam::zoneGenerators::box
 
 Description
-    A zoneGenerator which looks-up and returns a zoneSet containing point,
-    and/or cell and/or faces zones.
+    A zoneGenerator which selects points, cells or faces with centres inside a
+    box or list of boxes.
 
 Usage
     \table
         Property     | Description             | Required | Default value
-        type         | Type: lookup            | no       | lookup
-        name         | Name of the zone(s)     | no       | zoneGenerator name
-        zoneType     | Type of zone            | no       | all the zone types
+        type         | Type: box               | yes      |
+        name         | Name of the zone        | no       | zoneGenerator name
+        zoneType     | Type of zone            | yes      |
+        moveUpdate   | Switch to update after mesh motion | no | false
+        box          | Min and max bounding points of the box    | no |
+        boxes        | List of bounding point pairs of the boxes | no |
+        min          | Min bounding point of the box             | no |
+        max          | Max bounding point of the box             | no |
     \endtable
 
-    A full specification for the zoneGenerators::lookup requires the keyword
-    which is the name of the zoneGenerator, the type of the zoneGenerator,
-    i.e. \c lookup, the name and type of the zone to be looked-up, e.g.
+    A cellZone named \c box1 containing the cells with centres inside a
+    single box defined by its minimum and maximum bounding points is generated
+    by
+    \verbatim
+        box1
+        {
+            type        box;
+            zoneType    cell;
+
+            min     (-0.0075 0 -1);
+            max     (-0.003 0.0025 1);
+        }
+    \endverbatim
+    or named \c box1 specifically if the zoneGenerator has to be named
+    differently:
     \verbatim
         <zoneGenerator name>
         {
-            type        lookup;
-            name        box;
+            type        box;
             zoneType    cell;
+            name        box1;
+
+            min     (-0.0075 0 -1);
+            max     (-0.003 0.0025 1);
         }
     \endverbatim
-    However usually the name of the zoneGenerator can be chosen to match the
-    name of the zone to be looked-up so the name entry defaults to the
-    \c zoneGenerator keyword to make the specification simpler, e.g.
+    Alternatively the box can be specified using \c box entry followed by the
+    minimum and maximum bounding points:
     \verbatim
-        box
+        box2
         {
-            type        lookup;
+            type        box;
             zoneType    cell;
+
+            box         (-0.0075 0 -1) (-0.003 0.0025 1);
         }
     \endverbatim
-    To further simplify the specification of the \c lookup, given that it will
-    be commonly used in a zoneGenerator sequence, \c lookup is the default
-    type, so the box cellZone can be looked-up with the following simple
-    specification:
+    or a list of boxes can be specified using the \c boxes entry followed by a
+    list of minimum and maximum bounding point pairs:
     \verbatim
-        box
+        boxes
         {
+            type        box;
             zoneType    cell;
+
+            boxes
+            (
+                (-0.0075 0 -1) (-0.003 0.0025 1)
+                (-0.005 0.001 -1) (-0.001 0.0025 1)
+            );
         }
-    \endverbatim
-    If the \c zoneType is omitted the zoneSet returned by \c lookup will
-    contain each of the three zone types corresponding to the zone name that are
-    present in the lists of zones.  Usually there will only be the one zone type
-    of the given name so the \c zoneType entry can often be omitted and this
-    form of default \lookup can simply be specified as the name of
-    the zone only, e.g.
-    \verbatim
-        box;
     \endverbatim
 
 See also
-    zoneGenerator
-    zoneSet
-    zoneGeneratorList
+    zoneGenerators::volume
+    treeBoundBoxList
 
 SourceFiles
-    lookup.C
+    box.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef lookup_H
-#define lookup_H
+#ifndef zoneGenerators_box_H
+#define zoneGenerators_box_H
 
-#include "zoneGeneratorList.H"
+#include "volume.H"
+#include "treeBoundBoxList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -100,32 +117,37 @@ namespace zoneGenerators
 {
 
 /*---------------------------------------------------------------------------*\
-                              Class lookup Declaration
+                              Class box Declaration
 \*---------------------------------------------------------------------------*/
 
-class lookup
+class box
 :
-    public zoneGenerator
+    public volume
 {
     // Private Data
 
-        //- If the zoneType is not set lookup all the zones of the given name
-        bool anyZoneType_;
+        //- Bounding boxes
+        treeBoundBoxList boxes_;
 
-        //- The type of zone to lookup (optional)
-        zoneTypes zoneType_;
+
+    // Private Member Functions
+
+        friend class zoneGenerator;
+
+        //- Return true if the boxes contain the given point
+        inline bool contains(const point& p) const;
 
 
 public:
 
     //- Runtime type information
-    TypeName("lookup");
+    TypeName("box");
 
 
     // Constructors
 
         //- Construct from dictionary
-        lookup
+        box
         (
             const word& name,
             const polyMesh& mesh,
@@ -134,7 +156,7 @@ public:
 
 
     //- Destructor
-    virtual ~lookup();
+    virtual ~box();
 
 
     // Member Functions

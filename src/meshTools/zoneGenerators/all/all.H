@@ -22,93 +22,87 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::zoneGeneratorList
+    Foam::zoneGenerators::all
 
 Description
-    List of zoneGenerators
+    A zoneGenerator which selects all the point, cells or faces of the mesh
 
-    Used by Foam::zonesGenerator to generate and store the zones and also by the
-    zoneGenerators::Union, zoneGenerators::difference and
-    zoneGenerators::intersection zoneGenerators to construct the list of zones
-    they combine.
+Usage
+    \table
+        Property     | Description             | Required | Default value
+        type         | Type: all               | yes      |
+        name         | Name of the zone        | no       | zoneGenerator name
+    \endtable
 
-See also
-    zonesGenerator
-    zoneGenerator
-    zoneSet
+    Create a cellZone named \c allCells containing all the cells in the mesh:
+    \verbatim
+        allCells
+        {
+            type        all;
+            zoneType    cell;
+        }
+    \endverbatim
 
 SourceFiles
-    zoneGeneratorList.C
+    all.C
 
 \*---------------------------------------------------------------------------*/
-#ifndef zoneGeneratorList_H
-#define zoneGeneratorList_H
 
-#include "zoneGenerator.H"
-#include "PtrListDictionary.T.H"
+#ifndef all_H
+#define all_H
+
+#include "zoneGeneratorList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace zoneGenerators
+{
 
 /*---------------------------------------------------------------------------*\
-                      Class zoneGeneratorList Declaration
+                              Class all Declaration
 \*---------------------------------------------------------------------------*/
 
-class zoneGeneratorList
+class all
 :
-    public PtrListDictionary<zoneGenerator>
+    public zoneGenerator
 {
-protected:
+    // Private Data
 
-    // Protected Data
-
-        //- Reference to the polyMesh
-        const polyMesh& mesh_;
-
-
-    // Protected Member Functions
-
-        void read(const dictionary& dict);
+        zoneTypes zoneType_;
 
 
 public:
 
+    //- Runtime type information
+    TypeName("all");
+
+
     // Constructors
 
-        //- Construct from mesh
-        zoneGeneratorList(const polyMesh& mesh);
+        //- Construct from dictionary
+        all
+        (
+            const word& name,
+            const polyMesh& mesh,
+            const dictionary& dict
+        );
 
-        //- Construct from mesh and dictionary
-        zoneGeneratorList(const polyMesh& mesh, const dictionary& dict);
 
-        //- Disallow default bitwise copy construction
-        zoneGeneratorList(const zoneGeneratorList&) = delete;
+    //- Destructor
+    virtual ~all();
 
 
     // Member Functions
 
-        //- Return true if any of the zoneGenerators updates any of the zones
-        // following mesh point motion
-        bool moveUpdate() const;
-
-        //- Generate and register the zones
-        void generate();
-
-        //- Update the zones following mesh point movement
-        void movePoints();
-
-
-    // Member Operators
-
-        //- Disallow default bitwise assignment
-        void operator=(const zoneGeneratorList&) = delete;
+        virtual zoneSet generate() const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace zoneGenerators
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
