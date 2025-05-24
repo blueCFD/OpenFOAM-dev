@@ -22,35 +22,46 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::zoneGenerators::all
+    Foam::zoneGenerators::set
 
 Description
-    A zoneGenerator which selects all the point, cells or faces of the mesh
+    A zoneGenerator which converts a set into the corresponding zone
 
 Usage
     \table
         Property     | Description             | Required | Default value
-        type         | Type: all               | yes      |
+        type         | Type: set               | yes      |
         name         | Name of the zone        | no       | zoneGenerator name
-        zoneType     | Type of zone            | no       | all the zone types
+        setName      | Name of the set         | no       | zone name
+        zoneType     | Type of set/zone        | yes      |
     \endtable
 
-    Create a cellZone named \c allCells containing all the cells in the mesh:
+    Create a cellZone named \c setCells containing the cells in the set:
     \verbatim
-        allCells
+        setCells
         {
-            type        all;
+            type        set;
+            zoneType    cell;
+            setName     boxCells;
+        }
+    \endverbatim
+    of if the zoneGenerator, cellZone and set all have the name \c boxCells
+    this simpler specification can be used:
+    \verbatim
+        boxCells
+        {
+            type        set;
             zoneType    cell;
         }
     \endverbatim
 
 SourceFiles
-    all.C
+    set.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef all_H
-#define all_H
+#ifndef set_H
+#define set_H
 
 #include "zoneGenerator.H"
 
@@ -62,28 +73,33 @@ namespace zoneGenerators
 {
 
 /*---------------------------------------------------------------------------*\
-                              Class all Declaration
+                              Class set Declaration
 \*---------------------------------------------------------------------------*/
 
-class all
+class set
 :
     public zoneGenerator
 {
     // Private Data
 
+        //- Type of the set and corresponding zone
         zoneTypes zoneType_;
+
+        //- Name of the set to be converted
+        //  Defaults to the name of the zone
+        const word setName_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("all");
+    TypeName("set");
 
 
     // Constructors
 
         //- Construct from dictionary
-        all
+        set
         (
             const word& name,
             const polyMesh& mesh,
@@ -92,7 +108,7 @@ public:
 
 
     //- Destructor
-    virtual ~all();
+    virtual ~set();
 
 
     // Member Functions
