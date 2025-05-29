@@ -10,19 +10,18 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "system";
-    object      topoSetDict;
+    object      refineMeshDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
-    {
-        name    box;
-        type    cellSet;
-        action  new;
-        source  boxToCell;
-        box (-1e6 -1e6 -30) (1200 1200 30);
-    }
-);
+hexRef8         yes;
+
+zone
+{
+    type    cylinder;
+    point1  (0 0 0.5);
+    point2  (0 0 0.7);
+    radius  0.25;
+}
 
 // ************************************************************************* //

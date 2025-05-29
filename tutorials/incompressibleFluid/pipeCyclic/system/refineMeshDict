@@ -14,26 +14,12 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-set box;
+hexRef8         yes;
 
-coordinateSystem global;
-
-globalCoeffs
+zone
 {
-    e1   (1 0 0);
-    e2   (0 1 0);
+    type    box;
+    box     (-1e6 -1e6 -1e6)(1e6 -0.15 0.3);
 }
-
-directions
-(
-    e3
-);
-
-useHexTopology  true;
-
-geometricCut    false;
-
-writeMesh       false;
-
 
 // ************************************************************************* //
