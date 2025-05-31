@@ -9,30 +9,23 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      topoSetDict;
+    location    "system";
+    object      subsetMeshDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
-    // Create porousBlockage cellSet
-    {
-        name    porousBlockageCellSet;
-        type    cellSet;
-        action  new;
-        source  boxToCell;
-        box     (-0.5 -0.5 -1) (0.5 0.5 1);
-    }
+zone
+{
+    type invert;
 
-    // Convert porousBlockage cellSet into a cellZone
+    box
     {
-        name    porousBlockage;
-        type    cellZoneSet;
-        action  new;
-        source  setToCellZone;
-        set     porousBlockageCellSet;
+        type        box;
+        zoneType    cell;
+        box         (0.1 0.8 -100) (0.4 100 100);
     }
-);
+}
+
+patch   floatingObject;
 
 // ************************************************************************* //

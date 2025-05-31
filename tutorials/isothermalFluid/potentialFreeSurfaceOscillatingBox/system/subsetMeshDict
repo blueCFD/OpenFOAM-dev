@@ -10,27 +10,22 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "system";
-    object      topoSetDict;
+    object      subsetMeshDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
-    {
-        name    injection;
-        type    cellSet;
-        action  new;
-        source  boxToCell;
-        box     (0 0.04 0) (0.1 0.05 0.1);
-    }
+zone
+{
+    type invert;
 
+    box
     {
-        name    injection;
-        type    cellZoneSet;
-        action  new;
-        source  setToCellZone;
-        set     injection;
+        type        box;
+        zoneType    cell;
+        box         (0.1 0.8 -100) (0.4 100 100);
     }
-);
+}
+
+patch   floatingObject;
 
 // ************************************************************************* //

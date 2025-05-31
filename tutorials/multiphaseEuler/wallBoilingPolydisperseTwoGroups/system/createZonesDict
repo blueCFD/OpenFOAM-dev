@@ -9,30 +9,29 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      topoSetDict;
+    object      createZonesDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "$FOAM_CASE/system/blockMeshDict"
+x349
+{
+    type        box;
+    zoneType    cell;
+    box         (3.48 -0.1 -0.1) (3.5 0.1 0.1);
+}
 
-actions
-(
-    {
-        name    cs;
-        type    cellSet;
-        action  new;
-        source  sphereToCell;
-        centre  (0 0 0);
-        radius  $!geometry/sphere/radius;
-    }
-    {
-        name    solid;
-        type    cellZoneSet;
-        action  new;
-        source  setToCellZone;
-        set     cs;
-    }
-);
+x349_wall
+{
+    type        box;
+    zoneType    cell;
+    box         (3.48 0.0093 -0.1) (3.5 0.1 0.1);
+}
+
+x349_bulk
+{
+    type        box;
+    zoneType    cell;
+    box         (3.48 0.0 -0.1) (3.5 0.005 0.1);
+}
 
 // ************************************************************************* //

@@ -9,43 +9,29 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      topoSetDict;
+    object      createZonesDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
-    // rotor cell zone
-    {
-        name    rotorCells;
-        type    cellSet;
-        action  new;
-        source  zoneToCell;
-        zone    cylinder;
-    }
-    {
-        name    rotorCells;
-        type    cellSet;
-        action  add;
-        source  zoneToCell;
-        zone    innerCylinder;
-    }
-    {
-        name    rotorCells;
-        type    cellSet;
-        action  subset;
-        source  boxToCell;
-        box (-100 -100 0.1) (100 100 0.15);
-    }
-    {
-        name    rotor;
-        type    cellZoneSet;
-        action  new;
-        source  setToCellZone;
-        set rotorCells;
-    }
-);
+rotor
+{
+    type        intersection;
 
+    union
+    {
+        type    union;
+
+        cylinder;
+        innerCylinder;
+    }
+
+    box
+    {
+        type        box;
+        zoneType    cell;
+
+        box         (-100 -100 0.1) (100 100 0.15);
+    }
+}
 
 // ************************************************************************* //

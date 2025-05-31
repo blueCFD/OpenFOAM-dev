@@ -9,43 +9,44 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      topoSetDict;
+    location    "system";
+    object      subsetMeshDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
+zone
+{
+    type invert;
+
+    box1
     {
-        name    injection;
-        type    cellSet;
-        action  new;
-        source  boxToCell;
-        box     (0 -1 0.0) (0.005 1 0.01);
+        type        box;
+        zoneType    cell;
+        box         (0.4 0.1 0.1) (0.6 0.3 0.3);
     }
 
+    box2
     {
-        name    injection;
-        type    cellZoneSet;
-        action  new;
-        source  setToCellZone;
-        set     injection;
+        type        box;
+        zoneType    cell;
+        box         (0.4 0.1 0.4) (0.6 0.3 0.6);
     }
 
+    box3
     {
-        name    outlet;
-        type    cellSet;
-        action  new;
-        source  boxToCell;
-        box     (0 -1 0.89) (0.025 1 0.9);
+        type        box;
+        zoneType    cell;
+        box         (0.4 0.4 0.1) (0.6 0.6 0.3);
     }
 
+    box4
     {
-        name    outlet;
-        type    cellZoneSet;
-        action  new;
-        source  setToCellZone;
-        set     outlet;
+        type        box;
+        zoneType    cell;
+        box         (0.4 0.4 0.4) (0.6 0.6 0.6);
     }
-);
+}
+
+patch   film;
 
 // ************************************************************************* //
