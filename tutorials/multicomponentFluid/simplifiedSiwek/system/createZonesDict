@@ -13,25 +13,12 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-rotor
+ignitionCells
 {
-    type        intersection;
-
-    union
-    {
-        type        union;
-
-        cylinder;
-        innerCylinder;
-    }
-
-    box
-    {
-        type        box;
-        zoneType    cell;
-
-        box         (-100 -100 0.1) (100 100 0.15);
-    }
+    type        sphere;
+    zoneType    cell;
+    centre      (0.125 0.375 0.05);
+    radius      0.005;
 }
 
 // ************************************************************************* //
