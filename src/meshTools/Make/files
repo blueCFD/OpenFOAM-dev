@@ -240,6 +240,9 @@ zoneGenerators/volume/truncatedCone/truncatedCone.C
 zoneGenerators/conversion/point/pointZoneGenerator.C
 zoneGenerators/conversion/face/faceZoneGenerator.C
 
+zoneGenerators/face/patch/patchZoneGenerator.C
+zoneGenerators/face/normal/normalZoneGenerator.C
+
 zoneGenerators/periodic/periodic.C
 
 zoneGenerators/set/set.C

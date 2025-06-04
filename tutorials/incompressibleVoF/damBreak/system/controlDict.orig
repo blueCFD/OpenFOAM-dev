@@ -9,14 +9,14 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      momentumTransport;
+    location    "system";
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-simulationType  laminar;
-
-~RAS;
-
+DebugSwitches
+{
+    MULES           1;
+}
 
 // ************************************************************************* //

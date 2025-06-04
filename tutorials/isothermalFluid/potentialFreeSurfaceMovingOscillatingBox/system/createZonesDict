@@ -9,29 +9,26 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      setFieldsDict;
+    object      createZonesDict;
 }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defaultValues
+f0
 {
-    alpha.water 0;
-}
+    type        intersection;
 
-zones
-{
-    waterColumn
+    freeSurface
+    {
+        type        patch;
+        patch       freeSurface;
+    }
+
+    box
     {
         type        box;
-        zoneType    cell;
-
-        box (0 0 -1) (0.1461 0.292 1);
-
-        values
-        {
-            alpha.water 1;
-        }
+        zoneType    face;
+        box         (-100 0.9 -100) (0.2 100 100);
     }
 }
 

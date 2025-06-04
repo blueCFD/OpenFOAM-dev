@@ -22,21 +22,39 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::zoneGenerators::volume
+    Foam::zoneGenerators::patchZoneGenerator
 
 Description
-    Abstract zoneGenerator which selects points, cells or faces with centres
-    inside a volume.
+    A zoneGenerator which constructs a faceZone from a set of patches
+
+Usage
+    \table
+        Property     | Description             | Required | Default value
+        type         | Type: face              | yes      |
+        name         | Name of the zone        | no       | zoneGenerator name
+        patch        | Name of patch           | no       |
+        patches      | List of patch names     | no       | ()
+        moveUpdate   | Switch to update after mesh motion | no | false
+    \endtable
+
+    To convert patch named \c freeSurface into a faceZone of the same name:
+    \verbatim
+        freeSurface
+        {
+            type        patch;
+            patch       freeSurface;
+        }
+    \endverbatim
 
 SourceFiles
-    volume.C
+    patchZoneGenerator.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef zoneGenerators_volume_H
-#define zoneGenerators_volume_H
+#ifndef patchZoneGenerator_H
+#define patchZoneGenerator_H
 
-#include "zoneGenerator.H"
+#include "zoneGeneratorList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,33 +64,29 @@ namespace zoneGenerators
 {
 
 /*---------------------------------------------------------------------------*\
-                              Class volume Declaration
+                              Class patchZoneGenerator Declaration
 \*---------------------------------------------------------------------------*/
 
-class volume
+class patchZoneGenerator
 :
     public zoneGenerator
 {
-protected:
+    // Private Data
 
-    // Protected Member Data
-
-        zoneTypes zoneType_;
-
-
-    // Protected Member Functions
-
-        //- Generate the zone of the given type
-        template<class ZoneGenType>
-        zoneSet generate(const ZoneGenType& zone) const;
+        //- Set of patches to convert into faceZone
+        labelHashSet patchSet_;
 
 
 public:
 
+    //- Runtime type information
+    TypeName("patch");
+
+
     // Constructors
 
         //- Construct from dictionary
-        volume
+        patchZoneGenerator
         (
             const word& name,
             const polyMesh& mesh,
@@ -81,12 +95,12 @@ public:
 
 
     //- Destructor
-    virtual ~volume();
+    virtual ~patchZoneGenerator();
 
 
     // Member Functions
 
-        virtual zoneSet generate() const = 0;
+        virtual zoneSet generate() const;
 };
 
 
@@ -94,12 +108,6 @@ public:
 
 } // End namespace zoneGenerators
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "volumeTemplates.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

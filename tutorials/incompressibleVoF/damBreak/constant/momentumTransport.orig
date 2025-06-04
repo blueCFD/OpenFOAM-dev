@@ -9,29 +9,20 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      topoSetDict;
+    location    "constant";
+    object      momentumTransport;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
-    {
-        name    floatingObjectBottom;
-        type    faceSet;
-        action  new;
-        source  patchToFace;
-        patch   floatingObject;
-    }
+simulationType  RAS;
 
-    {
-        name    floatingObjectBottom;
-        type    faceSet;
-        action  subset;
-        source  normalToFace;
-        normal (0 1 0);     // Vector
-        cos     0.01;       // Tolerance (max cos of angle)
-    }
-);
+RAS
+{
+    model           kEpsilon;
+    // model           kOmega;
+
+    turbulence      on;
+}
+
 
 // ************************************************************************* //

@@ -9,21 +9,14 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      momentumTransport;
+    location    "system";
+    object      functions;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-simulationType  RAS;
+#includeFunc phaseScalarTransport(field=tracer.water)
 
-RAS
-{
-    model           kEpsilon;
-    // model           kOmega;
-
-    turbulence      on;
-
-}
+#includeFunc phaseScalarTransport(field=tracer.air, residualAlpha=1e-6)
 
 
 // ************************************************************************* //

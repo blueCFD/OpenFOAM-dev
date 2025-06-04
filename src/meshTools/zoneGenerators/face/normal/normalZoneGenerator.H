@@ -22,21 +22,49 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::zoneGenerators::volume
+    Foam::zoneGenerators::normalZoneGenerator
 
 Description
-    Abstract zoneGenerator which selects points, cells or faces with centres
-    inside a volume.
+    A zoneGenerator which selects the faces returned by the given
+    zoneGenerator that are aligned with the given normal.
+
+Usage
+    \table
+        Property     | Description              | Required | Default value
+        type         | Type: face               | yes      |
+        name         | Name of the zone         | no       | zoneGenerator name
+        normal       | Reference unit vector    | yes      |
+        tol          | cos angle tolerance      | yes      |
+        moveUpdate   | Switch to update after mesh motion | no | false
+    \endtable
+
+    To create the faceZone floatingObject containing the faces of the
+    \c floatingObject patch which point in the y-direction:
+    \verbatim
+        floatingObjectBottom
+        {
+            type        normal;
+
+            normal      (0 1 0);
+            tol         0.01;
+
+            floatingObject
+            {
+                type        patch;
+                patch       floatingObject;
+            }
+        }
+    \endverbatim
 
 SourceFiles
-    volume.C
+    normalZoneGenerator.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef zoneGenerators_volume_H
-#define zoneGenerators_volume_H
+#ifndef normalZoneGenerator_H
+#define normalZoneGenerator_H
 
-#include "zoneGenerator.H"
+#include "zoneGeneratorList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,33 +74,36 @@ namespace zoneGenerators
 {
 
 /*---------------------------------------------------------------------------*\
-                              Class volume Declaration
+                              Class normalZoneGenerator Declaration
 \*---------------------------------------------------------------------------*/
 
-class volume
+class normalZoneGenerator
 :
     public zoneGenerator
 {
-protected:
+    // Private Data
 
-    // Protected Member Data
+        //- Zone generator supplying the faces
+        autoPtr<zoneGenerator> zoneGenerator_;
 
-        zoneTypes zoneType_;
+        //- Reference unit vector face orientations are compared to
+        vector normal_;
 
-
-    // Protected Member Functions
-
-        //- Generate the zone of the given type
-        template<class ZoneGenType>
-        zoneSet generate(const ZoneGenType& zone) const;
+        //- Direction comparison tolerance
+        //  cos of angle between normal_ and face normal
+        const scalar tol_;
 
 
 public:
 
+    //- Runtime type information
+    TypeName("normal");
+
+
     // Constructors
 
         //- Construct from dictionary
-        volume
+        normalZoneGenerator
         (
             const word& name,
             const polyMesh& mesh,
@@ -81,12 +112,12 @@ public:
 
 
     //- Destructor
-    virtual ~volume();
+    virtual ~normalZoneGenerator();
 
 
     // Member Functions
 
-        virtual zoneSet generate() const = 0;
+        virtual zoneSet generate() const;
 };
 
 
@@ -94,12 +125,6 @@ public:
 
 } // End namespace zoneGenerators
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "volumeTemplates.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

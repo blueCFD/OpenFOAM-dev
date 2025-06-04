@@ -9,37 +9,31 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      topoSetDict;
+    location    "system";
+    object      setFieldsDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
-    {
-        name    f0FaceSet;
-        type    faceSet;
-        action  new;
-        source  patchToFace;
-        patch   freeSurface;
-    }
+defaultValues
+{
+    alpha.water     0;
+}
 
+zones
+{
+    waterColumn
     {
-        name    f0FaceSet;
-        type    faceSet;
-        action  subset;
-        source  boxToFace;
-        box     (-100 0.9 -100) (0.2 100 100);
-    }
+        type            box;
+        zoneType        cell;
 
-    {
-        name    f0;
-        type    faceZoneSet;
-        action  new;
-        source  setToFaceZone;
-        faceSet f0FaceSet;
+        box             (0 0 -1) (0.1461 0.292 1);
+
+        values
+        {
+            alpha.water     1;
+        }
     }
-);
+}
 
 
 // ************************************************************************* //

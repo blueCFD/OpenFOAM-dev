@@ -9,37 +9,48 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      topoSetDict;
+    location    "system";
+    object      controlDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-actions
-(
-    {
-        name    f0FaceSet;
-        type    faceSet;
-        action  new;
-        source  patchToFace;
-        patch   freeSurface;
-    }
+solver          incompressibleVoF;
 
-    {
-        name    f0FaceSet;
-        type    faceSet;
-        action  subset;
-        source  boxToFace;
-        box     (-100 0.9 -100) (0.2 100 100);
-    }
+startFrom       startTime;
 
-    {
-        name    f0;
-        type    faceZoneSet;
-        action  new;
-        source  setToFaceZone;
-        faceSet f0FaceSet;
-    }
-);
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1;
+
+deltaT          0.001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           1;
+
+maxAlphaCo      1;
+
+maxDeltaT       1;
 
 
 // ************************************************************************* //
