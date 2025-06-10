@@ -20,14 +20,14 @@ stirrer
     blades
     {
         type        surface;
-        surface     triSurfaceMesh;
+        surface     triSurface;
         file        "stirrer4.obj";
     }
 
     disk
     {
         type        surface;
-        surface     searchableDisk;
+        surface     disk;
         origin      (0 0 0.6);
         normal      (0 0 1);
         radius      0.1125;
@@ -37,14 +37,14 @@ stirrer
 baffles
 {
     type        surface;
-    surface     triSurfaceMesh;
+    surface     triSurface;
     file        "baffles.obj";
 }
 
 rotatingZone
 {
     type        surface;
-    surface     searchableCylinder;
+    surface     cylinder;
     point1      (0 0 0.54);
     point2      (0 0 0.66);
     radius      0.2;

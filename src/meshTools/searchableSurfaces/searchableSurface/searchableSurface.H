@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ Description
     Information returned is usually a pointIndexHit:
     - bool  : was intersection/nearest found?
     - point : intersection point or nearest point
-    - index : unique index on surface (e.g. triangle for triSurfaceMesh)
+    - index : unique index on surface (e.g. triangle for triSurface)
 
 SourceFiles
     searchableSurface.C
@@ -95,7 +95,7 @@ public:
         (
             autoPtr,
             searchableSurface,
-            dict,
+            dictionary,
             (
                 const IOobject& io,
                 const dictionary& dict

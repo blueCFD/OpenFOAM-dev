@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "refinementRegions.H"
-#include "searchableSurfaces.H"
+#include "searchableSurfaceList.H"
 #include "orientedSurface.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -214,9 +214,14 @@ void Foam::refinementRegions::orient()
     {
         const searchableSurface& s = allGeometry_[shells_[shelli]];
 
-        if (modes_[shelli] != refineMode::distance && isA<triSurfaceMesh>(s))
+        if
+        (
+            modes_[shelli] != refineMode::distance
+         && isA<searchableSurfaces::triSurface>(s)
+        )
         {
-            const triSurfaceMesh& shell = refCast<const triSurfaceMesh>(s);
+            const searchableSurfaces::triSurface& shell =
+                refCast<const searchableSurfaces::triSurface>(s);
 
             if (shell.triSurface::size())
             {
@@ -253,13 +258,14 @@ void Foam::refinementRegions::orient()
             if
             (
                 modes_[shelli] != refineMode::distance
-             && isA<triSurfaceMesh>(s)
+             && isA<searchableSurfaces::triSurface>(s)
             )
             {
-                triSurfaceMesh& shell = const_cast<triSurfaceMesh&>
-                (
-                    refCast<const triSurfaceMesh>(s)
-                );
+                searchableSurfaces::triSurface& shell =
+                    const_cast<searchableSurfaces::triSurface&>
+                    (
+                        refCast<const searchableSurfaces::triSurface>(s)
+                    );
 
                 // Flip surface so outsidePt is outside.
                 bool anyFlipped = orientedSurface::orient
@@ -272,7 +278,7 @@ void Foam::refinementRegions::orient()
                 if (anyFlipped)
                 {
                     // orientedSurface will have done a clearOut of the surface.
-                    // we could do a clearout of the triSurfaceMeshes::trees()
+                    // we could do a clearout of the triSurfacees::trees()
                     // but these aren't affected by orientation
                     // (except for cached
                     // sideness which should not be set at this point.
@@ -290,7 +296,7 @@ void Foam::refinementRegions::orient()
 
 Foam::scalar Foam::refinementRegions::interpolate
 (
-    const triSurfaceMesh& tsm,
+    const searchableSurfaces::triSurface& tsm,
     const triSurfacePointScalarField& closeness,
     const point& pt,
     const label index
@@ -301,7 +307,7 @@ Foam::scalar Foam::refinementRegions::interpolate
         triPointRef
         (
             tsm.points(),
-            tsm.triSurface::operator[](index)
+            tsm.Foam::triSurface::operator[](index)
         ).pointToBarycentric(pt)
     );
 
@@ -390,8 +396,9 @@ void Foam::refinementRegions::findHigherLevel
      || modes_[shelli] == refineMode::outsideSpan
     )
     {
-        const triSurfaceMesh& tsm =
-            refCast<const triSurfaceMesh>(allGeometry_[shells_[shelli]]);
+        const searchableSurfaces::triSurface& tsm =
+            refCast<const searchableSurfaces::triSurface>
+            (allGeometry_[shells_[shelli]]);
 
         // Collect all those points that have a current maxLevel less than
         // the maximum and furthest distance allowable for the shell.
@@ -516,7 +523,7 @@ void Foam::refinementRegions::findHigherLevel
 
 Foam::refinementRegions::refinementRegions
 (
-    const searchableSurfaces& allGeometry,
+    const searchableSurfaceList& allGeometry,
     const dictionary& shellsDict
 )
 :
@@ -572,12 +579,13 @@ Foam::refinementRegions::refinementRegions
             {
                 const searchableSurface& surface = allGeometry_[geomi];
 
-                if (isA<triSurfaceMesh>(surface))
+                if (isA<searchableSurfaces::triSurface>(surface))
                 {
                     dict.lookup("cellsAcrossSpan") >> cellsAcrossSpan_[shelli];
 
-                    const triSurfaceMesh& tsm =
-                        refCast<const triSurfaceMesh>(surface);
+                    const searchableSurfaces::triSurface& tsm =
+                        refCast<const searchableSurfaces::triSurface>
+                        (surface);
 
                     closeness_.set
                     (

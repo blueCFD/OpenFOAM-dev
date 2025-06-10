@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -50,7 +50,7 @@ Description
 #include "snappyRefineDriver.H"
 #include "snappySnapDriver.H"
 #include "snappyLayerDriver.H"
-#include "searchableSurfaces.H"
+#include "searchableSurfaceList.H"
 #include "refinementSurfaces.H"
 #include "refinementFeatures.H"
 #include "refinementRegions.H"
@@ -84,7 +84,7 @@ label sizeCoeffToRefinement
 
 autoPtr<refinementSurfaces> createRefinementSurfaces
 (
-    const searchableSurfaces& allGeometry,
+    const searchableSurfaceList& allGeometry,
     const dictionary& surfacesDict,
     const dictionary& shapeControlDict,
     const label gapLevelIncrement,
@@ -825,7 +825,7 @@ int main(int argc, char *argv[])
     // Read geometry
     // ~~~~~~~~~~~~~
 
-    searchableSurfaces allGeometry
+    searchableSurfaceList allGeometry
     (
         IOobject
         (
