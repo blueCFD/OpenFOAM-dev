@@ -238,6 +238,7 @@ zoneGenerators/volume/hemisphere/hemisphere.C
 zoneGenerators/volume/cylinder/cylinder.C
 zoneGenerators/volume/annulus/annulus.C
 zoneGenerators/volume/truncatedCone/truncatedCone.C
+zoneGenerators/volume/insideSurface/insideSurface.C
 
 zoneGenerators/point/point/pointZoneGenerator.C
 
@@ -245,6 +246,7 @@ zoneGenerators/face/face/faceZoneGenerator.C
 zoneGenerators/face/patch/patchZoneGenerator.C
 zoneGenerators/face/normal/normalZoneGenerator.C
 zoneGenerators/face/orient/orientZoneGenerator.C
+zoneGenerators/face/flip/flipZoneGenerator.C
 zoneGenerators/face/plane/planeZoneGenerator.C
 zoneGenerators/face/surface/surfaceZoneGenerator.C
 
