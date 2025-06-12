@@ -40,7 +40,7 @@ Usage
         moveUpdate   | Switch to update after mesh motion | no | false
     \endtable
 
-    To create the faceZone floatingObject containing the faces of the
+    To create the faceZone \c floatingObjectBottom containing the faces of the
     \c floatingObject patch which point in the y-direction:
     \verbatim
         floatingObjectBottom

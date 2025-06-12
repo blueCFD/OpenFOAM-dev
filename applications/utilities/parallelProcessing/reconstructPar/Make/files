@@ -1,7 +1,3 @@
 reconstructPar.C
-fvFieldReconstructor.C
-pointFieldReconstructor.C
-lagrangianFieldReconstructor.C
-LagrangianFieldReconstructor.T.C
 
 EXE = $(FOAM_APPBIN)/reconstructPar
