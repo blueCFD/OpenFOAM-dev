@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,7 +59,7 @@ Usage
         weightType        | weighting in case of field-dependent particle\\
                             properties                     | no\\
                                                            | numberConcentration
-        select            | cellZone or all                | no        | all
+        cellZone          | cellZone                       | yes       |
         name              | name of cellZone if required   | no        |
         setFormat         | output format                  | yes       |
     \endtable
@@ -67,7 +67,7 @@ Usage
 See also
     Foam::diameterModels::populationBalanceModel
     Foam::functionObjects::fvMeshFunctionObject
-    Foam::fvCellSet
+    Foam::fvCellZone
     Foam::functionObject
 
 SourceFiles
@@ -79,7 +79,7 @@ SourceFiles
 #define populationBalanceSizeDistribution_H
 
 #include "fvMeshFunctionObject.H"
-#include "fvCellSet.H"
+#include "fvCellZone.H"
 #include "populationBalanceModel.H"
 #include "writeFile.H"
 #include "setWriter.H"
@@ -98,7 +98,7 @@ namespace functionObjects
 class populationBalanceSizeDistribution
 :
     public fvMeshFunctionObject,
-    public fvCellSet
+    public fvCellZone
 {
 public:
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,73 +23,11 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "polyMesh.H"
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-inline const Foam::polyCellSet::selectionTypes&
-Foam::polyCellSet::selectionType() const
+inline Foam::scalar Foam::fvCellZone::V() const
 {
-    return selectionType_;
-}
-
-
-inline const Foam::word& Foam::polyCellSet::cellSetName() const
-{
-    return cellSetName_;
-}
-
-
-inline Foam::labelUList Foam::polyCellSet::cells() const
-{
-    if (selectionType_ == selectionTypes::all)
-    {
-        return identityMap(mesh_.nCells());
-    }
-    else if (selectionType_ == selectionTypes::cellZone)
-    {
-        return mesh_.cellZones()[cellSetName_];
-    }
-    else
-    {
-        return cells_;
-    }
-}
-
-
-inline Foam::label Foam::polyCellSet::nCells() const
-{
-    if (selectionType_ == selectionTypes::all)
-    {
-        return mesh_.nCells();
-    }
-    else
-    {
-        return cells().size();
-    }
-}
-
-
-inline bool Foam::polyCellSet::all() const
-{
-    return selectionType_ == selectionTypes::all;
-}
-
-
-inline Foam::label Foam::polyCellSet::celli(const label i) const
-{
-    if (selectionType_ == selectionTypes::all)
-    {
-        return i;
-    }
-    else if (selectionType_ == selectionTypes::cellZone)
-    {
-        return mesh_.cellZones()[cellSetName_][i];
-    }
-    else
-    {
-        return cells_[i];
-    }
+    return V_;
 }
 
 

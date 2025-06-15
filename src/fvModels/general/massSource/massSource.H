@@ -40,8 +40,7 @@ Usage
     {
         type            massSource;
 
-        select          cellSet;
-        cellSet         massSource;
+        cellZone        massSource;
 
         massFlowRate    1e-4;
     }
@@ -53,8 +52,11 @@ Usage
     {
         type            massSource;
 
-        select          points;
-        points          ((2.75 0.5 0));
+        cellZone
+        {
+            type            containsPoints;
+            points          ((2.75 0.5 0));
+        }
 
         massFlowRate
         {
@@ -79,7 +81,7 @@ See also
 #define massSource_H
 
 #include "massSourceBase.H"
-#include "fvCellSet.H"
+#include "fvCellZone.H"
 #include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -102,7 +104,7 @@ private:
     // Private Data
 
         //- The set of cells the source applies to
-        autoPtr<fvCellSet> setPtr_;
+        autoPtr<fvCellZone> setPtr_;
 
         //- Mass flow rate
         autoPtr<Function1<scalar>> massFlowRate_;

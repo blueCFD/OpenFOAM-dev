@@ -42,7 +42,7 @@ cavitationVolume
     writeInterval   1;
     writeFields     false;
 
-    select          all;
+    cellZone        all;
 
     operation       volIntegrate;
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,20 +22,24 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::cellSet
+    Foam::generatedZoneSet
 
 Description
-    A collection of cell labels.
+
+
+See also
+    Foam::zoneSet
+    Foam::zoneGenerator
 
 SourceFiles
-    cellSet.C
+    generatedZoneSet.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef cellSet_H
-#define cellSet_H
+#ifndef generatedZoneSet_H
+#define generatedZoneSet_H
 
-#include "topoSet.H"
+#include "zoneGenerator.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -43,87 +47,86 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class cellSet Declaration
+                      Class generatedZoneSet Declaration
 \*---------------------------------------------------------------------------*/
 
-class cellSet
+class generatedZoneSet
 :
-    public topoSet
+    public zoneSet
 {
+    // Private Member Data
+
+        autoPtr<zoneGenerator> zoneGenerator_;
+
+
 public:
-
-    //- Runtime type information
-    TypeName("cellSet");
-
 
     // Constructors
 
-        //- Construct from IOobject. No checking.
-        cellSet(const IOobject& obj);
+        //- Construct null
+        generatedZoneSet()
+        {}
 
-        //- Construct from polyMesh and name. Checks for valid cell ids.
-        cellSet
+        //- Construct from name, mesh and dictionary
+        generatedZoneSet
         (
-            const polyMesh& mesh,
             const word& name,
-            readOption r=MUST_READ,
-            writeOption w=NO_WRITE
+            const polyMesh& mesh,
+            const dictionary& dict
         );
 
-        //- Construct empty from size of labelHashSet
-        cellSet
+        //- Construct from name, zoneType, mesh and dictionary
+        generatedZoneSet
         (
-            const polyMesh& mesh,
             const word& name,
-            const label sizes,
-            writeOption w=NO_WRITE
-        );
-
-        //- Construct from existing set
-        cellSet
-        (
+            const zoneGenerator::zoneTypes& zoneType,
             const polyMesh& mesh,
-            const word& name,
-            const topoSet&,
-            writeOption w=NO_WRITE
-        );
-
-        //- Construct from labelHashSet
-        cellSet
-        (
-            const polyMesh& mesh,
-            const word& name,
-            const labelHashSet&,
-            writeOption w=NO_WRITE
+            const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        cellSet(const cellSet&) = delete;
-
-
-    //- Destructor
-    virtual ~cellSet();
+        generatedZoneSet(const generatedZoneSet&) = delete;
 
 
     // Member Functions
 
-        //- Sync cellSet across coupled patches.
-        virtual void sync(const polyMesh& mesh)
-        {}
-
-        //- Return max index+1.
-        virtual label maxSize(const polyMesh& mesh) const;
-
-        //- Update any stored data for new labels
-        virtual void topoChange(const polyTopoChangeMap& map);
-
-        //- Write maxLen items with label and coordinates.
-        virtual void writeDebug
+        //- Read from dictionary
+        void read
         (
-            Ostream& os,
-            const primitiveMesh&,
-            const label maxLen
-        ) const;
+            const word& name,
+            const polyMesh& mesh,
+            const dictionary& dict
+        );
+
+        //- Read from dictionary
+        void read
+        (
+            const word& name,
+            const zoneGenerator::zoneTypes& zoneType,
+            const polyMesh& mesh,
+            const dictionary& dict
+        );
+
+        //- Set the zoneGenerator and generate the zoneSet
+        void set(const autoPtr<zoneGenerator>& zg);
+
+        //- Update for mesh motion
+        bool movePoints();
+
+        //- Redistribute or update using the given distribution map
+        void distribute(const polyDistributionMap& map);
+
+        //- Update topology using the given map
+        void topoChange(const polyTopoChangeMap& map);
+
+        //- Update from another mesh using the given map
+        void mapMesh(const polyMeshMap& map);
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const generatedZoneSet&) = delete;
 };
 
 

@@ -226,7 +226,7 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::setPatchesFaces
         if (patchiis.empty())
         {
             FatalErrorInFunction
-                << type() << " " << this->name() << ": "
+                << type() << ' ' << this->name() << ": "
                 << selectionTypeNames[selectionType_]
                 << "(" << patchNames[i] << "):" << nl
                 << "    Unknown patch name: " << patchNames[i]
@@ -452,20 +452,23 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::initialise
     const dictionary& dict
 )
 {
+    // Selection type name
+    const word selection(selectionTypeNames[selectionType_]);
+
     switch (selectionType_)
     {
         case selectionTypes::faceZone:
         {
-            if (dict.isDict("faceZone"))
+            if (dict.isDict(selection))
             {
                 autoPtr<zoneGenerator> zg
                 (
                     zoneGenerator::New
                     (
-                        "zone",
+                        selection,
                         zoneGenerator::zoneTypes::face,
                         mesh_,
-                        dict.subDict("faceZone")
+                        dict.subDict(selection)
                     )
                 );
 
@@ -473,15 +476,15 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::initialise
             }
             else
             {
-                const word zoneName(dict.lookup<word>("faceZone"));
+                const word zoneName(dict.lookup<word>(selection));
                 const label zoneId(mesh_.faceZones().findIndex(zoneName));
 
                 if (zoneId < 0)
                 {
                     FatalErrorInFunction
-                        << type() << " " << name() << ": "
-                        << selectionTypeNames[selectionType_]
-                        << "(" << zoneName << "):" << nl
+                        << type() << ' ' << name() << ": "
+                        << selection
+                        << '(' << zoneName << "):" << nl
                         << "    Unknown faceZone: " << zoneName
                         << ". Available faceZones: " << mesh_.faceZones().toc()
                         << nl << exit(FatalError);
@@ -493,26 +496,18 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::initialise
         }
         case selectionTypes::patch:
         {
-            setPatchFaces(dict.lookup<wordRe>("patch"));
+            setPatchFaces(dict.lookup<wordRe>(selection));
             break;
         }
         case selectionTypes::patches:
         {
-            setPatchesFaces(dict.lookup<wordReList>("patches"));
+            setPatchesFaces(dict.lookup<wordReList>(selection));
             break;
         }
         case selectionTypes::sampledSurface:
         {
-            setSampledSurfaceFaces(dict.subDict("sampledSurface"));
+            setSampledSurfaceFaces(dict.subDict(selection));
             break;
-        }
-        default:
-        {
-            FatalErrorInFunction
-                << type() << " " << name() << ": "
-                << selectionTypeNames[selectionType_]
-                << "    Unknown selection type. Valid selection types are:"
-                << selectionTypeNames.sortedToc() << nl << exit(FatalError);
         }
     }
 
@@ -525,7 +520,7 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::initialise
 
         totalArea_ = totalArea();
 
-        Info<< type() << " " << name() << ":" << nl
+        Info<< type() << ' ' << name() << ":" << nl
             << "    total faces  = " << nFaces_
             << nl
             << "    total area   = " << totalArea_
@@ -533,7 +528,7 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::initialise
 
         if (dict.readIfPresent("weightFields", weightFieldNames_))
         {
-            Info<< name() << " " << operationTypeNames_[operation_]
+            Info<< name() << ' ' << operationTypeNames_[operation_]
                 << " weight fields " << weightFieldNames_;
         }
         else if (dict.found("weightField"))
@@ -541,7 +536,7 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::initialise
             weightFieldNames_.setSize(1);
             dict.lookup("weightField") >> weightFieldNames_[0];
 
-            Info<< name() << " " << operationTypeNames_[operation_]
+            Info<< name() << ' ' << operationTypeNames_[operation_]
                 << " weight field " << weightFieldNames_[0];
         }
 
@@ -664,13 +659,7 @@ Foam::functionObjects::fieldValues::surfaceFieldValue::surfaceFieldValue
     fieldValue(name, runTime, dict, typeName),
     dict_(dict),
     surfaceWriterPtr_(nullptr),
-    selectionType_
-    (
-        selectionTypeNames.read
-        (
-            dict.lookupBackwardsCompatible({"select", "regionType"})
-        )
-    ),
+    selectionType_(selectionTypeNames.select(dict)),
     selectionName_(string::null),
     operation_(operationTypeNames_.read(dict.lookup("operation"))),
     weightFieldNames_(),
@@ -693,13 +682,7 @@ Foam::functionObjects::fieldValues::surfaceFieldValue::surfaceFieldValue
     fieldValue(name, obr, dict, typeName),
     dict_(dict),
     surfaceWriterPtr_(nullptr),
-    selectionType_
-    (
-        selectionTypeNames.read
-        (
-            dict.lookupBackwardsCompatible({"select", "regionType"})
-        )
-    ),
+    selectionType_(selectionTypeNames.select(dict)),
     selectionName_(string::null),
     operation_(operationTypeNames_.read(dict.lookup("operation"))),
     weightFieldNames_(),

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Description
         type            reactionRates;
         libs            ("libchemistryModel.so");
 
-        select          all; // Or points, cellSet, cellZone
+        cellZone        all; // Or points, cellSet, cellZone
 
         //phase         <phaseName>; // Optional name of the phase
 
@@ -46,7 +46,7 @@ Description
 
 See also
     Foam::functionObjects::fvMeshFunctionObject
-    Foam::fvCellSet
+    Foam::fvCellZone
     Foam::functionObjects::logFiles
 
 SourceFiles
@@ -58,7 +58,7 @@ SourceFiles
 #define functionObjects_reactionRates_H
 
 #include "fvMeshFunctionObject.H"
-#include "fvCellSet.H"
+#include "fvCellZone.H"
 #include "logFiles.H"
 #include "basicChemistryModel.H"
 
@@ -76,7 +76,7 @@ namespace functionObjects
 class reactionRates
 :
     public fvMeshFunctionObject,
-    public fvCellSet,
+    public fvCellZone,
     public logFiles
 {
     // Private Member Data

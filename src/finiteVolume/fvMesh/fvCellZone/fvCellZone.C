@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,12 +23,12 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvCellSet.H"
+#include "fvCellZone.H"
 #include "volFields.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::fvCellSet::setV()
+void Foam::fvCellZone::setV()
 {
     const labelUList cells(this->cells());
 
@@ -43,32 +43,31 @@ void Foam::fvCellSet::setV()
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-void Foam::fvCellSet::writeFileHeader
+void Foam::fvCellZone::writeFileHeader
 (
     const functionObjects::writeFile& wf,
     Ostream& file
 )
 {
     wf.writeCommented(file, "Selection");
-    file<< setw(1) << ':' << setw(1) << ' '
-        << selectionTypeNames[selectionType()] << " " << cellSetName() << endl;
+    file<< setw(1) << ':' << setw(1) << ' ' << cellZoneName() << endl;
     wf.writeHeaderValue(file, "Volume", V());
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::fvCellSet::fvCellSet(const fvMesh& mesh)
+Foam::fvCellZone::fvCellZone(const fvMesh& mesh)
 :
-    polyCellSet(mesh),
+    generatedCellZone(mesh),
     mesh_(mesh),
     V_(gSum(mesh_.V()))
 {}
 
 
-Foam::fvCellSet::fvCellSet(const fvMesh& mesh, const dictionary& dict)
+Foam::fvCellZone::fvCellZone(const fvMesh& mesh, const dictionary& dict)
 :
-    polyCellSet(mesh, dict),
+    generatedCellZone(mesh, dict),
     mesh_(mesh),
     V_(NaN)
 {
@@ -78,43 +77,43 @@ Foam::fvCellSet::fvCellSet(const fvMesh& mesh, const dictionary& dict)
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::fvCellSet::~fvCellSet()
+Foam::fvCellZone::~fvCellZone()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::fvCellSet::movePoints()
+void Foam::fvCellZone::movePoints()
 {
-    polyCellSet::movePoints();
+    generatedCellZone::movePoints();
     setV();
 }
 
 
-void Foam::fvCellSet::topoChange(const polyTopoChangeMap& map)
+void Foam::fvCellZone::topoChange(const polyTopoChangeMap& map)
 {
-    polyCellSet::topoChange(map);
+    generatedCellZone::topoChange(map);
     setV();
 }
 
 
-void Foam::fvCellSet::mapMesh(const polyMeshMap& map)
+void Foam::fvCellZone::mapMesh(const polyMeshMap& map)
 {
-    polyCellSet::mapMesh(map);
+    generatedCellZone::mapMesh(map);
     setV();
 }
 
 
-void Foam::fvCellSet::distribute(const polyDistributionMap& map)
+void Foam::fvCellZone::distribute(const polyDistributionMap& map)
 {
-    polyCellSet::distribute(map);
+    generatedCellZone::distribute(map);
     setV();
 }
 
 
-bool Foam::fvCellSet::read(const dictionary& dict)
+bool Foam::fvCellZone::read(const dictionary& dict)
 {
-    polyCellSet::read(dict);
+    generatedCellZone::read(dict);
     setV();
 
     return true;

@@ -25,11 +25,11 @@ Class
     Foam::functionObjects::fieldValues::surfaceFieldValue
 
 Description
-    Surface (face) region selection class.
+    Surface, patch or faceZone selection class
 
     Given a list of user-specified fields and a selection of mesh (or general
     surface) faces, a number of operations can be performed, such as sums,
-    averages and integrations.
+    averages and integrals.
 
     For example, to calculate the volumetric or mass flux across a patch,
     apply the 'orientedSum' operator to the flux field (typically \c phi)
@@ -45,7 +45,6 @@ Description
         writeControl    writeTime;
         writeFields     true;
 
-        select          patch;
         patch           movingWall;
 
         operation       areaAverage;
@@ -69,7 +68,6 @@ Description
 
         surfaceFormat   none;
 
-        select          faceZone;
         faceZone        f0;
 
         operation       sum;
@@ -93,14 +91,13 @@ Usage
         writeFields  | Write the field values  | yes     |
         writeArea    | Write the area of the surfaceFieldValue | no |
         surfaceFormat | output value format    | no          |
-        select       | face selection: see below | yes         |
         operation    | operation to perform    | yes         |
         weightField  | name of field to apply weighting | no |
         weightFields | Names of fields to apply weighting | no |
         fields       | list of fields to operate on | yes    |
     \endtable
 
-    Where the supported \c select options are:
+    Where the supported selections are:
     \plaintable
         faceZone     | requires a 'faceZone' entry to specify the faceZone \\
                        or dictionary to specify the zoneGenerator

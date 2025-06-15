@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,11 +23,67 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "polyMesh.H"
+
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-inline Foam::scalar Foam::fvCellSet::V() const
+inline bool Foam::generatedCellZone::all() const
 {
-    return V_;
+    return all_;
+}
+
+
+inline const Foam::word& Foam::generatedCellZone::cellZoneName() const
+{
+    static word allName_("all");
+
+    if (all_)
+    {
+        return allName_;
+    }
+    else
+    {
+        return cellZone_.cZone().name();
+    }
+}
+
+
+inline Foam::labelUList Foam::generatedCellZone::cells() const
+{
+    if (all_)
+    {
+        return identityMap(mesh_.nCells());
+    }
+    else
+    {
+        return cellZone_.cZone();
+    }
+}
+
+
+inline Foam::label Foam::generatedCellZone::nCells() const
+{
+    if (all_)
+    {
+        return mesh_.nCells();
+    }
+    else
+    {
+        return cellZone_.cZone().size();
+    }
+}
+
+
+inline Foam::label Foam::generatedCellZone::celli(const label i) const
+{
+    if (all_)
+    {
+        return i;
+    }
+    else
+    {
+        return cellZone_.cZone()[i];
+    }
 }
 
 

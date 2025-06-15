@@ -46,7 +46,6 @@ outflow
     libs            ("libfieldFunctionObjects.so");
     log             yes;
     writeFields     false;
-    select          patch;
     patch           outlet;
     operation       sum;
     fields          (alphaRhoPhi.gas alphaRhoPhi.liquid);
@@ -58,7 +57,6 @@ inflow
     libs            ("libfieldFunctionObjects.so");
     log             yes;
     writeFields     false;
-    select          patch;
     patch           inlet;
     operation       sum;
     fields          (alphaRhoPhi.gas alphaRhoPhi.liquid);
@@ -70,7 +68,6 @@ outletGas
     libs            ("libfieldFunctionObjects.so");
     log             yes;
     writeFields     false;
-    select          patch;
     patch           outlet;
     operation       sum;
     weightField     alphaRhoPhi.gas;
@@ -83,7 +80,6 @@ outletLiquid
     libs            ("libfieldFunctionObjects.so");
     log             yes;
     writeFields     false;
-    select          patch;
     patch           outlet;
     operation       sum;
     weightField     alphaRhoPhi.liquid;
@@ -96,7 +92,6 @@ inletGas
     libs            ("libfieldFunctionObjects.so");
     log             yes;
     writeFields     false;
-    select          patch;
     patch           inlet;
     operation       sum;
     weightField     alphaRhoPhi.gas;
@@ -109,7 +104,6 @@ inletLiquid
     libs            ("libfieldFunctionObjects.so");
     log             yes;
     writeFields     false;
-    select          patch;
     patch           inlet;
     operation       sum;
     weightField     alphaRhoPhi.liquid;
@@ -122,7 +116,7 @@ contError
     libs            ("libfieldFunctionObjects.so");
     log             yes;
     writeFields     false;
-    select          all;
+    cellZone        all;
     operation       volIntegrate;
     fields          (continuityError.gas continuityError.liquid);
 }

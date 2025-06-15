@@ -41,7 +41,6 @@ Usage
     {
         type            volumeSource;
 
-        select          cellSet;
         cellSet         volumeSource;
 
         volumetricFlowRate 1e-4;
@@ -72,7 +71,7 @@ See also
 #define volumeSource_H
 
 #include "fvTotalSource.H"
-#include "fvCellSet.H"
+#include "fvCellZone.H"
 #include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -98,7 +97,7 @@ private:
         word alphaName_;
 
         //- The set of cells the source applies to
-        autoPtr<fvCellSet> setPtr_;
+        autoPtr<fvCellZone> setPtr_;
 
         //- Volumetric flow rate
         autoPtr<Function1<scalar>> volumetricFlowRate_;
