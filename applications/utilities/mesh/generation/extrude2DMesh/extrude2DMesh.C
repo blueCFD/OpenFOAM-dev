@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,17 +56,11 @@ enum ExtrudeMode
     MESHEDSURFACE
 };
 
-namespace Foam
+static const NamedEnum<ExtrudeMode, 2> ExtrudeModeNames
 {
-    template<>
-    const char* NamedEnum<ExtrudeMode, 2>::names[] =
-    {
-        "polyMesh2D",
-        "MeshedSurface"
-    };
-}
-
-static const NamedEnum<ExtrudeMode, 2> ExtrudeModeNames;
+    "polyMesh2D",
+    "MeshedSurface"
+};
 
 
 //pointField moveInitialPoints
@@ -114,7 +108,7 @@ int main(int argc, char *argv[])
 {
     argList::validArgs.append("surfaceFormat");
 
-    #include "addOverwriteOption.H"
+    #include "addNoOverwriteOption.H"
 
     #include "setRootCase.H"
 
@@ -129,7 +123,7 @@ int main(int argc, char *argv[])
     );
 
     const ExtrudeMode surfaceFormat = ExtrudeModeNames[args[1]];
-    const bool overwrite = args.optionFound("overwrite");
+    #include "setNoOverwrite.H"
 
     Info<< "Extruding from " << ExtrudeModeNames[surfaceFormat]
         << " at time " << runTimeExtruded.name() << endl;
