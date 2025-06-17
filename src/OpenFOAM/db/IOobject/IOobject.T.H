@@ -414,6 +414,9 @@ public:
             //- If the instance is a time directory update to the current time
             void updateInstance() const;
 
+            //- Update instance to the current time
+            void updateTimeInstance() const;
+
             const fileName& local() const
             {
                 return local_;

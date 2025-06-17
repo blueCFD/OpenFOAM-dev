@@ -23,9 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "flipZoneGenerator.H"
+#include "write.H"
+#include "Time.T.H"
 #include "polyMesh.H"
-#include "syncTools.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -34,19 +34,38 @@ namespace Foam
 {
     namespace zoneGenerators
     {
-        defineTypeNameAndDebug(flip, 0);
-        addToRunTimeSelectionTable
-        (
-            zoneGenerator,
-            flip,
-            dictionary
-        );
+        defineTypeNameAndDebug(write, 0);
+        addToRunTimeSelectionTable(zoneGenerator, write, dictionary);
     }
 }
 
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+template<class ZoneListType>
+void Foam::zoneGenerators::write::writeZoneType(const ZoneListType& zones) const
+{
+    if
+    (
+        mesh_.time().timeIndex() == mesh_.time().startTimeIndex()
+     || (mesh_.time().writeTime() && zones.timeIndex() > timeIndex_)
+    )
+    {
+        if (mesh_.time().timeIndex() != mesh_.time().startTimeIndex())
+        {
+            zones.updateTimeInstance();
+        }
+
+        zones.write();
+
+        timeIndex_ = mesh_.time().timeIndex();
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::zoneGenerators::flip::flip
+Foam::zoneGenerators::write::write
 (
     const word& name,
     const polyMesh& mesh,
@@ -54,40 +73,42 @@ Foam::zoneGenerators::flip::flip
 )
 :
     zoneGenerator(name, mesh, dict),
-    zoneGenerator_(zoneGenerator::New(mesh, dict))
-{}
+    zoneType_
+    (
+        zoneTypesAllNames.lookupOrDefault("zoneType", dict, zoneTypesAll::all)
+    ),
+    timeIndex_(mesh.time().timeIndex())
+{
+    moveUpdate_ = dict.lookupOrDefault("moveUpdate", true);
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::zoneGenerators::flip::~flip()
+Foam::zoneGenerators::write::~write()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::zoneSet Foam::zoneGenerators::flip::generate() const
+Foam::zoneSet Foam::zoneGenerators::write::generate() const
 {
-    zoneSet zs(zoneGenerator_->generate());
-    const faceZone& fZone = zs.fZone();
-    boolList flipMap(fZone.flipMap());
-
-    forAll(flipMap, fi)
+    if (zoneType_ == zoneTypesAll::point || zoneType_ == zoneTypesAll::all)
     {
-        flipMap[fi] = !flipMap[fi];
+        writeZoneType(mesh_.pointZones());
     }
 
-    return zoneSet
-    (
-        new faceZone
-        (
-            fZone,
-            zoneName_,
-            fZone,
-            flipMap,
-            mesh_.faceZones()
-        )
-    );
+    if (zoneType_ == zoneTypesAll::cell || zoneType_ == zoneTypesAll::all)
+    {
+        writeZoneType(mesh_.cellZones());
+    }
+
+    if (zoneType_ == zoneTypesAll::face || zoneType_ == zoneTypesAll::all)
+    {
+        writeZoneType(mesh_.faceZones());
+    }
+
+    return zoneSet();
 }
 
 

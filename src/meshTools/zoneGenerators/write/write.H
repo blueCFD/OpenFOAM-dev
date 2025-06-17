@@ -22,39 +22,58 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::zoneGenerators::patch
+    Foam::zoneGenerators::write
 
 Description
-    A zoneGenerator which constructs a faceZone from a set of patches
-
-    The returned faceZone is oriented and provides the corresponding flipMap.
+    A zoneGenerator which writes all existing zones from the mesh
 
 Usage
     \table
         Property     | Description             | Required | Default value
-        type         | Type: face              | yes      |
-        name         | Name of the zone        | no       | zoneGenerator name
-        patch        | Name of patch           | no       |
-        patches      | List of patch names     | no       | ()
-        moveUpdate   | Switch to update after mesh motion | no | false
+        type         | Type: write             | yes      |
+        zoneType     | Type of zone            | no       | all the zone types
     \endtable
 
-    To convert patch named \c freeSurface into a faceZone of the same name:
+    Examples:
+    To write all the zones that are changing:
     \verbatim
-        freeSurface
+        writeAllZones
         {
-            type        patch;
-            patch       freeSurface;
+            type        write;
+        }
+    \endverbatim
+    or to write only the cellZones:
+    \verbatim
+        writeCellZones
+        {
+            type        write;
+            zoneType    cell;
+        }
+    \endverbatim
+    When called from the zoneGenerators file which is the most likely use
+    the simpler syntax to write all the zones that are changing can be used:
+    \verbatim
+        write;
+    \endverbatim
+    or to write only the cellZones:
+    \verbatim
+        write
+        {
+            zoneType    cell;
         }
     \endverbatim
 
+See also
+    zoneGenerators::remove
+    zoneGenerators::clear
+
 SourceFiles
-    patchZoneGenerator.C
+    write.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef patchZoneGenerator_H
-#define patchZoneGenerator_H
+#ifndef write_H
+#define write_H
 
 #include "zoneGeneratorList.H"
 
@@ -66,29 +85,38 @@ namespace zoneGenerators
 {
 
 /*---------------------------------------------------------------------------*\
-                              Class patch Declaration
+                              Class write Declaration
 \*---------------------------------------------------------------------------*/
 
-class patch
+class write
 :
     public zoneGenerator
 {
-    // Private Data
+    // Private Member Data
 
-        //- Set of patches to convert into faceZone
-        labelHashSet patchSet_;
+        //- The type of zone to write (optional)
+        zoneTypesAll zoneType_;
+
+        //- timeIndex of the last write
+        mutable label timeIndex_;
+
+
+    // Private Member Functions
+
+        template<class ZoneListType>
+        void writeZoneType(const ZoneListType& zones) const;
 
 
 public:
 
     //- Runtime type information
-    TypeName("patch");
+    TypeName("write");
 
 
     // Constructors
 
         //- Construct from dictionary
-        patch
+        write
         (
             const word& name,
             const polyMesh& mesh,
@@ -97,7 +125,7 @@ public:
 
 
     //- Destructor
-    virtual ~patch();
+    virtual ~write();
 
 
     // Member Functions

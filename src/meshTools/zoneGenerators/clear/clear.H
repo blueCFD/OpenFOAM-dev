@@ -40,6 +40,11 @@ Usage
             type        clear;
         }
     \endverbatim
+    When called from the zoneGenerators file which is the most likely use
+    the simpler syntax to clear all the zones can be used:
+    \verbatim
+        clear;
+    \endverbatim
 
 See also
     zoneGenerators::remove
