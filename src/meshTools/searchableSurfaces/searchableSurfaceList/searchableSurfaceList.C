@@ -29,7 +29,7 @@ License
 #include "Time.T.H"
 #include "DynamicField.T.H"
 #include "PatchTools.T.H"
-#include "searchableTriSurface.H"
+#include "triSurface_searchableSurface.H"
 #include "vtkWritePolyData.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
