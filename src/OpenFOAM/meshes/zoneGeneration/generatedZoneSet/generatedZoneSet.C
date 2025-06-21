@@ -43,7 +43,7 @@ Foam::generatedZoneSet::generatedZoneSet
 Foam::generatedZoneSet::generatedZoneSet
 (
     const word& name,
-    const zoneGenerator::zoneTypes& zoneType,
+    const zoneTypes& zoneType,
     const polyMesh& mesh,
     const dictionary& dict
 )
@@ -79,7 +79,6 @@ void Foam::generatedZoneSet::read
             (
                 "type",
                 zoneGenerators::lookup::typeName,
-                zoneStream.lineNumber(),
                 zoneStream.lineNumber()
             )
         );
@@ -94,7 +93,7 @@ void Foam::generatedZoneSet::read
 void Foam::generatedZoneSet::read
 (
     const word& name,
-    const zoneGenerator::zoneTypes& zoneType,
+    const zoneTypes& zoneType,
     const polyMesh& mesh,
     const dictionary& dict
 )
@@ -122,11 +121,10 @@ void Foam::generatedZoneSet::read
             (
                 "type",
                 zoneGenerators::lookup::typeName,
-                zoneStream.lineNumber(),
                 zoneStream.lineNumber()
             )
         );
-        zoneDict.add("zoneType", zoneGenerator::zoneTypesNames[zoneType]);
+        zoneDict.add("zoneType", zoneTypesNames[zoneType]);
 
         zoneGenerator_ = new zoneGenerators::lookup(zoneName, mesh, zoneDict);
     }
