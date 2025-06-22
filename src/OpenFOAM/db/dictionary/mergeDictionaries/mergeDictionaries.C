@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "mergeDictionaries.H"
+#include "HashSet.T.H"
 #include "ListOps.T.H"
 #include "stringListOps.H"
 

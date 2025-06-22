@@ -39,6 +39,7 @@ SourceFiles
 #include "volFieldsFwd.H"
 #include "dictionary.H"
 #include "dimensionSet.H"
+#include "HashSet.T.H"
 #include "fvModelM.H"
 #include "geometricOneField.H"
 
