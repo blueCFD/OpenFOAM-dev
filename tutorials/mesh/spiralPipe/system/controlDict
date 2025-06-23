@@ -9,28 +9,36 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      extrudeMeshDict;
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-constructFrom mesh;
-sourceCase "$FOAM_CASE";
-sourcePatches (outlet);
+startFrom       startTime;
 
-flipNormals false;
+startTime       0;
 
-extrudeModel
-{
-    type            linearDirection;
+stopAt          endTime;
 
-    nLayers         40;
-    expansionRatio  1.0;
+endTime         1;
 
-    axisPt          (0 0 0);
-    direction       (1 -0.2 -0.03);
-    thickness       40;
-}
+deltaT          1;
 
-mergeFaces false;
+writeControl    timeStep;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  12;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
 
 // ************************************************************************* //

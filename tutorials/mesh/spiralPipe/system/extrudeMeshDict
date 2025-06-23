@@ -13,24 +13,23 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-constructFrom mesh;
-sourceCase "$FOAM_CASE";
-sourcePatches (outlet);
+constructFrom   mesh;
 
-flipNormals false;
+sourceCase      ".";
+
+sourcePatches   (outlet);
+
+flipNormals     false;
+
+mergeFaces      false;
 
 extrudeModel
 {
-    type            linearDirection;
+    type            path;
 
-    nLayers         40;
-    expansionRatio  1.0;
+    path            "constant/geometry/curve.obj";
 
-    axisPt          (0 0 0);
-    direction       (1 -0.2 -0.03);
-    thickness       40;
+    nLayers         500;
 }
-
-mergeFaces false;
 
 // ************************************************************************* //
