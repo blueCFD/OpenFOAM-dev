@@ -9,21 +9,17 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      fvSolution;
+    object      createZonesDict;
 }
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-solvers
-{
-    "alpha.water.*"
-    {
-        MULES
-        {
-            nIter           10;
-            tolerance       1e-2;
-        }
-    }
-}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// This is a skeleton file for configuring zoneGenerators.
+//
+// The available zoneGenerators can be listed using 'foamToC':
+//    foamToC -table zoneGenerator
+//
+// Examples of their configuration can be found using 'foamInfo',
+// e.g. for the 'union' zoneGenerator:
+//    foamInfo union
 
 // ************************************************************************* //

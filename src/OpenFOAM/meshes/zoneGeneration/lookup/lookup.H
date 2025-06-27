@@ -124,6 +124,18 @@ class lookup
         zoneTypesAll zoneType_;
 
 
+    // Private Member Functions
+
+        //- Check if the zone with the given zoneName and type exists
+        //  and return a reference otherwise error
+        template<class ZoneListType>
+        const typename ZoneListType::zoneType& lookupZone
+        (
+            const ZoneListType& zones,
+            const word& zoneName
+        ) const;
+
+
 public:
 
     //- Runtime type information
