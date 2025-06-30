@@ -9,49 +9,38 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      setFieldsDict;
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defaultValues
-{
-    alpha.water 0;
-}
+solver          incompressibleFluid;
 
-zones
-{
-    cells
-    {
-        type        box;
-        zoneType    cell;
+startFrom       latestTime;
 
-        box (-1e300 -1e300 -1e300) (1e300 0 1e300);
+startTime       0;
 
-        values
-        {
-            alpha.water 1;
-        }
-    }
+stopAt          endTime;
 
-    patchFaces
-    {
-        type        box;
-        zoneType    face;
+endTime         5000;
 
-        box (-1e300 -1e300 -1e300) (1e300 0 1e300);
+deltaT          1;
 
-        zone
-        {
-            type        patch;
-            patches     (inlet outlet);
-        }
+writeControl    runTime;
 
-        values
-        {
-            alpha.water 1;
-        }
-    }
-}
+writeInterval   500;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
 
 // ************************************************************************* //

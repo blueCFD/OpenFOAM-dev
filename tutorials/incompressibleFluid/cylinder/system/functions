@@ -4,19 +4,26 @@
    \\    /   O peration     | Website:  https://openfoam.org
     \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
--------------------------------------------------------------------------------
-Description
-    Calculate the diffusive specie-flux and write it as a surfaceScalarField
-    'specieDiffusiveFlux(<specieName>)'.
-
 \*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      functions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-type            specieDiffusiveFlux;
-libs            ("libfieldFunctionObjects.so");
-
-field           <specieName>;
-
-executeControl  writeTime;
-writeControl    writeTime;
+#includeFunc forcesIncompressible
+#includeFunc forceCoeffsIncompressible
+#includeFunc residuals(name=residuals, p)
+#includeFunc streamlinesLine
+(
+    name=streamlines,
+    start=(0.001 -0.002 0),
+    end=(0.001 0.002 0),
+    nPoints=40,
+    U
+)
 
 // ************************************************************************* //

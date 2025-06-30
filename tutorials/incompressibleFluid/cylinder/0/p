@@ -8,50 +8,36 @@
 FoamFile
 {
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      setFieldsDict;
+    class       volScalarField;
+    object      p;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defaultValues
-{
-    alpha.water 0;
-}
+pRef            0;
 
-zones
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform $pRef;
+
+boundaryField
 {
-    cells
+    inlet
     {
-        type        box;
-        zoneType    cell;
-
-        box (-1e300 -1e300 -1e300) (1e300 0 1e300);
-
-        values
-        {
-            alpha.water 1;
-        }
+        type            zeroGradient;
     }
 
-    patchFaces
+    outlet
     {
-        type        box;
-        zoneType    face;
-
-        box (-1e300 -1e300 -1e300) (1e300 0 1e300);
-
-        zone
-        {
-            type        patch;
-            patches     (inlet outlet);
-        }
-
-        values
-        {
-            alpha.water 1;
-        }
+        type            fixedValue;
+        value           uniform $pRef;
     }
+
+    wall
+    {
+        type            zeroGradient;
+    }
+
+    #includeEtc "caseDicts/setConstraintTypes"
 }
 
 // ************************************************************************* //

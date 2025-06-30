@@ -6,17 +6,17 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 Description
-    Calculate the diffusive specie-flux and write it as a surfaceScalarField
-    'specieDiffusiveFlux(<specieName>)'.
+    Calculates pressure and viscous forces over specified patches for a case
+    where the solver is incompressible; i.e., pressure is kinematic and has
+    units of m^2/s^2.
 
 \*---------------------------------------------------------------------------*/
 
-type            specieDiffusiveFlux;
-libs            ("libfieldFunctionObjects.so");
+#includeEtc "caseDicts/functions/forces/forcesIncompressible.cfg"
 
-field           <specieName>;
-
-executeControl  writeTime;
-writeControl    writeTime;
+patches     (cylinder);
+rhoInf      1.225;
+CofR        (0 0 0);
+pitchAxis   (0 1 0);
 
 // ************************************************************************* //

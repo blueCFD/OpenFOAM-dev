@@ -9,51 +9,41 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      setFieldsDict;
+    object      momentumTransport;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defaultValues
+simulationType          laminar;
+
+RAS
 {
-    alpha.water 0;
-    U           (0 0 0);
+    model               kOmegaSST;
+
+    turbulence          on;
+    printCoeffs         on;
 }
 
-zones
+LES
 {
-    // Set cell values
-    // (does zerogradient on boundaries)
-    cells
+    model               SpalartAllmarasDDES;
+    delta               cubeRootVol;
+
+    turbulence          on;
+    printCoeffs         on;
+
+    cubeRootVolCoeffs
     {
-        type        box;
-        zoneType    cell;
-
-        box (0 0 -1) (0.1461 0.292 1);
-
-        values
-        {
-            alpha.water 1;
-        }
+        deltaCoeff      1;
     }
 
-    // Set patch values (using ==)
-    patchFaces
+    smoothCoeffs
     {
-        type        box;
-        zoneType    face;
-
-        box (0 0 -1) (0.1461 0.292 1);
-
-        zone
+        delta           cubeRootVol;
+        cubeRootVolCoeffs
         {
-            type        patch;
-            patches     (inlet outlet);
+            deltaCoeff      1;
         }
-
-        values
-        {
-            alpha.water 1;
-        }
+        maxDeltaRatio   1.1;
     }
 }
 
