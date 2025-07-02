@@ -46,14 +46,14 @@ wallPressure
     interpolationScheme cellPoint;
 
     surfaces
-    (
+    {
         walls
         {
             type        patch;
             patches     (walls);
             triangulate false;
         }
-    );
+    }
 }
 
 // ************************************************************************* //

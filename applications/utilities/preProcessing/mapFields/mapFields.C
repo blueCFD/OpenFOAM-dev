@@ -203,6 +203,7 @@ int main(int argc, char *argv[])
         meshTarget.postConstruct
         (
             false,
+            false,
             fvMesh::stitchType::nonGeometric
         );
 
@@ -234,6 +235,7 @@ int main(int argc, char *argv[])
 
             meshSource.postConstruct
             (
+                false,
                 false,
                 fvMesh::stitchType::nonGeometric
             );
@@ -290,6 +292,7 @@ int main(int argc, char *argv[])
         meshSource.postConstruct
         (
             false,
+            false,
             fvMesh::stitchType::nonGeometric
         );
 
@@ -319,6 +322,7 @@ int main(int argc, char *argv[])
 
             meshTarget.postConstruct
             (
+                false,
                 false,
                 fvMesh::stitchType::nonGeometric
             );
@@ -395,6 +399,7 @@ int main(int argc, char *argv[])
             meshSource.postConstruct
             (
                 false,
+                false,
                 fvMesh::stitchType::nonGeometric
             );
 
@@ -436,6 +441,7 @@ int main(int argc, char *argv[])
 
                     meshTarget.postConstruct
                     (
+                        false,
                         false,
                         fvMesh::stitchType::nonGeometric
                     );
@@ -492,6 +498,7 @@ int main(int argc, char *argv[])
         meshSource.postConstruct
         (
             false,
+            false,
             fvMesh::stitchType::nonGeometric
         );
 
@@ -508,6 +515,7 @@ int main(int argc, char *argv[])
 
         meshTarget.postConstruct
         (
+            false,
             false,
             fvMesh::stitchType::nonGeometric
         );

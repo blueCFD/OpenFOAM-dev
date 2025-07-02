@@ -85,16 +85,17 @@ Description
 
 Usage
     \table
-        Property     | Description             | Required    | Default value
-        type         | type name: surfaceFieldValue   | yes         |
-        log          | write data to standard output | no    | no
-        writeFields  | Write the field values  | yes     |
-        writeArea    | Write the area of the surfaceFieldValue | no |
-        surfaceFormat | output value format    | no          |
-        operation    | operation to perform    | yes         |
-        weightField  | name of field to apply weighting | no |
-        weightFields | Names of fields to apply weighting | no |
-        fields       | list of fields to operate on | yes    |
+        Property     | Description                   | Required | Default value
+        type         | Type name: surfaceFieldValue  | yes      |
+        log          | Write data to standard output | no       | no
+        writeFields  | Write the field values        | yes      |
+        writeNumberOfFaces | Write the number of faces in the surface | no | no
+        writeArea    | Write the area of the surface | no       | no
+        surfaceFormat | Output value format          | if writeFields |
+        operation    | Operation to perform          | yes      |
+        weightField  | Name of field to apply weighting | no    | none
+        weightFields | Names of fields to apply weighting | no  | none
+        fields       | List of fields to operate on  | yes      |
     \endtable
 
     Where the supported selections are:
@@ -163,6 +164,7 @@ SourceFiles
 namespace Foam
 {
 
+class generatedFaceZone;
 class sampledSurface;
 class surfaceWriter;
 
@@ -196,7 +198,6 @@ public:
         //- Selection type names
         static const NamedEnum<selectionTypes, 4> selectionTypeNames;
 
-
         //- Operation type enumeration
         enum class operationType
         {
@@ -225,20 +226,17 @@ private:
 
     // Private Member Functions
 
-        //- Set faces to evaluate from a faceZone
-        void setFaceZoneFaces(const faceZone& zone);
+        //- Convert patch names to patch indices
+        labelList patchis(const wordReList&) const;
 
-        //- Set faces to evaluate based on a list of patch indices
-        void setPatchesFaces(const labelList&);
+        //- Set faces to evaluate from the faceZone
+        void setFaceZoneFaces();
 
-        //- Set faces to evaluate based on a list of patch names
-        void setPatchesFaces(const wordReList&);
+        //- Set faces to evaluate based the list of patch names
+        void setPatchesFaces();
 
-        //- Set faces to evaluate based on a patch name
-        void setPatchFaces(const wordRe&);
-
-        //- Set faces according to sampledSurface
-        void setSampledSurfaceFaces(const dictionary&);
+        //- Set faces according to the sampledSurface
+        void setSampledSurfaceFaces();
 
         //- Combine mesh faces and points from multiple processors
         void combineMeshGeometry
@@ -254,17 +252,13 @@ private:
             pointField& points
         ) const;
 
-        //- Calculate and return total area of the surfaceFieldValue: sum(magSf)
-        scalar totalArea() const;
+        //- Calculate and return the area of the surface
+        scalar area() const;
 
 
 protected:
 
     // Protected data
-
-        //- Input dictionary
-        //  Cached for mesh changes
-        dictionary dict_;
 
         //- Surface writer
         autoPtr<surfaceWriter> surfaceWriterPtr_;
@@ -281,17 +275,32 @@ protected:
         //- Weight field names - optional
         wordList weightFieldNames_;
 
-        //- Total area of the surfaceFieldValue
-        scalar totalArea_;
-
-        //- Optionally write the area of the surfaceFieldValue
-        bool writeArea_;
-
         //- Global number of faces
         label nFaces_;
 
+        //- Area of the surface
+        scalar area_;
 
-        // If operating on mesh faces (faceZone, patch)
+        //- Optionally write the number of faces in the surface
+        const bool writeNFaces_;
+
+        //- Optionally write the area of the surface
+        const bool writeArea_;
+
+
+        // If operating on a faceZone
+
+            //- The face-zone
+            autoPtr<generatedFaceZone> faceZonePtr_;
+
+
+        // If operating on a patch or patches
+
+            //- The name(s) of the patches
+            wordReList patchNames_;
+
+
+        // If operating on a faceZone, patch or patches to operate on
 
             //- Local list of face IDs
             labelList faceId_;
@@ -311,9 +320,6 @@ protected:
 
 
     // Protected Member Functions
-
-        //- Initialise, e.g. face addressing
-        void initialise(const dictionary& dict);
 
         //- Return true if the field name is valid
         template<class Type>
@@ -395,6 +401,12 @@ protected:
 
         //- Output file header information
         virtual void writeFileHeader(const label i);
+
+        //- Update the surface following mesh motion
+        void moveMesh();
+
+        //- Update the surface following mesh change
+        void changeMesh();
 
 
 public:
