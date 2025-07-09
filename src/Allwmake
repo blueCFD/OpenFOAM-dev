@@ -98,8 +98,6 @@ generic/Allwmake $targetType $*
 
 wmake $targetType sampling
 wmake $targetType meshCheck
-wmake $targetType topoSetSources
-wmake $targetType fvTopoSetSources
 
 wmake $targetType motionSolvers
 

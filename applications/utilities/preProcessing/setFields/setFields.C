@@ -26,7 +26,8 @@ Description
 
     The default and zone values are read from a dictionary which defaults to
     system/setFieldsDict, cellZones are used to specify the internal field
-    values and faceZone patch field values.
+    values and faceZone patch field values or by extrapolation from the
+    internal field.
 
 Usage
     Any number of fields can be initialised on any number of zones, for
@@ -78,10 +79,30 @@ Usage
                 }
             }
 
-            patchFaces
+            extrapolatePatches
+            {
+                "inlet|outlet"   (alpha.water);
+            }
+        }
+    \endverbatim
+    which sets the internal values of phase-fraction field and inlet and outlet
+    patch values by extrapolation from the internal to provide consistent
+    boundary distribution.
+
+    Alternatively the inlet and outlet patch values can be set explicitly on a
+    faceZone constructed from the corresponding patches:
+    \verbatim
+        defaultValues
+        {
+            alpha.water 0;
+        }
+
+        zones
+        {
+            cells
             {
                 type        box;
-                zoneType    face;
+                zoneType    cell;
 
                 box (-1e300 -1e300 -1e300) (1e300 0 1e300);
 
@@ -90,24 +111,36 @@ Usage
                     alpha.water 1;
                 }
             }
+
+            patchFaces
+            {
+                type        box;
+                zoneType    face;
+
+                box (-1e300 -1e300 -1e300) (1e300 0 1e300);
+
+                zone
+                {
+                    type        patch;
+                    patches     (inlet outlet);
+                }
+
+                values
+                {
+                    alpha.water 1;
+                }
+            }
         }
     \endverbatim
-    which sets both the internal and inlet values of the patch phase-fraction
-    field.
 
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
 #include "timeSelector.H"
+#include "PtrDictionary.T.H"
 #include "volFields.H"
 #include "zoneGenerator.H"
 #include "systemDict.H"
-
-// Backward compatibility
-#include "topoSetSource.H"
-#include "cellSet.H"
-#include "faceSet.H"
-#include "setCellField.H"
 
 using namespace Foam;
 
@@ -115,7 +148,8 @@ void setVolFields
 (
     const fvMesh& mesh,
     const dictionary& fieldsDict,
-    const labelList& selectedCells
+    const labelList& selectedCells,
+    const PtrDictionary<wordReList>& extrapolatePatches
 );
 
 void setPatchFields
@@ -140,6 +174,32 @@ int main(int argc, char *argv[])
 
     const dictionary setFieldsDict(systemDict("setFieldsDict", args, mesh));
 
+    PtrDictionary<wordReList> extrapolatePatches;
+
+    if (setFieldsDict.isDict("extrapolatePatches"))
+    {
+        const dictionary& extrapolatePatchesDict =
+            setFieldsDict.subDict("extrapolatePatches");
+
+        forAll(mesh.boundary(), patchi)
+        {
+            if (extrapolatePatchesDict.found(mesh.boundary()[patchi].name()))
+            {
+                extrapolatePatches.insert
+                (
+                    mesh.boundary()[patchi].name(),
+                    new wordReList
+                    (
+                        extrapolatePatchesDict.lookup
+                        (
+                            mesh.boundary()[patchi].name()
+                        )
+                    )
+                );
+            }
+        }
+    }
+
     if (setFieldsDict.found("defaultValues"))
     {
         Info<< "Setting field default values" << endl;
@@ -147,20 +207,8 @@ int main(int argc, char *argv[])
         (
             mesh,
             setFieldsDict.subDict("defaultValues"),
-            labelList::null()
-        );
-        Info<< endl;
-    }
-    else if (setFieldsDict.found("defaultFieldValues"))
-    {
-        Info<< "Setting field default values" << nl
-            << "    The 'defaultFieldValues' entry is deprecated, "
-               "please use 'default'" << endl;
-
-        PtrList<setCellField> defaultFieldValues
-        (
-            setFieldsDict.lookup("defaultFieldValues"),
-            setCellField::iNew(mesh, labelList::null())
+            labelList::null(),
+            extrapolatePatches
         );
         Info<< endl;
     }
@@ -177,16 +225,34 @@ int main(int argc, char *argv[])
 
             const dictionary& zoneDict = iter().dict();
 
-            autoPtr<zoneGenerator> zg
-            (
-                zoneGenerator::New(iter().keyword(), mesh, zoneDict)
-            );
+            autoPtr<zoneGenerator> zg;
+
+            if (zoneDict.found("zoneType"))
+            {
+                zg = zoneGenerator::New(iter().keyword(), mesh, zoneDict);
+            }
+            else
+            {
+                zg = zoneGenerator::New
+                (
+                    iter().keyword(),
+                    zoneTypes::cell,
+                    mesh,
+                    zoneDict
+                );
+            }
 
             const zoneSet zs(zg->generate());
 
             if (zs.cValid())
             {
-                setVolFields(mesh, zoneDict.subDict("values"), zs.cZone());
+                setVolFields
+                (
+                    mesh,
+                    zoneDict.subDict("values"),
+                    zs.cZone(),
+                    extrapolatePatches
+                );
             }
 
             if (zs.fValid())
@@ -195,67 +261,6 @@ int main(int argc, char *argv[])
             }
         }
     }
-
-    if (setFieldsDict.found("regions"))
-    {
-        PtrList<entry> regions(setFieldsDict.lookup("regions"));
-
-        Info<< "Setting field region values" << nl
-            << "    The 'regions' entry is deprecated, "
-               "please use 'zones'" << endl;
-
-        forAll(regions, ri)
-        {
-            const entry& region = regions[ri];
-
-            autoPtr<topoSetSource> source =
-                topoSetSource::New(region.keyword(), mesh, region.dict());
-
-            if (source().setType() == topoSetSource::CELLSETSOURCE)
-            {
-                cellSet selectedCellSet
-                (
-                    mesh,
-                    "cellSet",
-                    mesh.nCells()/10+1  // Reasonable size estimate.
-                );
-
-                source->applyToSet
-                (
-                    topoSetSource::NEW,
-                    selectedCellSet
-                );
-
-                PtrList<setCellField> fieldValues
-                (
-                    region.dict().lookup("fieldValues"),
-                    setCellField::iNew(mesh, selectedCellSet.toc())
-                );
-            }
-            else if (source().setType() == topoSetSource::FACESETSOURCE)
-            {
-                faceSet selectedFaceSet
-                (
-                    mesh,
-                    "faceSet",
-                    (mesh.nFaces()-mesh.nInternalFaces())/10+1
-                );
-
-                source->applyToSet
-                (
-                    topoSetSource::NEW,
-                    selectedFaceSet
-                );
-
-                PtrList<setFaceField> fieldValues
-                (
-                    region.dict().lookup("fieldValues"),
-                    setFaceField::iNew(mesh, selectedFaceSet.toc())
-                );
-            }
-        }
-    }
-
 
     Info<< "\nEnd\n" << endl;
 
