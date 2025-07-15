@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,6 @@ License
 
 #include "arcUniform.H"
 #include "sampledSet.H"
-#include "meshSearch.H"
 #include "DynamicList.T.H"
 #include "polyMesh.H"
 #include "addToRunTimeSelectionTable.H"
@@ -70,7 +69,6 @@ void Foam::sampledSets::arcUniform::calcSamples
     points::calcSamples
     (
         mesh(),
-        searchEngine(),
         points,
         samplingPositions,
         samplingDistances,
@@ -89,60 +87,23 @@ void Foam::sampledSets::arcUniform::calcSamples
 }
 
 
-void Foam::sampledSets::arcUniform::genSamples()
-{
-    DynamicList<point> samplingPositions;
-    DynamicList<scalar> samplingDistances;
-    DynamicList<label> samplingSegments;
-    DynamicList<label> samplingCells;
-    DynamicList<label> samplingFaces;
-
-    calcSamples
-    (
-        samplingPositions,
-        samplingDistances,
-        samplingSegments,
-        samplingCells,
-        samplingFaces
-    );
-
-    samplingPositions.shrink();
-    samplingDistances.shrink();
-    samplingSegments.shrink();
-    samplingCells.shrink();
-    samplingFaces.shrink();
-
-    setSamples
-    (
-        samplingPositions,
-        samplingDistances,
-        samplingSegments,
-        samplingCells,
-        samplingFaces
-    );
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::sampledSets::arcUniform::arcUniform
 (
     const word& name,
     const polyMesh& mesh,
-    const meshSearch& searchEngine,
     const dictionary& dict
 )
 :
-    sampledSet(name, mesh, searchEngine, dict),
+    sampledSet(name, mesh, dict),
     centre_(dict.lookup("centre")),
     normal_(normalised(dict.lookup<vector>("normal"))),
     radial_(dict.lookup<vector>("radial")),
     startAngle_(dict.lookup<scalar>("startAngle")),
     endAngle_(dict.lookup<scalar>("endAngle")),
     nPoints_(dict.lookup<scalar>("nPoints"))
-{
-    genSamples();
-}
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

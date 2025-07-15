@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,14 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "sphereRandom.H"
-#include "sampledSet.H"
 #include "meshSearch.H"
-#include "DynamicList.T.H"
-#include "polyMesh.H"
 #include "addToRunTimeSelectionTable.H"
-#include "word.H"
-#include "mathematicalConstants.H"
-#include "randomGenerator.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -50,11 +44,14 @@ namespace sampledSets
 void Foam::sampledSets::sphereRandom::calcSamples
 (
     DynamicList<point>& samplingPositions,
+    DynamicList<scalar>&,
     DynamicList<label>& samplingSegments,
     DynamicList<label>& samplingCells,
     DynamicList<label>& samplingFaces
 ) const
 {
+    const meshSearch& searchEngine = meshSearch::New(mesh());
+
     randomGenerator rndGen(261782, true);
 
     for (label i = 0; i < nPoints_; ++ i)
@@ -69,7 +66,7 @@ void Foam::sampledSets::sphereRandom::calcSamples
         }
 
         const point pt = centre_ + dpt;
-        const label celli = searchEngine().findCell(pt);
+        const label celli = searchEngine.findCell(pt);
 
         if (celli != -1)
         {
@@ -82,53 +79,20 @@ void Foam::sampledSets::sphereRandom::calcSamples
 }
 
 
-void Foam::sampledSets::sphereRandom::genSamples()
-{
-    DynamicList<point> samplingPositions;
-    DynamicList<label> samplingSegments;
-    DynamicList<label> samplingCells;
-    DynamicList<label> samplingFaces;
-
-    calcSamples
-    (
-        samplingPositions,
-        samplingSegments,
-        samplingCells,
-        samplingFaces
-    );
-
-    samplingPositions.shrink();
-    samplingSegments.shrink();
-    samplingCells.shrink();
-    samplingFaces.shrink();
-
-    setSamples
-    (
-        samplingPositions,
-        samplingSegments,
-        samplingCells,
-        samplingFaces
-    );
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::sampledSets::sphereRandom::sphereRandom
 (
     const word& name,
     const polyMesh& mesh,
-    const meshSearch& searchEngine,
     const dictionary& dict
 )
 :
-    sampledSet(name, mesh, searchEngine, dict),
+    sampledSet(name, mesh, dict),
     centre_(dict.lookup("centre")),
     radius_(dict.lookup<scalar>("radius")),
     nPoints_(dict.lookup<label>("nPoints"))
-{
-    genSamples();
-}
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

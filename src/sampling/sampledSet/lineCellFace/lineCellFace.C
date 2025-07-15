@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "lineCellFace.H"
-#include "meshSearch.H"
 #include "DynamicList.T.H"
 #include "polyMesh.H"
 #include "addToRunTimeSelectionTable.H"
@@ -45,7 +44,6 @@ namespace sampledSets
 
 void Foam::sampledSets::lineCellFace::calcSamples
 (
-    const label storeFaces,
     DynamicList<point>& samplingPositions,
     DynamicList<scalar>& samplingDistances,
     DynamicList<label>& samplingSegments,
@@ -56,10 +54,9 @@ void Foam::sampledSets::lineCellFace::calcSamples
     lineFace::calcSamples
     (
         mesh(),
-        searchEngine(),
         start_,
         end_,
-        storeFaces,
+        storeBothProcFaces_ ? 2 : 1,
         true,
         samplingPositions,
         samplingDistances,
@@ -70,84 +67,36 @@ void Foam::sampledSets::lineCellFace::calcSamples
 }
 
 
-void Foam::sampledSets::lineCellFace::genSamplesStoreFaces
-(
-    const label storeFaces
-)
-{
-    DynamicList<point> samplingPositions;
-    DynamicList<scalar> samplingDistances;
-    DynamicList<label> samplingSegments;
-    DynamicList<label> samplingCells;
-    DynamicList<label> samplingFaces;
-
-    calcSamples
-    (
-        storeFaces,
-        samplingPositions,
-        samplingDistances,
-        samplingSegments,
-        samplingCells,
-        samplingFaces
-    );
-
-    samplingPositions.shrink();
-    samplingDistances.shrink();
-    samplingSegments.shrink();
-    samplingCells.shrink();
-    samplingFaces.shrink();
-
-    setSamples
-    (
-        samplingPositions,
-        samplingDistances,
-        samplingSegments,
-        samplingCells,
-        samplingFaces
-    );
-}
-
-
-void Foam::sampledSets::lineCellFace::genSamples()
-{
-    genSamplesStoreFaces(1);
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::sampledSets::lineCellFace::lineCellFace
 (
     const word& name,
     const polyMesh& mesh,
-    const meshSearch& searchEngine,
     const dictionary& dict
 )
 :
-    sampledSet(name, mesh, searchEngine, dict),
+    sampledSet(name, mesh, dict),
     start_(dict.lookup("start")),
-    end_(dict.lookup("end"))
-{
-    genSamples();
-}
+    end_(dict.lookup("end")),
+    storeBothProcFaces_(false)
+{}
 
 
 Foam::sampledSets::lineCellFace::lineCellFace
 (
     const word& name,
     const polyMesh& mesh,
-    const meshSearch& searchEngine,
     const word& axis,
     const point& start,
     const point& end
 )
 :
-    sampledSet(name, mesh, searchEngine, axis),
+    sampledSet(name, mesh, axis),
     start_(start),
-    end_(end)
-{
-    genSamplesStoreFaces(2);
-}
+    end_(end),
+    storeBothProcFaces_(true)
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

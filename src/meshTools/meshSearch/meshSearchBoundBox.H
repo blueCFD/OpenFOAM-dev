@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,64 +22,84 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::meshSearchMeshObject
+    Foam::meshSearchBoundBox
 
 Description
-    DemandDrivenMeshObject wrapper around meshSearch(mesh).
+    Mesh object to hold a bound box for use by mesh search engines
 
 SourceFiles
+    meshSearchBoundBox.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef meshSearchMeshObject_H
-#define meshSearchMeshObject_H
+#ifndef meshSearchBoundBox_H
+#define meshSearchBoundBox_H
 
 #include "DemandDrivenMeshObject.T.H"
-#include "meshSearch.H"
+#include "polyMesh.H"
+#include "treeBoundBox.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
+// Forward declaration of classes
+class treeBoundBox;
+
 /*---------------------------------------------------------------------------*\
-                    Class meshSearchMeshObject Declaration
+                         Class meshSearchBoundBox Declaration
 \*---------------------------------------------------------------------------*/
 
-class meshSearchMeshObject
+class meshSearchBoundBox
 :
     public DemandDrivenMeshObject
     <
         polyMesh,
         DeletableMeshObject,
-        meshSearchMeshObject
-    >,
-    public meshSearch
+        meshSearchBoundBox
+    >
 {
+    // Private Data
 
-protected:
-
-    friend class DemandDrivenMeshObject
-    <
-        polyMesh,
-        DeletableMeshObject,
-        meshSearchMeshObject
-    >;
-
-    // Protected Constructors
-
-        //- Constructor from polyMesh
-        explicit meshSearchMeshObject(const polyMesh& mesh);
+        //- Bound box
+        const treeBoundBox bb_;
 
 
 public:
 
-    // Declare name of the class and its debug switch
-    TypeName("meshSearchMeshObject");
+    //- Run-time type information
+    TypeName("meshSearchBoundBox");
+
+
+    // Constructors
+
+        //- Construct from mesh
+        meshSearchBoundBox(const polyMesh& mesh);
+
+        //- Disallow default bitwise copy construction
+        meshSearchBoundBox(const meshSearchBoundBox&) = delete;
+
 
     //- Destructor
-    virtual ~meshSearchMeshObject()
-    {}
+    virtual ~meshSearchBoundBox();
+
+
+    // Member Functions
+
+        // Access
+
+            //- Access the bound box
+            inline const treeBoundBox& bb() const
+            {
+                return bb_;
+            }
+
+
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const meshSearchBoundBox&) = delete;
 };
 
 
