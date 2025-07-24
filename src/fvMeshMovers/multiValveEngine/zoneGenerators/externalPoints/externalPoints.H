@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,87 +22,90 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::HashList
+    Foam::zoneGenerators::externalPoints
 
 Description
-    HashList class. Like HashTable, but much less dynamic memory-y. Should be
-    faster for small sets of non-dynamic primitive types (labels, edges,
-    points, etc...). It is also much less functional at present. There is no
-    re-sizing, so you have to make sure it is constructed sufficiently large to
-    hold all the data that will ever be inserted into it.
+    A zoneGenerator which selects the static external points
+
+    i.e. points that are outside interior of the cylinder liner
+
+Usage
+    \table
+        Property     | Description              | Required | Default value
+        type         | Type: point              | yes      |
+        name         | Name of the zone         | no       | zoneGenerator name
+        moveUpdate   | Switch to update after mesh motion | no | false
+    \endtable
+
+    To create the \c externalPoints pointZone:
+    \verbatim
+        externalPoints;
+    \endverbatim
+    or the same pointZone but named \c staticPoints:
+    \verbatim
+        staticPoints
+        {
+            type        externalPoints;
+        }
+    \endverbatim
 
 SourceFiles
-    HashList.C
+    externalPoints.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef HashList_H
-#define HashList_H
+#ifndef externalPoints_H
+#define externalPoints_H
 
-#include "DynamicList.T.H"
-#include "Tuple2.T.H"
-#include "word.H"
+#include "zoneGeneratorList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace zoneGenerators
+{
 
 /*---------------------------------------------------------------------------*\
-                          Class HashList Declaration
+                         Class externalPoints Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type, class Key=word, class Hash=string::hash>
-class HashList
+class externalPoints
 :
-    private DynamicList<Tuple2<Key, Type>>
+    public zoneGenerator
 {
+
 public:
 
-    // Public Static Member Data
-
-        //- Null key value for unset elements in the list
-        static const Key nullKey;
+    //- Runtime type information
+    TypeName("externalPoints");
 
 
     // Constructors
 
-        //- Construct given a size
-        HashList(const label size);
+        //- Construct from dictionary
+        externalPoints
+        (
+            const word& name,
+            const polyMesh& mesh,
+            const dictionary& dict
+        );
+
+
+    //- Destructor
+    virtual ~externalPoints();
 
 
     // Member Functions
 
-        //- The size of the underlying list
-        inline label capacity() const;
-
-        //- Clear all elements
-        void clear();
-
-        //- Resize and clear all elements
-        void resizeAndClear(const label newSize);
-
-        //- Insert into the hash list. Return true if the value was newly
-        //  inserted, or false if it was already there.
-        bool insert(const Key& k, const Type& t);
-
-
-    // Member Operators
-
-        //- Retrieve from the hash list
-        const Type& operator[](const Key& k) const;
+        virtual zoneSet generate() const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace zoneGenerators
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "HashList.T.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
