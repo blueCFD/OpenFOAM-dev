@@ -9,18 +9,19 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    location    "system/Lagrangian/cloud";
-    object      LagrangianSolution;
+    object      clouds;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-outerCorrectors off;
+// As an fvModel this Lagrangian cloud provides two-way coupling
+// As a function object, it provides one-way coupling
 
-maxTimeStepFraction 0.3;
+type           kinematicParcelCloud;
+libs           ("libLagrangianCloud.so");
 
-maxCellLengthScaleFraction 0.3;
+// Entries required by the function object
 
-nCorrectors     0;
-
+executeControl timeStep;
+writeControl   writeTime;
 
 // ************************************************************************* //
