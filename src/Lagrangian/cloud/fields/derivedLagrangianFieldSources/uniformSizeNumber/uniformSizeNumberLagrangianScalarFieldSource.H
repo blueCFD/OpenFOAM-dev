@@ -38,7 +38,7 @@ SourceFiles
 #define uniformSizeNumberLagrangianScalarFieldSource_H
 
 #include "LagrangianFieldSources.T.H"
-#include "CloudLagrangianFieldSource.T.H"
+#include "cloudLagrangianFieldSource.H"
 #include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -53,7 +53,7 @@ namespace Foam
 class uniformSizeNumberLagrangianScalarFieldSource
 :
     public LagrangianScalarFieldSource,
-    private CloudLagrangianFieldSource<scalar>
+    protected cloudLagrangianFieldSource
 {
 public:
 

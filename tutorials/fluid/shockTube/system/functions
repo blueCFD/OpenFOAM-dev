@@ -17,6 +17,7 @@ FoamFile
 #includeFunc filterObjectsAsFiles
 
 #includeFunc mag(U)
+
 #includeFunc graphCell
 (
     name=graph,

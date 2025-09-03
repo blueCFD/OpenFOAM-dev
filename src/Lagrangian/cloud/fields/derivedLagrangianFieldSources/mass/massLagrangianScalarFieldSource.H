@@ -40,7 +40,7 @@ SourceFiles
 #define massLagrangianScalarFieldSource_H
 
 #include "LagrangianFieldSources.T.H"
-#include "CloudLagrangianFieldSource.T.H"
+#include "cloudLagrangianFieldSource.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,7 +54,7 @@ namespace Foam
 class massLagrangianScalarFieldSource
 :
     public LagrangianScalarFieldSource,
-    private CloudLagrangianFieldSource<scalar>
+    private cloudLagrangianFieldSource
 {
 public:
 
