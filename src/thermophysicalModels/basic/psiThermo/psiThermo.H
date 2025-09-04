@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 2024 FS Dynamics Portugal: Changes are tracked at:
@@ -78,7 +78,10 @@ public:
             PsiThermo<BasicThermo<MixtureType, composite>>;
 
         //- The derived name
-        DerivedThermoName;
+        static word derivedThermoName()
+        {
+            return "hePsiThermo";
+        }
 
 
     //- Runtime type information
