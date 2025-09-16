@@ -1745,16 +1745,24 @@ bool Foam::fvMesh::writeObject
         ok = ok & polyFaces.write(write);
     }
 
-    if (phiPtr_)
+    // Write geometry out at a higher precision
+    unsigned int precision0 =
+        IOstream::defaultPrecision(IOstream::fullPrecision());
+
+    // Write the mesh flux if old-old-time volumes exist
+    if (phiPtr_ && V00Ptr_)
     {
         ok = ok && phiPtr_->write(write);
     }
 
-    // Write V0 only if V00 exists
-    if (V00Ptr_)
+    // Write old-time volumes if old-old-time volumes exist
+    if (V0Ptr_ && V00Ptr_)
     {
         ok = ok && V0Ptr_->write(write);
     }
+
+    // Restore the default precision
+    IOstream::defaultPrecision(precision0);
 
     if (stitcher_.valid())
     {
