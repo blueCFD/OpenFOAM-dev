@@ -8,7 +8,6 @@ wmake $targetType specie
 wmake $targetType thermophysicalProperties
 wmake $targetType basic
 wmake $targetType multicomponentThermo
-wmake $targetType laminarFlameSpeed
 wmake $targetType chemistryModel
 
 wmake $targetType solidThermo
