@@ -22,21 +22,20 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::inhomogeneousMixture
+    Foam::homogeneousMixture
 
 Description
-    Combustion mixture for inhomogeneous lean, stoichiometric or rich conditions
+    Combustion mixture for homogeneous lean, stoichiometric or rich conditions
 
-    in which the mixture-fraction \c ft and fuel mass-fraction \c fu define the
-    composition.
+    in which the regress variable \c b defines the composition.
 
 SourceFiles
-    inhomogeneousMixture.C
+    homogeneousMixture.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef inhomogeneousMixture_H
-#define inhomogeneousMixture_H
+#ifndef homogeneousMixture_H
+#define homogeneousMixture_H
 
 #include "dimensionedTypes.H"
 #include "FieldListSlice.T.H"
@@ -47,11 +46,11 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class inhomogeneousMixture Declaration
+                     Class homogeneousMixture Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class ThermoType>
-class inhomogeneousMixture
+class homogeneousMixture
 {
 public:
 
@@ -72,19 +71,16 @@ private:
     // Private Enumerations
 
         //- Specie indices
-        enum species { FT, FU, B };
+        enum species { B };
 
 
     // Private Data
 
-        //- Stoichiometric air/fuel ratio
-        scalar stoicRatio_;
+        //- Return the fuel-oxidant equivalence ratio
+        scalar Phi_;
 
-        //- Fuel thermodynamic model
-        thermoType fuel_;
-
-        //- Oxidant thermodynamic model
-        thermoType oxidant_;
+        //- Reactant thermodynamic model
+        thermoType reactants_;
 
         //- Product thermodynamic model
         thermoType products_;
@@ -98,18 +94,10 @@ public:
     // Constructors
 
         //- Construct from a dictionary
-        inhomogeneousMixture(const dictionary&);
+        homogeneousMixture(const dictionary&);
 
         //- Disallow default bitwise copy construction
-        inhomogeneousMixture
-        (
-            const inhomogeneousMixture<ThermoType>&
-        ) = delete;
-
-
-    //- Destructor
-    virtual ~inhomogeneousMixture()
-    {}
+        homogeneousMixture(const homogeneousMixture<ThermoType>&) = delete;
 
 
     // Member Functions
@@ -117,40 +105,46 @@ public:
         //- Return the instantiated type name
         static word typeName()
         {
-            return "inhomogeneousMixture<" + ThermoType::typeName() + '>';
+            return "homogeneousMixture<" + ThermoType::typeName() + '>';
         }
 
         //- Return the specie names
         static wordList specieNames()
         {
-            return {"ft", "fu", "b"};
+            return {"b"};
         }
 
         //- Return the residual fraction of fuel in the burnt mixture
-        scalar fres(const scalarFieldListSlice& Y) const;
+        scalar fres(const scalarFieldListSlice& Y) const
+        {
+            return 0;
+        }
 
         //- Return the fuel-oxidant equivalence ratio
-        scalar Phi(const scalarFieldListSlice& Y) const;
+        scalar Phi(const scalarFieldListSlice& Y) const
+        {
+            return Phi_;
+        }
 
         //- Return the mixture for the given composition
-        const thermoType& mixture(const scalar ft, const scalar fu) const;
+        const thermoType& mixture(const scalar) const;
 
         //- Return the mixture for thermodynamic properties
         const thermoMixtureType& thermoMixture
         (
-            const scalarFieldListSlice& Y
+            const scalarFieldListSlice&
         ) const;
 
         //- Return the mixture for transport properties
         const transportMixtureType& transportMixture
         (
-            const scalarFieldListSlice& Y
+            const scalarFieldListSlice&
         ) const;
 
         //- Return the mixture for transport properties
         const transportMixtureType& transportMixture
         (
-            const scalarFieldListSlice& Y,
+            const scalarFieldListSlice&,
             const thermoMixtureType&
         ) const;
 
@@ -173,7 +167,7 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const inhomogeneousMixture<ThermoType>&) = delete;
+        void operator=(const homogeneousMixture<ThermoType>&) = delete;
 };
 
 
@@ -184,7 +178,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 #ifdef NoRepository
-    #include "inhomogeneousMixture.C"
+    #include "homogeneousMixture.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

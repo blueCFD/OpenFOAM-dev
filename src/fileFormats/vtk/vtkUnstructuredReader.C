@@ -29,6 +29,7 @@ License
 #include "stringIOList.H"
 #include "cellModeller.H"
 #include "vectorIOField.H"
+#include "tensorIOField.H"
 #include "stringOps.H"
 
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
@@ -618,11 +619,83 @@ void Foam::vtkUnstructuredReader::read(ISstream& inFile)
         {
             label nCells(readLabel(inFile));
             label nNumbers(readLabel(inFile));
-            if (debug)
+
+            token next(inFile);
+            if (next.isNumber())
             {
-                Info<< "Reading " << nCells << " cells or faces." << endl;
+                if (debug)
+                {
+                    Info<< "Reading " << nCells << " cells or faces." << endl;
+                }
+
+                inFile.putBack(next);
+                readBlock(inFile, nNumbers, cellVerts);
             }
-            readBlock(inFile, nNumbers, cellVerts);
+            else if (next.isWord() && next.wordToken() == "OFFSETS")
+            {
+                nCells --;
+
+                if (debug)
+                {
+                    Info<< "Reading " << nCells << " cells or faces." << endl;
+                }
+
+                // Read the offsets
+                const token offsetsIntType(inFile);
+                labelList cellOffsets;
+                readBlock(inFile, nCells + 1, cellOffsets);
+
+                // Check the next tag is "CONNECTIVITY"
+                const token connectivityTag(inFile);
+                if
+                (
+                    !connectivityTag.isWord()
+                 || connectivityTag.wordToken() != "CONNECTIVITY"
+                )
+                {
+                    FatalIOErrorInFunction(inFile)
+                        << "Expected 'CONNECTIVITY' but found "
+                        << next
+                        << exit(FatalIOError);
+                }
+
+                // Read the connectivity
+                const token connectivityIntType(inFile);
+                labelList cellConnectivity;
+                readBlock(inFile, nNumbers, cellConnectivity);
+
+                // Build the cell vertices
+                cellVerts.resize(nCells + nNumbers);
+                for
+                (
+                    label cellOffseti = 0, cellVerti = 0;
+                    cellOffseti < nCells;
+                    ++ cellOffseti
+                )
+                {
+                    const label cellConnectivityi0 =
+                        cellOffsets[cellOffseti];
+                    const label cellConnectivityi1 =
+                        cellOffsets[cellOffseti + 1];
+
+                    const label n = cellConnectivityi1 - cellConnectivityi0;
+
+                    cellVerts[cellVerti ++] = n;
+
+                    for (label i = 0; i < n; ++ i)
+                    {
+                        cellVerts[cellVerti ++] =
+                            cellConnectivity[cellConnectivityi0 + i];
+                    }
+                }
+            }
+            else
+            {
+                FatalIOErrorInFunction(inFile)
+                    << "Expected 'label' entry or 'OFFSETS' but found "
+                    << next
+                    << exit(FatalIOError);
+            }
         }
         else if (tag == "CELL_TYPES")
         {
@@ -827,6 +900,70 @@ void Foam::vtkUnstructuredReader::read(ISstream& inFile)
                 regIOobject::store(fieldVals);
             }
         }
+        else if (tag == "TENSORS")
+        {
+            // 'TENSORS Tensors float'
+            string line;
+            inFile.getLine(line);
+            IStringStream is(line);
+            word dataName(is);
+            word dataType(is);
+            if (debug)
+            {
+                Info<< "Reading tensor " << dataName
+                    << " of type " << dataType << endl;
+            }
+
+            objectRegistry& reg = selectRegistry(readMode);
+
+            readField
+            (
+                inFile,
+                reg,
+                dataName,
+                dataType,
+                9*wantedSize
+            );
+
+            if
+            (
+                vtkDataTypeNames[dataType] == VTK_FLOAT
+             || vtkDataTypeNames[dataType] == VTK_DOUBLE
+            )
+            {
+                objectRegistry::iterator iter = reg.find(dataName);
+                scalarField s(*dynamic_cast<const scalarField*>(iter()));
+                reg.erase(iter);
+                autoPtr<tensorIOField> fieldVals
+                (
+                    new tensorIOField
+                    (
+                        IOobject
+                        (
+                            dataName,
+                            "",
+                            reg
+                        ),
+                        s.size()/9
+                    )
+                );
+
+                label elemI = 0;
+                forAll(fieldVals(), i)
+                {
+                    fieldVals()[i].xx() = s[elemI++];
+                    fieldVals()[i].xy() = s[elemI++];
+                    fieldVals()[i].xz() = s[elemI++];
+                    fieldVals()[i].yx() = s[elemI++];
+                    fieldVals()[i].yy() = s[elemI++];
+                    fieldVals()[i].yz() = s[elemI++];
+                    fieldVals()[i].zx() = s[elemI++];
+                    fieldVals()[i].zy() = s[elemI++];
+                    fieldVals()[i].zz() = s[elemI++];
+                }
+                regIOobject::store(fieldVals);
+            }
+        }
         else if (tag == "TEXTURE_COORDINATES")
         {
             // 'TEXTURE_COORDINATES TCoords 2 float'
@@ -927,22 +1064,25 @@ void Foam::vtkUnstructuredReader::read(ISstream& inFile)
             << nl << endl;
 
         Info<< "Cell fields:" << endl;
-        printFieldStats<vectorIOField>(cellData_);
         printFieldStats<scalarIOField>(cellData_);
+        printFieldStats<vectorIOField>(cellData_);
+        printFieldStats<tensorIOField>(cellData_);
         printFieldStats<labelIOField>(cellData_);
         printFieldStats<stringIOList>(cellData_);
         Info<< nl << endl;
 
         Info<< "Point fields:" << endl;
-        printFieldStats<vectorIOField>(pointData_);
         printFieldStats<scalarIOField>(pointData_);
+        printFieldStats<vectorIOField>(pointData_);
+        printFieldStats<tensorIOField>(pointData_);
         printFieldStats<labelIOField>(pointData_);
         printFieldStats<stringIOList>(pointData_);
         Info<< nl << endl;
 
         Info<< "Other fields:" << endl;
-        printFieldStats<vectorIOField>(otherData_);
         printFieldStats<scalarIOField>(otherData_);
+        printFieldStats<vectorIOField>(otherData_);
+        printFieldStats<tensorIOField>(otherData_);
         printFieldStats<labelIOField>(otherData_);
         printFieldStats<stringIOList>(otherData_);
     }
