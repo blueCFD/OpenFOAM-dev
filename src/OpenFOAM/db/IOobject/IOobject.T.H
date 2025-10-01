@@ -184,7 +184,7 @@ private:
         readOption rOpt_;
 
         //- Write option
-        writeOption wOpt_;
+        mutable writeOption wOpt_;
 
         //- Register object created from this IOobject with registry if true
         bool registerObject_;
@@ -384,7 +384,7 @@ public:
                 return rOpt_;
             }
 
-            writeOption writeOpt() const
+            writeOption& writeOpt() const
             {
                 return wOpt_;
             }

@@ -11,15 +11,4 @@ EXE_INC = \
     -I$(LIB_SRC)/meshTools/lnInclude
 
 LIB_LIBS = \
-    -lcompressibleVoF
-
-LIB_LIBS += \
-    -ltwoPhaseVoFSolver \
-    -ltwoPhaseSolver \
-    -lVoFSolver \
-    -lphysicalProperties \
-    -lfluidThermophysicalModels \
-    -ltwoPhaseMixture \
-    -lcompressibleTwoPhases \
-    -lfiniteVolume \
-    -lmeshTools
+    -lcompressibleVoFSolver
