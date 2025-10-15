@@ -2,6 +2,8 @@ ubPsiMulticomponentThermo/ubPsiMulticomponentThermo.C
 ubPsiMulticomponentThermo/ubPsiMulticomponentThermos.C
 
 ubPsiThermo/ubPsiThermo.C
+ubPsiThermo/derivedFvPatchFields/ubCoupledTemperature/ubCoupledTemperatureFvPatchScalarField.C
+
 XiFluid.C
 thermophysicalPredictor.C
 
