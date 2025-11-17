@@ -71,13 +71,47 @@ class functionEntry
         // to the function name
         void readRestOfArgs(string& fNameArgs, Istream& is);
 
-        //- Read the function name and optional argument list
-        //  and return as a string.
-        //  The optional argument list can be on one or more lines.
-        tokenList readFuncNameArgList(Istream& is);
-
 
 protected:
+
+        tokenList readArgList
+        (
+            const functionName& functionType,
+            Istream& is,
+            const bool optional = false
+        );
+
+        //- Read the function name and optional argument list
+        //  The argument list can be on one or more lines.
+        tokenList readFuncNameArgList
+        (
+            const functionName& functionType,
+            Istream& is
+        );
+
+        //- Read the filen name and optional argument list
+        //  The argument list can be on one or more lines.
+        tokenList readFileNameArgList
+        (
+            const functionName& functionType,
+            Istream& is
+        );
+
+        static bool insert
+        (
+            const dictionary& contextDict,
+            dictionary& parentDict,
+            const token& t,
+            Istream& is
+        );
+
+        static bool insert
+        (
+            const dictionary& contextDict,
+            primitiveEntry& thisEntry,
+            const token& t,
+            Istream& is
+        );
 
         //- Insert the given string in a sub-dict context
         static bool insert
@@ -97,10 +131,39 @@ protected:
 
 public:
 
+    FunctionTypeName("functionEntry");
+
+    // Declare run-time constructor selection tables
+
+        declareRunTimeSelectionTable
+        (
+            autoPtr,
+            functionEntry,
+            dictionary,
+            (
+                const dictionary& parentDict,
+                Istream& is
+            ),
+            (parentDict, is)
+        );
+
+
     // Constructors
+
+        //- Construct from keyword and parent dictionary
+        functionEntry(const keyType&, const dictionary&);
 
         //- Construct from keyword, parent dictionary and Istream
         functionEntry(const keyType&, const dictionary&, Istream&);
+
+        //- Construct from function type and parent dictionary
+        functionEntry(const functionName&, const dictionary&);
+
+        //- Construct from function type, parent dictionary and a token
+        functionEntry(const functionName&, const dictionary&, const token&);
+
+        //- Construct from function type, parent dictionary and tokenList
+        functionEntry(const functionName&, const dictionary&, const tokenList&);
 
         //- Copy construct
         functionEntry(const functionEntry&) = default;
@@ -110,6 +173,14 @@ public:
         {
             return autoPtr<entry>(new functionEntry(*this));
         }
+
+        //- Construct from Istream and insert into dictionary
+        static autoPtr<functionEntry> New
+        (
+            const keyType& functionName,
+            const dictionary& parentDict,
+            Istream& is
+        );
 
 
     // Member Function Selectors
@@ -157,61 +228,6 @@ public:
             primitiveEntry&,
             Istream&
         );
-
-        Tuple2<word, label> funcName()
-        {
-            return Tuple2<word, label>
-            (
-                operator[](0).wordToken(),
-                operator[](0).lineNumber()
-            );
-        }
-
-        Tuple2<string, label> fName()
-        {
-            return Tuple2<string, label>
-            (
-                operator[](0).stringToken(),
-                operator[](0).lineNumber()
-            );
-        }
-
-        Tuple2<string, label> args()
-        {
-            if (size() > 1)
-            {
-                return Tuple2<string, label>
-                (
-                    char(operator[](1).pToken())
-                  + operator[](2).stringToken()
-                  + char(operator[](3).pToken()),
-                    operator[](1).lineNumber()
-                );
-            }
-            else
-            {
-                return Tuple2<string, label>(string::null, 0);
-            }
-        }
-
-        Tuple2<string, label> funcNameArgs()
-        {
-            Tuple2<string, label> fNameArgs
-            (
-                operator[](0).wordToken(),
-                operator[](0).lineNumber()
-            );
-
-            if (size() > 1)
-            {
-                fNameArgs.first() +=
-                    char(operator[](1).pToken())
-                  + operator[](2).stringToken()
-                  + char(operator[](3).pToken());
-            }
-
-            return fNameArgs;
-        }
 
         //- Write
         virtual void write(Ostream&) const;

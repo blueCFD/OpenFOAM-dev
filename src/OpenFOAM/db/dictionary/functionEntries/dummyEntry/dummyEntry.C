@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "includeFvConstraintEntry.H"
-#include "addToRunTimeSelectionTable.H"
-#include "addToMemberFunctionSelectionTable.H"
+#include "dummyEntry.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -33,63 +31,28 @@ namespace Foam
 {
 namespace functionEntries
 {
-    defineFunctionTypeNameAndDebug(includeFvConstraintEntry, 0);
-
-    addToRunTimeSelectionTable
-    (
-        functionEntry,
-        includeFvConstraintEntry,
-        dictionary
-    );
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        includeFvConstraintEntry,
-        execute,
-        dictionaryIstream
-    );
+    defineFunctionTypeName(dummyEntry);
 }
 }
-
-
-Foam::fileName
-Foam::functionEntries::includeFvConstraintEntry::fvConstraintDictPath
-(
-    "caseDicts/fvConstraints"
-);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::functionEntries::includeFvConstraintEntry::includeFvConstraintEntry
+Foam::functionEntries::dummyEntry::dummyEntry
 (
+    const keyType& key,
     const dictionary& parentDict,
     Istream& is
 )
 :
-    includeFuncEntry(typeName, parentDict, is)
-{}
+    functionEntry(key, parentDict)
+{
+    // Get the rest of the line and discard
+    string line;
+    dynamic_cast<ISstream&>(is).getLine(line);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool Foam::functionEntries::includeFvConstraintEntry::execute
-(
-    dictionary& parentDict,
-    Istream& is
-)
-{
-    return readConfigFile
-    (
-        "constraint",
-        // Read line containing the function name and the optional arguments
-        includeFvConstraintEntry(parentDict, is).funcNameArgs(),
-        parentDict,
-        fvConstraintDictPath,
-        "system"
-    );
-}
-
 
 // ************************************************************************* //

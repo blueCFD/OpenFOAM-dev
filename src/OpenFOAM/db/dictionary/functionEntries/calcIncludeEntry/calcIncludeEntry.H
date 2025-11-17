@@ -75,13 +75,25 @@ class calcIncludeEntry
         static DynamicList<fileName> includeFiles_;
 
 
+    // Private member functions
+
+        //- Return the file name
+        const string& fName() const
+        {
+            return operator[](0).stringToken();
+        }
+
+
 public:
 
     //- Runtime type information
-    ClassName("#calcInclude");
+    FunctionTypeName("#calcInclude");
 
 
     // Constructors
+
+        //- Construct from dictionary and Istream
+        calcIncludeEntry(const dictionary& parentDict, Istream& is);
 
         //- Disallow default bitwise copy construction
         calcIncludeEntry(const calcIncludeEntry&) = delete;

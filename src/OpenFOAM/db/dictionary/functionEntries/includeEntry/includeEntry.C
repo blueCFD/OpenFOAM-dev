@@ -26,6 +26,7 @@ License
 #include "includeEntry.H"
 #include "dictionary.H"
 #include "IFstream.H"
+#include "addToRunTimeSelectionTable.H"
 #include "addToMemberFunctionSelectionTable.H"
 #include "stringOps.H"
 #include "IOobject.T.H"
@@ -33,22 +34,16 @@ License
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-const Foam::word Foam::functionEntries::includeEntry::typeName
-(
-    Foam::functionEntries::includeEntry::typeName_()
-);
-
-// Don't lookup the debug switch here as the debug switch dictionary
-// might include includeEntry
-int Foam::functionEntries::includeEntry::debug(0);
-
 bool Foam::functionEntries::includeEntry::log(false);
-
 
 namespace Foam
 {
 namespace functionEntries
 {
+    defineFunctionTypeNameAndDebug(includeEntry, 0);
+
+    addToRunTimeSelectionTable(functionEntry, includeEntry, dictionary);
+
     addToMemberFunctionSelectionTable
     (
         functionEntry,
@@ -177,6 +172,7 @@ Foam::fileName Foam::functionEntries::includeEntry::includeFileName
 )
 {
     fileName fName(f);
+
     // Substitute dictionary and environment variables. Allow empty
     // substitutions.
     stringOps::inplaceExpandEntry(fName, dict, true, true);
@@ -193,6 +189,34 @@ Foam::fileName Foam::functionEntries::includeEntry::includeFileName
 }
 
 
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::functionEntries::includeEntry::includeEntry
+(
+    const functionName& functionType,
+    const dictionary& parentDict,
+    Istream& is
+)
+:
+    functionEntry
+    (
+        functionType,
+        parentDict,
+        readFileNameArgList(functionType, is)
+    )
+{}
+
+
+Foam::functionEntries::includeEntry::includeEntry
+(
+    const dictionary& parentDict,
+    Istream& is
+)
+:
+    includeEntry(typeName, parentDict, is)
+{}
+
+
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::functionEntries::includeEntry::execute
@@ -201,18 +225,18 @@ bool Foam::functionEntries::includeEntry::execute
     Istream& is
 )
 {
-    functionEntry fe(typeName, parentDict, is);
+    const includeEntry ie(parentDict, is);
 
     const fileName fName
     (
-        includeFileName(is.name().path(), fe[0].stringToken(), parentDict)
+        includeFileName(is.name().path(), ie.fName(), parentDict)
     );
 
     // Cache the optional named arguments
     // temporarily inserted into parentDict
     List<Tuple3<word, string, label>> namedArgs
     (
-        insertNamedArgs(parentDict, fe.args())
+        insertNamedArgs(parentDict, ie.args())
     );
 
     autoPtr<ISstream> ifsPtr
@@ -253,7 +277,7 @@ bool Foam::functionEntries::includeEntry::execute
         (
             is
         )   << "Cannot open include file "
-            << (ifs.name().size() ? ifs.name() : fe[0].stringToken())
+            << (ifs.name().size() ? ifs.name() : ie.fName())
             << " while reading dictionary " << parentDict.name()
             << exit(FatalIOError);
     }
@@ -273,18 +297,18 @@ bool Foam::functionEntries::includeEntry::execute
     Istream& is
 )
 {
-    functionEntry fe(typeName, parentDict, is);
+    const includeEntry ie(parentDict, is);
 
     const fileName fName
     (
-        includeFileName(is.name().path(), fe.fName().first(), parentDict)
+        includeFileName(is.name().path(), ie.fName(), parentDict)
     );
 
     // Cache the optional named arguments
     // temporarily inserted into parentDict
     List<Tuple3<word, string, label>> namedArgs
     (
-        insertNamedArgs(const_cast<dictionary&>(parentDict), fe.args())
+        insertNamedArgs(const_cast<dictionary&>(parentDict), ie.args())
     );
 
     autoPtr<ISstream> ifsPtr(fileHandler().NewIFstream(fName));
@@ -305,7 +329,7 @@ bool Foam::functionEntries::includeEntry::execute
         (
             is
         )   << "Cannot open include file "
-            << (ifs.name().size() ? ifs.name() : fe[0].stringToken())
+            << (ifs.name().size() ? ifs.name() : ie.fName())
             << " while reading dictionary " << parentDict.name()
             << exit(FatalIOError);
     }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,9 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "includeFuncEntry.H"
+#include "endifEntry.H"
 #include "addToRunTimeSelectionTable.H"
-#include "addToMemberFunctionSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -33,80 +32,24 @@ namespace Foam
 {
 namespace functionEntries
 {
-    defineFunctionTypeNameAndDebug(includeFuncEntry, 0);
-
-    addToRunTimeSelectionTable(functionEntry, includeFuncEntry, dictionary);
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        includeFuncEntry,
-        execute,
-        dictionaryIstream
-    );
+    defineFunctionTypeNameAndDebug(endifEntry, 0);
+    addToRunTimeSelectionTable(functionEntry, endifEntry, dictionary);
 }
 }
-
-
-Foam::fileName Foam::functionEntries::includeFuncEntry::functionObjectDictPath
-(
-    "caseDicts/functions"
-);
-
-
-Foam::fileName
-Foam::functionEntries::includeFuncEntry::functionObjectTemplatePath
-(
-    "caseDicts/functionTemplates"
-);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::functionEntries::includeFuncEntry::includeFuncEntry
-(
-    const functionName& functionType,
-    const dictionary& parentDict,
-    Istream& is
-)
-:
-    functionEntry
-    (
-        functionType,
-        parentDict,
-        readFuncNameArgList(functionType, is)
-    )
-{}
-
-
-Foam::functionEntries::includeFuncEntry::includeFuncEntry
+Foam::functionEntries::endifEntry::endifEntry
 (
     const dictionary& parentDict,
     Istream& is
 )
 :
-    includeFuncEntry(typeName, parentDict, is)
+    functionEntry(typeName, parentDict)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool Foam::functionEntries::includeFuncEntry::execute
-(
-    dictionary& parentDict,
-    Istream& is
-)
-{
-    return readConfigFile
-    (
-        "function",
-        // Read line containing the function name and the optional arguments
-        includeFuncEntry(parentDict, is).funcNameArgs(),
-        parentDict,
-        functionObjectDictPath,
-        "system"
-    );
-}
-
 
 // ************************************************************************* //

@@ -82,11 +82,51 @@ class includeFuncEntry
 :
     public functionEntry
 {
+protected:
+
+        //- Return the function name + arguments string
+        //  for processing by readConfigFile
+        Tuple2<string, label> funcNameArgs() const
+        {
+            Tuple2<string, label> fNameArgs
+            (
+                operator[](0).wordToken(),
+                operator[](0).lineNumber()
+            );
+
+            if (size() > 1)
+            {
+                fNameArgs.first() +=
+                    char(operator[](1).pToken())
+                  + operator[](2).stringToken()
+                  + char(operator[](3).pToken());
+            }
+
+            return fNameArgs;
+        }
+
 
 public:
 
     //- Runtime type information
-    ClassName("#includeFunc");
+    FunctionTypeName("#includeFunc");
+
+
+    // Constructors
+
+        //- Construct from functionType, dictionary and Istream
+        includeFuncEntry
+        (
+            const functionName& functionType,
+            const dictionary& parentDict,
+            Istream& is
+        );
+
+        //- Construct from dictionary and Istream
+        includeFuncEntry(const dictionary& parentDict, Istream& is);
+
+        //- Disallow default bitwise copy construction
+        includeFuncEntry(const includeFuncEntry&) = delete;
 
 
     // Static Data Members

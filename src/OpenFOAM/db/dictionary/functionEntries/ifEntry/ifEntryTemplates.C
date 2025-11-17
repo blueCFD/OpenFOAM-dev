@@ -23,78 +23,46 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "ifEntry.H"
 #include "Switch.H"
-#include "addToRunTimeSelectionTable.H"
-#include "addToMemberFunctionSelectionTable.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-namespace Foam
-{
-namespace functionEntries
-{
-    defineFunctionTypeNameAndDebug(ifEntry, 0);
-    addToRunTimeSelectionTable(functionEntry, ifEntry, dictionary);
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        ifEntry,
-        execute,
-        dictionaryIstream
-    );
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        ifEntry,
-        execute,
-        primitiveEntryIstream
-    );
-}
-}
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::functionEntries::ifEntry::ifEntry
-(
-    const dictionary& parentDict,
-    Istream& is
-)
-:
-    ifeqEntry
-    (
-        typeName,
-        parentDict,
-        functionEntry::readArgList(typeName, is)
-    )
-{}
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
+template<class Context>
 bool Foam::functionEntries::ifEntry::execute
 (
-    dictionary& contextDict,
-    Istream& is
-)
-{
-    DynamicList<filePos> stack(10);
-    return execute(stack, contextDict, contextDict, is);
-}
-
-
-bool Foam::functionEntries::ifEntry::execute
-(
+    DynamicList<filePos>& stack,
     const dictionary& contextDict,
-    primitiveEntry& contextEntry,
+    Context& context,
     Istream& is
 )
 {
-    DynamicList<filePos> stack(10);
-    return execute(stack, contextDict, contextEntry, is);
+    const label nNested = stack.size();
+
+    stack.append(filePos(is.name(), is.lineNumber()));
+
+    // Read if argument
+    const ifEntry ife(contextDict, is);
+    const string arg
+    (
+        ife[1].stringToken() + char(token::END_STATEMENT)
+    );
+    IStringStream argStream(arg);
+    argStream.lineNumber() = ife[1].lineNumber();
+    const primitiveEntry e("ifEntry", contextDict, argStream);
+    const Switch doIf(e.stream());
+
+    bool ok = ifeqEntry::execute(doIf, stack, contextDict, context, is);
+
+    if (stack.size() != nNested)
+    {
+        FatalIOErrorInFunction(contextDict)
+            << "Did not find matching #endif for "
+            << typeName << " condition starting"
+            << " at line " << stack.last().second()
+            << " in file " <<  stack.last().first() << exit(FatalIOError);
+    }
+
+    return ok;
 }
 
 
