@@ -25,7 +25,6 @@ License
 
 #include "includeFuncEntry.H"
 #include "addToRunTimeSelectionTable.H"
-#include "addToMemberFunctionSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -34,16 +33,7 @@ namespace Foam
 namespace functionEntries
 {
     defineFunctionTypeNameAndDebug(includeFuncEntry, 0);
-
     addToRunTimeSelectionTable(functionEntry, includeFuncEntry, dictionary);
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        includeFuncEntry,
-        execute,
-        dictionaryIstream
-    );
 }
 }
 
@@ -74,6 +64,7 @@ Foam::functionEntries::includeFuncEntry::includeFuncEntry
     (
         functionType,
         parentDict,
+        is,
         readFuncNameArgList(functionType, is)
     )
 {}
@@ -93,7 +84,7 @@ Foam::functionEntries::includeFuncEntry::includeFuncEntry
 
 bool Foam::functionEntries::includeFuncEntry::execute
 (
-    dictionary& parentDict,
+    dictionary& contextDict,
     Istream& is
 )
 {
@@ -101,8 +92,8 @@ bool Foam::functionEntries::includeFuncEntry::execute
     (
         "function",
         // Read line containing the function name and the optional arguments
-        includeFuncEntry(parentDict, is).funcNameArgs(),
-        parentDict,
+        funcNameArgs(),
+        contextDict,
         functionObjectDictPath,
         "system"
     );

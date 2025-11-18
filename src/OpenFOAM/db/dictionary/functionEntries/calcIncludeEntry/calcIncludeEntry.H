@@ -95,14 +95,20 @@ public:
         //- Construct from dictionary and Istream
         calcIncludeEntry(const dictionary& parentDict, Istream& is);
 
-        //- Disallow default bitwise copy construction
-        calcIncludeEntry(const calcIncludeEntry&) = delete;
+        //- Copy construct
+        calcIncludeEntry(const calcIncludeEntry&) = default;
+
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new calcIncludeEntry(*this));
+        }
 
 
     // Member Functions
 
         //- Execute the functionEntry in a sub-dict context
-        static bool execute(dictionary& parentDict, Istream&);
+        virtual bool execute(dictionary& parentDict, Istream&);
 
         //- Reset the cache of \#calc include file names
         static void clear();

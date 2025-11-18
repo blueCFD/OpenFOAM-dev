@@ -25,9 +25,7 @@ License
 
 #include "calcIncludeEntry.H"
 #include "stringOps.H"
-#include "fileOperation.H"
 #include "addToRunTimeSelectionTable.H"
-#include "addToMemberFunctionSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -36,16 +34,7 @@ namespace Foam
 namespace functionEntries
 {
     defineFunctionTypeNameAndDebug(calcIncludeEntry, 0);
-
     addToRunTimeSelectionTable(functionEntry, calcIncludeEntry, dictionary);
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        calcIncludeEntry,
-        execute,
-        dictionaryIstream
-    );
 }
 }
 
@@ -62,7 +51,7 @@ Foam::functionEntries::calcIncludeEntry::calcIncludeEntry
     Istream& is
 )
 :
-    functionEntry(typeName, parentDict, token(is))
+    functionEntry(typeName, parentDict, is, token(is))
 {
     if (!operator[](0).isString())
     {
@@ -78,18 +67,16 @@ Foam::functionEntries::calcIncludeEntry::calcIncludeEntry
 
 bool Foam::functionEntries::calcIncludeEntry::execute
 (
-    dictionary& parentDict,
+    dictionary& contextDict,
     Istream& is
 )
 {
-    const calcIncludeEntry cie(parentDict, is);
-
     // Read the include file name
-    fileName expandedFname(cie.fName());
+    fileName expandedFname(fName());
 
     // Substitute dictionary and environment variables. Allow empty
     // substitutions.
-    stringOps::inplaceExpandEntry(expandedFname, parentDict, true, true);
+    stringOps::inplaceExpandEntry(expandedFname, contextDict, true, true);
 
     // Add the file name to the cache
     includeFiles_.append(expandedFname);

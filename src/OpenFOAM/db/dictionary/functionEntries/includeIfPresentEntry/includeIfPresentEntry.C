@@ -24,11 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "includeIfPresentEntry.H"
-#include "dictionary.H"
-#include "IFstream.H"
+#include "fileOperation.H"
 #include "addToRunTimeSelectionTable.H"
 #include "addToMemberFunctionSelectionTable.H"
-#include "fileOperation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -43,14 +41,6 @@ namespace functionEntries
         functionEntry,
         includeIfPresentEntry,
         dictionary
-    );
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        includeIfPresentEntry,
-        execute,
-        dictionaryIstream
     );
 
     addToMemberFunctionSelectionTable
@@ -80,11 +70,14 @@ Foam::functionEntries::includeIfPresentEntry::includeIfPresentEntry
 
 bool Foam::functionEntries::includeIfPresentEntry::execute
 (
-    dictionary& parentDict,
+    dictionary& contextDict,
     Istream& is
 )
 {
-    const fileName fName(includeFileName(is, parentDict));
+    const fileName fName
+    (
+        includeFileName(is, includeEntry::fName(), contextDict)
+    );
 
     autoPtr<ISstream> ifsPtr(fileHandler().NewIFstream(fName));
     ISstream& ifs = ifsPtr();
@@ -95,7 +88,7 @@ bool Foam::functionEntries::includeIfPresentEntry::execute
         {
             Info<< fName << endl;
         }
-        parentDict.read(ifs);
+        contextDict.read(ifs);
     }
 
     return true;
@@ -104,12 +97,12 @@ bool Foam::functionEntries::includeIfPresentEntry::execute
 
 bool Foam::functionEntries::includeIfPresentEntry::execute
 (
-    const dictionary& parentDict,
-    primitiveEntry& entry,
+    const dictionary& contextDict,
+    primitiveEntry& contextEntry,
     Istream& is
 )
 {
-    const fileName fName(includeFileName(is, parentDict));
+    const fileName fName(includeFileName(is, fileName(is), contextDict));
 
     autoPtr<ISstream> ifsPtr(fileHandler().NewIFstream(fName));
     ISstream& ifs = ifsPtr();
@@ -120,7 +113,7 @@ bool Foam::functionEntries::includeIfPresentEntry::execute
         {
             Info<< fName << endl;
         }
-        entry.read(parentDict, ifs);
+        contextEntry.read(contextDict, ifs);
     }
 
     return true;

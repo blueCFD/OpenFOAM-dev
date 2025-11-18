@@ -208,20 +208,30 @@ public:
 
     // Constructors
 
-        //- Disallow default bitwise copy construction
-        calcEntry(const calcEntry&) = delete;
+        //- Copy construct
+        calcEntry(const calcEntry&) = default;
+
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new calcEntry(*this));
+        }
 
 
     // Member Functions
 
-        //- Execute the functionEntry in a sub-dict context
-        static bool execute(dictionary& dict, Istream&);
+        //- Expand the functionEntry into the contextDict
+        virtual bool execute(dictionary& contextDict, Istream&)
+        {
+            NotImplemented;
+            return false;
+        }
 
-        //- Execute the functionEntry in a primitiveEntry context
+        //- Expand the functionEntry into the contextEntry
         static bool execute
         (
-            const dictionary& dict,
-            primitiveEntry&,
+            const dictionary& contextDict,
+            primitiveEntry& contextEntry,
             Istream&
         );
 

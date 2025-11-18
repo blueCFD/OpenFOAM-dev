@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "ifEntry.H"
-#include "Switch.H"
 #include "addToRunTimeSelectionTable.H"
 #include "addToMemberFunctionSelectionTable.H"
 
@@ -36,14 +35,6 @@ namespace functionEntries
 {
     defineFunctionTypeNameAndDebug(ifEntry, 0);
     addToRunTimeSelectionTable(functionEntry, ifEntry, dictionary);
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        ifEntry,
-        execute,
-        dictionaryIstream
-    );
 
     addToMemberFunctionSelectionTable
     (
@@ -68,6 +59,7 @@ Foam::functionEntries::ifEntry::ifEntry
     (
         typeName,
         parentDict,
+        is,
         functionEntry::readArgList(typeName, is)
     )
 {}
@@ -94,7 +86,10 @@ bool Foam::functionEntries::ifEntry::execute
 )
 {
     DynamicList<filePos> stack(10);
-    return execute(stack, contextDict, contextEntry, is);
+    return ifEntry(contextDict, is).execute
+    (
+        stack, contextDict, contextEntry, is
+    );
 }
 
 

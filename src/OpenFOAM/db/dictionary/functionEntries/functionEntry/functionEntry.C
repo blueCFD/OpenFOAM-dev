@@ -24,9 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "functionEntry.H"
-#include "ISstream.H"
 #include "dummyEntry.H"
-#include "ifEntry.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -39,13 +37,6 @@ namespace Foam
     (
         functionEntry,
         execute,
-        dictionaryIstream
-    );
-
-    defineMemberFunctionSelectionTable
-    (
-        functionEntry,
-        execute,
         primitiveEntryIstream
     );
 }
@@ -53,7 +44,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::functionEntry::readRestOfArgs(string& fNameArgs, Istream& is)
+void Foam::functionEntry::readRestOfArgs(string& fNameArgs, Istream& is) const
 {
     int listDepth = 1
       + fNameArgs.count(token::BEGIN_LIST) - fNameArgs.count(token::END_LIST);
@@ -126,12 +117,14 @@ void Foam::functionEntry::readRestOfArgs(string& fNameArgs, Istream& is)
 }
 
 
+// * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
+
 Foam::tokenList Foam::functionEntry::readArgList
 (
     const functionName& functionType,
     Istream& is,
     const bool optional
-)
+) const
 {
     tokenList argList;
 
@@ -202,7 +195,7 @@ Foam::tokenList Foam::functionEntry::readFuncNameArgList
 (
     const functionName& functionType,
     Istream& is
-)
+) const
 {
     tokenList funcNameArgList;
     string::size_type argsStart = string::npos;
@@ -267,7 +260,7 @@ Foam::tokenList Foam::functionEntry::readFileNameArgList
 (
     const functionName& functionType,
     Istream& is
-)
+) const
 {
     tokenList fileNameArgList;
 
@@ -297,37 +290,37 @@ Foam::tokenList Foam::functionEntry::readFileNameArgList
 
 bool Foam::functionEntry::insert
 (
-    const dictionary& contextDict,
-    dictionary& context,
+    const dictionary& parentDict,
+    dictionary& contextDict,
     const token& t,
     Istream& is
 )
 {
     is.putBack(t);
-    return entry::New(context, is);
+    return entry::New(contextDict, is);
 }
 
 
 bool Foam::functionEntry::insert
 (
-    const dictionary& contextDict,
-    primitiveEntry& context,
+    const dictionary& parentDict,
+    primitiveEntry& contextEntry,
     const token& t,
     Istream& is
 )
 {
-    context.append(t, contextDict, is);
+    contextEntry.append(t, parentDict, is);
     return true;
 }
 
 
 bool Foam::functionEntry::insert
 (
-    dictionary& parentDict,
+    dictionary& contextDict,
     const string& str
 )
 {
-    parentDict.read(IStringStream(str)());
+    contextDict.read(IStringStream(str)());
     return true;
 }
 
@@ -335,36 +328,16 @@ bool Foam::functionEntry::insert
 bool Foam::functionEntry::insert
 (
     const dictionary& parentDict,
-    primitiveEntry& thisEntry,
+    primitiveEntry& contextEntry,
     const string& str
 )
 {
-    thisEntry.read(parentDict, IStringStream(str)());
+    contextEntry.read(parentDict, IStringStream(str)());
     return true;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::functionEntry::functionEntry
-(
-    const keyType& key,
-    const dictionary& dict
-)
-:
-    primitiveEntry(key)
-{}
-
-Foam::functionEntry::functionEntry
-(
-    const keyType& key,
-    const dictionary& dict,
-    Istream& is
-)
-:
-    primitiveEntry(key, readFuncNameArgList(typeName, is))
-{}
-
 
 Foam::functionEntry::functionEntry
 (
@@ -380,10 +353,15 @@ Foam::functionEntry::functionEntry
 (
     const functionName& functionType,
     const dictionary& dict,
+    const Istream& is,
     const token& token
 )
 :
-    primitiveEntry(keyType(functionType), token)
+    primitiveEntry
+    (
+        keyType(functionType),
+        ITstream(is.name(), tokenList(1, token))
+    )
 {}
 
 
@@ -391,10 +369,11 @@ Foam::functionEntry::functionEntry
 (
     const functionName& functionType,
     const dictionary& dict,
+    const Istream& is,
     const tokenList& tokens
 )
 :
-    primitiveEntry(keyType(functionType), tokens)
+    primitiveEntry(keyType(functionType), ITstream(is.name(), tokens))
 {}
 
 
@@ -402,7 +381,7 @@ Foam::functionEntry::functionEntry
 
 Foam::autoPtr<Foam::functionEntry> Foam::functionEntry::New
 (
-    const keyType& functionName,
+    const keyType& functionType,
     const dictionary& parentDict,
     Istream& is
 )
@@ -413,26 +392,28 @@ Foam::autoPtr<Foam::functionEntry> Foam::functionEntry::New
     {
         return autoPtr<functionEntry>
         (
-            new functionEntries::dummyEntry(functionName, parentDict, is)
+            new functionEntries::dummyEntry
+            (
+                functionName(functionType),
+                parentDict,
+                is
+            )
         );
     }
 
     dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(functionName);
+        dictionaryConstructorTablePtr_->find(functionType);
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
         FatalErrorInFunction
             << "Unknown functionEntry "
-            << functionName << nl << nl
+            << functionType << nl << nl
             << "Valid functions are : " << nl
             << dictionaryConstructorTablePtr_->sortedToc()
-            << endl; // exit(FatalError);
+            << exit(FatalError);
 
-        return autoPtr<functionEntry>
-        (
-            new functionEntry(functionName, parentDict, is)
-        );
+        return autoPtr<functionEntry>(nullptr);
     }
 
     return autoPtr<functionEntry>(cstrIter()(parentDict, is));
@@ -444,50 +425,8 @@ Foam::autoPtr<Foam::functionEntry> Foam::functionEntry::New
 bool Foam::functionEntry::execute
 (
     const word& functionName,
-    dictionary& parentDict,
-    Istream& is
-)
-{
-    is.fatalCheck
-    (
-        "functionEntry::execute"
-        "(const word& functionName, dictionary& parentDict, Istream&)"
-    );
-
-    if (!executedictionaryIstreamMemberFunctionTablePtr_)
-    {
-        cerr<< "functionEntry::execute"
-            << "(const word&, dictionary&, Istream&)"
-            << " not yet initialised, function = "
-            << functionName.c_str() << std::endl;
-
-        // Return true to keep reading
-        return true;
-    }
-
-    executedictionaryIstreamMemberFunctionTable::iterator mfIter =
-        executedictionaryIstreamMemberFunctionTablePtr_->find(functionName);
-
-    if (mfIter == executedictionaryIstreamMemberFunctionTablePtr_->end())
-    {
-        FatalErrorInFunction
-            << "Unknown functionEntry '" << functionName
-            << "' in " << is.name() << " at line " << is.lineNumber()
-            << nl << nl
-            << "Valid functionEntries are :" << endl
-            << executedictionaryIstreamMemberFunctionTablePtr_->toc()
-            << exit(FatalError);
-    }
-
-    return mfIter()(parentDict, is);
-}
-
-
-bool Foam::functionEntry::execute
-(
-    const word& functionName,
-    const dictionary& parentDict,
-    primitiveEntry& entry,
+    const dictionary& contextDict,
+    primitiveEntry& contextEntry,
     Istream& is
 )
 {
@@ -522,7 +461,7 @@ bool Foam::functionEntry::execute
             << exit(FatalError);
     }
 
-    return mfIter()(parentDict, entry, is);
+    return mfIter()(contextDict, contextEntry, is);
 }
 
 

@@ -93,11 +93,24 @@ public:
         //- Construct from dictionary and Istream
         elifEntry(const dictionary& parentDict, Istream& is);
 
-        //- Disallow default bitwise copy construction
-        elifEntry(const elifEntry&) = delete;
+        //- Copy construct
+        elifEntry(const elifEntry&) = default;
+
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new elifEntry(*this));
+        }
 
 
     // Member Functions
+
+        //- Expand the functionEntry into the contextDict
+        virtual bool execute(dictionary& contextDict, Istream& is)
+        {
+            NotImplemented;
+            return false;
+        }
 
 
     // Member Operators

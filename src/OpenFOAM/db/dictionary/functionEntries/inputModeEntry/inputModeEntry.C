@@ -24,8 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "inputModeEntry.H"
-#include "dictionary.H"
-#include "addToMemberFunctionSelectionTable.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -37,25 +36,71 @@ namespace Foam
 namespace functionEntries
 {
     defineFunctionTypeNameAndDebug(inputModeEntry, 0);
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        inputModeEntry,
-        execute,
-        dictionaryIstream
-    );
+    addToRunTimeSelectionTable(functionEntry, inputModeEntry, dictionary);
 }
 }
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-// we could combine this into execute() directly, but leave it here for now
-void Foam::functionEntries::inputModeEntry::setMode(Istream& is)
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::functionEntries::inputModeEntry::inputModeEntry
+(
+    const dictionary& parentDict,
+    Istream& is
+)
+:
+    functionEntry(typeName, parentDict, is, token(is))
+{
+    if (!operator[](0).isWord())
+    {
+        FatalIOErrorInFunction(is)
+            << "Expected a word, found " << operator[](0)
+            << " while reading function " << typeName
+            << exit(FatalIOError);
+    }
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::functionEntries::inputModeEntry::clear()
+{
+    mode_ = MERGE;
+}
+
+
+bool Foam::functionEntries::inputModeEntry::merge()
+{
+    return mode_ == MERGE;
+}
+
+
+bool Foam::functionEntries::inputModeEntry::overwrite()
+{
+    return mode_ == OVERWRITE;
+}
+
+
+bool Foam::functionEntries::inputModeEntry::protect()
+{
+    return mode_ == PROTECT;
+}
+
+bool Foam::functionEntries::inputModeEntry::error()
+{
+    return mode_ == ERROR;
+}
+
+
+bool Foam::functionEntries::inputModeEntry::execute
+(
+    dictionary& contextDict,
+    Istream& is
+)
 {
     clear();
 
-    word mode(is);
+    const word& mode = operator[](0).wordToken();
 
     if (mode == "merge" || mode == "default")
     {
@@ -84,48 +129,8 @@ void Foam::functionEntries::inputModeEntry::setMode(Istream& is)
             << "' ... defaulting to 'merge'"
             << endl;
     }
-}
 
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool Foam::functionEntries::inputModeEntry::execute
-(
-    dictionary& parentDict,
-    Istream& is
-)
-{
-    setMode(is);
     return true;
-}
-
-
-void Foam::functionEntries::inputModeEntry::clear()
-{
-    mode_ = MERGE;
-}
-
-
-bool Foam::functionEntries::inputModeEntry::merge()
-{
-    return mode_ == MERGE;
-}
-
-
-bool Foam::functionEntries::inputModeEntry::overwrite()
-{
-    return mode_ == OVERWRITE;
-}
-
-
-bool Foam::functionEntries::inputModeEntry::protect()
-{
-    return mode_ == PROTECT;
-}
-
-bool Foam::functionEntries::inputModeEntry::error()
-{
-    return mode_ == ERROR;
 }
 
 

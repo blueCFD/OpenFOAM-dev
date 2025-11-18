@@ -39,14 +39,6 @@ namespace functionEntries
         functionEntry,
         negEntry,
         execute,
-        dictionaryIstream
-    );
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        negEntry,
-        execute,
         primitiveEntryIstream
     );
 }
@@ -107,22 +99,12 @@ Foam::string Foam::functionEntries::negEntry::negateVariable
 
 bool Foam::functionEntries::negEntry::execute
 (
-    dictionary& parentDict,
+    const dictionary& contextDict,
+    primitiveEntry& contextEntry,
     Istream& is
 )
 {
-    return insert(parentDict, negateVariable(parentDict, is));
-}
-
-
-bool Foam::functionEntries::negEntry::execute
-(
-    const dictionary& parentDict,
-    primitiveEntry& thisEntry,
-    Istream& is
-)
-{
-    return insert(parentDict, thisEntry, negateVariable(parentDict, is));
+    return insert(contextDict, contextEntry, negateVariable(contextDict, is));
 }
 
 

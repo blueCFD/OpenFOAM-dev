@@ -260,20 +260,29 @@ public:
 
     // Constructors
 
-        //- Disallow default bitwise copy construction
-        codeStream(const codeStream&) = delete;
+        //- Construct from dictionary and Istream
+        codeStream(const dictionary& parentDict, Istream& is);
+
+        //- Copy construct
+        codeStream(const codeStream&) = default;
+
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new codeStream(*this));
+        }
 
 
     // Member Functions
 
-        //- Execute the functionEntry in a sub-dict context
-        static bool execute(dictionary& contextDict, Istream&);
+        //- Expand the functionEntry into the contextDict
+        virtual bool execute(dictionary& contextDict, Istream&);
 
-        //- Execute the functionEntry in a primitiveEntry context
+        //- Expand the functionEntry into the contextEntry
         static bool execute
         (
             const dictionary& contextDict,
-            primitiveEntry&,
+            primitiveEntry& contextEntry,
             Istream&
         );
 

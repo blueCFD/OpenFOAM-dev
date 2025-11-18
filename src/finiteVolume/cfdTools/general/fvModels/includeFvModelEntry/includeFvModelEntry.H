@@ -95,8 +95,14 @@ public:
         //- Construct from dictionary and Istream
         includeFvModelEntry(const dictionary& parentDict, Istream& is);
 
-        //- Disallow default bitwise copy construction
-        includeFvModelEntry(const includeFuncEntry&) = delete;
+        //- Copy construct
+        includeFvModelEntry(const includeFvModelEntry&) = default;
+
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new includeFvModelEntry(*this));
+        }
 
 
     // Static Data Members
@@ -108,8 +114,8 @@ public:
 
     // Member Functions
 
-        //- Execute the functionEntry in a sub-dict context
-        static bool execute(dictionary& parentDict, Istream&);
+        //- Expand the functionEntry into the contextDict
+        virtual bool execute(dictionary& contextDict, Istream&);
 };
 
 

@@ -28,7 +28,6 @@ License
 #include "elifEntry.H"
 #include "elseEntry.H"
 #include "endifEntry.H"
-#include "Switch.H"
 #include "stringOps.H"
 #include "addToRunTimeSelectionTable.H"
 #include "addToMemberFunctionSelectionTable.H"
@@ -47,14 +46,6 @@ namespace functionEntries
         functionEntry,
         ifeqEntry,
         execute,
-        dictionaryIstream
-    );
-
-    addToMemberFunctionSelectionTable
-    (
-        functionEntry,
-        ifeqEntry,
-        execute,
         primitiveEntryIstream
     );
 }
@@ -63,7 +54,10 @@ namespace functionEntries
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-Foam::tokenList Foam::functionEntries::ifeqEntry::readArgList(Istream& is)
+Foam::tokenList Foam::functionEntries::ifeqEntry::readArgList
+(
+    Istream& is
+) const
 {
     tokenList args;
 
@@ -117,7 +111,7 @@ Foam::tokenList Foam::functionEntries::ifeqEntry::readArgList(Istream& is)
 }
 
 
-void Foam::functionEntries::ifeqEntry::readToken(token& t, Istream& is)
+void Foam::functionEntries::ifeqEntry::readToken(token& t, Istream& is) const
 {
     // Skip dummy tokens - avoids entry::getKeyword consuming #else, #endif
     do
@@ -135,7 +129,7 @@ Foam::token Foam::functionEntries::ifeqEntry::expand
 (
     const dictionary& dict,
     const token& t
-)
+) const
 {
     if (t.isVariable())
     {
@@ -176,7 +170,7 @@ bool Foam::functionEntries::ifeqEntry::equalToken
 (
     const token& t1,
     const token& t2
-)
+) const
 {
     const bool eqType = (t1.type() == t2.type());
 
@@ -342,10 +336,10 @@ bool Foam::functionEntries::ifeqEntry::equalToken
 void Foam::functionEntries::ifeqEntry::skipUntil
 (
     DynamicList<filePos>& stack,
-    const dictionary& parentDict,
+    const dictionary& contextDict,
     const functionName& endWord,
     Istream& is
-)
+) const
 {
     while (!is.eof())
     {
@@ -360,7 +354,7 @@ void Foam::functionEntries::ifeqEntry::skipUntil
             )
             {
                 stack.append(filePos(is.name(), is.lineNumber()));
-                skipUntil(stack, parentDict, endifEntry::typeName, is);
+                skipUntil(stack, contextDict, endifEntry::typeName, is);
                 stack.remove();
             }
             else if (t.functionNameToken() == endWord)
@@ -370,7 +364,7 @@ void Foam::functionEntries::ifeqEntry::skipUntil
         }
     }
 
-    FatalIOErrorInFunction(parentDict)
+    FatalIOErrorInFunction(contextDict)
         << "Did not find matching " << endWord
         << " for " << typeName << " condition"
         << exit(FatalIOError);
@@ -383,10 +377,11 @@ Foam::functionEntries::ifeqEntry::ifeqEntry
 (
     const functionName& functionType,
     const dictionary& parentDict,
+    const Istream& is,
     const tokenList& tokens
 )
 :
-    functionEntry(functionType, parentDict, tokens)
+    functionEntry(functionType, parentDict, is, tokens)
 {}
 
 
@@ -396,7 +391,7 @@ Foam::functionEntries::ifeqEntry::ifeqEntry
     Istream& is
 )
 :
-    ifeqEntry(typeName, parentDict, readArgList(is))
+    ifeqEntry(typeName, parentDict, is, readArgList(is))
 {}
 
 
@@ -421,7 +416,9 @@ bool Foam::functionEntries::ifeqEntry::execute
 )
 {
     DynamicList<filePos> stack(10);
-    return execute(stack, contextDict, contextEntry, is);
+    const ifeqEntry ifeqe(contextDict, is);
+
+    return ifeqe.execute(stack, contextDict, contextEntry, is);
 }
 
 

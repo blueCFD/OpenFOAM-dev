@@ -80,12 +80,6 @@ class inputModeEntry
         static inputMode mode_;
 
 
-    // Private Member Functions
-
-        //- Read the mode as a word and set enum appropriately
-        static void setMode(Istream&);
-
-
 public:
 
     //- Runtime type information
@@ -94,14 +88,20 @@ public:
 
     // Constructors
 
-        //- Disallow default bitwise copy construction
-        inputModeEntry(const inputModeEntry&) = delete;
+        //- Construct from dictionary and Istream
+        inputModeEntry(const dictionary& parentDict, Istream& is);
+
+        //- Copy construct
+        inputModeEntry(const inputModeEntry&) = default;
+
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new inputModeEntry(*this));
+        }
 
 
     // Member Functions
-
-        //- Execute the functionEntry in a sub-dict context
-        static bool execute(dictionary& parentDict, Istream&);
 
         //- Reset the inputMode to %default (ie, %merge)
         static void clear();
@@ -117,6 +117,9 @@ public:
 
         //- Return true if the inputMode is %error
         static bool error();
+
+        //- Expand the functionEntry into the contextDict
+        virtual bool execute(dictionary& contextDict, Istream&);
 
 
     // Member Operators

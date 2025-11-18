@@ -69,11 +69,24 @@ public:
         //- Construct from dictionary and Istream
         elseEntry(const dictionary& parentDict, Istream& is);
 
-        //- Disallow default bitwise copy construction
-        elseEntry(const elseEntry&) = delete;
+        //- Copy construct
+        elseEntry(const elseEntry&) = default;
+
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new elseEntry(*this));
+        }
 
 
     // Member Functions
+
+        //- Expand the functionEntry into the contextDict
+        virtual bool execute(dictionary& contextDict, Istream& is)
+        {
+            NotImplemented;
+            return false;
+        }
 
 
     // Member Operators
