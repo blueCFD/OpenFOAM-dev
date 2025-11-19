@@ -57,8 +57,11 @@ Foam::string Foam::functionEntries::calcEntry::calc
     Istream& is
 )
 {
-    Info<< "Expanding #calc at line " << is.lineNumber()
-        << " in file " <<  dict.name() << endl;
+    if (debug)
+    {
+        Info<< "Expanding #calc at line " << is.lineNumber()
+            << " in file " <<  dict.name() << endl;
+    }
 
     dynamicCode::checkSecurity
     (
@@ -97,6 +100,16 @@ Foam::string Foam::functionEntries::calcEntry::calc
             << "    found token " << t
             << exit(FatalIOError);
     }
+
+    codeDict.add
+    (
+        primitiveEntry
+        (
+            "codeOptions",
+            "#{ -fno-show-column -fno-diagnostics-show-caret #}",
+            0
+        )
+    );
 
     codeStream::streamingFunctionType function = codeStream::getFunction
     (
