@@ -84,6 +84,9 @@ private:
         //- Product thermodynamic model
         thermoType products_;
 
+        //- List of specie active flags
+        boolList active_;
+
         //- Mutable storage for the mixed thermodynamic model
         mutable thermoType mixture_;
 
@@ -124,6 +127,18 @@ public:
         static wordList specieNames()
         {
             return {"ft"};
+        }
+
+        //- Access the specie active flags
+        const boolList& speciesActive() const
+        {
+            return active_;
+        }
+
+        //- Access the specie active flags
+        boolList& speciesActive()
+        {
+            return active_;
         }
 
         inline const ThermoType& specieThermo(const label speciei) const
