@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added -target and -jobs
@@ -144,45 +144,27 @@ then
     then
         rm -rf "$toDir" || exit 1
     fi
-    cp -r "${fromDir}" "${toDir}" || exit 1
+    cp -a "${fromDir}" "${toDir}" || exit 1
 fi
 
 # Change the control dict to make the tests quick
-echo "Modifying the controlDicts to run only $MODIFY_MESSAGE"
+echo "Modifying the controlDicts to run only one time step"
 cd ${toDir} || exit 1
 find . -name "controlDict*" | while read -r controlDict
 do
     (
-        if [ "$wallClockLimit" = "-1" ]
+        foamDictionary -entry startFrom -set latestTime "$controlDict"
+        foamDictionary -entry stopAt -set nextWrite "$controlDict"
+        foamDictionary -entry writeControl -set timeStep "$controlDict"
+        foamDictionary -entry writeInterval -set 1 "$controlDict"
+
+        # Generate the system/configDict files except for controlDict.orig
+        if [ $(basename "$controlDict") == "controlDict" ]
         then
-
-            foamDictionary -entry startFrom -set latestTime "$controlDict"
-            foamDictionary -entry stopAt -set nextWrite "$controlDict"
-            foamDictionary -entry writeControl -set timeStep "$controlDict"
-            foamDictionary -entry writeInterval -set 1 "$controlDict"
-
-        else
-
-            functionsDict="${controlDict/controlDict/functions}"
-            functionsDict="${functionsDict/.orig/}"
-
-            if [ -e "${functionsDict}.orig" ]
-            then
-                functionsDict="${functionsDict}.orig"
-
-            elif [ ! -e "${functionsDict}" ]
-            then
-                cp "${FOAM_ETC}/caseDicts/functions/functions" \
-                   "${functionsDict}"
-            fi
-
-            FUNCTION="stopAtClockTime(stopTime=$wallClockLimit,action=writeNow)"
-            sed -i -e "s|\(^// \* \*.*$\)|\1\n\n#includeFunc ${FUNCTION}|" \
-                "${functionsDict}"
+           configDict="$(dirname "$controlDict")"/configDict
+           foamDictionary -entry DebugSwitches \
+               -merge "{ fvSchemes 1; solution 1; }" -create "$configDict"
         fi
-
-        foamDictionary -entry DebugSwitches \
-            -merge "{ fvSchemes 1; solution 1; }" "$controlDict"
     ) > /dev/null
 done
 
