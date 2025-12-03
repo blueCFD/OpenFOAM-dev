@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,8 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "GAMGSolver.H"
-#include "PCG.H"
-#include "PBiCGStab.H"
 #include "SubField.T.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -519,34 +517,6 @@ void Foam::GAMGSolver::initVcycle
 }
 
 
-Foam::dictionary Foam::GAMGSolver::PCGsolverDict
-(
-    const scalar tol,
-    const scalar relTol
-) const
-{
-    dictionary dict(IStringStream("solver PCG; preconditioner DIC;")());
-    dict.add("tolerance", tol);
-    dict.add("relTol", relTol);
-
-    return dict;
-}
-
-
-Foam::dictionary Foam::GAMGSolver::PBiCGStabSolverDict
-(
-    const scalar tol,
-    const scalar relTol
-) const
-{
-    dictionary dict(IStringStream("solver PBiCGStab; preconditioner DILU;")());
-    dict.add("tolerance", tol);
-    dict.add("relTol", relTol);
-
-    return dict;
-}
-
-
 void Foam::GAMGSolver::solveCoarsestLevel
 (
     scalarField& coarsestCorrField,
@@ -559,144 +529,20 @@ void Foam::GAMGSolver::solveCoarsestLevel
 
     if (directSolveCoarsest_)
     {
-        coarsestLUMatrixPtr_->solve(coarsestCorrField, coarsestSource);
+        coarsestLUMatrixPtr_->solve
+        (
+            coarsestCorrField,
+            coarsestSource
+        );
     }
-    // else if
-    //(
-    //    agglomeration_.processorAgglomerate()
-    // && procMatrixLevels_.set(coarsestLevel)
-    //)
-    //{
-    //    // const labelList& agglomProcIDs = agglomeration_.agglomProcIDs
-    //    //(
-    //    //    coarsestLevel
-    //    //);
-    //    //
-    //    // scalarField allSource;
-    //    //
-    //    // globalIndex cellOffsets;
-    //    // if (Pstream::myProcNo(coarseComm) == agglomProcIDs[0])
-    //    //{
-    //    //    cellOffsets.offsets() =
-    //    //        agglomeration_.cellOffsets(coarsestLevel);
-    //    //}
-    //    //
-    //    // cellOffsets.gather
-    //    //(
-    //    //    coarseComm,
-    //    //    agglomProcIDs,
-    //    //    coarsestSource,
-    //    //    allSource
-    //    //);
-    //    //
-    //    // scalarField allCorrField;
-    //    // solverPerformance coarseSolverPerf;
-    //
-    //    label solveComm = agglomeration_.procCommunicator(coarsestLevel);
-    //
-    //    coarsestCorrField = 0;
-    //    solverPerformance coarseSolverPerf;
-    //
-    //    if (Pstream::myProcNo(solveComm) != -1)
-    //    {
-    //        const lduMatrix& allMatrix = procMatrixLevels_[coarsestLevel];
-    //
-    //        {
-    //            Pout<< "** Master:Solving on comm:" << solveComm
-    //                << " with procs:" << UPstream::procID(solveComm) << endl;
-    //
-    //            if (allMatrix.asymmetric())
-    //            {
-    //                coarseSolverPerf = PBiCGStab
-    //                (
-    //                    "coarsestLevelCorr",
-    //                    allMatrix,
-    //                    procInterfaceLevelsBouCoeffs_[coarsestLevel],
-    //                    procInterfaceLevelsIntCoeffs_[coarsestLevel],
-    //                    procInterfaceLevels_[coarsestLevel],
-    //                    PBiCGStabSolverDict(tolerance_, relTol_)
-    //                ).solve
-    //                (
-    //                    coarsestCorrField,
-    //                    coarsestSource
-    //                );
-    //            }
-    //            else
-    //            {
-    //                coarseSolverPerf = PCG
-    //                (
-    //                    "coarsestLevelCorr",
-    //                    allMatrix,
-    //                    procInterfaceLevelsBouCoeffs_[coarsestLevel],
-    //                    procInterfaceLevelsIntCoeffs_[coarsestLevel],
-    //                    procInterfaceLevels_[coarsestLevel],
-    //                    PCGsolverDict(tolerance_, relTol_)
-    //                ).solve
-    //                (
-    //                    coarsestCorrField,
-    //                    coarsestSource
-    //                );
-    //            }
-    //        }
-    //    }
-    //
-    //    Pout<< "done master solve." << endl;
-    //
-    //    //// Scatter to all processors
-    //    // coarsestCorrField.setSize(coarsestSource.size());
-    //    // cellOffsets.scatter
-    //    //(
-    //    //    coarseComm,
-    //    //    agglomProcIDs,
-    //    //    allCorrField,
-    //    //    coarsestCorrField
-    //    //);
-    //
-    //    if (debug >= 2)
-    //    {
-    //        coarseSolverPerf.print(Info(coarseComm));
-    //    }
-    //
-    //    Pout<< "procAgglom: coarsestSource   :" << coarsestSource << endl;
-    //    Pout<< "procAgglom: coarsestCorrField:" << coarsestCorrField << endl;
-    //}
     else
     {
         coarsestCorrField = 0;
-        solverPerformance coarseSolverPerf;
-
-        if (matrixLevels_[coarsestLevel].asymmetric())
-        {
-            coarseSolverPerf = PBiCGStab
-            (
-                "coarsestLevelCorr",
-                matrixLevels_[coarsestLevel],
-                interfaceLevelsBouCoeffs_[coarsestLevel],
-                interfaceLevelsIntCoeffs_[coarsestLevel],
-                interfaceLevels_[coarsestLevel],
-                PBiCGStabSolverDict(tolerance_, relTol_)
-            ).solve
-            (
-                coarsestCorrField,
-                coarsestSource
-            );
-        }
-        else
-        {
-            coarseSolverPerf = PCG
-            (
-                "coarsestLevelCorr",
-                matrixLevels_[coarsestLevel],
-                interfaceLevelsBouCoeffs_[coarsestLevel],
-                interfaceLevelsIntCoeffs_[coarsestLevel],
-                interfaceLevels_[coarsestLevel],
-                PCGsolverDict(tolerance_, relTol_)
-            ).solve
-            (
-                coarsestCorrField,
-                coarsestSource
-            );
-        }
+        solverPerformance coarseSolverPerf = coarsestSolverPtr_->solve
+        (
+            coarsestCorrField,
+            coarsestSource
+        );
 
         if (debug >= 2)
         {
