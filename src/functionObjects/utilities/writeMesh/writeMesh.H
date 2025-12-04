@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,88 +22,97 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::eagerGAMGProcAgglomeration
+    Foam::functionObjects::writeMesh
 
 Description
-    'Eager' processor agglomeration of GAMGAgglomerations: at every
-    level agglomerates 'mergeLevels' number of processors onto the
-    minimum processor number.
+    Writes changing mesh data (e.g., points, faces, zones) at times other than
+    the write times defined in the controlDict
+
+    Example of function object specification:
+    \verbatim
+    writeMesh1
+    {
+        type            writeMesh;
+        libs            ("libutilityFunctionObjects.so");
+        writeControl    adjustableRunTime;
+        writeInterval   0.002;
+    }
+    \endverbatim
+
+Usage
+    \table
+        Property | Description             | Required | Default value
+        type     | type name: writeMesh    | yes      |
+        region   | the name of the region  | no       | default region
+    \endtable
+
+See also
+    Foam::functionObject
+    Foam::functionObjects::timeControl
 
 SourceFiles
-    eagerGAMGProcAgglomeration.C
+    writeMesh.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef eagerGAMGProcAgglomeration_H
-#define eagerGAMGProcAgglomeration_H
+#ifndef writeMesh_functionObject_H
+#define writeMesh_functionObject_H
 
-#include "GAMGProcAgglomeration.H"
-#include "DynamicList.T.H"
+#include "regionFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-class GAMGAgglomeration;
+namespace functionObjects
+{
 
 /*---------------------------------------------------------------------------*\
-                 Class eagerGAMGProcAgglomeration Declaration
+                        Class writeMesh Declaration
 \*---------------------------------------------------------------------------*/
 
-class eagerGAMGProcAgglomeration
+class writeMesh
 :
-    public GAMGProcAgglomeration
+    public regionFunctionObject
 {
-    // Private Data
-
-        //- Agglomeration level
-        const label mergeLevels_;
-
-        DynamicList<label> comms_;
-
-
 public:
 
     //- Runtime type information
-    TypeName("eager");
+    TypeName("writeMesh");
 
 
     // Constructors
 
-        //- Construct given agglomerator and controls
-        eagerGAMGProcAgglomeration
-        (
-            GAMGAgglomeration& agglom,
-            const dictionary& controlDict
-        );
-
-        //- Disallow default bitwise copy construction
-        eagerGAMGProcAgglomeration
-        (
-            const eagerGAMGProcAgglomeration&
-        ) = delete;
+        //- Inherit constructors
+        using regionFunctionObject::regionFunctionObject;
 
 
     //- Destructor
-    virtual ~eagerGAMGProcAgglomeration();
+    virtual ~writeMesh();
 
 
     // Member Functions
 
-       //- Modify agglomeration. Return true if modified
-        virtual bool agglomerate();
+        //- Return the list of fields required
+        virtual wordList fields() const
+        {
+            return wordList::null();
+        }
 
+        //- Return true if the functionObject should be executed at the start
+        virtual bool executeAtStart() const;
 
-    // Member Operators
+        //- Do nothing
+        virtual bool execute();
 
-        //- Disallow default bitwise assignment
-        void operator=(const eagerGAMGProcAgglomeration&) = delete;
+        //- Write the registered objects
+        virtual bool write();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace functionObjects
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

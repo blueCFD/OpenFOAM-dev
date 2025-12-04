@@ -251,9 +251,9 @@ Foam::GAMGSolver::GAMGSolver
     {
         const label coarsestLevel = matrixLevels_.size() - 1;
 
-        if (directSolveCoarsest_)
+        if (matrixLevels_.set(coarsestLevel))
         {
-            if (matrixLevels_.set(coarsestLevel))
+            if (directSolveCoarsest_)
             {
                 coarsestLUMatrixPtr_.set
                 (
@@ -265,54 +265,54 @@ Foam::GAMGSolver::GAMGSolver
                     )
                 );
             }
-        }
-        else
-        {
-            coarsestSolverPtr_ =
-                matrixLevels_[coarsestLevel].asymmetric()
-              ? autoPtr<lduMatrix::solver>
-                (
-                    new PBiCGStab
+            else
+            {
+                coarsestSolverPtr_ =
+                    matrixLevels_[coarsestLevel].asymmetric()
+                  ? autoPtr<lduMatrix::solver>
                     (
-                        "coarsestLevelCorr",
-                        matrixLevels_[coarsestLevel],
-                        interfaceLevelsBouCoeffs_[coarsestLevel],
-                        interfaceLevelsIntCoeffs_[coarsestLevel],
-                        interfaceLevels_[coarsestLevel],
-                        dictionary::entries
+                        new PBiCGStab
                         (
-                            "preconditioner", "DILU",
-                            "tolerance", tolerance_,
-                            "relTol", relTol_
+                            "coarsestLevelCorr",
+                            matrixLevels_[coarsestLevel],
+                            interfaceLevelsBouCoeffs_[coarsestLevel],
+                            interfaceLevelsIntCoeffs_[coarsestLevel],
+                            interfaceLevels_[coarsestLevel],
+                            dictionary::entries
+                            (
+                                "preconditioner", "DILU",
+                                "tolerance", tolerance_,
+                                "relTol", relTol_
+                            )
                         )
                     )
-                )
-              : autoPtr<lduMatrix::solver>
-                (
-                    new PCG
+                  : autoPtr<lduMatrix::solver>
                     (
-                        "coarsestLevelCorr",
-                        matrixLevels_[coarsestLevel],
-                        interfaceLevelsBouCoeffs_[coarsestLevel],
-                        interfaceLevelsIntCoeffs_[coarsestLevel],
-                        interfaceLevels_[coarsestLevel],
-                        dictionary::entries
+                        new PCG
                         (
-                            "preconditioner", "DIC",
-                            "tolerance", tolerance_,
-                            "relTol", relTol_
+                            "coarsestLevelCorr",
+                            matrixLevels_[coarsestLevel],
+                            interfaceLevelsBouCoeffs_[coarsestLevel],
+                            interfaceLevelsIntCoeffs_[coarsestLevel],
+                            interfaceLevels_[coarsestLevel],
+                            dictionary::entries
+                            (
+                                "preconditioner", "DIC",
+                                "tolerance", tolerance_,
+                                "relTol", relTol_
+                            )
                         )
-                    )
-                );
+                    );
+            }
         }
     }
     else
     {
         FatalErrorInFunction
             << "No coarse levels created, either matrix too small for GAMG"
-               " or nCellsInCoarsestLevel too large.\n"
+               " or minCellsPerProcessor too large.\n"
                "    Either choose another solver of reduce "
-               "nCellsInCoarsestLevel."
+               "minCellsPerProcessor."
             << exit(FatalError);
     }
 }
