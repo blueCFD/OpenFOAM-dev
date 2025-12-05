@@ -22,18 +22,46 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::noneGAMGProcAgglomeration
+    Foam::allGAMGProcAgglomeration
 
 Description
-    Processor agglomeration of GAMGAgglomerations.
+    Agglomerates all processor matrices onto the master processor at the
+    coarsest but one level.
+
+    It would be more logical and useful if the agglomeration onto the master
+    took place at the coarsest level, providing a means to iteratively solve the
+    coarsest matrix without the need for communication, but due to a programming
+    limitation of the current implementation the agglomeration takes place at
+    the next finer level.  It would make more sense if this processor
+    agglomerator were replaced by an \c iterativelySolveCoarsest option, similar
+    to the current directSolveCoarsest option but which constructs a single
+    lduMatrix which is solved using one of the CG iterative solvers.
+
+Usage
+    Example of GAMG solver settings with all processor agglomeration
+    \verbatim
+    p
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+
+        processorAgglomeration
+        {
+            agglomerator         all;
+        }
+
+        tolerance       1e-8;
+        relTol          0;
+    }
+    \endverbatim
 
 SourceFiles
-    noneGAMGProcAgglomeration.C
+    allGAMGProcAgglomeration.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef noneGAMGProcAgglomeration_H
-#define noneGAMGProcAgglomeration_H
+#ifndef allGAMGProcAgglomeration_H
+#define allGAMGProcAgglomeration_H
 
 #include "GAMGProcAgglomeration.H"
 #include "DynamicList.T.H"
@@ -43,56 +71,56 @@ SourceFiles
 namespace Foam
 {
 
-class GAMGAgglomeration;
-
 /*---------------------------------------------------------------------------*\
-                  Class noneGAMGProcAgglomeration Declaration
+                Class allGAMGProcAgglomeration Declaration
 \*---------------------------------------------------------------------------*/
 
-class noneGAMGProcAgglomeration
+class allGAMGProcAgglomeration
 :
     public GAMGProcAgglomeration
 {
+    // Private Data
+
+        //- List of communicators
+        DynamicList<label> comms_;
+
 
 public:
 
     //- Runtime type information
-    TypeName("none");
+    TypeName("all");
 
 
     // Constructors
 
         //- Construct given agglomerator and controls
-        noneGAMGProcAgglomeration
+        allGAMGProcAgglomeration
         (
             GAMGAgglomeration& agglom,
-            const dictionary& controlDict
+            const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        noneGAMGProcAgglomeration
+        allGAMGProcAgglomeration
         (
-            const noneGAMGProcAgglomeration&
+            const allGAMGProcAgglomeration&
         ) = delete;
 
 
     //- Destructor
-    virtual ~noneGAMGProcAgglomeration();
+    virtual ~allGAMGProcAgglomeration();
 
 
     // Member Functions
 
-       //- Modify agglomeration. Return true if modified
-        virtual bool agglomerate()
-        {
-            return false;
-        }
+        //- Modify agglomeration. Return true if modified
+        virtual bool agglomerate();
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const noneGAMGProcAgglomeration&) = delete;
+        void operator=(const allGAMGProcAgglomeration&) = delete;
 };
 
 

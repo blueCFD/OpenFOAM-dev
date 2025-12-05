@@ -22,96 +22,96 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::procFacesGAMGProcAgglomeration
+    Foam::sequentialGAMGProcAgglomeration
 
 Description
-    Processor agglomeration of GAMGAgglomerations. Needs minCellsPerProcessor
-    which is when to start agglomerating processors. Processors get agglomerated
-    by constructing a single cell mesh for each processor with each
-    processor interface a face. This then gets agglomerated using
-    the pairGAMGAgglomeration algorithm with the number of faces
-    on the original processor interface as face weight.
+    Sequential processor agglomeration agglomerates 2^mergeLevels sequential
+    groups of processors into the minimum processor index of the group.
+
+    Note that no account is taken of the processor connectivity so the
+    processors in the agglomerated groups may or may not be connected
+    depending on the decomposition ordering.
+
+    To directly account for processor connectivity use
+    Foam::pairGAMGProcAgglomeration.
+
+Usage
+    Example of GAMG solver settings with sequential processor agglomeration
+    \verbatim
+    p
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+
+        processorAgglomeration
+        {
+            agglomerator         sequential;
+        }
+
+        tolerance       1e-8;
+        relTol          0;
+    }
+    \endverbatim
+
+See also
+    Foam::pairGAMGProcAgglomeration
 
 SourceFiles
-    procFacesGAMGProcAgglomeration.C
+    sequentialGAMGProcAgglomeration.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef procFacesGAMGProcAgglomeration_H
-#define procFacesGAMGProcAgglomeration_H
+#ifndef sequentialGAMGProcAgglomeration_H
+#define sequentialGAMGProcAgglomeration_H
 
 #include "GAMGProcAgglomeration.H"
 #include "DynamicList.T.H"
-#include "labelField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-class GAMGAgglomeration;
-class lduMesh;
-class lduPrimitiveMesh;
-
 /*---------------------------------------------------------------------------*\
-               Class procFacesGAMGProcAgglomeration Declaration
+               Class sequentialGAMGProcAgglomeration Declaration
 \*---------------------------------------------------------------------------*/
 
-class procFacesGAMGProcAgglomeration
+class sequentialGAMGProcAgglomeration
 :
     public GAMGProcAgglomeration
 {
     // Private Data
 
-        //- When to processor agglomerate
-        const label minCellsPerProcessor_;
+        //- Agglomeration level
+        const label mergeLevels_;
 
-        //- Allocated communicators
         DynamicList<label> comms_;
-
-    // Private Member Functions
-
-        //- Return (on master) all single-cell meshes collected. single-cell
-        //  meshes are just one cell with all proc faces intact.
-        autoPtr<lduPrimitiveMesh> singleCellMesh
-        (
-            const label singleCellMeshComm,
-            const lduMesh& mesh,
-            scalarField& faceWeights
-        ) const;
-
-        //- Construct processor agglomeration: for every processor the
-        //  coarse processor-cluster it agglomerates onto
-        tmp<labelField> processorAgglomeration(const lduMesh&) const;
-
-        //- Do we need to agglomerate across processors?
-        bool doProcessorAgglomeration(const lduMesh&) const;
 
 
 public:
 
     //- Runtime type information
-    TypeName("procFaces");
+    TypeName("sequential");
 
 
     // Constructors
 
         //- Construct given agglomerator and controls
-        procFacesGAMGProcAgglomeration
+        sequentialGAMGProcAgglomeration
         (
             GAMGAgglomeration& agglom,
-            const dictionary& controlDict
+            const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        procFacesGAMGProcAgglomeration
+        sequentialGAMGProcAgglomeration
         (
-            const procFacesGAMGProcAgglomeration&
+            const sequentialGAMGProcAgglomeration&
         ) = delete;
 
 
     //- Destructor
-    virtual ~procFacesGAMGProcAgglomeration();
+    virtual ~sequentialGAMGProcAgglomeration();
 
 
     // Member Functions
@@ -123,7 +123,7 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const procFacesGAMGProcAgglomeration&) = delete;
+        void operator=(const sequentialGAMGProcAgglomeration&) = delete;
 };
 
 

@@ -22,71 +22,113 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::eagerGAMGProcAgglomeration
+    Foam::pairGAMGProcAgglomeration
 
 Description
-    'Eager' processor agglomeration of GAMGAgglomerations: at every
-    level agglomerates 'mergeLevels' number of processors onto the
-    minimum processor number.
+    Pair-wise processor agglomerator.
+
+    Neighbouring pairs of processors are agglomerated when the number of
+    agglomerated cells per processor in the level is below \c
+    minCellsPerProcessor and the pairs chosen based on the largest number of
+    connecting processor faces.
+
+Usage
+    Example of GAMG solver settings with pair-wise processor agglomeration
+    \verbatim
+    p
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+
+        processorAgglomeration
+        {
+            agglomerator         pair;
+            minCellsPerProcessor 300;
+        }
+
+        tolerance       1e-8;
+        relTol          0;
+    }
+    \endverbatim
 
 SourceFiles
-    eagerGAMGProcAgglomeration.C
+    pairGAMGProcAgglomeration.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef eagerGAMGProcAgglomeration_H
-#define eagerGAMGProcAgglomeration_H
+#ifndef pairGAMGProcAgglomeration_H
+#define pairGAMGProcAgglomeration_H
 
 #include "GAMGProcAgglomeration.H"
 #include "DynamicList.T.H"
+#include "labelField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-class GAMGAgglomeration;
+class lduPrimitiveMesh;
 
 /*---------------------------------------------------------------------------*\
-                 Class eagerGAMGProcAgglomeration Declaration
+               Class pairGAMGProcAgglomeration Declaration
 \*---------------------------------------------------------------------------*/
 
-class eagerGAMGProcAgglomeration
+class pairGAMGProcAgglomeration
 :
     public GAMGProcAgglomeration
 {
     // Private Data
 
-        //- Agglomeration level
-        const label mergeLevels_;
+        //- When to processor agglomerate
+        const label minCellsPerProcessor_;
 
+        //- Allocated communicators
         DynamicList<label> comms_;
+
+    // Private Member Functions
+
+        //- Return (on master) all single-cell meshes collected. single-cell
+        //  meshes are just one cell with all proc faces intact.
+        autoPtr<lduPrimitiveMesh> singleCellMesh
+        (
+            const label singleCellMeshComm,
+            const lduMesh& mesh,
+            scalarField& faceWeights
+        ) const;
+
+        //- Construct processor agglomeration: for every processor the
+        //  coarse processor-cluster it agglomerates onto
+        tmp<labelField> processorAgglomeration(const lduMesh&) const;
+
+        //- Do we need to agglomerate across processors?
+        bool doProcessorAgglomeration(const lduMesh&) const;
 
 
 public:
 
     //- Runtime type information
-    TypeName("eager");
+    TypeName("pair");
 
 
     // Constructors
 
         //- Construct given agglomerator and controls
-        eagerGAMGProcAgglomeration
+        pairGAMGProcAgglomeration
         (
             GAMGAgglomeration& agglom,
-            const dictionary& controlDict
+            const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        eagerGAMGProcAgglomeration
+        pairGAMGProcAgglomeration
         (
-            const eagerGAMGProcAgglomeration&
+            const pairGAMGProcAgglomeration&
         ) = delete;
 
 
     //- Destructor
-    virtual ~eagerGAMGProcAgglomeration();
+    virtual ~pairGAMGProcAgglomeration();
 
 
     // Member Functions
@@ -98,7 +140,7 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const eagerGAMGProcAgglomeration&) = delete;
+        void operator=(const pairGAMGProcAgglomeration&) = delete;
 };
 
 

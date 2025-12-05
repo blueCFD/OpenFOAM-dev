@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,107 +22,76 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::manualGAMGProcAgglomeration
+    Foam::noneGAMGProcAgglomeration
 
 Description
-    Manual processor agglomeration of GAMGAgglomerations.
+    Dummy processor agglomerator which does not agglomerate
 
-    In the GAMG control dictionary:
-
-        processorAgglomerator manual;
-        // List of level+procagglomeration where
-        // procagglomeration is a set of labelLists. Each labelList is
-        // a cluster of processor which gets combined onto the first element
-        // in the list.
-        processorAgglomeration
-        (
-            (
-                3           // at level 3
-                (
-                    (0 1)   // coarse 0 from 0,1 (and moved onto 0)
-                    (3 2)   // coarse 1 from 2,3 (and moved onto 3)
-                )
-            )
-            (
-                6           // at level6
-                (
-                    (0 1)   // coarse 0 from 0,1 (and moved onto 0)
-                )
-            )
-        );
+    but does print the cell agglomeration levels table.
 
 SourceFiles
-    manualGAMGProcAgglomeration.C
+    noneGAMGProcAgglomeration.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef manualGAMGProcAgglomeration_H
-#define manualGAMGProcAgglomeration_H
+#ifndef noneGAMGProcAgglomeration_H
+#define noneGAMGProcAgglomeration_H
 
 #include "GAMGProcAgglomeration.H"
-#include "DynamicList.T.H"
-#include "Tuple2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-class GAMGAgglomeration;
-
 /*---------------------------------------------------------------------------*\
-                 Class manualGAMGProcAgglomeration Declaration
+                 Class noneGAMGProcAgglomeration Declaration
 \*---------------------------------------------------------------------------*/
 
-class manualGAMGProcAgglomeration
+class noneGAMGProcAgglomeration
 :
     public GAMGProcAgglomeration
 {
-    // Private Data
-
-        //- Per level the agglomeration map
-        const List<Tuple2<label, List<labelList>>> procAgglomMaps_;
-
-        //- Any allocated communicators
-        DynamicList<label> comms_;
-
 
 public:
 
     //- Runtime type information
-    TypeName("manual");
+    TypeName("none");
 
 
     // Constructors
 
         //- Construct given agglomerator and controls
-        manualGAMGProcAgglomeration
+        noneGAMGProcAgglomeration
         (
             GAMGAgglomeration& agglom,
-            const dictionary& controlDict
+            const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        manualGAMGProcAgglomeration
+        noneGAMGProcAgglomeration
         (
-            const manualGAMGProcAgglomeration&
+            const noneGAMGProcAgglomeration&
         ) = delete;
 
 
     //- Destructor
-    virtual ~manualGAMGProcAgglomeration();
+    virtual ~noneGAMGProcAgglomeration();
 
 
     // Member Functions
 
        //- Modify agglomeration. Return true if modified
-        virtual bool agglomerate();
+        virtual bool agglomerate()
+        {
+            return false;
+        }
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const manualGAMGProcAgglomeration&) = delete;
+        void operator=(const noneGAMGProcAgglomeration&) = delete;
 };
 
 
