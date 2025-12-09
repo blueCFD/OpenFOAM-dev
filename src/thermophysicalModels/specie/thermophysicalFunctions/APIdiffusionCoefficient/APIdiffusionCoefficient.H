@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::Function2s::APIdiffCoefFunc
+    Foam::Function2s::APIdiffusionCoefficientFunc
 
 Description
     API function for vapour mass diffusivity
@@ -35,8 +35,8 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef APIdiffCoef_H
-#define APIdiffCoef_H
+#ifndef APIdiffusionCoefficient_H
+#define APIdiffusionCoefficient_H
 
 #include "Function2.T.H"
 
@@ -48,12 +48,12 @@ namespace Function2s
 {
 
 /*---------------------------------------------------------------------------*\
-                         Class APIdiffCoef Declaration
+                         Class APIdiffusionCoefficient Declaration
 \*---------------------------------------------------------------------------*/
 
-class APIdiffCoef
+class APIdiffusionCoefficient
 :
-    public FieldFunction2<scalar, APIdiffCoef>
+    public FieldFunction2<scalar, APIdiffusionCoefficient>
 {
     // Private Data
 
@@ -67,13 +67,13 @@ class APIdiffCoef
 public:
 
     //- Runtime type information
-    TypeName("APIdiffCoef");
+    TypeName("APIdiffusionCoefficient");
 
 
     // Constructors
 
         //- Construct from name and coefficients
-        APIdiffCoef
+        APIdiffusionCoefficient
         (
             const word& name,
             const scalar a,
@@ -83,7 +83,7 @@ public:
         );
 
         //- Construct from name and dictionary
-        APIdiffCoef
+        APIdiffusionCoefficient
         (
             const word& name,
             const unitConversions& units,
@@ -93,7 +93,7 @@ public:
         //- Construct and return a clone
         virtual tmp<Function2<scalar>> clone() const
         {
-            return tmp<Function2<scalar>>(new APIdiffCoef(*this));
+            return tmp<Function2<scalar>>(new APIdiffusionCoefficient(*this));
         }
 
 
@@ -106,7 +106,7 @@ public:
         }
 
         //- Inherit base class value methods to prevent clang warnings
-        using FieldFunction2<scalar, APIdiffCoef>::value;
+        using FieldFunction2<scalar, APIdiffusionCoefficient>::value;
 
         //- API vapour mass diffusivity function using properties from
         //  construction - with specified binary pair
