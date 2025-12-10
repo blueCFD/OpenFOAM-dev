@@ -479,6 +479,21 @@ public:
             static inline Stream& writeEndDivider(Stream& os);
 
             //- Write header
+            static bool writeHeader
+            (
+                Ostream& os,
+                const IOstream::versionNumber version,
+                const IOstream::streamFormat format,
+                const word& type,
+                const string& note,
+                const fileName& location,
+                const word& name
+            );
+
+            //- Write header
+            static bool writeHeader(Ostream&, const dictionary& foamFileDict);
+
+            //- Write header
             bool writeHeader(Ostream&) const;
 
             //- Write header. Allow override of type
