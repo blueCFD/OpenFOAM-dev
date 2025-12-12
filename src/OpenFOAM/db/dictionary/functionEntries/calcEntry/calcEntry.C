@@ -51,6 +51,41 @@ namespace functionEntries
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+Foam::string Foam::functionEntries::calcEntry::codeString
+(
+    const label index,
+    const dictionary& codeDict,
+    Istream& is
+)
+{
+    // Read the code expression string delimited by either '"..."' or '#{...#}'
+    token t(is);
+
+    if (t.isString() || t.isVerbatimString())
+    {
+        return
+        (
+            "CODE_BLOCK_FUNCTION(" + Foam::name(index) + ")\n"
+            "{\n"
+            "    #line " + Foam::name(t.lineNumber())
+               + " \"" + codeDict.name() + "\"\n"
+            "    os << (" + t.anyStringToken() + ");\n"
+            "}\n\n"
+        );
+    }
+    else
+    {
+        FatalIOErrorInFunction(is)
+            << "Wrong string type for #calc" << nl
+            << "    Expected either a string delimited by '\"...\"' "
+               "or a verbatim string delimited by '#{...#}' " << nl
+            << "    found token " << t
+            << exit(FatalIOError);
+        return string::null;
+    }
+}
+
+
 Foam::string Foam::functionEntries::calcEntry::calc
 (
     const dictionary& dict,
@@ -77,18 +112,17 @@ Foam::string Foam::functionEntries::calcEntry::calc
     // Read the code expression string delimited by either '"..."' or '#{...#}'
     token t(is);
 
-    if (t.isVerbatimString())
+    if (t.isString() || t.isVerbatimString())
     {
-        calcIncludeEntry::codeInclude(codeDict);
-        codeDict.add(primitiveEntry("code", t));
-    }
-    else if (t.isString())
-    {
-        const string& s = t.stringToken();
         calcIncludeEntry::codeInclude(codeDict);
         codeDict.add
         (
-            primitiveEntry("code", "os << (" + s + ");", t.lineNumber())
+            primitiveEntry
+            (
+                "code",
+                "os << (" + t.anyStringToken() + ");",
+                t.lineNumber()
+            )
         );
     }
     else
@@ -101,6 +135,7 @@ Foam::string Foam::functionEntries::calcEntry::calc
             << exit(FatalIOError);
     }
 
+    // Add compilation options to simplify compilation error messages
     codeDict.add
     (
         primitiveEntry

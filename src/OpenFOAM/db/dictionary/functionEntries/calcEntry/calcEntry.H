@@ -41,8 +41,8 @@ Description
     the current entry via the \c Ostream \c os.
 
     The verbatim string format \c \#{ ... \c \#} can optionally be used to allow
-    multi-line input without the need to escape the newlines but in this case
-    the result must be written to the \c Ostream \c os explicitly.
+    string/word comparison without the need to escape the quotes and multi-line
+    input without the need to escape the newlines.
 
     Dictionary entries constructed \c \#calc can conveniently access and
     use typed variables.  This means calculations involving vectors and tensors
@@ -105,30 +105,6 @@ Usage
     k           #calc "1.5*magSqr(0.05*$<vector>{${FOAM_CASE}/testCalc2!U})";
     \endverbatim
 
-    If the code string is delimited by \#{ ... \c \#} multiple lines
-    and multiple code statements can be used to generate the entry using
-    'os << ...;'. This is equivalent to \#codeStream but with a more
-    compact syntax.
-
-    \verbatim
-    #calcInclude    "transform.H"
-    maxAngle        30;
-    nAngles         7;
-    Us              #calc
-    #{
-        const vector U($<vector>testCalc2!U);
-        const int nAngles = $nAngles;
-        const scalar angleStep = ($<scalar>maxAngle)/(nAngles - 1);
-        List<vector> Us(nAngles);
-        for(int i=0; i<nAngles; i++)
-        {
-            const scalar angle = degToRad(i*angleStep);
-            Us[i] = transform(Ry(angle), U);
-        }
-        os << Us;
-    #};
-    \endverbatim
-
     Example to generate a single block blockMeshDict for use with snappyHexMesh
     with no redundant information
     \verbatim
@@ -176,11 +152,11 @@ SourceFiles
 
 namespace Foam
 {
-
-class dlLibraryTable;
-
 namespace functionEntries
 {
+
+// Forward declaration of friend classes
+class codeBlockEntry;
 
 /*---------------------------------------------------------------------------*\
                           Class calcEntry Declaration
@@ -192,6 +168,14 @@ class calcEntry
 {
     // Private Member Functions
 
+        //- Add the code entry to the codeDict
+        static string codeString
+        (
+            const label index,
+            const dictionary& codeDict,
+            Istream&
+        );
+
         //- Perform the calculation and return the resulting string
         static string calc
         (
@@ -201,6 +185,12 @@ class calcEntry
 
 
 public:
+
+    // Related types
+
+        //- Declare friendship with the calcEntry class
+        friend class codeBlockEntry;
+
 
     //- Runtime type information
     FunctionTypeName("#calc");
