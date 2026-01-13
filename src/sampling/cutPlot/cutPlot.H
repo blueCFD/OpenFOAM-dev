@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) YEAR OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,59 +21,60 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Namespace
+    Foam::cutPlot
+
 Description
-    Template for use with codeBlock.
+    Functions for cut-plotting
+
+SourceFiles
+    cutPlot.C
 
 \*---------------------------------------------------------------------------*/
 
-#include "dictionaryEntry.H"
-#include "fieldTypes.H"
-#include "Ostream.H"
-#include "Pstream.T.H"
-#include "read.H"
-#include "unitConversion.H"
+#ifndef cutPlot_H
+#define cutPlot_H
 
-//{{{ begin codeInclude
-${codeInclude}
-//}}} end codeInclude
+#include "Field.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-// * * * * * * * * * * * * * * * Local Functions * * * * * * * * * * * * * * //
-
-//{{{ begin localCode
-${localCode}
-//}}} end localCode
-
-
-// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
-
-extern "C"
+namespace cutPlot
 {
-    #define CODE_BLOCK_STREAM_FUNCTION(index)                                  \
-        void CAT3(${typeName}, _, index)                                       \
-        (                                                                      \
-            Ostream& os,                                                       \
-            const dictionary& dict                                             \
-        )
-
-    #define CODE_BLOCK_DICT_FUNCTION(index)                                    \
-        void CAT3(${typeName}, _, index)                                       \
-        (                                                                      \
-            dictionary& dict                                                   \
-        )
-
-//{{{ begin code
-    ${code}
-//}}} end code
-}
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+//- Structure containing the weight for a given mesh element and cut index
+struct weight
+{
+    label elementi, cuti;
+    scalar value;
+};
+
+//- Construct plot values from cell values given a set of weights
+template<class Type>
+tmp<Field<Type>> applyWeights
+(
+    const label n,
+    const List<cutPlot::weight>& weights,
+    const Field<Type>& cellValues
+);
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace cutPlot
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+    #include "cutPlotTemplates.C"
+#endif
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //
