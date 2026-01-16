@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,37 +23,44 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "ubRhoMulticomponentThermo.H"
-#include "zeroGradientFvPatchFields.H"
+#include "BRhoFluidMulticomponentThermo.T.H"
+#include "bRhoMulticomponentThermo.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-    defineTypeNameAndDebug(ubRhoMulticomponentThermo, 0);
-    defineRunTimeSelectionTable(ubRhoMulticomponentThermo, fvMesh);
-}
-
-
-// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
-
-Foam::autoPtr<Foam::ubRhoMulticomponentThermo>
-Foam::ubRhoMulticomponentThermo::New
+template<class BaseThermo>
+Foam::BRhoFluidMulticomponentThermo<BaseThermo>::BRhoFluidMulticomponentThermo
 (
     const fvMesh& mesh,
     const word& phaseName
 )
-{
-    return basicThermo::New<ubRhoMulticomponentThermo>(mesh, phaseName);
-}
+:
+    RhoFluidThermo<BaseThermo>(mesh, phaseName)
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::ubRhoMulticomponentThermo::~ubRhoMulticomponentThermo()
+template<class BaseThermo>
+Foam::BRhoFluidMulticomponentThermo<BaseThermo>::
+~BRhoFluidMulticomponentThermo()
 {}
 
+
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class BaseThermo>
+Foam::tmp<Foam::volScalarField>
+Foam::BRhoFluidMulticomponentThermo<BaseThermo>::hf() const
+{
+    return this->volScalarFieldProperty
+    (
+        "hf",
+        dimEnergy/dimMass,
+        &BaseThermo::mixtureType::thermoMixture,
+        &BaseThermo::mixtureType::thermoMixtureType::hf
+    );
+}
 
 
 // ************************************************************************* //

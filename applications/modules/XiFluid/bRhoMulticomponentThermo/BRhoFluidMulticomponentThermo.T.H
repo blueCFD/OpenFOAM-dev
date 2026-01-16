@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,88 +22,80 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SuModels::unstrained
+    Foam::BRhoFluidMulticomponentThermo
 
 Description
-    Simple unstrained model for the laminar flame speed
+    Thermo implementation based on compressibility with additional unburnt
+    thermodynamic state
 
 SourceFiles
-    unstrained.C
+    BRhoFluidMulticomponentThermo.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef unstrained_H
-#define unstrained_H
+#ifndef BRhoFluidMulticomponentThermo_H
+#define BRhoFluidMulticomponentThermo_H
 
-#include "SuModel.H"
+#include "RhoFluidThermo.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-class laminarFlameSpeed;
-
-namespace SuModels
-{
-
 /*---------------------------------------------------------------------------*\
-                          Class unstrained Declaration
+                   Class BRhoFluidMulticomponentThermo Declaration
 \*---------------------------------------------------------------------------*/
 
-class unstrained
+template<class BaseThermo>
+class BRhoFluidMulticomponentThermo
 :
-    public SuModel
+    public RhoFluidThermo<BaseThermo>
 {
-protected:
-
-        autoPtr<laminarFlameSpeed> Su0_;
-
-        //- Update coefficients from given dictionary
-        virtual bool readCoeffs(const dictionary& dict);
-
 
 public:
 
-    //- Runtime type information
-    TypeName("unstrained");
-
-
     // Constructors
 
-        //- Construct from components
-        unstrained
-        (
-            const dictionary& dict,
-            const uRhoMulticomponentThermo& thermo,
-            const compressibleMomentumTransportModel& turbulence
-        );
+        //- Construct from mesh and phase name
+        BRhoFluidMulticomponentThermo(const fvMesh&, const word& phaseName);
 
         //- Disallow default bitwise copy construction
-        unstrained(const unstrained&) = delete;
+        BRhoFluidMulticomponentThermo
+        (
+            const BRhoFluidMulticomponentThermo<BaseThermo>&
+        ) = delete;
 
 
     //- Destructor
-    virtual ~unstrained();
+    virtual ~BRhoFluidMulticomponentThermo();
 
 
     // Member Functions
 
-        //- Correct the laminar flame speed
-        virtual void correct();
+        //- Standard enthalpy of formation [J/kg]
+        virtual tmp<volScalarField> hf() const;
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const unstrained&) = delete;
+        void operator=
+        (
+            const BRhoFluidMulticomponentThermo<BaseThermo>&
+        ) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace SuModels
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+#ifdef NoRepository
+    #include "BRhoFluidMulticomponentThermo.T.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

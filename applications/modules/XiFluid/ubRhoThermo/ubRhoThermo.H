@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,7 +34,8 @@ SourceFiles
 #ifndef ubRhoThermo_H
 #define ubRhoThermo_H
 
-#include "ubRhoMulticomponentThermo.H"
+#include "uRhoMulticomponentThermo.H"
+#include "bRhoMulticomponentThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,8 +58,8 @@ class ubRhoThermo
         volScalarField b_;
         volScalarField c_;
 
-        autoPtr<ubRhoMulticomponentThermo> uThermo_;
-        autoPtr<ubRhoMulticomponentThermo> bThermo_;
+        autoPtr<uRhoMulticomponentThermo> uThermo_;
+        autoPtr<bRhoMulticomponentThermo> bThermo_;
 
         volScalarField rho_;
         volScalarField psi_;
@@ -128,22 +129,22 @@ public:
             return alphab_;
         }
 
-        const ubRhoMulticomponentThermo& uThermo() const
+        const uRhoMulticomponentThermo& uThermo() const
         {
             return uThermo_();
         }
 
-        ubRhoMulticomponentThermo& uThermo()
+        uRhoMulticomponentThermo& uThermo()
         {
             return uThermo_();
         }
 
-        const ubRhoMulticomponentThermo& bThermo() const
+        const bRhoMulticomponentThermo& bThermo() const
         {
             return bThermo_();
         }
 
-        ubRhoMulticomponentThermo& bThermo()
+        bRhoMulticomponentThermo& bThermo()
         {
             return bThermo_();
         }
@@ -163,7 +164,10 @@ public:
         //- Update properties
         virtual void correct();
 
-        //- Name of the thermo physics
+        //- Return the name of the mixture (not implemented)
+        virtual word mixtureName() const;
+
+        //- Name of the thermo physics (not implemented)
         virtual word thermoName() const;
 
         //- Return true if the equation of state is incompressible

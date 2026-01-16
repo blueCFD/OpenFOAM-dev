@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,22 +22,22 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::uInhomogeneousEGRMixture
+    Foam::bInhomogeneousMixture
 
 Description
-    Unburnt gas ombustion mixture for inhomogeneous lean, stoichiometric
-    or rich conditions with exhaust gas recirculation
+    Burnt gas combustion mixture for inhomogeneous lean, stoichiometric
+    or rich conditions
 
-    in which the fuel mass-fraction \c fu and exhaust gas recirculation
-    mass-fraction \c egr define the composition.
+    in which the unburnt fuel mass-fraction \c fu (mixture fraction defines
+    the composition.
 
 SourceFiles
-    uInhomogeneousEGRMixture.C
+    bInhomogeneousMixture.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef uInhomogeneousEGRMixture_H
-#define uInhomogeneousEGRMixture_H
+#ifndef bInhomogeneousMixture_H
+#define bInhomogeneousMixture_H
 
 #include "dimensionedTypes.H"
 #include "FieldListSlice.T.H"
@@ -47,14 +47,12 @@ SourceFiles
 namespace Foam
 {
 
-class uRhoFluidMulticomponentThermo;
-
 /*---------------------------------------------------------------------------*\
-                     Class uInhomogeneousEGRMixture Declaration
+                    Class bInhomogeneousMixture Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class ThermoType>
-class uInhomogeneousEGRMixture
+class bInhomogeneousMixture
 {
 public:
 
@@ -71,12 +69,6 @@ public:
 
 
 private:
-
-    // Private Enumerations
-
-        //- Specie indices
-        enum species { FU, EGR };
-
 
     // Private Data
 
@@ -102,24 +94,24 @@ private:
     // Private Member Functions
 
         //- Return the mixture for the given composition
-        const thermoType& mixture
-        (
-            const scalar fu,
-            const scalar egr
-        ) const;
+        const thermoType& mixture(const scalar ft) const;
 
 
 public:
 
+        //- Specie indices
+        enum species { FT };
+
+
     // Constructors
 
         //- Construct from a dictionary
-        uInhomogeneousEGRMixture(const dictionary&);
+        bInhomogeneousMixture(const dictionary&);
 
         //- Disallow default bitwise copy construction
-        uInhomogeneousEGRMixture
+        bInhomogeneousMixture
         (
-            const uInhomogeneousEGRMixture<ThermoType>&
+            const bInhomogeneousMixture<ThermoType>&
         ) = delete;
 
 
@@ -128,13 +120,13 @@ public:
         //- Return the instantiated type name
         static word typeName()
         {
-            return "uInhomogeneousEGRMixture<" + ThermoType::typeName() + '>';
+            return "bInhomogeneousMixture<" + ThermoType::typeName() + '>';
         }
 
         //- Return the specie names
         static wordList specieNames()
         {
-            return {"fu", "egr"};
+            return {"ft"};
         }
 
         //- Access the specie active flags
@@ -149,10 +141,13 @@ public:
             return active_;
         }
 
-        const ThermoType& specieThermo(const label speciei) const;
-
-        //- Return the fuel-oxidant equivalence ratio
-        scalar Phi(const scalarFieldListSlice& Y) const;
+        inline const ThermoType& specieThermo(const label speciei) const
+        {
+            FatalErrorInFunction
+                << "Cannot return specieThermo for specie " << speciei << " ft "
+                << exit(FatalError);
+            return products_;
+        }
 
         //- Return the mixture for thermodynamic properties
         const thermoMixtureType& thermoMixture
@@ -173,14 +168,6 @@ public:
             const thermoMixtureType&
         ) const;
 
-        void reset
-        (
-            const volScalarField& b,
-            PtrList<volScalarField>& Yu,
-            const volScalarField& c,
-            const PtrList<volScalarField>& Yb
-        ) const;
-
         //- Read dictionary
         void read(const dictionary&);
 
@@ -188,7 +175,7 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const uInhomogeneousEGRMixture<ThermoType>&) = delete;
+        void operator=(const bInhomogeneousMixture<ThermoType>&) = delete;
 };
 
 
@@ -199,7 +186,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 #ifdef NoRepository
-    #include "uInhomogeneousEGRMixture.C"
+    #include "bInhomogeneousMixture.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
