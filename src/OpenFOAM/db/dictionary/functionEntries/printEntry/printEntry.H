@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,83 +22,85 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::RBD::compositeBody
+    Foam::functionEntries::printEntry
 
 Description
-    This specialised rigidBody holds the original body after it has been merged
-    into a parent.
+    Print the current contents of the dictionary
+
+    \c \#print does not require an argument.
+
+See also
+    Foam::functionEntries::exitEntry
 
 SourceFiles
-    compositeBodyI.H
-    compositeBody.C
+    printEntry.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef RBD_compositeBody_H
-#define RBD_compositeBody_H
+#ifndef printEntry_H
+#define printEntry_H
 
-#include "rigidBody.H"
+#include "functionEntry.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace RBD
+namespace functionEntries
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class compositeBody Declaration
+                           Class printEntry Declaration
 \*---------------------------------------------------------------------------*/
 
-class compositeBody
+class printEntry
 :
-    public rigidBody
+    public functionEntry
 {
-    // Private Data
-
-        //- Original body from which this composite-body was constructed
-        autoPtr<rigidBody> body_;
-
 
 public:
 
+    //- Runtime type information
+    FunctionTypeName("#print");
+
+
     // Constructors
 
-        //- Construct a merged version of the given rigidBody
-        //  providing the ID of the parent body to which this will be merged
-        //  and the transform relative to the parent
-        inline compositeBody(const autoPtr<rigidBody>& bodyPtr);
+        //- Construct from line number, dictionary and Istream
+        printEntry
+        (
+            const label lineNumber,
+            const dictionary& parentDict,
+            Istream& is
+        );
 
-        //- Return clone of this compositeBody
-        virtual autoPtr<rigidBody> clone() const;
+        //- Copy construct
+        printEntry(const printEntry&) = default;
 
-
-    //- Destructor
-    virtual ~compositeBody();
+        //- Clone
+        virtual autoPtr<entry> clone(const dictionary&) const
+        {
+            return autoPtr<entry>(new printEntry(*this));
+        }
 
 
     // Member Functions
 
-        //- Return the type name of the original body
-        virtual const word& type() const;
+        //- Expand the functionEntry into the contextDict
+        virtual bool execute(dictionary& contextDict, Istream& is);
 
-        //- Return the original body from which this composite-body
-        //  was constructed
-        inline const rigidBody& body() const;
 
-        //- Write
-        virtual void write(Ostream&) const;
+    // Member Operators
+
+        //- Disallow default bitwise assignment
+        void operator=(const printEntry&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace RBD
+} // End namespace functionEntries
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "compositeBodyI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

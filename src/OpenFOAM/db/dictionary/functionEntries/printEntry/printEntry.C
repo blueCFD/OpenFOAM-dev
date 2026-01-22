@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,46 +23,49 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "masslessBody.H"
+#include "printEntry.H"
+#include "Pstream.T.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace RBD
+namespace functionEntries
 {
-    defineTypeNameAndDebug(masslessBody, 0);
-    addToRunTimeSelectionTable(rigidBody, masslessBody, dictionary);
+    defineFunctionTypeNameAndDebug(printEntry, 0);
+    addToRunTimeSelectionTable(functionEntry, printEntry, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::RBD::rigidBody> Foam::RBD::masslessBody::clone() const
-{
-    return autoPtr<rigidBody>(new masslessBody(*this));
-}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::RBD::masslessBody::~masslessBody()
+Foam::functionEntries::printEntry::printEntry
+(
+    const label lineNumber,
+    const dictionary& parentDict,
+    Istream& is
+)
+:
+    functionEntry(typeName, lineNumber, parentDict)
 {}
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::RBD::masslessBody::massless() const
+bool Foam::functionEntries::printEntry::execute
+(
+    dictionary& contextDict,
+    Istream& is
+)
 {
+    if (Pstream::master())
+    {
+        contextDict.write(Info);
+    }
+
     return true;
-}
-
-
-void Foam::RBD::masslessBody::write(Ostream& os) const
-{
-    writeEntry(os, "type", type());
 }
 
 

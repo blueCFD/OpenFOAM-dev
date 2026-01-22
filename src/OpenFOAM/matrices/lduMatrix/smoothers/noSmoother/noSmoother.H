@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,83 +22,71 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::RBD::compositeBody
+    Foam::noSmoother
 
 Description
-    This specialised rigidBody holds the original body after it has been merged
-    into a parent.
+    A lduMatrix::smoother that does nothing. Not on the selection table. Only
+    used by GAMG in the event that the coarsest mesh is a single cell.
 
 SourceFiles
-    compositeBodyI.H
-    compositeBody.C
+    noSmoother.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef RBD_compositeBody_H
-#define RBD_compositeBody_H
+#ifndef noSmoother_H
+#define noSmoother_H
 
-#include "rigidBody.H"
+#include "lduMatrix.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace RBD
-{
 
 /*---------------------------------------------------------------------------*\
-                        Class compositeBody Declaration
+                     Class noSmoother Declaration
 \*---------------------------------------------------------------------------*/
 
-class compositeBody
+class noSmoother
 :
-    public rigidBody
+    public lduMatrix::smoother
 {
-    // Private Data
-
-        //- Original body from which this composite-body was constructed
-        autoPtr<rigidBody> body_;
-
 
 public:
 
+    //- Runtime type information
+    TypeName("no");
+
+
     // Constructors
 
-        //- Construct a merged version of the given rigidBody
-        //  providing the ID of the parent body to which this will be merged
-        //  and the transform relative to the parent
-        inline compositeBody(const autoPtr<rigidBody>& bodyPtr);
-
-        //- Return clone of this compositeBody
-        virtual autoPtr<rigidBody> clone() const;
-
-
-    //- Destructor
-    virtual ~compositeBody();
+        //- Construct from components
+        noSmoother
+        (
+            const word& fieldName,
+            const lduMatrix& matrix,
+            const FieldField<Field, scalar>& interfaceBouCoeffs,
+            const FieldField<Field, scalar>& interfaceIntCoeffs,
+            const lduInterfaceFieldPtrsList& interfaces
+        );
 
 
     // Member Functions
 
-        //- Return the type name of the original body
-        virtual const word& type() const;
-
-        //- Return the original body from which this composite-body
-        //  was constructed
-        inline const rigidBody& body() const;
-
-        //- Write
-        virtual void write(Ostream&) const;
+        //- Smooth the solution for a given number of sweeps
+        virtual void smooth
+        (
+            scalarField& psi,
+            const scalarField& Source,
+            const direction cmpt,
+            const label nSweeps
+        ) const;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace RBD
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "compositeBodyI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

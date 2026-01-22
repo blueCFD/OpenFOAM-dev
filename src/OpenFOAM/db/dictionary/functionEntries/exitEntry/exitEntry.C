@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,46 +23,45 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "masslessBody.H"
+#include "exitEntry.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace RBD
+namespace functionEntries
 {
-    defineTypeNameAndDebug(masslessBody, 0);
-    addToRunTimeSelectionTable(rigidBody, masslessBody, dictionary);
+    defineFunctionTypeNameAndDebug(exitEntry, 0);
+    addToRunTimeSelectionTable(functionEntry, exitEntry, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::RBD::rigidBody> Foam::RBD::masslessBody::clone() const
-{
-    return autoPtr<rigidBody>(new masslessBody(*this));
-}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::RBD::masslessBody::~masslessBody()
+Foam::functionEntries::exitEntry::exitEntry
+(
+    const label lineNumber,
+    const dictionary& parentDict,
+    Istream& is
+)
+:
+    functionEntry(typeName, lineNumber, parentDict)
 {}
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::RBD::masslessBody::massless() const
+bool Foam::functionEntries::exitEntry::execute
+(
+    dictionary& contextDict,
+    Istream& is
+)
 {
+    IOInfoInFunction(is) << "Exiting run." << endl;
+    ::exit(0);
     return true;
-}
-
-
-void Foam::RBD::masslessBody::write(Ostream& os) const
-{
-    writeEntry(os, "type", type());
 }
 
 

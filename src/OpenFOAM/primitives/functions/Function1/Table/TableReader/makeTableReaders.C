@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,15 +23,42 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeTableReaders.H"
+#include "TableReader.T.H"
+
+#include "EmbeddedTableReader.T.H"
+#include "FoamTableReader.T.H"
+#include "CsvTableReader.T.H"
+
 #include "fieldTypes.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Permute the order of the macro arguments so that the Value type can be
+// iterated over by FOR_ALL_FIELD_TYPES
+
+#define defineTableReaderValueFirst(Value, Coordinate) \
+    defineTableReader(Coordinate, Value)
+
+#define addTableReaderValueFirst(Value, TableReaderType, Coordinate) \
+    addTableReader(TableReaderType, Coordinate, Value)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    FOR_ALL_FIELD_TYPES(makeTableReaders);
-    makeTableReaders(vector2D, );
+    FOR_ALL_FIELD_TYPES(defineTableReaderValueFirst, scalar);
+    defineTableReader(vector, scalar)
+    defineTableReader(scalar, vector2D)
+
+    FOR_ALL_FIELD_TYPES(addTableReaderValueFirst, Embedded, scalar)
+    addTableReader(Embedded, scalar, vector2D)
+    addTableReader(Embedded, vector, scalar)
+    FOR_ALL_FIELD_TYPES(addTableReaderValueFirst, Foam, scalar)
+    addTableReader(Foam, scalar, vector2D)
+    addTableReader(Foam, vector, scalar)
+    FOR_ALL_FIELD_TYPES(addTableReaderValueFirst, Csv, scalar)
+    addTableReader(Csv, scalar, vector2D)
+    addTableReader(Csv, vector, scalar)
 }
 
 // ************************************************************************* //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,47 +23,48 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "masslessBody.H"
-#include "addToRunTimeSelectionTable.H"
+#include "noSmoother.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace RBD
-{
-    defineTypeNameAndDebug(masslessBody, 0);
-    addToRunTimeSelectionTable(rigidBody, masslessBody, dictionary);
-}
+    defineTypeNameAndDebug(noSmoother, 0);
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::RBD::rigidBody> Foam::RBD::masslessBody::clone() const
-{
-    return autoPtr<rigidBody>(new masslessBody(*this));
-}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::RBD::masslessBody::~masslessBody()
+Foam::noSmoother::noSmoother
+(
+    const word& fieldName,
+    const lduMatrix& matrix,
+    const FieldField<Field, scalar>& interfaceBouCoeffs,
+    const FieldField<Field, scalar>& interfaceIntCoeffs,
+    const lduInterfaceFieldPtrsList& interfaces
+)
+:
+    lduMatrix::smoother
+    (
+        fieldName,
+        matrix,
+        interfaceBouCoeffs,
+        interfaceIntCoeffs,
+        interfaces
+    )
 {}
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::RBD::masslessBody::massless() const
-{
-    return true;
-}
-
-
-void Foam::RBD::masslessBody::write(Ostream& os) const
-{
-    writeEntry(os, "type", type());
-}
+void Foam::noSmoother::smooth
+(
+    scalarField& psi,
+    const scalarField& source,
+    const direction cmpt,
+    const label nSweeps
+) const
+{}
 
 
 // ************************************************************************* //

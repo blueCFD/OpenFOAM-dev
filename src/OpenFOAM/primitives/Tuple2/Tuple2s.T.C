@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,47 +23,31 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "masslessBody.H"
-#include "addToRunTimeSelectionTable.H"
+#include "Tuple2.T.H"
+#include "fieldTypes.H"
+#include "vector2D.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#define defineTuple2(Type1, Type2)                                             \
+    template<>                                                                 \
+    const char* const Tuple2<Type1, Type2>::typeName =                         \
+        "Tuple2<" #Type1 "," #Type2 ">";
+
+#define defineScalarTypeTuple2(Type, nullArg)                                  \
+    defineTuple2(scalar, Type)
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace RBD
-{
-    defineTypeNameAndDebug(masslessBody, 0);
-    addToRunTimeSelectionTable(rigidBody, masslessBody, dictionary);
+    FOR_ALL_FIELD_TYPES(defineScalarTypeTuple2)
+
+    defineTuple2(vector, scalar)
+
+    defineTuple2(scalar, vector2D)
+
+    defineTuple2(word, scalar)
 }
-}
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::autoPtr<Foam::RBD::rigidBody> Foam::RBD::masslessBody::clone() const
-{
-    return autoPtr<rigidBody>(new masslessBody(*this));
-}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::RBD::masslessBody::~masslessBody()
-{}
-
-
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-bool Foam::RBD::masslessBody::massless() const
-{
-    return true;
-}
-
-
-void Foam::RBD::masslessBody::write(Ostream& os) const
-{
-    writeEntry(os, "type", type());
-}
-
 
 // ************************************************************************* //
