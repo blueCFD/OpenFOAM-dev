@@ -65,9 +65,9 @@ Foam::tmp<Foam::Field<Type>> Foam::RBD::pointMasses::sectionMuNs
         (
             points_,
             sortedPointis_[axis],
-            [&points = points_, axis](const label a, const label b)
+            [this, axis](const label a, const label b)
             {
-                return points[a][axis] < points[b][axis];
+                return points_[a][axis] < points_[b][axis];
             }
         );
     }
@@ -90,6 +90,8 @@ Foam::tmp<Foam::Field<Type>> Foam::RBD::pointMasses::sectionMuNs
             sectioni < result.size()
          && sortedPoints[sortedPointi][axis] > distances[sectioni + 1]
         ) sectioni ++;
+
+        if (sectioni >= result.size()) break;
 
         result[sectioni] +=
             op(sortedPoints[sortedPointi])*sortedMasses[sortedPointi];
@@ -169,8 +171,6 @@ Foam::RBD::pointMasses::pointMasses
     }
 
     rigidBodyInertia::operator=(rigidBodyInertia(m, c, Ic));
-
-    Info<< *this << endl;
 }
 
 
