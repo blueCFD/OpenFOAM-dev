@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,7 +66,7 @@ template<class Type, class GeoMesh, template<class> class PrimitiveField>
 DimensionedField<Type, GeoMesh, PrimitiveField>::DimensionedField
 (
     const IOobject& io,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensionSet& dims,
     const PrimitiveField<Type>& field
 )
@@ -77,12 +77,12 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::DimensionedField
     mesh_(mesh),
     dimensions_(dims)
 {
-    if (field.size() && field.size() != GeoMesh::size(mesh))
+    if (field.size() && field.size() != mesh.size())
     {
         FatalErrorInFunction
             << "size of field = " << field.size()
             << " is not the same as the size of mesh = "
-            << GeoMesh::size(mesh)
+            << mesh.size()
             << abort(FatalError);
     }
 }
@@ -92,7 +92,7 @@ template<class Type, class GeoMesh, template<class> class PrimitiveField>
 DimensionedField<Type, GeoMesh, PrimitiveField>::DimensionedField
 (
     const IOobject& io,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensionSet& dims,
     const tmp<PrimitiveField<Type>>& tfield
 )
@@ -103,12 +103,12 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::DimensionedField
     mesh_(mesh),
     dimensions_(dims)
 {
-    if (this->size() && this->size() != GeoMesh::size(mesh))
+    if (this->size() && this->size() != mesh.size())
     {
         FatalErrorInFunction
             << "size of field = " << this->size()
             << " is not the same as the size of mesh = "
-            << GeoMesh::size(mesh)
+            << mesh.size()
             << abort(FatalError);
     }
 }
@@ -118,19 +118,19 @@ template<class Type, class GeoMesh, template<class> class PrimitiveField>
 DimensionedField<Type, GeoMesh, PrimitiveField>::DimensionedField
 (
     const IOobject& io,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensionSet& dims,
     const bool checkIOFlags
 )
 :
     regIOobject(io),
-    PrimitiveField<Type>(GeoMesh::size(mesh)),
+    PrimitiveField<Type>(mesh.size()),
     OldTimeField<DimensionedField>(this->time().timeIndex()),
     mesh_(mesh),
     dimensions_(dims)
 {
     // Expand dynamic primitive fields to their full size
-    PrimitiveField<Type>::setSize(GeoMesh::size(mesh));
+    PrimitiveField<Type>::setSize(mesh.size());
 
     if (checkIOFlags)
     {
@@ -143,13 +143,13 @@ template<class Type, class GeoMesh, template<class> class PrimitiveField>
 DimensionedField<Type, GeoMesh, PrimitiveField>::DimensionedField
 (
     const IOobject& io,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensioned<Type>& dt,
     const bool checkIOFlags
 )
 :
     regIOobject(io),
-    PrimitiveField<Type>(GeoMesh::size(mesh), dt.value()),
+    PrimitiveField<Type>(mesh.size(), dt.value()),
     OldTimeField<DimensionedField>(this->time().timeIndex()),
     mesh_(mesh),
     dimensions_(dt.dimensions())
@@ -384,12 +384,12 @@ Foam::tmp<Foam::DimensionedField<Type, GeoMesh, PrimitiveField>>
 DimensionedField<Type, GeoMesh, PrimitiveField>::New
 (
     const word& name,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensionSet& ds,
     const PrimitiveField<Type>& field
 )
 {
-    const bool cacheTmp = mesh.thisDb().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -398,8 +398,8 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
             IOobject
             (
                 name,
-                mesh.thisDb().time().name(),
-                mesh.thisDb(),
+                mesh.db().time().name(),
+                mesh.db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 cacheTmp
@@ -418,12 +418,12 @@ Foam::tmp<Foam::DimensionedField<Type, GeoMesh, PrimitiveField>>
 DimensionedField<Type, GeoMesh, PrimitiveField>::New
 (
     const word& name,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensionSet& ds,
     const tmp<PrimitiveField<Type>>& tfield
 )
 {
-    const bool cacheTmp = mesh.thisDb().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -432,8 +432,8 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
             IOobject
             (
                 name,
-                mesh.thisDb().time().name(),
-                mesh.thisDb(),
+                mesh.db().time().name(),
+                mesh.db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 cacheTmp
@@ -452,11 +452,11 @@ Foam::tmp<Foam::DimensionedField<Type, GeoMesh, PrimitiveField>>
 DimensionedField<Type, GeoMesh, PrimitiveField>::New
 (
     const word& name,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensionSet& ds
 )
 {
-    const bool cacheTmp = mesh.thisDb().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -465,8 +465,8 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
             IOobject
             (
                 name,
-                mesh.thisDb().time().name(),
-                mesh.thisDb(),
+                mesh.db().time().name(),
+                mesh.db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 cacheTmp
@@ -485,11 +485,11 @@ Foam::tmp<Foam::DimensionedField<Type, GeoMesh, PrimitiveField>>
 DimensionedField<Type, GeoMesh, PrimitiveField>::New
 (
     const word& name,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensioned<Type>& dt
 )
 {
-    const bool cacheTmp = mesh.thisDb().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -498,8 +498,8 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
             IOobject
             (
                 name,
-                mesh.thisDb().time().name(),
-                mesh.thisDb(),
+                mesh.db().time().name(),
+                mesh.db(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 cacheTmp
@@ -864,7 +864,7 @@ void DimensionedField<Type, GeoMesh, PrimitiveField>::operator=
 
     if (tdf.isTmp())
     {
-        primitiveFieldRef().transfer(tdf.ref());
+        transfer(tdf.ref());
     }
     else
     {

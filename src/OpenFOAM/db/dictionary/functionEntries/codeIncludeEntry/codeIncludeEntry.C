@@ -35,40 +35,7 @@ namespace functionEntries
 {
     defineFunctionTypeNameAndDebug(codeIncludeEntry, 0);
     addToRunTimeSelectionTable(functionEntry, codeIncludeEntry, dictionary);
-
-    addBackwardCompatibleToRunTimeSelectionTable
-    (
-        functionEntry,
-        codeIncludeEntry,
-        dictionary,
-        calcIncludeEntry,
-        "#calcInclude"
-    );
 }
-}
-
-// Construct the static include file name cache
-Foam::DynamicList<Foam::fileName>
-    Foam::functionEntries::codeIncludeEntry::includeFiles_;
-
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-void Foam::functionEntries::codeIncludeEntry::appendFileName
-(
-    const dictionary& contextDict,
-    const fileName& fName
-) const
-{
-    // Copy the file name for inplace expansion
-    fileName expandedFname(fName);
-
-    // Substitute dictionary and environment variables. Allow empty
-    // substitutions.
-    stringOps::inplaceExpandEntry(expandedFname, contextDict, true, true);
-
-    // Add the file name to the cache
-    includeFiles_.append(expandedFname);
 }
 
 
@@ -97,37 +64,41 @@ Foam::functionEntries::codeIncludeEntry::codeIncludeEntry
 
 bool Foam::functionEntries::codeIncludeEntry::execute
 (
-    dictionary& contextDict,
+    dictionary& parentDict,
     Istream& is
 )
 {
-    forAll(fNames_, i)
-    {
-        appendFileName(contextDict, fNames_[i]);
-    }
-
-    return true;
+    FatalIOErrorInFunction(is)
+        << typeName
+        << " can only be used within #codeBlock...#endCodeBlock"
+        << exit(FatalIOError);
+    return false;
 }
 
 
-void Foam::functionEntries::codeIncludeEntry::clear()
+void Foam::functionEntries::codeIncludeEntry::addCodeInclude
+(
+    const List<fileName>& fileNames,
+    const dictionary& contextDict,
+    dictionary& codeDict
+)
 {
-    includeFiles_.clear();
-}
+    verbatimString codeInclude;
 
-
-void Foam::functionEntries::codeIncludeEntry::codeInclude(dictionary& codeDict)
-{
-    if (includeFiles_.size())
+    forAll(fileNames, i)
     {
-        verbatimString codeInclude;
-        forAll(includeFiles_, i)
-        {
-            codeInclude += "#include \"" + includeFiles_[i] + '"' + '\n';
-        }
+        // Copy the file name for inplace expansion
+        fileName expandedFname(fileNames[i]);
 
-        codeDict.add("codeInclude", codeInclude);
+        // Substitute dictionary and environment variables. Allow empty
+        // substitutions.
+        stringOps::inplaceExpandEntry(expandedFname, contextDict, true, true);
+
+        codeInclude +=
+            "#include \"" + expandedFname + '"' + '\n';
     }
+
+    codeDict.add("codeInclude", codeInclude);
 }
 
 

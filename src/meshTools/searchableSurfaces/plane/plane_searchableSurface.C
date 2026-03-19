@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,19 +84,24 @@ Foam::pointIndexHit Foam::searchableSurfaces::plane::findLine
 
 Foam::boundBox Foam::searchableSurfaces::plane::calcBounds() const
 {
-    point max(vGreat, vGreat, vGreat);
+    point min = point::min, max = point::max;
 
-    for (direction dir = 0; dir < vector::nComponents; dir++)
+    for (direction dir = 0; dir < vector::nComponents; dir ++)
     {
-        if (mag(normal()[dir]) - 1 < small)
+        // component == +1
+        if (normal()[dir] > 1 - small)
         {
-            max[dir] = 0;
+            max[dir] = refPoint()[dir];
+            break;
+        }
 
+        // component == -1
+        if (normal()[dir] < small - 1)
+        {
+            min[dir] = refPoint()[dir];
             break;
         }
     }
-
-    point min = -max;
 
     return boundBox(min, max);
 }
@@ -272,9 +277,13 @@ void Foam::searchableSurfaces::plane::getVolumeType
     List<volumeType>& volType
 ) const
 {
-    FatalErrorInFunction
-        << "Volume type not supported for plane."
-        << exit(FatalError);
+    forAll(points, pointi)
+    {
+        volType[pointi] =
+            ((points[pointi] - refPoint()) & normal()) < 0
+          ? volumeType::inside
+          : volumeType::outside;
+    }
 }
 
 

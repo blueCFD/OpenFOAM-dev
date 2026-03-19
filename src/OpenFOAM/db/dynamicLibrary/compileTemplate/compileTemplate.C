@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "compileTemplate.H"
-#include "dynamicCodeContext.H"
 #include "Time.T.H"
 #include "IFstream.H"
 #include "OSspecific.H"
@@ -34,6 +33,8 @@ License
 const Foam::wordList Foam::compileTemplate::codeKeys(wordList::null());
 
 const Foam::wordList Foam::compileTemplate::codeDictVars(wordList::null());
+
+Foam::wordList Foam::compileTemplate::compileFiles_(wordList::null());
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -69,12 +70,10 @@ Foam::dictionary Foam::compileTemplate::optionsDict
 }
 
 
-void Foam::compileTemplate::setFilterVariable
+void Foam::compileTemplate::setSubstitution
 (
-    dynamicCode& dynCode,
-    const dynamicCodeContext& context,
     const Pair<word>& substitution
-) const
+)
 {
     const word& name(substitution.first());
     word type(substitution.second());
@@ -105,36 +104,7 @@ void Foam::compileTemplate::setFilterVariable
         }
     }
 
-    dynCode.setFilterVariable(name, type);
-}
-
-
-void Foam::compileTemplate::prepare
-(
-    dynamicCode& dynCode,
-    const dynamicCodeContext& context
-) const
-{
-    dynCode.setFilterVariable("typeName", codeName());
-
-    forAll(substitutions_, i)
-    {
-        setFilterVariable(dynCode, context, substitutions_[i]);
-    }
-
-    // Compile filtered C template
-    dynCode.addCompileFile(codeTemplateC(templateName_));
-
-    // Define Make/options
-    dynCode.setMakeOptions(context.options() + "\n\n" + context.libs());
-
-    // Make verbose if debugging
-    dynCode.setFilterVariable("verbose", Foam::name(bool(debug)));
-
-    if (debug)
-    {
-        Info<<"compile " << codeName() << " sha1: " << context.sha1() << endl;
-    }
+    varSubstitutions().set(name, type);
 }
 
 
@@ -152,12 +122,24 @@ Foam::compileTemplate::compileTemplate
         name(instantiatedName),
         optionsDict(templateName),
         codeKeys,
-        codeDictVars
+        codeDictVars,
+        word::null,
+        compileFiles_,
+        wordList::null()
     ),
-    templateName_(templateName),
     substitutions_(substitutions),
     dict_(optionsDict(templateName))
 {
+    compileFiles_ = {templateName + "Template.C"};
+
+    forAll(substitutions_, i)
+    {
+        setSubstitution(substitutions_[i]);
+    }
+
+    // Make verbose if debugging
+    varSubstitutions().set("verbose", Foam::name(bool(debug)));
+
     this->updateLibrary(dict_);
 }
 

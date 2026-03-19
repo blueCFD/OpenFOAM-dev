@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -540,7 +540,7 @@ void Foam::motionSmootherAlgo::setDisplacement
 
     if (debug)
     {
-        OFstream str(mesh.db().path()/"changedPoints.obj");
+        OFstream str(mesh.parent().path()/"changedPoints.obj");
         label nVerts = 0;
         forAll(ppMeshPoints, patchPointi)
         {

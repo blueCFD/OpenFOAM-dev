@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ License
 
 void Foam::polyFacesFvsPatchLabelField::init()
 {
-    labelField::operator=(identityMap(patch().size()) + patch().start());
+    labelField::operator=(identityMap(patch().start(), patch().size()));
 }
 
 

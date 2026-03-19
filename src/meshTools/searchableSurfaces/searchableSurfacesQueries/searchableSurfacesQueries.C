@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -464,90 +464,87 @@ void Foam::searchableSurfacesQueries::findNearest
     const label nIter
 )
 {
-    // Multi-surface findNearest
+    // Initialise no projection and no constraint
+    near = start;
+    constraint = List<pointConstraint>(start.size(), pointConstraint());
 
+    // Get nearest points and normals on the first surface
+    boolList hit(start.size(), true);
     vectorField normal;
     List<pointIndexHit> info;
-
-    allSurfaces[surfacesToTest[0]].findNearest(start, distSqr, info);
-    allSurfaces[surfacesToTest[0]].getNormal(info, normal);
-
-    // Extract useful info from initial start point
-    near = start;
-    forAll(info, i)
+    allSurfaces[surfacesToTest.first()].findNearest(start, distSqr, info);
+    allSurfaces[surfacesToTest.first()].getNormal(info, normal);
+    forAll(info, pointi)
     {
-        if (info[i].hit())
+        if (info[pointi].hit())
         {
-            near[i] = info[i].hitPoint();
+            hit[pointi] = false;
+            near[pointi] = info[pointi].hitPoint();
+            constraint[pointi].applyConstraint(normal[pointi]);
         }
     }
-    constraint.setSize(near.size());
 
+    // Quick return if just one surface
+    if (surfacesToTest.size() == 1) return;
 
-    if (surfacesToTest.size() == 1)
+    // Otherwise iterate over the remaining surfaces ...
+
+    pointField near1(start.size());
+    vectorField normal1;
+
+    label surfi = 1;
+    for (label iter = 0; iter < nIter; iter++)
     {
-        constraint = pointConstraint();
-        forAll(info, i)
+        // Find the intersection with next surface, starting at the current
+        // nearest location
+        const searchableSurface& s = allSurfaces[surfacesToTest[surfi]];
+        s.findNearest(near, distSqr, info);
+        s.getNormal(info, normal1);
+        forAll(info, pointi)
         {
-            if (info[i].hit())
+            if (info[pointi].hit())
             {
-                constraint[i].applyConstraint(normal[i]);
+                near1[pointi] = info[pointi].hitPoint();
             }
         }
-    }
-    else if (surfacesToTest.size() >= 2)
-    {
-        // Work space
-        pointField near1;
-        vectorField normal1;
 
-        label surfi = 1;
-        for (label iter = 0; iter < nIter; iter++)
+        // Move to the new intersection
+        forAll(near, pointi)
         {
-            constraint = pointConstraint();
-            forAll(constraint, i)
+            // No hit
+            if (info[pointi].hit())
             {
-                if (info[i].hit())
+                if (hit[pointi])
                 {
-                    constraint[i].applyConstraint(normal[i]);
+                    // First hit
+                    hit[pointi] = false;
+                    near[pointi] = near1[pointi];
+                    normal[pointi] = normal1[pointi];
+                    constraint[pointi].applyConstraint(normal1[pointi]);
                 }
-            }
-
-            // Find intersection with next surface
-            const searchableSurface& s = allSurfaces[surfacesToTest[surfi]];
-            s.findNearest(near, distSqr, info);
-            s.getNormal(info, normal1);
-            near1.setSize(info.size());
-            forAll(info, i)
-            {
-                if (info[i].hit())
+                else if (mag(normal[pointi] & normal1[pointi]) < 1 - rootSmall)
                 {
-                    near1[i] = info[i].hitPoint();
-                }
-            }
+                    // Subsequent hit
+                    const plane pl0(near[pointi], normal[pointi]);
+                    const plane pl1(near1[pointi], normal1[pointi]);
+                    const plane::ray r(pl0.planeIntersect(pl1));
+                    const vector n = r.dir()/mag(r.dir());
 
-            // Move to intersection
-            forAll(near, pointi)
-            {
-                if (info[pointi].hit())
-                {
-                    plane pl0(near[pointi], normal[pointi]);
-                    plane pl1(near1[pointi], normal1[pointi]);
-                    plane::ray r(pl0.planeIntersect(pl1));
-                    vector n = r.dir() / mag(r.dir());
-
-                    vector d(r.refPoint()-near[pointi]);
-                    d -= (d&n)*n;
+                    const vector d
+                    (
+                        (symmTensor::I - sqr(n))
+                      & (r.refPoint() - near[pointi])
+                    );
 
                     near[pointi] += d;
                     normal[pointi] = normal1[pointi];
                     constraint[pointi].applyConstraint(normal1[pointi]);
                 }
             }
-
-            // Step to next surface
-            surfi = surfacesToTest.fcIndex(surfi);
         }
+
+        // Step to next surface
+        surfi = surfacesToTest.fcIndex(surfi);
     }
 }
 

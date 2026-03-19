@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -243,6 +243,9 @@ public:
         //- Randomly permute a list
         template<class Container>
         inline void permute(Container& l);
+
+        //- Return a random permutation
+        inline labelList permutation(const label n);
 
         //- Create a randomly seeded generator
         inline randomGenerator generator();

@@ -83,8 +83,8 @@ List<weight> calcWeights
 tmp<scalarField> calcCutXs
 (
     const faceList& faces,
-    const UList<vector>& faceAreas,
-    const UList<vector>& faceNormals,
+    const Field<vector>& faceAreas,
+    const Field<vector>& faceNormals,
     const pointField& points,
     const scalarField& pointXs,
     const bool interpolate,

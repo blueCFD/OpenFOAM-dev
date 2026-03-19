@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "meshRefinement.H"
-#include "volMesh.H"
 #include "volFields.H"
-#include "surfaceMesh.H"
 #include "syncTools.H"
 #include "Time.T.H"
 #include "refinementHistory.H"
@@ -553,8 +551,11 @@ void Foam::meshRefinement::checkData()
         localPointRegion::findDuplicateFaces
         (
             mesh_,
-            identityMap(mesh_.nFaces() - mesh_.nInternalFaces())
-          + mesh_.nInternalFaces()
+            identityMap
+            (
+                mesh_.nInternalFaces(),
+                mesh_.nFaces() - mesh_.nInternalFaces()
+            )
         )
     );
 

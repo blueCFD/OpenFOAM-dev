@@ -253,7 +253,8 @@ class codeStream
             const word& typeName,
             const dictionary& contextDict,
             const dictionary& codeDict,
-            const word& codeTemplateC,
+            const word& codeOptions,
+            const wordList& compileFiles,
             word& codeName
         );
 
@@ -282,8 +283,11 @@ public:
         //- Name of the dictionary variables in the source code
         static const wordList codeDictVars;
 
+        //- Name of the code options file to be used
+        static const word codeOptions;
+
         //- Name of the C code template to be used
-        static const word codeTemplateC;
+        static const wordList compileFiles;
 
 
     // Related types

@@ -25,10 +25,10 @@ License
 
 #include "uRhoMulticomponentThermo.H"
 
-#include "uHomogeneousMixture.H"
-#include "uInhomogeneousMixture.H"
-#include "uInhomogeneousEGRMixture.H"
-#include "uMulticomponentMixture.H"
+#include "UHomogeneousMixture.T.H"
+#include "UInhomogeneousMixture.T.H"
+#include "UInhomogeneousEGRMixture.T.H"
+#include "UMulticomponentMixture.T.H"
 
 #include "forGases.H"
 
@@ -64,22 +64,22 @@ namespace Foam
     forCoeffEnthalpyGases
     (
         makeURhoMulticomponentThermos,
-        uHomogeneousMixture
+        UHomogeneousMixture
     );
     forCoeffEnthalpyGases
     (
         makeURhoMulticomponentThermos,
-        uInhomogeneousMixture
+        UInhomogeneousMixture
     );
     forCoeffEnthalpyGases
     (
         makeURhoMulticomponentThermos,
-        uInhomogeneousEGRMixture
+        UInhomogeneousEGRMixture
     );
     forCoeffEnthalpyGases
     (
         makeURhoMulticomponentThermos,
-        uMulticomponentMixture
+        UMulticomponentMixture
     );
 }
 

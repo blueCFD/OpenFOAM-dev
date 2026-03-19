@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ class nonConformalProcessorCyclicFvPatch
 
         //- Reference to the polyPatch
         const nonConformalProcessorCyclicPolyPatch&
-            nonConformalProcessorCyclicPolyPatch_;
+            nonConformalProcessorCyclicPoly_;
 
 
 public:
@@ -88,13 +88,6 @@ public:
     // Member Functions
 
         // Access
-
-            //- Inherit the processor cyclic patch method
-            using processorCyclicFvPatch::patch;
-
-            //- Poly patch
-            const nonConformalProcessorCyclicPolyPatch&
-                nonConformalProcessorCyclicPatch() const;
 
             //- Inherit the processor cyclic owner method
             using processorCyclicFvPatch::owner;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -272,6 +272,29 @@ inline void Foam::zoneSet::operator=(const cellZone& cZone)
 inline void Foam::zoneSet::operator=(const faceZone& fZone)
 {
     fZone_ = fZone;
+}
+
+
+// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
+
+template<>
+inline Foam::zoneTypes Foam::zoneType<Foam::pointZone>()
+{
+    return zoneTypes::point;
+}
+
+
+template<>
+inline Foam::zoneTypes Foam::zoneType<Foam::cellZone>()
+{
+    return zoneTypes::cell;
+}
+
+
+template<>
+inline Foam::zoneTypes Foam::zoneType<Foam::faceZone>()
+{
+    return zoneTypes::face;
 }
 
 

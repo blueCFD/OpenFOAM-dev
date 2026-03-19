@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,7 +105,14 @@ void inv(Field<symmTensor>& tf, const UList<symmTensor>& tf1)
     }
 }
 
-tmp<symmTensorField> inv(const UList<symmTensor>& tf)
+tmp<symmTensorField> inv(const Field<symmTensor>& tf)
+{
+    tmp<symmTensorField> result(new symmTensorField(tf.size()));
+    inv(result.ref(), tf);
+    return result;
+}
+
+tmp<symmTensorField> inv(const SubField<symmTensor>& tf)
 {
     tmp<symmTensorField> result(new symmTensorField(tf.size()));
     inv(result.ref(), tf);

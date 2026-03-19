@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -913,7 +913,21 @@ bool Foam::phaseSystem::read()
             readOK &= phaseModels_[phasei].read();
         }
 
-        // models ...
+        cAlphas_ =
+            found("interfaceCompression")
+          ? generateInterfacialValues<scalar>
+            (
+                *this,
+                subDict("interfaceCompression")
+            )
+          : cAlphaTable();
+
+        surfaceTensionCoefficientModels_ =
+            generateInterfacialModels<surfaceTensionCoefficientModel>
+            (
+                *this,
+                subDict(modelName<surfaceTensionCoefficientModel>())
+            );
 
         return readOK;
     }
@@ -939,9 +953,9 @@ Foam::tmp<Foam::volScalarField> Foam::byDt(const volScalarField& vf)
 
 Foam::tmp<Foam::surfaceScalarField> Foam::byDt(const surfaceScalarField& sf)
 {
-    if (fv::localEulerDdt::enabled(sf.mesh()))
+    if (fv::localEulerDdt::enabled(sf.mesh()()))
     {
-        return fv::localEulerDdt::localRDeltaTf(sf.mesh())*sf;
+        return fv::localEulerDdt::localRDeltaTf(sf.mesh()())*sf;
     }
     else
     {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,7 +29,7 @@ License
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
+Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::fvMesh>>
 Foam::hardSphereGroupSurfaceAreaVolumeRatioFvScalarFieldSource::value
 (
     const label j,
@@ -38,15 +38,12 @@ Foam::hardSphereGroupSurfaceAreaVolumeRatioFvScalarFieldSource::value
 {
     const populationBalanceModel& popBal = this->popBal();
 
-    const volScalarField::Internal& fi = popBal.f(i());
-    const volScalarField::Internal& fj = popBal.f(j);
-
     const populationBalance::shapeModels::fractal& fractal =
         refCast<const populationBalance::shapeModels::fractal>(popBal.shape());
 
     const volScalarField::Internal& kappaj = fractal.fld(j);
 
-    return kappaj*fj/fi;
+    return kappaj*popBal.dSph(j)/popBal.dSph(i());
 }
 
 

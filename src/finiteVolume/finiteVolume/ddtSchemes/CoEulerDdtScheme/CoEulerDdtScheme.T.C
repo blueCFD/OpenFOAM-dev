@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,7 +77,7 @@ tmp<volScalarField> CoEulerDdtScheme<Type>::CorDeltaT() const
     {
         const fvsPatchScalarField& pcofrDeltaT = cofrDeltaTbf[patchi];
         const fvPatch& p = pcofrDeltaT.patch();
-        const labelUList& faceCells = p.patch().faceCells();
+        const labelUList& faceCells = p.poly().faceCells();
 
         forAll(pcofrDeltaT, patchFacei)
         {

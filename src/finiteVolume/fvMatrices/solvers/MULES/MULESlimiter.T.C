@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -514,10 +514,9 @@ void Foam::MULES::limiter
         }
 
         // Take minimum value of limiter across coupled patches
-        surfaceScalarField::Boundary lambdaNbrBf
+        const PtrList<scalarField> lambdaNbrBf
         (
-            surfaceScalarField::Internal::null(),
-            lambdaBf.boundaryNeighbourField()
+            lambdaBf.coupledNeighbourField()
         );
 
         forAll(lambdaBf, patchi)
@@ -526,8 +525,7 @@ void Foam::MULES::limiter
 
             if (lambdaPf.coupled())
             {
-                const fvsPatchScalarField& lambdaNbrPf = lambdaNbrBf[patchi];
-                lambdaPf = min(lambdaPf, lambdaNbrPf);
+                lambdaPf = min(lambdaPf, lambdaNbrBf[patchi]);
 
                 if (controls.tol > 0)
                 {

@@ -88,7 +88,7 @@ sed \
 
 runApplication blockMesh
 runApplication mirrorMesh
-foamDictionary -set "pointAndNormalDict/normal=(1 0 0)" system/mirrorMeshDict
+foamDictionary -set "normal=(1 0 0)" system/mirrorMeshDict
 runApplication -a mirrorMesh
 
 [ "$refineRotating" ] && \

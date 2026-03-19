@@ -44,7 +44,6 @@ SourceFiles
 #include "pointField.H"
 #include "volFieldsFwd.H"
 #include "surfaceFieldsFwd.H"
-#include "surfaceMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -86,7 +85,7 @@ protected:
         };
 
 
-    // Protected member data
+    // Protected Data
 
         //- Const reference to fvMesh
         const fvMesh& mesh_;

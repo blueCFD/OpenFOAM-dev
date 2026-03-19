@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,8 +74,8 @@ void Foam::ThermoCloud<CloudType>::setModels()
                 IOobject
                 (
                     this->name() + ":radAreaP",
-                    this->db().time().name(),
-                    this->db(),
+                    this->time().name(),
+                    this->parent(),
                     IOobject::READ_IF_PRESENT,
                     IOobject::AUTO_WRITE
                 ),
@@ -91,8 +91,8 @@ void Foam::ThermoCloud<CloudType>::setModels()
                 IOobject
                 (
                     this->name() + ":radT4",
-                    this->db().time().name(),
-                    this->db(),
+                    this->time().name(),
+                    this->parent(),
                     IOobject::READ_IF_PRESENT,
                     IOobject::AUTO_WRITE
                 ),
@@ -108,8 +108,8 @@ void Foam::ThermoCloud<CloudType>::setModels()
                 IOobject
                 (
                     this->name() + ":radAreaPT4",
-                    this->db().time().name(),
-                    this->db(),
+                    this->time().name(),
+                    this->parent(),
                     IOobject::READ_IF_PRESENT,
                     IOobject::AUTO_WRITE
                 ),
@@ -169,8 +169,8 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
             IOobject
             (
                 this->name() + ":hsTrans",
-                this->db().time().name(),
-                this->db(),
+                this->time().name(),
+                this->parent(),
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
             ),
@@ -185,8 +185,8 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
             IOobject
             (
                 this->name() + ":hsCoeff",
-                this->db().time().name(),
-                this->db(),
+                this->time().name(),
+                this->parent(),
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
             ),
@@ -238,8 +238,8 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
             IOobject
             (
                 this->name() + ":hsTrans",
-                this->db().time().name(),
-                this->db(),
+                this->time().name(),
+                this->parent(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 false
@@ -254,8 +254,8 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
             IOobject
             (
                 this->name() + ":hsCoeff",
-                this->db().time().name(),
-                this->db(),
+                this->time().name(),
+                this->parent(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 false
@@ -273,8 +273,8 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
                 IOobject
                 (
                     this->name() + ":radAreaP",
-                    this->db().time().name(),
-                    this->db(),
+                    this->time().name(),
+                    this->parent(),
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
                     false
@@ -290,8 +290,8 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
                 IOobject
                 (
                     this->name() + ":radT4",
-                    this->db().time().name(),
-                    this->db(),
+                    this->time().name(),
+                    this->parent(),
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
                     false
@@ -307,8 +307,8 @@ Foam::ThermoCloud<CloudType>::ThermoCloud
                 IOobject
                 (
                     this->name() + ":radAreaPT4",
-                    this->db().time().name(),
-                    this->db(),
+                    this->time().name(),
+                    this->parent(),
                     IOobject::NO_READ,
                     IOobject::NO_WRITE,
                     false

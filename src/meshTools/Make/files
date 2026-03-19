@@ -99,6 +99,9 @@ searchableSurfaces/extrudedCircle/extrudedCircle_searchableSurface.C
 searchableSurfaces/collection/collection_searchableSurface.C
 
 searchableSurfaces/searchableSurfacesQueries/searchableSurfacesQueries.C
+
+searchableSurfaces/searchableSurfacesInsideFraction/searchableSurfacesInsideFraction.C
+
 searchableSurfaces/triSurface/extractCloseness.C
 
 topoSets/cellSet.C
@@ -224,6 +227,7 @@ patchFaceOrientation/patchFaceOrientation.C
 zoneGenerators/remove/remove.C
 zoneGenerators/clear/clear.C
 zoneGenerators/write/write.C
+zoneGenerators/print/print.C
 
 zoneGenerators/union/union.C
 zoneGenerators/difference/difference.C

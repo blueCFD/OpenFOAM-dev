@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,7 +34,7 @@ License
 Foam::waveAlphaFvPatchScalarField::waveAlphaFvPatchScalarField
 (
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -62,7 +62,7 @@ Foam::waveAlphaFvPatchScalarField::waveAlphaFvPatchScalarField
 (
     const waveAlphaFvPatchScalarField& ptf,
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -74,7 +74,7 @@ Foam::waveAlphaFvPatchScalarField::waveAlphaFvPatchScalarField
 Foam::waveAlphaFvPatchScalarField::waveAlphaFvPatchScalarField
 (
     const waveAlphaFvPatchScalarField& ptf,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     fixedValueInletOutletFvPatchScalarField(ptf, iF),
@@ -120,7 +120,7 @@ Foam::waveAlphaFvPatchScalarField::alpha(const scalar t) const
         (
             patch(),
             waves.height(t, patch().Cf()),
-            waves.height(t, patch().patch().localPoints()),
+            waves.height(t, patch().poly().localPoints()),
             !liquid_
         );
 }
@@ -153,10 +153,10 @@ Foam::waveAlphaFvPatchScalarField::alphan(const scalar t) const
     {
         forAll(meshs.boundary()[patchis], is)
         {
-            const label fs = is + meshs.boundary()[patchis].patch().start();
+            const label fs = is + meshs.boundary()[patchis].poly().start();
             const label cs = meshs.boundary()[patchis].faceCells()[is];
             const label f = subset.faceMap()[fs];
-            const label i = patch().patch().whichFace(f);
+            const label i = patch().poly().whichFace(f);
             result[i] = alphas[cs];
         }
     }

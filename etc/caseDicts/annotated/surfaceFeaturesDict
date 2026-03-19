@@ -62,7 +62,6 @@ surface2
         // Keep only edges that intersect the plane
         plane
         {
-            planeType       pointAndNormal;
             point           (0 0 0);
             normal          (1 0 0);
         }

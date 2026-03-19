@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,7 +95,7 @@ void getFixedPoints
     PackedBoolList& fixedPoints
 )
 {
-    scalarList matchDistance(feMesh.points().size(), 1e-1);
+    scalarField matchDistance(feMesh.points().size(), 1e-1);
     labelList from0To1;
 
     bool matchedAll = matchPoints

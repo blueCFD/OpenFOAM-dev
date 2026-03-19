@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,6 +34,34 @@ License
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
+void Foam::solvers::isothermalFilm::constrainFixedFlux
+(
+    surfaceScalarField& pbByAlphaf,
+    surfaceScalarField& pbByAlphaGradRhof,
+    surfaceScalarField& phip
+)
+{
+    surfaceScalarField::Boundary& pbByAlphaBf = pbByAlphaf.boundaryFieldRef();
+
+    surfaceScalarField::Boundary& pbByAlphaGradRhoBf =
+        pbByAlphaGradRhof.boundaryFieldRef();
+
+    surfaceScalarField::Boundary& phipBf = phip.boundaryFieldRef();
+
+    const volVectorField::Boundary& UBf = U.boundaryField();
+
+    forAll(mesh.boundary(), patchi)
+    {
+        if (!UBf[patchi].assignable())
+        {
+            pbByAlphaBf[patchi] = 0;
+            pbByAlphaGradRhoBf[patchi] = 0;
+            phipBf[patchi] = 0;
+        }
+    }
+}
+
+
 void Foam::solvers::isothermalFilm::correctAlpha()
 {
     volScalarField& alpha = alpha_;
@@ -42,13 +70,13 @@ void Foam::solvers::isothermalFilm::correctAlpha()
 
     const surfaceScalarField rhof(fvc::interpolate(rho));
 
-    const surfaceScalarField pbByAlphaf(this->pbByAlphaf());
-    const surfaceScalarField pbByAlphaGradRhof
+    surfaceScalarField pbByAlphaf(this->pbByAlphaf());
+    surfaceScalarField pbByAlphaGradRhof
     (
         constrainedField(this->pbByAlphaGradRhof()*mesh.magSf())
     );
 
-    const surfaceScalarField phip
+    surfaceScalarField phip
     (
         constrainedField
         (
@@ -57,6 +85,8 @@ void Foam::solvers::isothermalFilm::correctAlpha()
           - rhof*(g & mesh.Sf())
         )
     );
+
+    constrainFixedFlux(pbByAlphaf, pbByAlphaGradRhof, phip);
 
     while (pimple.correct())
     {

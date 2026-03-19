@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -705,7 +705,7 @@ int main(int argc, char *argv[])
         0.0
     );
 
-    scalarList patchArea(totalPatches, 0.0);
+    scalarField patchArea(totalPatches, 0.0);
 
     if (Pstream::master())
     {
@@ -822,7 +822,9 @@ int main(int argc, char *argv[])
     F.write();
 
     reduce(sumViewFactorPatch, sumOp<scalarSquareMatrix>());
-    reduce(patchArea, sumOp<scalarList>());
+
+    Pstream::listCombineGather(patchArea, plusEqOp<scalar>());
+    Pstream::listCombineScatter(patchArea);
 
 
     if (Pstream::master() && debug)

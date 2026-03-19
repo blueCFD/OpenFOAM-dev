@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,9 +51,9 @@ namespace Foam
 //  with (almost) identical mag. pts0 can be subset of pts1.
 bool matchPoints
 (
-    const UList<point>& pts0,
-    const UList<point>& pts1,
-    const UList<scalar>& matchDistance,
+    const Field<point>& pts0,
+    const Field<point>& pts1,
+    const Field<scalar>& matchDistance,
     const bool verbose,
     labelList& from0To1,
     const point& origin = point::zero
@@ -66,11 +66,11 @@ bool matchPoints
 //  equal and opposite
 bool matchPoints
 (
-    const UList<point>& pts0,
-    const UList<point>& pts1,
-    const UList<point>& pts0Dir,
-    const UList<point>& pts1Dir,
-    const UList<scalar>& matchDistance,
+    const Field<point>& pts0,
+    const Field<point>& pts1,
+    const Field<point>& pts0Dir,
+    const Field<point>& pts1Dir,
+    const Field<scalar>& matchDistance,
     const bool verbose,
     labelList& from0To1,
     const point& origin = point::zero

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,9 @@ Class
     Foam::codedBase
 
 Description
-    Base class for function objects and boundary conditions using dynamic code
+    Base class for coded functionObjects, fvModels, Function1, Function2
+
+    and boundary conditions
 
 SourceFiles
     codedBase.C
@@ -35,28 +37,22 @@ SourceFiles
 #ifndef codedBase_H
 #define codedBase_H
 
-#include "dynamicCodeContext.H"
+#include "dynamicCode.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-// Forward declaration of classes
-class dynamicCode;
-
 /*---------------------------------------------------------------------------*\
                           Class codedBase Declaration
 \*---------------------------------------------------------------------------*/
 
 class codedBase
+:
+    public dynamicCode
 {
-    // Private Member Data
-
-        //- Name of the dynamically generated CodedType
-        const word codeName_;
-
-        dynamicCodeContext codeContext_;
+    // Private Data
 
         //- Previously loaded library
         mutable fileName oldLibPath_;
@@ -67,42 +63,37 @@ class codedBase
         //- Global loader/unloader function type
         typedef void (*loaderFunctionType)(bool);
 
-        //- Create a code name from the given function name
-        static word codeName(const word& name);
-
-        //- Load specified library and execute globalFuncName(true)
-        void* loadLibrary
+        void checkLibrary
         (
+            const dictionary& dict,
             const fileName& libPath,
-            const string& globalFuncName,
-            const dictionary& contextDict
+            void* lib,
+            const string& uniqueFuncName,
+            const bool load
         ) const;
 
-        //- Execute globalFuncName(false) and unload specified library
+        //- Load specified library and execute uniqueFuncName(true)
+        void* loadLibrary
+        (
+            const dictionary& dict,
+            const fileName& libPath,
+            const string& uniqueFuncName
+        ) const;
+
+        //- Execute uniqueFuncName(false) and unload specified library
         void unloadLibrary
         (
+            const dictionary& dict,
             const fileName& libPath,
-            const string& globalFuncName,
-            const dictionary& contextDict
+            const string& uniqueFuncName
         ) const;
 
         verbatimString expandCodeString
         (
-            const word& codeKey,
-            const word& codeDictVar,
-            const dictionary& dict
-        ) const;
-
-        //- Create library based on the dynamicCodeContext
-        void createLibrary
-        (
             const dictionary& dict,
-            dynamicCode&,
-            const dynamicCodeContext&
+            const word& codeKey,
+            const word& codeDictVar
         ) const;
-
-        //- Adapt the context for the current object
-        virtual void prepare(dynamicCode&, const dynamicCodeContext&) const = 0;
 
 
 public:
@@ -119,7 +110,10 @@ public:
             const word& name,
             const dictionary& dict,
             const wordList& codeKeys,
-            const wordList& codeDictVars
+            const wordList& codeDictVars,
+            const word& codeOptionsFileName,
+            const wordList& compileFiles,
+            const wordList& copyFiles
         );
 
         //- Construct from dictionary
@@ -127,11 +121,11 @@ public:
         (
             const dictionary& dict,
             const wordList& codeKeys,
-            const wordList& codeDictVars
+            const wordList& codeDictVars,
+            const word& codeOptionsFileName,
+            const wordList& compileFiles,
+            const wordList& copyFiles
         );
-
-        //- Copy constructor
-        codedBase(const codedBase& cb);
 
 
     //- Destructor
@@ -140,25 +134,12 @@ public:
 
     // Member Functions
 
-        //- Name of the dynamically generated CodedType
-        const word& codeName() const;
-
-        //- Return a description (type + name) for the output
-        string description() const;
-
-        word codeTemplateC(const word& baseTypeName) const;
-
-        word codeTemplateH(const word& baseTypeName) const;
+        //- Create a coded name from the given name
+        static word codedName(const word& name);
 
         //- Update library from given updated dictionary as required
         //  Returns true if the library was updated, otherwise false
         bool updateLibrary(const dictionary& dict) const;
-
-        //- Read the dictionary and update the code
-        void read(const dictionary& dict);
-
-        //- Write the code for restart
-        void write(Ostream& os) const;
 
 
     // Member Operators

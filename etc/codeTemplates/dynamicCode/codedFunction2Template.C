@@ -34,9 +34,14 @@ namespace Function2s
 {
     defineTypeNameAndDebug(${typeName}Function2${TemplateType}, 0);
 }
-    Function2<${TemplateType}>::adddictionaryConstructorToTable<Function2s::
-        ${typeName}Function2${TemplateType}>
-        ${typeName}Function2${TemplateType}ConstructorToTable_;
+
+Function2<${TemplateType}>::
+addRemovabledictionaryConstructorToTable
+<
+    Function2s::${typeName}Function2${TemplateType}
+>
+${typeName}Function2${TemplateType}ConstructorToTable_;
+
 }
 
 
@@ -49,7 +54,7 @@ extern "C"
     //
     // Unique function name that can be checked if the correct library version
     // has been loaded
-    void ${typeName}_${SHA1sum}(bool load)
+    void ${uniqueFunctionName}(bool load)
     {
         if (load)
         {

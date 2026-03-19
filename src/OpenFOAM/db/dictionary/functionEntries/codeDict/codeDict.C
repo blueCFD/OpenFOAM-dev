@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "codeDict.H"
-#include "dynamicCode.H"
 #include "OSspecific.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -40,8 +39,15 @@ namespace functionEntries
 }
 }
 
-const Foam::word Foam::functionEntries::codeDict::codeTemplateC =
-    "codeDictTemplate.C";
+const Foam::word Foam::functionEntries::codeDict::codeOptions
+(
+    "codeDictOptions"
+);
+
+const Foam::wordList Foam::functionEntries::codeDict::compileFiles
+{
+    "codeDictTemplate.C"
+};
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -77,7 +83,8 @@ Foam::functionEntries::codeDict::getFunction
         typeName,
         contextDict,
         codeDict,
-        codeTemplateC,
+        codeOptions,
+        compileFiles,
         codeName
     );
 
@@ -112,12 +119,6 @@ bool Foam::functionEntries::codeDict::resultStream
         Info<< "Using " << typeName << " at line " << is.lineNumber()
             << " in file " <<  contextDict.name() << endl;
     }
-
-    dynamicCode::checkSecurity
-    (
-        "functionEntries::codeDict::execute(..)",
-        contextDict
-    );
 
     // Construct codeDict for codeDict using the context dictionary
     // for string expansion and variable substitution

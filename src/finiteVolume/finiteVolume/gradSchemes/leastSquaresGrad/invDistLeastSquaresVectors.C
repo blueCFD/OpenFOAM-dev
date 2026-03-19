@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -118,7 +118,7 @@ void Foam::leastSquaresVectors::calcLeastSquaresVectors()
         const fvsPatchVectorField& patchLsP = blsP[patchi];
 
         const fvPatch& p = patchLsP.patch();
-        const labelUList& faceCells = p.patch().faceCells();
+        const labelUList& faceCells = p.poly().faceCells();
 
         // Build the d-vectors
         vectorField pd(p.delta());

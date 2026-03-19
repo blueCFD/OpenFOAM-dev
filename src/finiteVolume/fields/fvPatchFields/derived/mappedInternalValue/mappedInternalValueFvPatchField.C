@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,9 +38,9 @@ Foam::mappedInternalValueFvPatchField<Type>::mapper() const
         return mapperPtr_();
     }
 
-    if (isA<mappedInternalPatchBase>(this->patch().patch()))
+    if (isA<mappedInternalPatchBase>(this->patch().poly()))
     {
-        return refCast<const mappedInternalPatchBase>(this->patch().patch());
+        return refCast<const mappedInternalPatchBase>(this->patch().poly());
     }
 
     FatalErrorInFunction
@@ -62,7 +62,7 @@ Foam::mappedInternalValueFvPatchField<Type>::
 mappedInternalValueFvPatchField
 (
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -82,7 +82,7 @@ mappedInternalValueFvPatchField
     mapperPtr_
     (
         mappedInternalPatchBase::specified(dict)
-      ? new mappedInternalPatchBase(p.patch(), dict)
+      ? new mappedInternalPatchBase(p.poly(), dict)
       : nullptr
     )
 {}
@@ -94,7 +94,7 @@ mappedInternalValueFvPatchField
 (
     const mappedInternalValueFvPatchField<Type>& ptf,
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -106,7 +106,7 @@ mappedInternalValueFvPatchField
     mapperPtr_
     (
         ptf.mapperPtr_.valid()
-      ? new mappedInternalPatchBase(p.patch(), ptf.mapperPtr_())
+      ? new mappedInternalPatchBase(p.poly(), ptf.mapperPtr_())
       : nullptr
     )
 {}
@@ -117,7 +117,7 @@ Foam::mappedInternalValueFvPatchField<Type>::
 mappedInternalValueFvPatchField
 (
     const mappedInternalValueFvPatchField<Type>& ptf,
-    const DimensionedField<Type, volMesh>& iF
+    const DimensionedField<Type, fvMesh>& iF
 )
 :
     fixedValueFvPatchField<Type>(ptf, iF),
@@ -128,7 +128,7 @@ mappedInternalValueFvPatchField
     mapperPtr_
     (
         ptf.mapperPtr_.valid()
-      ? new mappedInternalPatchBase(ptf.patch().patch(), ptf.mapperPtr_())
+      ? new mappedInternalPatchBase(ptf.patch().poly(), ptf.mapperPtr_())
       : nullptr
     )
 {}

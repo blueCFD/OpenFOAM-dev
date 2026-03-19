@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -301,7 +301,7 @@ const Foam::GAMGAgglomeration& Foam::GAMGAgglomeration::New
 {
     if
     (
-        !mesh.thisDb().foundObject<GAMGAgglomeration>
+        !mesh.db().foundObject<GAMGAgglomeration>
         (
             GAMGAgglomeration::typeName
         )
@@ -338,7 +338,7 @@ const Foam::GAMGAgglomeration& Foam::GAMGAgglomeration::New
     }
     else
     {
-        return mesh.thisDb().lookupObject<GAMGAgglomeration>
+        return mesh.db().lookupObject<GAMGAgglomeration>
         (
             GAMGAgglomeration::typeName
         );
@@ -356,7 +356,7 @@ const Foam::GAMGAgglomeration& Foam::GAMGAgglomeration::New
 
     if
     (
-        !mesh.thisDb().foundObject<GAMGAgglomeration>
+        !mesh.db().foundObject<GAMGAgglomeration>
         (
             GAMGAgglomeration::typeName
         )
@@ -392,7 +392,7 @@ const Foam::GAMGAgglomeration& Foam::GAMGAgglomeration::New
     }
     else
     {
-        return mesh.thisDb().lookupObject<GAMGAgglomeration>
+        return mesh.db().lookupObject<GAMGAgglomeration>
         (
             GAMGAgglomeration::typeName
         );

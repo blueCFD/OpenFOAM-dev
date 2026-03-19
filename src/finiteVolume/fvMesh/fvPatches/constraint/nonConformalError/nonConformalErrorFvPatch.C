@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,10 +49,7 @@ Foam::nonConformalErrorFvPatch::nonConformalErrorFvPatch
 :
     fvPatch(patch, bm),
     nonConformalFvPatch(static_cast<const fvPatch&>(*this)),
-    nonConformalErrorPolyPatch_
-    (
-        refCast<const nonConformalErrorPolyPatch>(patch)
-    )
+    nonConformalErrorPoly_(refCast<const nonConformalErrorPolyPatch>(patch))
 {}
 
 
@@ -63,13 +60,6 @@ Foam::nonConformalErrorFvPatch::~nonConformalErrorFvPatch()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-const Foam::nonConformalErrorPolyPatch&
-Foam::nonConformalErrorFvPatch::nonConformalErrorPatch() const
-{
-    return nonConformalErrorPolyPatch_;
-}
-
 
 const Foam::labelList& Foam::nonConformalErrorFvPatch::polyFaces() const
 {

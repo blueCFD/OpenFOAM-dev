@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,12 +47,12 @@ namespace Foam
 
 Foam::cyclicLagrangianPatch::cyclicLagrangianPatch
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 :
-    LagrangianPatch(patch, boundaryMesh),
-    cyclicPatch_(refCast<const cyclicPolyPatch>(patch)),
+    LagrangianPatch(poly, boundaryMesh),
+    cyclicPoly_(refCast<const cyclicPolyPatch>(poly)),
     isNbrPatchMesh_(false)
 {}
 
@@ -71,8 +71,8 @@ const Foam::LagrangianSubMesh& Foam::cyclicLagrangianPatch::mesh() const
         boundaryMesh()
         [
             isNbrPatchMesh_
-          ? cyclicPatch_.nbrPatchIndex()
-          : patch().index()
+          ? cyclicPoly_.nbrPatchIndex()
+          : poly().index()
         ].LagrangianPatch::mesh();
 }
 
@@ -97,7 +97,7 @@ void Foam::cyclicLagrangianPatch::evaluate
     {
         tracking::crossCyclic
         (
-            cyclicPatch_,
+            cyclicPoly_,
             patchCoordinates[i],
             patchCelli[i],
             patchFacei[i],

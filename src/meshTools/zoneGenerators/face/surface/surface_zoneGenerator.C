@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -67,11 +67,11 @@ Foam::zoneGenerators::surface::surface
                 dict.lookupOrDefault
                 (
                     "surfaceName",
-                    mesh.objectRegistry::db().name()
+                    mesh.parent().name()
                 ),
                 mesh.time().constant(),
                 searchableSurface::geometryDir(mesh.time()),
-                mesh.objectRegistry::db(),
+                mesh.parent(),
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             ),

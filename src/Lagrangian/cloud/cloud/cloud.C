@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,11 +61,11 @@ Foam::LagrangianMesh& Foam::cloud::mesh
 
         forAll(pMesh.boundaryMesh(), patchi)
         {
-            const polyPatch& patch = pMesh.boundaryMesh()[patchi];
+            const polyPatch& pPatch = pMesh.boundaryMesh()[patchi];
 
             wantedPatchTypes[patchi] =
-                polyPatch::constraintType(patch.type())
-              ? patch.type()
+                polyPatch::constraintType(pPatch.type())
+              ? pPatch.type()
               : cloudVelocityLagrangianPatch::typeName;
         }
 

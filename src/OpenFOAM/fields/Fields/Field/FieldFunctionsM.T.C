@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,15 @@ void Func(Field<ReturnType>& res, const UList<Type>& f)                        \
 }                                                                              \
                                                                                \
 TEMPLATE                                                                       \
-tmp<Field<ReturnType>> Func(const UList<Type>& f)                              \
+tmp<Field<ReturnType>> Func(const Field<Type>& f)                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f.size()));              \
+    Func(tRes.ref(), f);                                                       \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func(const SubField<Type>& f)                           \
 {                                                                              \
     tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f.size()));              \
     Func(tRes.ref(), f);                                                       \
@@ -65,7 +73,15 @@ void OpFunc(Field<ReturnType>& res, const UList<Type>& f)                      \
 }                                                                              \
                                                                                \
 TEMPLATE                                                                       \
-tmp<Field<ReturnType>> operator Op(const UList<Type>& f)                       \
+tmp<Field<ReturnType>> operator Op(const Field<Type>& f)                       \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f.size()));              \
+    OpFunc(tRes.ref(), f);                                                     \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op(const SubField<Type>& f)                    \
 {                                                                              \
     tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f.size()));              \
     OpFunc(tRes.ref(), f);                                                     \
@@ -103,8 +119,8 @@ void Func                                                                      \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
-    const UList<Type2>& f2                                                     \
+    const Field<Type1>& f1,                                                    \
+    const Field<Type2>& f2                                                     \
 )                                                                              \
 {                                                                              \
     tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
@@ -115,7 +131,56 @@ tmp<Field<ReturnType>> Func                                                    \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
+    const Field<Type1>& f1,                                                    \
+    const SubField<Type2>& f2                                                  \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    Func(tRes.ref(), f1, f2);                                                  \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const Field<Type2>& f2                                                     \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    Func(tRes.ref(), f1, f2);                                                  \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const SubField<Type2>& f2                                                  \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    Func(tRes.ref(), f1, f2);                                                  \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const Field<Type1>& f1,                                                    \
+    const tmp<Field<Type2>>& tf2                                               \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes = reuseTmp<ReturnType, Type2>::New(tf2);       \
+    Func(tRes.ref(), f1, tf2());                                               \
+    tf2.clear();                                                               \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
     const tmp<Field<Type2>>& tf2                                               \
 )                                                                              \
 {                                                                              \
@@ -129,7 +194,20 @@ TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
     const tmp<Field<Type1>>& tf1,                                              \
-    const UList<Type2>& f2                                                     \
+    const Field<Type2>& f2                                                     \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes = reuseTmp<ReturnType, Type1>::New(tf1);       \
+    Func(tRes.ref(), tf1(), f2);                                               \
+    tf1.clear();                                                               \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const tmp<Field<Type1>>& tf1,                                              \
+    const SubField<Type2>& f2                                                  \
 )                                                                              \
 {                                                                              \
     tmp<Field<ReturnType>> tRes = reuseTmp<ReturnType, Type1>::New(tf1);       \
@@ -176,7 +254,19 @@ TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
     const Type1& s1,                                                           \
-    const UList<Type2>& f2                                                     \
+    const Field<Type2>& f2                                                     \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f2.size()));             \
+    Func(tRes.ref(), s1, f2);                                                  \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const Type1& s1,                                                           \
+    const SubField<Type2>& f2                                                  \
 )                                                                              \
 {                                                                              \
     tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f2.size()));             \
@@ -217,7 +307,19 @@ void Func                                                                      \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
+    const Field<Type1>& f1,                                                    \
+    const Type2& s2                                                            \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    Func(tRes.ref(), f1, s2);                                                  \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
     const Type2& s2                                                            \
 )                                                                              \
 {                                                                              \
@@ -263,8 +365,8 @@ void OpFunc                                                                    \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
-    const UList<Type2>& f2                                                     \
+    const Field<Type1>& f1,                                                    \
+    const Field<Type2>& f2                                                     \
 )                                                                              \
 {                                                                              \
     tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
@@ -275,7 +377,56 @@ tmp<Field<ReturnType>> operator Op                                             \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
+    const Field<Type1>& f1,                                                    \
+    const SubField<Type2>& f2                                                  \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    OpFunc(tRes.ref(), f1, f2);                                                \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const Field<Type2>& f2                                                     \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    OpFunc(tRes.ref(), f1, f2);                                                \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const SubField<Type2>& f2                                                  \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    OpFunc(tRes.ref(), f1, f2);                                                \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const Field<Type1>& f1,                                                    \
+    const tmp<Field<Type2>>& tf2                                               \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes = reuseTmp<ReturnType, Type2>::New(tf2);       \
+    OpFunc(tRes.ref(), f1, tf2());                                             \
+    tf2.clear();                                                               \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
     const tmp<Field<Type2>>& tf2                                               \
 )                                                                              \
 {                                                                              \
@@ -289,7 +440,20 @@ TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
     const tmp<Field<Type1>>& tf1,                                              \
-    const UList<Type2>& f2                                                     \
+    const Field<Type2>& f2                                                     \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes = reuseTmp<ReturnType, Type1>::New(tf1);       \
+    OpFunc(tRes.ref(), tf1(), f2);                                             \
+    tf1.clear();                                                               \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const tmp<Field<Type1>>& tf1,                                              \
+    const SubField<Type2>& f2                                                  \
 )                                                                              \
 {                                                                              \
     tmp<Field<ReturnType>> tRes = reuseTmp<ReturnType, Type1>::New(tf1);       \
@@ -333,7 +497,19 @@ TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
     const Type1& s1,                                                           \
-    const UList<Type2>& f2                                                     \
+    const Field<Type2>& f2                                                     \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f2.size()));             \
+    OpFunc(tRes.ref(), s1, f2);                                                \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const Type1& s1,                                                           \
+    const SubField<Type2>& f2                                                  \
 )                                                                              \
 {                                                                              \
     tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f2.size()));             \
@@ -371,7 +547,19 @@ void OpFunc                                                                    \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
+    const Field<Type1>& f1,                                                    \
+    const Type2& s2                                                            \
+)                                                                              \
+{                                                                              \
+    tmp<Field<ReturnType>> tRes(new Field<ReturnType>(f1.size()));             \
+    OpFunc(tRes.ref(), f1, s2);                                                \
+    return tRes;                                                               \
+}                                                                              \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
     const Type2& s2                                                            \
 )                                                                              \
 {                                                                              \

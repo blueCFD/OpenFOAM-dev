@@ -1,0 +1,56 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "constant";
+    object      alpha.volume;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [];
+
+internalField
+{
+    type        coded;
+
+    name        alphaVolume;
+
+    evaluate
+    #{
+        const scalarField x(C.component(vector::X));
+        const scalarField y(C.component(vector::Y));
+
+        const scalar x0 = 0.032;
+        const scalar x1 = 0.064;
+        const scalar x2 = 0.128;
+        const scalar x3 = 0.224;
+
+        const scalarField f
+        (
+            pos(x - x0)*pos(x1 - x)*(x - x0)/(x1 - x0)
+          + pos(x - x1)*pos(x2 - x)
+          + pos(x - x2)*pos(x3 - x)*(x3 - x)/(x3 - x2)
+        );
+
+        field.primitiveFieldRef() = 0.5*pos(y - (-0.124))*pos((-0.056) - y)*f;
+    #};
+};
+
+boundaryField
+{
+    ".*"
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+}
+
+
+// ************************************************************************* //

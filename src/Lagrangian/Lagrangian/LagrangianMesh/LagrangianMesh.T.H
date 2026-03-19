@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,6 @@ SourceFiles
 #ifndef LagrangianMesh_H
 #define LagrangianMesh_H
 
-#include "GeoMesh.T.H"
 #include "barycentricField.H"
 #include "barycentricIODynamicField.H"
 #include "LagrangianBoundaryMesh.H"
@@ -64,8 +63,7 @@ class nonConformalCyclicPolyPatch;
 
 class LagrangianMesh
 :
-    public objectRegistry,
-    public GeoMesh<polyMesh>
+    public objectRegistry
 {
 public:
 
@@ -420,7 +418,7 @@ public:
         //  linear displacement
         class linearDisplacement
         {
-            // Private Member Data
+            // Private Data
 
                 //- Reference to the linear displacement
                 const LagrangianSubVectorField& linear_;
@@ -450,7 +448,7 @@ public:
         //  parabolic displacement
         class parabolicDisplacement
         {
-            // Private Member Data
+            // Private Data
 
                 //- Reference to the linear displacement
                 const LagrangianSubVectorField& linear_;
@@ -624,9 +622,14 @@ public:
         // Access
 
             using objectRegistry::time;
-            using objectRegistry::thisDb;
             using objectRegistry::operator!=;
             using objectRegistry::operator==;
+
+            //- Return database
+            const objectRegistry& db() const
+            {
+                return *this;
+            }
 
             //- Access the mesh
             inline const polyMesh& mesh() const;

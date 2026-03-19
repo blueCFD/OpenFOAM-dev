@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,7 +91,10 @@ Foam::autoPtr<Foam::basicChemistryModel> Foam::basicChemistryModel::New
         if
         (
             dynamicCode::allowSystemOperations
-         && !dynamicCode::resolveTemplate(basicChemistryModel::typeName).empty()
+        && !dynamicCode::resolveTemplate
+            (
+                basicChemistryModel::typeName
+            ).empty()
         )
         {
             List<Pair<word>> substitutions

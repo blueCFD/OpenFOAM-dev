@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -768,7 +768,7 @@ void Foam::lagrangian::Cloud<ParticleType>::writePositions() const
 {
     OFstream pObj
     (
-        this->db().time().path()/this->name() + "_positions.obj"
+        this->time().path()/this->name() + "_positions.obj"
     );
 
     forAllConstIter(typename Cloud<ParticleType>, *this, pIter)

@@ -24,7 +24,6 @@ surfaces
     yNormal
     {
         type            cutPlane;
-        planeType       pointAndNormal;
         point           (0 0 0);
         normal          (0 1 0);
         interpolate     true;

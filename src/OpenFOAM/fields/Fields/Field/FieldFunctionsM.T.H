@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,9 @@ Description
 TEMPLATE                                                                       \
 void Func(Field<ReturnType>& res, const UList<Type1>& f);                      \
 TEMPLATE                                                                       \
-tmp<Field<ReturnType>> Func(const UList<Type1>& f);                            \
+tmp<Field<ReturnType>> Func(const Field<Type1>& f);                            \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func(const SubField<Type1>& f);                         \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func(const tmp<Field<Type1>>& tf);
 
@@ -47,7 +49,9 @@ tmp<Field<ReturnType>> Func(const tmp<Field<Type1>>& tf);
 TEMPLATE                                                                       \
 void OpFunc(Field<ReturnType>& res, const UList<Type1>& f);                    \
 TEMPLATE                                                                       \
-tmp<Field<ReturnType>> operator Op(const UList<Type1>& f);                     \
+tmp<Field<ReturnType>> operator Op(const Field<Type1>& f);                     \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op(const SubField<Type1>& f);                  \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op(const tmp<Field<Type1>>& tf);
 
@@ -67,8 +71,29 @@ void Func                                                                      \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
-    const UList<Type2>& f2                                                     \
+    const Field<Type1>& f1,                                                    \
+    const Field<Type2>& f2                                                     \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const Field<Type1>& f1,                                                    \
+    const SubField<Type2>& f2                                                  \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const Field<Type2>& f2                                                     \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const SubField<Type2>& f2                                                  \
 );                                                                             \
                                                                                \
 TEMPLATE                                                                       \
@@ -76,6 +101,20 @@ tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
     const UList<Type1>& f1,                                                    \
     const tmp<Field<Type2>>& tf2                                               \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const UList<Type1>& f1,                                                    \
+    const tmp<Field<Type2>>& tf2                                               \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const tmp<Field<Type1>>& tf1,                                              \
+    const UList<Type2>& f2                                                     \
 );                                                                             \
                                                                                \
 TEMPLATE                                                                       \
@@ -109,7 +148,14 @@ TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
     const Type1& s1,                                                           \
-    const UList<Type2>& f2                                                     \
+    const Field<Type2>& f2                                                     \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const Type1& s1,                                                           \
+    const SubField<Type2>& f2                                                  \
 );                                                                             \
                                                                                \
 TEMPLATE                                                                       \
@@ -133,7 +179,14 @@ void Func                                                                      \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> Func                                                    \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
+    const Field<Type1>& f1,                                                    \
+    const Type2& s2                                                            \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> Func                                                    \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
     const Type2& s2                                                            \
 );                                                                             \
                                                                                \
@@ -165,14 +218,42 @@ void OpFunc                                                                    \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
-    const UList<Type2>& f2                                                     \
+    const Field<Type1>& f1,                                                    \
+    const Field<Type2>& f2                                                     \
 );                                                                             \
                                                                                \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
+    const Field<Type1>& f1,                                                    \
+    const SubField<Type2>& f2                                                  \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const Field<Type2>& f2                                                     \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
+    const SubField<Type2>& f2                                                  \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const Field<Type1>& f1,                                                    \
+    const tmp<Field<Type2>>& tf2                                               \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
     const tmp<Field<Type2>>& tf2                                               \
 );                                                                             \
                                                                                \
@@ -180,7 +261,14 @@ TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
     const tmp<Field<Type1>>& tf1,                                              \
-    const UList<Type2>& f2                                                     \
+    const Field<Type2>& f2                                                     \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const tmp<Field<Type1>>& tf1,                                              \
+    const SubField<Type2>& f2                                                  \
 );                                                                             \
                                                                                \
 TEMPLATE                                                                       \
@@ -207,7 +295,14 @@ TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
     const Type1& s1,                                                           \
-    const UList<Type2>& f2                                                     \
+    const Field<Type2>& f2                                                     \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const Type1& s1,                                                           \
+    const SubField<Type2>& f2                                                  \
 );                                                                             \
                                                                                \
 TEMPLATE                                                                       \
@@ -231,7 +326,14 @@ void OpFunc                                                                    \
 TEMPLATE                                                                       \
 tmp<Field<ReturnType>> operator Op                                             \
 (                                                                              \
-    const UList<Type1>& f1,                                                    \
+    const Field<Type1>& f1,                                                    \
+    const Type2& s2                                                            \
+);                                                                             \
+                                                                               \
+TEMPLATE                                                                       \
+tmp<Field<ReturnType>> operator Op                                             \
+(                                                                              \
+    const SubField<Type1>& f1,                                                 \
     const Type2& s2                                                            \
 );                                                                             \
                                                                                \

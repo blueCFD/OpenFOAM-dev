@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -119,7 +119,7 @@ Foam::tmp<Foam::Field<Type>> Foam::levelSetAverage
 
     forAll(result, fI)
     {
-        const face& f = patch.patch().localFaces()[fI];
+        const face& f = patch.poly().localFaces()[fI];
 
         scalar a = 0;
         Type r = Zero;
@@ -131,9 +131,9 @@ Foam::tmp<Foam::Field<Type>> Foam::levelSetAverage
             const FixedList<point, 3>
                 tri =
                 {
-                    patch.patch().faceCentres()[fI],
-                    patch.patch().localPoints()[e[0]],
-                    patch.patch().localPoints()[e[1]]
+                    patch.poly().faceCentres()[fI],
+                    patch.poly().localPoints()[e[0]],
+                    patch.poly().localPoints()[e[1]]
                 };
             const FixedList<scalar, 3>
                 level =

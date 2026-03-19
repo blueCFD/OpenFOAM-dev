@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,7 +28,6 @@ License
 #include "fieldMapper.H"
 #include "pointFields.H"
 #include "dynamicCode.H"
-#include "dynamicCodeContext.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -44,56 +43,23 @@ const Foam::wordList Foam::codedFixedValuePointPatchField<Type>::codeDictVars
     {word::null, word::null, word::null}
 );
 
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+template<class Type>
+const Foam::word Foam::codedFixedValuePointPatchField<Type>::codeOptions
+(
+    "codedFixedValuePointPatchFieldOptions"
+);
 
 template<class Type>
-void Foam::codedFixedValuePointPatchField<Type>::prepare
-(
-    dynamicCode& dynCode,
-    const dynamicCodeContext& context
-) const
+const Foam::wordList Foam::codedFixedValuePointPatchField<Type>::compileFiles
 {
-    // Take no chances - typeName must be identical to codeName()
-    dynCode.setFilterVariable("typeName", codeName());
+    "codedFixedValuePointPatchFieldTemplate.C"
+};
 
-    // Set TemplateType and FieldType filter variables
-    // (for pointPatchField)
-    word fieldType(pTraits<Type>::typeName);
-
-    // Template type for pointPatchField
-    dynCode.setFilterVariable("TemplateType", fieldType);
-
-    // Name for pointPatchField - eg, ScalarField, VectorField, ...
-    fieldType[0] = toupper(fieldType[0]);
-    dynCode.setFilterVariable("FieldType", fieldType + "Field");
-
-    // Compile filtered C template
-    dynCode.addCompileFile(codeTemplateC("codedFixedValuePointPatchField"));
-
-    // Copy filtered H template
-    dynCode.addCopyFile(codeTemplateH("codedFixedValuePointPatchField"));
-
-    // Make verbose if debugging
-    dynCode.setFilterVariable("verbose", Foam::name(bool(debug)));
-
-    if (debug)
-    {
-        Info<<"compile " << codeName() << " sha1: " << context.sha1() << endl;
-    }
-
-    // Define Make/options
-    dynCode.setMakeOptions
-    (
-        "EXE_INC = -g \\\n"
-        "-I$(LIB_SRC)/finiteVolume/lnInclude \\\n"
-      + context.options()
-      + "\n\nLIB_LIBS = \\\n"
-      + "    -lOpenFOAM \\\n"
-      + "    -lfiniteVolume \\\n"
-      + context.libs()
-    );
-}
+template<class Type>
+const Foam::wordList Foam::codedFixedValuePointPatchField<Type>::copyFiles
+{
+    "codedFixedValuePointPatchFieldTemplate.H"
+};
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -107,8 +73,28 @@ Foam::codedFixedValuePointPatchField<Type>::codedFixedValuePointPatchField
 )
 :
     fixedValuePointPatchField<Type>(p, iF, dict),
-    codedBase(dict, codeKeys, codeDictVars)
+    codedBase
+    (
+        dict,
+        codeKeys,
+        codeDictVars,
+        codeOptions,
+        compileFiles,
+        copyFiles
+    )
 {
+    const word fieldType(pTraits<Type>::typeName);
+
+    // Set variable substitutions
+    varSubstitutions().set
+    (
+        {
+            {"TemplateType", fieldType},
+            {"FieldType", fieldType.capitalise() + "Field"},
+            {"verbose", Foam::name(bool(debug))}
+        }
+    );
+
     // Compile the library containing user-defined pointPatchField
     updateLibrary(dict);
 }

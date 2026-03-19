@@ -1,0 +1,63 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      hU;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField
+{
+    type        zonal;
+
+    defaultValue    (0.001 0 0);
+
+    zones
+    {
+        waterColumn
+        {
+            type            box;
+
+            box             (0.45 0.45 0) (0.55 0.55 0.1);
+
+            value           (0.0009 0 0);
+        }
+    }
+}
+
+boundaryField
+{
+    sides
+    {
+        type            slip;
+    }
+
+    inlet
+    {
+        type            fixedValue;
+        value           uniform (0.001 0 0);
+    }
+
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

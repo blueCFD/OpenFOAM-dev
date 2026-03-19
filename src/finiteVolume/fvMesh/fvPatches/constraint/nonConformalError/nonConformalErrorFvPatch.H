@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ class nonConformalErrorFvPatch
     // Private Data
 
         //- Reference to the polyPatch
-        const nonConformalErrorPolyPatch& nonConformalErrorPolyPatch_;
+        const nonConformalErrorPolyPatch& nonConformalErrorPoly_;
 
 
 public:
@@ -89,12 +89,6 @@ public:
     // Member Functions
 
         // Access
-
-            //- Inherit fvPatch patch method
-            using fvPatch::patch;
-
-            //- Poly patch
-            const nonConformalErrorPolyPatch& nonConformalErrorPatch() const;
 
             //- Return face face-poly-faces
             const labelList& polyFaces() const;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,9 +58,9 @@ void Foam::processorFvPatch::makeWeights(scalarField& w) const
             coupledFvPatch::makeWeights
             (
                 w,
-                procPolyPatch_.neighbFaceAreas(),
-                procPolyPatch_.neighbFaceCentres()
-              - procPolyPatch_.neighbFaceCellCentres()
+                processorPoly_.neighbFaceAreas(),
+                processorPoly_.neighbFaceCentres()
+              - processorPoly_.neighbFaceCellCentres()
             );
         }
     }
@@ -90,8 +90,8 @@ Foam::tmp<Foam::vectorField> Foam::processorFvPatch::delta() const
                 coupledFvPatch::delta()
               - transform().transform
                 (
-                    procPolyPatch_.neighbFaceCentres()
-                  - procPolyPatch_.neighbFaceCellCentres()
+                    processorPoly_.neighbFaceCentres()
+                  - processorPoly_.neighbFaceCellCentres()
                 );
         }
     }

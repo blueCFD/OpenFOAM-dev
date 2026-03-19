@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -34,7 +34,7 @@ License
 Foam::waveVelocityFvPatchVectorField::waveVelocityFvPatchVectorField
 (
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -61,7 +61,7 @@ Foam::waveVelocityFvPatchVectorField::waveVelocityFvPatchVectorField
 (
     const waveVelocityFvPatchVectorField& ptf,
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -72,7 +72,7 @@ Foam::waveVelocityFvPatchVectorField::waveVelocityFvPatchVectorField
 Foam::waveVelocityFvPatchVectorField::waveVelocityFvPatchVectorField
 (
     const waveVelocityFvPatchVectorField& ptf,
-    const DimensionedField<vector, volMesh>& iF
+    const DimensionedField<vector, fvMesh>& iF
 )
 :
     fixedValueInletOutletFvPatchVectorField(ptf, iF)
@@ -117,11 +117,11 @@ Foam::waveVelocityFvPatchVectorField::U(const scalar t) const
         (
             patch(),
             waves.height(t, patch().Cf()),
-            waves.height(t, patch().patch().localPoints()),
+            waves.height(t, patch().poly().localPoints()),
             waves.UGas(t, patch().Cf())(),
-            waves.UGas(t, patch().patch().localPoints())(),
+            waves.UGas(t, patch().poly().localPoints())(),
             waves.ULiquid(t, patch().Cf())(),
-            waves.ULiquid(t, patch().patch().localPoints())()
+            waves.ULiquid(t, patch().poly().localPoints())()
         );
 }
 
@@ -156,10 +156,10 @@ Foam::waveVelocityFvPatchVectorField::Un(const scalar t) const
     {
         forAll(meshs.boundary()[patchis], is)
         {
-            const label fs = is + meshs.boundary()[patchis].patch().start();
+            const label fs = is + meshs.boundary()[patchis].poly().start();
             const label cs = meshs.boundary()[patchis].faceCells()[is];
             const label f = subset.faceMap()[fs];
-            const label i = patch().patch().whichFace(f);
+            const label i = patch().poly().whichFace(f);
             result[i] = Us[cs];
         }
     }

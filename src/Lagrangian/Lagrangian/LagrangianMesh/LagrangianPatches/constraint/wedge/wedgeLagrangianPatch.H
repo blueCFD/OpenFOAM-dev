@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ private:
     // Private Data
 
         //- Reference to the wedge poly patch
-        const wedgePolyPatch& wedgePatch_;
+        const wedgePolyPatch& wedgePoly_;
 
         //- Between crossFaces/evaluate and partition the elements have moved
         //  to the opposite patch, but the mesh has not been partitioned. So,
@@ -85,9 +85,9 @@ public:
     // Member Functions
 
         //- Return the wedge patch
-        const wedgePolyPatch& wedgePatch() const
+        const wedgePolyPatch& wedgePoly() const
         {
-            return wedgePatch_;
+            return wedgePoly_;
         }
 
         //- Return the sub-mesh associated with this patch

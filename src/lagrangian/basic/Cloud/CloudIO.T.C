@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ void Foam::lagrangian::Cloud<ParticleType>::readCloudUniformProperties()
         cloudPropertiesName,
         time().name(),
         "uniform"/cloud::prefix/name(),
-        db(),
+        parent(),
         IOobject::MUST_READ_IF_MODIFIED,
         IOobject::NO_WRITE,
         false
@@ -81,7 +81,7 @@ void Foam::lagrangian::Cloud<ParticleType>::writeCloudUniformProperties() const
             cloudPropertiesName,
             time().name(),
             "uniform"/cloud::prefix/name(),
-            db(),
+            parent(),
             IOobject::NO_READ,
             IOobject::NO_WRITE,
             false

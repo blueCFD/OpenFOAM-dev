@@ -14,14 +14,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-planeType       pointAndNormal;
+point           (0 0 0);
+normal          (0 1 0);
 
-pointAndNormalDict
-{
-    point       (0 0 0);
-    normal      (0 1 0);
-}
-
-planeTolerance  #calc "0.001";
+planeTolerance  0.001;
 
 // ************************************************************************* //

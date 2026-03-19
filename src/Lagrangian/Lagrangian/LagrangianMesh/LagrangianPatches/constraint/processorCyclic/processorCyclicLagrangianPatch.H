@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,7 +59,7 @@ private:
     // Private Data
 
         //- Reference to the processorCyclic poly patch
-        const processorCyclicPolyPatch& processorCyclicPatch_;
+        const processorCyclicPolyPatch& processorCyclicPoly_;
 
 
 public:
@@ -84,16 +84,10 @@ public:
 
     // Member Functions
 
-        //- Return the processorCyclic patch
-        const processorCyclicPolyPatch& processorCyclicPatch() const
-        {
-            return processorCyclicPatch_;
-        }
-
         //- Return the referred patch index
         label referPatchIndex() const
         {
-            return processorCyclicPatch_.referPatchIndex();
+            return processorCyclicPoly_.referPatchIndex();
         }
 
         //- Return a reference to the referred patch
@@ -109,7 +103,7 @@ public:
         //- Return a reference to the referred patch's transform
         const transformer& transform() const
         {
-            return processorCyclicPatch_.transform();
+            return processorCyclicPoly_.transform();
         }
 };
 

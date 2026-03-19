@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,14 +35,14 @@ Foam::activeBaffleVelocityFvPatchVectorField::
 activeBaffleVelocityFvPatchVectorField
 (
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const dictionary& dict
 )
 :
     fixedValueFvPatchVectorField(p, iF, dict, false),
     pName_(dict.lookupOrDefault<word>("p", "p")),
     cyclicPatchName_(dict.lookup("cyclicPatch")),
-    cyclicPatchLabel_(p.patch().boundaryMesh().findIndex(cyclicPatchName_)),
+    cyclicPatchLabel_(p.poly().boundaryMesh().findIndex(cyclicPatchName_)),
     orientation_(dict.lookup<label>("orientation")),
     initWallSf_(p.Sf()),
     initCyclicSf_(p.boundaryMesh()[cyclicPatchLabel_].Sf()),
@@ -70,7 +70,7 @@ activeBaffleVelocityFvPatchVectorField
 (
     const activeBaffleVelocityFvPatchVectorField& ptf,
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -93,7 +93,7 @@ Foam::activeBaffleVelocityFvPatchVectorField::
 activeBaffleVelocityFvPatchVectorField
 (
     const activeBaffleVelocityFvPatchVectorField& ptf,
-    const DimensionedField<vector, volMesh>& iF
+    const DimensionedField<vector, fvMesh>& iF
 )
 :
     fixedValueFvPatchVectorField(ptf, iF),
@@ -140,7 +140,7 @@ void Foam::activeBaffleVelocityFvPatchVectorField::map
         [
             cyclicPatchLabel_
         ]
-    ).neighbFvPatch().patch().patchSlice(areas);
+    ).neighbFvPatch().poly().patchSlice(areas);
 }
 
 
@@ -164,7 +164,7 @@ void Foam::activeBaffleVelocityFvPatchVectorField::reset
         [
             cyclicPatchLabel_
         ]
-    ).neighbFvPatch().patch().patchSlice(areas);
+    ).neighbFvPatch().poly().patchSlice(areas);
 }
 
 
@@ -184,12 +184,12 @@ void Foam::activeBaffleVelocityFvPatchVectorField::updateCoeffs()
         );
 
         const fvPatch& cyclicPatch = patch().boundaryMesh()[cyclicPatchLabel_];
-        const labelList& cyclicFaceCells = cyclicPatch.patch().faceCells();
+        const labelList& cyclicFaceCells = cyclicPatch.poly().faceCells();
         const fvPatch& nbrPatch = refCast<const cyclicFvPatch>
         (
             cyclicPatch
         ).neighbFvPatch();
-        const labelList& nbrFaceCells = nbrPatch.patch().faceCells();
+        const labelList& nbrFaceCells = nbrPatch.poly().faceCells();
 
         scalar forceDiff = 0;
 
@@ -224,7 +224,7 @@ void Foam::activeBaffleVelocityFvPatchVectorField::updateCoeffs()
 
         Info<< "openFraction = " << openFraction_ << endl;
 
-        vectorField::subField Sfw = this->patch().patch().faceAreas();
+        vectorField::subField Sfw = this->patch().poly().faceAreas();
         const vectorField newSfw((1 - openFraction_)*initWallSf_);
         forAll(Sfw, facei)
         {

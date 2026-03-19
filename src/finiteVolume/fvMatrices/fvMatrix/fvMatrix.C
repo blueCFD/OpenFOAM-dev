@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -326,10 +326,9 @@ Foam::fvMatrix<Type>::fvMatrix
     }
 
     // Update the boundary coefficients of psi without changing its event No.
-    VolField<Type>& psiRef =
-       const_cast<VolField<Type>&>(psi_);
+    VolField<Type>& psiRef = const_cast<VolField<Type>&>(psi_);
 
-    label currentStatePsi = psiRef.eventNo();
+    const uint64_t currentStatePsi = psiRef.eventNo();
     psiRef.boundaryFieldRef().updateCoeffs();
     psiRef.eventNo() = currentStatePsi;
 }
@@ -1168,7 +1167,7 @@ void Foam::fvMatrix<Type>::operator-=(const tmp<fvMatrix<Type>>& tfvmv)
 template<class Type>
 void Foam::fvMatrix<Type>::operator+=
 (
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(*this, su, "+=");
@@ -1179,7 +1178,7 @@ void Foam::fvMatrix<Type>::operator+=
 template<class Type>
 void Foam::fvMatrix<Type>::operator+=
 (
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     operator+=(tsu());
@@ -1201,7 +1200,7 @@ void Foam::fvMatrix<Type>::operator+=
 template<class Type>
 void Foam::fvMatrix<Type>::operator-=
 (
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(*this, su, "-=");
@@ -1212,7 +1211,7 @@ void Foam::fvMatrix<Type>::operator-=
 template<class Type>
 void Foam::fvMatrix<Type>::operator-=
 (
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     operator-=(tsu());
@@ -1453,7 +1452,7 @@ template<class Type>
 void Foam::checkMethod
 (
     const fvMatrix<Type>& fvm,
-    const DimensionedField<Type, volMesh>& df,
+    const DimensionedField<Type, fvMesh>& df,
     const char* op
 )
 {
@@ -1572,7 +1571,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator==
 (
     const fvMatrix<Type>& A,
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(A, su, "==");
@@ -1585,7 +1584,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator==
 (
     const fvMatrix<Type>& A,
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     checkMethod(A, tsu(), "==");
@@ -1613,7 +1612,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator==
 (
     const tmp<fvMatrix<Type>>& tA,
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(tA(), su, "==");
@@ -1626,7 +1625,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator==
 (
     const tmp<fvMatrix<Type>>& tA,
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     checkMethod(tA(), tsu(), "==");
@@ -1778,7 +1777,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
     const fvMatrix<Type>& A,
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(A, su, "+");
@@ -1791,7 +1790,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
     const fvMatrix<Type>& A,
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     checkMethod(A, tsu(), "+");
@@ -1819,7 +1818,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
     const tmp<fvMatrix<Type>>& tA,
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(tA(), su, "+");
@@ -1832,7 +1831,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
     const tmp<fvMatrix<Type>>& tA,
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     checkMethod(tA(), tsu(), "+");
@@ -1859,7 +1858,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
-    const DimensionedField<Type, volMesh>& su,
+    const DimensionedField<Type, fvMesh>& su,
     const fvMatrix<Type>& A
 )
 {
@@ -1872,7 +1871,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
-    const tmp<DimensionedField<Type, volMesh>>& tsu,
+    const tmp<DimensionedField<Type, fvMesh>>& tsu,
     const fvMatrix<Type>& A
 )
 {
@@ -1900,7 +1899,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
-    const DimensionedField<Type, volMesh>& su,
+    const DimensionedField<Type, fvMesh>& su,
     const tmp<fvMatrix<Type>>& tA
 )
 {
@@ -1913,7 +1912,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator+
 (
-    const tmp<DimensionedField<Type, volMesh>>& tsu,
+    const tmp<DimensionedField<Type, fvMesh>>& tsu,
     const tmp<fvMatrix<Type>>& tA
 )
 {
@@ -1997,7 +1996,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
     const fvMatrix<Type>& A,
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(A, su, "-");
@@ -2010,7 +2009,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
     const fvMatrix<Type>& A,
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     checkMethod(A, tsu(), "-");
@@ -2038,7 +2037,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
     const tmp<fvMatrix<Type>>& tA,
-    const DimensionedField<Type, volMesh>& su
+    const DimensionedField<Type, fvMesh>& su
 )
 {
     checkMethod(tA(), su, "-");
@@ -2051,7 +2050,7 @@ template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
     const tmp<fvMatrix<Type>>& tA,
-    const tmp<DimensionedField<Type, volMesh>>& tsu
+    const tmp<DimensionedField<Type, fvMesh>>& tsu
 )
 {
     checkMethod(tA(), tsu(), "-");
@@ -2078,7 +2077,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
-    const DimensionedField<Type, volMesh>& su,
+    const DimensionedField<Type, fvMesh>& su,
     const fvMatrix<Type>& A
 )
 {
@@ -2092,7 +2091,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
-    const tmp<DimensionedField<Type, volMesh>>& tsu,
+    const tmp<DimensionedField<Type, fvMesh>>& tsu,
     const fvMatrix<Type>& A
 )
 {
@@ -2122,7 +2121,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
-    const DimensionedField<Type, volMesh>& su,
+    const DimensionedField<Type, fvMesh>& su,
     const tmp<fvMatrix<Type>>& tA
 )
 {
@@ -2136,7 +2135,7 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::operator-
 (
-    const tmp<DimensionedField<Type, volMesh>>& tsu,
+    const tmp<DimensionedField<Type, fvMesh>>& tsu,
     const tmp<fvMatrix<Type>>& tA
 )
 {
@@ -2469,7 +2468,7 @@ Foam::tmp<Foam::VolField<Type>>
 Foam::operator&
 (
     const fvMatrix<Type>& M,
-    const DimensionedField<Type, volMesh>& psi
+    const DimensionedField<Type, fvMesh>& psi
 )
 {
     tmp<VolField<Type>> tMphi
@@ -2515,7 +2514,7 @@ Foam::tmp<Foam::VolField<Type>>
 Foam::operator&
 (
     const fvMatrix<Type>& M,
-    const tmp<DimensionedField<Type, volMesh>>& tpsi
+    const tmp<DimensionedField<Type, fvMesh>>& tpsi
 )
 {
     tmp<VolField<Type>> tMpsi = M & tpsi();
@@ -2541,7 +2540,7 @@ Foam::tmp<Foam::VolField<Type>>
 Foam::operator&
 (
     const tmp<fvMatrix<Type>>& tM,
-    const DimensionedField<Type, volMesh>& psi
+    const DimensionedField<Type, fvMesh>& psi
 )
 {
     tmp<VolField<Type>> tMpsi = tM() & psi;
@@ -2554,7 +2553,7 @@ Foam::tmp<Foam::VolField<Type>>
 Foam::operator&
 (
     const tmp<fvMatrix<Type>>& tM,
-    const tmp<DimensionedField<Type, volMesh>>& tpsi
+    const tmp<DimensionedField<Type, fvMesh>>& tpsi
 )
 {
     tmp<VolField<Type>> tMpsi = tM() & tpsi();

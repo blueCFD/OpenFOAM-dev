@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2016-08-03 blueCAPE Lda: Added -target and -jobs
@@ -157,14 +157,10 @@ do
         foamDictionary -entry stopAt -set nextWrite "$controlDict"
         foamDictionary -entry writeControl -set timeStep "$controlDict"
         foamDictionary -entry writeInterval -set 1 "$controlDict"
-
-        # Generate the system/configDict files except for controlDict.orig
-        if [ $(basename "$controlDict") == "controlDict" ]
-        then
-           configDict="$(dirname "$controlDict")"/configDict
-           foamDictionary -entry DebugSwitches \
-               -merge "{ fvSchemes 1; solution 1; }" -create "$configDict"
-        fi
+        configDict="$(dirname "$controlDict")/configDict"
+        [ ! -f "$configDict" ] && configDict="$configDict.orig"
+        foamDictionary -entry DebugSwitches \
+            -merge "{ fvSchemes 1; solution 1; }" -create "$configDict"
     ) > /dev/null
 done
 

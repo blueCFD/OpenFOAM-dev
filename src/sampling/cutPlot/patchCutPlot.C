@@ -487,8 +487,8 @@ Foam::List<Foam::patchCutPlot::weight> Foam::patchCutPlot::calcWeights
 Foam::tmp<Foam::scalarField> Foam::patchCutPlot::calcCutXs
 (
     const faceList& faces,
-    const UList<vector>& faceAreas,
-    const UList<vector>& faceNormals,
+    const Field<vector>& faceAreas,
+    const Field<vector>& faceNormals,
     const pointField& points,
     const scalarField& pointXs,
     const bool interpolate,
@@ -526,7 +526,10 @@ Foam::tmp<Foam::scalarField> Foam::patchCutPlot::calcCutXs
     xMin -= max(rootVSmall, 2*small*mag(xMin));
     xMax += max(rootVSmall, 2*small*mag(xMax));
     tmp<scalarField> tcutXs =
-        (xMin + scalarList(identityMap(nCuts))/(nCuts - 1)*(xMax - xMin));
+        xMin
+      + scalarField(scalarList(identityMap(nCuts)))
+       /(nCuts - 1)
+       *(xMax - xMin);
     scalarField& cutXs = tcutXs.ref();
     cutXs.first() = xMin;
     cutXs.last() = xMax;

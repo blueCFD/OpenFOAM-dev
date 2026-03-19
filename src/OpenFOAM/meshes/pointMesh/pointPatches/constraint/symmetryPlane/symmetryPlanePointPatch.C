@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ Foam::symmetryPlanePointPatch::symmetryPlanePointPatch
 )
 :
     facePointPatch(patch, bm),
-    symmetryPlanePolyPatch_(refCast<const symmetryPlanePolyPatch>(patch))
+    symmetryPlanePoly_(refCast<const symmetryPlanePolyPatch>(patch))
 {}
 
 
@@ -64,7 +64,7 @@ void Foam::symmetryPlanePointPatch::applyConstraint
     pointConstraint& pc
 ) const
 {
-    pc.applyConstraint(symmetryPlanePolyPatch_.n());
+    pc.applyConstraint(symmetryPlanePoly_.n());
 }
 
 

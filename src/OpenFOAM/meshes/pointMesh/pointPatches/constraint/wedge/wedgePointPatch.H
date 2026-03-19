@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ class wedgePointPatch
     // Private Data
 
         //- Local reference cast into the symmetryPlane patch
-        const wedgePolyPatch& wedgePolyPatch_;
+        const wedgePolyPatch& wedgePoly_;
 
 
 public:
@@ -85,7 +85,7 @@ public:
         //- Return symmetry plane normal
         const vector& n() const
         {
-            return wedgePolyPatch_.n();
+            return wedgePoly_.n();
         }
 };
 

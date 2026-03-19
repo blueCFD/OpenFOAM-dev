@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -127,7 +127,7 @@ Foam::patchWriter::patchWriter
             const face& f = pp.localFaces()[facei];
 
             vertLabels.append(f.size());
-            vtkWriteOps::insert(f + offset, vertLabels);
+            vtkWriteOps::insert(SubField<label>(f) + offset, vertLabels);
         }
         offset += pp.nPoints();
     }

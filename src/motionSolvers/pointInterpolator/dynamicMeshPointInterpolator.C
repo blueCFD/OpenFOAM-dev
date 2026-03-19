@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -129,7 +129,7 @@ Foam::dynamicMeshPointInterpolator::curPointField() const
     {
         objectRegistry& fieldsCache = const_cast<objectRegistry&>
         (
-            pMesh.thisDb().subRegistry("fieldsCache", true)
+            pMesh.db().subRegistry("fieldsCache", true)
         );
 
         // Save old times so we now which ones have been loaded and need
@@ -173,7 +173,7 @@ Foam::dynamicMeshPointInterpolator::curPointField() const
             (
                 word("uniformInterpolate(") + fieldName_ + ')',
                 pMesh.time().name(),
-                pMesh.thisDb(),
+                pMesh.db(),
                 IOobject::NO_READ,
                 IOobject::AUTO_WRITE
             ),

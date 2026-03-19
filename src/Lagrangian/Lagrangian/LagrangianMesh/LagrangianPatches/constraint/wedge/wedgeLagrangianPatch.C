@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,12 +46,12 @@ namespace Foam
 
 Foam::wedgeLagrangianPatch::wedgeLagrangianPatch
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 :
-    LagrangianPatch(patch, boundaryMesh),
-    wedgePatch_(refCast<const wedgePolyPatch>(patch)),
+    LagrangianPatch(poly, boundaryMesh),
+    wedgePoly_(refCast<const wedgePolyPatch>(poly)),
     isOppositePatchMesh_(false)
 {}
 
@@ -70,8 +70,8 @@ const Foam::LagrangianSubMesh& Foam::wedgeLagrangianPatch::mesh() const
         boundaryMesh()
         [
             isOppositePatchMesh_
-          ? wedgePatch_.oppositePatchIndex()
-          : patch().index()
+          ? wedgePoly_.oppositePatchIndex()
+          : poly().index()
         ].LagrangianPatch::mesh();
 }
 
@@ -96,7 +96,7 @@ void Foam::wedgeLagrangianPatch::evaluate
     {
         tracking::crossWedge
         (
-            wedgePatch_,
+            wedgePoly_,
             patchCoordinates[i],
             patchCelli[i],
             patchFacei[i],

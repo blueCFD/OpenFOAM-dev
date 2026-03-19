@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,7 +50,7 @@ Foam::stickVelocityLagrangianPatchVectorField::state() const
         static_cast<LagrangianState>
         (
             static_cast<label>(LagrangianState::onPatchZero)
-          + patch().patch().index()
+          + patch().poly().index()
         );
 }
 

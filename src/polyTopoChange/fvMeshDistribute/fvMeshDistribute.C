@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -293,7 +293,7 @@ void Foam::fvMeshDistribute::printMeshInfo(const fvMesh& mesh)
     Pout<< "Patches:" << endl;
     forAll(patches, patchi)
     {
-        const polyPatch& pp = patches[patchi].patch();
+        const polyPatch& pp = patches[patchi].poly();
 
         Pout<< "    " << patchi << " name:" << pp.name()
             << " size:" << pp.size()
@@ -2417,7 +2417,7 @@ Foam::autoPtr<Foam::polyDistributionMap> Foam::fvMeshDistribute::distribute
 
         // Initialise all addressing into current mesh
         constructCellMap[Pstream::myProcNo()] = identityMap(mesh_.nCells());
-        constructFaceMap[Pstream::myProcNo()] = identityMap(mesh_.nFaces()) + 1;
+        constructFaceMap[Pstream::myProcNo()] = identityMap(1, mesh_.nFaces());
         constructPointMap[Pstream::myProcNo()] = identityMap(mesh_.nPoints());
         constructPatchMap[Pstream::myProcNo()] = identityMap(patches.size());
 
@@ -2772,7 +2772,7 @@ Foam::autoPtr<Foam::polyDistributionMap> Foam::fvMeshDistribute::distribute
 
 
             constructCellMap[sendProc] = identityMap(domainMesh.nCells());
-            constructFaceMap[sendProc] = identityMap(domainMesh.nFaces()) + 1;
+            constructFaceMap[sendProc] = identityMap(1, domainMesh.nFaces());
             constructPointMap[sendProc] = identityMap(domainMesh.nPoints());
             constructPatchMap[sendProc] =
                 identityMap(domainMesh.boundaryMesh().size());

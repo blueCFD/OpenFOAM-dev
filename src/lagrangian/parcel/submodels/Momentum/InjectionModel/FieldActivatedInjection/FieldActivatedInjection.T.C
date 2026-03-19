@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,14 +43,14 @@ Foam::FieldActivatedInjection<CloudType>::FieldActivatedInjection
     factor_(this->coeffDict().template lookup<scalar>("factor")),
     referenceField_
     (
-        owner.db().objectRegistry::template lookupObject<volScalarField>
+        owner.parent().objectRegistry::template lookupObject<volScalarField>
         (
             this->coeffDict().lookup("referenceField")
         )
     ),
     thresholdField_
     (
-        owner.db().objectRegistry::template lookupObject<volScalarField>
+        owner.parent().objectRegistry::template lookupObject<volScalarField>
         (
             this->coeffDict().lookup("thresholdField")
         )
@@ -61,7 +61,7 @@ Foam::FieldActivatedInjection<CloudType>::FieldActivatedInjection
         IOobject
         (
             positionsFile_,
-            owner.db().time().constant(),
+            owner.time().constant(),
             owner.mesh(),
             IOobject::MUST_READ,
             IOobject::NO_WRITE

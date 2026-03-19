@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,7 @@ class nonConformalCyclicFvPatch
     // Private Data
 
         //- Reference to the polyPatch
-        const nonConformalCyclicPolyPatch& nonConformalCyclicPolyPatch_;
+        const nonConformalCyclicPolyPatch& nonConformalCyclicPoly_;
 
 
 public:
@@ -90,11 +90,8 @@ public:
 
         // Access
 
-            //- Inherit the cyclic patch method
-            using cyclicFvPatch::patch;
-
             //- Poly patch
-            const nonConformalCyclicPolyPatch& nonConformalCyclicPatch() const;
+            const nonConformalCyclicPolyPatch& nonConformalCyclicPoly() const;
 
             //- Inherit the cyclic owner method
             using cyclicFvPatch::owner;

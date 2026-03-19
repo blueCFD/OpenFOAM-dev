@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ Description
     material anisotropic kappa specified in the physicalProperties dictionary
     transformed into the global coordinate system using default
     coordinate system and optionally additional coordinate systems specified
-    per-zone in the thermophysicalProperties dictionary.
+    per-zone in the thermophysicalTransport dictionary.
 
     If the coordinate transformed kappa does not align exactly with the boundary
     because the patch face orientations do not conform to the coordinate system
@@ -41,7 +41,7 @@ Description
 
 Usage
     Example of the anisotropic thermal conductivity specification in
-    thermophysicalProperties with two zone-based coordinate systems in
+    thermophysicalTransport with two zone-based coordinate systems in
     addition to the default:
 
     \verbatim
@@ -120,7 +120,7 @@ class anisotropic
     public SolidThermophysicalTransportModel,
     public TopoChangeableMeshObject<fvMesh>
 {
-    // Private member data
+    // Private Data
 
         coordinateSystem coordinateSystem_;
 

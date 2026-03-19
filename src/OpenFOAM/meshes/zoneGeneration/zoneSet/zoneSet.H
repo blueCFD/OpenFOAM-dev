@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,15 +113,6 @@ class zoneSet
 
 
 public:
-
-        //- Enumeration defining the zone types
-        enum class zoneTypess
-        {
-            point,
-            cell,
-            face
-        };
-
 
     // Constructors
 
@@ -245,6 +236,19 @@ inline const cellZone& zoneSet::zone<cellZone>() const;
 
 template<>
 inline const faceZone& zoneSet::zone<faceZone>() const;
+
+
+template<class ZoneType>
+inline zoneTypes zoneType();
+
+template<>
+inline zoneTypes zoneType<pointZone>();
+
+template<>
+inline zoneTypes zoneType<cellZone>();
+
+template<>
+inline zoneTypes zoneType<faceZone>();
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

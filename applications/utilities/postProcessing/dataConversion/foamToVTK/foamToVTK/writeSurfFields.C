@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -110,12 +110,12 @@ void Foam::writeSurfFields
         {
             const fvsPatchVectorField& pf = svf.boundaryField()[patchi];
 
-            const fvPatch& pp = mesh.boundary()[patchi];
+            const fvPatch& p = mesh.boundary()[patchi];
 
             if (isA<emptyFvsPatchVectorField>(pf))
             {
                 // Note: loop over polypatch size, not fvpatch size.
-                forAll(pp.patch(), i)
+                forAll(p.poly(), i)
                 {
                     vtkWriteOps::insert(vector::zero, fField);
                 }

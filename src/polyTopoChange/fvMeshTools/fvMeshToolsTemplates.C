@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ void Foam::fvMeshTools::setPatchFields
     const dictionary& patchFieldDict
 )
 {
-    objectRegistry& obr = const_cast<objectRegistry&>(mesh.thisDb());
+    objectRegistry& obr = const_cast<objectRegistry&>(mesh.db());
 
     HashTable<GeoField*> fields(obr.lookupClass<GeoField>());
 

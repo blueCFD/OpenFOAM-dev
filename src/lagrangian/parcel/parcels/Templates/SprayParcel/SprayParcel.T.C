@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -172,7 +172,7 @@ void Foam::SprayParcel<ParcelType>::calcAtomisation
     scalar rhoAv = td.pc()/(R*Tav);
 
     scalar soi = cloud.injectors()[injector_].timeStart();
-    scalar currentTime = cloud.db().time().value();
+    scalar currentTime = cloud.time().value();
     const vector& pos = this->position(td.mesh);
     const vector& injectionPos = this->position0();
 

@@ -48,8 +48,15 @@ namespace functionEntries
 }
 }
 
-const Foam::word Foam::functionEntries::codeBlockEntry::codeTemplateC =
-    "codeBlockTemplate.C";
+const Foam::word Foam::functionEntries::codeBlockEntry::codeOptions
+(
+    "codeBlockOptions"
+);
+
+const Foam::wordList Foam::functionEntries::codeBlockEntry::compileFiles
+{
+    "codeBlockTemplate.C"
+};
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -86,6 +93,8 @@ bool Foam::functionEntries::codeBlockEntry::execute
     // parent for consistent error messaging
     dictionary codeDict(typeName, contextDict);
     string codeString;
+
+    List<fileName> includeFileNames;
 
     // Disable functionEntry expansion
     entry::disableFunctionEntries = true;
@@ -167,10 +176,10 @@ bool Foam::functionEntries::codeBlockEntry::execute
             }
             else if (t.functionNameToken() == codeIncludeEntry::typeName)
             {
-                codeIncludeEntry(t.lineNumber(), contextDict, is).execute
+                // Add any optional codeInclude entry to codeDict
+                includeFileNames.append
                 (
-                    contextDict,
-                    is
+                    codeIncludeEntry(t.lineNumber(), codeDict, is).fileNames()
                 );
             }
             else if (t.functionNameToken() == negEntry::typeName)
@@ -197,22 +206,10 @@ bool Foam::functionEntries::codeBlockEntry::execute
     // to provide entries for the code to lookup
     contextDict.read(ITstream(dictStream.name(), dictStream)());
 
-    // Add any optional include statements to codeDict
-    codeIncludeEntry::codeInclude(codeDict);
-
     // Add the code entry to the codeDict
     codeDict.add(primitiveEntry("code", codeString, 0));
 
-    // Add compilation options to simplify compilation error messages
-    codeDict.add
-    (
-        primitiveEntry
-        (
-            "codeOptions",
-            "#{ -fno-show-column -fno-diagnostics-show-caret #}",
-            0
-        )
-    );
+    codeIncludeEntry::addCodeInclude(includeFileNames, contextDict, codeDict);
 
     // Compile the codeBlock library and cache the pointer
     lib_ = codeStream::compile
@@ -220,7 +217,8 @@ bool Foam::functionEntries::codeBlockEntry::execute
         typeName,
         contextDict,
         codeDict,
-        codeTemplateC,
+        codeOptions,
+        compileFiles,
         codeBlockName_
     );
 

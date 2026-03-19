@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ Foam::nonConformalMappedWallFvPatch::nonConformalMappedWallFvPatch
     wallFvPatch(patch, bm),
     nonConformalFvPatch(static_cast<const fvPatch&>(*this)),
     nonConformalMappedFvPatchBase(static_cast<const fvPatch&>(*this)),
-    nonConformalMappedWallPolyPatch_
+    nonConformalMappedWallPoly_
     (
         refCast<const nonConformalMappedWallPolyPatch>(patch)
     )
@@ -71,9 +71,9 @@ Foam::nonConformalMappedWallFvPatch::~nonConformalMappedWallFvPatch()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 const Foam::nonConformalMappedWallPolyPatch&
-Foam::nonConformalMappedWallFvPatch::nonConformalMappedWallPatch() const
+Foam::nonConformalMappedWallFvPatch::nonConformalMappedWallPoly() const
 {
-    return nonConformalMappedWallPolyPatch_;
+    return nonConformalMappedWallPoly_;
 }
 
 
@@ -86,7 +86,7 @@ Foam::nonConformalMappedWallFvPatch::nbrPatch() const
 
 bool Foam::nonConformalMappedWallFvPatch::owner() const
 {
-    return nonConformalMappedWallPolyPatch_.owner();
+    return nonConformalMappedWallPoly_.owner();
 }
 
 

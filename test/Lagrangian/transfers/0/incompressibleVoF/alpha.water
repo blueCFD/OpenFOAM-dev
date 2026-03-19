@@ -1,0 +1,61 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [];
+
+interfaceHeight 0.2 [m];
+interfaceThickness 0.04 [m];
+
+internalField
+{
+    type            coded;
+
+    name            thickenedInterfaceVolumeFraction;
+
+    evaluate
+    #{
+        const volScalarField::Internal z(C.component(2));
+
+        const dimensionedScalar h = $<dimensionedScalar>interfaceHeight;
+        const dimensionedScalar t = $<dimensionedScalar>interfaceThickness;
+
+        // Linear ramp over the interface thickness
+        tmp<volScalarField::Internal> r =
+            min(max(0.5 + (h - z)/t, scalar(0)), scalar(1));
+
+        // Smooth cosine function for the volume fraction
+        field = (1 - cos(constant::mathematical::pi*r))/2;
+    #};
+}
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    bottom
+    {
+        type            zeroGradient;
+    }
+
+    top
+    {
+        type            inletOutlet;
+        inletValue      uniform 1;
+    }
+}
+
+
+// ************************************************************************* //

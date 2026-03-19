@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,7 +97,7 @@ template<class CloudType>
 void Foam::IsotropyModels::Stochastic<CloudType>::calculate()
 {
     const fvMesh& mesh = this->owner().mesh();
-    const scalar deltaT(this->owner().db().time().deltaTValue());
+    const scalar deltaT(this->owner().time().deltaTValue());
     randomGenerator& rndGen = this->owner().rndGen();
 
     const scalar oneBySqrtThree = sqrt(1.0/3.0);
@@ -141,7 +141,7 @@ void Foam::IsotropyModels::Stochastic<CloudType>::calculate()
             IOobject
             (
                 this->owner().name() + ":exponentAverage",
-                this->owner().db().time().name(),
+                this->owner().time().name(),
                 mesh
             ),
             this->owner().solution().dict(),
@@ -190,7 +190,7 @@ void Foam::IsotropyModels::Stochastic<CloudType>::calculate()
             IOobject
             (
                 this->owner().name() + ":uTildeAverage",
-                this->owner().db().time().name(),
+                this->owner().time().name(),
                 mesh
             ),
             this->owner().solution().dict(),
@@ -213,7 +213,7 @@ void Foam::IsotropyModels::Stochastic<CloudType>::calculate()
             IOobject
             (
                 this->owner().name() + ":uTildeSqrAverage",
-                this->owner().db().time().name(),
+                this->owner().time().name(),
                 mesh
             ),
             this->owner().solution().dict(),

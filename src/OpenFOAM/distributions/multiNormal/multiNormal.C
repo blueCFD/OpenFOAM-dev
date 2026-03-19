@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ Foam::scalarList Foam::distributions::multiNormal::readCumulativeStrengths
     const dictionary& dict
 )
 {
-    const scalarList s(dict.lookup<scalarList>("strength"));
+    const scalarField s(dict.lookup<scalarList>("strength"));
 
     const scalarList sHat(s/sum(s));
 

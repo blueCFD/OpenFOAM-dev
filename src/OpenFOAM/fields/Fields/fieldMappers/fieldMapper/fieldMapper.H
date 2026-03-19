@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -127,6 +127,15 @@ public:
     {}
 
 
+    // Member Functions
+
+        //- Is the mapper direct?
+        virtual bool direct() const
+        {
+            return true;
+        }
+
+
     // Member Operators
 
         //- Map a field
@@ -205,7 +214,7 @@ class fieldMapper::FieldOpFunctor
 :
     public FieldFunctor<Type>
 {
-    // Private Member Data
+    // Private Data
 
         //- The operator
         FieldOp op_;

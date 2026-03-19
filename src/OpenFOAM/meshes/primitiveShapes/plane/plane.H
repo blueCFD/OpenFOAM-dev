@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,40 +60,49 @@ Ostream& operator<<(Ostream&, const plane&);
 
 class plane
 {
+    // Private Types
+
+        //- Ways in which the plane can be specified
+        enum class specification
+        {
+            planeEquation,
+            embeddedPoints,
+            pointAndNormal
+        };
+
+        //- Names of the ways in which the plane can be specified
+        static const NamedEnum<specification, 3> specificationNames_;
+
+
 public:
 
-    //- Side of the plane
-    enum side
-    {
-        NORMAL,
-        FLIP
-    };
+    // Public Types
 
-    //- A direction and a reference point
-    class ray
-    {
-        point refPoint_;
-
-        vector dir_;
-
-    public:
-
-        ray(const point& refPoint, const vector& dir)
-        :
-            refPoint_(refPoint),
-            dir_(dir)
-        {}
-
-        const point& refPoint() const
+        //- A direction and a reference point
+        class ray
         {
-            return refPoint_;
-        }
+            point refPoint_;
 
-        const vector& dir() const
-        {
-            return dir_;
-        }
-    };
+            vector dir_;
+
+        public:
+
+            ray(const point& refPoint, const vector& dir)
+            :
+                refPoint_(refPoint),
+                dir_(dir)
+            {}
+
+            const point& refPoint() const
+            {
+                return refPoint_;
+            }
+
+            const vector& dir() const
+            {
+                return dir_;
+            }
+        };
 
 
 private:
@@ -221,10 +230,6 @@ public:
 
         //- Return the cutting point between this plane and two other planes
         point planePlaneIntersect(const plane&, const plane&) const;
-
-        //- Return the side of the plane that the point is on.
-        //  If the point is on the plane, then returns NORMAL.
-        side sideOfPlane(const point& p) const;
 
         //- Mirror the supplied point in the plane. Return the mirrored point.
         point mirror(const point& p) const;

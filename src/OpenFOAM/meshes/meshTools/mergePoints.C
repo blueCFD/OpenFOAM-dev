@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,7 +32,7 @@ License
 template<class Type>
 Foam::label Foam::mergePoints
 (
-    const UList<Type>& points,
+    const Field<Type>& points,
     const scalar mergeTol,
     const bool verbose,
     labelList& pointMap,
@@ -175,7 +175,7 @@ Foam::label Foam::mergePoints
 template<class Type>
 bool Foam::mergePoints
 (
-    const UList<Type>& points,
+    const Field<Type>& points,
     const scalar mergeTol,
     const bool verbose,
     labelList& pointMap,

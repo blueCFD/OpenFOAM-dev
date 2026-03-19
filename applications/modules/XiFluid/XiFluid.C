@@ -165,12 +165,15 @@ Foam::solvers::XiFluid::XiFluid(fvMesh& mesh)
         fvModels().lookupType<fv::bXiIgnition>()
     );
 
-    forAll(ignitionModels, i)
+    if (runTime.restart())
     {
-        if (ignitionModels[i].ignited())
+        forAll(ignitionModels, i)
         {
-            ignited_ = true;
-            break;
+            if (ignitionModels[i].ignited())
+            {
+                ignited_ = true;
+                break;
+            }
         }
     }
 }
@@ -201,6 +204,7 @@ void Foam::solvers::XiFluid::thermophysicalTransportCorrector()
 void Foam::solvers::XiFluid::reset()
 {
     ignited_ = false;
+
     thermo_.reset();
 
     const surfaceScalarField phib("phib", phi);
@@ -210,5 +214,6 @@ void Foam::solvers::XiFluid::reset()
     SuModel_->reset();
     XiModel_->reset();
 }
+
 
 // ************************************************************************* //

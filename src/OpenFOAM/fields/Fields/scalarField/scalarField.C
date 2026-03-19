@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,7 +71,14 @@ void stabilise(scalarField& res, const UList<scalar>& sf, const scalar s)
     )
 }
 
-tmp<scalarField> stabilise(const UList<scalar>& sf, const scalar s)
+tmp<scalarField> stabilise(const Field<scalar>& sf, const scalar s)
+{
+    tmp<scalarField> tRes(new scalarField(sf.size()));
+    stabilise(tRes.ref(), sf, s);
+    return tRes;
+}
+
+tmp<scalarField> stabilise(const SubField<scalar>& sf, const scalar s)
 {
     tmp<scalarField> tRes(new scalarField(sf.size()));
     stabilise(tRes.ref(), sf, s);

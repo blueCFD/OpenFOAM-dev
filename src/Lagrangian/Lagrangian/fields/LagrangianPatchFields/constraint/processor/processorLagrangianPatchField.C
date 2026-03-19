@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,7 @@ void Foam::processorLagrangianPatchField<Type>::evaluate
     const GeoField<Type>& internalField
 )
 {
-    UIPstream uips(processorPatch_.processorPatch().neighbProcNo(), pBufs);
+    UIPstream uips(processorPatch_.processorPoly().neighbProcNo(), pBufs);
     Field<Type> field(uips);
 
     const LagrangianMesh& mesh = processorPatch_.boundaryMesh().mesh();
@@ -124,7 +124,7 @@ void Foam::processorLagrangianPatchField<Type>::initEvaluate
     const LagrangianInternalScalarDynamicField& fraction
 )
 {
-    UOPstream(processorPatch_.processorPatch().neighbProcNo(), pBufs)()
+    UOPstream(processorPatch_.processorPoly().neighbProcNo(), pBufs)()
         << this->primitiveSubField();
 }
 

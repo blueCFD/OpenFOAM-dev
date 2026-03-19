@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -109,11 +109,11 @@ Usage
     \endverbatim
 
     In addition to the above fvModel specification, wall patches on which
-    boiling is to be calculated should have an alphatBoilingWallFunction
+    boiling is to be calculated should have an alphatPhaseChangeWallFunction
     boundary condition applied to the turbulent thermal diffusivity field.
 
 See also
-    Foam::alphatBoilingWallFunctionFvPatchScalarField
+    Foam::alphatPhaseChangeWallFunctionFvPatchScalarField
 
 SourceFiles
     wallBoiling.C
@@ -123,7 +123,7 @@ SourceFiles
 #ifndef wallBoiling_H
 #define wallBoiling_H
 
-#include "phaseChange.H"
+#include "wallPhaseChange.H"
 #include "nucleation.H"
 #include "phaseSystem.H"
 
@@ -154,7 +154,7 @@ namespace fv
 
 class wallBoiling
 :
-    public phaseChange,
+    public wallPhaseChange,
     public nucleation
 {
 private:
@@ -167,9 +167,6 @@ private:
 
 
     // Private Data
-
-        //- Reference to the phase system
-        const phaseSystem& fluid_;
 
         //- Reference to the liquid phase
         const phaseModel& liquid_;
@@ -226,9 +223,6 @@ private:
 
         //- Non-virtual read
         void readCoeffs(const dictionary& dict);
-
-        //- Return the boundary condition types for the phase change rate
-        wordList mDotBoundaryTypes() const;
 
         //- Get the liquid temperature patch field and the parameters
         //  associated with its boundary condition that are necessary for
@@ -307,42 +301,33 @@ public:
 
         // Access
 
-            //- Access the liquid phase
-            inline const phaseModel& liquid() const;
+            //- Return a mask indicating whether phase change is occurring
+            virtual const scalarField& active(const label) const;
 
-            //- Access the vapour phase
-            inline const phaseModel& vapour() const;
-
-            //- Access the liquid turbulent thermal diffusivity
-            inline const volScalarField& alphatLiquid() const;
-
-            //- Access the vapour turbulent thermal diffusivity
-            inline const volScalarField& alphatVapour() const;
-
-            //- Is the given patch boiling?
-            bool isBoiling(const label patchi) const;
+            //- Access the turbulent thermal diffusivities for a patch
+            virtual Pair<const scalarField&> alphats(const label) const;
 
 
         // Evaluation
 
             //- Return the fraction of the latent heat that is transferred into
             //  the second phase
-            virtual tmp<DimensionedField<scalar, volMesh>> Lfraction() const;
+            virtual tmp<DimensionedField<scalar, fvMesh>> Lfraction() const;
 
             //- Return the diameter of nuclei
-            virtual tmp<DimensionedField<scalar, volMesh>> d() const;
+            virtual tmp<DimensionedField<scalar, fvMesh>> d() const;
 
             //- Return the number rate at which nuclei are generated
-            virtual tmp<DimensionedField<scalar, volMesh>> nDot() const;
+            virtual tmp<DimensionedField<scalar, fvMesh>> nDot() const;
 
             //- Return the nucleation time scale
-            virtual tmp<DimensionedField<scalar, volMesh>> tau() const;
+            virtual tmp<DimensionedField<scalar, fvMesh>> tau() const;
 
 
         // Sources
 
             //- Return the mass transfer rate
-            virtual tmp<DimensionedField<scalar, volMesh>> mDot() const;
+            virtual tmp<DimensionedField<scalar, fvMesh>> mDot() const;
 
             //- Return the mass transfer rate for the given patch
             const wallBoilingPhaseChangeRateFvPatchScalarField& mDotPf
@@ -384,10 +369,6 @@ public:
 
 } // End namespace fv
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "wallBoilingI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

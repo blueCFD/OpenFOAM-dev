@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,8 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "codedFixedValueFvPatchField.H"
-#include "dynamicCode.H"
-#include "dynamicCodeContext.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -42,55 +40,23 @@ const Foam::wordList Foam::codedFixedValueFvPatchField<Type>::codeDictVars
     {word::null, word::null, word::null}
 );
 
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+template<class Type>
+const Foam::word Foam::codedFixedValueFvPatchField<Type>::codeOptions
+(
+    "codedFixedValueFvPatchFieldOptions"
+);
 
 template<class Type>
-void Foam::codedFixedValueFvPatchField<Type>::prepare
-(
-    dynamicCode& dynCode,
-    const dynamicCodeContext& context
-) const
+const Foam::wordList Foam::codedFixedValueFvPatchField<Type>::compileFiles
 {
-    dynCode.setFilterVariable("typeName", codeName());
+    "codedFixedValueFvPatchFieldTemplate.C"
+};
 
-    // Set TemplateType and FieldType filter variables
-    // (for fvPatchField)
-    word fieldType(pTraits<Type>::typeName);
-
-    // Template type for fvPatchField
-    dynCode.setFilterVariable("TemplateType", fieldType);
-
-    // Name for fvPatchField - eg, ScalarField, VectorField, ...
-    fieldType[0] = toupper(fieldType[0]);
-    dynCode.setFilterVariable("FieldType", fieldType + "Field");
-
-    // Compile filtered C template
-    dynCode.addCompileFile(codeTemplateC("codedFixedValueFvPatchField"));
-
-    // Copy filtered H template
-    dynCode.addCopyFile(codeTemplateH("codedFixedValueFvPatchField"));
-
-    // Make verbose if debugging
-    dynCode.setFilterVariable("verbose", Foam::name(bool(debug)));
-
-    if (debug)
-    {
-        Info<<"compile " << codeName() << " sha1: " << context.sha1() << endl;
-    }
-
-    // Define Make/options
-    dynCode.setMakeOptions
-    (
-        "EXE_INC = -g \\\n"
-        "-I$(LIB_SRC)/finiteVolume/lnInclude \\\n"
-      + context.options()
-      + "\n\nLIB_LIBS = \\\n"
-      + "    -lOpenFOAM \\\n"
-      + "    -lfiniteVolume \\\n"
-      + context.libs()
-    );
-}
+template<class Type>
+const Foam::wordList Foam::codedFixedValueFvPatchField<Type>::copyFiles
+{
+    "codedFixedValueFvPatchFieldTemplate.H"
+};
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -99,14 +65,33 @@ template<class Type>
 Foam::codedFixedValueFvPatchField<Type>::codedFixedValueFvPatchField
 (
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const dictionary& dict
 )
 :
     fixedValueFvPatchField<Type>(p, iF, dict),
-    codedBase(dict, codeKeys, codeDictVars)
+    codedBase
+    (
+        dict,
+        codeKeys,
+        codeDictVars,
+        codeOptions,
+        compileFiles,
+        copyFiles
+    )
 {
-    // Compile the library containing user-defined fvPatchField
+    const word fieldType(pTraits<Type>::typeName);
+
+    // Set variable substitutions
+    varSubstitutions().set
+    (
+        {
+            {"TemplateType", fieldType},
+            {"FieldType", fieldType.capitalise() + "Field"},
+            {"verbose", Foam::name(bool(debug))}
+        }
+    );
+
     updateLibrary(dict);
 }
 
@@ -116,7 +101,7 @@ Foam::codedFixedValueFvPatchField<Type>::codedFixedValueFvPatchField
 (
     const codedFixedValueFvPatchField<Type>& ptf,
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -129,7 +114,7 @@ template<class Type>
 Foam::codedFixedValueFvPatchField<Type>::codedFixedValueFvPatchField
 (
     const codedFixedValueFvPatchField<Type>& ptf,
-    const DimensionedField<Type, volMesh>& iF
+    const DimensionedField<Type, fvMesh>& iF
 )
 :
     fixedValueFvPatchField<Type>(ptf, iF),

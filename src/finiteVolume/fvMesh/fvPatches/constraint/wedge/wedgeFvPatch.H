@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ class wedgeFvPatch
 {
     // Private Data
 
-        const wedgePolyPatch& wedgePolyPatch_;
+        const wedgePolyPatch& wedgePoly_;
 
 
 public:
@@ -75,13 +75,13 @@ public:
             //- Return face transformation tensor
             const tensor& faceT() const
             {
-                return wedgePolyPatch_.faceT();
+                return wedgePoly_.faceT();
             }
 
             //- Return neighbour-cell transformation tensor
             const tensor& cellT() const
             {
-                return wedgePolyPatch_.cellT();
+                return wedgePoly_.cellT();
             }
 };
 

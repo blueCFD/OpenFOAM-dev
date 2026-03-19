@@ -163,7 +163,6 @@ primitives/Barycentric/barycentric/barycentric.C
 primitives/Barycentric2D/barycentric2D/barycentric2D.C
 
 containers/HashTables/HashTable/HashTableCore.T.C
-containers/HashTables/ListHashTable/ListHashTableCore.T.C
 containers/Lists/SortableList/ParSortableListName.T.C
 containers/Lists/PackedList/PackedListCore.T.C
 containers/Lists/PackedList/PackedBoolList.C
@@ -289,7 +288,6 @@ db/CallbackRegistry/CallbackRegistryName.T.C
 dll = db/dynamicLibrary
 $(dll)/dlLibraryTable/dlLibraryTable.C
 $(dll)/dynamicCode/dynamicCode.C
-$(dll)/dynamicCode/dynamicCodeContext.C
 $(dll)/codedBase/codedBase.C
 $(dll)/compileTemplate/compileTemplate.C
 
@@ -651,10 +649,6 @@ meshes/treeBoundBox/treeBoundBox.C
 meshTools = meshes/meshTools
 $(meshTools)/matchPoints.C
 
-fields/UniformDimensionedFields/uniformDimensionedFields.C
-
-fields/UniformGeometricFields/uniformGeometricFields.C
-
 Fields = fields/Fields
 
 $(Fields)/fieldMappers/fieldMapper/fieldMapper.C
@@ -727,6 +721,12 @@ $(derivedPointPatchFields)/codedFixedValue/codedFixedValuePointPatchFields.C
 
 fields/GeometricFields/pointFields/pointFields.C
 
+fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedPointFieldFunctions.C
+
+fields/UniformDimensionedFields/uniformDimensionedFields.C
+
+fields/UniformGeometricFields/uniformGeometricFields.C
+
 meshes/bandCompression/bandCompression.C
 meshes/preservePatchTypes/preservePatchTypes.C
 
@@ -744,6 +744,7 @@ algorithms/dynamicIndexedOctree/dynamicIndexedOctreeName.C
 algorithms/dynamicIndexedOctree/dynamicTreeDataPoint.C
 algorithms/polygonTriangulate/polygonTriangulate.C
 algorithms/solutionControl/solutionControl.C
+algorithms/boundSphere/boundSphere.C
 
 distributions/distribution/distribution.C
 distributions/distribution/distributionNew.C

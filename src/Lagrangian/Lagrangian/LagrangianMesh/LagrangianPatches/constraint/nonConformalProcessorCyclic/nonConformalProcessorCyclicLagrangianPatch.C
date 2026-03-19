@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,14 +50,14 @@ namespace Foam
 Foam::nonConformalProcessorCyclicLagrangianPatch::
 nonConformalProcessorCyclicLagrangianPatch
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 :
-    processorCyclicLagrangianPatch(patch, boundaryMesh),
-    nonConformalProcessorCyclicPatch_
+    processorCyclicLagrangianPatch(poly, boundaryMesh),
+    nonConformalProcessorCyclicPoly_
     (
-        refCast<const nonConformalProcessorCyclicPolyPatch>(patch)
+        refCast<const nonConformalProcessorCyclicPolyPatch>(poly)
     )
 {}
 
@@ -90,7 +90,7 @@ void Foam::nonConformalProcessorCyclicLagrangianPatch::initEvaluate
         patchMesh.sub(mesh.receivePositionPtr_());
 
     // Send
-    UOPstream(nonConformalProcessorCyclicPatch_.neighbProcNo(), pBufs)()
+    UOPstream(nonConformalProcessorCyclicPoly_.neighbProcNo(), pBufs)()
         << receivePatchFace
         << receivePosition
         << sendFraction;
@@ -114,14 +114,14 @@ void Foam::nonConformalProcessorCyclicLagrangianPatch::evaluate
     const meshSearch& searchEngine = meshSearch::New(mesh.mesh());
 
     // Receive
-    UIPstream uips(nonConformalProcessorCyclicPatch_.neighbProcNo(), pBufs);
+    UIPstream uips(nonConformalProcessorCyclicPoly_.neighbProcNo(), pBufs);
     labelField receivePatchFace(uips);
     pointField receivePosition(uips);
     scalarField receiveFraction(uips);
 
     // Get a reference to the receiving original patch
     const polyPatch& receivePp =
-        nonConformalProcessorCyclicPatch_.referPatch().origPatch();
+        nonConformalProcessorCyclicPoly_.referPatch().origPatch();
 
     // Search for the elements on the receiving side
     barycentricField receiveCoordinates(receivePatchFace.size());

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,7 +95,7 @@ bool Foam::triSurface::readSTLBINARY(const fileName& STLfileName)
     // Everything OK so go ahead and read the triangles.
 
     // Allocate storage for raw points
-    List<floatVector> STLpoints(3*nTris);
+    Field<floatVector> STLpoints(3*nTris);
     setSize(nTris);
 
     label pointi = 0;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -399,8 +399,11 @@ bool triSurface::readSTLASCII(const fileName& STLfileName)
     // memStat.update();
     // Pout<< "After lexing:" << memStat.rss() << endl;
 
-    DynamicList<floatVector>& STLpoints = lexer.STLpoints();
+    DynamicList<floatVector>& STLpointsDyn = lexer.STLpoints();
     DynamicList<label>& STLlabels = lexer.STLlabels();
+
+    Field<floatVector> STLpoints;
+    STLpoints.transfer(STLpointsDyn);
 
     /*
     DynamicList<floatVector>& STLnormals = lexer.STLnormals();

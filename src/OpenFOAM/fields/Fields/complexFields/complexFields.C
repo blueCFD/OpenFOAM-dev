@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -226,16 +226,6 @@ vectorField Im(const UList<complexVector>& cvf)
     }
 
     return vf;
-}
-
-
-complexVectorField operator^
-(
-    const UList<vector>& vf,
-    const UList<complexVector>& cvf
-)
-{
-    return ComplexField(vf^Re(cvf), vf^Im(cvf));
 }
 
 

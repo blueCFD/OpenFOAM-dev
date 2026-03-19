@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,12 +44,12 @@ namespace Foam
 
 Foam::processorCyclicLagrangianPatch::processorCyclicLagrangianPatch
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 :
-    processorLagrangianPatch(patch, boundaryMesh),
-    processorCyclicPatch_(refCast<const processorCyclicPolyPatch>(patch))
+    processorLagrangianPatch(poly, boundaryMesh),
+    processorCyclicPoly_(refCast<const processorCyclicPolyPatch>(poly))
 {}
 
 

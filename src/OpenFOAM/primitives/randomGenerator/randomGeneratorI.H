@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -316,6 +316,14 @@ inline void Foam::randomGenerator::permute(Container& l)
     {
         Swap(l[i], l[sampleABNoCheckSync<label>(i, l.size())]);
     }
+}
+
+
+inline Foam::labelList Foam::randomGenerator::permutation(const label n)
+{
+    labelList result(identityMap(n));
+    permute(result);
+    return result;
 }
 
 

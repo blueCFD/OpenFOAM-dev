@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,12 +46,12 @@ namespace Foam
 
 Foam::processorLagrangianPatch::processorLagrangianPatch
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 :
-    LagrangianPatch(patch, boundaryMesh),
-    processorPatch_(refCast<const processorPolyPatch>(patch))
+    LagrangianPatch(poly, boundaryMesh),
+    processorPoly_(refCast<const processorPolyPatch>(poly))
 {}
 
 
@@ -93,14 +93,14 @@ void Foam::processorLagrangianPatch::initEvaluate
     {
         tracking::inProcessor
         (
-            processorPatch_,
+            processorPoly_,
             sendCelli[i],
             sendFacei[i]
         );
     }
 
     // Send
-    UOPstream(processorPatch_.neighbProcNo(), pBufs)()
+    UOPstream(processorPoly_.neighbProcNo(), pBufs)()
         << sendCoordinates
         << sendCelli
         << sendFacei
@@ -120,7 +120,7 @@ void Foam::processorLagrangianPatch::evaluate
 ) const
 {
     // Receive
-    UIPstream uips(processorPatch_.neighbProcNo(), pBufs);
+    UIPstream uips(processorPoly_.neighbProcNo(), pBufs);
     barycentricField receiveCoordinates(uips);
     labelField receiveCelli(uips);
     labelField receiveFacei(uips);
@@ -132,7 +132,7 @@ void Foam::processorLagrangianPatch::evaluate
     {
         tracking::outProcessor
         (
-            processorPatch_,
+            processorPoly_,
             receiveCoordinates[i],
             receiveCelli[i],
             receiveFacei[i],

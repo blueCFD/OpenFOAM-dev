@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ protected:
     // Protected data
 
         //- Reference to the underlying polyPatch
-        const polyPatch& polyPatch_;
+        const polyPatch& poly_;
 
 
     // Protected Member Functions
@@ -140,15 +140,15 @@ public:
     // Member Functions
 
         //- Return the polyPatch
-        const polyPatch& patch() const
+        const polyPatch& poly() const
         {
-            return polyPatch_;
+            return poly_;
         }
 
         //- Return name
         virtual const word& name() const
         {
-            return polyPatch_.name();
+            return poly_.name();
         }
 
         //- Return size
@@ -160,33 +160,31 @@ public:
         //- Return the index of this patch in the pointBoundaryMesh
         virtual label index() const
         {
-            return polyPatch_.index();
+            return poly_.index();
         }
 
         //- Return true if this patch field is coupled
         virtual bool coupled() const
         {
-            return polyPatch_.coupled();
+            return poly_.coupled();
         }
 
         //- Return mesh points
         virtual const labelList& meshPoints() const
         {
-            return polyPatch_.meshPoints();
+            return poly_.meshPoints();
         }
-
 
         //- Return pointField of points in patch
         virtual const pointField& localPoints() const
         {
-            return polyPatch_.localPoints();
+            return poly_.localPoints();
         }
-
 
         //- Return point unit normals
         virtual const vectorField& pointNormals() const
         {
-            return polyPatch_.pointNormals();
+            return poly_.pointNormals();
         }
 
 

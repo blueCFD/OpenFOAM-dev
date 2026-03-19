@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,7 +85,7 @@ Foam::cyclicPointPatch::cyclicPointPatch
 )
 :
     coupledFacePointPatch(patch, bm),
-    cyclicPolyPatch_(refCast<const cyclicPolyPatch>(patch))
+    cyclicPoly_(refCast<const cyclicPolyPatch>(patch))
 {}
 
 
@@ -99,7 +99,7 @@ Foam::cyclicPointPatch::~cyclicPointPatch()
 
 const Foam::edgeList& Foam::cyclicPointPatch::transformPairs() const
 {
-    return cyclicPolyPatch_.coupledPoints();
+    return cyclicPoly_.coupledPoints();
 }
 
 

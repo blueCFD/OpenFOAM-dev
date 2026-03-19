@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -1328,7 +1328,7 @@ int main(int argc, char *argv[])
                 {
                     const polyPatch& pp =
                         mesh.boundaryMesh()[zoneNames[zonei]];
-                    facesDyn.append(pp.start() + identityMap(pp.size()));
+                    facesDyn.append(identityMap(pp.start(), pp.size()));
                     zoneIDsDyn.append(labelList(pp.size(), zonei));
                     flipsDyn.append(boolList(pp.size(), false));
 
@@ -1346,7 +1346,7 @@ int main(int argc, char *argv[])
                         }
                         oppositeFacesDyn.append
                         (
-                            spp.start() + identityMap(spp.size())
+                            identityMap(spp.start(), spp.size())
                         );
                         oppositeZoneIDsDyn.append(labelList(spp.size(), zonei));
                         oppositeFlipsDyn.append(boolList(spp.size(), false));

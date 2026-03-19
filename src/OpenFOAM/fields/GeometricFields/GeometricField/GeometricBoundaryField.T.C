@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -483,6 +483,91 @@ boundaryInternalField() const
     }
 
     return tresult;
+}
+
+
+template<class Type, class GeoMesh, template<class> class PrimitiveField>
+Foam::PtrList<Foam::Field<Type>>
+Foam::GeometricBoundaryField<Type, GeoMesh, PrimitiveField>::
+coupledNeighbourField() const
+{
+    PtrList<Field<Type>> result(bmesh_.size());
+
+    if
+    (
+        Pstream::defaultCommsType == Pstream::commsTypes::blocking
+     || Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
+    )
+    {
+        const label nReq = Pstream::nRequests();
+
+        forAll(*this, patchi)
+        {
+            if (this->operator[](patchi).coupled())
+            {
+                this->operator[](patchi)
+                    .initPatchNeighbourField(Pstream::defaultCommsType);
+            }
+        }
+
+        // Block for any outstanding requests
+        if
+        (
+            Pstream::parRun()
+         && Pstream::defaultCommsType == Pstream::commsTypes::nonBlocking
+        )
+        {
+            Pstream::waitRequests(nReq);
+        }
+
+        forAll(*this, patchi)
+        {
+            if (this->operator[](patchi).coupled())
+            {
+                result.set
+                (
+                    patchi,
+                    this->operator[](patchi)
+                    .patchNeighbourField(Pstream::defaultCommsType)
+                );
+            }
+        }
+    }
+    else if (Pstream::defaultCommsType == Pstream::commsTypes::scheduled)
+    {
+        const lduSchedule& patchSchedule =
+            bmesh_.mesh().globalData().patchSchedule();
+
+        forAll(patchSchedule, patchEvali)
+        {
+            if (this->operator[](patchSchedule[patchEvali].patch).coupled())
+            {
+                if (patchSchedule[patchEvali].init)
+                {
+                    this->operator[](patchSchedule[patchEvali].patch)
+                        .initPatchNeighbourField(Pstream::defaultCommsType);
+                }
+                else
+                {
+                    result.set
+                    (
+                        patchSchedule[patchEvali].patch,
+                        this->operator[](patchSchedule[patchEvali].patch)
+                        .patchNeighbourField(Pstream::defaultCommsType)
+                    );
+                }
+            }
+        }
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "Unsupported communications type "
+            << Pstream::commsTypeNames[Pstream::defaultCommsType]
+            << exit(FatalError);
+    }
+
+    return result;
 }
 
 

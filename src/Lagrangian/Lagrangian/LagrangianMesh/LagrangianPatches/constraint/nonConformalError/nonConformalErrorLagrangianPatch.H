@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ private:
     // Private Data
 
         //- Reference to the nonConformalError poly patch
-        const nonConformalErrorPolyPatch& nonConformalErrorPatch_;
+        const nonConformalErrorPolyPatch& nonConformalErrorPoly_;
 
 
 public:
@@ -77,15 +77,6 @@ public:
 
     //- Destructor
     virtual ~nonConformalErrorLagrangianPatch();
-
-
-    // Member Functions
-
-        //- Return the nonConformalError patch
-        const nonConformalErrorPolyPatch& nonConformalErrorPatch() const
-        {
-            return nonConformalErrorPatch_;
-        }
 };
 
 

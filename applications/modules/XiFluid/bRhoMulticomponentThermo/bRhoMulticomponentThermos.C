@@ -25,9 +25,9 @@ License
 
 #include "bRhoMulticomponentThermo.H"
 
-#include "bHomogeneousMixture.H"
-#include "bInhomogeneousMixture.H"
-#include "bMulticomponentMixture.H"
+#include "BHomogeneousMixture.T.H"
+#include "BInhomogeneousMixture.T.H"
+#include "BMulticomponentMixture.T.H"
 
 #include "forGases.H"
 
@@ -63,17 +63,17 @@ namespace Foam
     forCoeffEnthalpyGases
     (
         makeBRhoMulticomponentThermos,
-        bHomogeneousMixture
+        BHomogeneousMixture
     );
     forCoeffEnthalpyGases
     (
         makeBRhoMulticomponentThermos,
-        bInhomogeneousMixture
+        BInhomogeneousMixture
     );
     forCoeffEnthalpyGases
     (
         makeBRhoMulticomponentThermos,
-        bMulticomponentMixture
+        BMulticomponentMixture
     );
 }
 

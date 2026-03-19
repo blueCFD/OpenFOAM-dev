@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,13 @@ License
 #include "plane.H"
 #include "tensor.H"
 #include "unitConversion.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+const Foam::NamedEnum<Foam::plane::specification, 3>
+Foam::plane::specificationNames_
+{"planeEquation", "embeddedPoints", "pointAndNormal"};
+
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -120,55 +127,80 @@ Foam::plane::plane(const dictionary& dict)
     normal_(Zero),
     point_(Zero)
 {
-    const word planeType(dict.lookup("planeType"));
-
-    const dictionary& subDict = dict.optionalSubDict(planeType + "Dict");
-
-    if (planeType == "planeEquation")
+    specification spec;
+    bool allowSubDict;
+    if (dict.found("planeType"))
     {
-        calcPntAndVec
-        (
-            subDict.lookup<scalar>("a", unitNone),
-            subDict.lookup<scalar>("b", unitNone),
-            subDict.lookup<scalar>("c", unitNone),
-            subDict.lookup<scalar>("d", unitNone)
-        );
-    }
-    else if (planeType == "embeddedPoints")
-    {
-        calcPntAndVec
-        (
-            subDict.lookup<point>("point1", dimLength),
-            subDict.lookup<point>("point2", dimLength),
-            subDict.lookup<point>("point3", dimLength)
-        );
-    }
-    else if (planeType == "pointAndNormal")
-    {
-        point_ =
-            subDict.lookupBackwardsCompatible<point>
-            (
-                {"point", "basePoint"},
-                dimLength
-            );
-
-        normal_ =
-            normalised
-            (
-                subDict.lookupBackwardsCompatible<vector>
-                (
-                    {"normal", "normalVector"},
-                    dimless
-                )
-            );
+        spec = specificationNames_.read(dict.lookup("planeType"));
+        allowSubDict = true;
     }
     else
     {
-        FatalIOErrorInFunction(dict)
-            << "Invalid plane type: " << planeType << nl
-            << "Valid options include: "
-            << "planeEquation, embeddedPoints and pointAndNormal"
-            << abort(FatalIOError);
+        const bool havePlaneEquation =
+            dict.found("a") || dict.found("b") ||
+            dict.found("c") || dict.found("d");
+        const bool haveEmbeddedPoints =
+            dict.found("point1") ||
+            dict.found("point2") ||
+            dict.found("point3");
+        const bool havePointAndNormal =
+            dict.found("point") || dict.found("basePoint")
+         || dict.found("normal") || dict.found("normalVector");
+        const bool haveSingleSpec =
+            havePlaneEquation + haveEmbeddedPoints + havePointAndNormal == 1;
+
+        if (!haveSingleSpec) dict.lookup("planeType");
+
+        spec =
+            havePlaneEquation ? specification::planeEquation
+          : haveEmbeddedPoints ? specification::embeddedPoints
+          : /* havePointAndNormal ? */ specification::pointAndNormal;
+        allowSubDict = false;
+    }
+
+    const dictionary& subDict =
+        allowSubDict
+      ? dict
+      : dict.optionalSubDict(specificationNames_[spec] + "Dict");
+
+    switch (spec)
+    {
+        case specification::planeEquation:
+        {
+            const scalar a = subDict.lookup<scalar>("a", unitNone);
+            const scalar b = subDict.lookup<scalar>("b", unitNone);
+            const scalar c = subDict.lookup<scalar>("c", unitNone);
+            const scalar d = subDict.lookup<scalar>("d", unitNone);
+            calcPntAndVec(a, b, c, d);
+            break;
+        }
+        case specification::embeddedPoints:
+        {
+            const point point1 = subDict.lookup<point>("point1", dimLength);
+            const point point2 = subDict.lookup<point>("point2", dimLength);
+            const point point3 = subDict.lookup<point>("point3", dimLength);
+            calcPntAndVec(point1, point2, point3);
+            break;
+        }
+        case specification::pointAndNormal:
+        {
+            point_ =
+                subDict.lookupBackwardsCompatible<point>
+                (
+                    {"point", "basePoint"},
+                    dimLength
+                );
+            normal_ =
+                normalised
+                (
+                    subDict.lookupBackwardsCompatible<vector>
+                    (
+                        {"normal", "normalVector"},
+                        dimless
+                    )
+                );
+            break;
+        }
     }
 
     if (normal_ == vector::zero)
@@ -428,14 +460,6 @@ Foam::point Foam::plane::planePlaneIntersect
     vector b(coeffs1[3],coeffs2[3],coeffs3[3]);
 
     return (inv(a) & (-b));
-}
-
-
-Foam::plane::side Foam::plane::sideOfPlane(const point& p) const
-{
-    const scalar angle((p - point_) & normal_);
-
-    return (angle < 0 ? FLIP : NORMAL);
 }
 
 

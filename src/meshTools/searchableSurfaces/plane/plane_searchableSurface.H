@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,12 +28,16 @@ Description
     Surface geometry of an infinite plane, which can be used with
     snappyHexMesh.
 
+    The searchable plane is considered to be a closed surface, as if it were
+    actually a locally flat part of an infinitely large sphere. Points behind
+    the plane (relative to the normal) are therefore taken to be inside.
+
 Usage
     \table
         Property  | Description                             | Required
-        planeType | Plane type, e.g. pointAndNormal         | yes
-        point     | Point location for pointAndNormal plane | yes
-        normal    | Normal vector for pointAndNormal plane  | yes
+        planeType | Method of specification. E.g., pointAndNormal. | no
+        point     | A point in the plane (for pointAndNormal) | yes
+        normal    | A vector normal to the plane (for pointAndNormal) | yes
     \endtable
 
     Note: there are also other options for planeType, including
@@ -42,10 +46,12 @@ Usage
     Example specification in snappyHexMeshDict/geometry:
     \verbatim
         type       plane;
-        planeType  pointAndNormal;
         point      (10 10 10);
-        normal     (0  1  0);
+        normal     (0 1 0);
     \endverbatim
+
+See also
+    Foam::plane
 
 SourceFiles
     searchablePlane.C
@@ -74,7 +80,7 @@ class plane
     public searchableSurface,
     public Foam::plane
 {
-    // Private Member Data
+    // Private Data
 
         mutable wordList regions_;
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ class LagrangianPatch
     // Private Data
 
         //- Reference to the corresponding polyPatch
-        const polyPatch& patch_;
+        const polyPatch& poly_;
 
         //- Reference to boundary mesh
         const LagrangianBoundaryMesh& boundaryMesh_;
@@ -79,10 +79,10 @@ public:
             LagrangianPatch,
             polyPatch,
             (
-                const polyPatch& patch,
+                const polyPatch& poly,
                 const LagrangianBoundaryMesh& boundaryMesh
             ),
-            (patch, boundaryMesh)
+            (poly, boundaryMesh)
         );
 
 
@@ -102,7 +102,7 @@ public:
         static autoPtr<LagrangianPatch> New
         (
             const word& type,
-            const polyPatch& patch,
+            const polyPatch& poly,
             const LagrangianBoundaryMesh& boundaryMesh
         );
 
@@ -110,7 +110,7 @@ public:
         //  given polyPatch
         static autoPtr<LagrangianPatch> New
         (
-            const polyPatch& patch,
+            const polyPatch& poly,
             const LagrangianBoundaryMesh& boundaryMesh
         );
 
@@ -121,22 +121,22 @@ public:
 
     // Member Functions
 
-        //- Return the patch
-        const polyPatch& patch() const
+        //- Return the polyPatch
+        const polyPatch& poly() const
         {
-            return patch_;
+            return poly_;
         }
 
         //- Return name
         virtual const word& name() const
         {
-            return patch_.name();
+            return poly_.name();
         }
 
         //- Return whether or not this patch is coupled
         virtual bool coupled() const
         {
-            return patch().coupled();
+            return poly_.coupled();
         }
 
         //- Return the boundary mesh

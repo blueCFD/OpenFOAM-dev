@@ -1,0 +1,48 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      alphaInternalField;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+internalField
+{
+    type        coded;
+
+    name        $name;
+
+    y0          $y0;
+    y1          $y1;
+
+    evaluate
+    #{
+        const scalarField x(C.component(vector::X));
+        const scalarField y(C.component(vector::Y));
+
+        const scalar x0 = 0.032;
+        const scalar x1 = 0.064;
+        const scalar x2 = 0.128;
+        const scalar x3 = 0.224;
+
+        const scalarField f
+        (
+            pos(x - x0)*pos(x1 - x)*(x - x0)/(x1 - x0)
+          + pos(x - x1)*pos(x2 - x)
+          + pos(x - x2)*pos(x3 - x)*(x3 - x)/(x3 - x2)
+        );
+
+        field.primitiveFieldRef() = 0.5*pos(y - $y0)*pos($y1 - y)*f;
+    #};
+};
+
+
+// ************************************************************************* //

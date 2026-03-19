@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ class cyclicPointPatch
     // Private Data
 
         //- Local reference cast into the cyclic patch
-        const cyclicPolyPatch& cyclicPolyPatch_;
+        const cyclicPolyPatch& cyclicPoly_;
 
 
     // Demand driven private data
@@ -107,15 +107,15 @@ public:
         // Access
 
             //- Return the underlying cyclicPolyPatch
-            const cyclicPolyPatch& cyclicPatch() const
+            const cyclicPolyPatch& cyclicPoly() const
             {
-                return cyclicPolyPatch_;
+                return cyclicPoly_;
             }
 
             //- Return neighbour point patch
             const cyclicPointPatch& nbrPatch() const
             {
-                label patchi = cyclicPolyPatch_.nbrPatchIndex();
+                label patchi = cyclicPoly_.nbrPatchIndex();
                 const pointPatch& pp = this->boundaryMesh()[patchi];
                 return refCast<const cyclicPointPatch>(pp);
             }
@@ -123,7 +123,7 @@ public:
             //- Return transformation between the coupled patches
             virtual const transformer& transform() const
             {
-                return cyclicPolyPatch_.transform();
+                return cyclicPoly_.transform();
             }
 
 

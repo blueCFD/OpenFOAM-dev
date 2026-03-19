@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ class nonConformalFvPatch
         const fvPatch& patch_;
 
         //- Reference to the polyPatch
-        const nonConformalPolyPatch& nonConformalPolyPatch_;
+        const nonConformalPolyPatch& nonConformalPoly_;
 
         //- Face-cells
         mutable labelList faceCells_;
@@ -90,9 +90,6 @@ public:
 
             //- Reference to the fvPatch
             const fvPatch& patch() const;
-
-            //- Reference to the polyPatch
-            const nonConformalPolyPatch& nonConformalPatch() const;
 
             //- Original patch name
             const word& origPatchName() const;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,8 +55,8 @@ class processorFvPatch
 {
     // Private Data
 
-        //- Reference to the processor polyPatch
-        const processorPolyPatch& procPolyPatch_;
+        //- Reference to the corresponding processorPolyPatch
+        const processorPolyPatch& processorPoly_;
 
 
 public:
@@ -71,7 +71,7 @@ public:
         processorFvPatch(const polyPatch& patch, const fvBoundaryMesh& bm)
         :
             coupledFvPatch(patch, bm),
-            procPolyPatch_(refCast<const processorPolyPatch>(patch))
+            processorPoly_(refCast<const processorPolyPatch>(patch))
         {}
 
 
@@ -80,19 +80,19 @@ public:
         //- Return communicator used for comms
         virtual label comm() const
         {
-            return procPolyPatch_.comm();
+            return processorPoly_.comm();
         }
 
         //- Return processor number
         virtual int myProcNo() const
         {
-            return procPolyPatch_.myProcNo();
+            return processorPoly_.myProcNo();
         }
 
         //- Return neighbour processor number
         virtual int neighbProcNo() const
         {
-            return procPolyPatch_.neighbProcNo();
+            return processorPoly_.neighbProcNo();
         }
 
         //- Return message tag used for sending
@@ -117,7 +117,7 @@ public:
         //- Return transformation between the coupled patches
         virtual const transformer& transform() const
         {
-            return procPolyPatch_.transform();
+            return processorPoly_.transform();
         }
 
         //- Make patch weighting factors

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ template<class Type, class GeoMesh>
 Foam::SlicedDimensionedField<Type, GeoMesh>::SlicedDimensionedField
 (
     const IOobject& io,
-    const Mesh& mesh,
+    const GeoMesh& mesh,
     const dimensionSet& ds,
     const Field<Type>& iField
 )
@@ -41,7 +41,7 @@ Foam::SlicedDimensionedField<Type, GeoMesh>::SlicedDimensionedField
     // Set the internalField to the slice of the complete field
     UList<Type>::shallowCopy
     (
-        typename Field<Type>::subField(iField, GeoMesh::size(mesh))
+        typename Field<Type>::subField(iField, mesh.size())
     );
 }
 
@@ -54,6 +54,32 @@ Foam::SlicedDimensionedField<Type, GeoMesh>::~SlicedDimensionedField()
     // Set the internalField storage pointer to nullptr before its destruction
     // to protect the field it a slice of.
     UList<Type>::shallowCopy(UList<Type>(nullptr, 0));
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class Type, class GeoMesh>
+void Foam::SlicedDimensionedField<Type, GeoMesh>::transfer
+(
+    Field<Type>& f
+)
+{
+    this->primitiveFieldRef() = f;
+}
+
+
+template<class Type, class GeoMesh>
+void Foam::SlicedDimensionedField<Type, GeoMesh>::reset
+(
+    const Field<Type>& iField
+)
+{
+    // Reset the internalField to the slice of the complete field
+    UList<Type>::shallowCopy
+    (
+        typename Field<Type>::subField(iField, this->mesh().size())
+    );
 }
 
 

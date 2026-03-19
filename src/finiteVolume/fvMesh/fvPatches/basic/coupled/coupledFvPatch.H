@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ class coupledFvPatch
     // Private Data
 
         //- Reference to the coupled polyPatch
-        const coupledPolyPatch& coupledPolyPatch_;
+        const coupledPolyPatch& coupledPoly_;
 
 
 protected:
@@ -85,7 +85,7 @@ public:
         coupledFvPatch(const polyPatch& patch, const fvBoundaryMesh& bm)
         :
             fvPatch(patch, bm),
-            coupledPolyPatch_(refCast<const coupledPolyPatch>(patch))
+            coupledPoly_(refCast<const coupledPolyPatch>(patch))
         {}
 
 
@@ -100,13 +100,13 @@ public:
             //- Return true because this patch is coupled
             virtual bool coupled() const
             {
-                return coupledPolyPatch_.coupled();
+                return coupledPoly_.coupled();
             }
 
             //- Does this side own the patch ?
             virtual bool owner() const
             {
-                return coupledPolyPatch_.owner();
+                return coupledPoly_.owner();
             }
 
             //- Does the coupled side own the patch ?

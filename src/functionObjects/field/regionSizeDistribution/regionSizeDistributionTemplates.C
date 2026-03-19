@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,19 +61,22 @@ Foam::Map<Type> Foam::functionObjects::regionSizeDistribution::regionSum
 
 
 template<class Type>
-Foam::List<Type> Foam::functionObjects::regionSizeDistribution::extractData
+Foam::tmp<Foam::Field<Type>>
+Foam::functionObjects::regionSizeDistribution::extractData
 (
     const UList<label>& keys,
     const Map<Type>& regionData
 ) const
 {
-    List<Type> sortedData(keys.size());
+    tmp<Field<Type>> tsortedData(new Field<Type>(keys.size()));
+    Field<Type>& sortedData = tsortedData.ref();
 
     forAll(keys, i)
     {
         sortedData[i] = regionData[keys[i]];
     }
-    return sortedData;
+
+    return tsortedData;
 }
 
 

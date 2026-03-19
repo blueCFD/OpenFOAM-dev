@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,9 +27,6 @@ License
 #include "volFields.H"
 #include "dictionary.H"
 #include "Time.T.H"
-#include "SHA1Digest.H"
-#include "dynamicCode.H"
-#include "dynamicCodeContext.H"
 #include "stringOps.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -72,46 +69,23 @@ const Foam::wordList Foam::codedFunctionObject::codeDictVars
     word::null,
 };
 
-
-// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
-
-void Foam::codedFunctionObject::prepare
+const Foam::word Foam::codedFunctionObject::codeOptions
 (
-    dynamicCode& dynCode,
-    const dynamicCodeContext& context
-) const
+    "codedFunctionObjectOptions"
+);
+
+const Foam::wordList Foam::codedFunctionObject::compileFiles
 {
-    dynCode.setFilterVariable("typeName", codeName());
+    "codedFunctionObjectTemplate.C"
+};
 
-    // Compile filtered C template
-    dynCode.addCompileFile(codeTemplateC("codedFunctionObject"));
+const Foam::wordList Foam::codedFunctionObject::copyFiles
+{
+    "codedFunctionObjectTemplate.H"
+};
 
-    // Copy filtered H template
-    dynCode.addCopyFile(codeTemplateH("codedFunctionObject"));
 
-    // Make verbose if debugging
-    dynCode.setFilterVariable("verbose", Foam::name(bool(debug)));
-
-    if (debug)
-    {
-        Info<<"compile " << codeName() << " sha1: " << context.sha1() << endl;
-    }
-
-    // Define Make/options
-    dynCode.setMakeOptions
-    (
-        "EXE_INC = -g \\\n"
-        "-I$(LIB_SRC)/finiteVolume/lnInclude \\\n"
-        "-I$(LIB_SRC)/meshTools/lnInclude \\\n"
-      + context.options()
-      + "\n\nLIB_LIBS = \\\n"
-      + "    -lOpenFOAM \\\n"
-      + "    -lfiniteVolume \\\n"
-      + "    -lmeshTools \\\n"
-      + context.libs()
-    );
-}
-
+// * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 
 void Foam::codedFunctionObject::updateLibrary(const dictionary& dict)
 {
@@ -141,8 +115,20 @@ Foam::codedFunctionObject::codedFunctionObject
 )
 :
     functionObject(name, time, dict),
-    codedBase(name, dict, codeKeys, codeDictVars)
+    codedBase
+    (
+        name,
+        dict,
+        codeKeys,
+        codeDictVars,
+        codeOptions,
+        compileFiles,
+        copyFiles
+    )
 {
+    // Set verbose if debugging
+    varSubstitutions().set("verbose", Foam::name(bool(debug)));
+
     updateLibrary(dict);
 }
 

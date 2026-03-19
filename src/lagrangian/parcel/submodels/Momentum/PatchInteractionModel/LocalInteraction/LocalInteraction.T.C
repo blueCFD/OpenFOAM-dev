@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -430,19 +430,19 @@ void Foam::LocalInteraction<CloudType>::info(Ostream& os)
     // Accumulate current data
     labelList npe(SubList<label>(nEscape_, nPatches));
     Pstream::listCombineGather(npe, plusEqOp<label>());
-    npe = npe + npe0;
+    SubField<label>(npe) += npe0;
 
     scalarList mpe(SubList<scalar>(massEscape_, nPatches));
     Pstream::listCombineGather(mpe, plusEqOp<scalar>());
-    mpe = mpe + mpe0;
+    SubField<scalar>(mpe) += mpe0;
 
     labelList nps(SubList<label>(nStick_, nPatches));
     Pstream::listCombineGather(nps, plusEqOp<label>());
-    nps = nps + nps0;
+    SubField<label>(nps) += nps0;
 
     scalarList mps(SubList<scalar>(massStick_, nPatches));
     Pstream::listCombineGather(mps, plusEqOp<scalar>());
-    mps = mps + mps0;
+    SubField<scalar>(mps) += mps0;
 
     for (label patchi = 0; patchi < nPatches; ++ patchi)
     {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -170,6 +170,9 @@ public:
         tmp<GeometricBoundaryField> boundaryInternalField() const;
 
         //- Return BoundaryField of the values on the other side of couples
+        PtrList<Field<Type>> coupledNeighbourField() const;
+
+        //- Return BoundaryField with the values on the other side of couples
         tmp<GeometricBoundaryField> boundaryNeighbourField() const;
 
         //- Return a list of pointers for each patch field with only those

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ Foam::nonConformalFvPatch::nonConformalFvPatch
 )
 :
     patch_(patch),
-    nonConformalPolyPatch_(refCast<const nonConformalPolyPatch>(patch.patch())),
+    nonConformalPoly_(refCast<const nonConformalPolyPatch>(patch.poly())),
     faceCells_()
 {}
 
@@ -61,22 +61,15 @@ const Foam::fvPatch& Foam::nonConformalFvPatch::patch() const
 }
 
 
-const Foam::nonConformalPolyPatch&
-Foam::nonConformalFvPatch::nonConformalPatch() const
-{
-    return nonConformalPolyPatch_;
-}
-
-
 const Foam::word& Foam::nonConformalFvPatch::origPatchName() const
 {
-    return nonConformalPolyPatch_.origPatchName();
+    return nonConformalPoly_.origPatchName();
 }
 
 
 Foam::label Foam::nonConformalFvPatch::origPatchIndex() const
 {
-    return nonConformalPolyPatch_.origPatchIndex();
+    return nonConformalPoly_.origPatchIndex();
 }
 
 
@@ -107,7 +100,7 @@ Foam::label Foam::nonConformalFvPatch::start() const
             << exit(FatalError);
     }
 
-    return patch_.patch().start();
+    return patch_.poly().start();
 }
 
 

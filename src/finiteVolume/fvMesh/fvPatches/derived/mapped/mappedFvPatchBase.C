@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ Foam::tmp<Foam::Field<Type>> Foam::mappedFvPatchBase::toNeighbour
 Foam::mappedFvPatchBase::mappedFvPatchBase(const fvPatch& patch)
 :
     mappedFvPatchBaseBase(patch),
-    mapper_(refCast<const mappedPatchBase>(patch.patch()))
+    mapper_(refCast<const mappedPatchBase>(patch.poly()))
 {}
 
 

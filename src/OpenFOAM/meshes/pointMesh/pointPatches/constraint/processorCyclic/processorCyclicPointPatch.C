@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,44 +27,38 @@ License
 #include "pointBoundaryMesh.H"
 #include "addToRunTimeSelectionTable.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+    defineTypeNameAndDebug(processorCyclicPointPatch, 0);
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-defineTypeNameAndDebug(processorCyclicPointPatch, 0);
-
-addToRunTimeSelectionTable
-(
-    facePointPatch,
-    processorCyclicPointPatch,
-    polyPatch
-);
+    addToRunTimeSelectionTable
+    (
+        facePointPatch,
+        processorCyclicPointPatch,
+        polyPatch
+    );
+}
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-processorCyclicPointPatch::processorCyclicPointPatch
+Foam::processorCyclicPointPatch::processorCyclicPointPatch
 (
     const polyPatch& patch,
     const pointBoundaryMesh& bm
 )
 :
     processorPointPatch(patch, bm),
-    procCycPolyPatch_(refCast<const processorCyclicPolyPatch>(patch))
+    processorCyclicPoly_(refCast<const processorCyclicPolyPatch>(patch))
 {}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-processorCyclicPointPatch::~processorCyclicPointPatch()
+Foam::processorCyclicPointPatch::~processorCyclicPointPatch()
 {}
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

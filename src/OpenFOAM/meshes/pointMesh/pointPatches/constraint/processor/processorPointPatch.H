@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ class processorPointPatch
 {
     // Private Data
 
-        const processorPolyPatch& procPolyPatch_;
+        const processorPolyPatch& processorPoly_;
 
         mutable labelList reverseMeshPoints_;
 
@@ -115,25 +115,25 @@ public:
         //- Return message tag to use for communication
         virtual int tag() const
         {
-            return procPolyPatch_.tag();
+            return processorPoly_.tag();
         }
 
         //- Return communicator used for communication
         virtual label comm() const
         {
-            return procPolyPatch_.comm();
+            return processorPoly_.comm();
         }
 
         //- Return processor number
         int myProcNo() const
         {
-            return procPolyPatch_.myProcNo();
+            return processorPoly_.myProcNo();
         }
 
         //- Return neighbour processor number
         int neighbProcNo() const
         {
-            return procPolyPatch_.neighbProcNo();
+            return processorPoly_.neighbProcNo();
         }
 
         //- Is this a master patch

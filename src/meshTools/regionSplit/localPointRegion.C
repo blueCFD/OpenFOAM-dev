@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -587,8 +587,11 @@ Foam::List<Foam::labelPair> Foam::localPointRegion::findDuplicateFacePairs
     // Faces to test: all boundary faces
     labelList testFaces
     (
-        identityMap(mesh.nFaces()-mesh.nInternalFaces())
-      + mesh.nInternalFaces()
+        identityMap
+        (
+            mesh.nInternalFaces(),
+            mesh.nFaces() - mesh.nInternalFaces()
+        )
     );
 
     // Find corresponding baffle face (or -1)

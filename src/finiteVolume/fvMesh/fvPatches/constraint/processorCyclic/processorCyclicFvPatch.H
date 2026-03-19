@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,9 @@ class processorCyclicFvPatch
 {
     // Private Data
 
-        const processorCyclicPolyPatch& procPolyPatch_;
+        //- Reference to the corresponding processorCyclicPolyPatch
+        const processorCyclicPolyPatch& processorCyclicPoly_;
+
 
 public:
 
@@ -68,7 +70,7 @@ public:
         processorCyclicFvPatch(const polyPatch& patch, const fvBoundaryMesh& bm)
         :
             processorFvPatch(patch, bm),
-            procPolyPatch_(refCast<const processorCyclicPolyPatch>(patch))
+            processorCyclicPoly_(refCast<const processorCyclicPolyPatch>(patch))
         {}
 
 
@@ -78,13 +80,13 @@ public:
         virtual int tag() const
         {
             // Allocate from Pstream?
-            return procPolyPatch_.tag();
+            return processorCyclicPoly_.tag();
         }
 
         //- Return the referring patch ID
         label referPatchIndex() const
         {
-            return procPolyPatch_.referPatchIndex();
+            return processorCyclicPoly_.referPatchIndex();
         }
 
         //- Return a reference to the referring patch
@@ -97,7 +99,7 @@ public:
         //- Return transformation between the coupled patches
         virtual const transformer& transform() const
         {
-            return procPolyPatch_.transform();
+            return processorCyclicPoly_.transform();
         }
 };
 

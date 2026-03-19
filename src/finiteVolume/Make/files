@@ -137,6 +137,9 @@ functionObjects/fvModelFunctionObject/fvModelFunctionObject.C
 fvPatchFields = fields/fvPatchFields
 $(fvPatchFields)/fvPatchField/fvPatchFields.C
 
+$(fvPatchFields)/DimensionedFvPatchFields/DimensionedFvPatchFields.C
+$(fvPatchFields)/DimensionedFvPatchFieldFunctions/makeDimensionedFvPatchFieldFunctions.C
+
 basicFvPatchFields = $(fvPatchFields)/basic
 $(basicFvPatchFields)/basicSymmetry/basicSymmetryFvPatchScalarField.C
 $(basicFvPatchFields)/calculated/calculatedFvPatchFields.C
@@ -175,6 +178,7 @@ $(constraintFvPatchFields)/nonConformalProcessorCyclic/nonConformalProcessorCycl
 derivedFvPatchFields = $(fvPatchFields)/derived
 $(derivedFvPatchFields)/advective/advectiveFvPatchFields.C
 $(derivedFvPatchFields)/codedFixedValue/codedFixedValueFvPatchFields.C
+$(derivedFvPatchFields)/functionalFixedValue/functionalFixedValueFvPatchFields.C
 $(derivedFvPatchFields)/codedMixed/codedMixedFvPatchFields.C
 $(derivedFvPatchFields)/externalCoupledMixed/externalCoupledMixedFvPatchFields.C
 $(derivedFvPatchFields)/fanPressureJump/fanPressureJumpFvPatchScalarField.C
@@ -300,6 +304,9 @@ $(derivedFvFieldSources)/uniformFixedValue/uniformFixedValueFvFieldSources.C
 $(derivedFvFieldSources)/uniformInletOutlet/uniformInletOutletFvFieldSources.C
 $(derivedFvFieldSources)/turbulentIntensityKineticEnergy/turbulentIntensityKineticEnergyFvScalarFieldSource.C
 $(derivedFvFieldSources)/NaN/NaNFvFieldSources.T.C
+
+fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedVolFieldFunctions.C
+fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedSurfaceFieldFunctions.C
 
 fields/volFields/volFields.C
 fields/surfaceFields/surfaceFields.C

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,8 +60,11 @@ void mergeDuplicateBoundaryFaces
     labelList duplicates = localPointRegion::findDuplicateFaces
     (
         mesh,
-        identityMap(mesh.nFaces() - mesh.nInternalFaces())
-      + mesh.nInternalFaces()
+        identityMap
+        (
+            mesh.nInternalFaces(),
+            mesh.nFaces() - mesh.nInternalFaces()
+        )
     );
 
     // Check that none are on processor patches

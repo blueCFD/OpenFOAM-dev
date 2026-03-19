@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,7 +76,7 @@ Foam::scalar Foam::InjectionModel<CloudType>::readDuration
         return vGreat;
     }
 
-    return dict.lookup<scalar>("duration", owner.db().time().userUnits());
+    return dict.lookup<scalar>("duration", owner.time().userUnits());
 }
 
 
@@ -128,7 +128,7 @@ Foam::InjectionModel<CloudType>::readMassFlowRate
             Function1<scalar>::New
             (
                 "massFlowRate",
-                this->owner().db().time().userUnits(),
+                this->owner().time().userUnits(),
                 dimMass/dimTime,
                 dict
             );
@@ -154,7 +154,7 @@ Foam::InjectionModel<CloudType>::readMassFlowRate
         Function1<scalar>::New
         (
             "flowRateProfile",
-            this->owner().db().time().userUnits(),
+            this->owner().time().userUnits(),
             dimless,
             dict
         )
@@ -188,7 +188,7 @@ Foam::InjectionModel<CloudType>::readParcelsPerSecond
         Function1<scalar>::New
         (
             "parcelsPerSecond",
-            this->owner().db().time().userUnits(),
+            this->owner().time().userUnits(),
             dimless/dimTime,
             dict
         );
@@ -550,7 +550,7 @@ Foam::InjectionModel<CloudType>::InjectionModel
 
     if (owner.solution().transient())
     {
-        SOI_ = dict.lookup<scalar>("SOI", owner.db().time().userUnits());
+        SOI_ = dict.lookup<scalar>("SOI", owner.time().userUnits());
     }
 }
 
@@ -608,10 +608,10 @@ void Foam::InjectionModel<CloudType>::inject
 
     const meshSearch& searchEngine = meshSearch::New(mesh);
 
-    const scalar time1 = this->owner().db().time().value();
+    const scalar time1 = this->owner().time().value();
     const scalar time0 =
-        this->owner().db().time().value()
-      - this->owner().db().time().deltaTValue();
+        this->owner().time().value()
+      - this->owner().time().deltaTValue();
 
     preInject(td);
 

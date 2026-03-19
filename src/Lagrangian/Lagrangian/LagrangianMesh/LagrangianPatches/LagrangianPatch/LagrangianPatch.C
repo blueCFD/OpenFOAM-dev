@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,11 +44,11 @@ namespace Foam
 
 Foam::LagrangianPatch::LagrangianPatch
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 :
-    patch_(patch),
+    poly_(poly),
     boundaryMesh_(boundaryMesh),
     meshPtr_(nullptr)
 {}
@@ -59,7 +59,7 @@ Foam::LagrangianPatch::LagrangianPatch
 Foam::autoPtr<Foam::LagrangianPatch> Foam::LagrangianPatch::New
 (
     const word& type,
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 {
@@ -76,17 +76,17 @@ Foam::autoPtr<Foam::LagrangianPatch> Foam::LagrangianPatch::New
             << exit(FatalError);
     }
 
-    return autoPtr<LagrangianPatch>(cstrIter()(patch, boundaryMesh));
+    return autoPtr<LagrangianPatch>(cstrIter()(poly, boundaryMesh));
 }
 
 
 Foam::autoPtr<Foam::LagrangianPatch> Foam::LagrangianPatch::New
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 {
-    return New(patch.type(), patch, boundaryMesh);
+    return New(poly.type(), poly, boundaryMesh);
 }
 
 
@@ -149,7 +149,7 @@ void Foam::LagrangianPatch::partition() const
                 static_cast<LagrangianGroup>
                 (
                     static_cast<label>(LagrangianGroup::onPatchZero)
-                  + patch_.index()
+                  + poly_.index()
                 )
             )
         )

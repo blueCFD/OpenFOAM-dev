@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,7 +103,14 @@ void inv(Field<tensor>& tf, const UList<tensor>& tf1)
     }
 }
 
-tmp<tensorField> inv(const UList<tensor>& tf)
+tmp<tensorField> inv(const Field<tensor>& tf)
+{
+    tmp<tensorField> result(new tensorField(tf.size()));
+    inv(result.ref(), tf);
+    return result;
+}
+
+tmp<tensorField> inv(const SubField<tensor>& tf)
 {
     tmp<tensorField> result(new tensorField(tf.size()));
     inv(result.ref(), tf);

@@ -292,7 +292,7 @@ void Foam::solvers::XiFluid::bSolve
     {
         bReaction_->correct();
 
-        const PtrList<volScalarField::Internal> Yp(uThermo.prompt());
+        const PtrList<volScalarField::Internal> Yp(thermo_.prompt());
 
         forAll(Yb, i)
         {
@@ -552,7 +552,7 @@ void Foam::solvers::XiFluid::thermophysicalPredictor()
 
         if (thermo_.bThermo().Y().size())
         {
-            const PtrList<volScalarField::Internal> Yp(uThermo.prompt());
+            const PtrList<volScalarField::Internal> Yp(thermo_.prompt());
 
             // Approximate phic for Ybi boundary condition correction
             const surfaceScalarField phic("phic", phi);

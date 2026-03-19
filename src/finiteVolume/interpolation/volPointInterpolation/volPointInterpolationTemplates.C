@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -78,10 +78,9 @@ void Foam::volPointInterpolation::interpolateUnconstrained
     }
 
     // Get the boundary neighbour field
-    const typename VolField<Type>::Boundary vfBnf
+    const PtrList<Field<Type>> vfBnf
     (
-        VolField<Type>::null(),
-        vf.boundaryField().boundaryNeighbourField()
+        vf.boundaryField().coupledNeighbourField()
     );
 
     // Interpolate from the boundary faces
@@ -157,7 +156,7 @@ Foam::volPointInterpolation::interpolate
 ) const
 {
     const pointMesh& pm = pointMesh::New(vf.mesh());
-    const objectRegistry& db = pm.thisDb();
+    const objectRegistry& db = pm.db();
 
     if (!cache || vf.mesh().changing())
     {

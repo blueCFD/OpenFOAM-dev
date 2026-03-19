@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -905,21 +905,21 @@ Foam::extendedEdgeMesh::edgeTreesByType() const
 
         // External edges
         sliceEdges[0] =
-            identityMap(internalStart_ - externalStart_) + externalStart_;
+            identityMap(externalStart_, internalStart_ - externalStart_);
 
         // Internal edges
         sliceEdges[1] =
-            identityMap(flatStart_ - internalStart_) + internalStart_;
+            identityMap(internalStart_, flatStart_ - internalStart_);
 
         // Flat edges
-        sliceEdges[2] = identityMap(openStart_ - flatStart_) + flatStart_;
+        sliceEdges[2] = identityMap(flatStart_, openStart_ - flatStart_);
 
         // Open edges
-        sliceEdges[3] = identityMap(multipleStart_ - openStart_) + openStart_;
+        sliceEdges[3] = identityMap(openStart_, multipleStart_ - openStart_);
 
         // Multiple edges
         sliceEdges[4] =
-            identityMap(edges().size() - multipleStart_) + multipleStart_;
+            identityMap(multipleStart_, edges().size() - multipleStart_);
 
         forAll(edgeTreesByType_, i)
         {

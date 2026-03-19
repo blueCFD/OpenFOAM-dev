@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,8 +53,8 @@ Foam::DemandDrivenMeshObject<Mesh, MeshObjectType, Type>::DemandDrivenMeshObject
         IOobject
         (
             name,
-            mesh.thisDb().instance(),
-            mesh.thisDb()
+            mesh.db().instance(),
+            mesh.db()
         )
     ),
     MeshObjectType<Mesh>(*this),
@@ -83,7 +83,7 @@ Type& Foam::DemandDrivenMeshObject<Mesh, MeshObjectType, Type>::New
 {
     if (found(name, mesh))
     {
-        return mesh.thisDb().objectRegistry::template lookupObjectRef<Type>
+        return mesh.db().objectRegistry::template lookupObjectRef<Type>
         (
             name
         );
@@ -113,7 +113,7 @@ Type& Foam::DemandDrivenMeshObject<Mesh, MeshObjectType, Type>::New
 {
     if (found(mesh))
     {
-        return mesh.thisDb().objectRegistry::template lookupObjectRef<Type>
+        return mesh.db().objectRegistry::template lookupObjectRef<Type>
         (
             Type::typeName
         );
@@ -145,7 +145,7 @@ Type& Foam::DemandDrivenMeshObject<Mesh, MeshObjectType, Type>::New
 {
     if (found(name, mesh))
     {
-        return mesh.thisDb().objectRegistry::template lookupObjectRef<Type>
+        return mesh.db().objectRegistry::template lookupObjectRef<Type>
         (
             name
         );
@@ -177,7 +177,7 @@ Type& Foam::DemandDrivenMeshObject<Mesh, MeshObjectType, Type>::New
 {
     if (found(mesh))
     {
-        return mesh.thisDb().objectRegistry::template lookupObjectRef<Type>
+        return mesh.db().objectRegistry::template lookupObjectRef<Type>
         (
             Type::typeName
         );
@@ -225,7 +225,7 @@ bool Foam::DemandDrivenMeshObject<Mesh, MeshObjectType, Type>::found
     const Mesh& mesh
 )
 {
-    return mesh.thisDb().objectRegistry::template foundObject<Type>(name);
+    return mesh.db().objectRegistry::template foundObject<Type>(name);
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,8 +65,10 @@ Foam::fv::bXiTimedIgnition::bXiTimedIgnition
     (
         "combustionDuration", mesh().time().userUnits(), coeffs(dict), vGreat
     ),
-    reset_(!ignited())
-{}
+    reset_(true)
+{
+    reset_ = !ignited();
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

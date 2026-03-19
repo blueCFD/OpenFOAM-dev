@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,7 +55,7 @@ void Foam::processorPointPatch::initCalcGeometry(PstreamBuffers& pBufs)
 
     // Create the reversed patch and pick up its points
     // so that the order is correct
-    const polyPatch& pp = patch();
+    const polyPatch& pp = poly();
 
     faceList masterFaces(pp.size());
 
@@ -111,7 +111,7 @@ Foam::processorPointPatch::processorPointPatch
 )
 :
     coupledFacePointPatch(patch, bm),
-    procPolyPatch_(refCast<const processorPolyPatch>(patch))
+    processorPoly_(refCast<const processorPolyPatch>(patch))
 {}
 
 

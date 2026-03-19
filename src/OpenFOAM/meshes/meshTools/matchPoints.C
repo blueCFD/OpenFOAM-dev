@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,9 +31,9 @@ License
 
 bool Foam::matchPoints
 (
-    const UList<point>& pts0,
-    const UList<point>& pts1,
-    const UList<scalar>& matchDistances,
+    const Field<point>& pts0,
+    const Field<point>& pts1,
+    const Field<scalar>& matchDistances,
     const bool verbose,
     labelList& from0To1,
     const point& origin
@@ -55,7 +55,6 @@ bool Foam::matchPoints
     }
 
     SortableList<scalar> pts0MagSqr(magSqr(pts0 - compareOrigin));
-
     SortableList<scalar> pts1MagSqr(magSqr(pts1 - compareOrigin));
 
     forAll(pts0MagSqr, i)
@@ -141,11 +140,11 @@ bool Foam::matchPoints
 
 bool Foam::matchPoints
 (
-    const UList<point>& pts0,
-    const UList<point>& pts1,
-    const UList<point>& pts0Dir,
-    const UList<point>& pts1Dir,
-    const UList<scalar>& matchDistances,
+    const Field<point>& pts0,
+    const Field<point>& pts1,
+    const Field<point>& pts0Dir,
+    const Field<point>& pts1Dir,
+    const Field<scalar>& matchDistances,
     const bool verbose,
     labelList& from0To1,
     const point& origin
@@ -167,7 +166,6 @@ bool Foam::matchPoints
     }
 
     SortableList<scalar> pts0MagSqr(magSqr(pts0 - compareOrigin));
-
     SortableList<scalar> pts1MagSqr(magSqr(pts1 - compareOrigin));
 
     forAll(pts0MagSqr, i)

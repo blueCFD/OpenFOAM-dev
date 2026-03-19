@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -138,8 +138,8 @@ public:
 
             //- Find nearest points that are on all supplied surfaces
             //  (nearest point if single surface; nearest intersection by
-            //   steepst descent if on multiple surfaces). Returns current
-            //   best guess). Wip.
+            //  steepest descent if on multiple surfaces). Returns current
+            //  best guess).
             static void findNearest
             (
                 const PtrList<searchableSurface>& allSurfaces,

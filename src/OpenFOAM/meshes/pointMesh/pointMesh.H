@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,11 +32,11 @@ Description
 #ifndef pointMesh_H
 #define pointMesh_H
 
-#include "GeoMesh.T.H"
 #include "DemandDrivenMeshObject.T.H"
 #include "polyMesh.H"
 #include "pointBoundaryMesh.H"
 #include "pointFieldsFwd.H"
+#include "SlicedDimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,13 +49,18 @@ namespace Foam
 
 class pointMesh
 :
-    public DemandDrivenMeshObject<polyMesh, PermanentMeshObject, pointMesh>,
-    public GeoMesh<polyMesh>
+    public DemandDrivenMeshObject<polyMesh, PermanentMeshObject, pointMesh>
 {
     // Private Data
 
+        //- Reference to polyMesh
+        const polyMesh& mesh_;
+
         //- Boundary mesh
         pointBoundaryMesh boundary_;
+
+        //- Dimensioned points
+        mutable autoPtr<SlicedDimensionedField<point, pointMesh>> pointsPtr_;
 
 
 protected:
@@ -85,6 +90,9 @@ public:
 
         //- Boundary mesh type
         typedef pointBoundaryMesh BoundaryMesh;
+
+        //- Zone type
+        typedef pointZone Zone;
 
         //- Patch field type
         template<class Type>
@@ -120,17 +128,20 @@ public:
 
     // Member Functions
 
-        //- Return number of points
-        label size() const
+        //- Access the corresponding polyhedral geometry
+        const polyMesh& poly() const
         {
-            return size(*this);
+            return mesh_;
         }
 
         //- Return number of points
-        static label size(const Mesh& mesh)
+        label size() const
         {
-            return mesh.GeoMesh<polyMesh>::mesh_.nPoints();
+            return mesh_.nPoints();
         }
+
+        //- Return point locations
+        const DimensionedField<vector, pointMesh>& C() const;
 
         //- Return reference to boundary mesh
         const pointBoundaryMesh& boundary() const
@@ -141,13 +152,13 @@ public:
         //- Return parallel info
         const globalMeshData& globalData() const
         {
-            return GeoMesh<polyMesh>::mesh_.globalData();
+            return mesh_.globalData();
         }
 
         //- Return database. For now is its polyMesh.
-        const objectRegistry& thisDb() const
+        const objectRegistry& db() const
         {
-            return GeoMesh<polyMesh>::mesh_.thisDb();
+            return mesh_.db();
         }
 
         //- Reset pointMesh with respect to the updated polyMesh
@@ -182,6 +193,12 @@ public:
 
 
     // Member Operators
+
+        //- Return reference to polyMesh
+        const polyMesh& operator()() const
+        {
+            return mesh_;
+        }
 
         //- Disallow default bitwise assignment
         void operator=(const pointMesh&) = delete;

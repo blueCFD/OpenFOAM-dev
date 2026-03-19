@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -142,7 +142,7 @@ Foam::solvers::isothermalFilm::contactForce(const volScalarField& sigma) const
 
                     // Estimate the length of the contact line across the face
                     scalar clen = 0;
-                    const face& f(p.patch()[facei]);
+                    const face& f(p.poly()[facei]);
                     forAll(f, i)
                     {
                         clen += mag

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -356,6 +356,7 @@ Foam::fvMesh::fvMesh
 )
 :
     polyMesh(io),
+    surfaceMesh(*this),
     surfaceInterpolation(*this),
     boundary_(*this, boundaryMesh()),
     stitcher_(nullptr),
@@ -419,6 +420,7 @@ Foam::fvMesh::fvMesh
         defaultBoundaryPatchType,
         syncPar
     ),
+    surfaceMesh(*this),
     surfaceInterpolation(*this),
     boundary_(*this, boundaryMesh()),
     stitcher_(nullptr),
@@ -471,6 +473,7 @@ Foam::fvMesh::fvMesh
         std::move(allNeighbour),
         syncPar
     ),
+    surfaceMesh(*this),
     surfaceInterpolation(*this),
     boundary_(*this, boundaryMesh()),
     stitcher_(nullptr),
@@ -521,6 +524,7 @@ Foam::fvMesh::fvMesh
         std::move(cells),
         syncPar
     ),
+    surfaceMesh(*this),
     surfaceInterpolation(*this),
     boundary_(*this),
     stitcher_(nullptr),
@@ -557,6 +561,7 @@ Foam::fvMesh::fvMesh
 Foam::fvMesh::fvMesh(fvMesh&& mesh)
 :
     polyMesh(Foam::move(mesh)),
+    surfaceMesh(*this),
     surfaceInterpolation(Foam::move(mesh)),
     boundary_(Foam::move(mesh.boundary_)),
     stitcher_(Foam::move(mesh.stitcher_)),
@@ -630,7 +635,7 @@ void Foam::fvMesh::postConstruct
         // and set the storage of V00
         if (fileHandler().isFile(time().timePath()/"Vc0"))
         {
-            V0Ptr_ = new DimensionedField<scalar, volMesh>
+            V0Ptr_ = new DimensionedField<scalar, fvMesh>
             (
                 IOobject
                 (
@@ -1155,7 +1160,7 @@ void Foam::fvMesh::mapFields(const polyTopoChangeMap& map)
 
     // Map all the volFields in the objectRegistry
     #define mapVolFieldType(Type, nullArg)                                     \
-        MapGeometricFields<Type, fvMeshMapper, volMesh>(fvMap);
+        MapGeometricFields<Type, fvMeshMapper, fvMesh>(fvMap);
     FOR_ALL_FIELD_TYPES(mapVolFieldType);
 
     // Map all the surfaceFields in the objectRegistry
@@ -1165,7 +1170,7 @@ void Foam::fvMesh::mapFields(const polyTopoChangeMap& map)
 
     // Map all the dimensionedFields in the objectRegistry
     #define mapVolInternalFieldType(Type, nullArg)                             \
-        MapDimensionedFields<Type, fvMeshMapper, volMesh>(fvMap);
+        MapDimensionedFields<Type, fvMeshMapper, fvMesh>(fvMap);
     FOR_ALL_FIELD_TYPES(mapVolInternalFieldType);
 
     if (pointMesh::found(*this))
@@ -1222,7 +1227,7 @@ Foam::tmp<Foam::scalarField> Foam::fvMesh::movePoints(const pointField& p)
         // If old-old-volumes are necessary then copy them from the old-volumes
         if (Foam::isNull(V00Ptr_))
         {
-            V00Ptr_ = new DimensionedField<scalar, volMesh>
+            V00Ptr_ = new DimensionedField<scalar, fvMesh>
             (
                 IOobject
                 (
@@ -1240,7 +1245,7 @@ Foam::tmp<Foam::scalarField> Foam::fvMesh::movePoints(const pointField& p)
         // Copy old-volumes from the volumes
         if (!V0Ptr_ || Foam::isNull(V0Ptr_))
         {
-            V0Ptr_ = new DimensionedField<scalar, volMesh>
+            V0Ptr_ = new DimensionedField<scalar, fvMesh>
             (
                 IOobject
                 (
@@ -1639,7 +1644,7 @@ void Foam::fvMesh::addPatch
     #define AddPatchFieldsType(Type, FieldType, DefaultPatchFieldType)         \
         AddPatchFields<FieldType<Type>>                                        \
         (                                                                      \
-            const_cast<objectRegistry&>(thisDb()),                             \
+            const_cast<objectRegistry&>(db()),                             \
             insertPatchi,                                                      \
             DefaultPatchFieldType                                              \
         );
@@ -1672,7 +1677,7 @@ void Foam::fvMesh::reorderPatches
     #define ReorderPatchFieldsType(Type, FieldType)                            \
         ReorderPatchFields<FieldType<Type>>                                    \
         (                                                                      \
-            const_cast<objectRegistry&>(thisDb()),                             \
+            const_cast<objectRegistry&>(db()),                             \
             newToOld                                                           \
         );
     FOR_ALL_FIELD_TYPES(ReorderPatchFieldsType, VolField);
@@ -1817,6 +1822,16 @@ bool Foam::fvMesh::operator!=(const fvMesh& bm) const
 bool Foam::fvMesh::operator==(const fvMesh& bm) const
 {
     return &bm == this;
+}
+
+
+
+// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
+
+const Foam::fvMesh& Foam::region(const dictionary& dict)
+{
+    const IOobject& io = refCast<const IOobject>(dict);
+    return refCast<const fvMesh>(io.db());
 }
 
 

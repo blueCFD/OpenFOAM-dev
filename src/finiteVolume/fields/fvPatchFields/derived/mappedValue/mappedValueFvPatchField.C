@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ Foam::mappedValueFvPatchField<Type>::mapper() const
     return
         mapperPtr_.valid()
       ? mapperPtr_()
-      : mappedPatchBase::getMap(this->patch().patch());
+      : mappedPatchBase::getMap(this->patch().poly());
 }
 
 
@@ -104,7 +104,7 @@ template<class Type>
 Foam::mappedValueFvPatchField<Type>::mappedValueFvPatchField
 (
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF
+    const DimensionedField<Type, fvMesh>& iF
 )
 :
     fixedValueFvPatchField<Type>(p, iF),
@@ -119,7 +119,7 @@ template<class Type>
 Foam::mappedValueFvPatchField<Type>::mappedValueFvPatchField
 (
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -140,19 +140,19 @@ Foam::mappedValueFvPatchField<Type>::mappedValueFvPatchField
         mappedPatchBase::specified(dict)
       ? new mappedPatchBase
         (
-            p.patch(),
+            p.poly(),
             dict,
             mappedPatchBase::transformType::specified
         )
       : nullptr
     )
 {
-    if (!mapperPtr_.valid() && !isA<mappedPatchBase>(p.patch()))
+    if (!mapperPtr_.valid() && !isA<mappedPatchBase>(p.poly()))
     {
         OStringStream str;
         str << "Field " << this->internalField().name() << " of type "
             << type() << " on patch " << this->patch().name()
-            << " of type " << p.patch().type() << " does not "
+            << " of type " << p.poly().type() << " does not "
             << "have mapping specified (i.e., neighbourPatch, and/or "
             << "neighbourRegion entries) nor is the patch of "
             << mappedPolyPatch::typeName << " type";
@@ -179,7 +179,7 @@ Foam::mappedValueFvPatchField<Type>::mappedValueFvPatchField
 (
     const mappedValueFvPatchField<Type>& ptf,
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -190,7 +190,7 @@ Foam::mappedValueFvPatchField<Type>::mappedValueFvPatchField
     mapperPtr_
     (
         ptf.mapperPtr_.valid()
-      ? new mappedPatchBase(p.patch(), ptf.mapperPtr_())
+      ? new mappedPatchBase(p.poly(), ptf.mapperPtr_())
       : nullptr
     )
 {}
@@ -200,7 +200,7 @@ template<class Type>
 Foam::mappedValueFvPatchField<Type>::mappedValueFvPatchField
 (
     const mappedValueFvPatchField<Type>& ptf,
-    const DimensionedField<Type, volMesh>& iF
+    const DimensionedField<Type, fvMesh>& iF
 )
 :
     fixedValueFvPatchField<Type>(ptf, iF),
@@ -210,7 +210,7 @@ Foam::mappedValueFvPatchField<Type>::mappedValueFvPatchField
     mapperPtr_
     (
         ptf.mapperPtr_.valid()
-      ? new mappedPatchBase(ptf.patch().patch(), ptf.mapperPtr_())
+      ? new mappedPatchBase(ptf.patch().poly(), ptf.mapperPtr_())
       : nullptr
     )
 {}

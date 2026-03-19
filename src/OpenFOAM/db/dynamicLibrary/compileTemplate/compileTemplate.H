@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,6 @@ License
 #define compileTemplate_H
 
 #include "codedBase.H"
-#include "dynamicCode.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -42,7 +41,7 @@ class compileTemplate
 :
     public codedBase
 {
-    // Private Member Data
+    // Private Data
 
         //- Keywords associated with source code
         static const wordList codeKeys;
@@ -50,8 +49,8 @@ class compileTemplate
         //- Name of the dictionary variables in the source code
         static const wordList codeDictVars;
 
-        //- Name of the class Thermo basicThermo is instantiated on
-        const word templateName_;
+        //- Files to copy and filter and compile
+        static wordList compileFiles_;
 
         //- List of template argument substitutions
         const List<Pair<word>> substitutions_;
@@ -68,15 +67,7 @@ class compileTemplate
             const word& templateName
         ) const;
 
-        void setFilterVariable
-        (
-            dynamicCode& dynCode,
-            const dynamicCodeContext& context,
-            const Pair<word>& substitution
-        ) const;
-
-        //- Adapt the context for the current object
-        virtual void prepare(dynamicCode&, const dynamicCodeContext&) const;
+        void setSubstitution(const Pair<word>& substitution);
 
 
 public:

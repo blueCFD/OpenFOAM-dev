@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ Foam::nonConformalProcessorCyclicFvPatch::nonConformalProcessorCyclicFvPatch
 :
     processorCyclicFvPatch(patch, bm),
     nonConformalCoupledFvPatch(static_cast<const fvPatch&>(*this)),
-    nonConformalProcessorCyclicPolyPatch_
+    nonConformalProcessorCyclicPoly_
     (
         refCast<const nonConformalProcessorCyclicPolyPatch>(patch)
     )
@@ -66,14 +66,6 @@ Foam::nonConformalProcessorCyclicFvPatch::~nonConformalProcessorCyclicFvPatch()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-const Foam::nonConformalProcessorCyclicPolyPatch&
-Foam::nonConformalProcessorCyclicFvPatch::
-nonConformalProcessorCyclicPatch() const
-{
-    return nonConformalProcessorCyclicPolyPatch_;
-}
-
 
 Foam::label Foam::nonConformalProcessorCyclicFvPatch::start() const
 {

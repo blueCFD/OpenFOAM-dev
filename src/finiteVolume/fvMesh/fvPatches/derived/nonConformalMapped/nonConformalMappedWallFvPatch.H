@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,7 +65,7 @@ class nonConformalMappedWallFvPatch
     // Private Data
 
         //- Reference to the polyPatch
-        const nonConformalMappedWallPolyPatch& nonConformalMappedWallPolyPatch_;
+        const nonConformalMappedWallPolyPatch& nonConformalMappedWallPoly_;
 
 
 public:
@@ -92,12 +92,9 @@ public:
 
         // Access
 
-            //- Inherit wallFvPatch patch method
-            using wallFvPatch::patch;
-
             //- Poly patch
             const nonConformalMappedWallPolyPatch&
-                nonConformalMappedWallPatch() const;
+                nonConformalMappedWallPoly() const;
 
             //- Neighbour patch
             const nonConformalMappedWallFvPatch& nbrPatch() const;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -186,7 +186,7 @@ void Foam::vtkPVFoam::convertVolFields
                 )
             )
             {
-                fvPatch p(ptf.patch().patch(), tf.mesh().boundary());
+                fvPatch p(ptf.patch().poly(), tf.mesh().boundary());
 
                 tmp<Field<Type>> tpptf
                 (

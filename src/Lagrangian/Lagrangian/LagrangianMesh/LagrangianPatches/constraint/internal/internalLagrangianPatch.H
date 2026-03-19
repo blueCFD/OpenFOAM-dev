@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ private:
     // Private Data
 
         //- Reference to the internal poly patch
-        const internalPolyPatch& internalPatch_;
+        const internalPolyPatch& internalPoly_;
 
 
 public:
@@ -77,15 +77,6 @@ public:
 
     //- Destructor
     virtual ~internalLagrangianPatch();
-
-
-    // Member Functions
-
-        //- Return the internal patch
-        const internalPolyPatch& internalPatch() const
-        {
-            return internalPatch_;
-        }
 };
 
 

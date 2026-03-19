@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,25 +37,17 @@ SourceFiles
 #define fvPatch_H
 
 #include "polyPatch.H"
-#include "labelList.H"
-#include "SubList.T.H"
-#include "typeInfo.T.H"
-#include "tmp.H"
-#include "tmpNrc.H"
-#include "primitiveFields.H"
-#include "SubField.T.H"
 #include "fvPatchFieldsFwd.H"
-#include "autoPtr.H"
-#include "runTimeSelectionTables.H"
+#include "SlicedDimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
+class fvMesh;
 class fvBoundaryMesh;
-class objectRegistry;
-class surfaceInterpolation;
+class faceZone;
 
 /*---------------------------------------------------------------------------*\
                            Class fvPatch Declaration
@@ -66,13 +58,28 @@ class fvPatch
     // Private Data
 
         //- Reference to the underlying polyPatch
-        const polyPatch& polyPatch_;
+        const polyPatch& poly_;
 
         //- Reference to boundary mesh
         const fvBoundaryMesh& boundaryMesh_;
 
+        //- Dimensioned face centres
+        mutable autoPtr<SlicedDimensionedField<vector, fvPatch>> CPtr_;
+
 
 public:
+
+    // Public Typedefs
+
+        //- Mesh type
+        typedef fvMesh Mesh;
+
+        //- Boundary mesh type
+        typedef fvBoundaryMesh BoundaryMesh;
+
+        //- Zone type
+        typedef faceZone Zone;
+
 
     //- Runtime type information
     TypeName(polyPatch::typeName_());
@@ -118,33 +125,33 @@ public:
         // Access
 
             //- Return the polyPatch
-            const polyPatch& patch() const
+            const polyPatch& poly() const
             {
-                return polyPatch_;
+                return poly_;
             }
 
             //- Return name
             virtual const word& name() const
             {
-                return polyPatch_.name();
+                return poly_.name();
             }
 
             //- Return start label of this patch in the polyMesh face list
             virtual label start() const
             {
-                return polyPatch_.start();
+                return poly_.start();
             }
 
             //- Return size
             virtual label size() const
             {
-                return polyPatch_.size();
+                return poly_.size();
             }
 
             //- Return true if this patch is coupled
             virtual bool coupled() const
             {
-                return polyPatch_.coupled();
+                return poly_.coupled();
             }
 
             //- Return true if the given type is a constraint type
@@ -156,17 +163,20 @@ public:
             //- Return the index of this patch in the fvBoundaryMesh
             label index() const
             {
-                return polyPatch_.index();
+                return poly_.index();
             }
+
+            //- Return the local object registry
+            const objectRegistry& db() const;
+
+            //- Return mesh reference
+            const fvMesh& mesh() const;
 
             //- Return boundaryMesh reference
             const fvBoundaryMesh& boundaryMesh() const
             {
                 return boundaryMesh_;
             }
-
-            //- Return the local object registry
-            const objectRegistry& db() const;
 
             //- Slice list to patch
             template<class T>
@@ -183,6 +193,9 @@ public:
 
             //- Return face centres
             const vectorField& Cf() const;
+
+            //- Return dimensioned face centres
+            const DimensionedField<vector, fvPatch>& C() const;
 
             //- Return neighbour cell centres
             tmp<vectorField> Cn() const;
@@ -258,6 +271,9 @@ public:
 
         //- Disallow default bitwise assignment
         void operator=(const fvPatch&) = delete;
+
+        //- Return reference to fvMesh
+        const fvMesh& operator()() const;
 };
 
 

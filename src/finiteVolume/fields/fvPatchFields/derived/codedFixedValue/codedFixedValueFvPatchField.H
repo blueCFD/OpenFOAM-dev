@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -106,13 +106,16 @@ class codedFixedValueFvPatchField
         //- Name of the dictionary variables in the source code
         static const wordList codeDictVars;
 
+        // Name of the code options template file
+        static const word codeOptions;
+
+        // Names of the source files to compile
+        static const wordList compileFiles;
+
+        // Names of the source files to copy (header files)
+        static const wordList copyFiles;
+
         mutable autoPtr<fvPatchField<Type>> redirectPatchFieldPtr_;
-
-
-    // Private Member Functions
-
-        //- Adapt the context for the current object
-        virtual void prepare(dynamicCode&, const dynamicCodeContext&) const;
 
 
 public:
@@ -127,7 +130,7 @@ public:
         codedFixedValueFvPatchField
         (
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
+            const DimensionedField<Type, fvMesh>&,
             const dictionary&
         );
 
@@ -137,7 +140,7 @@ public:
         (
             const codedFixedValueFvPatchField<Type>&,
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
+            const DimensionedField<Type, fvMesh>&,
             const fieldMapper&
         );
 
@@ -152,13 +155,13 @@ public:
         codedFixedValueFvPatchField
         (
             const codedFixedValueFvPatchField<Type>&,
-            const DimensionedField<Type, volMesh>&
+            const DimensionedField<Type, fvMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
         virtual tmp<fvPatchField<Type>> clone
         (
-            const DimensionedField<Type, volMesh>& iF
+            const DimensionedField<Type, fvMesh>& iF
         ) const
         {
             return tmp<fvPatchField<Type>>

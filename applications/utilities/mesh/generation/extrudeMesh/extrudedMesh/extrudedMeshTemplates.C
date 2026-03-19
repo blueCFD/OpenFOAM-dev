@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -126,7 +126,7 @@ Foam::faceList Foam::extrudedMesh::extrudedFaces
                 eFaces[facei++] =
                     face
                     (
-                        surfaceFaces[i] //.reverseFace()
+                        SubField<label>(surfaceFaces[i])
                       + nextLayerOffset
                     );
             }
@@ -177,7 +177,7 @@ Foam::faceList Foam::extrudedMesh::extrudedFaces
         eFaces[facei++] =
             face
             (
-                surfaceFaces[i]
+                SubField<label>(surfaceFaces[i])
               + nLayers*surfacePoints.size()
             );
     }

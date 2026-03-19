@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,12 +47,12 @@ namespace Foam
 
 Foam::internalLagrangianPatch::internalLagrangianPatch
 (
-    const polyPatch& patch,
+    const polyPatch& poly,
     const LagrangianBoundaryMesh& boundaryMesh
 )
 :
-    LagrangianPatch(patch, boundaryMesh),
-    internalPatch_(refCast<const internalPolyPatch>(patch))
+    LagrangianPatch(poly, boundaryMesh),
+    internalPoly_(refCast<const internalPolyPatch>(poly))
 {}
 
 

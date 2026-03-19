@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -159,8 +159,11 @@ class regionSizeDistribution
 
         //- Get data in order
         template<class Type>
-        List<Type> extractData(const UList<label>& keys, const Map<Type>&)
-        const;
+        tmp<Field<Type>> extractData
+        (
+            const UList<label>& keys,
+            const Map<Type>&
+        ) const;
 
         //- Write volfields with the parts of alpha which are not
         //  droplets (liquidCore, backGround)

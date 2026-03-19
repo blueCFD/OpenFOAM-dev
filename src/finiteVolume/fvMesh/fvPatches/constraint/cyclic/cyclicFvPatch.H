@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,8 @@ class cyclicFvPatch
 {
     // Private Data
 
-        const cyclicPolyPatch& cyclicPolyPatch_;
+        //- Reference to the corresponding cyclicPolyPatch
+        const cyclicPolyPatch& cyclicPoly_;
 
 
 protected:
@@ -79,7 +80,7 @@ public:
         cyclicFvPatch(const polyPatch& patch, const fvBoundaryMesh& bm)
         :
             coupledFvPatch(patch, bm),
-            cyclicPolyPatch_(refCast<const cyclicPolyPatch>(patch))
+            cyclicPoly_(refCast<const cyclicPolyPatch>(patch))
         {}
 
 
@@ -87,21 +88,15 @@ public:
 
         // Access
 
-            //- Return local reference cast into the cyclic patch
-            const cyclicPolyPatch& cyclicPatch() const
-            {
-                return cyclicPolyPatch_;
-            }
-
             //- Return neighbour
             virtual label nbrPatchIndex() const
             {
-                return cyclicPolyPatch_.nbrPatchIndex();
+                return cyclicPoly_.nbrPatchIndex();
             }
 
             virtual bool owner() const
             {
-                return cyclicPolyPatch_.owner();
+                return cyclicPoly_.owner();
             }
 
             //- Return processor number
@@ -109,21 +104,21 @@ public:
             {
                 return refCast<const cyclicFvPatch>
                 (
-                    this->boundaryMesh()[cyclicPolyPatch_.nbrPatchIndex()]
+                    this->boundaryMesh()[cyclicPoly_.nbrPatchIndex()]
                 );
             }
 
             //- Return transformation between the coupled patches
             virtual const transformer& transform() const
             {
-                return cyclicPolyPatch_.transform();
+                return cyclicPoly_.transform();
             }
 
             const cyclicFvPatch& neighbFvPatch() const
             {
                 return refCast<const cyclicFvPatch>
                 (
-                    this->boundaryMesh()[cyclicPolyPatch_.nbrPatchIndex()]
+                    this->boundaryMesh()[cyclicPoly_.nbrPatchIndex()]
                 );
             }
 

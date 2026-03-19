@@ -51,12 +51,9 @@ ${localCode}
 
 extern "C"
 {
-    // dynamicCode:
-    // SHA1 = ${SHA1sum}
-    //
-    // unique function name that can be checked if the correct library version
-    // has been loaded
-    void ${typeName}_${SHA1sum}(bool load)
+    // Unique function name that can be checked
+    // to ensure the correct library version has been loaded
+    void ${uniqueFunctionName}(bool load)
     {
         if (load)
         {
@@ -88,7 +85,7 @@ ${typeName}FixedValueFvPatch${FieldType}::
 ${typeName}FixedValueFvPatch${FieldType}
 (
     const fvPatch& p,
-    const DimensionedField<${TemplateType}, volMesh>& iF,
+    const DimensionedField<${TemplateType}, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -107,7 +104,7 @@ ${typeName}FixedValueFvPatch${FieldType}
 (
     const ${typeName}FixedValueFvPatch${FieldType}& ptf,
     const fvPatch& p,
-    const DimensionedField<${TemplateType}, volMesh>& iF,
+    const DimensionedField<${TemplateType}, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -125,7 +122,7 @@ ${typeName}FixedValueFvPatch${FieldType}::
 ${typeName}FixedValueFvPatch${FieldType}
 (
     const ${typeName}FixedValueFvPatch${FieldType}& ptf,
-    const DimensionedField<${TemplateType}, volMesh>& iF
+    const DimensionedField<${TemplateType}, fvMesh>& iF
 )
 :
     fixedValueFvPatchField<${TemplateType}>(ptf, iF)

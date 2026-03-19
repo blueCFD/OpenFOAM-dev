@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,6 +74,9 @@ class wallBoilingPhaseChangeRateFvPatchScalarField
 
     // Private Data
 
+        //- Mask which indicates which faces are boiling
+        scalarField boiling_;
+
         //- Wall liquid fraction
         scalarField wetFraction_;
 
@@ -115,14 +118,14 @@ public:
         wallBoilingPhaseChangeRateFvPatchScalarField
         (
             const fvPatch&,
-            const DimensionedField<scalar, volMesh>&
+            const DimensionedField<scalar, fvMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
         wallBoilingPhaseChangeRateFvPatchScalarField
         (
             const fvPatch&,
-            const DimensionedField<scalar, volMesh>&,
+            const DimensionedField<scalar, fvMesh>&,
             const dictionary&
         );
 
@@ -133,7 +136,7 @@ public:
         (
             const wallBoilingPhaseChangeRateFvPatchScalarField&,
             const fvPatch&,
-            const DimensionedField<scalar, volMesh>&,
+            const DimensionedField<scalar, fvMesh>&,
             const fieldMapper&
         );
 
@@ -147,13 +150,13 @@ public:
         wallBoilingPhaseChangeRateFvPatchScalarField
         (
             const wallBoilingPhaseChangeRateFvPatchScalarField&,
-            const DimensionedField<scalar, volMesh>&
+            const DimensionedField<scalar, fvMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
         virtual tmp<fvPatchScalarField> clone
         (
-            const DimensionedField<scalar, volMesh>& iF
+            const DimensionedField<scalar, fvMesh>& iF
         ) const
         {
             return tmp<fvPatchScalarField>

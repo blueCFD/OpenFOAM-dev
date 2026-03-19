@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ class processorCyclicPointPatch
 {
     // Private Data
 
-        const processorCyclicPolyPatch& procCycPolyPatch_;
+        const processorCyclicPolyPatch& processorCyclicPoly_;
 
 
 public:
@@ -94,13 +94,7 @@ public:
         //- Return message tag to use for communication
         virtual int tag() const
         {
-            return procCycPolyPatch_.tag();
-        }
-
-        //- Return the underlying processorCyclicPolyPatch
-        const processorCyclicPolyPatch& procCyclicPolyPatch() const
-        {
-            return procCycPolyPatch_;
+            return processorCyclicPoly_.tag();
         }
 
 

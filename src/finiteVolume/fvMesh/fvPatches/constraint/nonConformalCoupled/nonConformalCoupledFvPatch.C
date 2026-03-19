@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,9 +89,9 @@ Foam::nonConformalCoupledFvPatch::nonConformalCoupledFvPatch
 :
     nonConformalFvPatch(patch),
     patch_(refCast<const coupledFvPatch>(patch)),
-    nonConformalCoupledPolyPatch_
+    nonConformalCoupledPoly_
     (
-        refCast<const nonConformalCoupledPolyPatch>(patch.patch())
+        refCast<const nonConformalCoupledPolyPatch>(patch.poly())
     )
 {}
 
@@ -107,37 +107,37 @@ Foam::nonConformalCoupledFvPatch::~nonConformalCoupledFvPatch()
 const Foam::nonConformalCoupledPolyPatch&
 Foam::nonConformalCoupledFvPatch::nonConformalCoupledPatch() const
 {
-    return nonConformalCoupledPolyPatch_;
+    return nonConformalCoupledPoly_;
 }
 
 
 bool Foam::nonConformalCoupledFvPatch::owner() const
 {
-    return nonConformalCoupledPolyPatch_.owner();
+    return nonConformalCoupledPoly_.owner();
 }
 
 
 bool Foam::nonConformalCoupledFvPatch::neighbour() const
 {
-    return nonConformalCoupledPolyPatch_.neighbour();
+    return nonConformalCoupledPoly_.neighbour();
 }
 
 
 const Foam::transformer& Foam::nonConformalCoupledFvPatch::transform() const
 {
-    return nonConformalCoupledPolyPatch_.transform();
+    return nonConformalCoupledPoly_.transform();
 }
 
 
 const Foam::word& Foam::nonConformalCoupledFvPatch::errorPatchName() const
 {
-    return nonConformalCoupledPolyPatch_.errorPatchName();
+    return nonConformalCoupledPoly_.errorPatchName();
 }
 
 
 Foam::label Foam::nonConformalCoupledFvPatch::errorPatchIndex() const
 {
-    return nonConformalCoupledPolyPatch_.errorPatchIndex();
+    return nonConformalCoupledPoly_.errorPatchIndex();
 }
 
 

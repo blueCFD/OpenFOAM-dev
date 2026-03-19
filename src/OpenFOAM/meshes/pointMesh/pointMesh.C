@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "pointMesh.H"
 #include "globalMeshData.H"
 #include "pointFields.H"
+#include "SubField.T.H"
 #include "facePointPatch.H"
 #include "MapGeometricFields.T.H"
 
@@ -46,7 +47,7 @@ const Foam::HashSet<Foam::word> Foam::pointMesh::curGeometryFields;
 Foam::pointMesh::pointMesh(const polyMesh& pMesh)
 :
     DemandDrivenMeshObject<polyMesh, PermanentMeshObject, pointMesh>(pMesh),
-    GeoMesh<polyMesh>(pMesh),
+    mesh_(pMesh),
     boundary_(*this, pMesh.boundaryMesh())
 {
     if (debug)
@@ -76,6 +77,32 @@ Foam::pointMesh::~pointMesh()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+const Foam::DimensionedField<Foam::vector, Foam::pointMesh>&
+Foam::pointMesh::C() const
+{
+    if (!pointsPtr_.valid())
+    {
+        pointsPtr_ = new SlicedDimensionedField<vector, pointMesh>
+        (
+            IOobject
+            (
+                "points",
+                time().name(),
+                *this,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                true
+            ),
+            *this,
+            dimLength,
+            mesh_.points()
+        );
+    }
+
+    return *pointsPtr_;
+}
+
+
 bool Foam::pointMesh::movePoints()
 {
     if (debug)
@@ -84,7 +111,7 @@ bool Foam::pointMesh::movePoints()
             << "Moving points." << endl;
     }
 
-    boundary_.movePoints(GeoMesh<polyMesh>::mesh_.points());
+    boundary_.movePoints(mesh_.points());
 
     return true;
 }
@@ -97,6 +124,8 @@ void Foam::pointMesh::topoChange(const polyTopoChangeMap& map)
         Pout<< "pointMesh::topoChange(const polyTopoChangeMap&): "
             << "Topology change." << endl;
     }
+
+    pointsPtr_.clear();
     boundary_.topoChange();
 }
 
@@ -108,6 +137,8 @@ void Foam::pointMesh::mapMesh(const polyMeshMap& map)
         Pout<< "pointMesh::mapMesh(const polyMeshMap&): "
             << "Mesh mapping." << endl;
     }
+
+    pointsPtr_.clear();
     boundary_.topoChange();
 }
 
@@ -119,6 +150,8 @@ void Foam::pointMesh::distribute(const polyDistributionMap& map)
         Pout<< "pointMesh::distribute(const polyDistributionMap&): "
             << "Distribute." << endl;
     }
+
+    pointsPtr_.clear();
     boundary_.topoChange();
 }
 
@@ -140,7 +173,7 @@ void Foam::pointMesh::reorderPatches
     #define ReorderPatchFieldsType(Type, nullArg)                              \
         ReorderPatchFields<PointField<Type>>                                   \
         (                                                                      \
-            const_cast<objectRegistry&>(thisDb()),                             \
+            const_cast<objectRegistry&>(db()),                             \
             newToOld                                                           \
         );
     FOR_ALL_FIELD_TYPES(ReorderPatchFieldsType);
@@ -171,7 +204,7 @@ void Foam::pointMesh::addPatch(const label patchi)
     #define AddPatchFieldsType(Type, nullArg)                                  \
         AddPatchFields<PointField<Type>>                                       \
         (                                                                      \
-            const_cast<objectRegistry&>(thisDb()),                             \
+            const_cast<objectRegistry&>(db()),                             \
             patchi,                                                            \
             calculatedPointPatchField<scalar>::typeName                        \
         );

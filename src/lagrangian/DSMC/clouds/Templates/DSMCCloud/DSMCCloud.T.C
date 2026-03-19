@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -1102,9 +1102,9 @@ void Foam::DSMCCloud<ParcelType>::dumpParticlePositions() const
 {
     OFstream pObj
     (
-        this->db().time().path()/"parcelPositions_"
+        this->time().path()/"parcelPositions_"
       + this->name() + "_"
-      + this->db().time().name() + ".obj"
+      + this->time().name() + ".obj"
     );
 
     forAllConstIter(typename DSMCCloud<ParcelType>, *this, iter)

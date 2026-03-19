@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,32 +25,66 @@ Class
     Foam::surfaceMesh
 
 Description
-    Mesh data needed to do the Finite Volume discretisation.
+    Mesh data for surface fields
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceMesh_H
 #define surfaceMesh_H
 
-#include "GeoMesh.T.H"
-#include "fvMesh.H"
+#include "fvBoundaryMesh.H"
+#include "GeometricFieldSources.T.H"
+#include "fvsPatchFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
+class fvMesh;
+    // class fvBoundaryMesh;
+class faceZone;
+
 /*---------------------------------------------------------------------------*\
                          Class surfaceMesh Declaration
 \*---------------------------------------------------------------------------*/
 
 class surfaceMesh
-:
-    public GeoMesh<fvMesh>
 {
+    // Private Data
+
+        //- Reference to fvMesh
+        const fvMesh& mesh_;
+
+
+protected:
+
+    // Constructors
+
+        //- Construct from fvMesh
+        explicit surfaceMesh(const fvMesh& mesh)
+        :
+            mesh_(mesh)
+        {}
+
+
 public:
 
+    // Destructor
+    virtual ~surfaceMesh()
+    {}
+
+
     // Public typedefs
+
+        //- Mesh type
+        typedef fvMesh Mesh;
+
+        //- Boundary mesh type
+        typedef fvBoundaryMesh BoundaryMesh;
+
+        //- Zone type
+        typedef faceZone Zone;
 
         //- Patch field type
         template<class Type>
@@ -61,34 +95,29 @@ public:
         using FieldSource = NoFieldSource<Type>;
 
 
-    // Constructors
-
-        //- Construct from fvMesh
-        explicit surfaceMesh(const fvMesh& mesh)
-        :
-            GeoMesh<fvMesh>(mesh)
-        {}
-
-
     // Member Functions
 
-        //- Return size
-        label size() const
-        {
-            return size(mesh_);
-        }
+        //- Return size (number of internal faces)
+        inline label size() const;
 
-        //- Return size
-        static label size(const Mesh& mesh)
-        {
-            return mesh.nInternalFaces();
-        }
+        //- Return fvMesh database
+        inline const objectRegistry& db() const;
 
-        //- Return face centres
-        const surfaceVectorField& C()
-        {
-            return mesh_.Cf();
-        }
+        //- Return time
+        inline const Time& time() const;
+
+        //- Return reference to fvBoundaryMesh
+        inline const fvBoundaryMesh& boundary() const;
+
+
+    // Member Operators
+
+        //- Return reference to fvMesh
+        inline const fvMesh& operator()() const;
+
+        bool operator!=(const surfaceMesh&) const;
+
+        bool operator==(const surfaceMesh&) const;
 };
 
 

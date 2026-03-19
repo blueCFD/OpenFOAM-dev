@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [];
+
+internalField
+{
+    type        zonal;
+
+    defaultValue    0;
+
+    zones
+    {
+        water
+        {
+            type            box;
+            box             (-999 -999 -999) (999 999 0.065);
+            value           1;
+        }
+    }
+}
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    inlet
+    {
+        type            functionalFixedValue;
+
+        function
+        {
+            $internalField;
+
+            zones
+            {
+                water
+                {
+                    zone
+                    {
+                        type        patch;
+                        patch       inlet;
+                    }
+                }
+            }
+        }
+    }
+
+    outlet
+    {
+        type            variableHeightFlowRate;
+        lowerBound      0;
+        upperBound      1;
+    }
+
+    atmosphere
+    {
+        type            inletOutlet;
+        inletValue      uniform 0;
+    }
+
+    hull
+    {
+        type            interfaceCompression;
+    }
+}
+
+// ************************************************************************* //

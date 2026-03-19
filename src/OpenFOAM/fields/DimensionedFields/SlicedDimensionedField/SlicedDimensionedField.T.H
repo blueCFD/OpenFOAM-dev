@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,11 +55,12 @@ class SlicedDimensionedField
 :
     public DimensionedField<Type, GeoMesh>
 {
+
 public:
 
     // Public Typedefs
 
-        //- Type of mesh on which this SlicedDimensionedField is instantiated
+        //- Base mesh type from which GeoMesh is constructed
         typedef typename GeoMesh::Mesh Mesh;
 
 
@@ -69,7 +70,7 @@ public:
         SlicedDimensionedField
         (
             const IOobject&,
-            const Mesh&,
+            const GeoMesh&,
             const dimensionSet&,
             const Field<Type>& iField
         );
@@ -77,6 +78,15 @@ public:
 
     //- Destructor
     ~SlicedDimensionedField();
+
+
+    // Member Functions
+
+        //- Override the DimensionedField::transfer with assignment
+        virtual void transfer(Field<Type>&);
+
+        //- Reset internalField pointer
+        void reset(const Field<Type>& iField);
 };
 
 

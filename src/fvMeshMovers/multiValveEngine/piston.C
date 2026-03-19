@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "multiValveEngine.H"
 #include "pointDist.H"
 
-/* * * * * * * * * * * * * Static Private Member Data  * * * * * * * * * * * */
+/* * * * * * * * * * * * * Static Private Data  * * * * * * * * * * * */
 
 Foam::word Foam::fvMeshMovers::multiValveEngine::pistonObject::pistonBowlName
 (
@@ -59,8 +59,8 @@ void Foam::fvMeshMovers::multiValveEngine::pistonObject::calculateBore()
 
     // Assuming the piston moves in the positive axis direction
     // remove the axis_ component to find the lateral extent of the piston
-    pistonMax = pistonMax - (axis & pistonMax)*pistonMax;
-    pistonMin = pistonMin - (axis & pistonMin)*pistonMin;
+    pistonMax -= (axis & pistonMax)*axis;
+    pistonMin -= (axis & pistonMin)*axis;
 
     bore_ = mag(pistonMax - pistonMin)/sqrt(2.0);
     centre_ = (pistonMax + pistonMin)/2;

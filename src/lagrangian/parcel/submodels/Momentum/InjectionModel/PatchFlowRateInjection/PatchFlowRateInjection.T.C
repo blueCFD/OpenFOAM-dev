@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ Foam::PatchFlowRateInjection<CloudType>::PatchFlowRateInjection
             this->coeffDict().found("volumeRatio")
           ? "volumeRatio"
           : "concentration",
-            this->owner().db().time().userUnits(),
+            this->owner().time().userUnits(),
             dimless,
             this->coeffDict()
         )
@@ -64,7 +64,7 @@ Foam::PatchFlowRateInjection<CloudType>::PatchFlowRateInjection
       ? Function1<scalar>::New
         (
             "massRatio",
-            this->owner().db().time().userUnits(),
+            this->owner().time().userUnits(),
             dimless,
             this->coeffDict()
         )

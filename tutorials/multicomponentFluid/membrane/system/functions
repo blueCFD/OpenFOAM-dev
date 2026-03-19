@@ -16,25 +16,29 @@ FoamFile
 
 #includeFunc filterObjectsAsFiles
 
+#includeFunc heatFlux(executeControl=timeStep)
+
 #includeFunc specieFlux(O2, schemesField=Yi_h, executeControl=timeStep)
 
 #includeFunc specieFlux(CH4, schemesField=Yi_h, executeControl=timeStep)
 
 #includeFunc specieFlux(N2, schemesField=Yi_h, executeControl=timeStep)
 
-#includeFunc patchIntegrate
+#includeFunc patchFlux
 (
-    name=membraneSleeveSpecieFluxes,
+    name=membraneSleeveFluxes,
     patch=membraneSleeve,
+    heatFlux,
     specieFlux(O2),
     specieFlux(CH4),
     specieFlux(N2)
 )
 
-#includeFunc patchIntegrate
+#includeFunc patchFlux
 (
-    name=membranePipeSpecieFluxes,
+    name=membranePipeFluxes,
     patch=membranePipe,
+    heatFlux,
     specieFlux(O2),
     specieFlux(CH4),
     specieFlux(N2)

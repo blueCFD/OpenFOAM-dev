@@ -26,7 +26,6 @@ License
 #include "streamEntry.H"
 #include "codeIncludeEntry.H"
 #include "dictionary.H"
-#include "dynamicCode.H"
 #include "codeStream.H"
 #include "addToRunTimeSelectionTable.H"
 #include "addToMemberFunctionSelectionTable.H"
@@ -105,12 +104,6 @@ Foam::OTstream Foam::functionEntries::streamEntry::resultStream
             << " in file " <<  dict.name() << endl;
     }
 
-    dynamicCode::checkSecurity
-    (
-        "functionEntries::streamEntry::execute(..)",
-        dict
-    );
-
     // Construct codeDict for codeStream with the parent dictionary provided for
     // string expansion and variable substitution and the same name as the
     // parent for consistent error messaging
@@ -121,7 +114,6 @@ Foam::OTstream Foam::functionEntries::streamEntry::resultStream
 
     if (t.isString() || t.isVerbatimString())
     {
-        codeIncludeEntry::codeInclude(codeDict);
         codeDict.add
         (
             primitiveEntry
@@ -141,17 +133,6 @@ Foam::OTstream Foam::functionEntries::streamEntry::resultStream
             << "    found token " << t
             << exit(FatalIOError);
     }
-
-    // Add compilation options to simplify compilation error messages
-    codeDict.add
-    (
-        primitiveEntry
-        (
-            "codeOptions",
-            "#{ -fno-show-column -fno-diagnostics-show-caret #}",
-            0
-        )
-    );
 
     codeStream::streamingFunctionType function = codeStream::getFunction
     (

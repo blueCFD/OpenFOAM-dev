@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ private:
     // Private Data
 
         //- Reference to the nonConformalCyclic poly patch
-        const nonConformalCyclicPolyPatch& nonConformalCyclicPatch_;
+        const nonConformalCyclicPolyPatch& nonConformalCyclicPoly_;
 
         //- Between crossFaces/evaluate and partition the elements have moved
         //  to the neighbour patch, but the mesh has not been partitioned. So,
@@ -103,16 +103,10 @@ public:
 
     // Member Functions
 
-        //- Return the nonConformalCyclic patch
-        const nonConformalCyclicPolyPatch& nonConformalCyclicPatch() const
-        {
-            return nonConformalCyclicPatch_;
-        }
-
         //- Return a reference to the nonConformalCyclic patch's transform
         const transformer& transform() const
         {
-            return nonConformalCyclicPatch_.transform();
+            return nonConformalCyclicPoly_.transform();
         }
 
         //- Return the sub-mesh associated with this patch

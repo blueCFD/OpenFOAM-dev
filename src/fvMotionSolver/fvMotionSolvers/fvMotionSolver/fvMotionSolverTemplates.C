@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,7 +50,7 @@ Foam::wordList Foam::fvMotionSolver::cellMotionBoundaryTypes
 
         if (debug)
         {
-            Pout<< "Patch:" << fvMesh_.boundary()[patchi].patch().name()
+            Pout<< "Patch:" << fvMesh_.boundary()[patchi].poly().name()
                 << " pointType:" << pmUbf.types()[patchi]
                 << " cellType:" << cmUbf[patchi] << endl;
         }
