@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,13 +55,13 @@ int main(int argc, char *argv[])
     const CatmullRomSpline crSpline(points, tol, nIter);
 
     // Parameters
-    const scalarField is(scalarField(scalarList(identityMap(nSplinePoints))));
+    const scalar exponent = scalar(nSplinePoints - 1)/(nSplinePoints - 2);
     const scalarField lambdas
     (
         mag(grading - 1) < small
-      ? is/(is.size() - 1)
-      : (1 - pow(grading, is/(is.size() - 2)))
-       /(1 - Foam::pow(grading, (is.size() - 1)/scalar(is.size() - 2)))
+      ? linearSequence01(nSplinePoints)
+      : (1 - pow(grading, linearSequence01(nSplinePoints)*exponent))
+       /(1 - Foam::pow(grading, exponent))
     );
 
     // Evaluate
@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
     allPoints.append(crSplinePoints);
     labelListList allLines;
     allLines.append(identityMap(points.size()));
-    allLines.append(points.size() + identityMap(nSplinePoints));
-    allLines.append(points.size() + nSplinePoints + identityMap(nSplinePoints));
+    allLines.append(identityMap(nSplinePoints, points.size()));
+    allLines.append(identityMap(nSplinePoints, points.size() + nSplinePoints));
     vtkWritePolyData::write
     (
         dictName + ".vtk",

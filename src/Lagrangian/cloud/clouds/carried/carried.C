@@ -164,14 +164,14 @@ Foam::clouds::carried::carried(const cloud& c, const dictionary& dict)
     (
         carrierField<vector>
         (
-            c.mesh().mesh().lookupObject<volVectorField>
+            c.mesh().poly().lookupObject<volVectorField>
             (
-                c.mesh().mesh().foundObject<volVectorField>
+                c.mesh().poly().foundObject<volVectorField>
                 (
                     IOobject::groupName("U", carrierPhaseName())
                 )
               ? IOobject::groupName("U", carrierPhaseName())
-              : c.mesh().mesh().foundObject<volVectorField>
+              : c.mesh().poly().foundObject<volVectorField>
                 (
                     "U"
                 )
@@ -210,7 +210,7 @@ Foam::clouds::carried::carried(const cloud& c, const dictionary& dict)
       ? Uc
       : carrierField<vector>
         (
-            c.mesh().mesh().lookupObject<volVectorField>
+            c.mesh().poly().lookupObject<volVectorField>
             (
                 IOobject::groupName("U", phaseName())
             )

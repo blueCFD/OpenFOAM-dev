@@ -48,7 +48,7 @@ Foam::pointMesh::pointMesh(const polyMesh& pMesh)
 :
     DemandDrivenMeshObject<polyMesh, PermanentMeshObject, pointMesh>(pMesh),
     mesh_(pMesh),
-    boundary_(*this, pMesh.boundaryMesh())
+    boundary_(*this, pMesh.boundary())
 {
     if (debug)
     {
@@ -189,7 +189,7 @@ void Foam::pointMesh::addPatch(const label patchi)
             << "Adding patch at " << patchi << endl;
     }
 
-    const polyBoundaryMesh& pbm = mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = poly().boundary();
 
     if (pbm.size() != boundary_.size())
     {

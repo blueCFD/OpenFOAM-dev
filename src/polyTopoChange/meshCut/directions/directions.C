@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -353,7 +353,7 @@ Foam::directions::directions
 
         const word patchName(patchDict.lookup("patch"));
 
-        const label patchi = mesh.boundaryMesh().findIndex(patchName);
+        const label patchi = mesh.boundary().findIndex(patchName);
 
         if (patchi == -1)
         {
@@ -364,7 +364,7 @@ Foam::directions::directions
         }
 
         // Take zeroth face on patch
-        const polyPatch& pp = mesh.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh.boundary()[patchi];
 
         vector e1(patchDict.lookup("e1"));
 

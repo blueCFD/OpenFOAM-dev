@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -978,7 +978,7 @@ int main(int argc, char *argv[])
                     foamPatchSizes[patchi],
                     meshFacei,
                     patchi,
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     patchType
                 );
         }
@@ -991,7 +991,7 @@ int main(int argc, char *argv[])
                     foamPatchSizes[patchi],
                     meshFacei,
                     patchi,
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     patchType
                 );
         }
@@ -1005,7 +1005,7 @@ int main(int argc, char *argv[])
                     foamPatchSizes[patchi],
                     meshFacei,
                     patchi,
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     patchType
                 );
         }
@@ -1020,7 +1020,7 @@ int main(int argc, char *argv[])
                     foamPatchSizes[patchi],
                     meshFacei,
                     patchi,
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     word::null
                 );
         }

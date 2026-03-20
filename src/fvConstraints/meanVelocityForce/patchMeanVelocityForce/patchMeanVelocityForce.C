@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ void Foam::fv::patchMeanVelocityForce::readCoeffs(const dictionary& dict)
 {
     patch_ = dict.lookup<word>("patch");
 
-    if (mesh().boundaryMesh().findIndex(patch_) < 0)
+    if (mesh().poly().boundary().findIndex(patch_) < 0)
     {
         FatalErrorInFunction
             << "Cannot find patch " << patch_
@@ -85,7 +85,7 @@ Foam::scalar Foam::fv::patchMeanVelocityForce::magUbarAve
     const volVectorField& U
 ) const
 {
-    const label patchi = mesh().boundaryMesh().findIndex(patch_);
+    const label patchi = mesh().poly().boundary().findIndex(patch_);
 
     scalar sumA = sum(mesh().boundary()[patchi].magSf());
     scalar sumAmagU =
@@ -98,7 +98,7 @@ Foam::scalar Foam::fv::patchMeanVelocityForce::magUbarAve
     // If the mean velocity force is applied to a cyclic patch
     // for parallel runs include contributions from processorCyclic patches
     // generated from the decomposition of the cyclic patch
-    const polyBoundaryMesh& patches = mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = mesh().poly().boundary();
     if (Pstream::parRun() && isA<cyclicPolyPatch>(patches[patchi]))
     {
         const labelList processorCyclicPatches

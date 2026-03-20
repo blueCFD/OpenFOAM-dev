@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -196,9 +196,9 @@ Foam::List<Foam::remote> Foam::cellsToCells::distributeMesh
             }
 
             // boundary faces of existing region
-            forAll(mesh.boundaryMesh(), patchi)
+            forAll(mesh.boundary(), patchi)
             {
-                const polyPatch& pp = mesh.boundaryMesh()[patchi];
+                const polyPatch& pp = mesh.boundary()[patchi];
 
                 const label nbrProci =
                     isType<processorPolyPatch>(pp)
@@ -622,7 +622,7 @@ Foam::List<Foam::remote> Foam::cellsToCells::distributeMesh
         localMeshPtr().nFaces() - localMeshPtr().nInternalFaces(),
         localMeshPtr().nInternalFaces(),
         0,
-        localMeshPtr().boundaryMesh(),
+        localMeshPtr().boundary(),
         word::null
     );
     localMeshPtr().addPatches(patches);
@@ -879,7 +879,7 @@ void Foam::cellsToCells::trimLocalTgt()
         localTgtMeshPtr_().nFaces() - localTgtMeshPtr_().nInternalFaces(),
         localTgtMeshPtr_().nInternalFaces(),
         0,
-        localTgtMeshPtr_().boundaryMesh(),
+        localTgtMeshPtr_().boundary(),
         word::null
     );
     localTgtMeshPtr_().addPatches(patches);

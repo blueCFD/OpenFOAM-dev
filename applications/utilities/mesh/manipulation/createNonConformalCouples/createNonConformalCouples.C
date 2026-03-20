@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
     forAll(regionMeshes, regioni)
     {
         const fvMesh& mesh = regionMeshes[regioni];
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
         label& firstProcPatchi = regionFirstProcPatchis[regioni];
         label& firstProcFacei = regionFirstProcFaceis[regioni];
 
@@ -552,7 +552,7 @@ int main(int argc, char *argv[])
     forAll(regionMeshes, regioni)
     {
         const fvMesh& mesh = regionMeshes[regioni];
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
         const label firstProcPatchi = regionFirstProcPatchis[regioni];
 
         for (label patchi = 0; patchi < firstProcPatchi; ++ patchi)
@@ -623,7 +623,7 @@ int main(int argc, char *argv[])
                     couple.ncPatchNames[!owner],
                     patchDict,
                     newPatches[regioni].size(),
-                    regionMeshes[regioni].boundaryMesh()
+                    regionMeshes[regioni].poly().boundary()
                 ).ptr()
             );
             newPatchIsCouple[regioni].append(true);
@@ -685,7 +685,7 @@ int main(int argc, char *argv[])
                     0,
                     regionFirstProcFaceis[regioni],
                     newPatches[regioni].size(),
-                    regionMeshes[regioni].boundaryMesh(),
+                    regionMeshes[regioni].poly().boundary(),
                     nonConformalErrorPolyPatch::typeName,
                     origPatchName
                 )
@@ -699,7 +699,7 @@ int main(int argc, char *argv[])
     forAll(regionMeshes, regioni)
     {
         const fvMesh& mesh = regionMeshes[regioni];
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
         const label firstProcPatchi = regionFirstProcPatchis[regioni];
 
         for (label patchi = firstProcPatchi; patchi < patches.size(); ++ patchi)
@@ -736,7 +736,7 @@ int main(int argc, char *argv[])
 
             const label regioni = regionNames[couples[couplei].regionNames[0]];
             const fvMesh& mesh = regionMeshes[regioni];
-            const polyBoundaryMesh& patches = mesh.boundaryMesh();
+            const polyBoundaryMesh& patches = mesh.poly().boundary();
 
             const polyPatch& patch1 = patches[couple.origPatchNames[0]];
             const polyPatch& patch2 = patches[couple.origPatchNames[1]];

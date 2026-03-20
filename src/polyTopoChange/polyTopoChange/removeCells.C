@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -141,7 +141,7 @@ Foam::labelList Foam::removeCells::getExposedFaces
         }
     }
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     forAll(patches, patchi)
     {
@@ -179,7 +179,7 @@ void Foam::removeCells::setRefinement
     polyTopoChange& meshMod
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     if (exposedFaceLabels.size() != exposedPatchIDs.size())
     {

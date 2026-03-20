@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ tmp<scalarField> curvatureSeparation::calcInvR1
 
     const scalar rMin = 1e-6;
     const fvMesh& mesh = film_.mesh;
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
     forAll(patchRadii_, i)
     {
@@ -178,7 +178,7 @@ curvatureSeparation::curvatureSeparation
     (
         dict.lookupOrDefault("patchRadii", List<Tuple2<word, scalar>>::null())
     );
-    const wordList& allPatchNames = film_.mesh.boundaryMesh().names();
+    const wordList& allPatchNames = film_.mesh.poly().boundary().names();
 
     DynamicList<Tuple2<label, scalar>> prData(allPatchNames.size());
 

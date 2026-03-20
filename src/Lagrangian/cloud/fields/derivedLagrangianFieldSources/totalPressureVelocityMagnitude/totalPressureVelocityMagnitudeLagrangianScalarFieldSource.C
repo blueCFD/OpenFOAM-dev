@@ -99,7 +99,7 @@ Foam::totalPressureVelocityMagnitudeLagrangianScalarFieldSource::Umag
 {
     // Get the carrier pressure
     const volScalarField& pcVf =
-        subMesh.mesh().mesh().lookupObject<volScalarField>(pcName_);
+        subMesh.mesh().poly().lookupObject<volScalarField>(pcName_);
     const CarrierField<scalar>& pc =
         cloudField_.cloud<clouds::carried>(injection).carrierField(pcVf);
 
@@ -162,7 +162,7 @@ Foam::totalPressureVelocityMagnitudeLagrangianScalarFieldSource::Umag
 
             // Get the carrier density
             const volScalarField& rhocVf =
-                subMesh.mesh().mesh().lookupObject<volScalarField>(rhocName_);
+                subMesh.mesh().poly().lookupObject<volScalarField>(rhocName_);
             const CarrierField<scalar>& rhoc =
                 cloudField_
                .cloud<clouds::carried>(injection)

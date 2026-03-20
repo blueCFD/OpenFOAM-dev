@@ -80,20 +80,20 @@ void Foam::polyMesh::calcDirections() const
     vector emptyDirVec = Zero;
     vector wedgeDirVec = Zero;
 
-    forAll(boundaryMesh(), patchi)
+    forAll(boundary(), patchi)
     {
-        if (boundaryMesh()[patchi].size())
+        if (boundary()[patchi].size())
         {
-            if (isA<emptyPolyPatch>(boundaryMesh()[patchi]))
+            if (isA<emptyPolyPatch>(boundary()[patchi]))
             {
                 nEmptyPatches++;
-                emptyDirVec += sum(cmptMag(boundaryMesh()[patchi].faceAreas()));
+                emptyDirVec += sum(cmptMag(boundary()[patchi].faceAreas()));
             }
-            else if (isA<wedgePolyPatch>(boundaryMesh()[patchi]))
+            else if (isA<wedgePolyPatch>(boundary()[patchi]))
             {
                 const wedgePolyPatch& wpp = refCast<const wedgePolyPatch>
                 (
-                    boundaryMesh()[patchi]
+                    boundary()[patchi]
                 );
 
                 nWedgePatches++;
@@ -1073,7 +1073,7 @@ void Foam::polyMesh::addPatches
     const bool validBoundary
 )
 {
-    if (boundaryMesh().size())
+    if (boundary().size())
     {
         FatalErrorInFunction
             << "boundary already exists"

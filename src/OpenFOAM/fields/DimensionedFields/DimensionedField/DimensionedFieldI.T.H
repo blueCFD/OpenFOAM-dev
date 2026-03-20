@@ -72,7 +72,7 @@ inline void Foam::DimensionedField<Type, GeoMesh, PrimitiveField>::transfer
     PrimitiveField<Type>& f
 )
 {
-    primitiveFieldRef().transfer(f);
+    PrimitiveField<Type>::transfer(f);
 }
 
 

@@ -251,7 +251,7 @@ Foam::functionObjects::sectionalForcesBase::patch() const
         forAllConstIter(labelHashSet, patchSet_, iter)
         {
             const label ppi = iter.key();
-            const polyPatch& pp = mesh().boundaryMesh()[ppi];
+            const polyPatch& pp = mesh().poly().boundary()[ppi];
 
             patchFaces.append(identityMap(pp.start(), pp.size()));
         }
@@ -355,7 +355,7 @@ void Foam::functionObjects::sectionalForcesBase::addFluid
     forAllConstIter(labelHashSet, patchSet_, iter)
     {
         const label ppi = iter.key();
-        const polyPatch& pp = mesh().boundaryMesh()[ppi];
+        const polyPatch& pp = mesh().poly().boundary()[ppi];
 
         const vectorField f
         (
@@ -418,7 +418,7 @@ void Foam::functionObjects::sectionalForcesBase::addFluid
         forAllConstIter(labelHashSet, patchSet_, iter)
         {
             const label ppi = iter.key();
-            const polyPatch& pp = mesh().boundaryMesh()[ppi];
+            const polyPatch& pp = mesh().poly().boundary()[ppi];
 
             patchNames.append(pp.name());
         }
@@ -485,7 +485,7 @@ bool Foam::functionObjects::sectionalForcesBase::read(const dictionary& dict)
 {
     fvMeshFunctionObject::read(dict);
 
-    patchSet_ = mesh().boundaryMesh().patchSet(dict);
+    patchSet_ = mesh().poly().boundary().patchSet(dict);
 
     // Optional phase entry
     phaseName_ = dict.lookupOrDefault<word>("phase", word::null);

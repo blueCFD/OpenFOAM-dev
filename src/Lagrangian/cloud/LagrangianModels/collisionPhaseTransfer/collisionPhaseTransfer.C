@@ -157,7 +157,7 @@ Foam::Lagrangian::collisionPhaseTransfer::collisionPhaseTransfer
     (
         cloud<clouds::carried>().carrierField
         (
-            mesh.mesh().lookupObject<volScalarField>
+            mesh.poly().lookupObject<volScalarField>
             (
                 IOobject::groupName
                 (
@@ -256,7 +256,7 @@ void Foam::Lagrangian::collisionPhaseTransfer::calculate
             (
                 scalarField
                 (
-                    subMesh.mesh().mesh().cellVolumes(),
+                    subMesh.mesh().poly().cellVolumes(),
                     subMesh.sub(subMesh.mesh().celli())
                 )
             )

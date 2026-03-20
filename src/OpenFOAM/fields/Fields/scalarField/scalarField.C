@@ -94,6 +94,28 @@ tmp<scalarField> stabilise(const tmp<scalarField>& tsf, const scalar s)
 }
 
 
+tmp<scalarField> linearSequence
+(
+    const scalar start,
+    const scalar end,
+    const label n
+)
+{
+    return start + (end - start)*linearSequence01(n);
+}
+
+tmp<scalarField> linearSequence01(const label n)
+{
+    tmp<scalarField> tRes(new scalarField(n));
+    scalarField& res = tRes.ref();
+    forAll(res, i)
+    {
+        res[i] = scalar(i)/(n - 1);
+    }
+    return tRes;
+}
+
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<>

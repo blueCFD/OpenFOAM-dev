@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -164,7 +164,7 @@ Foam::autoPtr<Foam::fvMesh> Foam::loadOrCreateMesh
                     name,
                     patchDict,
                     nPatches++,
-                    dummyMesh.boundaryMesh()
+                    dummyMesh.poly().boundary()
                 ).ptr();
             }
         }
@@ -222,7 +222,7 @@ Foam::autoPtr<Foam::fvMesh> Foam::loadOrCreateMesh
     {
         // Check master names against mine
 
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
 
         forAll(patchEntries, patchi)
         {
@@ -338,9 +338,9 @@ Foam::autoPtr<Foam::fvMesh> Foam::loadOrCreateMesh
     // Do some checks.
 
     // Check if the boundary definition is unique
-    mesh.boundaryMesh().checkDefinition(true);
+    mesh.poly().boundary().checkDefinition(true);
     // Check if the boundary processor patches are correct
-    mesh.boundaryMesh().checkParallelSync(true);
+    mesh.poly().boundary().checkParallelSync(true);
     // Check names of zones are equal
     mesh.cellZones().checkDefinition(true);
     mesh.cellZones().checkParallelSync(true);

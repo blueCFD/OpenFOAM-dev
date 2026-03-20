@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -244,9 +244,9 @@ template<class Type, class TrackingData>
 template<class PatchType>
 bool Foam::FaceCellWave<Type, TrackingData>::hasPatch() const
 {
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        if (isA<PatchType>(mesh_.boundaryMesh()[patchi]))
+        if (isA<PatchType>(mesh_.boundary()[patchi]))
         {
             return true;
         }
@@ -387,7 +387,7 @@ void Foam::FaceCellWave<Type, TrackingData>::handleProcPatches()
         label patchi = procPatches[i];
 
         const processorPolyPatch& procPatch =
-            refCast<const processorPolyPatch>(mesh_.boundaryMesh()[patchi]);
+            refCast<const processorPolyPatch>(mesh_.boundary()[patchi]);
 
         // Allocate buffers
         label nSendFaces;
@@ -428,7 +428,7 @@ void Foam::FaceCellWave<Type, TrackingData>::handleProcPatches()
         label patchi = procPatches[i];
 
         const processorPolyPatch& procPatch =
-            refCast<const processorPolyPatch>(mesh_.boundaryMesh()[patchi]);
+            refCast<const processorPolyPatch>(mesh_.boundary()[patchi]);
 
         // Allocate buffers
         labelList receiveFaces;
@@ -475,9 +475,9 @@ void Foam::FaceCellWave<Type, TrackingData>::handleCyclicPatches()
 {
     // Transfer information across cyclic halves.
 
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        const polyPatch& patch = mesh_.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh_.boundary()[patchi];
 
         if (isA<cyclicPolyPatch>(patch))
         {

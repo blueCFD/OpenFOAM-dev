@@ -51,9 +51,9 @@ namespace radiationModels
 
 void Foam::radiationModels::fvDOM::initialise()
 {
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        const polyPatch& pp = mesh_.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh_.poly().boundary()[patchi];
         if
         (
             (

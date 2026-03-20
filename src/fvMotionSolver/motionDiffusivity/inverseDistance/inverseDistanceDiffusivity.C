@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,7 +87,7 @@ Foam::inverseDistanceDiffusivity::operator()() const
         fvPatchDistWave::calculate
         (
             mesh(),
-            mesh().boundaryMesh().patchSet(patchNames_),
+            mesh().poly().boundary().patchSet(patchNames_),
             -vGreat,
             y
         );

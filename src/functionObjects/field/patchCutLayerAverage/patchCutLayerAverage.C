@@ -65,7 +65,7 @@ Foam::fileName Foam::functionObjects::patchCutLayerAverage::outputPath() const
 
 void Foam::functionObjects::patchCutLayerAverage::calcWeights()
 {
-    const polyPatch& pp = mesh_.boundaryMesh()[patchName_];
+    const polyPatch& pp = mesh_.poly().boundary()[patchName_];
     const pointField& points = pp.localPoints();
 
     // Calculate or lookup the point coordinates
@@ -269,7 +269,7 @@ bool Foam::functionObjects::patchCutLayerAverage::write()
         calcWeights();
     }
 
-    const polyPatch& pp = mesh_.boundaryMesh()[patchName_];
+    const polyPatch& pp = mesh_.poly().boundary()[patchName_];
 
     const bool writeThickness =
         !interpolate_

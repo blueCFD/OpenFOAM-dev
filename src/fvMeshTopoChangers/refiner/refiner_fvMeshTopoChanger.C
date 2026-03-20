@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -640,9 +640,9 @@ void Foam::fvMeshTopoChangers::refiner::refineUfs
                 else
                 {
                     const label patchi =
-                        mesh().boundaryMesh().whichPatch(facei);
+                        mesh().poly().boundary().whichPatch(facei);
                     const label i =
-                        facei - mesh().boundaryMesh()[patchi].start();
+                        facei - mesh().poly().boundary()[patchi].start();
 
                     const fvsPatchVectorField& patchUfU =
                         UfU.boundaryField()[patchi];
@@ -703,9 +703,10 @@ void Foam::fvMeshTopoChangers::refiner::unrefineUfs
                         else
                         {
                             const label patchi =
-                                mesh().boundaryMesh().whichPatch(facei);
+                                mesh().poly().boundary().whichPatch(facei);
                             const label i =
-                                facei - mesh().boundaryMesh()[patchi].start();
+                                facei
+                              - mesh().poly().boundary()[patchi].start();
 
                             UfBf[patchi][i] = UfU.boundaryField()[patchi][i];
                         }

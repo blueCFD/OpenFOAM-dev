@@ -454,12 +454,6 @@ public:
             const fvBoundaryMesh& boundary() const;
 
             //- Return reference to polyMesh
-            const polyMesh& mesh() const
-            {
-                return *this;
-            }
-
-            //- Access the corresponding polyhedral geometry
             const polyMesh& poly() const
             {
                 return *this;

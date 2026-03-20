@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,18 +57,18 @@ int main(int argc, char *argv[])
 
     wordList patchFieldTypes
     (
-        mesh.boundaryMesh().size(),
+        mesh.poly().boundary().size(),
         calculatedFvPatchVectorField::typeName
     );
 
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.poly().boundary(), patchi)
     {
-        if (isA<mappedPolyPatch>(mesh.boundaryMesh()[patchi]))
+        if (isA<mappedPolyPatch>(mesh.poly().boundary()[patchi]))
         {
             patchFieldTypes[patchi] =
                 mappedValueFvPatchVectorField::typeName;
         }
-        if (isA<mappedInternalPolyPatch>(mesh.boundaryMesh()[patchi]))
+        if (isA<mappedInternalPolyPatch>(mesh.poly().boundary()[patchi]))
         {
             patchFieldTypes[patchi] =
                 mappedInternalValueFvPatchVectorField::typeName;
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
          || isA<mappedInternalValueFvPatchVectorField>(ccp)
         )
         {
-            OBJstream obj(mesh.boundaryMesh()[patchi].name() + ".obj");
+            OBJstream obj(mesh.poly().boundary()[patchi].name() + ".obj");
 
             Pout<< "Detected a " << ccp.patch().type() << " field on patch \""
                 << ccp.patch().name() << "\". Writing point connections to "

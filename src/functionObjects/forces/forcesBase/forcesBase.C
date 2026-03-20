@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -506,9 +506,9 @@ bool Foam::functionObjects::forcesBase::read(const dictionary& dict)
 
     directForceDensity_ = dict.lookupOrDefault("directForceDensity", false);
 
-    const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh_.poly().boundary();
 
-    patchSet_ = mesh_.boundaryMesh().patchSet(dict);
+    patchSet_ = mesh_.poly().boundary().patchSet(dict);
 
     if (directForceDensity_)
     {

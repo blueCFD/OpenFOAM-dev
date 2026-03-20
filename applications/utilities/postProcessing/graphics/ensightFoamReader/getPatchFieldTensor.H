@@ -34,7 +34,7 @@ volTensorField sf
 );
 
 const tensorField& tf = sf.boundaryField()[patchi];
-const polyBoundaryMesh& bMesh = meshPtr->boundaryMesh();
+const polyBoundaryMesh& bMesh = meshPtr->poly().boundary();
 
 if (which_type == Z_TRI03)
 {

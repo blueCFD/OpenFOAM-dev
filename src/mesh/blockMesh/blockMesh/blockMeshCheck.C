@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ void Foam::blockMesh::check(const polyMesh& bm, const dictionary& dict) const
 {
     const pointField& points = bm.points();
     const cellList& cells = bm.cells();
-    const polyPatchList& patches = bm.boundaryMesh();
+    const polyPatchList& patches = bm.boundary();
 
     label nBoundaryFaces = 0;
     forAll(cells, celli)

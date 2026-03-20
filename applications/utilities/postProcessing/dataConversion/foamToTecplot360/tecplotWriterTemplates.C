@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,7 +90,7 @@ Foam::tmp<Field<Type>> Foam::tecplotWriter::getFaceField
     const labelList& faceLabels
 ) const
 {
-    const polyBoundaryMesh& patches = sfld.mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = sfld.mesh().poly().boundary();
 
     tmp<Field<Type>> tfld(new Field<Type>(faceLabels.size()));
     Field<Type>& fld = tfld.ref();

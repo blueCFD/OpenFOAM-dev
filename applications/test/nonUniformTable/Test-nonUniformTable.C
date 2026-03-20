@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,12 @@ int main(int argc, char *argv[])
 {
     dictionary dict(IFstream("thermoDict")());
 
-    Function1s::NonUniformTable<scalar> table("table", dict);
+    Function1s::NonUniformTable<scalar> table
+    (
+        "table",
+        {dimless, dimless},
+        dict
+    );
 
     const label n = 1000;
     const scalar T0 = table.values().first().first();

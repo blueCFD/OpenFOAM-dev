@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,7 +84,7 @@ Foam::sixDoFRigidBodyMotionSolver::sixDoFRigidBodyMotionSolver
       : dict
     ),
     patches_(wordReList(dict.lookup("patches"))),
-    patchSet_(mesh.boundaryMesh().patchSet(patches_)),
+    patchSet_(mesh.boundary().patchSet(patches_)),
     di_(dict.lookup<scalar>("innerDistance")),
     do_(dict.lookup<scalar>("outerDistance")),
     test_(dict.lookupOrDefault<Switch>("test", false)),

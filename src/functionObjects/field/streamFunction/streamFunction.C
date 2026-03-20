@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,7 +98,7 @@ Foam::tmp<Foam::pointScalarField> Foam::functionObjects::streamFunction::calc
     vectorField unitAreas(mesh_.faceAreas());
     unitAreas /= mag(unitAreas);
 
-    const polyPatchList& patches = mesh_.boundaryMesh();
+    const polyPatchList& patches = mesh_.poly().boundary();
 
     bool finished = true;
 
@@ -242,7 +242,7 @@ Foam::tmp<Foam::pointScalarField> Foam::functionObjects::streamFunction::calc
                         if (visitedPoint[curBPoints[pointi]] == 0)
                         {
                             label patchNo =
-                                mesh_.boundaryMesh().whichPatch(facei);
+                                mesh_.poly().boundary().whichPatch(facei);
 
                             if
                             (
@@ -254,7 +254,7 @@ Foam::tmp<Foam::pointScalarField> Foam::functionObjects::streamFunction::calc
                             )
                             {
                                 label faceNo =
-                                    mesh_.boundaryMesh()[patchNo]
+                                    mesh_.poly().boundary()[patchNo]
                                    .whichFace(facei);
 
                                 vector edgeHat =

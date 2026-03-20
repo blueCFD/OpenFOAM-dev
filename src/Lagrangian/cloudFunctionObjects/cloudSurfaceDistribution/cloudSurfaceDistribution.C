@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -264,7 +264,7 @@ Foam::boolList Foam::functionObjects::cloudSurfaceDistribution::selected
 {
     const Foam::cloud& c = cloud();
 
-    const polyBoundaryMesh& pbm = c.mesh().mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = c.mesh().poly().boundary();
 
     const label patchi =
         max
@@ -289,7 +289,7 @@ Foam::boolList Foam::functionObjects::cloudSurfaceDistribution::selected
     {
         case selectionType::faceZone:
         {
-            const faceZone& z = c.mesh().mesh().faceZones()[selectionName_];
+            const faceZone& z = c.mesh().poly().faceZones()[selectionName_];
             forAll(facei, subi)
             {
                 if (states[subi] <= LagrangianState::inCell) continue;
@@ -470,8 +470,8 @@ void Foam::functionObjects::cloudSurfaceDistribution::writeDistribution
         time_.globalPath()
        /writeFile::outputPrefix
        /(
-            mesh().mesh().name() != polyMesh::defaultRegion
-          ? mesh().mesh().name()
+            mesh().poly().name() != polyMesh::defaultRegion
+          ? mesh().poly().name()
           : word::null
         )
        /name()
@@ -516,7 +516,7 @@ Foam::functionObjects::cloudSurfaceDistribution::cloudSurfaceDistribution
     selectionSet_
     (
         selectionType_ == selectionType::faceSet
-      ? faceSet(mesh().mesh(), selectionName_)
+      ? faceSet(mesh().poly(), selectionName_)
       : labelHashSet()
     ),
     nBins_(dict.lookup<label>("nBins")),
@@ -740,7 +740,7 @@ void Foam::functionObjects::cloudSurfaceDistribution::topoChange
 {
     if (selectionType_ == selectionType::faceSet)
     {
-        selectionSet_ = faceSet(mesh().mesh(), selectionName_);
+        selectionSet_ = faceSet(mesh().poly(), selectionName_);
     }
 }
 
@@ -752,7 +752,7 @@ void Foam::functionObjects::cloudSurfaceDistribution::mapMesh
 {
     if (selectionType_ == selectionType::faceSet)
     {
-        selectionSet_ = faceSet(mesh().mesh(), selectionName_);
+        selectionSet_ = faceSet(mesh().poly(), selectionName_);
     }
 }
 
@@ -764,7 +764,7 @@ void Foam::functionObjects::cloudSurfaceDistribution::distribute
 {
     if (selectionType_ == selectionType::faceSet)
     {
-        selectionSet_ = faceSet(mesh().mesh(), selectionName_);
+        selectionSet_ = faceSet(mesh().poly(), selectionName_);
     }
 }
 

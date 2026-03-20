@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,7 +84,7 @@ void Foam::DSMCParcel<ParcelType>::hitWallPatch
     const wallPolyPatch& wpp =
         static_cast<const wallPolyPatch&>
         (
-            cloud.pMesh().boundaryMesh()[wppIndex]
+            cloud.pMesh().boundary()[wppIndex]
         );
 
     const label wppLocalFace = wpp.whichFace(this->face());

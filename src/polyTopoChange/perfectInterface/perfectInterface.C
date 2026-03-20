@@ -74,8 +74,8 @@ Foam::perfectInterface::perfectInterface
 )
 :
     mesh_(mesh),
-    masterPatchIndex_(mesh_.boundaryMesh().findIndex(masterPatchName)),
-    slavePatchIndex_(mesh_.boundaryMesh().findIndex(slavePatchName))
+    masterPatchIndex_(mesh_.boundary().findIndex(masterPatchName)),
+    slavePatchIndex_(mesh_.boundary().findIndex(slavePatchName))
 {}
 
 
@@ -94,7 +94,7 @@ void Foam::perfectInterface::setRefinement
     polyTopoChange& ref
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     // Some aliases
     const edgeList& edges0 = pp0.edges();
@@ -336,7 +336,7 @@ void Foam::perfectInterface::setRefinement(polyTopoChange& ref) const
             << " slavePatchIndex_:" << slavePatchIndex_ << endl;
     }
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
     const polyPatch& patch0 = patches[masterPatchIndex_];
     const polyPatch& patch1 = patches[slavePatchIndex_];
 

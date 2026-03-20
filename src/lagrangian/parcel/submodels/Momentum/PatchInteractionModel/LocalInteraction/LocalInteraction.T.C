@@ -82,20 +82,20 @@ Foam::LocalInteraction<CloudType>::LocalInteraction
     PatchInteractionModel<CloudType>(dict, cloud, typeName),
     patchInteractionTypes_
     (
-        this->owner().mesh().boundaryMesh().size(),
+        this->owner().mesh().poly().boundary().size(),
         PatchInteractionModel<CloudType>::itOther
     ),
-    patchEs_(this->owner().mesh().boundaryMesh().size(), NaN),
-    patchMus_(this->owner().mesh().boundaryMesh().size(), NaN),
-    nEscape_(this->owner().mesh().boundaryMesh().size(), 0),
-    massEscape_(this->owner().mesh().boundaryMesh().size(), scalar(0)),
-    nStick_(this->owner().mesh().boundaryMesh().size(), 0),
-    massStick_(this->owner().mesh().boundaryMesh().size(), scalar(0)),
+    patchEs_(this->owner().mesh().poly().boundary().size(), NaN),
+    patchMus_(this->owner().mesh().poly().boundary().size(), NaN),
+    nEscape_(this->owner().mesh().poly().boundary().size(), 0),
+    massEscape_(this->owner().mesh().poly().boundary().size(), scalar(0)),
+    nStick_(this->owner().mesh().poly().boundary().size(), 0),
+    massStick_(this->owner().mesh().poly().boundary().size(), scalar(0)),
     writeFields_(this->coeffDict().lookupOrDefault("writeFields", false)),
     massEscapePtr_(nullptr),
     massStickPtr_(nullptr)
 {
-    const polyBoundaryMesh& patches = this->owner().mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = this->owner().mesh().poly().boundary();
 
     if (writeFields_)
     {
@@ -107,7 +107,7 @@ Foam::LocalInteraction<CloudType>::LocalInteraction
 
         (void)massEscape();
         (void)massStick();
-    }
+}
     else
     {
         Info<< "    Interaction fields will not be written" << endl;
@@ -408,7 +408,7 @@ bool Foam::LocalInteraction<CloudType>::correct
 template<class CloudType>
 void Foam::LocalInteraction<CloudType>::info(Ostream& os)
 {
-    const polyBoundaryMesh& patches = this->owner().mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = this->owner().mesh().poly().boundary();
 
     // Determine the number of non-processor patches
     label nPatches = patches.size();
@@ -453,7 +453,7 @@ void Foam::LocalInteraction<CloudType>::info(Ostream& os)
         )
         {
             os  << "    Parcel fate (number, mass)      : patch "
-                << this->owner().mesh().boundaryMesh()[patchi].name() << nl
+                << this->owner().mesh().poly().boundary()[patchi].name() << nl
                 << "      - escape                      = " << npe[patchi]
                 << ", " << mpe[patchi] << nl
                 << "      - stick                       = " << nps[patchi]

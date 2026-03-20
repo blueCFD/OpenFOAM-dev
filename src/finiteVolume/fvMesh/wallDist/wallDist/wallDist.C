@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -68,7 +68,7 @@ void Foam::wallDist::constructn() const
 Foam::wallDist::wallDist(const fvMesh& mesh, const word& patchTypeName)
 :
     DemandDrivenMeshObject<fvMesh, DeletableMeshObject, wallDist>(mesh),
-    patchIndices_(mesh.boundaryMesh().findIndices<wallPolyPatch>()),
+    patchIndices_(mesh.poly().boundary().findIndices<wallPolyPatch>()),
     patchTypeName_(patchTypeName),
     pdm_
     (

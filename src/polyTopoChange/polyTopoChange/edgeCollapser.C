@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -476,7 +476,7 @@ Foam::scalarField Foam::edgeCollapser::calcTargetFaceSizes() const
     scalarField targetFaceSizes(mesh_.nFaces(), -1);
 
     const scalarField& V = mesh_.cellVolumes();
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     const labelList& cellOwner = mesh_.faceOwner();
     const labelList& cellNeighbour = mesh_.faceNeighbour();
@@ -1549,7 +1549,7 @@ bool Foam::edgeCollapser::setRefinement
     }
 
 
-    const polyBoundaryMesh& boundaryMesh = mesh_.boundaryMesh();
+    const polyBoundaryMesh& boundaryMesh = mesh_.boundary();
 
     // Renumber faces that use points
     forAll(allPointInfo, pointi)
@@ -2043,7 +2043,7 @@ Foam::labelPair Foam::edgeCollapser::markFaceZoneEdges
 //    const edgeList& edges = mesh_.edges();
 //    const pointField& points = mesh_.points();
 //    const labelListList& edgeFaces = mesh_.edgeFaces();
-//    const polyBoundaryMesh& bMesh = mesh_.boundaryMesh();
+//    const polyBoundaryMesh& bMesh = mesh_.boundary();
 //
 //    forAll(edges, eI)
 //    {

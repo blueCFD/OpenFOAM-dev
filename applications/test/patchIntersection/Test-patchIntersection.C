@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createPolyMesh.H"
 
-    const polyPatch& srcPatch = mesh.boundaryMesh()[args[1]];
-    const polyPatch& tgtPatch = mesh.boundaryMesh()[args[2]];
+    const polyPatch& srcPatch = mesh.boundary()[args[1]];
+    const polyPatch& tgtPatch = mesh.boundary()[args[2]];
     const scalar snapTol =
         args.optionLookupOrDefault<scalar>("snapTol", defaultSnapTol);
 

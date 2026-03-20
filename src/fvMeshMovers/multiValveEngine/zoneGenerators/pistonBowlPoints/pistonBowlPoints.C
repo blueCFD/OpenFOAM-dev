@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,7 +77,7 @@ Foam::zoneSet Foam::zoneGenerators::pistonBowlPoints::generate() const
 
     const fvMeshMovers::multiValveEngine::pistonObject& piston = mve.piston;
 
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
         // Find the maximum axis coordinate of the piston patch-set
     // Assumes the piston moves in the positive axis direction

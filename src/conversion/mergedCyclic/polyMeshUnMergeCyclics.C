@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -179,14 +179,14 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
     // re-patch the mesh
     DynamicList<polyPatch*> patches;
 
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh.boundary()[patchi];
         patches.append
         (
             pp.clone
             (
-                mesh.boundaryMesh(),
+                mesh.boundary(),
                 patches.size(),
                 pp.size(),
                 pp.start()
@@ -195,12 +195,12 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
     }
 
     bool hasMergedCyclics = false;
-    labelList patchHalf0(mesh.boundaryMesh().size(), -1);
-    labelList patchHalf1(mesh.boundaryMesh().size(), -1);
+    labelList patchHalf0(mesh.boundary().size(), -1);
+    labelList patchHalf1(mesh.boundary().size(), -1);
 
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh.boundary()[patchi];
         if (isA<mergedCyclicPolyPatch>(pp))
         {
             hasMergedCyclics = true;
@@ -215,7 +215,7 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
                     0,
                     mesh.nFaces(),
                     patches.size(),
-                    mesh.boundaryMesh(),
+                    mesh.boundary(),
                     cyclicPolyPatch::typeName,
                     pp.name() + "-half-1"
                 )
@@ -231,7 +231,7 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
                     0,
                     mesh.nFaces(),
                     patches.size(),
-                    mesh.boundaryMesh(),
+                    mesh.boundary(),
                     cyclicPolyPatch::typeName,
                     pp.name() + "-half-0"
                 )
@@ -249,9 +249,9 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
 
     // Move faces from the merged cyclics to the pairs of cyclic patches
     polyTopoChange meshMod(mesh, false);
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh.boundary()[patchi];
         if (isA<mergedCyclicPolyPatch>(pp))
         {
             const boolList patchFaceHalves
@@ -283,16 +283,16 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
     // merged cyclics into a patch list and use this then re-patch the mesh.
     patches.clear();
 
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh.boundary()[patchi];
         if (!isA<mergedCyclicPolyPatch>(pp))
         {
             patches.append
             (
                 pp.clone
                 (
-                    mesh.boundaryMesh(),
+                    mesh.boundary(),
                     patches.size(),
                     pp.size(),
                     pp.start()

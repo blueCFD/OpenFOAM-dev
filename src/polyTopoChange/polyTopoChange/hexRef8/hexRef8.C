@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -96,7 +96,7 @@ Foam::label Foam::hexRef8::getPatchIndex(const label facei) const
 
     if (!mesh_.isInternalFace(facei))
     {
-        patchID = mesh_.boundaryMesh().whichPatch(facei);
+        patchID = mesh_.boundary().whichPatch(facei);
     }
 
     return patchID;
@@ -1571,7 +1571,7 @@ void Foam::hexRef8::checkWantedRefinementLevels
 
         if (mag(ownLevel - neiLevel[i]) > 1)
         {
-            label patchi = mesh_.boundaryMesh().whichPatch(facei);
+            label patchi = mesh_.boundary().whichPatch(facei);
 
             dumpCell(own);
             FatalErrorInFunction
@@ -1579,7 +1579,7 @@ void Foam::hexRef8::checkWantedRefinementLevels
                 << " On coupled face "
                 << facei
                 << " on patch " << patchi << " "
-                << mesh_.boundaryMesh()[patchi].name()
+                << mesh_.boundary()[patchi].name()
                 << " owner cell " << own
                 << " current level:" << cellLevel_[own]
                 << " level after refinement:" << ownLevel
@@ -2625,7 +2625,7 @@ Foam::labelList Foam::hexRef8::consistentSlowRefinement
             if (mag(ownLevel - nbrLevel) > 1)
             {
                 dumpCell(own);
-                label patchi = mesh_.boundaryMesh().whichPatch(facei);
+                label patchi = mesh_.boundary().whichPatch(facei);
 
                 FatalErrorInFunction
                     << "Celllevel does not satisfy 2:1 constraint."
@@ -2633,7 +2633,7 @@ Foam::labelList Foam::hexRef8::consistentSlowRefinement
                     << facei
                     << " refData:" << allFaceInfo[facei]
                     << " on patch " << patchi << " "
-                    << mesh_.boundaryMesh()[patchi].name() << nl
+                    << mesh_.boundary()[patchi].name() << nl
                     << "owner cell " << own
                     << " current level:" << cellLevel_[own]
                     << " current count:" << allCellInfo[own].count()
@@ -4461,7 +4461,7 @@ void Foam::hexRef8::checkMesh() const
         // Replace data on coupled patches with their neighbour ones.
         syncTools::swapBoundaryFaceList(mesh_, nei);
 
-        const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh_.boundary();
 
         forAll(patches, patchi)
         {
@@ -4525,7 +4525,7 @@ void Foam::hexRef8::checkMesh() const
             if (mag(magArea - neiFaceAreas[i]) > smallDim)
             {
                 const face& f = mesh_.faces()[facei];
-                label patchi = mesh_.boundaryMesh().whichPatch(facei);
+                label patchi = mesh_.boundary().whichPatch(facei);
 
                 dumpCell(mesh_.faceOwner()[facei]);
 
@@ -4534,7 +4534,7 @@ void Foam::hexRef8::checkMesh() const
                     << " boundaries" << endl
                     << "Coupled face " << facei
                     << " on patch " << patchi
-                    << " " << mesh_.boundaryMesh()[patchi].name()
+                    << " " << mesh_.boundary()[patchi].name()
                     << " coords:" << UIndirectList<point>(mesh_.points(), f)()
                     << " has face area:" << magArea
                     << " (coupled) neighbour face area differs:"
@@ -4569,14 +4569,14 @@ void Foam::hexRef8::checkMesh() const
             {
                 dumpCell(mesh_.faceOwner()[facei]);
 
-                label patchi = mesh_.boundaryMesh().whichPatch(facei);
+                label patchi = mesh_.boundary().whichPatch(facei);
 
                 FatalErrorInFunction
                     << "Faces do not seem to be correct across coupled"
                     << " boundaries" << endl
                     << "Coupled face " << facei
                     << " on patch " << patchi
-                    << " " << mesh_.boundaryMesh()[patchi].name()
+                    << " " << mesh_.boundary()[patchi].name()
                     << " coords:" << UIndirectList<point>(mesh_.points(), f)()
                     << " has size:" << f.size()
                     << " (coupled) neighbour face has size:"
@@ -4619,14 +4619,14 @@ void Foam::hexRef8::checkMesh() const
             {
                 dumpCell(mesh_.faceOwner()[facei]);
 
-                label patchi = mesh_.boundaryMesh().whichPatch(facei);
+                label patchi = mesh_.boundary().whichPatch(facei);
 
                 FatalErrorInFunction
                     << "Faces do not seem to be correct across coupled"
                     << " boundaries" << endl
                     << "Coupled face " << facei
                     << " on patch " << patchi
-                    << " " << mesh_.boundaryMesh()[patchi].name()
+                    << " " << mesh_.boundary()[patchi].name()
                     << " coords:" << UIndirectList<point>(mesh_.points(), f)()
                     << " has anchor vector:" << anchorVec
                     << " (coupled) neighbour face anchor vector differs:"
@@ -4721,13 +4721,13 @@ void Foam::hexRef8::checkRefinementLevels
             {
                 dumpCell(own);
 
-                label patchi = mesh_.boundaryMesh().whichPatch(facei);
+                label patchi = mesh_.boundary().whichPatch(facei);
 
                 FatalErrorInFunction
                     << "Celllevel does not satisfy 2:1 constraint."
                     << " On coupled face " << facei
                     << " on patch " << patchi << " "
-                    << mesh_.boundaryMesh()[patchi].name()
+                    << mesh_.boundary()[patchi].name()
                     << " owner cell " << own << " has refinement "
                     << cellLevel_[own]
                     << " (coupled) neighbour cell has refinement "
@@ -4839,7 +4839,7 @@ void Foam::hexRef8::checkRefinementLevels
     //
     //    boolList isHangingPoint(mesh_.nPoints(), false);
     //
-    //    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    //    const polyBoundaryMesh& patches = mesh_.boundary();
     //
     //    forAll(patches, patchi)
     //    {

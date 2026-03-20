@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ Foam::zoneGenerators::nearPatchCells::nearPatchCells
 )
 :
     zoneGenerator(name, mesh, dict),
-    patchSet_(mesh.boundaryMesh().patchSet(dict)),
+    patchSet_(mesh.boundary().patchSet(dict)),
     distance_(dict.lookup<scalar>("distance", dimLength))
 {}
 

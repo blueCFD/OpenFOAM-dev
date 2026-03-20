@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,7 +66,7 @@ void Foam::Lagrangian::patchInjection::readCoeffs(const dictionary& modelDict)
 
 void Foam::Lagrangian::patchInjection::calcSumAreas()
 {
-    const polyPatch& patch = mesh().mesh().boundaryMesh()[patchName_];
+    const polyPatch& patch = mesh().poly().boundary()[patchName_];
 
     // Create a point field mid-way through the fraction. We distribute
     // particles uniformly through the time-step, so using the mid-time-step
@@ -74,9 +74,9 @@ void Foam::Lagrangian::patchInjection::calcSumAreas()
     // presence of motion.
     const tmp<pointField> tPoints
     (
-        mesh().mesh().moving()
-      ? mesh().mesh().oldPoints()/2 + mesh().mesh().points()/2
-      : tmp<pointField>(mesh().mesh().points())
+        mesh().poly().moving()
+      ? mesh().poly().oldPoints()/2 + mesh().poly().points()/2
+      : tmp<pointField>(mesh().poly().points())
     );
     const pointField& points = tPoints();
 
@@ -100,8 +100,8 @@ void Foam::Lagrangian::patchInjection::calcSumAreas()
         for (label fTrii = 0; fTrii < f.nTriangles(); ++ fTrii)
         {
             patchFaceSumArea_[patchFacei] +=
-                tetIndices(mesh().mesh().faceOwner()[facei], facei, fTrii + 1)
-               .faceTri(mesh().mesh(), points)
+                tetIndices(mesh().poly().faceOwner()[facei], facei, fTrii + 1)
+               .faceTri(mesh().poly(), points)
                .mag();
 
             patchFaceTriSumArea_[patchFacei][fTrii] =
@@ -208,7 +208,7 @@ Foam::LagrangianSubMesh Foam::Lagrangian::patchInjection::modify
     };
 
     // Get the mesh index of the first face in the patch
-    const polyPatch& patch = mesh.mesh().boundaryMesh()[patchName_];
+    const polyPatch& patch = mesh.poly().boundary()[patchName_];
     const label facei0 = patch.start();
 
     // Initialise storage for the injection geometry and topology. This is
@@ -238,7 +238,7 @@ Foam::LagrangianSubMesh Foam::Lagrangian::patchInjection::modify
             const barycentric2D r = barycentric2D01(localRndGen_);
 
             injectCoordinates.append(barycentric(0, r.a(), r.b(), r.c()));
-            injectCells.append(mesh.mesh().faceOwner()[facei]);
+            injectCells.append(mesh.poly().faceOwner()[facei]);
             injectFaces.append(facei);
             injectFaceTris.append(faceTrii + 1);
             injectFraction.append(fraction[areai]);
@@ -308,7 +308,7 @@ void Foam::Lagrangian::patchInjection::distribute
 
 void Foam::Lagrangian::patchInjection::correct()
 {
-    if (mesh().mesh().moving())
+    if (mesh().poly().moving())
     {
         calcSumAreas();
     }

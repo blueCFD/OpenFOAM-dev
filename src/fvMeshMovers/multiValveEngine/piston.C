@@ -38,7 +38,7 @@ Foam::word Foam::fvMeshMovers::multiValveEngine::pistonObject::pistonBowlName
 
 void Foam::fvMeshMovers::multiValveEngine::pistonObject::calculateBore()
 {
-    const polyBoundaryMesh& pbm = meshMover_.mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = meshMover_.mesh().poly().boundary();
 
     // Find the maximum and minimum coordinates of the piston patch-set
     vector pistonMax(vector::min);
@@ -69,7 +69,7 @@ void Foam::fvMeshMovers::multiValveEngine::pistonObject::calculateBore()
 
 void Foam::fvMeshMovers::multiValveEngine::pistonObject::correctClearance()
 {
-    const polyBoundaryMesh& pbm = meshMover_.mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = meshMover_.mesh().poly().boundary();
 
     // Find the maximum and minimum coordinate of the liner patch-sets
     scalar linerMax(-great);

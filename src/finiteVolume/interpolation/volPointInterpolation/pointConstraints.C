@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ void Foam::pointConstraints::makePatchPatchAddressing()
     const polyMesh& mesh = pMesh();
 
     const pointBoundaryMesh& pbm = pMesh.boundary();
-    const polyBoundaryMesh& bm = mesh.boundaryMesh();
+    const polyBoundaryMesh& bm = mesh.boundary();
 
 
     // first count the total number of patch-patch points

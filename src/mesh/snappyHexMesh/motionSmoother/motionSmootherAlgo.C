@@ -851,7 +851,7 @@ bool Foam::motionSmootherAlgo::scaleMesh
     if (debug)
     {
         // Had a problem with patches moved non-synced. Check transformations.
-        const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh_.boundary();
 
         Pout<< "Entering scaleMesh : coupled patches:" << endl;
         forAll(patches, patchi)

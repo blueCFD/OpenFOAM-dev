@@ -255,7 +255,7 @@ Foam::tmp<Foam::VolField<Type>> Foam::fvMeshToFvMesh::srcToTgt
 
     // Cutting patches. Set values to that of the internal cell field.
     const labelHashSet tgtCuttingPatchIDs =
-        leftOverTgtFld.mesh().boundaryMesh().patchSet(tgtCuttingPatchNames);
+        leftOverTgtFld.mesh().poly().boundary().patchSet(tgtCuttingPatchNames);
     forAllConstIter(labelHashSet, tgtCuttingPatchIDs, iter)
     {
         tgtBfld[iter.key()] == tgtBfld[iter.key()].patchInternalField();

@@ -108,7 +108,7 @@ void Foam::nonConformalCyclicLagrangianPatch::evaluate
 {
     const LagrangianSubMesh& patchMesh = this->mesh();
 
-    const meshSearch& searchEngine = meshSearch::New(mesh.mesh());
+    const meshSearch& searchEngine = meshSearch::New(mesh.poly());
 
     // Sub-set the geometry and topology of the elements
     SubField<barycentric> patchCoordinates = patchMesh.sub(mesh.coordinates());
@@ -130,7 +130,7 @@ void Foam::nonConformalCyclicLagrangianPatch::evaluate
     forAll(patchMesh, i)
     {
         patchCelli[i] =
-            mesh.mesh().faceOwner()[receivePatchFace[i] + receivePp.start()];
+            mesh.poly().faceOwner()[receivePatchFace[i] + receivePp.start()];
 
         if
         (
@@ -153,7 +153,7 @@ void Foam::nonConformalCyclicLagrangianPatch::evaluate
                     receivePosition[i]
                   - tracking::position
                     (
-                        mesh.mesh(),
+                        mesh.poly(),
                         patchCoordinates[i],
                         patchCelli[i],
                         patchFacei[i],

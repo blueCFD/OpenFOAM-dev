@@ -348,7 +348,7 @@ Foam::vector Foam::PackingModels::Implicit<CloudType>::velocityCorrection
 
     // get face flux
     scalar phi;
-    const label patchi = mesh.boundaryMesh().whichPatch(facei);
+    const label patchi = mesh.poly().boundary().whichPatch(facei);
     if (patchi == -1)
     {
         phi = phiCorrect_()[facei];
@@ -358,7 +358,7 @@ Foam::vector Foam::PackingModels::Implicit<CloudType>::velocityCorrection
         phi =
             phiCorrect_().boundaryField()[patchi]
             [
-                mesh.boundaryMesh()[patchi].whichFace(facei)
+                mesh.poly().boundary()[patchi].whichFace(facei)
             ];
     }
 

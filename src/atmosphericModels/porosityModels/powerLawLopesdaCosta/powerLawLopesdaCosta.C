@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -166,8 +166,8 @@ Foam::porosityModels::powerLawLopesdaCostaZone::powerLawLopesdaCostaZone
     (
         triSurfaceTools::triangulate
         (
-            mesh.boundaryMesh(),
-            mesh.boundaryMesh().patchSet(groundPatches),
+            mesh.poly().boundary(),
+            mesh.poly().boundary().patchSet(groundPatches),
             searchBounds
         )
     );

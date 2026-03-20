@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -211,7 +211,7 @@ bool Foam::meshCheck::checkFaceOrthogonality
 
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Severe nonorthogonality threshold
     const scalar severeNonorthogonalityThreshold = ::cos(orthWarn);
@@ -574,7 +574,7 @@ bool Foam::meshCheck::checkFaceTets
     // positive volume, non-flat tets
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Calculate coupled cell centre
     pointField neiCc(mesh.nFaces() - mesh.nInternalFaces());
@@ -806,7 +806,7 @@ bool Foam::meshCheck::checkFaceSkewness
 
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Calculate coupled cell centre
     pointField neiCc;
@@ -1016,7 +1016,7 @@ bool Foam::meshCheck::checkFaceWeights
 
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Calculate coupled cell centre
     pointField neiCc(mesh.nFaces()-mesh.nInternalFaces());
@@ -1170,7 +1170,7 @@ bool Foam::meshCheck::checkVolRatio
 
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Calculate coupled cell vol
     scalarField neiVols(mesh.nFaces()-mesh.nInternalFaces());
@@ -1453,7 +1453,7 @@ bool Foam::meshCheck::checkFaceTwist
 
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Calculate coupled cell centre
     pointField neiCc(mesh.nFaces()-mesh.nInternalFaces());

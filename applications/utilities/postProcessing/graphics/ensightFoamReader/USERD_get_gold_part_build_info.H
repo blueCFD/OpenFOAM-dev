@@ -100,7 +100,7 @@ int USERD_get_gold_part_build_info
 
     number_of_nodes[0] = meshPtr->nPoints();
 
-    const polyBoundaryMesh& bMesh = meshPtr->boundaryMesh();
+    const polyBoundaryMesh& bMesh = meshPtr->poly().boundary();
 
     for (label i=0; i<nPatches; i++)
     {

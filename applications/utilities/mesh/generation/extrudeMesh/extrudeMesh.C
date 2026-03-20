@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -224,7 +224,7 @@ void changeFrontBackPatches
     const word& backPatchName
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     label frontPatchi = findIndex(patches, frontPatchName);
     label backPatchi = findIndex(patches, backPatchName);
@@ -245,14 +245,14 @@ void changeFrontBackPatches
                     pp.size(),
                     pp.start(),
                     pp.index(),
-                    mesh.boundaryMesh(),
+                    mesh.boundary(),
                     PatchType::typeName
                 )
             );
         }
         else
         {
-            newPatches.append(pp.clone(mesh.boundaryMesh()).ptr());
+            newPatches.append(pp.clone(mesh.boundary()).ptr());
         }
     }
 
@@ -377,7 +377,7 @@ int main(int argc, char *argv[])
 
         #include "createSpecifiedMeshNoChangers.H"
 
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
 
         const labelList patchZones
         (
@@ -511,7 +511,7 @@ int main(int argc, char *argv[])
 
         // Add any patches
 
-        label nAdded = nPatches - mesh.boundaryMesh().size();
+        label nAdded = nPatches - mesh.poly().boundary().size();
         reduce(nAdded, sumOp<label>());
 
         Info<< "Adding overall " << nAdded << " processor patches." << endl;
@@ -519,19 +519,19 @@ int main(int argc, char *argv[])
         if (nAdded > 0)
         {
             DynamicList<polyPatch*> newPatches(nPatches);
-            forAll(mesh.boundaryMesh(), patchi)
+            forAll(mesh.poly().boundary(), patchi)
             {
                 newPatches.append
                 (
-                    mesh.boundaryMesh()[patchi].clone
+                    mesh.poly().boundary()[patchi].clone
                     (
-                        mesh.boundaryMesh()
+                        mesh.poly().boundary()
                     ).ptr()
                 );
             }
             for
             (
-                label patchi = mesh.boundaryMesh().size();
+                label patchi = mesh.poly().boundary().size();
                 patchi < nPatches;
                 patchi++
             )
@@ -550,7 +550,7 @@ int main(int argc, char *argv[])
                         0,                  // size
                         mesh.nFaces(),      // start
                         patchi,             // index
-                        mesh.boundaryMesh(),// polyBoundaryMesh
+                        mesh.poly().boundary(),// polyBoundaryMesh
                         Pstream::myProcNo(),// myProcNo
                         nbrProci            // neighbProcNo
                     )
@@ -803,13 +803,13 @@ int main(int argc, char *argv[])
         frontPatchName = "originalPatch";
         frontPatchFaces = findPatchFaces
         (
-            meshFromSurface().boundaryMesh(),
+            meshFromSurface().boundary(),
             frontPatchName
         );
         backPatchName = "otherSide";
         backPatchFaces = findPatchFaces
         (
-            meshFromSurface().boundaryMesh(),
+            meshFromSurface().boundary(),
             backPatchName
         );
     }

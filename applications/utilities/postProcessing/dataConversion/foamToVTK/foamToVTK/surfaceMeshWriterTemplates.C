@@ -34,7 +34,7 @@ Foam::tmp<Field<Type>> Foam::surfaceMeshWriter::getFaceField
     const SurfaceField<Type>& sfld
 ) const
 {
-    const polyBoundaryMesh& patches = sfld.mesh()().boundaryMesh();
+    const polyBoundaryMesh& patches = sfld.mesh().poly().boundary();
 
     tmp<Field<Type>> tfld(new Field<Type>(pp_.size()));
     Field<Type>& fld = tfld.ref();

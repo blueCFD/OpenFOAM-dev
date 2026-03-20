@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ void Foam::syncTools::swapBoundaryCellPositions
             << mesh.nCells() << abort(FatalError);
     }
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     label nBnd = mesh.nFaces()-mesh.nInternalFaces();
 
@@ -154,7 +154,7 @@ Foam::PackedBoolList Foam::syncTools::getMasterFaces(const polyMesh& mesh)
 {
     PackedBoolList isMasterFace(mesh.nFaces(), 1);
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     forAll(patches, patchi)
     {
@@ -184,7 +184,7 @@ Foam::PackedBoolList Foam::syncTools::getInternalOrMasterFaces
 {
     PackedBoolList isMasterFace(mesh.nFaces(), 1);
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     forAll(patches, patchi)
     {
@@ -220,7 +220,7 @@ Foam::PackedBoolList Foam::syncTools::getInternalOrCoupledFaces
 {
     PackedBoolList isMasterFace(mesh.nFaces(), 1);
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     forAll(patches, patchi)
     {

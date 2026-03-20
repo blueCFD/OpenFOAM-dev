@@ -151,7 +151,7 @@ Foam::tmp<Foam::vectorField> Foam::LagrangianSubMesh::nf
         nf[subi] =
             tracking::faceNormalAndDisplacement
             (
-                subMesh.mesh().mesh(),
+                subMesh.mesh().poly(),
                 subMesh.mesh().coordinates()[subi + subMesh.start()],
                 subMesh.mesh().celli()[subi + subMesh.start()],
                 subMesh.mesh().facei()[subi + subMesh.start()],
@@ -197,7 +197,7 @@ Foam::tmp<Foam::vectorField> Foam::LagrangianSubMesh::nf
         nf[subi] =
             tracking::faceNormalAndDisplacement
             (
-                mesh().mesh(),
+                mesh().poly(),
                 mesh().coordinates()[subi + start()],
                 mesh().celli()[subi + start()],
                 mesh().facei()[subi + start()],
@@ -243,7 +243,7 @@ Foam::tmp<Foam::vectorField> Foam::LagrangianSubMesh::Uf
         Uf[subi] =
             tracking::faceNormalAndDisplacement
             (
-                subMesh.mesh().mesh(),
+                subMesh.mesh().poly(),
                 subMesh.mesh().coordinates()[subi + subMesh.start()],
                 subMesh.mesh().celli()[subi + subMesh.start()],
                 subMesh.mesh().facei()[subi + subMesh.start()],
@@ -289,7 +289,7 @@ Foam::tmp<Foam::vectorField> Foam::LagrangianSubMesh::Uf
         Uf[subi] =
             tracking::faceNormalAndDisplacement
             (
-                mesh().mesh(),
+                mesh().poly(),
                 mesh().coordinates()[subi + start()],
                 mesh().celli()[subi + start()],
                 mesh().facei()[subi + start()],

@@ -100,7 +100,7 @@ Foam::labelList Foam::functionObjects::fieldValues::surfaceFieldValue::patchis
     forAll(patchNames, i)
     {
         const labelList patchiis =
-            mesh_.boundaryMesh().findIndices(patchNames[i]);
+            mesh_.poly().boundary().findIndices(patchNames[i]);
 
         if (patchiis.empty())
         {
@@ -110,7 +110,7 @@ Foam::labelList Foam::functionObjects::fieldValues::surfaceFieldValue::patchis
                 << "(" << patchNames[i] << "):" << nl
                 << "    Unknown patch name: " << patchNames[i]
                 << ". Valid patch names are: "
-                << mesh_.boundaryMesh().names() << nl
+                << mesh_.poly().boundary().names() << nl
                 << exit(FatalError);
         }
 
@@ -244,7 +244,7 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::combineMeshGeometry
         if (facePatchId_[i] != -1)
         {
             label patchi = facePatchId_[i];
-            globalFacesIs[i] += mesh_.boundaryMesh()[patchi].start();
+            globalFacesIs[i] += mesh_.poly().boundary()[patchi].start();
         }
     }
 

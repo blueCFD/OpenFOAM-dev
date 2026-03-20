@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -136,8 +136,8 @@ Foam::displacementLayeredMotionSolver::displacementLayeredMotionSolver
     oppositePatchNames_(dict.lookup("oppositePatches")),
     oppositePatches_
     (
-        mesh.boundaryMesh().findIndex(oppositePatchNames_.first()),
-        mesh.boundaryMesh().findIndex(oppositePatchNames_.second())
+        mesh.boundary().findIndex(oppositePatchNames_.first()),
+        mesh.boundary().findIndex(oppositePatchNames_.second())
     )
 {}
 
@@ -171,13 +171,13 @@ void Foam::displacementLayeredMotionSolver::solve()
     pointDisplacement_.boundaryFieldRef().updateCoeffs();
 
     // Walk the layers from patch0 to patch1
-    const polyPatch& patch0 = mesh().boundaryMesh()[oppositePatches_.first()];
+    const polyPatch& patch0 = mesh().boundary()[oppositePatches_.first()];
     scalarField patchDist0(mesh().nPoints());
     vectorField patchDisp0(pointDisplacement_);
     walkLayers(patch0, patchDist0, patchDisp0);
 
     // Walk the layers from patch1 to patch0
-    const polyPatch& patch1 = mesh().boundaryMesh()[oppositePatches_.second()];
+    const polyPatch& patch1 = mesh().boundary()[oppositePatches_.second()];
     scalarField patchDist1(mesh().nPoints());
     vectorField patchDisp1(pointDisplacement_);
     walkLayers(patch1, patchDist1, patchDisp1);

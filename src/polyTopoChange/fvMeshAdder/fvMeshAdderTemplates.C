@@ -107,7 +107,7 @@ void Foam::fvMeshAdder::MapVolField
         // Sort deleted ones last so is now in newPatch ordering
         bfld.reorder(oldToNew);
         // Extend to covers all patches
-        bfld.setSize(mesh.boundaryMesh().size());
+        bfld.setSize(mesh.poly().boundary().size());
         // Delete unused patches
         for
         (
@@ -136,7 +136,7 @@ void Foam::fvMeshAdder::MapVolField
                         oldPatchStarts[patchi],
                         oldPatchSizes[patchi],
                         meshMap.oldFaceMap(),
-                        mesh.boundaryMesh()[newPatchi],
+                        mesh.poly().boundary()[newPatchi],
                         -1              // unmapped value
                     )
                 );
@@ -178,9 +178,9 @@ void Foam::fvMeshAdder::MapVolField
 
             if (newPatchi != -1)
             {
-                const polyPatch& newPatch = mesh.boundaryMesh()[newPatchi];
+                const polyPatch& newPatch = mesh.poly().boundary()[newPatchi];
                 const polyPatch& oldPatch =
-                    fldToAdd.mesh().boundaryMesh()[patchi];
+                    fldToAdd.mesh().poly().boundary()[patchi];
 
                 if (!bfld(newPatchi))
                 {
@@ -398,7 +398,7 @@ void Foam::fvMeshAdder::MapSurfaceField
         // Sort deleted ones last so is now in newPatch ordering
         bfld.reorder(oldToNew);
         // Extend to covers all patches
-        bfld.setSize(mesh.boundaryMesh().size());
+        bfld.setSize(mesh.poly().boundary().size());
         // Delete unused patches
         for
         (
@@ -427,7 +427,7 @@ void Foam::fvMeshAdder::MapSurfaceField
                         oldPatchStarts[patchi],
                         oldPatchSizes[patchi],
                         meshMap.oldFaceMap(),
-                        mesh.boundaryMesh()[newPatchi],
+                        mesh.poly().boundary()[newPatchi],
                         -1      // unmapped value
                     )
                 );
@@ -469,9 +469,9 @@ void Foam::fvMeshAdder::MapSurfaceField
 
             if (newPatchi != -1)
             {
-                const polyPatch& newPatch = mesh.boundaryMesh()[newPatchi];
+                const polyPatch& newPatch = mesh.poly().boundary()[newPatchi];
                 const polyPatch& oldPatch =
-                fldToAdd.mesh()().boundaryMesh()[patchi];
+                    fldToAdd.mesh()().poly().boundary()[patchi];
 
                 if (!bfld(newPatchi))
                 {

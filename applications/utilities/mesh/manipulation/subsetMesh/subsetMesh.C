@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -168,12 +168,12 @@ int main(int argc, char *argv[])
     {
         const word patchName = args["patch"];
 
-        patchi = mesh.boundaryMesh().findIndex(patchName);
+        patchi = mesh.poly().boundary().findIndex(patchName);
 
         if (patchi == -1)
         {
             FatalErrorInFunction
-                << nl << "Valid patches are " << mesh.boundaryMesh().names()
+                << nl << "Valid patches are " << mesh.poly().boundary().names()
                 << exit(FatalError);
         }
 
@@ -229,12 +229,13 @@ int main(int argc, char *argv[])
         if (patchi == -1 && subsetDict.found("patch"))
         {
             const word patchName(subsetDict.lookup("patch"));
-            patchi = mesh.boundaryMesh().findIndex(patchName);
+            patchi = mesh.poly().boundary().findIndex(patchName);
 
             if (patchi == -1)
             {
                 FatalErrorInFunction
-                    << nl << "Valid patches are " << mesh.boundaryMesh().names()
+                    << nl << "Valid patches are "
+                    << mesh.poly().boundary().names()
                     << exit(FatalError);
             }
         }

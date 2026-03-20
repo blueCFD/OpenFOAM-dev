@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
     // Find set of patches from the list of regular expressions provided
     const wordReList patches((IStringStream(args[1])()));
-    const labelHashSet patchSet(mesh.boundaryMesh().patchSet(patches));
+    const labelHashSet patchSet(mesh.boundary().patchSet(patches));
 
     const scalar weight  = args.argRead<scalar>(2);
     #include "setNoOverwrite.H"
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     {
         FatalErrorInFunction
             << "Cannot find any patches in set " << patches << endl
-            << "Valid patches are " << mesh.boundaryMesh().names()
+            << "Valid patches are " << mesh.boundary().names()
             << exit(FatalError);
     }
 
@@ -104,8 +104,8 @@ int main(int argc, char *argv[])
 
     forAllConstIter(labelHashSet, patchSet, iter)
     {
-        nPatchFaces += mesh.boundaryMesh()[iter.key()].size();
-        nPatchEdges += mesh.boundaryMesh()[iter.key()].nEdges();
+        nPatchFaces += mesh.boundary()[iter.key()].size();
+        nPatchEdges += mesh.boundary()[iter.key()].nEdges();
     }
 
     // Construct from estimate for the number of cells to refine
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     // Find cells to refine
     forAllConstIter(labelHashSet, patchSet, iter)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[iter.key()];
+        const polyPatch& pp = mesh.boundary()[iter.key()];
         const labelList& meshPoints = pp.meshPoints();
 
         forAll(meshPoints, pointi)
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 
     forAllConstIter(labelHashSet, patchSet, iter)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[iter.key()];
+        const polyPatch& pp = mesh.boundary()[iter.key()];
         const labelList& meshPoints = pp.meshPoints();
 
         forAll(meshPoints, pointi)
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 
     forAllConstIter(labelHashSet, patchSet, iter)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[iter.key()];
+        const polyPatch& pp = mesh.boundary()[iter.key()];
         const labelList& meshPoints = pp.meshPoints();
 
         forAll(meshPoints, pointi)

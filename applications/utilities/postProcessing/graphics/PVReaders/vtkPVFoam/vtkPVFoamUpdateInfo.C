@@ -295,7 +295,7 @@ void Foam::vtkPVFoam::updateInfoPatches
     {
         const fvMesh& mesh = procMeshesPtr_->completeMesh();
 
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
         const HashTable<labelList, word>& groups = patches.groupPatchIndices();
         const wordList allPatchNames = patches.names();
 

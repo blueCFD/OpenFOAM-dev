@@ -68,7 +68,7 @@ void mergeDuplicateBoundaryFaces
     );
 
     // Check that none are on processor patches
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
     forAll(duplicates, bFacei)
     {
         if (duplicates[bFacei] != -1)

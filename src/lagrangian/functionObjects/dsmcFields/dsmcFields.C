@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -219,9 +219,9 @@ bool Foam::functionObjects::dsmcFields::write()
 
         volScalarField::Boundary& pBf = p.boundaryFieldRef();
 
-        forAll(mesh_.boundaryMesh(), i)
+        forAll(mesh_.poly().boundary(), i)
         {
-            const polyPatch& patch = mesh_.boundaryMesh()[i];
+            const polyPatch& patch = mesh_.poly().boundary()[i];
 
             if (isA<wallPolyPatch>(patch))
             {

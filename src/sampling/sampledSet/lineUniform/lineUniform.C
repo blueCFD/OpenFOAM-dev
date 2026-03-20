@@ -54,10 +54,7 @@ bool Foam::sampledSets::lineUniform::calcSamples
 ) const
 {
     // Calculate all sampling points
-    const scalarField ts
-    (
-        scalarField(scalarList(identityMap(nPoints_)))/(nPoints_ - 1)
-    );
+    const scalarField ts(linearSequence01(nPoints_));
     const pointField points((1 - ts)*start_ + ts*end_);
 
     // Calculate the sampling topology

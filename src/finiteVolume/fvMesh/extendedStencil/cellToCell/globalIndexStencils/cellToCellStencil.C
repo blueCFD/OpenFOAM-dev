@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -167,7 +167,7 @@ void Foam::cellToCellStencil::merge
 
 void Foam::cellToCellStencil::validBoundaryFaces(boolList& isValidBFace) const
 {
-    const polyBoundaryMesh& patches = mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = mesh().boundary();
 
     isValidBFace.setSize(mesh().nFaces()-mesh().nInternalFaces(), true);
 
@@ -190,7 +190,7 @@ void Foam::cellToCellStencil::validBoundaryFaces(boolList& isValidBFace) const
 Foam::autoPtr<Foam::indirectPrimitivePatch>
 Foam::cellToCellStencil::allCoupledFacesPatch() const
 {
-    const polyBoundaryMesh& patches = mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = mesh().boundary();
 
     label nCoupled = 0;
 

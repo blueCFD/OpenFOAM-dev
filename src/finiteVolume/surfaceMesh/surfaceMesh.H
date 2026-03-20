@@ -97,6 +97,9 @@ public:
 
     // Member Functions
 
+        //- Return reference to polyMesh
+        const polyMesh& poly() const;
+
         //- Return size (number of internal faces)
         inline label size() const;
 

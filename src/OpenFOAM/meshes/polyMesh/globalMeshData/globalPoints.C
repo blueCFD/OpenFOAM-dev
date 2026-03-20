@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -90,7 +90,7 @@ Foam::labelPairList Foam::globalPoints::addSendTransform
 {
     scalar tol = refCast<const coupledPolyPatch>
     (
-        mesh_.boundaryMesh()[patchi]
+        mesh_.boundary()[patchi]
     ).matchTolerance();
 
     labelPairList sendInfo(info.size());
@@ -396,7 +396,7 @@ void Foam::globalPoints::initOwnPoints
     labelHashSet& changedPoints
 )
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     forAll(patches, patchi)
     {
@@ -484,7 +484,7 @@ void Foam::globalPoints::sendPatchPoints
     const labelHashSet& changedPoints
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
     const labelPairList& patchInfo = globalTransforms_.patchTransformSign();
 
     forAll(patches, patchi)
@@ -578,7 +578,7 @@ void Foam::globalPoints::receivePatchPoints
     // - meshToProcPoint_
     // - changedPoints: all points for which something changed.
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
     const labelPairList& patchInfo = globalTransforms_.patchTransformSign();
 
     // Reset changed points
@@ -1099,7 +1099,7 @@ Foam::globalPoints::globalPoints
     mesh_(mesh),
     globalIndices_(mesh_.nPoints()),
     globalTransforms_(mesh),
-    nPatchPoints_(countPatchPoints(mesh.boundaryMesh())),
+    nPatchPoints_(countPatchPoints(mesh.boundary())),
     procPoints_(nPatchPoints_),
     meshToProcPoint_(nPatchPoints_)
 {

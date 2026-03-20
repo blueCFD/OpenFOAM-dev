@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,7 +87,7 @@ Foam::medialAxisMeshMover::getPatch
     const labelList& patchIDs
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Count faces.
     label nFaces = 0;
@@ -624,7 +624,7 @@ void Foam::medialAxisMeshMover::update(const dictionary& coeffDict)
 
 
         // 2. Seed non-adapt patches
-        const polyBoundaryMesh& patches = mesh().boundaryMesh();
+        const polyBoundaryMesh& patches = mesh().boundary();
 
         labelHashSet adaptPatches(adaptPatchIndices_);
 

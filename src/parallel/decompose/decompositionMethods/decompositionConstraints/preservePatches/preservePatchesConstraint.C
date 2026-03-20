@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,7 +95,7 @@ void Foam::decompositionConstraints::preservePatchesConstraint::add
     List<labelPair>& explicitConnections
 ) const
 {
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.boundary();
 
     blockedFace.setSize(mesh.nFaces(), true);
 
@@ -143,7 +143,7 @@ void Foam::decompositionConstraints::preservePatchesConstraint::apply
     // Synchronise decomposition on patchIDs
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.boundary();
 
     labelList destProc(mesh.nFaces()-mesh.nInternalFaces(), labelMax);
 

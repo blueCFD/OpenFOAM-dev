@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,7 +88,7 @@ Foam::sampledSurfaces::patch::interpolateField
     forAll(faces(), cutFacei)
     {
         label patchi = patchIndices_[patchIndex_[cutFacei]];
-        const polyPatch& pp = mesh().boundaryMesh()[patchi];
+        const polyPatch& pp = mesh().boundary()[patchi];
         label patchFacei = patchFaceLabels()[cutFacei];
         const face& f = faces()[cutFacei];
 

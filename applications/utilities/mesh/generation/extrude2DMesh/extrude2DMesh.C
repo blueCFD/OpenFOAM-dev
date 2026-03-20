@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
                 poly2DMesh.patchSizes()[patchi],
                 poly2DMesh.patchStarts()[patchi],
                 patchi,
-                mesh().boundaryMesh(),
+                mesh().boundary(),
                 polyPatch::typeName
             );
         }
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 
     extruder.addFrontBackPatches();
 
-    meshMod.set(new polyTopoChange(mesh().boundaryMesh().size()));
+    meshMod.set(new polyTopoChange(mesh().boundary().size()));
 
     extruder.setRefinement(meshMod());
 

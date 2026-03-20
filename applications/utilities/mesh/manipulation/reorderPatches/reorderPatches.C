@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -224,23 +224,23 @@ int main(int argc, char *argv[])
     if
     (
         !Pstream::parRun()
-     && mesh.boundaryMesh().size() != referencePatchNames.size()
+     && mesh.poly().boundary().size() != referencePatchNames.size()
     )
     {
         FatalErrorInFunction
             << "Number of reference patches " << referencePatchNames.size()
             << " is not equal to the number of patches in the mesh "
-            << mesh.boundaryMesh().size()
+            << mesh.poly().boundary().size()
             << exit(FatalError);
     }
 
     // Reorder the patches
-    labelList newToOldPatches(identityMap(mesh.boundaryMesh().size()));
+    labelList newToOldPatches(identityMap(mesh.poly().boundary().size()));
 
     forAll(referencePatchNames, patchi)
     {
         const label oldPatchi =
-            mesh.boundaryMesh().findIndex(referencePatchNames[patchi]);
+            mesh.poly().boundary().findIndex(referencePatchNames[patchi]);
 
         if (oldPatchi != -1)
         {
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
             FatalErrorInFunction
                 << "Cannot find reference patch " << referencePatchNames[patchi]
                 << " in the mesh which has patches "
-                << mesh.boundaryMesh().names()
+                << mesh.poly().boundary().names()
                 << exit(FatalError);
         }
     }

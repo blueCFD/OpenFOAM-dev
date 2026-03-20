@@ -68,7 +68,7 @@ Foam::nonConformalBoundary::boundary(const labelList& patches) const
     DynamicList<label> faces;
     forAll(patches, i)
     {
-        const polyPatch& pp = mesh().boundaryMesh()[patches[i]];
+        const polyPatch& pp = mesh().boundary()[patches[i]];
 
         faces.append(identityMap(pp.start(), pp.size()));
     }
@@ -109,7 +109,7 @@ Foam::labelList Foam::nonConformalBoundary::nonConformalOtherPatchIndices
     NcPpTypeMethods ... typeMethods
 ) const
 {
-    const polyBoundaryMesh& pbm = mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh().boundary();
 
     labelHashSet origPatchIndexTable;
     DynamicList<label> nonCoupledPatchIndices(pbm.size());
@@ -138,7 +138,7 @@ void Foam::nonConformalBoundary::nonConformalOtherPatchIndices
     NcPpTypeMethods ... typesAndMethods
 ) const
 {
-    const polyBoundaryMesh& pbm = mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh().boundary();
 
     forAll(pbm, nccPatchi)
     {
@@ -269,8 +269,8 @@ Foam::nonConformalBoundary::nonConformalBoundary(const polyMesh& mesh)
     ownerOrigBoundaryEdgeMeshEdgePtr_(nullptr),
     ownerOrigBoundaryEdgesPtr_(nullptr),
     ownerOrigBoundaryMeshEdgesPtr_(nullptr),
-    patchPointOwnerOrigBoundaryPointsPtr_(mesh.boundaryMesh().size()),
-    patchEdgeOwnerOrigBoundaryEdgesPtr_(mesh.boundaryMesh().size()),
+    patchPointOwnerOrigBoundaryPointsPtr_(mesh.boundary().size()),
+    patchEdgeOwnerOrigBoundaryEdgesPtr_(mesh.boundary().size()),
     ownerOrigBoundaryPointNormalsPtr_(nullptr)
 {
 }
@@ -415,9 +415,9 @@ Foam::nonConformalBoundary::ownerOrigBoundaryEdgeMeshEdge() const
     {
         // Create boundary of all owner-orig and proc patches
         labelList ownerOrigAndProcPatchIndices = this->ownerOrigPatchIndices();
-        forAll(mesh().boundaryMesh(), patchi)
+        forAll(mesh().boundary(), patchi)
         {
-            if (isA<processorPolyPatch>(mesh().boundaryMesh()[patchi]))
+            if (isA<processorPolyPatch>(mesh().boundary()[patchi]))
             {
                 ownerOrigAndProcPatchIndices.append(patchi);
             }
@@ -589,7 +589,7 @@ Foam::nonConformalBoundary::patchPointOwnerOrigBoundaryPoints
 {
     if (!patchPointOwnerOrigBoundaryPointsPtr_.set(patchi))
     {
-        const polyPatch& pp = mesh().boundaryMesh()[patchi];
+        const polyPatch& pp = mesh().boundary()[patchi];
 
         ownerOrigBoundaryPointMeshPoint();
         const labelList& meshPointOwnerOrigBoundaryPoint =

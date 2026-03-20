@@ -59,7 +59,7 @@ void Foam::vtkPVFoam::convertVolFields
 )
 {
     const polyBoundaryMesh& patches =
-        procMeshesPtr_->completeMesh().boundaryMesh();
+        procMeshesPtr_->completeMesh().poly().boundary();
 
     forAllConstIter(IOobjectList, objects, iter)
     {

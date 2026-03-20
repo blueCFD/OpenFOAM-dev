@@ -451,7 +451,7 @@ Foam::localPointRegion::localPointRegion(const polyMesh& mesh)
     meshFaceMap_(0),
     faceRegions_(0)
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Get any point on the outside which is on a non-coupled boundary
     boolList candidatePoint(mesh.nPoints(), false);
@@ -582,7 +582,7 @@ Foam::List<Foam::labelPair> Foam::localPointRegion::findDuplicateFacePairs
     const polyMesh& mesh
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Faces to test: all boundary faces
     labelList testFaces

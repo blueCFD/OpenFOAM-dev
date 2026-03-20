@@ -99,7 +99,7 @@ Foam::carrierLagrangianFieldSource<Type>::value
     return
         this->template cloud<clouds::carried>().carrierField
         (
-            subMesh.mesh().mesh().lookupObject<VolField<Type>>(fieldcName_)
+            subMesh.mesh().poly().lookupObject<VolField<Type>>(fieldcName_)
         )(subMesh);
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,7 +117,7 @@ void Foam::vtkPVFoam::convertFields(vtkMultiBlockDataSet* output)
     }
 
     PtrList<PrimitivePatchInterpolation<primitivePatch>>
-        ppInterpList(procMeshesPtr_->completeMesh().boundaryMesh().size());
+        ppInterpList(procMeshesPtr_->completeMesh().poly().boundary().size());
     forAll(ppInterpList, i)
     {
         ppInterpList.set
@@ -125,7 +125,7 @@ void Foam::vtkPVFoam::convertFields(vtkMultiBlockDataSet* output)
             i,
             new PrimitivePatchInterpolation<primitivePatch>
             (
-                procMeshesPtr_->completeMesh().boundaryMesh()[i]
+                procMeshesPtr_->completeMesh().poly().boundary()[i]
             )
         );
     }

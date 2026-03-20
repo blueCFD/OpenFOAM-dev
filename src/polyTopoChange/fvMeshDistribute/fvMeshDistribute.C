@@ -367,7 +367,7 @@ void Foam::fvMeshDistribute::printCoupleInfo
 
 Foam::label Foam::fvMeshDistribute::findInternalPatch() const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     label internalPatchi = -1;
 
@@ -426,7 +426,7 @@ Foam::label Foam::fvMeshDistribute::findInternalPatch() const
 
 Foam::label Foam::fvMeshDistribute::findNonEmptyPatch() const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     label nonEmptyPatchi = -1;
 
@@ -471,9 +471,9 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::deleteProcPatches
     // or new patchID
     labelList newPatchID(mesh_.nFaces() - mesh_.nInternalFaces(), -1);
 
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.poly().boundary(), patchi)
     {
-        const polyPatch& pp = mesh_.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh_.poly().boundary()[patchi];
 
         if (isA<processorPolyPatch>(pp))
         {
@@ -502,12 +502,12 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::deleteProcPatches
 
     // Delete (now empty) processor patches.
     {
-        labelList oldToNew(identityMap(mesh_.boundaryMesh().size()));
+        labelList oldToNew(identityMap(mesh_.poly().boundary().size()));
         label newI = 0;
         // Non processor patches first
-        forAll(mesh_.boundaryMesh(), patchi)
+        forAll(mesh_.poly().boundary(), patchi)
         {
-            if (!isA<processorPolyPatch>(mesh_.boundaryMesh()[patchi]))
+            if (!isA<processorPolyPatch>(mesh_.poly().boundary()[patchi]))
             {
                 oldToNew[patchi] = newI++;
             }
@@ -515,9 +515,9 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::deleteProcPatches
         label nNonProcPatches = newI;
 
         // Processor patches as last
-        forAll(mesh_.boundaryMesh(), patchi)
+        forAll(mesh_.poly().boundary(), patchi)
         {
-            if (isA<processorPolyPatch>(mesh_.boundaryMesh()[patchi]))
+            if (isA<processorPolyPatch>(mesh_.poly().boundary()[patchi]))
             {
                 oldToNew[patchi] = newI++;
             }
@@ -736,7 +736,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::fvMeshDistribute::mergeSharedPoints
                     }
                 }
 
-                label patchID = mesh_.boundaryMesh().whichPatch(facei);
+                label patchID = mesh_.poly().boundary().whichPatch(facei);
                 label nei = (patchID == -1 ? mesh_.faceNeighbour()[facei] : -1);
 
                 meshMod.modifyFace
@@ -815,7 +815,7 @@ void Foam::fvMeshDistribute::getCouplingData
     sourceNbrPatch.setSize(nBnd);
     sourceNewNbrProc.setSize(nBnd);
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     // Get neighbouring meshFace labels and new processor of coupled boundaries.
     labelList nbrFaces(nBnd, -1);
@@ -1330,8 +1330,8 @@ void Foam::fvMeshDistribute::addProcPatches
                     (
                         0,              // size
                         mesh_.nFaces(),
-                        mesh_.boundaryMesh().size(),
-                        mesh_.boundaryMesh(),
+                        mesh_.poly().boundary().size(),
+                        mesh_.poly().boundary(),
                         Pstream::myProcNo(),
                         proci
                     );
@@ -1347,15 +1347,15 @@ void Foam::fvMeshDistribute::addProcPatches
                     const coupledPolyPatch& pcPatch =
                           refCast<const coupledPolyPatch>
                           (
-                              mesh_.boundaryMesh()[referPatchID[bFacei]]
+                              mesh_.poly().boundary()[referPatchID[bFacei]]
                           );
 
                     processorCyclicPolyPatch pp
                     (
                         0,              // size
                         mesh_.nFaces(),
-                        mesh_.boundaryMesh().size(),
-                        mesh_.boundaryMesh(),
+                        mesh_.poly().boundary().size(),
+                        mesh_.poly().boundary(),
                         Pstream::myProcNo(),
                         proci,
                         pcPatch.name()
@@ -1375,9 +1375,9 @@ void Foam::fvMeshDistribute::addProcPatches
 
 void Foam::fvMeshDistribute::addNccProcPatches()
 {
-    forAll(mesh_.boundaryMesh(), nccPatchi)
+    forAll(mesh_.poly().boundary(), nccPatchi)
     {
-        const polyPatch& pp = mesh_.boundaryMesh()[nccPatchi];
+        const polyPatch& pp = mesh_.poly().boundary()[nccPatchi];
 
         if (!isA<nonConformalCyclicPolyPatch>(pp)) continue;
 
@@ -1427,8 +1427,8 @@ void Foam::fvMeshDistribute::addNccProcPatches()
                             (
                                 0,
                                 mesh_.nFaces(),
-                                mesh_.boundaryMesh().size(),
-                                mesh_.boundaryMesh(),
+                                mesh_.poly().boundary().size(),
+                                mesh_.poly().boundary(),
                                 Pstream::myProcNo(),
                                 proci,
                                 owner ? nccPp.name() : nbrNccPp.name(),
@@ -1502,7 +1502,7 @@ void Foam::fvMeshDistribute::sendMesh
             << "    nPoints:" << mesh.nPoints() << nl
             << "    nFaces:" << mesh.nFaces() << nl
             << "    nCells:" << mesh.nCells() << nl
-            << "    nPatches:" << mesh.boundaryMesh().size() << nl
+            << "    nPatches:" << mesh.poly().boundary().size() << nl
             << endl;
     }
 
@@ -1626,7 +1626,7 @@ void Foam::fvMeshDistribute::sendMesh
         << CompactListList<label>(mesh.faces())
         << mesh.faceOwner()
         << mesh.faceNeighbour()
-        << mesh.boundaryMesh()
+        << mesh.poly().boundary()
 
         << zonePoints
         << zoneFaces
@@ -1716,7 +1716,7 @@ Foam::autoPtr<Foam::fvMesh> Foam::fvMeshDistribute::receiveMesh
             patchEntries[patchi].keyword(),
             patchEntries[patchi].dict(),
             patchi,
-            domainMesh.boundaryMesh()
+            domainMesh.poly().boundary()
         ).ptr();
     }
     // Add patches; no parallel comms
@@ -1823,7 +1823,7 @@ Foam::autoPtr<Foam::polyDistributionMap> Foam::fvMeshDistribute::distribute
     }
 
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     // Check all processors have same non-proc patches in same order.
     if (patches.checkParallelSync(true))
@@ -1833,7 +1833,7 @@ Foam::autoPtr<Foam::polyDistributionMap> Foam::fvMeshDistribute::distribute
             << " to be present in the same order on all patches" << nl
             << "followed by the processor patches (which of course are unique)."
             << nl
-            << "Local patches:" << mesh_.boundaryMesh().names()
+            << "Local patches:" << mesh_.poly().boundary().names()
             << abort(FatalError);
     }
 
@@ -2775,7 +2775,7 @@ Foam::autoPtr<Foam::polyDistributionMap> Foam::fvMeshDistribute::distribute
             constructFaceMap[sendProc] = identityMap(1, domainMesh.nFaces());
             constructPointMap[sendProc] = identityMap(domainMesh.nPoints());
             constructPatchMap[sendProc] =
-                identityMap(domainMesh.boundaryMesh().size());
+                identityMap(domainMesh.poly().boundary().size());
 
 
             // Print a bit.

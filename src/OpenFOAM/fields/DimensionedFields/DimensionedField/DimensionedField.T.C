@@ -763,7 +763,7 @@ void DimensionedField<Type, GeoMesh, PrimitiveField>::reset
 
     if (tdf.isTmp())
     {
-        PrimitiveField<Type>::transfer(tdf.ref());
+        transfer(tdf.ref());
     }
     else
     {
@@ -868,7 +868,7 @@ void DimensionedField<Type, GeoMesh, PrimitiveField>::operator=
     }
     else
     {
-        primitiveFieldRef() = df.primitiveField();
+        PrimitiveField<Type>::operator=(df.primitiveField());
     }
 
     tdf.clear();

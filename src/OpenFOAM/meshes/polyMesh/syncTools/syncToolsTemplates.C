@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,7 +87,7 @@ void Foam::syncTools::syncPointMap
     const TransformOp& top
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Synchronise multiple shared points.
     const globalMeshData& pd = mesh.globalData();
@@ -396,7 +396,7 @@ void Foam::syncTools::syncEdgeMap
     const TransformOp& top
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
 
     // Do synchronisation without constructing globalEdge addressing
@@ -788,7 +788,7 @@ void Foam::syncTools::syncEdgeMap
 //            << mesh.nPoints() << abort(FatalError);
 //    }
 //
-//    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+//    const polyBoundaryMesh& patches = mesh.boundary();
 //
 //    // Synchronise multiple shared points.
 //    const globalMeshData& pd = mesh.globalData();
@@ -961,7 +961,7 @@ void Foam::syncTools::syncEdgeMap
 //            << meshPoints.size() << abort(FatalError);
 //    }
 //
-//    if (!hasCouples(mesh.boundaryMesh()))
+//    if (!hasCouples(mesh.boundary()))
 //    {
 //        return;
 //    }
@@ -1309,7 +1309,7 @@ void Foam::syncTools::syncBoundaryFaceList
             << nBFaces << abort(FatalError);
     }
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     if (parRun)
     {
@@ -1429,7 +1429,7 @@ void Foam::syncTools::syncFaceList
             << mesh.nFaces() << abort(FatalError);
     }
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     if (parRun)
     {
@@ -1543,7 +1543,7 @@ void Foam::syncTools::swapBoundaryCellList
             << mesh.nCells() << abort(FatalError);
     }
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     label nBnd = mesh.nFaces()-mesh.nInternalFaces();
 

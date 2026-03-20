@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -546,7 +546,7 @@ Foam::label Foam::snappyRefineDriver::danglingCellRefine
         // ~~~~~~~~~~~~~~~~~~~~~~~~~
 
         const cellList& cells = mesh.cells();
-        const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+        const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
         labelList candidateCells;
         {

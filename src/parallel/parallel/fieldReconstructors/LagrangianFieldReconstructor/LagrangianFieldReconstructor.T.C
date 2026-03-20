@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,7 +83,7 @@ Foam::LagrangianFieldReconstructor::LagrangianFieldReconstructor
 
     // If the owner has changed then the face will be numbered around in
     // the opposite direction. Change the face triangle index accordingly.
-    const faceList& completeFaces = completeMesh_.mesh().faces();
+    const faceList& completeFaces = completeMesh_.poly().faces();
     forAll(completeCoordinates, i)
     {
         if (completeFaceIndices[i] < 0)

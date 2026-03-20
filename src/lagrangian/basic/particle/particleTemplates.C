@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -134,7 +134,7 @@ void Foam::particle::correctAfterParallelTransfer
     trackingData& td
 )
 {
-    const polyPatch& pp = td.mesh.boundaryMesh()[td.sendToPatch];
+    const polyPatch& pp = td.mesh.boundary()[td.sendToPatch];
 
     if (isA<processorPolyPatch>(pp))
     {
@@ -209,7 +209,7 @@ void Foam::particle::hitFace
 
         if (!p.hitPatch(cloud, ttd))
         {
-            const polyPatch& patch = td.mesh.boundaryMesh()[p.patch(td.mesh)];
+            const polyPatch& patch = td.mesh.boundary()[p.patch(td.mesh)];
 
             if (isA<wedgePolyPatch>(patch))
             {
@@ -304,7 +304,7 @@ void Foam::particle::hitCyclicPatch(TrackCloudType&, trackingData& td)
     const cyclicPolyPatch& cpp =
         static_cast<const cyclicPolyPatch&>
         (
-            td.mesh.boundaryMesh()[patch(td.mesh)]
+            td.mesh.boundary()[patch(td.mesh)]
         );
     const cyclicPolyPatch& receiveCpp = cpp.nbrPatch();
 
@@ -333,7 +333,7 @@ bool Foam::particle::hitNonConformalCyclicPatch
 {
     const nonConformalCyclicPolyPatch& nccpp =
         static_cast<const nonConformalCyclicPolyPatch&>
-        (td.mesh.boundaryMesh()[patchi]);
+        (td.mesh.boundary()[patchi]);
 
     const point sendPos = position(td.mesh);
 
@@ -397,7 +397,7 @@ void Foam::particle::hitProcessorPatch(TrackCloudType& cloud, trackingData& td)
     td.sendFromPatch = patch(td.mesh);
     td.sendToPatch = cloud.patchNbrProcPatch()[patch(td.mesh)];
     td.sendToPatchFace =
-        td.mesh.boundaryMesh()[patch(td.mesh)].whichFace(face());
+        td.mesh.boundary()[patch(td.mesh)].whichFace(face());
 }
 
 

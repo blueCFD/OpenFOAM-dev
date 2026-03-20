@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -121,7 +121,7 @@ void renamePatches
 )
 {
     polyBoundaryMesh& patches =
-        const_cast<polyBoundaryMesh&>(mesh.boundaryMesh());
+        const_cast<polyBoundaryMesh&>(mesh.poly().boundary());
 
     // Create a list of all the new names
     wordList newNames = patches.names();
@@ -146,7 +146,7 @@ void subsetVolFields
     const labelHashSet& addedPatches
 )
 {
-    const labelList patchMap(identityMap(mesh.boundaryMesh().size()));
+    const labelList patchMap(identityMap(mesh.poly().boundary().size()));
 
     HashTable<const GeoField*> fields
     (
@@ -200,7 +200,7 @@ void subsetSurfaceFields
     const labelHashSet& addedPatches
 )
 {
-    const labelList patchMap(identityMap(mesh.boundaryMesh().size()));
+    const labelList patchMap(identityMap(mesh.poly().boundary().size()));
 
     HashTable<const GeoField*> fields
     (
@@ -831,7 +831,7 @@ void createAndWriteRegion
     );
 
 
-    const polyBoundaryMesh& newPatches = newMesh().boundaryMesh();
+    const polyBoundaryMesh& newPatches = newMesh().poly().boundary();
     newPatches.checkParallelSync(true);
 
     // Delete empty patches
@@ -1016,7 +1016,7 @@ labelList addRegionPatches
             0,                  // overridden
             regionNames[e[1]],  // neighbourRegion
             names[1],           // neighbourPatch
-            mesh.boundaryMesh()
+            mesh.poly().boundary()
         );
 
         interfacePatches[interI] = fvMeshTools::addPatch(mesh, patch1);
@@ -1029,7 +1029,7 @@ labelList addRegionPatches
             0,
             regionNames[e[0]],  // neighbourRegion
             names[0],
-            mesh.boundaryMesh()
+            mesh.poly().boundary()
         );
 
         fvMeshTools::addPatch(mesh, patch2);
@@ -1037,10 +1037,10 @@ labelList addRegionPatches
         Info<< "For interface between region " << regionNames[e[0]]
             << " and " << regionNames[e[1]] << " added patches" << endl
             << "    " << interfacePatches[interI]
-            << "\t" << mesh.boundaryMesh()[interfacePatches[interI]].name()
+            << "\t" << mesh.poly().boundary()[interfacePatches[interI]].name()
             << endl
             << "    " << interfacePatches[interI]+1
-            << "\t" << mesh.boundaryMesh()[interfacePatches[interI]+1].name()
+            << "\t" << mesh.poly().boundary()[interfacePatches[interI]+1].name()
             << endl;
     }
 
@@ -1748,7 +1748,7 @@ int main(int argc, char *argv[])
 
     // Since we're going to mess with patches and zones make sure all
     // is synchronised
-    mesh.boundaryMesh().checkParallelSync(true);
+    mesh.poly().boundary().checkParallelSync(true);
     mesh.faceZones().checkParallelSync(true);
 
 

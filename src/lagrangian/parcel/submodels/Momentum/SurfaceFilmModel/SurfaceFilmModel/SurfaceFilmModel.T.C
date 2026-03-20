@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,7 +105,7 @@ void Foam::SurfaceFilmModel<CloudType>::inject(TrackCloudType& cloud)
         const label filmPatchi = filmPatches[filmi];
 
         const fvMesh& mesh = this->owner().mesh();
-        const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+        const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
         const labelList& injectorCellsPatch = pbm[filmPatchi].faceCells();
 

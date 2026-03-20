@@ -77,6 +77,16 @@ tmp<scalarField> stabilise(const SubField<scalar>&, const scalar s);
 tmp<scalarField> stabilise(const tmp<scalarField>&, const scalar s);
 
 
+tmp<scalarField> linearSequence
+(
+    const scalar start,
+    const scalar end,
+    const label n
+);
+
+tmp<scalarField> linearSequence01(const label n);
+
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<>

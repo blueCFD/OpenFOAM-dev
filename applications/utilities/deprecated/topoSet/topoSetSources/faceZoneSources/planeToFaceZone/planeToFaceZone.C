@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -84,9 +84,9 @@ void Foam::planeToFaceZone::combine(faceZoneSet& fzSet, const bool add) const
             cellIsAbovePlane[mesh_.faceOwner()[facei]]
          != cellIsAbovePlane[mesh_.faceNeighbour()[facei]];
     }
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        const polyPatch& patch = mesh_.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh_.boundary()[patchi];
         if (!patch.coupled()) continue;
         forAll(patch, patchFacei)
         {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,7 +73,7 @@ void Foam::PatchPostProcessing<CloudType>::write()
             mkDir(this->writeTimeDir());
 
             const word& patchName =
-                mesh.boundaryMesh()[patchIndices_[i]].name();
+                mesh.poly().boundary()[patchIndices_[i]].name();
 
             OFstream patchOutFile
             (
@@ -139,7 +139,7 @@ Foam::PatchPostProcessing<CloudType>::PatchPostProcessing
     times_(),
     patchData_()
 {
-    const wordList allPatchNames = owner.mesh().boundaryMesh().names();
+    const wordList allPatchNames = owner.mesh().poly().boundary().names();
     wordList patchName(this->coeffDict().lookup("patches"));
 
     labelHashSet uniquePatchIDs;
@@ -164,7 +164,8 @@ Foam::PatchPostProcessing<CloudType>::PatchPostProcessing
         forAll(patchIndices_, i)
         {
             const label patchi = patchIndices_[i];
-            const word& patchName = owner.mesh().boundaryMesh()[patchi].name();
+            const word& patchName =
+                owner.mesh().poly().boundary()[patchi].name();
             Info<< "Post-process patch " << patchName << endl;
         }
     }

@@ -60,10 +60,7 @@ bool Foam::sampledSets::arcUniform::calcSamples
     const scalar radius = mag(axis1);
 
     // Compute all point locations
-    const scalarField ts
-    (
-        scalarField(scalarList(identityMap(nPoints_)))/(nPoints_ - 1)
-    );
+    const scalarField ts(linearSequence01(nPoints_));
     const scalarField theta((1 - ts)*startAngle_ + ts*endAngle_);
     const scalarField c(cos(theta)), s(sin(theta));
     const pointField points(centre_ + c*axis1 + s*axis2);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,7 +45,7 @@ Foam::mirrorFvMesh::mirrorFvMesh(const IOobject& io, const IOobject& dictIO)
     const faceList& oldFaces = faces();
     const cellList& oldCells = cells();
     const label nOldInternalFaces = nInternalFaces();
-    const polyPatchList& oldPatches = boundaryMesh();
+    const polyPatchList& oldPatches = poly().boundary();
 
     // Mirror the points
     Info<< "Mirroring points. Old points: " << oldPoints.size();
@@ -253,10 +253,10 @@ Foam::mirrorFvMesh::mirrorFvMesh(const IOobject& io, const IOobject& dictIO)
     labelList newPatchStarts(boundary().size(), -1);
     label nNewPatches = 0;
 
-    forAll(boundaryMesh(), patchi)
+    forAll(poly().boundary(), patchi)
     {
-        const label curPatchSize = boundaryMesh()[patchi].size();
-        const label curPatchStart = boundaryMesh()[patchi].start();
+        const label curPatchSize = poly().boundary()[patchi].size();
+        const label curPatchStart = poly().boundary()[patchi].start();
         const boolList& curInserted = insertedBouFace[patchi];
 
         newPatchStarts[nNewPatches] = nNewFaces;
@@ -395,9 +395,9 @@ Foam::mirrorFvMesh::mirrorFvMesh(const IOobject& io, const IOobject& dictIO)
 
     forAll(p, patchi)
     {
-        p[patchi] = boundaryMesh()[newToOldPatch[patchi]].clone
+        p[patchi] = poly().boundary()[newToOldPatch[patchi]].clone
         (
-            pMesh.boundaryMesh(),
+            pMesh.poly().boundary(),
             patchi,
             newPatchSizes[patchi],
             newPatchStarts[patchi]

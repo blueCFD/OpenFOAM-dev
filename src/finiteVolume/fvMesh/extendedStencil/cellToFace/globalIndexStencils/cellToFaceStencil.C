@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -168,7 +168,7 @@ void Foam::cellToFaceStencil::merge
 
 void Foam::cellToFaceStencil::validBoundaryFaces(boolList& isValidBFace) const
 {
-    const polyBoundaryMesh& patches = mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = mesh().boundary();
 
     isValidBFace.setSize(mesh().nFaces()-mesh().nInternalFaces(), true);
 
@@ -191,7 +191,7 @@ void Foam::cellToFaceStencil::validBoundaryFaces(boolList& isValidBFace) const
 Foam::autoPtr<Foam::indirectPrimitivePatch>
 Foam::cellToFaceStencil::allCoupledFacesPatch() const
 {
-    const polyBoundaryMesh& patches = mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = mesh().boundary();
 
     label nCoupled = 0;
 
@@ -344,7 +344,7 @@ void Foam::cellToFaceStencil::calcFaceStencil
 {
     // Calculates per face a list of global cell/face indices.
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
     const label nBnd = mesh_.nFaces()-mesh_.nInternalFaces();
     const labelList& own = mesh_.faceOwner();
     const labelList& nei = mesh_.faceNeighbour();

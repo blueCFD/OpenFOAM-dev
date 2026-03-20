@@ -84,7 +84,7 @@ int USERD_set_filenames
 
     Num_time_steps = timeDirs.size() - 1;
 
-    nPatches = meshPtr->boundaryMesh().size();
+    nPatches = meshPtr->poly().boundary().size();
 
     // set the number of fields and store their names
     // a valid field must exist for all time-steps

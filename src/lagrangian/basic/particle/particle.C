@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -250,7 +250,7 @@ void Foam::particle::prepareForProcessorTransfer(trackingData& td)
     const processorPolyPatch& ppp =
         refCast<const processorPolyPatch>
         (
-            td.mesh.boundaryMesh()[td.sendFromPatch]
+            td.mesh.boundary()[td.sendFromPatch]
         );
 
     tracking::inProcessor(ppp, celli_, tetFacei_);
@@ -262,7 +262,7 @@ void Foam::particle::correctAfterProcessorTransfer(trackingData& td)
     const processorPolyPatch& ppp =
         refCast<const processorPolyPatch>
         (
-            td.mesh.boundaryMesh()[td.sendToPatch]
+            td.mesh.boundary()[td.sendToPatch]
         );
 
     tracking::outProcessor(ppp, coordinates_, celli_, tetFacei_, tetPti_);
@@ -289,7 +289,7 @@ void Foam::particle::prepareForNonConformalCyclicTransfer
     const nonConformalCyclicPolyPatch& nccpp =
         static_cast<const nonConformalCyclicPolyPatch&>
         (
-            mesh.boundaryMesh()[sendFromPatch]
+            mesh.boundary()[sendFromPatch]
         );
 
     // Store the position in the barycentric data
@@ -328,7 +328,7 @@ void Foam::particle::correctAfterNonConformalCyclicTransfer
     const nonConformalCyclicPolyPatch& nccpp =
         static_cast<const nonConformalCyclicPolyPatch&>
         (
-            mesh.boundaryMesh()[sendToPatch]
+            mesh.boundary()[sendToPatch]
         );
 
     // Get the position from the barycentric data

@@ -525,11 +525,7 @@ Foam::tmp<Foam::scalarField> Foam::patchCutPlot::calcCutXs
     scalar xMin = gMin(pointXs), xMax = gMax(pointXs);
     xMin -= max(rootVSmall, 2*small*mag(xMin));
     xMax += max(rootVSmall, 2*small*mag(xMax));
-    tmp<scalarField> tcutXs =
-        xMin
-      + scalarField(scalarList(identityMap(nCuts)))
-       /(nCuts - 1)
-       *(xMax - xMin);
+    tmp<scalarField> tcutXs = xMin + linearSequence01(nCuts)*(xMax - xMin);
     scalarField& cutXs = tcutXs.ref();
     cutXs.first() = xMin;
     cutXs.last() = xMax;
@@ -711,10 +707,10 @@ void Foam::patchCutPlot::writeLayers
 
         const label facei = meshFacei0 + w.elementi;
         const label patchi =
-            functionMesh.boundaryMesh().patchIndices()
+            functionMesh.poly().boundary().patchIndices()
             [w.elementi + meshFacei0 - functionMesh.nInternalFaces()];
         const label patchFacei =
-            facei - functionMesh.boundaryMesh()[patchi].start();
+            facei - functionMesh.poly().boundary()[patchi].start();
 
         layers.boundaryFieldRef()[patchi][patchFacei] = tensor::zero;
     }
@@ -725,10 +721,10 @@ void Foam::patchCutPlot::writeLayers
 
         const label facei = meshFacei0 + w.elementi;
         const label patchi =
-            functionMesh.boundaryMesh().patchIndices()
+            functionMesh.poly().boundary().patchIndices()
             [w.elementi + meshFacei0 - functionMesh.nInternalFaces()];
         const label patchFacei =
-            facei - functionMesh.boundaryMesh()[patchi].start();
+            facei - functionMesh.poly().boundary()[patchi].start();
 
         const direction i = w.cuti % tensor::nComponents;
 
@@ -768,10 +764,10 @@ void Foam::patchCutPlot::writeLayers
 
         const label facei = faces.addressing()[w.elementi];
         const label patchi =
-            functionMesh.boundaryMesh().patchIndices()
+            functionMesh.poly().boundary().patchIndices()
             [w.elementi - functionMesh.nInternalFaces()];
         const label patchFacei =
-            facei - functionMesh.boundaryMesh()[patchi].start();
+            facei - functionMesh.poly().boundary()[patchi].start();
 
         layers.boundaryFieldRef()[patchi][patchFacei] = tensor::zero;
     }
@@ -782,10 +778,10 @@ void Foam::patchCutPlot::writeLayers
 
         const label facei = faces.addressing()[w.elementi];
         const label patchi =
-            functionMesh.boundaryMesh().patchIndices()
+            functionMesh.poly().boundary().patchIndices()
             [w.elementi - functionMesh.nInternalFaces()];
         const label patchFacei =
-            facei - functionMesh.boundaryMesh()[patchi].start();
+            facei - functionMesh.poly().boundary()[patchi].start();
 
         const direction i = w.cuti % tensor::nComponents;
 

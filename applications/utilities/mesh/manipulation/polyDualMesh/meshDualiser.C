@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -545,7 +545,7 @@ void Foam::meshDualiser::createFacesAroundBoundaryPoint
     boolList& donePFaces            // pFaces visited
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
     const polyPatch& pp = patches[patchi];
     const labelList& pFaces = pp.pointFaces()[patchPointi];
     const labelList& own = mesh_.faceOwner();
@@ -1265,7 +1265,7 @@ void Foam::meshDualiser::setRefinement
 
     // Create boundary faces. Every boundary point has one or more dualcells.
     // These need to be closed.
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     forAll(patches, patchi)
     {

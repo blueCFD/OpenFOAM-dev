@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ Foam::oneDimensionalDiscretisations::uniform::coordinates
     const dictionary& dict
 )
 {
-    const scalarField f(coordinates01(n));
+    const scalarField f(linearSequence01(n));
 
     const scalar min = dict.lookup<scalar>("min", dims);
     const scalar max = dict.lookup<scalar>("max", dims);
@@ -85,15 +85,6 @@ Foam::oneDimensionalDiscretisations::uniform::coordinates
     }
 
     return integerRoot((1 - f)*integerPow(min, q) + f*integerPow(max, q), q);
-}
-
-
-// * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
-
-Foam::tmp<Foam::scalarField>
-Foam::oneDimensionalDiscretisations::uniform::coordinates01(const label n)
-{
-    return scalarField(scalarList(identityMap(n)))/(n - 1);
 }
 
 

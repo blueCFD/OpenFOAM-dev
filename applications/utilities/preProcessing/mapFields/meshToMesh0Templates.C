@@ -239,7 +239,7 @@ void Foam::meshToMesh0::interpolate
     typename VolField<Type>::
         Boundary& toVfBf = toVf.boundaryFieldRef();
 
-    forAll(toMesh_.boundaryMesh(), patchi)
+    forAll(toMesh_.poly().boundary(), patchi)
     {
         const fvPatch& toPatch = toMesh_.boundary()[patchi];
 

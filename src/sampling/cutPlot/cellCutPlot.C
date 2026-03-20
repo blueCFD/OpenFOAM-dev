@@ -983,11 +983,7 @@ Foam::tmp<Foam::scalarField> Foam::cellCutPlot::calcCutXs
     scalar xMin = gMin(pointXs), xMax = gMax(pointXs);
     xMin -= max(rootVSmall, 2*small*mag(xMin));
     xMax += max(rootVSmall, 2*small*mag(xMax));
-    tmp<scalarField> tcutXs =
-        xMin
-      + scalarField(scalarList(identityMap(nCuts)))
-       /(nCuts - 1)
-       *(xMax - xMin);
+    tmp<scalarField> tcutXs = xMin + linearSequence01(nCuts)*(xMax - xMin);
     scalarField& cutXs = tcutXs.ref();
     cutXs.first() = xMin;
     cutXs.last() = xMax;

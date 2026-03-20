@@ -21,7 +21,7 @@ int USERD_get_part_node_ids
     {
 
         label patchi = part_number-2;
-        const polyBoundaryMesh& bMesh = meshPtr->boundaryMesh();
+        const polyBoundaryMesh& bMesh = meshPtr->poly().boundary();
         const vectorField& points = bMesh[patchi].points();
 
         label nPoints = points.size();

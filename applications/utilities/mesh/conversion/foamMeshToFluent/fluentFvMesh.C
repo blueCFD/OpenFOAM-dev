@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -175,10 +175,10 @@ void Foam::fluentFvMesh::writeFluentMesh() const
     // Writing boundary faces
     forAll(boundary(), patchi)
     {
-        const faceUList& patchFaces = boundaryMesh()[patchi];
+        const faceUList& patchFaces = poly().boundary()[patchi];
 
         const labelList& patchFaceCells =
-            boundaryMesh()[patchi].faceCells();
+            poly().boundary()[patchi].faceCells();
 
         // The face group will be offset by 10 from the patch label
 

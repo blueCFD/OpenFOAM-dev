@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ void Foam::functionObjects::layerAverage::calcLayers()
     DynamicList<layerInfo> startFacesInfo;
     forAll(patchIndices_, i)
     {
-        const polyPatch& pp = mesh_.boundaryMesh()[patchIndices_[i]];
+        const polyPatch& pp = mesh_.poly().boundary()[patchIndices_[i]];
         forAll(pp, j)
         {
             startFaces.append(pp.start() + j);
@@ -240,7 +240,7 @@ bool Foam::functionObjects::layerAverage::read(const dictionary& dict)
 {
     Info<< type() << " " << name() << ":" << nl;
 
-    patchIndices_ = mesh_.boundaryMesh().patchSet(dict, true).toc();
+    patchIndices_ = mesh_.poly().boundary().patchSet(dict, true).toc();
 
     zoneIndices_ =
         findStrings

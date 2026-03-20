@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -82,7 +82,7 @@ Foam::extrude2DMesh::~extrude2DMesh()
 
 void Foam::extrude2DMesh::addFrontBackPatches()
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     frontPatchi_ = patches.findIndex("front");
     backPatchi_ = patches.findIndex("back");
@@ -213,7 +213,7 @@ void Foam::extrude2DMesh::setRefinement
     // ~~~~~~~~~~~~~~
 
     const faceList& faces = mesh_.faces();
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     for (label layer = 0; layer < nLayers; ++layer)
     {

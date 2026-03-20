@@ -52,7 +52,7 @@ void Foam::volPointInterpolation::interpolateUnconstrained
     }
 
     const labelListList& pointCells = mesh().pointCells();
-    const polyBoundaryMesh& pbm = mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh().poly().boundary();
     const fvBoundaryMesh& fvbm = mesh().boundary();
 
     // Cache calls to patch coupled flags

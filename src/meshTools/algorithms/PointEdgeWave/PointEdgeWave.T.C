@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -235,9 +235,9 @@ Foam::label Foam::PointEdgeWave<Type, TrackingData>::countPatchType() const
 {
     label nPatches = 0;
 
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        if (isA<PatchType>(mesh_.boundaryMesh()[patchi]))
+        if (isA<PatchType>(mesh_.boundary()[patchi]))
         {
             nPatches++;
         }
@@ -261,7 +261,7 @@ void Foam::PointEdgeWave<Type, TrackingData>::handleProcPatches()
     {
         label patchi = mesh_.globalData().processorPatches()[i];
         const processorPolyPatch& procPatch =
-            refCast<const processorPolyPatch>(mesh_.boundaryMesh()[patchi]);
+            refCast<const processorPolyPatch>(mesh_.boundary()[patchi]);
 
         patchInfo.clear();
         patchInfo.reserve(procPatch.nPoints());
@@ -305,7 +305,7 @@ void Foam::PointEdgeWave<Type, TrackingData>::handleProcPatches()
     {
         label patchi = mesh_.globalData().processorPatches()[i];
         const processorPolyPatch& procPatch =
-            refCast<const processorPolyPatch>(mesh_.boundaryMesh()[patchi]);
+            refCast<const processorPolyPatch>(mesh_.boundary()[patchi]);
 
         List<Type> patchInfo;
         labelList patchPoints;
@@ -359,9 +359,9 @@ void Foam::PointEdgeWave<Type, TrackingData>::handleCyclicPatches()
     DynamicList<label> nbrPoints;
     DynamicList<label> thisPoints;
 
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        const polyPatch& patch = mesh_.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh_.boundary()[patchi];
 
         if (isA<cyclicPolyPatch>(patch))
         {

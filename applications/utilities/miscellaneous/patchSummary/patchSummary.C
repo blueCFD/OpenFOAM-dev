@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     const bool expand = args.optionFound("expand");
 
     #include "createSpecifiedMeshNoChangers.H"
-    const polyBoundaryMesh& bm = mesh.boundaryMesh();
+    const polyBoundaryMesh& bm = mesh.poly().boundary();
 
     forAll(timeDirs, timeI)
     {

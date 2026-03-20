@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     bool writeAgglom = readBool(agglomDict.lookup("writeFacesAgglomeration"));
 
 
-    const polyBoundaryMesh& boundary = mesh.boundaryMesh();
+    const polyBoundaryMesh& boundary = mesh.poly().boundary();
 
     labelListIOList finalAgglom
     (

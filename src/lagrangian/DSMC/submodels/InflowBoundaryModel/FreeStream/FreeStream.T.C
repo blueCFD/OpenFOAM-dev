@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,9 +51,9 @@ Foam::FreeStream<CloudType>::FreeStream
 
     DynamicList<label> patches;
 
-    forAll(cloud.mesh().boundaryMesh(), p)
+    forAll(cloud.mesh().poly().boundary(), p)
     {
-        const polyPatch& patch = cloud.mesh().boundaryMesh()[p];
+        const polyPatch& patch = cloud.mesh().poly().boundary()[p];
 
         if (isType<polyPatch>(patch))
         {
@@ -75,7 +75,7 @@ Foam::FreeStream<CloudType>::FreeStream
 
     forAll(patches_, p)
     {
-        const polyPatch& patch = cloud.mesh().boundaryMesh()[patches_[p]];
+        const polyPatch& patch = cloud.mesh().poly().boundary()[patches_[p]];
 
         particleFluxAccumulators_[p] = List<Field<scalar>>
         (
@@ -127,7 +127,7 @@ void Foam::FreeStream<CloudType>::topoChange()
     {
         label patchi = patches_[p];
 
-        const polyPatch& patch = mesh.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh.boundary()[patchi];
         List<Field<scalar>>& pFA = particleFluxAccumulators_[p];
 
         forAll(pFA, facei)
@@ -172,7 +172,7 @@ void Foam::FreeStream<CloudType>::inflow()
     {
         label patchi = patches_[p];
 
-        const polyPatch& patch = mesh.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh.boundary()[patchi];
 
         // Add mass to the accumulators.  negative face area dotted with the
         // velocity to point flux into the domain.

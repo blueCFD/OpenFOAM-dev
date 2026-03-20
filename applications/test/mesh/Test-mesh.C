@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         pointField points(mesh.points());
         cellShapeList shapes(mesh.cellShapes());
 
-        const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+        const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
         faceListList boundaryFaces(pbm.size());
         forAll(pbm, patchi)

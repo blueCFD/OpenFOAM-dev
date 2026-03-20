@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,8 +111,8 @@ void Foam::fv::effectivenessHeatExchanger::setZone()
         }
         else
         {
-            facePatchId = mesh().boundaryMesh().whichPatch(facei);
-            const polyPatch& pp = mesh().boundaryMesh()[facePatchId];
+            facePatchId = mesh().poly().boundary().whichPatch(facei);
+            const polyPatch& pp = mesh().poly().boundary()[facePatchId];
             if (isA<coupledPolyPatch>(pp))
             {
                 if (refCast<const coupledPolyPatch>(pp).owner())

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ void filterPatches(fvMesh& mesh, const HashSet<word>& bafflePatches)
     // Remove any zero-sized patches, except for constraint types, and any
     // specified in the system dictionary
 
-    const polyBoundaryMesh& bMesh = mesh.boundaryMesh();
+    const polyBoundaryMesh& bMesh = mesh.poly().boundary();
 
     label newPatchi = 0;
 
@@ -185,7 +185,7 @@ label createFaces
 {
     label nModified = 0;
 
-    const polyBoundaryMesh& bMesh = mesh.boundaryMesh();
+    const polyBoundaryMesh& bMesh = mesh.poly().boundary();
 
     // Pass 1. Do selected side of zone
     for (label facei = 0; facei < mesh.nInternalFaces(); facei++)
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
     #include "createTimeNoFunctionObjects.H"
     #include "createSpecifiedMeshNoChangers.H"
 
-    const polyBoundaryMesh& bMesh = mesh.boundaryMesh();
+    const polyBoundaryMesh& bMesh = mesh.poly().boundary();
 
     #include "setNoOverwrite.H"
 
@@ -584,7 +584,7 @@ int main(int argc, char *argv[])
     Info<< endl;
 
     // Make sure patches and zoneFaces are synchronised across couples
-    mesh.boundaryMesh().checkParallelSync(true);
+    mesh.poly().boundary().checkParallelSync(true);
     mesh.faceZones().checkParallelSync(true);
 
     // Do the topology changes. Notes:

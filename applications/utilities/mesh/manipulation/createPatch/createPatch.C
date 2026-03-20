@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,7 +76,7 @@ void changePatchID
 // Filter out the empty patches.
 void filterPatches(polyMesh& mesh, const HashSet<word>& addedPatchNames)
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Patches to keep
     DynamicList<polyPatch*> allPatches(patches.size());
@@ -172,7 +172,7 @@ void filterPatches(polyMesh& mesh, const HashSet<word>& addedPatchNames)
 // Write current match for all patches the as OBJ files
 void writeCyclicMatchObjs(const fileName& prefix, const polyMesh& mesh)
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     forAll(patches, patchi)
     {
@@ -253,7 +253,7 @@ void syncPoints
             << mesh.nPoints() << abort(FatalError);
     }
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Is there any coupled patch with transformation?
     bool hasTransformation = false;
@@ -470,7 +470,7 @@ int main(int argc, char *argv[])
         dict.lookupOrDefault("writeCyclicMatch", false)
     );
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // If running parallel check same patches everywhere
     patches.checkParallelSync(true);

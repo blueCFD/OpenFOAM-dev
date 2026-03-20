@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,7 +88,7 @@ Foam::meshToMesh::srcPatchStabilisation(const label i) const
     if (!srcPatchStabilisations_.set(i))
     {
         const label srcPatchi = patchIndices_[i].first();
-        const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
+        const polyPatch& srcPp = srcMesh_.boundary()[srcPatchi];
 
         srcPatchStabilisations_.set(i, new patchToPatchStabilisation());
         srcPatchStabilisations_[i].update
@@ -108,7 +108,7 @@ Foam::meshToMesh::tgtPatchStabilisation(const label i) const
     if (!tgtPatchStabilisations_.set(i))
     {
         const label tgtPatchi = patchIndices_[i].first();
-        const polyPatch& tgtPp = tgtMesh_.boundaryMesh()[tgtPatchi];
+        const polyPatch& tgtPp = tgtMesh_.boundary()[tgtPatchi];
 
         tgtPatchStabilisations_.set(i, new patchToPatchStabilisation());
         tgtPatchStabilisations_[i].update

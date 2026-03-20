@@ -182,7 +182,7 @@ int USERD_get_part_elements_by_type
     else if (part_number < nPatches+2)
     {
         label patchi = part_number - 2;
-        const polyBoundaryMesh& bMesh = meshPtr->boundaryMesh();
+        const polyBoundaryMesh& bMesh = meshPtr->poly().boundary();
 
         label nTri03 = 0;
         label nQuad04 = 0;

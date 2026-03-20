@@ -125,7 +125,8 @@ Foam::compileTemplate::compileTemplate
         codeDictVars,
         word::null,
         compileFiles_,
-        wordList::null()
+        wordList::null(),
+        false
     ),
     substitutions_(substitutions),
     dict_(optionsDict(templateName))

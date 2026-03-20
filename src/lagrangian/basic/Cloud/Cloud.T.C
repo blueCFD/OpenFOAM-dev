@@ -69,7 +69,7 @@ Foam::labelList Foam::lagrangian::Cloud<ParticleType>::patchNbrProc
     const polyMesh& pMesh
 )
 {
-    const polyBoundaryMesh& pbm = pMesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = pMesh.boundary();
 
     labelList result(pbm.size(), -1);
 
@@ -97,7 +97,7 @@ Foam::labelList Foam::lagrangian::Cloud<ParticleType>::patchNbrProcPatch
     const polyMesh& pMesh
 )
 {
-    const polyBoundaryMesh& pbm = pMesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = pMesh.boundary();
 
     labelList result(pbm.size(), -1);
 
@@ -143,7 +143,7 @@ Foam::lagrangian::Cloud<ParticleType>::patchNonConformalCyclicPatches
     const polyMesh& pMesh
 )
 {
-    const polyBoundaryMesh& pbm = pMesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = pMesh.boundary();
 
     labelListList result(pbm.size(), labelList());
 
@@ -165,7 +165,7 @@ Foam::lagrangian::Cloud<ParticleType>::patchNonConformalCyclicPatches
 template<class ParticleType>
 void Foam::lagrangian::Cloud<ParticleType>::storeRays() const
 {
-    const polyBoundaryMesh& pbm = pMesh_.boundaryMesh();
+    const polyBoundaryMesh& pbm = pMesh_.boundary();
 
     forAll(patchNonConformalCyclicPatches_, patchi)
     {
@@ -457,7 +457,7 @@ void Foam::lagrangian::Cloud<ParticleType>::move
                     << "Cloud " << name() << " did not accurately locate "
                     << td.patchNLocateBoundaryHits[patchi]
                     << " particles that transferred to patch "
-                    << pMesh_.boundaryMesh()[patchi].name() << nl;
+                    << pMesh_.boundary()[patchi].name() << nl;
             }
         }
     }

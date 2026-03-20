@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,7 +105,7 @@ Foam::boolList Foam::zoneGenerators::orient::pointOrientation
     // - slaves of coupled faces
     // - non-manifold edges
     {
-        const polyBoundaryMesh& bm = mesh_.boundaryMesh();
+        const polyBoundaryMesh& bm = mesh_.boundary();
 
         label nProtected = 0;
 
@@ -312,7 +312,7 @@ Foam::boolList Foam::zoneGenerators::orient::pointOrientation
 
     // Push master zone info over to slave (since slave faces never visited)
     {
-        const polyBoundaryMesh& bm = mesh_.boundaryMesh();
+        const polyBoundaryMesh& bm = mesh_.boundary();
 
         labelList neiStatus
         (

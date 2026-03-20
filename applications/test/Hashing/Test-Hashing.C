@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
                 unsigned hash1 = Hash<edge>()(lst[i]);
 
                 // as FixedList
-                unsigned hash2 = labelPair::Hash<>()(lst[i]);
+                unsigned hash2 = FixedList<label, 2>::Hash<>()(lst[i]);
 
                 Info<< hex << hash1 << " (as FixedList: " << hash2
                     << "): " << dec << lst[i] << endl;

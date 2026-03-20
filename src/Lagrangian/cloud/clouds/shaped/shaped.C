@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,7 @@ Foam::clouds::shaped::shaped(const cloud& c)
         c.averageField<scalar>
         (
             "alpha",
-            refCast<const fvMesh>(c.mesh().mesh()).V(),
+            refCast<const fvMesh>(c.mesh().poly()).V(),
             v
         )
     )
@@ -68,7 +68,7 @@ Foam::clouds::shaped::shaped(const cloud& c, const grouped& groupedCloud)
         c.averageField<scalar>
         (
             "alpha",
-            refCast<const fvMesh>(c.mesh().mesh()).V(),
+            refCast<const fvMesh>(c.mesh().poly()).V(),
             c.derivedField<scalar>
             (
                 [&]

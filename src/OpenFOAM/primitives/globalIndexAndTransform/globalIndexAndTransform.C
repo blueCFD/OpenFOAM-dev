@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -128,7 +128,7 @@ Foam::label Foam::globalIndexAndTransform::matchTransform
 
 void Foam::globalIndexAndTransform::determineTransforms()
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     DynamicList<transformer> localTransforms;
     DynamicField<scalar> localTols;
@@ -259,7 +259,7 @@ void Foam::globalIndexAndTransform::determineTransformPermutations()
 
 void Foam::globalIndexAndTransform::determinePatchTransformSign()
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     patchTransformSign_.setSize(patches.size(), labelPair(-1, 0));
 
@@ -308,7 +308,7 @@ bool Foam::globalIndexAndTransform::uniqueTransform
             {
                 WarningInFunction
                     << "Point " << pt
-                    << " is on patch " << mesh_.boundaryMesh()[patchi].name();
+                    << " is on patch " << mesh_.boundary()[patchi].name();
             }
             else
             {
@@ -354,7 +354,7 @@ Foam::globalIndexAndTransform::globalIndexAndTransform(const polyMesh& mesh)
 
     if (debug && transforms_.size() > 0)
     {
-        const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh_.boundary();
 
         Info<< "Determined global transforms :" << endl;
         Info<< "\t\ttranslation\trotation" << endl;
@@ -399,7 +399,7 @@ Foam::globalIndexAndTransform::globalIndexAndTransform(const polyMesh& mesh)
         // Check that the transforms are space filling : any point
         // can only use up to three transforms
 
-        const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh_.boundary();
 
 
         // 1. Collect transform&sign per point and do local check

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -128,7 +128,7 @@ void Foam::combineFaces::regioniseFaces
     Map<label>& faceRegion
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     forAll(cEdges, i)
     {
@@ -388,7 +388,7 @@ Foam::labelListList Foam::combineFaces::getMergeSets
     const labelHashSet& patchIDs
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     // Pick up all cells on boundary
     labelHashSet boundaryCells(mesh_.nFaces()-mesh_.nInternalFaces());
@@ -417,7 +417,7 @@ Foam::labelListList Foam::combineFaces::getMergeSets
     const scalar minConcaveCos
 ) const
 {
-    const labelHashSet patchIDs(identityMap(mesh_.boundaryMesh().size()));
+    const labelHashSet patchIDs(identityMap(mesh_.boundary().size()));
 
     return getMergeSets(featureCos, minConcaveCos, patchIDs);
 }
@@ -587,7 +587,7 @@ void Foam::combineFaces::setRefinement
         nPointFaces[pointi] = pointFaces[pointi].size();
     }
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     forAll(faceSets, setI)
     {
@@ -644,7 +644,7 @@ void Foam::combineFaces::setRefinement
         // Get outside face in mesh vertex labels
         const face outsideFace(getOutsideFace(bigFace));
 
-        const label patchi = mesh_.boundaryMesh().whichPatch(masterFacei);
+        const label patchi = mesh_.boundary().whichPatch(masterFacei);
 
         meshMod.modifyFace
         (
@@ -910,13 +910,13 @@ void Foam::combineFaces::setUnrefinement
         // ~~~~~~~
 
         const label own = mesh_.faceOwner()[masterFacei];
-        const label patchi = mesh_.boundaryMesh().whichPatch(masterFacei);
+        const label patchi = mesh_.boundary().whichPatch(masterFacei);
 
-        if (mesh_.boundaryMesh()[patchi].coupled())
+        if (mesh_.boundary()[patchi].coupled())
         {
             FatalErrorInFunction
                 << "Master face " << masterFacei << " is on coupled patch "
-                << mesh_.boundaryMesh()[patchi].name()
+                << mesh_.boundary()[patchi].name()
                 << abort(FatalError);
         }
 

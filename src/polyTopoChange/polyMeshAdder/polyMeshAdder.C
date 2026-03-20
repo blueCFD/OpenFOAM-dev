@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -305,8 +305,8 @@ void Foam::polyMeshAdder::mergePrimitives
     labelList& from1ToAllCells
 )
 {
-    const polyBoundaryMesh& patches0 = mesh0.boundaryMesh();
-    const polyBoundaryMesh& patches1 = mesh1.boundaryMesh();
+    const polyBoundaryMesh& patches0 = mesh0.boundary();
+    const polyBoundaryMesh& patches1 = mesh1.boundary();
 
     const indirectPrimitivePatch& masterPatch = coupleInfo.masterPatch();
     const indirectPrimitivePatch& slavePatch = coupleInfo.slavePatch();
@@ -1246,8 +1246,8 @@ Foam::autoPtr<Foam::mapAddedPolyMesh> Foam::polyMeshAdder::add
     const bool validBoundary
 )
 {
-    const polyBoundaryMesh& patches0 = mesh0.boundaryMesh();
-    const polyBoundaryMesh& patches1 = mesh1.boundaryMesh();
+    const polyBoundaryMesh& patches0 = mesh0.boundary();
+    const polyBoundaryMesh& patches1 = mesh1.boundary();
 
     DynamicList<word> allPatchNames(patches0.size() + patches1.size());
     DynamicList<word> allPatchTypes(allPatchNames.size());

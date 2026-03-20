@@ -204,7 +204,7 @@ label addPatch
 // Remove zero-sized patches
 void deleteEmptyPatches(fvMesh& mesh)
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.poly().boundary();
 
     wordList masterNames;
     if (Pstream::master())
@@ -474,7 +474,7 @@ label findUncoveredPatchFace
         extrudeFaceSet.insert(extrudeFaces[i]);
     }
 
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.poly().boundary();
     const labelList& eFaces = mesh.edgeFaces()[meshEdgeI];
     forAll(eFaces, i)
     {
@@ -510,7 +510,7 @@ label findUncoveredCyclicPatchFace
         extrudeFaceSet.insert(extrudeFaces[i]);
     }
 
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.poly().boundary();
     const labelList& eFaces = mesh.edgeFaces()[meshEdgeI];
     forAll(eFaces, i)
     {
@@ -682,7 +682,7 @@ void addCouplingPatches
 
         zoneBottomPatch[zonei] = addPatch
         (
-            mesh.boundaryMesh(),
+            mesh.poly().boundary(),
             bottomPatchName,
             patchTypes.size() ? patchTypes[zonei]
           : !bottomMapped ? polyPatch::typeName
@@ -717,7 +717,7 @@ void addCouplingPatches
 
         zoneTopPatch[zonei] = addPatch
         (
-            mesh.boundaryMesh(),
+            mesh.poly().boundary(),
             topPatchName,
             oppositePatchTypes.size() ? oppositePatchTypes[zonei]
           : !topMapped ? polyPatch::typeName
@@ -828,7 +828,7 @@ labelList addZoneSidePatches
                 patchName = "oneDEmptyPatch";
                 zoneSidePatches[zoneI] = addPatch
                 (
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     patchName,
                     emptyPolyPatch::typeName,
                     dictionary(),
@@ -840,7 +840,7 @@ labelList addZoneSidePatches
                 patchName = "oneDWedgePatch";
                 zoneSidePatches[zoneI] = addPatch
                 (
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     patchName,
                     wedgePolyPatch::typeName,
                     dictionary(),
@@ -867,7 +867,7 @@ labelList addZoneSidePatches
 
                 zoneSidePatches[zoneI] = addPatch
                 (
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     patchName,
                     polyPatch::typeName,
                     dictionary(),
@@ -974,7 +974,7 @@ labelList addExtrudeEdgeSidePatches
 
                 if (facei != -1)
                 {
-                    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+                    const polyBoundaryMesh& patches = mesh.poly().boundary();
 
                     const label newPatchi = findIndex
                     (
@@ -1007,7 +1007,7 @@ labelList addExtrudeEdgeSidePatches
 
                     extrudeEdgeSidePatches[edgeI] = addPatch
                     (
-                        mesh.boundaryMesh(),
+                        mesh.poly().boundary(),
                         name,
                         processorPolyPatch::typeName,
                         patchDict,
@@ -1039,10 +1039,10 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createSpecifiedMeshNoChangers.H"
 
-    if (mesh.boundaryMesh().checkParallelSync(true))
+    if (mesh.poly().boundary().checkParallelSync(true))
     {
         List<wordList> allNames(Pstream::nProcs());
-        allNames[Pstream::myProcNo()] = mesh.boundaryMesh().names();
+        allNames[Pstream::myProcNo()] = mesh.poly().boundary().names();
         Pstream::gatherList(allNames);
         Pstream::scatterList(allNames);
 
@@ -1327,7 +1327,7 @@ int main(int argc, char *argv[])
                 case zoneSourceType::patch:
                 {
                     const polyPatch& pp =
-                        mesh.boundaryMesh()[zoneNames[zonei]];
+                        mesh.poly().boundary()[zoneNames[zonei]];
                     facesDyn.append(identityMap(pp.start(), pp.size()));
                     zoneIDsDyn.append(labelList(pp.size(), zonei));
                     flipsDyn.append(boolList(pp.size(), false));
@@ -1335,7 +1335,7 @@ int main(int argc, char *argv[])
                     if (!oppositeZoneNames[zonei].empty())
                     {
                         const polyPatch& spp =
-                            mesh.boundaryMesh()[oppositeZoneNames[zonei]];
+                            mesh.poly().boundary()[oppositeZoneNames[zonei]];
                         if (spp.size() != pp.size())
                         {
                             FatalIOErrorIn(args.executable().c_str(), dict)
@@ -1439,16 +1439,16 @@ int main(int argc, char *argv[])
 
     // Copy all non-local patches since these are used on boundary edges of
     // the extrusion
-    DynamicList<polyPatch*> regionPatches(mesh.boundaryMesh().size());
-    forAll(mesh.boundaryMesh(), patchi)
+    DynamicList<polyPatch*> regionPatches(mesh.poly().boundary().size());
+    forAll(mesh.poly().boundary(), patchi)
     {
-        if (!isA<processorPolyPatch>(mesh.boundaryMesh()[patchi]))
+        if (!isA<processorPolyPatch>(mesh.poly().boundary()[patchi]))
         {
             regionPatches.append
             (
-                mesh.boundaryMesh()[patchi].clone
+                mesh.poly().boundary()[patchi].clone
                 (
-                    mesh.boundaryMesh(),
+                    mesh.poly().boundary(),
                     regionPatches.size(),
                     0,              // size
                     0               // start
@@ -1484,7 +1484,7 @@ int main(int argc, char *argv[])
     labelList interMeshBottomPatch;
     if (adaptMesh)
     {
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
 
         // Clone existing non-processor patches
         DynamicList<polyPatch*> newPatches(patches.size());
@@ -1665,9 +1665,9 @@ int main(int argc, char *argv[])
                     findIndex
                     (
                         regionPatches,
-                        mesh.boundaryMesh()
+                        mesh.poly().boundary()
                         [
-                            mesh.boundaryMesh().whichPatch(facei)
+                            mesh.poly().boundary().whichPatch(facei)
                         ].name()
                     );
                 ePatches.setSize(eFaces.size(), newPatchi);
@@ -1810,7 +1810,8 @@ int main(int argc, char *argv[])
     forAll(regionPatches, patchi)
     {
         polyPatch* ppPtr = regionPatches[patchi];
-        regionPatches[patchi] = ppPtr->clone(regionMesh.boundaryMesh()).ptr();
+        regionPatches[patchi] =
+            ppPtr->clone(regionMesh.poly().boundary()).ptr();
         delete ppPtr;
     }
     regionMesh.clearOut();

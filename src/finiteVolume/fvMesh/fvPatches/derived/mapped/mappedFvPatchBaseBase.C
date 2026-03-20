@@ -88,14 +88,14 @@ const Foam::fvPatch& Foam::mappedFvPatchBaseBase::nbrFvPatch() const
     const fvMesh& nbrMesh = this->nbrMesh();
 
     const label patchi =
-        nbrMesh.boundaryMesh().findIndex(mapper_.nbrPatchName());
+        nbrMesh.poly().boundary().findIndex(mapper_.nbrPatchName());
 
     if (patchi == -1)
     {
         FatalErrorInFunction
             << "Cannot find patch " << mapper_.nbrPatchName()
             << " in region " << mapper_.nbrRegionName() << endl
-            << "Valid patches are " << nbrMesh.boundaryMesh().names()
+            << "Valid patches are " << nbrMesh.poly().boundary().names()
             << exit(FatalError);
     }
 

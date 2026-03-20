@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,7 +50,7 @@ void Foam::patchFluxToFace::applyToSet
     topoSet& set
 ) const
 {
-    const polyPatch& patch = mesh().boundaryMesh()[patchName_];
+    const polyPatch& patch = mesh().boundary()[patchName_];
 
     if ((action == topoSetSource::NEW) || (action == topoSetSource::ADD))
     {
@@ -158,7 +158,7 @@ void Foam::patchFluxToFace::applyToSet
         (
             "value",
             fieldDict.subDict("boundaryField").subDict(patchName_),
-            mesh().boundaryMesh()[patchName_].size()
+            mesh().boundary()[patchName_].size()
         );
 
         applyToSet(action, patchFluxField, set);

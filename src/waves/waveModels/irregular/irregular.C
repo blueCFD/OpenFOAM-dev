@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -172,7 +172,7 @@ Foam::waveModels::irregular::irregular
         );
 
         const label nn = 1024;
-        const scalarField xx(scalarField(scalarList(identityMap(nn + 1)))/nn);
+        const scalarField xx(linearSequence01(nn + 1));
         const scalarField ff((1 - xx)*g01.first() + xx*g01.second());
 
         formatter_->write

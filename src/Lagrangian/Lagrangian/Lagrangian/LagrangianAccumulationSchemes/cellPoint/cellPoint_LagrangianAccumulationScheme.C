@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ void Foam::Lagrangian::accumulationSchemes::cellPoint<Type>::accumulate
 {
     cellPointLagrangianAccumulator::New
     (
-        lPsi.mesh().mesh().mesh()
+        lPsi.mesh().mesh().poly()
     ).accumulate(lPsi, cPsi);
 }
 

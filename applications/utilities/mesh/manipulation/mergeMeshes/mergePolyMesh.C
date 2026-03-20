@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -121,21 +121,21 @@ Foam::mergePolyMesh::mergePolyMesh(polyMesh& mesh)
 :
     mesh_(mesh),
     meshMod_(mesh_),
-    patchNames_(2*mesh_.boundaryMesh().size()),
-    patchDicts_(2*mesh_.boundaryMesh().size()),
+    patchNames_(2*mesh_.boundary().size()),
+    patchDicts_(2*mesh_.boundary().size()),
     pointZoneNames_(),
     faceZoneNames_(),
     cellZoneNames_()
 {
     // Insert the original patches into the list
-    wordList curPatchNames = mesh_.boundaryMesh().names();
+    wordList curPatchNames = mesh_.boundary().names();
 
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        patchNames_.append(mesh_.boundaryMesh()[patchi].name());
+        patchNames_.append(mesh_.boundary()[patchi].name());
 
         OStringStream os;
-        mesh_.boundaryMesh()[patchi].write(os);
+        mesh_.boundary()[patchi].write(os);
         patchDicts_.append(dictionary(IStringStream(os.str())()));
     }
 
@@ -253,7 +253,7 @@ void Foam::mergePolyMesh::addMesh(const polyMesh& m)
     }
 
     // Add faces
-    const polyBoundaryMesh& bm = m.boundaryMesh();
+    const polyBoundaryMesh& bm = m.boundary();
 
     // Gather the patch indices
     labelList patchIndices(bm.size());
@@ -375,7 +375,7 @@ void Foam::mergePolyMesh::merge()
     }
 
     // Add the patches if necessary
-    if (patchNames_.size() != mesh_.boundaryMesh().size())
+    if (patchNames_.size() != mesh_.boundary().size())
     {
         if (debug)
         {
@@ -384,7 +384,7 @@ void Foam::mergePolyMesh::merge()
 
         List<polyPatch*> newPatches(patchNames_.size());
 
-        const polyBoundaryMesh& oldPatches = mesh_.boundaryMesh();
+        const polyBoundaryMesh& oldPatches = mesh_.boundary();
 
         // Note.  Reusing counter in two for loops
         label patchi = 0;

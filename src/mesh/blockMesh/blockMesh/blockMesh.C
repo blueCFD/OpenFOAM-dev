@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -127,14 +127,14 @@ const Foam::polyMesh& Foam::blockMesh::topology() const
 
 Foam::PtrList<Foam::dictionary> Foam::blockMesh::patchDicts() const
 {
-    const polyPatchList& patchTopologies = topology().boundaryMesh();
+    const polyPatchList& patchTopologies = topology().boundary();
 
     PtrList<dictionary> patchDicts(patchTopologies.size());
 
     forAll(patchTopologies, patchi)
     {
         autoPtr<polyPatch> ppPtr =
-            patchTopologies[patchi].clone(topology().boundaryMesh());
+            patchTopologies[patchi].clone(topology().boundary());
 
         if (isA<cyclicTransform>(ppPtr()))
         {
@@ -194,7 +194,7 @@ const Foam::faceListList& Foam::blockMesh::patches() const
 
 Foam::wordList Foam::blockMesh::patchNames() const
 {
-    return topology().boundaryMesh().names();
+    return topology().boundary().names();
 }
 
 

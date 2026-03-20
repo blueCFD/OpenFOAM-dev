@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -733,7 +733,7 @@ bool Foam::polyMeshZipUpCells(polyMesh& mesh)
             << " changed " << nChangedFacesInMesh << " faces." << endl;
 
 
-        const polyBoundaryMesh& bMesh = mesh.boundaryMesh();
+        const polyBoundaryMesh& bMesh = mesh.boundary();
 
         // Reset the polyMesh. Number of points/faces/cells/patches stays the
         // same, only the faces themselves have changed so clear all derived

@@ -302,7 +302,7 @@ Foam::SlicedGeometricField<Type, GeoMesh>::splice() const
 
     label completeSize = mesh.size();
 
-    const polyBoundaryMesh& bm = mesh().boundaryMesh();
+    const polyBoundaryMesh& bm = mesh().poly().boundary();
 
     forAll(bm, patchi)
     {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
 
     // Detect any cyclic patches and force re-ordering of the faces
     {
-        const polyPatchList& patches = mesh.boundaryMesh();
+        const polyPatchList& patches = mesh.boundary();
         bool hasCyclic = false;
         forAll(patches, patchi)
         {
@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
 
     // Write summary
     {
-        const polyPatchList& patches = mesh.boundaryMesh();
+        const polyPatchList& patches = mesh.boundary();
 
         Info<< "----------------" << nl
             << "Mesh Information" << nl

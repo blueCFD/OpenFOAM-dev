@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -85,7 +85,7 @@ Foam::Lagrangian::volumeInjection::volumeInjection
 )
 :
     LagrangianInjection(name, mesh),
-    zone_(mesh.mesh()),
+    zone_(mesh.poly()),
     haveNumber_(false),
     numberOrNumberDensity_(NaN),
     time_(NaN),
@@ -112,7 +112,7 @@ void Foam::Lagrangian::volumeInjection::correct()
 
     if (t0 <= time_ && time_ < t1) return;
 
-    if (mesh().mesh().moving())
+    if (mesh().poly().moving())
     {
         zone_.movePoints();
     }
@@ -138,20 +138,20 @@ Foam::LagrangianSubMesh Foam::Lagrangian::volumeInjection::modify
     timeIndex_ = db().time().timeIndex();
 
     // Reference the mesh faces and the set cells
-    const faceList& faces = mesh.mesh().faces();
+    const faceList& faces = mesh.poly().faces();
     const labelList& setCellCells = zone_.zone();
-    const UIndirectList<cell> setCells(mesh.mesh().cells(), setCellCells);
+    const UIndirectList<cell> setCells(mesh.poly().cells(), setCellCells);
 
     // Create point and cell-centre fields at the current fraction
     const pointField points
     (
-        (1 - fraction)*mesh.mesh().oldPoints()
-      + fraction*mesh.mesh().points()
+        (1 - fraction)*mesh.poly().oldPoints()
+      + fraction*mesh.poly().points()
     );
     const pointField cellCentres
     (
-        (1 - fraction)*mesh.mesh().oldCellCentres()
-      + fraction*mesh.mesh().cellCentres()
+        (1 - fraction)*mesh.poly().oldCellCentres()
+      + fraction*mesh.poly().cellCentres()
     );
 
     // Count the number of tetrahedra in each set cell
@@ -191,7 +191,7 @@ Foam::LagrangianSubMesh Foam::Lagrangian::volumeInjection::modify
 
                 setCellSumVolume[setCelli] +=
                     tetIndices(setCellCells[setCelli], c[cFacei], fTrii)
-                   .tet(mesh.mesh(), points, cellCentres)
+                   .tet(mesh.poly(), points, cellCentres)
                    .mag();
 
                 setCellTetSumVolume[setCelli][cellTeti] =
@@ -301,7 +301,7 @@ Foam::LagrangianSubMesh Foam::Lagrangian::volumeInjection::modify
         );
 
     // See the note in volumeInjection::correct
-    if (mesh.mesh().moving())
+    if (mesh.poly().moving())
     {
         zone_.movePoints();
     }

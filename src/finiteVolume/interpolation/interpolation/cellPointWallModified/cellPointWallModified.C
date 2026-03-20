@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,7 +74,7 @@ Foam::interpolations::cellPointWallModified<Type>::calcPointField
         wordList patchTypes(psi.boundaryField().size());
         forAll(patchTypes, patchi)
         {
-            if (isA<wallPolyPatch>(mesh.boundaryMesh()[patchi]))
+            if (isA<wallPolyPatch>(mesh.poly().boundary()[patchi]))
             {
                 patchTypes[patchi] = zeroGradientFvPatchVectorField::typeName;
             }
@@ -107,9 +107,9 @@ Foam::interpolations::cellPointWallModified<Type>::calcPointField
     {
         scalarField pointCount(mesh.nPoints(), 0);
 
-        forAll(mesh.boundaryMesh(), patchi)
+        forAll(mesh.poly().boundary(), patchi)
         {
-            const polyPatch& patch = mesh.boundaryMesh()[patchi];
+            const polyPatch& patch = mesh.poly().boundary()[patchi];
 
             forAll(patch, patchFacei)
             {
@@ -147,9 +147,9 @@ Foam::interpolations::cellPointWallModified<Type>::calcPointField
     // normal needed to make the interpolated field point into the mesh
     scalarField theta0(mesh.nPoints(), -vGreat), theta1(mesh.nPoints(), vGreat);
     scalar maxVHatDotN = - vGreat;
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.poly().boundary(), patchi)
     {
-        const polyPatch& patch = mesh.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh.poly().boundary()[patchi];
         if (isA<wallPolyPatch>(patch))
         {
             forAll(patch, patchFacei)
@@ -220,9 +220,9 @@ Foam::interpolations::cellPointWallModified<Type>::calcPointField
     }
 
     // Apply the rotations so that the interpolated field points into the mesh
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.poly().boundary(), patchi)
     {
-        const polyPatch& patch = mesh.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh.poly().boundary()[patchi];
         if (isA<wallPolyPatch>(patch))
         {
             forAll(patch.meshPoints(), patchPointi)
@@ -263,9 +263,9 @@ Foam::interpolations::cellPointWallModified<Type>::calcPointField
     {
         maxVHatDotN = - vGreat;
 
-        forAll(mesh.boundaryMesh(), patchi)
+        forAll(mesh.poly().boundary(), patchi)
         {
-            const polyPatch& patch = mesh.boundaryMesh()[patchi];
+            const polyPatch& patch = mesh.poly().boundary()[patchi];
             if (isA<wallPolyPatch>(patch))
             {
                 forAll(patch, patchFacei)

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -718,7 +718,7 @@ void Foam::polyDualMesh::calcDual
     const labelList& featurePoints
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
     const label nIntFaces = mesh.nInternalFaces();
 
 
@@ -1329,7 +1329,7 @@ void Foam::polyDualMesh::calcDual
 
         dualPatches[patchi] = pp.clone
         (
-            boundaryMesh(),
+            boundary(),
             patchi,
             0, // patchSizes[patchi],
             0  // patchStarts[patchi]
@@ -1499,7 +1499,7 @@ void Foam::polyDualMesh::calcFeatures
     // For ease of use store patch number per face in allBoundary.
     labelList allRegion(allBoundary.size());
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     forAll(patches, patchi)
     {

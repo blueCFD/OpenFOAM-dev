@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,7 +69,7 @@ Foam::fvMesh Foam::zeroDimensionalFvMesh(const objectRegistry& db)
             6,
             0,
             0,
-            mesh.boundaryMesh(),
+            mesh.poly().boundary(),
             emptyPolyPatch::typeName
         )
     );

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ Foam::zoneGenerators::patch::patch
 )
 :
     zoneGenerator(name, mesh, dict),
-    patchSet_(mesh.boundaryMesh().patchSet(dict))
+    patchSet_(mesh.boundary().patchSet(dict))
 {}
 
 
@@ -72,7 +72,7 @@ Foam::zoneSet Foam::zoneGenerators::patch::generate() const
     forAllConstIter(labelHashSet, patchSet_, iter)
     {
         const label patchi = iter.key();
-        const polyPatch& pp = mesh_.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh_.boundary()[patchi];
 
         for
         (

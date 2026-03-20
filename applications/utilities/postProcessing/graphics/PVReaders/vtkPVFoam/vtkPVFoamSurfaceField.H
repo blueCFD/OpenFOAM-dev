@@ -93,8 +93,9 @@ void Foam::vtkPVFoam::convertSurfaceField
         }
         else
         {
-            const label patchi = mesh.boundaryMesh().whichPatch(facei);
-            const label pFacei = mesh.boundaryMesh()[patchi].whichFace(facei);
+            const label patchi = mesh.poly().boundary().whichPatch(facei);
+            const label pFacei =
+                mesh.poly().boundary()[patchi].whichFace(facei);
             const Type& t = tf.boundaryField()[patchi][pFacei];
 
             for (direction d=0; d<nComp; ++d)
@@ -256,7 +257,7 @@ void Foam::vtkPVFoam::convertSurfaceFields
         {
             const word patchName = getPartName(partId);
             const label datasetNo = partDataset_[partId];
-            const label patchId = mesh.boundaryMesh().findIndex(patchName);
+            const label patchId = mesh.poly().boundary().findIndex(patchName);
 
             if (!partStatus_[partId] || datasetNo < 0 || patchId < 0)
             {

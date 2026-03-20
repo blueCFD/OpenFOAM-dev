@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ Foam::patchInjectionBase::patchInjectionBase
 )
 :
     patchName_(patchName),
-    patchId_(mesh.boundaryMesh().findIndex(patchName_)),
+    patchId_(mesh.boundary().findIndex(patchName_)),
     sumProcArea_(),
     sumFaceArea_(),
     sumFaceTriArea_()
@@ -51,7 +51,7 @@ Foam::patchInjectionBase::patchInjectionBase
     {
         FatalErrorInFunction
             << "Requested patch " << patchName_ << " not found" << nl
-            << "Available patches are: " << mesh.boundaryMesh().names() << nl
+            << "Available patches are: " << mesh.boundary().names() << nl
             << exit(FatalError);
     }
 
@@ -80,7 +80,7 @@ Foam::patchInjectionBase::~patchInjectionBase()
 void Foam::patchInjectionBase::topoChange(const polyMesh& mesh)
 {
     // Set/cache the injector cells
-    const polyPatch& patch = mesh.boundaryMesh()[patchId_];
+    const polyPatch& patch = mesh.boundary()[patchId_];
 
     // Initialise
     sumProcArea_.resize(Pstream::nProcs());
@@ -160,7 +160,7 @@ void Foam::patchInjectionBase::setPositionAndCell
         return label(0);
     };
 
-    const polyPatch& patch = mesh.boundaryMesh()[patchId_];
+    const polyPatch& patch = mesh.poly().boundary()[patchId_];
 
     scalar area = injectionModel::globalScalar01(rndGen)*sumProcArea_.last();
 

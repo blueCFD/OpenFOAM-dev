@@ -143,8 +143,8 @@ int main(int argc, char *argv[])
     const polyMesh& srcMesh = srcMeshPtr.valid() ? srcMeshPtr() : mesh;
     const polyMesh& tgtMesh = mesh;
 
-    const polyPatch& srcPatch = srcMesh.boundaryMesh()[args[1]];
-    const polyPatch& tgtPatch = tgtMesh.boundaryMesh()[args[2]];
+    const polyPatch& srcPatch = srcMesh.boundary()[args[1]];
+    const polyPatch& tgtPatch = tgtMesh.boundary()[args[2]];
     const word& method = args[3];
     const bool reverse = args.argRead<bool>(4);
 

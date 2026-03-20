@@ -25,14 +25,18 @@ License
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+inline const Foam::polyMesh& Foam::surfaceMesh::poly() const
+{
+    return mesh_.poly();
+}
+
+
 inline Foam::label Foam::surfaceMesh::size() const
 {
     // return dynamic_cast<const fvMesh&>(*this).nInternalFaces();
     return mesh_.nInternalFaces();
 }
 
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 inline const Foam::objectRegistry& Foam::surfaceMesh::db() const
 {
@@ -51,6 +55,8 @@ inline const Foam::fvBoundaryMesh& Foam::surfaceMesh::boundary() const
     return mesh_.boundary();
 }
 
+
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 inline const Foam::fvMesh& Foam::surfaceMesh::operator()() const
 {

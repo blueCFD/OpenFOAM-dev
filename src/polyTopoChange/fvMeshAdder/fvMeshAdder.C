@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ Foam::autoPtr<Foam::mapAddedPolyMesh> Foam::fvMeshAdder::add
         mesh0.foundObject<pointMesh>(pointMesh::typeName);
     if (havePointMesh)
     {
-        const polyBoundaryMesh& pbm0 = mesh0.boundaryMesh();
+        const polyBoundaryMesh& pbm0 = mesh0.poly().boundary();
         oldMeshPoints0.setSize(pbm0.size());
         forAll(pbm0, patchi)
         {
@@ -102,7 +102,7 @@ Foam::autoPtr<Foam::mapAddedPolyMesh> Foam::fvMeshAdder::add
     );
 
     // Adjust the fvMesh part.
-    const polyBoundaryMesh& patches = mesh0.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh0.poly().boundary();
 
     fvBoundaryMesh& fvPatches = const_cast<fvBoundaryMesh&>(mesh0.boundary());
     fvPatches.setSize(patches.size());

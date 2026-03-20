@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -288,7 +288,7 @@ void Foam::domainDecomposition::decompose()
     Info<< "Calculating original mesh data" << nl << endl;
 
     // set references to the original mesh
-    const polyBoundaryMesh& patches = completeMesh().boundaryMesh();
+    const polyBoundaryMesh& patches = completeMesh().poly().boundary();
     const faceList& fcs = completeMesh().faces();
     const labelList& owner = completeMesh().faceOwner();
     const labelList& neighbour = completeMesh().faceNeighbour();
@@ -797,7 +797,7 @@ void Foam::domainDecomposition::decompose()
             procProcessorPatchSubPatchIDs[proci];
         const labelListList& curSubStarts =
             procProcessorPatchSubPatchStarts[proci];
-        const polyPatchList& meshPatches = completeMesh().boundaryMesh();
+        const polyPatchList& meshPatches = completeMesh().poly().boundary();
 
         // Count the number of inter-proc patches
         label nInterProcPatches = 0;
@@ -821,7 +821,7 @@ void Foam::domainDecomposition::decompose()
             procPatches[nPatches] =
                 meshPatch.clone
                 (
-                    procMesh.boundaryMesh(),
+                    procMesh.poly().boundary(),
                     nPatches,
                     curPatchSizes[patchi],
                     curPatchStarts[patchi]
@@ -854,7 +854,7 @@ void Foam::domainDecomposition::decompose()
                             size,
                             curStart,
                             nPatches,
-                            procMesh.boundaryMesh(),
+                            procMesh.poly().boundary(),
                             proci,
                             curNeighbourProcessors[procPatchi]
                         );
@@ -863,7 +863,7 @@ void Foam::domainDecomposition::decompose()
                 (
                     isA<nonConformalCyclicPolyPatch>
                     (
-                        completeMesh().boundaryMesh()[subPatchID[i]]
+                        completeMesh().poly().boundary()[subPatchID[i]]
                     )
                 )
                 {
@@ -872,7 +872,7 @@ void Foam::domainDecomposition::decompose()
                     const nonConformalCyclicPolyPatch& nccPp =
                         refCast<const nonConformalCyclicPolyPatch>
                         (
-                            completeMesh().boundaryMesh()[subPatchID[i]]
+                            completeMesh().poly().boundary()[subPatchID[i]]
                         );
 
                     procPatches[nPatches] =
@@ -881,7 +881,7 @@ void Foam::domainDecomposition::decompose()
                             size,
                             curStart,
                             nPatches,
-                            procMesh.boundaryMesh(),
+                            procMesh.poly().boundary(),
                             proci,
                             curNeighbourProcessors[procPatchi],
                             nccPp.name(),
@@ -892,7 +892,7 @@ void Foam::domainDecomposition::decompose()
                 (
                     isA<cyclicPolyPatch>
                     (
-                        completeMesh().boundaryMesh()[subPatchID[i]]
+                        completeMesh().poly().boundary()[subPatchID[i]]
                     )
                 )
                 {
@@ -900,7 +900,7 @@ void Foam::domainDecomposition::decompose()
                     const cyclicPolyPatch& cPp =
                         refCast<const cyclicPolyPatch>
                         (
-                            completeMesh().boundaryMesh()[subPatchID[i]]
+                            completeMesh().poly().boundary()[subPatchID[i]]
                         );
 
                     procPatches[nPatches] =
@@ -909,7 +909,7 @@ void Foam::domainDecomposition::decompose()
                             size,
                             curStart,
                             nPatches,
-                            procMesh.boundaryMesh(),
+                            procMesh.poly().boundary(),
                             proci,
                             curNeighbourProcessors[procPatchi],
                             cPp.name()
@@ -1185,14 +1185,14 @@ void Foam::domainDecomposition::decompose()
             label nProcPatches = 0;
             label nProcFaces = 0;
 
-            forAll(procMesh.boundaryMesh(), patchi)
+            forAll(procMesh.poly().boundary(), patchi)
             {
-                if (isA<processorPolyPatch>(procMesh.boundaryMesh()[patchi]))
+                if (isA<processorPolyPatch>(procMesh.poly().boundary()[patchi]))
                 {
                     const processorPolyPatch& ppp =
                     refCast<const processorPolyPatch>
                     (
-                        procMesh.boundaryMesh()[patchi]
+                        procMesh.poly().boundary()[patchi]
                     );
 
                     Info<< "    Number of faces shared with processor "
@@ -1203,7 +1203,7 @@ void Foam::domainDecomposition::decompose()
                 }
                 else
                 {
-                    nBoundaryFaces += procMesh.boundaryMesh()[patchi].size();
+                    nBoundaryFaces += procMesh.poly().boundary()[patchi].size();
                 }
             }
 

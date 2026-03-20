@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,20 +56,20 @@ bool Foam::sampledSets::boundaryPoints::calcSamples
 ) const
 {
     // Get the patch IDs
-    const labelHashSet patchIDs(mesh().boundaryMesh().patchSet(patches_));
+    const labelHashSet patchIDs(mesh().boundary().patchSet(patches_));
 
     // Construct a single list of all patch faces
     label nPatchFaces = 0;
     forAllConstIter(labelHashSet, patchIDs, iter)
     {
-        const polyPatch& pp = mesh().boundaryMesh()[iter.key()];
+        const polyPatch& pp = mesh().boundary()[iter.key()];
         nPatchFaces += pp.size();
     }
     labelList patchFaces(nPatchFaces);
     nPatchFaces = 0;
     forAllConstIter(labelHashSet, patchIDs, iter)
     {
-        const polyPatch& pp = mesh().boundaryMesh()[iter.key()];
+        const polyPatch& pp = mesh().boundary()[iter.key()];
         forAll(pp, i)
         {
             patchFaces[nPatchFaces++] = pp.start()+i;
@@ -80,7 +80,7 @@ bool Foam::sampledSets::boundaryPoints::calcSamples
     treeBoundBox patchBB(point::max, point::min);
     forAllConstIter(labelHashSet, patchIDs, iter)
     {
-        const polyPatch& pp = mesh().boundaryMesh()[iter.key()];
+        const polyPatch& pp = mesh().boundary()[iter.key()];
         const boundBox patchBb(pp.points(), pp.meshPoints(), false);
         patchBB.min() = min(patchBB.min(), patchBb.min());
         patchBB.max() = max(patchBB.max(), patchBb.max());

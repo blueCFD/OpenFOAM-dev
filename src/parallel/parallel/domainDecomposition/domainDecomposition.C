@@ -1035,7 +1035,8 @@ Foam::domainDecomposition::procFaceAddressingBf() const
 
                     procFaceAddressingBf_[proci][procPatchi] =
                         mag(fvp.patchSlice(procFaceAddressing_[proci]))
-                      - completeMesh().boundaryMesh()[completePatchi].start();
+                      - completeMesh().poly().boundary()[completePatchi]
+                       .start();
                 }
                 else if (isA<processorFvPatch>(fvp))
                 {
@@ -1046,7 +1047,7 @@ Foam::domainDecomposition::procFaceAddressingBf() const
                 {
                     procFaceAddressingBf_[proci][procPatchi] =
                         mag(fvp.patchSlice(procFaceAddressing_[proci]))
-                      - completeMesh().boundaryMesh()[procPatchi].start();
+                      - completeMesh().poly().boundary()[procPatchi].start();
                 }
             }
         }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -79,7 +79,7 @@ Foam::label Foam::LagrangianBoundaryMesh::findIndex
     const word& patchName
 ) const
 {
-    return mesh().mesh().boundaryMesh().findIndex(patchName);
+    return mesh().poly().boundary().findIndex(patchName);
 }
 
 
@@ -89,7 +89,7 @@ Foam::labelList Foam::LagrangianBoundaryMesh::findIndices
     const bool useGroups
 ) const
 {
-    return mesh().mesh().boundaryMesh().findIndices(key, useGroups);
+    return mesh().poly().boundary().findIndices(key, useGroups);
 }
 
 

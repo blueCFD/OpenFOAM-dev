@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -211,7 +211,7 @@ Foam::labelList Foam::polyMeshTetDecomposition::findFaceBasePts
 
     syncTools::swapBoundaryFacePositions(mesh, neighbourCellCentres);
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     SubList<label> boundaryFaceTetBasePtIs
     (
@@ -227,8 +227,7 @@ Foam::labelList Foam::polyMeshTetDecomposition::findFaceBasePts
         fI++, bFI++
     )
     {
-        const label patchi =
-            mesh.boundaryMesh().patchIndices()[bFI];
+        const label patchi = mesh.boundary().patchIndices()[bFI];
 
         if (patches[patchi].coupled())
         {
@@ -300,7 +299,7 @@ Foam::labelList Foam::polyMeshTetDecomposition::findFaceBasePts
             continue;
         }
 
-        const label patchi = mesh.boundaryMesh().patchIndices()[bFI];
+        const label patchi = mesh.boundary().patchIndices()[bFI];
 
         if (patches[patchi].coupled())
         {
@@ -350,7 +349,7 @@ bool Foam::polyMeshTetDecomposition::checkFaceTets
 {
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     const vectorField& cc = mesh.cellCentres();
     const vectorField& fc = mesh.faceCentres();

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -593,7 +593,7 @@ bool Foam::faceZone::checkDefinition(const bool report) const
 bool Foam::faceZone::checkParallelSync(const bool report) const
 {
     const polyMesh& mesh = zones().mesh();
-    const polyBoundaryMesh& bm = mesh.boundaryMesh();
+    const polyBoundaryMesh& bm = mesh.boundary();
 
     bool hasError = false;
 

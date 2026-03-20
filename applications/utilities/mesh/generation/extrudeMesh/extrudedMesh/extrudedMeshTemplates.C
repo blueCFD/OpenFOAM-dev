@@ -325,7 +325,7 @@ Foam::extrudedMesh::extrudedMesh
         sz,
         facei,
         0,
-        boundaryMesh(),
+        boundary(),
         wallPolyPatch::typeName
     );
 
@@ -337,7 +337,7 @@ Foam::extrudedMesh::extrudedMesh
         extrudePatch.size(),
         facei,
         1,
-        boundaryMesh(),
+        boundary(),
         polyPatch::typeName
     );
 
@@ -349,7 +349,7 @@ Foam::extrudedMesh::extrudedMesh
         extrudePatch.size(),
         facei,
         2,
-        boundaryMesh(),
+        boundary(),
         polyPatch::typeName
     );
 

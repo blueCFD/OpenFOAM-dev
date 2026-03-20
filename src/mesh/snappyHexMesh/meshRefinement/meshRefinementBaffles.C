@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -234,8 +234,8 @@ Foam::Map<Foam::labelPair> Foam::meshRefinement::getZoneBafflePatches
             );
 
             Info<< "For zone " << fZone.name() << " found patches "
-                << mesh_.boundaryMesh()[zPatches[0]].name() << " and "
-                << mesh_.boundaryMesh()[zPatches[1]].name()
+                << mesh_.poly().boundary()[zPatches[0]].name() << " and "
+                << mesh_.poly().boundary()[zPatches[1]].name()
                 << endl;
 
             forAll(fZone, i)
@@ -305,7 +305,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::meshRefinement::createBaffles
             {
                 FatalErrorInFunction
                     << "Non synchronised at face:" << facei
-                    << " on patch:" << mesh_.boundaryMesh().whichPatch(facei)
+                    << " on patch:" << mesh_.poly().boundary().whichPatch(facei)
                     << " fc:" << mesh_.faceCentres()[facei] << endl
                     << "ownPatch:" << ownPatch[facei]
                     << " syncedOwnPatch:" << syncedOwnPatch[facei]
@@ -398,7 +398,7 @@ void Foam::meshRefinement::checkZoneFaces() const
 {
     const faceZoneList& fZones = mesh_.faceZones();
 
-    const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh_.poly().boundary();
 
     forAll(pbm, patchi)
     {
@@ -571,7 +571,7 @@ Foam::List<Foam::labelPair> Foam::meshRefinement::freeStandingBaffles
     // Count number of boundary faces per edge
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     forAll(patches, patchi)
     {
@@ -1039,7 +1039,7 @@ void Foam::meshRefinement::findCellZoneGeometric
     }
 
     labelList neiCellZone(mesh_.nFaces() - mesh_.nInternalFaces());
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     forAll(patches, patchi)
     {
@@ -1367,7 +1367,7 @@ void Foam::meshRefinement::findCellZoneTopo
 
         // Boundary faces
 
-        const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
         // Get coupled neighbour cellRegion
         labelList neiCellRegion(mesh_.nFaces() - mesh_.nInternalFaces());
@@ -1482,7 +1482,7 @@ void Foam::meshRefinement::makeConsistentFaceIndex
         }
     }
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     // Get coupled neighbour cellZone
     labelList neiCellZone(mesh_.nFaces() - mesh_.nInternalFaces());
@@ -1638,7 +1638,7 @@ Foam::labelList Foam::meshRefinement::freeStandingBaffleFaces
     const labelList& neiCellZone
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
     const labelList& faceOwner = mesh_.faceOwner();
     const labelList& faceNeighbour = mesh_.faceNeighbour();
 
@@ -1891,7 +1891,7 @@ void Foam::meshRefinement::consistentOrientation
     boolList& meshFlipMap
 ) const
 {
-    const polyBoundaryMesh& bm = mesh_.boundaryMesh();
+    const polyBoundaryMesh& bm = mesh_.poly().boundary();
 
     // Data on all edges and faces
     List<patchFaceOrientation> allEdgeInfo(patch.nEdges());
@@ -2685,7 +2685,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::meshRefinement::zonify
     const pointField& cellCentres = mesh_.cellCentres();
     const labelList& faceOwner = mesh_.faceOwner();
     const labelList& faceNeighbour = mesh_.faceNeighbour();
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
 
     // Swap neighbouring cell centres and cell level

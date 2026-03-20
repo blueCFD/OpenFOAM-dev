@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ inline void Foam::LagrangianMesh::checkPtr
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-inline const Foam::polyMesh& Foam::LagrangianMesh::mesh() const
+inline const Foam::polyMesh& Foam::LagrangianMesh::poly() const
 {
     return mesh_;
 }
@@ -179,7 +179,7 @@ inline Foam::label Foam::LagrangianMesh::nStates() const
 {
     return
         static_cast<label>(LagrangianState::onPatchZero)
-      + mesh().boundaryMesh().size() + 1;
+      + poly().boundary().size() + 1;
 }
 
 
@@ -187,7 +187,7 @@ inline Foam::label Foam::LagrangianMesh::nGroups() const
 {
     return
         static_cast<label>(LagrangianGroup::onPatchZero)
-      + mesh().boundaryMesh().size() + 1;
+      + poly().boundary().size() + 1;
 }
 
 

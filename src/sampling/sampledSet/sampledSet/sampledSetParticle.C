@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -224,7 +224,7 @@ void Foam::sampledSetParticle::hitProcessorPatch
     const processorPolyPatch& ppp =
         static_cast<const processorPolyPatch&>
         (
-            td.mesh.boundaryMesh()[patch(td.mesh)]
+            td.mesh.boundary()[patch(td.mesh)]
         );
 
     if (ppp.transform().transformsPosition())

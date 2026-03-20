@@ -162,7 +162,8 @@ Foam::codedBase::codedBase
     const wordList& codeDictVars,
     const word& codeOptionsFileName,
     const wordList& compileFiles,
-    const wordList& copyFiles
+    const wordList& copyFiles,
+    const bool reloadable
 )
 :
     dynamicCode
@@ -175,7 +176,8 @@ Foam::codedBase::codedBase
         codeOptionsFileName,
         compileFiles,
         copyFiles
-    )
+    ),
+    reloadable_(reloadable)
 {}
 
 
@@ -186,7 +188,8 @@ Foam::codedBase::codedBase
     const wordList& codeDictVars,
     const word& codeOptionsFileName,
     const wordList& compileFiles,
-    const wordList& copyFiles
+    const wordList& copyFiles,
+    const bool reloadable
 )
 :
     codedBase
@@ -197,7 +200,8 @@ Foam::codedBase::codedBase
         codeDictVars,
         codeOptionsFileName,
         compileFiles,
-        copyFiles
+        copyFiles,
+        reloadable
     )
 {}
 
@@ -206,12 +210,15 @@ Foam::codedBase::codedBase
 
 Foam::codedBase::~codedBase()
 {
-    unloadLibrary
-    (
-        dictionary(),
-        oldLibPath_,
-        dynamicCode::libraryBaseName(oldLibPath_)
-    );
+    if (reloadable_)
+    {
+        unloadLibrary
+        (
+            dictionary(),
+            oldLibPath_,
+            dynamicCode::libraryBaseName(oldLibPath_)
+        );
+    }
 }
 
 

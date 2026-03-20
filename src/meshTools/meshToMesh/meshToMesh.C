@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,9 +63,9 @@ Foam::meshToMesh::meshToMesh
     {
         DynamicList<labelPair> patchIDs;
 
-        forAll(srcMesh_.boundaryMesh(), srcPatchi)
+        forAll(srcMesh_.boundary(), srcPatchi)
         {
-            const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
+            const polyPatch& srcPp = srcMesh_.boundary()[srcPatchi];
 
             // We don't want to map empty or wedge patches, as by definition
             // these do not hold relevant values. We also don't want to map
@@ -81,7 +81,7 @@ Foam::meshToMesh::meshToMesh
             )
             {
                 const label tgtPatchi =
-                    tgtMesh_.boundaryMesh().findIndex(srcPp.name());
+                    tgtMesh_.boundary().findIndex(srcPp.name());
 
                 if (tgtPatchi == -1)
                 {
@@ -89,7 +89,7 @@ Foam::meshToMesh::meshToMesh
                         << "Source patch " << srcPp.name()
                         << " not found in target mesh. "
                         << "Available target patches are "
-                        << tgtMesh_.boundaryMesh().names()
+                        << tgtMesh_.boundary().names()
                         << exit(FatalError);
                 }
 
@@ -111,9 +111,9 @@ Foam::meshToMesh::meshToMesh
             const word& srcPatchName = iter();
 
             const label srcPatchi =
-                srcMesh_.boundaryMesh().findIndex(srcPatchName);
+                srcMesh_.boundary().findIndex(srcPatchName);
             const label tgtPatchi =
-                tgtMesh_.boundaryMesh().findIndex(tgtPatchName);
+                tgtMesh_.boundary().findIndex(tgtPatchName);
 
             if (srcPatchi == -1)
             {
@@ -121,7 +121,7 @@ Foam::meshToMesh::meshToMesh
                     << "Patch " << srcPatchName
                     << " not found in source mesh. "
                     << "Available source patches are "
-                    << srcMesh_.boundaryMesh().names()
+                    << srcMesh_.boundary().names()
                     << exit(FatalError);
             }
             if (tgtPatchi == -1)
@@ -130,7 +130,7 @@ Foam::meshToMesh::meshToMesh
                     << "Patch " << tgtPatchName
                     << " not found in target mesh. "
                     << "Available target patches are "
-                    << tgtMesh_.boundaryMesh().names()
+                    << tgtMesh_.boundary().names()
                     << exit(FatalError);
             }
 
@@ -160,8 +160,8 @@ Foam::meshToMesh::meshToMesh
         const label srcPatchi = patchIndices_[i].first();
         const label tgtPatchi = patchIndices_[i].second();
 
-        const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
-        const polyPatch& tgtPp = tgtMesh_.boundaryMesh()[tgtPatchi];
+        const polyPatch& srcPp = srcMesh_.boundary()[srcPatchi];
+        const polyPatch& tgtPp = tgtMesh_.boundary()[tgtPatchi];
 
         Info<< "Creating patchToPatch between source patch "
             << srcPp.name() << " and target patch " << tgtPp.name()
@@ -195,8 +195,8 @@ Foam::meshToMesh::~meshToMesh()
 
 bool Foam::meshToMesh::consistent() const
 {
-    boolList srcPatchIsMapped(srcMesh_.boundaryMesh().size(), false);
-    boolList tgtPatchIsMapped(tgtMesh_.boundaryMesh().size(), false);
+    boolList srcPatchIsMapped(srcMesh_.boundary().size(), false);
+    boolList tgtPatchIsMapped(tgtMesh_.boundary().size(), false);
 
     // Mark anything paired as mapped
     forAll(patchIndices_, i)
@@ -209,9 +209,9 @@ bool Foam::meshToMesh::consistent() const
     }
 
     // Filter out un-mappable patches
-    forAll(srcMesh_.boundaryMesh(), srcPatchi)
+    forAll(srcMesh_.boundary(), srcPatchi)
     {
-        const polyPatch& srcPp = srcMesh_.boundaryMesh()[srcPatchi];
+        const polyPatch& srcPp = srcMesh_.boundary()[srcPatchi];
 
         if
         (
@@ -223,9 +223,9 @@ bool Foam::meshToMesh::consistent() const
             srcPatchIsMapped[srcPp.index()] = true;
         }
     }
-    forAll(tgtMesh_.boundaryMesh(), tgtPatchi)
+    forAll(tgtMesh_.boundary(), tgtPatchi)
     {
-        const polyPatch& tgtPp = tgtMesh_.boundaryMesh()[tgtPatchi];
+        const polyPatch& tgtPp = tgtMesh_.boundary()[tgtPatchi];
 
         if
         (

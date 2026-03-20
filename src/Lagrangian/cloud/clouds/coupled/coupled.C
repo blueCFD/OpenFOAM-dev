@@ -44,17 +44,17 @@ Foam::tmp<Foam::volScalarField> Foam::clouds::coupled::getNucVf() const
 {
     const word nucName = IOobject::groupName("nu", carrierPhaseName());
 
-    if (cloud_.mesh().mesh().foundObject<volScalarField>(nucName))
+    if (cloud_.mesh().poly().foundObject<volScalarField>(nucName))
     {
-        return cloud_.mesh().mesh().lookupObject<volScalarField>(nucName);
+        return cloud_.mesh().poly().lookupObject<volScalarField>(nucName);
     }
 
     const word viscosityName =
         IOobject::groupName(physicalProperties::typeName, carrierPhaseName());
 
-    if (cloud_.mesh().mesh().foundObject<viscosity>(viscosityName))
+    if (cloud_.mesh().poly().foundObject<viscosity>(viscosityName))
     {
-        return cloud_.mesh().mesh().lookupObject<viscosity>(viscosityName).nu();
+        return cloud_.mesh().poly().lookupObject<viscosity>(viscosityName).nu();
     }
 
     return tmp<volScalarField>(nullptr);

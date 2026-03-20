@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,16 +51,16 @@ Foam::label Foam::meshCheck::checkTopology
     Info<< "Checking topology..." << endl;
 
     // Check if the boundary definition is unique
-    mesh.boundaryMesh().checkDefinition(true);
+    mesh.boundary().checkDefinition(true);
 
     // Check that empty patches cover all sides of the mesh
     {
         label nEmpty = 0;
-        forAll(mesh.boundaryMesh(), patchi)
+        forAll(mesh.boundary(), patchi)
         {
-            if (isA<emptyPolyPatch>(mesh.boundaryMesh()[patchi]))
+            if (isA<emptyPolyPatch>(mesh.boundary()[patchi]))
             {
-                nEmpty += mesh.boundaryMesh()[patchi].size();
+                nEmpty += mesh.boundary()[patchi].size();
             }
         }
         reduce(nEmpty, sumOp<label>());
@@ -77,7 +77,7 @@ Foam::label Foam::meshCheck::checkTopology
     }
 
     // Check if the boundary processor patches are correct
-    mesh.boundaryMesh().checkParallelSync(true);
+    mesh.boundary().checkParallelSync(true);
 
     // Check names of zones are equal
     mesh.cellZones().checkDefinition(true);
@@ -278,7 +278,7 @@ Foam::label Foam::meshCheck::checkTopology
             nInternalFaces[mesh.faceOwner()[facei]]++;
             nInternalFaces[mesh.faceNeighbour()[facei]]++;
         }
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
         forAll(patches, patchi)
         {
             if (patches[patchi].coupled())
@@ -517,7 +517,7 @@ Foam::label Foam::meshCheck::checkTopology
         }
 
 
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
 
         // Non-manifold points
         pointSet points

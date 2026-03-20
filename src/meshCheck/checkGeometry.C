@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,7 +49,7 @@ Foam::label Foam::meshCheck::findOppositeWedge
     const wedgePolyPatch& wpp
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     scalar wppCosAngle = wpp.cosAngle();
 
@@ -98,7 +98,7 @@ bool Foam::meshCheck::checkWedges
     const faceList& fcs = mesh.faces();
 
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
     forAll(patches, patchi)
     {
         if (patches[patchi].size() && isA<wedgePolyPatch>(patches[patchi]))
@@ -365,7 +365,7 @@ bool Foam::meshCheck::checkCoupledPoints
 {
     const pointField& p = mesh.points();
     const faceList& fcs = mesh.faces();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Zero'th point on coupled faces
     // pointField nbrZeroPoint(fcs.size()-mesh.nInternalFaces(), vector::max);
@@ -532,7 +532,7 @@ Foam::label Foam::meshCheck::checkGeometry
     {
         Info<< "    Patch bounding boxes" << endl;
 
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
 
         forAll(patches, patchi)
         {
@@ -1105,7 +1105,7 @@ Foam::label Foam::meshCheck::checkGeometry
            /"checkMesh"
            /mesh.time().name();
 
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
 
         // Compute coverage for all orig patches
         PtrList<scalarField> patchCoverage(patches.size());

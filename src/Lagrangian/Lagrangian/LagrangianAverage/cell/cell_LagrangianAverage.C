@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -232,9 +232,9 @@ Foam::LagrangianAverages::cell<Type>::cell
 :
     LagrangianAverage<Type>(name, mesh, dimensions),
     weightSum_(weightSum),
-    data_(mesh.mesh().nCells(), isNull(weightSum)),
+    data_(mesh.poly().nCells(), isNull(weightSum)),
     dDataIsValid_(false),
-    dData_(mesh.mesh().nCells(), isNull(weightSum))
+    dData_(mesh.poly().nCells(), isNull(weightSum))
 {}
 
 

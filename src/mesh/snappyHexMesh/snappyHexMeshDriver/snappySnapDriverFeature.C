@@ -516,7 +516,7 @@ void Foam::snappySnapDriver::calcNearestFacePointProperties
     //  is only that the unconstrained attraction vector is calculated
     //  correctly)
     {
-        const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+        const polyBoundaryMesh& pbm = mesh.poly().boundary();
         labelList patchID(pbm.patchIndices());
 
         // Unmark all non-coupled boundary faces

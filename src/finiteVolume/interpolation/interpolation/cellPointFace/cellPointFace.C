@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -407,7 +407,7 @@ Type Foam::interpolations::cellPointFace<Type>::interpolate
             else
             {
                 label patchi =
-                    this->mesh_.boundaryMesh().whichPatch(closestFace);
+                    this->mesh_.boundary().whichPatch(closestFace);
 
                 // If the boundary patch is not empty use the face value
                 // else use the cell value
@@ -415,7 +415,7 @@ Type Foam::interpolations::cellPointFace<Type>::interpolate
                 {
                     ts[2] = this->psi_.boundaryField()[patchi]
                     [
-                        this->mesh_.boundaryMesh()[patchi].whichFace
+                        this->mesh_.boundary()[patchi].whichFace
                         (
                             closestFace
                         )
@@ -451,7 +451,7 @@ Type Foam::interpolations::cellPointFace<Type>::interpolate
             else
             {
                 label patchi =
-                    this->mesh_.boundaryMesh().whichPatch(closestFace);
+                    this->mesh_.boundary().whichPatch(closestFace);
 
                 // If the boundary patch is not empty use the face value
                 // else use the cell value
@@ -459,7 +459,7 @@ Type Foam::interpolations::cellPointFace<Type>::interpolate
                 {
                     t = this->psi_.boundaryField()[patchi]
                     [
-                        this->mesh_.boundaryMesh()[patchi].whichFace
+                        this->mesh_.boundary()[patchi].whichFace
                         (
                             closestFace
                         )
@@ -498,14 +498,14 @@ Type Foam::interpolations::cellPointFace<Type>::interpolate
             }
             else
             {
-                label patchi = this->mesh_.boundaryMesh().whichPatch(facei);
+                label patchi = this->mesh_.boundary().whichPatch(facei);
 
                 // If the boundary patch is not empty use the face value
                 // else use the cell value
                 if (this->psi_.boundaryField()[patchi].size())
                 {
                     t += phi[2]*this->psi_.boundaryField()[patchi]
-                        [this->mesh_.boundaryMesh()[patchi].whichFace(facei)];
+                        [this->mesh_.boundary()[patchi].whichFace(facei)];
                 }
                 else
                 {
@@ -522,14 +522,14 @@ Type Foam::interpolations::cellPointFace<Type>::interpolate
             }
             else
             {
-                label patchi = this->mesh_.boundaryMesh().whichPatch(facei);
+                label patchi = this->mesh_.boundary().whichPatch(facei);
 
                 // If the boundary patch is not empty use the face value
                 // else use the cell value
                 if (this->psi_.boundaryField()[patchi].size())
                 {
                     t = this->psi_.boundaryField()[patchi]
-                        [this->mesh_.boundaryMesh()[patchi].whichFace(facei)];
+                        [this->mesh_.boundary()[patchi].whichFace(facei)];
                 }
                 else
                 {

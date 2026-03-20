@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -139,9 +139,9 @@ bool Foam::functionObjects::wallHeatFlux::read(const dictionary& dict)
 
     phaseName_ = dict.lookupOrDefault<word>("phase", word::null);
 
-    const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh_.poly().boundary();
 
-    patchSet_ = mesh_.boundaryMesh().patchSet(dict, true);
+    patchSet_ = mesh_.poly().boundary().patchSet(dict, true);
 
     Info<< type() << " " << name() << ":" << nl;
 

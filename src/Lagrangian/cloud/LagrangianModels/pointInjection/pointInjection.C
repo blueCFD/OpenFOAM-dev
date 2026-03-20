@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,7 +103,7 @@ void Foam::Lagrangian::pointInjection::correct()
 {
     // If anything is moving then all coordinates have to be constructed on the
     // fly, so don't store anything
-    if (mesh().mesh().moving() || !point_->constant())
+    if (mesh().poly().moving() || !point_->constant())
     {
         injectionLocation_ =
             injectionLocation::multiplePoints;

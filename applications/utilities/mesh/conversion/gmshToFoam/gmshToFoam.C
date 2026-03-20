@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -934,7 +934,7 @@ int main(int argc, char *argv[])
     // Now use the patchFaces to patch up the outside faces of the mesh.
 
     // Get the patch for all the outside faces (= default patch added as last)
-    const polyPatch& pp = mesh.boundaryMesh().last();
+    const polyPatch& pp = mesh.boundary().last();
 
     // Storage for faceZones.
     List<DynamicList<label>> zoneFaces(patchFaces.size());
@@ -1100,20 +1100,20 @@ int main(int argc, char *argv[])
     }
 
     // Remove empty defaultFaces
-    label defaultPatchID = mesh.boundaryMesh().findIndex(defaultFacesName);
-    if (mesh.boundaryMesh()[defaultPatchID].size() == 0)
+    label defaultPatchID = mesh.boundary().findIndex(defaultFacesName);
+    if (mesh.boundary()[defaultPatchID].size() == 0)
     {
-        List<polyPatch*> newPatchPtrList((mesh.boundaryMesh().size() - 1));
+        List<polyPatch*> newPatchPtrList((mesh.boundary().size() - 1));
         label newPatchi = 0;
-        forAll(mesh.boundaryMesh(), patchi)
+        forAll(mesh.boundary(), patchi)
         {
             if (patchi != defaultPatchID)
             {
-                const polyPatch& patch = mesh.boundaryMesh()[patchi];
+                const polyPatch& patch = mesh.boundary()[patchi];
 
                 newPatchPtrList[newPatchi] = patch.clone
                 (
-                    mesh.boundaryMesh(),
+                    mesh.boundary(),
                     newPatchi,
                     patch.size(),
                     patch.start()

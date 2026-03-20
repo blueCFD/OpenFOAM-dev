@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,21 +47,21 @@ namespace Foam
 
 void Foam::globalMeshData::initProcAddr()
 {
-    processorPatchIndices_.setSize(mesh_.boundaryMesh().size());
+    processorPatchIndices_.setSize(mesh_.boundary().size());
     processorPatchIndices_ = -1;
 
-    processorPatchNeighbours_.setSize(mesh_.boundaryMesh().size());
+    processorPatchNeighbours_.setSize(mesh_.boundary().size());
     processorPatchNeighbours_ = -1;
 
     // Construct processor patch indexing. processorPatchNeighbours_ only
     // set if running in parallel!
-    processorPatches_.setSize(mesh_.boundaryMesh().size());
+    processorPatches_.setSize(mesh_.boundary().size());
 
     label nNeighbours = 0;
 
-    forAll(mesh_.boundaryMesh(), patchi)
+    forAll(mesh_.boundary(), patchi)
     {
-        if (isA<processorPolyPatch>(mesh_.boundaryMesh()[patchi]))
+        if (isA<processorPolyPatch>(mesh_.boundary()[patchi]))
         {
             processorPatches_[nNeighbours] = patchi;
             processorPatchIndices_[patchi] = nNeighbours++;
@@ -83,7 +83,7 @@ void Foam::globalMeshData::initProcAddr()
             (
                 refCast<const processorPolyPatch>
                 (
-                    mesh_.boundaryMesh()[patchi]
+                    mesh_.boundary()[patchi]
                 ).neighbProcNo(),
                 pBufs
             );
@@ -101,7 +101,7 @@ void Foam::globalMeshData::initProcAddr()
             (
                 refCast<const processorPolyPatch>
                 (
-                    mesh_.boundaryMesh()[patchi]
+                    mesh_.boundary()[patchi]
                 ).neighbProcNo(),
                 pBufs
             );
@@ -1151,7 +1151,7 @@ void Foam::globalMeshData::calcPointBoundaryFaces
     labelListList& pointBoundaryFaces
 ) const
 {
-    const polyBoundaryMesh& bMesh = mesh_.boundaryMesh();
+    const polyBoundaryMesh& bMesh = mesh_.boundary();
     const Map<label>& meshPointMap = coupledPatch().meshPointMap();
 
     // 1. Count
@@ -1690,7 +1690,7 @@ Foam::globalMeshData::globalMeshData(const polyMesh& mesh)
     nTotalPoints_(-1),
     nTotalFaces_(-1),
     nTotalCells_(-1),
-    processorTopology_(mesh.boundaryMesh(), UPstream::worldComm),
+    processorTopology_(mesh.boundary(), UPstream::worldComm),
     processorPatches_(0),
     processorPatchIndices_(0),
     processorPatchNeighbours_(0),
@@ -1969,7 +1969,7 @@ const Foam::indirectPrimitivePatch& Foam::globalMeshData::coupledPatch() const
 {
     if (!coupledPatchPtr_.valid())
     {
-        const polyBoundaryMesh& bMesh = mesh_.boundaryMesh();
+        const polyBoundaryMesh& bMesh = mesh_.boundary();
 
         label nCoupled = 0;
 

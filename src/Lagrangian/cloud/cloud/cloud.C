@@ -57,11 +57,11 @@ Foam::LagrangianMesh& Foam::cloud::mesh
 {
     if (!pMesh.foundObject<LagrangianMesh>(name))
     {
-        wordList wantedPatchTypes(pMesh.boundaryMesh().size());
+        wordList wantedPatchTypes(pMesh.boundary().size());
 
-        forAll(pMesh.boundaryMesh(), patchi)
+        forAll(pMesh.boundary(), patchi)
         {
-            const polyPatch& pPatch = pMesh.boundaryMesh()[patchi];
+            const polyPatch& pPatch = pMesh.boundary()[patchi];
 
             wantedPatchTypes[patchi] =
                 polyPatch::constraintType(pPatch.type())
@@ -471,7 +471,7 @@ Foam::cloud::cloud(LagrangianMesh& mesh, const contextType context)
     mesh_(mesh),
     LagrangianModelsPtr_(nullptr),
     statePtr_(readStates()),
-    cellLengthScaleVf_(mag(cbrt(mesh_.mesh().cellVolumes()))),
+    cellLengthScaleVf_(mag(cbrt(mesh_.poly().cellVolumes()))),
     context(context),
     tracking
     (
@@ -506,7 +506,7 @@ Foam::cloud::cloud
     mesh_(mesh),
     LagrangianModelsPtr_(nullptr),
     statePtr_(readStates()),
-    cellLengthScaleVf_(mag(cbrt(mesh_.mesh().cellVolumes()))),
+    cellLengthScaleVf_(mag(cbrt(mesh_.poly().cellVolumes()))),
     context(context),
     tracking
     (
@@ -884,7 +884,7 @@ void Foam::cloud::storePosition()
 
 void Foam::cloud::movePoints(const polyMesh&)
 {
-    cellLengthScaleVf_ = mag(cbrt(mesh_.mesh().cellVolumes()));
+    cellLengthScaleVf_ = mag(cbrt(mesh_.poly().cellVolumes()));
 }
 
 
@@ -892,7 +892,7 @@ void Foam::cloud::topoChange(const polyTopoChangeMap& map)
 {
     mesh_.topoChange(map);
 
-    cellLengthScaleVf_ = mag(cbrt(mesh_.mesh().cellVolumes()));
+    cellLengthScaleVf_ = mag(cbrt(mesh_.poly().cellVolumes()));
 }
 
 
@@ -900,7 +900,7 @@ void Foam::cloud::mapMesh(const polyMeshMap& map)
 {
     mesh_.mapMesh(map);
 
-    cellLengthScaleVf_ = mag(cbrt(mesh_.mesh().cellVolumes()));
+    cellLengthScaleVf_ = mag(cbrt(mesh_.poly().cellVolumes()));
 }
 
 
@@ -908,7 +908,7 @@ void Foam::cloud::distribute(const polyDistributionMap& map)
 {
     mesh_.distribute(map);
 
-    cellLengthScaleVf_ = mag(cbrt(mesh_.mesh().cellVolumes()));
+    cellLengthScaleVf_ = mag(cbrt(mesh_.poly().cellVolumes()));
 }
 
 

@@ -631,8 +631,8 @@ public:
                 return *this;
             }
 
-            //- Access the mesh
-            inline const polyMesh& mesh() const;
+            //- Access the poly mesh
+            inline const polyMesh& poly() const;
 
             //- Access the coordinates
             inline const barycentricIODynamicField& coordinates() const;

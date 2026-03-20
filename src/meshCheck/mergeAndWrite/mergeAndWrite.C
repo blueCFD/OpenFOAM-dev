@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,7 +111,7 @@ void Foam::meshCheck::printMeshStats
         << "    cells:            " << nCells << nl
         << "    faces per cell:   "
         << scalar(nFaces + nIntFaces)/max(1, nCells) << nl
-        << "    boundary patches: " << mesh.boundaryMesh().size() << nl
+        << "    boundary patches: " << mesh.boundary().size() << nl
         << "    point zones:      " << mesh.pointZones().size() << nl
         << "    face zones:       " << mesh.faceZones().size() << nl
         << "    cell zones:       " << mesh.cellZones().size() << nl
@@ -301,7 +301,7 @@ void Foam::meshCheck::mergeAndWrite
 )
 {
     const polyMesh& mesh = refCast<const polyMesh>(set.db());
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.boundary();
 
 
     // Determine faces on outside of cellSet

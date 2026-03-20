@@ -132,7 +132,7 @@ void NaNGeometricFields(const fvMesh& mesh)
 
         forAll(mesh.boundary(), patchi)
         {
-            if (isA<processorPolyPatch>(mesh().boundaryMesh()[patchi]))
+            if (isA<processorPolyPatch>(mesh.poly().boundary()[patchi]))
             {
                 field.boundaryFieldRef().set
                 (

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -319,9 +319,9 @@ bool Foam::meshRefinement::isCollapsedFace
     }
     else
     {
-        const label patchi = mesh_.boundaryMesh().whichPatch(facei);
+        const label patchi = mesh_.poly().boundary().whichPatch(facei);
 
-        if (mesh_.boundaryMesh()[patchi].coupled())
+        if (mesh_.poly().boundary()[patchi].coupled())
         {
             const vector d = neiCc[facei-mesh_.nInternalFaces()] - ownCc;
 
@@ -371,7 +371,7 @@ Foam::labelList Foam::meshRefinement::nearestPatch
     const labelList& adaptPatchIDs
 ) const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     labelList nearestAdaptPatch;
 
@@ -464,7 +464,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
 {
     const labelList& cellLevel = meshCutter_.cellLevel();
     const labelList& pointLevel = meshCutter_.pointLevel();
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
 
     // Mark all points and edges on baffle patches (so not on any inlets,
@@ -1259,15 +1259,15 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCellsGeometric
 
         forAllConstIter(faceSet, wrongFaces, iter)
         {
-            label patchi = mesh_.boundaryMesh().whichPatch(iter.key());
+            label patchi = mesh_.poly().boundary().whichPatch(iter.key());
 
-            if (patchi == -1 || mesh_.boundaryMesh()[patchi].coupled())
+            if (patchi == -1 || mesh_.poly().boundary()[patchi].coupled())
             {
                 facePatch[iter.key()] = nearestAdaptPatch[iter.key()];
                 nBaffleFaces++;
 
                 // Pout<< "    " << iter.key()
-                //    //<< " on patch " << mesh_.boundaryMesh()[patchi].name()
+                //    << " on patch " << mesh_.poly().boundary()[patchi].name()
                 //    << " is destined for patch " << facePatch[iter.key()]
                 //    << endl;
             }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
         // Set the wave and non-wall fixed-value patch fields
         forAll(mesh.boundary(), patchi)
         {
-            const polyPatch& patch = mesh.boundaryMesh()[patchi];
+            const polyPatch& patch = mesh.poly().boundary()[patchi];
 
             fvPatchScalarField& alphap = alpha.boundaryFieldRef()[patchi];
             fvPatchVectorField& Up = U.boundaryFieldRef()[patchi];

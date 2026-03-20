@@ -358,7 +358,7 @@ Foam::fvMesh::fvMesh
     polyMesh(io),
     surfaceMesh(*this),
     surfaceInterpolation(*this),
-    boundary_(*this, boundaryMesh()),
+    boundary_(*this, poly().boundary()),
     stitcher_(nullptr),
     topoChanger_(nullptr),
     distributor_(nullptr),
@@ -422,7 +422,7 @@ Foam::fvMesh::fvMesh
     ),
     surfaceMesh(*this),
     surfaceInterpolation(*this),
-    boundary_(*this, boundaryMesh()),
+    boundary_(*this, poly().boundary()),
     stitcher_(nullptr),
     topoChanger_(nullptr),
     distributor_(nullptr),
@@ -475,7 +475,7 @@ Foam::fvMesh::fvMesh
     ),
     surfaceMesh(*this),
     surfaceInterpolation(*this),
-    boundary_(*this, boundaryMesh()),
+    boundary_(*this, poly().boundary()),
     stitcher_(nullptr),
     topoChanger_(nullptr),
     distributor_(nullptr),
@@ -769,7 +769,7 @@ void Foam::fvMesh::addFvPatches
 
     // first add polyPatches
     addPatches(p, validBoundary);
-    boundary_.addPatches(boundaryMesh());
+    boundary_.addPatches(poly().boundary());
 }
 
 
@@ -827,8 +827,8 @@ void Foam::fvMesh::swap(fvMesh& otherMesh)
         }
     };
 
-    updatePatches(boundaryMesh(), boundary_);
-    updatePatches(otherMesh.boundaryMesh(), otherMesh.boundary_);
+    updatePatches(poly().boundary(), boundary_);
+    updatePatches(otherMesh.poly().boundary(), otherMesh.boundary_);
 }
 
 
@@ -894,7 +894,7 @@ Foam::fvMesh::readUpdateState Foam::fvMesh::readUpdate
     switch (state)
     {
         case polyMesh::TOPO_PATCH_CHANGE:
-            boundary_.readUpdate(boundaryMesh());
+            boundary_.readUpdate(poly().boundary());
             clearOut();
             break;
         case polyMesh::TOPO_CHANGE:
@@ -974,7 +974,7 @@ const Foam::surfaceLabelField::Boundary& Foam::fvMesh::polyFacesBf() const
                 boundary(),
                 surfaceLabelField::null(),
                 polyFacesPatchTypes(),
-                boundaryMesh().types()
+                poly().boundary().types()
             );
     }
 
@@ -1084,7 +1084,7 @@ const Foam::surfaceLabelField::Boundary& Foam::fvMesh::ownerBf() const
                     boundary().size(),
                     calculatedFvsPatchLabelField::typeName
                 ),
-                boundaryMesh().types()
+                poly().boundary().types()
             );
 
         forAll(boundary(), patchi)
@@ -1636,7 +1636,7 @@ void Foam::fvMesh::addPatch
         insertPatchi,
         fvPatch::New
         (
-            boundaryMesh()[insertPatchi],
+            poly().boundary()[insertPatchi],
             boundary_
         )
     );
@@ -1644,7 +1644,7 @@ void Foam::fvMesh::addPatch
     #define AddPatchFieldsType(Type, FieldType, DefaultPatchFieldType)         \
         AddPatchFields<FieldType<Type>>                                        \
         (                                                                      \
-            const_cast<objectRegistry&>(db()),                             \
+            const_cast<objectRegistry&>(db()),                                 \
             insertPatchi,                                                      \
             DefaultPatchFieldType                                              \
         );

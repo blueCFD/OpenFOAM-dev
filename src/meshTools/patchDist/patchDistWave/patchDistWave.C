@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ Foam::labelList Foam::patchDistWave::getChangedFaces
     label nChangedFaces = 0;
     forAllConstIter(labelHashSet, patchIDs, iter)
     {
-        nChangedFaces += mesh.boundaryMesh()[iter.key()].size();
+        nChangedFaces += mesh.boundary()[iter.key()].size();
     }
 
     labelList changedFaces(nChangedFaces);
@@ -49,7 +49,7 @@ Foam::labelList Foam::patchDistWave::getChangedFaces
     {
         const label patchi = iter.key();
 
-        const polyPatch& patch = mesh.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh.boundary()[patchi];
 
         forAll(patch.faceCentres(), patchFacei)
         {

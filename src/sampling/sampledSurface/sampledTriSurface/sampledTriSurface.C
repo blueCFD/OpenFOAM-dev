@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -100,7 +100,7 @@ Foam::sampledSurfaces::triSurface::nonCoupledboundaryTree() const
     if (!boundaryTreePtr_.valid())
     {
         // all non-coupled boundary faces (not just walls)
-        const polyBoundaryMesh& patches = mesh().boundaryMesh();
+        const polyBoundaryMesh& patches = mesh().boundary();
 
         labelList bndFaces(mesh().nFaces()-mesh().nInternalFaces());
         label bndI = 0;

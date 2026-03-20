@@ -139,7 +139,7 @@ Foam::label Foam::globalIndexAndTransform::addToTransformIndex
     if (matchTransI >= transforms_.size())
     {
         FatalErrorInFunction
-            << "patch:" << mesh_.boundaryMesh()[patchi].name()
+            << "patch:" << mesh_.boundary()[patchi].name()
             << " transform:" << matchTransI
             << " out of possible transforms:" << transforms_
             << exit(FatalError);
@@ -173,7 +173,7 @@ Foam::label Foam::globalIndexAndTransform::addToTransformIndex
             {
                 // sent from patch without a transformation. Do nothing.
                 FatalErrorInFunction
-                    << "patch:" << mesh_.boundaryMesh()[patchi].name()
+                    << "patch:" << mesh_.boundary()[patchi].name()
                     << " transform:" << matchTransI << " sign:" << sign
                     << "  current transforms:" << permutation
                     << exit(FatalError);
@@ -210,7 +210,7 @@ Foam::label Foam::globalIndexAndTransform::addToTransformIndex
                     FatalErrorInFunction
                         << "More than one patch accessing the same transform "
                         << "but not of the same sign." << endl
-                        << "patch:" << mesh_.boundaryMesh()[patchi].name()
+                        << "patch:" << mesh_.boundary()[patchi].name()
                         << " transform:" << matchTransI << " sign:" << sign
                         << "  current transforms:" << permutation
                         << exit(FatalError);

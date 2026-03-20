@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -59,13 +59,13 @@ bool Foam::sampledSets::boundaryRandom::calcSamples
 ) const
 {
     // Get the patch IDs
-    const labelList patchIDs(mesh().boundaryMesh().patchSet(patches_).toc());
+    const labelList patchIDs(mesh().boundary().patchSet(patches_).toc());
 
     // Triangulate the patch faces
     DynamicList<label> triFaces, triTetPts;
     forAll(patchIDs, patchi)
     {
-        const polyPatch& patch = mesh().boundaryMesh()[patchIDs[patchi]];
+        const polyPatch& patch = mesh().boundary()[patchIDs[patchi]];
 
         forAll(patch, patchFacei)
         {

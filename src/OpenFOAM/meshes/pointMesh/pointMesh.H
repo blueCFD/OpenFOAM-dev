@@ -128,7 +128,7 @@ public:
 
     // Member Functions
 
-        //- Access the corresponding polyhedral geometry
+        //- Return reference to polyMesh
         const polyMesh& poly() const
         {
             return mesh_;

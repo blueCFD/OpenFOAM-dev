@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -1398,7 +1398,7 @@ int main(int argc, char *argv[])
 
 
     // old polyBoundary
-    const polyBoundaryMesh& oPatches = pShapeMesh.boundaryMesh();
+    const polyBoundaryMesh& oPatches = pShapeMesh.boundary();
     // new patches.
     DynamicList<polyPatch*> newPatches(nPatches);
 
@@ -1610,10 +1610,10 @@ int main(int argc, char *argv[])
         // this is just an info file to make MRF easier to setup
         List<DynamicList<word>> boundaryZones
         (
-            pShapeMesh.boundaryMesh().size()
+            pShapeMesh.boundary().size()
         );
 
-        const polyBoundaryMesh& bPatches = pShapeMesh.boundaryMesh();
+        const polyBoundaryMesh& bPatches = pShapeMesh.boundary();
         forAll(bPatches, pI)
         {
             boundaryZones[pI].append(bPatches[pI].name());

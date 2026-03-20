@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,11 +111,10 @@ void ReadAndMapFields
                 label bFacei = facei - mesh.nInternalFaces();
                 if (bFacei >= 0)
                 {
-                    label patchi = mesh.boundaryMesh().patchIndices()[bFacei];
-                    label localFacei = mesh.boundaryMesh()[patchi].whichFace
-                    (
-                        facei
-                    );
+                    label patchi =
+                        mesh.poly().boundary().patchIndices()[bFacei];
+                    label localFacei =
+                        mesh.poly().boundary()[patchi].whichFace(facei);
                     fld[pointi] = readField.boundaryField()[patchi][localFacei];
                 }
                 // else

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -297,7 +297,7 @@ public:
 
             //- Boundary edges get extruded into boundary faces. Determine patch
             //  for these faces. This might be a to-be-created processor patch
-            //  (patchi >= mesh.boundaryMesh().size()) in which case the
+            //  (patchi >= mesh.boundary().size()) in which case the
             //  nbrProcToPatch, patchToNbrProc give the correspondence. nPatches
             //  is the new number of patches.
             static void calcSidePatch

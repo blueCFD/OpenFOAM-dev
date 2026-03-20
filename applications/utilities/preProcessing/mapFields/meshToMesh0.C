@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,7 +75,7 @@ void Foam::meshToMesh0::calcAddressing()
     List<bool> boundaryCell(fromCells.size(), false);
 
     // Set reference to boundary
-    const polyPatchList& patchesFrom = fromMesh_.boundaryMesh();
+    const polyPatchList& patchesFrom = fromMesh_.poly().boundary();
 
     forAll(patchesFrom, patchi)
     {
@@ -129,9 +129,9 @@ void Foam::meshToMesh0::calcAddressing()
         oc
     );
 
-    forAll(toMesh_.boundaryMesh(), patchi)
+    forAll(toMesh_.poly().boundary(), patchi)
     {
-        const polyPatch& toPatch = toMesh_.boundaryMesh()[patchi];
+        const polyPatch& toPatch = toMesh_.poly().boundary()[patchi];
 
         if (cuttingPatches_.found(toPatch.name()))
         {
@@ -152,7 +152,7 @@ void Foam::meshToMesh0::calcAddressing()
          && fromMeshPatches_.found(patchMap_.find(toPatch.name())())
         )
         {
-            const polyPatch& fromPatch = fromMesh_.boundaryMesh()
+            const polyPatch& fromPatch = fromMesh_.poly().boundary()
             [
                 fromMeshPatches_.find(patchMap_.find(toPatch.name())())()
             ];
@@ -582,26 +582,26 @@ Foam::meshToMesh0::meshToMesh0
     toMesh_(meshTo),
     patchMap_(patchMap),
     cellAddressing_(toMesh_.nCells()),
-    boundaryAddressing_(toMesh_.boundaryMesh().size()),
+    boundaryAddressing_(toMesh_.poly().boundary().size()),
     inverseDistanceWeightsPtr_(nullptr),
     inverseVolumeWeightsPtr_(nullptr),
     cellToCellAddressingPtr_(nullptr),
     V_(0.0)
 {
-    forAll(fromMesh_.boundaryMesh(), patchi)
+    forAll(fromMesh_.poly().boundary(), patchi)
     {
         fromMeshPatches_.insert
         (
-            fromMesh_.boundaryMesh()[patchi].name(),
+            fromMesh_.poly().boundary()[patchi].name(),
             patchi
         );
     }
 
-    forAll(toMesh_.boundaryMesh(), patchi)
+    forAll(toMesh_.poly().boundary(), patchi)
     {
         toMeshPatches_.insert
         (
-            toMesh_.boundaryMesh()[patchi].name(),
+            toMesh_.poly().boundary()[patchi].name(),
             patchi
         );
     }
@@ -624,14 +624,14 @@ Foam::meshToMesh0::meshToMesh0
         }
     }
 
-    forAll(toMesh_.boundaryMesh(), patchi)
+    forAll(toMesh_.poly().boundary(), patchi)
     {
         // Add the processor patches in the toMesh to the cuttingPatches list
-        if (isA<processorPolyPatch>(toMesh_.boundaryMesh()[patchi]))
+        if (isA<processorPolyPatch>(toMesh_.poly().boundary()[patchi]))
         {
             cuttingPatches_.insert
             (
-                toMesh_.boundaryMesh()[patchi].name(),
+                toMesh_.poly().boundary()[patchi].name(),
                 patchi
             );
         }
@@ -650,7 +650,7 @@ Foam::meshToMesh0::meshToMesh0
     fromMesh_(meshFrom),
     toMesh_(meshTo),
     cellAddressing_(toMesh_.nCells()),
-    boundaryAddressing_(toMesh_.boundaryMesh().size()),
+    boundaryAddressing_(toMesh_.poly().boundary().size()),
     inverseDistanceWeightsPtr_(nullptr),
     inverseVolumeWeightsPtr_(nullptr),
     cellToCellAddressingPtr_(nullptr),
@@ -667,12 +667,12 @@ Foam::meshToMesh0::meshToMesh0
             << exit(FatalError);
     }
 
-    forAll(fromMesh_.boundaryMesh(), patchi)
+    forAll(fromMesh_.poly().boundary(), patchi)
     {
         if
         (
-            fromMesh_.boundaryMesh()[patchi].name()
-         != toMesh_.boundaryMesh()[patchi].name()
+            fromMesh_.poly().boundary()[patchi].name()
+         != toMesh_.poly().boundary()[patchi].name()
         )
         {
             FatalErrorInFunction
@@ -685,8 +685,8 @@ Foam::meshToMesh0::meshToMesh0
 
         if
         (
-            fromMesh_.boundaryMesh()[patchi].type()
-         != toMesh_.boundaryMesh()[patchi].type()
+            fromMesh_.poly().boundary()[patchi].type()
+         != toMesh_.poly().boundary()[patchi].type()
         )
         {
             FatalErrorInFunction
@@ -699,20 +699,20 @@ Foam::meshToMesh0::meshToMesh0
 
         fromMeshPatches_.insert
         (
-            fromMesh_.boundaryMesh()[patchi].name(),
+            fromMesh_.poly().boundary()[patchi].name(),
             patchi
         );
 
         toMeshPatches_.insert
         (
-            toMesh_.boundaryMesh()[patchi].name(),
+            toMesh_.poly().boundary()[patchi].name(),
             patchi
         );
 
         patchMap_.insert
         (
-            toMesh_.boundaryMesh()[patchi].name(),
-            fromMesh_.boundaryMesh()[patchi].name()
+            toMesh_.poly().boundary()[patchi].name(),
+            fromMesh_.poly().boundary()[patchi].name()
         );
     }
 

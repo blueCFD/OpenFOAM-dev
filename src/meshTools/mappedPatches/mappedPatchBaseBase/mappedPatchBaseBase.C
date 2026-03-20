@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -197,18 +197,18 @@ const Foam::polyPatch& Foam::mappedPatchBaseBase::nbrPolyPatch() const
 {
     const polyMesh& nbrMesh = this->nbrMesh();
 
-    const label patchi = nbrMesh.boundaryMesh().findIndex(nbrPatchName());
+    const label patchi = nbrMesh.boundary().findIndex(nbrPatchName());
 
     if (patchi == -1)
     {
         FatalErrorInFunction
             << "Cannot find patch " << nbrPatchName()
             << " in region " << nbrRegionName() << endl
-            << "Valid patches are " << nbrMesh.boundaryMesh().names()
+            << "Valid patches are " << nbrMesh.boundary().names()
             << exit(FatalError);
     }
 
-    return nbrMesh.boundaryMesh()[patchi];
+    return nbrMesh.boundary()[patchi];
 }
 
 

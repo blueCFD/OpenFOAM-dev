@@ -998,7 +998,7 @@ Foam::fvMeshStitcher::calculateOwnerOrigBoundaryEdgeParts
     const List<List<part>>& patchEdgeParts
 ) const
 {
-    const polyBoundaryMesh& pbMesh = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbMesh = mesh_.poly().boundary();
 
     const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh_);
     const labelList& ownerOrigBoundaryPointMeshPoint =
@@ -1164,7 +1164,7 @@ void Foam::fvMeshStitcher::applyOwnerOrigBoundaryEdgeParts
     const List<part>& ownerOrigBoundaryEdgeParts
 ) const
 {
-    const polyBoundaryMesh& pbMesh = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbMesh = mesh_.poly().boundary();
 
     const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh_);
     const labelList ownerOrigPatchIndices = ncb.ownerOrigPatchIndices();
@@ -1412,7 +1412,7 @@ void Foam::fvMeshStitcher::stabiliseOrigPatchFaces
     forAll(allOrigPatchIndices, i)
     {
         const label origPatchi = allOrigPatchIndices[i];
-        const polyPatch& origPp = mesh_.boundaryMesh()[origPatchi];
+        const polyPatch& origPp = mesh_.poly().boundary()[origPatchi];
 
         const vectorField::subField origPpFaceAreas = origPp.faceAreas();
         const pointField::subField origPpFaceCentres = origPp.faceCentres();
@@ -1462,7 +1462,7 @@ void Foam::fvMeshStitcher::intersect
     const bool matchTopology
 ) const
 {
-    const polyBoundaryMesh& pbMesh = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbMesh = mesh_.poly().boundary();
 
     const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh_);
     const labelList ownerOrigPatchIndices = ncb.ownerOrigPatchIndices();
@@ -1481,7 +1481,7 @@ void Foam::fvMeshStitcher::intersect
 
         patchEdgeParts[origPatchi].resize
         (
-            mesh_.boundaryMesh()[origPatchi].nEdges(),
+            mesh_.poly().boundary()[origPatchi].nEdges(),
             part(Zero)
         );
     }

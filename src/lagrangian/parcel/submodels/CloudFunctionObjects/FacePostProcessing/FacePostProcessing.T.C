@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -266,7 +266,7 @@ Foam::FacePostProcessing<CloudType>::FacePostProcessing
     DynamicList<label> zoneIDs;
     const faceZoneList& mfz = owner.mesh().faceZones();
     const surfaceScalarField& magSf = owner.mesh().magSf();
-    const polyBoundaryMesh& pbm = owner.mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = owner.mesh().poly().boundary();
     forAll(faceZoneNames, i)
     {
         const word& zoneName = faceZoneNames[i];

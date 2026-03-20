@@ -22,7 +22,7 @@ int USERD_get_nsided_conn
         // const faceList& faces = meshPtr->faces();
 
         label patchi = part_number - 2;
-        const polyBoundaryMesh& bMesh = meshPtr->boundaryMesh();
+        const polyBoundaryMesh& bMesh = meshPtr->poly().boundary();
 
         label np = 0;
         forAll(bMesh[patchi], facei)

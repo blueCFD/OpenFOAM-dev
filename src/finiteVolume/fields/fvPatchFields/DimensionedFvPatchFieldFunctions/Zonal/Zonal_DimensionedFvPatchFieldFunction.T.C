@@ -119,7 +119,7 @@ void Foam::DimensionedFieldFunctions::Zonal<DimensionedFieldType>::evaluate()
                 forAll(selected, i)
                 {
                     const label patchi =
-                        mesh.boundaryMesh().whichPatch(selected[i]);
+                        mesh.poly().boundary().whichPatch(selected[i]);
                     if (patchi == field.mesh().index())
                     {
                         field[selected[i] - field.mesh().start()] = value;

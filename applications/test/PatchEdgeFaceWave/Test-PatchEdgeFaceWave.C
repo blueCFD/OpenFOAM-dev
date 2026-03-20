@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.poly().boundary();
 
     // Get name of patch
     const word patchName = args[1];
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 
     // 2. Use a wrapper to walk from all boundary edges on selected patches
     {
-        labelHashSet otherPatchIDs(identityMap(mesh.boundaryMesh().size()));
+        labelHashSet otherPatchIDs(identityMap(mesh.poly().boundary().size()));
         otherPatchIDs.erase(patch.index());
 
         Info<< "Walking on patch " << patch.index()

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -349,7 +349,7 @@ void Foam::repatchMesh::read(const polyMesh& mesh)
 {
     patches_.clear();
 
-    patches_.setSize(mesh.boundaryMesh().size());
+    patches_.setSize(mesh.boundary().size());
 
     // Number of boundary faces
     label nBFaces = mesh.nFaces() - mesh.nInternalFaces();
@@ -361,9 +361,9 @@ void Foam::repatchMesh::read(const polyMesh& mesh)
     label bFacei = 0;
 
     // Collect all boundary faces.
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
-        const polyPatch& pp = mesh.boundaryMesh()[patchi];
+        const polyPatch& pp = mesh.boundary()[patchi];
 
         patches_.set
         (

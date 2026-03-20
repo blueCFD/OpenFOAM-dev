@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -683,7 +683,7 @@ void Foam::vtkPVFoam::renderPatchNames
         if (selectedPatches.empty()) return;
 
         const polyBoundaryMesh& pbMesh =
-            procMeshesPtr_->completeMesh().boundaryMesh();
+            procMeshesPtr_->completeMesh().poly().boundary();
 
         // Find the total number of zones
         // Each zone will take the patch name

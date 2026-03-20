@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -358,7 +358,7 @@ void Foam::streamlinesParticle::hitCyclicPatch
     const cyclicPolyPatch& cpp =
         static_cast<const cyclicPolyPatch&>
         (
-            td.mesh.boundaryMesh()[patch(td.mesh)]
+            td.mesh.boundary()[patch(td.mesh)]
         );
 
     // End this track
@@ -407,7 +407,7 @@ void Foam::streamlinesParticle::hitProcessorPatch
     const processorPolyPatch& ppp =
         static_cast<const processorPolyPatch&>
         (
-            td.mesh.boundaryMesh()[patch(td.mesh)]
+            td.mesh.boundary()[patch(td.mesh)]
         );
 
     // End this track

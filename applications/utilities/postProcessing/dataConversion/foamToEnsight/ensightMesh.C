@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,9 +61,9 @@ void Foam::ensightMesh::correct()
     if (!noPatches_)
     {
         // Patches are output. Check that they're synced.
-        mesh_.boundaryMesh().checkParallelSync(true);
+        mesh_.poly().boundary().checkParallelSync(true);
 
-        allPatchNames_ = mesh_.boundaryMesh().names();
+        allPatchNames_ = mesh_.poly().boundary().names();
         if (Pstream::parRun())
         {
             allPatchNames_.setSize
@@ -197,7 +197,7 @@ void Foam::ensightMesh::correct()
         {
             if (mesh_.boundary()[patchi].size())
             {
-                const polyPatch& p = mesh_.boundaryMesh()[patchi];
+                const polyPatch& p = mesh_.poly().boundary()[patchi];
 
                 labelList& tris = boundaryFaceSets_[patchi].tris;
                 labelList& quads = boundaryFaceSets_[patchi].quads;
@@ -284,9 +284,9 @@ void Foam::ensightMesh::correct()
             1
         );
 
-        forAll(mesh_.boundaryMesh(), patchi)
+        forAll(mesh_.poly().boundary(), patchi)
         {
-            const polyPatch& pp = mesh_.boundaryMesh()[patchi];
+            const polyPatch& pp = mesh_.poly().boundary()[patchi];
             if
             (
                 isA<processorPolyPatch>(pp)
@@ -1180,7 +1180,7 @@ void Foam::ensightMesh::write
 
             if (nfp.nTris || nfp.nQuads || nfp.nPolys)
             {
-                const polyPatch& p = mesh_.boundaryMesh()[patchi];
+                const polyPatch& p = mesh_.poly().boundary()[patchi];
 
                 const labelList& tris = boundaryFaceSets_[patchi].tris;
                 const labelList& quads = boundaryFaceSets_[patchi].quads;

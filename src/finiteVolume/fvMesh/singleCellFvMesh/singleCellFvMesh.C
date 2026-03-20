@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ void Foam::singleCellFvMesh::agglomerateMesh
     //   be in correct patch order)
     // - from agglomerations to coarse patch faces
 
-    const polyBoundaryMesh& oldPatches = mesh.boundaryMesh();
+    const polyBoundaryMesh& oldPatches = mesh.poly().boundary();
 
     // Check agglomeration within patch face range and continuous
     labelList nAgglom(oldPatches.size(), 0);
@@ -260,7 +260,7 @@ void Foam::singleCellFvMesh::agglomerateMesh
     {
         newPatches[patchi] = oldPatches[patchi].clone
         (
-            boundaryMesh(),
+            poly().boundary(),
             patchi,
             0,
             0
@@ -441,7 +441,7 @@ Foam::singleCellFvMesh::singleCellFvMesh
             io.readOpt(),
             io.writeOpt()
         ),
-        mesh.boundaryMesh().size()
+        mesh.poly().boundary().size()
     ),
     reverseFaceMap_
     (
@@ -483,7 +483,7 @@ Foam::singleCellFvMesh::singleCellFvMesh
         mesh.nPoints()
     )
 {
-    const polyBoundaryMesh& oldPatches = mesh.boundaryMesh();
+    const polyBoundaryMesh& oldPatches = mesh.poly().boundary();
 
     labelListList agglom(oldPatches.size());
 
@@ -536,7 +536,7 @@ Foam::singleCellFvMesh::singleCellFvMesh
             io.readOpt(),
             io.writeOpt()
         ),
-        mesh.boundaryMesh().size()
+        mesh.poly().boundary().size()
     ),
     reverseFaceMap_
     (

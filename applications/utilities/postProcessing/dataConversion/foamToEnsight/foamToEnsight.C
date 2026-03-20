@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
     {
         Info<< "Converting cellZone " << cellZoneName
             << " only (puts outside faces into patch "
-            << mesh.boundaryMesh()[0].name()
+            << mesh.poly().boundary()[0].name()
             << ")" << endl;
         const cellZone& cz = mesh.cellZones()[cellZoneName];
         cellSet c0(mesh, "c0", labelHashSet(cz));
@@ -398,7 +398,7 @@ int main(int argc, char *argv[])
         {
             Info<< "Converting cellZone " << cellZoneName
                 << " only (puts outside faces into patch "
-                << mesh.boundaryMesh()[0].name()
+                << mesh.poly().boundary()[0].name()
                 << ")" << endl;
             const cellZone& cz = mesh.cellZones()[cellZoneName];
             cellSet c0(mesh, "c0", labelHashSet(cz));

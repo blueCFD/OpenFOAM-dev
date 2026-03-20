@@ -121,7 +121,7 @@ void Foam::faceSelections::searchableSurfaceSelection::select
         neighbourCellCentres
     );
 
-    const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh_.poly().boundary();
 
     forAll(pbm, patchi)
     {

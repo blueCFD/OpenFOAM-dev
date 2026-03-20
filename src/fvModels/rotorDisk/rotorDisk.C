@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -156,7 +156,7 @@ void Foam::fv::rotorDisk::setFaceArea(vector& axis, const bool correct)
     static const scalar tol = 0.8;
 
     const label nInternalFaces = mesh().nInternalFaces();
-    const polyBoundaryMesh& pbm = mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh().poly().boundary();
     const vectorField& Sf = mesh().Sf();
     const scalarField& magSf = mesh().magSf();
 

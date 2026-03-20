@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -190,7 +190,7 @@ label mergePatchFaces
                 // Restore. Get face properties.
 
                 label own = mesh.faceOwner()[newMasterI];
-                label patchID = mesh.boundaryMesh().whichPatch(newMasterI);
+                label patchID = mesh.boundary().whichPatch(newMasterI);
 
                 Pout<< "Restoring new master face " << newMasterI
                     << " to vertices " << setFaceVerts[0] << endl;

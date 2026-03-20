@@ -208,8 +208,8 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
 
     const word patchName = args[1];
-    label patchi = mesh.boundaryMesh().findIndex(patchName);
-    const polyPatch& pp = mesh.boundaryMesh()[patchi];
+    label patchi = mesh.poly().boundary().findIndex(patchName);
+    const polyPatch& pp = mesh.poly().boundary()[patchi];
 
     const indirectPrimitivePatch& cpp = mesh.globalData().coupledPatch();
 

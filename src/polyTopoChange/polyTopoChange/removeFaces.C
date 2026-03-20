@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -395,7 +395,7 @@ Foam::label Foam::removeFaces::getPatchIndex(const label facei) const
 
     if (!mesh_.isInternalFace(facei))
     {
-        patchID = mesh_.boundaryMesh().whichPatch(facei);
+        patchID = mesh_.boundary().whichPatch(facei);
     }
 
     return patchID;
@@ -726,7 +726,7 @@ void Foam::removeFaces::setRefinement
 
 
     {
-        const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh_.boundary();
 
         // Usage of edges by non-removed faces.
         // See below about initialisation.

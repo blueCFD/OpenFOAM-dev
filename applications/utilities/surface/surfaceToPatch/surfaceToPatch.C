@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,11 +45,11 @@ using namespace Foam;
 // Adds empty patch if not yet there. Returns patchID.
 label addPatch(polyMesh& mesh, const word& patchName)
 {
-    label patchi = mesh.boundaryMesh().findIndex(patchName);
+    label patchi = mesh.boundary().findIndex(patchName);
 
     if (patchi == -1)
     {
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
 
         List<polyPatch*> newPatches(patches.size() + 1);
 
@@ -120,7 +120,7 @@ bool repatchFace
 
         const label patchID = surfToMeshPatch[rMeshPatchID];
 
-        if (patchID != mesh.boundaryMesh().whichPatch(facei))
+        if (patchID != mesh.boundary().whichPatch(facei))
         {
             const label own = mesh.faceOwner()[facei];
 
@@ -205,10 +205,10 @@ int main(int argc, char *argv[])
     Info<< "Before patching:" << nl
         << "    patch\tsize" << endl;
 
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
-        Info<< "    " << mesh.boundaryMesh()[patchi].name() << '\t'
-            << mesh.boundaryMesh()[patchi].size() << nl;
+        Info<< "    " << mesh.boundary()[patchi].name() << '\t'
+            << mesh.boundary()[patchi].size() << nl;
     }
     Info<< endl;
 
@@ -296,10 +296,10 @@ int main(int argc, char *argv[])
         Info<< "After patching:" << nl
             << "    patch\tsize" << endl;
 
-        forAll(mesh.boundaryMesh(), patchi)
+        forAll(mesh.boundary(), patchi)
         {
-            Info<< "    " << mesh.boundaryMesh()[patchi].name() << '\t'
-                << mesh.boundaryMesh()[patchi].size() << endl;
+            Info<< "    " << mesh.boundary()[patchi].name() << '\t'
+                << mesh.boundary()[patchi].size() << endl;
         }
         Info<< endl;
 

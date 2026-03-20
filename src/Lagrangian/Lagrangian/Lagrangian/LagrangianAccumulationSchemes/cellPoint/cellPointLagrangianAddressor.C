@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,9 +57,9 @@ Foam::cellPointLagrangianAddressor::cellPointLagrangianAddressor
     // from the mesh point indices
     {
         DynamicList<label> coupledPointPoint;
-        forAll(mesh.boundaryMesh(), patchi)
+        forAll(mesh.boundary(), patchi)
         {
-            const polyPatch& pp = mesh.boundaryMesh()[patchi];
+            const polyPatch& pp = mesh.boundary()[patchi];
 
             if (pp.coupled())
             {

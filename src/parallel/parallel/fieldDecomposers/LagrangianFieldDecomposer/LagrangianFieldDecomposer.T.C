@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ Foam::LagrangianFieldDecomposer::LagrangianFieldDecomposer
     }
 
     // Create reverse cell addressing
-    List<remote> completeCellProcCell(completeMesh_.mesh().nCells());
+    List<remote> completeCellProcCell(completeMesh_.poly().nCells());
     forAll(cellProcAddressing, proci)
     {
         forAll(cellProcAddressing[proci], procCelli)
@@ -68,8 +68,8 @@ Foam::LagrangianFieldDecomposer::LagrangianFieldDecomposer
     }
 
     // Create reverse face addressing
-    List<remote> completeFaceOwnerProcFace(completeMesh_.mesh().nFaces());
-    List<remote> completeFaceNeighbourProcFace(completeMesh_.mesh().nFaces());
+    List<remote> completeFaceOwnerProcFace(completeMesh_.poly().nFaces());
+    List<remote> completeFaceNeighbourProcFace(completeMesh_.poly().nFaces());
     forAll(faceProcAddressing, proci)
     {
         forAll(faceProcAddressing[proci], procFacei)
@@ -117,7 +117,7 @@ Foam::LagrangianFieldDecomposer::LagrangianFieldDecomposer
 
     // Distribute the elements to the processor meshes, and simultaneously
     // build addressing for distributing associated fields
-    const faceList& completeFaces = completeMesh_.mesh().faces();
+    const faceList& completeFaces = completeMesh_.poly().faces();
     labelList procIs(procMeshes_.size(), 0);
     forAll(completeMesh_, i)
     {

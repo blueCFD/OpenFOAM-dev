@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ Foam::nearWallDist::nearWallDist(const Foam::fvMesh& mesh)
     fvPatchDistWave::correct
     (
         mesh,
-        mesh.boundaryMesh().findIndices<wallPolyPatch>(),
+        mesh.poly().boundary().findIndices<wallPolyPatch>(),
         -vGreat,
         2,
         yVf

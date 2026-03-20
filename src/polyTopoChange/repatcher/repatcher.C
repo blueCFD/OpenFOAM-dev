@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,7 +91,7 @@ void Foam::repatcher::changePatchID
         if
         (
             faceID >= mesh_.faces().size()
-         || patchID >= mesh_.boundaryMesh().size()
+         || patchID >= mesh_.boundary().size()
          || mesh_.isInternalFace(faceID)
         )
         {
@@ -141,7 +141,7 @@ void Foam::repatcher::changeAnchorPoint
             << abort(FatalError);
     }
 
-    label patchID = mesh_.boundaryMesh().whichPatch(faceID);
+    label patchID = mesh_.boundary().whichPatch(faceID);
 
     if (fp == 0)
     {

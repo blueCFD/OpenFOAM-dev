@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createSpecifiedMeshNoChangers.H"
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.poly().boundary();
 
     forAll(patches, patchi)
     {
@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
     label nCoarseFaces = 0;      // total number of coarse faces
     label nFineFaces = 0;        // total number of fine faces
 
-    const polyBoundaryMesh& coarsePatches = coarseMesh.boundaryMesh();
+    const polyBoundaryMesh& coarsePatches = coarseMesh.poly().boundary();
 
     labelList viewFactorsPatches(patches.size());
 

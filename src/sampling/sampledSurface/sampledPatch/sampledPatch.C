@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -82,11 +82,8 @@ const Foam::labelList& Foam::sampledSurfaces::patch::patchIndices() const
 {
     if (patchIndices_.empty())
     {
-        patchIndices_ = mesh().boundaryMesh().patchSet
-        (
-            patchNames_,
-            false
-        ).sortedToc();
+        patchIndices_ =
+            mesh().boundary().patchSet(patchNames_, false).sortedToc();
     }
     return patchIndices_;
 }
@@ -130,7 +127,7 @@ bool Foam::sampledSurfaces::patch::update()
     forAll(patchIndices(), i)
     {
         label patchi = patchIndices()[i];
-        const polyPatch& pp = mesh().boundaryMesh()[patchi];
+        const polyPatch& pp = mesh().boundary()[patchi];
 
         if (isA<emptyPolyPatch>(pp))
         {
@@ -157,7 +154,7 @@ bool Foam::sampledSurfaces::patch::update()
 
         patchStart_[i] = sz;
 
-        const polyPatch& pp = mesh().boundaryMesh()[patchi];
+        const polyPatch& pp = mesh().boundary()[patchi];
 
         forAll(pp, j)
         {

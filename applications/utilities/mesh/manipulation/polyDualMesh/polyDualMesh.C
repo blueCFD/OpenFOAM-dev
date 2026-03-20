@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,7 +91,7 @@ void simpleMarkFeatures
 {
     const scalar minCos = Foam::cos(featureAngle);
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Working sets
     labelHashSet featureEdgeSet;
@@ -480,7 +480,7 @@ int main(int argc, char *argv[])
 
 
     // Topo change container
-    polyTopoChange meshMod(mesh.boundaryMesh().size());
+    polyTopoChange meshMod(mesh.poly().boundary().size());
 
     // Mesh dualiser engine
     meshDualiser dualMaker(mesh);

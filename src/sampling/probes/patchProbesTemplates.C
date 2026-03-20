@@ -141,7 +141,7 @@ Foam::patchProbes::sample(const VolField<Type>& vField) const
 
     Field<Type>& values = tValues.ref();
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     forAll(locations_, probei)
     {
@@ -175,7 +175,7 @@ Foam::patchProbes::sample(const SurfaceField<Type>& sField) const
 
     Field<Type>& values = tValues.ref();
 
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.poly().boundary();
 
     forAll(locations_, probei)
     {

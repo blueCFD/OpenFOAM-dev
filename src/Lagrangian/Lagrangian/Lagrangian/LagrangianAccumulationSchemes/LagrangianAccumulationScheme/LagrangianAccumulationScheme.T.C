@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,7 +86,7 @@ Foam::Lagrangian::accumulationScheme<Type>::accumulate
         DimensionedField<Type, CellMesh>::New
         (
             lPsi.name(),
-            refCast<const resultMeshType>(lPsi.mesh().mesh()),
+            refCast<const resultMeshType>(lPsi.mesh().poly()),
             dimensioned<Type>(lPsi.dimensions(), pTraits<Type>::zero)
         );
 

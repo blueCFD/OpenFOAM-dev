@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -236,7 +236,7 @@ Foam::label Foam::addPatchCellLayer::addSideFace
     {
         // External edge so external face.
 
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
 
         // Loop over all faces connected to edge and see if we can find a face
         // that is otherPatchID
@@ -363,7 +363,7 @@ Foam::label Foam::addPatchCellLayer::findProcPatch
     const label nbrProcID
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     forAll(mesh.globalData().processorPatches(), i)
     {
@@ -495,7 +495,7 @@ void Foam::addPatchCellLayer::calcSidePatch
     Map<label>& patchToNbrProc
 )
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Precalculate mesh edges for pp.edges.
     const labelList meshEdges(pp.meshEdges(mesh.edges(), mesh.pointEdges()));
@@ -592,7 +592,7 @@ void Foam::addPatchCellLayer::calcSidePatch
 
                 if (facei != myFacei && !mesh.isInternalFace(facei))
                 {
-                    sidePatchID[edgeI] = mesh.boundaryMesh().whichPatch(facei);
+                    sidePatchID[edgeI] = mesh.boundary().whichPatch(facei);
                     masterFacei[edgeI] = facei;
 
                     break;
@@ -653,7 +653,7 @@ void Foam::addPatchCellLayer::calcSidePatch
                  && patches.whichPatch(facei) == sidePatchID[edgeI]
                 )
                 {
-                    sidePatchID[edgeI] = mesh.boundaryMesh().whichPatch(facei);
+                    sidePatchID[edgeI] = mesh.boundary().whichPatch(facei);
                     masterFacei[edgeI] = facei;
                     break;
                 }
@@ -887,7 +887,7 @@ void Foam::addPatchCellLayer::setRefinement
                 const labelList& meshFaces = mesh.edgeFaces(meshEdgeI, ef);
 
                 // Check that there is only one patchface using edge.
-                const polyBoundaryMesh& patches = mesh.boundaryMesh();
+                const polyBoundaryMesh& patches = mesh.boundary();
 
                 label bFacei = -1;
 
@@ -927,7 +927,7 @@ void Foam::addPatchCellLayer::setRefinement
     }
 
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     // Precalculated patchID for each patch face
     labelList patchID(pp.size());

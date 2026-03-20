@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -145,7 +145,7 @@ Foam::autoPtr<Foam::globalIndex> Foam::regionSplit::calcRegionSplit
     {
         // Block all parallel faces to avoid comms across
         boolList coupledOrBlockedFace(blockedFace);
-        const polyBoundaryMesh& pbm = mesh().boundaryMesh();
+        const polyBoundaryMesh& pbm = mesh().boundary();
 
         if (coupledOrBlockedFace.size())
         {

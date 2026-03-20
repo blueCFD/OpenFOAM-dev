@@ -715,7 +715,7 @@ void Foam::GeometricBoundaryField<Type, GeoMesh, PrimitiveField>::reset
     // Reset the number of patches in case the decomposition changed
     this->setSize(btf.size());
 
-    const polyBoundaryMesh& pbm = bmesh_.mesh().mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = bmesh_.mesh().poly().boundary();
 
     forAll(*this, patchi)
     {

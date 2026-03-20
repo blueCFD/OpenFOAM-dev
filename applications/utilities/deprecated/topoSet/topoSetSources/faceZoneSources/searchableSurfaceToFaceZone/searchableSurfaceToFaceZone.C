@@ -62,9 +62,9 @@ void Foam::searchableSurfaceToFaceZone::combine
             interiorFaceFaces[facei] = facei;
         }
         label nInteriorFaces = mesh_.nInternalFaces();
-        forAll(mesh_.boundaryMesh(), patchi)
+        forAll(mesh_.boundary(), patchi)
         {
-            const polyPatch& patch = mesh_.boundaryMesh()[patchi];
+            const polyPatch& patch = mesh_.boundary()[patchi];
             if (patch.coupled())
             {
                 forAll(patch, patchFacei)

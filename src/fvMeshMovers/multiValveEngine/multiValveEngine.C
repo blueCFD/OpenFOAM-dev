@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,13 +48,13 @@ Foam::word Foam::fvMeshMovers::multiValveEngine::cylinderHeadName
 Foam::labelHashSet
 Foam::fvMeshMovers::multiValveEngine::findLinerPatchSet() const
 {
-    return mesh().boundaryMesh().patchSet(linerPatches_);
+    return mesh().poly().boundary().patchSet(linerPatches_);
 }
 
 
 Foam::labelHashSet Foam::fvMeshMovers::multiValveEngine::findSlidingPatchSet()
 {
-    return mesh().boundaryMesh().patchSet(slidingPatches_);
+    return mesh().poly().boundary().patchSet(slidingPatches_);
 }
 
 
@@ -69,9 +69,9 @@ Foam::labelHashSet Foam::fvMeshMovers::multiValveEngine::findStaticPatchSet()
 
     labelHashSet staticPatchSet;
 
-    forAll(mesh().boundaryMesh(), patchi)
+    forAll(mesh().poly().boundary(), patchi)
     {
-        const polyPatch& pp = mesh().boundaryMesh()[patchi];
+        const polyPatch& pp = mesh().poly().boundary()[patchi];
 
         // Exclude non-static patches
         if

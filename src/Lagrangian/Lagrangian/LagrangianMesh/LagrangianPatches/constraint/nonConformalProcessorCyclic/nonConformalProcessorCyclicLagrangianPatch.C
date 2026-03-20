@@ -111,7 +111,7 @@ void Foam::nonConformalProcessorCyclicLagrangianPatch::evaluate
     const LagrangianInternalScalarDynamicField& fraction
 ) const
 {
-    const meshSearch& searchEngine = meshSearch::New(mesh.mesh());
+    const meshSearch& searchEngine = meshSearch::New(mesh.poly());
 
     // Receive
     UIPstream uips(nonConformalProcessorCyclicPoly_.neighbProcNo(), pBufs);
@@ -131,7 +131,7 @@ void Foam::nonConformalProcessorCyclicLagrangianPatch::evaluate
     forAll(receivePatchFace, i)
     {
         receiveCelli[i] =
-            mesh.mesh().faceOwner()[receivePatchFace[i] + receivePp.start()];
+            mesh.poly().faceOwner()[receivePatchFace[i] + receivePp.start()];
 
         if
         (
@@ -154,7 +154,7 @@ void Foam::nonConformalProcessorCyclicLagrangianPatch::evaluate
                     receivePosition[i]
                   - tracking::position
                     (
-                        mesh.mesh(),
+                        mesh.poly(),
                         receiveCoordinates[i],
                         receiveCelli[i],
                         receiveFacei[i],

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -192,7 +192,7 @@ Foam::labelHashSet Foam::polyTopoChange::getSetIndices
 
 void Foam::polyTopoChange::writeMeshStats(const polyMesh& mesh, Ostream& os)
 {
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.boundary();
 
     labelList patchSizes(patches.size());
     labelList patchStarts(patches.size());
@@ -1433,13 +1433,13 @@ void Foam::polyTopoChange::compactAndReorder
     labelList& oldPatchStarts
 )
 {
-    if (mesh.boundaryMesh().size() != nPatches_)
+    if (mesh.boundary().size() != nPatches_)
     {
         FatalErrorInFunction
             << "polyTopoChange was constructed with a mesh with "
             << nPatches_ << " patches." << endl
             << "The mesh now provided has a different number of patches "
-            << mesh.boundaryMesh().size()
+            << mesh.boundary().size()
             << " which is illegal" << endl
             << abort(FatalError);
     }
@@ -1456,7 +1456,7 @@ void Foam::polyTopoChange::compactAndReorder
     reorderCoupledFaces
     (
         syncParallel,
-        mesh.boundaryMesh(),
+        mesh.boundary(),
         patchStarts,
         patchSizes,
         newPoints
@@ -1495,7 +1495,7 @@ void Foam::polyTopoChange::compactAndReorder
         cellsFromCells
     );
 
-    const polyBoundaryMesh& boundary = mesh.boundaryMesh();
+    const polyBoundaryMesh& boundary = mesh.boundary();
 
     // Grab patch mesh point maps
     oldPatchMeshPointMaps.setSize(boundary.size());
@@ -1544,7 +1544,7 @@ Foam::polyTopoChange::polyTopoChange
 )
 :
     strict_(strict),
-    nPatches_(mesh.boundaryMesh().size()),
+    nPatches_(mesh.boundary().size()),
     points_(0),
     pointMap_(0),
     reversePointMap_(0),
@@ -1598,7 +1598,7 @@ Foam::polyTopoChange::polyTopoChange
 
     // Add faces
     {
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
         const faceList& faces = mesh.faces();
         const labelList& faceOwner = mesh.faceOwner();
         const labelList& faceNeighbour = mesh.faceNeighbour();
@@ -2107,11 +2107,11 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::changeMesh
     // Patch point renumbering
     // For every preserved point on a patch give the old position.
     // For added points, the index is set to -1
-    labelListList patchPointMap(mesh.boundaryMesh().size());
+    labelListList patchPointMap(mesh.boundary().size());
     calcPatchPointMap
     (
         oldPatchMeshPointMaps,
-        mesh.boundaryMesh(),
+        mesh.boundary(),
         patchPointMap
     );
 
@@ -2292,7 +2292,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
 
 
     {
-        const polyBoundaryMesh& oldPatches = mesh.boundaryMesh();
+        const polyBoundaryMesh& oldPatches = mesh.boundary();
 
         List<polyPatch*> newBoundary(oldPatches.size());
 
@@ -2300,7 +2300,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
         {
             newBoundary[patchi] = oldPatches[patchi].clone
             (
-                newMesh.boundaryMesh(),
+                newMesh.poly().boundary(),
                 patchi,
                 patchSizes[patchi],
                 patchStarts[patchi]
@@ -2348,11 +2348,11 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::polyTopoChange::makeMesh
     // Patch point renumbering
     // For every preserved point on a patch give the old position.
     // For added points, the index is set to -1
-    labelListList patchPointMap(newMesh.boundaryMesh().size());
+    labelListList patchPointMap(newMesh.poly().boundary().size());
     calcPatchPointMap
     (
         oldPatchMeshPointMaps,
-        newMesh.boundaryMesh(),
+        newMesh.poly().boundary(),
         patchPointMap
     );
 

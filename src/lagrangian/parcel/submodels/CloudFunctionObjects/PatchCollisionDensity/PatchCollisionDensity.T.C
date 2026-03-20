@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -285,7 +285,7 @@ void Foam::PatchCollisionDensity<CloudType>::preFace(const parcelType& p)
     const fvMesh& mesh = this->owner().mesh();
     if (!p.onBoundaryFace(mesh)) return;
 
-    const polyPatch& pp = mesh.boundaryMesh()[p.patch(mesh)];
+    const polyPatch& pp = mesh.poly().boundary()[p.patch(mesh)];
     if (pp.coupled()) return;
 
     const label patchi = pp.index();

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,6 +58,7 @@ class interpolatingSolidBodyMotionSolver
         //- The motion control function
         autoPtr<solidBodyMotionFunction> SBMFPtr_;
 
+        //- The patches to which the motion applies
         wordReList patches_;
 
         //- Patches to integrate forces
@@ -75,7 +76,19 @@ class interpolatingSolidBodyMotionSolver
         //- Current interpolation scale (1 at patches, 0 at distance_)
         pointScalarField scale_;
 
+
+    // Private Member Functions
+
+        //- Calculate the interpolation scale
         void calcScale();
+
+        //- Calculate the point locations given a transformation and a centre
+        //  of gravity
+        tmp<pointField> calcPoints
+        (
+            const septernion& s,
+            const vector& CofG
+        ) const;
 
 
 public:

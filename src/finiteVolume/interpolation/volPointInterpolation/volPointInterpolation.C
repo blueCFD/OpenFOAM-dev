@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,7 +74,7 @@ Foam::volPointInterpolation::volPointInterpolation(const fvMesh& vm)
 
     const pointField& points = mesh().points();
     const labelListList& pointCells = mesh().pointCells();
-    const polyBoundaryMesh& pbm = mesh().boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh().poly().boundary();
     const fvBoundaryMesh& fvbm = mesh().boundary();
 
     // Cache calls to patch coupled flags

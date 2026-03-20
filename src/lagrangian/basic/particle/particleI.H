@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -152,7 +152,7 @@ inline bool Foam::particle::onBoundaryFace(const polyMesh& mesh) const
 
 inline Foam::label Foam::particle::patch(const polyMesh& mesh) const
 {
-    return onFace() ? mesh.boundaryMesh().whichPatch(facei_) : -1;
+    return onFace() ? mesh.boundary().whichPatch(facei_) : -1;
 }
 
 

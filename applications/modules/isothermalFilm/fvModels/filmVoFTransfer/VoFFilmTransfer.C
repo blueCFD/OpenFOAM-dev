@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ Foam::fv::VoFFilmTransfer::VoFFilmTransfer
     fvModel(sourceName, modelType, mesh, dict),
     VoF_(mesh.lookupObject<solvers::compressibleVoF>(solver::typeName)),
     filmPatchName_(dict.lookup("filmPatch")),
-    filmPatchi_(mesh.boundaryMesh().findIndex(filmPatchName_)),
+    filmPatchi_(mesh.poly().boundary().findIndex(filmPatchName_)),
     phaseName_(dict.lookup("phase")),
     thermo_
     (

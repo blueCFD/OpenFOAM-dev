@@ -386,7 +386,7 @@ public:
 
 
             //- Return boundary mesh
-            const polyBoundaryMesh& boundaryMesh() const
+            const polyBoundaryMesh& boundary() const
             {
                 return boundary_;
             }

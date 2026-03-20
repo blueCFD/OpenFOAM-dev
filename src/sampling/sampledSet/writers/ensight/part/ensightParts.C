@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,12 +58,7 @@ void Foam::ensightParts::recalculate(const polyMesh& mesh)
     partsList_.clear();
 
     // extra space for unzoned cells
-    label nPart =
-    (
-        mesh.cellZones().size()
-      + mesh.boundaryMesh().size()
-      + 1
-    );
+    label nPart = mesh.cellZones().size() + mesh.boundary().size() + 1;
 
     partsList_.setSize(nPart);
     nPart = 0;
@@ -141,9 +136,9 @@ void Foam::ensightParts::recalculate(const polyMesh& mesh)
 
 
     // do boundaries, skipping empty and processor patches
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
-        const polyPatch& patch = mesh.boundaryMesh()[patchi];
+        const polyPatch& patch = mesh.boundary()[patchi];
         if (patch.size() && !isA<processorPolyPatch>(patch))
         {
             partsList_.set

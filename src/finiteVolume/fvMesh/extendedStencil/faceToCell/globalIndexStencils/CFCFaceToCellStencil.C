@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ void Foam::CFCFaceToCellStencil::calcFaceBoundaryData
     labelListList& neiGlobal
 ) const
 {
-    const polyBoundaryMesh& patches = mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = mesh().boundary();
     const label nBnd = mesh().nFaces()-mesh().nInternalFaces();
     const labelList& own = mesh().faceOwner();
 
@@ -109,7 +109,7 @@ void Foam::CFCFaceToCellStencil::calcCellStencil
     // Non-empty boundary faces
     boolList validBFace(mesh().nFaces()-mesh().nInternalFaces(), true);
 
-    const polyBoundaryMesh& patches = mesh().boundaryMesh();
+    const polyBoundaryMesh& patches = mesh().boundary();
     forAll(patches, patchi)
     {
         const polyPatch& pp = patches[patchi];

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ namespace Foam
 
 Foam::label Foam::mergePatchPairs::findPatchIndex(const word& patchName) const
 {
-    label patchIndex = mesh_.boundaryMesh().findIndex(patchName);
+    label patchIndex = mesh_.boundary().findIndex(patchName);
 
     if (patchIndex == -1)
     {
@@ -94,13 +94,13 @@ void Foam::mergePatchPairs::removePoints
         UIndirectList<bool>
         (
             removedPoints,
-            mesh_.boundaryMesh()[patchPairs[ppi].first()].meshPoints()
+            mesh_.boundary()[patchPairs[ppi].first()].meshPoints()
         ) = true;
 
         UIndirectList<bool>
         (
             removedPoints,
-            mesh_.boundaryMesh()[patchPairs[ppi].second()].meshPoints()
+            mesh_.boundary()[patchPairs[ppi].second()].meshPoints()
         ) = true;
     }
 
@@ -516,7 +516,7 @@ void Foam::mergePatchPairs::modifyFaces
                         << " oldFace:" << f
                         << " centre:" << mesh_.faceCentres()[fi]
                         << " owner:" << mesh_.faceOwner()[fi]
-                        << " patch:" << mesh_.boundaryMesh().whichPatch(fi)
+                        << " patch:" << mesh_.boundary().whichPatch(fi)
                         << endl;
                 }
 
@@ -527,7 +527,7 @@ void Foam::mergePatchPairs::modifyFaces
                     mesh_.faceOwner()[fi],      // Owner cell
                     -1,                         // Neighbour cell
                     false,                      // Face flip
-                    mesh_.boundaryMesh().whichPatch(fi) // Patch index
+                    mesh_.boundary().whichPatch(fi) // Patch index
                 );
             }
         }
@@ -569,8 +569,8 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::mergePatchPairs::merge
         intersectPatchPair
         (
             meshMod,
-            mesh_.boundaryMesh()[patchPairs[ppi].first()],
-            mesh_.boundaryMesh()[patchPairs[ppi].second()]
+            mesh_.boundary()[patchPairs[ppi].first()],
+            mesh_.boundary()[patchPairs[ppi].second()]
         );
     }
 
@@ -585,7 +585,7 @@ bool Foam::mergePatchPairs::connected
     const label patchi
 ) const
 {
-    const labelList& pmp = mesh_.boundaryMesh()[patchi].meshPoints();
+    const labelList& pmp = mesh_.boundary()[patchi].meshPoints();
 
     forAll(pmp, pi)
     {
@@ -655,12 +655,12 @@ inline void Foam::mergePatchPairs::merge
 
     forAll(patchPairs, ppi)
     {
-        if (mesh.boundaryMesh()[patchPairs[ppi].first()].size() == 0)
+        if (mesh.boundary()[patchPairs[ppi].first()].size() == 0)
         {
             zeroSizedMergedPatches.insert(patchPairs[ppi].first());
         }
 
-        if (mesh.boundaryMesh()[patchPairs[ppi].second()].size() == 0)
+        if (mesh.boundary()[patchPairs[ppi].second()].size() == 0)
         {
             zeroSizedMergedPatches.insert(patchPairs[ppi].second());
         }
@@ -669,11 +669,11 @@ inline void Foam::mergePatchPairs::merge
     // Create a list of the remaining patch old patch labels
     labelList remainingPatches
     (
-        mesh.boundaryMesh().size() - zeroSizedMergedPatches.size()
+        mesh.boundary().size() - zeroSizedMergedPatches.size()
     );
 
     label rpi = 0;
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.boundary(), patchi)
     {
         if (!zeroSizedMergedPatches.found(patchi))
         {

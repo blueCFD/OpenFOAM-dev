@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ void Foam::Flux<CloudType, Derived>::accumulate
 )
 {
     const polyMesh& mesh = this->owner().mesh();
-    const polyBoundaryMesh& bMesh = mesh.boundaryMesh();
+    const polyBoundaryMesh& bMesh = mesh.boundary();
 
     const bool isInternal = p.onInternalFace(mesh);
 

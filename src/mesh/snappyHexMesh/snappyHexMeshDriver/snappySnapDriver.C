@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -251,7 +251,7 @@ Foam::pointField Foam::snappySnapDriver::smoothPatchDisplacement
         }
 
         // Count coupled faces as internal ones (but only once)
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.boundary();
 
         forAll(patches, patchi)
         {
@@ -1930,7 +1930,7 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::snappySnapDriver::repatchToSurface
     labelList ownPatch(mesh.nFaces(), -1);
     labelList nbrPatch(mesh.nFaces(), -1);
 
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.poly().boundary();
 
     forAll(patches, patchi)
     {

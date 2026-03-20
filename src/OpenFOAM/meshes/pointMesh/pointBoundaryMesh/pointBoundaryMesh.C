@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ Foam::pointBoundaryMesh::pointBoundaryMesh
 
 Foam::label Foam::pointBoundaryMesh::findIndex(const word& patchName) const
 {
-    return mesh()().boundaryMesh().findIndex(patchName);
+    return mesh().poly().boundary().findIndex(patchName);
 }
 
 
@@ -72,7 +72,7 @@ Foam::labelList Foam::pointBoundaryMesh::findIndices
     const bool usePatchGroups
 ) const
 {
-    return mesh()().boundaryMesh().findIndices(key, usePatchGroups);
+    return mesh().poly().boundary().findIndices(key, usePatchGroups);
 }
 
 
@@ -216,7 +216,7 @@ void Foam::pointBoundaryMesh::topoChange()
 
 void Foam::pointBoundaryMesh::reset()
 {
-    const polyBoundaryMesh& boundaryMesh = mesh()().boundaryMesh();
+    const polyBoundaryMesh& boundaryMesh = mesh().poly().boundary();
     pointPatchList& Patches = *this;
 
     // Reset the number of patches in case the decomposition changed

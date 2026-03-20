@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -440,10 +440,9 @@ void Foam::BlendedInterfacialModel<ModelType>::postProcessBlendingCoefficients
     {
         // Single axis, using the first phase as the x-coordinate
         static const label nDivisions = 128;
-        const scalarField divisionis(scalarList(identityMap(nDivisions)));
         fieldNames[0] = fluid.phases()[0].volScalarField::name();
         fieldNames[1] = fluid.phases()[1].volScalarField::name();
-        fields.set(0, new scalarField(divisionis/(nDivisions - 1)));
+        fields.set(0, new scalarField(linearSequence01(nDivisions)));
         fields.set(1, new scalarField(1 - fields[0]));
     }
     else

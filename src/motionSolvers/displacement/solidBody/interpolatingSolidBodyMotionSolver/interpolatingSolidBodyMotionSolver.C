@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,8 @@ void Foam::interpolatingSolidBodyMotionSolver::calcScale()
 
     const pointDist pDist(pMesh, patchSet_, points0(), do_);
 
-    // Scaling: 1 up to di then linear down to 0 at do away from patches
+    // One before the inner distance, zero after the outer distance, and a
+    // linear variation in between
     scale_.primitiveFieldRef() =
         min
         (
@@ -63,7 +64,7 @@ void Foam::interpolatingSolidBodyMotionSolver::calcScale()
             scalar(1)
         );
 
-    // Convert the scale function to a cosine
+    // Convert the linear variation into a smooth cosine
     scale_.primitiveFieldRef() =
         min
         (
@@ -79,7 +80,45 @@ void Foam::interpolatingSolidBodyMotionSolver::calcScale()
         );
 
     pointConstraints::New(pMesh).constrain(scale_);
+
     scale_.write();
+}
+
+
+Foam::tmp<Foam::pointField> Foam::interpolatingSolidBodyMotionSolver::calcPoints
+(
+    const septernion& s,
+    const vector& CofG
+) const
+{
+    const pointField& points0 = this->points0();
+
+    tmp<pointField> tpoints(new pointField(points0));
+    pointField& points = tpoints.ref();
+
+    forAll(points, pointi)
+    {
+        // Move non-stationary points
+        if (scale_[pointi] > small)
+        {
+            // Use solid-body motion where scale = 1
+            if (scale_[pointi] > 1 - small)
+            {
+                points[pointi] =
+                    CofG + s.transformPoint(points0[pointi] - CofG);
+            }
+            // Slerp septernion interpolation
+            else
+            {
+                const septernion ss(slerp(septernion::I, s, scale_[pointi]));
+
+                points[pointi] =
+                    CofG + ss.transformPoint(points0[pointi] - CofG);
+            }
+        }
+    }
+
+    return tpoints;
 }
 
 
@@ -95,7 +134,7 @@ Foam::interpolatingSolidBodyMotionSolver::interpolatingSolidBodyMotionSolver
     points0MotionSolver(name, mesh, dict, typeName),
     SBMFPtr_(solidBodyMotionFunction::New(dict, mesh.time())),
     patches_(wordReList(dict.lookup("patches"))),
-    patchSet_(mesh.boundaryMesh().patchSet(patches_)),
+    patchSet_(mesh.boundary().patchSet(patches_)),
     CofG_(dict.lookup("CofG")),
     di_(dict.lookup<scalar>("innerDistance")),
     do_(dict.lookup<scalar>("outerDistance")),
@@ -129,35 +168,7 @@ Foam::interpolatingSolidBodyMotionSolver::~interpolatingSolidBodyMotionSolver()
 Foam::tmp<Foam::pointField>
 Foam::interpolatingSolidBodyMotionSolver::curPoints() const
 {
-    const pointField& points0 = this->points0();
-    const septernion s = SBMFPtr_().transformation();
-
-    tmp<pointField> tpoints(new pointField(points0));
-    pointField& points = tpoints.ref();
-
-    forAll(points, pointi)
-    {
-        // Move non-stationary points
-        if (scale_[pointi] > small)
-        {
-            // Use solid-body motion where scale = 1
-            if (scale_[pointi] > 1 - small)
-            {
-                points[pointi] =
-                    CofG_ + s.transformPoint(points0[pointi] - CofG_);
-            }
-            // Slerp septernion interpolation
-            else
-            {
-                const septernion ss(slerp(septernion::I, s, scale_[pointi]));
-
-                points[pointi] =
-                    CofG_ + ss.transformPoint(points0[pointi] - CofG_);
-            }
-        }
-    }
-
-    return tpoints;
+    return calcPoints(SBMFPtr_().transformation(), CofG_);
 }
 
 
@@ -173,11 +184,19 @@ void Foam::interpolatingSolidBodyMotionSolver::topoChange
 
 void Foam::interpolatingSolidBodyMotionSolver::mapMesh(const polyMeshMap& map)
 {
+    // Reset the points0 to the current point locations
     points0MotionSolver::mapMesh(map);
 
-    // scale is resized by the meshToMesh mapper
-    scale_ = Zero;
+    // Recalculate the scale. It will already have been resized by the mapping.
     calcScale();
+
+    // Inverse-transform the points0-s so that the transformation still applies
+    // correctly. This is fine because all the points have changed during the
+    // mesh-to-mesh mapping. We are not concerned with returning exactly to the
+    // original point locations, as those locations now relate to an entirely
+    // different mesh. If we really want to return to those locations, then we
+    // need to map back to the original mesh.
+    this->points0() = calcPoints(inv(SBMFPtr_().transformation()), -CofG_);
 }
 
 

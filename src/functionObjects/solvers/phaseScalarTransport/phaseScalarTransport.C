@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -75,7 +75,7 @@ Foam::volScalarField& Foam::functionObjects::phaseScalarTransport::Phi()
         const volScalarField& p =
             mesh_.lookupObject<volScalarField>(pName_);
 
-        wordList PhiPatchFieldTypes(mesh_.boundaryMesh().size());
+        wordList PhiPatchFieldTypes(mesh_.poly().boundary().size());
         forAll(p.boundaryField(), patchi)
         {
             PhiPatchFieldTypes[patchi] =

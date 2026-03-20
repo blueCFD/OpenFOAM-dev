@@ -76,7 +76,7 @@ void printMeshData(const polyMesh& mesh)
     {
         const processorPolyPatch& ppp = refCast<const processorPolyPatch>
         (
-            mesh.boundaryMesh()[pPatches[i]]
+            mesh.boundary()[pPatches[i]]
         );
         patchNeiProcNo[Pstream::myProcNo()][i] = ppp.neighbProcNo();
         patchSize[Pstream::myProcNo()][i] = ppp.size();
@@ -437,7 +437,7 @@ int main(int argc, char *argv[])
     if (!allHaveMesh)
     {
         // Find last non-processor patch.
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
 
         label nonProci = -1;
 

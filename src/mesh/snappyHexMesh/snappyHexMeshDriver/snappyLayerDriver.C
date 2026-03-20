@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -704,7 +704,8 @@ void Foam::snappyLayerDriver::setNumLayers
     {
         label patchi = patchIDs[i];
 
-        const labelList& meshPoints = mesh.boundaryMesh()[patchi].meshPoints();
+        const labelList& meshPoints =
+            mesh.poly().boundary()[patchi].meshPoints();
 
         label wantedLayers = patchToNLayers[patchi];
 
@@ -994,7 +995,7 @@ void Foam::snappyLayerDriver::determineSidePatches
         patchToNbrProc
     );
 
-    label nOldPatches = mesh.boundaryMesh().size();
+    label nOldPatches = mesh.poly().boundary().size();
     label nAdded = returnReduce(nPatches-nOldPatches, sumOp<label>());
     Info<< nl << "Adding in total " << nAdded/2 << " inter-processor patches to"
         << " handle extrusion of non-manifold processor boundaries."
@@ -1009,13 +1010,13 @@ void Foam::snappyLayerDriver::determineSidePatches
         for (label patchi = nOldPatches; patchi < nPatches; patchi++)
         {
             const label nbrProci = patchToNbrProc[patchi];
-            const label procPatchi = mesh.boundaryMesh().size();
+            const label procPatchi = mesh.poly().boundary().size();
             const processorPolyPatch pp
             (
                 0,          // size
                 0,          // start
                 procPatchi, // index
-                mesh.boundaryMesh(),
+                mesh.poly().boundary(),
                 Pstream::myProcNo(),
                 nbrProci
             );
@@ -1036,7 +1037,7 @@ void Foam::snappyLayerDriver::determineSidePatches
 
         mesh.clearOut();
 
-        const_cast<polyBoundaryMesh&>(mesh.boundaryMesh()).topoChange();
+        const_cast<polyBoundaryMesh&>(mesh.poly().boundary()).topoChange();
     }
 }
 
@@ -1056,7 +1057,7 @@ void Foam::snappyLayerDriver::calculateLayerThickness
 ) const
 {
     const fvMesh& mesh = meshRefiner_.mesh();
-    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh.poly().boundary();
 
 
     // Rework patch-wise layer parameters into minimum per point
@@ -1244,7 +1245,7 @@ void Foam::snappyLayerDriver::calculateLayerThickness
 
     // Print a bit
     {
-        const polyBoundaryMesh& patches = mesh.boundaryMesh();
+        const polyBoundaryMesh& patches = mesh.poly().boundary();
 
         int oldPrecision = Info().precision();
 
@@ -2461,7 +2462,7 @@ void Foam::snappyLayerDriver::printLayerData
     const scalarField& faceRealThickness
 ) const
 {
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
     int oldPrecision = Info().precision();
 
@@ -2633,7 +2634,7 @@ bool Foam::snappyLayerDriver::writeLayerData
                 dimensionedScalar(dimless, 0),
                 fixedValueFvPatchScalarField::typeName
             );
-            const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+            const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
             volScalarField::Boundary& fldBf =
                 fld.boundaryFieldRef();
@@ -2672,7 +2673,7 @@ bool Foam::snappyLayerDriver::writeLayerData
                 fixedValueFvPatchScalarField::typeName
             );
 
-            const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+            const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
             volScalarField::Boundary& fldBf =
                 fld.boundaryFieldRef();
@@ -2707,7 +2708,7 @@ bool Foam::snappyLayerDriver::writeLayerData
                 fixedValueFvPatchScalarField::typeName
             );
 
-            const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+            const polyBoundaryMesh& pbm = mesh.poly().boundary();
 
             volScalarField::Boundary& fldBf =
                 fld.boundaryFieldRef();
@@ -2819,7 +2820,7 @@ void Foam::snappyLayerDriver::mergePatchFacesUndo
 
     // Get a set of which patches are to have faces merged
     labelHashSet patchIDs(meshRefiner_.meshedPatches());
-    forAll(mesh.boundaryMesh(), patchi)
+    forAll(mesh.poly().boundary(), patchi)
     {
         if (layerParams.mergeFaces()[patchi] == layerParameters::mergeFace::no)
         {
@@ -3076,7 +3077,7 @@ void Foam::snappyLayerDriver::addLayers
 
     // Current set of topology changes. (changing mesh clears out
     // polyTopoChange)
-    polyTopoChange savedMeshMod(mesh.boundaryMesh().size());
+    polyTopoChange savedMeshMod(mesh.poly().boundary().size());
     addPatchCellLayer savedAddLayer(mesh);
     // Per cell 0 or number of layers in the cell column it is part of
     labelList cellNLayers;
@@ -3622,12 +3623,12 @@ void Foam::snappyLayerDriver::doLayers
     {
         if (numLayers[patchi] > 0)
         {
-            const polyPatch& pp = mesh.boundaryMesh()[patchi];
+            const polyPatch& pp = mesh.poly().boundary()[patchi];
 
             if (!pp.coupled())
             {
                 patchIDs.append(patchi);
-                nFacesWithLayers += mesh.boundaryMesh()[patchi].size();
+                nFacesWithLayers += mesh.poly().boundary()[patchi].size();
             }
             else
             {
@@ -3676,7 +3677,7 @@ void Foam::snappyLayerDriver::doLayers
             {
                 if (numLayers[patchi] > 0)
                 {
-                    const polyPatch& pp = mesh.boundaryMesh()[patchi];
+                    const polyPatch& pp = mesh.poly().boundary()[patchi];
                     forAll(pp.faceCells(), i)
                     {
                         cellWeights[pp.faceCells()[i]] += numLayers[patchi];

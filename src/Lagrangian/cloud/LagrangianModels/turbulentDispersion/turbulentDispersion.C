@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -121,7 +121,7 @@ Foam::Lagrangian::turbulentDispersion::turbulentDispersion
     LagrangianModel(name, mesh),
     cloudLagrangianModel(static_cast<const LagrangianModel&>(*this)),
     dragPtr_(nullptr),
-    momentumTransportModel_(mesh.mesh().lookupType<momentumTransportModel>()),
+    momentumTransportModel_(mesh.poly().lookupType<momentumTransportModel>()),
     Cmu75_(pow(dimensionedScalar("Cmu", dimless, modelDict, 0.09), 0.75)),
     maxDiscreteEddies_
     (
@@ -268,7 +268,7 @@ void Foam::Lagrangian::turbulentDispersion::preAddSup
     // vibrate as the drag model and the rebound model fight each other.
     const PackedBoolList patchIsWall
     (
-        mesh().mesh().boundaryMesh().findIndices<wallPolyPatch>().toc()
+        mesh().poly().boundary().findIndices<wallPolyPatch>().toc()
     );
     forAll(subMesh, subi)
     {

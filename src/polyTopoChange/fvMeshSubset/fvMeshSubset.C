@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -104,7 +104,7 @@ void Foam::fvMeshSubset::doCoupledPatches
     // Synchronise facesToSubset on both sides of coupled patches.
     // Marks faces that become 'uncoupled' with 3.
 
-    const polyBoundaryMesh& oldPatches = baseMesh().boundaryMesh();
+    const polyBoundaryMesh& oldPatches = baseMesh().poly().boundary();
 
     label nUncoupled = 0;
 
@@ -518,7 +518,7 @@ void Foam::fvMeshSubset::setCellSubset
 )
 {
     // Initial check on patches before doing anything time consuming.
-    const polyBoundaryMesh& oldPatches = baseMesh().boundaryMesh();
+    const polyBoundaryMesh& oldPatches = baseMesh().poly().boundary();
     const cellList& oldCells = baseMesh().cells();
     const faceList& oldFaces = baseMesh().faces();
     const pointField& oldPoints = baseMesh().points();
@@ -863,7 +863,7 @@ void Foam::fvMeshSubset::setCellSubset
             // Patch still exists. Add it
             newBoundary[nNewPatches] = oldPatches[patchi].clone
             (
-                fvMeshSubsetPtr_().boundaryMesh(),
+                fvMeshSubsetPtr_().poly().boundary(),
                 nNewPatches,
                 boundaryPatchSizes[patchi],
                 patchStart
@@ -886,7 +886,7 @@ void Foam::fvMeshSubset::setCellSubset
                 boundaryPatchSizes[oldInternalPatchID],
                 patchStart,
                 nNewPatches,
-                fvMeshSubsetPtr_().boundaryMesh(),
+                fvMeshSubsetPtr_().poly().boundary(),
                 internalPolyPatch::typeName
             );
 
@@ -926,7 +926,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
     const pointField& oldPoints = baseMesh().points();
     const labelList& oldOwner = baseMesh().faceOwner();
     const labelList& oldNeighbour = baseMesh().faceNeighbour();
-    const polyBoundaryMesh& oldPatches = baseMesh().boundaryMesh();
+    const polyBoundaryMesh& oldPatches = baseMesh().poly().boundary();
     const label oldNInternalFaces = baseMesh().nInternalFaces();
 
     // Initial checks
@@ -1416,7 +1416,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
         // Clone (even if 0 size)
         newBoundary[nNewPatches] = oldPatches[oldPatchi].clone
         (
-            fvMeshSubsetPtr_().boundaryMesh(),
+            fvMeshSubsetPtr_().poly().boundary(),
             nNewPatches,
             newSize,
             patchStart
@@ -1447,7 +1447,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
                 boundaryPatchSizes[oldInternalPatchID],
                 patchStart,
                 nNewPatches,
-                fvMeshSubsetPtr_().boundaryMesh(),
+                fvMeshSubsetPtr_().poly().boundary(),
                 internalPolyPatch::typeName
             );
 
@@ -1477,7 +1477,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
         // Patch still exists. Add it
         newBoundary[nNewPatches] = oldPatches[oldPatchi].clone
         (
-            fvMeshSubsetPtr_().boundaryMesh(),
+            fvMeshSubsetPtr_().poly().boundary(),
             nNewPatches,
             newSize,
             patchStart
@@ -1577,7 +1577,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
     pointMap_ = map().pointMap();
     faceMap_ = map().faceMap();
     cellMap_ = map().cellMap();
-    patchMap_ = identityMap(baseMesh().boundaryMesh().size());
+    patchMap_ = identityMap(baseMesh().poly().boundary().size());
 }
 
 

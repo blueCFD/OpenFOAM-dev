@@ -218,7 +218,7 @@ void Foam::mapConsistentSubMesh
         {
             cuttingPatchTable.insert
             (
-                meshTarget.boundaryMesh()[patchi].name(),
+                meshTarget.poly().boundary()[patchi].name(),
                 -1
             );
         }
@@ -256,13 +256,13 @@ Foam::wordList Foam::addProcessorPatches
             (
                !cuttingPatchTable.found
                 (
-                    meshTarget.boundaryMesh()[patchi].name()
+                    meshTarget.poly().boundary()[patchi].name()
                 )
             )
             {
                 cuttingPatchTable.insert
                 (
-                    meshTarget.boundaryMesh()[patchi].name(),
+                    meshTarget.poly().boundary()[patchi].name(),
                     -1
                 );
             }

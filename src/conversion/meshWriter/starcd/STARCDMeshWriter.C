@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ const Foam::label Foam::meshWriters::STARCD::foamToStarFaceAddr[4][6] =
 
 Foam::label Foam::meshWriters::STARCD::findDefaultBoundary() const
 {
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     label id = -1;
 
@@ -366,7 +366,7 @@ void Foam::meshWriters::STARCD::writeBoundary(const fileName& prefix) const
     const cellList& cells  = mesh_.cells();
     const faceList& faces  = mesh_.faces();
     const labelList& owner = mesh_.faceOwner();
-    const polyBoundaryMesh& patches = mesh_.boundaryMesh();
+    const polyBoundaryMesh& patches = mesh_.boundary();
 
     // this is what we seem to need
     // these MUST correspond to foamToStarFaceAddr

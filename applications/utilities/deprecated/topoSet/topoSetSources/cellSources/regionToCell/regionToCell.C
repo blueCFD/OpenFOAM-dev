@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -68,7 +68,7 @@ void Foam::regionToCell::markRegionFaces
     syncTools::swapBoundaryCellList(mesh_, selectedCell, nbrSelected);
 
     // Boundary faces
-    const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh_.boundary();
     forAll(pbm, patchi)
     {
         const polyPatch& pp = pbm[patchi];
@@ -171,7 +171,7 @@ void Foam::regionToCell::shrinkRegions
 
     boolList boundaryPoint(mesh_.nPoints(), false);
 
-    const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh_.boundary();
 
     forAll(pbm, patchi)
     {

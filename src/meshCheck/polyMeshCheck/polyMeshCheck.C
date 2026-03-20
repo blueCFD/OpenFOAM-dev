@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ Foam::tmp<Foam::scalarField> Foam::meshCheck::faceOrthogonality
 {
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.boundary();
 
     tmp<scalarField> tortho(new scalarField(mesh.nFaces(), 1.0));
     scalarField& ortho = tortho.ref();
@@ -96,7 +96,7 @@ Foam::tmp<Foam::scalarField> Foam::meshCheck::faceSkewness
 {
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.boundary();
 
     tmp<scalarField> tskew(new scalarField(mesh.nFaces()));
     scalarField& skew = tskew.ref();
@@ -180,7 +180,7 @@ Foam::tmp<Foam::scalarField> Foam::meshCheck::faceWeights
 {
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.boundary();
 
     tmp<scalarField> tweight(new scalarField(mesh.nFaces(), 1.0));
     scalarField& weight = tweight.ref();
@@ -236,7 +236,7 @@ Foam::tmp<Foam::scalarField> Foam::meshCheck::volRatio
 {
     const labelList& own = mesh.faceOwner();
     const labelList& nei = mesh.faceNeighbour();
-    const polyBoundaryMesh& pbm = mesh.boundaryMesh();
+    const polyBoundaryMesh& pbm = mesh.boundary();
 
     tmp<scalarField> tratio(new scalarField(mesh.nFaces(), 1.0));
     scalarField& ratio = tratio.ref();

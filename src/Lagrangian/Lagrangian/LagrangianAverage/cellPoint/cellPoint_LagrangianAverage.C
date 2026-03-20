@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -309,7 +309,7 @@ void Foam::LagrangianAverages::cellPoint<Type>::addToPoints
         const label faceTrii = mesh.faceTrii()[i];
 
         const triFace triPoints =
-            tetIndices(celli, facei, faceTrii).faceTriIs(mesh.mesh());
+            tetIndices(celli, facei, faceTrii).faceTriIs(mesh.poly());
 
         forAll(triPoints, triPointi)
         {
@@ -351,7 +351,7 @@ void Foam::LagrangianAverages::cellPoint<Type>::addToPoints
     }
 
     // Expand to include any points that are being added to remotely
-    cellPointLagrangianAddressor::New(mesh.mesh()).sync
+    cellPointLagrangianAddressor::New(mesh.poly()).sync
     (
         d.pointPointAvg_,
         d.pointAvgPoint_
@@ -366,7 +366,7 @@ void Foam::LagrangianAverages::cellPoint<Type>::addToPoints
     // Sum on coupled points
     syncTools::syncPointList
     (
-        mesh.mesh(),
+        mesh.poly(),
         d.pointAvgPoint_,
         d.pointAvgCount_,
         plusEqOp<label>(),
@@ -376,7 +376,7 @@ void Foam::LagrangianAverages::cellPoint<Type>::addToPoints
     {
         syncTools::syncPointList
         (
-            mesh.mesh(),
+            mesh.poly(),
             d.pointAvgPoint_,
             d.pointAvgWeightSumPtr_(),
             plusEqOp<scalar>(),
@@ -385,7 +385,7 @@ void Foam::LagrangianAverages::cellPoint<Type>::addToPoints
     }
     syncTools::syncPointList
     (
-        mesh.mesh(),
+        mesh.poly(),
         d.pointAvgPoint_,
         d.pointAvgSum_,
         plusEqOp<Type>(),
@@ -489,7 +489,7 @@ void Foam::LagrangianAverages::cellPoint<Type>::interpolate
         const label faceTrii = mesh.faceTrii()[i];
 
         const triFace triPoints =
-            tetIndices(celli, facei, faceTrii).faceTriIs(mesh.mesh());
+            tetIndices(celli, facei, faceTrii).faceTriIs(mesh.poly());
 
         const label cellAvgi = data_.cellCellAvg_[celli];
         const label dCellAvgi = dData_.cellCellAvg_[celli];
@@ -593,18 +593,18 @@ Foam::LagrangianAverages::cellPoint<Type>::cellPoint
     cellWeightSumPtr_
     (
         !isNull(weightSum)
-      ? cellWeightSum(mesh.mesh(), weightSum).ptr()
+      ? cellWeightSum(mesh.poly(), weightSum).ptr()
       : nullptr
     ),
     pointWeightSumPtr_
     (
         !isNull(weightSum)
-      ? pointWeightSum(mesh.mesh(), weightSum).ptr()
+      ? pointWeightSum(mesh.poly(), weightSum).ptr()
       : nullptr
     ),
-    data_(mesh.mesh().nCells(), mesh.mesh().nPoints(), isNull(weightSum)),
+    data_(mesh.poly().nCells(), mesh.poly().nPoints(), isNull(weightSum)),
     dDataIsValid_(false),
-    dData_(mesh.mesh().nCells(), mesh.mesh().nPoints(), isNull(weightSum))
+    dData_(mesh.poly().nCells(), mesh.poly().nPoints(), isNull(weightSum))
 {}
 
 
