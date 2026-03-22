@@ -196,7 +196,12 @@ void Foam::interpolatingSolidBodyMotionSolver::mapMesh(const polyMeshMap& map)
     // original point locations, as those locations now relate to an entirely
     // different mesh. If we really want to return to those locations, then we
     // need to map back to the original mesh.
-    this->points0() = calcPoints(inv(SBMFPtr_().transformation()), -CofG_);
+    points0_.primitiveFieldRef() =
+        calcPoints(inv(SBMFPtr_().transformation()), -CofG_);
+
+    // Marks points0 as to be (re-) written
+    points0_.writeOpt() = IOobject::AUTO_WRITE;
+    points0_.instance() = mesh().time().name();
 }
 
 
