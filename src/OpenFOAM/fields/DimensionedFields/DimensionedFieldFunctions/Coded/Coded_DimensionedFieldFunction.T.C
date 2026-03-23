@@ -72,6 +72,12 @@ Coded
     DimensionedFieldFunction<DimensionedFieldType>(dict, field),
     codedBase
     (
+        dict.lookupOrDefault<word>
+        (
+            "name",
+            field.name() + '_' + field.mesh().name()
+            // + '_' + DimensionedFieldFunction<DimensionedFieldType>::typeName
+        ),
         dict,
         codeKeys,
         codeDictVars,
@@ -94,17 +100,6 @@ Coded
     );
 
     this->updateLibrary(dict);
-
-    dictionary redirectDict(dict);
-    redirectDict.set("type", codeName());
-
-    redirectFunctionPtr_ = DimensionedFieldFunction<DimensionedFieldType>::New
-    (
-        redirectDict,
-        field
-    );
-
-    evaluate();
 }
 
 
@@ -117,8 +112,7 @@ Coded
 )
 :
     DimensionedFieldFunction<DimensionedFieldType>(dff, field),
-    codedBase(dff),
-    redirectFunctionPtr_(dff.redirectFunctionPtr_, false)
+    codedBase(dff)
 {}
 
 
@@ -142,6 +136,19 @@ template<class DimensionedFieldType>
 void Foam::DimensionedFieldFunctions::Coded<DimensionedFieldType>::
 evaluate()
 {
+    if (!redirectFunctionPtr_.valid())
+    {
+        dictionary redirectDict;
+        redirectDict.set("type", codeName());
+
+        redirectFunctionPtr_ =
+        DimensionedFieldFunction<DimensionedFieldType>::New
+        (
+            redirectDict,
+            this->field_
+        );
+    }
+
     redirectFunctionPtr_->evaluate();
 }
 

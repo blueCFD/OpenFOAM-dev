@@ -47,11 +47,11 @@ activePressureForceBaffleVelocityFvPatchVectorField
     initWallSf_(0),
     initCyclicSf_(0),
     nbrCyclicSf_(0),
-    openFraction_(dict.lookup<scalar>("openFraction", unitFraction)),
+    openFraction_(dict.lookup<scalar>("openFraction", units::fraction)),
     openingTime_(dict.lookup<scalar>("openingTime", dimTime)),
     maxOpenFractionDelta_
     (
-        dict.lookup<scalar>("maxOpenFractionDelta", unitFraction)
+        dict.lookup<scalar>("maxOpenFractionDelta", units::fraction)
     ),
     curTimeIndex_(-1),
     minThresholdValue_(dict.lookup<scalar>("minThresholdValue", dimPressure)),

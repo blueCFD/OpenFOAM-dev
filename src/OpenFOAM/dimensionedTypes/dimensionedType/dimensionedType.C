@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -149,7 +149,7 @@ Foam::dimensioned<Type>::dimensioned(Istream& is)
 :
     dimensions_(dimless)
 {
-    initialise(word::null, unitAny, is);
+    initialise(word::null, units::any, is);
 }
 
 
@@ -159,7 +159,7 @@ Foam::dimensioned<Type>::dimensioned(const word& name, Istream& is)
     name_(name),
     dimensions_(dimless)
 {
-    initialise(name, unitAny, is);
+    initialise(name, units::any, is);
 }
 
 
@@ -651,7 +651,7 @@ void Foam::writeEntry(Ostream& os, const dimensioned<Type>& dt)
 template<class Type>
 Foam::Istream& Foam::operator>>(Istream& is, dimensioned<Type>& dt)
 {
-    dt.initialise(word::null, unitAny, is);
+    dt.initialise(word::null, units::any, is);
 
     // Check state of Istream
     is.check("Istream& operator>>(Istream&, dimensioned<Type>&)");

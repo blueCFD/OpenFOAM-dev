@@ -167,10 +167,10 @@ Foam::plane::plane(const dictionary& dict)
     {
         case specification::planeEquation:
         {
-            const scalar a = subDict.lookup<scalar>("a", unitNone);
-            const scalar b = subDict.lookup<scalar>("b", unitNone);
-            const scalar c = subDict.lookup<scalar>("c", unitNone);
-            const scalar d = subDict.lookup<scalar>("d", unitNone);
+            const scalar a = subDict.lookup<scalar>("a", units::none);
+            const scalar b = subDict.lookup<scalar>("b", units::none);
+            const scalar c = subDict.lookup<scalar>("c", units::none);
+            const scalar d = subDict.lookup<scalar>("d", units::none);
             calcPntAndVec(a, b, c, d);
             break;
         }

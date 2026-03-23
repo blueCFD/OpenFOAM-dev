@@ -283,7 +283,8 @@ void Foam::fv::wallBoiling::readCoeffs(const dictionary& dict)
         ).ptr()
     );
 
-    tolerance_ = dict.lookupOrDefault<scalar>("tolerance", unitless, rootSmall);
+    tolerance_ =
+        dict.lookupOrDefault<scalar>("tolerance", units::unitless, rootSmall);
 
     liquidTemperatureWallFunction_ =
         dict.lookupOrDefault<Switch>("useLiquidTemperatureWallFunction", true);

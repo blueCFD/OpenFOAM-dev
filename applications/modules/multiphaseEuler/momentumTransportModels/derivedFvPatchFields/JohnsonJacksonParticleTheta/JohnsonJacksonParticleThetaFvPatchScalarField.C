@@ -51,11 +51,11 @@ JohnsonJacksonParticleThetaFvPatchScalarField
     mixedFvPatchScalarField(p, iF, dict, false),
     restitutionCoefficient_
     (
-        dict.lookup<scalar>("restitutionCoefficient", unitFraction)
+        dict.lookup<scalar>("restitutionCoefficient", units::fraction)
     ),
     specularityCoefficient_
     (
-        dict.lookup<scalar>("specularityCoefficient", unitFraction)
+        dict.lookup<scalar>("specularityCoefficient", units::fraction)
     )
 {
     if (restitutionCoefficient_ < 0 || restitutionCoefficient_ > 1)

@@ -109,7 +109,7 @@ Foam::Lagrangian::GidaspowErgunWenYuDrag::GidaspowErgunWenYuDrag
 )
 :
     drag(name, mesh, modelDict, stateDict),
-    alphaMax_(modelDict.lookup<scalar>("alphaMax", unitFraction))
+    alphaMax_(modelDict.lookup<scalar>("alphaMax", units::fraction))
 {}
 
 

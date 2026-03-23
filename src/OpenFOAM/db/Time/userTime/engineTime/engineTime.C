@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,11 @@ Foam::userTimes::engine::engine(const dictionary& controlDict)
     userTime(controlDict),
     omega_(dict(controlDict))
 {
-    addUnits(unitName(), unitConversion(dimTime, 0, 0, userTimeToTime(1)));
+    units::add
+    (
+        unitName(),
+        unitConversion(dimTime, 0, 0, userTimeToTime(1))
+    );
 }
 
 
@@ -81,14 +85,14 @@ Foam::word Foam::userTimes::engine::unitName() const
 
 const Foam::unitConversion& Foam::userTimes::engine::units() const
 {
-    return Foam::units()[unitName()];
+    return Foam::units::lookup(unitName());
 }
 
 
 bool Foam::userTimes::engine::read(const dictionary& controlDict)
 {
     omega_ = omega(dict(controlDict));
-    addUnits(unitName(), unitConversion(dimTime, 0, 0, userTimeToTime(1)));
+    units::add(unitName(), unitConversion(dimTime, 0, 0, userTimeToTime(1)));
     return true;
 }
 

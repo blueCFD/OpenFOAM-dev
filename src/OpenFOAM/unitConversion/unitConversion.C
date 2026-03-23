@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -128,7 +128,7 @@ void Foam::unitConversion::reset(const unitConversion& units)
 Foam::unitConversion Foam::pow(const unitConversion& units, const scalar exp)
 {
     if (units.any()) return units;
-    if (units.none()) return unitNone;
+    if (units.none()) return units::none;
 
     return
         unitConversion
@@ -151,8 +151,8 @@ const Foam::unitConversion& Foam::operator+
 {
     if (a.any()) return b;
     if (b.any()) return a;
-    if (a.none()) return unitNone;
-    if (b.none()) return unitNone;
+    if (a.none()) return units::none;
+    if (b.none()) return units::none;
 
     if (!unitConversion::compare(a, b, true))
     {
@@ -174,8 +174,8 @@ Foam::unitConversion Foam::operator*
 {
     if (a.any()) return a;
     if (b.any()) return b;
-    if (a.none()) return unitNone;
-    if (b.none()) return unitNone;
+    if (a.none()) return units::none;
+    if (b.none()) return units::none;
 
     return
         unitConversion
@@ -196,8 +196,8 @@ Foam::unitConversion Foam::operator/
 {
     if (a.any()) return a;
     if (b.any()) return b;
-    if (a.none()) return unitNone;
-    if (b.none()) return unitNone;
+    if (a.none()) return units::none;
+    if (b.none()) return units::none;
 
     return
         unitConversion

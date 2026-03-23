@@ -115,11 +115,11 @@ contactAngleProperties::contactAngleProperties
 Foam::alphaContactAngleFvPatchScalarField::alphaContactAngleFvPatchScalarField::
 contactAngleProperties::contactAngleProperties(const dictionary& dict)
 :
-    theta0_(dict.lookup<scalar>("theta0", unitDegrees)),
+    theta0_(dict.lookup<scalar>("theta0", units::degrees)),
     dynamic_(dict.found("uTheta")),
     uTheta_(dynamic_ ? dict.lookup<scalar>("uTheta", dimVelocity) : NaN),
-    thetaA_(dynamic_ ? dict.lookup<scalar>("thetaA", unitDegrees) : NaN),
-    thetaR_(dynamic_ ? dict.lookup<scalar>("thetaR", unitDegrees) : NaN)
+    thetaA_(dynamic_ ? dict.lookup<scalar>("thetaA", units::degrees) : NaN),
+    thetaR_(dynamic_ ? dict.lookup<scalar>("thetaR", units::degrees) : NaN)
 {}
 
 
@@ -171,12 +171,12 @@ void
 Foam::alphaContactAngleFvPatchScalarField::alphaContactAngleFvPatchScalarField::
 contactAngleProperties::write(Ostream& os) const
 {
-    writeEntry(os, "theta0", unitDegrees, theta0_);
+    writeEntry(os, "theta0", units::degrees, theta0_);
     if (dynamic())
     {
         writeEntry(os, "uTheta", dimVelocity, uTheta_);
-        writeEntry(os, "thetaA", unitDegrees, thetaA_);
-        writeEntry(os, "thetaR", unitDegrees, thetaR_);
+        writeEntry(os, "thetaA", units::degrees, thetaA_);
+        writeEntry(os, "thetaR", units::degrees, thetaR_);
     }
 }
 

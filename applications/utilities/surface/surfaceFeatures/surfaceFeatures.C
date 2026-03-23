@@ -198,7 +198,7 @@ namespace Foam
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         const scalar includedAngle =
-            dict.lookup<scalar>("includedAngle", unitDegrees);
+            dict.lookup<scalar>("includedAngle", units::degrees);
 
         autoPtr<surfaceFeatures> set
         (
@@ -453,7 +453,7 @@ namespace Foam
                 closenessDict.lookupOrDefault<scalar>
                 (
                     "internalAngleTolerance",
-                    unitDegrees,
+                    units::degrees,
                     80
                 )
             );
@@ -463,7 +463,7 @@ namespace Foam
                 closenessDict.lookupOrDefault<scalar>
                 (
                     "externalAngleTolerance",
-                    unitDegrees,
+                    units::degrees,
                     80
                 )
             );

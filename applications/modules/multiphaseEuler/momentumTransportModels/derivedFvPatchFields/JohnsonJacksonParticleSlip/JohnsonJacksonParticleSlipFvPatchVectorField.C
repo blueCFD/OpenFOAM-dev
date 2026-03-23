@@ -52,7 +52,7 @@ JohnsonJacksonParticleSlipFvPatchVectorField
     partialSlipFvPatchVectorField(p, iF),
     specularityCoefficient_
     (
-        dict.lookup<scalar>("specularityCoefficient", unitFraction)
+        dict.lookup<scalar>("specularityCoefficient", units::fraction)
     )
 {
     if (specularityCoefficient_ < 0 || specularityCoefficient_ > 1)

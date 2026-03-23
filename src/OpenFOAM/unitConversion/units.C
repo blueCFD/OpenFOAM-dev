@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "unitConversions.H"
+#include "units.H"
 #include "demandDrivenData.H"
 #include "dictionary.H"
 
@@ -129,49 +129,22 @@ unitConversion makeUnitDegrees()
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-const Foam::unitConversion Foam::unitless(makeUnitless());
+const Foam::unitConversion Foam::units::unitless(makeUnitless());
 
-const Foam::unitConversion Foam::unitAny(makeUnitAny());
-const Foam::unitConversion Foam::unitNone(makeUnitNone());
+const Foam::unitConversion Foam::units::any(makeUnitAny());
+const Foam::unitConversion Foam::units::none(makeUnitNone());
 
-const Foam::unitConversion Foam::unitFraction(makeUnitFraction());
-const Foam::unitConversion Foam::unitPercent(makeUnitPercent());
+const Foam::unitConversion Foam::units::fraction(makeUnitFraction());
+const Foam::unitConversion Foam::units::percent(makeUnitPercent());
 
-const Foam::unitConversion Foam::unitRadians(makeUnitRadians());
-const Foam::unitConversion Foam::unitRotations(makeUnitRotations());
-const Foam::unitConversion Foam::unitDegrees(makeUnitDegrees());
+const Foam::unitConversion Foam::units::radians(makeUnitRadians());
+const Foam::unitConversion Foam::units::rotations(makeUnitRotations());
+const Foam::unitConversion Foam::units::degrees(makeUnitDegrees());
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::scalar Foam::degToRad(const scalar deg)
-{
-    return unitDegrees.toStandard(deg);
-}
-
-
-Foam::scalar Foam::radToDeg(const scalar rad)
-{
-    return unitDegrees.toUser(rad);
-}
-
-
-void Foam::addUnits(const word& name, const unitConversion& units)
-{
-    deleteDemandDrivenData(unitsDictPtr_);
-
-    if (!addedUnitsPtr_)
-    {
-        addedUnitsPtr_ = new HashTable<unitConversion>();
-    }
-
-    addedUnitsPtr_->insert(name, units);
-
-    deleteDemandDrivenData(unitsPtr_);
-}
-
-
-const Foam::HashTable<Foam::unitConversion>& Foam::units()
+const Foam::HashTable<Foam::unitConversion>& Foam::units::table()
 {
     if (!unitsPtr_)
     {
@@ -230,6 +203,33 @@ const Foam::HashTable<Foam::unitConversion>& Foam::units()
     }
 
     return *unitsPtr_;
+}
+
+
+void Foam::units::add(const word& name, const unitConversion& units)
+{
+    deleteDemandDrivenData(unitsDictPtr_);
+
+    if (!addedUnitsPtr_)
+    {
+        addedUnitsPtr_ = new HashTable<unitConversion>();
+    }
+
+    addedUnitsPtr_->insert(name, units);
+
+    deleteDemandDrivenData(unitsPtr_);
+}
+
+
+Foam::scalar Foam::degToRad(const scalar deg)
+{
+    return units::degrees.toStandard(deg);
+}
+
+
+Foam::scalar Foam::radToDeg(const scalar rad)
+{
+    return units::degrees.toUser(rad);
 }
 
 

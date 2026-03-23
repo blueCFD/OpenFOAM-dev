@@ -289,7 +289,7 @@ T Foam::dictionary::readTypeAndConvertUnits
         ITstream& is                                                           \
     ) const                                                                    \
     {                                                                          \
-        return readTypeAndConvertUnits<T>(keyword, unitAny, is);               \
+        return readTypeAndConvertUnits<T>(keyword, units::any, is);            \
     }
 
 #define IMPLEMENT_SPECIALISED_READ_PAIR_TYPE(T, nullArg)                       \

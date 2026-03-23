@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -125,10 +125,15 @@ Foam::layerParameters::layerParameters
         )
       : mergeFace::ifOnMeshedPatch
     ),
-    featureAngle_(dict.lookup<scalar>("featureAngle", unitDegrees)),
+    featureAngle_(dict.lookup<scalar>("featureAngle", units::degrees)),
     concaveAngle_
     (
-        dict.lookupOrDefault("concaveAngle", unitDegrees, defaultConcaveAngle)
+        dict.lookupOrDefault
+        (
+            "concaveAngle",
+            units::degrees,
+            defaultConcaveAngle
+        )
     ),
     nGrow_(dict.lookup<label>("nGrow")),
     maxFaceThicknessRatio_

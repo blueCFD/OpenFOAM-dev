@@ -36,7 +36,13 @@ Foam::functionalFixedValueFvPatchField<Type>::functionalFixedValueFvPatchField
     const dictionary& dict
 )
 :
-    fixedValueFvPatchField<Type>(p, iF, dict, false),
+    fixedValueFvPatchField<Type>
+    (
+        p,
+        iF,
+        dict,
+        !Pstream::parRun() && p.mesh().time().processorCase()
+    ),
     dimensionedValue_
     (
         IOobject
@@ -60,7 +66,12 @@ Foam::functionalFixedValueFvPatchField<Type>::functionalFixedValueFvPatchField
             dimensionedValue_
         )
     )
-{}
+{
+    if (Pstream::parRun() || !p.mesh().time().processorCase())
+    {
+        funcPtr_->evaluate();
+    }
+}
 
 
 template<class Type>

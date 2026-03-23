@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -32,11 +32,11 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef unitConversions_H
-#define unitConversions_H
+#ifndef units_H
+#define units_H
 
 #include "unitConversion.H"
-#include "dimensionSets.H"
+#include "dimensions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -45,17 +45,32 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-extern const unitConversion unitless;
+namespace units
+{
+    extern const unitConversion unitless;
 
-extern const unitConversion unitAny;
-extern const unitConversion unitNone;
+    extern const unitConversion any;
+    extern const unitConversion none;
 
-extern const unitConversion unitFraction;
-extern const unitConversion unitPercent;
+    extern const unitConversion fraction;
+    extern const unitConversion percent;
 
-extern const unitConversion unitRadians;
-extern const unitConversion unitRotations;
-extern const unitConversion unitDegrees;
+    extern const unitConversion radians;
+    extern const unitConversion rotations;
+    extern const unitConversion degrees;
+
+    //- Get the table of unit conversions
+    const HashTable<unitConversion>& table();
+
+    //- Add a unit conversion
+    void add(const word& name, const unitConversion& unit);
+
+    //- Lookup and return the named unit from the table
+    inline const unitConversion& lookup(const word& unitName)
+    {
+        return table()[unitName];
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -65,12 +80,6 @@ scalar degToRad(const scalar deg);
 
 //- Convert radians to degrees
 scalar radToDeg(const scalar rad);
-
-//- Add a unit conversion
-void addUnits(const word& name, const unitConversion& units);
-
-//- Get the table of unit conversions
-const HashTable<unitConversion>& units();
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

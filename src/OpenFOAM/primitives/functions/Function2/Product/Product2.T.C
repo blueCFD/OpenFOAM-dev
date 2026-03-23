@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,7 +45,7 @@ Foam::Function2s::ProductFunction1s<Type, rank>::ProductFunction1s
                 function1Type::New
                 (
                     valueName(i, typeAndRanks[i]),
-                    {i ? units.y : units.x, unitAny},
+                    {i ? units.y : units.x, units::any},
                     dict
                 );
         }
@@ -69,7 +69,7 @@ Foam::Function2s::ProductFunction1s<Type, 0>::ProductFunction1s
                 Function1<scalar>::New
                 (
                     valueName(i, typeAndRanks[i]),
-                    {i ? units.y : units.x, unitAny},
+                    {i ? units.y : units.x, units::any},
                     dict
                 );
         }
@@ -149,7 +149,7 @@ void Foam::Function2s::ProductFunction1s<Type, rank>::write
     {
         if (fs[i].valid())
         {
-            writeEntry(os, {i ? units.y : units.x, unitAny}, fs[i]());
+            writeEntry(os, {i ? units.y : units.x, units::any}, fs[i]());
         }
     }
 }
@@ -166,7 +166,7 @@ void Foam::Function2s::ProductFunction1s<Type, 0>::write
     {
         if (fs[i].valid())
         {
-            writeEntry(os, {i ? units.y : units.x, unitAny}, fs[i]());
+            writeEntry(os, {i ? units.y : units.x, units::any}, fs[i]());
         }
     }
 }

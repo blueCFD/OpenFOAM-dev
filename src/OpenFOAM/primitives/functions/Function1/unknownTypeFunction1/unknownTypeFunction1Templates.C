@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ Type Foam::unknownTypeFunction1::value
     const scalar x
 ) const
 {
-    build<Type>(unitAny);
+    build<Type>(units::any);
 
     return functionPtr_.autoPtr<Function1<Type>>::operator*().value(x);
 }
@@ -76,7 +76,7 @@ Foam::tmp<Foam::Field<Type>> Foam::unknownTypeFunction1::value
     const scalarField& x
 ) const
 {
-    build<Type>(unitAny);
+    build<Type>(units::any);
 
     return functionPtr_.autoPtr<Function1<Type>>::operator*().value(x);
 }
@@ -89,7 +89,7 @@ Type Foam::unknownTypeFunction1::integral
     const scalar x2
 ) const
 {
-    build<Type>(unitAny);
+    build<Type>(units::any);
 
     return functionPtr_.autoPtr<Function1<Type>>::operator*().integral(x1, x2);
 }
@@ -102,7 +102,7 @@ Foam::tmp<Foam::Field<Type>> Foam::unknownTypeFunction1::integral
     const scalarField& x2
 ) const
 {
-    build<Type>(unitAny);
+    build<Type>(units::any);
 
     return functionPtr_.autoPtr<Function1<Type>>::operator*().integral(x1, x2);
 }

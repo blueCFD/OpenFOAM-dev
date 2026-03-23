@@ -24,7 +24,7 @@
 
     mkDir(pdfPath);
 
-    autoPtr<distribution> p(distribution::New(unitAny, pdfDictionary, 0, 0));
+    autoPtr<distribution> p(distribution::New(units::any, pdfDictionary, 0, 0));
 
     const scalar xMin = p->min();
     const scalar xMax = p->max();

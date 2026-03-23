@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ Foam::autoPtr<Foam::Function1<Foam::scalar>> Foam::Function1s::omega::init
         (
             foundOmega ? "omega" : "rpm",
             tUnits_,
-            foundOmega ? unitRadians/dimTime : units()["rpm"],
+            foundOmega ? units::radians/dimTime : units::lookup("rpm"),
             dict
         );
 }
@@ -86,7 +86,9 @@ void Foam::Function1s::omega::write(Ostream& os) const
     (
         os,
         tUnits_,
-        omega_->name() == "omega" ? unitRadians/dimTime : units()["rpm"],
+        omega_->name() == "omega"
+      ? units::radians/dimTime
+      : units::lookup("rpm"),
         omega_()
     );
 }

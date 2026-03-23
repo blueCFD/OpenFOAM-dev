@@ -181,7 +181,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
         (
             "thetaInner",
             this->owner().time().userUnits(),
-            unitDegrees,
+            units::degrees,
             this->coeffDict()
         )
     ),
@@ -191,7 +191,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
         (
             "thetaOuter",
             this->owner().time().userUnits(),
-            unitDegrees,
+            units::degrees,
             this->coeffDict()
         )
     ),

@@ -38,7 +38,7 @@ turbulentIntensityKineticEnergyFvScalarFieldSource
 )
 :
     fvScalarFieldSource(iF, dict),
-    intensity_(dict.lookup<scalar>("intensity", unitFraction)),
+    intensity_(dict.lookup<scalar>("intensity", units::fraction)),
     UName_(dict.lookupOrDefault<word>("U", "U"))
 {}
 

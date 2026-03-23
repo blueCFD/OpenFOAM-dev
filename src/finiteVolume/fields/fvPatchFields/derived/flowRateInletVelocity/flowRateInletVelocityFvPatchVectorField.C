@@ -326,7 +326,7 @@ void Foam::flowRateInletVelocityFvPatchVectorField::updateCoeffs()
 void Foam::flowRateInletVelocityFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
-    writeEntry(os, db().time().userUnits(), unitAny, flowRate_());
+    writeEntry(os, db().time().userUnits(), units::any, flowRate_());
     if (profile_.valid())
     {
         writeEntry(os, profile_());

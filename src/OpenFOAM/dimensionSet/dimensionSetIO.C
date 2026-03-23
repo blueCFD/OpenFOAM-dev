@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,8 +72,7 @@ Foam::Istream& Foam::dimensionSet::readNoBeginOrEnd(Istream& is)
     // If not a number, then these are named dimensions. Parse.
     if (!nextToken.isNumber())
     {
-        reset(symbols::parseNoBeginOrEnd(is, dimless, dimensions()));
-
+        reset(symbols::parseNoBeginOrEnd(is, dimless, dimensions::table));
         return is;
     }
 

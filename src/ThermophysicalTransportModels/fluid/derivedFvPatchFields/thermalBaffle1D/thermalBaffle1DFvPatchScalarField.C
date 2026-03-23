@@ -105,7 +105,7 @@ thermalBaffle1DFvPatchScalarField
                 p.size()
             );
         valueFraction() =
-            scalarField("valueFraction", unitFraction, dict, p.size());
+            scalarField("valueFraction", units::fraction, dict, p.size());
     }
     else
     {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ const Foam::dimensionedScalar universal::c
     (
         universal::group,
         "c",
-        units()["m"]/units()["s"],
+        units::lookup("m")/units::lookup("s"),
         2.99792e+08
     )
 );
@@ -65,7 +65,11 @@ const Foam::dimensionedScalar universal::G
     (
         universal::group,
         "G",
-        pow(units()["m"], 3)/units()["kg"]/pow(units()["s"], 2),
+        pow
+        (
+            units::lookup("m"), 3)/units::lookup("kg")/pow(units::lookup("s"),
+            2
+        ),
         6.67429e-11
     )
 );
@@ -76,7 +80,7 @@ const Foam::dimensionedScalar universal::h
     (
         universal::group,
         "h",
-        units()["kg"]*pow(units()["m"], 2)/units()["s"],
+        units::lookup("kg")*pow(units::lookup("m"), 2)/units::lookup("s"),
         6.62607e-34
     )
 );
@@ -90,7 +94,7 @@ const Foam::dimensionedScalar electromagnetic::e
     (
         electromagnetic::group,
         "e",
-        units()["A"]*units()["s"],
+        units::lookup("A")*units::lookup("s"),
         1.60218e-19
     )
 );
@@ -104,7 +108,7 @@ const Foam::dimensionedScalar atomic::me
     (
         atomic::group,
         "me",
-        units()["kg"],
+        units::lookup("kg"),
         9.10938e-31
     )
 );
@@ -115,7 +119,7 @@ const Foam::dimensionedScalar atomic::mp
     (
         atomic::group,
         "mp",
-        units()["kg"],
+        units::lookup("kg"),
         1.67262e-27
     )
 );
@@ -129,7 +133,7 @@ const Foam::dimensionedScalar physicoChemical::mu
     (
         physicoChemical::group,
         "mu",
-        units()["kg"],
+        units::lookup("kg"),
         1.66054e-27
     )
 );
@@ -146,7 +150,7 @@ const Foam::dimensionedScalar physicoChemical::NNA
         physicoChemical::group,
         "NA",
         "NNA",
-        pow(units()["mol"], -1),
+        pow(units::lookup("mol"), -1),
         NA.value()
     )
 );
@@ -157,7 +161,8 @@ const Foam::dimensionedScalar physicoChemical::k
     (
         physicoChemical::group,
         "k",
-        units()["kg"]*pow(units()["m"], 2)/pow(units()["s"], 2)/units()["K"],
+        units::lookup("kg")*pow(units::lookup("m"), 2)
+       /pow(units::lookup("s"), 2)/units::lookup("K"),
         1.38065e-23
     )
 );

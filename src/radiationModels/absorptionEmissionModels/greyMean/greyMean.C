@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -198,7 +198,7 @@ Foam::radiationModels::absorptionEmissionModels::greyMean::aCont
 
     scalarField& a = ta.ref().primitiveFieldRef();
 
-    const unitConversion& unitAtm = units()["atm"];
+    const unitConversion& unitAtm = units::lookup("atm");
 
     forAll(a, celli)
     {

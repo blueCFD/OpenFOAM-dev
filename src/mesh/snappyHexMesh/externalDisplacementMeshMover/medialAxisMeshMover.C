@@ -367,20 +367,20 @@ void Foam::medialAxisMeshMover::update(const dictionary& coeffDict)
             coeffDict.lookupBackwardsCompatible<scalar>
             (
                 {"minMedialAxisAngle", "minMedianAxisAngle"},
-                unitDegrees
+                units::degrees
             )
         );
 
     //- Feature angle when to stop adding layers
     const scalar featureAngle =
-        coeffDict.lookup<scalar>("featureAngle", unitDegrees);
+        coeffDict.lookup<scalar>("featureAngle", units::degrees);
 
     //- When to slip along wall
     const scalar slipFeatureAngle =
         coeffDict.lookupOrDefault
         (
             "slipFeatureAngle",
-            unitDegrees,
+            units::degrees,
             featureAngle/2
         );
 
@@ -1649,7 +1649,7 @@ void Foam::medialAxisMeshMover::calculateDisplacement
 
     //- Feature angle when to stop adding layers
     const scalar featureAngle =
-        coeffDict.lookup<scalar>("featureAngle", unitDegrees);
+        coeffDict.lookup<scalar>("featureAngle", units::degrees);
 
     //- Stop layer growth where mesh wraps around sharp edge
     const scalar minCosLayerTermination = Foam::cos(featureAngle/2);

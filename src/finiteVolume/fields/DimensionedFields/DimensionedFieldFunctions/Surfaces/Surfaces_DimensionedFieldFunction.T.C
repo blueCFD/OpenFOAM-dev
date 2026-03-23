@@ -84,8 +84,6 @@ Foam::DimensionedFieldFunctions::Surfaces<DimensionedFieldType>::Surfaces
     surfacesDict_(dict.subDict("surfaces"))
 {
     readSurfacesAndValues();
-
-    evaluate();
 }
 
 

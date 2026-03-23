@@ -139,7 +139,7 @@ externalTemperatureFvPatchScalarField
     emissivity_
     (
         haveEmissivity_
-      ? dict.lookup<scalar>("emissivity", unitFraction)
+      ? dict.lookup<scalar>("emissivity", units::fraction)
       : NaN
     ),
     haveLayers_(dict.found("thicknessLayers") || dict.found("kappaLayers")),
@@ -167,9 +167,9 @@ externalTemperatureFvPatchScalarField
         ).ptr()
       : nullptr
     ),
-    relax_(dict.lookupOrDefault<scalar>("relaxation", unitFraction, 1)),
+    relax_(dict.lookupOrDefault<scalar>("relaxation", units::fraction, 1)),
     qrName_(dict.lookupOrDefault<word>("qr", word::null)),
-    qrRelax_(dict.lookupOrDefault<scalar>("qrRelaxation", unitFraction, 1)),
+    qrRelax_(dict.lookupOrDefault<scalar>("qrRelaxation", units::fraction, 1)),
     qrPrevious_
     (
         qrName_ != word::null
@@ -219,7 +219,7 @@ externalTemperatureFvPatchScalarField
                 p.size()
             );
         valueFraction() =
-            scalarField("valueFraction", unitFraction, dict, p.size());
+            scalarField("valueFraction", units::fraction, dict, p.size());
     }
     else
     {

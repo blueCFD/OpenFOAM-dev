@@ -53,7 +53,7 @@ fanDirectionLagrangianVectorFieldSource
         (
             "thetaInner",
             field.db().time().userUnits(),
-            unitDegrees,
+            units::degrees,
             dict
         )
     ),
@@ -63,7 +63,7 @@ fanDirectionLagrangianVectorFieldSource
         (
             "thetaOuter",
             field.db().time().userUnits(),
-            unitDegrees,
+            units::degrees,
             dict
         )
     ),
@@ -148,9 +148,23 @@ Foam::fanDirectionLagrangianVectorFieldSource::direction
 
 void Foam::fanDirectionLagrangianVectorFieldSource::write(Ostream& os) const
 {
-    writeEntry(os, field_.db().time().userUnits(), unitNone, normal_());
-    writeEntry(os, field_.db().time().userUnits(), unitDegrees, thetaInner_());
-    writeEntry(os, field_.db().time().userUnits(), unitDegrees, thetaOuter_());
+    writeEntry(os, field_.db().time().userUnits(), units::none, normal_());
+
+    writeEntry
+    (
+        os,
+        field_.db().time().userUnits(),
+        units::degrees,
+        thetaInner_()
+    );
+
+    writeEntry
+    (
+        os,
+        field_.db().time().userUnits(),
+        units::degrees,
+        thetaOuter_()
+    );
 
     writeEntry(os, "fanDirectionRndGen", rndGen_);
 }

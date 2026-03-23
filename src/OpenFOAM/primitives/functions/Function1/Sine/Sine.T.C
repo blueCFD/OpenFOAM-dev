@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,7 @@ Foam::Function1s::Sine<Type>::Sine
     FieldFunction1<Type, Sine<Type>>(name),
     amplitude_(Function1<Type>::New("amplitude", units, dict)),
     constantAmplitude_(amplitude_->constant()),
-    frequency_(dict.lookup<scalar>("frequency", unitless/units.x)),
+    frequency_(dict.lookup<scalar>("frequency", units::unitless/units.x)),
     start_(dict.lookupOrDefault<scalar>("start", units.x, 0)),
     level_(Function1<Type>::New("level", units, dict))
 {}
@@ -73,7 +73,7 @@ void Foam::Function1s::Sine<Type>::write
 ) const
 {
     writeEntry(os, units, amplitude_());
-    writeEntry(os, "frequency", unitless/units.x, frequency_);
+    writeEntry(os, "frequency", units::unitless/units.x, frequency_);
     writeEntry(os, "start", units.x, start_);
     writeEntry(os, units, level_());
 }

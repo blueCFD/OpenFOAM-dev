@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ namespace contactAngleModels
 
 Foam::contactAngleModels::constant::constant(const dictionary& dict)
 :
-    theta0_(dict.lookup<scalar>("theta0", unitDegrees))
+    theta0_(dict.lookup<scalar>("theta0", units::degrees))
 {}
 
 
@@ -67,7 +67,7 @@ Foam::contactAngleModels::constant::cosTheta
 
 void Foam::contactAngleModels::constant::write(Ostream& os) const
 {
-    writeEntry(os, "theta0", unitDegrees, theta0_);
+    writeEntry(os, "theta0", units::degrees, theta0_);
 }
 
 

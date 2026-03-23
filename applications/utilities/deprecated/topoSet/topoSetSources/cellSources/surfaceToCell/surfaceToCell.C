@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -402,7 +402,7 @@ Foam::surfaceToCell::surfaceToCell
         dict.lookupOrDefault<bool>("useSurfaceOrientation", false)
     ),
     nearDist_(dict.lookup<scalar>("nearDistance", dimLength)),
-    curvature_(dict.lookup<scalar>("curvature", unitNone)),
+    curvature_(dict.lookup<scalar>("curvature", units::none)),
     surfPtr_(new triSurface(surfName_)),
     querySurfPtr_(new triSurfaceSearch(*surfPtr_)),
     IOwnPtrs_(true)

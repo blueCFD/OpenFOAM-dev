@@ -621,7 +621,7 @@ Foam::labelList Foam::meshRefinement::markFacesOnProblemCells
     if (checkCollapse)
     {
         minArea = motionDict.lookup<scalar>("minArea");
-        maxNonOrtho = motionDict.lookup<scalar>("maxNonOrtho", unitDegrees);
+        maxNonOrtho = motionDict.lookup<scalar>("maxNonOrtho", units::degrees);
 
         Info<< "markFacesOnProblemCells :"
             << " Deleting all-anchor surface cells only if"

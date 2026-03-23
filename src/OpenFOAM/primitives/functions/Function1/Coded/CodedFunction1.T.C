@@ -95,7 +95,7 @@ Foam::Function1s::Coded<Type>::Coded
     redirectDict.set(codeName(), codeName());
 
     redirectFunction1Ptr_ =
-        Function1<Type>::New(codeName(), unitAny, unitAny, redirectDict);
+        Function1<Type>::New(codeName(), units::any, units::any, redirectDict);
 }
 
 

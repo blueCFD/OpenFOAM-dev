@@ -140,6 +140,8 @@ ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::
 void Foam::DimensionedFieldFunctions::
 ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::evaluate()
 {
+    using namespace dimensions;
+
     const DimensionedField<vector, GeoMesh, Field>& C(field.mesh().C());
 
 //{{{ begin code
@@ -151,6 +153,8 @@ ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::evaluate()
 void Foam::DimensionedFieldFunctions::
 ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::update()
 {
+    using namespace dimensions;
+
 //{{{ begin code
     ${update}
 //}}} end code

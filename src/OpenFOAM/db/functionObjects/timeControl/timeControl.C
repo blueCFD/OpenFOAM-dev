@@ -157,13 +157,13 @@ void Foam::timeControl::read(const dictionary& dict)
                 dict.lookupOrDefault
                 (
                     "timeDelta",
-                    unitNone,
+                    units::none,
                     1e-3*time_.userDeltaTValue()
                 );
 
             if (dict.found(timesName))
             {
-                times_ = dict.lookup<scalarList>(timesName, unitNone);
+                times_ = dict.lookup<scalarList>(timesName, units::none);
             }
             else if (dict.found(frequenciesName))
             {

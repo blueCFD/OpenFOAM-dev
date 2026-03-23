@@ -325,10 +325,10 @@ $(userTime)/engineTime/engineTime.C
 symbols/symbols.C
 dimensionSet/dimensionSet.C
 dimensionSet/dimensionSetIO.C
-dimensionSet/dimensionSets.C
+dimensionSet/dimensions.C
 unitConversion/unitConversion.C
 unitConversion/unitConversionIO.C
-unitConversion/unitConversions.C
+unitConversion/units.C
 unitConversion/namedUnitConversion.C
 unitConversion/namedUnitConversionIO.C
 dimensionedTypes/dimensionedScalar/dimensionedScalar.C

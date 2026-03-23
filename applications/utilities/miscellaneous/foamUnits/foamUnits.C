@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
     // Build lists of fundamental unit names
     wordList dimensionUnitNames(dimensionSet::nDimensions);
     wordList dimlessUnitNames(unitConversion::nDimlessUnits);
-    forAllConstIter(HashTable<unitConversion>, units(), iter)
+    forAllConstIter(HashTable<unitConversion>, units::table(), iter)
     {
         const unitConversion& unit = iter();
 
@@ -279,12 +279,12 @@ int main(int argc, char *argv[])
     // Print all dimensions and units
     if (args.optionFound("all"))
     {
-        forAllConstIter(HashTable<dimensionSet>, dimensions(), iter)
+        forAllConstIter(HashTable<dimensionSet>, dimensions::table, iter)
         {
             printDimension(iter.key(), iter());
         }
 
-        forAllConstIter(HashTable<unitConversion>, units(), iter)
+        forAllConstIter(HashTable<unitConversion>, units::table(), iter)
         {
             printUnit(iter.key(), iter());
         }
@@ -301,8 +301,8 @@ int main(int argc, char *argv[])
     {
         const string name(args[1]);
 
-        const bool isDimension = stringIs(name, dimensions());
-        const bool isUnit = stringIs(name, units());
+        const bool isDimension = stringIs(name, dimensions::table);
+        const bool isUnit = stringIs(name, units::table());
 
         if (isDimension && !isUnit)
         {
@@ -332,7 +332,7 @@ int main(int argc, char *argv[])
 
         auto assertStringIsUnit = [](const string& str)
         {
-            if (stringIs(str, dimensions()))
+            if (stringIs(str, dimensions::table))
             {
                 FatalErrorInFunction
                     << "'" << str.c_str() << "' is a dimension. "
@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
 
         DynamicList<word> fundamentalDimensions;
         DynamicList<word> derivedDimensions;
-        forAllConstIter(HashTable<dimensionSet>, dimensions(), iter)
+        forAllConstIter(HashTable<dimensionSet>, dimensions::table, iter)
         {
             (
                 isFundamental(iter())
@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
         DynamicList<word> derivedUnits;
         DynamicList<word> scaledUnits;
         DynamicList<word> derivedScaledUnits;
-        forAllConstIter(HashTable<unitConversion>, units(), iter)
+        forAllConstIter(HashTable<unitConversion>, units::table(), iter)
         {
             (
                 isFundamental(iter()) && iter().standard() ? fundamentalUnits

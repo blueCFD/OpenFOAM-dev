@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -147,6 +147,23 @@ namespace Foam
 
     //- Compute the power of the number x to the reciprocal integer 1/e
     inline scalar integerRoot(const scalar x, const label e);
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// Rank type
+
+namespace Foam
+{
+    template<direction Ncmpts>
+    struct typeOfNcmpts;
+
+    //- Rank type
+    template<>
+    struct typeOfNcmpts<1>
+    {
+        using type = scalar;
+    };
 }
 
 

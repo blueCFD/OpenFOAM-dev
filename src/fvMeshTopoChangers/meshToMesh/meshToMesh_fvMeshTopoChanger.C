@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,19 +113,19 @@ Foam::fvMeshTopoChangers::meshToMesh::meshToMesh
 )
 :
     fvMeshTopoChanger(mesh),
-    times_(dict.lookup<scalarList>("times", unitNone)),
-    timeDelta_(dict.lookup<scalar>("timeDelta", unitNone)),
+    times_(dict.lookup<scalarList>("times", units::none)),
+    timeDelta_(dict.lookup<scalar>("timeDelta", units::none)),
     begin_
     (
         dict.lookupOrDefault<scalar>
         (
             "begin",
-            unitNone,
+            units::none,
             mesh().time().beginTime().value()
         )
     ),
-    repeat_(dict.lookupOrDefault<scalar>("repeat", unitNone, 0)),
-    cycle_(dict.lookupOrDefault<scalar>("cycle", unitNone, 0)),
+    repeat_(dict.lookupOrDefault<scalar>("repeat", units::none, 0)),
+    cycle_(dict.lookupOrDefault<scalar>("cycle", units::none, 0)),
     timeIndex_(-1),
     mapped_(false)
 {

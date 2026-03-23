@@ -69,7 +69,7 @@ Foam::maxwellSlipUFvPatchVectorField::maxwellSlipUFvPatchVectorField
             this->refValue() =
                 vectorField("refValue", iF.dimensions(), dict, p.size());
             this->valueFraction() =
-                scalarField("valueFraction", unitFraction, dict, p.size());
+                scalarField("valueFraction", units::fraction, dict, p.size());
         }
         else
         {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,10 @@ Foam::contactAngleModels::temperatureDependent::temperatureDependent
 )
 :
     TName_(dict.lookupOrDefault<word>("T", "T")),
-    theta0_(Function1<scalar>::New("theta0", dimTemperature, unitDegrees, dict))
+    theta0_
+    (
+        Function1<scalar>::New("theta0", dimTemperature, units::degrees, dict)
+    )
 {}
 
 

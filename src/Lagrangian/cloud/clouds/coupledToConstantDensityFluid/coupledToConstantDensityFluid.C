@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "coupledToConstantDensityFluid.H"
-#include "dimensionSet.H"
 #include "dimensionedScalar.H"
 #include "physicalProperties.H"
 #include "uniformDimensionedFields.H"

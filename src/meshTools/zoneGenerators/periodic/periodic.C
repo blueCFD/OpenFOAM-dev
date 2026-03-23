@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ Foam::zoneGenerators::periodic::periodic
         dict.lookupOrDefault<scalar>
         (
             "begin",
-            unitNone,
+            units::none,
             mesh.time().beginTime().value()
         )
 
@@ -99,12 +99,12 @@ Foam::zoneGenerators::periodic::periodic
         dict.lookupOrDefault<scalar>
         (
             "end",
-            unitNone,
+            units::none,
             mesh.time().endTime().value()
         )
 
     ),
-    repeat_(dict.lookupOrDefault<scalar>("repeat", unitNone, 0)),
+    repeat_(dict.lookupOrDefault<scalar>("repeat", units::none, 0)),
     deactivate_(dict.lookupOrDefault<Switch>("deactivate", false)),
     active_(false)
 {

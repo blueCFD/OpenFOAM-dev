@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,7 +98,7 @@ bool Foam::solidBodyMotionFunctions::axisRotationMotion::read
     solidBodyMotionFunction::read(SBMFCoeffs);
 
     origin_ = SBMFCoeffs_.lookup<vector>("origin", dimLength);
-    omega_ = SBMFCoeffs_.lookup<vector>("omega", unitRadians/dimTime);
+    omega_ = SBMFCoeffs_.lookup<vector>("omega", units::radians/dimTime);
 
     return true;
 }

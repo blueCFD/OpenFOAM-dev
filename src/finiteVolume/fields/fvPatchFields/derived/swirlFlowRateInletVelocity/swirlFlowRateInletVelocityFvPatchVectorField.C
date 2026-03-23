@@ -280,7 +280,7 @@ void Foam::swirlFlowRateInletVelocityFvPatchVectorField::write
     fvPatchField<vector>::write(os);
     writeEntry(os, "origin", origin_);
     writeEntry(os, "axis", axis_);
-    writeEntry(os, db().time().userUnits(), unitAny, flowRate_());
+    writeEntry(os, db().time().userUnits(), units::any, flowRate_());
     if (!volumetric_)
     {
         writeEntryIfDifferent<word>(os, "rho", "rho", rhoName_);

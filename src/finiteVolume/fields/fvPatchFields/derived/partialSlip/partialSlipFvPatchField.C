@@ -49,7 +49,7 @@ Foam::partialSlipFvPatchField<Type>::partialSlipFvPatchField
 )
 :
     transformFvPatchField<Type>(p, iF),
-    valueFraction_("valueFraction", unitFraction, dict, p.size())
+    valueFraction_("valueFraction", units::fraction, dict, p.size())
 {
     evaluate();
 }

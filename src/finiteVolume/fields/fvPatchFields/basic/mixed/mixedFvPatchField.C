@@ -96,7 +96,7 @@ Foam::mixedFvPatchField<Type>::mixedFvPatchField
         if (dict.found("valueFraction"))
         {
             valueFraction_ =
-                Field<scalar>("valueFraction", unitFraction, dict, p.size());
+                Field<scalar>("valueFraction", units::fraction, dict, p.size());
         }
         else
         {

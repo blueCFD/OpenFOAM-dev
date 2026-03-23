@@ -63,13 +63,13 @@ Foam::distributions::tabulatedDensity::tabulatedDensity
         TableReader<scalar, scalar>::New
         (
             word::null,
-            {defaultUnits, unitAny},
+            {defaultUnits, units::any},
             dict
         )
     )
 {
     List<Tuple2<scalar, scalar>> values =
-        reader_->read({defaultUnits, unitAny}, dict, "distribution");
+        reader_->read({defaultUnits, units::any}, dict, "distribution");
 
     // Checks
     forAll(values, i)
@@ -208,7 +208,7 @@ void Foam::distributions::tabulatedDensity::write
         values[i].first() = x_[i];
         values[i].second() = PDF[i];
     }
-    reader_->write(os, {units, unitAny}, values, "distribution");
+    reader_->write(os, {units, units::any}, values, "distribution");
 }
 
 

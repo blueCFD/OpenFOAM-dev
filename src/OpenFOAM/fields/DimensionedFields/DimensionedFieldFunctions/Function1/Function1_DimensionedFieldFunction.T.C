@@ -48,9 +48,7 @@ Function1
         )
     ),
     direction_(normalised(dict.lookup<vector>("direction")))
-{
-    evaluate();
-}
+{}
 
 
 template<class DimensionedFieldType>

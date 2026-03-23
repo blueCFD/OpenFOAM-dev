@@ -50,7 +50,7 @@ CONSTRUCT
 )
 :
     PARENT(p, iF),
-    scalarData_(dict.lookup<scalar>("scalarData", unitAny)),
+    scalarData_(dict.lookup<scalar>("scalarData", units::any)),
     data_(dict.lookup<TYPE>("data")),
     fieldData_("fieldData", iF.dimensions(), dict, p.size()),
     timeVsData_
@@ -59,7 +59,7 @@ CONSTRUCT
         (
             "timeVsData",
             this->db().time().userUnits(),
-            unitAny,
+            units::any,
             dict
         )
     ),
@@ -195,7 +195,7 @@ void Foam::CLASS::write
     writeEntry(os, "scalarData", scalarData_);
     writeEntry(os, "data", data_);
     writeEntry(os, "fieldData", fieldData_);
-    writeEntry(os, this->db().time().userUnits(), unitAny, timeVsData_());
+    writeEntry(os, this->db().time().userUnits(), units::any, timeVsData_());
     writeEntry(os, "wordData", wordData_);
     writeEntry(os, "value", *this);
 }

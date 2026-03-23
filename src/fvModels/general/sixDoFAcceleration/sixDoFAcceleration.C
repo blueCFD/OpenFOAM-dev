@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,7 +72,7 @@ void Foam::fv::sixDoFAcceleration::readCoeffs(const dictionary& dict)
         (
             "angularVelocity",
             mesh().time().userUnits(),
-            unitRadians/dimTime,
+            units::radians/dimTime,
             dict
         ).ptr()
     );
@@ -83,7 +83,7 @@ void Foam::fv::sixDoFAcceleration::readCoeffs(const dictionary& dict)
         (
             "angularAcceleration",
             mesh().time().userUnits(),
-            unitRadians/sqr(dimTime),
+            units::radians/sqr(dimTime),
             dict
         ).ptr()
     );

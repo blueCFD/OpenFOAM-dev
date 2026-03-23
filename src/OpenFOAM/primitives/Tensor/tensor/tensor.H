@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,6 +71,13 @@ tensor eigenVectors(const symmTensor& T);
 //- Data associated with tensor type are contiguous
 template<>
 inline bool contiguous<tensor>() {return true;}
+
+//- Rank type
+template<>
+struct typeOfNcmpts<9>
+{
+    using type = tensor;
+};
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,8 +41,8 @@ Foam::refinementParameters::refinementParameters(const dictionary& dict)
         dict.lookupOrDefault
         (
             "planarAngle",
-            unitDegrees,
-            dict.lookup<scalar>("resolveFeatureAngle", unitDegrees)
+            units::degrees,
+            dict.lookup<scalar>("resolveFeatureAngle", units::degrees)
         )
     ),
     nBufferLayers_(dict.lookup<label>("nCellsBetweenLevels")),
@@ -58,7 +58,10 @@ Foam::refinementParameters::refinementParameters(const dictionary& dict)
         dict.lookupOrDefault<Switch>("handleSnapProblems", true)
     )
 {
-    scalar featAngle(dict.lookup<scalar>("resolveFeatureAngle", unitDegrees));
+    const scalar featAngle
+    (
+        dict.lookup<scalar>("resolveFeatureAngle", units::degrees)
+    );
 
     if (featAngle < 0 || featAngle > degToRad(180))
     {

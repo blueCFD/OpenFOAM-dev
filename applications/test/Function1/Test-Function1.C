@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     Info<< "Constructing the function\n" << endl;
     const autoPtr<Function1<scalar>> functionPtr =
-        Function1<scalar>::New("function", unitNone, unitNone, dict);
+        Function1<scalar>::New("function", units::none, units::none, dict);
     const Function1<scalar>& function = functionPtr();
 
     const bool integral = dict.lookupOrDefault<bool>("integral", true);

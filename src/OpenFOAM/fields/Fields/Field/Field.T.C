@@ -25,7 +25,7 @@ License
 
 #include "Field.T.H"
 #include "FieldM.T.H"
-#include "unitConversions.H"
+#include "units.H"
 #include "dictionary.H"
 #include "contiguous.H"
 
@@ -187,7 +187,7 @@ Foam::Field<Type>::Field
     const label s
 )
 :
-    Field<Type>(keyword, unitAny, dict, s)
+    Field<Type>(keyword, units::any, dict, s)
 {}
 
 

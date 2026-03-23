@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,10 @@ Foam::Function1s::turbulentBL::turbulentBL
 )
 :
     FieldFunction1<scalar, turbulentBL>(name),
-    exponent_(dict.lookupOrDefault<scalar>("exponent", unitless, 1.0/7.0))
+    exponent_
+    (
+        dict.lookupOrDefault<scalar>("exponent", units::unitless, 1.0/7.0)
+    )
 {}
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "STARCDCoordinateRotation.H"
-#include "unitConversions.H"
+#include "units.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -88,7 +88,7 @@ Foam::STARCDCoordinateRotation::STARCDCoordinateRotation
     R_(sphericalTensor::I),
     Rtr_(R_)
 {
-    const vector rotation(dict.lookup<vector>("rotation", unitDegrees));
+    const vector rotation(dict.lookup<vector>("rotation", units::degrees));
 
     if (dict.found("degrees"))
     {

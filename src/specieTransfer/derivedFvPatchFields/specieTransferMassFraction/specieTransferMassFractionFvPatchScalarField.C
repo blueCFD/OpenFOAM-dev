@@ -76,7 +76,7 @@ specieTransferMassFractionFvPatchScalarField
     UName_(dict.lookupOrDefault<word>("U", "U")),
     phiYp_(p.size(), 0),
     timeIndex_(-1),
-    c_(dict.lookupOrDefault<scalar>("c", unitAny, scalar(0))),
+    c_(dict.lookupOrDefault<scalar>("c", units::any, scalar(0))),
     property_
     (
         c_ == scalar(0)

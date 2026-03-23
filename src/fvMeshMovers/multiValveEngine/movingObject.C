@@ -271,7 +271,7 @@ Foam::fvMeshMovers::multiValveEngine::movingObject::movingObject
     meshMover_(engine),
     name(objectName),
     axis(dict.lookup<vector>("axis", dimless)),
-    motion_(Function1<scalar>::New("motion", unitNone, dimLength, dict)),
+    motion_(Function1<scalar>::New("motion", units::none, dimLength, dict)),
     patchNames_(dict.lookup("patches")),
     maxMotionDistance_
     (

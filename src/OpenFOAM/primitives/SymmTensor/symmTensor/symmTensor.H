@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,6 +50,13 @@ typedef SymmTensor<scalar> symmTensor;
 //- Data associated with symmTensor type are contiguous
 template<>
 inline bool contiguous<symmTensor>() {return true;}
+
+//- Rank type
+template<>
+struct typeOfNcmpts<6>
+{
+    using type = symmTensor;
+};
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

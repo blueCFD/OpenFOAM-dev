@@ -139,7 +139,7 @@ coupledTemperatureFvPatchScalarField
     TnbrName_(dict.lookupOrDefault<word>("Tnbr", "T")),
     qrNbrName_(dict.lookupOrDefault<word>("qrNbr", "none")),
     qrName_(dict.lookupOrDefault<word>("qr", "none")),
-    qrRelax_(dict.lookupOrDefault<scalar>("qrRelaxation", unitFraction, 1)),
+    qrRelax_(dict.lookupOrDefault<scalar>("qrRelaxation", units::fraction, 1)),
     qrPrevious_
     (
         qrName_ != word::null
@@ -213,7 +213,7 @@ coupledTemperatureFvPatchScalarField
                 p.size()
             );
         valueFraction() =
-            scalarField("valueFraction", unitFraction, dict, p.size());
+            scalarField("valueFraction", units::fraction, dict, p.size());
     }
     else
     {

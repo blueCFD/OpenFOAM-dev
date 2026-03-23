@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -278,7 +278,7 @@ Foam::cyclicTransform::cyclicTransform
     ),
     rotationAngle_
     (
-        dict.lookupOrDefault<scalar>("rotationAngle", unitDegrees, NaN)
+        dict.lookupOrDefault<scalar>("rotationAngle", units::degrees, NaN)
     ),
     separation_
     (
@@ -570,7 +570,7 @@ void Foam::cyclicTransform::write(Ostream& os) const
 
         if (transformComplete_)
         {
-            writeEntry(os, "rotationAngle", unitDegrees, rotationAngle_);
+            writeEntry(os, "rotationAngle", units::degrees, rotationAngle_);
         }
     }
 
@@ -606,7 +606,7 @@ Foam::string Foam::cyclicTransform::str() const
 
             if (transformComplete_)
             {
-                oss << unitDegrees.toUser(rotationAngle_);
+                oss << units::degrees.toUser(rotationAngle_);
             }
             else
             {

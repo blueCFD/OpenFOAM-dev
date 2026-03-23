@@ -53,11 +53,11 @@ activeBaffleVelocityFvPatchVectorField
             p.boundaryMesh()[cyclicPatchLabel_]
         ).neighbFvPatch().Sf()
     ),
-    openFraction_(dict.lookup<scalar>("openFraction", unitFraction)),
+    openFraction_(dict.lookup<scalar>("openFraction", units::fraction)),
     openingTime_(dict.lookup<scalar>("openingTime", dimTime)),
     maxOpenFractionDelta_
     (
-        dict.lookup<scalar>("maxOpenFractionDelta", unitFraction)
+        dict.lookup<scalar>("maxOpenFractionDelta", units::fraction)
     ),
     curTimeIndex_(-1)
 {

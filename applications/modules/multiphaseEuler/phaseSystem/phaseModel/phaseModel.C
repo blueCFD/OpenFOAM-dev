@@ -46,37 +46,6 @@ Foam::phaseModel::phaseModel
     const label index
 )
 :
-    // volScalarField
-    // (
-    //     referencePhase
-    //   ? volScalarField
-    //     (
-    //         IOobject
-    //         (
-    //             IOobject::groupName("alpha", phaseName),
-    //             fluid.mesh().time().name(),
-    //             fluid.mesh(),
-    //             IOobject::NO_READ,
-    //             IOobject::AUTO_WRITE
-    //         ),
-    //         fluid.mesh(),
-    //         dimensionedScalar(dimless, 0)
-    //     )
-    //   : volScalarField
-    //     (
-    //         IOobject
-    //         (
-    //             IOobject::groupName("alpha", phaseName),
-    //             fluid.mesh().time().name(),
-    //             fluid.mesh(),
-    //             IOobject::MUST_READ,
-    //             IOobject::AUTO_WRITE
-    //         ),
-    //         fluid.mesh()
-    //     )
-    // ),
-    // Replaced by the following because the Clang compiler does not use
-    // std::move to transfer the result of the ternary operator
     volScalarField
     (
         IOobject
@@ -84,34 +53,12 @@ Foam::phaseModel::phaseModel
             IOobject::groupName("alpha", phaseName),
             fluid.mesh().time().name(),
             fluid.mesh(),
-            IOobject::NO_READ,
+            referencePhase ? IOobject::NO_READ : IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        referencePhase
-      ? volScalarField::New
-        (
-            IOobject::groupName("alpha", phaseName),
-            fluid.mesh(),
-            dimensionedScalar(dimless, 0)
-        )
-      : tmp<volScalarField>
-        (
-            new volScalarField
-            (
-                IOobject
-                (
-                    IOobject::groupName("alpha", phaseName),
-                    fluid.mesh().time().name(),
-                    fluid.mesh(),
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE,
-                    false
-                ),
-                fluid.mesh()
-            )
-        )
+        fluid.mesh(),
+        dimensionedScalar(dimless, 0)
     ),
-
     fluid_(fluid),
     name_(phaseName),
     index_(index),

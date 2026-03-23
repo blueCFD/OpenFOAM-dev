@@ -126,17 +126,7 @@ bool Foam::GeometricField<Type, GeoMesh, PrimitiveField>::readIfPresent()
     (
         this->readOpt() == IOobject::MUST_READ
      || this->readOpt() == IOobject::MUST_READ_IF_MODIFIED
-    )
-    {
-        WarningInFunction
-            << "read option IOobject::MUST_READ or MUST_READ_IF_MODIFIED"
-            << " suggests that a read constructor for field " << this->name()
-            << " would be more appropriate." << endl;
-    }
-    else if
-    (
-        this->readOpt() == IOobject::READ_IF_PRESENT
-     && this->headerOk()
+     || (this->readOpt() == IOobject::READ_IF_PRESENT && this->headerOk())
     )
     {
         readFields();

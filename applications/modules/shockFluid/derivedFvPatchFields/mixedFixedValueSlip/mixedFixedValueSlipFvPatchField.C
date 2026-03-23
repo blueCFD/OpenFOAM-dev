@@ -51,7 +51,7 @@ Foam::mixedFixedValueSlipFvPatchField<Type>::mixedFixedValueSlipFvPatchField
 :
     transformFvPatchField<Type>(p, iF),
     refValue_("refValue", iF.dimensions(), dict, p.size()),
-    valueFraction_("valueFraction", unitFraction, dict, p.size())
+    valueFraction_("valueFraction", units::fraction, dict, p.size())
 {}
 
 

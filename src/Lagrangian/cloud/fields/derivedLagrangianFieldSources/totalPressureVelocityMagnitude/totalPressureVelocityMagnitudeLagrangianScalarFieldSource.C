@@ -201,7 +201,7 @@ void Foam::totalPressureVelocityMagnitudeLagrangianScalarFieldSource::write
     }
     else
     {
-        writeEntry(os, field_.db().time().userUnits(), unitAny, p0_());
+        writeEntry(os, field_.db().time().userUnits(), units::any, p0_());
     }
 
     writeEntryIfDifferent<word>

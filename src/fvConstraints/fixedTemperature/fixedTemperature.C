@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -99,7 +99,7 @@ void Foam::fv::fixedTemperature::readCoeffs(const dictionary& dict)
         (
             "fraction",
             mesh().time().userUnits(),
-            unitFraction,
+            units::fraction,
             dict
         )
       : autoPtr<Function1<scalar>>();

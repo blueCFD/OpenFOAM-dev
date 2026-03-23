@@ -53,7 +53,7 @@ Foam::directionMixedFvPatchField<Type>::directionMixedFvPatchField
     transformFvPatchField<Type>(p, iF, dict),
     refValue_("refValue", iF.dimensions(), dict, p.size()),
     refGrad_("refGradient", iF.dimensions()/dimLength, dict, p.size()),
-    valueFraction_("valueFraction", unitFraction, dict, p.size())
+    valueFraction_("valueFraction", units::fraction, dict, p.size())
 {
     evaluate();
 }

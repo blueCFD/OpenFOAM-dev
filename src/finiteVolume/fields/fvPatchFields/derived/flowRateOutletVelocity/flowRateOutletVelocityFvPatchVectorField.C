@@ -209,7 +209,7 @@ void Foam::flowRateOutletVelocityFvPatchVectorField::updateCoeffs()
 void Foam::flowRateOutletVelocityFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
-    writeEntry(os, db().time().userUnits(), unitAny, flowRate_());
+    writeEntry(os, db().time().userUnits(), units::any, flowRate_());
     if (!volumetric_)
     {
         writeEntryIfDifferent<word>(os, "rho", "rho", rhoName_);

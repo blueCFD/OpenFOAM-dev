@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,7 @@ Foam::RBD::joints::functionDot::functionDot
 )
 :
     joint(model, 0),
-    f_(Function1<scalar>::New("function", unitNone, unitNone, dict)),
+    f_(Function1<scalar>::New("function", units::none, units::none, dict)),
     delta_(dict.lookupOrDefault<scalar>("delta", rootSmall))
 {}
 

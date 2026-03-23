@@ -47,7 +47,7 @@ void Foam::DimensionedField<Type, GeoMesh, PrimitiveField>::readField
         (
             dict.subDict(keyword),
             *this
-        );
+        )->evaluate();
     }
     else
     {

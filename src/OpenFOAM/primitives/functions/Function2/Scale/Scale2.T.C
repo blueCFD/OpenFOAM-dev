@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,11 +36,11 @@ Foam::Function2s::Scale<Type>::Scale
 )
 :
     FieldFunction2<Type, Scale<Type>>(name),
-    scale_(Function2<scalar>::New("scale", units.x, units.y, unitAny, dict)),
+    scale_(Function2<scalar>::New("scale", units.x, units.y, units::any, dict)),
     xScale_
     (
         dict.found("xScale")
-      ? Function1<scalar>::New("xScale", units.x, unitless, dict)
+      ? Function1<scalar>::New("xScale", units.x, units::unitless, dict)
       : autoPtr<Function1<scalar>>
         (
             new Function1s::Constant<scalar>("xScale", 1)
@@ -49,13 +49,13 @@ Foam::Function2s::Scale<Type>::Scale
     yScale_
     (
         dict.found("yScale")
-      ? Function1<scalar>::New("yScale", units.y, unitless, dict)
+      ? Function1<scalar>::New("yScale", units.y, units::unitless, dict)
       : autoPtr<Function1<scalar>>
         (
             new Function1s::Constant<scalar>("yScale", 1)
         )
     ),
-    value_(Function2<Type>::New("value", units.x, units.y, unitAny, dict))
+    value_(Function2<Type>::New("value", units.x, units.y, units::any, dict))
 {}
 
 
@@ -86,7 +86,7 @@ void Foam::Function2s::Scale<Type>::write
     const unitConversions& units
 ) const
 {
-    writeEntry(os, units.x, units.y, unitless, scale_());
+    writeEntry(os, units.x, units.y, units::unitless, scale_());
     writeEntry(os, units.x, units.x, xScale_());
     writeEntry(os, units.y, units.y, yScale_());
     writeEntry(os, units, value_());

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,10 +37,10 @@ Foam::Function1s::Square<Type>::Square
 :
     FieldFunction1<Type, Square<Type>>(name),
     amplitude_(Function1<Type>::New("amplitude", units, dict)),
-    frequency_(dict.lookup<scalar>("frequency", unitless/units.x)),
+    frequency_(dict.lookup<scalar>("frequency", units::unitless/units.x)),
     start_(dict.lookupOrDefault<scalar>("start", units.x, 0)),
     level_(Function1<Type>::New("level", units, dict)),
-    markSpace_(dict.lookupOrDefault<scalar>("markSpace", unitless, 1)),
+    markSpace_(dict.lookupOrDefault<scalar>("markSpace", units::unitless, 1)),
     integrable_(amplitude_->constant() && level_->constant())
 {}
 
@@ -75,10 +75,10 @@ void Foam::Function1s::Square<Type>::write
 ) const
 {
     writeEntry(os, units, amplitude_());
-    writeEntry(os, "frequency", unitless/units.x, frequency_);
+    writeEntry(os, "frequency", units::unitless/units.x, frequency_);
     writeEntry(os, "start", units.x, start_);
     writeEntry(os, units, level_());
-    writeEntry(os, "markSpace", unitless, markSpace_);
+    writeEntry(os, "markSpace", units::unitless, markSpace_);
 }
 
 

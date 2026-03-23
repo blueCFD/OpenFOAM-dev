@@ -881,7 +881,7 @@ const Foam::unitConversion& Foam::Time::writeIntervalUnits() const
     switch (writeControl_)
     {
         case writeControl::timeStep:
-            return unitless;
+            return units::unitless;
         case writeControl::runTime:
         case writeControl::adjustableRunTime:
             return userUnits();
@@ -890,7 +890,7 @@ const Foam::unitConversion& Foam::Time::writeIntervalUnits() const
             return unitSeconds;
     }
 
-    return unitNone;
+    return units::none;
 }
 
 

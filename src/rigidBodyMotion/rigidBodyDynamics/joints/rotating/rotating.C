@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,7 +57,10 @@ Foam::RBD::joints::rotating::rotating
 )
 :
     joint(model, 0),
-    omega_(Function1<vector>::New("omega", dimTime, unitRadians/dimTime, dict))
+    omega_
+    (
+        Function1<vector>::New("omega", dimTime, units::radians/dimTime, dict)
+    )
 {}
 
 

@@ -330,7 +330,7 @@ CrankNicolsonDdtScheme<Type>::CrankNicolsonDdtScheme
             (
                 "ocCoeff",
                 mesh.time().userUnits(),
-                unitFraction,
+                units::fraction,
                 dict
             );
     }

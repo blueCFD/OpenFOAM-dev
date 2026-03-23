@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,7 +98,7 @@ Foam::radiationCoupledBase::radiationCoupledBase
         case LOOKUP:
         {
             emissivity_ =
-                scalarField("emissivity", unitFraction, dict, patch_.size());
+                scalarField("emissivity", units::fraction, dict, patch_.size());
             break;
         }
     }

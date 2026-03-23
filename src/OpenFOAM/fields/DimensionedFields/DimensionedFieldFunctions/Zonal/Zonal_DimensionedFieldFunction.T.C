@@ -40,9 +40,7 @@ Zonal
     DimensionedFieldFunction<DimensionedFieldType>(dict, field),
     value_(dict.lookup<Type>("defaultValue", this->field_.dimensions())),
     zonesDict_(dict.subDict("zones"))
-{
-    evaluate();
-}
+{}
 
 
 template<class DimensionedFieldType>

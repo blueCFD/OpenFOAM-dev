@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,8 +37,8 @@ reboundVelocityLagrangianPatchVectorField
 )
 :
     cloudVelocityLagrangianPatchVectorField(p, iIo, dict),
-    e_(dict.lookup<scalar>("e", unitless)),
-    mu_(dict.lookup<scalar>("mu", unitFraction))
+    e_(dict.lookup<scalar>("e", units::unitless)),
+    mu_(dict.lookup<scalar>("mu", units::fraction))
 {}
 
 

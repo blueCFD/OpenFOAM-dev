@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2019-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2019-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ bool Foam::functionObjects::rigidBodyState::read(const dictionary& dict)
 {
     fvMeshFunctionObject::read(dict);
 
-    units();
+    units::table();
 
     angleUnits_.readIfPresent("angleUnits", dict);
     angularVelocityUnits_.readIfPresent("angularVelocityUnits", dict);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     dict.set("Q", 0);
     autoPtr<distribution> distribution00Ptr
     (
-        distribution::New(unitAny, dict, 0, clock::getTime())
+        distribution::New(units::any, dict, 0, clock::getTime())
     );
 
     // Get the X-coordinates for the plots
@@ -102,7 +102,15 @@ int main(int argc, char *argv[])
         (
             Q == 0
           ? distribution00Ptr->clone(0)
-          : distribution::New(unitAny, dict, 0, clock::getTime(), false, false)
+          : distribution::New
+            (
+                units::any,
+                dict,
+                0,
+                clock::getTime(),
+                false,
+                false
+            )
         );
 
         // Resize
@@ -155,7 +163,7 @@ int main(int argc, char *argv[])
             );
             {
                 OStringStream oss;
-                distributionQSampleQPtr->write(oss, unitAny);
+                distributionQSampleQPtr->write(oss, units::any);
                 writeEntry(oss, "sampleQ", sampleQ);
                 writeEntry(oss, "min", distributionQSampleQPtr->min());
                 writeEntry(oss, "mean", distributionQSampleQPtr->mean());
