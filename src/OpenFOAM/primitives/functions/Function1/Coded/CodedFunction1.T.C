@@ -64,13 +64,14 @@ template<class Type>
 Foam::Function1s::Coded<Type>::Coded
 (
     const word& name,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const dictionary& dict
 )
 :
     Function1<Type>(name),
     codedBase
     (
+        dict.lookup("name"),
         dict,
         codeKeys,
         codeDictVars,
@@ -170,7 +171,7 @@ template<class Type>
 void Foam::Function1s::Coded<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     codedBase::write(os);

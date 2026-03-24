@@ -79,7 +79,7 @@ waveSurfacePressureFvPatchScalarField
                     IOobject::READ_IF_PRESENT,
                     IOobject::AUTO_WRITE
                 ),
-                patch().boundaryMesh().mesh(),
+                patch().mesh(),
                 dimensionedVector(dimLength, Zero)
             )
         );

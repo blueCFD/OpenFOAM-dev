@@ -118,7 +118,7 @@ public:
         NonUniformTable
         (
             const word& name,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict
         );
 
@@ -144,7 +144,7 @@ public:
         Type dfdT(scalar T) const;
 
         //- Write the function coefficients
-        void write(Ostream& os, const unitConversions& units) const;
+        void write(Ostream& os, const unitSets& units) const;
 
 
     // Member Operators

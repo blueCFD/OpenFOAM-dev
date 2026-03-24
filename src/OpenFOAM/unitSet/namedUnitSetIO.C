@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,12 +23,12 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "namedUnitConversion.H"
+#include "namedUnitSet.H"
 #include "dictionary.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::namedUnitConversion::readName(const entry& e)
+void Foam::namedUnitSet::readName(const entry& e)
 {
     // Read the entry characters directly
     OStringStream oss;
@@ -42,7 +42,7 @@ void Foam::namedUnitConversion::readName(const entry& e)
 }
 
 
-void Foam::namedUnitConversion::readName
+void Foam::namedUnitSet::readName
 (
     const word& keyword,
     const dictionary& dict
@@ -54,25 +54,25 @@ void Foam::namedUnitConversion::readName
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::namedUnitConversion::read
+void Foam::namedUnitSet::read
 (
     const word& keyword,
     const dictionary& dict
 )
 {
-    unitConversion::read(keyword, dict);
+    unitSet::read(keyword, dict);
 
     readName(keyword, dict);
 }
 
 
-bool Foam::namedUnitConversion::readIfPresent
+bool Foam::namedUnitSet::readIfPresent
 (
     const word& keyword,
     const dictionary& dict
 )
 {
-    if (unitConversion::readIfPresent(keyword, dict))
+    if (unitSet::readIfPresent(keyword, dict))
     {
         readName(keyword, dict);
         return true;
@@ -86,25 +86,25 @@ bool Foam::namedUnitConversion::readIfPresent
 
 // * * * * * * * * * * * * * * Friend Operators * * * * * * * * * * * * * * //
 
-Foam::Istream& Foam::operator>>(Istream& is, namedUnitConversion& u)
+Foam::Istream& Foam::operator>>(Istream& is, namedUnitSet& u)
 {
     const primitiveEntry e(word::null, is);
-    u.reset(unitConversion(e.stream()));
+    u.reset(unitSet(e.stream()));
     u.readName(e);
 
     // Check state of Istream
-    is.check("Istream& operator>>(Istream&, namedUnitConversion&)");
+    is.check("Istream& operator>>(Istream&, namedUnitSet&)");
 
     return is;
 }
 
 
-Foam::Ostream& Foam::operator<<(Ostream& os, const namedUnitConversion& u)
+Foam::Ostream& Foam::operator<<(Ostream& os, const namedUnitSet& u)
 {
     os << u.name_.c_str();
 
     // Check state of Ostream
-    os.check("Ostream& operator<<(Ostream&, const namedUnitConversion&)");
+    os.check("Ostream& operator<<(Ostream&, const namedUnitSet&)");
 
     return os;
 }

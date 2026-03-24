@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,10 +81,10 @@ class Polynomial
     // Private Member Functions
 
         //- Do unit conversions on input data
-        static List<Type> convertRead(const unitConversions&, List<Type>);
+        static List<Type> convertRead(const unitSets&, List<Type>);
 
         //- Do unit conversions in order to output data
-        static List<Type> convertWrite(const unitConversions&, List<Type>);
+        static List<Type> convertWrite(const unitSets&, List<Type>);
 
 
 public:
@@ -99,7 +99,7 @@ public:
         Polynomial
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -107,7 +107,7 @@ public:
         Polynomial
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             Istream& is
         );
 
@@ -131,7 +131,7 @@ public:
 
 
         //- Write in dictionary format
-        virtual void write(Ostream& os, const unitConversions& units) const;
+        virtual void write(Ostream& os, const unitSets& units) const;
 
 
     // Member Operators

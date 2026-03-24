@@ -27,7 +27,7 @@ License
 #include "dictionaryEntry.H"
 #include "regExp.H"
 #include "OSHA1stream.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "stringOps.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -228,7 +228,7 @@ void Foam::dictionary::assertNoConvertUnits
 (
     const char* typeName,
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     ITstream& is
 ) const
 {
@@ -245,12 +245,12 @@ template<class T>
 T Foam::dictionary::readTypeAndConvertUnits
 (
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     ITstream& is
 ) const
 {
     // Read the units if they are before the value
-    unitConversion units(defaultUnits);
+    unitSet units(defaultUnits);
     const bool haveUnits = units.readIfPresent(keyword, *this, is);
 
     // Read the value
@@ -275,7 +275,7 @@ T Foam::dictionary::readTypeAndConvertUnits
     Foam::T Foam::dictionary::readType                                         \
     (                                                                          \
         const word& keyword,                                                   \
-        const unitConversion& defaultUnits,                                    \
+        const unitSet& defaultUnits,                                    \
         ITstream& is                                                           \
     ) const                                                                    \
     {                                                                          \

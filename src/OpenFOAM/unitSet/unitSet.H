@@ -22,21 +22,21 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::unitConversion
+    Foam::unitSet
 
 Description
     Unit conversion structure. Contains the associated dimensions and the
     multiplier with which to convert values.
 
 SourceFiles
-    unitConversion.C
-    unitConversionIO.C
-    unitConversionI.H
+    unitSet.C
+    unitSetIO.C
+    unitSetI.H
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef unitConversion_H
-#define unitConversion_H
+#ifndef unitSet_H
+#define unitSet_H
 
 #include "dimensionSet.H"
 
@@ -52,20 +52,20 @@ template<class Type> class List;
 template<class Type> class Field;
 
 // Forward declaration of friend functions and operators
-class unitConversion;
-unitConversion pow(const unitConversion&, const scalar);
-const unitConversion& operator+(const unitConversion&, const unitConversion&);
-unitConversion operator*(const unitConversion&, const unitConversion&);
-unitConversion operator/(const unitConversion&, const unitConversion&);
-Istream& operator>>(Istream&, unitConversion&);
-Ostream& operator<<(Ostream&, const unitConversion&);
-Ostream& operator<<(Ostream&, const InfoProxy<unitConversion>&);
+class unitSet;
+unitSet pow(const unitSet&, const scalar);
+const unitSet& operator+(const unitSet&, const unitSet&);
+unitSet operator*(const unitSet&, const unitSet&);
+unitSet operator/(const unitSet&, const unitSet&);
+Istream& operator>>(Istream&, unitSet&);
+Ostream& operator<<(Ostream&, const unitSet&);
+Ostream& operator<<(Ostream&, const InfoProxy<unitSet>&);
 
 /*---------------------------------------------------------------------------*\
-                          Class unitConversion Declaration
+                          Class unitSet Declaration
 \*---------------------------------------------------------------------------*/
 
-class unitConversion
+class unitSet
 {
 public:
 
@@ -117,8 +117,8 @@ private:
         //  as well as the dimensions and dimensionless units.
         static bool compare
         (
-            const unitConversion&,
-            const unitConversion&,
+            const unitSet&,
+            const unitSet&,
             const bool compareMultiplier
         );
 
@@ -128,13 +128,13 @@ public:
     // Static Data Members
 
         //- Run time type information
-        ClassName("unitConversion");
+        ClassName("unitSet");
 
 
     // Constructors
 
         //- Construct from components
-        unitConversion
+        unitSet
         (
             const dimensionSet&,
             const scalar fraction,
@@ -144,16 +144,16 @@ public:
 
         //- Construct from a dimension set. No dimensionless units. Unity
         //  multiplier.
-        unitConversion(const dimensionSet&);
+        unitSet(const dimensionSet&);
 
         //- Copy constructor
-        unitConversion(const unitConversion&) = default;
+        unitSet(const unitSet&) = default;
 
         //- Move constructor
-        unitConversion(unitConversion&&) = default;
+        unitSet(unitSet&&) = default;
 
         //- Construct from stream
-        unitConversion(Istream& is);
+        unitSet(Istream& is);
 
 
     // Member Functions
@@ -226,7 +226,7 @@ public:
         inline bool standard() const;
 
         //- Reset the unit conversion
-        void reset(const unitConversion&);
+        void reset(const unitSet&);
 
         //- Update
         void read(const word& keyword, const dictionary&);
@@ -247,7 +247,7 @@ public:
         bool readIfPresent(const word& keyword, const dictionary&, Istream& is);
 
         //- Return info proxy
-        inline InfoProxy<unitConversion> info() const
+        inline InfoProxy<unitSet> info() const
         {
             return *this;
         }
@@ -262,52 +262,52 @@ public:
         inline scalar operator[](const dimlessUnitType type) const;
 
         //- Disallow default bitwise assignment
-        void operator=(const unitConversion&) = delete;
+        void operator=(const unitSet&) = delete;
 
         //- Disallow default bitwise move assignment
-        void operator=(const unitConversion&&) = delete;
+        void operator=(const unitSet&&) = delete;
 
 
     // Friend Functions
 
         //- Raise to a power
-        friend unitConversion pow(const unitConversion&, const scalar);
+        friend unitSet pow(const unitSet&, const scalar);
 
 
     // Friend Operators
 
         //- Combine
-        friend const unitConversion& operator+
+        friend const unitSet& operator+
         (
-            const unitConversion&,
-            const unitConversion&
+            const unitSet&,
+            const unitSet&
         );
 
         //- Multiply
-        friend unitConversion operator*
+        friend unitSet operator*
         (
-            const unitConversion&,
-            const unitConversion&
+            const unitSet&,
+            const unitSet&
         );
 
         //- Divide
-        friend unitConversion operator/
+        friend unitSet operator/
         (
-            const unitConversion&,
-            const unitConversion&
+            const unitSet&,
+            const unitSet&
         );
 
 
     // IOstream Operators
 
         //- Read from stream
-        friend Istream& operator>>(Istream&, unitConversion&);
+        friend Istream& operator>>(Istream&, unitSet&);
 
         //- Write to stream
-        friend Ostream& operator<<(Ostream&, const unitConversion&);
+        friend Ostream& operator<<(Ostream&, const unitSet&);
 
         //- Write info to stream
-        friend Ostream& operator<<(Ostream&, const InfoProxy<unitConversion>&);
+        friend Ostream& operator<<(Ostream&, const InfoProxy<unitSet>&);
 };
 
 
@@ -315,7 +315,7 @@ public:
 
 //- Write a type with a given unit conversion
 template<class Type>
-void writeEntry(Ostream& os, const unitConversion&, const Type& t);
+void writeEntry(Ostream& os, const unitSet&, const Type& t);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -324,10 +324,10 @@ void writeEntry(Ostream& os, const unitConversion&, const Type& t);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "unitConversionI.H"
+#include "unitSetI.H"
 
 #ifdef NoRepository
-    #include "unitConversionTemplates.C"
+    #include "unitSetTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

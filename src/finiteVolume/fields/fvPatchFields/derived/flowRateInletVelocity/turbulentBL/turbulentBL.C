@@ -41,7 +41,7 @@ namespace Function1s
 Foam::Function1s::turbulentBL::turbulentBL
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -64,7 +64,7 @@ Foam::Function1s::turbulentBL::~turbulentBL()
 void Foam::Function1s::turbulentBL::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, "exponent", exponent_);

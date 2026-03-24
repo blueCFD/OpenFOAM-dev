@@ -40,7 +40,7 @@ void Foam::ubCoupledTemperatureFvPatchScalarField::getThis
 {
     const solvers::XiFluid& XiFluid
     (
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupObject<solvers::XiFluid>(solver::typeName)
     );
 
@@ -123,7 +123,7 @@ void Foam::ubCoupledTemperatureFvPatchScalarField::getNbr
 {
     const solvers::XiFluid& XiFluid
     (
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupObject<solvers::XiFluid>(solver::typeName)
     );
 
@@ -174,7 +174,7 @@ void Foam::ubCoupledTemperatureFvPatchScalarField::getNbr
 {
     const solvers::XiFluid& XiFluid
     (
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupObject<solvers::XiFluid>(solver::typeName)
     );
 

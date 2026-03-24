@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ Foam::labelList Foam::pointFieldDecomposer::patchFieldDecomposer::addressing
     const labelList& procPatchPoints = procPatch.meshPoints();
 
     // Create a map from complete mesh point index to complete patch point index
-    labelList map(completePatch.boundaryMesh().mesh().size(), -1);
+    labelList map(completePatch.mesh().size(), -1);
     forAll(completePatchPoints, pointi)
     {
         map[completePatchPoints[pointi]] = pointi;

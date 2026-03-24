@@ -160,7 +160,7 @@ struct Foam::fv::wallBoiling::laggedProperties
             patch().magSf()
            /scalarField
             (
-                patch().boundaryMesh().mesh().V(),
+                patch().mesh().V(),
                 patch().faceCells()
             )
         ),

@@ -104,7 +104,7 @@ Foam::tmp<Foam::scalarField> Foam::distributions::multiNormal::PhiForZeroQ
 
 Foam::distributions::multiNormal::multiNormal
 (
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -251,7 +251,7 @@ Foam::scalar Foam::distributions::multiNormal::max() const
 void Foam::distributions::multiNormal::write
 (
     Ostream& os,
-    const unitConversion& units
+    const unitSet& units
 ) const
 {
     FieldDistribution<unintegrableForNonZeroQ, multiNormal>::write(os, units);

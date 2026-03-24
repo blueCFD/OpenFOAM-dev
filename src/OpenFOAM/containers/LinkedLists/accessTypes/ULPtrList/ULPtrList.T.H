@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -165,12 +165,12 @@ public:
 
             // Member Operators
 
-                T& operator*()
+                T& operator*() const
                 {
                     return *(LList<LListBase, T*>::iterator::operator*());
                 }
 
-                T& operator()()
+                T& operator()() const
                 {
                     return operator*();
                 }
@@ -204,12 +204,12 @@ public:
 
             // Member Operators
 
-                const T& operator*()
+                const T& operator*() const
                 {
                     return *(LList<LListBase, T*>::const_iterator::operator*());
                 }
 
-                const T& operator()()
+                const T& operator()() const
                 {
                     return operator*();
                 }

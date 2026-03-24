@@ -181,31 +181,6 @@ Foam::codedBase::codedBase
 {}
 
 
-Foam::codedBase::codedBase
-(
-    const dictionary& dict,
-    const wordList& codeKeys,
-    const wordList& codeDictVars,
-    const word& codeOptionsFileName,
-    const wordList& compileFiles,
-    const wordList& copyFiles,
-    const bool reloadable
-)
-:
-    codedBase
-    (
-        dict.lookup("name"),
-        dict,
-        codeKeys,
-        codeDictVars,
-        codeOptionsFileName,
-        compileFiles,
-        copyFiles,
-        reloadable
-    )
-{}
-
-
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 Foam::codedBase::~codedBase()

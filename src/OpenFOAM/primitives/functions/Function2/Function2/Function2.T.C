@@ -127,7 +127,7 @@ template<class Type>
 void Foam::writeEntry
 (
     Ostream& os,
-    const Function2s::unitConversions& units,
+    const Function2s::unitSets& units,
     const Function2<Type>& f2
 )
 {
@@ -146,9 +146,9 @@ template<class Type>
 void Foam::writeEntry
 (
     Ostream& os,
-    const unitConversion& xUnits,
-    const unitConversion& yUnits,
-    const unitConversion& valueUnits,
+    const unitSet& xUnits,
+    const unitSet& yUnits,
+    const unitSet& valueUnits,
     const Function2<Type>& f2
 )
 {

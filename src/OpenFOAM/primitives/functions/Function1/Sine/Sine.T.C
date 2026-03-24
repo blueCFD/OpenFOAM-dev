@@ -31,7 +31,7 @@ template<class Type>
 Foam::Function1s::Sine<Type>::Sine
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -69,7 +69,7 @@ template<class Type>
 void Foam::Function1s::Sine<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, units, amplitude_());

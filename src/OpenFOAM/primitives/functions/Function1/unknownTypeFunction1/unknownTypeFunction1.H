@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,7 +73,7 @@ class unknownTypeFunction1
         const word name_;
 
         //- Unit conversion for x-axis values
-        const unitConversion xUnits_;
+        const unitSet xUnits_;
 
         //- Top-level dictionary from which to read the function
         const dictionary& topDict_;
@@ -90,7 +90,7 @@ class unknownTypeFunction1
 
         //- Build the function of a given primitive type
         template<class Type>
-        void build(const unitConversion& valueUnits) const;
+        void build(const unitSet& valueUnits) const;
 
 
 public:
@@ -101,7 +101,7 @@ public:
         unknownTypeFunction1
         (
             const word& name,
-            const unitConversion& xUnits,
+            const unitSet& xUnits,
             const dictionary& dict
         );
 
@@ -117,7 +117,7 @@ public:
 
         //- Set the value units
         template<class Type>
-        void setValueUnits(const unitConversion&) const;
+        void setValueUnits(const unitSet&) const;
 
         //- Return value as a function of scalar x
         template<class Type>

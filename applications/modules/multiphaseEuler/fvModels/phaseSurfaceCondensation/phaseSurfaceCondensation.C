@@ -110,7 +110,7 @@ void Foam::fv::phaseSurfaceCondensation::correctMDot() const
     const label speciei = specieis()[0];
 
     const Pair<tmp<volScalarField>> Hs =
-        solver_.heatTransfer.Hs(vapour_, solid_, scalar(0));
+        solver_.heatTransfer.Hs(vapour_, solid_);
     const volScalarField::Internal& vapourH = Hs.first();
     const volScalarField::Internal& solidH = Hs.second();
     const volScalarField::Internal Tsurface

@@ -31,7 +31,7 @@ template<class Type>
 Foam::Function2s::Scale<Type>::Scale
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -83,7 +83,7 @@ template<class Type>
 void Foam::Function2s::Scale<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, units.x, units.y, units::unitless, scale_());

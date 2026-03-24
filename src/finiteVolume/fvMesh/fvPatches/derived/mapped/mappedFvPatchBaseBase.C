@@ -69,7 +69,7 @@ const Foam::mappedFvPatchBaseBase& Foam::mappedFvPatchBaseBase::getMap
 
 bool Foam::mappedFvPatchBaseBase::haveNbr() const
 {
-    const fvMesh& mesh = patch_.boundaryMesh().mesh();
+    const fvMesh& mesh = patch_.mesh();
 
     return mesh.time().foundObject<fvMesh>(mapper_.nbrRegionName());
 }
@@ -77,7 +77,7 @@ bool Foam::mappedFvPatchBaseBase::haveNbr() const
 
 const Foam::fvMesh& Foam::mappedFvPatchBaseBase::nbrMesh() const
 {
-    const fvMesh& mesh = patch_.boundaryMesh().mesh();
+    const fvMesh& mesh = patch_.mesh();
 
     return mesh.time().lookupObject<fvMesh>(mapper_.nbrRegionName());
 }

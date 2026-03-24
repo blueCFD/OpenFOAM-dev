@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,22 +23,22 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "namedUnitConversion.H"
+#include "namedUnitSet.H"
 #include "IStringStream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(namedUnitConversion, 0);
+    defineTypeNameAndDebug(namedUnitSet, 0);
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::namedUnitConversion::namedUnitConversion(const string& name)
+Foam::namedUnitSet::namedUnitSet(const string& name)
 :
-    unitConversion(IStringStream(name)()),
+    unitSet(IStringStream(name)()),
     name_(name)
 {}
 

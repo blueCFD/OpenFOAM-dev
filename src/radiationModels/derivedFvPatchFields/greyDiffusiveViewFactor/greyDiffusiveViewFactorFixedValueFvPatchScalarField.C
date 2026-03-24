@@ -137,7 +137,7 @@ void Foam::greyDiffusiveViewFactorFixedValueFvPatchScalarField::updateCoeffs()
     {
         scalar Q = gSum((*this)*patch().magSf());
 
-        Info<< patch().boundaryMesh().mesh().name() << ':'
+        Info<< patch().mesh().name() << ':'
             << patch().name() << ':'
             << this->internalField().name() << " <- "
             << " heat transfer rate:" << Q

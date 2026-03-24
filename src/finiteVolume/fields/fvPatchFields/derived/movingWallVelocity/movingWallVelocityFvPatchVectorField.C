@@ -76,7 +76,7 @@ void Foam::movingWallVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    const fvMesh& mesh = patch().boundaryMesh().mesh();
+    const fvMesh& mesh = patch().mesh();
 
     if (mesh.moving())
     {

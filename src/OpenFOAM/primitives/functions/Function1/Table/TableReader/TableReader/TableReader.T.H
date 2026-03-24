@@ -57,21 +57,21 @@ protected:
         //- Do unit conversions on input data
         void convertRead
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             List<Tuple2<Coordinate, Value>>& table
         ) const;
 
         //- Do unit conversions on input data
         List<Tuple2<Coordinate, Value>> convertRead
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const List<Tuple2<Coordinate, Value>>& table
         ) const;
 
         //- Do unit conversions in order to output data
         List<Tuple2<Coordinate, Value>> convertWrite
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const List<Tuple2<Coordinate, Value>>& table
         ) const;
 
@@ -91,7 +91,7 @@ public:
             dictionary,
             (
                 const word& name,
-                const Function1s::unitConversions& units,
+                const Function1s::unitSets& units,
                 const dictionary& dict
             ),
             (name, units, dict)
@@ -111,7 +111,7 @@ public:
     static autoPtr<TableReader<Coordinate, Value>> New
     (
         const word& name,
-        const Function1s::unitConversions& units,
+        const Function1s::unitSets& units,
         const dictionary& dict
     );
 
@@ -125,7 +125,7 @@ public:
         //- Read values
         virtual List<Tuple2<Coordinate, Value>> read
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict,
             const word& valuesKeyword="values"
         ) const = 0;
@@ -134,7 +134,7 @@ public:
         virtual void write
         (
             Ostream& os,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const List<Tuple2<Coordinate, Value>>& table,
             const word& valuesKeyword="values"
         ) const = 0;

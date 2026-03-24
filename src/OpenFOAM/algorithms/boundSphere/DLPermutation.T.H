@@ -149,11 +149,23 @@ public:
         //- Return the ending forward iterator
         inline const_iterator end() const;
 
+        //- Return the starting forward iterator
+        inline const_iterator cbegin() const;
+
+        //- Return the ending forward iterator
+        inline const_iterator cend() const;
+
         //- Return the starting reverse iterator
         inline const_iterator rbegin() const;
 
         //- Return the ending reverse iterator
         inline const_iterator rend() const;
+
+        //- Return the starting reverse iterator
+        inline const_iterator crbegin() const;
+
+        //- Return the ending reverse iterator
+        inline const_iterator crend() const;
 
         //- Add a new index to the end of the permutation
         void append();

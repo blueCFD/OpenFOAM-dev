@@ -46,6 +46,7 @@ namespace Foam
 
 // Forward declaration of classes
 
+class pointMesh;
 class pointBoundaryMesh;
 class pointConstraint;
 class PstreamBuffers;
@@ -130,6 +131,9 @@ public:
 
         //- Return the index of this patch in the pointBoundaryMesh
         virtual label index() const = 0;
+
+        //- Return mesh reference
+        const pointMesh& mesh() const;
 
         //- Return boundaryMesh reference
         const pointBoundaryMesh& boundaryMesh() const

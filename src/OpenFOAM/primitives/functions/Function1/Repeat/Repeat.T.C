@@ -30,7 +30,7 @@ License
 template<class Type>
 Foam::scalar Foam::Function1s::Repeat<Type>::readPeriod
 (
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 {
@@ -59,7 +59,7 @@ template<class Type>
 Foam::Function1s::Repeat<Type>::Repeat
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -93,7 +93,7 @@ template<class Type>
 void Foam::Function1s::Repeat<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, "period", units.x, period_);

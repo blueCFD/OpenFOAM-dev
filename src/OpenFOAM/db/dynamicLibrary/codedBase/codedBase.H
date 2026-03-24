@@ -121,18 +121,6 @@ public:
             const bool reloadable = true
         );
 
-        //- Construct from dictionary
-        codedBase
-        (
-            const dictionary& dict,
-            const wordList& codeKeys,
-            const wordList& codeDictVars,
-            const word& codeOptionsFileName,
-            const wordList& compileFiles,
-            const wordList& copyFiles,
-            const bool reloadable = true
-        );
-
 
     //- Destructor
     virtual ~codedBase();

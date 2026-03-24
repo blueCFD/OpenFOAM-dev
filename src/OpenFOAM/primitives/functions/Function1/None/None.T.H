@@ -71,7 +71,7 @@ public:
         None
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -89,7 +89,7 @@ public:
         virtual Type integral(const scalar x1, const scalar x2) const;
 
         //- Write in dictionary format
-        virtual void write(Ostream& os, const unitConversions& units) const;
+        virtual void write(Ostream& os, const unitSets& units) const;
 
 
     // Member Operators

@@ -221,7 +221,7 @@ template<class Coordinate, class Value>
 Foam::TableReaders::Csv<Coordinate, Value>::Csv
 (
     const word& name,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const dictionary& dict
 )
 :
@@ -269,7 +269,7 @@ template<class Coordinate, class Value>
 void Foam::TableReaders::Csv<Coordinate, Value>::write
 (
     Ostream& os,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const List<Tuple2<Coordinate, Value>>& table,
     const word&
 ) const

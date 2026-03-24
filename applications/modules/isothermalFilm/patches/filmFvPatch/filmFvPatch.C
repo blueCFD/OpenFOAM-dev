@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,14 +41,14 @@ const Foam::scalarField& Foam::filmFvPatch::deltaCoeffs() const
 {
     if
     (
-        boundaryMesh().mesh().foundObject<solvers::isothermalFilm>
+        mesh().foundObject<solvers::isothermalFilm>
         (
             solver::typeName
         )
     )
     {
         const solvers::isothermalFilm& film =
-            boundaryMesh().mesh().lookupObject<solvers::isothermalFilm>
+            mesh().lookupObject<solvers::isothermalFilm>
             (
                 solver::typeName
             );

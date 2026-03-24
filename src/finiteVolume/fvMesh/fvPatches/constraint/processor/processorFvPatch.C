@@ -43,14 +43,14 @@ void Foam::processorFvPatch::makeWeights(scalarField& w) const
 {
     if (Pstream::parRun())
     {
-        if (!boundaryMesh().mesh().conformal())
+        if (!mesh().conformal())
         {
             coupledFvPatch::makeWeights
             (
                 w,
-              - boundaryMesh().mesh().Sf().boundaryField()[index()],
-                boundaryMesh().mesh().Cf().boundaryField()[index()]
-              - boundaryMesh().mesh().C().boundaryField()[index()]
+              - mesh().Sf().boundaryField()[index()],
+                mesh().Cf().boundaryField()[index()]
+              - mesh().C().boundaryField()[index()]
             );
         }
         else
@@ -75,13 +75,13 @@ Foam::tmp<Foam::vectorField> Foam::processorFvPatch::delta() const
 {
     if (Pstream::parRun())
     {
-        if (!boundaryMesh().mesh().conformal())
+        if (!mesh().conformal())
         {
             return
                 coupledFvPatch::delta()
               - (
-                    boundaryMesh().mesh().Cf().boundaryField()[index()]
-                  - boundaryMesh().mesh().C().boundaryField()[index()]
+                    mesh().Cf().boundaryField()[index()]
+                  - mesh().C().boundaryField()[index()]
                 );
         }
         else

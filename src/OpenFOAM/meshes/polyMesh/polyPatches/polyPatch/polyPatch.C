@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -275,21 +275,27 @@ const Foam::polyBoundaryMesh& Foam::polyPatch::boundaryMesh() const
 }
 
 
+const Foam::polyMesh& Foam::polyPatch::mesh() const
+{
+    return boundaryMesh_.mesh();
+}
+
+
 const Foam::vectorField::subField Foam::polyPatch::faceCentres() const
 {
-    return patchSlice(boundaryMesh().mesh().faceCentres());
+    return patchSlice(mesh().faceCentres());
 }
 
 
 const Foam::vectorField::subField Foam::polyPatch::faceAreas() const
 {
-    return patchSlice(boundaryMesh().mesh().faceAreas());
+    return patchSlice(mesh().faceAreas());
 }
 
 
 const Foam::scalarField::subField Foam::polyPatch::magFaceAreas() const
 {
-    return patchSlice(boundaryMesh().mesh().magFaceAreas());
+    return patchSlice(mesh().magFaceAreas());
 }
 
 
@@ -299,7 +305,7 @@ Foam::tmp<Foam::vectorField> Foam::polyPatch::faceCellCentres() const
     vectorField& cc = tcc.ref();
 
     // get reference to global cell centres
-    const vectorField& gcc = boundaryMesh_.mesh().cellCentres();
+    const vectorField& gcc = mesh().cellCentres();
 
     const labelUList& faceCells = this->faceCells();
 
@@ -318,7 +324,7 @@ const Foam::labelUList& Foam::polyPatch::faceCells() const
     {
         faceCellsPtr_ = new labelList::subList
         (
-            patchSlice(boundaryMesh().mesh().faceOwner())
+            patchSlice(mesh().faceOwner())
         );
     }
 
@@ -335,8 +341,8 @@ const Foam::labelList& Foam::polyPatch::meshEdges() const
             (
                 primitivePatch::meshEdges
                 (
-                    boundaryMesh().mesh().edges(),
-                    boundaryMesh().mesh().pointEdges()
+                    mesh().edges(),
+                    mesh().pointEdges()
                 )
             );
     }

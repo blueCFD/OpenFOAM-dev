@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ namespace Foam
 
 bool Foam::wedgePolyPatch::isQuadFace(const label facei) const
 {
-    const polyMesh& mesh = boundaryMesh().mesh();
+    const polyMesh& mesh = this->mesh();
 
     const face& f = mesh.faces()[facei];
 
@@ -70,14 +70,14 @@ bool Foam::wedgePolyPatch::isQuadFace(const label facei) const
 bool Foam::wedgePolyPatch::isWedgeFace(const label facei) const
 {
     return
-        facei >= boundaryMesh().mesh().nInternalFaces()
+        facei >= mesh().nInternalFaces()
      && isA<wedgePolyPatch>
         (
             boundaryMesh()
             [
                 boundaryMesh().patchIndices()
                 [
-                    facei - boundaryMesh().mesh().nInternalFaces()
+                    facei - mesh().nInternalFaces()
                 ]
             ]
         );
@@ -86,7 +86,7 @@ bool Foam::wedgePolyPatch::isWedgeFace(const label facei) const
 
 Foam::label Foam::wedgePolyPatch::oppositeWedgeFace(const label thisFacei) const
 {
-    const polyMesh& mesh = boundaryMesh().mesh();
+    const polyMesh& mesh = this->mesh();
 
     // Function to generate a generic error that the search for the opposite
     // wedge face has failed
@@ -384,7 +384,7 @@ Foam::label Foam::wedgePolyPatch::oppositePatchIndex() const
                 boundaryMesh().patchIndices()
                 [
                     oppositeWedgeFace(start())
-                  - boundaryMesh().mesh().nInternalFaces()
+                  - mesh().nInternalFaces()
                 ];
         }
 

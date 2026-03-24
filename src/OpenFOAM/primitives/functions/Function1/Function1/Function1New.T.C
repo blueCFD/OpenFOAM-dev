@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ template<class Type>
 Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 (
     const word& name,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const dictionary& dict
 )
 {
@@ -121,8 +121,8 @@ template<class Type>
 Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 (
     const word& name,
-    const unitConversion& xUnits,
-    const unitConversion& valueUnits,
+    const unitSet& xUnits,
+    const unitSet& valueUnits,
     const dictionary& dict
 )
 {
@@ -133,7 +133,7 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 template<class Type>
 Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 (
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const entry& e
 )
 {
@@ -191,8 +191,8 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 template<class Type>
 Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 (
-    const unitConversion& xUnits,
-    const unitConversion& valueUnits,
+    const unitSet& xUnits,
+    const unitSet& valueUnits,
     const entry& e
 )
 {
@@ -204,7 +204,7 @@ template<class Type>
 Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 (
     const word& name,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const word& Function1Type,
     Istream& is
 )
@@ -248,8 +248,8 @@ template<class Type>
 Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 (
     const word& name,
-    const unitConversion& xUnits,
-    const unitConversion& valueUnits,
+    const unitSet& xUnits,
+    const unitSet& valueUnits,
     const word& Function1Type,
     Istream& is
 )

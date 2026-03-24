@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -76,7 +76,7 @@ Foam::distribution::clipPDF
 Foam::distribution::distribution
 (
     const word& name,
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -150,7 +150,7 @@ Foam::distribution::CDF(const scalarField& x) const
 }
 
 
-void Foam::distribution::write(Ostream& os, const unitConversion& units) const
+void Foam::distribution::write(Ostream& os, const unitSet& units) const
 {
     writeEntry(os, "type", type());
     writeEntry(os, "Q", Q_);
@@ -195,7 +195,7 @@ void Foam::writeEntry
 (
     Ostream& os,
     const word& entryName,
-    const unitConversion& units,
+    const unitSet& units,
     const distribution& d,
     const bool write,
     const bool writeState

@@ -10,8 +10,6 @@ type            coded;
 
 libs            ("libutilityFunctionObjects.so");
 
-name            eRThetaZ;
-
 codeInclude
 #{
     #include "volFields.H"

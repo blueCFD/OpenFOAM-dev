@@ -23,18 +23,18 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "unitConversion.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(unitConversion, 0);
+    defineTypeNameAndDebug(unitSet, 0);
 }
 
 
-const Foam::NamedEnum<Foam::unitConversion::dimlessUnitType, 2>
-Foam::unitConversion::dimlessUnitTypeNames_
+const Foam::NamedEnum<Foam::unitSet::dimlessUnitType, 2>
+Foam::unitSet::dimlessUnitTypeNames_
 {
     "fraction",
     "angle"
@@ -43,16 +43,16 @@ Foam::unitConversion::dimlessUnitTypeNames_
 
 namespace Foam
 {
-    const scalar unitConversion::smallExponent = rootSmall;
+    const scalar unitSet::smallExponent = rootSmall;
 }
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-bool Foam::unitConversion::compare
+bool Foam::unitSet::compare
 (
-    const unitConversion& a,
-    const unitConversion& b,
+    const unitSet& a,
+    const unitSet& b,
     const bool compareMultiplier
 )
 {
@@ -65,12 +65,12 @@ bool Foam::unitConversion::compare
     if (a.dimensions_ != b.dimensions_) return false;
 
     // Check the dimensionless units are the same
-    for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+    for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
     {
         if
         (
             mag(a.exponents_[i] - b.exponents_[i])
-          > unitConversion::smallExponent
+          > unitSet::smallExponent
         )
         {
             return false;
@@ -84,7 +84,7 @@ bool Foam::unitConversion::compare
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::unitConversion::unitConversion
+Foam::unitSet::unitSet
 (
     const dimensionSet& dimensions,
     const scalar fraction,
@@ -100,7 +100,7 @@ Foam::unitConversion::unitConversion
 }
 
 
-Foam::unitConversion::unitConversion(const dimensionSet& dimensions)
+Foam::unitSet::unitSet(const dimensionSet& dimensions)
 :
     dimensions_(dimensions),
     multiplier_(1)
@@ -112,10 +112,10 @@ Foam::unitConversion::unitConversion(const dimensionSet& dimensions)
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::unitConversion::reset(const unitConversion& units)
+void Foam::unitSet::reset(const unitSet& units)
 {
     dimensions_.reset(units.dimensions_);
-    for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+    for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
     {
         exponents_[i] = units.exponents_[i];
     }
@@ -125,13 +125,13 @@ void Foam::unitConversion::reset(const unitConversion& units)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
-Foam::unitConversion Foam::pow(const unitConversion& units, const scalar exp)
+Foam::unitSet Foam::pow(const unitSet& units, const scalar exp)
 {
     if (units.any()) return units;
     if (units.none()) return units::none;
 
     return
-        unitConversion
+        unitSet
         (
             pow(units.dimensions_, exp),
             units.exponents_[0]*exp,
@@ -143,10 +143,10 @@ Foam::unitConversion Foam::pow(const unitConversion& units, const scalar exp)
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
-const Foam::unitConversion& Foam::operator+
+const Foam::unitSet& Foam::operator+
 (
-    const unitConversion& a,
-    const unitConversion& b
+    const unitSet& a,
+    const unitSet& b
 )
 {
     if (a.any()) return b;
@@ -154,7 +154,7 @@ const Foam::unitConversion& Foam::operator+
     if (a.none()) return units::none;
     if (b.none()) return units::none;
 
-    if (!unitConversion::compare(a, b, true))
+    if (!unitSet::compare(a, b, true))
     {
         FatalErrorInFunction
             << "Different units for +" << endl
@@ -166,10 +166,10 @@ const Foam::unitConversion& Foam::operator+
 }
 
 
-Foam::unitConversion Foam::operator*
+Foam::unitSet Foam::operator*
 (
-    const unitConversion& a,
-    const unitConversion& b
+    const unitSet& a,
+    const unitSet& b
 )
 {
     if (a.any()) return a;
@@ -178,7 +178,7 @@ Foam::unitConversion Foam::operator*
     if (b.none()) return units::none;
 
     return
-        unitConversion
+        unitSet
         (
             a.dimensions_*b.dimensions_,
             a.exponents_[0] + b.exponents_[0],
@@ -188,10 +188,10 @@ Foam::unitConversion Foam::operator*
 }
 
 
-Foam::unitConversion Foam::operator/
+Foam::unitSet Foam::operator/
 (
-    const unitConversion& a,
-    const unitConversion& b
+    const unitSet& a,
+    const unitSet& b
 )
 {
     if (a.any()) return a;
@@ -200,7 +200,7 @@ Foam::unitConversion Foam::operator/
     if (b.none()) return units::none;
 
     return
-        unitConversion
+        unitSet
         (
             a.dimensions_/b.dimensions_,
             a.exponents_[0] - b.exponents_[0],

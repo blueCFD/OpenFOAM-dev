@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -160,6 +160,12 @@ public:
 
         //- Get the end of the iteration over the values
         const_iterator end() const;
+
+        //- Get the beginning of the iteration over the values
+        const_iterator cbegin() const;
+
+        //- Get the end of the iteration over the values
+        const_iterator cend() const;
 };
 
 
@@ -287,6 +293,12 @@ public:
 
         //- Get the end of the iteration over the values
         const_iterator end() const;
+
+        //- Get the beginning of the iteration over the values
+        const_iterator cbegin() const;
+
+        //- Get the end of the iteration over the values
+        const_iterator cend() const;
 };
 
 
@@ -412,6 +424,12 @@ public:
 
         //- Get the end of the iteration over the values
         const_iterator end() const;
+
+        //- Get the beginning of the iteration over the values
+        const_iterator cbegin() const;
+
+        //- Get the end of the iteration over the values
+        const_iterator cend() const;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

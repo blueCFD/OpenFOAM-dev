@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::namedUnitConversion
+    Foam::namedUnitSet
 
 Description
     ...
@@ -32,10 +32,10 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef namedUnitConversion_H
-#define namedUnitConversion_H
+#ifndef namedUnitSet_H
+#define namedUnitSet_H
 
-#include "unitConversion.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,17 +48,17 @@ class Ostream;
 class entry;
 
 // Forward declaration of friend functions and operators
-class namedUnitConversion;
-Istream& operator>>(Istream&, namedUnitConversion&);
-Ostream& operator<<(Ostream&, const namedUnitConversion&);
+class namedUnitSet;
+Istream& operator>>(Istream&, namedUnitSet&);
+Ostream& operator<<(Ostream&, const namedUnitSet&);
 
 /*---------------------------------------------------------------------------*\
-                          Class namedUnitConversion Declaration
+                          Class namedUnitSet Declaration
 \*---------------------------------------------------------------------------*/
 
-class namedUnitConversion
+class namedUnitSet
 :
-    public unitConversion
+    public unitSet
 {
 private:
 
@@ -82,19 +82,19 @@ public:
     // Static Data Members
 
         //- Run time type information
-        ClassName("namedUnitConversion");
+        ClassName("namedUnitSet");
 
 
     // Constructors
 
         //- Construct from name
-        namedUnitConversion(const string&);
+        namedUnitSet(const string&);
 
         //- Copy constructor
-        namedUnitConversion(const namedUnitConversion&) = default;
+        namedUnitSet(const namedUnitSet&) = default;
 
         //- Move constructor
-        namedUnitConversion(namedUnitConversion&&) = default;
+        namedUnitSet(namedUnitSet&&) = default;
 
 
     // Member Functions
@@ -109,10 +109,10 @@ public:
     // IOstream Operators
 
         //- Read from stream
-        friend Istream& operator>>(Istream&, namedUnitConversion&);
+        friend Istream& operator>>(Istream&, namedUnitSet&);
 
         //- Write to stream
-        friend Ostream& operator<<(Ostream&, const namedUnitConversion&);
+        friend Ostream& operator<<(Ostream&, const namedUnitSet&);
 };
 
 

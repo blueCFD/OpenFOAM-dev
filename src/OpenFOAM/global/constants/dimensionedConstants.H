@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -82,7 +82,7 @@ dimensionedScalar dimensionedConstant
 (
     const char* const group,
     const char* name,
-    const unitConversion& units,
+    const unitSet& units,
     const scalar value
 );
 
@@ -93,7 +93,7 @@ dimensionedScalar dimensionedConstant
     const char* const group,
     const char* entryName,
     const char* codeName,
-    const unitConversion& units,
+    const unitSet& units,
     const scalar value
 );
 

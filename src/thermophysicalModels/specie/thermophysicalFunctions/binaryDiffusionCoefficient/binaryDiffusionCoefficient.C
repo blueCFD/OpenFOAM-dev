@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ Foam::Function2s::binaryDiffusionCoefficient::binaryDiffusionCoefficient
 Foam::Function2s::binaryDiffusionCoefficient::binaryDiffusionCoefficient
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -67,7 +67,7 @@ Foam::Function2s::binaryDiffusionCoefficient::binaryDiffusionCoefficient
 void Foam::Function2s::binaryDiffusionCoefficient::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, "coeffs", coeffs_);

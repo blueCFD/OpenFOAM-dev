@@ -69,7 +69,7 @@ public:
         ${typeName}Function2${TemplateType}
         (
             const word& entryName,
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -108,7 +108,7 @@ public:
         }
 
         //- Write data to dictionary stream
-        virtual void write(Ostream& os, const unitConversions&) const;
+        virtual void write(Ostream& os, const unitSets&) const;
 
 
     // Member Operators

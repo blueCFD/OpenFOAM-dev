@@ -65,11 +65,9 @@ const Foam::dimensionedScalar universal::G
     (
         universal::group,
         "G",
-        pow
-        (
-            units::lookup("m"), 3)/units::lookup("kg")/pow(units::lookup("s"),
-            2
-        ),
+        pow(units::lookup("m"), 3)
+       /units::lookup("kg")
+       /pow(units::lookup("s"), 2),
         6.67429e-11
     )
 );

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,7 +74,7 @@ SourceFiles
 
 #include "fvMeshFunctionObject.H"
 #include "logFiles.H"
-#include "namedUnitConversion.H"
+#include "namedUnitSet.H"
 #include "rigidBodyMotion.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -96,10 +96,10 @@ class rigidBodyPoints
     // Private Data
 
         //- Units in which to write the angular velocities
-        namedUnitConversion angularVelocityUnits_;
+        namedUnitSet angularVelocityUnits_;
 
         //- Units in which to write the angular accelerations
-        namedUnitConversion angularAccelerationUnits_;
+        namedUnitSet angularAccelerationUnits_;
 
         //- Name of the body
         word body_;

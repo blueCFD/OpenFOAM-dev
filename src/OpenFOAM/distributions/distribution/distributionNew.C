@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,7 +29,7 @@ License
 
 Foam::autoPtr<Foam::distribution> Foam::distribution::New
 (
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen,
@@ -82,7 +82,7 @@ Foam::autoPtr<Foam::distribution> Foam::distribution::New
 
 Foam::autoPtr<Foam::distribution> Foam::distribution::New
 (
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const label sampleQ,
     const randomGenerator::seed& s,

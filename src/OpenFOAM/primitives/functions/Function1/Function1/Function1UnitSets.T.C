@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,9 +27,9 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Function1s::unitConversions::unitConversions
+Foam::Function1s::unitSets::unitSets
 (
-    std::initializer_list<unitConversion> l
+    std::initializer_list<unitSet> l
 )
 :
     x(dimless),
@@ -41,7 +41,7 @@ Foam::Function1s::unitConversions::unitConversions
 }
 
 
-Foam::Function1s::unitConversions::unitConversions(Istream& is)
+Foam::Function1s::unitSets::unitSets(Istream& is)
 :
     x(dimless),
     value(dimless)
@@ -50,16 +50,16 @@ Foam::Function1s::unitConversions::unitConversions(Istream& is)
 }
 
 
-Foam::autoPtr<Foam::Function1s::unitConversions>
-Foam::Function1s::unitConversions::clone() const
+Foam::autoPtr<Foam::Function1s::unitSets>
+Foam::Function1s::unitSets::clone() const
 {
-    return autoPtr<unitConversions>(new unitConversions(*this));
+    return autoPtr<unitSets>(new unitSets(*this));
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::Function1s::unitConversions::readIfPresent
+bool Foam::Function1s::unitSets::readIfPresent
 (
     const word& keyword,
     const dictionary& dict
@@ -71,10 +71,10 @@ bool Foam::Function1s::unitConversions::readIfPresent
     {
         ITstream& is = entryPtr->stream();
 
-        is.readBegin("unitConversions");
+        is.readBegin("unitSets");
         x.read(keyword, dict, is);
         value.read(keyword, dict, is);
-        is.readEnd("unitConversions");
+        is.readEnd("unitSets");
 
         return true;
     }
@@ -99,7 +99,7 @@ bool Foam::Function1s::unitConversions::readIfPresent
 void Foam::assertNoConvertUnits
 (
     const word& typeName,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const dictionary& dict
 )
 {
@@ -112,7 +112,7 @@ void Foam::assertNoConvertUnits
 }
 
 
-void Foam::writeEntry(Ostream& os, const Function1s::unitConversions& units)
+void Foam::writeEntry(Ostream& os, const Function1s::unitSets& units)
 {
     os << units;
 }
@@ -123,14 +123,14 @@ void Foam::writeEntry(Ostream& os, const Function1s::unitConversions& units)
 Foam::Istream& Foam::operator>>
 (
     Istream& is,
-    Function1s::unitConversions& units
+    Function1s::unitSets& units
 )
 {
-    is.readBegin("unitConversions");
+    is.readBegin("unitSets");
     is >> units.x >> units.value;
-    is.readEnd("unitConversions");
+    is.readEnd("unitSets");
 
-    is.check("Istream& operator>>(Istream&, unitConversions&)");
+    is.check("Istream& operator>>(Istream&, unitSets&)");
 
     return is;
 }
@@ -139,14 +139,14 @@ Foam::Istream& Foam::operator>>
 Foam::Ostream& Foam::operator<<
 (
     Ostream& os,
-    const Function1s::unitConversions& units
+    const Function1s::unitSets& units
 )
 {
     os  << token::BEGIN_LIST
         << units.x << token::SPACE << units.value
         << token::END_LIST;
 
-    os.check("Ostream& operator<<(Ostream&, const unitConversions&)");
+    os.check("Ostream& operator<<(Ostream&, const unitSets&)");
 
     return os;
 }

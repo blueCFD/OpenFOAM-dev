@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,7 @@ Foam::Function2s::APIdiffusionCoefficient::APIdiffusionCoefficient
 Foam::Function2s::APIdiffusionCoefficient::APIdiffusionCoefficient
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -91,7 +91,7 @@ Foam::Function2s::APIdiffusionCoefficient::APIdiffusionCoefficient
 void Foam::Function2s::APIdiffusionCoefficient::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, "a", a_);

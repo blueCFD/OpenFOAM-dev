@@ -132,7 +132,7 @@ Foam::treeDataFace::treeDataFace
     const polyPatch& patch
 )
 :
-    mesh_(patch.boundaryMesh().mesh()),
+    mesh_(patch.mesh()),
     faceLabels_(identityMap(patch.start(), patch.size())),
     isTreeFace_(mesh_.nFaces(), 0),
     cacheBb_(cacheBb)

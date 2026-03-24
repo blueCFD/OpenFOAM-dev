@@ -25,8 +25,14 @@ Class
     Foam::codedFixedValueFvPatchField
 
 Description
-    Constructs on-the-fly a new boundary condition (derived from
-    fixedValueFvPatchField) which is then used to evaluate.
+    Fixed value boundary condition evaluated from the code provided
+
+    which is compiled, linked and executed automatically at run-time.
+
+    The optional \c name entry specifies the name of the code generated from the
+    template, if not provided the it constructed as
+    \<field name\>_\<patch name\> for single region cases or
+    \<region name\>_\<field name\>_\<patch name\> for multi-region cases.
 
 Usage
     Example:
@@ -34,8 +40,10 @@ Usage
     <patchName>
     {
         type            codedFixedValue;
+
         value           uniform 0;
-        name    rampedFixedValue;   // name of generated BC
+
+        name            rampedFixedValue;   // Optional name of generated code
 
         code
         #{
@@ -54,23 +62,9 @@ Usage
     }
     \endverbatim
 
-    A special form is if the 'code' section is not supplied. In this case
-    the code is read from a (runTimeModifiable!) dictionary system/codeDict
-    which would have a corresponding entry:
-
-    \verbatim
-    <patchName>
-    {
-        code
-        #{
-            operator==(min(10, 0.1*this->db().time().value()));
-        #};
-    }
-    \endverbatim
-
 See also
+    Foam::codedBase
     Foam::dynamicCode
-    Foam::functionEntries::codeStream
 
 SourceFiles
     codedFixedValueFvPatchField.C

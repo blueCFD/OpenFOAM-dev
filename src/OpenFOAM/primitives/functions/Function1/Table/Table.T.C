@@ -141,7 +141,7 @@ template<class Type>
 Foam::Function1s::Table<Type>::Table
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -171,8 +171,8 @@ template<class Type>
 Foam::Function1s::Table<Type>::Table
 (
     const word& name,
-    const unitConversion& xUnits,
-    const unitConversion& valueUnits,
+    const unitSet& xUnits,
+    const unitSet& valueUnits,
     const dictionary& dict
 )
 :
@@ -184,7 +184,7 @@ template<class Type>
 Foam::Function1s::Table<Type>::Table
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     Istream& is
 )
 :
@@ -377,7 +377,7 @@ template<class Type>
 void Foam::Function1s::Table<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntryIfDifferent

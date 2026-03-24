@@ -94,7 +94,7 @@ primitives/Tuple2/Tuple2s.T.C
 primitives/omega/omega.C
 
 # Run-time selectable functions
-primitives/functions/Function1/Function1/Function1UnitConversions.T.C
+primitives/functions/Function1/Function1/Function1UnitSets.T.C
 primitives/functions/Function1/makeFunction1s.C
 primitives/functions/Function1/reverseRamp/reverseRamp.C
 primitives/functions/Function1/linearRamp/linearRamp.C
@@ -111,7 +111,7 @@ primitives/functions/Function1/unknownTypeFunction1/unknownTypeFunction1.C
 primitives/functions/Function1/omega1/omega1.C
 primitives/functions/Function1/Table/TableReader/Foam/tokenTupleN.C
 
-primitives/functions/Function2/Function2/Function2UnitConversions.T.C
+primitives/functions/Function2/Function2/Function2UnitSets.T.C
 primitives/functions/Function2/makeFunction2s.C
 
 strings = primitives/strings
@@ -326,11 +326,11 @@ symbols/symbols.C
 dimensionSet/dimensionSet.C
 dimensionSet/dimensionSetIO.C
 dimensionSet/dimensions.C
-unitConversion/unitConversion.C
-unitConversion/unitConversionIO.C
-unitConversion/units.C
-unitConversion/namedUnitConversion.C
-unitConversion/namedUnitConversionIO.C
+unitSet/unitSet.C
+unitSet/unitSetIO.C
+unitSet/units.C
+unitSet/namedUnitSet.C
+unitSet/namedUnitSetIO.C
 dimensionedTypes/dimensionedScalar/dimensionedScalar.C
 dimensionedTypes/dimensionedSphericalTensor/dimensionedSphericalTensor.C
 dimensionedTypes/dimensionedSymmTensor/dimensionedSymmTensor.C

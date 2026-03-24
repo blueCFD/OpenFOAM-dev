@@ -70,7 +70,7 @@ class dictionary;
 class primitiveEntry;
 class regExp;
 class SHA1Digest;
-class unitConversion;
+class unitSet;
 
 Istream& operator>>(Istream&, dictionary&);
 Ostream& operator<<(Ostream&, const dictionary&);
@@ -215,7 +215,7 @@ class dictionary
         (
             const char* typeName,
             const word& keyword,
-            const unitConversion& defaultUnits,
+            const unitSet& defaultUnits,
             ITstream& is
         ) const;
 
@@ -224,7 +224,7 @@ class dictionary
         T readTypeAndConvertUnits
         (
             const word& keyword,
-            const unitConversion& defaultUnits,
+            const unitSet& defaultUnits,
             ITstream& is
         ) const;
 
@@ -233,7 +233,7 @@ class dictionary
         T readType
         (
             const word& keyword,
-            const unitConversion& defaultUnits,
+            const unitSet& defaultUnits,
             ITstream& is
         ) const;
 
@@ -501,7 +501,7 @@ public:
             T lookup
             (
                 const word&,
-                const unitConversion&,
+                const unitSet&,
                 bool recursive=false,
                 bool patternMatch=true
             ) const;
@@ -529,7 +529,7 @@ public:
             T lookupBackwardsCompatible
             (
                 const wordList&,
-                const unitConversion&,
+                const unitSet&,
                 bool recursive=false,
                 bool patternMatch=true
             ) const;
@@ -552,7 +552,7 @@ public:
             T lookupOrDefault
             (
                 const word&,
-                const unitConversion&,
+                const unitSet&,
                 const T&,
                 const bool writeDefault = writeOptionalEntries > 0
             ) const;
@@ -579,7 +579,7 @@ public:
             T lookupOrDefaultBackwardsCompatible
             (
                 const wordList&,
-                const unitConversion&,
+                const unitSet&,
                 const T&
             ) const;
 
@@ -616,7 +616,7 @@ public:
             bool readIfPresent
             (
                 const word&,
-                const unitConversion&,
+                const unitSet&,
                 T&,
                 bool recursive=false,
                 bool patternMatch=true
@@ -908,7 +908,7 @@ public:
     T Foam::dictionary::readType                                               \
     (                                                                          \
         const word& keyword,                                                   \
-        const unitConversion& defaultUnits,                                    \
+        const unitSet& defaultUnits,                                    \
         ITstream& is                                                           \
     ) const;                                                                   \
                                                                                \
@@ -1078,7 +1078,7 @@ void writeEntry
 (
     Ostream& os,
     const word& entryName,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const EntryType& value
 );
 
@@ -1100,7 +1100,7 @@ void writeEntryIfDifferent
 (
     Ostream& os,
     const word& entryName,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const EntryType& value1,
     const EntryType& value2
 );

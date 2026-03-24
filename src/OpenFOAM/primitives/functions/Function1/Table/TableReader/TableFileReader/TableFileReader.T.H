@@ -57,15 +57,15 @@ class TableFileReader
         const fileName fName_;
 
         //- Unit conversions
-        const autoPtr<Function1s::unitConversions> unitsPtr_;
+        const autoPtr<Function1s::unitSets> unitsPtr_;
 
 
     // Private Member Functions
 
         //- Read the units, if any
-        autoPtr<Function1s::unitConversions> readUnits
+        autoPtr<Function1s::unitSets> readUnits
         (
-            const Function1s::unitConversions& defaultUnits,
+            const Function1s::unitSets& defaultUnits,
             const dictionary& dict
         ) const;
 
@@ -84,7 +84,7 @@ protected:
         //- Read a 1D table
         void read
         (
-            const Function1s::unitConversions& defaultUnits,
+            const Function1s::unitSets& defaultUnits,
             const dictionary& dict,
             List<Tuple2<Coordinate, Value>>&
         ) const;
@@ -97,7 +97,7 @@ public:
         //- Construct from dictionary
         TableFileReader
         (
-            const Function1s::unitConversions& defaultUnits,
+            const Function1s::unitSets& defaultUnits,
             const dictionary& dict
         );
 
@@ -114,7 +114,7 @@ public:
         //- Read values
         virtual List<Tuple2<Coordinate, Value>> read
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict,
             const word& valuesKeyword=word::null
         ) const;
@@ -123,7 +123,7 @@ public:
         virtual void write
         (
             Ostream& os,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const List<Tuple2<Coordinate, Value>>& table,
             const word& valuesKeyword=word::null
         ) const;

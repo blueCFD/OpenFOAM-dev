@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,10 @@ class UIndirectList
 {
     // Private Data
 
+        //- Reference to the complete list
         UList<T>& completeList_;
+
+        //- Indices into the complete list
         const UList<label>& addressing_;
 
 
@@ -159,6 +162,128 @@ public:
 
         //- The type that can represent the size of a UList.
         typedef label size_type;
+
+
+    // STL iterator
+    // Random access iterator for traversing UIndirectList
+
+        //- An STL-conforming iterator
+        class iterator
+        {
+            UList<T>& l_;
+
+            UList<label>::const_iterator i_;
+
+        public:
+
+            friend class const_iterator;
+
+            //- Construct for a given UList and addressing iterator
+            inline iterator
+            (
+                UList<T>&,
+                const UList<label>::const_iterator&
+            );
+
+            // Member Operators
+
+                inline bool operator==(const iterator&) const;
+                inline bool operator!=(const iterator&) const;
+
+                inline T& operator*() const;
+                inline T& operator()() const;
+
+                inline iterator operator++();
+                inline iterator operator++(const int);
+
+                inline iterator operator--();
+                inline iterator operator--(const int);
+
+                inline iterator operator+=(const label);
+                inline iterator operator-=(const label);
+
+                inline iterator operator+(const label) const;
+                inline iterator operator-(const label) const;
+
+                inline label operator-(const iterator&) const;
+
+                inline T& operator[](const label);
+
+                inline bool operator<(const iterator&) const;
+                inline bool operator>(const iterator&) const;
+
+                inline bool operator<=(const iterator&) const;
+                inline bool operator>=(const iterator&) const;
+        };
+
+        //- Return an iterator to begin traversing the UIndirectList
+        inline iterator begin();
+
+        //- Return an iterator to end traversing the UIndirectList
+        inline iterator end();
+
+
+    // STL const_iterator
+    // Random access iterator for traversing UIndirectList
+
+        //- An STL-conforming const_iterator
+        class const_iterator
+        {
+            const UList<T>& l_;
+
+            UList<label>::const_iterator i_;
+
+        public:
+
+            //- Construct for a given UList and addressing iterator
+            inline const_iterator
+            (
+                const UList<T>&,
+                const UList<label>::const_iterator&
+            );
+
+            // Member Operators
+
+                inline bool operator==(const const_iterator&) const;
+                inline bool operator!=(const const_iterator&) const;
+
+                inline const T& operator*() const;
+                inline const T& operator()() const;
+
+                inline const_iterator operator++();
+                inline const_iterator operator++(const int);
+
+                inline const_iterator operator--();
+                inline const_iterator operator--(const int);
+
+                inline const_iterator operator+=(const label);
+                inline const_iterator operator-=(const label);
+
+                inline const_iterator operator+(const label) const;
+                inline const_iterator operator-(const label) const;
+
+                inline label operator-(const const_iterator&) const;
+
+                inline const T& operator[](const label);
+
+                inline bool operator<(const const_iterator&) const;
+                inline bool operator>(const const_iterator&) const;
+
+                inline bool operator<=(const const_iterator&) const;
+                inline bool operator>=(const const_iterator&) const;
+        };
+
+        //- Return an const_iterator to begin traversing the UIndirectList
+        inline const_iterator cbegin() const;
+
+        //- Return an const_iterator to end traversing the UIndirectList
+        inline const_iterator cend() const;
+
+        //- Return an const_iterator to begin traversing the UIndirectList
+        inline const_iterator begin() const;
+
+        //- Return an const_iterator to end traversing the UIndirectList
+        inline const_iterator end() const;
 
 
     // Ostream operator

@@ -80,7 +80,7 @@ public:
         Embedded
         (
             const word& name,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict
         );
 
@@ -104,7 +104,7 @@ public:
         //- Read values
         virtual List<Tuple2<Coordinate, Value>> read
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict,
             const word& valuesKeyword="values"
         ) const;
@@ -112,7 +112,7 @@ public:
         //- Read values
         List<Tuple2<Coordinate, Value>> read
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             Istream& is
         );
 
@@ -120,7 +120,7 @@ public:
         virtual void write
         (
             Ostream& os,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const List<Tuple2<Coordinate, Value>>& table,
             const word& valuesKeyword="values"
         ) const;

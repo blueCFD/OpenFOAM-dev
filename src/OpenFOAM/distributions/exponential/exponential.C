@@ -63,7 +63,7 @@ Foam::tmp<Foam::scalarField> Foam::distributions::exponential::PhiForZeroQ
 
 Foam::distributions::exponential::exponential
 (
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -132,7 +132,7 @@ Foam::scalar Foam::distributions::exponential::max() const
 void Foam::distributions::exponential::write
 (
     Ostream& os,
-    const unitConversion& units
+    const unitSet& units
 ) const
 {
     FieldDistribution<unintegrableForNonZeroQ, exponential>::write(os, units);

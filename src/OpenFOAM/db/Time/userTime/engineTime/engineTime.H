@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,7 +87,7 @@ public:
         virtual word unitName() const;
 
         //- Return the engine-time unit conversion
-        virtual const unitConversion& units() const;
+        virtual const unitSet& units() const;
 
         //- Read the controlDict and set all the parameters
         virtual bool read(const dictionary& controlDict);

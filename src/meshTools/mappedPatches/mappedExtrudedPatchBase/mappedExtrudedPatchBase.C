@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ Foam::mappedExtrudedPatchBase::patchFaceAreas() const
     {
         if (!bottomFaceAreasPtr_.valid())
         {
-            const polyMesh& mesh = patch_.boundaryMesh().mesh();
+            const polyMesh& mesh = patch_.mesh();
             const polyPatch& pp = patch_;
 
             // If this is the extruded region we need to work out what the
@@ -197,7 +197,7 @@ Foam::mappedExtrudedPatchBase::patchLocalPoints() const
     {
         if (!bottomLocalPointsPtr_.valid())
         {
-            const polyMesh& mesh = patch_.boundaryMesh().mesh();
+            const polyMesh& mesh = patch_.mesh();
             const polyPatch& pp = patch_;
 
             // If this is the extruded region we need to work out what the

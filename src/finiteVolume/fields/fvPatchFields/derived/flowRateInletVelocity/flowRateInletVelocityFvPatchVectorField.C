@@ -128,7 +128,7 @@ bool Foam::flowRateInletVelocityFvPatchVectorField::canEvaluate()
 {
     return
         Pstream::parRun()
-     || !patch().boundaryMesh().mesh().time().processorCase();
+     || !patch().mesh().time().processorCase();
 }
 
 

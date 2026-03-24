@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -200,7 +200,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::checkTable()
     // Initialise
     if (startSampleTime_ == -1 && endSampleTime_ == -1)
     {
-        const polyMesh& pMesh = this->patch().boundaryMesh().mesh()();
+        const polyMesh& pMesh = this->patch().mesh()();
 
         // Read the initial point position
         pointField meshPts;

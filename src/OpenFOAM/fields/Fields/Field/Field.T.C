@@ -195,7 +195,7 @@ template<class Type>
 Foam::Field<Type>::Field
 (
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const dictionary& dict,
     const label s
 )
@@ -208,7 +208,7 @@ Foam::Field<Type>::Field
         token firstToken(is);
 
         // Read the units if they are before the values
-        unitConversion units(defaultUnits);
+        unitSet units(defaultUnits);
         const bool haveUnits = units.readIfPresent(keyword, dict, is);
 
         // Read the values

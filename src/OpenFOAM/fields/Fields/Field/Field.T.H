@@ -69,7 +69,7 @@ Ostream& operator<<(Ostream&, const Field<Type>&);
 template<class Type>
 Ostream& operator<<(Ostream&, const tmp<Field<Type>>&);
 
-class unitConversion;
+class unitSet;
 class dictionary;
 
 /*---------------------------------------------------------------------------*\
@@ -193,7 +193,7 @@ public:
         Field
         (
             const word& keyword,
-            const unitConversion&,
+            const unitSet&,
             const dictionary&,
             const label size
         );

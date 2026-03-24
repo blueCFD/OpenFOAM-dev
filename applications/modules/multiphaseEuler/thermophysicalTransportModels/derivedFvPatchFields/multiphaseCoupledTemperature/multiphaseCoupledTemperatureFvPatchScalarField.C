@@ -95,7 +95,7 @@ void Foam::multiphaseCoupledTemperatureFvPatchScalarField::getNbr
 {
     // Lookup the fluid model
     const phaseSystem& fluid =
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupObject<phaseSystem>(phaseSystem::propertiesName);
 
     scalarField sumKappa(size(), scalar(0));
@@ -133,7 +133,7 @@ void Foam::multiphaseCoupledTemperatureFvPatchScalarField::getNbr
 {
     // Lookup the fluid model
     const phaseSystem& fluid =
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupObject<phaseSystem>(phaseSystem::propertiesName);
 
     TrefNbr = new scalarField(size(), scalar(0));

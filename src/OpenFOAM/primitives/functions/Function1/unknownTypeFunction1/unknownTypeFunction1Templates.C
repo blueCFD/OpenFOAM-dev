@@ -28,7 +28,7 @@ License
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class Type>
-void Foam::unknownTypeFunction1::build(const unitConversion& valueUnits) const
+void Foam::unknownTypeFunction1::build(const unitSet& valueUnits) const
 {
     if (!functionPtr_.autoPtr<Function1<Type>>::valid())
     {
@@ -51,7 +51,7 @@ void Foam::unknownTypeFunction1::build(const unitConversion& valueUnits) const
 template<class Type>
 void Foam::unknownTypeFunction1::setValueUnits
 (
-    const unitConversion& valueUnits
+    const unitSet& valueUnits
 ) const
 {
     build<Type>(valueUnits);

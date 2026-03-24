@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,12 +30,12 @@ License
 template<class Type>
 Type Foam::Function2s::Constant<Type>::readValue
 (
-    const unitConversions& defaultUnits,
+    const unitSets& defaultUnits,
     Istream& is
 )
 {
     // Read the units if they are before the value
-    unitConversion units(defaultUnits.value);
+    unitSet units(defaultUnits.value);
     const bool haveUnits = units.readIfPresent(is);
 
     // Read the value
@@ -70,7 +70,7 @@ template<class Type>
 Foam::Function2s::Constant<Type>::Constant
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -83,7 +83,7 @@ template<class Type>
 Foam::Function2s::Constant<Type>::Constant
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     Istream& is
 )
 :
@@ -113,7 +113,7 @@ template<class Type>
 void Foam::Function2s::Constant<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, "value", units.value, value_);

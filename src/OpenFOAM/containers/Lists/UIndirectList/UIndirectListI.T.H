@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -211,6 +211,415 @@ template<class T>
 inline bool Foam::UIndirectList<T>::operator!=(const UIndirectList<T>& ae) const
 {
     return !(*this == ae);
+}
+
+
+// * * * * * * * * * * * * * * * * STL iterator  * * * * * * * * * * * * * * //
+
+template<class T>
+inline Foam::UIndirectList<T>::iterator::iterator
+(
+    UList<T>& l,
+    const UList<label>::const_iterator& i
+)
+:
+    l_(l),
+    i_(i)
+{}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::iterator::operator==
+(
+    const iterator& iter
+) const
+{
+    return i_ == iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::iterator::operator!=
+(
+    const iterator& iter
+) const
+{
+    return i_ != iter.i_;
+}
+
+
+template<class T>
+inline T& Foam::UIndirectList<T>::iterator::operator*() const
+{
+    return l_[*i_];
+}
+
+
+template<class T>
+inline T& Foam::UIndirectList<T>::iterator::operator()() const
+{
+    return operator*();
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator++()
+{
+    ++i_;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator++(const int)
+{
+    iterator tmp = *this;
+    ++i_;
+    return tmp;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator--()
+{
+    --i_;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator--(const int)
+{
+    iterator tmp = *this;
+    --i_;
+    return tmp;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator+=(const label n)
+{
+    i_ += n;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator-=(const label n)
+{
+    i_ -= n;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator+(const label n) const
+{
+    typename UIndirectList<T>::iterator tmp = *this;
+    return tmp += n;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::iterator::operator-(const label n) const
+{
+    typename UIndirectList<T>::iterator tmp = *this;
+    return tmp -= n;
+}
+
+
+template<class T>
+inline Foam::label Foam::UIndirectList<T>::iterator::operator-
+(
+    const typename UIndirectList<T>::iterator& iter
+) const
+{
+    return i_ - iter.i_;
+}
+
+
+template<class T>
+inline T& Foam::UIndirectList<T>::iterator::operator[](const label n)
+{
+    return *(*this + n);
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::iterator::operator<
+(
+    const iterator& iter
+) const
+{
+    return i_ < iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::iterator::operator>
+(
+    const iterator& iter
+) const
+{
+    return i_ > iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::iterator::operator<=
+(
+    const iterator& iter
+) const
+{
+    return i_ <= iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::iterator::operator>=
+(
+    const iterator& iter
+) const
+{
+    return i_ >= iter.i_;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::begin()
+{
+    return iterator(completeList_, addressing_.begin());
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::iterator
+Foam::UIndirectList<T>::end()
+{
+    return iterator(completeList_, addressing_.end());
+}
+
+
+// * * * * * * * * * * * * * * * STL const_iterator  * * * * * * * * * * * * //
+
+template<class T>
+inline Foam::UIndirectList<T>::const_iterator::const_iterator
+(
+    const UList<T>& l,
+    const UList<label>::const_iterator& i
+)
+:
+    l_(l),
+    i_(i)
+{}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::const_iterator::operator==
+(
+    const const_iterator& iter
+) const
+{
+    return i_ == iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::const_iterator::operator!=
+(
+    const const_iterator& iter
+) const
+{
+    return i_ != iter.i_;
+}
+
+
+template<class T>
+inline const T& Foam::UIndirectList<T>::const_iterator::operator*() const
+{
+    return l_[*i_];
+}
+
+
+template<class T>
+inline const T& Foam::UIndirectList<T>::const_iterator::operator()() const
+{
+    return operator*();
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator++()
+{
+    ++i_;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator++(const int)
+{
+    const_iterator tmp = *this;
+    ++i_;
+    return tmp;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator--()
+{
+    --i_;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator--(const int)
+{
+    const_iterator tmp = *this;
+    --i_;
+    return tmp;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator+=(const label n)
+{
+    i_ += n;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator-=(const label n)
+{
+    i_ -= n;
+    return *this;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator+(const label n) const
+{
+    typename UIndirectList<T>::const_iterator tmp = *this;
+    return tmp += n;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::const_iterator::operator-(const label n) const
+{
+    typename UIndirectList<T>::const_iterator tmp = *this;
+    return tmp -= n;
+}
+
+
+template<class T>
+inline Foam::label Foam::UIndirectList<T>::const_iterator::operator-
+(
+    const typename UIndirectList<T>::const_iterator& iter
+) const
+{
+    return i_ - iter.i_;
+}
+
+
+template<class T>
+inline const T& Foam::UIndirectList<T>::const_iterator::operator[]
+(
+    const label n
+)
+{
+    return *(*this + n);
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::const_iterator::operator<
+(
+    const const_iterator& iter
+) const
+{
+    return i_ < iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::const_iterator::operator>
+(
+    const const_iterator& iter
+) const
+{
+    return i_ > iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::const_iterator::operator<=
+(
+    const const_iterator& iter
+) const
+{
+    return i_ <= iter.i_;
+}
+
+
+template<class T>
+inline bool Foam::UIndirectList<T>::const_iterator::operator>=
+(
+    const const_iterator& iter
+) const
+{
+    return i_ >= iter.i_;
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::begin() const
+{
+    return const_iterator(completeList_, addressing_.begin());
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::end() const
+{
+    return const_iterator(completeList_, addressing_.end());
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::cbegin() const
+{
+    return const_iterator(completeList_, addressing_.begin());
+}
+
+
+template<class T>
+inline typename Foam::UIndirectList<T>::const_iterator
+Foam::UIndirectList<T>::cend() const
+{
+    return const_iterator(completeList_, addressing_.end());
 }
 
 

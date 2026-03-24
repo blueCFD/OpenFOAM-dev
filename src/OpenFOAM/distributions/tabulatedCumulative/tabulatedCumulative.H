@@ -106,7 +106,7 @@ public:
         //- Construct from a dictionary
         tabulatedCumulative
         (
-            const unitConversion& units,
+            const unitSet& units,
             const dictionary& dict,
             const label sampleQ,
             randomGenerator&& rndGen
@@ -155,7 +155,7 @@ public:
         ) const;
 
         //- Write to a stream
-        virtual void write(Ostream& os, const unitConversion& units) const;
+        virtual void write(Ostream& os, const unitSet& units) const;
 
         //- Return coordinates to plot across the range of the distribution
         virtual tmp<scalarField> plotX(const label n) const;

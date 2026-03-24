@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -299,7 +299,7 @@ Foam::PackedList<nBits>::iteratorBase::get() const
 
 template<unsigned nBits>
 inline bool
-Foam::PackedList<nBits>::iteratorBase::set(const unsigned int val)
+Foam::PackedList<nBits>::iteratorBase::set(const unsigned int val) const
 {
     const unsigned int seg = index_ / packing();
     const unsigned int off = index_ % packing();
@@ -356,7 +356,7 @@ template<unsigned nBits>
 inline void Foam::PackedList<nBits>::iteratorBase::operator=
 (
     const iteratorBase& iter
-)
+) const
 {
     const unsigned int val = iter.get();
     this->set(val);
@@ -367,7 +367,7 @@ template<unsigned nBits>
 inline void Foam::PackedList<nBits>::iteratorBase::operator=
 (
     const unsigned int val
-)
+) const
 {
     // Lazy evaluation - increase size on assignment
     if (index_ >= list_->size_)
@@ -626,34 +626,18 @@ Foam::PackedList<nBits>::const_iterator::operator--(int)
 
 
 template<unsigned nBits>
-inline typename Foam::PackedList<nBits>::iteratorBase&
-Foam::PackedList<nBits>::iterator::operator*()
+inline const typename Foam::PackedList<nBits>::iteratorBase&
+Foam::PackedList<nBits>::iterator::operator*() const
 {
-    return static_cast<iteratorBase&>(*this);
+    return static_cast<const iteratorBase&>(*this);
 }
 
 
 template<unsigned nBits>
-inline typename Foam::PackedList<nBits>::iteratorBase&
-Foam::PackedList<nBits>::iterator::operator()()
+inline const typename Foam::PackedList<nBits>::iteratorBase&
+Foam::PackedList<nBits>::iterator::operator()() const
 {
-    return static_cast<iteratorBase&>(*this);
-}
-
-
-template<unsigned nBits>
-inline unsigned int
-Foam::PackedList<nBits>::const_iterator::operator*() const
-{
-    return this->get();
-}
-
-
-template<unsigned nBits>
-inline unsigned int
-Foam::PackedList<nBits>::const_iterator::operator()() const
-{
-    return this->get();
+    return static_cast<const iteratorBase&>(*this);
 }
 
 

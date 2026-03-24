@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -141,8 +141,8 @@ public:
 
                 inline bool operator!=(const const_iterator&) const;
 
-                inline label operator*();
-                inline label operator()();
+                inline label operator*() const;
+                inline label operator()() const;
 
                 inline const_iterator& operator++();
                 inline const_iterator operator++(int);

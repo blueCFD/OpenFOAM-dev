@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ bool Foam::nonConformalMappedPatchBase::calcOwner() const
 {
     const polyPatch& pp = patch_.patch();
 
-    const word& regionName = pp.boundaryMesh().mesh().name();
+    const word& regionName = pp.mesh().name();
     const word& patchName = pp.name();
 
     if (regionName != nbrRegionName())
@@ -164,7 +164,7 @@ Foam::nonConformalMappedPatchBase::intersection() const
     if (!intersectionIsValid)
     {
         const polyMesh& mesh =
-            mappedPatchBaseBase::patch_.boundaryMesh().mesh();
+            mappedPatchBaseBase::patch_.mesh();
 
         const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh);
 

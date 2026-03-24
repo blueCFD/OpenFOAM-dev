@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ template<class T, unsigned SizeInc, unsigned SizeMult, unsigned SizeDiv>
 Foam::DynamicField<T, SizeInc, SizeMult, SizeDiv>::DynamicField
 (
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const dictionary& dict,
     const label size
 )

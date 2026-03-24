@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "cyclicTransform.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "IOmanip.H"
 #include "stringOps.H"
 

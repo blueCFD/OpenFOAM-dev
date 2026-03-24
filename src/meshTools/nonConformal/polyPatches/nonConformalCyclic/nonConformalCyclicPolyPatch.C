@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -306,7 +306,7 @@ Foam::nonConformalCyclicPolyPatch::intersection() const
 
     if (!intersectionIsValid)
     {
-        const polyMesh& mesh = boundaryMesh().mesh();
+        const polyMesh& mesh = this->mesh();
 
         const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh);
 
@@ -358,7 +358,7 @@ Foam::nonConformalCyclicPolyPatch::rays() const
 
     if (!raysIsValid)
     {
-        const polyMesh& mesh = boundaryMesh().mesh();
+        const polyMesh& mesh = this->mesh();
 
         const nonConformalBoundary& ncb = nonConformalBoundary::New(mesh);
 
@@ -407,7 +407,7 @@ Foam::remote Foam::nonConformalCyclicPolyPatch::ray
     point& nbrP
 ) const
 {
-    const polyMesh& mesh = boundaryMesh().mesh();
+    const polyMesh& mesh = this->mesh();
 
     const nonConformalCyclicPolyPatch& ownerPatch =
         owner() ? *this : nbrPatch();

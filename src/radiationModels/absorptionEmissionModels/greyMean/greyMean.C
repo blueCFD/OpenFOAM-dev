@@ -198,7 +198,7 @@ Foam::radiationModels::absorptionEmissionModels::greyMean::aCont
 
     scalarField& a = ta.ref().primitiveFieldRef();
 
-    const unitConversion& unitAtm = units::lookup("atm");
+    const unitSet& unitAtm = units::lookup("atm");
 
     forAll(a, celli)
     {

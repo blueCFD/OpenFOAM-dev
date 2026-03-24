@@ -33,7 +33,7 @@ Foam::autoPtr<Foam::TableReader<Coordinate, Value>>
 Foam::TableReader<Coordinate, Value>::New
 (
     const word& name,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const dictionary& dict
 )
 {

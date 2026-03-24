@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -182,14 +182,10 @@ Foam::Matrix<Form, Type>::Matrix
 
     label rowi = 0;
     label i = 0;
-    forAllConstIter
-    (
-        typename std::initializer_list<std::initializer_list<Type>>,
-        lstLst,
-        rowIter
-    )
+
+    for (const std::initializer_list<Type>& lst : lstLst)
     {
-        if (label(rowIter->size()) != nCols_)
+        if (label(lst.size()) != nCols_)
         {
             FatalErrorInFunction
                 << "Number of columns in row " << rowi
@@ -197,14 +193,9 @@ Foam::Matrix<Form, Type>::Matrix
                 << abort(FatalError);
         }
 
-        forAllConstIter
-        (
-            typename std::initializer_list<Type>,
-            *rowIter,
-            colIter
-        )
+        for (const Type& v : lst)
         {
-            v_[i++] = *colIter;
+            v_[i++] = v;
         }
 
         rowi++;

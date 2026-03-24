@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,7 +62,7 @@ SourceFiles
 
 #include "fvMeshFunctionObject.H"
 #include "logFiles.H"
-#include "namedUnitConversion.H"
+#include "namedUnitSet.H"
 #include "sixDoFRigidBodyMotion.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -84,10 +84,10 @@ class sixDoFRigidBodyState
     // Private Data
 
         //- Units in which to write the angles
-        namedUnitConversion angleUnits_;
+        namedUnitSet angleUnits_;
 
         //- Units in which to write the angular velocities
-        namedUnitConversion angularVelocityUnits_;
+        namedUnitSet angularVelocityUnits_;
 
 
     // Private Member Functions
@@ -136,7 +136,7 @@ public:
         vector angularVelocity() const;
 
         //- Return the units in which to write the angular velocities
-        const unitConversion& angularVelocityUnits() const;
+        const unitSet& angularVelocityUnits() const;
 
         //- Read the sixDoFRigidBodyState data
         virtual bool read(const dictionary&);

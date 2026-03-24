@@ -146,7 +146,7 @@ void Foam::activePressureForceBaffleVelocityFvPatchVectorField::map
     //  fvMesh::S() which will give problems when mapped (since already
     //  on new mesh)
 
-    const vectorField& areas = patch().boundaryMesh().mesh().faceAreas();
+    const vectorField& areas = patch().mesh().faceAreas();
     initWallSf_ = patch().patchSlice(areas);
     initCyclicSf_ = patch().boundaryMesh()
     [
@@ -170,7 +170,7 @@ void Foam::activePressureForceBaffleVelocityFvPatchVectorField::reset
     fixedValueFvPatchVectorField::reset(ptf);
 
     // See rmap.
-    const vectorField& areas = patch().boundaryMesh().mesh().faceAreas();
+    const vectorField& areas = patch().mesh().faceAreas();
     initWallSf_ = patch().patchSlice(areas);
     initCyclicSf_ = patch().boundaryMesh()
     [

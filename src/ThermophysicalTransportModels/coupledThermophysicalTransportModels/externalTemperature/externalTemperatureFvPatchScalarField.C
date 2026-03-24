@@ -80,7 +80,7 @@ void Foam::externalTemperatureFvPatchScalarField::getKappa
 ) const
 {
     const thermophysicalTransportModel& ttm =
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupType<thermophysicalTransportModel>();
 
     kappa = ttm.kappaEff(patch().index());
@@ -482,7 +482,7 @@ void Foam::externalTemperatureFvPatchScalarField::updateCoeffs()
     {
         const scalar Q = gSum(kappa*patch().magSf()*snGrad());
 
-        Info<< patch().boundaryMesh().mesh().name() << ':'
+        Info<< patch().mesh().name() << ':'
             << patch().name() << ':'
             << this->internalField().name() << " :"
             << " heat transfer rate:" << Q

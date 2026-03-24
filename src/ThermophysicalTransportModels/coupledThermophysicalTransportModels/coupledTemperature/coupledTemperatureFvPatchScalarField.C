@@ -42,7 +42,7 @@ void Foam::coupledTemperatureFvPatchScalarField::getThis
 ) const
 {
     const thermophysicalTransportModel& ttm =
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupType<thermophysicalTransportModel>();
 
     kappa = ttm.kappaEff(patch().index());
@@ -68,7 +68,7 @@ void Foam::coupledTemperatureFvPatchScalarField::getNbr
 ) const
 {
     const thermophysicalTransportModel& ttm =
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupType<thermophysicalTransportModel>();
 
     sumKappaByDeltaNbr = ttm.kappaEff(patch().index())*patch().deltaCoeffs();
@@ -86,7 +86,7 @@ void Foam::coupledTemperatureFvPatchScalarField::getNbr
 ) const
 {
     const thermophysicalTransportModel& ttm =
-        patch().boundaryMesh().mesh()
+        patch().mesh()
        .lookupType<thermophysicalTransportModel>();
 
     const fvPatchScalarField& Tp =
@@ -445,7 +445,7 @@ void Foam::coupledTemperatureFvPatchScalarField::updateCoeffs()
     {
         const scalar Q = gSum(kappa()*patch().magSf()*snGrad());
 
-        Info<< patch().boundaryMesh().mesh().name() << ':'
+        Info<< patch().mesh().name() << ':'
             << patch().name() << ':'
             << this->internalField().name() << " <- "
             << mapper.nbrMesh().name() << ':'

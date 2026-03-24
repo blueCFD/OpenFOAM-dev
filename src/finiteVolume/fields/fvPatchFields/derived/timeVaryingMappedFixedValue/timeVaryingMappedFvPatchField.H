@@ -207,7 +207,7 @@ public:
 
         const Time& time() const
         {
-            return patch_.boundaryMesh().mesh().time();
+            return patch_.mesh().time();
         }
 
         // Mapping functions

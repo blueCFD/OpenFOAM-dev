@@ -71,7 +71,7 @@ public:
         None
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -86,7 +86,7 @@ public:
         virtual inline Type value(const scalar x, const scalar y) const;
 
         //- Write in dictionary format
-        virtual void write(Ostream& os, const unitConversions& units) const;
+        virtual void write(Ostream& os, const unitSets& units) const;
 
 
     // Member Operators

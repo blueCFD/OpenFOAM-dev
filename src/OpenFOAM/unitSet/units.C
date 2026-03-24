@@ -46,11 +46,11 @@ const dictionary& unitsDict()
         (
             debug::switchSet
             (
-                debug::configDict().found("UnitConversions")
-              ? "UnitConversions"
+                debug::configDict().found("UnitSets")
+              ? "UnitSets"
               : debug::configDict().found("DimensionSets")
               ? "DimensionSets"
-              : "UnitConversions",
+              : "UnitSets",
                 cachedPtr
             )
         );
@@ -59,8 +59,8 @@ const dictionary& unitsDict()
     return *unitsDictPtr_;
 }
 
-HashTable<unitConversion>* addedUnitsPtr_(nullptr);
-HashTable<unitConversion>* unitsPtr_(nullptr);
+HashTable<unitSet>* addedUnitsPtr_(nullptr);
+HashTable<unitSet>* unitsPtr_(nullptr);
 
 // Delete the above data at the end of the run
 struct deleteUnitsPtr
@@ -88,40 +88,40 @@ dimensionSet makeDimless()
     return dimensionSet(0, 0, 0, 0, 0);
 }
 
-unitConversion makeUnitless()
+unitSet makeUnitless()
 {
-    return unitConversion(makeDimless(), 0, 0, 1);
+    return unitSet(makeDimless(), 0, 0, 1);
 }
 
-unitConversion makeUnitAny()
+unitSet makeUnitAny()
 {
-    return unitConversion(makeDimless(), 0, 0, 0);
+    return unitSet(makeDimless(), 0, 0, 0);
 }
-unitConversion makeUnitNone()
+unitSet makeUnitNone()
 {
-    return unitConversion(makeDimless(), 0, 0, -1);
-}
-
-unitConversion makeUnitFraction()
-{
-    return unitConversion(makeDimless(), 1, 0, 1);
-}
-unitConversion makeUnitPercent()
-{
-    return unitConversion(makeDimless(), 1, 0, 0.01);
+    return unitSet(makeDimless(), 0, 0, -1);
 }
 
-unitConversion makeUnitRadians()
+unitSet makeUnitFraction()
 {
-    return unitConversion(makeDimless(), 0, 1, 1);
+    return unitSet(makeDimless(), 1, 0, 1);
 }
-unitConversion makeUnitRotations()
+unitSet makeUnitPercent()
 {
-    return unitConversion(makeDimless(), 0, 1, 2*pi);
+    return unitSet(makeDimless(), 1, 0, 0.01);
 }
-unitConversion makeUnitDegrees()
+
+unitSet makeUnitRadians()
 {
-    return unitConversion(makeDimless(), 0, 1, pi/180);
+    return unitSet(makeDimless(), 0, 1, 1);
+}
+unitSet makeUnitRotations()
+{
+    return unitSet(makeDimless(), 0, 1, 2*pi);
+}
+unitSet makeUnitDegrees()
+{
+    return unitSet(makeDimless(), 0, 1, pi/180);
 }
 
 }
@@ -129,26 +129,26 @@ unitConversion makeUnitDegrees()
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-const Foam::unitConversion Foam::units::unitless(makeUnitless());
+const Foam::unitSet Foam::units::unitless(makeUnitless());
 
-const Foam::unitConversion Foam::units::any(makeUnitAny());
-const Foam::unitConversion Foam::units::none(makeUnitNone());
+const Foam::unitSet Foam::units::any(makeUnitAny());
+const Foam::unitSet Foam::units::none(makeUnitNone());
 
-const Foam::unitConversion Foam::units::fraction(makeUnitFraction());
-const Foam::unitConversion Foam::units::percent(makeUnitPercent());
+const Foam::unitSet Foam::units::fraction(makeUnitFraction());
+const Foam::unitSet Foam::units::percent(makeUnitPercent());
 
-const Foam::unitConversion Foam::units::radians(makeUnitRadians());
-const Foam::unitConversion Foam::units::rotations(makeUnitRotations());
-const Foam::unitConversion Foam::units::degrees(makeUnitDegrees());
+const Foam::unitSet Foam::units::radians(makeUnitRadians());
+const Foam::unitSet Foam::units::rotations(makeUnitRotations());
+const Foam::unitSet Foam::units::degrees(makeUnitDegrees());
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-const Foam::HashTable<Foam::unitConversion>& Foam::units::table()
+const Foam::HashTable<Foam::unitSet>& Foam::units::table()
 {
     if (!unitsPtr_)
     {
-        unitsPtr_ = new HashTable<unitConversion>();
+        unitsPtr_ = new HashTable<unitSet>();
 
         unitsPtr_->insert("%", makeUnitPercent());
 
@@ -165,14 +165,14 @@ const Foam::HashTable<Foam::unitConversion>& Foam::units::table()
         {
             ITstream& is = iter().stream();
 
-            const unitConversion units(is);
+            const unitSet units(is);
             const scalar multiplier = pTraits<scalar>(is);
 
             const bool ok =
                 unitsPtr_->insert
                 (
                     iter().keyword(),
-                    units*unitConversion(dimless, 0, 0, multiplier)
+                    units*unitSet(dimless, 0, 0, multiplier)
                 );
 
             if (!ok)
@@ -187,7 +187,7 @@ const Foam::HashTable<Foam::unitConversion>& Foam::units::table()
         // Add programmatically defined units
         if (addedUnitsPtr_)
         {
-            forAllConstIter(HashTable<unitConversion>, *addedUnitsPtr_, iter)
+            forAllConstIter(HashTable<unitSet>, *addedUnitsPtr_, iter)
             {
                 const bool ok = unitsPtr_->insert(iter.key(), iter());
 
@@ -206,13 +206,13 @@ const Foam::HashTable<Foam::unitConversion>& Foam::units::table()
 }
 
 
-void Foam::units::add(const word& name, const unitConversion& units)
+void Foam::units::add(const word& name, const unitSet& units)
 {
     deleteDemandDrivenData(unitsDictPtr_);
 
     if (!addedUnitsPtr_)
     {
-        addedUnitsPtr_ = new HashTable<unitConversion>();
+        addedUnitsPtr_ = new HashTable<unitSet>();
     }
 
     addedUnitsPtr_->insert(name, units);

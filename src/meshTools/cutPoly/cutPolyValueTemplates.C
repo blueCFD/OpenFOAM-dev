@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -272,6 +272,22 @@ Foam::cutPoly::FaceValues<Type>::end() const
 
 
 template<class Type>
+typename Foam::cutPoly::FaceValues<Type>::const_iterator
+Foam::cutPoly::FaceValues<Type>::cbegin() const
+{
+    return const_iterator(*this, 0);
+}
+
+
+template<class Type>
+typename Foam::cutPoly::FaceValues<Type>::const_iterator
+Foam::cutPoly::FaceValues<Type>::cend() const
+{
+    return const_iterator(*this, f_.size());
+}
+
+
+template<class Type>
 Type Foam::cutPoly::FaceCutValues<Type>::const_iterator::next() const
 {
     const label j = (j_ + 1) % size(i_);
@@ -297,6 +313,22 @@ Foam::cutPoly::FaceCutValues<Type>::end() const
 
 
 template<class Type>
+typename Foam::cutPoly::FaceCutValues<Type>::const_iterator
+Foam::cutPoly::FaceCutValues<Type>::cbegin() const
+{
+    return const_iterator(*this, 0, 0);
+}
+
+
+template<class Type>
+typename Foam::cutPoly::FaceCutValues<Type>::const_iterator
+Foam::cutPoly::FaceCutValues<Type>::cend() const
+{
+    return const_iterator(*this, this->fCuts_.size(), 0);
+}
+
+
+template<class Type>
 const Type& Foam::cutPoly::CellCutValues<Type>::const_iterator::next() const
 {
     return psis_.second();
@@ -314,6 +346,22 @@ Foam::cutPoly::CellCutValues<Type>::begin() const
 template<class Type>
 typename Foam::cutPoly::CellCutValues<Type>::const_iterator
 Foam::cutPoly::CellCutValues<Type>::end() const
+{
+    return const_iterator(*this, this->cCuts_.size(), 0);
+}
+
+
+template<class Type>
+typename Foam::cutPoly::CellCutValues<Type>::const_iterator
+Foam::cutPoly::CellCutValues<Type>::cbegin() const
+{
+    return const_iterator(*this, 0, 0);
+}
+
+
+template<class Type>
+typename Foam::cutPoly::CellCutValues<Type>::const_iterator
+Foam::cutPoly::CellCutValues<Type>::cend() const
 {
     return const_iterator(*this, this->cCuts_.size(), 0);
 }

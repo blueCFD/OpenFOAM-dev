@@ -154,7 +154,7 @@ void Foam::totalFlowRateAdvectiveDiffusiveFvPatchScalarField::updateCoeffs()
     {
         scalar phi = gSum(-phip*(*this));
 
-        Info<< patch().boundaryMesh().mesh().name() << ':'
+        Info<< patch().mesh().name() << ':'
             << patch().name() << ':'
             << this->internalField().name() << " :"
             << " mass flux[Kg/s]:" << phi

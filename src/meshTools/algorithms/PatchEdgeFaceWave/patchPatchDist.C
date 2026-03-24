@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,7 +91,7 @@ void Foam::patchPatchDist::correct()
     // Make sure these boundary edges are marked everywhere.
     syncTools::syncEdgeMap
     (
-        patch_.boundaryMesh().mesh(),
+        patch_.mesh(),
         nbrEdges,
         maxEqOp<label>()
     );
@@ -139,7 +139,7 @@ void Foam::patchPatchDist::correct()
     // Walk
     PatchEdgeFaceWave<primitivePatch, patchEdgeFacePoint> calc
     (
-        patch_.boundaryMesh().mesh(),
+        patch_.mesh(),
         patch_,
         initialEdges,
         initialEdgesInfo,

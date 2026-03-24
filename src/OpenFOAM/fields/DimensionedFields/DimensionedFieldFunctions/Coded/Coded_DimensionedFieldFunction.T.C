@@ -75,8 +75,17 @@ Coded
         dict.lookupOrDefault<word>
         (
             "name",
-            field.name() + '_' + field.mesh().name()
-            // + '_' + DimensionedFieldFunction<DimensionedFieldType>::typeName
+            (
+                field.mesh().db().name() == polyMesh::defaultRegion
+              ? word::null
+              : word(field.mesh().db().name() + '_')
+            )
+          + field.name()
+          + (
+                field.mesh().name() == field.mesh().db().name()
+              ? word::null
+              : word('_' + field.mesh().name())
+            )
         ),
         dict,
         codeKeys,

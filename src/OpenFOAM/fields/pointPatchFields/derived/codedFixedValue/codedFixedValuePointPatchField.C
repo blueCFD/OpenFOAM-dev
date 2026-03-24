@@ -75,6 +75,7 @@ Foam::codedFixedValuePointPatchField<Type>::codedFixedValuePointPatchField
     fixedValuePointPatchField<Type>(p, iF, dict),
     codedBase
     (
+        dict.lookup("name"),
         dict,
         codeKeys,
         codeDictVars,

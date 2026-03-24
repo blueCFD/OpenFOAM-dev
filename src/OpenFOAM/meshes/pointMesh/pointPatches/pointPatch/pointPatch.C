@@ -42,4 +42,10 @@ const Foam::polyPatch& Foam::pointPatch::poly() const
 }
 
 
+const Foam::pointMesh& Foam::pointPatch::mesh() const
+{
+    return boundaryMesh_.mesh();
+}
+
+
 // ************************************************************************* //

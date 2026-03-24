@@ -136,7 +136,7 @@ struct Foam::fv::wallCondensation::properties
             patch().magSf()
            /scalarField
             (
-                patch().boundaryMesh().mesh().V(),
+                patch().mesh().V(),
                 patch().faceCells()
             )
         ),

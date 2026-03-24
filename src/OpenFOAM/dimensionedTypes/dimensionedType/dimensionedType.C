@@ -33,7 +33,7 @@ template<class Type>
 void Foam::dimensioned<Type>::initialise
 (
     const word& name,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     Istream& is
 )
 {
@@ -62,7 +62,7 @@ void Foam::dimensioned<Type>::initialise
     }
 
     // Read the units if they are before the value
-    unitConversion units(defaultUnits);
+    unitSet units(defaultUnits);
     const bool haveUnits = units.readIfPresent(is);
 
     // Read the value
@@ -183,7 +183,7 @@ template<class Type>
 Foam::dimensioned<Type>::dimensioned
 (
     const word& name,
-    const unitConversion& units,
+    const unitSet& units,
     Istream& is
 )
 :
@@ -215,7 +215,7 @@ template<class Type>
 Foam::dimensioned<Type>::dimensioned
 (
     const word& name,
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict
 )
 :
@@ -282,7 +282,7 @@ template<class Type>
 Foam::dimensioned<Type>::dimensioned
 (
     const word& name,
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const Type& defaultValue,
     const bool writeDefault
@@ -389,7 +389,7 @@ template<class Type>
 void Foam::dimensioned<Type>::read
 (
     const dictionary& dict,
-    const unitConversion& defaultUnits
+    const unitSet& defaultUnits
 )
 {
     initialise
@@ -405,7 +405,7 @@ template<class Type>
 bool Foam::dimensioned<Type>::readIfPresent
 (
     const dictionary& dict,
-    const unitConversion& defaultUnits
+    const unitSet& defaultUnits
 )
 {
     const entry* entryPtr = dict.lookupEntryPtr(name_, false, true);
@@ -440,7 +440,7 @@ void Foam::dimensioned<Type>::readOrDefault
 (
     const dictionary& dict,
     const Type& defaultValue,
-    const unitConversion& defaultUnits
+    const unitSet& defaultUnits
 )
 {
     const entry* entryPtr = dict.lookupEntryPtr(name_, false, true);

@@ -53,7 +53,7 @@ namespace Foam
 // Forward declaration of friend functions and operators
 
 class dimensionSet;
-class unitConversion;
+class unitSet;
 template<class Type> class dimensioned;
 typedef dimensioned<scalar> dimensionedScalar;
 

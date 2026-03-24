@@ -130,7 +130,7 @@ Foam::fvsPatchField<Type>::fvsPatchField
 template<class Type>
 const Foam::objectRegistry& Foam::fvsPatchField<Type>::db() const
 {
-    return patch_.boundaryMesh().mesh();
+    return patch_.mesh();
 }
 
 

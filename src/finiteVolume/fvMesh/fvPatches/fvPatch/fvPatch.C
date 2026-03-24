@@ -92,13 +92,13 @@ Foam::wordList Foam::fvPatch::constraintTypes()
 
 const Foam::objectRegistry& Foam::fvPatch::db() const
 {
-    return boundaryMesh().mesh();
+    return boundaryMesh_.mesh();
 }
 
 
 const Foam::fvMesh& Foam::fvPatch::mesh() const
 {
-    return boundaryMesh().mesh();
+    return boundaryMesh_.mesh();
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -1734,7 +1734,7 @@ void Foam::tracking::crossWedge
     const scalar stepFraction
 )
 {
-    const polyMesh& mesh = inPatch.boundaryMesh().mesh();
+    const polyMesh& mesh = inPatch.mesh();
 
     // Move to the other side of the mesh. Note that we track here because the
     // tet indices aren't guaranteed to be consistent between pairs of wedge
@@ -1769,7 +1769,7 @@ void Foam::tracking::crossCyclic
     label& faceTrii
 )
 {
-    const polyMesh& mesh = inPatch.boundaryMesh().mesh();
+    const polyMesh& mesh = inPatch.mesh();
 
     // Set the topology to the neighbouring face and cell
     facei = facei - inPatch.start() + inPatch.nbrPatch().start();
@@ -1810,7 +1810,7 @@ void Foam::tracking::outProcessor
     label& faceTrii
 )
 {
-    const polyMesh& mesh = outPatch.boundaryMesh().mesh();
+    const polyMesh& mesh = outPatch.mesh();
 
     // Restore the topology. Convert the patch-local face label to a mesh face
     // label. Set the cell as the face's owner.

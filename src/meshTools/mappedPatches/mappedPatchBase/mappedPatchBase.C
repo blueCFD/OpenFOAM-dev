@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -261,7 +261,7 @@ void Foam::mappedPatchBase::calcMapping() const
                 {
                     FatalErrorInFunction
                         << "' in region '"
-                        << patch_.boundaryMesh().mesh().name();
+                        << patch_.mesh().name();
                 }
                 FatalErrorInFunction
                     << "' from patch '" << nbrPatchName();
@@ -374,7 +374,7 @@ void Foam::mappedPatchBase::calcMapping() const
                 {
                     FatalErrorInFunction
                         << "' in region '"
-                        << patch.boundaryMesh().mesh().name();
+                        << patch.mesh().name();
                 }
                 FatalErrorInFunction
                     << "' from patch '" << nbrPatch.name();
@@ -382,7 +382,7 @@ void Foam::mappedPatchBase::calcMapping() const
                 {
                     FatalErrorInFunction
                         << "' in region '"
-                        << nbrPatch.boundaryMesh().mesh().name();
+                        << nbrPatch.mesh().name();
                 }
                 FatalErrorInFunction
                     << "' failed because faces at the following locations "

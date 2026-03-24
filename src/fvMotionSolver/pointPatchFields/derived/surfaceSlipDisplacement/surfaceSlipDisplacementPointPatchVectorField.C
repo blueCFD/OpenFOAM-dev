@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ void surfaceSlipDisplacementPointPatchVectorField::calcProjection
     vectorField& displacement
 ) const
 {
-    const polyMesh& mesh = patch().boundaryMesh().mesh()();
+    const polyMesh& mesh = patch().mesh()();
     const pointField& localPoints = patch().localPoints();
     const labelList& meshPoints = patch().meshPoints();
 

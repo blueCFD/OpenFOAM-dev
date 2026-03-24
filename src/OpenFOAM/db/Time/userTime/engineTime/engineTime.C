@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "engineTime.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -49,7 +49,7 @@ Foam::userTimes::engine::engine(const dictionary& controlDict)
     units::add
     (
         unitName(),
-        unitConversion(dimTime, 0, 0, userTimeToTime(1))
+        unitSet(dimTime, 0, 0, userTimeToTime(1))
     );
 }
 
@@ -83,7 +83,7 @@ Foam::word Foam::userTimes::engine::unitName() const
 }
 
 
-const Foam::unitConversion& Foam::userTimes::engine::units() const
+const Foam::unitSet& Foam::userTimes::engine::units() const
 {
     return Foam::units::lookup(unitName());
 }
@@ -92,7 +92,7 @@ const Foam::unitConversion& Foam::userTimes::engine::units() const
 bool Foam::userTimes::engine::read(const dictionary& controlDict)
 {
     omega_ = omega(dict(controlDict));
-    units::add(unitName(), unitConversion(dimTime, 0, 0, userTimeToTime(1)));
+    units::add(unitName(), unitSet(dimTime, 0, 0, userTimeToTime(1)));
     return true;
 }
 

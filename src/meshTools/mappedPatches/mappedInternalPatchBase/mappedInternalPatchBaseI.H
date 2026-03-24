@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ inline const Foam::word& Foam::mappedInternalPatchBase::nbrRegionName() const
 
 inline bool Foam::mappedInternalPatchBase::sameRegion() const
 {
-    return nbrRegionName_ == patch_.boundaryMesh().mesh().name();
+    return nbrRegionName_ == patch_.mesh().name();
 }
 
 

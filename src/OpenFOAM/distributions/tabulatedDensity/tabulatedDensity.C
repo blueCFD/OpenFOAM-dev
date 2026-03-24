@@ -44,7 +44,7 @@ namespace distributions
 
 Foam::distributions::tabulatedDensity::tabulatedDensity
 (
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -190,7 +190,7 @@ Foam::distributions::tabulatedDensity::integralPDFxPow
 void Foam::distributions::tabulatedDensity::write
 (
     Ostream& os,
-    const unitConversion& units
+    const unitSet& units
 ) const
 {
     FieldDistribution<distribution, tabulatedDensity>::write(os, units);

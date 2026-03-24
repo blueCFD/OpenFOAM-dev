@@ -84,7 +84,7 @@ Foam::waveVelocityFvPatchVectorField::waveVelocityFvPatchVectorField
 const Foam::fvMeshSubset&
 Foam::waveVelocityFvPatchVectorField::faceCellSubset() const
 {
-    const fvMesh& mesh = patch().boundaryMesh().mesh();
+    const fvMesh& mesh = patch().mesh();
     const label timeIndex = mesh.time().timeIndex();
 
     if

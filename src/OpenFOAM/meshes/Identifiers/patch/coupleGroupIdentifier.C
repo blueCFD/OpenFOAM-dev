@@ -51,7 +51,7 @@ Foam::label Foam::coupleGroupIdentifier::findOtherPatchID
 
     if (fnd == pbm.groupPatchIndices().end())
     {
-        if (&mesh == &thisPatch.boundaryMesh().mesh())
+        if (&mesh == &thisPatch.mesh())
         {
             // thisPatch should be in patchGroup
             FatalErrorInFunction
@@ -67,7 +67,7 @@ Foam::label Foam::coupleGroupIdentifier::findOtherPatchID
     // Mesh has patch group
     const labelList& patchIDs = fnd();
 
-    if (&mesh == &thisPatch.boundaryMesh().mesh())
+    if (&mesh == &thisPatch.mesh())
     {
         if (patchIDs.size() > 2 || patchIDs.size() == 0)
         {
@@ -76,7 +76,7 @@ Foam::label Foam::coupleGroupIdentifier::findOtherPatchID
                 << " with contents " << patchIDs
                 << " not of size < 2"
                 << " on patch " << thisPatch.name()
-                << " region " << thisPatch.boundaryMesh().mesh().name()
+                << " region " << thisPatch.mesh().name()
                 << exit(FatalError);
 
             return -1;

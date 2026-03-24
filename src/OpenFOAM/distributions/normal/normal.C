@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,7 +70,7 @@ Foam::tmp<Foam::scalarField> Foam::distributions::normal::PhiForZeroQ
 
 Foam::distributions::normal::normal
 (
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -190,7 +190,7 @@ Foam::scalar Foam::distributions::normal::mean() const
 void Foam::distributions::normal::write
 (
     Ostream& os,
-    const unitConversion& units
+    const unitSet& units
 ) const
 {
     FieldDistribution<unintegrableForNonZeroQ, normal>::write(os, units);

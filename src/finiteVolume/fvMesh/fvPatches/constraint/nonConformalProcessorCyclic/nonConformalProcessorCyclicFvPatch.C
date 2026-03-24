@@ -99,9 +99,9 @@ void Foam::nonConformalProcessorCyclicFvPatch::makeWeights(scalarField& w) const
         nonConformalCoupledFvPatch::makeWeights
         (
             w,
-          - boundaryMesh().mesh().Sf().boundaryField()[index()],
-            boundaryMesh().mesh().Cf().boundaryField()[index()]
-          - boundaryMesh().mesh().C().boundaryField()[index()]
+          - mesh().Sf().boundaryField()[index()],
+            mesh().Cf().boundaryField()[index()]
+          - mesh().C().boundaryField()[index()]
         );
     }
     else

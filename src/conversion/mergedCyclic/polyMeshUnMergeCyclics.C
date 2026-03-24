@@ -27,7 +27,7 @@ License
 #include "cyclicPolyPatch.H"
 #include "mergedCyclicPolyPatch.H"
 #include "polyTopoChange.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

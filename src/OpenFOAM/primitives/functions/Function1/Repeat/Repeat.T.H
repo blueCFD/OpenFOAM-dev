@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,7 +103,7 @@ class Repeat
         //- Read the period
         static scalar readPeriod
         (
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -120,7 +120,7 @@ public:
         Repeat
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -141,7 +141,7 @@ public:
         virtual inline Type integral(const scalar x1, const scalar x2) const;
 
         //- Write data to dictionary stream
-        virtual void write(Ostream& os, const unitConversions& units) const;
+        virtual void write(Ostream& os, const unitSets& units) const;
 
 
     // Member Operators

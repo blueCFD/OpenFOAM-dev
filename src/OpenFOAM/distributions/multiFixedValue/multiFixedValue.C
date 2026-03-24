@@ -42,7 +42,7 @@ namespace distributions
 
 Foam::distributions::multiFixedValue::multiFixedValue
 (
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -231,7 +231,7 @@ Foam::distributions::multiFixedValue::integralPDFxPow
 void Foam::distributions::multiFixedValue::write
 (
     Ostream& os,
-    const unitConversion& units
+    const unitSet& units
 ) const
 {
     FieldDistribution<distribution, multiFixedValue>::write(os, units);

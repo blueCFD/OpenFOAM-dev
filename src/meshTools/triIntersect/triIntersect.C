@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ License
 #include "triIntersect.H"
 #include "boundBox.H"
 #include "cubicEqn.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "OFstream.H"
 #include "tensor2D.H"
 #include "vtkWritePolyData.H"

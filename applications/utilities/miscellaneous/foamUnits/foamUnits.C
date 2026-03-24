@@ -54,7 +54,7 @@ Example usage:
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "stringOps.H"
 #include "IOobject.T.H"
 
@@ -66,7 +66,7 @@ string standardUnitName
 (
     const wordList& dimensionUnitNames,
     const wordList& dimlessUnitNames,
-    const unitConversion& unit
+    const unitSet& unit
 )
 {
     string result;
@@ -79,9 +79,9 @@ string standardUnitName
         if (e != 1) result.append("^" + name(e));
         result.append(" ");
     }
-    for (label i = 0; i < unitConversion::nDimlessUnits; ++ i)
+    for (label i = 0; i < unitSet::nDimlessUnits; ++ i)
     {
-        const scalar e = unit[static_cast<unitConversion::dimlessUnitType>(i)];
+        const scalar e = unit[static_cast<unitSet::dimlessUnitType>(i)];
         if (e == 0) continue;
         result.append(dimlessUnitNames[i]);
         if (e != 1) result.append("^" + name(e));
@@ -132,7 +132,7 @@ bool isFundamental(const dimensionSet& dimension)
 }
 
 
-bool isFundamental(const unitConversion& unit)
+bool isFundamental(const unitSet& unit)
 {
     label result = 0;
 
@@ -147,10 +147,10 @@ bool isFundamental(const unitConversion& unit)
           : -1;
     }
 
-    for (label i = 0; i < unitConversion::nDimlessUnits; ++ i)
+    for (label i = 0; i < unitSet::nDimlessUnits; ++ i)
     {
-        const unitConversion::dimlessUnitType t =
-            static_cast<unitConversion::dimlessUnitType>(i);
+        const unitSet::dimlessUnitType t =
+            static_cast<unitSet::dimlessUnitType>(i);
 
         result =
             result == 0 && unit[t] == 1 ? 1
@@ -210,10 +210,10 @@ int main(int argc, char *argv[])
 
     // Build lists of fundamental unit names
     wordList dimensionUnitNames(dimensionSet::nDimensions);
-    wordList dimlessUnitNames(unitConversion::nDimlessUnits);
-    forAllConstIter(HashTable<unitConversion>, units::table(), iter)
+    wordList dimlessUnitNames(unitSet::nDimlessUnits);
+    forAllConstIter(HashTable<unitSet>, units::table(), iter)
     {
-        const unitConversion& unit = iter();
+        const unitSet& unit = iter();
 
         label dimensioni = -1, dimlessUniti = -1;
         for (label i = 0; i < dimensionSet::nDimensions; ++ i)
@@ -229,10 +229,10 @@ int main(int argc, char *argv[])
                 dimensioni = i;
             }
         }
-        for (label i = 0; i < unitConversion::nDimlessUnits; ++ i)
+        for (label i = 0; i < unitSet::nDimlessUnits; ++ i)
         {
-            const unitConversion::dimlessUnitType t =
-                static_cast<unitConversion::dimlessUnitType>(i);
+            const unitSet::dimlessUnitType t =
+                static_cast<unitSet::dimlessUnitType>(i);
             if (dimlessUniti >= 0 && unit[t] != 0)
             {
                 dimlessUniti = -1;
@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
              << endl;
     };
 
-    auto printUnit = [&](const word& name, const unitConversion& unit)
+    auto printUnit = [&](const word& name, const unitSet& unit)
     {
         const string standardName =
             standardUnitName(dimensionUnitNames, dimlessUnitNames, unit);
@@ -284,7 +284,7 @@ int main(int argc, char *argv[])
             printDimension(iter.key(), iter());
         }
 
-        forAllConstIter(HashTable<unitConversion>, units::table(), iter)
+        forAllConstIter(HashTable<unitSet>, units::table(), iter)
         {
             printUnit(iter.key(), iter());
         }
@@ -343,28 +343,28 @@ int main(int argc, char *argv[])
         assertStringIsUnit(name1);
         assertStringIsUnit(name2);
 
-        const unitConversion unit1
+        const unitSet unit1
         (
             IStringStream(("[" + name1 + "]").c_str())()
         );
-        const unitConversion unit2
+        const unitSet unit2
         (
             IStringStream(("[" + name2 + "]").c_str())()
         );
 
         // Check the units are the same, except for the multiplier
-        unitConversion
+        unitSet
         (
             unit1.dimensions(),
-            unit1[unitConversion::FRACTION],
-            unit1[unitConversion::ANGLE],
+            unit1[unitSet::FRACTION],
+            unit1[unitSet::ANGLE],
             1
         )
-      + unitConversion
+      + unitSet
         (
             unit2.dimensions(),
-            unit2[unitConversion::FRACTION],
-            unit2[unitConversion::ANGLE],
+            unit2[unitSet::FRACTION],
+            unit2[unitSet::ANGLE],
             1
         );
 
@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
         DynamicList<word> derivedUnits;
         DynamicList<word> scaledUnits;
         DynamicList<word> derivedScaledUnits;
-        forAllConstIter(HashTable<unitConversion>, units::table(), iter)
+        forAllConstIter(HashTable<unitSet>, units::table(), iter)
         {
             (
                 isFundamental(iter()) && iter().standard() ? fundamentalUnits

@@ -23,13 +23,13 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "dictionary.H"
 #include "symbols.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::unitConversion::unitConversion(Istream& is)
+Foam::unitSet::unitSet(Istream& is)
 :
     dimensions_(dimless),
     multiplier_(NaN)
@@ -40,9 +40,9 @@ Foam::unitConversion::unitConversion(Istream& is)
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::unitConversion::read(const word& keyword, const dictionary& dict)
+void Foam::unitSet::read(const word& keyword, const dictionary& dict)
 {
-    const unitConversion units(dict.lookup(keyword));
+    const unitSet units(dict.lookup(keyword));
 
     if (!compare(*this, units, false))
     {
@@ -57,9 +57,9 @@ void Foam::unitConversion::read(const word& keyword, const dictionary& dict)
 }
 
 
-void Foam::unitConversion::read(Istream& is)
+void Foam::unitSet::read(Istream& is)
 {
-    const unitConversion units(is);
+    const unitSet units(is);
 
     if (!compare(*this, units, false))
     {
@@ -73,14 +73,14 @@ void Foam::unitConversion::read(Istream& is)
 }
 
 
-void Foam::unitConversion::read
+void Foam::unitSet::read
 (
     const word& keyword,
     const dictionary& dict,
     Istream& is
 )
 {
-    const unitConversion units(is);
+    const unitSet units(is);
 
     if (!compare(*this, units, false))
     {
@@ -95,7 +95,7 @@ void Foam::unitConversion::read
 }
 
 
-bool Foam::unitConversion::readIfPresent
+bool Foam::unitSet::readIfPresent
 (
     const word& keyword,
     const dictionary& dict
@@ -105,7 +105,7 @@ bool Foam::unitConversion::readIfPresent
 
     if (entryPtr)
     {
-        const unitConversion units(entryPtr->stream());
+        const unitSet units(entryPtr->stream());
 
         if (!compare(*this, units, false))
         {
@@ -135,16 +135,16 @@ bool Foam::unitConversion::readIfPresent
 }
 
 
-bool Foam::unitConversion::readIfPresent(Istream& is)
+bool Foam::unitSet::readIfPresent(Istream& is)
 {
     token nextToken(is);
     is.putBack(nextToken);
 
     if (nextToken != token::BEGIN_SQR) return false;
 
-    const unitConversion units(is);
+    const unitSet units(is);
 
-    if (!unitConversion::compare(units, *this, false))
+    if (!unitSet::compare(units, *this, false))
     {
         FatalIOErrorInFunction(is)
             << "The units " << units.info() << " provided do not match "
@@ -152,7 +152,7 @@ bool Foam::unitConversion::readIfPresent(Istream& is)
             << abort(FatalIOError);
     }
 
-    if (debug && (any() || !unitConversion::compare(units, *this, true)))
+    if (debug && (any() || !unitSet::compare(units, *this, true)))
     {
         Info<< "Unit conversion at line " << is.lineNumber()
             << " of file " << is.name()
@@ -165,7 +165,7 @@ bool Foam::unitConversion::readIfPresent(Istream& is)
 }
 
 
-bool Foam::unitConversion::readIfPresent
+bool Foam::unitSet::readIfPresent
 (
     const word& keyword,
     const dictionary& dict,
@@ -177,9 +177,9 @@ bool Foam::unitConversion::readIfPresent
 
     if (nextToken != token::BEGIN_SQR) return false;
 
-    const unitConversion units(is);
+    const unitSet units(is);
 
-    if (!unitConversion::compare(units, *this, false))
+    if (!unitSet::compare(units, *this, false))
     {
         FatalIOErrorInFunction(dict)
             << "The units " << units.info() << " of " << keyword
@@ -188,7 +188,7 @@ bool Foam::unitConversion::readIfPresent
             << abort(FatalIOError);
     }
 
-    if (debug && (any() || !unitConversion::compare(units, *this, true)))
+    if (debug && (any() || !unitSet::compare(units, *this, true)))
     {
         Info<< "Unit conversion of " << keyword
             << " in dictionary " << dict.name()
@@ -203,7 +203,7 @@ bool Foam::unitConversion::readIfPresent
 
 // * * * * * * * * * * * * * * Friend Operators * * * * * * * * * * * * * * //
 
-Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
+Foam::Istream& Foam::operator>>(Istream& is, unitSet& units)
 {
     token nextToken;
 
@@ -212,7 +212,7 @@ Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
     if (nextToken != token::BEGIN_SQR)
     {
         FatalIOErrorInFunction(is)
-            << "expected a " << token::BEGIN_SQR << " in unitConversion"
+            << "expected a " << token::BEGIN_SQR << " in unitSet"
             << endl << "in stream " << is.info() << ", got a "
             << nextToken << exit(FatalIOError);
     }
@@ -232,7 +232,7 @@ Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
             symbols::parseNoBeginOrEnd
             (
                 is,
-                unitConversion(dimless, 0, 0, 1),
+                unitSet(dimless, 0, 0, 1),
                 Foam::units::table()
             )
         );
@@ -242,13 +242,13 @@ Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
         if (nextToken != token::END_SQR)
         {
             FatalIOErrorInFunction(is)
-                << "expected a " << token::END_SQR << " in unitConversion "
+                << "expected a " << token::END_SQR << " in unitSet "
                 << endl << "in stream " << is.info() << ", got a "
                 << nextToken << exit(FatalIOError);
         }
 
         // Check state of Istream
-        is.check("Istream& operator>>(Istream&, unitConversion&)");
+        is.check("Istream& operator>>(Istream&, unitSet&)");
 
         return is;
     }
@@ -272,14 +272,14 @@ Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
         // Read the dimensionless units if present, or set to zero
         if (!nextToken.isNumber())
         {
-            for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+            for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
             {
                 units.exponents_[i] = 0;
             }
         }
         else
         {
-            for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+            for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
             {
                 is  >> units.exponents_[i];
             }
@@ -310,7 +310,7 @@ Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
             if (nextToken != token::END_SQR)
             {
                 FatalIOErrorInFunction(is)
-                    << "expected a " << token::END_SQR << " in unitConversion "
+                    << "expected a " << token::END_SQR << " in unitSet "
                     << endl << "in stream " << is.info() << ", got a "
                     << nextToken << exit(FatalIOError);
             }
@@ -323,13 +323,13 @@ Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
         {
             FatalIOErrorInFunction(is)
                 << "expected a " << token::END_SQR << " or a " << token::COLON
-                << " in unitConversion " << endl << "in stream " << is.info()
+                << " in unitSet " << endl << "in stream " << is.info()
                 << ", got a " << nextToken << exit(FatalIOError);
         }
     }
     else if (nextToken == token::END_SQR)
     {
-        for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+        for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
         {
             units.exponents_[i] = 0;
         }
@@ -340,18 +340,18 @@ Foam::Istream& Foam::operator>>(Istream& is, unitConversion& units)
     {
         FatalIOErrorInFunction(is)
             << "expected a " << token::END_SQR << " or a " << token::COLON
-            << " in unitConversion " << endl << "in stream " << is.info()
+            << " in unitSet " << endl << "in stream " << is.info()
             << ", got a " << nextToken << exit(FatalIOError);
     }
 
     // Check state of Istream
-    is.check("Istream& operator>>(Istream&, unitConversion&)");
+    is.check("Istream& operator>>(Istream&, unitSet&)");
 
     return is;
 }
 
 
-Foam::Ostream& Foam::operator<<(Ostream& os, const unitConversion& units)
+Foam::Ostream& Foam::operator<<(Ostream& os, const unitSet& units)
 {
     // Write the start
     os << token::BEGIN_SQR;
@@ -361,11 +361,11 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const unitConversion& units)
 
     // Determine if any dimensionless units are non-zero
     bool nonZeroDimlessUnits = false;
-    for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+    for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
     {
         nonZeroDimlessUnits =
             nonZeroDimlessUnits
-         || mag(units.exponents_[i]) > unitConversion::smallExponent;
+         || mag(units.exponents_[i]) > unitSet::smallExponent;
     }
 
     // Determine if the multiplier is non-unity
@@ -380,7 +380,7 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const unitConversion& units)
     // Write the dimensionless units if any are non-zero
     if (nonZeroDimlessUnits)
     {
-        for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+        for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
         {
             os  << token::SPACE << units.exponents_[i];
         }
@@ -402,7 +402,7 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const unitConversion& units)
     os  << token::END_SQR;
 
     // Check state of Ostream
-    os.check("Ostream& operator<<(Ostream&, const unitConversion&)");
+    os.check("Ostream& operator<<(Ostream&, const unitSet&)");
 
     return os;
 }
@@ -411,10 +411,10 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const unitConversion& units)
 Foam::Ostream& Foam::operator<<
 (
     Ostream& os,
-    const InfoProxy<unitConversion>& ip
+    const InfoProxy<unitSet>& ip
 )
 {
-    const unitConversion& units = ip.t_;
+    const unitSet& units = ip.t_;
 
     // Filter out special cases
     if (units.any())
@@ -434,11 +434,11 @@ Foam::Ostream& Foam::operator<<
 
     // Determine if any dimensionless units are non-zero
     bool nonZeroDimlessUnits = false;
-    for (int i = 0; i < unitConversion::nDimlessUnits; ++ i)
+    for (int i = 0; i < unitSet::nDimlessUnits; ++ i)
     {
         nonZeroDimlessUnits =
             nonZeroDimlessUnits
-         || mag(units.exponents_[i]) > unitConversion::smallExponent;
+         || mag(units.exponents_[i]) > unitSet::smallExponent;
     }
 
     // Determine if the multiplier is non-unity
@@ -453,12 +453,12 @@ Foam::Ostream& Foam::operator<<
     // Write the dimensionless units if any are non-zero
     if (nonZeroDimlessUnits)
     {
-        for (int i=0; i<unitConversion::nDimlessUnits; i++)
+        for (int i=0; i<unitSet::nDimlessUnits; i++)
         {
-            if (mag(units.exponents_[i]) > unitConversion::smallExponent)
+            if (mag(units.exponents_[i]) > unitSet::smallExponent)
             {
-                os << token::SPACE << unitConversion::dimlessUnitTypeNames_
-                      [static_cast<unitConversion::dimlessUnitType>(i)];
+                os << token::SPACE << unitSet::dimlessUnitTypeNames_
+                      [static_cast<unitSet::dimlessUnitType>(i)];
 
                 if (units.exponents_[i] != 1)
                 {
@@ -484,7 +484,7 @@ Foam::Ostream& Foam::operator<<
     os  << token::END_SQR;
 
     // Check state of Ostream
-    os.check("Ostream& operator<<(Ostream&, const InfoProxy<unitConversion>&)");
+    os.check("Ostream& operator<<(Ostream&, const InfoProxy<unitSet>&)");
 
     return os;
 }

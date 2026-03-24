@@ -64,7 +64,7 @@ Foam::tmp<Foam::scalarField> Foam::distributions::RosinRammler::PhiForZeroQ
 
 Foam::distributions::RosinRammler::RosinRammler
 (
-    const unitConversion& units,
+    const unitSet& units,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -135,7 +135,7 @@ Foam::scalar Foam::distributions::RosinRammler::max() const
 void Foam::distributions::RosinRammler::write
 (
     Ostream& os,
-    const unitConversion& units
+    const unitSet& units
 ) const
 {
     FieldDistribution<unintegrableForNonZeroQ, RosinRammler>::write(os, units);

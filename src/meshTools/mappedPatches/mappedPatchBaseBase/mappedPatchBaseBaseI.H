@@ -62,7 +62,7 @@ inline const Foam::transformer& Foam::mappedPatchBaseBase::transform() const
 
 inline bool Foam::mappedPatchBaseBase::sameRegion() const
 {
-    return nbrRegionName() == patch_.boundaryMesh().mesh().name();
+    return nbrRegionName() == patch_.mesh().name();
 }
 
 

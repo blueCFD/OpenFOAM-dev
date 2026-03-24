@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,7 +91,7 @@ class dimensioned
         void initialise
         (
             const word& name,
-            const unitConversion& defaultUnits,
+            const unitSet& defaultUnits,
             Istream& is
         );
 
@@ -131,13 +131,13 @@ public:
         dimensioned(const word&, const dimensionSet&, Istream&);
 
         //- Construct from an Istream with a given name and units
-        dimensioned(const word&, const unitConversion&, Istream&);
+        dimensioned(const word&, const unitSet&, Istream&);
 
         //- Construct from dictionary lookup with a given name and dimensions
         dimensioned(const word&, const dimensionSet&, const dictionary&);
 
         //- Construct from dictionary lookup with a given name and units
-        dimensioned(const word&, const unitConversion&, const dictionary&);
+        dimensioned(const word&, const unitSet&, const dictionary&);
 
         //- Construct from dictionary lookup with a given name and dimensions
         //  and if not found set to the given default value
@@ -165,7 +165,7 @@ public:
         dimensioned
         (
             const word& name,
-            const unitConversion&,
+            const unitSet&,
             const dictionary&,
             const Type& defaultValue,
             const bool writeDefault = dictionary::writeOptionalEntries > 0
@@ -205,14 +205,14 @@ public:
         void read
         (
             const dictionary&,
-            const unitConversion& defaultUnits = NullObjectRef<unitConversion>()
+            const unitSet& defaultUnits = NullObjectRef<unitSet>()
         );
 
         //- Update the value of dimensioned<Type> if found in the dictionary.
         bool readIfPresent
         (
             const dictionary&,
-            const unitConversion& defaultUnits = NullObjectRef<unitConversion>()
+            const unitSet& defaultUnits = NullObjectRef<unitSet>()
         );
 
         //- Update the value of dimensioned<Type> if found in the dictionary
@@ -221,7 +221,7 @@ public:
         (
             const dictionary&,
             const Type& defaultValue,
-            const unitConversion& defaultUnits = NullObjectRef<unitConversion>()
+            const unitSet& defaultUnits = NullObjectRef<unitSet>()
         );
 
 

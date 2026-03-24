@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,7 +45,7 @@ template<class T>
 T Foam::dictionary::readType
 (
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     ITstream& is
 ) const
 {
@@ -161,7 +161,7 @@ template<class T>
 T Foam::dictionary::lookup
 (
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     bool recursive,
     bool patternMatch
 ) const
@@ -206,7 +206,7 @@ template<class T>
 T Foam::dictionary::lookupBackwardsCompatible
 (
     const wordList& keywords,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     bool recursive,
     bool patternMatch
 ) const
@@ -259,7 +259,7 @@ template<class T>
 T Foam::dictionary::lookupOrDefault
 (
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const T& defaultValue,
     const bool writeDefault
 ) const
@@ -310,7 +310,7 @@ template<class T>
 T Foam::dictionary::lookupOrDefaultBackwardsCompatible
 (
     const wordList& keywords,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const T& defaultValue
 ) const
 {
@@ -392,7 +392,7 @@ template<class T>
 bool Foam::dictionary::readIfPresent
 (
     const word& keyword,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     T& val,
     bool recursive,
     bool patternMatch
@@ -535,7 +535,7 @@ void Foam::writeEntry
 (
     Ostream& os,
     const word& entryName,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const EntryType& value
 )
 {
@@ -566,7 +566,7 @@ void Foam::writeEntryIfDifferent
 (
     Ostream& os,
     const word& entryName,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const EntryType& value1,
     const EntryType& value2
 )

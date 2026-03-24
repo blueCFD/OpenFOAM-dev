@@ -44,7 +44,7 @@ namespace distributions
 
 Foam::distributions::tabulatedCumulative::tabulatedCumulative
 (
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const dictionary& dict,
     const label sampleQ,
     randomGenerator&& rndGen
@@ -261,7 +261,7 @@ Foam::distributions::tabulatedCumulative::integralPDFxPow
 void Foam::distributions::tabulatedCumulative::write
 (
     Ostream& os,
-    const unitConversion& units
+    const unitSet& units
 ) const
 {
     FieldDistribution<distribution, tabulatedCumulative>::write(os, units);

@@ -23,52 +23,23 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "unitConversion.H"
-#include "mathematicalConstants.H"
+#include "Function2.T.H"
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
 
-inline const Foam::dimensionSet& Foam::unitConversion::dimensions() const
-{
-    return dimensions_;
-}
-
-
-inline bool Foam::unitConversion::any() const
-{
-    return multiplier_ == 0;
-}
-
-
-inline bool Foam::unitConversion::none() const
-{
-    return multiplier_ == -1;
-}
-
-
-inline bool Foam::unitConversion::standard() const
-{
-    return multiplier_ == 1 || any() || none();
-}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-inline Foam::scalar Foam::unitConversion::operator[]
+void Foam::assertNoConvertUnits
 (
-    const dimensionSet::dimensionType type
-) const
+    const word& typeName,
+    const Function2s::unitSets& units,
+    const dictionary& dict
+)
 {
-    return dimensions_[type];
-}
-
-
-inline Foam::scalar Foam::unitConversion::operator[]
-(
-    const dimlessUnitType type
-) const
-{
-    return exponents_[static_cast<int>(type)];
+    if (!units.x.standard() || !units.y.standard() || !units.value.standard())
+    {
+        FatalIOErrorInFunction(dict)
+            << "Unit conversions are not supported by "
+            << typeName << " function2 types" << abort(FatalError);
+    }
 }
 
 

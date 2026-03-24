@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -395,7 +395,7 @@ const Foam::edgeList& Foam::cyclicPolyPatch::coupledPoints() const
         {
             OFstream str
             (
-                boundaryMesh().mesh().time().path()
+                mesh().time().path()
                /name() + "_coupledPoints.obj"
             );
             label vertI = 0;
@@ -529,7 +529,7 @@ const Foam::edgeList& Foam::cyclicPolyPatch::coupledEdges() const
         {
             OFstream str
             (
-                boundaryMesh().mesh().time().path()
+                mesh().time().path()
                /name() + "_coupledEdges.obj"
             );
             label vertI = 0;

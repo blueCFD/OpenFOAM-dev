@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ SourceFiles
 #define Function1_H
 
 #include "dictionary.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "tmp.H"
 #include "typeInfo.T.H"
 #include "Field.T.H"
@@ -56,32 +56,32 @@ template<class Type> class Function1;
 template<class Type> Ostream& operator<<(Ostream&, const Function1<Type>&);
 
 /*---------------------------------------------------------------------------*\
-                Class Function1s::unitConversions Declaration
+                Class Function1s::unitSets Declaration
 \*---------------------------------------------------------------------------*/
 
 namespace Function1s
 {
-struct unitConversions
+struct unitSets
 {
     // Public Data
 
         //- Unit conversion for x-axis values
-        unitConversion x;
+        unitSet x;
 
         //- Unit conversion for result values
-        unitConversion value;
+        unitSet value;
 
 
     // Constructors
 
         //- Construct from initialiser list
-        unitConversions(std::initializer_list<unitConversion>);
+        unitSets(std::initializer_list<unitSet>);
 
         //- Construct from stream
-        unitConversions(Istream& is);
+        unitSets(Istream& is);
 
         //- Construct a clone
-        autoPtr<unitConversions> clone() const;
+        autoPtr<unitSets> clone() const;
 
 
     // Member Functions
@@ -98,21 +98,21 @@ struct unitConversions
 void assertNoConvertUnits
 (
     const word& typeName,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const dictionary& dict
 );
 
 //- Write a units entry
-void writeEntry(Ostream& os, const Function1s::unitConversions& units);
+void writeEntry(Ostream& os, const Function1s::unitSets& units);
 
 
 // IOStream Operators
 
 //- Read from stream
-Istream& operator>>(Istream& is, Function1s::unitConversions&);
+Istream& operator>>(Istream& is, Function1s::unitSets&);
 
 //- Write to stream
-Ostream& operator<<(Ostream& os, const Function1s::unitConversions&);
+Ostream& operator<<(Ostream& os, const Function1s::unitSets&);
 
 
 /*---------------------------------------------------------------------------*\
@@ -151,7 +151,7 @@ public:
             dictionary,
             (
                 const word& name,
-                const Function1s::unitConversions& units,
+                const Function1s::unitSets& units,
                 const dictionary& dict
             ),
             (name, units, dict)
@@ -164,7 +164,7 @@ public:
             Istream,
             (
                 const word& name,
-                const Function1s::unitConversions& units,
+                const Function1s::unitSets& units,
                 Istream& is
             ),
             (name, units, is)
@@ -189,7 +189,7 @@ public:
         static autoPtr<Function1<Type>> New
         (
             const word& name,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict
         );
 
@@ -197,23 +197,23 @@ public:
         static autoPtr<Function1<Type>> New
         (
             const word& name,
-            const unitConversion& xUnits,
-            const unitConversion& valueUnits,
+            const unitSet& xUnits,
+            const unitSet& valueUnits,
             const dictionary& dict
         );
 
         //- Select from an entry
         static autoPtr<Function1<Type>> New
         (
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const entry& e
         );
 
         //- Select from an entry
         static autoPtr<Function1<Type>> New
         (
-            const unitConversion& xUnits,
-            const unitConversion& valueUnits,
+            const unitSet& xUnits,
+            const unitSet& valueUnits,
             const entry& e
         );
 
@@ -221,7 +221,7 @@ public:
         static autoPtr<Function1<Type>> New
         (
             const word& name,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const word& Function1Type,
             Istream& is
         );
@@ -230,8 +230,8 @@ public:
         static autoPtr<Function1<Type>> New
         (
             const word& name,
-            const unitConversion& xUnits,
-            const unitConversion& valueUnits,
+            const unitSet& xUnits,
+            const unitSet& valueUnits,
             const word& Function1Type,
             Istream& is
         );
@@ -269,7 +269,7 @@ public:
         virtual void write
         (
             Ostream& os,
-            const Function1s::unitConversions&
+            const Function1s::unitSets&
         ) const = 0;
 
 
@@ -297,7 +297,7 @@ template<class Type>
 void writeEntry
 (
     Ostream& os,
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const Function1<Type>& f1
 );
 
@@ -305,8 +305,8 @@ template<class Type>
 void writeEntry
 (
     Ostream& os,
-    const unitConversion& xUnits,
-    const unitConversion& valueUnits,
+    const unitSet& xUnits,
+    const unitSet& valueUnits,
     const Function1<Type>& f1
 );
 

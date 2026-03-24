@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -215,7 +215,7 @@ inline bool Foam::DLListBase::iterator::operator!=(const iterator& iter) const
 
 
 inline Foam::DLListBase::link&
-Foam::DLListBase::iterator::operator*()
+Foam::DLListBase::iterator::operator*() const
 {
     return *curElmt_;
 }
@@ -317,7 +317,7 @@ inline bool Foam::DLListBase::const_iterator::operator!=
 
 
 inline const Foam::DLListBase::link&
-Foam::DLListBase::const_iterator::operator*()
+Foam::DLListBase::const_iterator::operator*() const
 {
     return *curElmt_;
 }
@@ -424,7 +424,7 @@ inline bool Foam::DLListBase::const_reverse_iterator::operator!=
 
 
 inline const Foam::DLListBase::link&
-Foam::DLListBase::const_reverse_iterator::operator*()
+Foam::DLListBase::const_reverse_iterator::operator*() const
 {
     return *curElmt_;
 }

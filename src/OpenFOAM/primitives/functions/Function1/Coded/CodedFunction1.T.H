@@ -105,7 +105,7 @@ class Coded
         static const wordList copyFiles;
 
         //- Cache of the unit conversions
-        const unitConversions units_;
+        const unitSets units_;
 
         //- The dynamically generated Function1 pointer
         mutable autoPtr<Function1<Type>> redirectFunction1Ptr_;
@@ -123,7 +123,7 @@ public:
         Coded
         (
             const word& name,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict
         );
 
@@ -157,7 +157,7 @@ public:
         ) const;
 
         //- Write data to dictionary stream
-        virtual void write(Ostream& os, const unitConversions& units) const;
+        virtual void write(Ostream& os, const unitSets& units) const;
 
 
     // Member Operators

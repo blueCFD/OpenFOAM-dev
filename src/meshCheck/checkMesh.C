@@ -25,7 +25,7 @@ License
 
 #include "meshCheck.H"
 #include "IOmanip.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

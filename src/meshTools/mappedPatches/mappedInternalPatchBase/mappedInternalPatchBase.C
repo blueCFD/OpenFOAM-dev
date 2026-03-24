@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -286,7 +286,7 @@ Foam::mappedInternalPatchBase::mappedInternalPatchBase
 )
 :
     patch_(pp),
-    nbrRegionName_(patch_.boundaryMesh().mesh().name()),
+    nbrRegionName_(patch_.mesh().name()),
     offsetMode_(NORMAL),
     distance_(NaN),
     offset_(vector::uniform(NaN)),
@@ -323,7 +323,7 @@ Foam::mappedInternalPatchBase::mappedInternalPatchBase
         dict.lookupOrDefaultBackwardsCompatible<word>
         (
             {"neighbourRegion", "sampleRegion"},
-            patch_.boundaryMesh().mesh().name()
+            patch_.mesh().name()
         )
     ),
     offsetMode_(readOffsetMode(dict)),
@@ -370,7 +370,7 @@ Foam::mappedInternalPatchBase::~mappedInternalPatchBase()
 
 const Foam::polyMesh& Foam::mappedInternalPatchBase::nbrMesh() const
 {
-    return patch_.boundaryMesh().mesh().time().lookupObject<polyMesh>
+    return patch_.mesh().time().lookupObject<polyMesh>
     (
         nbrRegionName()
     );
@@ -379,7 +379,7 @@ const Foam::polyMesh& Foam::mappedInternalPatchBase::nbrMesh() const
 
 Foam::tmp<Foam::pointField> Foam::mappedInternalPatchBase::samplePoints() const
 {
-    const polyMesh& mesh = patch_.boundaryMesh().mesh();
+    const polyMesh& mesh = patch_.mesh();
 
     // Force construction of min-tet decomp
     (void)mesh.tetBasePtIs();
@@ -475,7 +475,7 @@ void Foam::mappedInternalPatchBase::write(Ostream& os) const
     (
         os,
         "neighbourRegion",
-        patch_.boundaryMesh().mesh().name(),
+        patch_.mesh().name(),
         nbrRegionName_
     );
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -80,13 +80,13 @@ inline bool Foam::labelRange::const_iterator::operator!=
 }
 
 
-inline Foam::label Foam::labelRange::const_iterator::operator*()
+inline Foam::label Foam::labelRange::const_iterator::operator*() const
 {
     return range_[index_];
 }
 
 
-inline Foam::label Foam::labelRange::const_iterator::operator()()
+inline Foam::label Foam::labelRange::const_iterator::operator()() const
 {
     return range_[index_];
 }

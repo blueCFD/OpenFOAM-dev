@@ -156,9 +156,9 @@ public:
                 inline bool operator==(const iterator&) const;
                 inline bool operator!=(const iterator&) const;
 
-                inline solver& operator*();
-                inline solver& operator()();
-                inline solver* operator->();
+                inline solver& operator*() const;
+                inline solver& operator()() const;
+                inline solver* operator->() const;
 
                 inline iterator operator++();
                 inline iterator operator++(int);

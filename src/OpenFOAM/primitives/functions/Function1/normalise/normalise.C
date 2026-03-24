@@ -41,7 +41,7 @@ namespace Function1s
 Foam::Function1s::normalise::normalise
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -72,7 +72,7 @@ Foam::Function1s::normalise::~normalise()
 void Foam::Function1s::normalise::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, units.x, bounds_);

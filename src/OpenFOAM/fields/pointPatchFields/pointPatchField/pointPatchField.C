@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -89,7 +89,7 @@ Foam::pointPatchField<Type>::pointPatchField
 template<class Type>
 const Foam::objectRegistry& Foam::pointPatchField<Type>::db() const
 {
-    return patch_.boundaryMesh().mesh()();
+    return patch_.mesh()();
 }
 
 

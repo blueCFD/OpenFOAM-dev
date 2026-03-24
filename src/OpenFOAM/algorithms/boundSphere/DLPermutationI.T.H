@@ -238,6 +238,22 @@ Foam::DLPermutation<LabelList>::end() const
 
 template<class LabelList>
 inline typename Foam::DLPermutation<LabelList>::const_iterator
+Foam::DLPermutation<LabelList>::cbegin() const
+{
+    return const_iterator(*this, head_);
+}
+
+
+template<class LabelList>
+inline typename Foam::DLPermutation<LabelList>::const_iterator
+Foam::DLPermutation<LabelList>::cend() const
+{
+    return const_iterator(*this, -1);
+}
+
+
+template<class LabelList>
+inline typename Foam::DLPermutation<LabelList>::const_iterator
 Foam::DLPermutation<LabelList>::rbegin() const
 {
     return const_iterator(*this, tail_);
@@ -247,6 +263,22 @@ Foam::DLPermutation<LabelList>::rbegin() const
 template<class LabelList>
 inline typename Foam::DLPermutation<LabelList>::const_iterator
 Foam::DLPermutation<LabelList>::rend() const
+{
+    return const_iterator(*this, -2);
+}
+
+
+template<class LabelList>
+inline typename Foam::DLPermutation<LabelList>::const_iterator
+Foam::DLPermutation<LabelList>::crbegin() const
+{
+    return const_iterator(*this, tail_);
+}
+
+
+template<class LabelList>
+inline typename Foam::DLPermutation<LabelList>::const_iterator
+Foam::DLPermutation<LabelList>::crend() const
 {
     return const_iterator(*this, -2);
 }

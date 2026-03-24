@@ -41,7 +41,7 @@ Foam::scalar Foam::lumpedMassTemperatureFvPatchScalarField::V() const
 {
     return
        -gSum(patch().Sf() & patch().Cf())
-       /patch().boundaryMesh().mesh().nSolutionD();
+       /patch().mesh().nSolutionD();
 }
 
 

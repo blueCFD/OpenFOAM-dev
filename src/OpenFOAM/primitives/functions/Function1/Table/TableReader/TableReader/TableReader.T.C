@@ -30,7 +30,7 @@ License
 template<class Coordinate, class Value>
 void Foam::TableReader<Coordinate, Value>::convertRead
 (
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     List<Tuple2<Coordinate, Value>>& table
 ) const
 {
@@ -46,7 +46,7 @@ template<class Coordinate, class Value>
 Foam::List<Foam::Tuple2<Coordinate, Value>>
 Foam::TableReader<Coordinate, Value>::convertRead
 (
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const List<Tuple2<Coordinate, Value>>& table
 ) const
 {
@@ -60,7 +60,7 @@ template<class Coordinate, class Value>
 Foam::List<Foam::Tuple2<Coordinate, Value>>
 Foam::TableReader<Coordinate, Value>::convertWrite
 (
-    const Function1s::unitConversions& units,
+    const Function1s::unitSets& units,
     const List<Tuple2<Coordinate, Value>>& table
 ) const
 {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -171,14 +171,14 @@ inline bool Foam::UPtrList<T>::iterator::operator!=(const iterator& iter) const
 
 
 template<class T>
-inline T& Foam::UPtrList<T>::iterator::operator*()
+inline T& Foam::UPtrList<T>::iterator::operator*() const
 {
     return **ptr_;
 }
 
 
 template<class T>
-inline T& Foam::UPtrList<T>::iterator::operator()()
+inline T& Foam::UPtrList<T>::iterator::operator()() const
 {
     return operator*();
 }
@@ -356,14 +356,14 @@ inline bool Foam::UPtrList<T>::const_iterator::operator!=
 
 
 template<class T>
-inline const T& Foam::UPtrList<T>::const_iterator::operator*()
+inline const T& Foam::UPtrList<T>::const_iterator::operator*() const
 {
     return **ptr_;
 }
 
 
 template<class T>
-inline const T& Foam::UPtrList<T>::const_iterator::operator()()
+inline const T& Foam::UPtrList<T>::const_iterator::operator()() const
 {
     return operator*();
 }

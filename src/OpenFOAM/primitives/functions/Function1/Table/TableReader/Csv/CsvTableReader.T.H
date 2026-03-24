@@ -155,7 +155,7 @@ public:
         Csv
         (
             const word& name,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const dictionary& dict
         );
 
@@ -180,7 +180,7 @@ public:
         virtual void write
         (
             Ostream& os,
-            const Function1s::unitConversions& units,
+            const Function1s::unitSets& units,
             const List<Tuple2<Coordinate, Value>>& table,
             const word& valuesKeyword=word::null
         ) const;

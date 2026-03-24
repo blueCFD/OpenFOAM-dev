@@ -45,7 +45,7 @@ Foam::mappedPatchBaseBase::mappedPatchBaseBase(const polyPatch& pp)
 :
     patch_(pp),
     coupleGroup_(),
-    nbrRegionName_(patch_.boundaryMesh().mesh().name()),
+    nbrRegionName_(patch_.mesh().name()),
     nbrPatchName_(patch_.name()),
     transform_(true),
     moveUpdate_(moveUpdate::always)
@@ -84,7 +84,7 @@ Foam::mappedPatchBaseBase::mappedPatchBaseBase
       : dict.lookupOrDefaultBackwardsCompatible<word>
         (
             {"neighbourRegion", "sampleRegion"},
-            pp.boundaryMesh().mesh().name()
+            pp.mesh().name()
         )
     ),
     nbrPatchName_
@@ -146,7 +146,7 @@ Foam::mappedPatchBaseBase::mappedPatchBaseBase
             FatalIOErrorInFunction(dict)
                 << word(cyclicTransform::transformTypeNames[cttt]).capitalise()
                 << " transform specified for patch '" << patch_.name()
-                << "' in region '" << patch_.boundaryMesh().mesh().name()
+                << "' in region '" << patch_.mesh().name()
                 << "'. This patch does not support transformed mapping."
                 << exit(FatalIOError);
         }
@@ -179,7 +179,7 @@ Foam::mappedPatchBaseBase::~mappedPatchBaseBase()
 
 bool Foam::mappedPatchBaseBase::haveNbr() const
 {
-    const polyMesh& mesh = patch_.boundaryMesh().mesh();
+    const polyMesh& mesh = patch_.mesh();
 
     return mesh.time().foundObject<polyMesh>(nbrRegionName());
 }
@@ -187,7 +187,7 @@ bool Foam::mappedPatchBaseBase::haveNbr() const
 
 const Foam::polyMesh& Foam::mappedPatchBaseBase::nbrMesh() const
 {
-    const polyMesh& mesh = patch_.boundaryMesh().mesh();
+    const polyMesh& mesh = patch_.mesh();
 
     return mesh.time().lookupObject<polyMesh>(nbrRegionName());
 }
@@ -218,14 +218,14 @@ bool Foam::mappedPatchBaseBase::moving
     const polyPatch& nbrPatch
 )
 {
-    const polyMesh& mesh = patch.boundaryMesh().mesh();
-    const polyMesh& nbrMesh = nbrPatch.boundaryMesh().mesh();
+    const polyMesh& mesh = patch.mesh();
+    const polyMesh& nbrMesh = nbrPatch.mesh();
 
     if (!mesh.moving() && !nbrMesh.moving()) return false;
 
     auto localPatchMoving = [](const polyPatch& patch)
     {
-        const polyMesh& mesh = patch.boundaryMesh().mesh();
+        const polyMesh& mesh = patch.mesh();
 
         if (!mesh.moving()) return false;
 

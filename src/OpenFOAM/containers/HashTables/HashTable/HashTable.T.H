@@ -412,7 +412,7 @@ public:
                 bool erase();
 
                 //- Return non-const access to referenced object
-                inline T& object();
+                inline T& object() const;
 
                 //- Return const access to referenced object
                 inline const T& cobject() const;
@@ -475,12 +475,8 @@ public:
             // Member Operators
 
                 //- Return referenced hash value
-                inline T& operator*();
-                inline T& operator()();
-
-                //- Return referenced hash value
-                inline const T& operator*() const;
-                inline const T& operator()() const;
+                inline T& operator*() const;
+                inline T& operator()() const;
 
                 inline iterator& operator++();
                 inline iterator operator++(int);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,23 +23,52 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Function2.T.H"
+#include "unitSet.H"
+#include "mathematicalConstants.H"
 
-// * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::assertNoConvertUnits
-(
-    const word& typeName,
-    const Function2s::unitConversions& units,
-    const dictionary& dict
-)
+inline const Foam::dimensionSet& Foam::unitSet::dimensions() const
 {
-    if (!units.x.standard() || !units.y.standard() || !units.value.standard())
-    {
-        FatalIOErrorInFunction(dict)
-            << "Unit conversions are not supported by "
-            << typeName << " function2 types" << abort(FatalError);
-    }
+    return dimensions_;
+}
+
+
+inline bool Foam::unitSet::any() const
+{
+    return multiplier_ == 0;
+}
+
+
+inline bool Foam::unitSet::none() const
+{
+    return multiplier_ == -1;
+}
+
+
+inline bool Foam::unitSet::standard() const
+{
+    return multiplier_ == 1 || any() || none();
+}
+
+
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
+
+inline Foam::scalar Foam::unitSet::operator[]
+(
+    const dimensionSet::dimensionType type
+) const
+{
+    return dimensions_[type];
+}
+
+
+inline Foam::scalar Foam::unitSet::operator[]
+(
+    const dimlessUnitType type
+) const
+{
+    return exponents_[static_cast<int>(type)];
 }
 
 

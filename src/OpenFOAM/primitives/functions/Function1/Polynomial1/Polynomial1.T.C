@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,11 +30,11 @@ License
 template<class Type>
 Foam::List<Type> Foam::Function1s::Polynomial<Type>::convertRead
 (
-    const unitConversions& units,
+    const unitSets& units,
     List<Type> coeffs
 )
 {
-    unitConversion unitsXPowI(units.x);
+    unitSet unitsXPowI(units.x);
     forAll(coeffs, i)
     {
         coeffs[i] = units.value.toStandard(unitsXPowI.toUser(coeffs[i]));
@@ -47,11 +47,11 @@ Foam::List<Type> Foam::Function1s::Polynomial<Type>::convertRead
 template<class Type>
 Foam::List<Type> Foam::Function1s::Polynomial<Type>::convertWrite
 (
-    const unitConversions& units,
+    const unitSets& units,
     List<Type> coeffs
 )
 {
-    unitConversion unitsXPowI(units.x);
+    unitSet unitsXPowI(units.x);
     forAll(coeffs, i)
     {
         coeffs[i] = units.value.toUser(unitsXPowI.toStandard(coeffs[i]));
@@ -67,7 +67,7 @@ template<class Type>
 Foam::Function1s::Polynomial<Type>::Polynomial
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -77,7 +77,7 @@ Foam::Function1s::Polynomial<Type>::Polynomial
         convertRead
         (
             dict.found("units")
-          ? Function1s::unitConversions(dict.lookup("units"))
+          ? Function1s::unitSets(dict.lookup("units"))
           : units,
             dict.lookup("coeffs")
         )
@@ -97,7 +97,7 @@ template<class Type>
 Foam::Function1s::Polynomial<Type>::Polynomial
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     Istream& is
 )
 :
@@ -168,7 +168,7 @@ template<class Type>
 void Foam::Function1s::Polynomial<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     writeEntry(os, "coeffs", convertWrite(units, coeffs_));

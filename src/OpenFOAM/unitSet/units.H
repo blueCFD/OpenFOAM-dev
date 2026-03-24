@@ -22,20 +22,20 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    unitConversions
+    unitSets
 
 Description
     Useful unit conversions
 
 SourceFiles
-    unitConversions.C
+    unitSets.C
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef units_H
 #define units_H
 
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "dimensions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -47,26 +47,26 @@ namespace Foam
 
 namespace units
 {
-    extern const unitConversion unitless;
+    extern const unitSet unitless;
 
-    extern const unitConversion any;
-    extern const unitConversion none;
+    extern const unitSet any;
+    extern const unitSet none;
 
-    extern const unitConversion fraction;
-    extern const unitConversion percent;
+    extern const unitSet fraction;
+    extern const unitSet percent;
 
-    extern const unitConversion radians;
-    extern const unitConversion rotations;
-    extern const unitConversion degrees;
+    extern const unitSet radians;
+    extern const unitSet rotations;
+    extern const unitSet degrees;
 
     //- Get the table of unit conversions
-    const HashTable<unitConversion>& table();
+    const HashTable<unitSet>& table();
 
     //- Add a unit conversion
-    void add(const word& name, const unitConversion& unit);
+    void add(const word& name, const unitSet& unit);
 
     //- Lookup and return the named unit from the table
-    inline const unitConversion& lookup(const word& unitName)
+    inline const unitSet& lookup(const word& unitName)
     {
         return table()[unitName];
     }

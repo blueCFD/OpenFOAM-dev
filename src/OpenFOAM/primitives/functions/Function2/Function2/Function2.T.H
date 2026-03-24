@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ SourceFiles
 #define Function2_H
 
 #include "dictionary.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 #include "tmp.H"
 #include "typeInfo.T.H"
 #include "Field.T.H"
@@ -56,23 +56,23 @@ template<class Type> class Function2;
 template<class Type> Ostream& operator<<(Ostream&, const Function2<Type>&);
 
 /*---------------------------------------------------------------------------*\
-                 Class Function2s::unitConversions Declaration
+                 Class Function2s::unitSets Declaration
 \*---------------------------------------------------------------------------*/
 
 namespace Function2s
 {
-struct unitConversions
+struct unitSets
 {
     // Public Data
 
         //- Unit conversion for x-axis values
-        unitConversion x;
+        unitSet x;
 
         //- Unit conversion for y-axis values
-        unitConversion y;
+        unitSet y;
 
         //- Unit conversion for result values
-        unitConversion value;
+        unitSet value;
 };
 }
 
@@ -83,7 +83,7 @@ struct unitConversions
 void assertNoConvertUnits
 (
     const word& typeName,
-    const Function2s::unitConversions& units,
+    const Function2s::unitSets& units,
     const dictionary& dict
 );
 
@@ -124,7 +124,7 @@ public:
             dictionary,
             (
                 const word& name,
-                const Function2s::unitConversions& units,
+                const Function2s::unitSets& units,
                 const dictionary& dict
             ),
             (name, units, dict)
@@ -137,7 +137,7 @@ public:
             Istream,
             (
                 const word& name,
-                const Function2s::unitConversions& units,
+                const Function2s::unitSets& units,
                 Istream& is
             ),
             (name, units, is)
@@ -162,7 +162,7 @@ public:
         static autoPtr<Function2<Type>> New
         (
             const word& name,
-            const Function2s::unitConversions& units,
+            const Function2s::unitSets& units,
             const dictionary& dict
         );
 
@@ -170,9 +170,9 @@ public:
         static autoPtr<Function2<Type>> New
         (
             const word& name,
-            const unitConversion& xUnits,
-            const unitConversion& yUnits,
-            const unitConversion& valueUnits,
+            const unitSet& xUnits,
+            const unitSet& yUnits,
+            const unitSet& valueUnits,
             const dictionary& dict
         );
 
@@ -180,7 +180,7 @@ public:
         static autoPtr<Function2<Type>> New
         (
             const word& name,
-            const Function2s::unitConversions& units,
+            const Function2s::unitSets& units,
             const word& Function2Type,
             Istream& is
         );
@@ -189,9 +189,9 @@ public:
         static autoPtr<Function2<Type>> New
         (
             const word& name,
-            const unitConversion& xUnits,
-            const unitConversion& yUnits,
-            const unitConversion& valueUnits,
+            const unitSet& xUnits,
+            const unitSet& yUnits,
+            const unitSet& valueUnits,
             const word& Function2Type,
             Istream& is
         );
@@ -220,7 +220,7 @@ public:
         virtual void write
         (
             Ostream& os,
-            const Function2s::unitConversions&
+            const Function2s::unitSets&
         ) const = 0;
 
 
@@ -248,7 +248,7 @@ template<class Type>
 void writeEntry
 (
     Ostream& os,
-    const Function2s::unitConversions& units,
+    const Function2s::unitSets& units,
     const Function2<Type>& f2
 );
 
@@ -256,9 +256,9 @@ template<class Type>
 void writeEntry
 (
     Ostream& os,
-    const unitConversion& xUnits,
-    const unitConversion& yUnits,
-    const unitConversion& valueUnits,
+    const unitSet& xUnits,
+    const unitSet& yUnits,
+    const unitSet& valueUnits,
     const Function2<Type>& f2
 );
 

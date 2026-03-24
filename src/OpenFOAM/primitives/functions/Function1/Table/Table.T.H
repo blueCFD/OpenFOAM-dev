@@ -182,7 +182,7 @@ public:
         Table
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -190,8 +190,8 @@ public:
         Table
         (
             const word& name,
-            const unitConversion& xUnits,
-            const unitConversion& valueUnits,
+            const unitSet& xUnits,
+            const unitSet& valueUnits,
             const dictionary& dict
         );
 
@@ -199,7 +199,7 @@ public:
         Table
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             Istream& dict
         );
 
@@ -244,7 +244,7 @@ public:
         virtual tmp<Field<Type>> y() const;
 
         //- Write data to dictionary stream
-        virtual void write(Ostream& os, const unitConversions& units) const;
+        virtual void write(Ostream& os, const unitSets& units) const;
 
 
     // Member Operators

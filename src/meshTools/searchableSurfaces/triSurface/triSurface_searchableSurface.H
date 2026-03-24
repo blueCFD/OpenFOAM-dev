@@ -66,7 +66,7 @@ SourceFiles
 #include "triSurfaceRegionSearch.H"
 #include "triSurfaceFieldsFwd.H"
 #include "pointIndexHitList.H"
-#include "unitConversion.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

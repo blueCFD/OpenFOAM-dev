@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,26 +23,26 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "unitConversion.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class T>
-T Foam::unitConversion::toStandard(const T& t) const
+T Foam::unitSet::toStandard(const T& t) const
 {
     return standard() ? t : t*multiplier_;
 }
 
 
 template<class T>
-Foam::Pair<T> Foam::unitConversion::toStandard(const Pair<T>& p) const
+Foam::Pair<T> Foam::unitSet::toStandard(const Pair<T>& p) const
 {
     return Pair<T>(toStandard(p.first(), p.second()));
 }
 
 
 template<class T>
-Foam::List<T> Foam::unitConversion::toStandard(const List<T>& l) const
+Foam::List<T> Foam::unitSet::toStandard(const List<T>& l) const
 {
     List<T> result(l.size());
     forAll(l, i)
@@ -55,7 +55,7 @@ Foam::List<T> Foam::unitConversion::toStandard(const List<T>& l) const
 
 template<class T>
 Foam::tmp<Foam::Field<T>>
-Foam::unitConversion::toStandard(const Field<T>& f) const
+Foam::unitSet::toStandard(const Field<T>& f) const
 {
     return standard() ? tmp<Field<T>>(f) : f*multiplier_;
 }
@@ -63,14 +63,14 @@ Foam::unitConversion::toStandard(const Field<T>& f) const
 
 template<class T>
 Foam::tmp<Foam::Field<T>>
-Foam::unitConversion::toStandard(const tmp<Field<T>>& tf) const
+Foam::unitSet::toStandard(const tmp<Field<T>>& tf) const
 {
     return standard() ? tf : tf*multiplier_;
 }
 
 
 template<class T>
-void Foam::unitConversion::makeStandard(T& t) const
+void Foam::unitSet::makeStandard(T& t) const
 {
     if (!standard())
     {
@@ -80,7 +80,7 @@ void Foam::unitConversion::makeStandard(T& t) const
 
 
 template<class T>
-void Foam::unitConversion::makeStandard(Pair<T>& p) const
+void Foam::unitSet::makeStandard(Pair<T>& p) const
 {
     if (!standard())
     {
@@ -91,7 +91,7 @@ void Foam::unitConversion::makeStandard(Pair<T>& p) const
 
 
 template<class T>
-void Foam::unitConversion::makeStandard(List<T>& l) const
+void Foam::unitSet::makeStandard(List<T>& l) const
 {
     if (!standard())
     {
@@ -104,21 +104,21 @@ void Foam::unitConversion::makeStandard(List<T>& l) const
 
 
 template<class T>
-T Foam::unitConversion::toUser(const T& t) const
+T Foam::unitSet::toUser(const T& t) const
 {
     return standard() ? t : t/multiplier_;
 }
 
 
 template<class T>
-Foam::Pair<T> Foam::unitConversion::toUser(const Pair<T>& p) const
+Foam::Pair<T> Foam::unitSet::toUser(const Pair<T>& p) const
 {
     return Pair<T>(toUser(p.first()), toUser(p.second()));
 }
 
 
 template<class T>
-Foam::List<T> Foam::unitConversion::toUser(const List<T>& l) const
+Foam::List<T> Foam::unitSet::toUser(const List<T>& l) const
 {
     List<T> result(l.size());
     forAll(l, i)
@@ -131,7 +131,7 @@ Foam::List<T> Foam::unitConversion::toUser(const List<T>& l) const
 
 template<class T>
 Foam::tmp<Foam::Field<T>>
-Foam::unitConversion::toUser(const Field<T>& f) const
+Foam::unitSet::toUser(const Field<T>& f) const
 {
     return standard() ? tmp<Field<T>>(f) : f/multiplier_;
 }
@@ -139,7 +139,7 @@ Foam::unitConversion::toUser(const Field<T>& f) const
 
 template<class T>
 Foam::tmp<Foam::Field<T>>
-Foam::unitConversion::toUser(const tmp<Field<T>>& tf) const
+Foam::unitSet::toUser(const tmp<Field<T>>& tf) const
 {
     return standard() ? tf : tf/multiplier_;
 }
@@ -151,7 +151,7 @@ template<class Type>
 void Foam::writeEntry
 (
     Ostream& os,
-    const unitConversion& defaultUnits,
+    const unitSet& defaultUnits,
     const Type& t
 )
 {

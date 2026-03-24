@@ -94,7 +94,7 @@ public:
         integratedNonUniformTable
         (
             const word& name,
-            const unitConversions& units,
+            const unitSets& units,
             const dictionary& dict
         );
 
@@ -108,7 +108,7 @@ public:
         scalar intfByTdT(scalar T) const;
 
         //- Write the function coefficients
-        void write(Ostream& os, const unitConversions& units) const;
+        void write(Ostream& os, const unitSets& units) const;
 };
 
 

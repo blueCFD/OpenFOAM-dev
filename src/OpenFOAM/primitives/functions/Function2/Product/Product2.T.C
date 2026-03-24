@@ -30,7 +30,7 @@ License
 template<class Type, Foam::direction rank>
 Foam::Function2s::ProductFunction1s<Type, rank>::ProductFunction1s
 (
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict,
     const Pair<Tuple2<word, label>>& typeAndRanks
 )
@@ -56,7 +56,7 @@ Foam::Function2s::ProductFunction1s<Type, rank>::ProductFunction1s
 template<class Type>
 Foam::Function2s::ProductFunction1s<Type, 0>::ProductFunction1s
 (
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict,
     const Pair<Tuple2<word, label>>& typeAndRanks
 )
@@ -110,7 +110,7 @@ template<class Type>
 Foam::Function2s::Product<Type>::Product
 (
     const word& name,
-    const unitConversions& units,
+    const unitSets& units,
     const dictionary& dict
 )
 :
@@ -140,7 +140,7 @@ template<class Type, Foam::direction rank>
 void Foam::Function2s::ProductFunction1s<Type, rank>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     ProductFunction1s<Type, rank - 1>::write(os, units);
@@ -159,7 +159,7 @@ template<class Type>
 void Foam::Function2s::ProductFunction1s<Type, 0>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     forAll(fs, i)
@@ -176,7 +176,7 @@ template<class Type>
 void Foam::Function2s::Product<Type>::write
 (
     Ostream& os,
-    const unitConversions& units
+    const unitSets& units
 ) const
 {
     fs_.write(os, units);

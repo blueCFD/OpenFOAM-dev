@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,6 +53,7 @@ namespace Foam
 
 // Forward declaration of friend functions and operators
 
+class polyMesh;
 class polyBoundaryMesh;
 class polyPatch;
 class PstreamBuffers;
@@ -285,6 +286,9 @@ public:
 
         //- Return boundaryMesh reference
         const polyBoundaryMesh& boundaryMesh() const;
+
+        //- Return mesh reference
+        const polyMesh& mesh() const;
 
         //- Return true if this patch is geometrically coupled (i.e. faces and
         //  points correspondence)

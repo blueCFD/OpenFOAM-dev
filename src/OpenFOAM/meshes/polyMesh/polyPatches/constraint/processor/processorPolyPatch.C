@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -228,7 +228,7 @@ void Foam::processorPolyPatch::calcGeometry(PstreamBuffers& pBufs)
             {
                 const fileName patchOBJName
                 (
-                    boundaryMesh().mesh().time().path()/name() + "_faces.obj"
+                    mesh().time().path()/name() + "_faces.obj"
                 );
 
                 Pout<< "processorPolyPatch::calcGeometry : Writing my "
@@ -238,7 +238,7 @@ void Foam::processorPolyPatch::calcGeometry(PstreamBuffers& pBufs)
 
                 const fileName centresOBJName
                 (
-                    boundaryMesh().mesh().time().path()/name()
+                    mesh().time().path()/name()
                   + "_faceCentresConnections.obj"
                 );
 

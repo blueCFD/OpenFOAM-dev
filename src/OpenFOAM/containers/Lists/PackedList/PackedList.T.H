@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -437,7 +437,7 @@ public:
                 inline unsigned int get() const;
 
                 //- Set value, returning true if changed, no range-checking
-                inline bool set(unsigned int);
+                inline bool set(unsigned int) const;
 
 
             // Protected Constructors
@@ -474,11 +474,11 @@ public:
 
                 //- Assign value, not position.
                 //  This allows packed[0] = packed[3] for assigning values
-                inline void operator=(const iteratorBase&);
+                inline void operator=(const iteratorBase&) const;
 
                 //- Assign value.
                 //  A non-existent entry will be auto-vivified.
-                inline void operator=(const unsigned int val);
+                inline void operator=(const unsigned int val) const;
 
                 //- Conversion operator
                 //  Never auto-vivify entries.
@@ -530,17 +530,11 @@ public:
                 //  An out-of-range iterator is assigned end()
                 inline void operator=(const iteratorBase&);
 
-                //- Return value
-                inline unsigned int operator*() const;
-
-                //- Return value
-                inline unsigned int operator()() const;
+                //- Return iteratorBase for assigning values
+                inline const iteratorBase& operator*() const;
 
                 //- Return iteratorBase for assigning values
-                inline iteratorBase& operator*();
-
-                //- Return iteratorBase for assigning values
-                inline iteratorBase& operator()();
+                inline const iteratorBase& operator()() const;
 
                 inline iterator& operator++();
                 inline iterator operator++(int);

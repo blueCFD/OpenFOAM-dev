@@ -81,7 +81,7 @@ const Foam::fvPatch& Foam::nonConformalFvPatch::origPatch() const
 
 const Foam::labelList& Foam::nonConformalFvPatch::polyFaces() const
 {
-    const fvMesh& mesh = patch_.boundaryMesh().mesh();
+    const fvMesh& mesh = patch_.mesh();
 
     return
         mesh.conformal()
@@ -112,7 +112,7 @@ Foam::label Foam::nonConformalFvPatch::size() const
 
 const Foam::labelUList& Foam::nonConformalFvPatch::faceCells() const
 {
-    const fvMesh& mesh = patch_.boundaryMesh().mesh();
+    const fvMesh& mesh = patch_.mesh();
 
     return
         mesh.conformal()

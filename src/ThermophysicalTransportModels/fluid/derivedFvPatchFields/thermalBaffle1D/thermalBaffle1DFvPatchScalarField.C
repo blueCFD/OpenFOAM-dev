@@ -363,7 +363,7 @@ void thermalBaffle1DFvPatchScalarField<solidType>::updateCoeffs()
         if (debug)
         {
             scalar Q = gAverage(kappap*snGrad());
-            Info<< patch().boundaryMesh().mesh().name() << ':'
+            Info<< patch().mesh().name() << ':'
                 << patch().name() << ':'
                 << this->internalField().name() << " <- "
                 << nbrField().patch().name() << ':'

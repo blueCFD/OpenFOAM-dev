@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -259,7 +259,7 @@ const Key& Foam::HashTable<T, Key, Hash>::iteratorBase::key() const
 
 template<class T, class Key, class Hash>
 inline T&
-Foam::HashTable<T, Key, Hash>::iteratorBase::object()
+Foam::HashTable<T, Key, Hash>::iteratorBase::object() const
 {
     return entryPtr_->obj_;
 }
@@ -356,7 +356,7 @@ inline Foam::HashTable<T, Key, Hash>::iterator::iterator
 
 template<class T, class Key, class Hash>
 inline T&
-Foam::HashTable<T, Key, Hash>::iterator::operator*()
+Foam::HashTable<T, Key, Hash>::iterator::operator*() const
 {
     return this->object();
 }
@@ -364,25 +364,9 @@ Foam::HashTable<T, Key, Hash>::iterator::operator*()
 
 template<class T, class Key, class Hash>
 inline T&
-Foam::HashTable<T, Key, Hash>::iterator::operator()()
-{
-    return this->object();
-}
-
-
-template<class T, class Key, class Hash>
-inline const T&
-Foam::HashTable<T, Key, Hash>::iterator::operator*() const
-{
-    return this->cobject();
-}
-
-
-template<class T, class Key, class Hash>
-inline const T&
 Foam::HashTable<T, Key, Hash>::iterator::operator()() const
 {
-    return this->cobject();
+    return this->object();
 }
 
 

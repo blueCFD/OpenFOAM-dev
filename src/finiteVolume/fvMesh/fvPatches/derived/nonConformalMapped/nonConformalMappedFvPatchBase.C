@@ -42,7 +42,7 @@ Foam::tmp<Foam::Field<Type>> Foam::nonConformalMappedFvPatchBase::fromNeighbour
     const Field<Type>& nbrFld
 ) const
 {
-    const fvMesh& mesh = patch().boundaryMesh().mesh();
+    const fvMesh& mesh = patch().mesh();
 
     return
         map
@@ -60,7 +60,7 @@ Foam::tmp<Foam::Field<Type>> Foam::nonConformalMappedFvPatchBase::toNeighbour
     const Field<Type>& fld
 ) const
 {
-    const fvMesh& mesh = patch().boundaryMesh().mesh();
+    const fvMesh& mesh = patch().mesh();
 
     return
         map

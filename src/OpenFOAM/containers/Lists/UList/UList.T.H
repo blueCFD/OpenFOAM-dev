@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -477,8 +477,8 @@ void writeListEntries(Ostream& os, const word& keyword, const ListType& l);
 #define forAllConstIter(Container,container,iter)                              \
     for                                                                        \
     (                                                                          \
-        Container::const_iterator iter = (container).begin();                  \
-        iter != (container).end();                                             \
+        Container::const_iterator iter = (container).cbegin();                 \
+        iter != (container).cend();                                            \
         ++iter                                                                 \
     )
 

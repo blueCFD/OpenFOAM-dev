@@ -65,7 +65,7 @@ Foam::label Foam::polyMeshAdder::patchIndex
 
         // Duplicate name is not allowed.  Create a composite name from the
         // patch name and case name
-        const word& caseName = p.boundaryMesh().mesh().time().caseName();
+        const word& caseName = p.mesh().time().caseName();
 
         allPatchNames.append(pName + "_" + caseName);
         allPatchTypes.append(pType);

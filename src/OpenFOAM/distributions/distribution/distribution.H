@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,7 +130,7 @@ public:
         distribution,
         dictionary,
         (
-            const unitConversion& units,
+            const unitSet& units,
             const dictionary& dict,
             const label sampleQ,
             randomGenerator&& rndGen
@@ -145,7 +145,7 @@ public:
         distribution
         (
             const word& name,
-            const unitConversion& units,
+            const unitSet& units,
             const dictionary& dict,
             const label sampleQ,
             randomGenerator&& rndGen
@@ -177,7 +177,7 @@ public:
         //- Select from dictionary and a random generator
         static autoPtr<distribution> New
         (
-            const unitConversion& units,
+            const unitSet& units,
             const dictionary& dict,
             const label sampleQ,
             randomGenerator&& rndGen,
@@ -187,7 +187,7 @@ public:
         //- Select from a dictionary and a random generator seed and global flag
         static autoPtr<distribution> New
         (
-            const unitConversion& units,
+            const unitSet& units,
             const dictionary& dict,
             const label sampleQ,
             const randomGenerator::seed& s,
@@ -253,7 +253,7 @@ public:
         ) const = 0;
 
         //- Write to a stream
-        virtual void write(Ostream& os, const unitConversion& units) const;
+        virtual void write(Ostream& os, const unitSet& units) const;
 
         //- Write the state to a stream
         virtual void writeState(Ostream& os) const;
@@ -280,7 +280,7 @@ void writeEntry
 (
     Ostream& os,
     const word&entryName,
-    const unitConversion& units,
+    const unitSet& units,
     const distribution& d,
     const bool write = true,
     const bool writeState = true
