@@ -62,6 +62,13 @@ Foam::DimensionedFieldFunction<DimensionedFieldType>::New
 {
     const word type(dict.lookup("type"));
 
+    libs.open
+    (
+        dict,
+        "libs",
+        dictionaryConstructorTablePtr_
+    );
+
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(type);
 

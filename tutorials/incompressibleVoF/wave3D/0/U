@@ -16,30 +16,26 @@ FoamFile
 
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (2 0 0);
+internalField
+{
+    type        waveVelocity;
+    libs        ("libwaves.so");
+}
 
 boundaryField
 {
     #includeEtc "caseDicts/setConstraintTypes"
 
-    left
+    "(inlet|inletSide)"
     {
         type            waveVelocity;
         libs            ("libwaves.so");
     }
 
-    right
-    {
-        type            outletPhaseMeanVelocity;
-        UnMean          2;
-        alpha           alpha.water;
-    }
-
     top
     {
         type            pressureInletOutletVelocity;
-        tangentialVelocity  $internalField;
-        value           $internalField;
+        value           uniform (0 0 0);
     }
 
     bottom

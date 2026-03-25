@@ -10,30 +10,38 @@ FoamFile
     format      ascii;
     class       volScalarField;
     location    "0";
-    object      alpha;
+    object      alpha.water;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 dimensions      [];
 
-internalField   uniform 1;
+internalField
+{
+    type        waveAlpha;
+    libs        ("libwaves.so");
+}
 
 boundaryField
 {
-    bottom
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    "(right|bottom)"
     {
         type            zeroGradient;
     }
 
-    "(top|inlet|outlet)"
+    left
     {
         type            waveAlpha;
         libs            ("libwaves.so");
+        inletOutlet     true;
     }
 
-    "(front|back)"
+    top
     {
-        type            symmetryPlane;
+        type            inletOutlet;
+        inletValue      uniform 0;
     }
 }
 

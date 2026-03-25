@@ -8,8 +8,6 @@ runApplication blockMesh
 
 runApplication refineMesh
 
-runApplication setWaves
-
 runApplication decomposePar
 
 runParallel foamRun

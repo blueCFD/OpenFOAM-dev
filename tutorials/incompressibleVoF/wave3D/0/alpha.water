@@ -8,15 +8,19 @@
 FoamFile
 {
     format      ascii;
-    class       volVectorField;
+    class       volScalarField;
     location    "0";
-    object      U;
+    object      alpha.water;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
+dimensions      [];
 
-internalField   uniform (0 0 0);
+internalField
+{
+    type        waveAlpha;
+    libs        ("libwaves.so");
+}
 
 boundaryField
 {
@@ -24,19 +28,19 @@ boundaryField
 
     "(inlet|inletSide)"
     {
-        type            waveVelocity;
+        type            waveAlpha;
         libs            ("libwaves.so");
     }
 
     top
     {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
+        type            inletOutlet;
+        inletValue      uniform 0;
     }
 
     bottom
     {
-        type            noSlip;
+        type            zeroGradient;
     }
 }
 

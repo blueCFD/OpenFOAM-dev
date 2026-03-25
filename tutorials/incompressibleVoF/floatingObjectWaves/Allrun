@@ -8,8 +8,6 @@ runApplication blockMesh
 runApplication refineMesh
 runApplication subsetMesh -noFields
 
-runApplication setWaves
-
 runApplication foamRun
 
 #------------------------------------------------------------------------------

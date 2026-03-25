@@ -8,13 +8,46 @@
 FoamFile
 {
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      setWavesDict;
+    class       volScalarField;
+    location    "0";
+    object      alpha.water;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-alpha   alpha.water;
+dimensions      [];
+
+internalField
+{
+    type        waveAlpha;
+    libs        ("libwaves.so");
+}
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    sides
+    {
+        type            waveAlpha;
+        libs            ("libwaves.so");
+    }
+
+    bottom
+    {
+        type            zeroGradient;
+    }
+
+    atmosphere
+    {
+        type            inletOutlet;
+        inletValue      uniform 0;
+    }
+
+    floatingObject
+    {
+        type            zeroGradient;
+    }
+}
 
 
 // ************************************************************************* //

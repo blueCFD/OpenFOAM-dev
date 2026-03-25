@@ -8,17 +8,19 @@
 FoamFile
 {
     format      ascii;
-    class       volVectorField;
+    class       volScalarField;
     location    "0";
-    object      U;
+    object      alpha.water;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include        "$FOAM_CASE/constant/waveProperties"
+dimensions      [];
 
-dimensions      [0 1 -1 0 0 0 0];
-
-internalField   uniform ($UxMean 0 0);
+internalField
+{
+    type        waveAlpha;
+    libs        ("libwaves.so");
+}
 
 boundaryField
 {
@@ -27,31 +29,27 @@ boundaryField
 
     inlet
     {
-        type            waveVelocity;
+        type            waveAlpha;
         libs            ("libwaves.so");
     }
 
     outlet
     {
-        type            outletPhaseMeanVelocity;
-        alpha           alpha.water;
-        UnMean          #neg $UxMean;
-        value           $internalField;
+        type            variableHeightFlowRate;
+        lowerBound      0;
+        upperBound      1;
     }
 
     atmosphere
     {
-        type            pressureInletOutletVelocity;
-        tangentialVelocity $internalField;
-        value           uniform (0 0 0);
+        type            inletOutlet;
+        inletValue      uniform 0;
     }
 
     hull
     {
-        type            movingWallVelocity;
-        value           uniform (0 0 0);
+        type            zeroGradient;
     }
 }
-
 
 // ************************************************************************* //

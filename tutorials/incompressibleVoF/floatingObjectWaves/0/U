@@ -16,7 +16,11 @@ FoamFile
 
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (0 0 0);
+internalField
+{
+    type        waveVelocity;
+    libs        ("libwaves.so");
+}
 
 boundaryField
 {
