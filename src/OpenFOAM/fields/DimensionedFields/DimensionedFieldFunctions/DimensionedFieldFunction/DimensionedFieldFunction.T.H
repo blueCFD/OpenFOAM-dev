@@ -169,6 +169,13 @@ void writeEntry
 );
 
 
+namespace DimensionedFieldFunctions
+{
+    //- Dummy function to call on a variable to avoid "unused variable" warnings
+    template<class T> void ignore(const T&){}
+}
+
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

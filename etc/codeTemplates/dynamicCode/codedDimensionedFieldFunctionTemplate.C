@@ -142,7 +142,14 @@ ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::evaluate()
 {
     using namespace dimensions;
 
+    // Local reference to time
+    const dimensionedScalar& t(field.db().time());
+    ignore(t);
+
+    // Local reference to the field value locations
+    // (points, cell centres, face centres)
     const DimensionedField<vector, GeoMesh, Field>& C(field.mesh().C());
+    ignore(C);
 
 //{{{ begin code
     ${evaluate}
