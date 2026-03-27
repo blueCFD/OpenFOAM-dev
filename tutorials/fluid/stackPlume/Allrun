@@ -30,8 +30,6 @@ copyEntry () {
 # Initialise fields according to atmospheric boundary layer
 runApplication setAtmBoundaryLayer
 copyEntry boundaryField/outlet/value boundaryField/outlet/freestreamValue 0/U
-copyEntry boundaryField/outlet/value boundaryField/outlet/inletValue 0/k
-copyEntry boundaryField/outlet/value boundaryField/outlet/inletValue 0/epsilon
 
 runApplication decomposePar
 runParallel foamRun

@@ -14,8 +14,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-libs            ("libatmosphericModels.so");
-
 solver          fluid;
 
 startFrom       latestTime;

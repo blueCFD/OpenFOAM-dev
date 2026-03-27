@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,44 +22,29 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::atmBoundaryLayerInletVelocityFvPatchVectorField
+    Foam::atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 
 Description
-    This boundary condition specifies a velocity inlet profile appropriate
-    for atmospheric boundary layers (ABL).
+    This boundary condition specifies an inlet value for the turbulence
+    kinetic energy, \f$k\f$, appropriate for atmospheric boundary layers.
 
-    See Foam::atmBoundaryLayer for details.
-
-    Example of the boundary condition specification:
-    \verbatim
-    ground
-    {
-        type            atmBoundaryLayerInletVelocity;
-        flowDir         (1 0 0);
-        zDir            (0 0 1);
-        Uref            10.0;
-        Zref            20.0;
-        z0              uniform 0.1;
-        zGround         uniform 0.0;
-    }
-    \endverbatim
+    See Foam::atmosphericBoundaryLayer for details.
 
 See also
-    Foam::atmBoundaryLayer,
-    Foam::atmBoundaryLayerInletKFvPatchScalarField,
-    Foam::atmBoundaryLayerInletEpsilonFvPatchScalarField
+    Foam::atmosphericBoundaryLayer
+    Foam::atmosphericBoundaryLayerVelocityFvPatchVectorField
+    Foam::atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 
 SourceFiles
-    atmBoundaryLayerInletVelocityFvPatchVectorField.C
+    atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef atmBoundaryLayerInletVelocityFvPatchVectorField_H
-#define atmBoundaryLayerInletVelocityFvPatchVectorField_H
+#ifndef atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField_H
+#define atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField_H
 
 #include "fvPatchFields.H"
 #include "inletOutletFvPatchFields.H"
-#include "atmBoundaryLayer.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -67,72 +52,69 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-       Class atmBoundaryLayerInletVelocityFvPatchVectorField Declaration
+    Class atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 \*---------------------------------------------------------------------------*/
 
-class atmBoundaryLayerInletVelocityFvPatchVectorField
+class atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 :
-    public inletOutletFvPatchVectorField,
-    public atmBoundaryLayer
+    public inletOutletFvPatchScalarField
 {
 
 public:
 
     //- Runtime type information
-    TypeName("atmBoundaryLayerInletVelocity");
+    TypeName("atmosphericBoundaryLayerTurbulentKineticEnergy");
 
 
     // Constructors
 
         //- Construct from patch, internal field and dictionary
-        atmBoundaryLayerInletVelocityFvPatchVectorField
+        atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
         (
             const fvPatch&,
-            const DimensionedField<vector, fvMesh>&,
+            const DimensionedField<scalar, fvMesh>&,
             const dictionary&
         );
 
         //- Construct by mapping given
-        //  atmBoundaryLayerInletVelocityFvPatchVectorField onto a new patch
-        atmBoundaryLayerInletVelocityFvPatchVectorField
+        //  atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
+        //  onto a new patch
+        atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
         (
-            const atmBoundaryLayerInletVelocityFvPatchVectorField&,
+            const
+            atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField&,
             const fvPatch&,
-            const DimensionedField<vector, fvMesh>&,
+            const DimensionedField<scalar, fvMesh>&,
             const fieldMapper&
         );
 
         //- Construct as copy setting internal field reference
-        atmBoundaryLayerInletVelocityFvPatchVectorField
+        atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
         (
-            const atmBoundaryLayerInletVelocityFvPatchVectorField&,
-            const DimensionedField<vector, fvMesh>&
+            const
+            atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField&,
+            const DimensionedField<scalar, fvMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
-        virtual tmp<fvPatchVectorField> clone
+        virtual tmp<fvPatchScalarField> clone
         (
-            const DimensionedField<vector, fvMesh>& iF
+            const DimensionedField<scalar, fvMesh>& iF
         ) const
         {
-            return tmp<fvPatchVectorField>
+            return tmp<fvPatchScalarField>
             (
-                new atmBoundaryLayerInletVelocityFvPatchVectorField(*this, iF)
+                new
+                atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
+                (
+                    *this,
+                    iF
+                )
             );
         }
 
 
     // Member Functions
-
-        // Mapping functions
-
-            //- Map the given fvPatchField onto this fvPatchField
-            virtual void map(const fvPatchVectorField&, const fieldMapper&);
-
-            //- Reset the fvPatchField to the given fvPatchField
-            //  Used for mesh to mesh mapping
-            virtual void reset(const fvPatchVectorField&);
-
 
         //- Write
         virtual void write(Ostream&) const;
@@ -141,7 +123,7 @@ public:
     // Member Operators
 
         //- Inherit assignment
-        using inletOutletFvPatchVectorField::operator=;
+        using inletOutletFvPatchScalarField::operator=;
 };
 
 

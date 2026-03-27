@@ -25,9 +25,8 @@ boundaryField
 {
     inletWind
     {
-        type            atmBoundaryLayerInletEpsilon;
-        #include        "${${FOAM_CASE}/system/setAtmBoundaryLayerDict"
-        value           uniform $epsilonWind;
+        type            atmosphericBoundaryLayerTurbulentDissipationRate;
+        libs            ("libatmosphericModels.so");
     }
 
     inlet
@@ -39,8 +38,8 @@ boundaryField
 
     outlet
     {
-        type            inletOutlet;
-        inletValue      uniform $epsilonWind;
+        type            atmosphericBoundaryLayerTurbulentDissipationRate;
+        libs            ("libatmosphericModels.so");
     }
 
     wall

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -129,7 +129,7 @@ Foam::scalar Foam::dispersedPhaseInterface::sign() const
 
 Foam::tmp<Foam::volVectorField> Foam::dispersedPhaseInterface::Ur() const
 {
-    return dispersed().U() - continuous().U();
+    return phaseInterface::Ur(dispersed());
 }
 
 

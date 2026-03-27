@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -242,7 +242,7 @@ bool Foam::functionObjects::phaseForces::execute()
         {
             *forceFields_()[dragModel::typeName] +=
                 fluid.lookupInterfacialModel<blendedDragModel>(interface).K()
-               *(otherPhase.U() - phase.U());
+               *interface.Ur(otherPhase);
         }
 
         if (fluid.foundInterfacialModel<blendedVirtualMassModel>(interface))
@@ -252,10 +252,7 @@ bool Foam::functionObjects::phaseForces::execute()
                 <
                     blendedVirtualMassModel
                 >(interface).K()
-               *(
-                    (otherPhase.DUDt() & otherPhase.U())
-                  - (phase.DUDt() & phase.U())
-                );
+               *interface.DUDtr(otherPhase);
         }
 
         if (fluid.foundInterfacialModel<blendedLiftModel>(interface))

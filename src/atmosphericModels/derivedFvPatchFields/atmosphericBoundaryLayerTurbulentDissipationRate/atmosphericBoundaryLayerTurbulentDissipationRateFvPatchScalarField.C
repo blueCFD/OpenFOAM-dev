@@ -23,11 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "atmBoundaryLayerInletVelocityFvPatchVectorField.H"
+#include "atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField.H"
+#include "atmosphericBoundaryLayer.H"
 #include "addToRunTimeSelectionTable.H"
-#include "fieldMapper.H"
-#include "volFields.H"
-#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -36,98 +34,73 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-atmBoundaryLayerInletVelocityFvPatchVectorField::
-atmBoundaryLayerInletVelocityFvPatchVectorField
+atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField::
+atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 (
     const fvPatch& p,
-    const DimensionedField<vector, fvMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
-    inletOutletFvPatchVectorField(p, iF),
-    atmBoundaryLayer(patch().Cf(), dict)
+    inletOutletFvPatchScalarField(p, iF, dict, false)
 {
     phiName_ = dict.lookupOrDefault<word>("phi", "phi");
 
-    refValue() = U(patch().Cf());
-    refGrad() = Zero;
+    const atmosphericBoundaryLayer& abl =
+        atmosphericBoundaryLayer::New(patch().db());
+
+    refValue() = abl.epsilon(patch().Cf());
+    refGrad() = 0;
     valueFraction() = 1;
 
     if (dict.found("value"))
     {
-        vectorField::operator=
+        scalarField::operator=
         (
-            vectorField("value", iF.dimensions(), dict, p.size())
+            scalarField("value", iF.dimensions(), dict, p.size())
         );
     }
     else
     {
-        vectorField::operator=(refValue());
+        scalarField::operator=(refValue());
     }
 }
 
 
-atmBoundaryLayerInletVelocityFvPatchVectorField::
-atmBoundaryLayerInletVelocityFvPatchVectorField
+atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField::
+atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 (
-    const atmBoundaryLayerInletVelocityFvPatchVectorField& pvf,
+    const atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField&
+    psf,
     const fvPatch& p,
-    const DimensionedField<vector, fvMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
-    inletOutletFvPatchVectorField(pvf, p, iF, mapper),
-    atmBoundaryLayer(pvf, mapper)
+    inletOutletFvPatchScalarField(psf, p, iF, mapper)
 {}
 
 
-atmBoundaryLayerInletVelocityFvPatchVectorField::
-atmBoundaryLayerInletVelocityFvPatchVectorField
+atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField::
+atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 (
-    const atmBoundaryLayerInletVelocityFvPatchVectorField& pvf,
-    const DimensionedField<vector, fvMesh>& iF
+    const atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField&
+    psf,
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
-    inletOutletFvPatchVectorField(pvf, iF),
-    atmBoundaryLayer(pvf)
+    inletOutletFvPatchScalarField(psf, iF)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void atmBoundaryLayerInletVelocityFvPatchVectorField::map
+void atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField::write
 (
-    const fvPatchVectorField& pvf,
-    const fieldMapper& mapper
-)
+    Ostream& os
+) const
 {
-    inletOutletFvPatchVectorField::map(pvf, mapper);
-
-    const atmBoundaryLayerInletVelocityFvPatchVectorField& blpvf =
-        refCast<const atmBoundaryLayerInletVelocityFvPatchVectorField>(pvf);
-
-    atmBoundaryLayer::map(blpvf, mapper);
-}
-
-
-void atmBoundaryLayerInletVelocityFvPatchVectorField::reset
-(
-    const fvPatchVectorField& pvf
-)
-{
-    inletOutletFvPatchVectorField::reset(pvf);
-
-    const atmBoundaryLayerInletVelocityFvPatchVectorField& blpvf =
-        refCast<const atmBoundaryLayerInletVelocityFvPatchVectorField>(pvf);
-
-    atmBoundaryLayer::reset(blpvf);
-}
-
-
-void atmBoundaryLayerInletVelocityFvPatchVectorField::write(Ostream& os) const
-{
-    fvPatchVectorField::write(os);
-    atmBoundaryLayer::write(os);
+    fvPatchScalarField::write(os);
     writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
     writeEntry(os, "value", *this);
 }
@@ -137,8 +110,8 @@ void atmBoundaryLayerInletVelocityFvPatchVectorField::write(Ostream& os) const
 
 makePatchTypeField
 (
-    fvPatchVectorField,
-    atmBoundaryLayerInletVelocityFvPatchVectorField
+    fvPatchScalarField,
+    atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 );
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

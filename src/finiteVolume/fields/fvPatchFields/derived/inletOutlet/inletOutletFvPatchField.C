@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "inletOutletFvPatchField.H"
+#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -49,29 +50,33 @@ Foam::inletOutletFvPatchField<Type>::inletOutletFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, fvMesh>& iF,
-    const dictionary& dict
+    const dictionary& dict,
+    const bool valuesRequired
 )
 :
     mixedFvPatchField<Type>(p, iF, dict, false),
     phiName_(dict.lookupOrDefault<word>("phi", "phi"))
 {
-    this->refValue() =
-        Field<Type>("inletValue", iF.dimensions(), dict, p.size());
-
-    if (dict.found("value"))
+    if (valuesRequired)
     {
-        fvPatchField<Type>::operator=
-        (
-            Field<Type>("value", iF.dimensions(), dict, p.size())
-        );
-    }
-    else
-    {
-        fvPatchField<Type>::operator=(this->refValue());
-    }
+        this->refValue() =
+            Field<Type>("inletValue", iF.dimensions(), dict, p.size());
 
-    this->refGrad() = Zero;
-    this->valueFraction() = 0;
+        if (dict.found("value"))
+        {
+            fvPatchField<Type>::operator=
+            (
+                Field<Type>("value", iF.dimensions(), dict, p.size())
+            );
+        }
+        else
+        {
+            fvPatchField<Type>::operator=(this->refValue());
+        }
+
+        this->refGrad() = Zero;
+        this->valueFraction() = 0;
+    }
 }
 
 

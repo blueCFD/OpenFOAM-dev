@@ -39,7 +39,7 @@ boundaryField
 
     inlet
     {
-        type            atmBoundaryLayerInletEpsilon;
+        type            atmosphericBoundaryLayerTurbulentDissipationRate;
         #include        "include/ABLConditions"
     }
 

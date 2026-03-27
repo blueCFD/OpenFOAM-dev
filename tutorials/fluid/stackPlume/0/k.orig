@@ -25,9 +25,8 @@ boundaryField
 {
     inletWind
     {
-        type            atmBoundaryLayerInletK;
-        #include        "${${FOAM_CASE}/system/setAtmBoundaryLayerDict"
-        value           uniform $kWind;
+        type            atmosphericBoundaryLayerTurbulentKineticEnergy;
+        libs            ("libatmosphericModels.so");
     }
 
     inlet
@@ -39,8 +38,8 @@ boundaryField
 
     outlet
     {
-        type            inletOutlet;
-        inletValue      uniform $kWind;
+        type            atmosphericBoundaryLayerTurbulentKineticEnergy;
+        libs            ("libatmosphericModels.so");
     }
 
     wall

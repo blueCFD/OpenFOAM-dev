@@ -23,10 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "nutkAtmRoughWallFunctionFvPatchScalarField.H"
+#include "atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField.H"
 #include "momentumTransportModel.H"
-#include "fieldMapper.H"
-#include "volFields.H"
+#include "atmosphericBoundaryLayer.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -36,7 +35,8 @@ namespace Foam
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-tmp<scalarField> nutkAtmRoughWallFunctionFvPatchScalarField::nut() const
+tmp<scalarField>
+atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField::nut() const
 {
     const label patchi = patch().index();
 
@@ -49,7 +49,13 @@ tmp<scalarField> nutkAtmRoughWallFunctionFvPatchScalarField::nut() const
     const tmp<scalarField> tnuw = turbModel.nu(patchi);
     const scalarField& nuw = tnuw();
 
-    const scalar Cmu25 = pow025(Cmu_);
+    const atmosphericBoundaryLayer& abl =
+        atmosphericBoundaryLayer::New(patch().db());
+
+    const scalar Cmu25 = pow025(abl.Cmu());
+    const scalar kappa = abl.kappa();
+
+    const scalarField z0(abl.z0(patch().Cf()));
 
     tmp<scalarField> tnutw(new scalarField(*this));
     scalarField& nutw = tnutw.ref();
@@ -61,10 +67,10 @@ tmp<scalarField> nutkAtmRoughWallFunctionFvPatchScalarField::nut() const
         scalar uStar = Cmu25*sqrt(k[celli]);
         scalar yPlus = uStar*y[facei]/nuw[facei];
 
-        scalar Edash = (y[facei] + z0_[facei])/z0_[facei];
+        scalar Edash = (y[facei] + z0[facei])/z0[facei];
 
         nutw[facei] =
-            nuw[facei]*(yPlus*kappa_/log(max(Edash, 1+1e-4)) - 1);
+            nuw[facei]*(yPlus*kappa/log(max(Edash, 1+1e-4)) - 1);
 
         if (debug)
         {
@@ -81,81 +87,51 @@ tmp<scalarField> nutkAtmRoughWallFunctionFvPatchScalarField::nut() const
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-nutkAtmRoughWallFunctionFvPatchScalarField::
-nutkAtmRoughWallFunctionFvPatchScalarField
+atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField::
+atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField
 (
     const fvPatch& p,
     const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
-    nutkWallFunctionFvPatchScalarField(p, iF, dict),
-    z0_("z0", dimLength, dict, p.size())
+    nutkWallFunctionFvPatchScalarField(p, iF, dict)
 {}
 
 
-nutkAtmRoughWallFunctionFvPatchScalarField::
-nutkAtmRoughWallFunctionFvPatchScalarField
+atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField::
+atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField
 (
-    const nutkAtmRoughWallFunctionFvPatchScalarField& ptf,
+    const atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField& ptf,
     const fvPatch& p,
     const DimensionedField<scalar, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
-    nutkWallFunctionFvPatchScalarField(ptf, p, iF, mapper),
-    z0_(mapper(ptf.z0_))
+    nutkWallFunctionFvPatchScalarField(ptf, p, iF, mapper)
 {}
 
 
-nutkAtmRoughWallFunctionFvPatchScalarField::
-nutkAtmRoughWallFunctionFvPatchScalarField
+atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField::
+atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField
 (
-    const nutkAtmRoughWallFunctionFvPatchScalarField& rwfpsf,
+    const atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField& rwfpsf,
     const DimensionedField<scalar, fvMesh>& iF
 )
 :
-    nutkWallFunctionFvPatchScalarField(rwfpsf, iF),
-    z0_(rwfpsf.z0_)
+    nutkWallFunctionFvPatchScalarField(rwfpsf, iF)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void nutkAtmRoughWallFunctionFvPatchScalarField::map
+void atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField::write
 (
-    const fvPatchScalarField& ptf,
-    const fieldMapper& mapper
-)
-{
-    nutkWallFunctionFvPatchScalarField::map(ptf, mapper);
-
-    const nutkAtmRoughWallFunctionFvPatchScalarField& nrwfpsf =
-        refCast<const nutkAtmRoughWallFunctionFvPatchScalarField>(ptf);
-
-    mapper(z0_, nrwfpsf.z0_);
-}
-
-
-void nutkAtmRoughWallFunctionFvPatchScalarField::reset
-(
-    const fvPatchScalarField& ptf
-)
-{
-    nutkWallFunctionFvPatchScalarField::reset(ptf);
-
-    const nutkAtmRoughWallFunctionFvPatchScalarField& nrwfpsf =
-        refCast<const nutkAtmRoughWallFunctionFvPatchScalarField>(ptf);
-
-    z0_.reset(nrwfpsf.z0_);
-}
-
-
-void nutkAtmRoughWallFunctionFvPatchScalarField::write(Ostream& os) const
+    Ostream& os
+) const
 {
     fvPatchField<scalar>::write(os);
     writeLocalEntries(os);
-    writeEntry(os, "z0", z0_);
     writeEntry(os, "value", *this);
 }
 
@@ -165,7 +141,7 @@ void nutkAtmRoughWallFunctionFvPatchScalarField::write(Ostream& os) const
 makePatchTypeField
 (
     fvPatchScalarField,
-    nutkAtmRoughWallFunctionFvPatchScalarField
+    atmosphericBoundaryLayerNutWallFunctionFvPatchScalarField
 );
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

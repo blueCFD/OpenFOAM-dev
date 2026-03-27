@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::atmBoundaryLayer
+    Foam::atmosphericBoundaryLayer
 
 Description
     This class provides functions to evaluate the velocity and turbulence
@@ -62,8 +62,18 @@ Description
         Z_{ref} | Reference height [m]
     \endvartable
 
-    Use in the atmBoundaryLayerInletVelocity, atmBoundaryLayerInletK and
-    atmBoundaryLayerInletEpsilon boundary conditions.
+    The specification of the atmospheric boundary layer is centralised in the
+    constant/atmosphericBoundaryLayerProperties dictionary which is read once on
+    construction of the atmosphericBoundaryLayer class using the
+    atmosphericBoundaryLayer::New factory method and cached automatically for
+    subsequent lookup so a single instance is used by all atmospheric boundary
+    conditions and internal field initialisation.
+
+    Used in the
+    Foam::atmosphericBoundaryLayerVelocity,
+    Foam::atmosphericBoundaryLayerTurbulentKineticEnergy,
+    Foam::atmosphericBoundaryLayerTurbulentDissipationRate and
+    Foam::atmosphericBoundaryLayerNutWallFunction boundary conditions.
 
     Reference:
         D.M. Hargreaves and N.G. Wright,  "On the use of the k-epsilon model
@@ -87,18 +97,14 @@ Usage
         epsilonLower | Turbulence epsilon below the BL  | no        |
     \endtable
 
-    Example of the boundary condition specification:
+    Example of the atmosphericBoundaryLayerProperties specification:
     \verbatim
-    ground
-    {
-        type            atmBoundaryLayerInletVelocity;
         flowDir         (1 0 0);
         zDir            (0 0 1);
         Uref            10.0;
         Zref            20.0;
         z0              uniform 0.1;
         zGround         uniform 0.0;
-    }
     \endverbatim
 
     Note:
@@ -108,14 +114,16 @@ Usage
         reference.
 
 SourceFiles
-    atmBoundaryLayer.C
+    atmosphericBoundaryLayer.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef atmBoundaryLayer_H
-#define atmBoundaryLayer_H
+#ifndef atmosphericBoundaryLayer_H
+#define atmosphericBoundaryLayer_H
 
-#include "fvPatchFields.H"
+#include "IOdictionary.H"
+#include "primitiveFields.H"
+#include "Function2.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -123,10 +131,12 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class atmBoundaryLayer Declaration
+                      Class atmosphericBoundaryLayer Declaration
 \*---------------------------------------------------------------------------*/
 
-class atmBoundaryLayer
+class atmosphericBoundaryLayer
+:
+    public IOdictionary
 {
     // Private static data
 
@@ -139,11 +149,14 @@ class atmBoundaryLayer
 
     // Private Data
 
-        //- Flow direction
+        //- Flow direction (x-coordinate)
         vector flowDir_;
 
         //- Direction of the z-coordinate
         vector zDir_;
+
+        //- Direction of the y-coordinate
+        vector yDir_;
 
         //- Von Karman constant
         const scalar kappa_;
@@ -158,13 +171,10 @@ class atmBoundaryLayer
         const scalar Zref_;
 
         //- Surface roughness height
-        scalarField z0_;
+        autoPtr<Function2<scalar>> z0_;
 
         //- Minimum coordinate value in z direction
-        scalarField zGround_;
-
-        //- Friction velocity
-        scalarField Ustar_;
+        autoPtr<Function2<scalar>> zGround_;
 
         //- True if the boundary layer is offset within the domain
         bool offset_;
@@ -180,53 +190,46 @@ class atmBoundaryLayer
         const scalar epsilonLower_;
 
 
-    // Private Member Functions
-
-        //- Initialisation shared by multiple constructors
-        void init();
-
-
 public:
+
+    //- Runtime type information
+    TypeName("atmosphericBoundaryLayer");
+
+
+    // Static Data
+
+        //- The name of the dictionary
+        static const word dictName;
+
 
     // Constructors
 
-        //- Construct null
-        atmBoundaryLayer();
+        //- Read construct from objectRegistry
+        explicit atmosphericBoundaryLayer(const objectRegistry& obr);
 
-        //- Construct from components
-        atmBoundaryLayer
-        (
-            const vector& flowDir,
-            const vector& zDir,
-            const scalar Uref,
-            const scalar Zref,
-            const scalarField& z0,
-            const scalarField& zGround,
-            const scalar kappa = kappaDefault_,
-            const scalar Cmu = CmuDefault_,
-            const scalar ULower = 0,
-            const scalar kLower = 0,
-            const scalar epsilonLower = 0
-        );
 
-        //- Construct from the coordinates field and dictionary
-        atmBoundaryLayer(const vectorField& p, const dictionary&);
+    // Selectors
 
-        //- Construct by mapping given
-        // atmBoundaryLayer onto a new patch
-        atmBoundaryLayer
-        (
-            const atmBoundaryLayer&,
-            const fieldMapper&
-        );
-
-        //- Copy constructor
-        atmBoundaryLayer(const atmBoundaryLayer&);
+        //- Return a reference to the atmosphericBoundaryLayer
+        //  from the database, constructing and storing if it doesn't exist
+        static const atmosphericBoundaryLayer& New(const objectRegistry& db);
 
 
     // Member Functions
 
         // Access
+
+            //- Von Karman constant
+            scalar kappa() const
+            {
+                return kappa_;
+            }
+
+            //- Turbulent viscosity coefficient
+            scalar Cmu() const
+            {
+                return Cmu_;
+            }
 
             //- Return flow direction
             const vector& flowDir() const
@@ -240,34 +243,27 @@ public:
                 return zDir_;
             }
 
+            //- Return surface roughness height
+            tmp<scalarField> z0(const vectorField& C) const;
+
             //- Return friction velocity
-            const scalarField& Ustar() const
-            {
-                return Ustar_;
-            }
-
-
-        // Mapping functions
-
-            //- Map the given atmBoundaryLayer onto this atmBoundaryLayer
-            void map(const atmBoundaryLayer&, const fieldMapper&);
-
-            //- Reset the atmBoundaryLayer to the given atmBoundaryLayer
-            //  Used for mesh to mesh mapping
-            void reset(const atmBoundaryLayer&);
+            tmp<scalarField> Ustar(const scalarField& z0) const;
 
 
         // Evaluate functions
 
-            //- Return the velocity distribution for the ATM
+            //- Return the velocity field
             tmp<vectorField> U(const vectorField& p) const;
 
-            //- Return the turbulent kinetic energy distribution for the ATM
+            //- Return the turbulent kinetic energy field
             tmp<scalarField> k(const vectorField& p) const;
 
-            //- Return the turbulent dissipation rate distribution for the ATM
+            //- Return the turbulent dissipation rate field
             tmp<scalarField> epsilon(const vectorField& p) const;
 
+
+        //- Inherit write from regIOobject
+        using regIOobject::write;
 
         //- Write
         void write(Ostream&) const;

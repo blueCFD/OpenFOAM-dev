@@ -111,7 +111,8 @@ public:
         (
             const fvPatch&,
             const DimensionedField<Type, fvMesh>&,
-            const dictionary&
+            const dictionary&,
+            const bool valuesRequired=true
         );
 
         //- Construct by mapping given inletOutletFvPatchField onto a new patch

@@ -30,7 +30,7 @@ boundaryField
 
     inlet
     {
-        type            atmBoundaryLayerInletVelocity;
+        type            atmosphericBoundaryLayerVelocity;
         #include        "include/ABLConditions"
     }
 

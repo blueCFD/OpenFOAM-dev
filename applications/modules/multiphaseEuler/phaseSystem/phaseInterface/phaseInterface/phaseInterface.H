@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -355,8 +355,14 @@ public:
             //- Average density
             tmp<volScalarField> rho() const;
 
+            //- Velocity of the phase relative to the other phase
+            tmp<volVectorField> Ur(const phaseModel& phase) const;
+
             //- Relative velocity magnitude
             tmp<volScalarField> magUr() const;
+
+            //- Convective acceleration of the phase relative to the other phase
+            tmp<volVectorField> DUDtr(const phaseModel& phase) const;
 
             //- Surface tension coefficient
             tmp<volScalarField> sigma() const;

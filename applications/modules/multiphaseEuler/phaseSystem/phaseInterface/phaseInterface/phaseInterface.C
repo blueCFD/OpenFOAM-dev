@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "phaseInterface.H"
 #include "phaseSystem.H"
 #include "addToRunTimeSelectionTable.H"
+#include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -519,19 +520,54 @@ Foam::tmp<Foam::volScalarField> Foam::phaseInterface::rho() const
 }
 
 
-Foam::tmp<Foam::volScalarField> Foam::phaseInterface::magUr() const
+Foam::tmp<Foam::volVectorField> Foam::phaseInterface::Ur
+(
+    const phaseModel& phase
+) const
 {
-    if (phase1().stationary())
+    const phaseModel& otherPhase = this->otherPhase(phase);
+
+    if (otherPhase.stationary())
     {
-        return mag(phase2().U());
+        return phase.U();
     }
-    else if (phase2().stationary())
+    else if (phase.stationary())
     {
-        return mag(phase1().U());
+        return - otherPhase.U();
     }
     else
     {
-        return mag(phase1().U() - phase2().U());
+        return phase.U() - otherPhase.U();
+    }
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::phaseInterface::magUr() const
+{
+    return mag(Ur(phase1()));
+}
+
+
+Foam::tmp<Foam::volVectorField> Foam::phaseInterface::DUDtr
+(
+    const phaseModel& phase
+) const
+{
+    const phaseModel& otherPhase = this->otherPhase(phase);
+
+    if (otherPhase.stationary())
+    {
+        return phase.DUDt() & phase.U();
+    }
+    else if (phase.stationary())
+    {
+        return - (otherPhase.DUDt() & phase.U());
+    }
+    else
+    {
+        return
+            (phase.DUDt() & phase.U())
+          - (otherPhase.DUDt() & otherPhase.U());
     }
 }
 

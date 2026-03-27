@@ -9,12 +9,16 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      surfaceHookUpDict;
+    location    "system";
+    object      atmosphericBoundaryLayerProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-surface1.stl    {type triSurface;}
-surface2.stl    {type triSurface;}
-
+flowDir         (1 0 0);
+zDir            (0 0 1);
+Uref            5.0;
+Zref            5.0;
+z0              constant 0.01;
+zGround         constant 0.0;
 
 // ************************************************************************* //

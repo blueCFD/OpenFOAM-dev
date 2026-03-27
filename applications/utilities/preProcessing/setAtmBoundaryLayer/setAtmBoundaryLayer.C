@@ -34,8 +34,7 @@ Description
 #include "timeSelector.H"
 #include "volFields.H"
 #include "wallFvPatch.H"
-#include "atmBoundaryLayer.H"
-#include "systemDict.H"
+#include "atmosphericBoundaryLayer.H"
 
 using namespace Foam;
 
@@ -54,16 +53,13 @@ int main(int argc, char *argv[])
 
     #include "createRegionMeshNoChangers.H"
 
-    const dictionary setAtmBoundaryLayerDict
-    (
-        systemDict("setAtmBoundaryLayerDict", args, mesh)
-    );
+    const atmosphericBoundaryLayer& atm =
+        atmosphericBoundaryLayer::New(runTime);
 
-    // Parse options
-    const word UName = setAtmBoundaryLayerDict.lookupOrDefault<word>("U", "U");
-    const word kName = setAtmBoundaryLayerDict.lookupOrDefault<word>("k", "k");
-    const word epsilonName =
-        setAtmBoundaryLayerDict.lookupOrDefault<word>("epsilon", "epsilon");
+    // Set field names if specified
+    const word UName = atm.lookupOrDefault<word>("U", "U");
+    const word kName = atm.lookupOrDefault<word>("k", "k");
+    const word epsilonName = atm.lookupOrDefault<word>("epsilon", "epsilon");
 
     forAll(timeDirs, timeI)
     {
@@ -109,7 +105,7 @@ int main(int argc, char *argv[])
         );
 
         // Set the internal fields
-        const atmBoundaryLayer atm(mesh.C(), setAtmBoundaryLayerDict);
+
         U.primitiveFieldRef() = atm.U(mesh.C());
         if (k.valid())
         {
@@ -125,20 +121,18 @@ int main(int argc, char *argv[])
         {
             const fvPatch& patch = mesh.boundary()[patchi];
 
-            const atmBoundaryLayer atmp(patch.Cf(), setAtmBoundaryLayerDict);
-
             if (!isA<wallFvPatch>(patch))
             {
-                U.boundaryFieldRef()[patchi] == atmp.U(patch.Cf());
+                U.boundaryFieldRef()[patchi] == atm.U(patch.Cf());
                 if (k.valid())
                 {
                     k.ref().boundaryFieldRef()[patchi] ==
-                        atmp.k(patch.Cf());
+                        atm.k(patch.Cf());
                 }
                 if (epsilon.valid())
                 {
                     epsilon.ref().boundaryFieldRef()[patchi] ==
-                        atmp.epsilon(patch.Cf());
+                        atm.epsilon(patch.Cf());
                 }
             }
         }

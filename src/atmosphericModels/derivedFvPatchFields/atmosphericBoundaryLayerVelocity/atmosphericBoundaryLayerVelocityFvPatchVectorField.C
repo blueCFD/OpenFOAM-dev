@@ -23,11 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "atmBoundaryLayerInletEpsilonFvPatchScalarField.H"
+#include "atmosphericBoundaryLayerVelocityFvPatchVectorField.H"
+#include "atmosphericBoundaryLayer.H"
 #include "addToRunTimeSelectionTable.H"
-#include "fieldMapper.H"
-#include "volFields.H"
-#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -36,98 +34,71 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-atmBoundaryLayerInletEpsilonFvPatchScalarField::
-atmBoundaryLayerInletEpsilonFvPatchScalarField
+atmosphericBoundaryLayerVelocityFvPatchVectorField::
+atmosphericBoundaryLayerVelocityFvPatchVectorField
 (
     const fvPatch& p,
-    const DimensionedField<scalar, fvMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const dictionary& dict
 )
 :
-    inletOutletFvPatchScalarField(p, iF),
-    atmBoundaryLayer(patch().Cf(), dict)
+    inletOutletFvPatchVectorField(p, iF, dict, false)
 {
     phiName_ = dict.lookupOrDefault<word>("phi", "phi");
 
-    refValue() = epsilon(patch().Cf());
-    refGrad() = 0;
+    const atmosphericBoundaryLayer& abl =
+        atmosphericBoundaryLayer::New(patch().db());
+
+    refValue() = abl.U(patch().Cf());
+    refGrad() = Zero;
     valueFraction() = 1;
 
     if (dict.found("value"))
     {
-        scalarField::operator=
+        vectorField::operator=
         (
-            scalarField("value", iF.dimensions(), dict, p.size())
+            vectorField("value", iF.dimensions(), dict, p.size())
         );
     }
     else
     {
-        scalarField::operator=(refValue());
+        vectorField::operator=(refValue());
     }
 }
 
 
-atmBoundaryLayerInletEpsilonFvPatchScalarField::
-atmBoundaryLayerInletEpsilonFvPatchScalarField
+atmosphericBoundaryLayerVelocityFvPatchVectorField::
+atmosphericBoundaryLayerVelocityFvPatchVectorField
 (
-    const atmBoundaryLayerInletEpsilonFvPatchScalarField& psf,
+    const atmosphericBoundaryLayerVelocityFvPatchVectorField& pvf,
     const fvPatch& p,
-    const DimensionedField<scalar, fvMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
-    inletOutletFvPatchScalarField(psf, p, iF, mapper),
-    atmBoundaryLayer(psf, mapper)
+    inletOutletFvPatchVectorField(pvf, p, iF, mapper)
 {}
 
 
-atmBoundaryLayerInletEpsilonFvPatchScalarField::
-atmBoundaryLayerInletEpsilonFvPatchScalarField
+atmosphericBoundaryLayerVelocityFvPatchVectorField::
+atmosphericBoundaryLayerVelocityFvPatchVectorField
 (
-    const atmBoundaryLayerInletEpsilonFvPatchScalarField& psf,
-    const DimensionedField<scalar, fvMesh>& iF
+    const atmosphericBoundaryLayerVelocityFvPatchVectorField& pvf,
+    const DimensionedField<vector, fvMesh>& iF
 )
 :
-    inletOutletFvPatchScalarField(psf, iF),
-    atmBoundaryLayer(psf)
+    inletOutletFvPatchVectorField(pvf, iF)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void atmBoundaryLayerInletEpsilonFvPatchScalarField::map
+void atmosphericBoundaryLayerVelocityFvPatchVectorField::write
 (
-    const fvPatchScalarField& psf,
-    const fieldMapper& mapper
-)
+    Ostream& os
+) const
 {
-    inletOutletFvPatchScalarField::map(psf, mapper);
-
-    const atmBoundaryLayerInletEpsilonFvPatchScalarField& blpsf =
-        refCast<const atmBoundaryLayerInletEpsilonFvPatchScalarField>(psf);
-
-    atmBoundaryLayer::map(blpsf, mapper);
-}
-
-
-void atmBoundaryLayerInletEpsilonFvPatchScalarField::reset
-(
-    const fvPatchScalarField& psf
-)
-{
-    inletOutletFvPatchScalarField::reset(psf);
-
-    const atmBoundaryLayerInletEpsilonFvPatchScalarField& blpsf =
-        refCast<const atmBoundaryLayerInletEpsilonFvPatchScalarField>(psf);
-
-    atmBoundaryLayer::reset(blpsf);
-}
-
-
-void atmBoundaryLayerInletEpsilonFvPatchScalarField::write(Ostream& os) const
-{
-    fvPatchScalarField::write(os);
-    atmBoundaryLayer::write(os);
+    fvPatchVectorField::write(os);
     writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
     writeEntry(os, "value", *this);
 }
@@ -137,8 +108,8 @@ void atmBoundaryLayerInletEpsilonFvPatchScalarField::write(Ostream& os) const
 
 makePatchTypeField
 (
-    fvPatchScalarField,
-    atmBoundaryLayerInletEpsilonFvPatchScalarField
+    fvPatchVectorField,
+    atmosphericBoundaryLayerVelocityFvPatchVectorField
 );
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

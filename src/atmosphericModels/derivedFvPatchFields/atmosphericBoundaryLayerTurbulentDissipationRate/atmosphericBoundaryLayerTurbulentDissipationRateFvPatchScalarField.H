@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,44 +22,29 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::atmBoundaryLayerInletKFvPatchScalarField
+    Foam::atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 
 Description
     This boundary condition specifies an inlet value for the turbulence
-    kinetic energy, \f$k\f$, appropriate for atmospheric boundary layers.
+    dissipation, \f$\epsilon\f$, appropriate for atmospheric boundary layers.
 
-    See Foam::atmBoundaryLayer for details.
-
-    Example of the boundary condition specification:
-    \verbatim
-    ground
-    {
-        type            atmBoundaryLayerInletK;
-        flowDir         (1 0 0);
-        zDir            (0 0 1);
-        Uref            10.0;
-        Zref            20.0;
-        z0              uniform 0.1;
-        zGround         uniform 0.0;
-    }
-    \endverbatim
+    See Foam::atmosphericBoundaryLayer for details.
 
 See also
-    Foam::atmBoundaryLayer,
-    Foam::atmBoundaryLayerInletVelocityFvPatchVectorField,
-    Foam::atmBoundaryLayerInletEpsilonFvPatchScalarField
+    Foam::atmosphericBoundaryLayer
+    Foam::atmosphericBoundaryLayerVelocityFvPatchVectorField
+    Foam::atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 
 SourceFiles
-    atmBoundaryLayerInletKFvPatchScalarField.C
+    atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef atmBoundaryLayerInletKFvPatchScalarField_H
-#define atmBoundaryLayerInletKFvPatchScalarField_H
+#ifndef atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField_H
+#define atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField_H
 
 #include "fvPatchFields.H"
 #include "inletOutletFvPatchFields.H"
-#include "atmBoundaryLayer.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -67,25 +52,24 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-          Class atmBoundaryLayerInletKFvPatchScalarField Declaration
+   Class atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 \*---------------------------------------------------------------------------*/
 
-class atmBoundaryLayerInletKFvPatchScalarField
+class atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
 :
-    public inletOutletFvPatchScalarField,
-    public atmBoundaryLayer
+    public inletOutletFvPatchScalarField
 {
 
 public:
 
     //- Runtime type information
-    TypeName("atmBoundaryLayerInletK");
+    TypeName("atmosphericBoundaryLayerTurbulentDissipationRate");
 
 
     // Constructors
 
         //- Construct from patch, internal field and dictionary
-        atmBoundaryLayerInletKFvPatchScalarField
+        atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
         (
             const fvPatch&,
             const DimensionedField<scalar, fvMesh>&,
@@ -93,19 +77,22 @@ public:
         );
 
         //- Construct by mapping given
-        //  atmBoundaryLayerInletKFvPatchScalarField onto a new patch
-        atmBoundaryLayerInletKFvPatchScalarField
+        //  atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
+        // onto a new patch
+        atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
         (
-            const atmBoundaryLayerInletKFvPatchScalarField&,
+            const
+            atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField&,
             const fvPatch&,
             const DimensionedField<scalar, fvMesh>&,
             const fieldMapper&
         );
 
         //- Construct as copy setting internal field reference
-        atmBoundaryLayerInletKFvPatchScalarField
+        atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
         (
-            const atmBoundaryLayerInletKFvPatchScalarField&,
+            const
+            atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField&,
             const DimensionedField<scalar, fvMesh>&
         );
 
@@ -117,22 +104,17 @@ public:
         {
             return tmp<fvPatchScalarField>
             (
-                new atmBoundaryLayerInletKFvPatchScalarField(*this, iF)
+                new
+              atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
+                (
+                    *this,
+                    iF
+                )
             );
         }
 
 
     // Member Functions
-
-        // Mapping functions
-
-            //- Map the given fvPatchField onto this fvPatchField
-            virtual void map(const fvPatchScalarField&, const fieldMapper&);
-
-            //- Reset the fvPatchField to the given fvPatchField
-            //  Used for mesh to mesh mapping
-            virtual void reset(const fvPatchScalarField&);
-
 
         //- Write
         virtual void write(Ostream&) const;

@@ -23,11 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "atmBoundaryLayerInletKFvPatchScalarField.H"
+#include "atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField.H"
+#include "atmosphericBoundaryLayer.H"
 #include "addToRunTimeSelectionTable.H"
-#include "fieldMapper.H"
-#include "volFields.H"
-#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -36,20 +34,22 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-atmBoundaryLayerInletKFvPatchScalarField::
-atmBoundaryLayerInletKFvPatchScalarField
+atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField::
+atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 (
     const fvPatch& p,
     const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
-    inletOutletFvPatchScalarField(p, iF),
-    atmBoundaryLayer(patch().Cf(), dict)
+    inletOutletFvPatchScalarField(p, iF, dict, false)
 {
     phiName_ = dict.lookupOrDefault<word>("phi", "phi");
 
-    refValue() = k(patch().Cf());
+    const atmosphericBoundaryLayer& abl =
+        atmosphericBoundaryLayer::New(patch().db());
+
+    refValue() = abl.k(patch().Cf());
     refGrad() = 0;
     valueFraction() = 1;
 
@@ -67,67 +67,38 @@ atmBoundaryLayerInletKFvPatchScalarField
 }
 
 
-atmBoundaryLayerInletKFvPatchScalarField::
-atmBoundaryLayerInletKFvPatchScalarField
+atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField::
+atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 (
-    const atmBoundaryLayerInletKFvPatchScalarField& psf,
+    const atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField& psf,
     const fvPatch& p,
     const DimensionedField<scalar, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
-    inletOutletFvPatchScalarField(psf, p, iF, mapper),
-    atmBoundaryLayer(psf, mapper)
+    inletOutletFvPatchScalarField(psf, p, iF, mapper)
 {}
 
 
-atmBoundaryLayerInletKFvPatchScalarField::
-atmBoundaryLayerInletKFvPatchScalarField
+atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField::
+atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 (
-    const atmBoundaryLayerInletKFvPatchScalarField& psf,
+    const atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField& psf,
     const DimensionedField<scalar, fvMesh>& iF
 )
 :
-    inletOutletFvPatchScalarField(psf, iF),
-    atmBoundaryLayer(psf)
+    inletOutletFvPatchScalarField(psf, iF)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void atmBoundaryLayerInletKFvPatchScalarField::map
+void atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField::write
 (
-    const fvPatchScalarField& psf,
-    const fieldMapper& mapper
-)
-{
-    inletOutletFvPatchScalarField::map(psf, mapper);
-
-    const atmBoundaryLayerInletKFvPatchScalarField& blpsf =
-        refCast<const atmBoundaryLayerInletKFvPatchScalarField>(psf);
-
-    atmBoundaryLayer::map(blpsf, mapper);
-}
-
-
-void atmBoundaryLayerInletKFvPatchScalarField::reset
-(
-    const fvPatchScalarField& psf
-)
-{
-    inletOutletFvPatchScalarField::reset(psf);
-
-    const atmBoundaryLayerInletKFvPatchScalarField& blpsf =
-        refCast<const atmBoundaryLayerInletKFvPatchScalarField>(psf);
-
-    atmBoundaryLayer::reset(blpsf);
-}
-
-
-void atmBoundaryLayerInletKFvPatchScalarField::write(Ostream& os) const
+    Ostream& os
+) const
 {
     fvPatchScalarField::write(os);
-    atmBoundaryLayer::write(os);
     writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
     writeEntry(os, "value", *this);
 }
@@ -138,7 +109,7 @@ void atmBoundaryLayerInletKFvPatchScalarField::write(Ostream& os) const
 makePatchTypeField
 (
     fvPatchScalarField,
-    atmBoundaryLayerInletKFvPatchScalarField
+    atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 );
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

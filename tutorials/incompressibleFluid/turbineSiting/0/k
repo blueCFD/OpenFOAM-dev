@@ -30,7 +30,7 @@ boundaryField
 
     inlet
     {
-        type            atmBoundaryLayerInletK;
+        type            atmosphericBoundaryLayerTurbulentKineticEnergy;
         #include        "include/ABLConditions"
     }
 

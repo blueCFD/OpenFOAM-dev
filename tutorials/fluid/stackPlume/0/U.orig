@@ -24,9 +24,8 @@ boundaryField
 {
     inletWind
     {
-        type            atmBoundaryLayerInletVelocity;
-        #include        "${${FOAM_CASE}/system/setAtmBoundaryLayerDict"
-        value           uniform ($Uref 0 0);
+        type            atmosphericBoundaryLayerVelocity;
+        libs            ("libatmosphericModels.so");
     }
 
     inlet

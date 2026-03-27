@@ -28,19 +28,15 @@ Description
     Find close open edges and stitches the surface along them
 
 Usage
-    - surfaceHookUp hookDistance [OPTION]
+    - surfaceHookUp \( surface1.stl surface2.stl \) hookDistance
 
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "Time.T.H"
-
-#include "triSurface_searchableSurface.H"
+#include "triSurface.H"
 #include "indexedOctree.H"
-#include "treeBoundBox.H"
+#include "treeDataEdge.H"
 #include "PackedBoolList.H"
-#include "searchableSurfaceList.H"
-#include "systemDict.H"
 
 using namespace Foam;
 
@@ -115,7 +111,7 @@ void greenRefine
 
 void createBoundaryEdgeTrees
 (
-    const PtrList<searchableSurfaces::triSurface>& surfs,
+    const PtrList<triSurface>& surfs,
     PtrList<indexedOctree<treeDataEdge>>& bEdgeTrees,
     labelListList& treeBoundaryEdges
 )
@@ -237,53 +233,42 @@ int main(int argc, char *argv[])
 {
     argList::addNote
     (
-        "hook surfaces to other surfaces by moving and retriangulating their"
-        "boundary edges to match other surface boundary edges"
+        "Hook surfaces to other surfaces by moving and re-triangulating \n"
+        "their boundary edges to match other surface boundary edges"
     );
+
+    #include "removeCaseOptions.H"
+
     argList::noParallel();
-    argList::validArgs.append("hookTolerance");
+    argList::validArgs.append("surface files");
+    argList::validArgs.append("hook distance");
+    argList args(argc, argv);
 
-    #include "addDictOption.H"
+    const fileNameList surfFileNames(args.argRead<fileNameList>(1));
 
-    #include "setRootCase.H"
-    #include "createTime.H"
+    Info<< endl;
+    PtrList<triSurface> surfs(surfFileNames.size());
+    forAll(surfs, surfi)
+    {
+        surfs.set(surfi, new triSurface(surfFileNames[surfi]));
 
-    const dictionary dict(systemDict("surfaceHookUpDict", args, runTime));
+        Info<< "Reading "
+            << surfFileNames[surfi].c_str() << ':' << endl;
 
-    const scalar dist(args.argRead<scalar>(1));
+        Info<< incrIndent << indent << "Regions = (";
+        forAll(surfs[surfi].patches(), surfPatchi)
+        {
+            if (surfPatchi) Info << ' ';
+            Info<< surfs[surfi].patches()[surfPatchi].name();
+        }
+        Info << ')' << decrIndent << nl << endl;
+    }
+
+    const scalar dist(args.argRead<scalar>(2));
     const scalar matchTolerance(max(1e-6*dist, small));
-    const label maxIters = 100;
-
     Info<< "Hooking distance = " << dist << endl;
 
-    searchableSurfaceList surfs
-    (
-        IOobject
-        (
-            "surfacesToHook",
-            runTime.constant(),
-            searchableSurface::geometryDir(runTime),
-            runTime
-        ),
-        dict,
-        true            // assume single-region names get surface name
-    );
-
-    Info<< nl << "Reading surfaces: " << endl;
-    forAll(surfs, surfI)
-    {
-        Info<< incrIndent;
-        Info<< nl << indent << "Surface     = " << surfs.names()[surfI] << endl;
-
-        const wordList& regions = surfs[surfI].regions();
-        forAll(regions, surfRegionI)
-        {
-            Info<< incrIndent;
-            Info<< indent << "Regions = " << regions[surfRegionI] << endl;
-            Info<< decrIndent;
-        }
-        Info<< decrIndent;
-    }
+    const label maxIters = 100;
 
     PtrList<indexedOctree<treeDataEdge>> bEdgeTrees(surfs.size());
     labelListList treeBoundaryEdges(surfs.size());
@@ -292,27 +277,10 @@ int main(int argc, char *argv[])
     List<DynamicList<point>> newPoints(surfs.size());
     List<PackedBoolList> visitedFace(surfs.size());
 
-    PtrList<searchableSurfaces::triSurface> newSurfaces(surfs.size());
-    forAll(surfs, surfI)
+    PtrList<triSurface> newSurfs(surfs.size());
+    forAll(surfs, surfi)
     {
-        const searchableSurfaces::triSurface& surf =
-            refCast<const searchableSurfaces::triSurface>(surfs[surfI]);
-
-        newSurfaces.set
-        (
-            surfI,
-            new searchableSurfaces::triSurface
-            (
-                IOobject
-                (
-                    "hookedSurface_" + surfs.names()[surfI],
-                    runTime.constant(),
-                    searchableSurface::geometryDir(runTime),
-                    runTime
-                ),
-                surf
-            )
-        );
+        newSurfs.set(surfi, new triSurface(surfs[surfi]));
     }
 
     label nChanged = 0;
@@ -323,20 +291,20 @@ int main(int argc, char *argv[])
         Info<< nl << "Iteration = " << nIters++ << endl;
         nChanged = 0;
 
-        createBoundaryEdgeTrees(newSurfaces, bEdgeTrees, treeBoundaryEdges);
+        createBoundaryEdgeTrees(newSurfs, bEdgeTrees, treeBoundaryEdges);
 
-        forAll(newSurfaces, surfI)
+        forAll(newSurfs, surfI)
         {
-            const triSurface& newSurf = newSurfaces[surfI];
+            const triSurface& newSurf = newSurfs[surfI];
 
             newFaces[surfI] = newSurf.localFaces();
             newPoints[surfI] = newSurf.localPoints();
             visitedFace[surfI] = PackedBoolList(newSurf.size(), false);
         }
 
-        forAll(newSurfaces, surfI)
+        forAll(newSurfs, surfI)
         {
-            const triSurface& surf = newSurfaces[surfI];
+            const triSurface& surf = newSurfs[surfI];
 
             List<pointIndexHit> bPointsTobEdges(surf.boundaryPoints().size());
             labelList bPointsHitTree(surf.boundaryPoints().size(), -1);
@@ -410,7 +378,7 @@ int main(int argc, char *argv[])
                 if (eHit.hit())
                 {
                     const label hitSurfI = bPointsHitTree[bPointi];
-                    const triSurface& hitSurf = newSurfaces[hitSurfI];
+                    const triSurface& hitSurf = newSurfs[hitSurfI];
 
                     const label eIndex =
                         treeBoundaryEdges[hitSurfI][eHit.index()];
@@ -501,26 +469,16 @@ int main(int argc, char *argv[])
 
         Info<< "    Number of edges split = " << nChanged << endl;
 
-        forAll(newSurfaces, surfI)
+        forAll(newSurfs, surfi)
         {
-            newSurfaces.set
+            newSurfs.set
             (
-                surfI,
-                new searchableSurfaces::triSurface
+                surfi,
+                new triSurface
                 (
-                    IOobject
-                    (
-                        "hookedSurface_" + surfs.names()[surfI],
-                        runTime.constant(),
-                        searchableSurface::geometryDir(runTime),
-                        runTime
-                    ),
-                    triSurface
-                    (
-                        newFaces[surfI],
-                        newSurfaces[surfI].patches(),
-                        pointField(newPoints[surfI])
-                    )
+                    newFaces[surfi],
+                    newSurfs[surfi].patches(),
+                    pointField(newPoints[surfi])
                 )
             );
         }
@@ -529,14 +487,16 @@ int main(int argc, char *argv[])
 
     Info<< endl;
 
-    forAll(newSurfaces, surfI)
+    forAll(newSurfs, surfi)
     {
-        const searchableSurfaces::triSurface& newSurf = newSurfaces[surfI];
+        const fileName newSurfFileName =
+            surfFileNames[surfi].lessExt()
+          + "_hooked."
+          + surfFileNames[surfi].ext();
 
-        Info<< "Writing hooked surface " << newSurf.searchableSurface::name()
-            << endl;
+        Info<< "Writing hooked surface " << newSurfFileName << endl;
 
-        newSurf.searchableSurface::write();
+        newSurfs[surfi].write(newSurfFileName);
     }
 
     Info<< "\nEnd\n" << endl;
