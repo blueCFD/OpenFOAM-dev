@@ -131,7 +131,7 @@ void Foam::turbulentInletFvPatchField<Type>::updateCoeffs()
         return;
     }
 
-    if (curTimeIndex_ != this->db().time().timeIndex())
+    if (curTimeIndex_ != this->time().timeIndex())
     {
         Field<Type>& patchField = *this;
 
@@ -158,7 +158,7 @@ void Foam::turbulentInletFvPatchField<Type>::updateCoeffs()
                 )*mag(referenceField_)
             );
 
-        curTimeIndex_ = this->db().time().timeIndex();
+        curTimeIndex_ = this->time().timeIndex();
     }
 
     fixedValueFvPatchField<Type>::updateCoeffs();

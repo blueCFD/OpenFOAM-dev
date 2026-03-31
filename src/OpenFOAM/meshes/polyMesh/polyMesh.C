@@ -344,13 +344,12 @@ Foam::polyMesh::polyMesh(const IOobject& io)
     boundary_.calcGeometry();
 
     // Warn if global empty mesh
-    const bool complete = Pstream::parRun() || !time().processorCase();
-    if (complete && returnReduce(nPoints(), sumOp<label>()) == 0)
+    if (time().completeCase() && returnReduce(nPoints(), sumOp<label>()) == 0)
     {
         WarningInFunction
             << "no points in mesh" << endl;
     }
-    if (complete && returnReduce(nCells(), sumOp<label>()) == 0)
+    if (time().completeCase() && returnReduce(nCells(), sumOp<label>()) == 0)
     {
         WarningInFunction
             << "no cells in mesh" << endl;

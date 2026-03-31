@@ -166,9 +166,9 @@ Foam::LagrangianSubMesh Foam::Lagrangian::patchInjection::modify
     const scalar t0 = t1 - mesh.time().deltaT().value();
 
     // Restart the generators if necessary and set the time index up to date
-    localRndGen_.start(timeIndex_ == db().time().timeIndex());
-    globalRndGen_.start(timeIndex_ == db().time().timeIndex());
-    timeIndex_ = db().time().timeIndex();
+    localRndGen_.start(timeIndex_ == time().timeIndex());
+    globalRndGen_.start(timeIndex_ == time().timeIndex());
+    timeIndex_ = time().timeIndex();
 
     // Calculate the number of particles to inject. Round down to get an
     // integer number. Store the excess to apply at a later time.

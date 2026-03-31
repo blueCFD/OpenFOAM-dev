@@ -176,7 +176,7 @@ void Foam::activeBaffleVelocityFvPatchVectorField::updateCoeffs()
     }
 
     // Execute the change to the openFraction only once per time-step
-    if (curTimeIndex_ != this->db().time().timeIndex())
+    if (curTimeIndex_ != this->time().timeIndex())
     {
         const volScalarField& p = db().lookupObject<volScalarField>
         (
@@ -213,7 +213,7 @@ void Foam::activeBaffleVelocityFvPatchVectorField::updateCoeffs()
                     openFraction_
                   + min
                     (
-                        this->db().time().deltaTValue()/openingTime_,
+                        this->time().deltaTValue()/openingTime_,
                         maxOpenFractionDelta_
                     )
                    *(orientation_*sign(forceDiff)),
@@ -243,7 +243,7 @@ void Foam::activeBaffleVelocityFvPatchVectorField::updateCoeffs()
         const_cast<scalarField&>(nbrPatch.magSf()) =
             mag(nbrPatch.Sf());
 
-        curTimeIndex_ = this->db().time().timeIndex();
+        curTimeIndex_ = this->time().timeIndex();
     }
 
     fixedValueFvPatchVectorField::updateCoeffs();

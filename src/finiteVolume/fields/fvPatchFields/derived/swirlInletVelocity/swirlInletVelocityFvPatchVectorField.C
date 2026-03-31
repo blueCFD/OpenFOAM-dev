@@ -64,7 +64,7 @@ swirlInletVelocityFvPatchVectorField
         Function2<scalar>::New
         (
             "axialVelocity",
-            db().time().userUnits(),
+            time().userUnits(),
             dimLength,
             dimVelocity,
             dict
@@ -75,7 +75,7 @@ swirlInletVelocityFvPatchVectorField
         Function2<scalar>::New
         (
             "radialVelocity",
-            db().time().userUnits(),
+            time().userUnits(),
             dimLength,
             dimVelocity,
             dict
@@ -86,7 +86,7 @@ swirlInletVelocityFvPatchVectorField
 {
     if (dict.found("omega") || dict.found("rpm"))
     {
-        omega_ = new Function1s::omega(db().time(), dict);
+        omega_ = new Function1s::omega(time(), dict);
     }
     else if (dict.found("tangentialVelocity"))
     {
@@ -94,7 +94,7 @@ swirlInletVelocityFvPatchVectorField
             Function2<scalar>::New
             (
                 "tangentialVelocity",
-                db().time().userUnits(),
+                time().userUnits(),
                 dimLength,
                 dimVelocity,
                 dict
@@ -166,7 +166,7 @@ void Foam::swirlInletVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    const scalar t = this->db().time().value();
+    const scalar t = this->time().value();
     const scalarField ts(size(), t);
 
     // Compute geometry
@@ -209,7 +209,7 @@ void Foam::swirlInletVelocityFvPatchVectorField::write(Ostream& os) const
     writeEntry
     (
         os,
-        db().time().userUnits(),
+        time().userUnits(),
         dimLength,
         dimVelocity,
         axialVelocity_()
@@ -217,7 +217,7 @@ void Foam::swirlInletVelocityFvPatchVectorField::write(Ostream& os) const
     writeEntry
     (
         os,
-        db().time().userUnits(),
+        time().userUnits(),
         dimLength,
         dimVelocity,
         radialVelocity_()
@@ -231,7 +231,7 @@ void Foam::swirlInletVelocityFvPatchVectorField::write(Ostream& os) const
         writeEntry
         (
             os,
-            db().time().userUnits(),
+            time().userUnits(),
             dimLength,
             dimVelocity,
             tangentialVelocity_()

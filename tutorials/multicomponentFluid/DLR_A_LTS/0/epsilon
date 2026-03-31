@@ -22,7 +22,7 @@ boundaryField
 {
     inletfuel
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.005;
         phi             phi;
         k               k;
@@ -30,7 +30,7 @@ boundaryField
     }
     inletair
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.005;
         phi             phi;
         k               k;

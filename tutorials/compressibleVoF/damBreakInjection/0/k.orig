@@ -18,7 +18,7 @@ sources
 {
     injection
     {
-        type            turbulentIntensityKineticEnergy;
+        type            turbulentKineticEnergy;
         intensity       0.05;
     }
 }

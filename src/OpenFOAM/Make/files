@@ -170,6 +170,8 @@ containers/Lists/ListOps/ListOps.T.C
 containers/LinkedLists/linkTypes/SLListBase/SLListBase.C
 containers/LinkedLists/linkTypes/DLListBase/DLListBase.C
 
+typeName/typeName.C
+
 Streams = db/IOstreams
 $(Streams)/token/tokenIO.C
 

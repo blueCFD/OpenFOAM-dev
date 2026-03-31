@@ -102,6 +102,12 @@ const Foam::fvMesh& Foam::fvPatch::mesh() const
 }
 
 
+const Foam::Time& Foam::fvPatch::time() const
+{
+    return boundaryMesh_.mesh().time();
+}
+
+
 const Foam::labelUList& Foam::fvPatch::faceCells() const
 {
     return poly_.faceCells();

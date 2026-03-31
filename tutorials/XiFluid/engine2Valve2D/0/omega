@@ -24,21 +24,21 @@ boundaryField
 
     inletFuel
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.012;
         value           $internalField;
     }
 
     inlet
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.012;
         value           $internalField;
     }
 
     outlet
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.012;
         value           $internalField;
     }

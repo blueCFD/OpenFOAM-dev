@@ -41,7 +41,7 @@ Description
             operator==
             (
                 vector(0,0,1)
-                *min(10, 0.1*this->db().time().value())
+                *min(10, 0.1*this->time().value())
             );
         #};
 
@@ -66,7 +66,7 @@ Description
     {
         code
         #{
-            operator==(min(10, 0.1*this->db().time().value()));
+            operator==(min(10, 0.1*this->time().value()));
         #};
     }
     \endverbatim

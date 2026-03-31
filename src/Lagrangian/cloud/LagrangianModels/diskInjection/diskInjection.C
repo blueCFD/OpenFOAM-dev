@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -205,8 +205,8 @@ Foam::LagrangianSubMesh Foam::Lagrangian::diskInjection::modify
     const scalar t0 = t1 - mesh.time().deltaT().value();
 
     // Restart the generator if necessary and set the time index up to date
-    rndGen_.start(timeIndex_ == db().time().timeIndex());
-    timeIndex_ = db().time().timeIndex();
+    rndGen_.start(timeIndex_ == time().timeIndex());
+    timeIndex_ = time().timeIndex();
 
     // Calculate the number of particles to inject. Round down to get an
     // integer number. Store the excess to apply at a later time.

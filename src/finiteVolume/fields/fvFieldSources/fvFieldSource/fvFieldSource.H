@@ -167,6 +167,9 @@ public:
         //- Return the local object registry
         const objectRegistry& db() const;
 
+        //- Return time
+        const Time& time() const;
+
         //- Return the internal field reference
         const DimensionedField<Type, fvMesh>& internalField() const;
 

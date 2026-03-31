@@ -152,6 +152,13 @@ const Foam::objectRegistry& Foam::fvFieldSource<Type>::db() const
 
 
 template<class Type>
+const Foam::Time& Foam::fvFieldSource<Type>::time() const
+{
+    return internalField_.mesh().time();
+}
+
+
+template<class Type>
 const Foam::DimensionedField<Type, Foam::fvMesh>&
 Foam::fvFieldSource<Type>::internalField() const
 {

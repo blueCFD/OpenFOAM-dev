@@ -217,7 +217,6 @@ $(derivedFvPatchFields)/partialSlip/partialSlipFvPatchFields.C
 $(derivedFvPatchFields)/phaseHydrostaticPressure/phaseHydrostaticPressureFvPatchScalarField.C
 $(derivedFvPatchFields)/pressureDirectedInletOutletVelocity/pressureDirectedInletOutletVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/pressureDirectedInletVelocity/pressureDirectedInletVelocityFvPatchVectorField.C
-$(derivedFvPatchFields)/pressureInletOutletParSlipVelocity/pressureInletOutletParSlipVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/pressureInletOutletVelocity/pressureInletOutletVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/pressureInletUniformVelocity/pressureInletUniformVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/pressureInletVelocity/pressureInletVelocityFvPatchVectorField.C
@@ -241,7 +240,7 @@ $(derivedFvPatchFields)/entrainmentPressure/entrainmentPressureFvPatchScalarFiel
 $(derivedFvPatchFields)/totalTemperature/totalTemperatureFvPatchScalarField.C
 $(derivedFvPatchFields)/translatingWallVelocity/translatingWallVelocityFvPatchVectorField.C
 $(derivedFvPatchFields)/turbulentInlet/turbulentInletFvPatchFields.C
-$(derivedFvPatchFields)/turbulentIntensityKineticEnergyInlet/turbulentIntensityKineticEnergyInletFvPatchScalarField.C
+$(derivedFvPatchFields)/turbulentKineticEnergy/turbulentKineticEnergyFvPatchScalarField.C
 $(derivedFvPatchFields)/uniformDensityHydrostaticPressure/uniformDensityHydrostaticPressureFvPatchScalarField.C
 $(derivedFvPatchFields)/uniformFixedGradient/uniformFixedGradientFvPatchFields.C
 $(derivedFvPatchFields)/uniformFixedValue/uniformFixedValueFvPatchFields.C
@@ -302,7 +301,7 @@ derivedFvFieldSources = $(fvFieldSources)/derived
 $(derivedFvFieldSources)/internal/internalFvFieldSources.C
 $(derivedFvFieldSources)/uniformFixedValue/uniformFixedValueFvFieldSources.C
 $(derivedFvFieldSources)/uniformInletOutlet/uniformInletOutletFvFieldSources.C
-$(derivedFvFieldSources)/turbulentIntensityKineticEnergy/turbulentIntensityKineticEnergyFvScalarFieldSource.C
+$(derivedFvFieldSources)/turbulentKineticEnergy/turbulentKineticEnergyFvScalarFieldSource.C
 $(derivedFvFieldSources)/NaN/NaNFvFieldSources.T.C
 
 fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedVolFieldFunctions.C

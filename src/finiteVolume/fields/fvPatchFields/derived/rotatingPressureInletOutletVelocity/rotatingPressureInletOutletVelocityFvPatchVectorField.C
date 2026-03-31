@@ -33,7 +33,7 @@ License
 void Foam::rotatingPressureInletOutletVelocityFvPatchVectorField::
 calcTangentialVelocity()
 {
-    const scalar omega = omega_.value(db().time().value());
+    const scalar omega = omega_.value(time().value());
 
     const vectorField tangentialVelocity
     (
@@ -59,7 +59,7 @@ rotatingPressureInletOutletVelocityFvPatchVectorField
     pressureInletOutletVelocityFvPatchVectorField(p, iF, dict),
     origin_(dict.lookup<vector>("origin", dimLength)),
     axis_(dict.lookup<vector>("axis", dimless)),
-    omega_(db().time(), dict)
+    omega_(time(), dict)
 {
     calcTangentialVelocity();
 }

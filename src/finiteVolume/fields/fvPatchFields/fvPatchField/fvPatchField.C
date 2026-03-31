@@ -154,6 +154,13 @@ const Foam::objectRegistry& Foam::fvPatchField<Type>::db() const
 
 
 template<class Type>
+const Foam::Time& Foam::fvPatchField<Type>::time() const
+{
+    return patch_.time();
+}
+
+
+template<class Type>
 void Foam::fvPatchField<Type>::check(const fvPatchField<Type>& ptf) const
 {
     if (&patch_ != &(ptf.patch_))

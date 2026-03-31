@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -43,7 +43,7 @@ flowRateNumberLagrangianScalarFieldSource
       ? Function1<scalar>::New
         (
             "volumetricFlowRate",
-            db().time().userUnits(),
+            time().userUnits(),
             dimVolumetricFlux,
             dict
         ).ptr()
@@ -55,7 +55,7 @@ flowRateNumberLagrangianScalarFieldSource
       ? Function1<scalar>::New
         (
             "massFlowRate",
-            db().time().userUnits(),
+            time().userUnits(),
             dimMassFlux,
             dict
         ).ptr()
@@ -102,8 +102,8 @@ Foam::dimensionedScalar Foam::flowRateNumberLagrangianScalarFieldSource::Q
 ) const
 {
     // Get the range of the time-step
-    const scalar t1 = db().time().value();
-    const scalar t0 = t1 - db().time().deltaTValue();
+    const scalar t1 = time().value();
+    const scalar t0 = t1 - time().deltaTValue();
 
     if (volumetricFlowRate_.valid())
     {
@@ -146,8 +146,8 @@ Foam::flowRateNumberLagrangianScalarFieldSource::value
 ) const
 {
     // Get the range of the time-step
-    const scalar t1 = db().time().value();
-    const scalar t0 = t1 - db().time().deltaTValue();
+    const scalar t1 = time().value();
+    const scalar t0 = t1 - time().deltaTValue();
 
     // Calculate the necessary sizes
     tmp<LagrangianSubScalarField> size, v, m;

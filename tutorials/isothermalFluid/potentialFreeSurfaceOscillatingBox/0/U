@@ -22,8 +22,7 @@ boundaryField
 {
     freeSurface
     {
-        type            pressureInletOutletParSlipVelocity;
-        value           uniform (0 0 0);
+        type            fluxCorrectedVelocity;
     }
     walls
     {

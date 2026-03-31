@@ -28,7 +28,7 @@ boundaryField
 
     inlet
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.0168;
         value           $internalField;
     }

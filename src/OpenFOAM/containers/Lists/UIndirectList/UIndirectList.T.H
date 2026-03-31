@@ -50,6 +50,7 @@ namespace Foam
 
 // Forward declaration of friend functions and operators
 template<class T> class UIndirectList;
+template<class T> void writeEntry(Ostream& os, const UIndirectList<T>&);
 template<class T> Ostream& operator<<(Ostream&, const UIndirectList<T>&);
 
 /*---------------------------------------------------------------------------*\

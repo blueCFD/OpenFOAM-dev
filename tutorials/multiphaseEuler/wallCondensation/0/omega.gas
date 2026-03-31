@@ -24,7 +24,7 @@ boundaryField
 
     inlet
     {
-        type                turbulentMixingLengthFrequencyInlet;
+        type                turbulentOmega;
         mixingLength        0.0002;
         k                   k.gas;
         value               uniform 0.01;

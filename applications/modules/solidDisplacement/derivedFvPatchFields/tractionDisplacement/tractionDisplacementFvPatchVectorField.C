@@ -59,7 +59,7 @@ tractionDisplacementFvPatchVectorField
         Function1<scalar>::New
         (
             "pressure",
-            db().time().userUnits(),
+            time().userUnits(),
             dimPressure,
             dict
         )
@@ -136,7 +136,7 @@ void Foam::tractionDisplacementFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    this->updateCoeffs(pressure_->value(db().time().value()));
+    this->updateCoeffs(pressure_->value(time().value()));
 }
 
 
@@ -144,7 +144,7 @@ void Foam::tractionDisplacementFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchVectorField::write(os);
     writeEntry(os, "traction", traction_);
-    writeEntry(os, db().time().userUnits(), dimPressure, pressure_());
+    writeEntry(os, time().userUnits(), dimPressure, pressure_());
     writeEntry(os, "value", *this);
 }
 

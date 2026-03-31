@@ -109,7 +109,7 @@ Foam::totalPressureVelocityMagnitudeLagrangianScalarFieldSource::Umag
         p0_ =
             Function1<scalar>::New
             (
-                field_.db().time().userUnits(),
+                field_.time().userUnits(),
                 pcVf.dimensions(),
                 p0Entry_()
             ).ptr();
@@ -201,7 +201,7 @@ void Foam::totalPressureVelocityMagnitudeLagrangianScalarFieldSource::write
     }
     else
     {
-        writeEntry(os, field_.db().time().userUnits(), units::any, p0_());
+        writeEntry(os, field_.time().userUnits(), units::any, p0_());
     }
 
     writeEntryIfDifferent<word>

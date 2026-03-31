@@ -376,9 +376,9 @@ surfaceDisplacementPointPatchVectorField::surfaces() const
                 IOobject
                 (
                     "abc",             // dummy name
-                    db().time().constant(),
-                    searchableSurface::geometryDir(db().time()),
-                    db().time(),
+                    time().constant(),
+                    searchableSurface::geometryDir(time()),
+                    time(),
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE
                 ),

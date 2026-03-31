@@ -24,14 +24,14 @@ boundaryField
 
     inlet
     {
-        type            turbulentIntensityKineticEnergyInlet;
+        type            turbulentKineticEnergy;
         intensity       0.05;
         value           $internalField;
     }
 
     outlet
     {
-        type            turbulentIntensityKineticEnergyInlet;
+        type            turbulentKineticEnergy;
         intensity       0.05;
         value           $internalField;
     }

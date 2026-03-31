@@ -20,8 +20,6 @@ internalField   uniform 0;
 
 boundaryField
 {
-    #include "include/ABLConditions"
-
     inlet
     {
         type            calculated;
@@ -36,9 +34,9 @@ boundaryField
 
     terrain
     {
-        type            atmosphericBoundaryLayerNutWallFunction;
-        z0              $z0;
-        value           uniform 0.0;
+        type            nutAtmosphericBoundaryLayerWallFunction;
+        libs            ("libatmosphericModels.so");
+        value           uniform 0;
     }
 
     ground

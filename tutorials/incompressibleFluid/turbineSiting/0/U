@@ -14,37 +14,35 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include        "include/initialConditions"
-
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform $flowVelocity;
+internalField
+{
+    type            atmosphericBoundaryLayerVelocity;
+    libs            ("libatmosphericModels.so");
+}
 
 boundaryField
 {
     outlet
     {
-        type            inletOutlet;
-        inletValue      uniform (0 0 0);
+        $internalField;
     }
 
     inlet
     {
-        type            atmosphericBoundaryLayerVelocity;
-        #include        "include/ABLConditions"
+        $internalField;
     }
 
     terrain
     {
         type            uniformFixedValue;
         uniformValue    (0 0 0);
-        value           uniform (0 0 0);
     }
 
     ground
     {
         type            uniformFixedValue;
-        value           uniform (0 0 0);
         uniformValue    constant (0 0 0);
     }
 

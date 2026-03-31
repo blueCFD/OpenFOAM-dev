@@ -50,7 +50,7 @@ Usage
         code
         #{
             this->refValue() =
-                vector(1, 0, 0)*min(10, 0.1*this->db().time().value());
+                vector(1, 0, 0)*min(10, 0.1*this->time().value());
             this->refGrad() = Zero;
             this->valueFraction() = 1.0;
         #};

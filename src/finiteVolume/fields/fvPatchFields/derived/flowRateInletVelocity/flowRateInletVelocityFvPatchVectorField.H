@@ -184,10 +184,6 @@ class flowRateInletVelocityFvPatchVectorField
         template<class AlphaType>
         void updateValues(const AlphaType& alpha);
 
-        //- Return whether the flow rate can be evaluated on this case (i.e.,
-        //  is not a non-parallel processor case)
-        bool canEvaluate();
-
 
 public:
 

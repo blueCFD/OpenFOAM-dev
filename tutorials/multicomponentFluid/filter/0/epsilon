@@ -60,7 +60,7 @@ sources
 {
     massSource
     {
-        type            turbulentMixingLengthDissipationRate;
+        type            turbulentEpsilon;
         mixingLength    0.01;
     }
 }

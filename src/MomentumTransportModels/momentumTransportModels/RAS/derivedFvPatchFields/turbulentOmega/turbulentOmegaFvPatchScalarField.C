@@ -1,0 +1,154 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is part of OpenFOAM.
+
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+\*---------------------------------------------------------------------------*/
+
+#include "turbulentOmegaFvPatchScalarField.H"
+#include "addToRunTimeSelectionTable.H"
+#include "fieldMapper.H"
+#include "surfaceFields.H"
+#include "volFields.H"
+#include "momentumTransportModel.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+turbulentOmegaFvPatchScalarField::
+turbulentOmegaFvPatchScalarField
+(
+    const fvPatch& p,
+    const DimensionedField<scalar, fvMesh>& iF,
+    const dictionary& dict
+)
+:
+    inletOutletFvPatchScalarField(p, iF),
+    mixingLength_(dict.lookup<scalar>("mixingLength", dimLength)),
+    kName_(dict.lookupOrDefault<word>("k", "k")),
+    Cmu_(dict.lookupOrDefault<scalar>("Cmu", 0.09))
+{
+    this->phiName_ = dict.lookupOrDefault<word>("phi", "phi");
+
+    fvPatchScalarField::operator=
+    (
+        scalarField("value", iF.dimensions(), dict, p.size())
+    );
+
+    this->refValue() = 0.0;
+    this->refGrad() = 0.0;
+    this->valueFraction() = 0.0;
+}
+
+
+turbulentOmegaFvPatchScalarField::
+turbulentOmegaFvPatchScalarField
+(
+    const turbulentOmegaFvPatchScalarField& ptf,
+    const fvPatch& p,
+    const DimensionedField<scalar, fvMesh>& iF,
+    const fieldMapper& mapper
+)
+:
+    inletOutletFvPatchScalarField(ptf, p, iF, mapper),
+    mixingLength_(ptf.mixingLength_),
+    kName_(ptf.kName_),
+    Cmu_(ptf.Cmu_)
+{}
+
+
+turbulentOmegaFvPatchScalarField::
+turbulentOmegaFvPatchScalarField
+(
+    const turbulentOmegaFvPatchScalarField& ptf,
+    const DimensionedField<scalar, fvMesh>& iF
+)
+:
+    inletOutletFvPatchScalarField(ptf, iF),
+    mixingLength_(ptf.mixingLength_),
+    kName_(ptf.kName_),
+    Cmu_(ptf.Cmu_)
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void turbulentOmegaFvPatchScalarField::updateCoeffs()
+{
+    if (updated())
+    {
+        return;
+    }
+
+    const scalar Cmu25 = pow(Cmu_, 0.25);
+
+    const fvPatchScalarField& kp =
+        patch().lookupPatchField<volScalarField, scalar>(kName_);
+
+    const fvsPatchScalarField& phip =
+        patch().lookupPatchField<surfaceScalarField, scalar>(this->phiName_);
+
+    this->refValue() = sqrt(kp)/(Cmu25*mixingLength_);
+    this->valueFraction() = neg(phip);
+
+    inletOutletFvPatchScalarField::updateCoeffs();
+}
+
+
+void turbulentOmegaFvPatchScalarField::write
+(
+    Ostream& os
+) const
+{
+    fvPatchScalarField::write(os);
+    writeEntry(os, "mixingLength", mixingLength_);
+    writeEntry(os, "phi", this->phiName_);
+    writeEntry(os, "k", kName_);
+    writeEntry(os, "value", *this);
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+makePatchTypeField
+(
+    fvPatchScalarField,
+    turbulentOmegaFvPatchScalarField
+);
+
+// Backwards compatible lookup as turbulentMixingLengthFrequencyInlet
+addNamedToRunTimeSelectionTable
+(
+    fvPatchScalarField,
+    turbulentOmegaFvPatchScalarField,
+    dictionary,
+    turbulentMixingLengthFrequencyInlet
+);
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// ************************************************************************* //

@@ -106,7 +106,7 @@ externalTemperatureFvPatchScalarField
     Q_
     (
         haveQ_
-      ? Function1<scalar>::New("Q", db().time().userUnits(), dimPower, dict)
+      ? Function1<scalar>::New("Q", time().userUnits(), dimPower, dict)
       : autoPtr<Function1<scalar>>()
     ),
     haveq_(dict.found("q")),
@@ -116,7 +116,7 @@ externalTemperatureFvPatchScalarField
       ? Function1<scalar>::New
         (
             "q",
-            db().time().userUnits(),
+            time().userUnits(),
             dimPower/dimArea,
             dict
         )
@@ -129,7 +129,7 @@ externalTemperatureFvPatchScalarField
       ? Function1<scalar>::New
         (
             "h",
-            db().time().userUnits(),
+            time().userUnits(),
             dimPower/dimArea/dimTemperature,
             dict
         ).ptr()
@@ -161,7 +161,7 @@ externalTemperatureFvPatchScalarField
       ? Function1<scalar>::New
         (
             "Ta",
-            db().time().userUnits(),
+            time().userUnits(),
             dimTemperature,
             dict
         ).ptr()
@@ -337,7 +337,7 @@ void Foam::externalTemperatureFvPatchScalarField::updateCoeffs()
         return;
     }
 
-    const scalar t = db().time().value();
+    const scalar t = time().value();
 
     // Get thermal conductivities, the patch temperature and any explicit
     // correction heat flux
@@ -504,12 +504,12 @@ void Foam::externalTemperatureFvPatchScalarField::write
 
     if (haveQ_)
     {
-        writeEntry(os, db().time().userUnits(), dimPower, Q_());
+        writeEntry(os, time().userUnits(), dimPower, Q_());
     }
 
     if (haveq_)
     {
-        writeEntry(os, db().time().userUnits(), dimPower/dimArea, q_());
+        writeEntry(os, time().userUnits(), dimPower/dimArea, q_());
     }
 
     if (haveh_)
@@ -517,7 +517,7 @@ void Foam::externalTemperatureFvPatchScalarField::write
         writeEntry
         (
             os,
-            db().time().userUnits(),
+            time().userUnits(),
             dimPower/dimArea/dimTemperature,
             h_()
         );
@@ -536,7 +536,7 @@ void Foam::externalTemperatureFvPatchScalarField::write
 
     if (haveh_ || haveEmissivity_)
     {
-        writeEntry(os, db().time().userUnits(), dimTemperature, Ta_());
+        writeEntry(os, time().userUnits(), dimTemperature, Ta_());
     }
 
     writeEntryIfDifferent(os, "relaxation", scalar(1), relax_);

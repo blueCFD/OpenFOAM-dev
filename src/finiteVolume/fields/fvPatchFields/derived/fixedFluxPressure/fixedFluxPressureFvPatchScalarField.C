@@ -117,7 +117,7 @@ void Foam::fixedFluxPressureFvPatchScalarField::updateCoeffs
         return;
     }
 
-    curTimeIndex_ = this->db().time().timeIndex();
+    curTimeIndex_ = this->time().timeIndex();
 
     gradient() = snGradp;
     fixedGradientFvPatchScalarField::updateCoeffs();
@@ -131,7 +131,7 @@ void Foam::fixedFluxPressureFvPatchScalarField::updateCoeffs()
         return;
     }
 
-    if (curTimeIndex_ != this->db().time().timeIndex())
+    if (curTimeIndex_ != this->time().timeIndex())
     {
         FatalErrorInFunction
             << "updateCoeffs(const scalarField& snGradp) MUST be called before"

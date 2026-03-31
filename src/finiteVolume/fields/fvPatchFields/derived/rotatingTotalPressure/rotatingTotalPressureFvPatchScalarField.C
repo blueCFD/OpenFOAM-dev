@@ -42,7 +42,7 @@ rotatingTotalPressureFvPatchScalarField
     totalPressureFvPatchScalarField(p, iF, dict),
     origin_(dict.lookup<vector>("origin")),
     axis_(dict.lookup<vector>("axis")),
-    omega_(db().time(), dict)
+    omega_(time(), dict)
 {}
 
 
@@ -85,7 +85,7 @@ void Foam::rotatingTotalPressureFvPatchScalarField::updateCoeffs()
         return;
     }
 
-    const scalar omega = omega_.value(db().time().value());
+    const scalar omega = omega_.value(time().value());
 
     const fvsPatchField<scalar>& phip =
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);

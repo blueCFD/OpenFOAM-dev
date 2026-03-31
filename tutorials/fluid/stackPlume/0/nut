@@ -28,7 +28,7 @@ boundaryField
 
     wall
     {
-        type            atmosphericBoundaryLayerNutWallFunction;
+        type            nutAtmosphericBoundaryLayerWallFunction;
         libs            ("libatmosphericModels.so");
         value           uniform 0;
     }

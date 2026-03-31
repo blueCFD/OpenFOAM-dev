@@ -26,14 +26,14 @@ Class
 
 Description
     This boundary condition specifies a velocity inlet profile appropriate
-    for atmospheric boundary layers (ABL).
+    for an atmospheric boundary layer.
 
     See Foam::atmosphericBoundaryLayer for details.
 
 See also
     Foam::atmosphericBoundaryLayer
     Foam::atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
-    Foam::atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
+    Foam::atmosphericBoundaryLayerTurbulentEpsilonFvPatchScalarField
 
 SourceFiles
     atmosphericBoundaryLayerVelocityFvPatchVectorField.C

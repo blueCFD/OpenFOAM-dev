@@ -41,7 +41,7 @@ Foam::uniformInletOutletFvFieldSource<Type>::uniformInletOutletFvFieldSource
         Function1<Type>::New
         (
             "uniformInletValue",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -86,7 +86,7 @@ Foam::uniformInletOutletFvFieldSource<Type>::sourceValue
             dimensioned<Type>
             (
                 this->internalField().dimensions(),
-                uniformInletValue_->value(this->db().time().value())
+                uniformInletValue_->value(this->time().value())
             )
         );
 }
@@ -107,7 +107,7 @@ Foam::uniformInletOutletFvFieldSource<Type>::sourceValue
             new Field<Type>
             (
                 source.size(),
-                uniformInletValue_->value(this->db().time().value())
+                uniformInletValue_->value(this->time().value())
             )
         );
 }
@@ -145,7 +145,7 @@ void Foam::uniformInletOutletFvFieldSource<Type>::write(Ostream& os) const
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         uniformInletValue_()
     );

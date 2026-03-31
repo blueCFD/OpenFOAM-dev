@@ -16,9 +16,11 @@ FoamFile
 
 dimensions      [0 2 -3 0 0 0 0];
 
-#include        "include/initialConditions"
-
-internalField   uniform $turbulentEpsilon;
+internalField
+{
+    type            atmosphericBoundaryLayerTurbulentEpsilon;
+    libs            ("libatmosphericModels.so");
+}
 
 boundaryField
 {
@@ -28,19 +30,17 @@ boundaryField
         Cmu             0.09;
         kappa           0.4;
         E               9.8;
-        value           $internalField;
+        value           0;
     }
 
     outlet
     {
-        type            inletOutlet;
-        inletValue      uniform $turbulentEpsilon;
+        $internalField;
     }
 
     inlet
     {
-        type            atmosphericBoundaryLayerTurbulentDissipationRate;
-        #include        "include/ABLConditions"
+        $internalField;
     }
 
     ground

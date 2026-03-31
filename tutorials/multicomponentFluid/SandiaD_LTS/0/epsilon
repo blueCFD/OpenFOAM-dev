@@ -37,7 +37,7 @@ boundaryField
 
     inletPilot
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.000735;
         phi             phi;
         k               k;
@@ -46,7 +46,7 @@ boundaryField
 
     inletAir
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.019677;
         value           uniform 1;
     }
@@ -62,7 +62,7 @@ boundaryField
 
     inletCH4
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.000504;
         phi             phi;
         k               k;

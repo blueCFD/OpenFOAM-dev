@@ -74,7 +74,7 @@ waveSurfacePressureFvPatchScalarField
                 IOobject
                 (
                     "zeta",
-                    db().time().name(),
+                    time().name(),
                     db(),
                     IOobject::READ_IF_PRESENT,
                     IOobject::AUTO_WRITE
@@ -133,7 +133,7 @@ void Foam::waveSurfacePressureFvPatchScalarField::updateCoeffs()
 
     const label patchi = patch().index();
 
-    const scalar dt = db().time().deltaTValue();
+    const scalar dt = time().deltaTValue();
 
     vectorField& zetap = zeta.boundaryFieldRef()[patchi];
 
@@ -172,7 +172,7 @@ void Foam::waveSurfacePressureFvPatchScalarField::updateCoeffs()
         }
         case tsBackward:
         {
-            scalar dt0 = db().time().deltaT0Value();
+            scalar dt0 = time().deltaT0Value();
 
             scalar c = 1.0 + dt/(dt + dt0);
             scalar c00 = dt*dt/(dt0*(dt + dt0));

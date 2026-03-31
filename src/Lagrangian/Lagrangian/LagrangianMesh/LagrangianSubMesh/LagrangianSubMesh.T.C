@@ -106,6 +106,12 @@ const Foam::objectRegistry& Foam::LagrangianSubMesh::db() const
 }
 
 
+const Foam::Time& Foam::LagrangianSubMesh::time() const
+{
+    return mesh_.time();
+}
+
+
 Foam::word Foam::LagrangianSubMesh::complete(const word& subFieldName) const
 {
     const word groupName = Foam::name(group());

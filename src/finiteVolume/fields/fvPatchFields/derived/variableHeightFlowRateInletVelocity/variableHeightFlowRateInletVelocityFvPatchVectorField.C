@@ -43,7 +43,7 @@ variableHeightFlowRateInletVelocityFvPatchVectorField
         Function1<scalar>::New
         (
             "flowRate",
-            db().time().userUnits(),
+            time().userUnits(),
             dimVolumetricFlux,
             dict
         )
@@ -96,7 +96,7 @@ updateCoeffs()
     alphap = max(alphap, scalar(0));
     alphap = min(alphap, scalar(1));
 
-    scalar flowRate = flowRate_->value(db().time().value());
+    scalar flowRate = flowRate_->value(time().value());
 
     // a simpler way of doing this would be nice
     scalar avgU = -flowRate/gSum(patch().magSf()*alphap);
@@ -115,7 +115,7 @@ void Foam::variableHeightFlowRateInletVelocityFvPatchVectorField::write
 ) const
 {
     fvPatchField<vector>::write(os);
-    writeEntry(os, db().time().userUnits(), dimVolumetricFlux, flowRate_());
+    writeEntry(os, time().userUnits(), dimVolumetricFlux, flowRate_());
     writeEntry(os, "alpha", alphaName_);
     writeEntry(os, "value", *this);
 }

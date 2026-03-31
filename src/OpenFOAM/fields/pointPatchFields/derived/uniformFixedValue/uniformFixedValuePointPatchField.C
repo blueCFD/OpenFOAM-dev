@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ uniformFixedValuePointPatchField
         Function1<Type>::New
         (
             "uniformValue",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -57,7 +57,7 @@ uniformFixedValuePointPatchField
     }
     else
     {
-        const scalar t = this->db().time().value();
+        const scalar t = this->time().value();
         fixedValuePointPatchField<Type>::operator=(uniformValue_->value(t));
     }
 }
@@ -77,7 +77,7 @@ uniformFixedValuePointPatchField
     uniformValue_(ptf.uniformValue_, false)
 {
     // For safety re-evaluate
-    const scalar t = this->db().time().value();
+    const scalar t = this->time().value();
     fixedValuePointPatchField<Type>::operator=(uniformValue_->value(t));
 }
 
@@ -94,7 +94,7 @@ uniformFixedValuePointPatchField
     uniformValue_(ptf.uniformValue_, false)
 {
     // For safety re-evaluate
-    const scalar t = this->db().time().value();
+    const scalar t = this->time().value();
     fixedValuePointPatchField<Type>::operator==(uniformValue_->value(t));
 }
 
@@ -109,7 +109,7 @@ void Foam::uniformFixedValuePointPatchField<Type>::updateCoeffs()
         return;
     }
 
-    const scalar t = this->db().time().value();
+    const scalar t = this->time().value();
     fixedValuePointPatchField<Type>::operator==(uniformValue_->value(t));
 
     fixedValuePointPatchField<Type>::updateCoeffs();
@@ -125,7 +125,7 @@ write(Ostream& os) const
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         uniformValue_())
     ;

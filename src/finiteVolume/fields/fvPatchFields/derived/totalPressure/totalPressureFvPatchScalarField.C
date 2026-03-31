@@ -88,7 +88,7 @@ void Foam::totalPressureFvPatchScalarField::updateCoeffs()
 
         if (Upiov.tangentialVelocity().valid())
         {
-            const scalar t = this->db().time().value();
+            const scalar t = this->time().value();
 
             dynamicPressureFvPatchScalarField::updateCoeffs
             (

@@ -151,6 +151,9 @@ public:
         //- Return the local object registry
         const objectRegistry& db() const;
 
+        //- Return time
+        const Time& time() const;
+
         //- Lookup and return the patchField of the named field from the
         //  local objectRegistry.
         template<class GeometricField, class Type>

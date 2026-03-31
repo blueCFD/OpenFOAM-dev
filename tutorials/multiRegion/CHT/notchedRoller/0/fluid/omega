@@ -30,7 +30,7 @@ boundaryField
 
     inlet
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.1;
         value           $internalField;
     }

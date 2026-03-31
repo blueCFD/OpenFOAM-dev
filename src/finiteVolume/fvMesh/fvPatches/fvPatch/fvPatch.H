@@ -172,6 +172,9 @@ public:
             //- Return mesh reference
             const fvMesh& mesh() const;
 
+            //- Return time
+            const Time& time() const;
+
             //- Return boundaryMesh reference
             const fvBoundaryMesh& boundaryMesh() const
             {

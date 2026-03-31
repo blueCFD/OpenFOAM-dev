@@ -76,7 +76,7 @@ void Foam::flowRateInletVelocityFvPatchVectorField::updateValues
 
     const scalar avgU =
        scale
-      *flowRate_->value(db().time().value())
+      *flowRate_->value(time().value())
       /gSum(alpha*rho*profile*patch().magSf());
 
     operator==(- avgU*profile*patch().nf());
@@ -124,14 +124,6 @@ void Foam::flowRateInletVelocityFvPatchVectorField::updateValues
 }
 
 
-bool Foam::flowRateInletVelocityFvPatchVectorField::canEvaluate()
-{
-    return
-        Pstream::parRun()
-     || !patch().mesh().time().processorCase();
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::flowRateInletVelocityFvPatchVectorField::
@@ -161,7 +153,7 @@ flowRateInletVelocityFvPatchVectorField
             Function1<scalar>::New
             (
                 "meanVelocity",
-                db().time().userUnits(),
+                time().userUnits(),
                 dimVelocity,
                 dict
             );
@@ -174,7 +166,7 @@ flowRateInletVelocityFvPatchVectorField
             Function1<scalar>::New
             (
                 "volumetricFlowRate",
-                db().time().userUnits(),
+                time().userUnits(),
                 dimVolumetricFlux,
                 dict
             );
@@ -187,7 +179,7 @@ flowRateInletVelocityFvPatchVectorField
             Function1<scalar>::New
             (
                 "massFlowRate",
-                db().time().userUnits(),
+                time().userUnits(),
                 dimMassFlux,
                 dict
             );
@@ -205,7 +197,7 @@ flowRateInletVelocityFvPatchVectorField
         profile_ = Function1<scalar>::New("profile", dimless, dimless, dict);
     }
 
-    if (!canEvaluate() || dict.found("value"))
+    if (!p.time().completeCase() || dict.found("value"))
     {
         fvPatchField<vector>::operator=
         (
@@ -295,7 +287,7 @@ void Foam::flowRateInletVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    if (!canEvaluate())
+    if (!patch().time().completeCase())
     {
         FatalErrorInFunction
             << "Cannot evaluate flow rate on a non-parallel processor case"
@@ -326,7 +318,7 @@ void Foam::flowRateInletVelocityFvPatchVectorField::updateCoeffs()
 void Foam::flowRateInletVelocityFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
-    writeEntry(os, db().time().userUnits(), units::any, flowRate_());
+    writeEntry(os, time().userUnits(), units::any, flowRate_());
     if (profile_.valid())
     {
         writeEntry(os, profile_());

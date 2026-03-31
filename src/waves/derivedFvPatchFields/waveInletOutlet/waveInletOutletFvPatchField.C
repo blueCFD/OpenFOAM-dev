@@ -47,7 +47,7 @@ Foam::waveInletOutletFvPatchField<Type>::waveInletOutletFvPatchField
         Function1<Type>::New
         (
             "inletValueAbove",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -57,7 +57,7 @@ Foam::waveInletOutletFvPatchField<Type>::waveInletOutletFvPatchField
         Function1<Type>::New
         (
             "inletValueBelow",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -128,7 +128,7 @@ void Foam::waveInletOutletFvPatchField<Type>::updateCoeffs()
             phiName_
         );
 
-    const scalar t = this->db().time().value();
+    const scalar t = this->time().value();
 
     const waveSuperposition& waves = waveSuperposition::New(this->db());
 
@@ -159,14 +159,14 @@ void Foam::waveInletOutletFvPatchField<Type>::write(Ostream& os) const
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         inletValueAbove_()
     );
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         inletValueBelow_()
     );

@@ -266,6 +266,12 @@ public:
             //  the corresponding method in objectRegistry
             using TimePaths::path;
 
+            //- Return true if this is a complete serial or parallel case
+            bool completeCase() const
+            {
+                return Pstream::parRun() || !processorCase();
+            }
+
             //- Return the control dict
             const IOdictionary& controlDict() const
             {

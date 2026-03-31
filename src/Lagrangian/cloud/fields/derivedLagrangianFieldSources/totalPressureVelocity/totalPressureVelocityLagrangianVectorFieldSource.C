@@ -107,7 +107,7 @@ void Foam::totalPressureVelocityLagrangianVectorFieldSource::write
 
     totalPressureVelocityMagnitudeLagrangianScalarFieldSource::write(os);
 
-    writeEntry(os, db().time().userUnits(), units::none, direction_());
+    writeEntry(os, time().userUnits(), units::none, direction_());
 }
 
 

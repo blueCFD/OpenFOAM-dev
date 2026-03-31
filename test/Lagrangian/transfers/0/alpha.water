@@ -23,18 +23,16 @@ internalField
 {
     type            coded;
 
-    name            thickenedInterfaceVolumeFraction;
-
     evaluate
     #{
         const volScalarField::Internal z(C.component(2));
 
         const dimensionedScalar h = $<dimensionedScalar>interfaceHeight;
-        const dimensionedScalar t = $<dimensionedScalar>interfaceThickness;
+        const dimensionedScalar dh = $<dimensionedScalar>interfaceThickness;
 
         // Linear ramp over the interface thickness
         tmp<volScalarField::Internal> r =
-            min(max(0.5 + (h - z)/t, scalar(0)), scalar(1));
+            min(max(0.5 + (h - z)/dh, scalar(0)), scalar(1));
 
         // Smooth cosine function for the volume fraction
         field = (1 - cos(constant::mathematical::pi*r))/2;

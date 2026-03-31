@@ -172,7 +172,7 @@ void Foam::waveAlphaFvPatchScalarField::updateCoeffs()
         return;
     }
 
-    operator==(alpha(db().time().value()));
+    operator==(alpha(time().value()));
 
     fixedValueInletOutletFvPatchScalarField::updateCoeffs();
 }

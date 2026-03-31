@@ -63,7 +63,7 @@ lumpedMassTemperatureFvPatchScalarField
         IOobject
         (
             "T_" + patch().name(),
-            db().time().name(),
+            time().name(),
             db()
         ),
         dimensionedScalar(dimTemperature, dict.lookup<scalar>("T"))
@@ -74,7 +74,7 @@ lumpedMassTemperatureFvPatchScalarField
       ? Function1<scalar>::New
         (
             "Q",
-            db().time().userUnits(),
+            time().userUnits(),
             dimPower,
             dict
         )
@@ -180,11 +180,11 @@ void Foam::lumpedMassTemperatureFvPatchScalarField::updateCoeffs()
         ttm.kappaEff(patch().index())*patch().magSf()*patch().deltaCoeffs()
     );
 
-    const scalar Hs = rho_*Cv_*V_/db().time().deltaTValue();
+    const scalar Hs = rho_*Cv_*V_/time().deltaTValue();
 
     T_.value() =
     (
-        Q_->value(db().time().value())
+        Q_->value(time().value())
       + gSum(Hf*patchInternalField())
       + Hs*T_.oldTime().value()
     )/(Hs + gSum(Hf));

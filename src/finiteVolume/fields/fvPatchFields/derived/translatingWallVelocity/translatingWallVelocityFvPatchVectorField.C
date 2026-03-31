@@ -43,7 +43,7 @@ translatingWallVelocityFvPatchVectorField
         Function1<vector>::New
         (
             "U",
-            db().time().userUnits(),
+            time().userUnits(),
             dimVelocity,
             dict
         )
@@ -89,7 +89,7 @@ void Foam::translatingWallVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    const vector U = U_->value(db().time().value());
+    const vector U = U_->value(time().value());
 
     // Remove the component of U normal to the wall in case the wall is not flat
     const vectorField n(patch().nf());
@@ -102,7 +102,7 @@ void Foam::translatingWallVelocityFvPatchVectorField::updateCoeffs()
 void Foam::translatingWallVelocityFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchVectorField::write(os);
-    writeEntry(os, db().time().userUnits(), dimVelocity, U_());
+    writeEntry(os, time().userUnits(), dimVelocity, U_());
     writeEntry(os, "value", *this);
 }
 

@@ -42,9 +42,21 @@ const Foam::polyPatch& Foam::pointPatch::poly() const
 }
 
 
+const Foam::objectRegistry& Foam::pointPatch::db() const
+{
+    return boundaryMesh_.mesh().db();
+}
+
+
 const Foam::pointMesh& Foam::pointPatch::mesh() const
 {
     return boundaryMesh_.mesh();
+}
+
+
+const Foam::Time& Foam::pointPatch::time() const
+{
+    return boundaryMesh_.mesh().time();
 }
 
 

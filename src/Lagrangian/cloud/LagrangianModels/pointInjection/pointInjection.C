@@ -149,8 +149,8 @@ Foam::LagrangianSubMesh Foam::Lagrangian::pointInjection::modify
     const scalar t0 = t1 - mesh.time().deltaT().value();
 
     // Restart the generator if necessary and set the time index up to date
-    rndGen_.start(timeIndex_ == db().time().timeIndex());
-    timeIndex_ = db().time().timeIndex();
+    rndGen_.start(timeIndex_ == time().timeIndex());
+    timeIndex_ = time().timeIndex();
 
     // Calculate the number of particles to inject. Round down to get an
     // integer number. Store the excess to apply at a later time.

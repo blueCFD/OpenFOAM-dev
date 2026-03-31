@@ -119,7 +119,7 @@ void Foam::movingMappedWallVelocityFvPatchVectorField::updateCoeffs()
         }
         const vectorField nbrUp
         (
-            (nbrCf - nbrCf0)/db().time().deltaTValue()
+            (nbrCf - nbrCf0)/time().deltaTValue()
         );
         const vectorField Up(mapper.fromNeighbour(nbrUp));
 

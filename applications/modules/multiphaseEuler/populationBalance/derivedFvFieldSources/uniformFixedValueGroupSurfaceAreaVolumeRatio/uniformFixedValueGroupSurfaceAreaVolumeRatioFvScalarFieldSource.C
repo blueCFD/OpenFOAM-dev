@@ -43,7 +43,7 @@ uniformFixedValueGroupSurfaceAreaVolumeRatioFvScalarFieldSource
         Function1<scalar>::New
         (
             "uniformValue",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -88,7 +88,7 @@ sourceValue
        *dimensionedScalar
         (
             internalField().dimensions(),
-            uniformValue_->value(this->db().time().value())
+            uniformValue_->value(this->time().value())
         );
 }
 
@@ -105,7 +105,7 @@ sourceValue
     // Scale the value by the source for the corresponding group fraction
     return
         popBal().f(i()).sources()[model.name()].value(model, source, cells)
-       *uniformValue_->value(this->db().time().value());
+       *uniformValue_->value(this->time().value());
 }
 
 
@@ -151,7 +151,7 @@ write
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         uniformValue_()
     );

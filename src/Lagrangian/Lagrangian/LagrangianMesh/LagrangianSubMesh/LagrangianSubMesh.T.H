@@ -141,6 +141,9 @@ public:
             //- Return the object registry
             const objectRegistry& db() const;
 
+            //- Return time
+            const Time& time() const;
+
             //- Return the group
             inline LagrangianGroup group() const;
 

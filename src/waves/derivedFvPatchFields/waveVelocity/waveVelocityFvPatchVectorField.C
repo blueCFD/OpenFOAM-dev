@@ -175,7 +175,7 @@ void Foam::waveVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    operator==(U(db().time().value()));
+    operator==(U(time().value()));
 
     fixedValueInletOutletFvPatchVectorField::updateCoeffs();
 }

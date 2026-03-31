@@ -143,7 +143,7 @@ ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::evaluate()
     using namespace dimensions;
 
     // Local reference to time
-    const dimensionedScalar& t(field.db().time());
+    const dimensionedScalar& t(field.time());
     ignore(t);
 
     // Local reference to the field value locations

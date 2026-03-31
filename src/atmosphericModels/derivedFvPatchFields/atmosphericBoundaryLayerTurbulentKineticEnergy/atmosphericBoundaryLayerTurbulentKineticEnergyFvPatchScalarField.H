@@ -25,15 +25,15 @@ Class
     Foam::atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField
 
 Description
-    This boundary condition specifies an inlet value for the turbulence
-    kinetic energy, \f$k\f$, appropriate for atmospheric boundary layers.
+    This boundary condition specifies an inlet value for the turbulent
+    kinetic energy, \f$k\f$, for an atmospheric boundary layer.
 
     See Foam::atmosphericBoundaryLayer for details.
 
 See also
     Foam::atmosphericBoundaryLayer
     Foam::atmosphericBoundaryLayerVelocityFvPatchVectorField
-    Foam::atmosphericBoundaryLayerTurbulentDissipationRateFvPatchScalarField
+    Foam::atmosphericBoundaryLayerTurbulentEpsilonFvPatchScalarField
 
 SourceFiles
     atmosphericBoundaryLayerTurbulentKineticEnergyFvPatchScalarField.C

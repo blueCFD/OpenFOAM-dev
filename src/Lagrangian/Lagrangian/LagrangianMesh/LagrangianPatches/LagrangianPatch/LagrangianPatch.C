@@ -117,6 +117,12 @@ const Foam::objectRegistry& Foam::LagrangianPatch::db() const
 }
 
 
+const Foam::Time& Foam::LagrangianPatch::time() const
+{
+    return boundaryMesh().mesh().time();
+}
+
+
 void Foam::LagrangianPatch::initEvaluate
 (
     PstreamBuffers&,

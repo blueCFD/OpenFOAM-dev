@@ -44,6 +44,7 @@ namespace Foam
 {
 
 // Forward declaration of classes
+class Time;
 class regIOobject;
 class dimensionSet;
 class objectRegistry;
@@ -89,6 +90,9 @@ public:
 
             //- Return local objectRegistry
             const objectRegistry& db() const;
+
+            //- Return time
+            const Time& time() const;
 
             //- Return internal field name
             const word& internalName() const;

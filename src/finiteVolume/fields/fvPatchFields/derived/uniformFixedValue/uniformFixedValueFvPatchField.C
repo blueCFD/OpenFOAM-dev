@@ -41,7 +41,7 @@ Foam::uniformFixedValueFvPatchField<Type>::uniformFixedValueFvPatchField
         Function1<Type>::New
         (
             "uniformValue",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -98,7 +98,7 @@ void Foam::uniformFixedValueFvPatchField<Type>::updateCoeffs()
 
     fvPatchField<Type>::operator==
     (
-        uniformValue_->value(this->db().time().value())
+        uniformValue_->value(this->time().value())
     );
 
     fixedValueFvPatchField<Type>::updateCoeffs();
@@ -112,7 +112,7 @@ void Foam::uniformFixedValueFvPatchField<Type>::write(Ostream& os) const
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         uniformValue_()
     );

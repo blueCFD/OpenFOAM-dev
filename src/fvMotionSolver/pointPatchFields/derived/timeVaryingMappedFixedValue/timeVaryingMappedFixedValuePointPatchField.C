@@ -66,7 +66,7 @@ timeVaryingMappedFixedValuePointPatchField
         offset_ = Function1<Type>::New
         (
             "offset",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         );
@@ -237,7 +237,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::checkTable()
         // Reread values and interpolate
         fileName samplePointsFile
         (
-            this->db().time().constant()
+            this->time().constant()
            /"boundaryData"
            /this->patch().name()
            /"points"
@@ -267,7 +267,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::checkTable()
         // Read the times for which data is available
 
         const fileName samplePointsDir = samplePointsFile.path();
-        sampleTimes_ = this->db().time().findTimes(samplePointsDir);
+        sampleTimes_ = this->time().findTimes(samplePointsDir);
 
         if (debug)
         {
@@ -286,7 +286,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::checkTable()
     (
         sampleTimes_,
         startSampleTime_,
-        this->db().time().userTimeValue(),
+        this->time().userTimeValue(),
         lo,
         hi
     );
@@ -295,11 +295,11 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::checkTable()
     {
         FatalErrorInFunction
             << "Cannot find starting sampling values for current time "
-            << this->db().time().userTimeValue() << nl
+            << this->time().userTimeValue() << nl
             << "Have sampling values for times "
             << pointToPointPlanarInterpolation::timeNames(sampleTimes_) << nl
             << "In directory "
-            <<  this->db().time().constant()/"boundaryData"/this->patch().name()
+            <<  this->time().constant()/"boundaryData"/this->patch().name()
             << "\n    on patch " << this->patch().name()
             << " of field " << fieldTableName_
             << exit(FatalError);
@@ -340,7 +340,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::checkTable()
             // Reread values and interpolate
             fileName valsFile
             (
-                this->db().time().constant()
+                this->time().constant()
                /"boundaryData"
                /this->patch().name()
                /sampleTimes_[startSampleTime_].name()
@@ -400,7 +400,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::checkTable()
             // Reread values and interpolate
             fileName valsFile
             (
-                this->db().time().constant()
+                this->time().constant()
                /"boundaryData"
                /this->patch().name()
                /sampleTimes_[endSampleTime_].name()
@@ -467,7 +467,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::updateCoeffs()
         scalar start = sampleTimes_[startSampleTime_].value();
         scalar end = sampleTimes_[endSampleTime_].value();
 
-        scalar s = (this->db().time().userTimeValue()-start)/(end-start);
+        scalar s = (this->time().userTimeValue()-start)/(end-start);
 
         if (debug)
         {
@@ -527,7 +527,7 @@ void Foam::timeVaryingMappedFixedValuePointPatchField<Type>::updateCoeffs()
     {
         this->operator==
         (
-            *this + offset_->value(this->db().time().value())
+            *this + offset_->value(this->time().value())
         );
     }
 

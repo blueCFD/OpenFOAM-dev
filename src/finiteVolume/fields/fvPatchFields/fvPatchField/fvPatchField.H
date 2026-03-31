@@ -364,6 +364,9 @@ public:
             //- Return local objectRegistry
             const objectRegistry& db() const;
 
+            //- Return time
+            const Time& time() const;
+
             //- Return patch
             const fvPatch& patch() const
             {

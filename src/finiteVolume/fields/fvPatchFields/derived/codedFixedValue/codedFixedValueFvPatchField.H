@@ -47,7 +47,7 @@ Usage
 
         code
         #{
-            operator==(min(10, 0.1*this->db().time().value()));
+            operator==(min(10, 0.1*this->time().value()));
         #};
 
         // codeInclude

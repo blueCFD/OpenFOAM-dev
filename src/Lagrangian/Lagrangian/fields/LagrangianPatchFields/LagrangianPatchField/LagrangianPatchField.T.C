@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -273,6 +273,13 @@ template<class Type>
 const Foam::objectRegistry& Foam::LagrangianPatchField<Type>::db() const
 {
     return patch_.boundaryMesh().mesh();
+}
+
+
+template<class Type>
+const Foam::Time& Foam::LagrangianPatchField<Type>::time() const
+{
+    return patch_.boundaryMesh().mesh().time();
 }
 
 

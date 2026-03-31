@@ -146,13 +146,13 @@ void Foam::plenumPressureFvPatchScalarField::updateCoeffs()
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
     // Get the timestep
-    const scalar dt = db().time().deltaTValue();
+    const scalar dt = time().deltaTValue();
 
     // Check if operating at a new time index and update the old-time properties
     // if so
-    if (timeIndex_ != db().time().timeIndex())
+    if (timeIndex_ != time().timeIndex())
     {
-        timeIndex_ = db().time().timeIndex();
+        timeIndex_ = time().timeIndex();
         plenumDensityOld_ = plenumDensity_;
         plenumTemperatureOld_ = plenumTemperature_;
     }

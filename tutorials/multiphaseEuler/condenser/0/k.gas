@@ -24,7 +24,7 @@ boundaryField
 
     inlet
     {
-        type            turbulentIntensityKineticEnergyInlet;
+        type            turbulentKineticEnergy;
         intensity       0.05;
         U               U.gas;
         value           uniform 0.01;

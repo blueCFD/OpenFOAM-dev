@@ -46,6 +46,8 @@ namespace Foam
 
 // Forward declaration of classes
 
+class objectRegistry;
+class Time;
 class pointMesh;
 class pointBoundaryMesh;
 class pointConstraint;
@@ -132,8 +134,14 @@ public:
         //- Return the index of this patch in the pointBoundaryMesh
         virtual label index() const = 0;
 
+        //- Return the local object registry
+        const objectRegistry& db() const;
+
         //- Return mesh reference
         const pointMesh& mesh() const;
+
+        //- Return time
+        const Time& time() const;
 
         //- Return boundaryMesh reference
         const pointBoundaryMesh& boundaryMesh() const

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,6 +88,7 @@ Foam::zonesGenerator::zonesGenerator
     zoneGeneratorList(mesh)
 {
     readHeaderOk(IOstream::ASCII, typeName);
+    zoneGeneratorList::read(*this, true);
     generate();
     addWatch();
 }
@@ -98,7 +99,6 @@ Foam::zonesGenerator::zonesGenerator
 bool Foam::zonesGenerator::readData(Istream& is)
 {
     is >> *this;
-    zoneGeneratorList::read(*this, true);
     return !is.bad();
 }
 
@@ -114,6 +114,7 @@ bool Foam::zonesGenerator::read()
 {
     if (regIOobject::read())
     {
+        zoneGeneratorList::read(*this, true);
         generate();
     }
 

@@ -44,7 +44,7 @@ uniformInletOutletEnergyTemperatureFvScalarFieldSource
         Function1<scalar>::New
         (
             "uniformInletHe",
-            db().time().userUnits(),
+            time().userUnits(),
             dimEnergy/dimMass,
             dict
         )
@@ -88,7 +88,7 @@ Foam::uniformInletOutletEnergyTemperatureFvScalarFieldSource::sourceHeValue
             dimensionedScalar
             (
                 this->internalField().dimensions(),
-                uniformInletHe_->value(this->db().time().value())
+                uniformInletHe_->value(this->time().value())
             )
         );
 }
@@ -102,7 +102,7 @@ Foam::uniformInletOutletEnergyTemperatureFvScalarFieldSource::sourceHeValue
     const labelUList& cells
 ) const
 {
-    const scalar v = uniformInletHe_->value(db().time().value());
+    const scalar v = uniformInletHe_->value(time().value());
     return tmp<scalarField>(new scalarField(source.size(), v));
 }
 
@@ -139,7 +139,7 @@ void Foam::uniformInletOutletEnergyTemperatureFvScalarFieldSource::write
     writeEntry
     (
         os,
-        db().time().userUnits(),
+        time().userUnits(),
         dimEnergy/dimMass,
         uniformInletHe_()
     );

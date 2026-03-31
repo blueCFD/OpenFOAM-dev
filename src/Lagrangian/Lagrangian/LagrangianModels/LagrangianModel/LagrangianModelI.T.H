@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,6 +39,12 @@ inline const Foam::objectRegistry& Foam::LagrangianModel::db() const
 }
 
 
+inline const Foam::Time& Foam::LagrangianModel::time() const
+{
+    return mesh_.time();
+}
+
+
 inline const Foam::LagrangianMesh& Foam::LagrangianModel::mesh() const
 {
     return mesh_;
@@ -46,4 +52,3 @@ inline const Foam::LagrangianMesh& Foam::LagrangianModel::mesh() const
 
 
 // ************************************************************************* //
-

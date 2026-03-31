@@ -205,9 +205,10 @@ public:
 
     // Member Functions
 
+        //- Return reference to time
         const Time& time() const
         {
-            return patch_.mesh().time();
+            return patch_.time();
         }
 
         // Mapping functions

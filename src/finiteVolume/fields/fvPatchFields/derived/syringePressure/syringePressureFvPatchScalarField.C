@@ -52,7 +52,7 @@ Foam::syringePressureFvPatchScalarField::syringePressureFvPatchScalarField
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
     curTimeIndex_(-1)
 {
-    scalar ps = (psI_*VsI_ + ams_/psi_)/Vs(db().time().value());
+    scalar ps = (psI_*VsI_ + ams_/psi_)/Vs(time().value());
     fvPatchField<scalar>::operator=(ps);
 }
 
@@ -153,14 +153,14 @@ void Foam::syringePressureFvPatchScalarField::updateCoeffs()
         return;
     }
 
-    if (curTimeIndex_ != db().time().timeIndex())
+    if (curTimeIndex_ != time().timeIndex())
     {
         ams0_ = ams_;
-        curTimeIndex_ = db().time().timeIndex();
+        curTimeIndex_ = time().timeIndex();
     }
 
-    scalar t = db().time().value();
-    scalar deltaT = db().time().deltaTValue();
+    scalar t = time().value();
+    scalar deltaT = time().deltaTValue();
 
     const surfaceScalarField& phi =
         db().lookupObject<surfaceScalarField>(phiName_);

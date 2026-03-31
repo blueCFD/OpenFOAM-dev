@@ -58,6 +58,12 @@ const Foam::objectRegistry& Foam::LagrangianFieldSourceBase::db() const
 }
 
 
+const Foam::Time& Foam::LagrangianFieldSourceBase::time() const
+{
+    return internalIo_.db().time();
+}
+
+
 const Foam::word& Foam::LagrangianFieldSourceBase::internalName() const
 {
     return internalIo_.name();

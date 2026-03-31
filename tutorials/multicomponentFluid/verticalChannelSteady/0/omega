@@ -30,14 +30,14 @@ boundaryField
     }
     inletCentral
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.007;
         k               k;
         value           uniform 4.5e-3;
     }
     inletSides
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.007;
         k               k;
         value           uniform 4.5e-3;

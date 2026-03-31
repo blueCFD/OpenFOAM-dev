@@ -133,9 +133,9 @@ Foam::LagrangianSubMesh Foam::Lagrangian::volumeInjection::modify
     const scalar fraction = (time_ - t0)/(t1 - t0);
 
     // Restart the generators if necessary and set the time index up to date
-    localRndGen_.start(timeIndex_ == db().time().timeIndex());
-    globalRndGen_.start(timeIndex_ == db().time().timeIndex());
-    timeIndex_ = db().time().timeIndex();
+    localRndGen_.start(timeIndex_ == time().timeIndex());
+    globalRndGen_.start(timeIndex_ == time().timeIndex());
+    timeIndex_ = time().timeIndex();
 
     // Reference the mesh faces and the set cells
     const faceList& faces = mesh.poly().faces();

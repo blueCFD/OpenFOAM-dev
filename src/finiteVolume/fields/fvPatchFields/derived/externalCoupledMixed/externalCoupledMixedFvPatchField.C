@@ -632,7 +632,7 @@ void Foam::externalCoupledMixedFvPatchField<Type>::evaluate
     const Pstream::commsTypes comms
 )
 {
-    if (!initialised_ || this->db().time().timeIndex() % calcFrequency_ == 0)
+    if (!initialised_ || this->time().timeIndex() % calcFrequency_ == 0)
     {
         const fileName transferFile(baseDir()/fName_);
 

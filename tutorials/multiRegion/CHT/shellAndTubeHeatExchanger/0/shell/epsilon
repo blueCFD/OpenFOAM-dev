@@ -30,7 +30,7 @@ boundaryField
     }
     upper
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.008;
         value           $internalField;
     }

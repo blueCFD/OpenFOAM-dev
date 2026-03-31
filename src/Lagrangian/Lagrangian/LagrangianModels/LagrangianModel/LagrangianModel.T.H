@@ -263,6 +263,9 @@ public:
             //- The database
             inline const objectRegistry& db() const;
 
+            //- Return time
+            inline const Time& time() const;
+
             //- The mesh
             inline const LagrangianMesh& mesh() const;
 

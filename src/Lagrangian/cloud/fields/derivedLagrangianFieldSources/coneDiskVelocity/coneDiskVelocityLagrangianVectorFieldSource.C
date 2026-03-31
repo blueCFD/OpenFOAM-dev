@@ -91,7 +91,7 @@ void Foam::coneDiskVelocityLagrangianVectorFieldSource::write(Ostream& os) const
 
     coneDiskDirectionLagrangianVectorFieldSource::write(os);
 
-    writeEntry(os, db().time().userUnits(), dimVelocity, Umag_());
+    writeEntry(os, time().userUnits(), dimVelocity, Umag_());
 }
 
 

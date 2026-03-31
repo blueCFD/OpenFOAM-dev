@@ -44,7 +44,7 @@ surfaceNormalUniformFixedValueFvPatchVectorField
         Function1<scalar>::New
         (
             "uniformValue",
-            db().time().userUnits(),
+            time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -100,7 +100,7 @@ void Foam::surfaceNormalUniformFixedValueFvPatchVectorField::updateCoeffs()
 
     fvPatchVectorField::operator=
     (
-        uniformValue_->value(db().time().value())*patch().nf()
+        uniformValue_->value(time().value())*patch().nf()
     );
 
     fvPatchVectorField::updateCoeffs();
@@ -116,7 +116,7 @@ void Foam::surfaceNormalUniformFixedValueFvPatchVectorField::write
     writeEntry
     (
         os,
-        db().time().userUnits(),
+        time().userUnits(),
         internalField().dimensions(),
         uniformValue_()
     );

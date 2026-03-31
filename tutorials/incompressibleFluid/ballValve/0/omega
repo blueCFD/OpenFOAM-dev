@@ -24,19 +24,19 @@ boundaryField
 
     inlet
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.1;
         value           $internalField;
     }
     lowerOutlet
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.1;
         value           $internalField;
     }
     upperOutlet
     {
-        type            turbulentMixingLengthFrequencyInlet;
+        type            turbulentOmega;
         mixingLength    0.1;
         value           $internalField;
     }

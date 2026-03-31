@@ -42,7 +42,7 @@ fanDirectionLagrangianVectorFieldSource
         Function1<vector>::New
         (
             "normal",
-            field.db().time().userUnits(),
+            field.time().userUnits(),
             dimless,
             dict
         )
@@ -52,7 +52,7 @@ fanDirectionLagrangianVectorFieldSource
         Function1<scalar>::New
         (
             "thetaInner",
-            field.db().time().userUnits(),
+            field.time().userUnits(),
             units::degrees,
             dict
         )
@@ -62,7 +62,7 @@ fanDirectionLagrangianVectorFieldSource
         Function1<scalar>::New
         (
             "thetaOuter",
-            field.db().time().userUnits(),
+            field.time().userUnits(),
             units::degrees,
             dict
         )
@@ -112,8 +112,8 @@ Foam::fanDirectionLagrangianVectorFieldSource::direction
     const LagrangianSubMesh& subMesh = axis.mesh();
 
     // Restart the generator if necessary and set the time index up to date
-    rndGen_.start(timeIndex_ == field_.db().time().timeIndex());
-    timeIndex_ = field_.db().time().timeIndex();
+    rndGen_.start(timeIndex_ == field_.time().timeIndex());
+    timeIndex_ = field_.time().timeIndex();
 
     // Construct a direction in the plane of the fan
     const tmp<LagrangianSubVectorField> normal =
@@ -148,12 +148,12 @@ Foam::fanDirectionLagrangianVectorFieldSource::direction
 
 void Foam::fanDirectionLagrangianVectorFieldSource::write(Ostream& os) const
 {
-    writeEntry(os, field_.db().time().userUnits(), units::none, normal_());
+    writeEntry(os, field_.time().userUnits(), units::none, normal_());
 
     writeEntry
     (
         os,
-        field_.db().time().userUnits(),
+        field_.time().userUnits(),
         units::degrees,
         thetaInner_()
     );
@@ -161,7 +161,7 @@ void Foam::fanDirectionLagrangianVectorFieldSource::write(Ostream& os) const
     writeEntry
     (
         os,
-        field_.db().time().userUnits(),
+        field_.time().userUnits(),
         units::degrees,
         thetaOuter_()
     );

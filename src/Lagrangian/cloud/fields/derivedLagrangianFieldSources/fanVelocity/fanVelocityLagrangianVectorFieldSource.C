@@ -95,7 +95,7 @@ void Foam::fanVelocityLagrangianVectorFieldSource::write(Ostream& os) const
 
     fanDirectionLagrangianVectorFieldSource::write(os);
 
-    writeEntry(os, db().time().userUnits(), dimVelocity, Ucentre_());
+    writeEntry(os, time().userUnits(), dimVelocity, Ucentre_());
 }
 
 

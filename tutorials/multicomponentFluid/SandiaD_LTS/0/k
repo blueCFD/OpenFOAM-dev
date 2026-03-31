@@ -34,14 +34,14 @@ boundaryField
 
     inletPilot
     {
-        type            turbulentIntensityKineticEnergyInlet;
+        type            turbulentKineticEnergy;
         intensity       0.0628;
         value           uniform 1;
     }
 
     inletAir
     {
-        type            turbulentIntensityKineticEnergyInlet;
+        type            turbulentKineticEnergy;
         intensity       0.0471;
         value           uniform 1;
     }
@@ -54,7 +54,7 @@ boundaryField
 
     inletCH4
     {
-        type            turbulentIntensityKineticEnergyInlet;
+        type            turbulentKineticEnergy;
         intensity       0.0458;
         value           uniform 1;
     }

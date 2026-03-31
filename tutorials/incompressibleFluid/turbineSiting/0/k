@@ -14,30 +14,30 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include        "include/initialConditions"
-
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform $turbulentKE;
+internalField
+{
+    type            atmosphericBoundaryLayerTurbulentKineticEnergy;
+    libs            ("libatmosphericModels.so");
+}
 
 boundaryField
 {
     outlet
     {
-        type            inletOutlet;
-        inletValue      uniform $turbulentKE;
+        $internalField;
     }
 
     inlet
     {
-        type            atmosphericBoundaryLayerTurbulentKineticEnergy;
-        #include        "include/ABLConditions"
+        $internalField;
     }
 
     terrain
     {
         type            kqRWallFunction;
-        value           uniform 0.0;
+        value           uniform 0;
     }
 
     ground

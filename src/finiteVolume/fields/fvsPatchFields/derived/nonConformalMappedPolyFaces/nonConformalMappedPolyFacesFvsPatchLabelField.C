@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ nonConformalMappedPolyFacesFvsPatchLabelField
     fvsPatchLabelField(p, iF, dict, false),
     procOffsets_
     (
-        db().time().processorCase()
+        time().processorCase()
       ? dict.lookup<labelList>("procOffsets")
       : labelList(1, label(0))
     )
@@ -145,7 +145,7 @@ void Foam::nonConformalMappedPolyFacesFvsPatchLabelField::write
 {
     fvsPatchLabelField::write(os);
     writeEntry(os, "size", this->size());
-    if (db().time().processorCase())
+    if (time().processorCase())
     {
         writeEntry(os, "procOffsets", procOffsets_);
     }

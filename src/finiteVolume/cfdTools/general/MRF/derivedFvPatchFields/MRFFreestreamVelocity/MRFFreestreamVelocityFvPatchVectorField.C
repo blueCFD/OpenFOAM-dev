@@ -80,7 +80,7 @@ void Foam::MRFFreestreamVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    const scalar time = this->db().time().value();
+    const scalar time = this->time().value();
     const vector Omega = MRFzone(db()).Omega();
     const scalar omega = mag(Omega);
     const vector axis(Omega/omega);

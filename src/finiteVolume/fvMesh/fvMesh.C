@@ -1557,7 +1557,7 @@ void Foam::fvMesh::unconform
     // patch field. However, at the moment, the cell centres field is the only
     // vol-field containing an absolute position, so the hack is functionally
     // sufficient for now.
-    if (sync && (Pstream::parRun() || !time().processorCase()))
+    if (sync && time().completeCase())
     {
         volVectorField::Boundary& CBf = CRef().boundaryFieldRef();
 

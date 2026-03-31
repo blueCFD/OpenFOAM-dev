@@ -44,7 +44,7 @@ uniformFixedEnergyTemperatureFvScalarFieldSource
         Function1<scalar>::New
         (
             "uniformHe",
-            db().time().userUnits(),
+            time().userUnits(),
             dimEnergy/dimMass,
             dict
         )
@@ -88,7 +88,7 @@ Foam::uniformFixedEnergyTemperatureFvScalarFieldSource::sourceHeValue
             dimensionedScalar
             (
                 this->internalField().dimensions(),
-                uniformHe_->value(this->db().time().value())
+                uniformHe_->value(this->time().value())
             )
         );
 }
@@ -102,7 +102,7 @@ Foam::uniformFixedEnergyTemperatureFvScalarFieldSource::sourceHeValue
     const labelUList& cells
 ) const
 {
-    const scalar v = uniformHe_->value(db().time().value());
+    const scalar v = uniformHe_->value(time().value());
     return tmp<scalarField>(new scalarField(source.size(), v));
 }
 
@@ -145,7 +145,7 @@ void Foam::uniformFixedEnergyTemperatureFvScalarFieldSource::write
     writeEntry
     (
         os,
-        db().time().userUnits(),
+        time().userUnits(),
         dimEnergy/dimMass,
         uniformHe_()
     );

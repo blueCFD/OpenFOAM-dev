@@ -103,8 +103,8 @@ Foam::distributionDiameterLagrangianScalarFieldSource::value
     // Restart the distribution if the time index has not changed. This ensures
     // multiple evaluations from different conditions and/or iterations
     // generate the same values
-    distribution_->start(timeIndex_ == db().time().timeIndex());
-    timeIndex_ = db().time().timeIndex();
+    distribution_->start(timeIndex_ == time().timeIndex());
+    timeIndex_ = time().timeIndex();
 
     // Sample the distribution and return the result as a sub-field
     return

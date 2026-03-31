@@ -41,7 +41,7 @@ Foam::uniformFixedValueFvFieldSource<Type>::uniformFixedValueFvFieldSource
         Function1<Type>::New
         (
             "uniformValue",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
@@ -86,7 +86,7 @@ Foam::uniformFixedValueFvFieldSource<Type>::sourceValue
             dimensioned<Type>
             (
                 this->internalField().dimensions(),
-                uniformValue_->value(this->db().time().value())
+                uniformValue_->value(this->time().value())
             )
         );
 }
@@ -107,7 +107,7 @@ Foam::uniformFixedValueFvFieldSource<Type>::sourceValue
             new Field<Type>
             (
                 source.size(),
-                uniformValue_->value(this->db().time().value())
+                uniformValue_->value(this->time().value())
             )
         );
 }
@@ -151,7 +151,7 @@ void Foam::uniformFixedValueFvFieldSource<Type>::write(Ostream& os) const
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         uniformValue_()
     );

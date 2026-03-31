@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ solidBodyMotionDisplacementPointPatchVectorField
 )
 :
     fixedValuePointPatchVectorField(p, iF, dict, false),
-    SBMFPtr_(solidBodyMotionFunction::New(dict, this->db().time()))
+    SBMFPtr_(solidBodyMotionFunction::New(dict, this->time()))
 {
     if (!dict.found("value"))
     {
@@ -112,7 +112,7 @@ solidBodyMotionDisplacementPointPatchVectorField::localPoints0() const
             IOobject
             (
                 "points",
-                this->db().time().constant(),
+                this->time().constant(),
                 polyMesh::meshSubDir,
                 this->db(),
                 IOobject::MUST_READ,

@@ -14,11 +14,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include        "include/initialConditions"
-
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform $pressure;
+internalField   uniform 0;
 
 boundaryField
 {
@@ -30,7 +28,7 @@ boundaryField
     outlet
     {
         type            uniformFixedValue;
-        uniformValue    constant $pressure;
+        uniformValue    constant 0;
     }
 
     terrain

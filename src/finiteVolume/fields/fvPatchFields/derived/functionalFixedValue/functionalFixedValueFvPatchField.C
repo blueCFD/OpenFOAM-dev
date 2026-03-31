@@ -41,7 +41,7 @@ Foam::functionalFixedValueFvPatchField<Type>::functionalFixedValueFvPatchField
         p,
         iF,
         dict,
-        !Pstream::parRun() && p.mesh().time().processorCase()
+        !p.time().completeCase()
     ),
     dimensionedValue_
     (
@@ -67,7 +67,7 @@ Foam::functionalFixedValueFvPatchField<Type>::functionalFixedValueFvPatchField
         )
     )
 {
-    if (Pstream::parRun() || !p.mesh().time().processorCase())
+    if (p.time().completeCase())
     {
         funcPtr_->evaluate();
     }

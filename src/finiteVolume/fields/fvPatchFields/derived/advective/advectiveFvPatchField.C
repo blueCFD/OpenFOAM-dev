@@ -160,7 +160,7 @@ void Foam::advectiveFvPatchField<Type>::updateCoeffs()
     (
         mesh.schemes().ddt(this->internalField().name())
     );
-    scalar deltaT = this->db().time().deltaTValue();
+    scalar deltaT = this->time().deltaTValue();
 
     const VolField<Type>& field =
         this->db().objectRegistry::template

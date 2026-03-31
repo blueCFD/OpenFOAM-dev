@@ -41,20 +41,20 @@ Foam::fixedMeanFvPatchField<Type>::fixedMeanFvPatchField
         p,
         iF,
         dict,
-        !Pstream::parRun() && p.mesh().time().processorCase()
+        !p.time().completeCase()
     ),
     meanValue_
     (
         Function1<Type>::New
         (
             "meanValue",
-            this->db().time().userUnits(),
+            this->time().userUnits(),
             iF.dimensions(),
             dict
         )
     )
 {
-    if (Pstream::parRun() || !p.mesh().time().processorCase())
+    if (p.time().completeCase())
     {
         this->evaluate();
     }
@@ -97,7 +97,7 @@ void Foam::fixedMeanFvPatchField<Type>::updateCoeffs()
         return;
     }
 
-    Type meanValue = meanValue_->value(this->db().time().value());
+    Type meanValue = meanValue_->value(this->time().value());
 
     Field<Type> newValues(this->patchInternalField());
 
@@ -127,7 +127,7 @@ void Foam::fixedMeanFvPatchField<Type>::write(Ostream& os) const
     writeEntry
     (
         os,
-        this->db().time().userUnits(),
+        this->time().userUnits(),
         this->internalField().dimensions(),
         meanValue_()
     );

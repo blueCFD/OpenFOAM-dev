@@ -53,7 +53,7 @@ pressureInletOutletVelocityFvPatchVectorField
             Function1<vector>::New
             (
                 "tangentialVelocity",
-                db().time().userUnits(),
+                time().userUnits(),
                 dimVelocity,
                 dict
             );
@@ -105,7 +105,7 @@ void Foam::pressureInletOutletVelocityFvPatchVectorField::updateCoeffs()
     if (tangentialVelocity_.valid())
     {
         const vector tangentialVelocity =
-            tangentialVelocity_->value(db().time().value());
+            tangentialVelocity_->value(time().value());
         const vectorField n(patch().nf());
         refValue() = tangentialVelocity - n*(n & tangentialVelocity);
     }
@@ -133,7 +133,7 @@ const
         writeEntry
         (
             os,
-            db().time().userUnits(),
+            time().userUnits(),
             dimVelocity,
             tangentialVelocity_()
         );

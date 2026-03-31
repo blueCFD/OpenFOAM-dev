@@ -89,7 +89,14 @@ Foam::pointPatchField<Type>::pointPatchField
 template<class Type>
 const Foam::objectRegistry& Foam::pointPatchField<Type>::db() const
 {
-    return patch_.mesh()();
+    return patch_.db();
+}
+
+
+template<class Type>
+const Foam::Time& Foam::pointPatchField<Type>::time() const
+{
+    return patch_.time();
 }
 
 

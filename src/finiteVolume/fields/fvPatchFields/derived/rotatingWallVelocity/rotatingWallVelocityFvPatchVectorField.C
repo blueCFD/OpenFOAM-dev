@@ -41,7 +41,7 @@ rotatingWallVelocityFvPatchVectorField
     fixedValueFvPatchField<vector>(p, iF, dict, false),
     origin_(dict.lookup<vector>("origin")),
     axis_(dict.lookup<vector>("axis")),
-    omega_(db().time(), dict)
+    omega_(time(), dict)
 {
     if (dict.found("value"))
     {
@@ -97,7 +97,7 @@ void Foam::rotatingWallVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    const scalar omega = omega_.value(db().time().value());
+    const scalar omega = omega_.value(time().value());
 
     // Calculate the rotating wall velocity from the specification of the motion
     const vectorField Up

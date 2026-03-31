@@ -38,7 +38,7 @@ boundaryField
 
     lower
     {
-        type            turbulentIntensityKineticEnergyInlet;
+        type            turbulentKineticEnergy;
         intensity       0.05;
         value           $internalField;
     }

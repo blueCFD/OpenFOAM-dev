@@ -165,9 +165,9 @@ void Foam::specieTransferMassFractionFvPatchScalarField::reset
 const Foam::scalarField&
 Foam::specieTransferMassFractionFvPatchScalarField::phiYp() const
 {
-    if (timeIndex_ != this->db().time().timeIndex())
+    if (timeIndex_ != this->time().timeIndex())
     {
-        timeIndex_ = this->db().time().timeIndex();
+        timeIndex_ = this->time().timeIndex();
 
         phiYp_ = calcPhiYp();
     }

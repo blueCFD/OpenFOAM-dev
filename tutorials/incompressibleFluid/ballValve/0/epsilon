@@ -24,19 +24,19 @@ boundaryField
 
     inlet
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.1;
         value           $internalField;
     }
     lowerOutlet
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.1;
         value           $internalField;
     }
     upperOutlet
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.1;
         value           $internalField;
     }

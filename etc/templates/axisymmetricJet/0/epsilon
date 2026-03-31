@@ -24,7 +24,7 @@ boundaryField
 {
     "(inlet|atmosphere)"
     {
-        type            turbulentMixingLengthDissipationRateInlet;
+        type            turbulentEpsilon;
         mixingLength    0.1;
         value           uniform $epsilonInlet;
     }
