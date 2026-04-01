@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -165,8 +165,8 @@ inline Foam::scalar Foam::ePowerThermo<EquationOfState>::gStd
 {
     return
         c0_*(pow(T, n0_ + 1) - pow(Tstd, n0_ + 1))/(pow(Tref_, n0_)*(n0_ + 1))
-      + hf() + Pstd/EquationOfState::rho(Pstd, T)
-      - s(Pstd, T)*T;
+      + hf() + pStd/EquationOfState::rho(pStd, T)
+      - s(pStd, T)*T;
 }
 
 

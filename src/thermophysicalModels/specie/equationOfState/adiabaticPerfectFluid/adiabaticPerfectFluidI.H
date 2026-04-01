@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -139,7 +139,7 @@ inline Foam::scalar Foam::adiabaticPerfectFluid<Specie>::sp
 {
     scalar n = 1 - 1.0/gamma_;
     return
-       -pow(p0_ + B_, 1.0/gamma_)*(pow((p + B_), n) - pow((Pstd + B_), n))
+       -pow(p0_ + B_, 1.0/gamma_)*(pow((p + B_), n) - pow((pStd + B_), n))
        /(rho0_*T*n);
 }
 

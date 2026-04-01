@@ -24,7 +24,7 @@ boundaryField
     {
         type            functionalFixedValue;
 
-        function
+        value
         {
             type    zonal;
 

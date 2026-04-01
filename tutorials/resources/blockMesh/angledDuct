@@ -15,7 +15,7 @@ FoamFile
 // Block definition for a porosity with an angled inlet/outlet
 // the porosity is not aligned with the main axes
 
-convertToMeters 0.001;
+units [mm];
 
 angle 45;
 

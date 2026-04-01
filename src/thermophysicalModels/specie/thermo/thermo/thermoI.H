@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -146,7 +146,7 @@ Foam::species::thermo<Thermo, Type>::Kc(const scalar p, const scalar T) const
     }
     else
     {
-        return Kp(p, T)*pow(Pstd/(RR*T), nm);
+        return Kp(p, T)*pow(pStd/(RR*T), nm);
     }
 }
 
@@ -166,7 +166,7 @@ inline Foam::scalar Foam::species::thermo<Thermo, Type>::Kx
     }
     else
     {
-        return Kp(p, T)*pow(Pstd/p, nm);
+        return Kp(p, T)*pow(pStd/p, nm);
     }
 }
 
@@ -187,7 +187,7 @@ inline Foam::scalar Foam::species::thermo<Thermo, Type>::Kn
     }
     else
     {
-        return Kp(p, T)*pow(n*Pstd/p, nm);
+        return Kp(p, T)*pow(n*pStd/p, nm);
     }
 }
 
@@ -374,7 +374,7 @@ Foam::species::thermo<Thermo, Type>::dKcdTbyKc
 ) const
 {
     const scalar dKcdTbyKc =
-        (this->s(Pstd, T) + this->gStd(T)/T)*this->Y()/(RR*T);
+        (this->s(pStd, T) + this->gStd(T)/T)*this->Y()/(RR*T);
 
     const scalar nm = this->Y()/this->W();
     if (equal(nm, small))

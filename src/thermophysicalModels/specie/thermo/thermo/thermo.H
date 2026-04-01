@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -186,28 +186,28 @@ public:
         // Equilibrium reaction thermodynamics
 
             //- Equilibrium constant [] i.t.o fugacities
-            //  = PIi(fi/Pstd)^nui
+            //  = PIi(fi/pStd)^nui
             inline scalar K(const scalar p, const scalar T) const;
 
             //- Equilibrium constant [] i.t.o. partial pressures
-            //  = PIi(pi/Pstd)^nui
+            //  = PIi(pi/pStd)^nui
             //  For low pressures (where the gas mixture is near perfect) Kp = K
             inline scalar Kp(const scalar p, const scalar T) const;
 
             //- Equilibrium constant i.t.o. molar concentration
             //  = PIi(ci/cStd)^nui
             //  For low pressures (where the gas mixture is near perfect)
-            //  Kc = Kp(Pstd/(RR*T))^nu
+            //  Kc = Kp(pStd/(RR*T))^nu
             inline scalar Kc(const scalar p, const scalar T) const;
 
             //- Equilibrium constant [] i.t.o. mole-fractions
             //  For low pressures (where the gas mixture is near perfect)
-            //  Kx = Kp(Pstd/p)^nui
+            //  Kx = Kp(pStd/p)^nui
             inline scalar Kx(const scalar p, const scalar T) const;
 
             //- Equilibrium constant [] i.t.o. number of moles
             //  For low pressures (where the gas mixture is near perfect)
-            //  Kn = Kp(n*Pstd/p)^nui where n = number of moles in mixture
+            //  Kn = Kp(n*pStd/p)^nui where n = number of moles in mixture
             inline scalar Kn
             (
                 const scalar p,

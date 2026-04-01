@@ -8,19 +8,19 @@
 FoamFile
 {
     format      ascii;
-    class       volVectorField;
+    class       volScalarField;
     location    "0";
-    object      U;
+    object      epsilon;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-UStack 20;
+epsilonStack 6.16;
 
-dimensions      [0 1 -1 0 0 0 0];
+dimensions      [0 2 -3 0 0 0 0];
 
 internalField
 {
-    type            atmosphericBoundaryLayerVelocity;
+    type            atmosphericBoundaryLayerTurbulentEpsilon;
     libs            ("libatmosphericModels.so");
 }
 
@@ -33,19 +33,20 @@ boundaryField
 
     inlet
     {
-        type            flowRateInletVelocity;
-        meanVelocity    constant $UStack;
+        type            turbulentEpsilon;
+        mixingLength    0.049; // 7% of diameter
+        value           uniform $epsilonStack;
     }
 
     outlet
     {
-        type            freestreamVelocity;
-        freestreamValue uniform (0 0 0);
+        type            atmosphericBoundaryLayerTurbulentEpsilon;
+        libs            ("libatmosphericModels.so");
     }
 
     wall
     {
-        type            noSlip;
+        type            epsilonWallFunction;
     }
 
     #includeEtc "caseDicts/setConstraintTypes"

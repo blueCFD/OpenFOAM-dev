@@ -31,7 +31,7 @@ License
 namespace Foam
 {
 
-int dimensionedConstantsDebug(debug::debugSwitch("dimensionedConstants", 0));
+int dimensionedConstantsDebug(debug::debugSwitch("constants", 0));
 
 dictionary* dimensionedConstantsDictPtr_(nullptr);
 
@@ -45,7 +45,11 @@ dictionary& dimensionedConstantsDict()
         (
             debug::switchSet
             (
-                "DimensionedConstants",
+                debug::configDict().found("constants")
+              ? "constants"
+              : debug::configDict().found("DimensionedConstants")
+              ? "DimensionedConstants"
+              : "constants",
                 cachedPtr
             )
         );
@@ -61,7 +65,8 @@ struct deleteDimensionedConstantsPtr
     {
         if (dimensionedConstantsDebug)
         {
-            Info<< "DimensionedConstants" << dimensionedConstantsDict() << endl;
+            Info<< "constants"
+                << dimensionedConstantsDict() << endl;
         }
 
         deleteDemandDrivenData(dimensionedConstantsDictPtr_);
@@ -88,10 +93,27 @@ Foam::dimensionedScalar Foam::dimensionedConstant
     (
         name,
         dimensions,
-        dict.subDict(group).lookup(name)
+        dict.isDict(group)
+     && dict.subDict(group).found(name)
+      ? dict.subDict(group).lookup(name)
+      : dict.found(name)
+      ? dict.lookup(name)
+      : dict.isDict(group)
+      ? dict.subDict(group).lookup(name)
+      : dict.lookup(name)
     );
 
+    if (!dict.found(group))
+    {
+        dict.add(group, dictionary::null);
+    }
+
     dict.subDict(group).set(name, dimensionedValue);
+
+    if (dict.found(name))
+    {
+        dict.remove(name);
+    }
 
     return dimensionedValue;
 }

@@ -168,12 +168,12 @@ const Foam::dimensionedScalar physicoChemical::k
 
 // Standard
 
-const Foam::dimensionedScalar standard::Pstd
+const Foam::dimensionedScalar standard::pStd
 (
     dimensionedConstant
     (
         standard::group,
-        "Pstd",
+        "pStd",
         dimensionSet(1, -1, -2, 0, 0)
     )
 );

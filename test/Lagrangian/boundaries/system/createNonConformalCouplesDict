@@ -24,7 +24,7 @@ nonConformalCouples
         transform       translational;
         separation
         (
-            #calc "$<scalar>blockMeshDict!convertToMeters*\
+            #calc "$<scalar>blockMeshDict!scale*\
             ($<List<scalar>>blockMeshDict!xs[0] - $<List<scalar>>blockMeshDict!xs[1])"
             0
             0
@@ -36,7 +36,7 @@ nonConformalCouples
         patches         (nonCouple2 nonCouple3);
         transform       rotational;
         rotationAxis    (0 0 1);
-        rotationCentre  #calc "$<scalar>blockMeshDict!convertToMeters*$<vector>blockMeshDict!c";
+        rotationCentre  #calc "$<scalar>blockMeshDict!scale*$<vector>blockMeshDict!c";
         rotationAngle   #calc "2*$<scalar>blockMeshDict!theta";
     }
 }

@@ -16,8 +16,6 @@ FoamFile
 
 internalFacesOnly true;
 
-#include "blockMeshDict"
-
 baffles
 {
     nonCouple
@@ -26,7 +24,7 @@ baffles
         surface     cylinder;
         point1      (0 0 -1);
         point2      (0 0 1);
-        radius      #calc "$<scalar>convertToMeters*$<scalar>R";
+        radius      #calc "$<scalar>blockMeshDict!scale*$<scalar>blockMeshDict!R";
 
         owner
         {

@@ -31,18 +31,35 @@ Description
     continuously blend between fixed value for normal inlet and zero gradient
     for normal outlet flow.
 
+    The \c freestreamValue can be specified as a uniform value, a field or a
+    function.
+
 Usage
     \table
         Property        | Description             | Required    | Default value
         freestreamValue | freestream velocity     | yes         |
     \endtable
 
-    Example of the boundary condition specification:
+    Example of the boundary condition specification with uniform freestream:
     \verbatim
     <patchName>
     {
         type            freestreamVelocity;
         freestreamValue uniform (300 0 0);
+    }
+    \endverbatim
+
+    Example of the boundary condition specification for an
+    atmospheric boundary layer:
+    \verbatim
+    <patchName>
+    {
+        type            freestreamVelocity;
+        freestreamValue
+        {
+            type            atmosphericBoundaryLayerVelocity;
+            libs            ("libatmosphericModels.so");
+        }
     }
     \endverbatim
 
@@ -62,8 +79,8 @@ SourceFiles
 #ifndef freestreamVelocityFvPatchVectorField_H
 #define freestreamVelocityFvPatchVectorField_H
 
-#include "fvPatchFields.H"
 #include "mixedFvPatchFields.H"
+#include "UDimensionedFieldFunction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -78,6 +95,11 @@ class freestreamVelocityFvPatchVectorField
 :
     public mixedFvPatchVectorField
 {
+    // Private Data
+
+        //- DimensionedField and function for the freestream value
+        UDimensionedFieldFunction<vector, fvPatch> dimensionedFreestreamValue_;
+
 
 public:
 
@@ -142,6 +164,16 @@ public:
             {
                 return refValue();
             }
+
+
+        // Mapping functions
+
+            //- Map the given fvPatchField onto this fvPatchField
+            virtual void map(const fvPatchVectorField&, const fieldMapper&);
+
+            //- Reset the fvPatchField to the given fvPatchField
+            //  Used for mesh to mesh mapping
+            virtual void reset(const fvPatchVectorField&);
 
 
         // Evaluation functions

@@ -110,6 +110,10 @@ public:
         //  top level regIOobject.
         regIOobject(const IOobject&, const bool isTime = false);
 
+        //- Construct from IOobject with new name, and overriding the
+        //  IOobject's register object setting
+        regIOobject(const word& newName, const IOobject&, bool registerObject);
+
         //- Copy constructor
         regIOobject(const regIOobject&);
 
@@ -120,13 +124,6 @@ public:
         //- Copy constructor, transferring registry registration to copy
         //  if registerCopy is true
         regIOobject(const regIOobject&, bool registerCopy);
-
-        //- Copy constructor with new name, transferring registry registration
-        //  to copy as specified
-        regIOobject(const word& newName, const regIOobject&, bool registerCopy);
-
-        //- Copy constructor with new IO parameters
-        regIOobject(const IOobject&, const regIOobject&);
 
 
     //- Destructor

@@ -401,9 +401,11 @@ Foam::Time::Time
                 "InfoSwitches",
                 "OptimisationSwitches",
                 "DebugSwitches",
-                "DimensionedConstants",
                 "DimensionSets",
-                "UnitSets"
+                "UnitSets",
+                "units",
+                "DimensionedConstants",
+                "dimensionedConstants"
             }
         );
 

@@ -395,10 +395,29 @@ Foam::polyMesh* Foam::blockMesh::createTopology
         defaultPatchTypeSet = true;
     }
 
-    // Optional 'convertToMeters' or 'scale' scaling factor
-    if (!meshDescription.readIfPresent("convertToMeters", scaleFactor_))
+    // Read the scaling factor (if any)
+    const bool haveConvertToMeters = meshDescription.found("convertToMeters");
+    const bool haveScale = meshDescription.found("scale");
+    const bool haveUnits = meshDescription.found("units");
+    if (haveConvertToMeters + haveScale + haveUnits > 1)
     {
-        meshDescription.readIfPresent("scale", scaleFactor_);
+        FatalIOErrorInFunction(meshDescription)
+            << "more than one of keywords 'convertToMeters', 'scale' and "
+            << "'units' defined in dictionary " << meshDescription.name()
+            << exit(FatalIOError);
+    }
+    if (haveConvertToMeters)
+    {
+        scaleFactor_ = meshDescription.lookup<scalar>("convertToMeters");
+    }
+    if (haveScale)
+    {
+        scaleFactor_ = meshDescription.lookup<scalar>("scale");
+    }
+    if (haveUnits)
+    {
+        scaleFactor_ =
+            unitSet(meshDescription.lookup("units")).toStandard(scalar(1));
     }
 
     // Read the block edges

@@ -34,7 +34,7 @@ boundaryField
     {
         type           functionalFixedValue;
 
-        function
+        value
         {
             $internalField;
         }

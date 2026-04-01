@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ inline Foam::scalar Foam::perfectFluid<Specie>::rho(scalar p, scalar T) const
 template<class Specie>
 inline Foam::scalar Foam::perfectFluid<Specie>::h(scalar p, scalar T) const
 {
-    return p/rho(p, T) - Pstd/rho(Pstd, T);
+    return p/rho(p, T) - pStd/rho(pStd, T);
 }
 
 
@@ -90,7 +90,7 @@ inline Foam::scalar Foam::perfectFluid<Specie>::Cp(scalar p, scalar T) const
 {
     return
         sqr(p/(rho(p, T)*T))/this->R()
-      - sqr(Pstd/(rho(Pstd, T)*T))/this->R();
+      - sqr(pStd/(rho(pStd, T)*T))/this->R();
 }
 
 
@@ -111,7 +111,7 @@ inline Foam::scalar Foam::perfectFluid<Specie>::Cv(scalar p, scalar T) const
 template<class Specie>
 inline Foam::scalar Foam::perfectFluid<Specie>::sp(scalar p, scalar T) const
 {
-    return -this->R()*log(p/Pstd);
+    return -this->R()*log(p/pStd);
 }
 
 

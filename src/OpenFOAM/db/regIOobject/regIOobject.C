@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,15 +44,30 @@ Foam::regIOobject::regIOobject(const IOobject& io, const bool isTime)
     registered_(false),
     ownedByRegistry_(false),
     watchIndices_(),
-    eventNo_                // Do not get event for top level Time database
-    (
-        isTime
-      ? 0
-      : db().getEvent()
-    )
+    eventNo_(isTime ? 0 : db().getEvent()) // Don't get event for Time
 {
     // Register with objectRegistry if requested
     if (registerObject())
+    {
+        checkIn();
+    }
+}
+
+
+Foam::regIOobject::regIOobject
+(
+    const word& newName,
+    const IOobject& io,
+    const bool registerObject
+)
+:
+    IOobject(newName, io.instance(), io.local(), io.db()),
+    registered_(false),
+    ownedByRegistry_(false),
+    watchIndices_(),
+    eventNo_(db().getEvent())
+{
+    if (registerObject)
     {
         checkIn();
     }
@@ -101,45 +116,6 @@ Foam::regIOobject::regIOobject(const regIOobject& rio, bool registerCopy)
         {
             const_cast<regIOobject&>(rio).checkOut();
         }
-        checkIn();
-    }
-}
-
-
-Foam::regIOobject::regIOobject
-(
-    const word& newName,
-    const regIOobject& rio,
-    bool registerCopy
-)
-:
-    IOobject(newName, rio.instance(), rio.local(), rio.db()),
-    registered_(false),
-    ownedByRegistry_(false),
-    watchIndices_(),
-    eventNo_(db().getEvent())
-{
-    if (registerCopy)
-    {
-        checkIn();
-    }
-}
-
-
-Foam::regIOobject::regIOobject
-(
-    const IOobject& io,
-    const regIOobject& rio
-)
-:
-    IOobject(io),
-    registered_(false),
-    ownedByRegistry_(false),
-    watchIndices_(),
-    eventNo_(db().getEvent())
-{
-    if (registerObject())
-    {
         checkIn();
     }
 }

@@ -21,8 +21,7 @@ rotating
 
     point1      (0 0 -1);
     point2      (0 0 1);
-    radius      #calc
-        "$<scalar>blockMeshDict!convertToMeters * $<scalar>blockMeshDict!R";
+    radius      #calc "$<scalar>blockMeshDict!scale*$<scalar>blockMeshDict!R";
 }
 
 // ************************************************************************* //

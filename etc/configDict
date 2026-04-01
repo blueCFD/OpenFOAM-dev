@@ -13,7 +13,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Documentation
+documentation
 {
     docBrowser      "firefox";
     doxyDocDirs
@@ -26,7 +26,6 @@ Documentation
     doxySourceFileExt "_8C.html";
 }
 
-
 InfoSwitches
 {
     writePrecision          6;
@@ -38,7 +37,6 @@ InfoSwitches
     // Allow case-supplied C++ code (#codeStream, codedFixedValue)
     allowSystemOperations   1;
 }
-
 
 OptimisationSwitches
 {
@@ -78,7 +76,6 @@ OptimisationSwitches
     stopAtWriteNowSignal        -1; // 12; // SIGUSR2
 }
 
-
 DebugSwitches
 {
     dimensionSet        1;
@@ -90,97 +87,80 @@ DebugSwitches
     vtkUnstructuredReader 1;
 }
 
-
-UnitSets
+units
 {
-    unitSet             SI;
+    set     SI;
 
-    SICoeffs
+    SI
     {
-        // Basic units
-        kg          [1 0 0 0 0 0 0]     1;
-        m           [0 1 0 0 0 0 0]     1;
-        s           [0 0 1 0 0 0 0]     1;
-        K           [0 0 0 1 0 0 0]     1;
-        kmol        [0 0 0 0 1 0 0]     1;
-        A           [0 0 0 0 0 1 0]     1;
-        Cd          [0 0 0 0 0 0 1]     1;
-
-        // Derived units
-        Hz          [s^-1]              1;
-        N           [kg m s^-2]         1;
-        Pa          [N m^-2]            1;
-        J           [N m]               1;
-        W           [J s^-1]            1;
-
-        // Scaled units
-        g           [kg]                1e-3;
-        um          [m]                 1e-6;
-        mm          [m]                 1e-3;
-        cm          [m]                 1e-2;
-        km          [m]                 1e3;
-        us          [s]                 1e-6;
-        ms          [s]                 1e-3;
-        min         [s]                 60;
-        hr          [s]                 3600;
-        mol         [kmol]              1e-3;
-
-        // Derived scaled units
-        l           [m^3]               1e-3;
-        ml          [m^3]               1e-6;
-        rpm         [rot/min]           1;
-        bar         [Pa]                1e5;
-        atm         [Pa]                101325;
-        kPa         [Pa]                1e3;
-        MPa         [Pa]                1e6;
-        cal         [J]                 4.184;
-        kcal        [J]                 4184;
-        cSt         [m^2/s]             1e-6;
-        cP          [kg/m/s]            1e-3;
+        kg      [1 0 0 0 0 0 0];
+        m       [0 1 0 0 0 0 0];
+        s       [0 0 1 0 0 0 0];
+        K       [0 0 0 1 0 0 0];
+        kmol    [0 0 0 0 1 0 0];
+        A       [0 0 0 0 0 1 0];
+        Cd      [0 0 0 0 0 0 1];
     }
 
-    USCSCoeffs
+    USCS
     {
-        // Basic units
-        lb          [1 0 0 0 0 0 0]     1;
-        ft          [0 1 0 0 0 0 0]     1;
-        s           [0 0 1 0 0 0 0]     1;
-        R           [0 0 0 1 0 0 0]     1;
-        lbmol       [0 0 0 0 1 0 0]     1;
-        A           [0 0 0 0 0 1 0]     1;
-        Cd          [0 0 0 0 0 0 1]     1;
-
-        // Derived units
-        Hz          [s^-1]              1;
-        pdl         [lb ft s^-2]        1;
-
-        // Scaled units
-        us          [s]                 1e-6;
-        ms          [s]                 1e-3;
-        min         [s]                 60;
-        hr          [s]                 3600;
-
-        // Derived scaled units
-        rpm         [rot/min]           1;
-        lbf         [pdl]               32.174049;
-
-        // (conversions to SI needed for constants)
-        kg          [lb]                2.2046226218487757;
-        m           [ft]                3.280839895013123;
-        K           [R]                 1.8;
-        mol         [lbmol]             2.2046226218487757e-3;
+        lb      [1 0 0 0 0 0 0];
+        ft      [0 1 0 0 0 0 0];
+        s       [0 0 1 0 0 0 0];
+        R       [0 0 0 1 0 0 0];
+        lbmol   [0 0 0 0 1 0 0];
+        A       [0 0 0 0 0 1 0];
+        Cd      [0 0 0 0 0 0 1];
     }
+
+    // Conversions between fundamental units
+    lb      0.45359237          [kg];
+    ft      0.3048              [m];
+    K       1.8                 [R];
+    lbmol   0.45359237          [kmol];
+
+    // Derived units
+    Hz      1                   [s^-1];
+    N       1                   [kg m s^-2];
+    pdl     1                   [lb ft s^-2];
+    Pa      1                   [N m^-2];
+    J       1                   [N m];
+    W       1                   [J s^-1];
+
+    // Scaled units
+    g       1e-3                [kg];
+    um      1e-6                [m];
+    mm      1e-3                [m];
+    cm      1e-2                [m];
+    km      1e3                 [m];
+    in      25.4                [mm];
+    yd      3                   [ft];
+    mi      1760                [yd];
+    us      1e-6                [s];
+    ms      1e-3                [s];
+    min     60                  [s];
+    hr      3600                [s];
+    lbf     32.174049           [pdl];
+    mol     1e-3                [kmol];
+
+    // Derived scaled units
+    l       1e-3                [m^3];
+    ml      1e-6                [m^3];
+    rpm     1                   [rot/min];
+    bar     1e5                 [Pa];
+    atm     101325              [Pa];
+    kPa     1e3                 [Pa];
+    MPa     1e6                 [Pa];
+    cal     4.184               [J];
+    kcal    4184                [J];
+    cSt     1e-6                [m^2/s];
+    cP      1e-3                [kg/m/s];
 }
 
-
-DimensionedConstants
+constants
 {
-    standard
-    {
-        Pstd    1e5 [kg m^-1 s^-2];
-        Tstd    298.15 [K];
-    }
+    pStd    1e5                 [kg m^-1 s^-2];
+    Tstd    298.15              [K];
 }
-
 
 // ************************************************************************* //

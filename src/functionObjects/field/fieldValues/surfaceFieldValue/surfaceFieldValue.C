@@ -872,7 +872,7 @@ bool Foam::functionObjects::fieldValues::surfaceFieldValue::write()
               + "("
               + (
                     selectionType_ == selectionTypes::patches
-                  ? selectionName_.replace(" ", ",").c_str()
+                  ? selectionName_.replaceAll(" ", ",").c_str()
                   : selectionName_.c_str()
                 )
               + ")",

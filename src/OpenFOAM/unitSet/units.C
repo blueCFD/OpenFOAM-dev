@@ -26,6 +26,7 @@ License
 #include "units.H"
 #include "demandDrivenData.H"
 #include "dictionary.H"
+#include "symbols.H"
 
 using namespace Foam::constant::mathematical;
 
@@ -46,11 +47,13 @@ const dictionary& unitsDict()
         (
             debug::switchSet
             (
-                debug::configDict().found("UnitSets")
+                debug::configDict().found("units")
+              ? "units"
+              : debug::configDict().found("UnitSets")
               ? "UnitSets"
               : debug::configDict().found("DimensionSets")
               ? "DimensionSets"
-              : "UnitSets",
+              : "units",
                 cachedPtr
             )
         );
@@ -158,29 +161,160 @@ const Foam::HashTable<Foam::unitSet>& Foam::units::table()
 
         // Get the relevant part of the control dictionary
         const dictionary& unitSetDict =
-            unitsDict().subDict(unitsDict().lookup<word>("unitSet") + "Coeffs");
+            unitsDict().found("set")
+          ? unitsDict().subDict(unitsDict().lookup<word>("set"))
+          : unitsDict().found("unitSet")
+          ? unitsDict().subDict(unitsDict().lookup<word>("unitSet") + "Coeffs")
+          : unitsDict().subDict(unitsDict().lookup<word>("set"));
 
-        // Add units from the control dictionary
+        // Read fundamental units
+        HashTable<label> fundamentalUnits;
         forAllConstIter(dictionary, unitSetDict, iter)
         {
             ITstream& is = iter().stream();
 
-            const unitSet units(is);
-            const scalar multiplier = pTraits<scalar>(is);
+            const dimensionSet units(is);
 
-            const bool ok =
-                unitsPtr_->insert
-                (
-                    iter().keyword(),
-                    units*unitSet(dimless, 0, 0, multiplier)
-                );
-
-            if (!ok)
+            // Check that this is unique
+            if (fundamentalUnits.found(iter().keyword()))
             {
                 FatalIOErrorInFunction(unitsDict())
-                    << "Duplicate unit " << iter().keyword()
-                    << " read from dictionary"
+                    << "Duplicate-fundamental unit specified"
                     << exit(FatalIOError);
+            }
+
+            // Get the index of the dimension of this fundamental unit
+            label i = -1;
+            for (label j = 0; j < dimensionSet::nDimensions; ++ j)
+            {
+                if (units[j] == 0);
+                else if (units[j] == 1 && i == -1) i = j;
+                else i = -2;
+            }
+            if (i < 0)
+            {
+                FatalIOErrorInFunction(unitsDict())
+                    << "Non-fundamental unit specified" << units
+                    << exit(FatalIOError);
+            }
+
+            // Store the name
+            fundamentalUnits.insert(iter().keyword(), i);
+
+            // Add to the table
+            unitsPtr_->insert
+            (
+                iter().keyword(),
+                units*unitSet(dimless, 0, 0, scalar(1))
+            );
+        }
+
+        // Read other units
+        forAllConstIter(dictionary, unitsDict(), iter)
+        {
+            if
+            (
+                iter().isDict()
+             || iter().keyword() == "set"
+             || iter().keyword() == "unitSet"
+            ) continue;
+
+            // Local function to add a unit to the table with checking
+            auto addUnit = []
+            (
+                const word& name,
+                const unitSet& units,
+                const scalar multiplier
+            )
+            {
+                const bool ok =
+                    unitsPtr_->insert
+                    (
+                        name,
+                        units*unitSet(dimless, 0, 0, multiplier)
+                    );
+
+                if (!ok)
+                {
+                    FatalIOErrorInFunction(unitsDict())
+                        << "Duplicate unit " << name
+                        << " read from dictionary"
+                        << exit(FatalIOError);
+                }
+            };
+
+            // Read the units
+            ITstream& is = iter().stream();
+            if (fundamentalUnits.found(iter().keyword()))
+            {
+                // This unit is fundamental, so the conversion here is between
+                // fundamental units in different unit sets, and it is written
+                // in such a way as to convert into the other unit set, rather
+                // than into this unit set. To use this we need to invert it.
+                // This means parsing it...
+                auto readPunctuation = [](symbols::tokeniser& tis, const char p)
+                {
+                    token t(tis.nextToken());
+                    if (!t.isPunctuation() || t.pToken() != p)
+                    {
+                        FatalIOErrorInFunction(tis.stream())
+                            << "Illegal token " << t
+                            << ". Expected character '" << p << "'."
+                            << exit(FatalIOError);
+                    }
+                };
+                symbols::tokeniser tis(is);
+
+                // Read the name and the multiplier, in whatever order
+                token t(tis.nextToken());
+                tis.putBack(t);
+                word derivedUnitName;
+                scalar multiplier;
+                if (!t.isNumber())
+                {
+                    readPunctuation(tis, token::BEGIN_SQR);
+                    derivedUnitName = tis.nextToken().wordToken();
+                    readPunctuation(tis, token::END_SQR);
+                    multiplier = tis.nextToken().scalarToken();
+                }
+                else
+                {
+                    multiplier = tis.nextToken().scalarToken();
+                    readPunctuation(tis, token::BEGIN_SQR);
+                    derivedUnitName = tis.nextToken().wordToken();
+                    readPunctuation(tis, token::END_SQR);
+                }
+
+                // Now we have the name and the multiplier, we can add the
+                // inverse conversion to the table; i.e., flip the names, and
+                // use the reciprocal of the multiplier
+                addUnit
+                (
+                    derivedUnitName,
+                    unitsPtr_->operator[](iter().keyword()),
+                    1/multiplier
+                );
+            }
+            else
+            {
+                // Read the units and the multiplier, in whatever order
+                token t(is);
+                is.putBack(t);
+                unitSet units(units::any);
+                scalar multiplier;
+                if (!t.isNumber())
+                {
+                    is >> units;
+                    multiplier = pTraits<scalar>(is);
+                }
+                else
+                {
+                    multiplier = pTraits<scalar>(is);
+                    is >> units;
+                }
+
+                // Add the conversion to the table
+                addUnit(iter().keyword(), units, multiplier);
             }
         }
 

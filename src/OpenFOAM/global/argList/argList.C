@@ -1333,7 +1333,11 @@ void Foam::argList::printUsage() const
 
 void Foam::argList::displayDoc(bool source) const
 {
-    const dictionary& docDict = debug::configDict().subDict("Documentation");
+    const dictionary& docDict =
+        debug::configDict().subDictBackwardsCompatible
+        (
+            {"documentation", "Documentation"}
+        );
     List<fileName> docDirs(docDict.lookup("doxyDocDirs"));
     fileName docExt(docDict.lookup("doxySourceFileExt"));
 

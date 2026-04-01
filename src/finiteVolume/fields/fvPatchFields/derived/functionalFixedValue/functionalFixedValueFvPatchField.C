@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,37 +41,18 @@ Foam::functionalFixedValueFvPatchField<Type>::functionalFixedValueFvPatchField
         p,
         iF,
         dict,
-        !p.time().completeCase()
+        false
     ),
     dimensionedValue_
     (
-        IOobject
-        (
-            iF.name(),
-            iF.time().name(),
-            p.mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE,
-            false
-        ),
+        iF.name(),
+        "value",
         p,
         iF.dimensions(),
-        *this
-    ),
-    funcPtr_
-    (
-        DimensionedFieldFunction<DimensionedFvPatchField<Type>>::New
-        (
-            dict.subDict("function"),
-            dimensionedValue_
-        )
+        *this,
+        dict
     )
-{
-    if (p.time().completeCase())
-    {
-        funcPtr_->evaluate();
-    }
-}
+{}
 
 
 template<class Type>
@@ -88,10 +69,8 @@ Foam::functionalFixedValueFvPatchField<Type>::functionalFixedValueFvPatchField
     (
         ptf.dimensionedValue_,
         p,
-        ptf.dimensionedValue_.dimensions(),
         *this
-    ),
-    funcPtr_(ptf.funcPtr_->clone(dimensionedValue_))
+    )
 {}
 
 
@@ -106,11 +85,8 @@ Foam::functionalFixedValueFvPatchField<Type>::functionalFixedValueFvPatchField
     dimensionedValue_
     (
         ptf.dimensionedValue_,
-        ptf.patch(),
-        ptf.dimensionedValue_.dimensions(),
         *this
-    ),
-    funcPtr_(ptf.funcPtr_->clone(dimensionedValue_))
+    )
 {}
 
 
@@ -130,9 +106,9 @@ void Foam::functionalFixedValueFvPatchField<Type>::map
     else
     {
         this->setSize(this->patch().size());
-        dimensionedValue_.reset(*this);
-        funcPtr_->reset();
     }
+
+    dimensionedValue_.map(!mapper.direct());
 }
 
 
@@ -143,8 +119,7 @@ void Foam::functionalFixedValueFvPatchField<Type>::reset
 )
 {
     this->setSize(this->patch().size());
-    dimensionedValue_.reset(*this);
-    funcPtr_->reset();
+    dimensionedValue_.reset();
 }
 
 
@@ -156,7 +131,7 @@ void Foam::functionalFixedValueFvPatchField<Type>::updateCoeffs()
         return;
     }
 
-    funcPtr_->update();
+    dimensionedValue_.update();
 
     fixedValueFvPatchField<Type>::updateCoeffs();
 }
@@ -166,8 +141,7 @@ template<class Type>
 void Foam::functionalFixedValueFvPatchField<Type>::write(Ostream& os) const
 {
     fvPatchField<Type>::write(os);
-    writeEntry(os, "function", *funcPtr_);
-    writeEntry(os, "value", *this);
+    writeEntry(os, dimensionedValue_);
 }
 
 

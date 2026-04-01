@@ -272,7 +272,7 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::DimensionedField
     const bool checkIOFlags
 )
 :
-    regIOobject(io, df),
+    regIOobject(io),
     PrimitiveField<Type>(df, reuse),
     OldTimeField<DimensionedField>(this->time().timeIndex()),
     mesh_(df.mesh_),

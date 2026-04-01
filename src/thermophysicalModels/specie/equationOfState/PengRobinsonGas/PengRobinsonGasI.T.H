@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -203,7 +203,7 @@ inline Foam::scalar Foam::PengRobinsonGas<Specie>::sp
     return
         this->R()
        *(
-          - log(p/Pstd)
+          - log(p/pStd)
           + (
                 log(Z - B)
               - 2.078*kappa*((1 + kappa)/sqrt(Tr) - kappa)

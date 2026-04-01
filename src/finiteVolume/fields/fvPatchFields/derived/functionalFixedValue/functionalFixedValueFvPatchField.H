@@ -25,22 +25,45 @@ Class
     Foam::functionalFixedValueFvPatchField
 
 Description
-    This boundary condition extrapolates field to the patch using the near-cell
-    values and adjusts the distribution to match the specified, optionally
-    time-varying, mean value.
+    Functional fixed value boundary condition using a run-time selected function
+    to set the value field as a function of space and/or time.
 
 Usage
     \table
         Property     | Description             | Required    | Default value
-        meanValue    | mean value Function1    | yes         |
+        value        | Value function          | yes         |
     \endtable
 
-    Example of the boundary condition specification:
+    Example of the boundary condition specification using the \c zonal function:
     \verbatim
     <patchName>
     {
         type            functionalFixedValue;
-        meanValue       1.0;
+
+        value
+        {
+            type    zonal;
+
+            defaultValue    300;
+
+            zones
+            {
+                hotFaces
+                {
+                    type        box;
+
+                    zone
+                    {
+                        type        patch;
+                        patch       floor;
+                    }
+
+                    box         (4.5 -1000 4.5) (5.5 1e-5 5.5);
+
+                    value       600;
+                }
+            }
+        }
     }
     \endverbatim
 
@@ -56,9 +79,7 @@ SourceFiles
 #define functionalFixedValueFvPatchField_H
 
 #include "fixedValueFvPatchFields.H"
-#include "UDimensionedFvPatchFields.H"
-#include "DimensionedFvPatchFieldsFwd.H"
-#include "DimensionedFieldFunction.T.H"
+#include "UDimensionedFieldFunction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +87,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                    Class functionalFixedValueFvPatchField Declaration
+               Class functionalFixedValueFvPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
@@ -76,10 +97,9 @@ class functionalFixedValueFvPatchField
 {
     // Private Data
 
-        UDimensionedFvPatchField<Type> dimensionedValue_;
+        //- DimensionedField and function
+        UDimensionedFieldFunction<Type, fvPatch> dimensionedValue_;
 
-        autoPtr<DimensionedFieldFunction<DimensionedFvPatchField<Type>>>
-            funcPtr_;
 
 public:
 
