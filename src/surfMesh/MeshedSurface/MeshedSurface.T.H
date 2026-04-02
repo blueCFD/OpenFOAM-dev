@@ -302,6 +302,14 @@ public:
                 return zones_;
             }
 
+            //- Non-const access to the surface zones.
+            //  If zones are defined, they must be contiguous and cover the
+            //  entire surface
+            List<surfZone>& surfZones()
+            {
+                return zones_;
+            }
+
             //- Add surface zones
             virtual void addZones
             (
