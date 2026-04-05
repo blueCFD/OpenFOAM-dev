@@ -157,13 +157,15 @@ ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::evaluate()
 }
 
 
-void Foam::DimensionedFieldFunctions::
+bool Foam::DimensionedFieldFunctions::
 ${typeName}DimensionedFieldFunction${DimensionedFieldTypeName}::update()
 {
     using namespace dimensions;
 
 //{{{ begin code
+    bool updated = false;
     ${update}
+    return updated;
 //}}} end code
 }
 

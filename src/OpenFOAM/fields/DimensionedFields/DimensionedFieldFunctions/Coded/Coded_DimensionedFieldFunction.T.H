@@ -25,6 +25,45 @@ Class
     Foam::DimensionedFieldFunctions::Coded
 
 Description
+    Coded internal and patch field initialisation, evaluation and update
+    with dimension checking.
+
+    Code can be provided for field initialisation in the \c evaluate function or
+    field update (time dependent) in the \c update function which can call the
+    \c evaluate function if appropriate.  The \c evaluate function provides
+    direct access to the point, cell or face centres in the \c C field and also
+    time \c t and the \c field is set by assignment.  If the \c update
+    function changes the field \c updated should be set true.
+
+Usage
+    To initialise the swirl velocity and set the \c inlet value using
+    Foam::functionalFixedValue in the \c incompressibleFluid/pipeCyclic case:
+    \verbatim
+    internalField
+    {
+        type        coded;
+
+        evaluate
+        #{
+            field = velocity(1, 0, 0) + (C ^ rate(2, 0, 0));
+        #};
+    }
+
+    boundaryField
+    {
+        inlet
+        {
+            type           functionalFixedValue;
+
+            value
+            {
+                $internalField;
+            }
+        }
+        .
+        .
+        .
+    \endverbatim
 
 SourceFiles
     Coded_DimensionedFieldFunction.C
@@ -108,6 +147,10 @@ public:
 
         //- Evaluate the function and set the field
         virtual void evaluate();
+
+        //- Update the field if the function has changed and return true
+        //  otherwise return false
+        virtual bool update();
 
         //- Write data to dictionary stream
         virtual void write(Ostream& os) const;

@@ -163,6 +163,27 @@ evaluate()
 
 
 template<class DimensionedFieldType>
+bool Foam::DimensionedFieldFunctions::Coded<DimensionedFieldType>::
+update()
+{
+    if (!redirectFunctionPtr_.valid())
+    {
+        dictionary redirectDict;
+        redirectDict.set("type", codeName());
+
+        redirectFunctionPtr_ =
+        DimensionedFieldFunction<DimensionedFieldType>::New
+        (
+            redirectDict,
+            this->field_
+        );
+    }
+
+    return redirectFunctionPtr_->update();
+}
+
+
+template<class DimensionedFieldType>
 void Foam::DimensionedFieldFunctions::Coded<DimensionedFieldType>::write
 (
     Ostream& os

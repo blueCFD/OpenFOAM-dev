@@ -43,7 +43,6 @@ boundaryField
     {
         type            pressureInletOutletVelocity;
         tangentialVelocity $internalField;
-        value           uniform (0 0 0);
     }
 
     hull

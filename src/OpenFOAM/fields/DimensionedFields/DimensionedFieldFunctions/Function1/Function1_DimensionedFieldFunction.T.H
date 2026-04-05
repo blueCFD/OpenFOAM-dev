@@ -25,6 +25,28 @@ Class
     Foam::DimensionedFieldFunctions::Function1
 
 Description
+    Function1 internal and patch field initialisation function
+
+    The field is initialised by evaluating the specified Foam::Function1 in
+    the given spatial direction.
+
+Usage
+    To set a field with a linear ramp from 0 to 1 over the distance 1 starting
+    at 0 in the x-direction:
+    \verbatim
+    internalField
+    {
+        type        function1;
+
+        direction   (1 0 0);
+
+        function
+        {
+            type        linearRamp;
+            duration    1;
+        }
+    }
+    \endverbatim
 
 SourceFiles
     Function1_DimensionedFieldFunction.C
@@ -55,6 +77,7 @@ class Function1
 {
         autoPtr<Foam::Function1<typename DimensionedFieldType::Type_>> funcPtr_;
 
+        //- Direction the Function1 is evaluated for
         vector direction_;
 
 

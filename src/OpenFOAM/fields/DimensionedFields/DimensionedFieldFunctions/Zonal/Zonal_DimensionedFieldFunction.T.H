@@ -25,6 +25,86 @@ Class
     Foam::DimensionedFieldFunctions::Zonal
 
 Description
+    Zonal internal and patch field initialisation function
+
+    The field is initialised to the given \c defaultValue and then updated to
+    the \c value provided for each zone (cellZones for the internalField of
+    volFields or faceZones for patchFields).
+
+Usage
+    To set the water column in the \c alpha.water field for the damBreak cases
+    specifying a default value of 0 and a value of 1 in a \c box \c cellZone:
+    \verbatim
+    internalField
+    {
+        type        zonal;
+
+        defaultValue    0;
+
+        zones
+        {
+            waterColumn
+            {
+                type            box;
+
+                box             (0 0 -1) (0.1461 0.292 1);
+
+                value           1;
+            }
+        }
+    }
+    \endverbatim
+
+    The value of inlet and other fixed value patch fields can be specified using
+    DimensionedFieldFunctions::Zonal with the Foam::functionalFixedValue patch
+    field.  It is also possible to use the same zone specification as used for
+    the internalField initialisation and filter it using the patch faceZone
+    for efficiency, e.g.
+    \verbatim
+    internalField
+    {
+        type        zonal;
+
+        defaultValue    0;
+
+        zones
+        {
+            water
+            {
+                type            box;
+                box             (-999 -999 -999) (999 999 0.244);
+                value           1;
+            }
+        }
+    }
+
+    boundaryField
+    {
+        inlet
+        {
+            type            functionalFixedValue;
+
+            value
+            {
+                $internalField;
+
+                zones
+                {
+                    water
+                    {
+                        zone
+                        {
+                            type        patch;
+                            patch       inlet;
+                        }
+                    }
+                }
+            }
+        }
+        .
+        .
+        .
+    \endverbatim
 
 SourceFiles
     Zonal_DimensionedFieldFunction.C
@@ -55,7 +135,10 @@ class Zonal
     typedef typename DimensionedFieldType::Type_ Type;
     typedef typename DimensionedFieldType::GeoMesh_::Zone Zone;
 
+    //- Default value
     Type value_;
+
+    //- Cached zone and value specification dictionary
     dictionary zonesDict_;
 
 

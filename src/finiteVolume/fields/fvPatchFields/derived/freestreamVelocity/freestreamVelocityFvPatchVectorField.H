@@ -68,6 +68,8 @@ Usage
         condition
 
 See also
+    Foam::DimensionedFieldFunction
+    Foam::UDimensionedFieldFunction
     Foam::mixedFvPatchField
     Foam::freestreamFvPatchField
 

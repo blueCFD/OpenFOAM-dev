@@ -86,19 +86,14 @@ void Foam::totalPressureFvPatchScalarField::updateCoeffs()
         const pressureInletOutletVelocityFvPatchVectorField& Upiov =
             refCast<const pressureInletOutletVelocityFvPatchVectorField>(Up);
 
-        if (Upiov.tangentialVelocity().valid())
-        {
-            const scalar t = this->time().value();
+        dynamicPressureFvPatchScalarField::updateCoeffs
+        (
+            p0_,
+            0.5*neg(phip)*magSqr(Upiov.tangentialVelocity())
+          - 0.5*neg(phip)*magSqr(Up)
+        );
 
-            dynamicPressureFvPatchScalarField::updateCoeffs
-            (
-                p0_,
-                0.5*neg(phip)*magSqr(Upiov.tangentialVelocity()->value(t))
-              - 0.5*neg(phip)*magSqr(Up)
-            );
-
-            return;
-        }
+        return;
     }
 
     dynamicPressureFvPatchScalarField::updateCoeffs

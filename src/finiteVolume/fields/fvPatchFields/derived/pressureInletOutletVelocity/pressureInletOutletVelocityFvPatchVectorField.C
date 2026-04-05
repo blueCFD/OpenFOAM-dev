@@ -40,28 +40,46 @@ pressureInletOutletVelocityFvPatchVectorField
 )
 :
     directionMixedFvPatchVectorField(p, iF),
+    tangentialVelocity_
+    (
+        iF.name(),
+        "tangentialVelocity",
+        p,
+        iF.dimensions(),
+        refValue(),
+        dict,
+        Zero
+    ),
     phiName_(dict.lookupOrDefault<word>("phi", "phi"))
 {
-    fvPatchVectorField::operator=
-    (
-        vectorField("value", iF.dimensions(), dict, p.size())
-    );
+    const vectorField n(patch().nf());
 
-    if (dict.found("tangentialVelocity"))
-    {
-        tangentialVelocity_ =
-            Function1<vector>::New
-            (
-                "tangentialVelocity",
-                time().userUnits(),
-                dimVelocity,
-                dict
-            );
-    }
-
-    refValue() = Zero;
+    refValue() -= n*(n & refValue());
     refGrad() = Zero;
     valueFraction() = Zero;
+
+    if (dict.found("value"))
+    {
+        fvPatchVectorField::operator=
+        (
+            vectorField("value", iF.dimensions(), dict, p.size())
+        );
+    }
+    else if (p.time().completeCase())
+    {
+        const scalarField phip = patchInternalField() & n;
+        valueFraction() = neg(phip)*(I - sqr(n));
+
+        directionMixedFvPatchVectorField::updateCoeffs();
+        directionMixedFvPatchVectorField::evaluate();
+    }
+    else
+    {
+        FatalIOErrorInFunction(dict)
+            << "Unable to evaluate function for incomplete case "
+                "and 'value' entry not provided."
+            << exit(FatalIOError);
+    }
 }
 
 
@@ -75,21 +93,30 @@ pressureInletOutletVelocityFvPatchVectorField
 )
 :
     directionMixedFvPatchVectorField(ptf, p, iF, mapper),
-    phiName_(ptf.phiName_),
-    tangentialVelocity_(ptf.tangentialVelocity_, false)
+    tangentialVelocity_
+    (
+        ptf.tangentialVelocity_,
+        p,
+        refValue()
+    ),
+    phiName_(ptf.phiName_)
 {}
 
 
 Foam::pressureInletOutletVelocityFvPatchVectorField::
 pressureInletOutletVelocityFvPatchVectorField
 (
-    const pressureInletOutletVelocityFvPatchVectorField& pivpvf,
+    const pressureInletOutletVelocityFvPatchVectorField& ptf,
     const DimensionedField<vector, fvMesh>& iF
 )
 :
-    directionMixedFvPatchVectorField(pivpvf, iF),
-    phiName_(pivpvf.phiName_),
-    tangentialVelocity_(pivpvf.tangentialVelocity_, false)
+    directionMixedFvPatchVectorField(ptf, iF),
+    tangentialVelocity_
+    (
+        ptf.tangentialVelocity_,
+        refValue()
+    ),
+    phiName_(ptf.phiName_)
 {}
 
 
@@ -102,18 +129,17 @@ void Foam::pressureInletOutletVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    if (tangentialVelocity_.valid())
+    const vectorField n(patch().nf());
+
+    if (tangentialVelocity_.update())
     {
-        const vector tangentialVelocity =
-            tangentialVelocity_->value(time().value());
-        const vectorField n(patch().nf());
-        refValue() = tangentialVelocity - n*(n & tangentialVelocity);
+        refValue() -= n*(n & refValue());
     }
 
     const fvsPatchField<scalar>& phip =
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
-    valueFraction() = neg(phip)*(I - sqr(patch().nf()));
+    valueFraction() = neg(phip)*(I - sqr(n));
 
     directionMixedFvPatchVectorField::updateCoeffs();
     directionMixedFvPatchVectorField::evaluate();
@@ -128,16 +154,7 @@ const
 {
     fvPatchVectorField::write(os);
     writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
-    if (tangentialVelocity_.valid())
-    {
-        writeEntry
-        (
-            os,
-            time().userUnits(),
-            dimVelocity,
-            tangentialVelocity_()
-        );
-    }
+    writeEntry(os, tangentialVelocity_);
     writeEntry(os, "value", *this);
 }
 

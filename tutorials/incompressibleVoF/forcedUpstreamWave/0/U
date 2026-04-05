@@ -39,7 +39,6 @@ boundaryField
     {
         type            pressureInletOutletVelocity;
         tangentialVelocity  uniform (2 0 0);
-        value           uniform (2 0 0);
     }
 
     bottom

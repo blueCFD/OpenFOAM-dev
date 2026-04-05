@@ -86,6 +86,69 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
 template<class Type, class GeoMesh>
 Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
 (
+    const word& name,
+    const word& funcName,
+    const GeoMesh& mesh,
+    const dimensionSet& dimensions,
+    Field<Type>& field,
+    const dictionary& dict,
+    const Type& defaultValue
+)
+:
+    field_(field),
+    funcName_(funcName),
+    dimensionedField_
+    (
+        IOobject
+        (
+            name + '_' + funcName,
+            mesh.time().name(),
+            mesh.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE,
+            false
+        ),
+        mesh,
+        dimensions,
+        field_
+    ),
+    funcPtr_
+    (
+        dict.isDict(funcName)
+      ? DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>::New
+        (
+            dict.subDict(funcName),
+            dimensionedField_
+        )
+      : autoPtr<DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>>
+        (
+            nullptr
+        )
+    )
+{
+    if (funcPtr_.valid())
+    {
+        if (mesh.time().completeCase())
+        {
+            funcPtr_->evaluate();
+        }
+    }
+    else if (dict.found(funcName))
+    {
+        field_ = Field<Type>(funcName_, dimensions, dict, mesh.size());
+        dimensionedField_.reset(field_);
+    }
+    else
+    {
+        field_ = Field<Type>(mesh.size(), defaultValue);
+        dimensionedField_.reset(field_);
+    }
+}
+
+
+template<class Type, class GeoMesh>
+Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
+(
     const UDimensionedFieldFunction<Type, GeoMesh>& udff,
     const GeoMesh& mesh,
     Field<Type>& field
@@ -166,11 +229,15 @@ void Foam::UDimensionedFieldFunction<Type, GeoMesh>::reset()
 
 
 template<class Type, class GeoMesh>
-void Foam::UDimensionedFieldFunction<Type, GeoMesh>::update()
+bool Foam::UDimensionedFieldFunction<Type, GeoMesh>::update()
 {
     if (funcPtr_.valid())
     {
-        funcPtr_->update();
+        return funcPtr_->update();
+    }
+    else
+    {
+        return false;
     }
 }
 

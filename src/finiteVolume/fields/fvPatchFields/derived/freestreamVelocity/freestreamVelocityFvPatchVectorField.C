@@ -53,19 +53,16 @@ Foam::freestreamVelocityFvPatchVectorField::freestreamVelocityFvPatchVectorField
             vectorField("value", iF.dimensions(), dict, p.size())
         );
     }
+    else if (p.time().completeCase())
+    {
+        fvPatchVectorField::operator=(freestreamValue());
+    }
     else
     {
-        if (p.time().completeCase())
-        {
-            fvPatchVectorField::operator=(freestreamValue());
-        }
-        else
-        {
-            FatalIOErrorInFunction(dict)
-                << "Unable to evaluate function for incomplete case "
-                   "and 'value' entry not provided."
-                << exit(FatalIOError);
-        }
+        FatalIOErrorInFunction(dict)
+            << "Unable to evaluate function for incomplete case "
+                "and 'value' entry not provided."
+            << exit(FatalIOError);
     }
 
     refGrad() = Zero;

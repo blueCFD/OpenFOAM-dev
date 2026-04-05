@@ -106,7 +106,7 @@ public:
         virtual void evaluate();
 
         //- Update the field if the function has changed
-        virtual void update();
+        virtual bool update();
 
         //- Write data to dictionary stream
         virtual void write(Ostream& os) const;
