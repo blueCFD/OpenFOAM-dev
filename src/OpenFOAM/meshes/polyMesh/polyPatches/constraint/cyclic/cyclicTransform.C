@@ -27,6 +27,7 @@ License
 #include "unitSet.H"
 #include "IOmanip.H"
 #include "stringOps.H"
+#include "units.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -267,13 +268,13 @@ Foam::cyclicTransform::cyclicTransform
     rotationAxis_
     (
         transformType_ == ROTATIONAL
-      ? normalised(dict.lookup<vector>("rotationAxis"))
+      ? normalised(dict.lookup<vector>("rotationAxis", dimless))
       : vector::uniform(NaN)
     ),
     rotationCentre_
     (
         transformType_ == ROTATIONAL
-      ? dict.lookup<point>("rotationCentre")
+      ? dict.lookup<point>("rotationCentre", units::length)
       : point::uniform(NaN)
     ),
     rotationAngle_
@@ -286,7 +287,8 @@ Foam::cyclicTransform::cyclicTransform
       ? (
             dict.lookupBackwardsCompatible<vector>
             (
-                {"separation", "separationVector"}
+                {"separation", "separationVector"},
+                units::length
             )
         )
       : vector::uniform(NaN)

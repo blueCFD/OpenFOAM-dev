@@ -30,7 +30,6 @@ boundaryField
     {
         type            pressureInletOutletVelocity;
         phi             phi.gas;
-        value           uniform (1.75175 0 0);
     }
     wall
     {

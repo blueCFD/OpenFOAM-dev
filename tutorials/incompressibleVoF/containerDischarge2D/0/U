@@ -23,7 +23,6 @@ boundaryField
     "(left|right|atmosphere)"
     {
         type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
     }
 
     wall

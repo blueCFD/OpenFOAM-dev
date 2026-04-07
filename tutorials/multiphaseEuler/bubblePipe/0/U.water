@@ -33,7 +33,6 @@ boundaryField
     {
         type            pressureInletOutletVelocity;
         phi             phi.water;
-        value           $internalField;
     }
     walls
     {

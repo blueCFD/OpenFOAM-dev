@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -154,12 +154,7 @@ bool Foam::seulex::seul
 
             LUBacksubstitute(a_, pivotIndices_, dy_);
 
-            // This form from the original paper is unreliable
-            // step size underflow for some cases
-            // const scalar denom = max(1, dy1);
-
-            // This form is reliable but limits how large the step size can be
-            const scalar denom = min(1, dy1 + small);
+            const scalar denom = max(1, dy1);
 
             scalar dy2 = 0;
             for (label i=0; i<n_; i++)
@@ -338,7 +333,7 @@ void Foam::seulex::solve
                     dxNew = mag(dx)*stepFactor5_;
                     break;
                 }
-                errOld = min(4*err, 1);
+                errOld = max(4*err, 1);
                 scalar expo = 1.0/(k + 1);
                 scalar facmin = pow(stepFactor3_, expo);
                 scalar fac;

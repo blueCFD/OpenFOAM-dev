@@ -102,6 +102,17 @@ units
         Cd      [0 0 0 0 0 0 1];
     }
 
+    CGS
+    {
+        g       [1 0 0 0 0 0 0];
+        cm      [0 1 0 0 0 0 0];
+        s       [0 0 1 0 0 0 0];
+        K       [0 0 0 1 0 0 0];
+        mol     [0 0 0 0 1 0 0];
+        A       [0 0 0 0 0 1 0];
+        Cd      [0 0 0 0 0 0 1];
+    }
+
     USCS
     {
         lb      [1 0 0 0 0 0 0];
@@ -114,10 +125,13 @@ units
     }
 
     // Conversions between fundamental units
+    g       1e-3                [kg];
     lb      0.45359237          [kg];
+    cm      1e-2                [m];
     ft      0.3048              [m];
     K       1.8                 [R];
-    lbmol   0.45359237          [kmol];
+    kmol    1000                [mol];
+    lbmol   453.59237           [mol];
 
     // Derived units
     Hz      1                   [s^-1];
@@ -128,10 +142,8 @@ units
     W       1                   [J s^-1];
 
     // Scaled units
-    g       1e-3                [kg];
     um      1e-6                [m];
     mm      1e-3                [m];
-    cm      1e-2                [m];
     km      1e3                 [m];
     in      25.4                [mm];
     yd      3                   [ft];
@@ -141,7 +153,6 @@ units
     min     60                  [s];
     hr      3600                [s];
     lbf     32.174049           [pdl];
-    mol     1e-3                [kmol];
 
     // Derived scaled units
     l       1e-3                [m^3];

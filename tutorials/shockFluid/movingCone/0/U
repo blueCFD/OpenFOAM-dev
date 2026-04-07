@@ -41,7 +41,6 @@ boundaryField
     left
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
 
     farField

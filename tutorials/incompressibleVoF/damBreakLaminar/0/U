@@ -30,7 +30,6 @@ boundaryField
     atmosphere
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
 }
 

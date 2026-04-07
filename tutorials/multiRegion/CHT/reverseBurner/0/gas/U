@@ -35,7 +35,6 @@ boundaryField
     outlet
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
     gas_to_solid
     {

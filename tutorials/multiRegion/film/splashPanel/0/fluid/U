@@ -31,7 +31,6 @@ boundaryField
     top
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
 }
 

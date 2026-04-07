@@ -1617,7 +1617,7 @@ _foamUnits_ ()
     local line=${COMP_LINE}
     local used=$(echo "$line" | grep -oE "\-[a-zA-Z]+ ")
 
-    opts="$(_unitArgs "$used")"
+    opts="-all -value $(_unitArgs "$used")"
     extra=""
 
     [ "$COMP_CWORD" = 1 ] || \

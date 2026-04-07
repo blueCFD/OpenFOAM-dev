@@ -1,0 +1,3 @@
+surfaceRenamePatch.C
+
+EXE = $(FOAM_APPBIN)/surfaceRenamePatch

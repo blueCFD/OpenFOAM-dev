@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # License
@@ -65,22 +65,6 @@ our example.
 USAGE
 }
 
-seriesFileHead () {
-    cat<<EOF
-{
-    "file-series-version": "1.0",
-    "files": [
-EOF
-}
-
-seriesFileFoot () {
-    cat<<EOF
-
-    ]
-}
-EOF
-}
-
 dir=postProcessing
 
 while [ "$#" -gt 0 ]
@@ -110,46 +94,40 @@ done
 
 [ ! -d "$dir" ] && error "Cannot find postProcessing directory, exiting."
 
-subDirs=$(find "$dir" -maxdepth 1 -mindepth 1 -type d)
-
-for s in $subDirs
+find "$dir" -mindepth 3 -name "*.vtk" | while read -r vtkFile
 do
-    # Create list of subdirectories containing VTK files
-    subDir_files=$(find "$s" -type f -name "*vtk")
+    echo "$(dirname "$(dirname "$vtkFile")")"/"$(basename "$vtkFile")"
+done | sort -u | while read -r seriesName
+do
+    vtkFile=$(basename "$seriesName")
+    vtkDir=$(dirname "$seriesName")
 
-    [ "$subDir_files" ] || continue
+    echo "Sequencing all $vtkFile files in $vtkDir"
 
-    printf "Sequencing all VTK files in %s\n" "$s"
+    seriesFile="$seriesName.series"
 
-    # Get the names of VTK files in this category
-    names=$(for f in $subDir_files; do basename "$f" .vtk; done | sort -u)
+    cat > "$seriesFile" << EOF
+{
+    "file-series-version": "1.0",
+    "files": [
+EOF
 
-    for n in $names
+    unset comma
+
+    (cd "$vtkDir" && find -- * -name "$vtkFile") | xargs -I {} dirname {} | \
+        LC_ALL=C sort -g | while read -r time
     do
-        series_file="$s/$n.vtk.series"
-        seriesFileHead > "$series_file"
+        [ "$comma" ] && printf ",\n" >> "$seriesFile" || comma=yes
 
-        # Create list of VTK files of a given name, ordered by time step
-        files=$(echo "$subDir_files" | \
-            grep "$n\.vtk" | \
-            awk -F'/' '{print($(NF-1)" "$0)}' | \
-            LC_ALL=C  sort -k 1 -g | \
-            cut -d' ' -f2)
-
-        unset comma
-
-        for f in $files
-        do
-            # Write series file
-            [ "$comma" ] && printf ",\n" >> "$series_file"
-            [ "$comma" ] || comma=yes
-            time="$(dirname "$f" | awk -F/ '{print $NF}')"
-            printf "%17s\"%s\", \"time\": %s }" \
-                   '{"name": ' \
-                   "$time/$n.vtk" \
-                   "$time" >> "$series_file"
-        done
-
-        seriesFileFoot >> "$series_file"
+        printf "        {\"name\": \"%s\", \"time\": %s }" \
+            "$time/$vtkFile" "$time" >> "$seriesFile"
     done
+
+    cat >> "$seriesFile" << EOF
+
+    ]
+}
+EOF
 done
+
+#------------------------------------------------------------------------------

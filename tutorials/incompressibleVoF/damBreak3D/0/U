@@ -23,7 +23,6 @@ boundaryField
     atmosphere
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
     walls
     {

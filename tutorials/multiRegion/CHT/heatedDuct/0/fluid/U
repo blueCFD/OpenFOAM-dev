@@ -30,7 +30,6 @@ boundaryField
     fluidOutlet
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
     fluid_to_metal
     {

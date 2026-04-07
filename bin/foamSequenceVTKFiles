@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # License
@@ -42,13 +42,28 @@
 error() {
     exec 1>&2
     while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    echo
     usage
     exit 1
 }
 
-usage() {
-        cat <<USAGE
+cat <<EOF
 
+foamSequenceVTKFiles been superseded and replaced by foamVTKSeries.
+
+foamVTKSeries is preferable because it generates fewer files, and it allows
+ParaView to correctly maintain the time values corresponding to each file in
+the series.
+
+foamVTKSeries has identical usage to foamSequenceVTKFiles, except that the
+output directory option ('-out' or '-o') is not available. foamVTKSeries writes
+its output into the same directory tree containing the VTK files, rather than
+into a separate directory.
+
+EOF
+
+usage() {
+    cat <<USAGE
 Usage: ${0##*/} [OPTIONS] ...
 options:
   -case | -c <dir>    specify case directory (default = local dir)
@@ -88,22 +103,6 @@ multipleSeries () {
     [ "$(echo "$_dirs" | wc -l)" -gt 1 ] || return 1
 
     echo "$_dirs"
-}
-
-seriesFileHead () {
-    cat<<EOF
-{
-    "file-series-version": "1.0",
-    "files": [
-EOF
-}
-
-seriesFileFoot () {
-    cat<<EOF
-
-    ]
-}
-EOF
 }
 
 dir=postProcessing
@@ -176,9 +175,6 @@ do
 
         [ "$d" = SINGLE ] && unset s
 
-        series_file="$out/$n$s.vtk.series"
-        seriesFileHead > "$series_file"
-
         for f in $file_list
         do
             ! [ "$d" = SINGLE ] && \
@@ -188,18 +184,8 @@ do
             link=$(printf "${n}${s}.%04d.vtk" $i)
             ln -s "../$f" "$out/$link"
 
-            # Write series file
-            [ "$i" -eq 0 ] || printf ",\n" >> "$series_file"
-            time="$(dirname "$f" | awk -F/ '{print $NF}')"
-            printf "%17s\"%s\", \"time\": %s }" \
-                   '{"name": ' \
-                   "$link" \
-                   "$time" >> "$series_file"
-
             i=$(( i + 1 )) # Relies on ordered list of files
         done
-
-        seriesFileFoot >> "$series_file"
 
         s=$(( s + 1 ))
     done

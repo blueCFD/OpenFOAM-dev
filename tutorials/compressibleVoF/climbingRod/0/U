@@ -37,7 +37,6 @@ boundaryField
     atmosphere
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
 
     #includeEtc "caseDicts/setConstraintTypes"

@@ -59,6 +59,8 @@ namespace units
     extern const unitSet rotations;
     extern const unitSet degrees;
 
+    extern const unitSet& length;
+
     //- Get the table of unit conversions
     const HashTable<unitSet>& table();
 
@@ -66,10 +68,13 @@ namespace units
     void add(const word& name, const unitSet& unit);
 
     //- Lookup and return the named unit from the table
-    inline const unitSet& lookup(const word& unitName)
-    {
-        return table()[unitName];
-    }
+    const unitSet& lookup(const word& unitName);
+
+    //- Set the length scale to the given unit set
+    void setLength(const unitSet& length);
+
+    //- Set the length scale to the given value
+    void setLength(const scalar length);
 }
 
 

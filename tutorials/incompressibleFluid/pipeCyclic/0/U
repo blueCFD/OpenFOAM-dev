@@ -43,7 +43,6 @@ boundaryField
     outlet
     {
         type            pressureInletOutletVelocity;
-        value           uniform (1 0 0);
     }
 
     walls

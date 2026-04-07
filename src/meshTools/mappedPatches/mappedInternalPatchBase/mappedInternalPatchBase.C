@@ -330,13 +330,13 @@ Foam::mappedInternalPatchBase::mappedInternalPatchBase
     distance_
     (
         offsetMode_ == NORMAL
-      ? dict.lookup<scalar>("distance")
+      ? dict.lookup<scalar>("distance", units::length)
       : NaN
     ),
     offset_
     (
         offsetMode_ == DIRECTION
-      ? dict.lookup<vector>("offset")
+      ? dict.lookup<vector>("offset", units::length)
       : vector::uniform(NaN)
     ),
     mapPtr_(nullptr),

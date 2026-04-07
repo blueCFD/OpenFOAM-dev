@@ -216,6 +216,8 @@ int main(int argc, char *argv[])
 
     Info<< nl << "Creating polyMesh from blockMesh" << endl;
 
+    units::setLength(blocks.scaleFactor());
+
     word defaultFacesName = "defaultFaces";
     word defaultFacesType = emptyPolyPatch::typeName;
     polyMesh mesh

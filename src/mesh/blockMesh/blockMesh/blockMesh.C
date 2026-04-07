@@ -25,7 +25,6 @@ License
 
 #include "blockMesh.H"
 #include "Time.T.H"
-#include "cyclicTransform.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -133,18 +132,8 @@ Foam::PtrList<Foam::dictionary> Foam::blockMesh::patchDicts() const
 
     forAll(patchTopologies, patchi)
     {
-        autoPtr<polyPatch> ppPtr =
-            patchTopologies[patchi].clone(topology().boundary());
-
-        if (isA<cyclicTransform>(ppPtr()))
-        {
-            refCast<cyclicTransform>(ppPtr()) =
-                transformer::scaling(scaleFactor_*tensor::I)
-              & refCast<cyclicTransform>(ppPtr());
-        }
-
         OStringStream os;
-        ppPtr->write(os);
+        patchTopologies[patchi].write(os);
         IStringStream is(os.str());
         patchDicts.set(patchi, new dictionary(is));
     }

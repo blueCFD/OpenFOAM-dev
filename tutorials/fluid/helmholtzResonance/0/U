@@ -30,8 +30,6 @@ boundaryField
     outlet
     {
         type            pressureInletOutletVelocity;
-        inletValue      $internalField;
-        value           $internalField;
     }
 
     symmetry

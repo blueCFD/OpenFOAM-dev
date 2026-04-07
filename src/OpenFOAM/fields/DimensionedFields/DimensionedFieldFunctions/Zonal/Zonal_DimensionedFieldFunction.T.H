@@ -135,11 +135,13 @@ class Zonal
     typedef typename DimensionedFieldType::Type_ Type;
     typedef typename DimensionedFieldType::GeoMesh_::Zone Zone;
 
-    //- Default value
-    Type value_;
+    // Private Data
 
-    //- Cached zone and value specification dictionary
-    dictionary zonesDict_;
+        //- Default value
+        Type value_;
+
+        //- Cached zone and value specification dictionary
+        dictionary zonesDict_;
 
 
 public:

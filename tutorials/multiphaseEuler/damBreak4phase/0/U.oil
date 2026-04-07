@@ -39,7 +39,6 @@ boundaryField
     {
         type            pressureInletOutletVelocity;
         phi             phi.oil;
-        value           $internalField;
     }
 
     defaultFaces

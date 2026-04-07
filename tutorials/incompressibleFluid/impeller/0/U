@@ -25,7 +25,6 @@ boundaryField
     "(inlet|outlet)"
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
 
     "(statorDuct|nonCoupleIn1|nonCoupleOut2)"

@@ -22,13 +22,13 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::DimensionedFieldFunctions::Function1
+    Foam::DimensionedFieldFunctions::DistanceFunction
 
 Description
-    Function1 internal and patch field initialisation function
+    Distance function internal and patch field initialisation function
 
-    The field is initialised by evaluating the specified Foam::Function1 in
-    the given spatial direction.
+    The field is initialised by evaluating the specified
+    Foam::Function1 of distance in the given spatial direction.
 
 Usage
     To set a field with a linear ramp from 0 to 1 over the distance 1 starting
@@ -36,7 +36,7 @@ Usage
     \verbatim
     internalField
     {
-        type        function1;
+        type        distanceFunction;
 
         direction   (1 0 0);
 
@@ -49,12 +49,12 @@ Usage
     \endverbatim
 
 SourceFiles
-    Function1_DimensionedFieldFunction.C
+    DistanceFunction_DimensionedFieldFunction.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef Function1_DimensionedFieldFunction_H
-#define Function1_DimensionedFieldFunction_H
+#ifndef DistanceFunction_DimensionedFieldFunction_H
+#define DistanceFunction_DimensionedFieldFunction_H
 
 #include "DimensionedFieldFunction.T.H"
 #include "Function1.T.H"
@@ -67,39 +67,42 @@ namespace DimensionedFieldFunctions
 {
 
 /*---------------------------------------------------------------------------*\
-                            Class Function1 Declaration
+                            Class DistanceFunction Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class DimensionedFieldType>
-class Function1
+class DistanceFunction
 :
     public DimensionedFieldFunction<DimensionedFieldType>
 {
+    // Private Data
+
+        //- Distance DistanceFunction pointer
         autoPtr<Foam::Function1<typename DimensionedFieldType::Type_>> funcPtr_;
 
-        //- Direction the Function1 is evaluated for
+        //- Direction the DistanceFunction is evaluated for
         vector direction_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("function1");
+    TypeName("distanceFunction");
 
 
     // Constructors
 
         //- Construct with dictionary to initialise given field
-        Function1
+        DistanceFunction
         (
             const dictionary& dict,
             DimensionedFieldType& field
         );
 
         //- Construct a copy for the given field
-        Function1
+        DistanceFunction
         (
-            const Function1& dff,
+            const DistanceFunction& dff,
             DimensionedFieldType& field
         );
 
@@ -109,7 +112,7 @@ public:
 
 
     //- Destructor
-    virtual ~Function1()
+    virtual ~DistanceFunction()
     {}
 
 
@@ -131,7 +134,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#include "Function1_DimensionedFieldFunction.T.C"
+#include "DistanceFunction_DimensionedFieldFunction.T.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

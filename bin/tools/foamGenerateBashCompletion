@@ -412,7 +412,7 @@ _foamUnits_ ()
 {
 $(declareLocals)
 
-    opts="\$(_unitArgs "\$used")"
+    opts="-all -value \$(_unitArgs "\$used")"
     extra=""
 
 $(caseStart)

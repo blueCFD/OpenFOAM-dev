@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,7 +63,8 @@ Foam::processorRunTimes::processorRunTimes::procRunTimes
                 Time::controlDictName,
                 completeRunTime.rootPath(),
                 completeRunTime.caseName()
-               /fileName(word("processor") + Foam::name(proci))
+               /fileName(word("processor") + Foam::name(proci)),
+                false
             )
         );
 
@@ -89,7 +90,8 @@ Foam::autoPtr<Foam::Time> Foam::processorRunTimes::proc0RunTime
                 Time::controlDictName,
                 completeRunTime.rootPath(),
                 completeRunTime.caseName()
-               /fileName(word("processor") + Foam::name(label(0)))
+               /fileName(word("processor") + Foam::name(label(0))),
+                false
             )
           : nullptr
         );

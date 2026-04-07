@@ -36,6 +36,9 @@ Usage
       - \par -all \n
         Print information for all available dimensions and units
 
+      - \par -value \n
+        Print the conversion factor value only (e.g., for use in a script)
+
 Note
     This utility can be run with no arguments, one argument or two arguments.
     If no arguments are given this utility will print the names of all
@@ -173,6 +176,11 @@ int main(int argc, char *argv[])
         "all",
         "list only the names of the dimensions and units"
     );
+    argList::addBoolOption
+    (
+        "value",
+        "print only the conversion factor value"
+    );
 
     const label nArgs = argList::nArgs(argc, argv);
     switch (nArgs)
@@ -207,6 +215,22 @@ int main(int argc, char *argv[])
     );
 
     argList args(argc, argv);
+
+    const bool all = args.optionFound("all");
+    const bool value = args.optionFound("value");
+
+    if (all && value)
+    {
+        FatalErrorInFunction
+            << "Options -all and -value can not be used together"
+            << exit(FatalError);
+    }
+    if (nArgs == 0 && value)
+    {
+        FatalErrorInFunction
+            << "Option -value requires a unit argument"
+            << exit(FatalError);
+    }
 
     // Build lists of fundamental unit names
     wordList dimensionUnitNames(dimensionSet::nDimensions);
@@ -255,29 +279,42 @@ int main(int argc, char *argv[])
 
     auto printDimension = [&](const word& name, const dimensionSet& dimension)
     {
-        Info<< "Dimension [" << name << "]" << nl;
-        if (!isFundamental(dimension))
-            Info<< "+ Dimensions = " << dimension.info() << nl;
-        Info << "+ Exponents = " << dimension << nl
-             << endl;
+        if (!value)
+        {
+            Info<< "Dimension [" << name << "]" << nl;
+            if (!isFundamental(dimension))
+                Info<< "+ Dimensions = " << dimension.info() << nl;
+            Info << "+ Exponents = " << dimension << nl
+                 << endl;
+        }
     };
 
     auto printUnit = [&](const word& name, const unitSet& unit)
     {
-        const string standardName =
-            standardUnitName(dimensionUnitNames, dimlessUnitNames, unit);
-        Info<< "Unit [" << name << "]" << nl
-            << "+ Dimensions = " << unit.dimensions().info() << nl;
-        if (!isFundamental(unit))
-            Info<< "+ Standard Unit = [" << standardName.c_str() << "]" << nl;
-        Info<< "+ Conversion Factor = " << unit.toStandard(scalar(1)) << nl
-            << endl;
+        if (value)
+        {
+            Info<< unit.toStandard(scalar(1));
+        }
+        else
+        {
+            const string standardName =
+                standardUnitName(dimensionUnitNames, dimlessUnitNames, unit);
+            Info<< "Unit [" << name << "]" << nl
+                << "+ Dimensions = " << unit.dimensions().info() << nl;
+            if (!isFundamental(unit))
+            {
+                Info<< "+ Standard Unit = [" << standardName.c_str() << "]"
+                    << nl;
+            }
+            Info<< "+ Conversion Factor = " << unit.toStandard(scalar(1))
+                << nl << endl;
+        }
     };
 
-    Info<< endl;
+    if (!value) Info<< endl;
 
     // Print all dimensions and units
-    if (args.optionFound("all"))
+    if (all)
     {
         forAllConstIter(HashTable<dimensionSet>, dimensions::table, iter)
         {
@@ -371,22 +408,29 @@ int main(int argc, char *argv[])
         const string standardName =
             standardUnitName(dimensionUnitNames, dimlessUnitNames, unit1);
 
-        Info<< "Units [" << name1.c_str() << "] [" << name2.c_str() << ']' << nl
-            << "+ Dimensions = " << unit1.dimensions().info() << nl
-            << "+ Standard Unit = [" << standardName.c_str() << "]" << nl
-            << "+ Conversion: " << 1 << " [" << name1.c_str() << "] = "
-            << unit2.toUser(unit1.toStandard(scalar(1))) << " ["
-            << name2.c_str() << ']' << nl
-            << "+ Conversion: " << 1 << " [" << name2.c_str() << "] = "
-            << unit1.toUser(unit2.toStandard(scalar(1))) << " ["
-            << name1.c_str() << ']' << nl
-            << endl;
+        if (value)
+        {
+            Info<< unit2.toUser(unit1.toStandard(scalar(1)));
+        }
+        else
+        {
+            Info<< "Units [" << name1.c_str() << "] [" << name2.c_str() << ']'
+                << nl << "+ Dimensions = " << unit1.dimensions().info() << nl
+                << "+ Standard Unit = [" << standardName.c_str() << "]" << nl
+                << "+ Conversion: " << 1 << " [" << name1.c_str() << "] = "
+                << unit2.toUser(unit1.toStandard(scalar(1))) << " ["
+                << name2.c_str() << ']' << nl
+                << "+ Conversion: " << 1 << " [" << name2.c_str() << "] = "
+                << unit1.toUser(unit2.toStandard(scalar(1))) << " ["
+                << name1.c_str() << ']' << nl
+                << endl;
+        }
 
         return 0;
     }
 
     // Print just the names of the dimensions and units
-    if (!args.optionFound("all"))
+    if (!all)
     {
         auto print = [](const char* group, const DynamicList<word>& names)
         {

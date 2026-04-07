@@ -26,7 +26,6 @@ boundaryField
     {
         type            pressureInletOutletVelocity;
         tangentialVelocity $internalField;
-        value           $internalField;
     }
 
     inlet
@@ -38,7 +37,6 @@ boundaryField
     outlet
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
 
     "nonCouple.*"

@@ -43,8 +43,9 @@ options:
   -f | -files            find wmake 'files' file associated with searched file
   -h | -help             help
   -i | -isearch <string> searches files for a <string>, case insensitive
-  -l | -lnInclude        find 'lnInclude' directory for searched file and print
-                         the corresponding '-I' flag for an 'options' file
+  -l | -lnInclude        find 'lnInclude' directory for searched file, print
+                         the corresponding '-I' flag and '-l' library for an
+                         'options' file
   -m | -modules          search for the file from the \$FOAM_MODULES directory
   -n | -numbers          print line numbers with file output
   -o | -options          find wmake 'options' file associated with searched file
@@ -139,14 +140,14 @@ writeCoded () {
     # Optional arguments for codeInclude, codeOptions and codeLibs entries
     _file="$2"
     _codeInclude="$3"
+    _codeLibs="$(awk -F/ '/LIB =/ {gsub("lib", "-l", $NF); print $NF}' \
+              "$_lnInclude/../Make/files" 2>/dev/null)"
 
     ! [ "$_file" ] && \
         printf "\nDirectory: %s\n" "$_lnInclude" && \
         printf "options entry: %s\n" "$_codeOptions" && \
+        printf "libs entry: %s\n" "$_codeLibs" && \
         return 0
-
-    _codeLibs="$(awk -F/ '/LIB =/ {gsub("lib", "-l", $NF); print $NF}' \
-              "$_lnInclude/../Make/files" 2>/dev/null)"
 
     for _b in codeInclude codeOptions codeLibs
     do

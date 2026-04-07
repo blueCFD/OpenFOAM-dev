@@ -23,7 +23,6 @@ boundaryField
     "(outlet|sides)"
     {
         type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
     }
 
     base

@@ -39,9 +39,10 @@ Description
 
 Usage
     \table
-        Property     | Description             | Required    | Default value
-        phi          | flux field name         | no          | phi
-        tangentialVelocity | tangential velocity | no  |
+        Property     | Description               | Required | Default value
+        phi          | flux field name           | no       | phi
+        tangentialVelocity | tangential velocity | no       |
+        value        | initial velocity          | no       | evaluated
     \endtable
 
     Example of the boundary condition specification:

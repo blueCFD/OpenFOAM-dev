@@ -23,14 +23,14 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Function1_DimensionedFieldFunction.T.H"
+#include "TimeFunction_DimensionedFieldFunction.T.H"
 #include "DimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class DimensionedFieldType>
-Foam::DimensionedFieldFunctions::Function1<DimensionedFieldType>::
-Function1
+Foam::DimensionedFieldFunctions::TimeFunction<DimensionedFieldType>::
+TimeFunction
 (
     const dictionary& dict,
     DimensionedFieldType& field
@@ -42,39 +42,37 @@ Function1
         Foam::Function1<typename DimensionedFieldType::Type_>::New
         (
             "function",
-            dimLength,
+            field.time().userUnits(),
             field.dimensions(),
             dict
         )
-    ),
-    direction_(normalised(dict.lookup<vector>("direction")))
+    )
 {}
 
 
 template<class DimensionedFieldType>
-Foam::DimensionedFieldFunctions::Function1<DimensionedFieldType>::
-Function1
+Foam::DimensionedFieldFunctions::TimeFunction<DimensionedFieldType>::
+TimeFunction
 (
-    const Function1& dff,
+    const TimeFunction& dff,
     DimensionedFieldType& field
 )
 :
     DimensionedFieldFunction<DimensionedFieldType>(dff, field),
-    funcPtr_(dff.funcPtr_, false),
-    direction_(dff.direction_)
+    funcPtr_(dff.funcPtr_, false)
 {}
 
 
 template<class DimensionedFieldType>
 Foam::autoPtr<Foam::DimensionedFieldFunction<DimensionedFieldType>>
-Foam::DimensionedFieldFunctions::Function1<DimensionedFieldType>::clone
+Foam::DimensionedFieldFunctions::TimeFunction<DimensionedFieldType>::clone
 (
     DimensionedFieldType& field
 ) const
 {
     return autoPtr<DimensionedFieldFunction<DimensionedFieldType>>
     (
-        new Function1<DimensionedFieldType>(*this, field)
+        new TimeFunction<DimensionedFieldType>(*this, field)
     );
 }
 
@@ -82,22 +80,30 @@ Foam::DimensionedFieldFunctions::Function1<DimensionedFieldType>::clone
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class DimensionedFieldType>
-void Foam::DimensionedFieldFunctions::Function1<DimensionedFieldType>::
+void Foam::DimensionedFieldFunctions::TimeFunction<DimensionedFieldType>::
 evaluate()
 {
     this->field_.primitiveFieldRef() =
-        funcPtr_->value(direction_ & this->field_.mesh().C());
+        funcPtr_->value(this->field_.time().value());
 }
 
 
 template<class DimensionedFieldType>
-void Foam::DimensionedFieldFunctions::Function1<DimensionedFieldType>::write
+bool Foam::DimensionedFieldFunctions::TimeFunction<DimensionedFieldType>::
+update()
+{
+    evaluate();
+    return true;
+}
+
+
+template<class DimensionedFieldType>
+void Foam::DimensionedFieldFunctions::TimeFunction<DimensionedFieldType>::write
 (
     Ostream& os
 ) const
 {
     writeEntry(os, dimLength, this->field_.dimensions(), funcPtr_());
-    writeEntry(os, "direction", direction_);
 }
 
 

@@ -24,7 +24,6 @@ boundaryField
     cutOut
     {
         type            pressureInletOutletVelocity;
-        value           $internalField;
     }
 }
 

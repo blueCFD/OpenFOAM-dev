@@ -18,7 +18,7 @@ SRF
 {
     cellZone        all;
 
-    origin      (0 0 0);
+    origin      (0 0.1 0);
     axis        (0 0 1);
 
     omega       1000 [rpm];

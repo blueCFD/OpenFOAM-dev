@@ -420,6 +420,10 @@ Foam::polyMesh* Foam::blockMesh::createTopology
             unitSet(meshDescription.lookup("units")).toStandard(scalar(1));
     }
 
+    // Prohibit unit conversion in the patch settings
+    units::setLength(units::none);
+
+
     // Read the block edges
     if (meshDescription.found("edges"))
     {
@@ -478,7 +482,6 @@ Foam::polyMesh* Foam::blockMesh::createTopology
 
         transfer(blocks);
     }
-
 
 
     polyMesh* blockMeshPtr = nullptr;
