@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -100,7 +100,7 @@ void Foam::functionObjects::writeObjects::writeObject
     }
     else
     {
-        if (obj.db().cacheTemporaryObject(obj.name()))
+        if (obj.db().temporaryObjectCached(obj.name()))
         {
             // If the object is a temporary field expression wrap with tmp<...>
             const word name(obj.name());

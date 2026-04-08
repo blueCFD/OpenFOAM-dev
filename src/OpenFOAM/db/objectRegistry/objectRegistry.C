@@ -355,7 +355,15 @@ void Foam::objectRegistry::clear()
 }
 
 
-bool Foam::objectRegistry::cacheTemporaryObject
+void Foam::objectRegistry::cacheTemporary(const word& name) const
+{
+    const objectRegistry& root = time_;
+
+    root.cacheTemporaryObjects_.insert(name, {false, false});
+}
+
+
+bool Foam::objectRegistry::temporaryObjectCached
 (
     const word& name
 ) const

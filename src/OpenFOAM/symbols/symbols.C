@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -93,7 +93,7 @@ Foam::token Foam::symbols::tokeniser::nextToken()
 
         if (t.isWord())
         {
-            splitWord(t.wordToken());
+            splitWord(t.wordToken(), t.lineNumber());
             return pop();
         }
         else
@@ -121,7 +121,7 @@ void Foam::symbols::tokeniser::putBack(const token& t)
 }
 
 
-void Foam::symbols::tokeniser::splitWord(const word& w)
+void Foam::symbols::tokeniser::splitWord(const word& w, const label lineNumber)
 {
     size_t start = 0;
     for (size_t i=0; i<w.size(); ++i)
@@ -133,22 +133,24 @@ void Foam::symbols::tokeniser::splitWord(const word& w)
                 word subWord = w(start, i-start);
                 if (isdigit(subWord[0]) || subWord[0] == token::SUBTRACT)
                 {
-                    push(token(readScalar(IStringStream(subWord)())));
+                    const scalar s = readScalar(IStringStream(subWord)());
+                    push(token(s, lineNumber));
                 }
                 else
                 {
-                    push(token(subWord));
+                    push(token(subWord, lineNumber));
                 }
             }
             if (w[i] != token::SPACE)
             {
                 if (isdigit(w[i]))
                 {
-                    push(token(readScalar(IStringStream(w[i])())));
+                    const scalar s = readScalar(IStringStream(w[i])());
+                    push(token(s, lineNumber));
                 }
                 else
                 {
-                    push(token::punctuationToken(w[i]));
+                    push(token(token::punctuationToken(w[i]), lineNumber));
                 }
             }
             start = i+1;
@@ -159,11 +161,11 @@ void Foam::symbols::tokeniser::splitWord(const word& w)
         word subWord = w(start, w.size()-start);
         if (isdigit(subWord[0]) || subWord[0] == token::SUBTRACT)
         {
-            push(token(readScalar(IStringStream(subWord)())));
+            push(token(readScalar(IStringStream(subWord)()), lineNumber));
         }
         else
         {
-            push(token(subWord));
+            push(token(subWord, lineNumber));
         }
     }
 }

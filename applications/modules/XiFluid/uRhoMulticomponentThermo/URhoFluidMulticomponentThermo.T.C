@@ -92,4 +92,18 @@ void Foam::URhoFluidMulticomponentThermo<BaseThermo>::reset
 }
 
 
+template<class BaseThermo>
+Foam::tmp<Foam::volScalarField>
+Foam::URhoFluidMulticomponentThermo<BaseThermo>::hf() const
+{
+    return this->volScalarFieldProperty
+    (
+        "hf",
+        dimEnergy/dimMass,
+        &BaseThermo::mixtureType::thermoMixture,
+        &BaseThermo::mixtureType::thermoMixtureType::hf
+    );
+}
+
+
 // ************************************************************************* //

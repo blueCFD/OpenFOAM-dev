@@ -6,15 +6,11 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 Description
-    Writes the turbulent flame-speed and reaction-rate volScalarFields for the
-    Xi-based combustion models.
+    Writes the heat release rate of the Weller b-Xi combustion model.
 
 \*---------------------------------------------------------------------------*/
 
-type            XiReactionRate;
-libs            ("libfieldFunctionObjects.so");
-
-fields          (b Xi Su);
+type            bXiQdot;
 
 executeControl  writeTime;
 writeControl    writeTime;

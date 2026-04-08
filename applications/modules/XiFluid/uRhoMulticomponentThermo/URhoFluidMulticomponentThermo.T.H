@@ -84,6 +84,9 @@ public:
             const volScalarField& heb
         );
 
+        //- Standard enthalpy of formation [J/kg]
+        virtual tmp<volScalarField> hf() const;
+
 
     // Member Operators
 

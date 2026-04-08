@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "XiReactionRate.H"
+#include "bXiProgress.H"
 #include "volFields.H"
 #include "fvcGrad.H"
 #include "addToRunTimeSelectionTable.H"
@@ -34,22 +34,39 @@ namespace Foam
 {
 namespace functionObjects
 {
-    defineTypeNameAndDebug(XiReactionRate, 0);
-    addToRunTimeSelectionTable(functionObject, XiReactionRate, dictionary);
+    defineTypeNameAndDebug(bXiProgress, 0);
+    addToRunTimeSelectionTable(functionObject, bXiProgress, dictionary);
 }
+}
+
+
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+void Foam::functionObjects::bXiProgress::writeFileHeader(const label i)
+{
+    if (Pstream::master())
+    {
+        writeHeader(file(), "Combustion progress");
+        writeCommented(file(), "Time");
+
+        file() << tab << "progress";
+
+        file() << endl;
+    }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::functionObjects::XiReactionRate::XiReactionRate
+Foam::functionObjects::bXiProgress::bXiProgress
 (
     const word& name,
     const Time& runTime,
     const dictionary& dict
 )
 :
-    fvMeshFunctionObject(name, runTime, dict)
+    fvMeshFunctionObject(name, runTime, dict),
+    logFiles(obr_, name)
 {
     read(dict);
 }
@@ -57,66 +74,51 @@ Foam::functionObjects::XiReactionRate::XiReactionRate
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::functionObjects::XiReactionRate::~XiReactionRate()
+Foam::functionObjects::bXiProgress::~bXiProgress()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::wordList Foam::functionObjects::XiReactionRate::fields() const
+bool Foam::functionObjects::bXiProgress::read(const dictionary& dict)
 {
-    return wordList{"b", "Su", "Xi"};
+    functionObject::read(dict);
+
+    resetName(typeName);
+
+    return true;
 }
 
 
-bool Foam::functionObjects::XiReactionRate::execute()
+Foam::wordList Foam::functionObjects::bXiProgress::fields() const
+{
+    return wordList{"b"};
+}
+
+
+bool Foam::functionObjects::bXiProgress::execute()
 {
     return true;
 }
 
 
-bool Foam::functionObjects::XiReactionRate::write()
+bool Foam::functionObjects::bXiProgress::write()
 {
     const volScalarField& b =
         mesh_.lookupObject<volScalarField>("b");
 
-    const volScalarField& Su =
-        mesh_.lookupObject<volScalarField>("Su");
+    const scalar progress((scalar(1) - b)().weightedAverage(mesh_.V()).value());
 
-    const volScalarField& Xi =
-        mesh_.lookupObject<volScalarField>("Xi");
+    logFiles::write();
 
-    volScalarField St
-    (
-        IOobject
-        (
-            "St",
-            time_.name(),
-            mesh_
-        ),
-        Xi*Su
-    );
+    if (Pstream::master())
+    {
+        writeTime(file());
 
-    Log << "    Writing turbulent flame-speed field " << St.name()
-        << " to " << time_.name() << endl;
+        file() << tab << progress;
 
-    St.write();
-
-    volScalarField wdot
-    (
-        IOobject
-        (
-            "wdot",
-            time_.name(),
-            mesh_
-        ),
-        St*mag(fvc::grad(b))
-    );
-
-    Log << "    Writing reaction-rate field " << wdot.name()
-        << " to " << time_.name() << endl;
-
-    wdot.write();
+        file() << endl;
+    }
 
     return true;
 }

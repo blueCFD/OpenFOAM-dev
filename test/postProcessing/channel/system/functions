@@ -19,9 +19,6 @@ FoamFile
 // Not possible to test here as it needs a case with a combustion model
 //#includeFunc Qdot
 
-// Not possible to test here as it needs a XiFoam case
-//#includeFunc XiReactionRate
-
 // Control Functions * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #includeFunc stopAtClockTime(stopTime=3600)

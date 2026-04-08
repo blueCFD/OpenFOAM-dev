@@ -389,7 +389,7 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
     const PrimitiveField<Type>& field
 )
 {
-    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().temporaryObjectCached(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -423,7 +423,7 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
     const tmp<PrimitiveField<Type>>& tfield
 )
 {
-    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().temporaryObjectCached(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -456,7 +456,7 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
     const dimensionSet& ds
 )
 {
-    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().temporaryObjectCached(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -489,7 +489,7 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
     const dimensioned<Type>& dt
 )
 {
-    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().temporaryObjectCached(name);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -522,7 +522,7 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
     const DimensionedField<Type, GeoMesh, PrimitiveField2>& df
 )
 {
-    const bool cacheTmp = df.db().cacheTemporaryObject(newName);
+    const bool cacheTmp = df.db().temporaryObjectCached(newName);
 
     return tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>
     (
@@ -553,7 +553,7 @@ DimensionedField<Type, GeoMesh, PrimitiveField>::New
     const tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>& tdf
 )
 {
-    const bool cacheTmp = tdf().db().cacheTemporaryObject(newName);
+    const bool cacheTmp = tdf().db().temporaryObjectCached(newName);
 
     return tmp<DimensionedField<Type, GeoMesh, Field>>
     (

@@ -908,7 +908,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const HashPtrTable<Source>& stft
 )
 {
-    const bool cacheTmp = diField.mesh().db().cacheTemporaryObject(name);
+    const bool cacheTmp = diField.mesh().db().temporaryObjectCached(name);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -942,7 +942,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const word& patchFieldType
 )
 {
-    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().temporaryObjectCached(name);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -976,7 +976,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const word& patchFieldType
 )
 {
-    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().temporaryObjectCached(name);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1014,7 +1014,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const IOerrorLocation& fieldSourceErrorLocation
 )
 {
-    const bool cacheTmp = mesh.db().cacheTemporaryObject(name);
+    const bool cacheTmp = mesh.db().temporaryObjectCached(name);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1049,7 +1049,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const tmp<GeometricField<Type, GeoMesh, PrimitiveField>>& tgf
 )
 {
-    const bool cacheTmp = tgf().db().cacheTemporaryObject(newName);
+    const bool cacheTmp = tgf().db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1082,7 +1082,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const word& patchFieldType
 )
 {
-    const bool cacheTmp = gf.db().cacheTemporaryObject(newName);
+    const bool cacheTmp = gf.db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1115,7 +1115,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const word& patchFieldType
 )
 {
-    const bool cacheTmp = tgf().db().cacheTemporaryObject(newName);
+    const bool cacheTmp = tgf().db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1149,7 +1149,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const word& patchFieldType
 )
 {
-    const bool cacheTmp = df.db().cacheTemporaryObject(newName);
+    const bool cacheTmp = df.db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1182,7 +1182,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const word& patchFieldType
 )
 {
-    const bool cacheTmp = tdf().db().cacheTemporaryObject(newName);
+    const bool cacheTmp = tdf().db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1219,7 +1219,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const IOerrorLocation& fieldSourceErrorLocation
 )
 {
-    const bool cacheTmp = gf.db().cacheTemporaryObject(newName);
+    const bool cacheTmp = gf.db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1258,7 +1258,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const IOerrorLocation& fieldSourceErrorLocation
 )
 {
-    const bool cacheTmp = tgf().db().cacheTemporaryObject(newName);
+    const bool cacheTmp = tgf().db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1298,7 +1298,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const IOerrorLocation& fieldSourceErrorLocation
 )
 {
-    const bool cacheTmp = df.db().cacheTemporaryObject(newName);
+    const bool cacheTmp = df.db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (
@@ -1337,7 +1337,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::New
     const IOerrorLocation& fieldSourceErrorLocation
 )
 {
-    const bool cacheTmp = tdf().db().cacheTemporaryObject(newName);
+    const bool cacheTmp = tdf().db().temporaryObjectCached(newName);
 
     return tmp<GeometricField<Type, GeoMesh, PrimitiveField>>
     (

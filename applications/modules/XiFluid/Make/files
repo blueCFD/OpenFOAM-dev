@@ -79,4 +79,7 @@ fvModels/ignition/constantbXiIgnition/constantbXiIgnition.C
 fvModels/ignition/GaussianbXiIgnition/GaussianbXiIgnition.C
 fvModels/ignition/bXiKernelCorr/bXiKernelCorr.C
 
+functionObjects/bXiProgress/bXiProgress.C
+functionObjects/bXiQdot/bXiQdot.C
+
 LIB = $(FOAM_LIBBIN)/libXiFluidSolver

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,40 +22,44 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::functionObjects::XiReactionRate
+    Foam::functionObjects::bXiQdot
 
 Description
-    Writes the turbulent flame-speed and reaction-rate volScalarFields for the
-    Xi-based combustion models.
+    Calculates and caches the heat release rate bXiQdot
+    of the Weller b-Xi combustion model.
 
     Example of function object specification:
     \verbatim
-    XiReactionRate
+    bXiQdot
     {
-        type        XiReactionRate;
-        libs        ("libfieldFunctionObjects.so");
-        ...
+        type        bXiQdot;
     }
     \endverbatim
 
 Usage
     \table
         Property  | Description                 | Required  | Default value
-        type      | type name: XiReactionRate   | yes       |
+        type      | type name: bXiQdot          | yes       |
     \endtable
+
+    Or, using the standard configuration:
+    \verbatim
+    #includeFunc bXiQdot
+    \endverbatim
 
 See also
     Foam::functionObjects::fvMeshFunctionObject
 
 SourceFiles
-    XiReactionRate.C
+    bXiQdot.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef XiReactionRate_functionObject_H
-#define XiReactionRate_functionObject_H
+#ifndef bXiQdot_functionObject_H
+#define bXiQdot_functionObject_H
 
 #include "fvMeshFunctionObject.H"
+#include "writeLocalObjects.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,23 +69,25 @@ namespace functionObjects
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class XiReactionRate Declaration
+                       Class bXiQdot Declaration
 \*---------------------------------------------------------------------------*/
 
-class XiReactionRate
+class bXiQdot
 :
-    public fvMeshFunctionObject
+    public fvMeshFunctionObject,
+    public writeLocalObjects
 {
+
 public:
 
     //- Runtime type information
-    TypeName("XiReactionRate");
+    TypeName("bXiQdot");
 
 
     // Constructors
 
         //- Construct from Time and dictionary
-        XiReactionRate
+        bXiQdot
         (
             const word& name,
             const Time& runTime,
@@ -89,29 +95,35 @@ public:
         );
 
         //- Disallow default bitwise copy construction
-        XiReactionRate(const XiReactionRate&) = delete;
+        bXiQdot(const bXiQdot&) = delete;
 
 
     //- Destructor
-    virtual ~XiReactionRate();
+    virtual ~bXiQdot();
 
 
     // Member Functions
 
+        //- Read the controls
+        virtual bool read(const dictionary&);
+
         //- Return the list of fields required
-        virtual wordList fields() const;
+        virtual wordList fields() const
+        {
+            return wordList::null();
+        }
+
+        //- Do not execute at the start of the run
+        virtual bool executeAtStart() const
+        {
+            return false;
+        }
 
         //- Do nothing
         virtual bool execute();
 
         //- Write the cell-centre fields
         virtual bool write();
-
-
-    // Member Operators
-
-        //- Disallow default bitwise assignment
-        void operator=(const XiReactionRate&) = delete;
 };
 
 

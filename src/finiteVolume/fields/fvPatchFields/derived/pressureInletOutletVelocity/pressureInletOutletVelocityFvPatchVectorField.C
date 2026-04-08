@@ -67,7 +67,7 @@ pressureInletOutletVelocityFvPatchVectorField
     }
     else if (p.time().completeCase())
     {
-        const scalarField phip = patchInternalField() & n;
+        const scalarField phip(patchInternalField() & n);
         valueFraction() = neg(phip)*(I - sqr(n));
 
         directionMixedFvPatchVectorField::updateCoeffs();

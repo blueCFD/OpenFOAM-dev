@@ -130,6 +130,9 @@ public:
             volScalarField& c,
             const volScalarField& heb
         ) = 0;
+
+        //- Standard enthalpy of formation [J/kg]
+        virtual tmp<volScalarField> hf() const = 0;
 };
 
 

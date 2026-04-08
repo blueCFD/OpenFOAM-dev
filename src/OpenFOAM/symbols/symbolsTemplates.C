@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,6 +50,13 @@ Type Foam::symbols::parseNoBegin
         if (nextToken.isWord())
         {
             // Named unit conversion. Multiply.
+            if (!table.found(nextToken.wordToken()))
+            {
+                FatalIOErrorInFunction(tis.stream())
+                    << nextToken.wordToken() << " not found in symbols table."
+                    << " Valid symbols are:" << nl << table.toc()
+                    << exit(FatalIOError);
+            }
             result.reset(result*table[nextToken.wordToken()]);
             haveReadSymbol = true;
         }

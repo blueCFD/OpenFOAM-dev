@@ -416,8 +416,9 @@ Foam::polyMesh* Foam::blockMesh::createTopology
     }
     if (haveUnits)
     {
-        scaleFactor_ =
-            unitSet(meshDescription.lookup("units")).toStandard(scalar(1));
+        unitSet units(dimensions::length);
+        units.read(meshDescription.lookup("units"));
+        scaleFactor_ = units.toStandard(scalar(1));
     }
 
     // Prohibit unit conversion in the patch settings
