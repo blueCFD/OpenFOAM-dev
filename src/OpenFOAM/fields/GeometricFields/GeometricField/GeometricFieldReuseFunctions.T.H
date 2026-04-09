@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,7 @@ bool reusable(const tmp<GeometricField<Type, GeoMesh, PrimitiveField>>& tgf)
             {
                 if
                 (
-                    !polyPatch::constraintType(gbf[patchi].patch().type())
+                    !gbf[patchi].patch().constraint()
                  && !isA<typename geoField::Patch::Calculated>(gbf[patchi])
                 )
                 {

@@ -144,8 +144,7 @@ Foam::LocalInteraction<CloudType>::LocalInteraction
 
         const bool havePatchDict = patchesDict.found(patchName);
 
-        const bool patchIsConstraint =
-            polyPatch::constraintType(patches[patchi].type());
+        const bool patchIsConstraint = patches[patchi].constraint();
 
         // No settings for constrained patch. No model.
         if (!havePatchDict && patchIsConstraint)

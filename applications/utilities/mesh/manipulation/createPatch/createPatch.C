@@ -98,7 +98,7 @@ void filterPatches(polyMesh& mesh, const HashSet<word>& addedPatchNames)
             if
             (
                 addedPatchNames.found(pp.name())
-             || polyPatch::constraintType(pp.type())
+             || pp.constraint()
              || returnReduce(pp.size(), sumOp<label>()) > 0
             )
             {

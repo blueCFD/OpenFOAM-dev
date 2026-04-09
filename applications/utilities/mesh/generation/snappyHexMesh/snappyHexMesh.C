@@ -590,7 +590,7 @@ void removeZeroSizedPatches(fvMesh& mesh)
 
         if
         (
-            polyPatch::constraintType(pp.type())
+            pp.constraint()
          || returnReduce(pp.size(), sumOp<label>())
         )
         {

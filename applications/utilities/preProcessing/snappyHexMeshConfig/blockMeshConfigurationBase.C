@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,6 +27,7 @@ License
 #include "polyPatch.H"
 #include "wallPolyPatch.H"
 #include "blockMeshFunctions.H"
+#include "etcFiles.H"
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
@@ -53,7 +54,7 @@ Foam::Pair<Foam::word> Foam::blockMeshConfigurationBase::readPatchOption
     if
     (
         !(
-            polyPatch::constraintType(patchOpt.second())
+            constraintTypes_.found(patchOpt.second())
          || patchOpt.second() == wallPolyPatch::typeName
          || patchOpt.second() == polyPatch::typeName
         )
@@ -64,7 +65,7 @@ Foam::Pair<Foam::word> Foam::blockMeshConfigurationBase::readPatchOption
             << "'(<name> <type>)'" << nl
             << "where <type> must be a generic \"patch\", \"wall\" "
             << "or a constraint condition:" << nl << nl
-            << polyPatch::constraintTypes()
+            << constraintTypes_.sortedToc()
             << exit(FatalError);
     }
 
@@ -100,6 +101,13 @@ Foam::blockMeshConfigurationBase::blockMeshConfigurationBase
 )
 :
     caseFileConfiguration(name, dir, time),
+    constraintTypes_
+    (
+        dictionary
+        (
+            IFstream(findEtcFile("caseDicts/setConstraintTypes", true))()
+        ).toc()
+    ),
     bb_(surfaces.bb()),
     patchOpts_(patchOpts)
 {}

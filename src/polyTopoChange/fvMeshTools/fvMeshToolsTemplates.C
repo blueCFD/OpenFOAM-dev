@@ -52,7 +52,7 @@ void Foam::fvMeshTools::setPatchFields
         if
         (
             patchFieldDict.found(field.name())
-        || !fvPatch::constraintType(mesh.boundary()[patchi].type())
+        || !mesh.boundary()[patchi].constraint()
         )
         {
             bfield.set

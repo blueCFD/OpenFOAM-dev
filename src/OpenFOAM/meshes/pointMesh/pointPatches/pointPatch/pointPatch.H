@@ -149,6 +149,9 @@ public:
             return boundaryMesh_;
         }
 
+        //- Return true if this patch is a constraint type
+        virtual bool constraint() const;
+
         //- Return true if this patch field is coupled
         virtual bool coupled() const
         {

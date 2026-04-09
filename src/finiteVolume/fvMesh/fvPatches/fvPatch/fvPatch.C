@@ -58,38 +58,6 @@ Foam::fvPatch::~fvPatch()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::fvPatch::constraintType(const word& pt)
-{
-    return fvPatchField<scalar>::patchConstructorTablePtr_->found(pt);
-}
-
-
-Foam::wordList Foam::fvPatch::constraintTypes()
-{
-    wordList cTypes(polyPatchConstructorTablePtr_->size());
-
-    label i = 0;
-
-    for
-    (
-        polyPatchConstructorTable::iterator cstrIter =
-            polyPatchConstructorTablePtr_->begin();
-        cstrIter != polyPatchConstructorTablePtr_->end();
-        ++cstrIter
-    )
-    {
-        if (constraintType(cstrIter.key()))
-        {
-            cTypes[i++] = cstrIter.key();
-        }
-    }
-
-    cTypes.setSize(i);
-
-    return cTypes;
-}
-
-
 const Foam::objectRegistry& Foam::fvPatch::db() const
 {
     return boundaryMesh_.mesh();

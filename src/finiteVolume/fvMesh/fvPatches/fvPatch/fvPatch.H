@@ -148,17 +148,17 @@ public:
                 return poly_.size();
             }
 
+            //- Return true if this patch is a constraint type
+            virtual bool constraint() const
+            {
+                return poly_.constraint();
+            }
+
             //- Return true if this patch is coupled
             virtual bool coupled() const
             {
                 return poly_.coupled();
             }
-
-            //- Return true if the given type is a constraint type
-            static bool constraintType(const word& pt);
-
-            //- Return a list of all the constraint patch types
-            static wordList constraintTypes();
 
             //- Return the index of this patch in the fvBoundaryMesh
             label index() const

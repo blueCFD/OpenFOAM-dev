@@ -51,7 +51,7 @@ void Foam::fvMeshToFvMesh::evaluateConstraintTypes(VolField<Type>& fld)
             if
             (
                 tgtField.type() == tgtField.patch().poly().type()
-             && polyPatch::constraintType(tgtField.patch().poly().type())
+             && tgtField.patch().poly().constraint()
             )
             {
                 tgtField.initEvaluate(Pstream::defaultCommsType);
@@ -75,7 +75,7 @@ void Foam::fvMeshToFvMesh::evaluateConstraintTypes(VolField<Type>& fld)
             if
             (
                 tgtField.type() == tgtField.patch().poly().type()
-             && polyPatch::constraintType(tgtField.patch().poly().type())
+             && tgtField.patch().poly().constraint()
             )
             {
                 tgtField.evaluate(Pstream::defaultCommsType);
@@ -95,7 +95,7 @@ void Foam::fvMeshToFvMesh::evaluateConstraintTypes(VolField<Type>& fld)
             if
             (
                 tgtField.type() == tgtField.patch().poly().type()
-             && polyPatch::constraintType(tgtField.patch().poly().type())
+             && tgtField.patch().poly().constraint()
             )
             {
                 if (patchSchedule[patchEvali].init)
@@ -164,10 +164,7 @@ Foam::tmp<Foam::VolField<Type>> Foam::fvMeshToFvMesh::srcToTgt
             );
 
             tgtPatchFieldIsUnMapped[tgtPatchi] =
-                polyPatch::constraintType
-                (
-                    tgtMesh_.boundary()[tgtPatchi].poly().type()
-                );
+                tgtMesh_.boundary()[tgtPatchi].poly().constraint();
         }
     }
 

@@ -530,7 +530,7 @@ void Foam::fvMeshStitchers::moving::unconformInternalFaceCorrectMeshPhi
     {
         const fvPatch& subFvp = subMesh.boundary()[patchi];
         MeshPhiPatchTypes[patchi] =
-            polyPatch::constraintType(subFvp.type())
+            subFvp.constraint()
          && !isA<internalFvPatch>(subFvp)
           ? subFvp.type()
           : zeroGradientFvPatchField<scalar>::typeName;

@@ -1985,7 +1985,7 @@ Foam::labelList Foam::meshRefinement::meshedPatches() const
     DynamicList<label> patchIDs(meshedPatches_.size());
     forAll(meshedPatches_, i)
     {
-        label patchi = patches.findIndex(meshedPatches_[i]);
+        const label patchi = patches.findIndex(meshedPatches_[i]);
 
         if (patchi == -1)
         {
@@ -1994,7 +1994,8 @@ Foam::labelList Foam::meshRefinement::meshedPatches() const
                 << endl << "Valid patches are " << patches.names()
                 << abort(FatalError);
         }
-        if (!polyPatch::constraintType(patches[patchi].type()))
+
+        if (!patches[patchi].constraint())
         {
             patchIDs.append(patchi);
         }

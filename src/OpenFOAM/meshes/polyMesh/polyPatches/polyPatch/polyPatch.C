@@ -31,7 +31,6 @@ License
 #include "SubField.T.H"
 #include "entry.H"
 #include "dictionary.H"
-#include "pointPatchField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -113,18 +112,7 @@ Foam::polyPatch::polyPatch
     boundaryMesh_(bm),
     faceCellsPtr_(nullptr),
     mePtr_(nullptr)
-{
-    if
-    (
-        patchType != word::null
-     && constraintType(patchType)
-     && findIndex(inGroups(), patchType) == -1
-     && name != patchType
-    )
-    {
-        inGroups().append(patchType);
-    }
-}
+{}
 
 
 Foam::polyPatch::polyPatch
@@ -151,18 +139,7 @@ Foam::polyPatch::polyPatch
     boundaryMesh_(bm),
     faceCellsPtr_(nullptr),
     mePtr_(nullptr)
-{
-    if
-    (
-        patchType != word::null
-     && constraintType(patchType)
-     && findIndex(inGroups(), patchType) == -1
-     && name != patchType
-    )
-    {
-        inGroups().append(patchType);
-    }
-}
+{}
 
 
 Foam::polyPatch::polyPatch
@@ -236,38 +213,6 @@ Foam::polyPatch::~polyPatch()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool Foam::polyPatch::constraintType(const word& pt)
-{
-    return pointPatchField<scalar>::pointPatchConstructorTablePtr_->found(pt);
-}
-
-
-Foam::wordList Foam::polyPatch::constraintTypes()
-{
-    wordList cTypes(dictionaryConstructorTablePtr_->size());
-
-    label i = 0;
-
-    for
-    (
-        dictionaryConstructorTable::iterator cstrIter =
-            dictionaryConstructorTablePtr_->begin();
-        cstrIter != dictionaryConstructorTablePtr_->end();
-        ++cstrIter
-    )
-    {
-        if (constraintType(cstrIter.key()))
-        {
-            cTypes[i++] = cstrIter.key();
-        }
-    }
-
-    cTypes.setSize(i);
-
-    return cTypes;
-}
-
 
 const Foam::polyBoundaryMesh& Foam::polyPatch::boundaryMesh() const
 {

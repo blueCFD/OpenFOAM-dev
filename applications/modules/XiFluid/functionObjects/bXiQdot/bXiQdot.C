@@ -109,7 +109,7 @@ bool Foam::functionObjects::bXiQdot::execute()
         store
         (
             typeName,
-            bSource*(uThermo.he()() - uThermo.ha()() + bThermo.hf()())
+            bSource*(bThermo.hf()()() - uThermo.hf()()())
         );
 
         return true;

@@ -60,4 +60,10 @@ const Foam::Time& Foam::pointPatch::time() const
 }
 
 
+bool Foam::pointPatch::constraint() const
+{
+    return poly().constraint();
+}
+
+
 // ************************************************************************* //

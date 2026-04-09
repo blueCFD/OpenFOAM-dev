@@ -64,7 +64,7 @@ Foam::LagrangianMesh& Foam::cloud::mesh
             const polyPatch& pPatch = pMesh.boundary()[patchi];
 
             wantedPatchTypes[patchi] =
-                polyPatch::constraintType(pPatch.type())
+                pPatch.constraint()
               ? pPatch.type()
               : cloudVelocityLagrangianPatch::typeName;
         }
@@ -727,7 +727,7 @@ void Foam::cloud::solve(const bool initial, const bool final)
                 if                                                             \
                 (                                                              \
                     patch.mesh().size()                                        \
-                 && !polyPatch::constraintType(patch.type())                   \
+                && !patch.poly().constraint()                                  \
                 )                                                              \
                 {                                                              \
                     iter()->boundaryFieldRef()[patchi].evaluate                \

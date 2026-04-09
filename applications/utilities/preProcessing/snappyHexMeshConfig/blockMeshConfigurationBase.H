@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -55,6 +55,9 @@ class blockMeshConfigurationBase
 protected:
 
     // Protected Data
+
+        //- Set of constraint types
+        const HashSet<word> constraintTypes_;
 
         //- Bounding box for the background mesh block
         boundBox bb_;

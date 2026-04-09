@@ -514,7 +514,7 @@ void Foam::solvers::XiFluid::HbSolve
       + uThermophysicalTransport_->divq(hb)
      ==
         // Combustion source
-      - bSource*(uThermo.he()() + uThermo.hf()() - bThermo.hf()())()
+      - bSource*(uThermo.he()() + uThermo.hf()()() - bThermo.hf()()())
 
         // Other sources
       + fvModels().source(c, rho, hb)

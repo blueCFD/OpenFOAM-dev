@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -155,6 +155,12 @@ public:
 
 
     // Member Functions
+
+        //- Return true as this patch is a constraint type
+        virtual bool constraint() const
+        {
+            return true;
+        }
 
         //- Get the referred patch
         const nonConformalCyclicPolyPatch& referPatch() const

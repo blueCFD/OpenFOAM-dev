@@ -149,7 +149,7 @@ void Foam::fvMeshStitcher::postUnconformEvaluateVolFields()
             (
                 isA<nonConformalFvPatch>(pf.patch())
              && pf.type() == pf.patch().poly().type()
-             && polyPatch::constraintType(pf.patch().poly().type())
+             && pf.patch().poly().constraint()
             )
          || isA<nonConformalErrorFvPatch>(pf.patch());
     };

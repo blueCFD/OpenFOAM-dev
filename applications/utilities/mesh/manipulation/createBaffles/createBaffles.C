@@ -79,7 +79,7 @@ void filterPatches(fvMesh& mesh, const HashSet<word>& bafflePatches)
             if
             (
                 bafflePatches.found(pp.name())
-             || fvPatch::constraintType(pp.type())
+             || pp.constraint()
              || returnReduce(pp.size(), sumOp<label>())
             )
             {

@@ -150,7 +150,7 @@ void Foam::fvMeshMovers::multiValveEngine::movingObject::createStaticPatchSet()
         // Exclude non-static patches
         if
         (
-           !polyPatch::constraintType(pp.type())
+           !pp.constraint()
         && !meshMover_.slidingPatchSet_.found(pp.index())
         && !patchSet.found(pp.index())
         )

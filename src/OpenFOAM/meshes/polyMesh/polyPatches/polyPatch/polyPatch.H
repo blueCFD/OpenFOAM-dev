@@ -290,18 +290,18 @@ public:
         //- Return mesh reference
         const polyMesh& mesh() const;
 
+        //- Return false as this patch is not a constraint type
+        virtual bool constraint() const
+        {
+            return false;
+        }
+
         //- Return true if this patch is geometrically coupled (i.e. faces and
         //  points correspondence)
         virtual bool coupled() const
         {
             return false;
         }
-
-        //- Return true if the given type is a constraint type
-        static bool constraintType(const word& pt);
-
-        //- Return a list of all the constraint patch types
-        static wordList constraintTypes();
 
         //- Extract face cell data
         template<class T>

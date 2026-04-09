@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,7 +53,7 @@ Foam::autoPtr<Foam::polyPatch> Foam::polyPatch::New
             << exit(FatalError);
     }
 
-    return autoPtr<polyPatch>
+    autoPtr<polyPatch> ppPtr
     (
         cstrIter()
         (
@@ -65,6 +65,19 @@ Foam::autoPtr<Foam::polyPatch> Foam::polyPatch::New
             patchType
         )
     );
+
+    if
+    (
+        patchType != word::null
+     && ppPtr->constraint()
+     && findIndex(ppPtr->inGroups(), patchType) == -1
+     && name != patchType
+    )
+    {
+        ppPtr->inGroups().append(patchType);
+    }
+
+    return ppPtr;
 }
 
 
@@ -119,7 +132,20 @@ Foam::autoPtr<Foam::polyPatch> Foam::polyPatch::New
         }
     }
 
-    return autoPtr<polyPatch>(cstrIter()(name, dict, index, bm, patchType));
+    autoPtr<polyPatch> ppPtr(cstrIter()(name, dict, index, bm, patchType));
+
+    if
+    (
+        patchType != word::null
+     && ppPtr->constraint()
+     && findIndex(ppPtr->inGroups(), patchType) == -1
+     && name != patchType
+    )
+    {
+        ppPtr->inGroups().append(patchType);
+    }
+
+    return ppPtr;
 }
 
 

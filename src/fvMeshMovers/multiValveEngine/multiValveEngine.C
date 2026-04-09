@@ -76,7 +76,7 @@ Foam::labelHashSet Foam::fvMeshMovers::multiValveEngine::findStaticPatchSet()
         // Exclude non-static patches
         if
         (
-           !polyPatch::constraintType(pp.type())
+           !pp.constraint()
         && !slidingPatchSet_.found(pp.index())
         && !movingPatchSet.found(pp.index())
         )

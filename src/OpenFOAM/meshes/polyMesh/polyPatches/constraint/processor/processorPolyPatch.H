@@ -198,6 +198,12 @@ public:
 
     // Member Functions
 
+        //- Return true as this patch is a constraint type
+        virtual bool constraint() const
+        {
+            return true;
+        }
+
         //- Return true only if this is a parallel run
         virtual bool coupled() const
         {

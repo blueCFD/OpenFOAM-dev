@@ -182,7 +182,7 @@ void Foam::vtkPVFoam::convertVolFields
              ||
                 (
                     reader_->GetExtrapolatePatches()
-                && !polyPatch::constraintType(patches[patchId].type())
+                && !patches[patchId].constraint()
                 )
             )
             {
