@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,7 +26,7 @@ Application
 
 Description
     Execute the set of functionObjects specified in the selected dictionary
-    (which defaults to system/controlDict) or on the command-line for the
+    (which defaults to system/functions) or on the command-line for the
     selected set of times on the selected set of fields.
 
     The functionObjects are either executed directly or for the solver
@@ -35,7 +35,7 @@ Description
 Usage
     \b foamPostProcess [OPTION]
       - \par -dict <file>
-        Read control dictionary from specified location
+        Read functions dictionary from specified location
 
       - \par -solver <name>
         Solver name
@@ -77,16 +77,16 @@ Usage
             foamPostProcess -list
         \endverbatim
 
-      - Execute the functionObjects specified in the controlDict of the
-        fluid region for all the available times:
+      - Execute the cellMax function on the pressure field in the default
+        region for all the available times:
         \verbatim
-            foamPostProcess -region fluid
+            foamPostProcess -func 'cellMax(p)'
         \endverbatim
 
-      - Execute the functionObjects specified in the controlDict
-        for the 'fluid' solver in the 'cooling' region for the latest time only:
+      - Execute the functionObjects specified in the functions dictionary of the
+        'cooling' region using the 'fluid' solver for the latest time only:
         \verbatim
-            foamPostProcess -solver fluid -region cooling -latestTime
+            foamPostProcess -region cooling -solver fluid -latestTime
         \endverbatim
 
 \*---------------------------------------------------------------------------*/

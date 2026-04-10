@@ -1,4 +1,9 @@
-#include "addDictOption.H"
+Foam::argList::addOption
+(
+    "dict",
+    "file",
+    "read functions dictionary from specified location"
+);
 Foam::argList::addOption
 (
     "field",
