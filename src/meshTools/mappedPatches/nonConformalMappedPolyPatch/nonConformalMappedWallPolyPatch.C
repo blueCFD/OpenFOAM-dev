@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -113,11 +113,10 @@ Foam::nonConformalMappedWallPolyPatch::nonConformalMappedWallPolyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    wallPolyPatch(name, size, start, index, bm, patchType),
+    wallPolyPatch(name, size, start, index, bm),
     nonConformalPolyPatch(static_cast<const polyPatch&>(*this)),
     nonConformalMappedPatchBase
     (
@@ -145,7 +144,7 @@ Foam::nonConformalMappedWallPolyPatch::nonConformalMappedWallPolyPatch
     const polyBoundaryMesh& bm
 )
 :
-    wallPolyPatch(name, size, start, index, bm, typeName),
+    wallPolyPatch(name, size, start, index, bm),
     nonConformalPolyPatch(*this, origPatchName),
     nonConformalMappedPatchBase
     (
@@ -169,11 +168,10 @@ Foam::nonConformalMappedWallPolyPatch::nonConformalMappedWallPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    wallPolyPatch(name, dict, index, bm, patchType),
+    wallPolyPatch(name, dict, index, bm),
     nonConformalPolyPatch(*this, dict),
     nonConformalMappedPatchBase(*this, dict, transformType::defaultNone)
 {

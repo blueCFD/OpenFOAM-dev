@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,23 +69,37 @@ Foam::zoneGenerators::normal::~normal()
 
 Foam::zoneSet Foam::zoneGenerators::normal::generate() const
 {
-    labelList faceIndices(zoneGenerator_->generate().fZone());
+    const zoneSet zs(zoneGenerator_->generate());
+    const faceZone& fZone = zs.fZone();
+
+    labelList faceIndices(fZone);
+    boolList flipMap
+    (
+        fZone.oriented()
+      ? fZone.flipMap()
+      : boolList(faceIndices.size(), false)
+    );
+
     const vectorField& faceAreas = mesh_.faceAreas();
 
     label fj = 0;
     forAll(faceIndices, fi)
     {
         const label facei = faceIndices[fi];
-
+        const bool flip = flipMap[fi];
         const vector n(normalised(faceAreas[facei]));
+        const vector fn(flip ? -n : n);
 
-        if (mag(1 - (n & normal_)) < tol_)
+        if (mag(1 - (fn & normal_)) < tol_)
         {
-            faceIndices[fj++] = facei;
+            faceIndices[fj] = facei;
+            flipMap[fj] = flip;
+            fj++;
         }
     }
 
     faceIndices.setSize(fj);
+    flipMap.setSize(fj);
 
     return zoneSet
     (
@@ -93,7 +107,7 @@ Foam::zoneSet Foam::zoneGenerators::normal::generate() const
         (
             zoneName_,
             faceIndices,
-            boolList(faceIndices.size(), false),
+            flipMap,
             mesh_.faceZones(),
             moveUpdate_,
             true

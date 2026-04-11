@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -304,14 +304,19 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
         {
             forAll(boundary_, patchi)
             {
-                boundary_[patchi] = polyPatch
+                // boundary_[patchi] = polyPatch
+                // (
+                //     newBoundary[patchi].name(),
+                //     newBoundary[patchi].size(),
+                //     newBoundary[patchi].start(),
+                //     patchi,
+                //     boundary_
+                // );
+
+                boundary_[patchi].reset
                 (
-                    newBoundary[patchi].name(),
                     newBoundary[patchi].size(),
-                    newBoundary[patchi].start(),
-                    patchi,
-                    boundary_,
-                    newBoundary[patchi].type()
+                    newBoundary[patchi].start()
                 );
             }
         }

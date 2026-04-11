@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,8 +25,8 @@ Class
     Foam::zoneGenerators::face
 
 Description
-    A zoneGenerator which converts the point, cell and face zones
-    from a list of zoneGenerators into a faceZone
+    A zoneGenerator which converts the cell and face zones from a list of
+    zoneGenerators into a faceZone.
 
     If a faceZone with the same name as the faceZone to be generated is
     returned by a zoneGenerator in the list it is ignored.

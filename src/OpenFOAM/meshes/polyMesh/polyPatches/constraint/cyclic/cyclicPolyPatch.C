@@ -141,11 +141,10 @@ Foam::cyclicPolyPatch::cyclicPolyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    coupledPolyPatch(name, size, start, index, bm, patchType),
+    coupledPolyPatch(name, size, start, index, bm),
     cyclicTransform(false),
     nbrPatchName_(word::null),
     nbrPatchIndex_(-1),
@@ -164,12 +163,11 @@ Foam::cyclicPolyPatch::cyclicPolyPatch
     const label start,
     const label index,
     const polyBoundaryMesh& bm,
-    const word& patchType,
     const word& nbrPatchName,
     const cyclicTransform& transform
 )
 :
-    coupledPolyPatch(name, size, start, index, bm, patchType),
+    coupledPolyPatch(name, size, start, index, bm),
     cyclicTransform(transform),
     nbrPatchName_(nbrPatchName),
     nbrPatchIndex_(-1),
@@ -187,11 +185,10 @@ Foam::cyclicPolyPatch::cyclicPolyPatch
     const dictionary& dict,
     const label index,
     const polyBoundaryMesh& bm,
-    const word& patchType,
     const bool cyclicTransformDefaultIsNone
 )
 :
-    coupledPolyPatch(name, dict, index, bm, patchType),
+    coupledPolyPatch(name, dict, index, bm),
     cyclicTransform(dict, cyclicTransformDefaultIsNone),
     nbrPatchName_(dict.lookupOrDefault("neighbourPatch", word::null)),
     coupleGroup_(dict),

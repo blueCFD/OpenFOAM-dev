@@ -1,4 +1,3 @@
 genericPolyPatch/genericPolyPatch.C
-genericPointPatch/genericPointPatch.C
 
 LIB = $(FOAM_LIBBIN)/libgenericPatches

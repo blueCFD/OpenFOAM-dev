@@ -79,8 +79,7 @@ public:
             const label size,
             const label start,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         );
 
         //- Construct from dictionary
@@ -89,8 +88,7 @@ public:
             const word& name,
             const dictionary& dict,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         );
 
         //- Construct as copy, resetting the boundary mesh

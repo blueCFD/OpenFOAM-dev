@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,11 +77,10 @@ Foam::mappedFilmWallPolyPatch::mappedFilmWallPolyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    filmWallPolyPatch(name, size, start, index, bm, patchType),
+    filmWallPolyPatch(name, size, start, index, bm),
     mappedPatchBase(static_cast<const polyPatch&>(*this))
 {
     //  mapped is not constraint type so add mapped group explicitly
@@ -103,7 +102,7 @@ Foam::mappedFilmWallPolyPatch::mappedFilmWallPolyPatch
     const polyBoundaryMesh& bm
 )
 :
-    filmWallPolyPatch(name, size, start, index, bm, typeName),
+    filmWallPolyPatch(name, size, start, index, bm),
     mappedPatchBase
     (
         *this,
@@ -125,11 +124,10 @@ Foam::mappedFilmWallPolyPatch::mappedFilmWallPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    filmWallPolyPatch(name, dict, index, bm, patchType),
+    filmWallPolyPatch(name, dict, index, bm),
     mappedPatchBase(*this, dict, transformType::none)
 {
     //  mapped is not constraint type so add mapped group explicitly

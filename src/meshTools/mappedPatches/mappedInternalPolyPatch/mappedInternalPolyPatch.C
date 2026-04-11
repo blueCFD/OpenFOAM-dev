@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,11 +72,10 @@ Foam::mappedInternalPolyPatch::mappedInternalPolyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    polyPatch(name, size, start, index, bm, patchType),
+    polyPatch(name, size, start, index, bm),
     mappedInternalPatchBase(static_cast<const polyPatch&>(*this))
 {
     if (findIndex(inGroups(), typeName) == -1)
@@ -91,11 +90,10 @@ Foam::mappedInternalPolyPatch::mappedInternalPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    polyPatch(name, dict, index, bm, patchType),
+    polyPatch(name, dict, index, bm),
     mappedInternalPatchBase(*this, dict)
 {
     if (findIndex(inGroups(), typeName) == -1)

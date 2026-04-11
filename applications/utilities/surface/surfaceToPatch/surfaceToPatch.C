@@ -80,8 +80,7 @@ label addPatch(polyMesh& mesh, const word& patchName)
                 0,
                 mesh.nFaces(),
                 patchi,
-                patches,
-                polyPatch::typeName
+                patches
             );
 
         mesh.removeBoundary();

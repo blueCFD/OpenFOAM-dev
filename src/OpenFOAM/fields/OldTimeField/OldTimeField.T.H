@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,6 @@ SourceFiles
 
 #include "Time.T.H"
 #include "VoidT.H"
-#include "GeometricFieldFwd.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -306,21 +305,6 @@ struct OldTimeFieldCopy
     tmp<Field0Type> operator()(const IOobject& io, const FieldType& field)
     {
         return tmp<Field0Type>(new Field0Type(io, field));
-    }
-};
-
-template<class Type, class GeoMesh, template<class> class PrimitiveField>
-struct OldTimeFieldCopy<GeometricField<Type, GeoMesh, PrimitiveField>>
-{
-    typedef GeometricField<Type, GeoMesh, PrimitiveField> FieldType;
-
-    typedef typename OldTimeField0Type<FieldType>::type Field0Type;
-
-    typedef typename FieldType::Patch::Calculated Calculated;
-
-    tmp<Field0Type> operator()(const IOobject& io, const FieldType& field)
-    {
-        return tmp<Field0Type>(new Field0Type(io, field, Calculated::typeName));
     }
 };
 

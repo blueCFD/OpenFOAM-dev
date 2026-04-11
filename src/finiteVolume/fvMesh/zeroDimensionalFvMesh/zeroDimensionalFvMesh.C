@@ -69,8 +69,7 @@ Foam::fvMesh Foam::zeroDimensionalFvMesh(const objectRegistry& db)
             6,
             0,
             0,
-            mesh.poly().boundary(),
-            emptyPolyPatch::typeName
+            mesh.poly().boundary()
         )
     );
 

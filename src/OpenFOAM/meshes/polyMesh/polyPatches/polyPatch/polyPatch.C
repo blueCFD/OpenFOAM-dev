@@ -98,8 +98,7 @@ Foam::polyPatch::polyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
     patchIdentifier(name, index),
@@ -120,8 +119,7 @@ Foam::polyPatch::polyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
     patchIdentifier(name, dict, index),
@@ -328,6 +326,20 @@ bool Foam::polyPatch::order
 {
     // Nothing changed.
     return false;
+}
+
+
+void Foam::polyPatch::reset(const label size, const label start)
+{
+    clearAddressing();
+    start_ = start;
+
+    const primitivePatch pp
+    (
+        faceSubList(mesh().faces(), size, start),
+        mesh().points()
+    );
+    primitivePatch::operator=(pp);
 }
 
 

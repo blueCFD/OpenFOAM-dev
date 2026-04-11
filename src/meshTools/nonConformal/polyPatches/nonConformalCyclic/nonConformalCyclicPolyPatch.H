@@ -154,8 +154,7 @@ public:
             const label size,
             const label start,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         );
 
         //- Construct from components
@@ -166,7 +165,6 @@ public:
             const label start,
             const label index,
             const polyBoundaryMesh& bm,
-            const word& patchType,
             const word& nbrPatchName,
             const word& origPatchName,
             const cyclicTransform& transform=cyclicTransform(true)
@@ -178,8 +176,7 @@ public:
             const word& name,
             const dictionary& dict,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         );
 
         //- Construct as copy, resetting the boundary mesh

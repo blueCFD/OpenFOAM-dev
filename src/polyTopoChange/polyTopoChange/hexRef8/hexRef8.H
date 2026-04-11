@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -552,6 +552,13 @@ public:
 
             //- Inserted patch at patchi
             virtual void addPatch(const label patchi);
+
+            //- Reset
+            //  hexRef8 update must be handled explicitly
+            virtual void reset();
+
+            //- Clear
+            virtual void clear();
 
             //- Debug: Check coupled mesh for correctness
             void checkMesh() const;

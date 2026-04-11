@@ -686,7 +686,6 @@ int main(int argc, char *argv[])
                     regionFirstProcFaceis[regioni],
                     newPatches[regioni].size(),
                     regionMeshes[regioni].poly().boundary(),
-                    nonConformalErrorPolyPatch::typeName,
                     origPatchName
                 )
             );

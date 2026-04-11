@@ -216,7 +216,6 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
                     mesh.nFaces(),
                     patches.size(),
                     mesh.boundary(),
-                    cyclicPolyPatch::typeName,
                     pp.name() + "-half-1"
                 )
             );
@@ -232,7 +231,6 @@ void Foam::polyMeshUnMergeCyclics(polyMesh& mesh, const scalar includedAngle)
                     mesh.nFaces(),
                     patches.size(),
                     mesh.boundary(),
-                    cyclicPolyPatch::typeName,
                     pp.name() + "-half-0"
                 )
             );

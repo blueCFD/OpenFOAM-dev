@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,11 +77,10 @@ Foam::mappedExtrudedWallPolyPatch::mappedExtrudedWallPolyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    wallPolyPatch(name, size, start, index, bm, patchType),
+    wallPolyPatch(name, size, start, index, bm),
     mappedExtrudedPatchBase(static_cast<const polyPatch&>(*this))
 {
     //  mapped is not constraint type so add mapped group explicitly
@@ -104,7 +103,7 @@ Foam::mappedExtrudedWallPolyPatch::mappedExtrudedWallPolyPatch
     const polyBoundaryMesh& bm
 )
 :
-    wallPolyPatch(name, size, start, index, bm, typeName),
+    wallPolyPatch(name, size, start, index, bm),
     mappedExtrudedPatchBase
     (
         *this,
@@ -127,11 +126,10 @@ Foam::mappedExtrudedWallPolyPatch::mappedExtrudedWallPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    wallPolyPatch(name, dict, index, bm, patchType),
+    wallPolyPatch(name, dict, index, bm),
     mappedExtrudedPatchBase(*this, dict)
 {
     //  mapped is not constraint type so add mapped group explicitly

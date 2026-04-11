@@ -144,11 +144,10 @@ Foam::nonConformalCyclicPolyPatch::nonConformalCyclicPolyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    cyclicPolyPatch(name, size, start, index, bm, patchType),
+    cyclicPolyPatch(name, size, start, index, bm),
     nonConformalCoupledPolyPatch(static_cast<const polyPatch&>(*this)),
     intersectionIsValid_(0),
     intersection_(false),
@@ -165,7 +164,6 @@ Foam::nonConformalCyclicPolyPatch::nonConformalCyclicPolyPatch
     const label start,
     const label index,
     const polyBoundaryMesh& bm,
-    const word& patchType,
     const word& nbrPatchName,
     const word& origPatchName,
     const cyclicTransform& transform
@@ -178,7 +176,6 @@ Foam::nonConformalCyclicPolyPatch::nonConformalCyclicPolyPatch
         start,
         index,
         bm,
-        patchType,
         nbrPatchName,
         transform
     ),
@@ -196,11 +193,10 @@ Foam::nonConformalCyclicPolyPatch::nonConformalCyclicPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    cyclicPolyPatch(name, dict, index, bm, patchType, true),
+    cyclicPolyPatch(name, dict, index, bm, true),
     nonConformalCoupledPolyPatch(*this, dict),
     intersectionIsValid_(0),
     intersection_(false),

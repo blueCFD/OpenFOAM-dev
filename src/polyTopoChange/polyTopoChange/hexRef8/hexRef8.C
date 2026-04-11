@@ -4435,6 +4435,16 @@ void Foam::hexRef8::addPatch(const label patchi)
 {}
 
 
+void Foam::hexRef8::reset()
+{
+    // hexRef8 update must be handled explicitly
+}
+
+
+void Foam::hexRef8::clear()
+{}
+
+
 void Foam::hexRef8::checkMesh() const
 {
     const scalar smallDim = 1e-6 * mesh_.bounds().mag();

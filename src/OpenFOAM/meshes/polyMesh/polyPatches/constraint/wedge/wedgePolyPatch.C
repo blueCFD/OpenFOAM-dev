@@ -300,11 +300,10 @@ Foam::wedgePolyPatch::wedgePolyPatch
     const label size,
     const label start,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    polyPatch(name, size, start, index, bm, patchType),
+    polyPatch(name, size, start, index, bm),
     axis_(vector::rootMax),
     centreNormal_(vector::rootMax),
     n_(vector::rootMax),
@@ -320,11 +319,10 @@ Foam::wedgePolyPatch::wedgePolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    polyPatch(name, dict, index, bm, patchType),
+    polyPatch(name, dict, index, bm),
     axis_(vector::rootMax),
     centreNormal_(vector::rootMax),
     n_(vector::rootMax),

@@ -611,39 +611,6 @@ $(polyDistributionMap)/IOdistributionMap.C
 PrimitivePatch = $(primitiveMesh)/PrimitivePatch.T
 $(PrimitivePatch)/PrimitivePatchName.T.C
 
-pointMesh = meshes/pointMesh
-$(pointMesh)/pointMesh.C
-
-pointMeshMapper = $(pointMesh)/pointMeshMapper
-$(pointMeshMapper)/pointMapper.C
-$(pointMeshMapper)/pointPatchMapper.C
-
-pointPatches = $(pointMesh)/pointPatches
-$(pointPatches)/pointPatch/pointPatch.C
-$(pointPatches)/facePointPatch/facePointPatch.C
-$(pointPatches)/facePointPatch/facePointPatchNew.C
-
-basicPointPatches = $(pointPatches)/basic
-$(basicPointPatches)/coupled/coupledPointPatch.C
-
-constraintPointPatches = $(pointPatches)/constraint
-$(constraintPointPatches)/cyclic/cyclicPointPatch.C
-$(constraintPointPatches)/cyclicSlip/cyclicSlipPointPatch.C
-$(constraintPointPatches)/empty/emptyPointPatch.C
-$(constraintPointPatches)/processor/processorPointPatch.C
-$(constraintPointPatches)/processorCyclic/processorCyclicPointPatch.C
-$(constraintPointPatches)/symmetryPlane/symmetryPlanePointPatch.C
-$(constraintPointPatches)/symmetry/symmetryPointPatch.C
-$(constraintPointPatches)/wedge/wedgePointPatch.C
-$(constraintPointPatches)/internal/internalPointPatch.C
-
-derivedPointPatches = $(pointPatches)/derived
-$(derivedPointPatches)/coupled/coupledFacePointPatch.C
-$(derivedPointPatches)/wall/wallPointPatch.C
-
-pointBoundaryMesh = $(pointMesh)/pointBoundaryMesh
-$(pointBoundaryMesh)/pointBoundaryMesh.C
-
 meshes/boundBox/boundBox.C
 
 meshes/treeBoundBox/treeBoundBox.C
@@ -694,40 +661,7 @@ $(Fields)/quaternionField/quaternionIOField.C
 $(Fields)/triadField/triadIOField.C
 $(Fields)/transformField/transformField.C
 
-pointPatchFields = fields/pointPatchFields
-$(pointPatchFields)/pointPatchField/pointPatchFields.C
-
-basicPointPatchFields = $(pointPatchFields)/basic
-$(basicPointPatchFields)/calculated/calculatedPointPatchFields.C
-$(basicPointPatchFields)/coupled/coupledPointPatchFields.C
-$(basicPointPatchFields)/value/valuePointPatchFields.C
-$(basicPointPatchFields)/fixedValue/fixedValuePointPatchFields.C
-$(basicPointPatchFields)/zeroGradient/zeroGradientPointPatchFields.C
-
-constraintPointPatchFields = $(pointPatchFields)/constraint
-$(constraintPointPatchFields)/cyclic/cyclicPointPatchFields.C
-$(constraintPointPatchFields)/cyclicSlip/cyclicSlipPointPatchFields.C
-$(constraintPointPatchFields)/empty/emptyPointPatchFields.C
-$(constraintPointPatchFields)/processor/processorPointPatchFields.C
-$(constraintPointPatchFields)/processorCyclic/processorCyclicPointPatchFields.C
-$(constraintPointPatchFields)/symmetryPlane/symmetryPlanePointPatchFields.C
-$(constraintPointPatchFields)/symmetry/symmetryPointPatchFields.C
-$(constraintPointPatchFields)/wedge/wedgePointPatchFields.C
-$(constraintPointPatchFields)/internal/internalPointPatchFields.C
-
-derivedPointPatchFields = $(pointPatchFields)/derived
-$(derivedPointPatchFields)/slip/slipPointPatchFields.C
-$(derivedPointPatchFields)/fixedNormalSlip/fixedNormalSlipPointPatchFields.C
-$(derivedPointPatchFields)/uniformFixedValue/uniformFixedValuePointPatchFields.C
-$(derivedPointPatchFields)/codedFixedValue/codedFixedValuePointPatchFields.C
-
-fields/GeometricFields/pointFields/pointFields.C
-
-fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedPointFieldFunctions.C
-
 fields/UniformDimensionedFields/uniformDimensionedFields.C
-
-fields/UniformGeometricFields/uniformGeometricFields.C
 
 meshes/bandCompression/bandCompression.C
 meshes/preservePatchTypes/preservePatchTypes.C

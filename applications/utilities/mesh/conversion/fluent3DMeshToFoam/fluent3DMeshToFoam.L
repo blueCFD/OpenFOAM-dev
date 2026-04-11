@@ -1138,7 +1138,6 @@ int main(int argc, char *argv[])
                     0,
                     patchi,
                     mesh.boundary(),
-                    cyclicPolyPatch::typeName,
                     nbrName
                 );
             }
@@ -1163,8 +1162,7 @@ int main(int argc, char *argv[])
                 0,
                 0,
                 patchi,
-                mesh.boundary(),
-                polyPatch::typeName
+                mesh.boundary()
             );
         }
     }

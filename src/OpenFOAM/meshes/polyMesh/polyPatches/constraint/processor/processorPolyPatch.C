@@ -54,11 +54,10 @@ Foam::processorPolyPatch::processorPolyPatch
     const label index,
     const polyBoundaryMesh& bm,
     const int myProcNo,
-    const int neighbProcNo,
-    const word& patchType
+    const int neighbProcNo
 )
 :
-    coupledPolyPatch(name, size, start, index, bm, patchType),
+    coupledPolyPatch(name, size, start, index, bm),
     myProcNo_(myProcNo),
     neighbProcNo_(neighbProcNo),
     neighbFaceCentres_(),
@@ -74,8 +73,7 @@ Foam::processorPolyPatch::processorPolyPatch
     const label index,
     const polyBoundaryMesh& bm,
     const int myProcNo,
-    const int neighbProcNo,
-    const word& patchType
+    const int neighbProcNo
 )
 :
     coupledPolyPatch
@@ -84,8 +82,7 @@ Foam::processorPolyPatch::processorPolyPatch
         size,
         start,
         index,
-        bm,
-        patchType
+        bm
     ),
     myProcNo_(myProcNo),
     neighbProcNo_(neighbProcNo),
@@ -100,11 +97,10 @@ Foam::processorPolyPatch::processorPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    coupledPolyPatch(name, dict, index, bm, patchType),
+    coupledPolyPatch(name, dict, index, bm),
     myProcNo_(dict.lookup<label>("myProcNo")),
     neighbProcNo_(dict.lookup<label>("neighbProcNo")),
     neighbFaceCentres_(),

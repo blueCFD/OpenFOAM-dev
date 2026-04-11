@@ -171,8 +171,7 @@ int main(int argc, char *argv[])
                 poly2DMesh.patchSizes()[patchi],
                 poly2DMesh.patchStarts()[patchi],
                 patchi,
-                mesh().boundary(),
-                polyPatch::typeName
+                mesh().boundary()
             );
         }
 

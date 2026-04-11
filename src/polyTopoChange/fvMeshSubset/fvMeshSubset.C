@@ -886,8 +886,7 @@ void Foam::fvMeshSubset::setCellSubset
                 boundaryPatchSizes[oldInternalPatchID],
                 patchStart,
                 nNewPatches,
-                fvMeshSubsetPtr_().poly().boundary(),
-                internalPolyPatch::typeName
+                fvMeshSubsetPtr_().poly().boundary()
             );
 
             // The index for the first patch is -1 as it originates from
@@ -1447,8 +1446,7 @@ void Foam::fvMeshSubset::setLargeCellSubset
                 boundaryPatchSizes[oldInternalPatchID],
                 patchStart,
                 nNewPatches,
-                fvMeshSubsetPtr_().poly().boundary(),
-                internalPolyPatch::typeName
+                fvMeshSubsetPtr_().poly().boundary()
             );
 
             // The index for the first patch is -1 as it originates from

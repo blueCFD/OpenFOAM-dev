@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -220,6 +220,49 @@ void Foam::meshObjects::mapMesh
 
 
 template<class Mesh>
+void Foam::meshObjects::swap
+(
+    objectRegistry& obr,
+    Mesh& otherMesh
+)
+{
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
+    (
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
+    );
+
+    if (meshObjects::debug)
+    {
+        Pout<< "meshObjects::swap(objectRegistry&, "
+               "const Mesh& otherMesh) : swapping " << Mesh::typeName
+            << " meshObjects for region " << obr.name() << endl;
+    }
+
+    forAllIter
+    (
+        typename HashTable<DeletableMeshObject<Mesh>*>,
+        meshObjects,
+        iter
+    )
+    {
+        if (isA<TopoChangeableMeshObject<Mesh>>(*iter()))
+        {
+            if (meshObjects::debug)
+            {
+                Pout<< "    Swapping " << iter()->io_.name() << endl;
+            }
+            dynamic_cast<TopoChangeableMeshObject<Mesh>*>(iter())
+                ->swap(otherMesh);
+        }
+        else
+        {
+            Delete<Mesh>(iter()->io_);
+        }
+    }
+}
+
+
+template<class Mesh>
 void Foam::meshObjects::addPatch(objectRegistry& obr, const label patchi)
 {
     HashTable<DeletableMeshObject<Mesh>*> meshObjects
@@ -305,26 +348,43 @@ void Foam::meshObjects::reorderPatches
 }
 
 
-template<class Mesh, template<class> class MeshObjectType>
-void Foam::meshObjects::clearAll(objectRegistry& obr)
+template<class Mesh>
+void Foam::meshObjects::reset(objectRegistry& obr)
 {
-    HashTable<MeshObjectType<Mesh>*> meshObjects
+    HashTable<DeletableMeshObject<Mesh>*> meshObjects
     (
-        obr.lookupClass<MeshObjectType<Mesh>>()
+        obr.lookupClass<DeletableMeshObject<Mesh>>()
     );
 
     if (meshObjects::debug)
     {
-        Pout<< "meshObjects::clear(objectRegistry&) :"
-            << " clearing " << Mesh::typeName
+        Pout<< "meshObjects::reset(objectRegistry&) :"
+            << " resetting " << Mesh::typeName
             << " meshObjects for region " << obr.name() << endl;
     }
 
-    forAllIter(typename HashTable<MeshObjectType<Mesh>*>, meshObjects, iter)
+    forAllIter
+    (
+        typename HashTable<DeletableMeshObject<Mesh>*>,
+        meshObjects,
+        iter
+    )
     {
-        Delete<Mesh>(iter()->io_);
+        if (isA<PermanentMeshObject<Mesh>>(*iter()))
+        {
+            if (meshObjects::debug)
+            {
+                Pout<< "    Resetting " << iter()->io_.name() << endl;
+            }
+            dynamic_cast<PermanentMeshObject<Mesh>*>(iter())->reset();
+        }
+        else
+        {
+            Delete<Mesh>(iter()->io_);
+        }
     }
 }
+
 
 
 template<class Mesh, template<class> class MeshObjectType>
@@ -344,7 +404,15 @@ void Foam::meshObjects::clear(objectRegistry& obr)
 
     forAllIter(typename HashTable<MeshObjectType<Mesh>*>, meshObjects, iter)
     {
-        if (!isA<PermanentMeshObject<Mesh>>(*iter()))
+        if (isA<PermanentMeshObject<Mesh>>(*iter()))
+        {
+            if (meshObjects::debug)
+            {
+                Pout<< "    Clearing " << iter()->io_.name() << endl;
+            }
+            dynamic_cast<PermanentMeshObject<Mesh>*>(iter())->clear();
+        }
+        else
         {
             Delete<Mesh>(iter()->io_);
         }
@@ -378,6 +446,28 @@ void Foam::meshObjects::clearUpto(objectRegistry& obr)
         {
             Delete<Mesh>(iter()->io_);
         }
+    }
+}
+
+
+template<class Mesh, template<class> class MeshObjectType>
+void Foam::meshObjects::clearAll(objectRegistry& obr)
+{
+    HashTable<MeshObjectType<Mesh>*> meshObjects
+    (
+        obr.lookupClass<MeshObjectType<Mesh>>()
+    );
+
+    if (meshObjects::debug)
+    {
+        Pout<< "meshObjects::clear(objectRegistry&) :"
+            << " clearing " << Mesh::typeName
+            << " meshObjects for region " << obr.name() << endl;
+    }
+
+    forAllIter(typename HashTable<MeshObjectType<Mesh>*>, meshObjects, iter)
+    {
+        Delete<Mesh>(iter()->io_);
     }
 }
 

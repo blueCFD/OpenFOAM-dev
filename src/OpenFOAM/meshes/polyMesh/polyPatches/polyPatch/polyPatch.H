@@ -151,10 +151,9 @@ public:
                 const label size,
                 const label start,
                 const label index,
-                const polyBoundaryMesh& bm,
-                const word& patchType
+                const polyBoundaryMesh& bm
             ),
-            (name, size, start, index, bm, patchType)
+            (name, size, start, index, bm)
         );
 
         declareRunTimeSelectionTable
@@ -166,10 +165,9 @@ public:
                 const word& name,
                 const dictionary& dict,
                 const label index,
-                const polyBoundaryMesh& bm,
-                const word& patchType
+                const polyBoundaryMesh& bm
             ),
-            (name, dict, index, bm, patchType)
+            (name, dict, index, bm)
         );
 
 
@@ -182,8 +180,7 @@ public:
             const label size,
             const label start,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         );
 
         //- Construct from dictionary
@@ -192,8 +189,7 @@ public:
             const word& name,
             const dictionary& dict,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         );
 
         //- Copy constructor, resetting the boundary mesh
@@ -384,6 +380,9 @@ public:
             labelList& faceMap,
             labelList& rotation
         ) const;
+
+        //- Reset the size and start of the patch
+        void reset(const label size, const label start);
 
 
     // Member Operators

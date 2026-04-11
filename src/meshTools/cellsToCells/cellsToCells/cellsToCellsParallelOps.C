@@ -622,8 +622,7 @@ Foam::List<Foam::remote> Foam::cellsToCells::distributeMesh
         localMeshPtr().nFaces() - localMeshPtr().nInternalFaces(),
         localMeshPtr().nInternalFaces(),
         0,
-        localMeshPtr().boundary(),
-        word::null
+        localMeshPtr().boundary()
     );
     localMeshPtr().addPatches(patches);
 
@@ -879,8 +878,7 @@ void Foam::cellsToCells::trimLocalTgt()
         localTgtMeshPtr_().nFaces() - localTgtMeshPtr_().nInternalFaces(),
         localTgtMeshPtr_().nInternalFaces(),
         0,
-        localTgtMeshPtr_().boundary(),
-        word::null
+        localTgtMeshPtr_().boundary()
     );
     localTgtMeshPtr_().addPatches(patches);
 

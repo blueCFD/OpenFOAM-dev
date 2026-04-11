@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -154,6 +154,11 @@ public:
 
     //- Update from another mesh using the given map
     virtual void mapMesh(const polyMeshMap& map) = 0;
+
+    //- Swap mesh
+    //  For run-time mesh replacement and mesh to mesh mapping
+    virtual void swap(Mesh& otherMesh)
+    {}
 };
 
 
@@ -204,6 +209,12 @@ public:
     :
         RepatchableMeshObject<Mesh>(mo)
     {}
+
+    //- Reset
+    virtual void reset() = 0;
+
+    //- Clear all but permanent registered meshObjects
+    virtual void clear() = 0;
 };
 
 

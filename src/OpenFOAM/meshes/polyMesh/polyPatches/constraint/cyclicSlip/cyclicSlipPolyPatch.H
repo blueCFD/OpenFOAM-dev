@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -67,11 +67,10 @@ public:
             const label size,
             const label start,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         )
         :
-            cyclicPolyPatch(name, size, start, index, bm, patchType)
+            cyclicPolyPatch(name, size, start, index, bm)
         {}
 
         //- Construct from dictionary
@@ -80,11 +79,10 @@ public:
             const word& name,
             const dictionary& dict,
             const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType
+            const polyBoundaryMesh& bm
         )
         :
-            cyclicPolyPatch(name, dict, index, bm, patchType)
+            cyclicPolyPatch(name, dict, index, bm)
         {}
 
         //- Construct as copy, resetting the boundary mesh

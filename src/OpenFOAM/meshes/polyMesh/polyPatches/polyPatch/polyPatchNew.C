@@ -61,8 +61,7 @@ Foam::autoPtr<Foam::polyPatch> Foam::polyPatch::New
             size,
             start,
             index,
-            bm,
-            patchType
+            bm
         )
     );
 
@@ -132,7 +131,7 @@ Foam::autoPtr<Foam::polyPatch> Foam::polyPatch::New
         }
     }
 
-    autoPtr<polyPatch> ppPtr(cstrIter()(name, dict, index, bm, patchType));
+    autoPtr<polyPatch> ppPtr(cstrIter()(name, dict, index, bm));
 
     if
     (

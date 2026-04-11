@@ -293,15 +293,24 @@ Foam::zoneSet Foam::zoneGenerators::face::generate() const
 
         if (zs.fValid() && zs.fZone().name() != zoneName_)
         {
-            const labelList& zoneFaces = zs.fZone();
+            const faceZone& fZone = zs.fZone();
+            const labelList& zoneFaces = fZone;
 
-            forAll(zoneFaces, zfi)
+            if (fZone.oriented())
             {
-                const Foam::face& f = mesh_.faces()[zoneFaces[zfi]];
+                const boolList& zoneFlipMap = fZone.flipMap();
 
-                forAll(f, fp)
+                forAll(zoneFaces, zfi)
                 {
-                    selectedFaces[f[fp]] = true;
+                    selectedFaces[zoneFaces[zfi]] = true;
+                    flipMap[zoneFaces[zfi]] = zoneFlipMap[zfi];
+                }
+            }
+            else
+            {
+                forAll(zoneFaces, zfi)
+                {
+                    selectedFaces[zoneFaces[zfi]] = true;
                 }
             }
         }

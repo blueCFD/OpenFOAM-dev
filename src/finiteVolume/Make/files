@@ -1,3 +1,47 @@
+pointMesh/pointMesh.C
+
+pointMeshMapper = pointMesh/pointMeshMapper
+$(pointMeshMapper)/pointMapper.C
+$(pointMeshMapper)/pointPatchMapper.C
+
+pointPatches = pointMesh/pointPatches
+$(pointPatches)/pointPatch/pointPatch.C
+$(pointPatches)/facePointPatch/facePointPatch.C
+$(pointPatches)/facePointPatch/facePointPatchNew.C
+
+basicPointPatches = $(pointPatches)/basic
+$(basicPointPatches)/coupled/coupledPointPatch.C
+
+constraintPointPatches = $(pointPatches)/constraint
+$(constraintPointPatches)/cyclic/cyclicPointPatch.C
+$(constraintPointPatches)/cyclicSlip/cyclicSlipPointPatch.C
+$(constraintPointPatches)/empty/emptyPointPatch.C
+$(constraintPointPatches)/processor/processorPointPatch.C
+$(constraintPointPatches)/processorCyclic/processorCyclicPointPatch.C
+$(constraintPointPatches)/symmetryPlane/symmetryPlanePointPatch.C
+$(constraintPointPatches)/symmetry/symmetryPointPatch.C
+$(constraintPointPatches)/wedge/wedgePointPatch.C
+$(constraintPointPatches)/internal/internalPointPatch.C
+$(constraintPointPatches)/nonConformalCyclic/nonConformalCyclicPointPatch.C
+$(constraintPointPatches)/nonConformalError/nonConformalErrorPointPatch.C
+$(constraintPointPatches)/nonConformalProcessorCyclic/nonConformalProcessorCyclicPointPatch.C
+
+derivedPointPatches = $(pointPatches)/derived
+$(derivedPointPatches)/coupled/coupledFacePointPatch.C
+$(derivedPointPatches)/wall/wallPointPatch.C
+
+$(derivedPointPatches)/mapped/mappedPointPatch/mappedPointPatch.C
+$(derivedPointPatches)/mapped/mappedPointPatch/mappedWallPointPatch.C
+$(derivedPointPatches)/mapped/mappedExtrudedPointPatch/mappedExtrudedWallPointPatch.C
+$(derivedPointPatches)/mapped/mappedInternalPointPatch/mappedInternalPointPatch.C
+$(derivedPointPatches)/mapped/nonConformalMappedPointPatch/nonConformalMappedWallPointPatch.C
+
+pointBoundaryMesh = pointMesh/pointBoundaryMesh
+$(pointBoundaryMesh)/pointBoundaryMesh.C
+
+pointMesh/pointDist/pointEdgeDist.C
+pointMesh/pointDist/pointDist.C
+
 fvMesh/fvMeshGeometry.C
 fvMesh/fvMesh.C
 
@@ -133,6 +177,38 @@ $(fvMeshStitchers)/stationary/stationary_fvMeshStitcher.C
 
 functionObjects/fvMeshFunctionObject/fvMeshFunctionObject.C
 functionObjects/fvModelFunctionObject/fvModelFunctionObject.C
+
+pointPatchFields = fields/pointPatchFields
+$(pointPatchFields)/pointPatchField/pointPatchFields.C
+
+basicPointPatchFields = $(pointPatchFields)/basic
+$(basicPointPatchFields)/calculated/calculatedPointPatchFields.C
+$(basicPointPatchFields)/coupled/coupledPointPatchFields.C
+$(basicPointPatchFields)/value/valuePointPatchFields.C
+$(basicPointPatchFields)/fixedValue/fixedValuePointPatchFields.C
+$(basicPointPatchFields)/zeroGradient/zeroGradientPointPatchFields.C
+
+constraintPointPatchFields = $(pointPatchFields)/constraint
+$(constraintPointPatchFields)/cyclic/cyclicPointPatchFields.C
+$(constraintPointPatchFields)/cyclicSlip/cyclicSlipPointPatchFields.C
+$(constraintPointPatchFields)/empty/emptyPointPatchFields.C
+$(constraintPointPatchFields)/processor/processorPointPatchFields.C
+$(constraintPointPatchFields)/processorCyclic/processorCyclicPointPatchFields.C
+$(constraintPointPatchFields)/symmetryPlane/symmetryPlanePointPatchFields.C
+$(constraintPointPatchFields)/symmetry/symmetryPointPatchFields.C
+$(constraintPointPatchFields)/wedge/wedgePointPatchFields.C
+$(constraintPointPatchFields)/internal/internalPointPatchFields.C
+$(constraintPointPatchFields)/nonConformalCyclic/nonConformalCyclicPointPatchFields.C
+$(constraintPointPatchFields)/nonConformalError/nonConformalErrorPointPatchFields.C
+$(constraintPointPatchFields)/nonConformalProcessorCyclic/nonConformalProcessorCyclicPointPatchFields.C
+
+derivedPointPatchFields = $(pointPatchFields)/derived
+$(derivedPointPatchFields)/slip/slipPointPatchFields.C
+$(derivedPointPatchFields)/fixedNormalSlip/fixedNormalSlipPointPatchFields.C
+$(derivedPointPatchFields)/uniformFixedValue/uniformFixedValuePointPatchFields.C
+$(derivedPointPatchFields)/codedFixedValue/codedFixedValuePointPatchFields.C
+
+fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedPointFieldFunctions.C
 
 fvPatchFields = fields/fvPatchFields
 $(fvPatchFields)/fvPatchField/fvPatchFields.C
@@ -307,8 +383,11 @@ $(derivedFvFieldSources)/NaN/NaNFvFieldSources.T.C
 fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedVolFieldFunctions.C
 fields/DimensionedFields/DimensionedFieldFunctions/makeDimensionedSurfaceFieldFunctions.C
 
-fields/volFields/volFields.C
-fields/surfaceFields/surfaceFields.C
+fields/UniformGeometricFields/uniformGeometricFields.C
+
+fields/GeometricFields/pointFields/pointFields.C
+fields/GeometricFields/volFields/volFields.C
+fields/GeometricFields/surfaceFields/surfaceFields.C
 
 fvMatrices/fvMatrices.C
 fvMatrices/fvScalarMatrix/fvScalarMatrix.C

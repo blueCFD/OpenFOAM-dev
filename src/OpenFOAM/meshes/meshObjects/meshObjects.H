@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -114,6 +114,9 @@ public:
     static void mapMesh(objectRegistry&, const polyMeshMap&);
 
     template<class Mesh>
+    static void swap(objectRegistry&, Mesh& otherMesh);
+
+    template<class Mesh>
     static void distribute(objectRegistry&, const polyDistributionMap&);
 
     template<class Mesh>
@@ -127,9 +130,8 @@ public:
         const bool validBoundary
     );
 
-    //- Clear all meshObjects of type MeshObjectType
-    template<class Mesh, template<class> class MeshObjectType>
-    static void clearAll(objectRegistry&);
+    template<class Mesh>
+    static void reset(objectRegistry&);
 
     //- Clear all but permanent meshObjects of type MeshObjectType
     template<class Mesh, template<class> class MeshObjectType>
@@ -144,6 +146,10 @@ public:
         template<class> class ToType
     >
     static void clearUpto(objectRegistry&);
+
+    //- Clear all meshObjects of type MeshObjectType
+    template<class Mesh, template<class> class MeshObjectType>
+    static void clearAll(objectRegistry&);
 };
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,8 +73,7 @@ nonConformalProcessorCyclicPolyPatch
     const int myProcNo,
     const int neighbProcNo,
     const word& referPatchName,
-    const word& origPatchName,
-    const word& patchType
+    const word& origPatchName
 )
 :
     processorCyclicPolyPatch
@@ -86,8 +85,7 @@ nonConformalProcessorCyclicPolyPatch
         bm,
         myProcNo,
         neighbProcNo,
-        referPatchName,
-        patchType
+        referPatchName
     ),
     nonConformalCoupledPolyPatch(*this, origPatchName)
 {}
@@ -99,11 +97,10 @@ nonConformalProcessorCyclicPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    processorCyclicPolyPatch(name, dict, index, bm, patchType),
+    processorCyclicPolyPatch(name, dict, index, bm),
     nonConformalCoupledPolyPatch(*this, dict)
 {}
 

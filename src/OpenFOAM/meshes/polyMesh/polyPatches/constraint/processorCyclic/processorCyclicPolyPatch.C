@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,8 +48,7 @@ Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
     const polyBoundaryMesh& bm,
     const int myProcNo,
     const int neighbProcNo,
-    const word& referPatchName,
-    const word& patchType
+    const word& referPatchName
 )
 :
     processorPolyPatch
@@ -60,8 +59,7 @@ Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
         index,
         bm,
         myProcNo,
-        neighbProcNo,
-        patchType
+        neighbProcNo
     ),
     referPatchName_(referPatchName),
     tag_(-1),
@@ -77,8 +75,7 @@ Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
     const polyBoundaryMesh& bm,
     const int myProcNo,
     const int neighbProcNo,
-    const word& referPatchName,
-    const word& patchType
+    const word& referPatchName
 )
 :
     processorPolyPatch
@@ -89,8 +86,7 @@ Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
         index,
         bm,
         myProcNo,
-        neighbProcNo,
-        patchType
+        neighbProcNo
     ),
     referPatchName_(referPatchName),
     tag_(-1),
@@ -103,11 +99,10 @@ Foam::processorCyclicPolyPatch::processorCyclicPolyPatch
     const word& name,
     const dictionary& dict,
     const label index,
-    const polyBoundaryMesh& bm,
-    const word& patchType
+    const polyBoundaryMesh& bm
 )
 :
-    processorPolyPatch(name, dict, index, bm, patchType),
+    processorPolyPatch(name, dict, index, bm),
     referPatchName_(dict.lookup("referPatch")),
     tag_(dict.lookupOrDefault<int>("tag", -1)),
     referPatchIndex_(-1)

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,7 +27,6 @@ License
 #include "primitiveMesh.H"
 #include "globalMeshData.H"
 #include "meshObjects.H"
-#include "pointMesh.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -63,7 +62,6 @@ void Foam::polyMesh::clearGeom()
     DebugInFunction << "Clearing geometric data" << endl;
 
     // Clear all geometric mesh objects
-    meshObjects::clear<pointMesh, DeletableMeshObject>(*this);
     meshObjects::clear<polyMesh, DeletableMeshObject>(*this);
 
     primitiveMesh::clearGeom();
@@ -76,39 +74,8 @@ void Foam::polyMesh::clearGeom()
 }
 
 
-void Foam::polyMesh::clearAddressing(const bool isMeshUpdate)
+void Foam::polyMesh::clearAddressing()
 {
-    DebugInFunction << "isMeshUpdate: " << isMeshUpdate << endl;
-
-    if (isMeshUpdate)
-    {
-        // Part of a mesh update. Keep meshObjects that have an topoChange
-        // callback
-        meshObjects::clearUpto
-        <
-            pointMesh,
-            DeletableMeshObject,
-            TopoChangeableMeshObject
-        >
-        (
-            *this
-        );
-        meshObjects::clearUpto
-        <
-            polyMesh,
-            DeletableMeshObject,
-            TopoChangeableMeshObject
-        >
-        (
-            *this
-        );
-    }
-    else
-    {
-        meshObjects::clear<pointMesh, DeletableMeshObject>(*this);
-        meshObjects::clear<polyMesh, DeletableMeshObject>(*this);
-    }
-
     primitiveMesh::clearAddressing();
 
     // parallelData depends on the processorPatch ordering so force
@@ -129,21 +96,9 @@ void Foam::polyMesh::clearAddressing(const bool isMeshUpdate)
 }
 
 
-void Foam::polyMesh::clearPrimitives()
-{
-    resetMotion();
-
-    points_.setSize(0);
-    faces_.setSize(0);
-    owner_.setSize(0);
-    neighbour_.setSize(0);
-
-    clearedPrimitives_ = true;
-}
-
-
 void Foam::polyMesh::clearOut()
 {
+    meshObjects::clear<polyMesh, DeletableMeshObject>(*this);
     clearGeom();
     clearAddressing();
 }

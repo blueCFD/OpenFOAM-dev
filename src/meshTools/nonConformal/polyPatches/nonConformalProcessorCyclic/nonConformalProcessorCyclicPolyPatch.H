@@ -85,8 +85,7 @@ public:
             const int myProcNo,
             const int neighbProcNo,
             const word& referPatchName,
-            const word& origPatchName,
-            const word& patchType = typeName
+            const word& origPatchName
         );
 
         //- Construct from dictionary
@@ -95,8 +94,7 @@ public:
             const word& name,
             const dictionary& dict,
             const label index,
-            const polyBoundaryMesh&,
-            const word& patchType
+            const polyBoundaryMesh&
         );
 
         //- Construct as copy, resetting the boundary mesh

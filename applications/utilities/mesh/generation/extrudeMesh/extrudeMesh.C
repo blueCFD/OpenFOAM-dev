@@ -245,8 +245,7 @@ void changeFrontBackPatches
                     pp.size(),
                     pp.start(),
                     pp.index(),
-                    mesh.boundary(),
-                    PatchType::typeName
+                    mesh.boundary()
                 )
             );
         }
