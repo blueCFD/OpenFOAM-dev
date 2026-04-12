@@ -229,6 +229,7 @@ zoneGenerators/volume/insideSurface/insideSurface.C
 
 zoneGenerators/point/point/point_zoneGenerator.C
 
+zoneGenerators/cell/cell/cell_zoneGenerator.C
 zoneGenerators/cell/containsPoints/containsPoints.C
 zoneGenerators/cell/generatedCellZone/generatedCellZone.C
 zoneGenerators/cell/patchCells/patchCells_zoneGenerator.C

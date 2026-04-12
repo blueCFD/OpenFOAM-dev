@@ -97,63 +97,6 @@ void Foam::faceZone::calcFaceZonePatch() const
 }
 
 
-void Foam::faceZone::calcCellLayers() const
-{
-    if (debug)
-    {
-        InfoInFunction << "Calculating master cells" << endl;
-    }
-
-    // It is an error to attempt to recalculate edgeCells
-    // if the pointer is already set
-    if (masterCellsPtr_ || slaveCellsPtr_)
-    {
-        FatalErrorInFunction
-            << "cell layers already calculated"
-            << abort(FatalError);
-    }
-    else
-    {
-        // Go through all the faces in the master zone.  Choose the
-        // master or slave cell based on the face flip
-
-        const labelList& own = zones().mesh().faceOwner();
-        const labelList& nei = zones().mesh().faceNeighbour();
-
-        const labelList& mf = *this;
-
-        masterCellsPtr_ = new labelList(mf.size());
-        labelList& mc = *masterCellsPtr_;
-
-        slaveCellsPtr_ = new labelList(mf.size());
-        labelList& sc = *slaveCellsPtr_;
-
-        forAll(mf, facei)
-        {
-            label ownCelli = own[mf[facei]];
-            label neiCelli =
-            (
-                zones().mesh().isInternalFace(mf[facei])
-              ? nei[mf[facei]]
-              : -1
-            );
-
-            if (!oriented_ || !flipMap_[facei])
-            {
-                // Face is oriented correctly, no flip needed
-                mc[facei] = neiCelli;
-                sc[facei] = ownCelli;
-            }
-            else
-            {
-                mc[facei] = ownCelli;
-                sc[facei] = neiCelli;
-            }
-        }
-    }
-}
-
-
 void Foam::faceZone::checkAddressing() const
 {
     if (oriented_ && size() != flipMap_.size())
@@ -228,8 +171,6 @@ Foam::faceZone::faceZone
     oriented_(true),
     flipMap_(fm),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -248,8 +189,6 @@ Foam::faceZone::faceZone
     Zone<faceZone, faceZoneList>(name, addr, mz, moveUpdate, topoUpdate),
     oriented_(false),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -270,8 +209,6 @@ Foam::faceZone::faceZone
     oriented_(true),
     flipMap_(move(fm)),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -290,8 +227,6 @@ Foam::faceZone::faceZone
     Zone<faceZone, faceZoneList>(name, move(addr), mz, moveUpdate, topoUpdate),
     oriented_(false),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -309,8 +244,6 @@ Foam::faceZone::faceZone
     oriented_(dict.found("flipMap")),
     flipMap_(dict.lookupOrDefault("flipMap", boolList::null())),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -330,8 +263,6 @@ Foam::faceZone::faceZone
     oriented_(true),
     flipMap_(fm),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -349,8 +280,6 @@ Foam::faceZone::faceZone
     Zone<faceZone, faceZoneList>(fz, name, addr, mz),
     oriented_(false),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -369,8 +298,6 @@ Foam::faceZone::faceZone
     oriented_(true),
     flipMap_(move(fm)),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -387,8 +314,6 @@ Foam::faceZone::faceZone
     Zone<faceZone, faceZoneList>(fz, fz.name(), move(addr), mz),
     oriented_(false),
     patchPtr_(nullptr),
-    masterCellsPtr_(nullptr),
-    slaveCellsPtr_(nullptr),
     mePtr_(nullptr)
 {
     checkAddressing();
@@ -501,28 +426,6 @@ const Foam::primitiveFacePatch& Foam::faceZone::patch() const
 }
 
 
-const Foam::labelList& Foam::faceZone::masterCells() const
-{
-    if (!masterCellsPtr_)
-    {
-        calcCellLayers();
-    }
-
-    return *masterCellsPtr_;
-}
-
-
-const Foam::labelList& Foam::faceZone::slaveCells() const
-{
-    if (!slaveCellsPtr_)
-    {
-        calcCellLayers();
-    }
-
-    return *slaveCellsPtr_;
-}
-
-
 const Foam::labelList& Foam::faceZone::meshEdges() const
 {
     if (!mePtr_)
@@ -547,10 +450,6 @@ void Foam::faceZone::clearAddressing()
     Zone::clearAddressing();
 
     deleteDemandDrivenData(patchPtr_);
-
-    deleteDemandDrivenData(masterCellsPtr_);
-    deleteDemandDrivenData(slaveCellsPtr_);
-
     deleteDemandDrivenData(mePtr_);
 }
 

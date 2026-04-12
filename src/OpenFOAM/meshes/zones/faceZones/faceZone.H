@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,12 +83,6 @@ class faceZone
             //- Primitive patch made out of correctly flipped faces
             mutable primitiveFacePatch* patchPtr_;
 
-            //- Master cell layer
-            mutable labelList* masterCellsPtr_;
-
-            //- Slave cell layer
-            mutable labelList* slaveCellsPtr_;
-
             //- Global edge addressing
             mutable labelList* mePtr_;
 
@@ -100,9 +94,6 @@ class faceZone
 
         //- Return map of local face indices
         const Map<label>& faceLookupMap() const;
-
-        //- Calculate master and slave face layer
-        void calcCellLayers() const;
 
         //- Check addressing
         void checkAddressing() const;
@@ -276,19 +267,8 @@ public:
         //- Return reference to primitive patch
         const primitiveFacePatch& patch() const;
 
-
-        // Addressing into mesh
-
-            //- Return labels of master cells (cells next to the master face
-            //  zone in the prescribed direction)
-            const labelList& masterCells() const;
-
-            //- Return labels of slave cells
-            const labelList& slaveCells() const;
-
-            //- Return global edge index for local edges
-            const labelList& meshEdges() const;
-
+        //- Return global edge index for local edges
+        const labelList& meshEdges() const;
 
         //- Clear addressing
         void clearAddressing();

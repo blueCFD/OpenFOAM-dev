@@ -27,7 +27,7 @@ License
 #include "randomGenerator.H"
 #include "addToRunTimeSelectionTable.H"
 #include "EdgeMap.T.H"
-#include "triSurfaceFields.H"
+#include "labelIOField.H"
 #include "Time.T.H"
 #include "PatchTools.T.H"
 
@@ -843,9 +843,9 @@ void Foam::searchableSurfaces::triSurface::getVolumeType
 
 void Foam::searchableSurfaces::triSurface::setField(const labelList& values)
 {
-    autoPtr<triSurfaceLabelField> fldPtr
+    autoPtr<labelIOField> fldPtr
     (
-        new triSurfaceLabelField
+        new labelIOField
         (
             IOobject
             (
@@ -856,8 +856,6 @@ void Foam::searchableSurfaces::triSurface::setField(const labelList& values)
                 IOobject::NO_READ,
                 IOobject::AUTO_WRITE
             ),
-            *this,
-            dimless,
             labelField(values)
         )
     );
@@ -873,11 +871,11 @@ void Foam::searchableSurfaces::triSurface::getField
     labelList& values
 ) const
 {
-    if (foundObject<triSurfaceLabelField>("values"))
+    if (foundObject<labelIOField>("values"))
     {
         values.setSize(info.size());
 
-        const triSurfaceLabelField& fld = lookupObject<triSurfaceLabelField>
+        const labelIOField& fld = lookupObject<labelIOField>
         (
             "values"
         );

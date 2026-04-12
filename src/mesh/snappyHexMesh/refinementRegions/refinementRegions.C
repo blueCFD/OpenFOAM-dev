@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "refinementRegions.H"
 #include "searchableSurfaceList.H"
 #include "orientedSurface.H"
+#include "Time.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -287,7 +288,7 @@ void Foam::refinementRegions::orient()
 Foam::scalar Foam::refinementRegions::interpolate
 (
     const searchableSurfaces::triSurface& tsm,
-    const triSurfacePointScalarField& closeness,
+    const scalarIOField& closeness,
     const point& pt,
     const label index
 ) const
@@ -573,14 +574,10 @@ Foam::refinementRegions::refinementRegions
                 {
                     dict.lookup("cellsAcrossSpan") >> cellsAcrossSpan_[shelli];
 
-                    const searchableSurfaces::triSurface& tsm =
-                        refCast<const searchableSurfaces::triSurface>
-                        (surface);
-
                     closeness_.set
                     (
                         shelli,
-                        new triSurfacePointScalarField
+                        new scalarIOField
                         (
                             IOobject
                             (
@@ -599,8 +596,7 @@ Foam::refinementRegions::refinementRegions
                                 ),
                                 surface.searchableSurface::time(),
                                 IOobject::MUST_READ
-                            ),
-                            tsm
+                            )
                         )
                     );
                 }

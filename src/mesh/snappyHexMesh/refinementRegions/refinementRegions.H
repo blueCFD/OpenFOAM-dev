@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -38,7 +38,6 @@ SourceFiles
 
 #include "Tuple2.T.H"
 #include "triSurface_searchableSurface.H"
-#include "triSurfaceFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -91,7 +90,7 @@ private:
         labelList cellsAcrossSpan_;
 
         //- Surface closness field for refinement mode span
-        PtrList<triSurfacePointScalarField> closeness_;
+        PtrList<scalarIOField> closeness_;
 
 
     // Private Data
@@ -114,7 +113,7 @@ private:
         scalar interpolate
         (
             const searchableSurfaces::triSurface& tris,
-            const triSurfacePointScalarField& closeness,
+            const scalarIOField& closeness,
             const point& pt,
             const label index
         ) const;

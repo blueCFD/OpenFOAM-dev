@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,43 +47,53 @@ Foam::faceZoneToCell::faceActionNames_
 
 void Foam::faceZoneToCell::combine(topoSet& set, const bool add) const
 {
-    bool hasMatched = false;
-
     forAll(mesh_.faceZones(), i)
     {
-        const faceZone& zone = mesh_.faceZones()[i];
+        const faceZone& fZone = mesh_.faceZones()[i];
 
-        if (zoneName_.match(zone.name()))
+        if (zoneName_.match(fZone.name()))
         {
-            const labelList& cellLabels =
-            (
-                option_ == MASTER
-              ? zone.masterCells()
-              : zone.slaveCells()
-            );
+            Info<< "    Found matching zone " << fZone.name() << endl;
 
-            Info<< "    Found matching zone " << zone.name()
-                << " with " << returnReduce(cellLabels.size(), sumOp<label>())
-                << " cells on selected side." << endl;
+            const labelList& faces = fZone;
+            const labelList& own = mesh_.faceOwner();
+            const labelList& nei = mesh_.faceNeighbour();
 
-            hasMatched = true;
-
-            forAll(cellLabels, i)
+            if (fZone.oriented())
             {
-                // Only do active cells
-                if (cellLabels[i] >= 0 && cellLabels[i] < mesh_.nCells())
+                const boolList& flipMap = fZone.flipMap();
+
+                forAll(faces, facei)
                 {
-                    addOrDelete(set, cellLabels[i], add);
+                    if
+                    (
+                        option_ == MASTER
+                     && !flipMap[facei]
+                     && mesh_.isInternalFace(faces[facei]))
+                    {
+                        addOrDelete(set, nei[faces[facei]], add);
+                    }
+                    else
+                    {
+                        addOrDelete(set, own[faces[facei]], add);
+                    }
+                }
+            }
+            else
+            {
+                forAll(faces, facei)
+                {
+                    if (option_ == MASTER && mesh_.isInternalFace(faces[facei]))
+                    {
+                        addOrDelete(set, nei[faces[facei]], add);
+                    }
+                    else
+                    {
+                        addOrDelete(set, own[faces[facei]], add);
+                    }
                 }
             }
         }
-    }
-
-    if (!hasMatched)
-    {
-        WarningInFunction
-            << "Cannot find any faceZone named " << zoneName_ << endl
-            << "Valid names are " << mesh_.faceZones().toc() << endl;
     }
 }
 

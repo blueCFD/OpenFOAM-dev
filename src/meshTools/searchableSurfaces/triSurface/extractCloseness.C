@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "triSurface_searchableSurface.H"
-#include "triSurfaceFields.H"
 #include "meshTools.H"
 #include "Time.T.H"
 
@@ -199,7 +198,7 @@ void Foam::searchableSurfaces::triSurface::processHit
 }
 
 
-Foam::Pair<Foam::tmp<Foam::triSurfaceScalarField>>
+Foam::Pair<Foam::tmp<Foam::scalarIOField>>
 Foam::searchableSurfaces::triSurface::extractCloseness
 (
     const scalar internalAngleTolerance,
@@ -256,11 +255,11 @@ Foam::searchableSurfaces::triSurface::extractCloseness
         );
     }
 
-    return Pair<tmp<triSurfaceScalarField>>
+    return Pair<tmp<scalarIOField>>
     (
-        tmp<triSurfaceScalarField>
+        tmp<scalarIOField>
         (
-            new triSurfaceScalarField
+            new scalarIOField
             (
                 IOobject
                 (
@@ -269,15 +268,13 @@ Foam::searchableSurfaces::triSurface::extractCloseness
                     searchableSurface::geometryDir(runTime),
                     runTime
                 ),
-                *this,
-                dimLength,
                 internalCloseness
             )
         ),
 
-        tmp<triSurfaceScalarField>
+        tmp<scalarIOField>
         (
-            new triSurfaceScalarField
+            new scalarIOField
             (
                 IOobject
                 (
@@ -286,8 +283,6 @@ Foam::searchableSurfaces::triSurface::extractCloseness
                     searchableSurface::geometryDir(runTime),
                     runTime
                 ),
-                *this,
-                dimLength,
                 externalCloseness
             )
         )
@@ -295,7 +290,7 @@ Foam::searchableSurfaces::triSurface::extractCloseness
 }
 
 
-Foam::Pair<Foam::tmp<Foam::triSurfacePointScalarField>>
+Foam::Pair<Foam::tmp<Foam::scalarIOField>>
 Foam::searchableSurfaces::triSurface::extractPointCloseness
 (
     const scalar internalAngleTolerance,
@@ -387,11 +382,11 @@ Foam::searchableSurfaces::triSurface::extractPointCloseness
         }
     }
 
-    return Pair<tmp<triSurfacePointScalarField>>
+    return Pair<tmp<scalarIOField>>
     (
-        tmp<triSurfacePointScalarField>
+        tmp<scalarIOField>
         (
-            new triSurfacePointScalarField
+            new scalarIOField
             (
                 IOobject
                 (
@@ -400,15 +395,13 @@ Foam::searchableSurfaces::triSurface::extractPointCloseness
                     searchableSurface::geometryDir(runTime),
                     runTime
                 ),
-                *this,
-                dimLength,
                 internalCloseness
             )
         ),
 
-        tmp<triSurfacePointScalarField>
+        tmp<scalarIOField>
         (
-            new triSurfacePointScalarField
+            new scalarIOField
             (
                 IOobject
                 (
@@ -417,8 +410,6 @@ Foam::searchableSurfaces::triSurface::extractPointCloseness
                     searchableSurface::geometryDir(runTime),
                     runTime
                 ),
-                *this,
-                dimLength,
                 externalCloseness
             )
         )

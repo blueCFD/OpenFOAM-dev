@@ -33,7 +33,6 @@ Description
 #include "featureEdgeMesh.H"
 #include "extendedFeatureEdgeMesh.H"
 #include "surfaceFeatures.H"
-#include "triSurfaceFields.H"
 #include "vtkWritePolyData.H"
 #include "systemDict.H"
 
@@ -483,7 +482,7 @@ namespace Foam
 
             if (faceCloseness)
             {
-                Pair<tmp<triSurfaceScalarField>> closenessFields
+                Pair<tmp<scalarIOField>> closenessFields
                 (
                     searchSurf.extractCloseness
                     (
@@ -520,7 +519,7 @@ namespace Foam
 
             if (pointCloseness)
             {
-                Pair<tmp<triSurfacePointScalarField >> closenessFields
+                Pair<tmp<scalarIOField >> closenessFields
                 (
                     searchSurf.extractPointCloseness
                     (
@@ -542,10 +541,10 @@ namespace Foam
                     const faceList faces(searchSurf.faces());
                     const Map<label>& meshPointMap = searchSurf.meshPointMap();
 
-                    const triSurfacePointScalarField&
+                    const scalarIOField&
                         internalClosenessPointField = closenessFields.first();
 
-                    const triSurfacePointScalarField&
+                    const scalarIOField&
                         externalClosenessPointField = closenessFields.second();
 
                     scalarField internalCloseness(searchSurf.nPoints(), great);
@@ -583,7 +582,7 @@ namespace Foam
             Info<< nl << "Extracting curvature of surface at the points."
                 << endl;
 
-            triSurfacePointScalarField k
+            scalarIOField k
             (
                 IOobject
                 (
@@ -592,8 +591,6 @@ namespace Foam
                     searchableSurface::geometryDir(runTime),
                     runTime
                 ),
-                surf,
-                dimLength,
                 surf.curvature()
             );
 
@@ -646,7 +643,7 @@ namespace Foam
                 );
             }
 
-            triSurfaceScalarField featureProximityField
+            scalarIOField featureProximityField
             (
                 IOobject
                 (
@@ -657,8 +654,6 @@ namespace Foam
                     IOobject::NO_READ,
                     IOobject::NO_WRITE
                 ),
-                surf,
-                dimLength,
                 featureProximity
             );
 

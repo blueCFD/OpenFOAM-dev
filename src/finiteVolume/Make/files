@@ -178,6 +178,8 @@ $(fvMeshStitchers)/stationary/stationary_fvMeshStitcher.C
 functionObjects/fvMeshFunctionObject/fvMeshFunctionObject.C
 functionObjects/fvModelFunctionObject/fvModelFunctionObject.C
 
+fields/UniformDimensionedFields/uniformDimensionedFields.C
+
 pointPatchFields = fields/pointPatchFields
 $(pointPatchFields)/pointPatchField/pointPatchFields.C
 

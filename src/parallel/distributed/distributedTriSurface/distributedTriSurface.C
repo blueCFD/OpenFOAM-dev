@@ -26,7 +26,6 @@ License
 #include "distributedTriSurface.H"
 #include "distributionMap.H"
 #include "randomGenerator.H"
-#include "addToRunTimeSelectionTable.H"
 #include "triangleFuncs.H"
 #include "matchPoints.H"
 #include "globalIndex.H"
@@ -38,6 +37,8 @@ License
 #include "vectorList.H"
 #include "PackedBoolList.H"
 #include "PatchTools.T.H"
+#include "labelIOField.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -1945,10 +1946,9 @@ void Foam::searchableSurfaces::distributedTriSurface::getField
         return;
     }
 
-    if (foundObject<triSurfaceLabelField>("values"))
+    if (foundObject<labelIOField>("values"))
     {
-        const Foam::triSurfaceLabelField& fld =
-            lookupObject<triSurfaceLabelField>("values");
+        const Foam::labelIOField& fld = lookupObject<labelIOField>("values");
 
         // Get query data (= local index of triangle)
         // ~~~~~~~~~~~~~~
