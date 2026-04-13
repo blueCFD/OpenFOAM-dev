@@ -69,6 +69,9 @@ struct OldTimeField0Type<GeoField<Type, GeoMesh, PrimitiveField>>
 };
 
 template<class Type>
+class Field;
+
+template<class Type>
 class SubField;
 
 template

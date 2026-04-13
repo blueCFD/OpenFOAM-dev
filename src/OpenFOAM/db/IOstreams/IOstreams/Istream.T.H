@@ -98,6 +98,12 @@ public:
 
         // Check
 
+            //- Return true if next operation might succeed
+            bool good() const
+            {
+                return putBack_ || IOstream::good();
+            }
+
             //- Return true if end of input seen
             bool eof() const
             {
