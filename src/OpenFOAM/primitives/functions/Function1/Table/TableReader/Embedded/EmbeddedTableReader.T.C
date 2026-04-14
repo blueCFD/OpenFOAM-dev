@@ -64,10 +64,17 @@ Foam::TableReaders::Embedded<Coordinate, Value>::read
     const word& valuesKeyword
 ) const
 {
-    Function1s::unitSets units(defaultUnits);
-    units.readIfPresent("units", dict);
     Istream& is = dict.lookup(valuesKeyword);
-    return TableReader<Coordinate, Value>::convertRead(units, is);
+    if (dict.found("units"))
+    {
+        Function1s::unitSets units(defaultUnits);
+        units.read(dict.lookup("units"));
+        return TableReader<Coordinate, Value>::convertRead(units, is);
+    }
+    else
+    {
+        return TableReader<Coordinate, Value>::convertRead(defaultUnits, is);
+    }
 }
 
 

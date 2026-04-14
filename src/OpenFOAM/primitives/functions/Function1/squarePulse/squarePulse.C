@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "squarePulse.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

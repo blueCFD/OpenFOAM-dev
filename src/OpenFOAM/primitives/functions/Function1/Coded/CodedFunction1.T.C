@@ -137,7 +137,7 @@ Foam::tmp<Foam::Field<Type>> Foam::Function1s::Coded<Type>::value
         (
             redirectFunction1Ptr_->value
             (
-                units_.x.toUser(x)
+                units_.x.toUser(tmp<scalarField>(x))
             )
         );
 }

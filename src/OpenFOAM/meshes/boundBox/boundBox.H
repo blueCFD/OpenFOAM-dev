@@ -34,6 +34,7 @@ Description
 
 #include "pointField.H"
 #include "faceList.H"
+#include "scaleable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -80,6 +81,12 @@ public:
         static const boundBox invertedBox;
 
 
+    // Static Member Functions
+
+        //- Does the dictionary have a bound box specified in it?
+        inline static bool found(const dictionary& dict);
+
+
     // Constructors
 
         //- Construct null, setting points to zero
@@ -117,11 +124,11 @@ public:
             const bool doReduce = true
         );
 
-        //- Construct from dictionary
-        inline boundBox(const dictionary&);
-
         //- Construct from Istream
         inline boundBox(Istream&);
+
+        //- Construct from dictionary
+        inline boundBox(const dictionary&);
 
 
     // Member Functions
@@ -252,9 +259,24 @@ template<>
 inline bool contiguous<boundBox>() {return contiguous<point>();}
 
 
+//- A boundBox is scaleable
+template<>
+struct scaleable<boundBox> : public std::true_type {};
+
+//- Apply a conversion to a boundBox by applying separately to min and max
+template<class ... Args>
+void convert(boundBox& bb, const Args& ... args)
+{
+    convert(bb.min(), args ...);
+    convert(bb.max(), args ...);
+}
+
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "boundBoxI.H"
 

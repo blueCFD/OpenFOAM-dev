@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "quarterSineRamp.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

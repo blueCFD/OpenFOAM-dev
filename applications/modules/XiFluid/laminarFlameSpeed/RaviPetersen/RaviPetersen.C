@@ -252,7 +252,7 @@ Foam::laminarFlameSpeedModels::RaviPetersen::correlationOutOfRange
 }
 
 
-inline Foam::scalar Foam::laminarFlameSpeedModels::RaviPetersen::Su0pTphi
+inline Foam::scalar Foam::laminarFlameSpeedModels::RaviPetersen::Su0pTPhi
 (
     const scalar p,
     const scalar Tu,
@@ -292,19 +292,13 @@ inline Foam::scalar Foam::laminarFlameSpeedModels::RaviPetersen::Su0pTphi
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::volScalarField>
-Foam::laminarFlameSpeedModels::RaviPetersen::operator()() const
+Foam::laminarFlameSpeedModels::RaviPetersen::Su
+(
+    const volScalarField& p,
+    const volScalarField& Tu,
+    const volScalarField& Phi
+) const
 {
-    if (uThermo_.containsSpecie("egr"))
-    {
-        FatalErrorInFunction
-            << "The " << type() << " model does not support EGR"
-            << exit(FatalError);
-    }
-
-    const volScalarField& p = uThermo_.p();
-    const volScalarField& Tu = uThermo_.T();
-    const volScalarField Phi(uThermo_.Phi());
-
     tmp<volScalarField> tSu0
     (
         volScalarField::New
@@ -319,7 +313,7 @@ Foam::laminarFlameSpeedModels::RaviPetersen::operator()() const
 
     forAll(Su0, celli)
     {
-        Su0[celli] = Su0pTphi(p[celli], Tu[celli], Phi[celli]);
+        Su0[celli] = Su0pTPhi(p[celli], Tu[celli], Phi[celli]);
     }
 
     volScalarField::Boundary& Su0Bf = Su0.boundaryFieldRef();
@@ -329,7 +323,7 @@ Foam::laminarFlameSpeedModels::RaviPetersen::operator()() const
         forAll(Su0Bf[patchi], facei)
         {
             Su0Bf[patchi][facei] =
-                Su0pTphi
+                Su0pTPhi
                 (
                     p.boundaryField()[patchi][facei],
                     Tu.boundaryField()[patchi][facei],
@@ -339,6 +333,26 @@ Foam::laminarFlameSpeedModels::RaviPetersen::operator()() const
     }
 
     return tSu0;
+}
+
+
+Foam::tmp<Foam::volScalarField>
+Foam::laminarFlameSpeedModels::RaviPetersen::Su
+(
+    const volScalarField& p,
+    const volScalarField& Tu,
+    const volScalarField& Phi,
+    const volScalarField& egr
+) const
+{
+    if (uThermo_.containsSpecie("egr"))
+    {
+        FatalErrorInFunction
+            << "The " << type() << " model does not support EGR"
+            << exit(FatalError);
+    }
+
+    return tmp<volScalarField>(nullptr);
 }
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "dimensionSet.H"
 #include "dimensionedScalar.H"
+#include "NamedEnum.T.H"
 #include "OStringStream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -34,24 +35,25 @@ namespace Foam
     defineTypeNameAndDebug(dimensionSet, 1);
 }
 
+const Foam::autoPtr<Foam::NamedEnum<Foam::dimensionSet::dimensionType, 7>>
+    dimensionTypeNamesPtr_
+    (
+        new Foam::NamedEnum<Foam::dimensionSet::dimensionType, 7>
+        ({
+            "mass",
+            "length",
+            "time",
+            "temperature",
+            "moles",
+            "current",
+            "luminousIntensity"
+        })
+    );
 
-const Foam::NamedEnum<Foam::dimensionSet::dimensionType, 7>
-Foam::dimensionSet::dimensionTypeNames_
-{
-    "mass",
-    "length",
-    "time",
-    "temperature",
-    "moles",
-    "current",
-    "luminousIntensity"
-};
+const Foam::NamedEnum<Foam::dimensionSet::dimensionType, 7>&
+    Foam::dimensionSet::dimensionTypeNames_ = dimensionTypeNamesPtr_();
 
-
-namespace Foam
-{
-    const scalar dimensionSet::smallExponent = rootSmall;
-}
+const Foam::scalar Foam::dimensionSet::smallExponent = rootSmall;
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

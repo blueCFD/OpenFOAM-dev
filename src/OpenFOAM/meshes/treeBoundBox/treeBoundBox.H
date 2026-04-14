@@ -208,11 +208,11 @@ public:
             const FixedList<label, Size>& indices
         );
 
-        //- Construct from dictionary
-        inline treeBoundBox(const dictionary&);
-
         //- Construct from Istream
         inline treeBoundBox(Istream&);
+
+        //- Construct from dictionary
+        inline treeBoundBox(const dictionary&);
 
 
     // Member Functions
@@ -377,6 +377,11 @@ public:
 //- Data associated with treeBoundBox type are contiguous
 template<>
 inline bool contiguous<treeBoundBox>() {return contiguous<boundBox>();}
+
+
+//- A treeBoundBox is scaleable
+template<>
+struct scaleable<treeBoundBox> : public scaleable<boundBox> {};
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -25,7 +25,7 @@ License
 
 #include "primitiveMeshCheck.H"
 #include "polyMeshCheck.H"
-#include "unitSet.H"
+#include "units.H"
 #include "syncTools.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

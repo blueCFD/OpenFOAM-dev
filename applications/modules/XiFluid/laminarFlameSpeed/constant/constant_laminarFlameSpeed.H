@@ -81,10 +81,31 @@ public:
     virtual ~constant();
 
 
-    // Member Operators
+    // Member Functions
 
         //- Return the laminar flame speed [m/s]
-        tmp<volScalarField> operator()() const;
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi
+        ) const;
+
+        //- Return the laminar flame speed [m/s]
+        //  including EGR effects
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi,
+            const volScalarField& egr
+        ) const;
+
+        //- Return the laminar flame speed [m/s]
+        virtual tmp<volScalarField> Su() const;
+
+
+    // Member Operators
 
         //- Disallow default bitwise assignment
         void operator=(const constant&) = delete;

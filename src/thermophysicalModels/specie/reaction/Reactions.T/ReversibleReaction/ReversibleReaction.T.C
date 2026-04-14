@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,7 +117,7 @@ Foam::scalar Foam::ReversibleReaction<ThermoType, ReactionRate>::kr
     const label li
 ) const
 {
-    return kfwd/max(this->Kc(p, T), rootSmall);
+    return kfwd/this->Kc(p, T);
 }
 
 
@@ -158,9 +158,7 @@ Foam::scalar Foam::ReversibleReaction<ThermoType, ReactionRate>::dkrdT
     const scalar kr
 ) const
 {
-    const scalar Kc = max(this->Kc(p, T), rootSmall);
-
-    return dkfdT/Kc - (Kc > rootSmall ? kr*this->dKcdTbyKc(p, T) : 0);
+    return dkfdT/this->Kc(p, T) - kr*this->dKcdTbyKc(p, T);
 }
 
 
@@ -198,9 +196,7 @@ void Foam::ReversibleReaction<ThermoType, ReactionRate>::dkrdc
     scalarField& dkrdc
 ) const
 {
-    const scalar Kc = max(this->Kc(p, T), rootSmall);
-
-    dkrdc = dkfdc/Kc;
+    dkrdc = dkfdc/this->Kc(p, T);
 }
 
 

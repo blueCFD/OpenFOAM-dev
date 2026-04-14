@@ -78,6 +78,11 @@ struct typeOfNcmpts<3>
 };
 
 
+//- A vector is scaleable
+template<>
+struct scaleable<vector> : public std::true_type {};
+
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

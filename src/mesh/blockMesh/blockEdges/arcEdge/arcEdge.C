@@ -24,7 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "arcEdge.H"
-#include "unitSet.H"
+#include "units.H"
+#include "mathematicalConstants.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

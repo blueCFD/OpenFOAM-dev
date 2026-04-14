@@ -32,7 +32,7 @@ Description
 #include "IOmanip.H"
 #include "boundBox.H"
 #include "Map.T.H"
-#include "unitSet.H"
+#include "units.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

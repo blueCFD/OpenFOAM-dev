@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -96,7 +96,7 @@ Foam::sampledSets::boxUniform::boxUniform
 )
 :
     sampledSet(name, mesh, dict),
-    box_(dict.lookup("box")),
+    box_(dict),
     nPoints_(dict.lookup("nPoints"))
 {}
 

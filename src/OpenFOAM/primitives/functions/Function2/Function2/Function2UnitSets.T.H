@@ -21,29 +21,90 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::Function2
+
+Description
+    Struct containing three unitSets for use in converting both the two
+    arguments and the value of a Function2.
+
+SourceFiles
+    Function2UnitSets.C
+
 \*---------------------------------------------------------------------------*/
 
-#ifndef polyMeshUnMergeCyclics_H
-#define polyMeshUnMergeCyclics_H
+#ifndef Function2UnitSets_H
+#define Function2UnitSets_H
 
-#include "polyMesh.H"
-#include "units.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace Function2s
+{
+
+/*---------------------------------------------------------------------------*\
+                 Class Function2s::unitSets Declaration
+\*---------------------------------------------------------------------------*/
+
+struct unitSets
+{
+    // Public Data
+
+        //- Unit conversion for x-axis values
+        unitSet x;
+
+        //- Unit conversion for y-axis values
+        unitSet y;
+
+        //- Unit conversion for result values
+        unitSet value;
+
+
+    // Constructors
+
+        //- Construct from initialiser list
+        unitSets(std::initializer_list<unitSet>);
+
+        //- Construct from stream
+        unitSets(Istream& is);
+
+
+    // Member Functions
+
+        //- Update from stream
+        void read(Istream& is);
+};
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-//- Find all patches of type "mergedCyclic" in the given mesh and split them
-//  into two "standard" cyclics, using the given included angle to
-//  geometrically separate the halves if they meet at an angle at the axis
-void polyMeshUnMergeCyclics
+} // End namespace Function2s
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Global Functions
+
+//- Generate an error in an context where unit conversions are not supported
+void assertNoConvertUnits
 (
-    polyMesh& mesh,
-    const scalar includedAngle=degToRad(165)
+    const word& typeName,
+    const Function2s::unitSets& units,
+    const dictionary& dict
 );
+
+//- Write a units entry
+void writeEntry(Ostream& os, const Function2s::unitSets& units);
+
+
+// IOStream Operators
+
+//- Read from stream
+Istream& operator>>(Istream& is, Function2s::unitSets&);
+
+//- Write to stream
+Ostream& operator<<(Ostream& os, const Function2s::unitSets&);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

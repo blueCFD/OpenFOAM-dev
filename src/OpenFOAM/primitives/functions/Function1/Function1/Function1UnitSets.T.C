@@ -23,14 +23,11 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Function1.T.H"
+#include "Function1UnitSets.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Function1s::unitSets::unitSets
-(
-    std::initializer_list<unitSet> l
-)
+Foam::Function1s::unitSets::unitSets(std::initializer_list<unitSet> l)
 :
     x(dimless),
     value(dimless)
@@ -50,47 +47,14 @@ Foam::Function1s::unitSets::unitSets(Istream& is)
 }
 
 
-Foam::autoPtr<Foam::Function1s::unitSets>
-Foam::Function1s::unitSets::clone() const
-{
-    return autoPtr<unitSets>(new unitSets(*this));
-}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::Function1s::unitSets::readIfPresent
-(
-    const word& keyword,
-    const dictionary& dict
-)
+void Foam::Function1s::unitSets::read(Istream& is)
 {
-    const entry* entryPtr = dict.lookupEntryPtr(keyword, false, true);
-
-    if (entryPtr)
-    {
-        ITstream& is = entryPtr->stream();
-
-        is.readBegin("unitSets");
-        x.read(keyword, dict, is);
-        value.read(keyword, dict, is);
-        is.readEnd("unitSets");
-
-        return true;
-    }
-    else
-    {
-        if (dictionary::writeOptionalEntries)
-        {
-            IOInfoInFunction(dict)
-                << "Optional entry '" << keyword << "' is not present,"
-                << " the default value '" << token::BEGIN_LIST << x.info()
-                << token::SPACE << value.info() << token::END_LIST
-                << "' will be used." << endl;
-        }
-
-        return false;
-    }
+    is.readBegin("Function1s::unitSets");
+    x.read(is);
+    value.read(is);
+    is.readEnd("Function1s::unitSets");
 }
 
 
@@ -126,11 +90,11 @@ Foam::Istream& Foam::operator>>
     Function1s::unitSets& units
 )
 {
-    is.readBegin("unitSets");
+    is.readBegin("Function1s::unitSets");
     is >> units.x >> units.value;
-    is.readEnd("unitSets");
+    is.readEnd("Function1s::unitSets");
 
-    is.check("Istream& operator>>(Istream&, unitSets&)");
+    is.check(FUNCTION_NAME);
 
     return is;
 }
@@ -146,7 +110,7 @@ Foam::Ostream& Foam::operator<<
         << units.x << token::SPACE << units.value
         << token::END_LIST;
 
-    os.check("Ostream& operator<<(Ostream&, const unitSets&)");
+    os.check(FUNCTION_NAME);
 
     return os;
 }

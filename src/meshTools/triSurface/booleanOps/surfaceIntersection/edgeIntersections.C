@@ -35,7 +35,7 @@ License
 #include "meshTools.H"
 #include "plane.H"
 #include "randomGenerator.H"
-#include "unitSet.H"
+#include "units.H"
 #include "treeBoundBox.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

@@ -26,7 +26,7 @@ License
 #include "lookupProfile.H"
 #include "addToRunTimeSelectionTable.H"
 #include "vector.H"
-#include "unitSet.H"
+#include "units.H"
 #include "IFstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

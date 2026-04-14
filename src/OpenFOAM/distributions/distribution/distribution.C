@@ -195,6 +195,20 @@ void Foam::writeEntry
 (
     Ostream& os,
     const word& entryName,
+    const dimensionSet& dimensions,
+    const distribution& d,
+    const bool write,
+    const bool writeState
+)
+{
+    writeEntry(os, entryName, units::any, d, write, writeState);
+}
+
+
+void Foam::writeEntry
+(
+    Ostream& os,
+    const word& entryName,
     const unitSet& units,
     const distribution& d,
     const bool write,

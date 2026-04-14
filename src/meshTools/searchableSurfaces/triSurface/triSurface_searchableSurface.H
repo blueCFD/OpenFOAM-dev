@@ -66,7 +66,7 @@ SourceFiles
 #include "triSurfaceRegionSearch.H"
 #include "scalarIOField.H"
 #include "pointIndexHitList.H"
-#include "unitSet.H"
+#include "units.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

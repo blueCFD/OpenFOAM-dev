@@ -30,11 +30,11 @@ Description
     The correlation for the laminar flame speed \f$Su\f$ is of the following
     form:
     \f[
-        Su = \left( \sum \alpha_i \phi^i \right)
-        \left( \frac{T}{T_{ref}} \right)^{\left( \sum \beta_j \phi^j \right)}
+        Su = \left( \sum \alpha_i \Phi^i \right)
+        \left( \frac{T}{T_{ref}} \right)^{\left( \sum \beta_j \Phi^j \right)}
     \f]
 
-    Where \f$\phi\f$ is the equivalence ratio, and \f$\alpha\f$ and \f$\beta\f$
+    Where \f$\Phi\f$ is the equivalence ratio, and \f$\alpha\f$ and \f$\beta\f$
     are polynomial coefficients given for a number of pressure and equivalence
     ratio points.
 
@@ -152,7 +152,7 @@ class RaviPetersen
         ) const;
 
         //- Return the laminar flame speed [m/s]
-        inline scalar Su0pTphi
+        inline scalar Su0pTPhi
         (
             const scalar p,
             const scalar Tu,
@@ -184,10 +184,28 @@ public:
     virtual ~RaviPetersen();
 
 
-    // Member Operators
+    // Member Functions
 
         //- Return the laminar flame speed [m/s]
-        tmp<volScalarField> operator()() const;
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi
+        ) const;
+
+        //- Return the laminar flame speed [m/s]
+        //  including EGR effects
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi,
+            const volScalarField& egr
+        ) const;
+
+
+    // Member Operators
 
         //- Disallow default bitwise assignment
         void operator=(const RaviPetersen&) = delete;

@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "normalise.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

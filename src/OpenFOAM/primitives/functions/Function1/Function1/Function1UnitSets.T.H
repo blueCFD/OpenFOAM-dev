@@ -21,67 +21,88 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::tensor
+Class
+    Foam::Function1s::unitSets
 
 Description
-    Tensor of scalars.
+    Struct containing two unitSets for use in converting both the argument
+    and the value of a Function1.
 
 SourceFiles
-    tensor.C
+    Function1UnitSets.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef tensor_H
-#define tensor_H
+#ifndef Function1UnitSets_H
+#define Function1UnitSets_H
 
-#include "Tensor.T.H"
-#include "vector.H"
-#include "sphericalTensor.H"
-#include "symmTensor.H"
-#include "contiguous.H"
+#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace Function1s
+{
+
+/*---------------------------------------------------------------------------*\
+                Class Function1s::unitSets Declaration
+\*---------------------------------------------------------------------------*/
+
+struct unitSets
+{
+    // Public Data
+
+        //- Unit conversion for x-axis values
+        unitSet x;
+
+        //- Unit conversion for result values
+        unitSet value;
+
+
+    // Constructors
+
+        //- Construct from initialiser list
+        unitSets(std::initializer_list<unitSet>);
+
+        //- Construct from stream
+        unitSets(Istream& is);
+
+
+    // Member Functions
+
+        //- Update from stream
+        void read(Istream& is);
+};
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-typedef Tensor<scalar> tensor;
+} // End namespace Function1s
 
-vector eigenValues(const tensor& T);
-vector eigenValues(const symmTensor& T);
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class TensorType>
-vector eigenVector
+// Global Functions
+
+//- Generate an error in an context where unit conversions are not supported
+void assertNoConvertUnits
 (
-    const TensorType& T,
-    const scalar lambda,
-    const vector& direction1,
-    const vector& direction2
+    const word& typeName,
+    const Function1s::unitSets& units,
+    const dictionary& dict
 );
 
-tensor eigenVectors(const tensor& T, const vector& lambdas);
-tensor eigenVectors(const symmTensor& T, const vector& lambdas);
+//- Write a units entry
+void writeEntry(Ostream& os, const Function1s::unitSets& units);
 
-tensor eigenVectors(const tensor& T);
-tensor eigenVectors(const symmTensor& T);
 
-//- Data associated with tensor type are contiguous
-template<>
-inline bool contiguous<tensor>() {return true;}
+// IOStream Operators
 
-//- Rank type
-template<>
-struct typeOfNcmpts<9>
-{
-    using type = tensor;
-};
+//- Read from stream
+Istream& operator>>(Istream& is, Function1s::unitSets&);
 
-//- A tensor is scaleable
-template<>
-struct scaleable<tensor> : public std::true_type {};
+//- Write to stream
+Ostream& operator<<(Ostream& os, const Function1s::unitSets&);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

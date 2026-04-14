@@ -31,7 +31,7 @@ License
 #include "cellCuts.H"
 #include "splitCell.H"
 #include "polyTopoChangeMap.H"
-#include "unitSet.H"
+#include "units.H"
 #include "meshTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

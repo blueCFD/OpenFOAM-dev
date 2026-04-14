@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "quadraticRamp.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

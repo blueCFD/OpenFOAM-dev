@@ -25,7 +25,7 @@ License
 
 #include "sector.H"
 #include "addToRunTimeSelectionTable.H"
-#include "unitSet.H"
+#include "units.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

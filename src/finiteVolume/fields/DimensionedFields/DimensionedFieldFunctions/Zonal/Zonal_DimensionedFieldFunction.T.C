@@ -38,7 +38,14 @@ Zonal
 )
 :
     DimensionedFieldFunction<DimensionedFieldType>(dict, field),
-    value_(dict.lookup<Type>("defaultValue", this->field_.dimensions())),
+    value_
+    (
+        dict.lookup<Type>
+        (
+            "defaultValue",
+            typeUnits<Type>(this->field_.dimensions())
+        )
+    ),
     zonesDict_(dict.subDict("zones"))
 {}
 
@@ -111,7 +118,11 @@ void Foam::DimensionedFieldFunctions::Zonal<DimensionedFieldType>::evaluate()
 
             const Type value
             (
-                zoneDict.lookup<Type>("value", field.dimensions())
+                zoneDict.lookup<Type>
+                (
+                    "value",
+                    typeUnits<Type>(field.dimensions())
+                )
             );
 
             if (&selected == &labelList::null())
@@ -136,7 +147,13 @@ void Foam::DimensionedFieldFunctions::Zonal<DimensionedFieldType>::write
     Ostream& os
 ) const
 {
-    writeEntry(os, "defaultValue", this->field_.dimensions(), value_);
+    writeEntry
+    (
+        os,
+        "defaultValue",
+        typeUnits<Type>(this->field_.dimensions()),
+        value_
+    );
     writeEntry(os, "zones", zonesDict_);
 }
 

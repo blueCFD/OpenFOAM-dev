@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "turbulentBL.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

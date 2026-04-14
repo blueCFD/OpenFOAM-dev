@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,29 +21,39 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Struct
+    Foam::scaleable
+
+Description
+    Trait to identify types which are "scaleable"; i.e., that can be
+    multiply-equals-d with a scalar. This has to be done explicitly, rather
+    than by identifying the existence of the operator with decltype, in order
+    to exclude bool and int and similar.
+
 \*---------------------------------------------------------------------------*/
 
-#ifndef polyMeshUnMergeCyclics_H
-#define polyMeshUnMergeCyclics_H
+#ifndef scaleable_H
+#define scaleable_H
 
-#include "polyMesh.H"
-#include "units.H"
+#include <type_traits>
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+/*---------------------------------------------------------------------------*\
+                          Class scaleable Declaration
+\*---------------------------------------------------------------------------*/
 
-//- Find all patches of type "mergedCyclic" in the given mesh and split them
-//  into two "standard" cyclics, using the given included angle to
-//  geometrically separate the halves if they meet at an angle at the axis
-void polyMeshUnMergeCyclics
-(
-    polyMesh& mesh,
-    const scalar includedAngle=degToRad(165)
-);
+template<class Type>
+struct scaleable : public std::false_type {};
+
+template<class Type, class Void = void>
+using enableIfScaleable = std::enable_if_t<scaleable<Type>::value, Void>;
+
+template<class Type, class Void = void>
+using enableIfNotScaleable = std::enable_if_t<!scaleable<Type>::value, Void>;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

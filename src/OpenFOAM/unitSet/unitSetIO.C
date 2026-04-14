@@ -23,8 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "unitSet.H"
+#include "units.H"
 #include "dictionary.H"
+#include "NamedEnum.T.H"
 #include "symbols.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

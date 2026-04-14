@@ -39,12 +39,9 @@ SourceFiles
 #ifndef Function2_H
 #define Function2_H
 
-#include "dictionary.H"
-#include "unitSet.H"
-#include "tmp.H"
-#include "typeInfo.T.H"
+#include "Function2UnitSets.T.H"
 #include "Field.T.H"
-#include "addToRunTimeSelectionTable.H"
+#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,39 +51,6 @@ namespace Foam
 // Forward declaration of friend functions and operators
 template<class Type> class Function2;
 template<class Type> Ostream& operator<<(Ostream&, const Function2<Type>&);
-
-/*---------------------------------------------------------------------------*\
-                 Class Function2s::unitSets Declaration
-\*---------------------------------------------------------------------------*/
-
-namespace Function2s
-{
-struct unitSets
-{
-    // Public Data
-
-        //- Unit conversion for x-axis values
-        unitSet x;
-
-        //- Unit conversion for y-axis values
-        unitSet y;
-
-        //- Unit conversion for result values
-        unitSet value;
-};
-}
-
-
-// Global Functions
-
-//- Generate an error in an context where unit conversions are not supported
-void assertNoConvertUnits
-(
-    const word& typeName,
-    const Function2s::unitSets& units,
-    const dictionary& dict
-);
-
 
 /*---------------------------------------------------------------------------*\
                           Class Function2 Declaration

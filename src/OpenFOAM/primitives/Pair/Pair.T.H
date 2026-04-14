@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,6 +37,7 @@ See also
 #define Pair_H
 
 #include "Hash.T.H"
+#include "scaleable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -212,6 +213,19 @@ inline Ostream& operator<<(Ostream& os, const Pair<Type>& p);
 //- Write as a dictionary entry
 template<class Type>
 inline void writeEntry(Ostream& os, const Pair<Type>& p);
+
+
+//- A pair is scaleable if its type is
+template<class Type>
+struct scaleable<Pair<Type>> : public scaleable<Type> {};
+
+//- Apply a conversion to a Pair by applying separately to first and second
+template<class Type, class ... Args>
+void convert(Pair<Type>& t, const Args& ... args)
+{
+    convert(t.first(), args ...);
+    convert(t.second(), args ...);
+}
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

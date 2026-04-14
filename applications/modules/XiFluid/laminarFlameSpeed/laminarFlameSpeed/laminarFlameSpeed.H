@@ -112,10 +112,32 @@ public:
     virtual ~laminarFlameSpeed();
 
 
-    // Member Operators
+    // Member Functions
 
         //- Return the laminar flame speed [m/s]
-        virtual tmp<volScalarField> operator()() const = 0;
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi
+        ) const = 0;
+
+        //- Return the laminar flame speed [m/s]
+        //  including EGR effects
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi,
+            const volScalarField& egr
+        ) const = 0;
+
+        //- Return the laminar flame speed [m/s]
+        //  assuming a single fuel specie
+        virtual tmp<volScalarField> Su() const;
+
+
+    // Member Operators
 
         //- Disallow default bitwise assignment
         void operator=(const laminarFlameSpeed&) = delete;

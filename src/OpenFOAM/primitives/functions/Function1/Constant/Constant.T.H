@@ -65,12 +65,6 @@ class Constant
         const Type value_;
 
 
-    // Private Member Functions
-
-        //- Read the value
-        static Type readValue(const unitSets& units, Istream& is);
-
-
 public:
 
     // Runtime type information

@@ -80,7 +80,7 @@ Foam::SuModels::unstrained::~unstrained()
 
 void Foam::SuModels::unstrained::correct()
 {
-    Su_ == Su0_()();
+    Su_ == Su0_->Su();
 }
 
 

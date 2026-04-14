@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -296,6 +296,11 @@ public:
 //  Mostly useful for handling command-line arguments
 template<class T>
 List<T> readList(Istream&);
+
+
+//- A List is scaleable if its UList is
+template<class Type>
+struct scaleable<List<Type>> : public scaleable<UList<Type>> {};
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

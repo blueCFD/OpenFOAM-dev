@@ -25,7 +25,7 @@ License
 
 #include "shapeToCell.H"
 #include "polyMesh.H"
-#include "unitSet.H"
+#include "units.H"
 #include "hexMatcher.H"
 #include "cellFeatures.H"
 #include "addToRunTimeSelectionTable.H"

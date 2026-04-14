@@ -67,8 +67,31 @@ Foam::laminarFlameSpeedModels::constant::~constant()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
+Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::constant::Su
+(
+    const volScalarField& p,
+    const volScalarField& Tu,
+    const volScalarField& Phi
+) const
+{
+    return Su();
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::constant::Su
+(
+    const volScalarField& p,
+    const volScalarField& Tu,
+    const volScalarField& Phi,
+    const volScalarField& egr
+) const
+{
+    return Su();
+}
+
+
 Foam::tmp<Foam::volScalarField>
-Foam::laminarFlameSpeedModels::constant::operator()() const
+Foam::laminarFlameSpeedModels::constant::Su() const
 {
     return volScalarField::New
     (

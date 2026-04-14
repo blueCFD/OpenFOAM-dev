@@ -36,7 +36,6 @@ SourceFiles
 #define realTime_H
 
 #include "userTime.H"
-#include "unitSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

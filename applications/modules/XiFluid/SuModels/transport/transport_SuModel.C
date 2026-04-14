@@ -83,7 +83,7 @@ Foam::SuModels::transport::~transport()
 
 void Foam::SuModels::transport::reset()
 {
-    Su_ = Su0_()();
+    Su_ = Su0_->Su();
 }
 
 
@@ -122,7 +122,7 @@ void Foam::SuModels::transport::correct()
         )*(Xi + scalar(1))/(2*Xi)
     );
 
-    const volScalarField Su0(Su0_()());
+    const volScalarField Su0(Su0_->Su());
 
     const volScalarField SuInf
     (

@@ -38,12 +38,13 @@ Foam::TableFileReader<Coordinate, Value>::readUnits
 {
     if (dict.found("units"))
     {
-        autoPtr<Function1s::unitSets> unitsPtr
-        (
-            new Function1s::unitSets(defaultUnits)
-        );
-        unitsPtr->readIfPresent("units", dict);
-        return unitsPtr;
+        Function1s::unitSets units(defaultUnits);
+        units.read(dict.lookup("units"));
+        return
+            autoPtr<Function1s::unitSets>
+            (
+                new Function1s::unitSets(units)
+            );
     }
     else
     {
@@ -117,7 +118,12 @@ Foam::TableFileReader<Coordinate, Value>::TableFileReader
 :
     TableReader<Coordinate, Value>(tfr),
     fName_(tfr.fName_),
-    unitsPtr_(tfr.unitsPtr_, false)
+    unitsPtr_
+    (
+        tfr.unitsPtr_.valid()
+      ? new Function1s::unitSets(tfr.unitsPtr_())
+      : nullptr
+    )
 {}
 
 

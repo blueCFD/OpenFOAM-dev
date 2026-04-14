@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -66,11 +66,11 @@ Foam::zoneGenerators::box::box
     volume(name, mesh, dict),
     boxes_
     (
-        dict.found("min")
-      ? treeBoundBoxList(1, treeBoundBox(dict))
-      : dict.found("box")
-        ? treeBoundBoxList(1, treeBoundBox(dict.lookup("box")))
-        : dict.lookup("boxes")
+        boundBox::found(dict)
+      ? List<boundBox>(1, boundBox(dict))
+      : dict.found("boxes")
+      ? dict.lookup<List<boundBox>>("boxes", dimLength)
+      : List<boundBox>(1, boundBox(dict))
     )
 {}
 

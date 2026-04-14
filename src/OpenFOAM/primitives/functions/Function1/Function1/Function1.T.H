@@ -39,12 +39,9 @@ SourceFiles
 #ifndef Function1_H
 #define Function1_H
 
-#include "dictionary.H"
-#include "unitSet.H"
-#include "tmp.H"
-#include "typeInfo.T.H"
+#include "Function1UnitSets.T.H"
 #include "Field.T.H"
-#include "addToRunTimeSelectionTable.H"
+#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,66 +51,6 @@ namespace Foam
 // Forward declaration of friend functions and operators
 template<class Type> class Function1;
 template<class Type> Ostream& operator<<(Ostream&, const Function1<Type>&);
-
-/*---------------------------------------------------------------------------*\
-                Class Function1s::unitSets Declaration
-\*---------------------------------------------------------------------------*/
-
-namespace Function1s
-{
-struct unitSets
-{
-    // Public Data
-
-        //- Unit conversion for x-axis values
-        unitSet x;
-
-        //- Unit conversion for result values
-        unitSet value;
-
-
-    // Constructors
-
-        //- Construct from initialiser list
-        unitSets(std::initializer_list<unitSet>);
-
-        //- Construct from stream
-        unitSets(Istream& is);
-
-        //- Construct a clone
-        autoPtr<unitSets> clone() const;
-
-
-    // Member Functions
-
-        //- Update if found in the dictionary
-        bool readIfPresent(const word& keyword, const dictionary&);
-};
-}
-
-
-// Global Functions
-
-//- Generate an error in an context where unit conversions are not supported
-void assertNoConvertUnits
-(
-    const word& typeName,
-    const Function1s::unitSets& units,
-    const dictionary& dict
-);
-
-//- Write a units entry
-void writeEntry(Ostream& os, const Function1s::unitSets& units);
-
-
-// IOStream Operators
-
-//- Read from stream
-Istream& operator>>(Istream& is, Function1s::unitSets&);
-
-//- Write to stream
-Ostream& operator<<(Ostream& os, const Function1s::unitSets&);
-
 
 /*---------------------------------------------------------------------------*\
                           Class Function1 Declaration

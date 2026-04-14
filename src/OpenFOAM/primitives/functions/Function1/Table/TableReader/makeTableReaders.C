@@ -31,6 +31,8 @@ License
 
 #include "fieldTypes.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // Permute the order of the macro arguments so that the Value type can be

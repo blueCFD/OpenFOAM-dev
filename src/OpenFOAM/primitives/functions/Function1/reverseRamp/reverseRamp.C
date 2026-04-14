@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "reverseRamp.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

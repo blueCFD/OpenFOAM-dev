@@ -382,6 +382,7 @@ public:
         );
 };
 
+
 template<class T>
 void sort(UList<T>&);
 
@@ -410,6 +411,21 @@ void writeListEntries(Ostream& os, const ListType& l);
 
 template<class ListType>
 void writeListEntries(Ostream& os, const word& keyword, const ListType& l);
+
+
+//- A UList is scaleable if its type is
+template<class Type>
+struct scaleable<UList<Type>> : public scaleable<Type> {};
+
+//- Apply a conversion to a UList by applying to each element individually
+template<class Type, class ... Args>
+void convert(UList<Type>& l, const Args& ... args)
+{
+    for (label i = 0; i < l.size(); ++ i)
+    {
+        convert(l[i], args ...);
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

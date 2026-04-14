@@ -35,7 +35,6 @@ InClass
 
 // OpenFOAM includes
 #include "domainDecomposition.H"
-#include "emptyFvsPatchField.H"
 #include "faceSet.H"
 #include "surfaceFields.H"
 #include "fvFieldReconstructor.H"
@@ -96,7 +95,12 @@ void Foam::vtkPVFoam::convertSurfaceField
             const label patchi = mesh.poly().boundary().whichPatch(facei);
             const label pFacei =
                 mesh.poly().boundary()[patchi].whichFace(facei);
-            const Type& t = tf.boundaryField()[patchi][pFacei];
+            const fvPatchField<Type>& ptf =  tf.boundaryField()[patchi];
+
+            const Type& t =
+                isType<emptyFvPatchField<Type>>(ptf)
+              ? tf[faceOwner[facei]]
+              : ptf[pFacei];
 
             for (direction d=0; d<nComp; ++d)
             {

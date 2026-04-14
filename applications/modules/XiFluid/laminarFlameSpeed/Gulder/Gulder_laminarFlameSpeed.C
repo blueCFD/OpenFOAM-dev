@@ -70,7 +70,7 @@ Foam::laminarFlameSpeedModels::Gulder::~Gulder()
 {}
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 inline Foam::scalar Foam::laminarFlameSpeedModels::Gulder::SuRef
 (
@@ -88,7 +88,7 @@ inline Foam::scalar Foam::laminarFlameSpeedModels::Gulder::SuRef
 }
 
 
-inline Foam::scalar Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
+inline Foam::scalar Foam::laminarFlameSpeedModels::Gulder::Su0pTPhi
 (
     const scalar p,
     const scalar Tu,
@@ -105,11 +105,13 @@ inline Foam::scalar Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
 }
 
 
-Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su
 (
     const volScalarField& p,
     const volScalarField& Tu,
-    const volScalarField& phi
+    const volScalarField& Phi
 ) const
 {
     tmp<volScalarField> tSu0
@@ -126,7 +128,7 @@ Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
 
     forAll(Su0, celli)
     {
-        Su0[celli] = Su0pTphi(p[celli], Tu[celli], phi[celli], 0);
+        Su0[celli] = Su0pTPhi(p[celli], Tu[celli], Phi[celli], 0);
     }
 
     volScalarField::Boundary& Su0Bf = Su0.boundaryFieldRef();
@@ -136,11 +138,11 @@ Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
         forAll(Su0Bf[patchi], facei)
         {
             Su0Bf[patchi][facei] =
-                Su0pTphi
+                Su0pTPhi
                 (
                     p.boundaryField()[patchi][facei],
                     Tu.boundaryField()[patchi][facei],
-                    phi.boundaryField()[patchi][facei],
+                    Phi.boundaryField()[patchi][facei],
                     0
                 );
         }
@@ -150,7 +152,7 @@ Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
 }
 
 
-Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
+Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su
 (
     const volScalarField& p,
     const volScalarField& Tu,
@@ -172,7 +174,7 @@ Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
 
     forAll(Su0, celli)
     {
-        Su0[celli] = Su0pTphi(p[celli], Tu[celli], Phi[celli], egr[celli]);
+        Su0[celli] = Su0pTPhi(p[celli], Tu[celli], Phi[celli], egr[celli]);
     }
 
     volScalarField::Boundary& Su0Bf = Su0.boundaryFieldRef();
@@ -182,7 +184,7 @@ Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
         forAll(Su0Bf[patchi], facei)
         {
             Su0Bf[patchi][facei] =
-                Su0pTphi
+                Su0pTPhi
                 (
                     p.boundaryField()[patchi][facei],
                     Tu.boundaryField()[patchi][facei],
@@ -193,31 +195,6 @@ Foam::tmp<Foam::volScalarField> Foam::laminarFlameSpeedModels::Gulder::Su0pTphi
     }
 
     return tSu0;
-}
-
-
-Foam::tmp<Foam::volScalarField>
-Foam::laminarFlameSpeedModels::Gulder::operator()() const
-{
-    if (uThermo_.containsSpecie("egr"))
-    {
-        return Su0pTphi
-        (
-            uThermo_.p(),
-            uThermo_.T(),
-            uThermo_.Phi(),
-            uThermo_.Y("egr")
-        );
-    }
-    else
-    {
-        return Su0pTphi
-        (
-            uThermo_.p(),
-            uThermo_.T(),
-            uThermo_.Phi()
-        );
-    }
 }
 
 

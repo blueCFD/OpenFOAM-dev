@@ -27,6 +27,7 @@ License
 #include "demandDrivenData.H"
 #include "dictionary.H"
 #include "symbols.H"
+#include "mathematicalConstants.H"
 
 using namespace Foam::constant::mathematical;
 
@@ -88,45 +89,29 @@ namespace Foam
 namespace units
 {
 
-dimensionSet makeDimless()
+unitSet newFraction()
 {
-    return dimensionSet(0, 0, 0, 0, 0);
+    return unitSet(dimensionSet(0, 0, 0, 0, 0), 1, 0, 1);
 }
 
-unitSet makeUnitless()
+unitSet newPercent()
 {
-    return unitSet(makeDimless(), 0, 0, 1);
+    return unitSet(dimensionSet(0, 0, 0, 0, 0), 1, 0, 0.01);
 }
 
-unitSet makeAny()
+unitSet newRadians()
 {
-    return unitSet(makeDimless(), 0, 0, 0);
-}
-unitSet makeNone()
-{
-    return unitSet(makeDimless(), 0, 0, -1);
+    return unitSet(dimensionSet(0, 0, 0, 0, 0), 0, 1, 1);
 }
 
-unitSet makeFraction()
+unitSet newRotations()
 {
-    return unitSet(makeDimless(), 1, 0, 1);
-}
-unitSet makePercent()
-{
-    return unitSet(makeDimless(), 1, 0, 0.01);
+    return unitSet(dimensionSet(0, 0, 0, 0, 0), 0, 1, 2*pi);
 }
 
-unitSet makeRadians()
+unitSet newDegrees()
 {
-    return unitSet(makeDimless(), 0, 1, 1);
-}
-unitSet makeRotations()
-{
-    return unitSet(makeDimless(), 0, 1, 2*pi);
-}
-unitSet makeDegrees()
-{
-    return unitSet(makeDimless(), 0, 1, pi/180);
+    return unitSet(dimensionSet(0, 0, 0, 0, 0), 0, 1, pi/180);
 }
 
 unitSet length_(dimensionSet(0, 1, 0, 0, 0), 0, 0, 1);
@@ -137,17 +122,17 @@ unitSet length_(dimensionSet(0, 1, 0, 0, 0), 0, 0, 1);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-const Foam::unitSet Foam::units::unitless(makeUnitless());
+const Foam::unitSet Foam::units::unitless(unitSet::newUnitless());
 
-const Foam::unitSet Foam::units::any(makeAny());
-const Foam::unitSet Foam::units::none(makeNone());
+const Foam::unitSet Foam::units::any(unitSet::newAny());
+const Foam::unitSet Foam::units::none(unitSet::newNone());
 
-const Foam::unitSet Foam::units::fraction(makeFraction());
-const Foam::unitSet Foam::units::percent(makePercent());
+const Foam::unitSet Foam::units::fraction(newFraction());
+const Foam::unitSet Foam::units::percent(newPercent());
 
-const Foam::unitSet Foam::units::radians(makeRadians());
-const Foam::unitSet Foam::units::rotations(makeRotations());
-const Foam::unitSet Foam::units::degrees(makeDegrees());
+const Foam::unitSet Foam::units::radians(newRadians());
+const Foam::unitSet Foam::units::rotations(newRotations());
+const Foam::unitSet Foam::units::degrees(newDegrees());
 
 const Foam::unitSet& Foam::units::length = Foam::units::length_;
 
@@ -160,11 +145,11 @@ const Foam::HashTable<Foam::unitSet>& Foam::units::table()
     {
         unitsPtr_ = new HashTable<unitSet>();
 
-        unitsPtr_->insert("%", makePercent());
+        unitsPtr_->insert("%", newPercent());
 
-        unitsPtr_->insert("rad", makeRadians());
-        unitsPtr_->insert("rot", makeRotations());
-        unitsPtr_->insert("deg", makeDegrees());
+        unitsPtr_->insert("rad", newRadians());
+        unitsPtr_->insert("rot", newRotations());
+        unitsPtr_->insert("deg", newDegrees());
 
         // Get the relevant part of the control dictionary
         const dictionary& unitSetDict =

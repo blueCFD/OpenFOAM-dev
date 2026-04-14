@@ -25,7 +25,7 @@ License
 
 #include "intersectionPatchToPatch.H"
 #include "triIntersect.H"
-#include "unitSet.H"
+#include "units.H"
 #include "vtkWritePolyData.H"
 #include "addToRunTimeSelectionTable.H"
 

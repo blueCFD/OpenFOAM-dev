@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,14 @@ License
 #include "boundBox.H"
 #include "pointField.H"
 
+// * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
+
+inline bool Foam::boundBox::found(const dictionary& dict)
+{
+    return dict.found("box") || dict.found("min") || dict.found("max");
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 inline Foam::boundBox::boundBox()
@@ -42,16 +50,36 @@ inline Foam::boundBox::boundBox(const point& min, const point& max)
 {}
 
 
-inline Foam::boundBox::boundBox(const dictionary& dict)
-:
-    min_(dict.lookup<point>("min", dimLength)),
-    max_(dict.lookup<point>("max", dimLength))
-{}
-
-
 inline Foam::boundBox::boundBox(Istream& is)
 {
     operator>>(is, *this);
+}
+
+
+inline Foam::boundBox::boundBox(const dictionary& dict)
+{
+    const bool haveBox = dict.found("box");
+    const bool haveMinMax = dict.found("min") && dict.found("max");
+
+    if (haveBox && !haveMinMax)
+    {
+        *this = dict.lookup<boundBox>("box", dimLength);
+        return;
+    }
+
+    if (!haveBox && haveMinMax)
+    {
+        min_ = dict.lookup<point>("min", dimLength);
+        max_ = dict.lookup<point>("max", dimLength);
+        return;
+    }
+
+    FatalIOErrorInFunction(dict)
+        << (haveBox ? "both" : "neither")
+        << " of keywords box "
+        << (haveBox ? "and" : "or")
+        << " min/max defined in dictionary"
+        << dict.name() << exit(FatalIOError);
 }
 
 

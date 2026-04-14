@@ -90,7 +90,7 @@ void Foam::SuModels::linearEquilibrium::correct()
         )*(Xi + scalar(1))/(2*Xi)
     );
 
-    Su_ == Su0_()()*max(scalar(1) - sigmas/sigmaExt_, scalar(0.01));
+    Su_ == Su0_->Su()*max(scalar(1) - sigmas/sigmaExt_, scalar(0.01));
 }
 
 

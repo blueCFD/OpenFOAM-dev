@@ -23,7 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "scaleable.H"
 #include "unitSet.H"
+#include "typeName.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -31,41 +33,6 @@ template<class T>
 T Foam::unitSet::toStandard(const T& t) const
 {
     return standard() ? t : t*multiplier_;
-}
-
-
-template<class T>
-Foam::Pair<T> Foam::unitSet::toStandard(const Pair<T>& p) const
-{
-    return Pair<T>(toStandard(p.first(), p.second()));
-}
-
-
-template<class T>
-Foam::List<T> Foam::unitSet::toStandard(const List<T>& l) const
-{
-    List<T> result(l.size());
-    forAll(l, i)
-    {
-        result[i] = toStandard(l[i]);
-    }
-    return result;
-}
-
-
-template<class T>
-Foam::tmp<Foam::Field<T>>
-Foam::unitSet::toStandard(const Field<T>& f) const
-{
-    return standard() ? tmp<Field<T>>(f) : f*multiplier_;
-}
-
-
-template<class T>
-Foam::tmp<Foam::Field<T>>
-Foam::unitSet::toStandard(const tmp<Field<T>>& tf) const
-{
-    return standard() ? tf : tf*multiplier_;
 }
 
 
@@ -80,30 +47,6 @@ void Foam::unitSet::makeStandard(T& t) const
 
 
 template<class T>
-void Foam::unitSet::makeStandard(Pair<T>& p) const
-{
-    if (!standard())
-    {
-        makeStandard(p.first());
-        makeStandard(p.second());
-    }
-}
-
-
-template<class T>
-void Foam::unitSet::makeStandard(List<T>& l) const
-{
-    if (!standard())
-    {
-        forAll(l, i)
-        {
-            makeStandard(l[i]);
-        }
-    }
-}
-
-
-template<class T>
 T Foam::unitSet::toUser(const T& t) const
 {
     return standard() ? t : t/multiplier_;
@@ -111,51 +54,209 @@ T Foam::unitSet::toUser(const T& t) const
 
 
 template<class T>
-Foam::Pair<T> Foam::unitSet::toUser(const Pair<T>& p) const
+void Foam::unitSet::makeUser(T& t) const
 {
-    return Pair<T>(toUser(p.first()), toUser(p.second()));
-}
-
-
-template<class T>
-Foam::List<T> Foam::unitSet::toUser(const List<T>& l) const
-{
-    List<T> result(l.size());
-    forAll(l, i)
+    if (!standard())
     {
-        result[i] = toUser(l[i]);
+        t *= 1/multiplier_;
     }
-    return result;
-}
-
-
-template<class T>
-Foam::tmp<Foam::Field<T>>
-Foam::unitSet::toUser(const Field<T>& f) const
-{
-    return standard() ? tmp<Field<T>>(f) : f/multiplier_;
-}
-
-
-template<class T>
-Foam::tmp<Foam::Field<T>>
-Foam::unitSet::toUser(const tmp<Field<T>>& tf) const
-{
-    return standard() ? tf : tf/multiplier_;
 }
 
 
 // * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
 
-template<class Type>
-void Foam::writeEntry
+template<class Type, class Convert>
+Foam::enableIfScalarCmptType<Type> Foam::convert
 (
-    Ostream& os,
-    const unitSet& defaultUnits,
-    const Type& t
+    Type& t,
+    const unitSet& units,
+    const Convert& convert
 )
 {
-    return writeEntry(os, defaultUnits.toUser(t));
+    convert(t, units);
+}
+
+
+template<class Type>
+const typename Foam::typeUnitsType<Type>::type&
+Foam::typeUnits(const unitSet& units)
+{
+    return units;
+}
+
+
+template<class Type>
+typename Foam::typeUnitsType<Type>::type
+Foam::typeUnits(const dimensionSet& dimensions)
+{
+    return dimensions;
+}
+
+
+template<>
+inline const typename Foam::typeUnitsType<Foam::label>::type&
+Foam::typeUnits<Foam::label>(const unitSet& units)
+{
+    typeUnits<label>(units.dimensions());
+
+    if (!units.standard())
+    {
+        FatalErrorInFunction
+            << "Unit conversions are not supported for "
+            << pTraits<label>::typeName << "s"
+            << exit(FatalError);
+    }
+
+    static const Foam::nil nil;
+
+    return nil;
+}
+
+
+template<>
+inline typename Foam::typeUnitsType<Foam::label>::type
+Foam::typeUnits<Foam::label>(const dimensionSet& dimensions)
+{
+    if (!dimensions.dimensionless())
+    {
+        FatalErrorInFunction
+            << pTraits<label>::typeName << "s must be dimensionless"
+            << exit(FatalError);
+    }
+
+    return nil();
+}
+
+
+template<class Type>
+Type Foam::readAndConvert(Istream& is, const unitSet& defaultUnits)
+{
+    // Read the units if they are before the value
+    unitSet units(defaultUnits);
+    const bool haveUnits = units.readIfPresent(is);
+
+    // Read the value
+    Type value = Foam::read<Type>(is);
+
+    // Read the units if they are after the value
+    if (!haveUnits && !is.eof())
+    {
+        units.readIfPresent(is);
+    }
+
+    // Modify the value by the unit conversion
+    convert(value, units, unitSet::makeStandardOp());
+
+    return value;
+}
+
+
+template<class Type>
+Type Foam::readAndConvert(Istream& is, const dimensionSet& dimensions)
+{
+    return readAndConvert<Type>(is, unitSet(dimensions));
+}
+
+
+template<class Type, class Units>
+Type Foam::readAndConvert(Istream& is, const Units& defaultUnits)
+{
+    // Read the value
+    Type value = Foam::read<Type>(is);
+
+    // If there is more then read units and use them to convert the value
+    if (!is.eof())
+    {
+        Units units(defaultUnits);
+        units.read(is);
+        convert(value, units, unitSet::makeStandardOp());
+    }
+    // Otherwise convert the value using the default units
+    else
+    {
+        convert(value, defaultUnits, unitSet::makeStandardOp());
+    }
+
+    return value;
+}
+
+
+template<class Type>
+Type Foam::readAndConvert(Istream& is, const nil&)
+{
+    auto error = [&]()
+    {
+        FatalIOErrorInFunction(is)
+            << "Unit conversion is not supported for entries of type "
+            << typeName<Type>() << abort(FatalIOError);
+    };
+
+    unitSet units(unitSet::newAny());
+
+    if (units.readIfPresent(is)) error();
+
+    const Type value = Foam::read<Type>(is);
+
+    if (!is.eof() && units.readIfPresent(is)) error();
+
+    return value;
+}
+
+
+template<class Type>
+Foam::enableIfScaleable<Type, Type> Foam::readAndMaybeConvert(Istream& is)
+{
+    return readAndConvert<Type>(is, unitSet::newAny());
+}
+
+
+template<class Type>
+Foam::enableIfNotScaleable<Type, Type> Foam::readAndMaybeConvert(Istream& is)
+{
+    return readAndConvert<Type>(is, nil());
+}
+
+
+template<>
+inline Foam::unitSet Foam::readAndMaybeConvert<Foam::unitSet>
+(
+    Istream& is
+)
+{
+    return unitSet(is);
+}
+
+
+template<>
+inline Foam::dimensionSet Foam::readAndMaybeConvert<Foam::dimensionSet>
+(
+    Istream& is
+)
+{
+    return dimensionSet(is);
+}
+
+
+template<class Type>
+void Foam::writeEntry(Ostream& os, const unitSet& defaultUnits, const Type& t)
+{
+    if (defaultUnits.standard())
+    {
+        writeEntry(os, t);
+    }
+    else
+    {
+        Type tUser(t);
+        convert(tUser, defaultUnits, unitSet::makeUserOp());
+        return writeEntry(os, tUser);
+    }
+}
+
+
+template<class Type>
+void Foam::writeEntry(Ostream& os, const nil&, const Type& t)
+{
+    writeEntry(os, t);
 }
 
 

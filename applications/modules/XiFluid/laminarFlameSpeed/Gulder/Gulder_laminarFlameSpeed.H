@@ -79,30 +79,15 @@ class Gulder
 
         inline scalar SuRef
         (
-            const scalar phi
+            const scalar Phi
         ) const;
 
-        inline scalar Su0pTphi
+        inline scalar Su0pTPhi
         (
             const scalar p,
             const scalar Tu,
-            const scalar phi,
+            const scalar Phi,
             const scalar Yegr
-        ) const;
-
-        tmp<volScalarField> Su0pTphi
-        (
-            const volScalarField& p,
-            const volScalarField& Tu,
-            const volScalarField& phi
-        ) const;
-
-        tmp<volScalarField> Su0pTphi
-        (
-            const volScalarField& p,
-            const volScalarField& Tu,
-            const volScalarField& phi,
-            const volScalarField& egr
         ) const;
 
 
@@ -130,10 +115,28 @@ public:
     virtual ~Gulder();
 
 
-    // Member Operators
+    // Member Functions
 
         //- Return the laminar flame speed [m/s]
-        tmp<volScalarField> operator()() const;
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi
+        ) const;
+
+        //- Return the laminar flame speed [m/s]
+        //  including EGR effects
+        virtual tmp<volScalarField> Su
+        (
+            const volScalarField& p,
+            const volScalarField& Tu,
+            const volScalarField& Phi,
+            const volScalarField& egr
+        ) const;
+
+
+    // Member Operators
 
         //- Disallow default bitwise assignment
         void operator=(const Gulder&) = delete;

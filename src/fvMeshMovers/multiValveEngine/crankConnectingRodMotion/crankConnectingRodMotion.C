@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "crankConnectingRodMotion.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

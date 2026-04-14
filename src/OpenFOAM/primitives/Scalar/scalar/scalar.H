@@ -39,6 +39,7 @@ SourceFiles
 #include "floatScalar.H"
 #include "doubleScalar.H"
 #include "longDoubleScalar.H"
+#include "scaleable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -164,6 +165,35 @@ namespace Foam
     {
         using type = scalar;
     };
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// Define a scalar to be scaleable
+
+namespace Foam
+{
+    template<>
+    struct scaleable<scalar> : public std::true_type {};
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// Enable conditional instantiation for types with a scalar component type
+
+namespace Foam
+{
+    template<class Type, class Void = void>
+    using enableIfScalarCmptType =
+        std::enable_if_t
+        <
+            std::is_same
+            <
+                scalar,
+                typename pTraits<Type>::cmptType
+            >::value,
+            Void
+        >;
 }
 
 

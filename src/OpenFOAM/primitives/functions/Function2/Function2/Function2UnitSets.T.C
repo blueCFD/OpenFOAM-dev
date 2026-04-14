@@ -23,7 +23,46 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "Function2.T.H"
+#include "Function2UnitSets.T.H"
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::Function2s::unitSets::unitSets(std::initializer_list<unitSet> l)
+:
+    x(dimless),
+    y(dimless),
+    value(dimless)
+{
+    auto i = l.begin();
+    x.reset(*i);
+    y.reset(*(++i));
+    value.reset(*(++i));
+}
+
+
+Foam::Function2s::unitSets::unitSets(Istream& is)
+:
+    x(dimless),
+    y(dimless),
+    value(dimless)
+{
+    is >> *this;
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::Function2s::unitSets::read(Istream& is)
+{
+    is.readBegin("Function2s::unitSets");
+    is.readBegin("Function2s::unitSets");
+    x.read(is);
+    y.read(is);
+    is.readEnd("Function2s::unitSets");
+    value.read(is);
+    is.readEnd("Function2s::unitSets");
+}
+
 
 // * * * * * * * * * * * * * * * Global Functions  * * * * * * * * * * * * * //
 
@@ -40,6 +79,52 @@ void Foam::assertNoConvertUnits
             << "Unit conversions are not supported by "
             << typeName << " function2 types" << abort(FatalError);
     }
+}
+
+
+void Foam::writeEntry(Ostream& os, const Function2s::unitSets& units)
+{
+    os << units;
+}
+
+
+// * * * * * * * * * * * * * *  IOStream operators * * * * * * * * * * * * * //
+
+Foam::Istream& Foam::operator>>
+(
+    Istream& is,
+    Function2s::unitSets& units
+)
+{
+    is.readBegin("Function2s::unitSets");
+    is.readBegin("Function2s::unitSets");
+    is >> units.x >> units.y;
+    is.readEnd("Function2s::unitSets");
+    is >> units.value;
+    is.readEnd("Function2s::unitSets");
+
+    is.check(FUNCTION_NAME);
+
+    return is;
+}
+
+
+Foam::Ostream& Foam::operator<<
+(
+    Ostream& os,
+    const Function2s::unitSets& units
+)
+{
+    os  << token::BEGIN_LIST
+        << token::BEGIN_LIST
+        << units.x << token::SPACE << units.y
+        << token::END_LIST << token::SPACE
+        << units.value
+        << token::END_LIST;
+
+    os.check(FUNCTION_NAME);
+
+    return os;
 }
 
 

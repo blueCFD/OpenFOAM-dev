@@ -26,7 +26,7 @@ License
 #include "primitiveMeshCheck.H"
 #include "pyramidPointFaceRef.H"
 #include "PackedBoolList.H"
-#include "unitSet.H"
+#include "units.H"
 #include "SortableList.T.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

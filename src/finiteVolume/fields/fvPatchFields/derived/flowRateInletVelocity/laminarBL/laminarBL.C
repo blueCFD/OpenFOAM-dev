@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "laminarBL.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

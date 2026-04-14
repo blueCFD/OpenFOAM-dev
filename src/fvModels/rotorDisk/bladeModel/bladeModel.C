@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "bladeModel.H"
-#include "unitSet.H"
+#include "units.H"
 #include "Tuple2.T.H"
 #include "vector.H"
 #include "IFstream.H"

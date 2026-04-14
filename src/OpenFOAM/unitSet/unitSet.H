@@ -39,6 +39,8 @@ SourceFiles
 #define unitSet_H
 
 #include "dimensionSet.H"
+#include "nil.H"
+#include "scaleable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,8 +50,6 @@ namespace Foam
 // Forward declaration of classes
 class Istream;
 class Ostream;
-template<class Type> class List;
-template<class Type> class Field;
 
 // Forward declaration of friend functions and operators
 class unitSet;
@@ -86,7 +86,7 @@ public:
         };
 
         //- Names of the dimensionless units
-        static const NamedEnum<dimlessUnitType, 2> dimlessUnitTypeNames_;
+        static const NamedEnum<dimlessUnitType, 2>& dimlessUnitTypeNames_;
 
 
     // Static Data Members
@@ -131,6 +131,18 @@ public:
         ClassName("unitSet");
 
 
+    // Static Member Functions
+
+        //- Return a new "unitless" unit set
+        inline static unitSet newUnitless();
+
+        //- Return a new "any" unit set
+        inline static unitSet newAny();
+
+        //- Return a new "none" unit set
+        inline static unitSet newNone();
+
+
     // Constructors
 
         //- Construct from components
@@ -165,53 +177,17 @@ public:
         template<class T>
         T toStandard(const T&) const;
 
-        //- Convert a pair of values to standard units
-        template<class T>
-        Pair<T> toStandard(const Pair<T>&) const;
-
-        //- Convert a list of values to standard units
-        template<class T>
-        List<T> toStandard(const List<T>&) const;
-
-        //- Convert a field of values to standard units
-        template<class T>
-        tmp<Field<T>> toStandard(const Field<T>&) const;
-
-        //- Convert a tmp field of values to standard units
-        template<class T>
-        tmp<Field<T>> toStandard(const tmp<Field<T>>&) const;
-
         //- Convert a value to standard units
         template<class T>
         void makeStandard(T&) const;
-
-        //- Convert a pair of values to standard units
-        template<class T>
-        void makeStandard(Pair<T>&) const;
-
-        //- Convert a list of values to standard units
-        template<class T>
-        void makeStandard(List<T>&) const;
 
         //- Convert a value to user units
         template<class T>
         T toUser(const T&) const;
 
-        //- Convert a pair of values to user units
+        //- Convert a value to user units
         template<class T>
-        Pair<T> toUser(const Pair<T>&) const;
-
-        //- Convert a list of values to user units
-        template<class T>
-        List<T> toUser(const List<T>&) const;
-
-        //- Convert a field of values to user units
-        template<class T>
-        tmp<Field<T>> toUser(const Field<T>&) const;
-
-        //- Convert a tmp field of values to user units
-        template<class T>
-        tmp<Field<T>> toUser(const tmp<Field<T>>&) const;
+        void makeUser(T&) const;
 
         //- Return whether this is the "any" unit. I.e., the case where
         //  dimensions and dimensionless units are not checked, and any
@@ -308,15 +284,118 @@ public:
 
         //- Write info to stream
         friend Ostream& operator<<(Ostream&, const InfoProxy<unitSet>&);
+
+
+    // Public Types
+
+        //- Functor to convert to standard
+        struct makeStandardOp
+        {
+            template<class Type>
+            inline void operator()(Type& t, const unitSet& units) const
+            {
+                units.makeStandard(t);
+            }
+        };
+
+        //- Functor to convert to user
+        struct makeUserOp
+        {
+            template<class Type>
+            inline void operator()(Type& t, const unitSet& units) const
+            {
+                units.makeUser(t);
+            }
+        };
 };
 
 
 // Global Functions
 
+//- Convert a primitive type
+template<class Type, class Convert>
+enableIfScalarCmptType<Type> convert
+(
+    Type& t,
+    const unitSet& units,
+    const Convert&
+);
+
+//- Get the units type for a given type. This returns the unit set for
+//  everything except label, for which it returns nil. This can be used to
+//  modify the type of the units passed to dictionary, such that a single
+//  template instantiation can be used for label as well as the field types.
+//  The label specialisation checks the unit set provided to make sure it is
+//  both dimensionless and standard.
+template<class Type>
+struct typeUnitsType { typedef unitSet type; };
+
+template<>
+struct typeUnitsType<label> { typedef nil type; };
+
+template<class Type>
+const typename typeUnitsType<Type>::type& typeUnits
+(
+    const unitSet&
+);
+
+template<class Type>
+typename typeUnitsType<Type>::type typeUnits
+(
+    const dimensionSet&
+);
+
+template<>
+inline const typename typeUnitsType<label>::type& typeUnits<label>
+(
+    const unitSet&
+);
+
+template<>
+inline typename typeUnitsType<label>::type typeUnits<label>
+(
+    const dimensionSet&
+);
+
+//- Read a type which supports unit conversion
+template<class Type>
+Type readAndConvert(Istream&, const unitSet&);
+
+//- Read a type which supports unit conversion
+template<class Type>
+Type readAndConvert(Istream&, const dimensionSet&);
+
+//- Read a type which supports unit conversion
+template<class Type, class Units>
+Type readAndConvert(Istream&, const Units&);
+
+//- Read a type which does not support unit conversion
+template<class Type>
+Type readAndConvert(Istream&, const nil&);
+
+//- Read a type which may or may not support unit conversion
+template<class Type>
+enableIfScaleable<Type, Type> readAndMaybeConvert(Istream&);
+
+//- Read a type which may or may not support unit conversion
+template<class Type>
+enableIfNotScaleable<Type, Type> readAndMaybeConvert(Istream&);
+
+//- Read a unit set
+template<>
+inline unitSet readAndMaybeConvert<unitSet>(Istream&);
+
+//- Read a dimension set
+template<>
+inline dimensionSet readAndMaybeConvert<dimensionSet>(Istream&);
+
 //- Write a type with a given unit conversion
 template<class Type>
-void writeEntry(Ostream& os, const unitSet&, const Type& t);
+void writeEntry(Ostream&, const unitSet&, const Type&);
 
+//- Write a type without unit conversion
+template<class Type>
+void writeEntry(Ostream&, const nil&, const Type&);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

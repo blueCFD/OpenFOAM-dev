@@ -26,7 +26,7 @@ License
 #include "triIntersect.H"
 #include "boundBox.H"
 #include "cubicEqn.H"
-#include "unitSet.H"
+#include "units.H"
 #include "OFstream.H"
 #include "tensor2D.H"
 #include "vtkWritePolyData.H"

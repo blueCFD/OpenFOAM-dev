@@ -42,7 +42,6 @@ SourceFiles
 #include "bool.H"
 #include "fieldTypes.H"
 #include "className.H"
-#include "NamedEnum.T.H"
 #include "InfoProxy.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -149,7 +148,7 @@ public:
         };
 
         //- Names of the dimensions
-        static const NamedEnum<dimensionType, 7> dimensionTypeNames_;
+        static const NamedEnum<dimensionType, 7>& dimensionTypeNames_;
 
 
     // Static Data Members

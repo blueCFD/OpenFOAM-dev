@@ -53,4 +53,31 @@ Foam::laminarFlameSpeed::~laminarFlameSpeed()
 {}
 
 
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+
+Foam::tmp<Foam::volScalarField>
+Foam::laminarFlameSpeed::Su() const
+{
+    if (uThermo_.containsSpecie("egr"))
+    {
+        return Su
+        (
+            uThermo_.p(),
+            uThermo_.T(),
+            uThermo_.Phi(),
+            uThermo_.Y("egr")
+        );
+    }
+    else
+    {
+        return Su
+        (
+            uThermo_.p(),
+            uThermo_.T(),
+            uThermo_.Phi()
+        );
+    }
+}
+
+
 // ************************************************************************* //

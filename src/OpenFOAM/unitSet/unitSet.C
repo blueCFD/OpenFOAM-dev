@@ -23,7 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "unitSet.H"
+#include "units.H"
+#include "NamedEnum.T.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -32,19 +33,20 @@ namespace Foam
     defineTypeNameAndDebug(unitSet, 0);
 }
 
+const Foam::autoPtr<Foam::NamedEnum<Foam::unitSet::dimlessUnitType, 2>>
+    dimlessUnitTypeNamesPtr_
+    (
+        new Foam::NamedEnum<Foam::unitSet::dimlessUnitType, 2>
+        ({
+            "fraction",
+            "angle"
+        })
+    );
 
-const Foam::NamedEnum<Foam::unitSet::dimlessUnitType, 2>
-Foam::unitSet::dimlessUnitTypeNames_
-{
-    "fraction",
-    "angle"
-};
+const Foam::NamedEnum<Foam::unitSet::dimlessUnitType, 2>&
+    Foam::unitSet::dimlessUnitTypeNames_ = dimlessUnitTypeNamesPtr_();
 
-
-namespace Foam
-{
-    const scalar unitSet::smallExponent = rootSmall;
-}
+const Foam::scalar Foam::unitSet::smallExponent = rootSmall;
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

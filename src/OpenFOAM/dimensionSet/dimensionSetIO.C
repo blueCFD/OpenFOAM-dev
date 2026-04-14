@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "dimensionSet.H"
+#include "NamedEnum.T.H"
 #include "symbols.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

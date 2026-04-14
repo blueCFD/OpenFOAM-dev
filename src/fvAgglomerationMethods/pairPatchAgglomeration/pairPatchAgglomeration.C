@@ -25,7 +25,7 @@ License
 
 #include "pairPatchAgglomeration.H"
 #include "meshTools.H"
-#include "unitSet.H"
+#include "units.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

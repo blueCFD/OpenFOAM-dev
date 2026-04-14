@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "refinementParameters.H"
-#include "unitSet.H"
+#include "units.H"
 #include "polyMesh.H"
 #include "globalIndex.H"
 #include "meshSearch.H"

@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "crankConnectingRodMotion.H"
-#include "unitSet.H"
+#include "units.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

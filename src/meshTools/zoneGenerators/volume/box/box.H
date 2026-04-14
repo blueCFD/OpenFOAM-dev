@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -119,7 +119,7 @@ Usage
 
 See also
     zoneGenerators::volume
-    treeBoundBoxList
+    boundBox
 
 SourceFiles
     box.C
@@ -130,7 +130,6 @@ SourceFiles
 #define box_zoneGenerator_H
 
 #include "volume.H"
-#include "treeBoundBoxList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -150,7 +149,7 @@ class box
     // Private Data
 
         //- Bounding boxes
-        treeBoundBoxList boxes_;
+        List<boundBox> boxes_;
 
 
     // Private Member Functions
