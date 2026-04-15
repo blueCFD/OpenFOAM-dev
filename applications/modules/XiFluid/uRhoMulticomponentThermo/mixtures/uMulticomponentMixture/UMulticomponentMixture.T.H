@@ -25,7 +25,7 @@ Class
     Foam::UMulticomponentMixture
 
 Description
-    Templated unburnt gas multicomponent mixture
+    Templated unburnt gas multicomponent mixture for a single fuel specie
 
 See also
     Foam::uMulticomponentMixture

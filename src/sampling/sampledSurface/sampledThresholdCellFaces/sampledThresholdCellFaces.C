@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -184,122 +184,68 @@ bool Foam::sampledSurfaces::thresholdCellFaces::needsUpdate() const
 }
 
 
-bool Foam::sampledSurfaces::thresholdCellFaces::expire()
-{
-    // already marked as expired
-    if (prevTimeIndex_ == -1)
-    {
-        return false;
-    }
-
-    // force update
-    prevTimeIndex_ = -1;
-    return true;
-}
-
-
 bool Foam::sampledSurfaces::thresholdCellFaces::update()
 {
     return updateGeometry();
 }
 
 
-Foam::tmp<Foam::scalarField>
-Foam::sampledSurfaces::thresholdCellFaces::sample
-(
-    const volScalarField& vField
-) const
+#define IMPLEMENT_SAMPLE(Type, nullArg)                                        \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::thresholdCellFaces::sample                          \
+    (                                                                          \
+        const VolField<Type>& vField                                           \
+    ) const                                                                    \
+    {                                                                          \
+        return sampleField(vField);                                            \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_SAMPLE);
+#undef IMPLEMENT_SAMPLE
+
+
+#define IMPLEMENT_INTERPOLATE(Type, nullArg)                                   \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::thresholdCellFaces::interpolate                     \
+    (                                                                          \
+        const interpolation<Type>& interpolator                                \
+    ) const                                                                    \
+    {                                                                          \
+        return interpolateField(interpolator);                                 \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_INTERPOLATE);
+#undef IMPLEMENT_INTERPOLATE
+
+
+void Foam::sampledSurfaces::thresholdCellFaces::movePoints()
 {
-    return sampleField(vField);
+    prevTimeIndex_ = -1;
 }
 
 
-Foam::tmp<Foam::vectorField>
-Foam::sampledSurfaces::thresholdCellFaces::sample
+void Foam::sampledSurfaces::thresholdCellFaces::topoChange
 (
-    const volVectorField& vField
-) const
+    const polyTopoChangeMap&
+)
 {
-    return sampleField(vField);
+    prevTimeIndex_ = -1;
 }
 
 
-Foam::tmp<Foam::sphericalTensorField>
-Foam::sampledSurfaces::thresholdCellFaces::sample
+void Foam::sampledSurfaces::thresholdCellFaces::mapMesh
 (
-    const volSphericalTensorField& vField
-) const
+    const polyMeshMap& map
+)
 {
-    return sampleField(vField);
+    prevTimeIndex_ = -1;
 }
 
 
-Foam::tmp<Foam::symmTensorField>
-Foam::sampledSurfaces::thresholdCellFaces::sample
+void Foam::sampledSurfaces::thresholdCellFaces::distribute
 (
-    const volSymmTensorField& vField
-) const
+    const polyDistributionMap& map
+)
 {
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::tensorField>
-Foam::sampledSurfaces::thresholdCellFaces::sample
-(
-    const volTensorField& vField
-) const
-{
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::scalarField>
-Foam::sampledSurfaces::thresholdCellFaces::interpolate
-(
-    const interpolation<scalar>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::vectorField>
-Foam::sampledSurfaces::thresholdCellFaces::interpolate
-(
-    const interpolation<vector>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-Foam::tmp<Foam::sphericalTensorField>
-Foam::sampledSurfaces::thresholdCellFaces::interpolate
-(
-    const interpolation<sphericalTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::symmTensorField>
-Foam::sampledSurfaces::thresholdCellFaces::interpolate
-(
-    const interpolation<symmTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::tensorField>
-Foam::sampledSurfaces::thresholdCellFaces::interpolate
-(
-    const interpolation<tensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
+    prevTimeIndex_ = -1;
 }
 
 

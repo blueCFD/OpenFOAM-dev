@@ -80,103 +80,30 @@ Foam::sampledSurfaces::patchInternalField::~patchInternalField()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::scalarField>
-Foam::sampledSurfaces::patchInternalField::sample
-(
-    const volScalarField& vField
-) const
-{
-    return sampleField(vField);
-}
+#define IMPLEMENT_SAMPLE(Type, nullArg)                                        \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::patchInternalField::sample                          \
+    (                                                                          \
+        const VolField<Type>& vField                                           \
+    ) const                                                                    \
+    {                                                                          \
+        return sampleField(vField);                                            \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_SAMPLE);
+#undef IMPLEMENT_SAMPLE
 
 
-Foam::tmp<Foam::vectorField>
-Foam::sampledSurfaces::patchInternalField::sample
-(
-    const volVectorField& vField
-) const
-{
-    return sampleField(vField);
-}
-
-Foam::tmp<Foam::sphericalTensorField>
-Foam::sampledSurfaces::patchInternalField::sample
-(
-    const volSphericalTensorField& vField
-) const
-{
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::symmTensorField>
-Foam::sampledSurfaces::patchInternalField::sample
-(
-    const volSymmTensorField& vField
-) const
-{
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::tensorField>
-Foam::sampledSurfaces::patchInternalField::sample
-(
-    const volTensorField& vField
-) const
-{
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::scalarField>
-Foam::sampledSurfaces::patchInternalField::interpolate
-(
-    const interpolation<scalar>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::vectorField>
-Foam::sampledSurfaces::patchInternalField::interpolate
-(
-    const interpolation<vector>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::sphericalTensorField>
-Foam::sampledSurfaces::patchInternalField::interpolate
-(
-    const interpolation<sphericalTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::symmTensorField>
-Foam::sampledSurfaces::patchInternalField::interpolate
-(
-    const interpolation<symmTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::tensorField>
-Foam::sampledSurfaces::patchInternalField::interpolate
-(
-    const interpolation<tensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
+#define IMPLEMENT_INTERPOLATE(Type, nullArg)                                   \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::patchInternalField::interpolate                     \
+    (                                                                          \
+        const interpolation<Type>& interpolator                                \
+    ) const                                                                    \
+    {                                                                          \
+        return interpolateField(interpolator);                                 \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_INTERPOLATE);
+#undef IMPLEMENT_INTERPOLATE
 
 
 void Foam::sampledSurfaces::patchInternalField::print(Ostream& os) const

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,7 @@ Foam::cutPolyIsoSurface::cutPolyIsoSurface
     const polyMesh& mesh,
     const scalarField& pAlphas,
     const scalar isoAlpha,
-    const word& cellZoneName
+    const labelUList& cells
 )
 :
     points_(),
@@ -90,12 +90,11 @@ Foam::cutPolyIsoSurface::cutPolyIsoSurface
         nCutCells += !cellCuts[celli].empty();
     };
 
-    if (cellZoneName != word::null)
+    if (notNull(cells))
     {
-        const labelList& zoneCells = mesh.cellZones()[cellZoneName];
-        forAll(zoneCells, zoneCelli)
+        forAll(cells, i)
         {
-            cutCell(zoneCells[zoneCelli]);
+            cutCell(cells[i]);
         }
     }
     else

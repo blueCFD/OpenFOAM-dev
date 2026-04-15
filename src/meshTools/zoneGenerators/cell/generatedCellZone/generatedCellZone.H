@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -103,7 +103,12 @@ public:
         generatedCellZone(const polyMesh& mesh);
 
         //- Construct from mesh and dictionary
-        generatedCellZone(const polyMesh& mesh, const dictionary& dict);
+        generatedCellZone
+        (
+            const polyMesh& mesh,
+            const dictionary& dict,
+            const bool defaultIsAll = false
+        );
 
         //- Disallow default bitwise copy construction
         generatedCellZone(const generatedCellZone&) = delete;
@@ -151,7 +156,11 @@ public:
         // IO
 
             //- Read coefficients dictionary
-            bool read(const dictionary& dict);
+            bool read
+            (
+                const dictionary& dict,
+                const bool defaultIsAll = false
+            );
 
 
     // Member Operators

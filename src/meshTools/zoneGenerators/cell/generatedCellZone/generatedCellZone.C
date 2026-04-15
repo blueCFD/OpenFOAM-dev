@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,13 +39,14 @@ Foam::generatedCellZone::generatedCellZone(const polyMesh& mesh)
 Foam::generatedCellZone::generatedCellZone
 (
     const polyMesh& mesh,
-    const dictionary& dict
+    const dictionary& dict,
+    const bool defaultIsAll
 )
 :
     mesh_(mesh),
     all_(true)
 {
-    read(dict);
+    read(dict, defaultIsAll);
 }
 
 
@@ -93,7 +94,11 @@ void Foam::generatedCellZone::distribute(const polyDistributionMap& map)
 }
 
 
-bool Foam::generatedCellZone::read(const dictionary& dict)
+bool Foam::generatedCellZone::read
+(
+    const dictionary& dict,
+    const bool defaultIsAll
+)
 {
     if (dict.found("cellZone"))
     {
@@ -150,6 +155,10 @@ bool Foam::generatedCellZone::read(const dictionary& dict)
         {
             all_ = true;
         }
+    }
+    else if (defaultIsAll)
+    {
+        all_ = true;
     }
     else
     {

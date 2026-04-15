@@ -246,26 +246,6 @@ bool Foam::sampledSurfaces::triSurface::needsUpdate() const
 }
 
 
-bool Foam::sampledSurfaces::triSurface::expire()
-{
-    // already marked as expired
-    if (needsUpdate_)
-    {
-        return false;
-    }
-
-    sampledSurface::clearGeom();
-    MeshedSurface<face>::clear();
-
-    boundaryTreePtr_.clear();
-    sampleElements_.clear();
-    samplePoints_.clear();
-
-    needsUpdate_ = true;
-    return true;
-}
-
-
 bool Foam::sampledSurfaces::triSurface::update()
 {
     if (!needsUpdate_)
@@ -651,101 +631,60 @@ bool Foam::sampledSurfaces::triSurface::update()
 }
 
 
-Foam::tmp<Foam::scalarField>
-Foam::sampledSurfaces::triSurface::sample
-(
-    const volScalarField& vField
-) const
+#define IMPLEMENT_SAMPLE(Type, nullArg)                                        \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::triSurface::sample                                  \
+    (                                                                          \
+        const VolField<Type>& vField                                           \
+    ) const                                                                    \
+    {                                                                          \
+        return sampleField(vField);                                            \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_SAMPLE);
+#undef IMPLEMENT_SAMPLE
+
+
+#define IMPLEMENT_INTERPOLATE(Type, nullArg)                                   \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::triSurface::interpolate                             \
+    (                                                                          \
+        const interpolation<Type>& interpolator                                \
+    ) const                                                                    \
+    {                                                                          \
+        return interpolateField(interpolator);                                 \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_INTERPOLATE);
+#undef IMPLEMENT_INTERPOLATE
+
+
+void Foam::sampledSurfaces::triSurface::movePoints()
 {
-    return sampleField(vField);
+    sampledSurface::clearGeom();
+    MeshedSurface<face>::clear();
+
+    boundaryTreePtr_.clear();
+    sampleElements_.clear();
+    samplePoints_.clear();
+
+    needsUpdate_ = true;
 }
 
 
-Foam::tmp<Foam::vectorField>
-Foam::sampledSurfaces::triSurface::sample
-(
-    const volVectorField& vField
-) const
+void Foam::sampledSurfaces::triSurface::topoChange(const polyTopoChangeMap&)
 {
-    return sampleField(vField);
-}
-
-Foam::tmp<Foam::sphericalTensorField>
-Foam::sampledSurfaces::triSurface::sample
-(
-    const volSphericalTensorField& vField
-) const
-{
-    return sampleField(vField);
+    movePoints();
 }
 
 
-Foam::tmp<Foam::symmTensorField>
-Foam::sampledSurfaces::triSurface::sample
-(
-    const volSymmTensorField& vField
-) const
+void Foam::sampledSurfaces::triSurface::mapMesh(const polyMeshMap&)
 {
-    return sampleField(vField);
+    movePoints();
 }
 
 
-Foam::tmp<Foam::tensorField>
-Foam::sampledSurfaces::triSurface::sample
-(
-    const volTensorField& vField
-) const
+void Foam::sampledSurfaces::triSurface::distribute(const polyDistributionMap&)
 {
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::scalarField>
-Foam::sampledSurfaces::triSurface::interpolate
-(
-    const interpolation<scalar>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::vectorField>
-Foam::sampledSurfaces::triSurface::interpolate
-(
-    const interpolation<vector>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-Foam::tmp<Foam::sphericalTensorField>
-Foam::sampledSurfaces::triSurface::interpolate
-(
-    const interpolation<sphericalTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::symmTensorField>
-Foam::sampledSurfaces::triSurface::interpolate
-(
-    const interpolation<symmTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::tensorField>
-Foam::sampledSurfaces::triSurface::interpolate
-(
-    const interpolation<tensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
+    movePoints();
 }
 
 

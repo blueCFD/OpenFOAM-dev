@@ -183,6 +183,16 @@ public:
             }
 
 
+        // Mapping functions
+
+            //- Map the given fvPatchField onto this fvPatchField
+            virtual void map(const fvPatchField<vector>&, const fieldMapper&);
+
+            //- Reset the fvPatchField to the given fvPatchField
+            //  Used for mesh to mesh mapping
+            virtual void reset(const fvPatchField<vector>&);
+
+
         //- Update the coefficients associated with the patch field
         virtual void updateCoeffs();
 

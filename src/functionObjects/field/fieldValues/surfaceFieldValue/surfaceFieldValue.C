@@ -502,7 +502,7 @@ void Foam::functionObjects::fieldValues::surfaceFieldValue::moveMesh()
         case selectionTypes::patches:
             break;
         case selectionTypes::sampledSurface:
-            surfacePtr_->expire();
+            surfacePtr_->movePoints();
             setSampledSurfaceFaces();
             break;
     }

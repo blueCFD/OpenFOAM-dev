@@ -122,6 +122,27 @@ pressureInletOutletVelocityFvPatchVectorField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void Foam::pressureInletOutletVelocityFvPatchVectorField::map
+(
+    const fvPatchField<vector>& ptf,
+    const fieldMapper& mapper
+)
+{
+    tangentialVelocity_.map(!mapper.direct());
+    directionMixedFvPatchVectorField::map(ptf, mapper);
+}
+
+
+void Foam::pressureInletOutletVelocityFvPatchVectorField::reset
+(
+    const fvPatchField<vector>& ptf
+)
+{
+    tangentialVelocity_.reset();
+    directionMixedFvPatchVectorField::reset(ptf);
+}
+
+
 void Foam::pressureInletOutletVelocityFvPatchVectorField::updateCoeffs()
 {
     if (updated())

@@ -242,8 +242,6 @@ public:
 
     // Member Functions
 
-      // Access
-
         //- Access to the underlying mesh
         const polyMesh& mesh() const
         {
@@ -270,11 +268,6 @@ public:
         {
             return wordList::null();
         }
-
-        //- Mark the surface as needing an update.
-        //  May also free up unneeded data.
-        //  Return false if surface was already marked as expired.
-        virtual bool expire() = 0;
 
         //- Update the surface as required.
         //  Do nothing (and return false) if no update was required
@@ -310,10 +303,6 @@ public:
         template<class Type>
         Type average(const Field<Type>&) const;
 
-        //- Area-averaged value of a field across the surface
-        template<class Type>
-        Type average(const tmp<Field<Type>>&) const;
-
         //- Project field onto surface
         tmp<Field<scalar>> project(const Field<scalar>&) const;
 
@@ -329,114 +318,65 @@ public:
         //- Project field onto surface
         tmp<Field<vector>> project(const Field<tensor>&) const;
 
-        //- Sample field on surface
-        virtual tmp<scalarField> sample
-        (
-            const volScalarField&
-        ) const = 0;
+        //- Area-averaged value of a field across the surface
+        template<class Type>
+        Type average(const tmp<Field<Type>>&) const;
 
-        //- Sample field on surface
-        virtual tmp<vectorField> sample
-        (
-            const volVectorField&
-        ) const = 0;
+        //- Sample field on the surface's faces
+        #define DEFINE_SAMPLE(Type, nullArg)                                   \
+            virtual tmp<Field<Type>> sample                                    \
+            (                                                                  \
+                const VolField<Type>&                                          \
+            ) const = 0;                                                       \
+                                                                               \
+            virtual tmp<Field<Type>> sample                                    \
+            (                                                                  \
+                const SurfaceField<Type>&                                      \
+            ) const;
+        FOR_ALL_FIELD_TYPES(DEFINE_SAMPLE);
+        #undef DEFINE_SAMPLE
 
-        //- Sample field on surface
-        virtual tmp<sphericalTensorField> sample
-        (
-            const volSphericalTensorField&
-        ) const = 0;
-
-        //- Sample field on surface
-        virtual tmp<symmTensorField> sample
-        (
-            const volSymmTensorField&
-        ) const = 0;
-
-        //- Sample field on surface
-        virtual tmp<tensorField> sample
-        (
-            const volTensorField&
-        ) const = 0;
-
-        //- Surface sample field on surface
-        virtual tmp<scalarField> sample
-        (
-            const surfaceScalarField&
-        ) const;
-
-        //- Surface Sample field on surface
-        virtual tmp<vectorField> sample
-        (
-            const surfaceVectorField&
-        ) const;
-
-        //- Surface sample field on surface
-        virtual tmp<sphericalTensorField> sample
-        (
-            const surfaceSphericalTensorField&
-        ) const;
-
-        //- Surface sample field on surface
-        virtual tmp<symmTensorField> sample
-        (
-            const surfaceSymmTensorField&
-        ) const;
-
-        //- Surface sample field on surface
-        virtual tmp<tensorField> sample
-        (
-            const surfaceTensorField&
-        ) const;
-
-        //- Interpolate field on surface
-        virtual tmp<scalarField> interpolate
-        (
-            const interpolation<scalar>&
-        ) const = 0;
+        //- Interpolate field to the surface's points
+        #define DEFINE_INTERPOLATE(Type, nullArg)                              \
+            virtual tmp<Field<Type>> interpolate                               \
+            (                                                                  \
+                const interpolation<Type>&                                     \
+            ) const = 0;
+        FOR_ALL_FIELD_TYPES(DEFINE_INTERPOLATE);
+        #undef DEFINE_INTERPOLATE
 
 
-        //- Interpolate field on surface
-        virtual tmp<vectorField> interpolate
-        (
-            const interpolation<vector>&
-        ) const = 0;
+        // Mesh Change
 
-        //- Interpolate field on surface
-        virtual tmp<sphericalTensorField> interpolate
-        (
-            const interpolation<sphericalTensor>&
-        ) const = 0;
+            //- Update for mesh point-motion
+            virtual void movePoints() = 0;
 
-        //- Interpolate field on surface
-        virtual tmp<symmTensorField> interpolate
-        (
-            const interpolation<symmTensor>&
-        ) const = 0;
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap&) = 0;
 
-        //- Interpolate field on surface
-        virtual tmp<tensorField> interpolate
-        (
-            const interpolation<tensor>&
-        ) const = 0;
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&) = 0;
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap&) = 0;
 
 
-      // Edit
+        // Edit
 
-        //- Rename
-        virtual void rename(const word& newName)
-        {
-            name_ = newName;
-        }
+            //- Rename
+            virtual void rename(const word& newName)
+            {
+                name_ = newName;
+            }
 
 
-      // Write
+        // Write
 
-        //- Write
-        virtual void print(Ostream&) const;
+            //- Write
+            virtual void print(Ostream&) const;
 
-        //- Ostream operator
-        friend Ostream& operator<<(Ostream&, const sampledSurface&);
+            //- Ostream operator
+            friend Ostream& operator<<(Ostream&, const sampledSurface&);
 };
 
 

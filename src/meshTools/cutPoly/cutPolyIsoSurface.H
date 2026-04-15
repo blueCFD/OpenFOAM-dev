@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ public:
             const polyMesh& mesh,
             const scalarField& pAlphas,
             const scalar isoAlpha,
-            const word& cellZoneName = word::null
+            const labelUList& cells = NullObjectRef<labelUList>()
         );
 
         //- Construct by combining a list of iso-surfaces

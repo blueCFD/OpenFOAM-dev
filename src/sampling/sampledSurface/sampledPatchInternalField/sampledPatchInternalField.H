@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -100,71 +100,23 @@ public:
 
     // Member Functions
 
-        // Sample
-
-            //- Sample field on surface
-            virtual tmp<scalarField> sample
-            (
-                const volScalarField&
+        //- Sample field on the surface's faces
+        #define DEFINE_SAMPLE(Type, nullArg)                                   \
+            virtual tmp<Field<Type>> sample                                    \
+            (                                                                  \
+                const VolField<Type>&                                          \
             ) const;
+        FOR_ALL_FIELD_TYPES(DEFINE_SAMPLE);
+        #undef DEFINE_SAMPLE
 
-            //- Sample field on surface
-            virtual tmp<vectorField> sample
-            (
-                const volVectorField&
+        //- Interpolate field to the surface's points
+        #define DEFINE_INTERPOLATE(Type, nullArg)                              \
+            virtual tmp<Field<Type>> interpolate                               \
+            (                                                                  \
+                const interpolation<Type>&                                     \
             ) const;
-
-            //- Sample field on surface
-            virtual tmp<sphericalTensorField> sample
-            (
-                const volSphericalTensorField&
-            ) const;
-
-            //- Sample field on surface
-            virtual tmp<symmTensorField> sample
-            (
-                const volSymmTensorField&
-            ) const;
-
-            //- Sample field on surface
-            virtual tmp<tensorField> sample
-            (
-                const volTensorField&
-            ) const;
-
-
-        // Interpolate
-
-            //- Interpolate field on surface
-            virtual tmp<scalarField> interpolate
-            (
-                const interpolation<scalar>&
-            ) const;
-
-            //- Interpolate field on surface
-            virtual tmp<vectorField> interpolate
-            (
-                const interpolation<vector>&
-            ) const;
-
-            //- Interpolate field on surface
-            virtual tmp<sphericalTensorField> interpolate
-            (
-                const interpolation<sphericalTensor>&
-            ) const;
-
-            //- Interpolate field on surface
-            virtual tmp<symmTensorField> interpolate
-            (
-                const interpolation<symmTensor>&
-            ) const;
-
-            //- Interpolate field on surface
-            virtual tmp<tensorField> interpolate
-            (
-                const interpolation<tensor>&
-            ) const;
-
+        FOR_ALL_FIELD_TYPES(DEFINE_INTERPOLATE);
+        #undef DEFINE_INTERPOLATE
 
         //- Write
         virtual void print(Ostream&) const;

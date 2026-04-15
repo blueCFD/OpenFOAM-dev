@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,8 +91,6 @@ class thresholdCellFaces
         //- Triangulated faces or keep faces as is
         bool triangulate_;
 
-        // Recreated for every time-step
-
         //- Time at last call, also track it surface needs an update
         mutable label prevTimeIndex_;
 
@@ -148,11 +146,6 @@ public:
         //- Does the surface need an update?
         virtual bool needsUpdate() const;
 
-        //- Mark the surface as needing an update.
-        //  May also free up unneeded data.
-        //  Return false if surface was already marked as expired.
-        virtual bool expire();
-
         //- Update the surface as required.
         //  Do nothing (and return false) if no update was needed
         virtual bool update();
@@ -169,56 +162,35 @@ public:
             return MeshedSurface<face>::faces();
         }
 
-        //- Sample field on surface
-        virtual tmp<scalarField> sample(const volScalarField&) const;
+        //- Sample field on the surface's faces
+        #define DEFINE_SAMPLE(Type, nullArg)                                   \
+            virtual tmp<Field<Type>> sample                                    \
+            (                                                                  \
+                const VolField<Type>&                                          \
+            ) const;
+        FOR_ALL_FIELD_TYPES(DEFINE_SAMPLE);
+        #undef DEFINE_SAMPLE
 
-        //- Sample field on surface
-        virtual tmp<vectorField> sample( const volVectorField&) const;
+        //- Interpolate field to the surface's points
+        #define DEFINE_INTERPOLATE(Type, nullArg)                              \
+            virtual tmp<Field<Type>> interpolate                               \
+            (                                                                  \
+                const interpolation<Type>&                                     \
+            ) const;
+        FOR_ALL_FIELD_TYPES(DEFINE_INTERPOLATE);
+        #undef DEFINE_INTERPOLATE
 
-        //- Sample field on surface
-        virtual tmp<sphericalTensorField> sample
-        (
-            const volSphericalTensorField&
-        ) const;
+        //- Update for mesh point-motion
+        virtual void movePoints();
 
-        //- Sample field on surface
-        virtual tmp<symmTensorField> sample(const volSymmTensorField&) const;
+        //- Update topology using the given map
+        virtual void topoChange(const polyTopoChangeMap&);
 
-        //- Sample field on surface
-        virtual tmp<tensorField> sample
-        (
-            const volTensorField&
-        ) const;
+        //- Update from another mesh using the given map
+        virtual void mapMesh(const polyMeshMap&);
 
-        //- Interpolate field on surface
-        virtual tmp<scalarField> interpolate
-        (
-            const interpolation<scalar>&
-        ) const;
-
-        //- Interpolate field on surface
-        virtual tmp<vectorField> interpolate
-        (
-            const interpolation<vector>&
-        ) const;
-
-        //- Interpolate field on surface
-        virtual tmp<sphericalTensorField> interpolate
-        (
-            const interpolation<sphericalTensor>&
-        ) const;
-
-        //- Interpolate field on surface
-        virtual tmp<symmTensorField> interpolate
-        (
-            const interpolation<symmTensor>&
-        ) const;
-
-        //- Interpolate field on surface
-        virtual tmp<tensorField> interpolate
-        (
-            const interpolation<tensor>&
-        ) const;
+        //- Redistribute or update using the given distribution map
+        virtual void distribute(const polyDistributionMap&);
 
         //- Write
         virtual void print(Ostream&) const;

@@ -95,27 +95,6 @@ bool Foam::sampledSurfaces::patch::needsUpdate() const
 }
 
 
-bool Foam::sampledSurfaces::patch::expire()
-{
-    // already marked as expired
-    if (needsUpdate_)
-    {
-        return false;
-    }
-
-    sampledSurface::clearGeom();
-    MeshedSurface<face>::clear();
-
-    patchIndices_.clear();
-    patchIndex_.clear();
-    patchFaceLabels_.clear();
-    patchStart_.clear();
-
-    needsUpdate_ = true;
-    return true;
-}
-
-
 bool Foam::sampledSurfaces::patch::update()
 {
     if (!needsUpdate_)
@@ -227,138 +206,70 @@ void Foam::sampledSurfaces::patch::remapFaces(const labelUList& faceMap)
 }
 
 
-Foam::tmp<Foam::scalarField> Foam::sampledSurfaces::patch::sample
-(
-    const volScalarField& vField
-) const
+#define IMPLEMENT_SAMPLE(Type, nullArg)                                        \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::patch::sample                                       \
+    (                                                                          \
+        const VolField<Type>& vField                                           \
+    ) const                                                                    \
+    {                                                                          \
+        return sampleField(vField);                                            \
+    }                                                                          \
+                                                                               \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::patch::sample                                       \
+    (                                                                          \
+        const SurfaceField<Type>& vField                                       \
+    ) const                                                                    \
+    {                                                                          \
+        return sampleField(vField);                                            \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_SAMPLE);
+#undef IMPLEMENT_SAMPLE
+
+
+#define IMPLEMENT_INTERPOLATE(Type, nullArg)                                   \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurfaces::patch::interpolate                                  \
+    (                                                                          \
+        const interpolation<Type>& interpolator                                \
+    ) const                                                                    \
+    {                                                                          \
+        return interpolateField(interpolator);                                 \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_INTERPOLATE);
+#undef IMPLEMENT_INTERPOLATE
+
+
+void Foam::sampledSurfaces::patch::movePoints()
 {
-    return sampleField(vField);
+    sampledSurface::clearGeom();
+    MeshedSurface<face>::clear();
+
+    patchIndices_.clear();
+    patchIndex_.clear();
+    patchFaceLabels_.clear();
+    patchStart_.clear();
+
+    needsUpdate_ = true;
 }
 
 
-Foam::tmp<Foam::vectorField> Foam::sampledSurfaces::patch::sample
-(
-    const volVectorField& vField
-) const
+void Foam::sampledSurfaces::patch::topoChange(const polyTopoChangeMap&)
 {
-    return sampleField(vField);
+    movePoints();
 }
 
 
-Foam::tmp<Foam::sphericalTensorField> Foam::sampledSurfaces::patch::sample
-(
-    const volSphericalTensorField& vField
-) const
+void Foam::sampledSurfaces::patch::mapMesh(const polyMeshMap&)
 {
-    return sampleField(vField);
+    movePoints();
 }
 
 
-Foam::tmp<Foam::symmTensorField> Foam::sampledSurfaces::patch::sample
-(
-    const volSymmTensorField& vField
-) const
+void Foam::sampledSurfaces::patch::distribute(const polyDistributionMap&)
 {
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::tensorField> Foam::sampledSurfaces::patch::sample
-(
-    const volTensorField& vField
-) const
-{
-    return sampleField(vField);
-}
-
-
-Foam::tmp<Foam::scalarField> Foam::sampledSurfaces::patch::sample
-(
-    const surfaceScalarField& sField
-) const
-{
-    return sampleField(sField);
-}
-
-
-Foam::tmp<Foam::vectorField> Foam::sampledSurfaces::patch::sample
-(
-    const surfaceVectorField& sField
-) const
-{
-    return sampleField(sField);
-}
-
-
-Foam::tmp<Foam::sphericalTensorField> Foam::sampledSurfaces::patch::sample
-(
-    const surfaceSphericalTensorField& sField
-) const
-{
-    return sampleField(sField);
-}
-
-
-Foam::tmp<Foam::symmTensorField> Foam::sampledSurfaces::patch::sample
-(
-    const surfaceSymmTensorField& sField
-) const
-{
-    return sampleField(sField);
-}
-
-
-Foam::tmp<Foam::tensorField> Foam::sampledSurfaces::patch::sample
-(
-    const surfaceTensorField& sField
-) const
-{
-    return sampleField(sField);
-}
-
-
-Foam::tmp<Foam::scalarField> Foam::sampledSurfaces::patch::interpolate
-(
-    const interpolation<scalar>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::vectorField> Foam::sampledSurfaces::patch::interpolate
-(
-    const interpolation<vector>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::sphericalTensorField> Foam::sampledSurfaces::patch::interpolate
-(
-    const interpolation<sphericalTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::symmTensorField> Foam::sampledSurfaces::patch::interpolate
-(
-    const interpolation<symmTensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
-}
-
-
-Foam::tmp<Foam::tensorField> Foam::sampledSurfaces::patch::interpolate
-(
-    const interpolation<tensor>& interpolator
-) const
-{
-    return interpolateField(interpolator);
+    movePoints();
 }
 
 

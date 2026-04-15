@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -166,11 +166,6 @@ class sampledSurfaces
         //- Does any of the surfaces need an update?
         bool needsUpdate() const;
 
-        //- Mark the surfaces as needing an update.
-        //  May also free up unneeded data.
-        //  Return false if all surfaces were already marked as expired.
-        bool expire();
-
         //- Update the surfaces as required and merge surface points (parallel).
         //  Return false if no surfaces required an update.
         bool update();
@@ -233,10 +228,10 @@ public:
         //- Sample and write
         virtual bool write();
 
-        //- Update for mesh point-motion - expires the surfaces
+        //- Update for mesh point-motion
         virtual void movePoints(const polyMesh&);
 
-        //- Update topology using the given map - expires the surfaces
+        //- Update topology using the given map
         virtual void topoChange(const polyTopoChangeMap&);
 
         //- Update from another mesh using the given map

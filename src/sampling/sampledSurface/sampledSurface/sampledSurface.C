@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -237,54 +237,18 @@ Foam::scalar Foam::sampledSurface::area() const
 }
 
 
-Foam::tmp<Foam::scalarField> Foam::sampledSurface::sample
-(
-    const surfaceScalarField& sField
-) const
-{
-    NotImplemented;
-    return tmp<scalarField>(nullptr);
-}
-
-
-Foam::tmp<Foam::vectorField> Foam::sampledSurface::sample
-(
-    const surfaceVectorField& sField
-) const
-{
-    NotImplemented;
-    return tmp<vectorField>(nullptr);
-}
-
-
-Foam::tmp<Foam::sphericalTensorField> Foam::sampledSurface::sample
-(
-    const surfaceSphericalTensorField& sField
-) const
-{
-    NotImplemented;
-    return tmp<sphericalTensorField>(nullptr);
-}
-
-
-Foam::tmp<Foam::symmTensorField> Foam::sampledSurface::sample
-(
-    const surfaceSymmTensorField& sField
-) const
-{
-    NotImplemented;
-    return tmp<symmTensorField>(nullptr);
-}
-
-
-Foam::tmp<Foam::tensorField> Foam::sampledSurface::sample
-(
-    const surfaceTensorField& sField
-) const
-{
-    NotImplemented;
-    return tmp<tensorField>(nullptr);
-}
+#define IMPLEMENT_SAMPLE(Type, nullArg)                                        \
+    Foam::tmp<Foam::Field<Foam::Type>>                                         \
+    Foam::sampledSurface::sample                                               \
+    (                                                                          \
+        const SurfaceField<Type>& vField                                       \
+    ) const                                                                    \
+    {                                                                          \
+        NotImplemented;                                                        \
+        return tmp<Field<Type>>(nullptr);                                      \
+    }
+FOR_ALL_FIELD_TYPES(IMPLEMENT_SAMPLE);
+#undef IMPLEMENT_SAMPLE
 
 
 Foam::tmp<Foam::Field<Foam::scalar>>

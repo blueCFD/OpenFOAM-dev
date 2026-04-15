@@ -809,7 +809,8 @@ void Foam::polyMesh::resetPrimitives
         }
     }
 
-    meshObjects::reset<polyMesh>(*this);
+    // Mapping handled by specific mapping function
+    // meshObjects::reset<polyMesh>(*this);
 }
 
 

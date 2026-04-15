@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,6 +36,7 @@ SourceFiles
 #define sampledIsoSurfaceSurface_H
 
 #include "sampledSurface.H"
+#include "generatedCellZone.H"
 #include "cutPolyIsoSurface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -57,10 +58,10 @@ private:
 
     // Private Data
 
-        //- Optional name of the cellZone
-        const word zoneName_;
+        //- Optional cellZone in which to compute the iso-surface
+        mutable generatedCellZone zone_;
 
-        //- Constructed iso surface
+        //- Constructed iso-surface
         mutable autoPtr<cutPolyIsoSurface> isoSurfPtr_;
 
         //- Time index at last surface generation
@@ -69,7 +70,7 @@ private:
 
     // Private Member Functions
 
-        //- Generate the iso surface
+        //- Generate the iso-surface
         virtual autoPtr<cutPolyIsoSurface> calcIsoSurf() const = 0;
 
         //- Sample field on the surface's faces
@@ -88,11 +89,12 @@ protected:
 
     // Protected Member Functions
 
-        //- Access the zoneName
-        inline const word& zoneName() const
-        {
-            return zoneName_;
-        }
+        //- Generate the iso-surface for given point and iso-values
+        autoPtr<cutPolyIsoSurface> calcIsoSurf
+        (
+            const scalarField& pointValues,
+            const scalar isoValue
+        ) const;
 
         //- Access the time index
         inline const label& timeIndex() const
@@ -123,11 +125,6 @@ public:
 
 
     // Member Functions
-
-        //- Mark the surface as needing an update.
-        //  May also free up unneeded data.
-        //  Return false if surface was already marked as expired.
-        virtual bool expire();
 
         //- Update the surface as required.
         //  Do nothing (and return false) if no update was needed
@@ -166,6 +163,21 @@ public:
             ) const;
         FOR_ALL_FIELD_TYPES(DEFINE_INTERPOLATE);
         #undef DEFINE_INTERPOLATE
+
+
+        // Mesh changes
+
+            //- Update for mesh point-motion
+            virtual void movePoints();
+
+            //- Update topology using the given map
+            virtual void topoChange(const polyTopoChangeMap&);
+
+            //- Update from another mesh using the given map
+            virtual void mapMesh(const polyMeshMap&);
+
+            //- Redistribute or update using the given distribution map
+            virtual void distribute(const polyDistributionMap&);
 };
 
 

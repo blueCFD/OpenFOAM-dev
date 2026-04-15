@@ -25,7 +25,10 @@ Class
     Foam::uMulticomponentMixture
 
 Description
-    Unburnt gas combustion multicomponent mixture
+    Unburnt gas combustion multicomponent mixture for a single fuel specie
+
+    to provide composition support for unburnt chemistry integration for
+    e.g. knock simulations.
 
 SourceFiles
     uMulticomponentMixture.C

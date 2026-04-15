@@ -27,6 +27,9 @@ Class
 Description
     Burnt gas combustion multicomponent mixture
 
+    to provide composition support for burnt chemistry integration for
+    pollutant simulations.
+
 SourceFiles
     bMulticomponentMixture.C
 
