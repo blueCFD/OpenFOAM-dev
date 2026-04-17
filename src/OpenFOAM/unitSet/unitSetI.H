@@ -53,6 +53,12 @@ inline const Foam::dimensionSet& Foam::unitSet::dimensions() const
 }
 
 
+inline bool Foam::unitSet::dimensionless() const
+{
+    return dimensions_.dimensionless();
+}
+
+
 inline bool Foam::unitSet::any() const
 {
     return multiplier_ == 0;

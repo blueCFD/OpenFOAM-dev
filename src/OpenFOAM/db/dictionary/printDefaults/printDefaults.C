@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,16 +23,51 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "printDefaults.H"
 #include "dictionary.H"
+#include "Pstream.T.H"
 
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
 
-namespace Foam
+bool Foam::printDefaults::active_(false);
+const Foam::dictionary* Foam::printDefaults::dictPtr_(nullptr);
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::printDefaults::printDefaults()
 {
-    defineTypeNameAndDebug(dictionary, 0);
+    if (Pstream::master())
+    {
+        active_ = true;
+        Info<< incrIndent;
+    }
 }
 
-const Foam::dictionary Foam::dictionary::null;
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::printDefaults::~printDefaults()
+{
+    if (Pstream::master())
+    {
+        active_ = false;
+        dictPtr_ = nullptr;
+        Info<< decrIndent;
+    }
+}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::printDefaults::set(const dictionary& dict)
+{
+    if (active_ && !printDefaults::dictPtr_)
+    {
+        dict.write(Info, false);
+        printDefaults::dictPtr_ = &dict;
+    }
+}
 
 
 // ************************************************************************* //

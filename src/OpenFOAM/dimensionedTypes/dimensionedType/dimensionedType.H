@@ -146,8 +146,7 @@ public:
             const word& name,
             const dimensionSet& dimensions,
             const dictionary& dict,
-            const Type& defaultValue,
-            const bool writeDefault = dictionary::writeOptionalEntries > 0
+            const Type& defaultValue
         );
 
         //- Construct from dictionary lookup with the given name, dimensionless,
@@ -156,8 +155,7 @@ public:
         (
             const word& name,
             const dictionary& dict,
-            const Type& defaultValue,
-            const bool writeDefault = dictionary::writeOptionalEntries > 0
+            const Type& defaultValue
         );
 
         //- Construct from dictionary lookup with the given name and units
@@ -167,8 +165,7 @@ public:
             const word& name,
             const unitSet&,
             const dictionary&,
-            const Type& defaultValue,
-            const bool writeDefault = dictionary::writeOptionalEntries > 0
+            const Type& defaultValue
         );
 
 

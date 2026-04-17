@@ -3919,63 +3919,6 @@ Foam::TriPatchIntersection<SrcPatchType, TgtPatchType>::TriPatchIntersection
         3
     );
 
-    // Find intersection operation, excluding a hash set of previously obtained
-    // intersections. Used to get multiple target triangles intersected by a
-    // single source point and point normal (i.e., two target triangles if the
-    // source point intersects a target edge).
-    class findIntersectExcludingOp
-    {
-    public:
-
-        const indexedOctree<treeDataPrimitivePatch<TgtPatchType>>& tree_;
-
-        const labelHashSet& excludingIndices_;
-
-    public:
-
-        //- Construct from components
-        findIntersectExcludingOp
-        (
-            const indexedOctree<treeDataPrimitivePatch<TgtPatchType>>& tree,
-            const labelHashSet& hitIndices
-        )
-        :
-            tree_(tree),
-            excludingIndices_(hitIndices)
-        {}
-
-        //- Calculate intersection of triangle with ray. Sets result
-        //  accordingly
-        bool operator()
-        (
-            const label index,
-            const point& start,
-            const point& end,
-            point& intersectionPoint
-        ) const
-        {
-            if (excludingIndices_.found(index))
-            {
-                return false;
-            }
-            else
-            {
-                typename
-                    treeDataPrimitivePatch<TgtPatchType>::findIntersectOp
-                    iop(tree_);
-
-                return
-                    iop
-                    (
-                        index,
-                        start,
-                        end,
-                        intersectionPoint
-                    );
-            }
-        }
-    };
-
     // Populate local data from the source and target patches
     initialise(srcPointNormals);
     write();
@@ -3995,9 +3938,9 @@ Foam::TriPatchIntersection<SrcPatchType, TgtPatchType>::TriPatchIntersection
          || this->pointTgtFaces_[pointi] != -1
         ) continue;
 
-        // Get the projection geometry for this source point
+        // Get a length scale for this point by averaging the lengths of the
+        // connected edges
         const point& srcP = srcPoints_[pointi];
-        const vector& srcN = srcPointNormals_[pointi];
         scalar srcL = 0;
         forAll(this->srcPatch_.pointEdges()[srcPointi], srcPointEdgei)
         {
@@ -4011,24 +3954,11 @@ Foam::TriPatchIntersection<SrcPatchType, TgtPatchType>::TriPatchIntersection
         }
         srcL /= this->srcPatch_.pointEdges()[srcPointi].size();
 
-        // Find all the target faces that this source point projects to
-        labelHashSet tgtFaceis;
-        while (true)
-        {
-            pointIndexHit hit =
-                tgtTree.findLine
-                (
-                    srcP - srcL*srcN,
-                    srcP + srcL*srcN,
-                    findIntersectExcludingOp(tgtTree, tgtFaceis)
-                );
+        // Find all the target triangles that are within the length scale of
+        // the source point
+        const labelList tgtFaceis = tgtTree.findSphere(srcP, sqr(srcL));
 
-            if (!hit.hit()) break;
-
-            tgtFaceis.insert(hit.index());
-        }
-
-        // Continue if this point does not project to the opposite patch
+        // Continue if nothing was found
         if (tgtFaceis.empty()) continue;
 
         // Loop all the potential source/target face intersections until an
@@ -4038,9 +3968,9 @@ Foam::TriPatchIntersection<SrcPatchType, TgtPatchType>::TriPatchIntersection
             const label srcFacei =
                 this->srcPatch_.pointFaces()[srcPointi][srcPointFacei];
 
-            forAllConstIter(labelHashSet, tgtFaceis, tgtFaceiIter)
+            forAll(tgtFaceis, i)
             {
-                intersect(srcFacei, tgtFaceiIter.key());
+                intersect(srcFacei, tgtFaceis[i]);
 
                 if (frontEdgeEdges_.size()) break;
             }

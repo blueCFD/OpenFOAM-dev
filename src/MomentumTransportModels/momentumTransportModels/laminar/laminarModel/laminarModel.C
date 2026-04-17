@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "laminarModel.H"
 #include "Stokes.T.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -107,8 +108,7 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
                 << exit(FatalError);
         }
 
-        Info<< incrIndent;
-
+        printDefaults print;
         autoPtr<laminarModel> modelPtr
         (
             cstrIter()
@@ -122,8 +122,6 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
             )
         );
 
-        Info<< decrIndent;
-
         return modelPtr;
     }
     else
@@ -133,8 +131,7 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
             << laminarModels::Stokes<BasicMomentumTransportModel>::typeName
             << endl;
 
-        Info<< incrIndent;
-
+        printDefaults print;
         autoPtr<laminarModel> modelPtr
         (
             new laminarModels::Stokes<BasicMomentumTransportModel>
@@ -147,8 +144,6 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
                 viscosity
             )
         );
-
-        Info<< decrIndent;
 
         return modelPtr;
     }

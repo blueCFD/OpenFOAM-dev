@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,16 +23,47 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "dictionary.H"
+#include "printDefaultsEntry.H"
+#include "Pstream.T.H"
+#include "printDefaults.H"
+#include "addToRunTimeSelectionTable.H"
 
-/* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(dictionary, 0);
+namespace functionEntries
+{
+    defineFunctionTypeNameAndDebug(printDefaultsEntry, 0);
+    addToRunTimeSelectionTable(functionEntry, printDefaultsEntry, dictionary);
+}
 }
 
-const Foam::dictionary Foam::dictionary::null;
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::functionEntries::printDefaultsEntry::printDefaultsEntry
+(
+    const label lineNumber,
+    const dictionary& parentDict,
+    Istream& is
+)
+:
+    functionEntry(typeName, lineNumber, parentDict)
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool Foam::functionEntries::printDefaultsEntry::execute
+(
+    dictionary& contextDict,
+    Istream& is
+)
+{
+    printDefaults::set(contextDict);
+    return true;
+}
 
 
 // ************************************************************************* //

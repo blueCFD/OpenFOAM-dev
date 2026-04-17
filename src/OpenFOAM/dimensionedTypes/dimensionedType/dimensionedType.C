@@ -27,6 +27,7 @@ License
 #include "pTraits.H"
 #include "dictionary.H"
 #include "units.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -234,8 +235,7 @@ Foam::dimensioned<Type>::dimensioned
     const word& name,
     const dimensionSet& dims,
     const dictionary& dict,
-    const Type& defaultValue,
-    const bool writeDefault
+    const Type& defaultValue
 )
 :
     name_(name),
@@ -246,22 +246,16 @@ Foam::dimensioned<Type>::dimensioned
     {
         initialise(name, dims, dict.lookup(name));
     }
-    else if (writeDefault)
+    else if (printDefaults::print(dict))
     {
-        Info<< indent << "Default: " << name;
+        writeKeyword(Info, name);
 
         if (!dims.dimensionless())
         {
-            Info<< " " << dims.info();
+            Info<< dims.info() << " ";
         }
 
-        Info<< " " << defaultValue;
-
-        if (dict.name() != fileName::null)
-        {
-            Info<< " in " << dict.name().relativePath();
-        }
-        Info<< endl;
+        Info<< defaultValue << endl;
     }
 }
 
@@ -271,11 +265,10 @@ Foam::dimensioned<Type>::dimensioned
 (
     const word& name,
     const dictionary& dict,
-    const Type& defaultValue,
-    const bool writeDefault
+    const Type& defaultValue
 )
 :
-    dimensioned(name, dimless, dict, defaultValue, writeDefault)
+    dimensioned(name, dimless, dict, defaultValue)
 {}
 
 
@@ -285,8 +278,7 @@ Foam::dimensioned<Type>::dimensioned
     const word& name,
     const unitSet& units,
     const dictionary& dict,
-    const Type& defaultValue,
-    const bool writeDefault
+    const Type& defaultValue
 )
 :
     name_(name),
@@ -297,22 +289,16 @@ Foam::dimensioned<Type>::dimensioned
     {
         initialise(name, units, dict.lookup(name));
     }
-    else if (writeDefault)
+    else if (printDefaults::print(dict))
     {
-        Info<< indent << "Default: " << name;
+        writeKeyword(Info, name);
 
         if (!units.dimensions().dimensionless())
         {
-            Info<< " " << units.info();
+            Info<< units.info() << " ";
         }
 
-        Info<< " " << defaultValue;
-
-        if (dict.name() != fileName::null)
-        {
-            Info<< " in " << dict.name().relativePath();
-        }
-        Info<< endl;
+        Info<< defaultValue << endl;
     }
 }
 
@@ -423,14 +409,6 @@ bool Foam::dimensioned<Type>::readIfPresent
     }
     else
     {
-        if (dictionary::writeOptionalEntries)
-        {
-            IOInfoInFunction(dict)
-                << "Optional entry '" << name_ << "' is not present,"
-                << " the default value '" << *this << "' will be used."
-                << endl;
-        }
-
         return false;
     }
 }

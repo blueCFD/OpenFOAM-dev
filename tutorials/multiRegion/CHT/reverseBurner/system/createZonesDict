@@ -10,14 +10,17 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "system";
-    object      configDict;
+    object      regionZones;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-InfoSwitches
+solid
 {
-    writeOptionalEntries 1;
-}
+    type    union;
 
+    inner;
+    middle;
+    outer;
+}
 
 // ************************************************************************* //

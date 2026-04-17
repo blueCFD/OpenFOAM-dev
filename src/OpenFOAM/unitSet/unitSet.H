@@ -173,6 +173,9 @@ public:
         //- Access the dimensions
         inline const dimensionSet& dimensions() const;
 
+        //- Return true if it is dimensionless
+        inline bool dimensionless() const;
+
         //- Convert a value to standard units
         template<class T>
         T toStandard(const T&) const;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,7 +58,7 @@ Foam::dragModels::AttouFerschneider::KGasLiquid
     const volScalarField magURel(mag(gas.U() - liquid.U()));
 
     return
-        E2_*gas.fluidThermo().mu()*sqr(oneMinusGas/solid.d())*sqr(cbrtR)
+        E1_*gas.fluidThermo().mu()*sqr(oneMinusGas/solid.d())*sqr(cbrtR)
        /max(gas, gas.residualAlpha())
       + E2_*gas.rho()*magURel*(1 - gas)/solid.d()*cbrtR;
 }

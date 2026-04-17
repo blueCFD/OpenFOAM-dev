@@ -69,11 +69,11 @@ Layers
 
 Creating the CHT Mesh
 =====================
-Run splitMeshRegions with "-cellZones" to split the solid cellZones into
+Run splitMeshRegions with "-cellZones all" to split the solid cellZones into
 separate mesh regions; the remaining fluid region can be named with the
-"-defaultRegionName" option.  For example, to name the default region "fluid":
+"-defaultRegion" option.  For example, to name the default region "fluid":
 
-  splitMeshRegions -cellZones -defaultRegionName fluid
+  splitMeshRegions -cellZones all -defaultRegion fluid
 
 Initialisation
 ==============

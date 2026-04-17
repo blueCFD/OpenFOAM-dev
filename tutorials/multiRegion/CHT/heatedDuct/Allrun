@@ -8,7 +8,7 @@ rm -rf constant/polyMesh/sets
 
 runApplication blockMesh
 runApplication snappyHexMesh
-runApplication splitMeshRegions -cellZones -defaultRegionName fluid
+runApplication splitMeshRegions -cellZones all -defaultRegion fluid
 runApplication decomposePar -allRegions
 runParallel foamMultiRun
 runApplication reconstructPar -allRegions

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -48,16 +48,19 @@ void Foam::patchIntersection::report(const word& writeSuffix)
             points_
         );
 
-        scalar area = 0, srcArea = 0, tgtArea = 0;
+        scalar srcArea = 0, tgtArea = 0, intersectionArea = 0;
         forAll(faces_, facei)
         {
             const scalar a = faces_[facei].mag(points_);
-            area += a;
-            srcArea += faceSrcFaces_[facei] != -1 ? a : 0;
-            tgtArea += faceTgtFaces_[facei] != -1 ? a : 0;
+            const bool isSrc = faceSrcFaces_[facei] != -1;
+            const bool isTgt = faceTgtFaces_[facei] != -1;
+            srcArea += isSrc ? a : 0;
+            tgtArea += isTgt ? a : 0;
+            intersectionArea += isSrc && isTgt ? a : 0;
         }
-        Info<< indent << "Source/target coverage = " << srcArea/area
-            << "/" << tgtArea/area << endl;
+        Info<< indent << "Source/target coverage = "
+            << intersectionArea/srcArea << "/"
+            << intersectionArea/tgtArea << endl;
 
         DynamicList<label> nEdgesNFaces, nFacesNEdges;
         forAll(faces_, facei)

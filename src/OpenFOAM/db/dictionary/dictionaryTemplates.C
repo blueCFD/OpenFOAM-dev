@@ -27,6 +27,7 @@ License
 #include "primitiveEntry.H"
 #include "dictionaryEntry.H"
 #include "unitSet.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
@@ -210,8 +211,7 @@ template<class T>
 T Foam::dictionary::lookupOrDefault
 (
     const word& keyword,
-    const T& defaultValue,
-    const bool writeDefault
+    const T& defaultValue
 ) const
 {
     const entry* entryPtr = lookupEntryPtr(keyword, false, false);
@@ -222,11 +222,10 @@ T Foam::dictionary::lookupOrDefault
     }
     else
     {
-        if (writeDefault)
+        if (printDefaults::print(*this))
         {
-            Info<< indent << "Default: " << keyword
-                << " " << defaultValue
-                << " in " << name().relativePath() << endl;
+            writeKeyword(Info, keyword);
+            Info<< defaultValue << endl;
         }
 
         return defaultValue;
@@ -239,8 +238,7 @@ T Foam::dictionary::lookupOrDefault
 (
     const word& keyword,
     const DefaultUnits& defaultUnits,
-    const T& defaultValue,
-    const bool writeDefault
+    const T& defaultValue
 ) const
 {
     const entry* entryPtr = lookupEntryPtr(keyword, false, false);
@@ -251,11 +249,16 @@ T Foam::dictionary::lookupOrDefault
     }
     else
     {
-        if (writeDefault)
+        if (printDefaults::print(*this))
         {
-            Info<< indent << "Default: " << keyword
-                << " " << defaultValue
-                << " in " << name().relativePath() << endl;
+            writeKeyword(Info, keyword);
+
+            if (!defaultUnits.dimensionless())
+            {
+                Info<< defaultUnits.info() << " ";
+            }
+
+            Info<< defaultValue << endl;
         }
 
         return defaultValue;
@@ -323,11 +326,10 @@ T Foam::dictionary::lookupOrAddDefault
     }
     else
     {
-        if (writeOptionalEntries > 1)
+        if (printDefaults::print(*this))
         {
-            Info<< indent << "Added default: " << keyword
-                << " " << defaultValue
-                << " to " << name().relativePath() << endl;
+            writeKeyword(Info, keyword);
+            Info<< defaultValue << endl;
         }
 
         add(new primitiveEntry(keyword, defaultValue));
@@ -354,13 +356,6 @@ bool Foam::dictionary::readIfPresent
     }
     else
     {
-        if (writeOptionalEntries > 1)
-        {
-            Info<< indent << "Default: " << keyword
-                << " " << val
-                << " in " << name().relativePath() << endl;
-        }
-
         return false;
     }
 }
@@ -385,13 +380,6 @@ bool Foam::dictionary::readIfPresent
     }
     else
     {
-        if (writeOptionalEntries > 1)
-        {
-            Info<< indent << "Default: " << keyword
-                << " " << val
-                << " in " << name().relativePath() << endl;
-        }
-
         return false;
     }
 }

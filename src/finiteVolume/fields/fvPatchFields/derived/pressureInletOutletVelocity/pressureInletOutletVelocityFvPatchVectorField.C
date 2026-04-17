@@ -128,8 +128,8 @@ void Foam::pressureInletOutletVelocityFvPatchVectorField::map
     const fieldMapper& mapper
 )
 {
-    tangentialVelocity_.map(!mapper.direct());
     directionMixedFvPatchVectorField::map(ptf, mapper);
+    tangentialVelocity_.map(!mapper.direct());
 }
 
 
@@ -138,8 +138,8 @@ void Foam::pressureInletOutletVelocityFvPatchVectorField::reset
     const fvPatchField<vector>& ptf
 )
 {
-    tangentialVelocity_.reset();
     directionMixedFvPatchVectorField::reset(ptf);
+    tangentialVelocity_.reset();
 }
 
 

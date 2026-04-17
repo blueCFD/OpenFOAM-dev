@@ -243,10 +243,6 @@ public:
         //- Null dictionary
         static const dictionary null;
 
-        //- If true write optional keywords and values
-        //  if not present in dictionary
-        static int writeOptionalEntries;
-
 
     // Static Member Functions
 
@@ -506,25 +502,14 @@ public:
             //- Find and return a T, if not found return the given default
             //  value.
             template<class T>
-            T lookupOrDefault
-            (
-                const word&,
-                const T&,
-                const bool writeDefault = writeOptionalEntries > 0
-            ) const;
+            T lookupOrDefault(const word&, const T&) const;
 
             //- Find and return a T with dimension checking and unit
             //  conversions, and if not found return the given default value.
             //  If recursive, search parent dictionaries.
             //  If patternMatch, use regular expressions.
             template<class T, class DefaultUnits>
-            T lookupOrDefault
-            (
-                const word&,
-                const DefaultUnits&,
-                const T&,
-                const bool writeDefault = writeOptionalEntries > 0
-            ) const;
+            T lookupOrDefault(const word&, const DefaultUnits&, const T&) const;
 
             //- Find and return a T, trying a list of keywords in sequence,
             //  and if not found throw a fatal error relating to the first

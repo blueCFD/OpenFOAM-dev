@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "LESThermophysicalTransportModel.T.H"
 #include "unityLewisEddyDiffusivity.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -80,7 +81,7 @@ Foam::LESThermophysicalTransportModel
     {
         IOdictionary modelDict(header);
 
-        const word modelType(modelDict.subDict("LES").lookup( "model"));
+        const word modelType(modelDict.subDict("LES").lookup("model"));
 
         Info<< "Selecting LES thermophysical transport model "
             << modelType << endl;
@@ -98,6 +99,7 @@ Foam::LESThermophysicalTransportModel
                 << exit(FatalError);
         }
 
+        printDefaults print;
         return autoPtr<LESThermophysicalTransportModel>
         (
             cstrIter()(momentumTransport, thermo)
@@ -117,6 +119,7 @@ Foam::LESThermophysicalTransportModel
         Info<< "Selecting default LES thermophysical transport model "
             <<  LESunityLewisEddyDiffusivity::typeName << endl;
 
+        printDefaults print;
         return autoPtr<LESThermophysicalTransportModel>
         (
             new LESunityLewisEddyDiffusivity

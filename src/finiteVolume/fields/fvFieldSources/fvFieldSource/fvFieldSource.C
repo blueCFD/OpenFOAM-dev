@@ -47,15 +47,7 @@ Foam::fvFieldSource<Type>::fvFieldSource
     const dictionary& dict
 )
 :
-    libs_
-    (
-        dict.lookupOrDefault
-        (
-            "libs",
-            fileNameList::null(),
-            dictionary::writeOptionalEntries > 1
-        )
-    ),
+    libs_(dict.lookupOrDefault("libs", fileNameList::null())),
     internalField_(iF)
 {}
 

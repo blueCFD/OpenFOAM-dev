@@ -88,8 +88,8 @@ Foam::wordList Foam::ReadFields
 
     forAll(masterNames, i)
     {
-        Info<< "Reading " << GeoField::typeName << ' ' << masterNames[i]
-            << endl;
+        Info<< indent << "Reading " << GeoField::typeName << ' '
+            << masterNames[i] << endl;
 
         const IOobject& io = *fieldObjects[masterNames[i]];
 
