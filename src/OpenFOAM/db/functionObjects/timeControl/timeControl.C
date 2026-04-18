@@ -158,7 +158,7 @@ void Foam::timeControl::read(const dictionary& dict)
                 (
                     "timeDelta",
                     units::none,
-                    1e-3*time_.userDeltaTValue()
+                    scalar(1e-3*time_.userDeltaTValue())
                 );
 
             if (dict.found(timesName))
