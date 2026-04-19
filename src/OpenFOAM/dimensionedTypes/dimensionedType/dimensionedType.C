@@ -248,14 +248,7 @@ Foam::dimensioned<Type>::dimensioned
     }
     else if (printDefaults::print(dict))
     {
-        writeKeyword(Info, name);
-
-        if (!dims.dimensionless())
-        {
-            Info<< dims.info() << " ";
-        }
-
-        Info<< defaultValue << endl;
+        printDefaults::add(dict).add(name, defaultValue);
     }
 }
 
@@ -291,14 +284,7 @@ Foam::dimensioned<Type>::dimensioned
     }
     else if (printDefaults::print(dict))
     {
-        writeKeyword(Info, name);
-
-        if (!units.dimensions().dimensionless())
-        {
-            Info<< units.info() << " ";
-        }
-
-        Info<< defaultValue << endl;
+        printDefaults::add(dict).add(name, defaultValue);
     }
 }
 

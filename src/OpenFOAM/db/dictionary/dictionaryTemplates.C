@@ -27,7 +27,6 @@ License
 #include "primitiveEntry.H"
 #include "dictionaryEntry.H"
 #include "unitSet.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
@@ -222,10 +221,9 @@ T Foam::dictionary::lookupOrDefault
     }
     else
     {
-        if (printDefaults::print(*this))
+        if (printDefaults(*this))
         {
-            writeKeyword(Info, keyword);
-            Info<< defaultValue << endl;
+            defaults(*this).add(new primitiveEntry(keyword, defaultValue));
         }
 
         return defaultValue;
@@ -249,16 +247,9 @@ T Foam::dictionary::lookupOrDefault
     }
     else
     {
-        if (printDefaults::print(*this))
+        if (printDefaults(*this))
         {
-            writeKeyword(Info, keyword);
-
-            if (!defaultUnits.dimensionless())
-            {
-                Info<< defaultUnits.info() << " ";
-            }
-
-            Info<< defaultValue << endl;
+            defaults(*this).add(new primitiveEntry(keyword, defaultValue));
         }
 
         return defaultValue;
@@ -326,10 +317,9 @@ T Foam::dictionary::lookupOrAddDefault
     }
     else
     {
-        if (printDefaults::print(*this))
+        if (printDefaults(*this))
         {
-            writeKeyword(Info, keyword);
-            Info<< defaultValue << endl;
+            defaults(*this).add(new primitiveEntry(keyword, defaultValue));
         }
 
         add(new primitiveEntry(keyword, defaultValue));

@@ -36,6 +36,8 @@ SourceFiles
 #ifndef printDefaults_H
 #define printDefaults_H
 
+#include "HashPtrTable.T.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -51,18 +53,28 @@ class printDefaults
 {
 public:
 
+    // Public Typedefs
+
+        typedef HashPtrTable<dictionary, const dictionary*, Hash<void*>>
+            dictHashTable;
+
+
     // Private Static Data
 
-        static bool active_;
-        static const dictionary* dictPtr_;
+        //- Pointer to most recently constructed printDefaults
+        static printDefaults* printDefaults_;
+
+        //- Table of dictionaries containing all entries including defaults
+        static dictHashTable dicts_;
+
+        //- Pointer to the associated dictionary
+        //  Set by printDefaults::set called by entry #printDefaults
+        const dictionary* dictPtr_;
 
 
 public:
 
     // Constructors
-
-        //- Construct for dictionary
-        printDefaults(const dictionary& dict);
 
         //- Construct null
         printDefaults();
@@ -80,7 +92,13 @@ public:
         //- Return true if printing of specified dictionary is enabled
         static bool print(const dictionary& dict)
         {
-            return &dict == dictPtr_;
+            return dicts_.found(&dict);
+        }
+
+        //- Return true if printing of specified dictionary is enabled
+        static dictionary& add(const dictionary& dict)
+        {
+            return *dicts_[&dict];
         }
 };
 

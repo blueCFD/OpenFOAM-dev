@@ -27,6 +27,7 @@ License
 #include "dictionaryEntry.H"
 #include "regExp.H"
 #include "OSHA1stream.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -191,6 +192,18 @@ bool Foam::dictionary::findInPatterns
 }
 
 
+bool Foam::dictionary::printDefaults(const dictionary& dict)
+{
+    return Foam::printDefaults::print(dict);
+}
+
+
+Foam::dictionary& Foam::dictionary::defaults(const dictionary& dict)
+{
+    return Foam::printDefaults::add(dict);
+}
+
+
 bool Foam::dictionary::findInPatterns
 (
     const bool patternMatch,
@@ -285,25 +298,8 @@ Foam::dictionary::dictionary
 
 Foam::dictionary::dictionary(const dictionary& dict)
 :
-    dictionaryName(dict.name()),
-    IDLList<entry>(dict, *this),
-    parent_(dictionary::null),
-    filePtr_(nullptr)
-{
-    forAllIter(IDLList<entry>, *this, iter)
-    {
-        hashedEntries_.insert(iter().keyword(), &iter());
-
-        if (iter().keyword().isPattern())
-        {
-            patternEntries_.insert(&iter());
-            patternRegexps_.insert
-            (
-                autoPtr<regExp>(new regExp(iter().keyword()))
-            );
-        }
-    }
-}
+    dictionary(dictionary::null, dict)
+{}
 
 
 Foam::dictionary::dictionary(const dictionary* dictPtr)

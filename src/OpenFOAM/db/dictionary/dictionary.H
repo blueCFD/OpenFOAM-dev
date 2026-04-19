@@ -209,6 +209,13 @@ class dictionary
             DLList<autoPtr<regExp>>::iterator& reLink
         );
 
+        //- Return true if printDefaults is active
+        static bool printDefaults(const dictionary& dict);
+
+        //- Return the defaults dictionary corresponding to the given dictionary
+        //  if printDefaults is active
+        static dictionary& defaults(const dictionary& dict);
+
         //- Assign multiple entries, overwriting any existing entries
         template<class ... Entries, size_t ... Indices>
         void set

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,7 +72,7 @@ Foam::HashPtrTable<T, Key, Hash>::~HashPtrTable()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class T, class Key, class Hash>
-T* Foam::HashPtrTable<T, Key, Hash>::remove(iterator& it)
+T* Foam::HashPtrTable<T, Key, Hash>::remove(const iterator& it)
 {
     T* elemPtr = *it;
     HashTable<T*, Key, Hash>::erase(it);
@@ -81,7 +81,7 @@ T* Foam::HashPtrTable<T, Key, Hash>::remove(iterator& it)
 
 
 template<class T, class Key, class Hash>
-bool Foam::HashPtrTable<T, Key, Hash>::erase(iterator& it)
+bool Foam::HashPtrTable<T, Key, Hash>::erase(const iterator& it)
 {
     T* elemPtr = *it;
 
@@ -98,6 +98,13 @@ bool Foam::HashPtrTable<T, Key, Hash>::erase(iterator& it)
     {
         return false;
     }
+}
+
+
+template<class T, class Key, class Hash>
+bool Foam::HashPtrTable<T, Key, Hash>::erase(const Key& key)
+{
+    return erase(this->find(key));
 }
 
 

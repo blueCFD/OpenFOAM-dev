@@ -29,17 +29,20 @@ License
 
 /* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
 
-bool Foam::printDefaults::active_(false);
-const Foam::dictionary* Foam::printDefaults::dictPtr_(nullptr);
+Foam::printDefaults* Foam::printDefaults::printDefaults_(nullptr);
+Foam::printDefaults::dictHashTable Foam::printDefaults::dicts_;
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::printDefaults::printDefaults()
+:
+    dictPtr_(nullptr)
 {
+    printDefaults_ = this;
+
     if (Pstream::master())
     {
-        active_ = true;
         Info<< incrIndent;
     }
 }
@@ -49,10 +52,15 @@ Foam::printDefaults::printDefaults()
 
 Foam::printDefaults::~printDefaults()
 {
+    printDefaults_ = nullptr;
+
     if (Pstream::master())
     {
-        active_ = false;
-        dictPtr_ = nullptr;
+        if (dictPtr_)
+        {
+            dicts_[dictPtr_]->write(Info, false);
+            dicts_.erase(dictPtr_);
+        }
         Info<< decrIndent;
     }
 }
@@ -62,10 +70,15 @@ Foam::printDefaults::~printDefaults()
 
 void Foam::printDefaults::set(const dictionary& dict)
 {
-    if (active_ && !printDefaults::dictPtr_)
+    if (printDefaults_)
     {
-        dict.write(Info, false);
-        printDefaults::dictPtr_ = &dict;
+        printDefaults_->dictPtr_ = &dict;
+        dicts_.insert
+        (
+            printDefaults_->dictPtr_,
+            new dictionary(dict.parent(), dict)
+        );
+        printDefaults_ = nullptr;
     }
 }
 

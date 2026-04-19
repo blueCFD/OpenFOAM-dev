@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -116,10 +116,13 @@ public:
         // Edit
 
             //- Remove and return the pointer specified by given iterator
-            T* remove(iterator&);
+            T* remove(const iterator&);
 
             //- Erase an hashedEntry specified by given iterator
-            bool erase(iterator&);
+            bool erase(const iterator&);
+
+            //- Erase a hashedEntry specified by the given key
+            bool erase(const Key&);
 
             //- Clear all entries from table
             void clear();
