@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,7 +41,7 @@ Foam::autoPtr<Foam::heatTransferModel> Foam::heatTransferModel::New
 
     const word heatTransferModelType(modelDict.lookup("type"));
 
-    Info<< "Selecting heatTransferModel for "
+    Info<< indent << "Selecting heatTransferModel for "
         << interface.name() << ": " << heatTransferModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

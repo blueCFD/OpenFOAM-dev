@@ -35,11 +35,30 @@ Foam::printDefaults::dictHashTable Foam::printDefaults::dicts_;
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::printDefaults::printDefaults()
+Foam::printDefaults::printDefaults(const bool parent)
 :
+    parent_(parent),
     dictPtr_(nullptr)
 {
     printDefaults_ = this;
+
+    if (Pstream::master())
+    {
+        Info<< incrIndent;
+    }
+}
+
+
+Foam::printDefaults::printDefaults(const dictionary& subDict)
+:
+    parent_(false),
+    dictPtr_(nullptr)
+{
+    if (dicts_.found(&subDict.parent()))
+    {
+        printDefaults_ = this;
+        set(subDict);
+    }
 
     if (Pstream::master())
     {
@@ -58,7 +77,10 @@ Foam::printDefaults::~printDefaults()
     {
         if (dictPtr_)
         {
-            dicts_[dictPtr_]->write(Info, false);
+            if (!parent_)
+            {
+                dicts_[dictPtr_].write(Info, false);
+            }
             dicts_.erase(dictPtr_);
         }
         Info<< decrIndent;

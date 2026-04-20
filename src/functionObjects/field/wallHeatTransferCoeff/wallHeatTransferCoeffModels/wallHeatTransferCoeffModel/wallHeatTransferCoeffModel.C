@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,7 @@ Foam::wallHeatTransferCoeffModel::New
 
     if (debug)
     {
-        Info<< "Selecting heat transfer coefficient type: "
+        Info<< indent << "Selecting heat transfer coefficient type: "
             << model << endl;
     }
 

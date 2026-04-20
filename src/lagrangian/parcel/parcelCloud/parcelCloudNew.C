@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,7 +50,8 @@ Foam::autoPtr<Foam::parcelCloud> Foam::parcelCloud::New
 
     const word type(dict.lookup<word>("type"));
 
-    Info<< "Selecting " << parcelCloud::typeName << " " << type << endl;
+    Info<< indent
+        << "Selecting " << parcelCloud::typeName << " " << type << endl;
 
     libs.open(dict, "libs");
 
@@ -93,7 +94,8 @@ Foam::autoPtr<Foam::parcelCloud> Foam::parcelCloud::New
 
     const word type(dict.lookup<word>("type"));
 
-    Info<< "Selecting " << parcelCloud::typeName << " " << type << endl;
+    Info<< indent
+        << "Selecting " << parcelCloud::typeName << " " << type << endl;
 
     libs.open(dict, "libs");
 

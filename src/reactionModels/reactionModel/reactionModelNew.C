@@ -60,7 +60,7 @@ Foam::autoPtr<Foam::reactionModel> Foam::reactionModel::New
             << " not found" << endl;
     }
 
-    Info<< "Selecting reaction model " << modelType << endl;
+    Info<< indent << "Selecting reaction model " << modelType << endl;
 
     const wordList cmpts2(basicThermo::splitThermoName(modelType, 2));
     const wordList cmpts3(basicThermo::splitThermoName(modelType, 3));

@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 
     if (zoneName != word::null)
     {
-        Info<< "Selecting cellZone " << zoneName << endl << endl;
+        Info<< indent << "Selecting cellZone " << zoneName << endl << endl;
         subsetter.setLargeCellSubset
         (
             labelHashSet(mesh.cellZones()[zoneName]),
@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
     }
     else if (setName != word::null)
     {
-        Info<< "Selecting cellSet " << setName << endl << endl;
+        Info<< indent << "Selecting cellSet " << setName << endl << endl;
         const cellSet currentSet(mesh, setName);
         subsetter.setLargeCellSubset(currentSet, patchi, true);
     }
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
                 )
             );
 
-            Info<< "Selecting cellZone " << zg->zoneName()
+            Info<< indent << "Selecting cellZone " << zg->zoneName()
                 << " of type " << zg->type() << endl;
 
             subCells = zg->generate().cZone();
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
         {
             const word cellZoneName(subsetDict.lookup("zone"));
 
-            Info<< "Selecting cellZone " << cellZoneName << endl;
+            Info<< indent << "Selecting cellZone " << cellZoneName << endl;
 
             subCells = mesh.cellZones()[cellZoneName];
         }

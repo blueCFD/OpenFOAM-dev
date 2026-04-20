@@ -543,7 +543,7 @@ Foam::autoPtr<Foam::cloud> Foam::cloud::New
     const IOobject::writeOption writeOption
 )
 {
-    Info<< "Selecting " << typeName
+    Info<< indent << "Selecting " << typeName
         << " with name " << name
         << " of type " << type << endl;
 

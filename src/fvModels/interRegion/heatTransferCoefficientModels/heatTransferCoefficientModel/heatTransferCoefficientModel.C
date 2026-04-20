@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,7 +73,7 @@ Foam::fv::heatTransferCoefficientModel::New
 {
     word heatTransferCoefficientModelType(dict.lookup(typeName));
 
-    Info<< "Selecting " << typeName << " "
+    Info<< indent << "Selecting " << typeName << " "
         << heatTransferCoefficientModelType << endl;
 
     meshConstructorTable::iterator cstrIter =
@@ -107,7 +107,7 @@ Foam::fv::heatTransferCoefficientModel::New
 {
     word heatTransferCoefficientModelType(dict.lookup(typeName));
 
-    Info<< "Selecting " << typeName << " "
+    Info<< indent << "Selecting " << typeName << " "
         << heatTransferCoefficientModelType << endl;
 
     modelConstructorTable::iterator cstrIter =

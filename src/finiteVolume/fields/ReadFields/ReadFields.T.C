@@ -91,7 +91,7 @@ Foam::wordList Foam::ReadFields
         Info<< indent << "Reading " << GeoField::typeName << ' '
             << masterNames[i] << endl;
 
-        const IOobject& io = *fieldObjects[masterNames[i]];
+        const IOobject& io = fieldObjects[masterNames[i]];
 
         fields.set
         (
@@ -350,7 +350,7 @@ void Foam::readUniformFields
 
     forAll(masterNames, i)
     {
-        const IOobject& io = *fields[masterNames[i]];
+        const IOobject& io = fields[masterNames[i]];
         const word& fieldName = io.name();
 
         if (selectedFields.found(fieldName))

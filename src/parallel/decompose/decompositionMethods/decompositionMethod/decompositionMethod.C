@@ -147,7 +147,7 @@ Foam::decompositionMethod::NewDecomposer
         )
     );
 
-    Info<< "Selecting decomposer " << methodType << endl;
+    Info<< indent << "Selecting decomposer " << methodType << endl;
 
     libs.open
     (
@@ -200,7 +200,7 @@ Foam::decompositionMethod::NewDistributor
         )
     );
 
-    Info<< "Selecting distributor " << methodType << endl;
+    Info<< indent << "Selecting distributor " << methodType << endl;
 
     libs.open
     (

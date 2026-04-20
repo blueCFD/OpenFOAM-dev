@@ -59,6 +59,8 @@ public:
             dictHashTable;
 
 
+private:
+
     // Private Static Data
 
         //- Pointer to most recently constructed printDefaults
@@ -66,6 +68,9 @@ public:
 
         //- Table of dictionaries containing all entries including defaults
         static dictHashTable dicts_;
+
+        //- Set true if the dictionary is a parent of model sub-dictionaries
+        const bool parent_;
 
         //- Pointer to the associated dictionary
         //  Set by printDefaults::set called by entry #printDefaults
@@ -76,8 +81,11 @@ public:
 
     // Constructors
 
-        //- Construct null
-        printDefaults();
+        //- Construct optionally for parent dictionary
+        printDefaults(const bool parent = false);
+
+        //- Construct for model sub-dictionary
+        printDefaults(const dictionary& subDict);
 
 
     //- Destructor
@@ -98,7 +106,7 @@ public:
         //- Return true if printing of specified dictionary is enabled
         static dictionary& add(const dictionary& dict)
         {
-            return *dicts_[&dict];
+            return dicts_[&dict];
         }
 };
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,8 @@ Foam::autoPtr<Foam::waveModel> Foam::waveModel::New
 {
     if (debug)
     {
-        Info<< "Selecting " << waveModel::typeName << " " << type << endl;
+        Info<< indent
+            << "Selecting " << waveModel::typeName << " " << type << endl;
     }
 
     dictionaryConstructorTable::iterator cstrIter =

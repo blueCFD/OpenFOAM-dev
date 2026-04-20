@@ -252,7 +252,7 @@ namespace Foam
             {
                 treeBoundBox bb(subsetDict.lookup("insideBox")());
 
-                Info<< "Selecting edges inside bb " << bb;
+                Info<< indent << "Selecting edges inside bb " << bb;
                 if (writeObj)
                 {
                     Info << " see insideBox.obj";

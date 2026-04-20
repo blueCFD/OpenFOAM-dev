@@ -2544,7 +2544,8 @@ Foam::autoPtr<Foam::polyTopoChangeMap> Foam::meshRefinement::splitMesh
     label nCellsInMesh = mesh_.nCells() - cellsToRemove.size();
     reduce(nCellsInMesh, sumOp<label>());
 
-    Info<< "Selecting all cells in regions containing any of the points in "
+    Info<< indent
+        << "Selecting all cells in regions containing any of the points in "
         << selectionPoints.inside() << endl
         << "Selected: " << nCellsInMesh << " cells." << endl;
 

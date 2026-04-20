@@ -49,8 +49,6 @@ void Foam::solvers::XiFluid::burn()
     // Unburnt gas density
     const volScalarField& rhou(thermo_.uThermo().rho());
 
-    const volScalarField Db(XiModel_->Db());
-
     // Calculate flame normal etc.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -76,6 +74,8 @@ void Foam::solvers::XiFluid::burn()
     nfVec /= max(mag(nfVec), dMgb);
     const surfaceScalarField nf("nf", mesh.Sf() & nfVec);
     n /= mgb;
+
+    const volScalarField Db(XiModel_->Db());
 
     // Turbulent flame speed volumetric flux
     const surfaceScalarField phivSt("phivSt", fvc::interpolate(Su*Xi)*nf);

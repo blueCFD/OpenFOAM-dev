@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "fvConstraint.H"
 #include "volFields.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -69,8 +70,7 @@ Foam::fvConstraint::fvConstraint
     constraintType_(constraintType),
     mesh_(mesh)
 {
-    Info<< incrIndent << indent << "Name: " << name_
-        << endl << decrIndent;
+    writeEntry(Info, "name", name_);
 }
 
 
@@ -130,6 +130,7 @@ Foam::autoPtr<Foam::fvConstraint> Foam::fvConstraint::New
             << exit(FatalIOError);
     }
 
+    printDefaults print(dict);
     return autoPtr<fvConstraint>
     (
         cstrIter()(name, constraintType, mesh, dict)

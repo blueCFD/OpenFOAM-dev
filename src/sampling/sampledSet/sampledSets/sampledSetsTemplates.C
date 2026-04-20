@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,7 +64,7 @@ Foam::functionObjects::sampledSets::sampleLocalType
                 );
             }
 
-            const interpolation<Type>& interp = *interpolations[name];
+            const interpolation<Type>& interp = interpolations[name];
 
             tmp<Field<Type>> tfield(new Field<Type>(s.size()));
             Field<Type>& field = tfield.ref();

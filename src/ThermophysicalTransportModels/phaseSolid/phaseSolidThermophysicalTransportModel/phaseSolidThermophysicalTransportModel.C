@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ Foam::phaseSolidThermophysicalTransportModel::New
     {
         const word modelType(IOdictionary(header).lookup("model"));
 
-        Info<< "Selecting solid thermophysical transport model "
+        Info<< indent << "Selecting solid thermophysical transport model "
             << modelType << endl;
 
         typename dictionaryConstructorTable::iterator cstrIter =
@@ -104,7 +104,8 @@ Foam::phaseSolidThermophysicalTransportModel::New
     }
     else
     {
-        Info<< "Selecting default solid thermophysical transport model "
+        Info<< indent
+            << "Selecting default solid thermophysical transport model "
             << solidThermophysicalTransportModels::
                isotropic<phaseSolidThermophysicalTransportModel>::typeName
             << endl;

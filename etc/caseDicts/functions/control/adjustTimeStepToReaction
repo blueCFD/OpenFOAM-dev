@@ -6,11 +6,11 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 Description
-    Adjusts the time step to a combustion model's bulk reaction time scales
+    Adjusts the time step to a reaction model's bulk reaction time scales
 
 \*---------------------------------------------------------------------------*/
 
-type            adjustTimeStepToCombustion;
+type            adjustTimeStepToReaction;
 libs            ("libchemistryModel.so");
 
 //phase         <phaseName>; // Optional name of the phase to which the

@@ -240,14 +240,14 @@ bool Foam::functionObjects::phaseForces::execute()
 
         if (fluid.foundInterfacialModel<blendedDragModel>(interface))
         {
-            *forceFields_()[dragModel::typeName] +=
+            forceFields_()[dragModel::typeName] +=
                 fluid.lookupInterfacialModel<blendedDragModel>(interface).K()
                *interface.Ur(otherPhase);
         }
 
         if (fluid.foundInterfacialModel<blendedVirtualMassModel>(interface))
         {
-            *forceFields_()[virtualMassModel::typeName] +=
+            forceFields_()[virtualMassModel::typeName] +=
                 fluid.lookupInterfacialModel
                 <
                     blendedVirtualMassModel
@@ -257,7 +257,7 @@ bool Foam::functionObjects::phaseForces::execute()
 
         if (fluid.foundInterfacialModel<blendedLiftModel>(interface))
         {
-            *forceFields_()[liftModel::typeName] +=
+            forceFields_()[liftModel::typeName] +=
                 (&interface.phase1() == &phase ? -1 : +1)
                *fluid.lookupInterfacialModel<blendedLiftModel>(interface).F();
         }
@@ -270,7 +270,7 @@ bool Foam::functionObjects::phaseForces::execute()
             >(interface)
         )
         {
-            *forceFields_()[wallLubricationModel::typeName] +=
+            forceFields_()[wallLubricationModel::typeName] +=
                 (&interface.phase1() == &phase ? -1 : +1)
                *fluid.lookupInterfacialModel
                 <
@@ -286,7 +286,7 @@ bool Foam::functionObjects::phaseForces::execute()
             >(interface)
         )
         {
-            *forceFields_()[turbulentDispersionModel::typeName] +=
+            forceFields_()[turbulentDispersionModel::typeName] +=
                 fluid.lookupInterfacialModel
                 <
                     blendedTurbulentDispersionModel

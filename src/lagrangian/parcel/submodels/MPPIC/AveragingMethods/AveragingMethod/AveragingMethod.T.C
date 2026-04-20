@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,7 +88,7 @@ Foam::AveragingMethod<Type>::New
 {
     word averageType(dict.lookup(typeName));
 
-    // Info<< "Selecting averaging method "
+    // Info<< indent << "Selecting averaging method "
     //    << averageType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =

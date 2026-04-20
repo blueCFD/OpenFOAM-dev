@@ -233,7 +233,7 @@ void readFields
         forAll(masterNames, i)
         {
             const word& name = masterNames[i];
-            IOobject& io = *objects[name];
+            IOobject& io = objects[name];
             io.writeOpt() = IOobject::AUTO_WRITE;
 
             // Load field
@@ -300,7 +300,7 @@ void readFields
         forAll(masterNames, i)
         {
             const word& name = masterNames[i];
-            IOobject& io = *objects[name];
+            IOobject& io = objects[name];
             io.writeOpt() = IOobject::AUTO_WRITE;
 
             // Load field

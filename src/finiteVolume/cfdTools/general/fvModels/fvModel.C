@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "fvModel.H"
 #include "volFields.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -84,8 +85,7 @@ Foam::fvModel::fvModel
     modelType_(modelType),
     mesh_(mesh)
 {
-    Info<< incrIndent << indent << "Name: " << name_
-        << endl << decrIndent;
+    writeEntry(Info, "name", name_);
 }
 
 
@@ -145,6 +145,7 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
             << exit(FatalIOError);
     }
 
+    printDefaults print(dict);
     return autoPtr<fvModel>
     (
         cstrIter()(name, modelType, mesh, dict)

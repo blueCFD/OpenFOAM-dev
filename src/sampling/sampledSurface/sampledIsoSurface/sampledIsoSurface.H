@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,11 +39,15 @@ Description
 
 Usage
     \table
-        Property     | Description             | Required    | Default value
-        isoField     | the field to get an iso-surface of | yes |
-        isoValue     | the iso-surface value   | yes         |
-        interpolate  | interpolate values to the surface points | no | no
+        Property    | Description             | Required    | Default value
+        isoField    | The field to get an iso-surface of | yes |
+        isoValue    | The iso-surface value   | yes         |
+        interpolate | Interpolate values to the surface points? | no | no
+        cellZone    | Zone containing cells to include | no | all
     \endtable
+
+See also
+    Foam::generatedCellZone
 
 SourceFiles
     sampledIsoSurface.C

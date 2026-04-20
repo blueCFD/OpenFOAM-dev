@@ -83,7 +83,7 @@ Foam::laminarThermophysicalTransportModel
 
         const word modelType(modelDict.subDict("laminar").lookup("model"));
 
-        Info<< "Selecting laminar thermophysical transport model "
+        Info<< indent << "Selecting laminar thermophysical transport model "
             << modelType << endl;
 
         typename dictionaryConstructorTable::iterator cstrIter =
@@ -107,7 +107,8 @@ Foam::laminarThermophysicalTransportModel
     }
     else
     {
-        Info<< "Selecting default laminar thermophysical transport model "
+        Info<< indent
+            << "Selecting default laminar thermophysical transport model "
             << laminarThermophysicalTransportModels::unityLewisFourier<
                BasicThermophysicalTransportModel>::typeName << endl;
 

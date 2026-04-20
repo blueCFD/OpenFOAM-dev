@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ Foam::diffusiveMassTransferModel::New
 
     const word diffusiveMassTransferModelType(modelDict.lookup("type"));
 
-    Info<< "Selecting diffusiveMassTransferModel for "
+    Info<< indent << "Selecting diffusiveMassTransferModel for "
         << interface.name() << ": " << diffusiveMassTransferModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,11 +98,11 @@ void Foam::fv::semiImplicitSource::addSupType
 ) const
 {
     // Set the value units for the functions
-    fieldSu_[field.name()]->template setValueUnits<Type>
+    fieldSu_[field.name()].template setValueUnits<Type>
     (
         eqn.dimensions()
     );
-    fieldSp_[field.name()]->template setValueUnits<scalar>
+    fieldSp_[field.name()].template setValueUnits<scalar>
     (
         eqn.dimensions()/eqn.psi().dimensions()
     );
@@ -145,7 +145,7 @@ void Foam::fv::semiImplicitSource::addSupType
 
     // Explicit source function for the field
     UIndirectList<Type>(Su, zone_.zone()) =
-        fieldSu_[field.name()]->template value<Type>(t)/VDash;
+        fieldSu_[field.name()].template value<Type>(t)/VDash;
 
     volScalarField::Internal Sp
     (
@@ -169,7 +169,7 @@ void Foam::fv::semiImplicitSource::addSupType
 
     // Implicit source function for the field
     UIndirectList<scalar>(Sp, zone_.zone()) =
-        fieldSp_[field.name()]->template value<scalar>(t)/VDash;
+        fieldSp_[field.name()].template value<scalar>(t)/VDash;
 
     eqn += Su - fvm::SuSp(-Sp, psi);
 }

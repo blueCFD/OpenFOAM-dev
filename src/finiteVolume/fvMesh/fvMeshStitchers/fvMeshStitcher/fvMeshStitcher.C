@@ -284,7 +284,7 @@ const Foam::surfaceLabelField::Boundary& Foam::fvMeshStitcher::getPolyFacesBf
 {
     if (regionPolyFacesBfs_.found(regionName))
     {
-        return *regionPolyFacesBfs_[regionName];
+        return regionPolyFacesBfs_[regionName];
     }
     else
     {

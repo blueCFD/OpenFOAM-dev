@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -132,21 +132,6 @@ void Foam::fv::limitPressure::readCoeffs(const dictionary& dict)
             pMax_.value() = pMaxFactor*pMax;
             limitMaxP_ = true;
         }
-    }
-
-    if (limitMinP_ || limitMaxP_)
-    {
-        if (limitMinP_)
-        {
-            Info<< "    min " << pMin_.value() << nl;
-        }
-
-        if (limitMaxP_)
-        {
-            Info<< "    max " << pMax_.value() << nl;
-        }
-
-        Info << endl;
     }
 }
 

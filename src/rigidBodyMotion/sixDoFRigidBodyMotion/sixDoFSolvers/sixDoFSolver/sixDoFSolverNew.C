@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::sixDoFSolver> Foam::sixDoFSolver::New
 {
     word sixDoFSolverType(dict.lookup("type"));
 
-    Info<< "Selecting sixDoFSolver " << sixDoFSolverType << endl;
+    Info<< indent << "Selecting sixDoFSolver " << sixDoFSolverType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(sixDoFSolverType);

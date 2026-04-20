@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,7 +41,7 @@ Foam::autoPtr<Foam::virtualMassModel> Foam::virtualMassModel::New
 
     const word virtualMassModelType(modelDict.lookup("type"));
 
-    Info<< "Selecting virtualMassModel for "
+    Info<< indent << "Selecting virtualMassModel for "
         << interface.name() << ": " << virtualMassModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

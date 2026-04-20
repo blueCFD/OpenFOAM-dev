@@ -114,7 +114,7 @@ template<class Type>
 const Foam::CarrierEqn<Type>&
 Foam::clouds::coupled::carrierEqn(const word& key) const
 {
-    return *carrierEqns<Type>()[key];
+    return carrierEqns<Type>()[key];
 }
 
 

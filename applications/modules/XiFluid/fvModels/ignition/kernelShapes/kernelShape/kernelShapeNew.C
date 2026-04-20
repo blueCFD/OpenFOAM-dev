@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ Foam::autoPtr<Foam::kernelShape> Foam::kernelShape::New
 
     const word type(kernelShapeDict.lookup("type"));
 
-    Info<< "Selecting flame-wrinkling correction type "
+    Info<< indent << "Selecting flame-wrinkling correction type "
         << type << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

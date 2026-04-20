@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ Foam::swarmCorrection::New
 {
     const word swarmCorrectionType(dict.lookup("type"));
 
-    Info<< "Selecting swarmCorrection for "
+    Info<< indent << "Selecting swarmCorrection for "
         << interface.name() << ": " << swarmCorrectionType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

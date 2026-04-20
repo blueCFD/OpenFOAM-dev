@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "fvModels.H"
 #include "fvConstraint.H"
 #include "fvMesh.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -54,7 +55,7 @@ Foam::IOobject Foam::fvModels::createIOobject
     if (io.headerOk())
     {
         Info<< "Creating fvModels from "
-            << io.instance()/io.name() << nl
+            << io.instance()/io.name()
             << endl;
 
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
@@ -70,7 +71,7 @@ Foam::IOobject Foam::fvModels::createIOobject
         {
             Warning
                 << "Creating fvModels from "
-                << io.instance()/io.name() << nl
+                << io.instance()/io.name()
                 << endl;
 
             io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
@@ -154,6 +155,7 @@ Foam::fvModels::fvModels
     checkTimeIndex_(mesh.time().timeIndex() + 1),
     addSupFields_()
 {
+    Foam::printDefaults print(true);
     readHeaderOk(IOstream::ASCII, typeName);
 
     const bool readFromFvModels(IOobject::name() == typeName);

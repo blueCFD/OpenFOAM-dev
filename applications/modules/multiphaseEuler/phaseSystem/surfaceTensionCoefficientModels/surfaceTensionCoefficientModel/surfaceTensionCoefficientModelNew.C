@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,7 +41,8 @@ Foam::surfaceTensionCoefficientModel::New
 
     const word surfaceTensionCoefficientModelType(modelDict.lookup("type"));
 
-    Info<< "Selecting surfaceTensionCoefficientModel for " << interface.name()
+    Info<< indent
+        << "Selecting surfaceTensionCoefficientModel for " << interface.name()
         << ": " << surfaceTensionCoefficientModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

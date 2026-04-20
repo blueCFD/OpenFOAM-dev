@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ Foam::autoPtr<Foam::solver> Foam::solver::New
     fvMesh& mesh
 )
 {
-    Info<< "Selecting solver " << solverName << endl;
+    Info<< indent << "Selecting solver " << solverName << endl;
 
     load(solverName);
 

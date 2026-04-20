@@ -95,7 +95,7 @@ bool Foam::fv::fixedValueConstraint::constrainType
 ) const
 {
     // Set the value units for the function
-    fieldValues_[fieldName]->template setValueUnits<Type>
+    fieldValues_[fieldName].template setValueUnits<Type>
     (
         eqn.psi().dimensions()
     );
@@ -105,7 +105,7 @@ bool Foam::fv::fixedValueConstraint::constrainType
     const List<Type> values
     (
         zone_.nCells(),
-        fieldValues_[fieldName]->value<Type>(t)
+        fieldValues_[fieldName].value<Type>(t)
     );
 
     if (fraction_.valid())

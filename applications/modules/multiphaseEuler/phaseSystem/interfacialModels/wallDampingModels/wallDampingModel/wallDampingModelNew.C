@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::wallDampingModel> Foam::wallDampingModel::New
 {
     const word wallDampingModelType(dict.lookup("type"));
 
-    Info<< "Selecting wallDampingModel for "
+    Info<< indent << "Selecting wallDampingModel for "
         << interface.name() << ": " << wallDampingModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

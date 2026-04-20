@@ -298,7 +298,7 @@ Foam::heatTransferSystem::heatTransfer() const
                *H
             );
 
-            *eqns[phase.name()] +=
+            eqns[phase.name()] +=
                 Hstabilised*(otherPhase.thermo().T()() - phase.thermo().T()())
               + Hstabilised/Cpv*he - fvm::Sp(Hstabilised/Cpv, he);
         }
@@ -329,7 +329,7 @@ Foam::heatTransferSystem::heatTransfer() const
 
             const volScalarField::Internal& H = Hs[iter.index()];
 
-            *eqns[phase.name()] +=
+            eqns[phase.name()] +=
                 HEff*(otherPhase.thermo().T()() - phase.thermo().T()())
               + H/Cpv*he - fvm::Sp(H/Cpv, he);
         }

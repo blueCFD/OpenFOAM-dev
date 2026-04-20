@@ -43,7 +43,8 @@ Usage
         planeType   | Method of specification. E.g., pointAndNormal. | no
         point       | A point in the plane (for pointAndNormal) | yes
         normal      | A vector normal to the plane (for pointAndNormal) | yes
-        interpolate | interpolate values to the surface points | no | no
+        interpolate | Interpolate values to the surface points? | no | no
+        cellZone    | Zone containing cells to include | no | all
     \endtable
 
     Note: there are also other options for planeType, including
@@ -51,6 +52,7 @@ Usage
 
 See also
     Foam::plane
+    Foam::generatedCellZone
 
 SourceFiles
     sampledCutPlane.C

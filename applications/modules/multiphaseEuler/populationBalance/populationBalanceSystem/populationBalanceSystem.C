@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2017-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2017-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,13 +77,13 @@ void Foam::populationBalanceSystem::addDmdtUfs
 
         if (!phase1.stationary())
         {
-            *eqns[phase1.name()] +=
+            eqns[phase1.name()] +=
                 dmdtf21*phase2.U()()() + fvm::Sp(dmdtf12, phase1.URef());
         }
 
         if (!phase2.stationary())
         {
-            *eqns[phase2.name()] -=
+            eqns[phase2.name()] -=
                 dmdtf12*phase1.U()()() + fvm::Sp(dmdtf21, phase2.URef());
         }
     }
@@ -117,18 +117,18 @@ void Foam::populationBalanceSystem::addDmdtHefs
         const volScalarField::Internal K2(phase2.K());
 
         // Transfer of sensible enthalpy within the phases
-        *eqns[phase1.name()] +=
+        eqns[phase1.name()] +=
             dmdtf*hs1 + fvm::Sp(dmdtf12, he1) - dmdtf12*he1;
-        *eqns[phase2.name()] -=
+        eqns[phase2.name()] -=
             dmdtf*hs2 + fvm::Sp(dmdtf21, he2) - dmdtf21*he2;
 
         // Transfer of sensible enthalpy between the phases
-        *eqns[phase1.name()] += dmdtf21*(hs2 - hs1);
-        *eqns[phase2.name()] -= dmdtf12*(hs1 - hs2);
+        eqns[phase1.name()] += dmdtf21*(hs2 - hs1);
+        eqns[phase2.name()] -= dmdtf12*(hs1 - hs2);
 
         // Transfer of kinetic energy
-        *eqns[phase1.name()] += dmdtf21*K2 + dmdtf12*K1;
-        *eqns[phase2.name()] -= dmdtf12*K1 + dmdtf21*K2;
+        eqns[phase1.name()] += dmdtf21*K2 + dmdtf12*K1;
+        eqns[phase2.name()] -= dmdtf12*K1 + dmdtf21*K2;
     }
 }
 
@@ -155,8 +155,8 @@ void Foam::populationBalanceSystem::addDmdtYfs
             const volScalarField& Y1 = phase1.Y()[Yi1];
             const volScalarField& Y2 = phase2.Y(Y1.member());
 
-            *eqns[Y1.name()] += dmdtf21*Y2 + fvm::Sp(dmdtf12, Y1);
-            *eqns[Y2.name()] -= dmdtf12*Y1 + fvm::Sp(dmdtf21, Y2);
+            eqns[Y1.name()] += dmdtf21*Y2 + fvm::Sp(dmdtf12, Y1);
+            eqns[Y2.name()] -= dmdtf12*Y1 + fvm::Sp(dmdtf21, Y2);
         }
     }
 }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,7 +52,7 @@ Foam::autoPtr<Foam::motionDiffusivity> Foam::motionDiffusivity::New
 {
     const word motionType(mdData);
 
-    Info<< "Selecting motion diffusion: " << motionType << endl;
+    Info<< indent << "Selecting motion diffusion: " << motionType << endl;
 
     IstreamConstructorTable::iterator cstrIter =
         IstreamConstructorTablePtr_->find(motionType);

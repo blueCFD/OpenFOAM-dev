@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -26,6 +26,7 @@ License
 #include "fvConstraints.H"
 #include "fvModel.H"
 #include "fvMesh.H"
+#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -54,8 +55,7 @@ Foam::IOobject Foam::fvConstraints::createIOobject
     if (io.headerOk())
     {
         Info<< "Creating fvConstraints from "
-            << io.instance()/io.name() << nl
-            << endl;
+            << io.instance()/io.name() << endl;
 
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
         return io;
@@ -70,8 +70,7 @@ Foam::IOobject Foam::fvConstraints::createIOobject
         {
             Warning
                 << "Creating fvConstraints from "
-                << io.instance()/io.name() << nl
-                << endl;
+                << io.instance()/io.name() << endl;
 
             io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
             return io;
@@ -149,6 +148,7 @@ Foam::fvConstraints::fvConstraints
     checkTimeIndex_(mesh.time().timeIndex() + 1),
     constrainedFields_()
 {
+    Foam::printDefaults print(true);
     readHeaderOk(IOstream::ASCII, typeName);
 
     const bool readFromFvConstraints(IOobject::name() == typeName);

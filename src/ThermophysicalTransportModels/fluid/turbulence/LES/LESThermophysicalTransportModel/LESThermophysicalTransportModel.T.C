@@ -83,7 +83,7 @@ Foam::LESThermophysicalTransportModel
 
         const word modelType(modelDict.subDict("LES").lookup("model"));
 
-        Info<< "Selecting LES thermophysical transport model "
+        Info<< indent << "Selecting LES thermophysical transport model "
             << modelType << endl;
 
         typename dictionaryConstructorTable::iterator cstrIter =
@@ -116,7 +116,7 @@ Foam::LESThermophysicalTransportModel
                 >
             > LESunityLewisEddyDiffusivity;
 
-        Info<< "Selecting default LES thermophysical transport model "
+        Info<< indent << "Selecting default LES thermophysical transport model "
             <<  LESunityLewisEddyDiffusivity::typeName << endl;
 
         printDefaults print;

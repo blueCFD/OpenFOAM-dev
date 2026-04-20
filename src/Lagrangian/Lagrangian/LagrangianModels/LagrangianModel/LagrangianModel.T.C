@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -81,7 +81,7 @@ Foam::autoPtr<Foam::LagrangianModel> Foam::LagrangianModel::New
 {
     const word type(modelDict.lookup("type"));
 
-    Info<< "Selecting " << typeName
+    Info<< indent << "Selecting " << typeName
         << " with name " << name
         << " of type " << type << endl;
 

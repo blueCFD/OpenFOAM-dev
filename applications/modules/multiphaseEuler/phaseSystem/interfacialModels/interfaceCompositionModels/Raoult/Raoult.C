@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -130,7 +130,7 @@ Foam::tmp<Foam::volScalarField> Foam::interfaceCompositionModels::Raoult::Yf
     {
         return
             otherMulticomponentThermo().Y(speciesName)
-           *speciesModels_[speciesName]->Yf(speciesName, Tf);
+           *speciesModels_[speciesName].Yf(speciesName, Tf);
     }
     else
     {
@@ -150,7 +150,7 @@ Foam::interfaceCompositionModels::Raoult::YfPrime
     {
         return
             otherMulticomponentThermo().Y(speciesName)
-           *speciesModels_[speciesName]->YfPrime(speciesName, Tf);
+           *speciesModels_[speciesName].YfPrime(speciesName, Tf);
     }
     else
     {

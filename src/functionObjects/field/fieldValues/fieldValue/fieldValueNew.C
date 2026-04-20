@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ Foam::functionObjects::fieldValue::New
 
     if (output)
     {
-        Info<< "Selecting " << typeName << " " << modelType << endl;
+        Info<< indent << "Selecting " << typeName << " " << modelType << endl;
     }
 
     dictionaryConstructorTable::iterator cstrIter =

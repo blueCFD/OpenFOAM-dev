@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,7 +117,7 @@ Foam::fv::meanVelocityForce::meanVelocityForce
         propsDict.lookup("gradient") >> gradP0_;
     }
 
-    Info<< "    Initial pressure gradient = " << gradP0_ << nl << endl;
+    Info<< indent << "Initial pressure gradient = " << gradP0_ << endl;
 }
 
 

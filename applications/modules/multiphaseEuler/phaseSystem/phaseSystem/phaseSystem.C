@@ -508,7 +508,7 @@ Foam::phaseSystem::sigma(const phaseInterfaceKey& key) const
 {
     if (surfaceTensionCoefficientModels_.found(key))
     {
-        return surfaceTensionCoefficientModels_[key]->sigma();
+        return surfaceTensionCoefficientModels_[key].sigma();
     }
     else
     {
@@ -527,7 +527,7 @@ Foam::phaseSystem::sigma(const phaseInterfaceKey& key, const label patchi) const
 {
     if (surfaceTensionCoefficientModels_.found(key))
     {
-        return surfaceTensionCoefficientModels_[key]->sigma(patchi);
+        return surfaceTensionCoefficientModels_[key].sigma(patchi);
     }
     else
     {

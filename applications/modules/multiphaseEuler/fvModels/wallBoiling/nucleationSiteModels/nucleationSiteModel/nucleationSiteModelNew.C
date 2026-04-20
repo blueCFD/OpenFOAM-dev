@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Foam::wallBoilingModels::nucleationSiteModel::New
 {
     word nucleationSiteModelType(dict.lookup("type"));
 
-    Info<< "Selecting nucleationSiteModel: "
+    Info<< indent << "Selecting nucleationSiteModel: "
         << nucleationSiteModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

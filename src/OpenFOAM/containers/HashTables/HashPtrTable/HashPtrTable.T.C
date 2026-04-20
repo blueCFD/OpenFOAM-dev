@@ -102,13 +102,6 @@ bool Foam::HashPtrTable<T, Key, Hash>::erase(const iterator& it)
 
 
 template<class T, class Key, class Hash>
-bool Foam::HashPtrTable<T, Key, Hash>::erase(const Key& key)
-{
-    return erase(this->find(key));
-}
-
-
-template<class T, class Key, class Hash>
 void Foam::HashPtrTable<T, Key, Hash>::clear()
 {
     for

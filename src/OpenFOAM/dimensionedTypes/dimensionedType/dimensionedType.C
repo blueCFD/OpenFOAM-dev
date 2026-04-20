@@ -248,7 +248,7 @@ Foam::dimensioned<Type>::dimensioned
     }
     else if (printDefaults::print(dict))
     {
-        printDefaults::add(dict).add(name, defaultValue);
+        printDefaults::add(dict).add(name, defaultValue, true);
     }
 }
 
@@ -284,7 +284,7 @@ Foam::dimensioned<Type>::dimensioned
     }
     else if (printDefaults::print(dict))
     {
-        printDefaults::add(dict).add(name, defaultValue);
+        printDefaults::add(dict).add(name, defaultValue, true);
     }
 }
 

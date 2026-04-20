@@ -168,7 +168,7 @@ void Foam::populationBalanceModel::birthByCoalescence
 
         if (dmdtfs_.found(interfaceij))
         {
-            *dmdtfs_[interfaceij] +=
+            dmdtfs_[interfaceij] +=
                 (interfaceij.index(phases_[i]) == 0 ? +1 : -1)
                *vs_[j]/vjk*Sui*phases_[j].rho();
         }
@@ -177,7 +177,7 @@ void Foam::populationBalanceModel::birthByCoalescence
 
         if (dmdtfs_.found(interfaceik))
         {
-            *dmdtfs_[interfaceik] +=
+            dmdtfs_[interfaceik] +=
                 (interfaceik.index(phases_[i]) == 0 ? +1 : -1)
                *vs_[k]/vjk*Sui*phases_[k].rho();
         }
@@ -223,7 +223,7 @@ void Foam::populationBalanceModel::birthByDaughterSizeDistributionBreakup
 
         if (dmdtfs_.found(interface))
         {
-            *dmdtfs_[interface] +=
+            dmdtfs_[interface] +=
                 (interface.index(phases_[i]) == 0 ? +1 : -1)
                *Sui*phases_[k].rho();
         }
@@ -264,7 +264,7 @@ void Foam::populationBalanceModel::birthByBinaryBreakup
 
         if (dmdtfs_.found(interfaceij))
         {
-            *dmdtfs_[interfaceij] +=
+            dmdtfs_[interfaceij] +=
                 (interfaceij.index(phases_[i]) == 0 ? +1 : -1)
                *Sui*phases_[j].rho();
         }
@@ -291,7 +291,7 @@ void Foam::populationBalanceModel::birthByBinaryBreakup
 
         if (dmdtfs_.found(interfacekj))
         {
-            *dmdtfs_[interfacekj] +=
+            dmdtfs_[interfacekj] +=
                 (interfacekj.index(phases_[k]) == 0 ? +1 : -1)
                *Suk*phases_[j].rho();
         }
@@ -453,7 +453,7 @@ void Foam::populationBalanceModel::computeExpansion()
 
         const phaseInterface interface01(phase0, phase1);
 
-        *expansionDmdtfs_[interface01] +=
+        expansionDmdtfs_[interface01] +=
             (interface01.index(phase0) == 0 ? -1 : +1)
            *(- tSus0.second()*phase0.rho() + tSus1.first()*phase1.rho());
     }
@@ -549,12 +549,12 @@ void Foam::populationBalanceModel::computeModelSources()
 
         if (tRhoSus0.second().valid())
         {
-            *modelSourceDmdtfs_[interface01] -= sign*tRhoSus0.second();
+            modelSourceDmdtfs_[interface01] -= sign*tRhoSus0.second();
         }
 
         if (tRhoSus1.first().valid())
         {
-            *modelSourceDmdtfs_[interface01] -= sign*tRhoSus1.first();
+            modelSourceDmdtfs_[interface01] -= sign*tRhoSus1.first();
         }
     }
 }

@@ -42,13 +42,16 @@ Description
 
 Usage
     \table
-        Property     | Description             | Required    | Default value
-        surfaceType  | the type of surface to sample from | yes |
-        distance     | the distance from which to sample the surface | yes |
-        signed       | sample only on one side of the surface, specified by \\
-                       the sign of the distance | yes |
-        interpolate  | interpolate values to the surface points | no | no
+        Property    | Description             | Required    | Default value
+        surfaceType | The type of surface to sample from | yes |
+        distance    | The distance from which to sample the surface | yes |
+        signed      | Sample only on one side of the surface? | yes |
+        interpolate | Interpolate values to the surface points? | no | no
+        cellZone    | Zone containing cells to include | no | all
     \endtable
+
+See also
+    Foam::generatedCellZone
 
 SourceFiles
     sampledDistanceSurface.C

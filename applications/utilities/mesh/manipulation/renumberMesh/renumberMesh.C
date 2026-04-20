@@ -684,7 +684,6 @@ int main(int argc, char *argv[])
     Info<< "Selecting renumberMethod " << renumberPtr().type() << nl << endl;
 
 
-
     // Read parallel reconstruct maps
     labelIOList cellProcAddressing
     (

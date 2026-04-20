@@ -71,7 +71,7 @@ void Foam::probes::sampleAndWrite(const VolField<Type>& vField)
     if (Pstream::master())
     {
         const unsigned int w = IOstream::defaultPrecision() + 7;
-        OFstream& os = *probeFilePtrs_[vField.name()];
+        OFstream& os = probeFilePtrs_[vField.name()];
 
         os  << setw(w) << vField.time().userTimeValue();
 
@@ -94,7 +94,7 @@ void Foam::probes::sampleAndWrite(const SurfaceField<Type>& sField)
     if (Pstream::master())
     {
         const unsigned int w = IOstream::defaultPrecision() + 7;
-        OFstream& os = *probeFilePtrs_[sField.name()];
+        OFstream& os = probeFilePtrs_[sField.name()];
 
         os  << sField.time().userTimeValue();
 

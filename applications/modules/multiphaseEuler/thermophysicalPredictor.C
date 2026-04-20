@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -58,7 +58,7 @@ void Foam::solvers::multiphaseEuler::compositionPredictor()
                 (
                     phase.YiEqn(Y[i])
                  ==
-                    *popBalSpecieTransfer[Y[i].name()]
+                    popBalSpecieTransfer[Y[i].name()]
                   + fvModels().source(alpha, rho, Y[i])
                 );
 
@@ -104,8 +104,8 @@ void Foam::solvers::multiphaseEuler::energyPredictor()
         (
             phase.heEqn()
          ==
-            *heatTransfer[phase.name()]
-          + *popBalHeatTransfer[phase.name()]
+            heatTransfer[phase.name()]
+          + popBalHeatTransfer[phase.name()]
           + fvModels().source(alpha, rho, phase.thermo().he())
         );
 

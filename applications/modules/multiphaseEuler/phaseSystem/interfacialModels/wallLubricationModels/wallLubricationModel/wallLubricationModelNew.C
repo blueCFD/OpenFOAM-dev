@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ Foam::autoPtr<Foam::wallLubricationModel> Foam::wallLubricationModel::New
 
     const word wallLubricationModelType(modelDict.lookup("type"));
 
-    Info<< "Selecting wallLubricationModel for "
+    Info<< indent << "Selecting wallLubricationModel for "
         << interface.name() << ": " << wallLubricationModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

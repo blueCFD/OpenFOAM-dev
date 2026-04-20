@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::laminarFlameSpeed> Foam::laminarFlameSpeed::New
 {
     const word model(dict.lookup("model"));
 
-    Info<< "Selecting laminar flame speed model " << model << endl;
+    Info<< indent << "Selecting laminar flame speed model " << model << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(model);

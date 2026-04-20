@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,38 +23,32 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "kineticTheoryViscosityModel.H"
 
-// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::kineticTheoryModels::viscosityModel>
-Foam::kineticTheoryModels::viscosityModel::New
-(
-    const dictionary& dict
-)
+template<class T, class Key, class Hash>
+inline bool Foam::HashPtrTable<T, Key, Hash>::erase(const Key& key)
 {
-    const word viscosityModelType(dict.lookup("granularViscosityModel"));
+    return erase(this->find(key));
+}
 
-    Info<< indent << "Selecting granularViscosityModel "
-        << viscosityModelType << endl;
 
-    dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(viscosityModelType);
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-    if (cstrIter == dictionaryConstructorTablePtr_->end())
-    {
-        FatalIOErrorInFunction(dict)
-            << "Unknown granularViscosityModel type "
-            << viscosityModelType << endl << endl
-            << "Valid granularViscosityModel types are :" << endl
-            << dictionaryConstructorTablePtr_->sortedToc()
-            << exit(FatalIOError);
-    }
+template<class T, class Key, class Hash>
+inline T& Foam::HashPtrTable<T, Key, Hash>::operator[](const Key& key)
+{
+    return *HashTable<T*, Key, Hash>::operator[](key);
+}
 
-    const dictionary& coeffDict =
-        dict.optionalSubDict(viscosityModelType + "Coeffs");
 
-    return autoPtr<viscosityModel>(cstrIter()(coeffDict));
+template<class T, class Key, class Hash>
+inline const T& Foam::HashPtrTable<T, Key, Hash>::operator[]
+(
+    const Key& key
+) const
+{
+    return *HashTable<T*, Key, Hash>::operator[](key);
 }
 
 

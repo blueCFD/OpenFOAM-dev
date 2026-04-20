@@ -223,7 +223,11 @@ T Foam::dictionary::lookupOrDefault
     {
         if (printDefaults(*this))
         {
-            defaults(*this).add(new primitiveEntry(keyword, defaultValue));
+            defaults(*this).add
+            (
+                new primitiveEntry(keyword, defaultValue),
+                true
+            );
         }
 
         return defaultValue;
@@ -249,7 +253,11 @@ T Foam::dictionary::lookupOrDefault
     {
         if (printDefaults(*this))
         {
-            defaults(*this).add(new primitiveEntry(keyword, defaultValue));
+            defaults(*this).add
+            (
+                new primitiveEntry(keyword, defaultValue),
+                true
+            );
         }
 
         return defaultValue;
@@ -319,7 +327,11 @@ T Foam::dictionary::lookupOrAddDefault
     {
         if (printDefaults(*this))
         {
-            defaults(*this).add(new primitiveEntry(keyword, defaultValue));
+            defaults(*this).add
+            (
+                new primitiveEntry(keyword, defaultValue),
+                true
+            );
         }
 
         add(new primitiveEntry(keyword, defaultValue));

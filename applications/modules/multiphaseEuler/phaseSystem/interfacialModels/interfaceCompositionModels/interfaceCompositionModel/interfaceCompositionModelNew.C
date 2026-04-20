@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -41,7 +41,7 @@ Foam::interfaceCompositionModel::New
 
     const word interfaceCompositionModelType(modelDict.lookup("type"));
 
-    Info<< "Selecting interfaceCompositionModel for "
+    Info<< indent << "Selecting interfaceCompositionModel for "
         << interface.name() << ": " << interfaceCompositionModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

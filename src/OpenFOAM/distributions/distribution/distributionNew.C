@@ -40,7 +40,8 @@ Foam::autoPtr<Foam::distribution> Foam::distribution::New
 
     if (report)
     {
-        Info<< "Selecting " << typeName << " type " << distributionType << endl;
+        Info<< indent
+            << "Selecting " << typeName << " type " << distributionType << endl;
     }
 
     dictionaryConstructorTable::iterator cstrIter =

@@ -28,6 +28,7 @@ Description
     A HashTable specialisation for hashing pointers.
 
 SourceFiles
+    HashPtrTableI.H
     HashPtrTable.C
     HashPtrTableIO.C
 
@@ -122,7 +123,7 @@ public:
             bool erase(const iterator&);
 
             //- Erase a hashedEntry specified by the given key
-            bool erase(const Key&);
+            inline bool erase(const Key&);
 
             //- Clear all entries from table
             void clear();
@@ -132,6 +133,12 @@ public:
 
 
     // Member Operators
+
+        //- Find and return a hashedEntry
+        inline T& operator[](const Key&);
+
+        //- Find and return a hashedEntry
+        inline const T& operator[](const Key&) const;
 
         //- Assignment operator
         void operator=(const HashPtrTable<T, Key, Hash>&);
@@ -159,6 +166,10 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "HashPtrTableI.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
