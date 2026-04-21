@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # License
@@ -55,11 +55,27 @@
 #     only the variant files present.
 #
 #------------------------------------------------------------------------------
-usage() {
+usageArguments() {
     cat<<USAGE
 
 Usage: ${0##*/} <source case> <variant case 1> ... <variant case N>
 
+USAGE
+}
+
+usageConcise() {
+    usageArguments
+    cat<<USAGE
+Merge a series of cases into the curent case directory. For further
+information, run:
+
+    foamMergeCase -help
+USAGE
+}
+
+usageVerbose() {
+    usageArguments
+    cat<<USAGE
 There is often a need to run several CFD simulations which are generally similar
 but include small differences.  The foamMergeCase script is designed to help
 maintain cases in these circumstances.  It allows users to create a 'variant'
@@ -96,8 +112,8 @@ editing the file or by running the following 'foamDictionary' commands.
   foamDictionary -set "nu=1e-6" constant/physicalProperties.orig
 
 To complete the automation of this variant case, the user should add the
-following foamMergeCase command before the 'runApplication blockMesh' command in
-the Allrun script.
+following 'foamMergeCase' command before the 'runApplication blockMesh' command
+in the Allrun script.
 
   runApplication foamMergeCase \$FOAM_TUTORIALS/incompressibleFluid/pitzDaily
 
@@ -108,34 +124,32 @@ copy a standard Allclean script into the case directory as follows.
   foamGet Allclean
 
 Then they should add the equivalent 'foamUnMergeCase' command at the end of the
-file, i.e. after the 'cleanCase' function is called.
+file; i.e. after the 'cleanCase' function is called.
 
   foamUnMergeCase \$FOAM_TUTORIALS/incompressibleFluid/pitzDaily
 
-The case can now be reset by running the Allclean script with'./Allclean'
+The case can now be reset by running the clean script.
 
+    ./Allclean
 USAGE
 }
 
 error() {
     exec 1>&2
-    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
-    usage
+    while [ "$#" -ge 1 ]; do echo; echo "*** Error: $1"; shift; done
+    usageConcise
+    echo
     exit 1
-}
-
-isCaseValid() {
-    foamListTimes -case "$1" >/dev/null 2>&1
 }
 
 while [ "$#" -gt 0 ]
 do
     case "$1" in
     -h | -help)
-        usage && exit 0
+        usageVerbose && echo && exit 0
         ;;
     -*)
-        error "unknown option: '$*'"
+        error "Unknown option: '$*'"
         ;;
     *)
         break
@@ -146,21 +160,25 @@ done
 [ $# -ge 1 ] || error "Incorrect arguments specified"
 
 # Set the source directory
-isCaseValid "$1" || error "'$1' is not a valid case directory"
 srcDir="$1"
+[ -d "$srcDir" ] || error "Directory '$srcDir' not found"
+srcControlDict="$srcDir/system/controlDict"
+[ -f "$srcControlDict" ] || error "File '$srcControlDict' not found"
 shift
 
 # Set the variant directories
 varDirs=()
 while [ "$#" -gt 0 ]
 do
-    [ -d "$1" ] || error "'$1' is not a valid directory"
+    [ -d "$1" ] || error "Directory '$1' not found"
     varDirs+=("$1")
     shift
 done
 
 # Get the initial time
-t0=$(foamDictionary "$srcDir/system/controlDict" -entry startTime -value)
+foamDictionary "$srcControlDict" -entry startTime -quiet \
+    || error "Entry 'startTime' not found in file '$srcControlDict'"
+t0=$(foamDictionary "$srcControlDict" -entry startTime -value)
 
 # Check that all affected files in this case have .orig extensions so that
 # nothing gets permanently overridden

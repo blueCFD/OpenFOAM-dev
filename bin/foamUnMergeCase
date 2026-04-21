@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # License
@@ -45,7 +45,7 @@ USAGE
 
 error() {
     exec 1>&2
-    while [ "$#" -ge 1 ]; do echo "$1"; shift; done
+    while [ "$#" -ge 1 ]; do echo; echo "*** Error: $1"; shift; done
     usage
     exit 1
 }
@@ -57,7 +57,7 @@ do
         usage && exit 0
         ;;
     -*)
-        error "unknown option: '$*'"
+        error "Unknown option: '$*'"
         ;;
     *)
         break
@@ -68,15 +68,15 @@ done
 [ $# -ge 1 ] || error "Incorrect arguments specified"
 
 # Set the source directory
-[ -d "$1" ] || error "'$1' is not a valid case directory"
 srcDir="$1"
+[ -d "$srcDir" ] || error "Directory '$srcDir' not found"
 shift
 
 # Set the variant directories
 varDirs=()
 while [ "$#" -gt 0 ]
 do
-    [ -d "$1" ] || error "'$1' is not a valid directory"
+    [ -d "$1" ] || error "'Directory $1' not found"
     varDirs+=("$1")
     shift
 done
