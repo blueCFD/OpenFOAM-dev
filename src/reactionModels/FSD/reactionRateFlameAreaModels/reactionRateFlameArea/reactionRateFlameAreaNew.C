@@ -39,7 +39,7 @@ Foam::autoPtr<Foam::reactionRateFlameArea> Foam::reactionRateFlameArea::New
         dict.lookup("reactionRateFlameArea")
     );
 
-    Info<< indent << "Selecting reaction rate flame area correlation "
+    Info<< indentOrNl << "Selecting reaction rate flame area correlation "
         << reactionRateFlameAreaType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

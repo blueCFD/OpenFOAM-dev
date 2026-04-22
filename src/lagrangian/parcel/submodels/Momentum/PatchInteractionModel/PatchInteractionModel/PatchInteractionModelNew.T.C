@@ -37,7 +37,8 @@ Foam::PatchInteractionModel<CloudType>::New
 {
     const word modelType(dict.lookup("patchInteractionModel"));
 
-    Info<< indent << "Selecting patch interaction model " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting patch interaction model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

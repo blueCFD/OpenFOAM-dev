@@ -37,7 +37,8 @@ Foam::autoPtr<Foam::XiGModel> Foam::XiGModel::New
 {
     const word modelType(propDict.lookup("XiGModel"));
 
-    Info<< indent << "Selecting flame-wrinkling model " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting flame-wrinkling model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

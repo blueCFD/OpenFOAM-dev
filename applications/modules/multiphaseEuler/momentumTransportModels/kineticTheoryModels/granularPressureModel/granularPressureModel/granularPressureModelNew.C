@@ -35,7 +35,7 @@ Foam::kineticTheoryModels::granularPressureModel::New
 {
     const word granularPressureModelType(dict.lookup("granularPressureModel"));
 
-    Info<< indent << "Selecting granularPressureModel "
+    Info<< indentOrNl << "Selecting granularPressureModel "
         << granularPressureModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

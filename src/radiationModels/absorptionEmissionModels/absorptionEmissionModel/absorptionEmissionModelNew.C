@@ -37,7 +37,8 @@ Foam::radiationModels::absorptionEmissionModel::New
 {
     const word modelType(dict.lookup("absorptionEmissionModel"));
 
-    Info<< indent << "Selecting absorptionEmissionModel " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting absorptionEmissionModel " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

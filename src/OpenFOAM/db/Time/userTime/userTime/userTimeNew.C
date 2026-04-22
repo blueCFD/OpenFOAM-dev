@@ -37,7 +37,7 @@ Foam::userTimes::userTime::New
     {
         const word type(dict(controlDict).lookup("type"));
 
-        Info<< indent << "Selecting userTime " << type << endl;
+        Info<< indentOrNl << "Selecting userTime " << type << endl;
 
         dictionaryConstructorTable::iterator cstrIter =
             dictionaryConstructorTablePtr_->find(type);

@@ -40,7 +40,8 @@ Foam::functionObjects::fieldValue::New
 
     if (output)
     {
-        Info<< indent << "Selecting " << typeName << " " << modelType << endl;
+        Info<< indentOrNl
+            << "Selecting " << typeName << " " << modelType << endl;
     }
 
     dictionaryConstructorTable::iterator cstrIter =

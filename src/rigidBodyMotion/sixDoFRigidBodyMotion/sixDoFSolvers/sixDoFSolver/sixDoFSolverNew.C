@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::sixDoFSolver> Foam::sixDoFSolver::New
 {
     word sixDoFSolverType(dict.lookup("type"));
 
-    Info<< indent << "Selecting sixDoFSolver " << sixDoFSolverType << endl;
+    Info<< indentOrNl << "Selecting sixDoFSolver " << sixDoFSolverType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(sixDoFSolverType);

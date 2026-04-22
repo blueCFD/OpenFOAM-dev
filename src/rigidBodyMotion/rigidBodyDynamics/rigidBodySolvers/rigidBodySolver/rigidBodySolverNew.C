@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::RBD::rigidBodySolver> Foam::RBD::rigidBodySolver::New
 {
     word rigidBodySolverType(dict.lookup("type"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting rigidBodySolver " << rigidBodySolverType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

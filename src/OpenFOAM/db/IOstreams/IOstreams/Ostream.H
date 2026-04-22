@@ -241,6 +241,21 @@ inline Ostream& indent(Ostream& os)
     return os;
 }
 
+//- Indent stream or add newline if indent level == 0
+inline Ostream& indentOrNl(Ostream& os)
+{
+    if (os.indentLevel() == 0)
+    {
+        os.endl();
+    }
+    else
+    {
+        os.indent();
+    }
+
+    return os;
+}
+
 //- Increment the indent level
 inline Ostream& incrIndent(Ostream& os)
 {

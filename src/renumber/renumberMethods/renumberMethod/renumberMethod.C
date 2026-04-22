@@ -47,7 +47,7 @@ Foam::autoPtr<Foam::renumberMethod> Foam::renumberMethod::New
 {
     const word methodType(renumberDict.lookup("method"));
 
-    Info<< indent << "Selecting renumberMethod " << methodType << endl;
+    Info<< indentOrNl << "Selecting renumberMethod " << methodType << endl;
 
     libs.open
     (

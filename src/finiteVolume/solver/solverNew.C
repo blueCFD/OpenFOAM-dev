@@ -39,7 +39,7 @@ Foam::autoPtr<Foam::solver> Foam::solver::New
     fvMesh& mesh
 )
 {
-    Info<< indent << "Selecting solver " << solverName << endl;
+    Info<< indentOrNl << "Selecting solver " << solverName << endl;
 
     load(solverName);
 

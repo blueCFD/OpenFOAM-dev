@@ -84,7 +84,7 @@ Foam::PackingModel<CloudType>::New
 {
     word modelType(dict.lookup(typeName));
 
-    Info<< indent << "Selecting packing model " << modelType << endl;
+    Info<< indentOrNl << "Selecting packing model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

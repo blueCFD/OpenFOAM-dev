@@ -52,7 +52,7 @@ Foam::autoPtr<Foam::fvMeshMover> Foam::fvMeshMover::New(fvMesh& mesh)
 
             const word fvMeshMoverTypeName(moverDict.lookup("type"));
 
-            Info<< indent
+            Info<< indentOrNl
                 << "Selecting fvMeshMover " << fvMeshMoverTypeName << endl;
 
             libs.open

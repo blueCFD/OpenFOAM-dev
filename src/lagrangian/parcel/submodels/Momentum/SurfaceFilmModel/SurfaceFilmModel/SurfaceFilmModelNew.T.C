@@ -37,7 +37,7 @@ Foam::SurfaceFilmModel<CloudType>::New
 {
     const word modelType(dict.lookup("surfaceFilmModel"));
 
-    Info<< indent << "Selecting surface film model " << modelType << endl;
+    Info<< indentOrNl << "Selecting surface film model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

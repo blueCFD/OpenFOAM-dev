@@ -91,7 +91,7 @@ Foam::IsotropyModel<CloudType>::New
 {
     word modelType(dict.lookup(typeName));
 
-    Info<< indent << "Selecting isotropy model " << modelType << endl;
+    Info<< indentOrNl << "Selecting isotropy model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

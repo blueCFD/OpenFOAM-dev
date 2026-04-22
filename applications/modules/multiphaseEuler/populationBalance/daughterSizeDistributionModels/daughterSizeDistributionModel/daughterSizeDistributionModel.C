@@ -52,7 +52,7 @@ Foam::populationBalance::daughterSizeDistributionModel::New
         dict.lookup("daughterSizeDistributionModel")
     );
 
-    Info<< indent << "Selecting daughter size distribution model for "
+    Info<< indentOrNl << "Selecting daughter size distribution model for "
         << breakup.popBal().name() << ": "
         << daughterSizeDistributionModelType << endl;
 

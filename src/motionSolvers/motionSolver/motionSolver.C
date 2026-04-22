@@ -69,7 +69,7 @@ Foam::autoPtr<Foam::motionSolver> Foam::motionSolver::New
 {
     const word solverTypeName = solverDict.lookup<word>("motionSolver");
 
-    Info<< indent << "Selecting motion solver: " << solverTypeName << endl;
+    Info<< indentOrNl << "Selecting motion solver: " << solverTypeName << endl;
 
     libs.open
     (

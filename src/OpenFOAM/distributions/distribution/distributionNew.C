@@ -40,8 +40,8 @@ Foam::autoPtr<Foam::distribution> Foam::distribution::New
 
     if (report)
     {
-        Info<< indent
-            << "Selecting " << typeName << " type " << distributionType << endl;
+        Info<< indentOrNl << "Selecting " << typeName
+            << " type " << distributionType << endl;
     }
 
     dictionaryConstructorTable::iterator cstrIter =
@@ -56,12 +56,17 @@ Foam::autoPtr<Foam::distribution> Foam::distribution::New
             << exit(FatalIOError);
     }
 
+    const dictionary& distributionDict =
+        dict.optionalSubDict(distributionType + "Distribution");
+
+    printDictionary print(distributionDict);
+
     autoPtr<distribution> distributionPtr
     (
         cstrIter()
         (
             units,
-            dict.optionalSubDict(distributionType + "Distribution"),
+            distributionDict,
             sampleQ,
             std::move(rndGen)
         )
@@ -69,12 +74,10 @@ Foam::autoPtr<Foam::distribution> Foam::distribution::New
 
     if (report)
     {
-        Info<< incrIndent << indent
-            << "min/average/max value = "
+        Info<< indent << "min/average/max value = "
             << distributionPtr->min() << '/'
             << distributionPtr->mean() << '/'
-            << distributionPtr->max()
-            << decrIndent << endl;
+            << distributionPtr->max() << endl;
     }
 
     return distributionPtr;

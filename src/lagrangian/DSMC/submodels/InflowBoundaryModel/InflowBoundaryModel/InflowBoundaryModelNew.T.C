@@ -37,7 +37,7 @@ Foam::InflowBoundaryModel<CloudType>::New
 {
     const word modelType(dict.lookup("InflowBoundaryModel"));
 
-    Info<< indent << "Selecting InflowBoundaryModel " << modelType << endl;
+    Info<< indentOrNl << "Selecting InflowBoundaryModel " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

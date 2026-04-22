@@ -41,7 +41,7 @@ Foam::autoPtr<Foam::dragModel> Foam::dragModel::New
 
     const word dragModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting dragModel for "
+    Info<< indentOrNl << "Selecting dragModel for "
         << interface.name() << ": " << dragModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

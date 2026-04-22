@@ -71,7 +71,8 @@ Foam::saturationPressureModel::New
       : isDict ? dict.subDict(name)
       : dict.optionalSubDict(name + "Coeffs");
 
-    Info<< indent << "Selecting " << typeName << " " << modelTypeName << endl;
+    Info<< indentOrNl
+        << "Selecting " << typeName << " " << modelTypeName << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelTypeName);
@@ -85,6 +86,8 @@ Foam::saturationPressureModel::New
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
+
+    printDictionary print(coeffDict);
 
     return cstrIter()(coeffDict);
 }

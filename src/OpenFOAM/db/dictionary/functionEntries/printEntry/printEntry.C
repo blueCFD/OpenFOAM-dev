@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "printEntry.H"
-#include "Pstream.T.H"
+#include "printDictionary.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -60,11 +60,7 @@ bool Foam::functionEntries::printEntry::execute
     Istream& is
 )
 {
-    if (Pstream::master())
-    {
-        contextDict.write(Info);
-    }
-
+    printDictionary::set(contextDict);
     return true;
 }
 

@@ -37,7 +37,8 @@ Foam::autoPtr<Foam::XiEqModel> Foam::XiEqModel::New
 {
     const word modelType(propDict.lookup("XiEqModel"));
 
-    Info<< indent << "Selecting flame-wrinkling model " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting flame-wrinkling model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

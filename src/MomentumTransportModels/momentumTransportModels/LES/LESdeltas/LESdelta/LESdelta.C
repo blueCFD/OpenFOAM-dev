@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -71,7 +71,7 @@ Foam::autoPtr<Foam::LESdelta> Foam::LESdelta::New
 {
     const word deltaType(dict.lookup("delta"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting LES delta type " << deltaType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
@@ -104,7 +104,7 @@ Foam::autoPtr<Foam::LESdelta> Foam::LESdelta::New
 {
     const word deltaType(dict.lookup("delta"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting LES delta type " << deltaType << endl;
 
     // First on additional ones

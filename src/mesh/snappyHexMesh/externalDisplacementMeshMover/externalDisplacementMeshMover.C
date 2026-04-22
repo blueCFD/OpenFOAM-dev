@@ -60,7 +60,8 @@ Foam::externalDisplacementMeshMover::New
     pointVectorField& pointDisplacement
 )
 {
-    Info<< indent << "Selecting externalDisplacementMeshMover " << type << endl;
+    Info<< indentOrNl
+        << "Selecting externalDisplacementMeshMover " << type << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(type);

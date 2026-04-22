@@ -38,7 +38,7 @@ Foam::autoPtr<Foam::phaseModel> Foam::phaseModel::New
 {
     const word phaseModelType(fluid.subDict(phaseName).lookup("type"));
 
-    Info<< indent << "Selecting phaseModel for "
+    Info<< indentOrNl << "Selecting phaseModel for "
         << phaseName << ": " << phaseModelType << endl;
 
     phaseSystemConstructorTable::iterator cstrIter =

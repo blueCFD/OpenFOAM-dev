@@ -36,7 +36,7 @@ Foam::autoPtr<Foam::integrationScheme> Foam::integrationScheme::New
 {
     const word schemeName(dict.lookup(phiName));
 
-    Info<< indent << "Selecting " << phiName << " integration scheme "
+    Info<< indentOrNl << "Selecting " << phiName << " integration scheme "
         << schemeName << endl;
 
     typename wordConstructorTable::iterator cstrIter =

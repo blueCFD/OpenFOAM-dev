@@ -39,7 +39,7 @@ Foam::autoPtr<Foam::XiEqModel> Foam::XiEqModel::New
 
     const word modelType(XiEqDict.lookup("model"));
 
-    Info<< indent << "Selecting equilibrium flame-wrinkling XiEq model "
+    Info<< indentOrNl << "Selecting equilibrium flame-wrinkling XiEq model "
         << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

@@ -148,9 +148,12 @@ Foam::Function1s::Table<Type>::Table
     FieldFunction1<Type, Table<Type>>(name),
     boundsHandling_
     (
-        dict.found("outOfBounds")
-      ? tableBase::boundsHandlingNames.read(dict.lookup("outOfBounds"))
-      : tableBase::boundsHandling::clamp
+        tableBase::boundsHandlingNames.lookupOrDefault
+        (
+            "outOfBounds",
+            dict,
+            tableBase::boundsHandling::clamp
+        )
     ),
     interpolationScheme_
     (

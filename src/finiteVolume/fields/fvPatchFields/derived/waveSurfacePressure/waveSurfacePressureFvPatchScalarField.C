@@ -65,7 +65,7 @@ waveSurfacePressureFvPatchScalarField
 {
     if (!db().foundObject<volVectorField>(zetaName_))
     {
-        Info << "Creating field " << zetaName_ << endl;
+        Info<< indent << "Constructing field " << zetaName_ << endl;
 
         tmp<volVectorField> tzeta
         (

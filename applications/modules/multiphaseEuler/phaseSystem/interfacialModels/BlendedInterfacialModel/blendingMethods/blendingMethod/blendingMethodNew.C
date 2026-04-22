@@ -36,7 +36,8 @@ Foam::autoPtr<Foam::blendingMethod> Foam::blendingMethod::New
 {
     const word blendingMethodType(dict.lookup("type"));
 
-    Info<< indent << "Selecting " << modelTypeName << " blending method for "
+    Info<< indentOrNl
+        << "Selecting " << modelTypeName << " blending method for "
         << interface.name() << ": " << blendingMethodType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

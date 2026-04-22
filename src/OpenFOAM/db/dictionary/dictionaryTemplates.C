@@ -221,7 +221,7 @@ T Foam::dictionary::lookupOrDefault
     }
     else
     {
-        if (printDefaults(*this))
+        if (haveDefaults(*this))
         {
             defaults(*this).add
             (
@@ -251,7 +251,7 @@ T Foam::dictionary::lookupOrDefault
     }
     else
     {
-        if (printDefaults(*this))
+        if (haveDefaults(*this))
         {
             defaults(*this).add
             (
@@ -325,7 +325,7 @@ T Foam::dictionary::lookupOrAddDefault
     }
     else
     {
-        if (printDefaults(*this))
+        if (haveDefaults(*this))
         {
             defaults(*this).add
             (

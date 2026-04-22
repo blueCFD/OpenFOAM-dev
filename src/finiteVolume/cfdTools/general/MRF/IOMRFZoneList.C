@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,14 +45,17 @@ Foam::IOobject Foam::IOMRFZoneList::createIOobject
 
     if (io.headerOk())
     {
-        Info<< "Creating MRF zone list from " << io.name() << endl;
+        Info<< indentOrNl
+            << "Constructing MRF zone list from " << io.name()
+            << endl;
 
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
         return io;
     }
     else
     {
-        Info<< "No MRF models present" << nl << endl;
+        Info<< indentOrNl
+            << "No MRF models present" << endl;
 
         io.readOpt() = IOobject::NO_READ;
         return io;

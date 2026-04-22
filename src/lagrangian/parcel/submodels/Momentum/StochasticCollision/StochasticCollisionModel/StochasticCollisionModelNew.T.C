@@ -37,7 +37,7 @@ Foam::StochasticCollisionModel<CloudType>::New
 {
     const word modelType(dict.lookup("stochasticCollisionModel"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting stochastic collision model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =

@@ -26,7 +26,6 @@ License
 #include "fvModels.H"
 #include "fvConstraint.H"
 #include "fvMesh.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -54,9 +53,8 @@ Foam::IOobject Foam::fvModels::createIOobject
 
     if (io.headerOk())
     {
-        Info<< "Creating fvModels from "
-            << io.instance()/io.name()
-            << endl;
+        Info<< "Constructing " << typeName << " from "
+            << io.instance()/io.name() << endl;
 
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
         return io;
@@ -70,7 +68,7 @@ Foam::IOobject Foam::fvModels::createIOobject
         if (io.headerOk())
         {
             Warning
-                << "Creating fvModels from "
+                << "Constructing " << typeName << " from "
                 << io.instance()/io.name()
                 << endl;
 
@@ -86,7 +84,7 @@ Foam::IOobject Foam::fvModels::createIOobject
             if (io.headerOk())
             {
                 Warning
-                    << "Creating fvModels from "
+                    << "Constructing " << typeName << " from "
                     << io.instance()/io.name()
                     << " rather than constant/fvModels"
                     << endl;
@@ -155,12 +153,11 @@ Foam::fvModels::fvModels
     checkTimeIndex_(mesh.time().timeIndex() + 1),
     addSupFields_()
 {
-    Foam::printDefaults print(true);
     readHeaderOk(IOstream::ASCII, typeName);
 
-    const bool readFromFvModels(IOobject::name() == typeName);
+    const bool readFromFvModels = IOobject::name() == typeName;
 
-    const dictionary& dict(*this);
+    const dictionary& dict = *this;
 
     // Count number of active fvModels
     label count = 0;
@@ -175,6 +172,8 @@ Foam::fvModels::fvModels
     PtrListDictionary<fvModel>::setSize(count);
 
     addSupFields_.setSize(count);
+
+    Info<< incrIndent;
 
     label i = 0;
     forAllConstIter(dictionary, dict, iter)
@@ -208,6 +207,8 @@ Foam::fvModels::fvModels
             }
         }
     }
+
+    Info<< decrIndent;
 
     PtrListDictionary<fvModel>::setSize(i);
     addSupFields_.setSize(i);

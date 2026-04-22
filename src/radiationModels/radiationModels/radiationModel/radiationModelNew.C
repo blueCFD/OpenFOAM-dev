@@ -48,7 +48,7 @@ Foam::autoPtr<Foam::radiationModel> Foam::radiationModel::New
 
     const word modelType(radiationProperties.lookup("radiationModel"));
 
-    Info<< indent << "Selecting radiationModel " << modelType << endl;
+    Info<< indentOrNl << "Selecting radiationModel " << modelType << endl;
 
     TConstructorTable::iterator cstrIter =
         TConstructorTablePtr_->find(modelType);
@@ -75,7 +75,7 @@ Foam::autoPtr<Foam::radiationModel> Foam::radiationModel::New
 {
     const word modelType(dict.lookup("radiationModel"));
 
-    Info<< indent << "Selecting radiationModel " << modelType << endl;
+    Info<< indentOrNl << "Selecting radiationModel " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,6 +50,12 @@ Foam::IOobject Foam::LagrangianModels::io(const LagrangianMesh& mesh) const
     if (!result.headerOk())
     {
         result.readOpt() = IOobject::NO_READ;
+    }
+    else
+    {
+        Info<< indentOrNl
+            << "Constructing " << typeName << " from "
+            << result.instance()/result.name() << endl;
     }
 
     return result;

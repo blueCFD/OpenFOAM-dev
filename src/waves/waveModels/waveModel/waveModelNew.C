@@ -46,7 +46,7 @@ Foam::autoPtr<Foam::waveModel> Foam::waveModel::New
 {
     if (debug)
     {
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting " << waveModel::typeName << " " << type << endl;
     }
 

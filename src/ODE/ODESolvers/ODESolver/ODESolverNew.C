@@ -34,7 +34,7 @@ Foam::autoPtr<Foam::ODESolver> Foam::ODESolver::New
 )
 {
     word ODESolverTypeName(dict.lookup("solver"));
-    Info<< indent << "Selecting ODE solver " << ODESolverTypeName << endl;
+    Info<< indentOrNl << "Selecting ODE solver " << ODESolverTypeName << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(ODESolverTypeName);

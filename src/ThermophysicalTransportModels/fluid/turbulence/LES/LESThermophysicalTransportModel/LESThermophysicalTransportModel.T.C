@@ -25,7 +25,6 @@ License
 
 #include "LESThermophysicalTransportModel.T.H"
 #include "unityLewisEddyDiffusivity.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -81,9 +80,12 @@ Foam::LESThermophysicalTransportModel
     {
         IOdictionary modelDict(header);
 
-        const word modelType(modelDict.subDict("LES").lookup("model"));
+        const dictionary& LESdict(modelDict.subDict("LES"));
 
-        Info<< indent << "Selecting LES thermophysical transport model "
+        const word modelType(LESdict.lookup("model"));
+
+        Info<< indentOrNl
+            << "Selecting LES thermophysical transport model "
             << modelType << endl;
 
         typename dictionaryConstructorTable::iterator cstrIter =
@@ -99,7 +101,8 @@ Foam::LESThermophysicalTransportModel
                 << exit(FatalError);
         }
 
-        printDefaults print;
+        printDictionary print(LESdict.name());
+
         return autoPtr<LESThermophysicalTransportModel>
         (
             cstrIter()(momentumTransport, thermo)
@@ -116,10 +119,12 @@ Foam::LESThermophysicalTransportModel
                 >
             > LESunityLewisEddyDiffusivity;
 
-        Info<< indent << "Selecting default LES thermophysical transport model "
+        Info<< indentOrNl
+            << "Selecting default LES thermophysical transport model "
             <<  LESunityLewisEddyDiffusivity::typeName << endl;
 
-        printDefaults print;
+        printDictionary print(header.name());
+
         return autoPtr<LESThermophysicalTransportModel>
         (
             new LESunityLewisEddyDiffusivity

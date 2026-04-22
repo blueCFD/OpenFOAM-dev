@@ -40,7 +40,7 @@ Foam::autoPtr<Foam::liftModel> Foam::liftModel::New
 
     const word liftModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting liftModel for "
+    Info<< indentOrNl << "Selecting liftModel for "
         << interface.name() << ": " << liftModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

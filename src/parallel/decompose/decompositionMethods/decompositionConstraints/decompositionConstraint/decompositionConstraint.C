@@ -52,7 +52,8 @@ Foam::decompositionConstraint::New
     const word& modelType
 )
 {
-    Info<< indent << "Selecting decompositionConstraint " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting decompositionConstraint " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

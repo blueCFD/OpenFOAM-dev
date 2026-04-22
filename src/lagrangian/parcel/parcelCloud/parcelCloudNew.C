@@ -50,7 +50,7 @@ Foam::autoPtr<Foam::parcelCloud> Foam::parcelCloud::New
 
     const word type(dict.lookup<word>("type"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting " << parcelCloud::typeName << " " << type << endl;
 
     libs.open(dict, "libs");
@@ -94,7 +94,7 @@ Foam::autoPtr<Foam::parcelCloud> Foam::parcelCloud::New
 
     const word type(dict.lookup<word>("type"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting " << parcelCloud::typeName << " " << type << endl;
 
     libs.open(dict, "libs");

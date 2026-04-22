@@ -82,7 +82,7 @@ Foam::DampingModel<CloudType>::New
 {
     word modelType(dict.lookup(typeName));
 
-    Info<< indent << "Selecting damping model " << modelType << endl;
+    Info<< indentOrNl << "Selecting damping model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

@@ -147,7 +147,7 @@ Foam::waveSpectrum::New(const dictionary& dict, const scalar g)
 
     if (debug)
     {
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting " << waveSpectrum::typeName << " " << type << endl;
     }
 

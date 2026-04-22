@@ -22,25 +22,23 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::functionEntries::printDefaultsEntry
+    Foam::functionEntries::dumpEntry
 
 Description
-    Print the current contents of the dictionary
-    and subsequently looked-up defaulted entries
+    Dumps the current contents of the dictionary to the info stream
 
-    \c \#printDefaults does not require an argument.
+    \c \#dump does not require an argument.
 
 See also
-    Foam::printDefaults
     Foam::functionEntries::printEntry
 
 SourceFiles
-    printDefaultsEntry.C
+    dumpEntry.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef printDefaultsEntry_H
-#define printDefaultsEntry_H
+#ifndef dumpEntry_H
+#define dumpEntry_H
 
 #include "functionEntry.H"
 
@@ -52,10 +50,10 @@ namespace functionEntries
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class printDefaultsEntry Declaration
+                           Class dumpEntry Declaration
 \*---------------------------------------------------------------------------*/
 
-class printDefaultsEntry
+class dumpEntry
 :
     public functionEntry
 {
@@ -63,13 +61,13 @@ class printDefaultsEntry
 public:
 
     //- Runtime type information
-    FunctionTypeName("#printDefaults");
+    FunctionTypeName("#dump");
 
 
     // Constructors
 
         //- Construct from line number, dictionary and Istream
-        printDefaultsEntry
+        dumpEntry
         (
             const label lineNumber,
             const dictionary& parentDict,
@@ -77,12 +75,12 @@ public:
         );
 
         //- Copy construct
-        printDefaultsEntry(const printDefaultsEntry&) = default;
+        dumpEntry(const dumpEntry&) = default;
 
         //- Clone
         virtual autoPtr<entry> clone(const dictionary&) const
         {
-            return autoPtr<entry>(new printDefaultsEntry(*this));
+            return autoPtr<entry>(new dumpEntry(*this));
         }
 
 
@@ -95,7 +93,7 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const printDefaultsEntry&) = delete;
+        void operator=(const dumpEntry&) = delete;
 };
 
 

@@ -39,7 +39,8 @@ Foam::autoPtr<Foam::SuModel> Foam::SuModel::New
 
     const word modelType(SuDict.lookup("model"));
 
-    Info<< indent << "Selecting flame-wrinkling Su model " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting flame-wrinkling Su model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

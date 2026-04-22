@@ -51,7 +51,7 @@ Foam::wallHeatTransferCoeffModel::New
 
     if (debug)
     {
-        Info<< indent << "Selecting heat transfer coefficient type: "
+        Info<< indentOrNl << "Selecting heat transfer coefficient type: "
             << model << endl;
     }
 

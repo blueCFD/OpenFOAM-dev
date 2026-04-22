@@ -40,7 +40,7 @@ Foam::diffusiveMassTransferModel::New
 
     const word diffusiveMassTransferModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting diffusiveMassTransferModel for "
+    Info<< indentOrNl << "Selecting diffusiveMassTransferModel for "
         << interface.name() << ": " << diffusiveMassTransferModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

@@ -42,7 +42,7 @@ Foam::radiationModels::sootModel::New
     if (dict.found(sootModel::typeName))
     {
         dict.lookup(sootModel::typeName) >> modelType;
-        Info<< indent << "Selecting soot model " << modelType << endl;
+        Info<< indentOrNl << "Selecting soot model " << modelType << endl;
     }
 
     // Backwards compatibility check

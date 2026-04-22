@@ -169,7 +169,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
 {
     if (debug)
     {
-        InfoInFunction << "Creating temporary" << endl << this->info() << endl;
+        InfoInFunction
+            << "Constructing field" << endl << this->info() << endl;
     }
 
     readIfPresent();
@@ -196,7 +197,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
 {
     if (debug)
     {
-        InfoInFunction << "Creating temporary" << endl << this->info() << endl;
+        InfoInFunction
+            << "Constructing field" << endl << this->info() << endl;
     }
 
     readIfPresent();
@@ -220,7 +222,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
 {
     if (debug)
     {
-        InfoInFunction << "Creating temporary" << endl << this->info() << endl;
+        InfoInFunction
+            << "Constructing field" << endl << this->info() << endl;
     }
 
     boundaryField_ == dt.value();
@@ -249,7 +252,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
 {
     if (debug)
     {
-        InfoInFunction << "Creating temporary" << endl << this->info() << endl;
+        InfoInFunction
+            << "Constructing field" << endl << this->info() << endl;
     }
 
     boundaryField_ == dt.value();
@@ -276,7 +280,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from components" << endl << this->info() << endl;
+            << "Constructing field from components" << endl
+            << this->info() << endl;
     }
 
     readIfPresent();
@@ -303,7 +308,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from components" << endl << this->info() << endl;
+            << "Constructing field from components" << endl
+            << this->info() << endl;
     }
 }
 
@@ -393,7 +399,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing as copy" << endl << this->info() << endl;
+            << "Constructing field as copy" << endl << this->info() << endl;
     }
 
     this->writeOpt() = IOobject::NO_WRITE;
@@ -416,7 +422,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing as copy" << endl << this->info() << endl;
+            << "Constructing field as copy" << endl << this->info() << endl;
     }
 
     this->writeOpt() = IOobject::NO_WRITE;
@@ -438,7 +444,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing by moving" << endl << this->info() << endl;
+            << "Constructing field by moving" << endl << this->info() << endl;
     }
 
     this->writeOpt() = IOobject::NO_WRITE;
@@ -464,7 +470,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from tmp" << endl << this->info() << endl;
+            << "Constructing field from tmp" << endl << this->info() << endl;
     }
 
     this->writeOpt() = IOobject::NO_WRITE;
@@ -490,7 +496,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing as copy resetting IO params"
+            << "Constructing field as copy resetting IO params"
             << endl << this->info() << endl;
     }
 
@@ -523,7 +529,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from tmp resetting IO params"
+            << "Constructing field from tmp resetting IO params"
             << endl << this->info() << endl;
     }
 
@@ -550,7 +556,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing as copy resetting name"
+            << "Constructing field as copy resetting name"
             << endl << this->info() << endl;
     }
 
@@ -579,7 +585,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from tmp resetting name"
+            << "Constructing field from tmp resetting name"
             << endl << this->info() << endl;
     }
 
@@ -605,7 +611,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing as copy resetting IO params"
+            << "Constructing field as copy resetting IO params"
             << endl << this->info() << endl;
     }
 
@@ -641,7 +647,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing as copy resetting IO params"
+            << "Constructing field as copy resetting IO params"
             << endl << this->info() << endl;
     }
 
@@ -671,7 +677,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from components" << endl << this->info() << endl;
+            << "Constructing field from components" << endl
+            << this->info() << endl;
     }
 
     if (!readIfPresent())
@@ -698,7 +705,8 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from components" << endl << this->info() << endl;
+            << "Constructing field from components" << endl
+            << this->info() << endl;
     }
 
     if (!readIfPresent())
@@ -735,7 +743,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing as copy resetting IO params and patch types"
+            << "Constructing field as copy resetting IO params and patch types"
             << endl << this->info() << endl;
     }
 
@@ -780,7 +788,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from tmp resetting IO params and patch types"
+            << "Constructing field from tmp resetting IO params and patch types"
             << endl << this->info() << endl;
     }
 
@@ -819,7 +827,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from internal field and patch types"
+            << "Constructing field from internal field and patch types"
             << endl << this->info() << endl;
     }
 
@@ -853,7 +861,7 @@ Foam::GeometricField<Type, GeoMesh, PrimitiveField>::GeometricField
     if (debug)
     {
         InfoInFunction
-            << "Constructing from tmp internal field and patch types"
+            << "Constructing field from tmp internal field and patch types"
             << endl << this->info() << endl;
     }
 

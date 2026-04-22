@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,6 +25,7 @@ License
 
 #include "NamedEnum.T.H"
 #include "dictionary.H"
+#include "printDictionary.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -76,9 +77,18 @@ Enum Foam::NamedEnum<Enum, nEnum>::lookupOrDefault
     const Enum defaultValue
 ) const
 {
-    return dict.found(name)
-      ? read(dict.lookup(name))
-      : defaultValue;
+    if (dict.found(name))
+    {
+        return read(dict.lookup(name));
+    }
+    else
+    {
+        if (printDictionary::haveDefaults(dict))
+        {
+            printDictionary::defaults(dict).add(name, operator[](defaultValue));
+        }
+        return defaultValue;
+    }
 }
 
 

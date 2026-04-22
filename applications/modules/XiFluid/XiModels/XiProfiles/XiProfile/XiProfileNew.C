@@ -37,7 +37,7 @@ Foam::autoPtr<Foam::XiProfile> Foam::XiProfile::New
 
     const word modelType(XiProfileDict.lookup("model"));
 
-    Info<< indent << "Selecting equilibrium flame-wrinkling profile model "
+    Info<< indentOrNl << "Selecting equilibrium flame-wrinkling profile model "
         << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

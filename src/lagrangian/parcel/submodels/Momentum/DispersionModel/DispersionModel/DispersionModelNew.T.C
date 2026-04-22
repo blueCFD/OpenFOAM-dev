@@ -37,7 +37,7 @@ Foam::DispersionModel<CloudType>::New
 {
     const word modelType(dict.lookup("dispersionModel"));
 
-    Info<< indent << "Selecting dispersion model " << modelType << endl;
+    Info<< indentOrNl << "Selecting dispersion model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

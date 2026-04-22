@@ -41,7 +41,7 @@ Foam::turbulentDispersionModel::New
 
     const word turbulentDispersionModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting turbulentDispersionModel for "
+    Info<< indentOrNl << "Selecting turbulentDispersionModel for "
         << interface.name() << ": " << turbulentDispersionModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

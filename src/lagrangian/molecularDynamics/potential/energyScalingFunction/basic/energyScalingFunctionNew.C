@@ -37,7 +37,7 @@ Foam::autoPtr<Foam::energyScalingFunction> Foam::energyScalingFunction::New
 {
     const word scalingType(propDict.lookup("energyScalingFunction"));
 
-    Info<< indent << "Selecting energy scaling function "
+    Info<< indentOrNl << "Selecting energy scaling function "
         << scalingType << " for "
         << name << " potential energy." << endl;
 

@@ -58,7 +58,7 @@ Foam::autoPtr<Foam::patchDistMethod> Foam::patchDistMethod::New
 {
     word patchDistMethodType(dict.lookup("method"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting patchDistMethod " << patchDistMethodType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

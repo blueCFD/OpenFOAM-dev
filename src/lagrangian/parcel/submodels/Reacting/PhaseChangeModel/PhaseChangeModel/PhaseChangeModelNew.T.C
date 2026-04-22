@@ -37,7 +37,7 @@ Foam::PhaseChangeModel<CloudType>::New
 {
     const word modelType(dict.lookup("phaseChangeModel"));
 
-    Info<< indent << "Selecting phase change model " << modelType << endl;
+    Info<< indentOrNl << "Selecting phase change model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

@@ -54,14 +54,14 @@ Usage
     }
     \endverbatim
 
-    The \c tangentialVelocity entry is a \c UDimensionedFieldFunction providing
-    total flexibility in the specification of the tangential velocity, the
-    normal component is removed automatically from the field returned by the
+    The \c tangentialVelocity entry is a \c UFunctionalDimensionedField
+    providing total flexibility in the specification of the tangential velocity,
+    the normal component is removed automatically from the field returned by the
     function.
 
 See also
     Foam::DimensionedFieldFunction
-    Foam::UDimensionedFieldFunction
+    Foam::UFunctionalDimensionedField
     Foam::directionMixedFvPatchVectorField
     Foam::totalPressureFvPatchScalarField
     Foam::entrainmentPressureFvPatchScalarField
@@ -75,7 +75,7 @@ SourceFiles
 #define pressureInletOutletVelocityFvPatchVectorField_H
 
 #include "directionMixedFvPatchFields.H"
-#include "UDimensionedFieldFunction.T.H"
+#include "UFunctionalDimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -93,7 +93,7 @@ class pressureInletOutletVelocityFvPatchVectorField
     // Private Data
 
         //- Optional tangential velocity
-        UDimensionedFieldFunction<vector, fvPatch> tangentialVelocity_;
+        UFunctionalDimensionedField<vector, fvPatch> tangentialVelocity_;
 
         //- Flux field name
         word phiName_;
@@ -179,7 +179,7 @@ public:
             //- Return the tangential velocity Function1
             const DimensionedField<vector, fvPatch>& tangentialVelocity() const
             {
-                return tangentialVelocity_.field();
+                return tangentialVelocity_;
             }
 
 

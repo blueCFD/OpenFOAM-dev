@@ -37,7 +37,7 @@ Foam::BreakupModel<CloudType>::New
 {
     const word breakupModelType(dict.lookup("breakupModel"));
 
-    Info<< indent << "Selecting breakup model " << breakupModelType << endl;
+    Info<< indentOrNl << "Selecting breakup model " << breakupModelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(breakupModelType);

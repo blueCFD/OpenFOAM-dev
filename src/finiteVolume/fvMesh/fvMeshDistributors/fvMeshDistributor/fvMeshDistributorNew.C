@@ -62,7 +62,7 @@ Foam::autoPtr<Foam::fvMeshDistributor> Foam::fvMeshDistributor::New
                     distributorDict.lookup("type")
                 );
 
-                Info<< indent << "Selecting fvMeshDistributor "
+                Info<< indentOrNl << "Selecting fvMeshDistributor "
                     << fvMeshDistributorTypeName << endl;
 
                 libs.open

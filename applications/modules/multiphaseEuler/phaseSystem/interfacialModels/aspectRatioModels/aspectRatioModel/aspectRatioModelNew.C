@@ -37,7 +37,7 @@ Foam::aspectRatioModel::New
 {
     const word aspectRatioModelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting aspectRatioModel for "
+    Info<< indentOrNl << "Selecting aspectRatioModel for "
         << interface.name() << ": " << aspectRatioModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

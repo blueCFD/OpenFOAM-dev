@@ -27,7 +27,7 @@ License
 #include "pTraits.H"
 #include "dictionary.H"
 #include "units.H"
-#include "printDefaults.H"
+#include "printDictionary.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -246,9 +246,9 @@ Foam::dimensioned<Type>::dimensioned
     {
         initialise(name, dims, dict.lookup(name));
     }
-    else if (printDefaults::print(dict))
+    else if (printDictionary::haveDefaults(dict))
     {
-        printDefaults::add(dict).add(name, defaultValue, true);
+        printDictionary::defaults(dict).add(name, defaultValue, true);
     }
 }
 
@@ -282,9 +282,9 @@ Foam::dimensioned<Type>::dimensioned
     {
         initialise(name, units, dict.lookup(name));
     }
-    else if (printDefaults::print(dict))
+    else if (printDictionary::haveDefaults(dict))
     {
-        printDefaults::add(dict).add(name, defaultValue, true);
+        printDictionary::defaults(dict).add(name, defaultValue, true);
     }
 }
 

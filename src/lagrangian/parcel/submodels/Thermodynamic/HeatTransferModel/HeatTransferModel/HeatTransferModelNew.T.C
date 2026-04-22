@@ -37,7 +37,7 @@ Foam::HeatTransferModel<CloudType>::New
 {
     const word modelType(dict.lookup("heatTransferModel"));
 
-    Info<< indent << "Selecting heat transfer model " << modelType << endl;
+    Info<< indentOrNl << "Selecting heat transfer model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

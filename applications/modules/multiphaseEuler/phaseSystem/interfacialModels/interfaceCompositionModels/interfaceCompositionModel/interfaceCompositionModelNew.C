@@ -41,7 +41,7 @@ Foam::interfaceCompositionModel::New
 
     const word interfaceCompositionModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting interfaceCompositionModel for "
+    Info<< indentOrNl << "Selecting interfaceCompositionModel for "
         << interface.name() << ": " << interfaceCompositionModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

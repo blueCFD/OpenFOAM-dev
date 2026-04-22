@@ -57,7 +57,7 @@ Foam::autoPtr<Foam::packingDispersionModel> Foam::packingDispersionModel::New
     {
         const word modelType(dict.lookup(typeName));
 
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting packing dispersion model " << modelType << endl;
 
         dictionaryConstructorTable::iterator cstrIter =

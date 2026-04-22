@@ -37,7 +37,7 @@ Foam::WallModel<CloudType>::New
 {
     const word wallModelType(dict.lookup("wallModel"));
 
-    Info<< indent << "Selecting wall model " << wallModelType << endl;
+    Info<< indentOrNl << "Selecting wall model " << wallModelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(wallModelType);

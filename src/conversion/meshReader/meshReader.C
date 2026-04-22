@@ -123,10 +123,10 @@ Foam::autoPtr<Foam::polyMesh> Foam::meshReader::mesh
 {
     readGeometry();
 
-    Info<< "Creating a polyMesh" << endl;
+    Info<< indentOrNl << "Constructing a polyMesh" << endl;
     createPolyCells();
 
-    Info<< "Number of internal faces: " << nInternalFaces_ << endl;
+    Info<< indent << "Number of internal faces: " << nInternalFaces_ << endl;
 
     createPolyBoundary();
     clearExtraStorage();

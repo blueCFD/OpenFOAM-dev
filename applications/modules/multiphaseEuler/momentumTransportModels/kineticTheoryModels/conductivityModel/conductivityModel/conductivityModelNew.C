@@ -35,7 +35,7 @@ Foam::kineticTheoryModels::conductivityModel::New
 {
     const word conductivityModelType(dict.lookup("granularConductivityModel"));
 
-    Info<< indent << "Selecting granularConductivityModel "
+    Info<< indentOrNl << "Selecting granularConductivityModel "
         << conductivityModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

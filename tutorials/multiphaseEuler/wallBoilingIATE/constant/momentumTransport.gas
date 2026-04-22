@@ -21,6 +21,8 @@ RAS
     model    kOmegaSST;
 
     turbulence      on;
+
+    #print
 }
 
 

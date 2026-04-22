@@ -35,7 +35,7 @@ Foam::kineticTheoryModels::frictionalStressModel::New
 {
     const word frictionalStressModelType(dict.lookup("frictionalStressModel"));
 
-    Info<< indent << "Selecting frictionalStressModel "
+    Info<< indentOrNl << "Selecting frictionalStressModel "
         << frictionalStressModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

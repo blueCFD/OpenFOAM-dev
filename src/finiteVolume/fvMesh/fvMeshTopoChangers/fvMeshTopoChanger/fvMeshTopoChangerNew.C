@@ -38,7 +38,7 @@ Foam::autoPtr<Foam::fvMeshTopoChanger> Foam::fvMeshTopoChanger::New
         dict.lookup("type")
     );
 
-    Info<< indent << "Selecting fvMeshTopoChanger "
+    Info<< indentOrNl << "Selecting fvMeshTopoChanger "
         << fvMeshTopoChangerTypeName << endl;
 
     libs.open

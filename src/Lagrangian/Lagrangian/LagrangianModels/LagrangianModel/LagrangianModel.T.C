@@ -81,7 +81,7 @@ Foam::autoPtr<Foam::LagrangianModel> Foam::LagrangianModel::New
 {
     const word type(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting " << typeName
+    Info<< indentOrNl << "Selecting " << typeName
         << " with name " << name
         << " of type " << type << endl;
 
@@ -119,14 +119,11 @@ Foam::autoPtr<Foam::LagrangianModel> Foam::LagrangianModel::New
             << exit(FatalIOError);
     }
 
-    return
-        cstrIter()
-        (
-            name,
-            mesh,
-            modelDict.optionalSubDict(type + "Coeffs"),
-            stateDict(name, mesh)
-        );
+    const dictionary& coeffsDict = modelDict.optionalSubDict(type + "Coeffs");
+
+    printDictionary print(coeffsDict);
+
+    return cstrIter()(name, mesh, coeffsDict, stateDict(name, mesh));
 }
 
 

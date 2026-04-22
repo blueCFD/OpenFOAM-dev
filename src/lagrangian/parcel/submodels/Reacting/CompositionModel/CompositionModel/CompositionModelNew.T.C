@@ -37,7 +37,7 @@ Foam::CompositionModel<CloudType>::New
 {
     const word modelType(dict.lookup("compositionModel"));
 
-    Info<< indent << "Selecting composition model " << modelType << endl;
+    Info<< indentOrNl << "Selecting composition model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

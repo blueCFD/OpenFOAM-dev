@@ -40,7 +40,7 @@ Foam::autoPtr<Foam::wallLubricationModel> Foam::wallLubricationModel::New
 
     const word wallLubricationModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting wallLubricationModel for "
+    Info<< indentOrNl << "Selecting wallLubricationModel for "
         << interface.name() << ": " << wallLubricationModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

@@ -37,7 +37,7 @@ Foam::AtomisationModel<CloudType>::New
 {
     const word atomisationModelType(dict.lookup("atomisationModel"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting atomisation model " << atomisationModelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =

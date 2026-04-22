@@ -65,7 +65,8 @@ Foam::autoPtr<Foam::ParticleStressModel> Foam::ParticleStressModel::New
 {
     word modelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting particle stress model " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting particle stress model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

@@ -41,7 +41,7 @@ Foam::autoPtr<Foam::virtualMassModel> Foam::virtualMassModel::New
 
     const word virtualMassModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting virtualMassModel for "
+    Info<< indentOrNl << "Selecting virtualMassModel for "
         << interface.name() << ": " << virtualMassModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

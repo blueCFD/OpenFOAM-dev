@@ -43,7 +43,7 @@ Foam::chemistryReductionMethod<ThermoType>::New
 
         const word methodName(reductionDict.lookup("method"));
 
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting chemistry reduction method " << methodName << endl;
 
         const word methodTypeName =

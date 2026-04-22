@@ -26,7 +26,6 @@ License
 #include "fvConstraints.H"
 #include "fvModel.H"
 #include "fvMesh.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -54,7 +53,7 @@ Foam::IOobject Foam::fvConstraints::createIOobject
 
     if (io.headerOk())
     {
-        Info<< "Creating fvConstraints from "
+        Info<< "Constructing " << typeName << " from "
             << io.instance()/io.name() << endl;
 
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
@@ -69,7 +68,7 @@ Foam::IOobject Foam::fvConstraints::createIOobject
         if (io.headerOk())
         {
             Warning
-                << "Creating fvConstraints from "
+                << "Constructing " << typeName << " from "
                 << io.instance()/io.name() << endl;
 
             io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
@@ -84,7 +83,7 @@ Foam::IOobject Foam::fvConstraints::createIOobject
             if (io.headerOk())
             {
                 Warning
-                    << "Creating fvConstraints from "
+                    << "Constructing " << typeName << " from "
                     << io.instance()/io.name()
                     << " rather than system/fvConstraints"
                     << endl;
@@ -148,12 +147,11 @@ Foam::fvConstraints::fvConstraints
     checkTimeIndex_(mesh.time().timeIndex() + 1),
     constrainedFields_()
 {
-    Foam::printDefaults print(true);
     readHeaderOk(IOstream::ASCII, typeName);
 
-    const bool readFromFvConstraints(IOobject::name() == typeName);
+    const bool readFromFvConstraints = IOobject::name() == typeName;
 
-    const dictionary& dict(*this);
+    const dictionary& dict = *this;
 
     // Count number of active fvConstraints
     label count = 0;
@@ -168,6 +166,8 @@ Foam::fvConstraints::fvConstraints
     PtrListDictionary<fvConstraint>::setSize(count);
 
     constrainedFields_.setSize(count);
+
+    Info<< incrIndent;
 
     label i = 0;
     forAllConstIter(dictionary, dict, iter)
@@ -201,6 +201,8 @@ Foam::fvConstraints::fvConstraints
             }
         }
     }
+
+    Info<< decrIndent;
 
     PtrListDictionary<fvConstraint>::setSize(i);
     constrainedFields_.setSize(i);

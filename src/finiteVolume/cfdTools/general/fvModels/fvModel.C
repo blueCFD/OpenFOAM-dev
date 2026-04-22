@@ -25,7 +25,6 @@ License
 
 #include "fvModel.H"
 #include "volFields.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -84,9 +83,7 @@ Foam::fvModel::fvModel
     name_(name),
     modelType_(modelType),
     mesh_(mesh)
-{
-    writeEntry(Info, "name", name_);
-}
+{}
 
 
 // * * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * //
@@ -98,15 +95,16 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
     const dictionary& dict
 )
 {
-    const word modelType(dict.lookup("type"));
+    const word type(dict.lookup("type"));
 
-    Info<< indent
-        << "Selecting finite volume model type " << modelType << endl;
+    Info<< indentOrNl << "Selecting " << typeName
+        << " with name " << name
+        << " of type " << type << endl;
 
     if
     (
         !dictionaryConstructorTablePtr_
-     || dictionaryConstructorTablePtr_->find(modelType)
+     || dictionaryConstructorTablePtr_->find(type)
         == dictionaryConstructorTablePtr_->end()
     )
     {
@@ -120,35 +118,36 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
             )
         )
         {
-            libs.open("lib" + modelType.remove(':') + ".so", false);
+            libs.open("lib" + type.remove(':') + ".so", false);
         }
 
         if (!dictionaryConstructorTablePtr_)
         {
             FatalErrorInFunction
                 << "Unknown model type "
-                << modelType << nl << nl
+                << type << nl << nl
                 << "Table of fvModels is empty"
                 << exit(FatalError);
         }
     }
 
     dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(modelType);
+        dictionaryConstructorTablePtr_->find(type);
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
         FatalIOErrorInFunction(dict)
-            << "Unknown fvModel " << modelType << nl << nl
+            << "Unknown fvModel " << type << nl << nl
             << "Valid fvModels are:" << nl
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
 
-    printDefaults print(dict);
+    printDictionary print(dict);
+
     return autoPtr<fvModel>
     (
-        cstrIter()(name, modelType, mesh, dict)
+        cstrIter()(name, type, mesh, dict)
     );
 }
 

@@ -37,7 +37,7 @@ Foam::PairModel<CloudType>::New
 {
     const word pairModelType(dict.lookup("pairModel"));
 
-    Info<< indent << "Selecting pair model " << pairModelType << endl;
+    Info<< indentOrNl << "Selecting pair model " << pairModelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(pairModelType);

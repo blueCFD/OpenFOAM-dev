@@ -25,7 +25,6 @@ License
 
 #include "laminarModel.H"
 #include "Stokes.T.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -90,7 +89,7 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
             {"model", "laminarModel"}
         );
 
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting laminar stress model " << modelType << endl;
 
         libs.open(laminarDict, "libs", dictionaryConstructorTablePtr_);
@@ -108,7 +107,8 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
                 << exit(FatalError);
         }
 
-        printDefaults print;
+        printDictionary print(laminarDict.name());
+
         autoPtr<laminarModel> modelPtr
         (
             cstrIter()
@@ -126,12 +126,13 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
     }
     else
     {
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting laminar stress model "
             << laminarModels::Stokes<BasicMomentumTransportModel>::typeName
             << endl;
 
-        printDefaults print;
+        printDictionary print(dict.name());
+
         autoPtr<laminarModel> modelPtr
         (
             new laminarModels::Stokes<BasicMomentumTransportModel>

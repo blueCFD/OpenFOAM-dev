@@ -58,7 +58,7 @@ Foam::CorrectionLimitingMethod::New
 {
     word modelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting correction limiter " << modelType << endl;
+    Info<< indentOrNl << "Selecting correction limiter " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

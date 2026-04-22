@@ -25,12 +25,15 @@ Class
     Foam::functionEntries::printEntry
 
 Description
-    Print the current contents of the dictionary
+    Print the entire contents of the dictionary after it has been read. Also
+    print any entries which are not present and for which default values were
+    used.
 
     \c \#print does not require an argument.
 
 See also
-    Foam::functionEntries::exitEntry
+    Foam::printDictionary
+    Foam::functionEntries::dumpEntry
 
 SourceFiles
     printEntry.C

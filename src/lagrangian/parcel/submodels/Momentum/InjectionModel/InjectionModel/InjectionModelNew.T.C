@@ -37,7 +37,7 @@ Foam::InjectionModel<CloudType>::New
 {
     const word modelType(dict.lookup("injectionModel"));
 
-    Info<< indent << "Selecting injection model " << modelType << endl;
+    Info<< indentOrNl << "Selecting injection model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);
@@ -66,7 +66,7 @@ Foam::InjectionModel<CloudType>::New
     CloudType& owner
 )
 {
-    Info<< indent << "Selecting injection model " << modelType << endl;
+    Info<< indentOrNl << "Selecting injection model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

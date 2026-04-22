@@ -80,7 +80,7 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
 
     if (debug)
     {
-        Info<< indent << "Selecting function " << functionType << endl;
+        Info<< indentOrNl << "Selecting function " << functionType << endl;
     }
 
     if

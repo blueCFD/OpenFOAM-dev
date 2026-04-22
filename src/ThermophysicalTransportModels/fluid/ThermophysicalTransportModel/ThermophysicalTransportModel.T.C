@@ -61,7 +61,7 @@ Foam::ThermophysicalTransportModel<MomentumTransportModel, ThermoModel>::New
         momentumTransport.lookup("simulationType")
     );
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting thermophysical transport type " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
@@ -76,6 +76,8 @@ Foam::ThermophysicalTransportModel<MomentumTransportModel, ThermoModel>::New
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalError);
     }
+
+    Foam::printDictionary print(fileName::null);
 
     return autoPtr<ThermophysicalTransportModel>
     (

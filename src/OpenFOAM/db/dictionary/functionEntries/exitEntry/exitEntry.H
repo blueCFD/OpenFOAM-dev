@@ -31,6 +31,7 @@ Description
     \c \#exit does not require an argument.
 
 See also
+    Foam::functionEntries::dumpEntry
     Foam::functionEntries::printEntry
 
 SourceFiles

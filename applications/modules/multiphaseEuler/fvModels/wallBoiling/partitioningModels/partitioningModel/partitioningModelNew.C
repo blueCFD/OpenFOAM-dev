@@ -35,7 +35,7 @@ Foam::wallBoilingModels::partitioningModel::New
 {
     word partitioningModelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting partitioningModel: "
+    Info<< indentOrNl << "Selecting partitioningModel "
         << partitioningModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
@@ -50,6 +50,8 @@ Foam::wallBoilingModels::partitioningModel::New
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
+
+    printDictionary print(dict);
 
     return cstrIter()(dict);
 }

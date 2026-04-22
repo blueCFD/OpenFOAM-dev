@@ -42,7 +42,7 @@ Foam::chemistryTabulationMethod::New
 
         const word methodName(tabulationDict.lookup("method"));
 
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting chemistry tabulation method " << methodName << endl;
 
         typename dictionaryConstructorTable::iterator cstrIter =

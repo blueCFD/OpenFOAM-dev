@@ -25,7 +25,6 @@ License
 
 #include "fvConstraint.H"
 #include "volFields.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -69,9 +68,7 @@ Foam::fvConstraint::fvConstraint
     name_(name),
     constraintType_(constraintType),
     mesh_(mesh)
-{
-    writeEntry(Info, "name", name_);
-}
+{}
 
 
 // * * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * //
@@ -83,15 +80,16 @@ Foam::autoPtr<Foam::fvConstraint> Foam::fvConstraint::New
     const dictionary& dict
 )
 {
-    const word constraintType(dict.lookup("type"));
+    const word type(dict.lookup("type"));
 
-    Info<< indent
-        << "Selecting finite volume constraint type " << constraintType << endl;
+    Info<< indentOrNl << "Selecting " << typeName
+        << " with name " << name
+        << " of type " << type << endl;
 
     if
     (
         !dictionaryConstructorTablePtr_
-     || dictionaryConstructorTablePtr_->find(constraintType)
+     || dictionaryConstructorTablePtr_->find(type)
         == dictionaryConstructorTablePtr_->end()
     )
     {
@@ -105,35 +103,36 @@ Foam::autoPtr<Foam::fvConstraint> Foam::fvConstraint::New
             )
         )
         {
-            libs.open("lib" + constraintType.remove(':') + ".so", false);
+            libs.open("lib" + type.remove(':') + ".so", false);
         }
 
         if (!dictionaryConstructorTablePtr_)
         {
             FatalErrorInFunction
                 << "Unknown constraint type "
-                << constraintType << nl << nl
+                << type << nl << nl
                 << "Table of fvConstraints is empty"
                 << exit(FatalError);
         }
     }
 
     dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(constraintType);
+        dictionaryConstructorTablePtr_->find(type);
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
         FatalIOErrorInFunction(dict)
-            << "Unknown fvConstraint " << constraintType << nl << nl
+            << "Unknown fvConstraint " << type << nl << nl
             << "Valid fvConstraints are:" << nl
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
 
-    printDefaults print(dict);
+    printDictionary print(dict);
+
     return autoPtr<fvConstraint>
     (
-        cstrIter()(name, constraintType, mesh, dict)
+        cstrIter()(name, type, mesh, dict)
     );
 }
 

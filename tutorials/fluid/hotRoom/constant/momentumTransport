@@ -22,7 +22,7 @@ RAS
 
     turbulence      on;
 
-    #printDefaults
+    #print
 }
 
 

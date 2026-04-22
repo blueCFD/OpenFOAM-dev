@@ -25,7 +25,6 @@ License
 
 #include "LESModel.T.H"
 #include "NewtonianViscosityModel.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -122,7 +121,7 @@ Foam::LESModel<BasicMomentumTransportModel>::New
         {"model", "LESModel"}
     );
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting LES turbulence model " << modelType << endl;
 
     libs.open(LESdict, "libs", dictionaryConstructorTablePtr_);
@@ -140,7 +139,8 @@ Foam::LESModel<BasicMomentumTransportModel>::New
             << exit(FatalError);
     }
 
-    printDefaults print;
+    printDictionary print(LESdict.name());
+
     autoPtr<LESModel> modelPtr
     (
         cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity)

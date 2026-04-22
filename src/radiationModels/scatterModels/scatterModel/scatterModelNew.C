@@ -37,7 +37,7 @@ Foam::radiationModels::scatterModel::New
 {
     const word modelType(dict.lookup("scatterModel"));
 
-    Info<< indent << "Selecting scatterModel " << modelType << endl;
+    Info<< indentOrNl << "Selecting scatterModel " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

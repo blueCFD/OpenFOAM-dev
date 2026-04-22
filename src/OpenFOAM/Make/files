@@ -217,7 +217,7 @@ $(dictionary)/dictionary.C
 $(dictionary)/dictionaryIO.C
 
 $(dictionary)/keyType/keyType.C
-$(dictionary)/printDefaults/printDefaults.C
+$(dictionary)/printDictionary/printDictionary.C
 
 entry = $(dictionary)/entry
 $(entry)/entry.C
@@ -240,8 +240,8 @@ $(dictionary)/mergeDictionaries/mergeDictionaries.C
 functionEntries = $(dictionary)/functionEntries
 $(functionEntries)/functionEntry/functionEntry.C
 $(functionEntries)/exitEntry/exitEntry.C
+$(functionEntries)/dumpEntry/dumpEntry.C
 $(functionEntries)/printEntry/printEntry.C
-$(functionEntries)/printDefaultsEntry/printDefaultsEntry.C
 $(functionEntries)/negEntry/negEntry.C
 $(functionEntries)/codeIncludeEntry/codeIncludeEntry.C
 $(functionEntries)/calcEntry/calcEntry.C

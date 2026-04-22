@@ -38,7 +38,7 @@ Foam::autoPtr<Foam::viscosityModel> Foam::viscosityModel::New
 
     const word modelType(dict.lookup("viscosityModel"));
 
-    Info<< indent << "Selecting viscosity model " << modelType << endl;
+    Info<< indentOrNl << "Selecting viscosity model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

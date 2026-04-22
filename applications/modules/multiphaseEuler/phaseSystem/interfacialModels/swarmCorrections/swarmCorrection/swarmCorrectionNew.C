@@ -37,7 +37,7 @@ Foam::swarmCorrection::New
 {
     const word swarmCorrectionType(dict.lookup("type"));
 
-    Info<< indent << "Selecting swarmCorrection for "
+    Info<< indentOrNl << "Selecting swarmCorrection for "
         << interface.name() << ": " << swarmCorrectionType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

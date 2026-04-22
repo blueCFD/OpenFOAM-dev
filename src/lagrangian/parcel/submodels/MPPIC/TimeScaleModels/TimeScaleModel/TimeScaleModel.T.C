@@ -67,7 +67,7 @@ Foam::autoPtr<Foam::TimeScaleModel> Foam::TimeScaleModel::New
 {
     word modelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting time scale model " << modelType << endl;
+    Info<< indentOrNl << "Selecting time scale model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

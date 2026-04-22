@@ -35,7 +35,7 @@ Foam::wallBoilingModels::departureFrequencyModel::New
 {
     word departureFrequencyModelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting departureFrequencyModel: "
+    Info<< indentOrNl << "Selecting departureFrequencyModel "
         << departureFrequencyModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
@@ -50,6 +50,8 @@ Foam::wallBoilingModels::departureFrequencyModel::New
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
+
+    printDictionary print(dict);
 
     return cstrIter()(dict);
 }

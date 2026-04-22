@@ -37,7 +37,7 @@ Foam::CollisionModel<CloudType>::New
 {
     const word modelType(dict.lookup("collisionModel"));
 
-    Info<< indent << "Selecting collision model " << modelType << endl;
+    Info<< indentOrNl << "Selecting collision model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

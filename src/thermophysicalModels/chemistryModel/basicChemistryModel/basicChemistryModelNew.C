@@ -78,7 +78,7 @@ Foam::autoPtr<Foam::basicChemistryModel> Foam::basicChemistryModel::New
     chemistryTypeDictNew.add("solver", solverName);
     chemistryTypeDictNew.add("method", methodName);
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting chemistry solver " << chemistryTypeDictNew << endl;
 
     const word chemSolverNameName =

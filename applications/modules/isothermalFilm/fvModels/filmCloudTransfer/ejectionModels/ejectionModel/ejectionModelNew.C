@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::ejectionModel> Foam::ejectionModel::New
 {
     const word modelType(dict.lookup("model"));
 
-    Info<< indent << "Selecting film ejection model " << modelType << endl;
+    Info<< indentOrNl << "Selecting film ejection model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

@@ -69,7 +69,7 @@ Usage
 
 See also
     Foam::DimensionedFieldFunction
-    Foam::UDimensionedFieldFunction
+    Foam::UFunctionalDimensionedField
     Foam::mixedFvPatchField
     Foam::freestreamFvPatchField
 
@@ -82,7 +82,7 @@ SourceFiles
 #define freestreamVelocityFvPatchVectorField_H
 
 #include "mixedFvPatchFields.H"
-#include "UDimensionedFieldFunction.T.H"
+#include "UFunctionalDimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -100,7 +100,8 @@ class freestreamVelocityFvPatchVectorField
     // Private Data
 
         //- DimensionedField and function for the freestream value
-        UDimensionedFieldFunction<vector, fvPatch> dimensionedFreestreamValue_;
+        UFunctionalDimensionedField<vector, fvPatch>
+            dimensionedFreestreamValue_;
 
 
 public:

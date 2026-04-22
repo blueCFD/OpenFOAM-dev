@@ -22,19 +22,19 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::printDefaults
+    Foam::printDictionary
 
 Description
     Enables the printing of a dictionary
     and subsequently looked-up defaulted entries
 
 SourceFiles
-    printDefaults.C
+    printDictionary.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef printDefaults_H
-#define printDefaults_H
+#ifndef printDictionary_H
+#define printDictionary_H
 
 #include "HashPtrTable.T.H"
 
@@ -46,50 +46,49 @@ namespace Foam
 class dictionary;
 
 /*---------------------------------------------------------------------------*\
-                          Class printDefaults Declaration
+                          Class printDictionary Declaration
 \*---------------------------------------------------------------------------*/
 
-class printDefaults
+class printDictionary
 {
-public:
-
-    // Public Typedefs
-
-        typedef HashPtrTable<dictionary, const dictionary*, Hash<void*>>
-            dictHashTable;
-
-
 private:
 
     // Private Static Data
 
-        //- Pointer to most recently constructed printDefaults
-        static printDefaults* printDefaults_;
+        //- Table from the names of dictionaries to be printed to pointers
+        //  to those dictionaries
+        static HashTable<const dictionary*, fileName, Hash<fileName>>
+            dictNameToDictPtrs_;
 
-        //- Table of dictionaries containing all entries including defaults
-        static dictHashTable dicts_;
+        //- Table from pointers to the dictionaries to be printed to
+        //  dictionaries containing all entries including defaults
+        static HashPtrTable<dictionary, const dictionary*, Hash<void*>>
+            dictPtrToDefaults_;
 
-        //- Set true if the dictionary is a parent of model sub-dictionaries
-        const bool parent_;
-
-        //- Pointer to the associated dictionary
-        //  Set by printDefaults::set called by entry #printDefaults
+        //- Pointer to the dictionary to be printed
         const dictionary* dictPtr_;
+
+        //- Name of the dictionary to be printed
+        const fileName dictName_;
 
 
 public:
 
     // Constructors
 
-        //- Construct optionally for parent dictionary
-        printDefaults(const bool parent = false);
+        //- Construct for model sub-dictionary. Use this for things like
+        //  fvModels which read a sub-dictionary, and do not own or construct
+        //  their own IOdictionary.
+        printDictionary(const dictionary& dict);
 
-        //- Construct for model sub-dictionary
-        printDefaults(const dictionary& subDict);
+        //- Construct for a dictionary name. Use this for classes like
+        //  momentumTransportModels which do own and construct their
+        //  IOdictionary as part of their construction.
+        printDictionary(const fileName& dictName);
 
 
     //- Destructor
-    ~printDefaults();
+    ~printDictionary();
 
 
     // Member Functions
@@ -97,16 +96,32 @@ public:
         //- Set the dictionary to be printed
         static void set(const dictionary& dict);
 
-        //- Return true if printing of specified dictionary is enabled
-        static bool print(const dictionary& dict)
+        //- Un-set the dictionary to be printed
+        static void unset(const dictionary& dict);
+
+        //- Return if a dictionary is marked to be printed
+        static bool prints(const dictionary& dict)
         {
-            return dicts_.found(&dict);
+            return dictNameToDictPtrs_.found(dict.name());
         }
 
-        //- Return true if printing of specified dictionary is enabled
-        static dictionary& add(const dictionary& dict)
+        //- Return if a dictionary is marked to be printed
+        static bool prints(const word& dictName)
         {
-            return dicts_[&dict];
+            return dictNameToDictPtrs_.found(dictName);
+        }
+
+        //- Return if a dictionary exists to add defaults to for a given
+        //  dictionary
+        static bool haveDefaults(const dictionary& dict)
+        {
+            return dictPtrToDefaults_.found(&dict);
+        }
+
+        //- Return the dictionary to add defaults to for a given dictionary
+        static dictionary& defaults(const dictionary& dict)
+        {
+            return dictPtrToDefaults_[&dict];
         }
 };
 

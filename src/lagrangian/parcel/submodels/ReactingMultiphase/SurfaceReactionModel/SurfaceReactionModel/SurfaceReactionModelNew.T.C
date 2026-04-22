@@ -37,7 +37,8 @@ Foam::SurfaceReactionModel<CloudType>::New
 {
     const word modelType(dict.lookup("surfaceReactionModel"));
 
-    Info<< indent << "Selecting surface reaction model " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting surface reaction model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

@@ -46,8 +46,8 @@ Foam::dictionary::dictionary
 :
     dictionaryName
     (
-        parentDict.name().size()
-      ? parentDict.name()/name
+        parentDict.currentName().size()
+      ? parentDict.currentName()/name
       : name
     ),
     parent_(parentDict),
@@ -124,12 +124,10 @@ bool Foam::dictionary::read(Istream& is, const bool keepHeader)
         return false;
     }
 
-    // Cache the current name and file/stream pointer
-    const fileName name0(name());
+    // Cache the file/stream pointer
     const Istream* filePtr0 = filePtr_;
 
-    // Set the name and file/stream pointer to the given stream
-    name() = is.name();
+    // Set the file/stream pointer to the given stream
     filePtr_ = &is;
 
     token currToken(is);
@@ -156,8 +154,7 @@ bool Foam::dictionary::read(Istream& is, const bool keepHeader)
         return false;
     }
 
-    // Reset the name and file/stream pointer to the original
-    name() = name0;
+    // Reset the file/stream pointer to the original
     filePtr_ = filePtr0;
 
     return true;

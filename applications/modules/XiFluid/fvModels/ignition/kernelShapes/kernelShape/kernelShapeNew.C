@@ -37,7 +37,7 @@ Foam::autoPtr<Foam::kernelShape> Foam::kernelShape::New
 
     const word type(kernelShapeDict.lookup("type"));
 
-    Info<< indent << "Selecting flame-wrinkling correction type "
+    Info<< indentOrNl << "Selecting flame-wrinkling correction type "
         << type << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

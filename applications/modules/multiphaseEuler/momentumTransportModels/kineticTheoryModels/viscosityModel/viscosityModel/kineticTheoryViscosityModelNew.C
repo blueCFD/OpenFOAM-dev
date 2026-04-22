@@ -35,7 +35,7 @@ Foam::kineticTheoryModels::viscosityModel::New
 {
     const word viscosityModelType(dict.lookup("granularViscosityModel"));
 
-    Info<< indent << "Selecting granularViscosityModel "
+    Info<< indentOrNl << "Selecting granularViscosityModel "
         << viscosityModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

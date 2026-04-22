@@ -52,7 +52,7 @@ Foam::autoPtr<Foam::motionDiffusivity> Foam::motionDiffusivity::New
 {
     const word motionType(mdData);
 
-    Info<< indent << "Selecting motion diffusion: " << motionType << endl;
+    Info<< indentOrNl << "Selecting motion diffusion: " << motionType << endl;
 
     IstreamConstructorTable::iterator cstrIter =
         IstreamConstructorTablePtr_->find(motionType);

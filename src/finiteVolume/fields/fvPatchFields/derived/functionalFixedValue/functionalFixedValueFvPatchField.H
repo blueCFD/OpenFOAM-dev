@@ -79,7 +79,7 @@ SourceFiles
 #define functionalFixedValueFvPatchField_H
 
 #include "fixedValueFvPatchFields.H"
-#include "UDimensionedFieldFunction.T.H"
+#include "UFunctionalDimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -98,7 +98,7 @@ class functionalFixedValueFvPatchField
     // Private Data
 
         //- DimensionedField and function
-        UDimensionedFieldFunction<Type, fvPatch> dimensionedValue_;
+        UFunctionalDimensionedField<Type, fvPatch> dimensionedValue_;
 
 
 public:

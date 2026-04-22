@@ -42,6 +42,12 @@ Foam::autoPtr<Foam::Function2<Type>> Foam::Function2<Type>::New
 
         const word Function2Type(coeffDict.lookup("type"));
 
+        if (printDictionary::prints(coeffDict))
+        {
+            Info<< indent << "Selecting " << typeName << " "
+                << Function2Type << endl;
+        }
+
         typename dictionaryConstructorTable::iterator cstrIter =
             dictionaryConstructorTablePtr_->find(Function2Type);
 
@@ -55,6 +61,8 @@ Foam::autoPtr<Foam::Function2<Type>> Foam::Function2<Type>::New
                 << dictionaryConstructorTablePtr_->sortedToc() << nl
                 << exit(FatalIOError);
         }
+
+        printDictionary print(coeffDict);
 
         return cstrIter()(name, units, coeffDict);
     }

@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::solidBodyMotionFunction> Foam::solidBodyMotionFunction::New
 {
     const word motionType(SBMFCoeffs.lookup("solidBodyMotionFunction"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting solid-body motion function " << motionType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

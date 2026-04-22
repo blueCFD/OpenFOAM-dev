@@ -73,7 +73,7 @@ Foam::fv::heatTransferCoefficientModel::New
 {
     word heatTransferCoefficientModelType(dict.lookup(typeName));
 
-    Info<< indent << "Selecting " << typeName << " "
+    Info<< indentOrNl << "Selecting " << typeName << " "
         << heatTransferCoefficientModelType << endl;
 
     meshConstructorTable::iterator cstrIter =
@@ -107,7 +107,7 @@ Foam::fv::heatTransferCoefficientModel::New
 {
     word heatTransferCoefficientModelType(dict.lookup(typeName));
 
-    Info<< indent << "Selecting " << typeName << " "
+    Info<< indentOrNl << "Selecting " << typeName << " "
         << heatTransferCoefficientModelType << endl;
 
     modelConstructorTable::iterator cstrIter =

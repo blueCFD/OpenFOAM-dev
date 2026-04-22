@@ -48,7 +48,7 @@ Foam::autoPtr<Foam::extrudeModel> Foam::extrudeModel::New
     }
     const dictionary& modelDict = *modelDictPtr;
 
-    Info<< indent << "Selecting " << typeName << " " << modelType << endl;
+    Info<< indentOrNl << "Selecting " << typeName << " " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

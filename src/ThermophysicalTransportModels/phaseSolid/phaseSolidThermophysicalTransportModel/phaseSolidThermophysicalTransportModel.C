@@ -81,7 +81,7 @@ Foam::phaseSolidThermophysicalTransportModel::New
     {
         const word modelType(IOdictionary(header).lookup("model"));
 
-        Info<< indent << "Selecting solid thermophysical transport model "
+        Info<< indentOrNl << "Selecting solid thermophysical transport model "
             << modelType << endl;
 
         typename dictionaryConstructorTable::iterator cstrIter =
@@ -104,7 +104,7 @@ Foam::phaseSolidThermophysicalTransportModel::New
     }
     else
     {
-        Info<< indent
+        Info<< indentOrNl
             << "Selecting default solid thermophysical transport model "
             << solidThermophysicalTransportModels::
                isotropic<phaseSolidThermophysicalTransportModel>::typeName

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -67,7 +67,7 @@ Foam::IOerrorLocation::IOerrorLocation(const IOstream& ios)
 
 Foam::IOerrorLocation::IOerrorLocation(const dictionary& dict)
 :
-    ioFileName_(dict.name()),
+    ioFileName_(dict.currentName()),
     ioStartLineNumber_(dict.startLineNumber()),
     ioEndLineNumber_(dict.endLineNumber()),
     ioGlobal_(dict.global())

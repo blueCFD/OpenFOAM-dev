@@ -124,7 +124,7 @@ Foam::autoPtr<Foam::sampledSurface> Foam::sampledSurface::New
 
     if (debug)
     {
-        Info<< indent << "Selecting sampledType " << sampleType << endl;
+        Info<< indentOrNl << "Selecting sampledType " << sampleType << endl;
     }
 
     wordConstructorTable::iterator cstrIter =

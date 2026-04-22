@@ -41,7 +41,7 @@ Foam::surfaceTensionCoefficientModel::New
 
     const word surfaceTensionCoefficientModelType(modelDict.lookup("type"));
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting surfaceTensionCoefficientModel for " << interface.name()
         << ": " << surfaceTensionCoefficientModelType << endl;
 

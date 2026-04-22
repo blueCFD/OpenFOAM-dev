@@ -25,7 +25,6 @@ License
 
 #include "RASModel.T.H"
 #include "NewtonianViscosityModel.H"
-#include "printDefaults.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -112,7 +111,7 @@ Foam::RASModel<BasicMomentumTransportModel>::New
         {"model", "RASModel"}
     );
 
-    Info<< indent
+    Info<< indentOrNl
         << "Selecting RAS turbulence model " << modelType << endl;
 
     libs.open(RASdict, "libs", dictionaryConstructorTablePtr_);
@@ -130,7 +129,8 @@ Foam::RASModel<BasicMomentumTransportModel>::New
             << exit(FatalError);
     }
 
-    printDefaults print;
+    printDictionary print(RASdict.name());
+
     autoPtr<RASModel> modelPtr
     (
         cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity)

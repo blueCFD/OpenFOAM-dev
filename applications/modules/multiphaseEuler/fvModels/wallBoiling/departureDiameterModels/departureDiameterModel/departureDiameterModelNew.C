@@ -35,7 +35,7 @@ Foam::wallBoilingModels::departureDiameterModel::New
 {
     word departureDiameterModelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting departureDiameterModel: "
+    Info<< indentOrNl << "Selecting departureDiameterModel "
         << departureDiameterModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
@@ -50,6 +50,8 @@ Foam::wallBoilingModels::departureDiameterModel::New
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
+
+    printDictionary print(dict);
 
     return cstrIter()(dict);
 }

@@ -40,7 +40,7 @@ Foam::autoPtr<Foam::surfaceTensionModel> Foam::surfaceTensionModel::New
 
         word surfaceTensionModelType(sigmaDict.lookup("type"));
 
-        Info<< indent << "Selecting surfaceTensionModel "
+        Info<< indentOrNl << "Selecting surfaceTensionModel "
             << surfaceTensionModelType << endl;
 
         dictionaryConstructorTable::iterator cstrIter =

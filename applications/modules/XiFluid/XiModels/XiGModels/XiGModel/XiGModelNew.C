@@ -39,7 +39,7 @@ Foam::autoPtr<Foam::XiGModel> Foam::XiGModel::New
 
     const word modelType(XiGDict.lookup("model"));
 
-    Info<< indent << "Selecting flame-wrinkling generation rate XiG model "
+    Info<< indentOrNl << "Selecting flame-wrinkling generation rate XiG model "
         << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

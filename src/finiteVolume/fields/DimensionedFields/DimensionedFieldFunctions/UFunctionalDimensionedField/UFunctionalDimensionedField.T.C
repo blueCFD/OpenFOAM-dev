@@ -23,12 +23,12 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "UDimensionedFieldFunction.T.H"
+#include "UFunctionalDimensionedField.T.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type, class GeoMesh>
-Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
+Foam::UFunctionalDimensionedField<Type, GeoMesh>::UFunctionalDimensionedField
 (
     const word& name,
     const word& funcName,
@@ -38,9 +38,7 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
     const dictionary& dict
 )
 :
-    field_(field),
-    funcName_(funcName),
-    dimensionedField_
+    SlicedDimensionedField<Type, GeoMesh>
     (
         IOobject
         (
@@ -53,15 +51,17 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
         ),
         mesh,
         dimensions,
-        field_
+        field
     ),
+    field_(field),
+    funcName_(funcName),
     funcPtr_
     (
         dict.isDict(funcName)
       ? DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>::New
         (
             dict.subDict(funcName),
-            dimensionedField_
+            *this
         )
       : autoPtr<DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>>
         (
@@ -84,7 +84,7 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
 
 
 template<class Type, class GeoMesh>
-Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
+Foam::UFunctionalDimensionedField<Type, GeoMesh>::UFunctionalDimensionedField
 (
     const word& name,
     const word& funcName,
@@ -95,9 +95,7 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
     const Type& defaultValue
 )
 :
-    field_(field),
-    funcName_(funcName),
-    dimensionedField_
+    SlicedDimensionedField<Type, GeoMesh>
     (
         IOobject
         (
@@ -110,15 +108,17 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
         ),
         mesh,
         dimensions,
-        field_
+        field
     ),
+    field_(field),
+    funcName_(funcName),
     funcPtr_
     (
         dict.isDict(funcName)
       ? DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>::New
         (
             dict.subDict(funcName),
-            dimensionedField_
+            *this
         )
       : autoPtr<DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>>
         (
@@ -136,37 +136,37 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
     else if (dict.found(funcName))
     {
         field_ = Field<Type>(funcName_, dimensions, dict, mesh.size());
-        dimensionedField_.reset(field_);
+        SlicedDimensionedField<Type, GeoMesh>::reset(field_);
     }
     else
     {
         field_ = Field<Type>(mesh.size(), defaultValue);
-        dimensionedField_.reset(field_);
+        SlicedDimensionedField<Type, GeoMesh>::reset(field_);
     }
 }
 
 
 template<class Type, class GeoMesh>
-Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
+Foam::UFunctionalDimensionedField<Type, GeoMesh>::UFunctionalDimensionedField
 (
-    const UDimensionedFieldFunction<Type, GeoMesh>& udff,
+    const UFunctionalDimensionedField<Type, GeoMesh>& udff,
     const GeoMesh& mesh,
     Field<Type>& field
 )
 :
+    SlicedDimensionedField<Type, GeoMesh>
+    (
+        udff,
+        mesh,
+        udff.dimensions(),
+        field
+    ),
     field_(field),
     funcName_(udff.funcName_),
-    dimensionedField_
-    (
-        udff.dimensionedField_,
-        mesh,
-        udff.dimensionedField_.dimensions(),
-        field_
-    ),
     funcPtr_
     (
         udff.funcPtr_.valid()
-      ? udff.funcPtr_->clone(dimensionedField_)
+      ? udff.funcPtr_->clone(*this)
       : autoPtr<DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>>
         (
             nullptr
@@ -176,25 +176,25 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
 
 
 template<class Type, class GeoMesh>
-Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
+Foam::UFunctionalDimensionedField<Type, GeoMesh>::UFunctionalDimensionedField
 (
-    const UDimensionedFieldFunction<Type, GeoMesh>& udff,
+    const UFunctionalDimensionedField<Type, GeoMesh>& udff,
     Field<Type>& field
 )
 :
+    SlicedDimensionedField<Type, GeoMesh>
+    (
+        udff,
+        udff.mesh(),
+        udff.dimensions(),
+        field
+    ),
     field_(field),
     funcName_(udff.funcName_),
-    dimensionedField_
-    (
-        udff.dimensionedField_,
-        udff.dimensionedField_.mesh(),
-        udff.dimensionedField_.dimensions(),
-        field_
-    ),
     funcPtr_
     (
         udff.funcPtr_.valid()
-      ? udff.funcPtr_->clone(dimensionedField_)
+      ? udff.funcPtr_->clone(*this)
       : autoPtr<DimensionedFieldFunction<DimensionedField<Type, GeoMesh>>>
         (
             nullptr
@@ -206,9 +206,9 @@ Foam::UDimensionedFieldFunction<Type, GeoMesh>::UDimensionedFieldFunction
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type, class GeoMesh>
-void Foam::UDimensionedFieldFunction<Type, GeoMesh>::map(const bool evaluate)
+void Foam::UFunctionalDimensionedField<Type, GeoMesh>::map(const bool evaluate)
 {
-    dimensionedField_.reset(field_);
+    SlicedDimensionedField<Type, GeoMesh>::reset(field_);
     if (evaluate && funcPtr_.valid())
     {
         funcPtr_->reset();
@@ -217,9 +217,9 @@ void Foam::UDimensionedFieldFunction<Type, GeoMesh>::map(const bool evaluate)
 
 
 template<class Type, class GeoMesh>
-void Foam::UDimensionedFieldFunction<Type, GeoMesh>::reset()
+void Foam::UFunctionalDimensionedField<Type, GeoMesh>::reset()
 {
-    dimensionedField_.reset(field_);
+    SlicedDimensionedField<Type, GeoMesh>::reset(field_);
 
     if (funcPtr_.valid())
     {
@@ -229,7 +229,7 @@ void Foam::UDimensionedFieldFunction<Type, GeoMesh>::reset()
 
 
 template<class Type, class GeoMesh>
-bool Foam::UDimensionedFieldFunction<Type, GeoMesh>::update()
+bool Foam::UFunctionalDimensionedField<Type, GeoMesh>::update()
 {
     if (funcPtr_.valid())
     {
@@ -243,7 +243,7 @@ bool Foam::UDimensionedFieldFunction<Type, GeoMesh>::update()
 
 
 template<class Type, class GeoMesh>
-void Foam::UDimensionedFieldFunction<Type, GeoMesh>::write(Ostream& os) const
+void Foam::UFunctionalDimensionedField<Type, GeoMesh>::write(Ostream& os) const
 {
     if (funcPtr_.valid())
     {
@@ -256,7 +256,7 @@ template<class Type, class GeoMesh>
 void Foam::writeEntry
 (
     Ostream& os,
-    const UDimensionedFieldFunction<Type, GeoMesh>& udff
+    const UFunctionalDimensionedField<Type, GeoMesh>& udff
 )
 {
     if (udff.funcPtr_.valid())

@@ -35,7 +35,7 @@ Foam::wallBoilingModels::nucleationSiteModel::New
 {
     word nucleationSiteModelType(dict.lookup("type"));
 
-    Info<< indent << "Selecting nucleationSiteModel: "
+    Info<< indentOrNl << "Selecting nucleationSiteModel "
         << nucleationSiteModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
@@ -50,6 +50,8 @@ Foam::wallBoilingModels::nucleationSiteModel::New
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
+
+    printDictionary print(dict);
 
     return cstrIter()(dict);
 }

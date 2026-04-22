@@ -23,6 +23,9 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "momentumTransportModel.H"
+#include "printDictionary.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<class MomentumTransportModel>
@@ -48,8 +51,8 @@ inline Foam::autoPtr<MomentumTransportModel> Foam::momentumTransportModel::New
         ).lookup("simulationType")
     );
 
-    Info<< indent
-        << "Selecting turbulence model type " << modelType << endl;
+    Info<< indentOrNl << "Selecting momentum transport model type "
+        << modelType << endl;
 
     typename MomentumTransportModel::dictionaryConstructorTable::iterator
         cstrIter =
@@ -70,16 +73,9 @@ inline Foam::autoPtr<MomentumTransportModel> Foam::momentumTransportModel::New
             << exit(FatalError);
     }
 
-    Info<< incrIndent;
+    Foam::printDictionary print(fileName::null);
 
-    autoPtr<MomentumTransportModel> modelPtr
-    (
-        cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity)
-    );
-
-    Info<< decrIndent;
-
-    return modelPtr;
+    return cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
 }
 
 

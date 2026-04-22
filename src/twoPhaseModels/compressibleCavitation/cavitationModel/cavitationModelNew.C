@@ -37,7 +37,7 @@ Foam::compressible::cavitationModel::New
 {
     const word modelType(dict.lookup("model"));
 
-    Info<< indent << "Selecting cavitation model " << modelType << endl;
+    Info<< indentOrNl << "Selecting cavitation model " << modelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

@@ -42,6 +42,12 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 
         const word Function1Type(coeffDict.lookup("type"));
 
+        if (printDictionary::prints(coeffDict))
+        {
+            Info<< indent << "Selecting " << typeName << " "
+                << Function1Type << endl;
+        }
+
         typename dictionaryConstructorTable::iterator cstrIter =
             dictionaryConstructorTablePtr_->find(Function1Type);
 
@@ -55,6 +61,8 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
                 << dictionaryConstructorTablePtr_->sortedToc() << nl
                 << exit(FatalIOError);
         }
+
+        printDictionary print(coeffDict);
 
         return cstrIter()(name, units, coeffDict);
     }
@@ -144,6 +152,12 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
 
         const word Function1Type(coeffDict.lookup("type"));
 
+        if (printDictionary::prints(coeffDict))
+        {
+            Info<< indent << "Selecting " << typeName << " "
+                << Function1Type << endl;
+        }
+
         typename dictionaryConstructorTable::iterator cstrIter =
             dictionaryConstructorTablePtr_->find(Function1Type);
 
@@ -157,6 +171,8 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
                 << dictionaryConstructorTablePtr_->sortedToc() << nl
                 << exit(FatalIOError);
         }
+
+        printDictionary print(coeffDict);
 
         return cstrIter()(e.keyword(), units, coeffDict);
     }

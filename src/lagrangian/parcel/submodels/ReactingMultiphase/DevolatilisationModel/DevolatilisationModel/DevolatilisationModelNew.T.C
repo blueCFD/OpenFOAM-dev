@@ -37,7 +37,8 @@ Foam::DevolatilisationModel<CloudType>::New
 {
     const word modelType(dict.lookup("devolatilisationModel"));
 
-    Info<< indent << "Selecting devolatilisation model " << modelType << endl;
+    Info<< indentOrNl
+        << "Selecting devolatilisation model " << modelType << endl;
 
     typename dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(modelType);

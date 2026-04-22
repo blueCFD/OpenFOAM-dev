@@ -35,7 +35,7 @@ Foam::kineticTheoryModels::radialModel::New
 {
     const word radialModelType(dict.lookup("radialModel"));
 
-    Info<< indent << "Selecting radialModel "
+    Info<< indentOrNl << "Selecting radialModel "
         << radialModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =

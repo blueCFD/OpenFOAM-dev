@@ -41,7 +41,7 @@ Foam::autoPtr<Foam::heatTransferModel> Foam::heatTransferModel::New
 
     const word heatTransferModelType(modelDict.lookup("type"));
 
-    Info<< indent << "Selecting heatTransferModel for "
+    Info<< indentOrNl << "Selecting heatTransferModel for "
         << interface.name() << ": " << heatTransferModelType << endl;
 
     dictionaryConstructorTable::iterator cstrIter =
