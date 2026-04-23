@@ -21,7 +21,7 @@ RAS
     model               kEpsilon;
 
     turbulence          on;
-    printCoeffs         on;
+    #print
 }
 
 // ************************************************************************* //

@@ -21,7 +21,7 @@ RAS
     model               kOmegaSST;
 
     turbulence          on;
-    printCoeffs         on;
+    #print
 }
 
 LES
@@ -30,7 +30,7 @@ LES
     delta               cubeRootVol;
 
     turbulence          on;
-    printCoeffs         on;
+    #print
 
     cubeRootVolCoeffs
     {
