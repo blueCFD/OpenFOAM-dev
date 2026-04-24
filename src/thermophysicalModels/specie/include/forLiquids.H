@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,6 +97,22 @@ License
 
 #define forEnergyLiquids(Macro, Args...)                                       \
     forEnergyLiquidTransports(Macro, Args)
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#define forCoeffEnergyLiquidEqns(Mu, He, Cp, Macro, Args...)                   \
+    forThermo(Mu, He, Cp, rhoConst, specie, Macro, Args);                      \
+    forThermo(Mu, He, Cp, rPolynomial, specie, Macro, Args)
+
+#define forCoeffEnergyLiquidEnergiesAndThermos(Mu, Args...)                    \
+    forCoeffEnergyLiquidEqns(Mu, sensibleInternalEnergy, eConstThermo, Args);  \
+    forCoeffEnergyLiquidEqns(Mu, sensibleInternalEnergy, hConstThermo, Args)
+
+#define forCoeffEnergyLiquidTransports(Macro, Args...)                         \
+    forCoeffEnergyLiquidEnergiesAndThermos(constTransport, Macro, Args)
+
+#define forCoeffEnergyLiquids(Macro, Args...)                                  \
+    forCoeffEnergyLiquidTransports(Macro, Args)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

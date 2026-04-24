@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,40 +23,25 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "cloudLagrangianModel.H"
-#include "cloud.H"
-#include "CloudTypes.T.H"
+#ifndef UFunctionalDimensionedFieldFwd_H
+#define UFunctionalDimensionedFieldFwd_H
 
-// * * * * * * * * * * * *  Protected Member Functions * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class Cloud, class ... Clouds>
-bool Foam::cloudLagrangianModel::isCloud() const
+namespace Foam
 {
-    return CloudTypes<Cloud, Clouds ...>::isA(cloud_);
-}
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class Cloud, class ... Clouds>
-void Foam::cloudLagrangianModel::assertCloud() const
-{
-    if (!isCloud<Cloud, Clouds ...>())
-    {
-        FatalErrorInFunction
-            << "The Lagrangian model '" << name_ << "' of cloud '"
-            << cloud_.mesh().name() << "' requires a cloud of type "
-            << CloudTypes<Cloud, Clouds ...>::typesString("or").c_str()
-            << " (or a derivation thereof), rather than '" << cloud_.type()
-            << "'" << exit(FatalError);
-    }
-}
+template<class Type, class GeoMesh>
+class UFunctionalDimensionedField;
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class Cloud>
-const Cloud& Foam::cloudLagrangianModel::cloud() const
-{
-    assertCloud<Cloud>();
-    return refCast<const Cloud>(cloud_);
-}
+} // End namespace Foam
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

@@ -37,9 +37,15 @@ boundaryField
     {
         type            multiphaseExternalTemperature;
         Ta              283.15;
-        h               uniform 10000.0;
-        thicknessLayers (0.045);
-        kappaLayers     (117);
+
+        h
+        {
+            type            externalWallLayersHeatTransferCoefficient;
+            h               10000;
+            thicknessLayers (0.045);
+            kappaLayers     (117);
+        }
+
         relaxation      0.2;
         value           $internalField;
     }

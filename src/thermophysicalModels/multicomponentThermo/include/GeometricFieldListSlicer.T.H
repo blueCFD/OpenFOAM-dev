@@ -37,8 +37,6 @@ See also
 
 #include "GeometricField.T.H"
 #include "FieldListSlice.T.H"
-#include "volFieldsFwd.H"
-#include "surfaceFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,19 +46,13 @@ namespace Foam
                   Class GeometricFieldListSlicer Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type, class GeoMesh>
+template<class Type>
 class GeometricFieldListSlicer
 {
-    // Private Typedefs
-
-        // Type of the geometric field
-        typedef GeometricField<Type, GeoMesh> geoFieldType;
-
-
     // Private Data
 
         //- Pointers to the primitive fields
-        UPtrList<const Field<Type>> fields_;
+        UPtrList<const Field<Type>> primitiveFields_;
 
         //- Pointers to the patch fields. Indexed by patch, then by field.
         List<UPtrList<const Field<Type>>> patchFields_;
@@ -75,46 +67,36 @@ public:
         {}
 
         //- Construct from a mesh and a list of fields
+        template<class GeoMesh, template<class> class PrimitiveField>
         inline GeometricFieldListSlicer
         (
-            const typename geoFieldType::Mesh& mesh,
-            const UPtrList<const geoFieldType>& geoFields
+            const GeoMesh& mesh,
+            const UPtrList<GeometricField<Type, GeoMesh, PrimitiveField>>&
+                geoFields
         )
         {
             set(mesh, geoFields);
         }
 
-        //- Construct from a mesh and a list of fields
-        inline GeometricFieldListSlicer
-        (
-            const typename geoFieldType::Mesh& mesh,
-            const UPtrList<geoFieldType>& geoFields
-        )
-        :
-            GeometricFieldListSlicer
-            (
-                mesh,
-                reinterpret_cast<const UPtrList<const geoFieldType>&>(geoFields)
-            )
-        {}
-
 
     // Member Functions
 
         //- Set the field pointers
+        template<class GeoMesh, template<class> class PrimitiveField>
         inline void set
         (
-            const typename geoFieldType::Mesh& mesh,
-            const UPtrList<const geoFieldType>& geoFields
+            const GeoMesh& mesh,
+            const UPtrList<GeometricField<Type, GeoMesh, PrimitiveField>>&
+                geoFields
         )
         {
-            fields_.resize(geoFields.size());
+            primitiveFields_.resize(geoFields.size());
 
-            patchFields_.resize(mesh.boundary().size(), fields_);
+            patchFields_.resize(mesh.boundary().size(), primitiveFields_);
 
             forAll(geoFields, fieldi)
             {
-                fields_.set
+                primitiveFields_.set
                 (
                     fieldi,
                     &geoFields[fieldi].primitiveField()
@@ -134,7 +116,7 @@ public:
         //- Return a slice for an internal element
         inline FieldListSlice<Type> slice(const label elementi) const
         {
-            return FieldListSlice<Type>(fields_, elementi);
+            return FieldListSlice<Type>(primitiveFields_, elementi);
         }
 
         //- Return a slice for a patch element
@@ -147,22 +129,6 @@ public:
             return FieldListSlice<Type>(patchFields_[patchi], patchElementi);
         }
 };
-
-
-//- Define volScalarFieldListSlicer, volVectorFieldListSlicer, etc...
-#define typedefVolTypeFieldListSlicer(Type, nullArg)                           \
-    typedef GeometricFieldListSlicer<Type, fvMesh>                            \
-        CAT3(vol, CAPITALIZE(Type), FieldListSlicer);
-FOR_ALL_FIELD_TYPES(typedefVolTypeFieldListSlicer);
-#undef typedefVolTypeFieldListSlicer
-
-
-//- Define surfaceScalarFieldListSlicer, surfaceVectorFieldListSlicer, etc...
-#define typedefSurfaceTypeFieldListSlicer(Type, nullArg)                       \
-    typedef GeometricFieldListSlicer<Type, surfaceMesh>                        \
-        CAT3(surface, CAPITALIZE(Type), FieldListSlicer);
-FOR_ALL_FIELD_TYPES(typedefSurfaceTypeFieldListSlicer);
-#undef typedefSurfaceTypeFieldListSlicer
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

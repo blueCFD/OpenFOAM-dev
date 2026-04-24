@@ -8,34 +8,36 @@
 FoamFile
 {
     format      ascii;
-    class       volScalarField;
-    location    "0/solid";
-    object      T;
+    class       dictionary;
+    location    "system";
+    object      configDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [temperature];
+// Local Debug, Info and Optimisation switches
+// The following command shows the current parameters, which can be overridden
+// below
+//     foamToC -switches
 
-internalField   uniform 300;
-
-boundaryField
+DebugSwitches
 {
-    #includeEtc "caseDicts/setConstraintTypes"
-
-    external
-    {
-        type            externalTemperature;
-        h               uniform 1e3 [W/m^2/K];
-        Ta              $internalField;
-        value           $internalField;
-    }
-    solid_to_gas
-    {
-        type            coupledTemperature;
-        value           $internalField;
-        qrNbr           qr;
-    }
 }
 
+InfoSwitches
+{
+    writePrecision  6;
+}
+
+OptimisationSwitches
+{
+    fileHandler     uncollated;
+}
+
+// Local unit set and/or conversions
+units
+{
+    set        SI;
+    day        24 [hr];
+}
 
 // ************************************************************************* //

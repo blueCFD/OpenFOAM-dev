@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,10 +35,8 @@ See also
 #ifndef DimensionedFieldListSlicer_H
 #define DimensionedFieldListSlicer_H
 
-#include "DimensionedField.T.H"
+#include "GeometricField.T.H"
 #include "FieldListSlice.T.H"
-#include "volFieldsFwd.H"
-#include "surfaceFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,18 +46,12 @@ namespace Foam
                   Class DimensionedFieldListSlicer Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type, class GeoMesh>
+template<class Type>
 class DimensionedFieldListSlicer
 {
-    // Private Typedefs
-
-        // Type of the dimensioned field
-        typedef DimensionedField<Type, GeoMesh> geoFieldType;
-
-
     // Private Data
 
-        //- Pointers to the primitive fields
+        //- Pointers to the fields
         UPtrList<const Field<Type>> fields_;
 
 
@@ -71,42 +63,60 @@ public:
         inline DimensionedFieldListSlicer()
         {}
 
-        //- Construct from a list of fields
+        //- Construct from a list of dimensioned fields
+        template<class GeoMesh, template<class> class PrimitiveField>
         inline DimensionedFieldListSlicer
         (
-            const UPtrList<const geoFieldType>& geoFields
+            const UPtrList<DimensionedField<Type, GeoMesh, PrimitiveField>>&
+                geoFields
         )
         {
             set(geoFields);
         }
 
-        //- Construct from a list of fields
+        //- Construct from a list of geometric fields
+        template<class GeoMesh, template<class> class PrimitiveField>
         inline DimensionedFieldListSlicer
         (
-            const UPtrList<geoFieldType>& geoFields
+            const UPtrList<GeometricField<Type, GeoMesh, PrimitiveField>>&
+                geoFields
         )
-        :
-            DimensionedFieldListSlicer
-            (
-                reinterpret_cast<const UPtrList<const geoFieldType>&>(geoFields)
-            )
-        {}
+        {
+            set(geoFields);
+        }
 
 
     // Member Functions
 
         //- Set the field pointers
-        inline void set(const UPtrList<const geoFieldType>& geoFields)
+        template<class GeoMesh, template<class> class PrimitiveField>
+        inline void set
+        (
+            const UPtrList<DimensionedField<Type, GeoMesh, PrimitiveField>>&
+                geoFields
+        )
         {
             fields_.resize(geoFields.size());
 
             forAll(geoFields, fieldi)
             {
-                fields_.set
-                (
-                    fieldi,
-                    &geoFields[fieldi].primitiveField()
-                );
+                fields_.set(fieldi, &geoFields[fieldi].primitiveField());
+            }
+        }
+
+        //- Set the field pointers
+        template<class GeoMesh, template<class> class PrimitiveField>
+        inline void set
+        (
+            const UPtrList<GeometricField<Type, GeoMesh, PrimitiveField>>&
+                geoFields
+        )
+        {
+            fields_.resize(geoFields.size());
+
+            forAll(geoFields, fieldi)
+            {
+                fields_.set(fieldi, &geoFields[fieldi].primitiveField());
             }
         }
 
@@ -122,18 +132,12 @@ public:
                 Class DimensionedFieldListAndSlicer Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type, class GeoMesh>
+template<class Type, class GeoMesh, template<class> class PrimitiveField=Field>
 class DimensionedFieldListAndSlicer
 :
-    public PtrList<DimensionedField<Type, GeoMesh>>,
-    private DimensionedFieldListSlicer<Type, GeoMesh>
+    public PtrList<DimensionedField<Type, GeoMesh, PrimitiveField>>,
+    private DimensionedFieldListSlicer<Type>
 {
-    // Private Typedefs
-
-        // Type of the dimensioned field
-        typedef DimensionedField<Type, GeoMesh> geoFieldType;
-
-
 public:
 
     // Constructors
@@ -145,7 +149,7 @@ public:
         //- Construct with size specified
         explicit DimensionedFieldListAndSlicer(const label size)
         :
-            PtrList<DimensionedField<Type, GeoMesh>>(size)
+            PtrList<DimensionedField<Type, GeoMesh, PrimitiveField>>(size)
         {}
 
         //- Construct from arguments
@@ -161,19 +165,16 @@ public:
     // Member Functions
 
         //- Inherit the pointer list's set method
-        using PtrList<DimensionedField<Type, GeoMesh>>::set;
+        using PtrList<DimensionedField<Type, GeoMesh, PrimitiveField>>::set;
 
         //- Set the field pointers in the slicer
         inline void set()
         {
-            DimensionedFieldListSlicer<Type, GeoMesh>::set
-            (
-                reinterpret_cast<const UPtrList<const geoFieldType>&>(*this)
-            );
+            DimensionedFieldListSlicer<Type>::set(*this);
         }
 
         //- Return a slice for an internal element
-        using DimensionedFieldListSlicer<Type, GeoMesh>::slice;
+        using DimensionedFieldListSlicer<Type>::slice;
 };
 
 

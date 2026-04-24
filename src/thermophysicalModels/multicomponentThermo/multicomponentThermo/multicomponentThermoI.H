@@ -104,17 +104,17 @@ inline Foam::label Foam::multicomponentThermo::specieIndex
 }
 
 
-inline Foam::volScalarFieldListSlicer
+inline Foam::GeometricFieldListSlicer<Foam::scalar>
 Foam::multicomponentThermo::implementation::Yslicer() const
 {
-    return volScalarFieldListSlicer(mesh(), Y_);
+    return GeometricFieldListSlicer<scalar>(mesh(), Y_);
 }
 
 
 inline Foam::scalarFieldListSlice
 Foam::multicomponentThermo::implementation::cellComposition
 (
-    const volScalarFieldListSlicer& Yslicer,
+    const GeometricFieldListSlicer<scalar>& Yslicer,
     const label celli
 ) const
 {
@@ -125,7 +125,7 @@ Foam::multicomponentThermo::implementation::cellComposition
 inline Foam::scalarFieldListSlice
 Foam::multicomponentThermo::implementation::patchFaceComposition
 (
-    const volScalarFieldListSlicer& Yslicer,
+    const GeometricFieldListSlicer<scalar>& Yslicer,
     const label patchi,
     const label facei
 ) const

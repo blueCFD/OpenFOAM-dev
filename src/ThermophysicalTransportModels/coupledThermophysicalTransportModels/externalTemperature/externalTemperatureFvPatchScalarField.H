@@ -36,16 +36,12 @@ Description
     \vartable
         Q  | Power Function1 of time [W]
         q  | Heat flux Function1 of time [W/m^2]
-        h  | Heat transfer coefficient Function1 of time [W/m^2/K]
+        h  | Heat transfer coefficient DimensionedFieldFunction [W/m^2/K]
         Ta | Ambient temperature Function1 of time [K]
     \endvartable
 
     Only one of \c Q or \c q may be specified, if \c h and \c Ta are also
     specified the corresponding heat-flux is added.
-
-    If the heat transfer coefficient \c h is specified an optional thin thermal
-    layer resistances can also be specified through thicknessLayers and
-    kappaLayers entries.
 
     The patch thermal conductivity \c kappa is obtained from the region
     thermophysicalTransportModel so that this boundary condition can be applied
@@ -58,8 +54,6 @@ Usage
     q            | Heat flux [W/m^2]           | no       |
     h            | Heat transfer coefficient [W/m^2/K] | no |
     Ta           | Ambient temperature [K]     | if h is given  |
-    thicknessLayers | Layer thicknesses [m]    | no |
-    kappaLayers  | Layer thermal conductivities [W/m/K] | no |
     relaxation   | Relaxation for the wall temperature | no | 1
     emissivity   | Surface emissivity for radiative flux to ambient | no | 0
     qr           | Name of the radiative field | no | none
@@ -74,8 +68,6 @@ Usage
 
         Ta              constant 300.0;
         h               uniform 10.0;
-        thicknessLayers (0.1 0.2 0.3 0.4);
-        kappaLayers     (1 2 3 4);
 
         value           $internalField;
     }
@@ -95,6 +87,7 @@ SourceFiles
 
 #include "mixedFvPatchFields.H"
 #include "Function1.T.H"
+#include "FunctionalDimensionedFieldFwd.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -131,26 +124,14 @@ class externalTemperatureFvPatchScalarField
 
         // Heat transfer coefficient
 
-            //- Do we have a heat transfer coefficient?
-            const bool haveh_;
-
             //- Heat transfer coefficient [W/m^2K]
-            autoPtr<Function1<scalar>> h_;
+            autoPtr<FunctionalDimensionedField<scalar, fvPatch>> h_;
 
             //- Do we have an emissivity?
             const bool haveEmissivity_;
 
             //- Optional surface emissivity for radiative transfer to ambient
             scalar emissivity_;
-
-            //- Do we have layers?
-            const bool haveLayers_;
-
-            //- Thickness of layers
-            scalarList thicknessLayers_;
-
-            //- Conductivity of layers
-            scalarList kappaLayers_;
 
             //- Ambient temperature [K]
             autoPtr<Function1<scalar>> Ta_;
@@ -239,13 +220,11 @@ public:
         virtual tmp<fvPatchScalarField> clone
         (
             const DimensionedField<scalar, fvMesh>& iF
-        ) const
-        {
-            return tmp<fvPatchScalarField>
-            (
-                new externalTemperatureFvPatchScalarField(*this, iF)
-            );
-        }
+        ) const;
+
+
+    //- Destructor
+    virtual ~externalTemperatureFvPatchScalarField();
 
 
     // Member Functions

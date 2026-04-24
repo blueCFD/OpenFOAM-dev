@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,7 +25,7 @@ Class
     Foam::FieldListSlice
 
 Description
-    Class to provide a list-like interface to a slice through a PtrList of
+    Class to provide a list-like interface to a slice through a UPtrList of
     fields
 
 \*---------------------------------------------------------------------------*/
@@ -34,8 +34,7 @@ Description
 #define FieldListSlice_H
 
 #include "Field.T.H"
-#include "fieldTypes.H"
-#include "PtrList.T.H"
+#include "UPtrList.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

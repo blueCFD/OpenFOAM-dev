@@ -22,30 +22,27 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::UFunctionalDimensionedField
+    Foam::FunctionalDimensionedField
 
 Description
-    Combined class containing a field reference, a dimensionedField wrapper
-    providing the corresponding mesh and dimensions and a run-time selected
-    function to evaluate and update the field.
-
-    Particularly applicable to time and/or space varying boundary conditions.
+    DimensionedField with a corresponding run-time selected function
+    to evaluate and update the field.
 
 See also
     Foam::DimensionedField
     Foam::DimensionedFieldFunction
-    Foam::FunctionalDimensionedField
+    Foam::UFunctionalDimensionedField
 
 SourceFiles
-    UFunctionalDimensionedField.C
+    FunctionalDimensionedField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef UFunctionalDimensionedField_H
-#define UFunctionalDimensionedField_H
+#ifndef FunctionalDimensionedField_H
+#define FunctionalDimensionedField_H
 
-#include "UFunctionalDimensionedFieldFwd.T.H"
-#include "SlicedDimensionedField.T.H"
+#include "FunctionalDimensionedFieldFwd.T.H"
+#include "DimensionedField.T.H"
 #include "DimensionedFieldFunction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -58,22 +55,19 @@ template<class Type, class GeoMesh>
 void writeEntry
 (
     Ostream& os,
-    const UFunctionalDimensionedField<Type, GeoMesh>& udff
+    const FunctionalDimensionedField<Type, GeoMesh>& udff
 );
 
 /*---------------------------------------------------------------------------*\
-                    Class UFunctionalDimensionedField Declaration
+                    Class FunctionalDimensionedField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type, class GeoMesh>
-class UFunctionalDimensionedField
+class FunctionalDimensionedField
 :
-    public SlicedDimensionedField<Type, GeoMesh>
+    public DimensionedField<Type, GeoMesh>
 {
     // Private Data
-
-        //- Reference to field
-        Field<Type>& field_;
 
         //- Name of the function entry/sub dictionary
         const word funcName_;
@@ -88,49 +82,39 @@ public:
     // Constructors
 
         //- Construct from name, mesh, dimensions, field and dictionary
-        UFunctionalDimensionedField
+        FunctionalDimensionedField
         (
             const word& name,
             const word& funcName,
             const GeoMesh&,
             const dimensionSet& dimensions,
-            Field<Type>&,
             const dictionary&
         );
 
         //- Construct from name, mesh, dimensions, field, dictionary
         //  and default value
-        UFunctionalDimensionedField
+        FunctionalDimensionedField
         (
             const word& name,
             const word& funcName,
             const GeoMesh&,
             const dimensionSet& dimensions,
-            Field<Type>&,
             const dictionary&,
             const Type& defaultValue
         );
 
-        //- Construct from given UFunctionalDimensionedField
+        //- Construct from given FunctionalDimensionedField
         //  with new mesh and field
-        UFunctionalDimensionedField
+        FunctionalDimensionedField
         (
-            const UFunctionalDimensionedField<Type, GeoMesh>&,
-            const GeoMesh&,
-            Field<Type>&
+            const FunctionalDimensionedField<Type, GeoMesh>&,
+            const GeoMesh&
         );
 
-        //- Disallow copy
-        UFunctionalDimensionedField
+        //- Copy constructor
+        FunctionalDimensionedField
         (
-            const UFunctionalDimensionedField<Type, GeoMesh>&
-        ) = delete;
-
-        //- Copy constructor setting field reference
-        UFunctionalDimensionedField
-        (
-            const UFunctionalDimensionedField<Type, GeoMesh>&,
-            Field<Type>&
+            const FunctionalDimensionedField<Type, GeoMesh>&
         );
 
 
@@ -156,7 +140,7 @@ public:
         friend void writeEntry <Type, GeoMesh>
         (
             Ostream& os,
-            const UFunctionalDimensionedField<Type, GeoMesh>& udff
+            const FunctionalDimensionedField<Type, GeoMesh>& udff
         );
 };
 
@@ -168,7 +152,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "UFunctionalDimensionedField.T.C"
+    #include "FunctionalDimensionedField.T.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

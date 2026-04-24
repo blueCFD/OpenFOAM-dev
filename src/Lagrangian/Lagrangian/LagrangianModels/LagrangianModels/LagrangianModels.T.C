@@ -53,9 +53,8 @@ Foam::IOobject Foam::LagrangianModels::io(const LagrangianMesh& mesh) const
     }
     else
     {
-        Info<< indentOrNl
-            << "Constructing " << typeName << " from "
-            << result.instance()/result.name() << endl;
+        Info<< indentOrNl << "Constructing " << typeName << " from "
+            << result.relativeObjectPath() << endl;
     }
 
     return result;
@@ -128,6 +127,8 @@ Foam::LagrangianModels::LagrangianModels(const LagrangianMesh& mesh)
     PtrListDictionary<LagrangianModel>::setSize(i);
     addSupFields_.setSize(i);
 
+    Info<< incrIndent;
+
     // Iterate through the dictionary to construct the models
     i = 0;
     forAllConstIter(dictionary, dict, iter)
@@ -158,6 +159,8 @@ Foam::LagrangianModels::LagrangianModels(const LagrangianMesh& mesh)
             modelList[i].postConstruct();
         }
     }
+
+    Info<< decrIndent;
 
     // Enable re-reading
     addWatch();

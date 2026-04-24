@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,40 +23,44 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "cloudLagrangianModel.H"
-#include "cloud.H"
-#include "CloudTypes.T.H"
+#include "fluidMulticomponentLagrangianThermo.H"
 
-// * * * * * * * * * * * *  Protected Member Functions * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-template<class Cloud, class ... Clouds>
-bool Foam::cloudLagrangianModel::isCloud() const
+namespace Foam
 {
-    return CloudTypes<Cloud, Clouds ...>::isA(cloud_);
+    defineTypeNameAndDebug(fluidMulticomponentLagrangianThermo, 0);
+    defineRunTimeSelectionTable
+    (
+        fluidMulticomponentLagrangianThermo,
+        LagrangianMesh
+    );
 }
 
 
-template<class Cloud, class ... Clouds>
-void Foam::cloudLagrangianModel::assertCloud() const
+// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
+
+Foam::autoPtr<Foam::fluidMulticomponentLagrangianThermo>
+Foam::fluidMulticomponentLagrangianThermo::New
+(
+    const LagrangianMesh& mesh,
+    const word& phaseName
+)
 {
-    if (!isCloud<Cloud, Clouds ...>())
-    {
-        FatalErrorInFunction
-            << "The Lagrangian model '" << name_ << "' of cloud '"
-            << cloud_.mesh().name() << "' requires a cloud of type "
-            << CloudTypes<Cloud, Clouds ...>::typesString("or").c_str()
-            << " (or a derivation thereof), rather than '" << cloud_.type()
-            << "'" << exit(FatalError);
-    }
+    return
+        basicLagrangianThermo::New<fluidMulticomponentLagrangianThermo>
+        (
+            mesh,
+            phaseName
+        );
 }
 
 
-template<class Cloud>
-const Cloud& Foam::cloudLagrangianModel::cloud() const
-{
-    assertCloud<Cloud>();
-    return refCast<const Cloud>(cloud_);
-}
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::fluidMulticomponentLagrangianThermo::
+~fluidMulticomponentLagrangianThermo()
+{}
 
 
 // ************************************************************************* //

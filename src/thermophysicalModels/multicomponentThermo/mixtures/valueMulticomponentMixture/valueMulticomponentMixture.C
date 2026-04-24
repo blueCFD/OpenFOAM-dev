@@ -167,6 +167,18 @@ Foam::valueMulticomponentMixture<ThermoType>::thermoMixtureType::psi
 
 template<class ThermoType>
 Foam::scalar
+Foam::valueMulticomponentMixture<ThermoType>::thermoMixtureType::alphav
+(
+    scalar p,
+    scalar T
+) const
+{
+    return harmonicMassWeighted(&ThermoType::alphav, p, T);
+}
+
+
+template<class ThermoType>
+Foam::scalar
 Foam::valueMulticomponentMixture<ThermoType>::thermoMixtureType::hf() const
 {
     return massWeighted(&ThermoType::hf);
@@ -189,6 +201,7 @@ Foam::valueMulticomponentMixture<ThermoType>::thermoMixtureType::hf() const
 thermoMixtureFunction(Cp)
 thermoMixtureFunction(Cv)
 thermoMixtureFunction(hs)
+thermoMixtureFunction(es)
 thermoMixtureFunction(ha)
 thermoMixtureFunction(Cpv)
 thermoMixtureFunction(gamma)
@@ -212,6 +225,28 @@ Foam::valueMulticomponentMixture<ThermoType>::thermoMixtureType::The
         T0,
         &thermoMixtureType::he,
         &thermoMixtureType::Cpv,
+        &thermoMixtureType::limit
+    );
+}
+
+
+template<class ThermoType>
+Foam::scalar
+Foam::valueMulticomponentMixture<ThermoType>::thermoMixtureType::Tes
+(
+    const scalar he,
+    scalar p,
+    scalar T0
+) const
+{
+    return ThermoType::T
+    (
+        *this,
+        he,
+        p,
+        T0,
+        &thermoMixtureType::es,
+        &thermoMixtureType::Cv,
         &thermoMixtureType::limit
     );
 }

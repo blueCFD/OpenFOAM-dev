@@ -148,7 +148,7 @@ typename Table::iterator Foam::basicThermo::lookupCstrIter
         const dictionary& thermoTypeDict(thermoDict.subDict("thermoType"));
 
         Info<< indentOrNl
-            << "Selecting thermodynamics package " << thermoTypeDict << endl;
+            << "Selecting thermodynamics package " << thermoTypeDict;
 
         if (thermoTypeDict.found("properties"))
         {

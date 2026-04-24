@@ -43,8 +43,7 @@ Usage
     \table
         Property     | Description             | Required    | Default value
         Tnbr         | name of the field       | no          | T
-        thicknessLayers | list of thicknesses per layer [m] | no |
-        kappaLayers  | list of thermal conductivities per layer [W/m/K] | no |
+        h     | Heat transfer coefficient of insulation layer [W/m^2/K] | no |
         qs           | Optional source heat flux [W/m^2] | no | 0
         Qs           | Optional heat source [W]          | no | 0
         qrNbr        | name of the radiative flux in the nbr region | no | none
@@ -57,8 +56,6 @@ Usage
     <patchName>
     {
         type            coupledTemperature;
-        thicknessLayers (0.1 0.2 0.3 0.4); // Optional wall layer thicknesses
-        kappaLayers     (1 2 3 4); // Optional wall layer conductivities
         qs              uniform 100;    // Optional source heat flux [W/m^2]
         value           uniform 300;
     }
@@ -82,7 +79,7 @@ SourceFiles
 #define coupledTemperatureFvPatchScalarField_H
 
 #include "mixedFvPatchFields.H"
-#include "scalarField.H"
+#include "FunctionalDimensionedFieldFwd.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -114,20 +111,14 @@ class coupledTemperatureFvPatchScalarField
         //- Cache qr for relaxation
         mutable scalarField qrPrevious_;
 
-        //- Thickness of wall layers
-        scalarList thicknessLayers_;
-
-        //- Conductivity of wall layers
-        scalarList kappaLayers_;
+        //- Optional heat transfer coefficient of insulation layer [W/m^2K]
+        autoPtr<FunctionalDimensionedField<scalar, fvPatch>> h_;
 
         //- Optional source heat flux [W/m^2]
         autoPtr<scalarField> qs_;
 
         //- Optional heat source [W]
         scalar Qs_;
-
-        //- Optional wall material conductivity/thickness
-        scalar wallKappaByDelta_;
 
 
 protected:
@@ -208,17 +199,11 @@ public:
         virtual tmp<fvPatchScalarField> clone
         (
             const DimensionedField<scalar, fvMesh>& iF
-        ) const
-        {
-            return tmp<fvPatchScalarField>
-            (
-                new coupledTemperatureFvPatchScalarField
-                (
-                    *this,
-                    iF
-                )
-            );
-        }
+        ) const;
+
+
+    //- Destructor
+    virtual ~coupledTemperatureFvPatchScalarField();
 
 
     // Member Functions

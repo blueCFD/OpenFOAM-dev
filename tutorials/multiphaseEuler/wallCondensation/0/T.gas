@@ -53,9 +53,15 @@ boundaryField
     {
         type            multiphaseExternalTemperature;
         Ta              304;
-        h               uniform 4000.0;
-        thicknessLayers (0.045);
-        kappaLayers     (117);
+
+        h
+        {
+            type            externalWallLayersHeatTransferCoefficient;
+            h               4000;
+            thicknessLayers (0.045);
+            kappaLayers     (117);
+        }
+
         relaxation      0.2;
         value           uniform 304;
     }

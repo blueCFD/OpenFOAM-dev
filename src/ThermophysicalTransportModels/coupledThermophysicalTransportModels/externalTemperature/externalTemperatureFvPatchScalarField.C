@@ -25,7 +25,7 @@ License
 
 #include "externalTemperatureFvPatchScalarField.H"
 #include "thermophysicalTransportModel.H"
-#include "volFields.H"
+#include "FunctionalDimensionedField.T.H"
 #include "physicoChemicalConstants.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -122,17 +122,17 @@ externalTemperatureFvPatchScalarField
         )
       : autoPtr<Function1<scalar>>()
     ),
-    haveh_(dict.found("h")),
     h_
     (
-        haveh_
-      ? Function1<scalar>::New
+        dict.found("h")
+      ? new FunctionalDimensionedField<scalar, fvPatch>
         (
+            iF.name(),
             "h",
-            time().userUnits(),
+            p,
             dimPower/dimArea/dimTemperature,
             dict
-        ).ptr()
+        )
       : nullptr
     ),
     haveEmissivity_(dict.found("emissivity")),
@@ -142,22 +142,9 @@ externalTemperatureFvPatchScalarField
       ? dict.lookup<scalar>("emissivity", units::fraction)
       : NaN
     ),
-    haveLayers_(dict.found("thicknessLayers") || dict.found("kappaLayers")),
-    thicknessLayers_
-    (
-        haveLayers_
-      ? dict.lookup<scalarList>("thicknessLayers", dimLength)
-      : scalarList()
-    ),
-    kappaLayers_
-    (
-        haveLayers_
-      ? dict.lookup<scalarList>("kappaLayers", dimThermalConductivity)
-      : scalarList()
-    ),
     Ta_
     (
-        haveh_ || haveEmissivity_
+        h_.valid() || haveEmissivity_
       ? Function1<scalar>::New
         (
             "Ta",
@@ -188,21 +175,6 @@ externalTemperatureFvPatchScalarField
     {
         FatalIOErrorInFunction(dict)
             << "Emissivity must be in the range 0 to 1"
-            << exit(FatalIOError);
-    }
-
-    if (thicknessLayers_.size() != kappaLayers_.size())
-    {
-        FatalIOErrorInFunction(dict)
-            << "If either thicknessLayers or kappaLayers is specified, then "
-            << "both must be specified and be lists of the same length "
-            << exit(FatalIOError);
-    }
-
-    if (haveEmissivity_ && haveLayers_)
-    {
-        FatalIOErrorInFunction(dict)
-            << "Emissivity and thicknessLayers/kappaLayers are incompatible"
             << exit(FatalIOError);
     }
 
@@ -245,13 +217,18 @@ externalTemperatureFvPatchScalarField
     Q_(ptf.Q_, false),
     haveq_(ptf.haveq_),
     q_(ptf.q_, false),
-    haveh_(ptf.haveh_),
-    h_(ptf.h_, false),
+    h_
+    (
+        ptf.h_.valid()
+      ? new FunctionalDimensionedField<scalar, fvPatch>
+        (
+            ptf.h_(),
+            p
+        )
+      : nullptr
+    ),
     haveEmissivity_(ptf.haveEmissivity_),
     emissivity_(ptf.emissivity_),
-    haveLayers_(ptf.haveLayers_),
-    thicknessLayers_(ptf.thicknessLayers_),
-    kappaLayers_(ptf.kappaLayers_),
     Ta_(ptf.Ta_, false),
     relax_(ptf.relax_),
     qrName_(ptf.qrName_),
@@ -268,27 +245,51 @@ externalTemperatureFvPatchScalarField
 Foam::externalTemperatureFvPatchScalarField::
 externalTemperatureFvPatchScalarField
 (
-    const externalTemperatureFvPatchScalarField& tppsf,
+    const externalTemperatureFvPatchScalarField& ptf,
     const DimensionedField<scalar, fvMesh>& iF
 )
 :
-    mixedFvPatchScalarField(tppsf, iF),
-    haveQ_(tppsf.haveQ_),
-    Q_(tppsf.Q_, false),
-    haveq_(tppsf.haveq_),
-    q_(tppsf.q_, false),
-    haveh_(tppsf.haveh_),
-    h_(tppsf.h_, false),
-    haveEmissivity_(tppsf.haveEmissivity_),
-    emissivity_(tppsf.emissivity_),
-    haveLayers_(tppsf.haveLayers_),
-    thicknessLayers_(tppsf.thicknessLayers_),
-    kappaLayers_(tppsf.kappaLayers_),
-    Ta_(tppsf.Ta_, false),
-    relax_(tppsf.relax_),
-    qrName_(tppsf.qrName_),
-    qrRelax_(tppsf.qrRelax_),
-    qrPrevious_(tppsf.qrPrevious_)
+    mixedFvPatchScalarField(ptf, iF),
+    haveQ_(ptf.haveQ_),
+    Q_(ptf.Q_, false),
+    haveq_(ptf.haveq_),
+    q_(ptf.q_, false),
+    h_
+    (
+        ptf.h_.valid()
+      ? new FunctionalDimensionedField<scalar, fvPatch>
+        (
+            ptf.h_()
+        )
+      : nullptr
+    ),
+    haveEmissivity_(ptf.haveEmissivity_),
+    emissivity_(ptf.emissivity_),
+    Ta_(ptf.Ta_, false),
+    relax_(ptf.relax_),
+    qrName_(ptf.qrName_),
+    qrRelax_(ptf.qrRelax_),
+    qrPrevious_(ptf.qrPrevious_)
+{}
+
+
+Foam::tmp<Foam::fvPatchScalarField>
+Foam::externalTemperatureFvPatchScalarField::clone
+(
+    const DimensionedField<scalar, fvMesh>& iF
+) const
+{
+    return tmp<fvPatchScalarField>
+    (
+        new externalTemperatureFvPatchScalarField(*this, iF)
+    );
+}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::externalTemperatureFvPatchScalarField::
+~externalTemperatureFvPatchScalarField()
 {}
 
 
@@ -301,6 +302,11 @@ void Foam::externalTemperatureFvPatchScalarField::map
 )
 {
     mixedFvPatchScalarField::map(ptf, mapper);
+
+    if (h_.valid())
+    {
+        h_->map(!mapper.direct());
+    }
 
     const externalTemperatureFvPatchScalarField& tiptf =
         refCast<const externalTemperatureFvPatchScalarField>(ptf);
@@ -318,6 +324,11 @@ void Foam::externalTemperatureFvPatchScalarField::reset
 )
 {
     mixedFvPatchScalarField::reset(ptf);
+
+    if (h_.valid())
+    {
+        h_->reset();
+    }
 
     const externalTemperatureFvPatchScalarField& tiptf =
         refCast<const externalTemperatureFvPatchScalarField>(ptf);
@@ -371,13 +382,14 @@ void Foam::externalTemperatureFvPatchScalarField::updateCoeffs()
     }
 
     // Evaluate the ambient temperature
-    const scalar Ta = haveh_ || haveEmissivity_ ? Ta_->value(t) : NaN;
+    const scalar Ta = h_.valid() || haveEmissivity_ ? Ta_->value(t) : NaN;
 
     // Evaluate the combined convective and radiative heat transfer coefficient
     tmp<scalarField> hEff;
-    if (haveh_)
+    if (h_.valid())
     {
-        plusEqOp(hEff, h_->value(t));
+        h_->update();
+        plusEqOp(hEff, h_());
     }
     if (haveEmissivity_)
     {
@@ -389,23 +401,6 @@ void Foam::externalTemperatureFvPatchScalarField::updateCoeffs()
            *(sqr(Ta) + sqr(T()))
            *(Ta + T())
         );
-    }
-
-    // Determine the (reciprocal of the) heat transfer coefficient for the
-    // layer resistances and combine with the convective and radiative heat
-    // transfer coefficients to create a complete effective coefficient
-    if (hEff.valid() && haveLayers_)
-    {
-        scalar oneByHLayers = 0;
-        if (haveLayers_)
-        {
-            forAll(thicknessLayers_, layeri)
-            {
-                oneByHLayers += thicknessLayers_[layeri]/kappaLayers_[layeri];
-            }
-        }
-
-        hEff = 1/(1/hEff + oneByHLayers);
     }
 
     // If we have a heat transfer coefficient then add it to the kappa sums
@@ -512,15 +507,9 @@ void Foam::externalTemperatureFvPatchScalarField::write
         writeEntry(os, time().userUnits(), dimPower/dimArea, q_());
     }
 
-    if (haveh_)
+    if (h_.valid())
     {
-        writeEntry
-        (
-            os,
-            time().userUnits(),
-            dimPower/dimArea/dimTemperature,
-            h_()
-        );
+        writeEntry(os, h_());
     }
 
     if (haveEmissivity_)
@@ -528,13 +517,7 @@ void Foam::externalTemperatureFvPatchScalarField::write
         writeEntry(os, "emissivity", emissivity_);
     }
 
-    if (haveLayers_)
-    {
-        writeEntry(os, "thicknessLayers", thicknessLayers_);
-        writeEntry(os, "kappaLayers", kappaLayers_);
-    }
-
-    if (haveh_ || haveEmissivity_)
+    if (h_.valid() || haveEmissivity_)
     {
         writeEntry(os, time().userUnits(), dimTemperature, Ta_());
     }

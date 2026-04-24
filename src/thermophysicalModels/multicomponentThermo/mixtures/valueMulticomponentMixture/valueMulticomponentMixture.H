@@ -115,6 +115,9 @@ public:
                 //- Return compressibility [s^2/m^2]
                 scalar psi(scalar p, scalar T) const;
 
+                //- Return volumetric coefficient of thermal expansion [1/T]
+                scalar alphav(const scalar p, const scalar T) const;
+
                 // Heat capacity at constant pressure [J/kg/K]
                 scalar Cp(const scalar p, const scalar T) const;
 
@@ -123,6 +126,9 @@ public:
 
                 // Sensible enthalpy [J/kg]
                 scalar hs(const scalar p, const scalar T) const;
+
+                // Sensible internal energy [J/kg]
+                scalar es(const scalar p, const scalar T) const;
 
                 // Absolute enthalpy [J/kg]
                 scalar ha(const scalar p, const scalar T) const;
@@ -148,6 +154,15 @@ public:
                 //- Temperature from enthalpy or internal energy
                 //  given an initial temperature T0
                 scalar The
+                (
+                    const scalar he,
+                    const scalar p,
+                    const scalar T0
+                ) const;
+
+                //- Temperature from sensible internal energy
+                //  given an initial temperature T0
+                scalar Tes
                 (
                     const scalar he,
                     const scalar p,

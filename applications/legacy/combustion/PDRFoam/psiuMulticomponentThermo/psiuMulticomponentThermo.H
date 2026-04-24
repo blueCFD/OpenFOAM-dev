@@ -271,19 +271,19 @@ public:
         virtual const PtrList<volScalarField>& Y() const;
 
         //- Get the slicer
-        inline volScalarFieldListSlicer Yslicer() const;
+        inline GeometricFieldListSlicer<scalar> Yslicer() const;
 
         //- Get the composition of an internal cell
         inline scalarFieldListSlice cellComposition
         (
-            const volScalarFieldListSlicer& Yslicer,
+            const GeometricFieldListSlicer<scalar>& Yslicer,
             const label celli
         ) const;
 
         //- Get the composition of a boundary face
         inline scalarFieldListSlice patchFaceComposition
         (
-            const volScalarFieldListSlicer& Yslicer,
+            const GeometricFieldListSlicer<scalar>& Yslicer,
             const label patchi,
             const label facei
         ) const;

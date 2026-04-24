@@ -83,7 +83,7 @@ LagrangianSubScalarFieldProperty
     (
         LagrangianSubScalarField::New
         (
-            IOobject::groupName(psiName, this->group()),
+            IOobject::groupName(subMesh.sub(psiName), this->group()),
             subMesh,
             psiDim
         )
@@ -124,7 +124,7 @@ LagrangianInjectionProperty
     (
         LagrangianSubScalarField::New
         (
-            IOobject::groupName(psiName, this->group()),
+            IOobject::groupName(subMesh.sub(psiName), this->group()),
             subMesh,
             psiDim
         )
@@ -384,7 +384,11 @@ Foam::BasicLagrangianThermo<MixtureType, BasicThermoType>::kappa
     const LagrangianInjection& injection
 ) const
 {
-    typedef decltype(this->Yslicer(injection, T.mesh())) compositionType;
+    typedef decltype(this->Yslicer(injection, T.mesh())) YslicerType;
+
+    typedef
+        decltype(this->injectionElementComposition(YslicerType(), -1))
+        compositionType;
 
     const typename MixtureType::transportMixtureType&
         (MixtureType::*mixture)(const compositionType&) const =

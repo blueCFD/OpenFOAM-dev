@@ -114,7 +114,11 @@ Foam::FluidLagrangianThermo<BaseThermo>::mu
     const LagrangianInjection& injection
 ) const
 {
-    typedef decltype(this->Yslicer(injection, T.mesh())) compositionType;
+    typedef decltype(this->Yslicer(injection, T.mesh())) YslicerType;
+
+    typedef
+        decltype(this->injectionElementComposition(YslicerType(), -1))
+        compositionType;
 
     const typename BaseThermo::mixtureType::transportMixtureType&
         (BaseThermo::mixtureType::*mixture)(const compositionType&) const =
