@@ -171,6 +171,7 @@ Foam::tmp<Foam::fvPatchField<Type>> Foam::fvPatchField<Type>::New
         }
     }
 
+    printDictionary print(dict);
     return cstrIter()(p, iF, dict);
 }
 

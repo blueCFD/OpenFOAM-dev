@@ -36,7 +36,9 @@ SourceFiles
 #ifndef printDictionary_H
 #define printDictionary_H
 
-#include "HashPtrTable.T.H"
+#include "HashTable.T.H"
+#include "tmpNrc.H"
+#include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,6 +55,19 @@ class printDictionary
 {
 private:
 
+    // Private Static Member Functions
+
+        //- Allocate the default dictionary for the given dictionary
+        static void setDefaults(const dictionary& dict);
+
+        //- Set the default dictionary pointers for the sub-dictionaries
+        //  of the given dictionary
+        static void setSubDefaults(const dictionary& dict);
+
+        //- Print the given dictionary and its accumulated defaults
+        static void print(const dictionary& dict, const dictionary& defaults);
+
+
     // Private Static Data
 
         //- Table from the names of dictionaries to be printed to pointers
@@ -62,7 +77,7 @@ private:
 
         //- Table from pointers to the dictionaries to be printed to
         //  dictionaries containing all entries including defaults
-        static HashPtrTable<dictionary, const dictionary*, Hash<void*>>
+        static HashTable<tmpNrc<dictionary>, const dictionary*, Hash<void*>>
             dictPtrToDefaults_;
 
         //- Pointer to the dictionary to be printed
@@ -121,7 +136,7 @@ public:
         //- Return the dictionary to add defaults to for a given dictionary
         static dictionary& defaults(const dictionary& dict)
         {
-            return dictPtrToDefaults_[&dict];
+            return const_cast<dictionary&>(dictPtrToDefaults_[&dict]());
         }
 };
 

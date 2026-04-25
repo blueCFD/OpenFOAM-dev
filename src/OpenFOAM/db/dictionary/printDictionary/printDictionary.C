@@ -26,15 +26,95 @@ License
 #include "printDictionary.H"
 #include "dictionary.H"
 
-/* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
+// * * * * * * * * * * * * Private Static Data Members * * * * * * * * * * * //
 
 namespace Foam
 {
     HashTable<const dictionary*, fileName, Hash<fileName>>
         printDictionary::dictNameToDictPtrs_;
 
-    HashPtrTable<dictionary, const dictionary*, Hash<void*>>
+    HashTable<tmpNrc<dictionary>, const dictionary*, Hash<void*>>
         printDictionary::dictPtrToDefaults_;
+}
+
+
+// * * * * * * * * * * * Private Static Member Functions * * * * * * * * * * //
+
+void Foam::printDictionary::setDefaults(const dictionary& dict)
+{
+    dictPtrToDefaults_.set
+    (
+        &dict,
+        tmpNrc<dictionary>(new dictionary(dict.parent(), dictionary()))
+    );
+
+    setSubDefaults(dict);
+}
+
+
+void Foam::printDictionary::setSubDefaults(const dictionary& dict)
+{
+    dictionary& defaults = printDictionary::defaults(dict);
+
+    forAllConstIter(dictionary, dict, iter)
+    {
+        if (!iter().isDict()) continue;
+
+        const dictionary& subDict = iter().dict();
+
+        defaults.set(iter().keyword(), dictionary());
+
+        const dictionary& subDefaults = defaults.subDict(iter().keyword());
+
+        dictPtrToDefaults_.set
+        (
+            &subDict,
+            tmpNrc<dictionary>(subDefaults)
+        );
+
+        setSubDefaults(subDict);
+    }
+}
+
+
+void Foam::printDictionary::print
+(
+    const dictionary& dict,
+    const dictionary& defaults
+)
+{
+    Info<< nl << indent << token::BEGIN_BLOCK << nl << incrIndent;
+
+    forAllConstIter(dictionary, dict, iter)
+    {
+        if (!iter().isDict())
+        {
+            Info<< iter();
+        }
+        else
+        {
+            Info<< indent << iter().keyword();
+            print(iter().dict(), defaults.subDict(iter().keyword()));
+        }
+    }
+
+    label nDefaultsEntries = 0;
+    forAllConstIter(dictionary, defaults, iter)
+    {
+        nDefaultsEntries += !iter().isDict();
+    }
+
+    if (nDefaultsEntries) Info<< indent << "/* Defaults */" << endl;
+
+    forAllConstIter(dictionary, defaults, iter)
+    {
+        if (!iter().isDict())
+        {
+            Info<< iter();
+        }
+    }
+
+    Info<< decrIndent << indent << token::END_BLOCK << nl;
 }
 
 
@@ -47,11 +127,7 @@ Foam::printDictionary::printDictionary(const dictionary& dict)
 {
     if (dictNameToDictPtrs_.found(dict.name()))
     {
-        dictPtrToDefaults_.set
-        (
-            &dict,
-            new dictionary(dict.parent(), dictionary())
-        );
+        setDefaults(dict);
     }
 
     Info<< incrIndent;
@@ -80,33 +156,11 @@ Foam::printDictionary::~printDictionary()
       ? dictNameToDictPtrs_[dictName_]
       : nullptr;
 
-    if (dictPtr)
+    if (dictPtr && dictPtrToDefaults_[dictPtr].isTmp())
     {
-        Info<< indent << dictPtr->dictName() << endl
-            << indent << token::BEGIN_BLOCK << nl << incrIndent;
+        Info<< indent << dictPtr->name().relativePath().c_str();
 
-        auto print = [](const dictionary& dict)
-        {
-            forAllConstIter(dictionary, dict, iter)
-            {
-                if (iter().isDict())
-                {
-                    writeKeyword(Info, iter().keyword());
-                    Info<< "{ ... }" << nl;
-                }
-                else
-                {
-                    Info<< iter();
-                }
-            }
-        };
-
-        Info<< indent << "// Specified" << endl;
-        print(*dictPtr);
-        Info<< indent << "// Defaulted" << endl;
-        print(dictPtrToDefaults_[dictPtr]);
-
-        Info<< decrIndent << indent << token::END_BLOCK << nl;
+        print(*dictPtr, dictPtrToDefaults_[dictPtr]());
 
         dictPtrToDefaults_.erase(dictPtr);
         dictNameToDictPtrs_.erase(dictPtr->name());
@@ -126,11 +180,7 @@ void Foam::printDictionary::set(const dictionary& dict)
      && dictNameToDictPtrs_[dict.name()] != &dict
     )
     {
-        dictPtrToDefaults_.set
-        (
-            &dict,
-            new dictionary(dict.parent(), dictionary())
-        );
+        setDefaults(dict);
     }
 
     dictNameToDictPtrs_.set(dict.name(), &dict);

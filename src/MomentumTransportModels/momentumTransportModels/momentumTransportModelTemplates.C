@@ -73,9 +73,14 @@ inline Foam::autoPtr<MomentumTransportModel> Foam::momentumTransportModel::New
             << exit(FatalError);
     }
 
-    Foam::printDictionary print(fileName::null);
+    Info<< incrIndent;
 
-    return cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
+    autoPtr<MomentumTransportModel> modelPtr =
+        cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
+
+    Info<< decrIndent;
+
+    return modelPtr;
 }
 
 

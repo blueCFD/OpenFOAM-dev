@@ -56,8 +56,6 @@ heatTransferLimitedPhaseChange
             columns         (1 0);
             mergeSeparators no;
             file "$FOAM_TUTORIALS/resources/thermoData/wallBoiling-saturation.csv";
-
-            #print
         }
     }
 }

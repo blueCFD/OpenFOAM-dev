@@ -161,8 +161,6 @@ solidSurfaceBoiling
     departureDiameterModel
     {
         type            TolubinskiKostanchuk;
-
-        #print
     }
 
     departureFrequencyModel

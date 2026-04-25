@@ -127,7 +127,7 @@ Foam::LagrangianModels::LagrangianModels(const LagrangianMesh& mesh)
     PtrListDictionary<LagrangianModel>::setSize(i);
     addSupFields_.setSize(i);
 
-    Info<< incrIndent;
+    printDictionary print(*this);
 
     // Iterate through the dictionary to construct the models
     i = 0;
@@ -159,8 +159,6 @@ Foam::LagrangianModels::LagrangianModels(const LagrangianMesh& mesh)
             modelList[i].postConstruct();
         }
     }
-
-    Info<< decrIndent;
 
     // Enable re-reading
     addWatch();

@@ -170,7 +170,7 @@ Foam::fvConstraints::fvConstraints
 
     constrainedFields_.setSize(count);
 
-    Info<< incrIndent;
+    printDictionary print(*this);
 
     label i = 0;
     forAllConstIter(dictionary, dict, iter)
@@ -204,8 +204,6 @@ Foam::fvConstraints::fvConstraints
             }
         }
     }
-
-    Info<< decrIndent;
 
     PtrListDictionary<fvConstraint>::setSize(i);
     constrainedFields_.setSize(i);

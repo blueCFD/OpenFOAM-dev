@@ -140,13 +140,7 @@ Foam::LESModel<BasicMomentumTransportModel>::New
     }
 
     printDictionary print(LESdict.name());
-
-    autoPtr<LESModel> modelPtr
-    (
-        cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity)
-    );
-
-    return modelPtr;
+    return cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
 }
 
 

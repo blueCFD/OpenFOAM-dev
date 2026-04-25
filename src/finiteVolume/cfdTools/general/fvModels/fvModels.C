@@ -175,7 +175,7 @@ Foam::fvModels::fvModels
 
     addSupFields_.setSize(count);
 
-    Info<< incrIndent;
+    printDictionary print(*this);
 
     label i = 0;
     forAllConstIter(dictionary, dict, iter)
@@ -209,8 +209,6 @@ Foam::fvModels::fvModels
             }
         }
     }
-
-    Info<< decrIndent;
 
     PtrListDictionary<fvModel>::setSize(i);
     addSupFields_.setSize(i);

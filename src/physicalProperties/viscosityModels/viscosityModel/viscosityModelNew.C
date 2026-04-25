@@ -34,7 +34,7 @@ Foam::autoPtr<Foam::viscosityModel> Foam::viscosityModel::New
     const word& group
 )
 {
-    IOdictionary dict( viscosityModel::findModelDict(mesh, group));
+    IOdictionary dict(viscosityModel::findModelDict(mesh, group));
 
     const word modelType(dict.lookup("viscosityModel"));
 

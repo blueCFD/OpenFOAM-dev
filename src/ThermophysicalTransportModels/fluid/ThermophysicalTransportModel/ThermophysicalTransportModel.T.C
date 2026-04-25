@@ -77,12 +77,14 @@ Foam::ThermophysicalTransportModel<MomentumTransportModel, ThermoModel>::New
             << exit(FatalError);
     }
 
-    Foam::printDictionary print(fileName::null);
+    Info<< incrIndent;
 
-    return autoPtr<ThermophysicalTransportModel>
-    (
-        cstrIter()(momentumTransport, thermo)
-    );
+    autoPtr<ThermophysicalTransportModel> modelPtr =
+        cstrIter()(momentumTransport, thermo);
+
+    Info<< decrIndent;
+
+    return modelPtr;
 }
 
 

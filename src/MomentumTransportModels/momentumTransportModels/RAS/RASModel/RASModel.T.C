@@ -130,13 +130,7 @@ Foam::RASModel<BasicMomentumTransportModel>::New
     }
 
     printDictionary print(RASdict.name());
-
-    autoPtr<RASModel> modelPtr
-    (
-        cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity)
-    );
-
-    return modelPtr;
+    return cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
 }
 
 

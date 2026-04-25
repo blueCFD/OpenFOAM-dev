@@ -108,21 +108,15 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
         }
 
         printDictionary print(laminarDict.name());
-
-        autoPtr<laminarModel> modelPtr
+        return cstrIter()
         (
-            cstrIter()
-            (
-                alpha,
-                rho,
-                U,
-                alphaRhoPhi,
-                phi,
-                viscosity
-            )
+            alpha,
+            rho,
+            U,
+            alphaRhoPhi,
+            phi,
+            viscosity
         );
-
-        return modelPtr;
     }
     else
     {
@@ -132,8 +126,7 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
             << endl;
 
         printDictionary print(dict.name());
-
-        autoPtr<laminarModel> modelPtr
+        return autoPtr<laminarModel>
         (
             new laminarModels::Stokes<BasicMomentumTransportModel>
             (
@@ -145,8 +138,6 @@ Foam::laminarModel<BasicMomentumTransportModel>::New
                 viscosity
             )
         );
-
-        return modelPtr;
     }
 }
 
