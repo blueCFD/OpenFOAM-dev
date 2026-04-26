@@ -164,6 +164,7 @@ Foam::autoPtr<Foam::pointPatchField<Type>> Foam::pointPatchField<Type>::New
         }
     }
 
+    printDictionary print(dict);
     return cstrIter()(p, iF, dict);
 }
 

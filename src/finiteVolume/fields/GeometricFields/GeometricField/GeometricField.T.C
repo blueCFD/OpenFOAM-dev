@@ -66,6 +66,8 @@ void Foam::GeometricField<Type, GeoMesh, PrimitiveField>::readFields
     const dictionary& dict
 )
 {
+    printDictionary print(dict);
+
     Internal::readField(dict, "internalField");
 
     boundaryField_.readField(*this, dict.subDict("boundaryField"));

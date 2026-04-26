@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -52,6 +52,8 @@ Foam::MRFZoneList::~MRFZoneList()
 
 void Foam::MRFZoneList::reset(const dictionary& dict)
 {
+    printDictionary print(dict);
+
     label count = 0;
     forAllConstIter(dictionary, dict, iter)
     {
@@ -59,6 +61,11 @@ void Foam::MRFZoneList::reset(const dictionary& dict)
         {
             count++;
         }
+    }
+
+    if (count)
+    {
+        Info<< indentOrNl << "MRF zone list" << endl;
     }
 
     this->setSize(count);
@@ -70,8 +77,8 @@ void Foam::MRFZoneList::reset(const dictionary& dict)
             const word& name = iter().keyword();
             const dictionary& modelDict = iter().dict();
 
-            Info<< "    creating MRF zone: " << name << endl;
-
+            printDictionary print(modelDict);
+            Info<< indent << "Constructing MRF zone " << name << endl;
             this->set
             (
                 i++,

@@ -46,7 +46,7 @@ Foam::IOobject Foam::IOMRFZoneList::createIOobject
     if (io.headerOk())
     {
         Info<< indentOrNl
-            << "Constructing MRF zone list from " << io.name()
+            << "Constructing MRF zones from " << io.name()
             << endl;
 
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
@@ -54,9 +54,6 @@ Foam::IOobject Foam::IOMRFZoneList::createIOobject
     }
     else
     {
-        Info<< indentOrNl
-            << "No MRF models present" << endl;
-
         io.readOpt() = IOobject::NO_READ;
         return io;
     }

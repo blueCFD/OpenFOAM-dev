@@ -39,6 +39,8 @@ void Foam::GeometricBoundaryField<Type, GeoMesh, PrimitiveField>::readField
     const dictionary& dict
 )
 {
+    printDictionary print(dict);
+
     // Clear the boundary field if already initialised
     this->clear();
 
