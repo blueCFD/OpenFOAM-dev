@@ -26,17 +26,6 @@ License
 #include "printDictionary.H"
 #include "dictionary.H"
 
-// * * * * * * * * * * * * Private Static Data Members * * * * * * * * * * * //
-
-namespace Foam
-{
-    HashTable<const dictionary*, fileName, Hash<fileName>>
-        printDictionary::dictNameToDictPtrs_;
-
-    HashTable<tmpNrc<dictionary>, const dictionary*, Hash<void*>>
-        printDictionary::dictPtrToDefaults_;
-}
-
 
 // * * * * * * * * * * * Private Static Member Functions * * * * * * * * * * //
 

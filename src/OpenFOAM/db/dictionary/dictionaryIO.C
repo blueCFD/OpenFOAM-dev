@@ -44,12 +44,7 @@ Foam::dictionary::dictionary
     Istream& is
 )
 :
-    dictionaryName
-    (
-        parentDict.currentName().size()
-      ? parentDict.currentName()/name
-      : name
-    ),
+    dictionaryName(pathName(parentDict, name)),
     parent_(parentDict),
     filePtr_(nullptr)
 {

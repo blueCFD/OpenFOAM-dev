@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -64,6 +64,25 @@ bool Foam::jobInfo::constructed(false);
 #include "error.T.C"
 #include "IOerror.C"
 #include "token.T.C"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// Construct the printDictionary tables
+
+#include "printDictionary.H"
+
+Foam::HashTable
+<
+    const Foam::dictionary*,
+    Foam::fileName,
+    Foam::Hash<Foam::fileName>
+> Foam::printDictionary::dictNameToDictPtrs_;
+
+Foam::HashTable
+<
+    Foam::tmpNrc<Foam::dictionary>,
+    const Foam::dictionary*,
+    Foam::Hash<void*>
+> Foam::printDictionary::dictPtrToDefaults_;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Read the debug and info switches

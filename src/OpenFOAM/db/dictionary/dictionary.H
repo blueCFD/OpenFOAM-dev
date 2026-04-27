@@ -125,7 +125,7 @@ public:
         {
             const word scopedName = name_.name();
 
-            string::size_type i = scopedName.rfind('/');
+            const string::size_type i = scopedName.find_last_of("/!");
 
             if (i == scopedName.npos)
             {
@@ -180,6 +180,16 @@ class dictionary
 
 
     // Private Member Functions
+
+        //- Construct the path name from the name of the parent dictionary
+        //  and the given name.
+        //  A '/' separator is used unless the parent dictionary is top-level
+        //  and hence has the name of the file in which case a '!' is used
+        fileName pathName
+        (
+            const dictionary& parentDict,
+            const fileName& name
+        ) const;
 
         //- Find and return an entry data stream pointer if present
         //  otherwise return nullptr.
