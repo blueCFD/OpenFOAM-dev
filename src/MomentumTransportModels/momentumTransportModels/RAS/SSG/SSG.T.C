@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,19 +94,19 @@ SSG<BasicMomentumTransportModel>::SSG
         viscosity
     ),
 
-    Cmu_("Cmu", this->coeffDict(), 0.09),
-    C1_("C1", this->coeffDict(), 3.4),
-    C1s_("C1s", this->coeffDict(), 1.8),
-    C2_("C2", this->coeffDict(), 4.2),
-    C3_("C3", this->coeffDict(), 0.8),
-    C3s_("C3s", this->coeffDict(), 1.3),
-    C4_("C4", this->coeffDict(), 1.25),
-    C5_("C5", this->coeffDict(), 0.4),
+    Cmu_("Cmu", this->typeDict(), 0.09),
+    C1_("C1", this->typeDict(), 3.4),
+    C1s_("C1s", this->typeDict(), 1.8),
+    C2_("C2", this->typeDict(), 4.2),
+    C3_("C3", this->typeDict(), 0.8),
+    C3s_("C3s", this->typeDict(), 1.3),
+    C4_("C4", this->typeDict(), 1.25),
+    C5_("C5", this->typeDict(), 0.4),
 
-    Ceps1_("Ceps1", this->coeffDict(), 1.44),
-    Ceps2_("Ceps2", this->coeffDict(), 1.92),
-    Cs_("Cs", this->coeffDict(), 0.25),
-    Ceps_("Ceps", this->coeffDict(), 0.15),
+    Ceps1_("Ceps1", this->typeDict(), 1.44),
+    Ceps2_("Ceps2", this->typeDict(), 1.92),
+    Cs_("Cs", this->typeDict(), 0.25),
+    Ceps_("Ceps", this->typeDict(), 0.15),
 
     k_
     (
@@ -149,19 +149,19 @@ bool SSG<BasicMomentumTransportModel>::read()
 {
     if (ReynoldsStress<RASModel<BasicMomentumTransportModel>>::read())
     {
-        Cmu_.readIfPresent(this->coeffDict());
-        C1_.readIfPresent(this->coeffDict());
-        C1s_.readIfPresent(this->coeffDict());
-        C2_.readIfPresent(this->coeffDict());
-        C3_.readIfPresent(this->coeffDict());
-        C3s_.readIfPresent(this->coeffDict());
-        C4_.readIfPresent(this->coeffDict());
-        C5_.readIfPresent(this->coeffDict());
+        Cmu_.readIfPresent(this->typeDict());
+        C1_.readIfPresent(this->typeDict());
+        C1s_.readIfPresent(this->typeDict());
+        C2_.readIfPresent(this->typeDict());
+        C3_.readIfPresent(this->typeDict());
+        C3s_.readIfPresent(this->typeDict());
+        C4_.readIfPresent(this->typeDict());
+        C5_.readIfPresent(this->typeDict());
 
-        Ceps1_.readIfPresent(this->coeffDict());
-        Ceps2_.readIfPresent(this->coeffDict());
-        Cs_.readIfPresent(this->coeffDict());
-        Ceps_.readIfPresent(this->coeffDict());
+        Ceps1_.readIfPresent(this->typeDict());
+        Ceps2_.readIfPresent(this->typeDict());
+        Cs_.readIfPresent(this->typeDict());
+        Ceps_.readIfPresent(this->typeDict());
 
         return true;
     }

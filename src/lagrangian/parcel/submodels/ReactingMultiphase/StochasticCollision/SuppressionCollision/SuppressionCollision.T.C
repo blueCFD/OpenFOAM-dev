@@ -69,10 +69,10 @@ Foam::SuppressionCollision<CloudType>::SuppressionCollision
 )
 :
     StochasticCollisionModel<CloudType>(dict, owner, typeName),
-    suppressionCloud_(this->coeffDict().lookup("suppressionCloud")),
+    suppressionCloud_(this->typeDict().lookup("suppressionCloud")),
     suppressedParcelType_
     (
-        this->coeffDict().lookupOrDefault("suppressedParcelType", -1)
+        this->typeDict().lookupOrDefault("suppressedParcelType", -1)
     )
 {}
 

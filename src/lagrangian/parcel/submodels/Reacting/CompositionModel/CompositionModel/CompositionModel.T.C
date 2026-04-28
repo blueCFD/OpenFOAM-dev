@@ -63,7 +63,7 @@ Foam::CompositionModel<CloudType>::CompositionModel
     thermo_(owner.thermo()),
     phaseProps_
     (
-        this->coeffDict().lookup("phases"),
+        this->typeDict().lookup("phases"),
         carrierMcThermoPtr_ == nullptr
       ? hashedWordList::null
       : carrierMcThermoPtr_->species(),

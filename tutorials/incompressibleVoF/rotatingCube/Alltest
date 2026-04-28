@@ -34,7 +34,7 @@ runFoamDictionary()
     runFoamDictionary system/decomposeParDict \
         -entry decomposer -set scotch
     runFoamDictionary system/decomposeParDict \
-        -entry scotchCoeffs -set "{ processorWeights ($(yes 1 | head -n $(( \
+        -entry scotch -set "{ processorWeights ($(yes 1 | head -n $(( \
         $(getNumberOfProcessors) - 1 ))) 2); }"
 
     runApplication blockMesh

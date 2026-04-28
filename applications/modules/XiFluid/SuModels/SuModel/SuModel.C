@@ -80,7 +80,7 @@ bool Foam::SuModel::read(const dictionary& combustionProperties)
 {
     return readCoeffs
     (
-        combustionProperties.subDict("Su").optionalSubDict(type() + "Coeffs")
+        combustionProperties.subDict("Su").optionalTypeDict(type())
     );
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -50,9 +50,9 @@ Foam::ParticleTracks<CloudType>::ParticleTracks
 )
 :
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
-    trackInterval_(this->coeffDict().template lookup<label>("trackInterval")),
-    maxSamples_(this->coeffDict().template lookup<label>("maxSamples")),
-    resetOnWrite_(this->coeffDict().lookup("resetOnWrite")),
+    trackInterval_(this->typeDict().template lookup<label>("trackInterval")),
+    maxSamples_(this->typeDict().template lookup<label>("maxSamples")),
+    resetOnWrite_(this->typeDict().lookup("resetOnWrite")),
     faceHitCounter_(),
     cloudPtr_(nullptr)
 {}

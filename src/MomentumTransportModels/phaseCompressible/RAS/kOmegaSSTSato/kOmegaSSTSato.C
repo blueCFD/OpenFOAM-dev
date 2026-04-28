@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,14 +63,14 @@ kOmegaSSTSato<BasicMomentumTransportModel>::kOmegaSSTSato
 
     phase_(refCast<const phaseModel>(viscosity)),
 
-    hasDispersedPhaseNames_(this->coeffDict().found("dispersedPhases")),
+    hasDispersedPhaseNames_(this->typeDict().found("dispersedPhases")),
 
     dispersedPhaseNames_
     (
-        this->coeffDict().lookupOrDefault("dispersedPhases", hashedWordList())
+        this->typeDict().lookupOrDefault("dispersedPhases", hashedWordList())
     ),
 
-    Cmub_("Cmub", this->coeffDict(), 0.6)
+    Cmub_("Cmub", this->typeDict(), 0.6)
 {}
 
 
@@ -81,7 +81,7 @@ bool kOmegaSSTSato<BasicMomentumTransportModel>::read()
 {
     if (kOmegaSST<BasicMomentumTransportModel>::read())
     {
-        Cmub_.readIfPresent(this->coeffDict());
+        Cmub_.readIfPresent(this->typeDict());
 
         return true;
     }

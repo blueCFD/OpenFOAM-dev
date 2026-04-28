@@ -16,7 +16,7 @@ FoamFile
 
 radiationModel  fvDOM;
 
-fvDOMCoeffs
+fvDOM
 {
     nPhi        3;
     nTheta      3;
@@ -28,7 +28,7 @@ solverFreq 1;
 
 absorptionEmissionModel constant;
 
-constantCoeffs
+constant
 {
     absorptivity    absorptivity    [0 -1 0 0 0 0 0] 0;
     emissivity      emissivity      [0 -1 0 0 0 0 0] 0;

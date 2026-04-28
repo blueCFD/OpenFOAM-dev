@@ -150,7 +150,7 @@ bool  Foam::reactionRateFlameAreaModels::relaxation::read
 {
     if (reactionRateFlameArea::read(dict))
     {
-        const dictionary& coeffDict = dict.optionalSubDict(typeName + "Coeffs");
+        const dictionary& coeffDict = dict.optionalTypeDict(typeName);
         coeffDict.lookup("C") >> C_;
         coeffDict.lookup("alpha") >> alpha_;
         consumptionSpeed_.read(coeffDict.subDict(fuel_));

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,9 +105,9 @@ Foam::SingleMixtureFraction<CloudType>::SingleMixtureFraction
             << exit(FatalError);
     }
 
-    this->coeffDict().lookup("YGasTot0") >> YMixture0_[idGas_];
-    this->coeffDict().lookup("YLiquidTot0") >> YMixture0_[idLiquid_];
-    this->coeffDict().lookup("YSolidTot0") >> YMixture0_[idSolid_];
+    this->typeDict().lookup("YGasTot0") >> YMixture0_[idGas_];
+    this->typeDict().lookup("YLiquidTot0") >> YMixture0_[idLiquid_];
+    this->typeDict().lookup("YSolidTot0") >> YMixture0_[idSolid_];
 
     if (mag(sum(YMixture0_) - 1.0) > small)
     {

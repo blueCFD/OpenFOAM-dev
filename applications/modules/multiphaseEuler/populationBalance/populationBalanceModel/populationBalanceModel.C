@@ -122,9 +122,9 @@ Foam::tmp<Foam::volScalarField> Foam::populationBalanceModel::groupField
 
 // * * * * * * * * * * * * Private Member Functions * * * * * * * * * * * * //
 
-const Foam::dictionary& Foam::populationBalanceModel::coeffDict() const
+const Foam::dictionary& Foam::populationBalanceModel::typeDict() const
 {
-    return fluid_.optionalSubDict("populationBalanceCoeffs").subDict(name_);
+    return fluid_.optionalTypeDict("populationBalance").subDict(name_);
 }
 
 
@@ -715,7 +715,7 @@ Foam::populationBalanceModel::populationBalanceModel
     (
         mesh_.lookupObject<phaseModel>
         (
-            IOobject::groupName("alpha", coeffDict().lookup("continuousPhase"))
+            IOobject::groupName("alpha", typeDict().lookup("continuousPhase"))
         )
     ),
     phases_(),
@@ -815,7 +815,7 @@ Foam::populationBalanceModel::populationBalanceModel
             "dSph",
             dimLength,
             nGroups(),
-            coeffDict().subDict("sphericalDiameters")
+            typeDict().subDict("sphericalDiameters")
         )->dimensionedCoordinates();
 
     // Build the groups' representative volumes
@@ -974,10 +974,10 @@ Foam::populationBalanceModel::populationBalanceModel
     using namespace populationBalance;
 
     // Select the shape model
-    shapeModel_.set(shapeModel::New(coeffDict(), *this).ptr());
+    shapeModel_.set(shapeModel::New(typeDict(), *this).ptr());
 
     // Select coalescence model
-    coalescenceModel_.set(coalescenceModel::New(*this, coeffDict()).ptr());
+    coalescenceModel_.set(coalescenceModel::New(*this, typeDict()).ptr());
     if (coalescenceModel_->coalesces())
     {
         forAll(fs_, i)
@@ -990,7 +990,7 @@ Foam::populationBalanceModel::populationBalanceModel
     }
 
     // Select breakup model
-    breakupModel_.set(breakupModel::New(*this, coeffDict()).ptr());
+    breakupModel_.set(breakupModel::New(*this, typeDict()).ptr());
     if (isA<breakupModels::daughterSizeDistribution>(breakupModel_()))
     {
         daughterSizeDistributionBreakupModel_ =

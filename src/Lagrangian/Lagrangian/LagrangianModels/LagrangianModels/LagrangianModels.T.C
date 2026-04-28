@@ -405,7 +405,7 @@ bool Foam::LagrangianModels::read()
             const bool ok =
                 modelList[i].read
                 (
-                    modelDict.optionalSubDict(modelList[i].type() + "Coeffs")
+                    modelDict.optionalTypeDict(modelList[i].type())
                 );
             allOk = allOk && ok;
         }

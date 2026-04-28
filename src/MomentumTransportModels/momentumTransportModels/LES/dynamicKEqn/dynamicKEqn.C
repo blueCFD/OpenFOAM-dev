@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -179,7 +179,7 @@ dynamicKEqn<BasicMomentumTransportModel>::dynamicKEqn
     ),
 
     simpleFilter_(this->mesh_),
-    filterPtr_(LESfilter::New(this->mesh_, this->coeffDict())),
+    filterPtr_(LESfilter::New(this->mesh_, this->typeDict())),
     filter_(filterPtr_())
 {
     bound(k_, this->kMin_);
@@ -193,7 +193,7 @@ bool dynamicKEqn<BasicMomentumTransportModel>::read()
 {
     if (LESeddyViscosity<BasicMomentumTransportModel>::read())
     {
-        filter_.read(this->coeffDict());
+        filter_.read(this->typeDict());
 
         return true;
     }

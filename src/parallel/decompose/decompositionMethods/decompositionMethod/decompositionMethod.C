@@ -176,7 +176,7 @@ Foam::decompositionMethod::NewDecomposer
         cstrIter()
         (
             decompositionDict,
-            decompositionDict.subOrEmptyDict(methodType + "Coeffs")
+            decompositionDict.typeOrEmptyDict(methodType)
         )
     );
 
@@ -229,7 +229,7 @@ Foam::decompositionMethod::NewDistributor
         cstrIter()
         (
             distributionDict,
-            distributionDict.subOrEmptyDict(methodType + "Coeffs")
+            distributionDict.typeOrEmptyDict(methodType)
         )
     );
 

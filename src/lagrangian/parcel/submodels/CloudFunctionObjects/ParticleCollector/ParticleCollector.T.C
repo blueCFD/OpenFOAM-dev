@@ -119,7 +119,7 @@ void Foam::ParticleCollector<CloudType>::initPolygons
         label np = polygons[polyI].size();
         if (np < 3)
         {
-            FatalIOErrorInFunction(this->coeffDict())
+            FatalIOErrorInFunction(this->typeDict())
                 << "polygons must consist of at least 3 points"
                 << exit(FatalIOError);
         }
@@ -149,17 +149,17 @@ void Foam::ParticleCollector<CloudType>::initConcentricCircles()
 {
     mode_ = mtConcentricCircle;
 
-    vector origin(this->coeffDict().lookup("origin"));
+    vector origin(this->typeDict().lookup("origin"));
 
-    this->coeffDict().lookup("radius") >> radius_;
-    nSector_ = this->coeffDict().template lookup<label>("nSector");
+    this->typeDict().lookup("radius") >> radius_;
+    nSector_ = this->typeDict().template lookup<label>("nSector");
 
     label nS = nSector_;
 
     vector refDir;
     if (nSector_ > 1)
     {
-        refDir = this->coeffDict().lookup("refDir");
+        refDir = this->typeDict().lookup("refDir");
         refDir -= normal_[0]*(normal_[0] & refDir);
         refDir /= mag(refDir);
     }
@@ -446,7 +446,7 @@ void Foam::ParticleCollector<CloudType>::write()
         {
             autoPtr<surfaceWriter> writer
             (
-                surfaceWriter::New(surfaceFormat_, this->coeffDict())
+                surfaceWriter::New(surfaceFormat_, this->typeDict())
             );
 
             writer->write
@@ -501,8 +501,8 @@ Foam::ParticleCollector<CloudType>::ParticleCollector
 :
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
     mode_(mtUnknown),
-    parcelType_(this->coeffDict().lookupOrDefault("parcelType", -1)),
-    removeCollected_(this->coeffDict().lookup("removeCollected")),
+    parcelType_(this->typeDict().lookupOrDefault("parcelType", -1)),
+    removeCollected_(this->typeDict().lookup("removeCollected")),
     points_(),
     faces_(),
     nSector_(0),
@@ -511,36 +511,36 @@ Foam::ParticleCollector<CloudType>::ParticleCollector
     normal_(),
     negateParcelsOppositeNormal_
     (
-        readBool(this->coeffDict().lookup("negateParcelsOppositeNormal"))
+        readBool(this->typeDict().lookup("negateParcelsOppositeNormal"))
     ),
-    surfaceFormat_(this->coeffDict().lookup("surfaceFormat")),
-    resetOnWrite_(this->coeffDict().lookup("resetOnWrite")),
+    surfaceFormat_(this->typeDict().lookup("surfaceFormat")),
+    resetOnWrite_(this->typeDict().lookup("resetOnWrite")),
     totalTime_(0.0),
     mass_(),
     massTotal_(),
     massFlowRate_(),
-    log_(this->coeffDict().lookup("log")),
+    log_(this->typeDict().lookup("log")),
     outputFilePtr_(),
     timeOld_(owner.mesh().time().value()),
     hitFaceIndices_()
 {
     normal_ /= mag(normal_);
 
-    word mode(this->coeffDict().lookup("mode"));
+    word mode(this->typeDict().lookup("mode"));
     if (mode == "polygon")
     {
-        List<Field<point>> polygons(this->coeffDict().lookup("polygons"));
+        List<Field<point>> polygons(this->typeDict().lookup("polygons"));
 
         initPolygons(polygons);
 
-        vector n0(this->coeffDict().lookup("normal"));
+        vector n0(this->typeDict().lookup("normal"));
         normal_ = vectorField(faces_.size(), n0);
     }
     else if (mode == "polygonWithNormal")
     {
         List<Tuple2<Field<point>, vector>> polygonAndNormal
         (
-            this->coeffDict().lookup("polygons")
+            this->typeDict().lookup("polygons")
         );
 
         List<Field<point>> polygons(polygonAndNormal.size());
@@ -557,14 +557,14 @@ Foam::ParticleCollector<CloudType>::ParticleCollector
     }
     else if (mode == "concentricCircle")
     {
-        vector n0(this->coeffDict().lookup("normal"));
+        vector n0(this->typeDict().lookup("normal"));
         normal_ = vectorField(1, n0);
 
         initConcentricCircles();
     }
     else
     {
-        FatalIOErrorInFunction(this->coeffDict())
+        FatalIOErrorInFunction(this->typeDict())
             << "Unknown mode " << mode << ".  Available options are "
             << "polygon, polygonWithNormal and concentricCircle"
             << exit(FatalIOError);

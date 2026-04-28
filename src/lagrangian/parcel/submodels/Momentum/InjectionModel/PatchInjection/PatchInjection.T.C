@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -87,7 +87,7 @@ Foam::PatchInjection<CloudType>::PatchInjection
 )
 :
     InjectionModel<CloudType>(dict, owner, modelName, typeName),
-    patchInjectionBase(owner.mesh(), this->coeffDict().lookup("patchName")),
+    patchInjectionBase(owner.mesh(), this->typeDict().lookup("patchName")),
     duration_(this->readDuration(dict, owner)),
     massFlowRate_(this->readMassFlowRate(dict, owner, duration_)),
     parcelsPerSecond_(this->readParcelsPerSecond(dict, owner)),
@@ -99,13 +99,13 @@ Foam::PatchInjection<CloudType>::PatchInjection
         distribution::New
         (
             dimLength,
-            this->coeffDict().subDict("sizeDistribution"),
+            this->typeDict().subDict("sizeDistribution"),
             this->sizeSampleQ(),
             owner.rndGen().generator()
         )
     )
 {
-    ITstream& is = this->coeffDict().lookup("U0");
+    ITstream& is = this->typeDict().lookup("U0");
 
     token t(is);
     is.putBack(t);

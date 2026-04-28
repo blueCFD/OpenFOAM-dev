@@ -59,7 +59,7 @@ Foam::autoPtr<Foam::XiGModel> Foam::XiGModel::New
     (
         cstrIter()
         (
-            XiGDict.optionalSubDict(modelType + "Coeffs"),
+            XiGDict.optionalTypeDict(modelType),
             thermo,
             momentumTransport,
             Su

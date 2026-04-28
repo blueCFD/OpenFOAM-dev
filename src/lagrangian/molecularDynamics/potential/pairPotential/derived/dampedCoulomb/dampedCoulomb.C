@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ dampedCoulomb::dampedCoulomb
     pairPotential(name, pairPotentialProperties),
     dampedCoulombCoeffs_
     (
-        pairPotentialProperties.subDict(typeName + "Coeffs")
+        pairPotentialProperties.typeDict(typeName)
     ),
     alpha_(dampedCoulombCoeffs_.template lookup<scalar>("alpha"))
 {
@@ -81,7 +81,7 @@ bool dampedCoulomb::read(const dictionary& pairPotentialProperties)
     pairPotential::read(pairPotentialProperties);
 
     dampedCoulombCoeffs_ =
-        pairPotentialProperties.subDict(typeName + "Coeffs");
+        pairPotentialProperties.typeDict(typeName);
 
     dampedCoulombCoeffs_.lookup("alpha") >> alpha_;
 

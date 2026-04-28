@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,9 +42,9 @@ Foam::ETAB<CloudType>::ETAB
 {
     if (!this->defaultCoeffs(true))
     {
-        this->coeffDict().lookup("k1") >> k1_;
-        this->coeffDict().lookup("k2") >> k2_;
-        this->coeffDict().lookup("WeTransition") >> WeTransition_;
+        this->typeDict().lookup("k1") >> k1_;
+        this->typeDict().lookup("k2") >> k2_;
+        this->typeDict().lookup("WeTransition") >> WeTransition_;
     }
 
     scalar k21 = k2_/k1_;

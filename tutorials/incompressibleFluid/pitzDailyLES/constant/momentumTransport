@@ -30,7 +30,7 @@ LES
         filter simple;
     }
 
-    cubeRootVolCoeffs
+    cubeRootVol
     {
         deltaCoeff      1;
     }
@@ -38,15 +38,15 @@ LES
     PrandtlCoeffs
     {
         delta           cubeRootVol;
-        cubeRootVolCoeffs
+        cubeRootVol
         {
             deltaCoeff      1;
         }
 
-        smoothCoeffs
+        smooth
         {
             delta           cubeRootVol;
-            cubeRootVolCoeffs
+            cubeRootVol
             {
                 deltaCoeff      1;
             }
@@ -60,15 +60,15 @@ LES
     vanDriestCoeffs
     {
         delta           cubeRootVol;
-        cubeRootVolCoeffs
+        cubeRootVol
         {
             deltaCoeff      1;
         }
 
-        smoothCoeffs
+        smooth
         {
             delta           cubeRootVol;
-            cubeRootVolCoeffs
+            cubeRootVol
             {
                 deltaCoeff      1;
             }
@@ -80,10 +80,10 @@ LES
         Cdelta          0.158;
     }
 
-    smoothCoeffs
+    smooth
     {
         delta           cubeRootVol;
-        cubeRootVolCoeffs
+        cubeRootVol
         {
             deltaCoeff      1;
         }

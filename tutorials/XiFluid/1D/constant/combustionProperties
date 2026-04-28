@@ -31,7 +31,7 @@ flameWrinkling
     model           equilibrium;
     // model           transport;
 
-    equilibrium
+    eq
     {
         model      constant;
         XiEq       5;

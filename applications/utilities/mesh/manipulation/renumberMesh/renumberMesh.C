@@ -766,7 +766,7 @@ int main(int argc, char *argv[])
         Info<< "nBlocks   = " << nBlocks << endl;
 
         // Read decompositionMethod dictionary
-        dictionary decomposeDict(renumberDictPtr().subDict("blockCoeffs"));
+        dictionary decomposeDict(renumberDictPtr().typeDict("block"));
         decomposeDict.set("numberOfSubdomains", nBlocks);
 
         bool oldParRun = UPstream::parRun();

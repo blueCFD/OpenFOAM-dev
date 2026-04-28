@@ -22,7 +22,7 @@ writeMaps true;
 sortCoupledFaceCells false;
 
 // Optional entry: renumber on a block-by-block basis. It uses a
-// blockCoeffs dictionary to construct a decompositionMethod to do
+// block dictionary to construct a decompositionMethod to do
 // a block subdivision) and then applies the renumberMethod to each
 // block in turn. This can be used in large cases to keep the blocks
 // fitting in cache with all the cache misses bunched at the end.
@@ -44,13 +44,13 @@ method          CuthillMcKee;
 //method          structured;
 //method          spring;
 
-//CuthillMcKeeCoeffs
+//CuthillMcKee
 //{
 //    // Reverse CuthillMcKee (RCM) or plain
 //    reverse true;
 //}
 
-manualCoeffs
+manual
 {
     // In system directory: new-to-original (i.e. order) labelIOList
     dataFile "cellMap";
@@ -58,7 +58,7 @@ manualCoeffs
 
 
 // For extruded (i.e. structured in one direction) meshes
-structuredCoeffs
+structured
 {
     // Patches that mesh was extruded from. These determine the starting
     // layer of cells
@@ -74,7 +74,7 @@ structuredCoeffs
 }
 
 
-springCoeffs
+spring
 {
     // Maximum jump of cell indices. Is fraction of number of cells
     maxCo 0.01;
@@ -88,11 +88,11 @@ springCoeffs
 }
 
 
-blockCoeffs
+block
 {
     method          scotch;
     // method hierarchical;
-    // hierarchicalCoeffs
+    // hierarchical
     //{
     //    n           (1 2 1);
     //    delta       0.001;

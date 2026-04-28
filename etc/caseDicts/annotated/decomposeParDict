@@ -79,7 +79,7 @@ method          scotch;
 // method          multiLevel;
 // method          structured;  // does 2D decomposition of structured mesh
 
-multiLevelCoeffs
+multiLevel
 {
     // Decomposition methods to apply in turn. This is like hierarchical but
     // fully general - every method can be used at every level.
@@ -88,7 +88,7 @@ multiLevelCoeffs
     {
         numberOfSubdomains  64;
         // method simple;
-        // simpleCoeffs
+        // simple
         // {
         //     n           (2 1 1);
         //     delta       0.001;
@@ -103,7 +103,7 @@ multiLevelCoeffs
 }
 
 
-simpleCoeffs
+simple
 {
     // Number of processor blocks in each coordinate direction
     n           (2 1 1);
@@ -114,7 +114,7 @@ simpleCoeffs
     delta       0.001;
 }
 
-hierarchicalCoeffs
+hierarchical
 {
     // Number of processor blocks in each coordinate direction
     n           (1 2 1);
@@ -128,7 +128,7 @@ hierarchicalCoeffs
     delta       0.001;
 }
 
-metisCoeffs
+metis
 {
     /*
     processorWeights
@@ -141,7 +141,7 @@ metisCoeffs
     */
 }
 
-scotchCoeffs
+scotch
 {
     /*
     processorWeights
@@ -156,12 +156,12 @@ scotchCoeffs
     */
 }
 
-manualCoeffs
+manual
 {
     dataFile    "decompositionData";
 }
 
-structuredCoeffs
+structured
 {
     // Patches to do 2D decomposition on. Structured mesh only; cells have
     // to be in 'columns' on top of patches.

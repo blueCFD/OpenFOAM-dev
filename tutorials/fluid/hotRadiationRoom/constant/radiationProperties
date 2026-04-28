@@ -21,7 +21,7 @@ solverFreq 1;
 
 absorptionEmissionModel constant;
 
-constantCoeffs
+constant
 {
     absorptivity    0.5;
     emissivity      0.5;

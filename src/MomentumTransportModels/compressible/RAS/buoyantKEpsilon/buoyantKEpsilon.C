@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ buoyantKEpsilon<BasicMomentumTransportModel>::buoyantKEpsilon
         type
     ),
 
-    Cg_("Cg", this->coeffDict(), 1.0)
+    Cg_("Cg", this->typeDict(), 1.0)
 {}
 
 
@@ -71,7 +71,7 @@ bool buoyantKEpsilon<BasicMomentumTransportModel>::read()
 {
     if (kEpsilon<BasicMomentumTransportModel>::read())
     {
-        Cg_.readIfPresent(this->coeffDict());
+        Cg_.readIfPresent(this->typeDict());
 
         return true;
     }

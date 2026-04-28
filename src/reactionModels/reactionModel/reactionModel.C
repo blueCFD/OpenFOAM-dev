@@ -83,7 +83,7 @@ Foam::reactionModel::reactionModel
     mesh_(thermo.T().mesh()),
     thermo_(thermo),
     turb_(turb),
-    coeffs_(optionalSubDict(modelType + "Coeffs")),
+    coeffs_(optionalTypeDict(modelType)),
     modelType_(modelType)
 {}
 
@@ -100,7 +100,7 @@ bool Foam::reactionModel::read()
 {
     if (regIOobject::read())
     {
-        coeffs_ = optionalSubDict(modelType_ + "Coeffs");
+        coeffs_ = optionalTypeDict(modelType_);
         return true;
     }
     else

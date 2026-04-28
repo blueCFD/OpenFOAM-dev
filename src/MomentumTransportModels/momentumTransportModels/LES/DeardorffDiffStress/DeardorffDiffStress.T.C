@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -70,10 +70,10 @@ DeardorffDiffStress<BasicMomentumTransportModel>::DeardorffDiffStress
         viscosity
     ),
 
-    Ck_("Ck", this->coeffDict(), 0.094),
-    Cm_("Cm", this->coeffDict(), 4.13),
-    Ce_("Ce", this->coeffDict(), 1.05),
-    Cs_("Cs", this->coeffDict(), 0.25)
+    Ck_("Ck", this->typeDict(), 0.094),
+    Cm_("Cm", this->typeDict(), 4.13),
+    Ce_("Ce", this->typeDict(), 1.05),
+    Cs_("Cs", this->typeDict(), 0.25)
 {
     if (type == typeName)
     {
@@ -89,10 +89,10 @@ bool DeardorffDiffStress<BasicMomentumTransportModel>::read()
 {
     if (ReynoldsStress<LESModel<BasicMomentumTransportModel>>::read())
     {
-        Ck_.readIfPresent(this->coeffDict());
-        Cm_.readIfPresent(this->coeffDict());
-        Ce_.readIfPresent(this->coeffDict());
-        Cs_.readIfPresent(this->coeffDict());
+        Ck_.readIfPresent(this->typeDict());
+        Cm_.readIfPresent(this->typeDict());
+        Ce_.readIfPresent(this->typeDict());
+        Cs_.readIfPresent(this->typeDict());
 
         return true;
     }

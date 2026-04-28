@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -30,11 +30,11 @@ Description
 Usage
     Example usage, here employing the Darcy-Forchheimer model:
     \verbatim
-    porosityForceCoeffs
+    porosityForce
     {
         type            DarcyForchheimer;
 
-        DarcyForchheimerCoeffs
+        DarcyForchheimer
         {
             d   d [0 -2 0 0 0 0 0] (5e7 -1000 -1000);
             f   f [0 -1 0 0 0 0 0] (0 0 0);

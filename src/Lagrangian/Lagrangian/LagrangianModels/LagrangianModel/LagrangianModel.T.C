@@ -119,7 +119,7 @@ Foam::autoPtr<Foam::LagrangianModel> Foam::LagrangianModel::New
             << exit(FatalIOError);
     }
 
-    const dictionary& coeffsDict = modelDict.optionalSubDict(type + "Coeffs");
+    const dictionary& coeffsDict = modelDict.optionalTypeDict(type);
 
     printDictionary print(coeffsDict);
 

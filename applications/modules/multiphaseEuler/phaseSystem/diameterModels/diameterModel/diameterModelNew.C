@@ -45,7 +45,7 @@ Foam::autoPtr<Foam::diameterModel> Foam::diameterModel::New
     else
     {
         modelType = dict.lookup<word>(typeName);
-        modelDictPtr = &dict.optionalSubDict(modelType + "Coeffs");
+        modelDictPtr = &dict.optionalTypeDict(modelType);
     }
     const dictionary& modelDict = *modelDictPtr;
 

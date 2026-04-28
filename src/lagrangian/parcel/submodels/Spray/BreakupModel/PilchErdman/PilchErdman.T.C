@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,8 +40,8 @@ Foam::PilchErdman<CloudType>::PilchErdman
 {
     if (!this->defaultCoeffs(true))
     {
-        this->coeffDict().lookup("B1") >> B1_;
-        this->coeffDict().lookup("B2") >> B2_;
+        this->typeDict().lookup("B1") >> B1_;
+        this->typeDict().lookup("B2") >> B2_;
     }
 }
 

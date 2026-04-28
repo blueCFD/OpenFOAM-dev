@@ -24,7 +24,7 @@ LES
 
     delta           cubeRootVol;
 
-    cubeRootVolCoeffs
+    cubeRootVol
     {
     }
 }

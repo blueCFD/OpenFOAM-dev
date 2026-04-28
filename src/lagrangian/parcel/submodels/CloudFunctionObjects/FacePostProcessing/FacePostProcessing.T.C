@@ -195,7 +195,7 @@ void Foam::FacePostProcessing<CloudType>::write()
 
                 autoPtr<surfaceWriter> writer
                 (
-                    surfaceWriter::New(surfaceFormat_, this->coeffDict())
+                    surfaceWriter::New(surfaceFormat_, this->typeDict())
                 );
 
                 writer->write
@@ -246,17 +246,17 @@ Foam::FacePostProcessing<CloudType>::FacePostProcessing
 :
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
     faceZoneIndices_(),
-    surfaceFormat_(this->coeffDict().lookup("surfaceFormat")),
-    resetOnWrite_(this->coeffDict().lookup("resetOnWrite")),
+    surfaceFormat_(this->typeDict().lookup("surfaceFormat")),
+    resetOnWrite_(this->typeDict().lookup("resetOnWrite")),
     totalTime_(0.0),
     mass_(),
     massTotal_(),
     massFlowRate_(),
-    log_(this->coeffDict().lookup("log")),
+    log_(this->typeDict().lookup("log")),
     outputFilePtr_(),
     timeOld_(owner.mesh().time().value())
 {
-    wordList faceZoneNames(this->coeffDict().lookup("faceZones"));
+    wordList faceZoneNames(this->typeDict().lookup("faceZones"));
     mass_.setSize(faceZoneNames.size());
     massTotal_.setSize(faceZoneNames.size());
     massFlowRate_.setSize(faceZoneNames.size());

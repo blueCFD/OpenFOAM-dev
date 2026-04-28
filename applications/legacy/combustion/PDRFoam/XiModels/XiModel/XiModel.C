@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,7 +51,7 @@ Foam::XiModel::XiModel
     (
         XiProperties.subDict
         (
-            word(XiProperties.lookup("XiModel")) + "Coeffs"
+            XiProperties.lookup<word>("XiModel")
         )
     ),
     thermo_(thermo),
@@ -85,7 +85,7 @@ Foam::XiModel::~XiModel()
 
 bool Foam::XiModel::read(const dictionary& XiProperties)
 {
-    XiModelCoeffs_ = XiProperties.optionalSubDict(type() + "Coeffs");
+    XiModelCoeffs_ = XiProperties.optionalTypeDict(type());
 
     return true;
 }

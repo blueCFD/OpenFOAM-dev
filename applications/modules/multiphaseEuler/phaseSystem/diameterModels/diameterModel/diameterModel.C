@@ -68,7 +68,7 @@ bool Foam::diameterModel::read()
         (
             phaseDict.isDict(typeName)
           ? phaseDict.subDict(typeName)
-          : phaseDict.optionalSubDict(type() + "Coeffs")
+          : phaseDict.optionalTypeDict(type())
         );
 }
 

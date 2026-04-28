@@ -52,7 +52,7 @@ Foam::autoPtr<Foam::cavitationModel> Foam::cavitationModel::New
 
     return autoPtr<cavitationModel>
     (
-        cstrIter()(dict.optionalSubDict(modelType + "Coeffs"), phases)
+        cstrIter()(dict.optionalTypeDict(modelType), phases)
     );
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,17 +117,17 @@ ShihQuadraticKE::ShihQuadraticKE
         viscosity
     ),
 
-    Ceps1_("Ceps1", coeffDict(), 1.44),
-    Ceps2_("Ceps2", coeffDict(), 1.92),
-    sigmak_("sigmak", coeffDict(), 1.0),
-    sigmaEps_("sigmaEps", coeffDict(), 1.3),
-    Cmu_("Cmu", coeffDict(), 0.09),
-    Cmu1_("Cmu1", coeffDict(), 1.25),
-    Cmu2_("Cmu2", coeffDict(), 0.9),
-    Cbeta_("Cbeta", coeffDict(), 1000.0),
-    Cbeta1_("Cbeta1", coeffDict(), 3.0),
-    Cbeta2_("Cbeta2", coeffDict(), 15.0),
-    Cbeta3_("Cbeta3", coeffDict(), -19.0),
+    Ceps1_("Ceps1", typeDict(), 1.44),
+    Ceps2_("Ceps2", typeDict(), 1.92),
+    sigmak_("sigmak", typeDict(), 1.0),
+    sigmaEps_("sigmaEps", typeDict(), 1.3),
+    Cmu_("Cmu", typeDict(), 0.09),
+    Cmu1_("Cmu1", typeDict(), 1.25),
+    Cmu2_("Cmu2", typeDict(), 0.9),
+    Cbeta_("Cbeta", typeDict(), 1000.0),
+    Cbeta1_("Cbeta1", typeDict(), 3.0),
+    Cbeta2_("Cbeta2", typeDict(), 15.0),
+    Cbeta3_("Cbeta3", typeDict(), -19.0),
 
     k_
     (
@@ -166,17 +166,17 @@ bool ShihQuadraticKE::read()
 {
     if (nonlinearEddyViscosity<incompressible::RASModel>::read())
     {
-        Ceps1_.readIfPresent(coeffDict());
-        Ceps2_.readIfPresent(coeffDict());
-        sigmak_.readIfPresent(coeffDict());
-        sigmaEps_.readIfPresent(coeffDict());
-        Cmu_.readIfPresent(coeffDict());
-        Cmu1_.readIfPresent(coeffDict());
-        Cmu2_.readIfPresent(coeffDict());
-        Cbeta_.readIfPresent(coeffDict());
-        Cbeta1_.readIfPresent(coeffDict());
-        Cbeta2_.readIfPresent(coeffDict());
-        Cbeta3_.readIfPresent(coeffDict());
+        Ceps1_.readIfPresent(typeDict());
+        Ceps2_.readIfPresent(typeDict());
+        sigmak_.readIfPresent(typeDict());
+        sigmaEps_.readIfPresent(typeDict());
+        Cmu_.readIfPresent(typeDict());
+        Cmu1_.readIfPresent(typeDict());
+        Cmu2_.readIfPresent(typeDict());
+        Cbeta_.readIfPresent(typeDict());
+        Cbeta1_.readIfPresent(typeDict());
+        Cbeta2_.readIfPresent(typeDict());
+        Cbeta3_.readIfPresent(typeDict());
 
         return true;
     }

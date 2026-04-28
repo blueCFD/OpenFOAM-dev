@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ Description
 
 Usage
     \verbatim
-        fvDOMCoeffs
+        fvDOM
         {
             nPhi        4;      // azimuthal angles in PI/2 on X-Y (from Y to X)
             nTheta      0;      // polar angles in PI (from Z to X-Y plane)

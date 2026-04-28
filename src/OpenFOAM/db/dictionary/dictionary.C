@@ -872,6 +872,76 @@ const Foam::dictionary& Foam::dictionary::optionalSubDict
 }
 
 
+const Foam::dictionary& Foam::dictionary::typeDict
+(
+    const word& typeName
+) const
+{
+    const entry* entryPtr = lookupEntryPtr(typeName, false, true);
+
+    if (!entryPtr)
+    {
+        entryPtr = lookupEntryPtr(typeName + "Coeffs", false, true);
+    }
+
+    if (entryPtr == nullptr)
+    {
+        // Generate error message using the typeName keyword
+        return subDict(typeName);
+    }
+    else
+    {
+        return entryPtr->dict();
+    }
+}
+
+
+const Foam::dictionary& Foam::dictionary::typeOrEmptyDict
+(
+    const word& typeName
+) const
+{
+    const entry* entryPtr = lookupEntryPtr(typeName, false, true);
+
+    if (!entryPtr)
+    {
+        entryPtr = lookupEntryPtr(typeName + "Coeffs", false, true);
+    }
+
+    if (entryPtr == nullptr)
+    {
+        return null;
+    }
+    else
+    {
+        return entryPtr->dict();
+    }
+}
+
+
+const Foam::dictionary& Foam::dictionary::optionalTypeDict
+(
+    const word& typeName
+) const
+{
+    const entry* entryPtr = lookupEntryPtr(typeName, false, true);
+
+    if (!entryPtr)
+    {
+        entryPtr = lookupEntryPtr(typeName + "Coeffs", false, true);
+    }
+
+    if (entryPtr)
+    {
+        return entryPtr->dict();
+    }
+    else
+    {
+        return *this;
+    }
+}
+
+
 const Foam::dictionary& Foam::dictionary::scopedDict(const word& keyword) const
 {
     if (keyword == "")

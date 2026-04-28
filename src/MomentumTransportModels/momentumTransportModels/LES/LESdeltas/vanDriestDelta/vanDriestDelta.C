@@ -122,13 +122,13 @@ Foam::LESModels::vanDriestDelta::vanDriestDelta
         (
             IOobject::groupName("geometricDelta", turbulence.U().group()),
             turbulence,
-            dict.subDict(type() + "Coeffs")
+            dict.typeDict(type())
         )
     ),
     kappa_(dict.lookupOrDefault<scalar>("kappa", 0.41)),
     Aplus_
     (
-        dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>
+        dict.typeDict(type()).lookupOrDefault<scalar>
         (
             "Aplus",
             26.0
@@ -136,7 +136,7 @@ Foam::LESModels::vanDriestDelta::vanDriestDelta
     ),
     Cdelta_
     (
-        dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>
+        dict.typeDict(type()).lookupOrDefault<scalar>
         (
             "Cdelta",
             0.158
@@ -144,7 +144,7 @@ Foam::LESModels::vanDriestDelta::vanDriestDelta
     ),
     calcInterval_
     (
-        dict.subDict(type() + "Coeffs").lookupOrDefault<label>
+        dict.typeDict(type()).lookupOrDefault<label>
         (
             "calcInterval",
             1
@@ -152,7 +152,7 @@ Foam::LESModels::vanDriestDelta::vanDriestDelta
     ),
     yPlusCutOff_
     (
-        dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>
+        dict.typeDict(type()).lookupOrDefault<scalar>
         (
             "yPlusCutOff",
             500
@@ -160,7 +160,7 @@ Foam::LESModels::vanDriestDelta::vanDriestDelta
     ),
     minWallFaceFraction_
     (
-        dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>
+        dict.typeDict(type()).lookupOrDefault<scalar>
         (
             "minWallFaceFraction",
             0.1
@@ -175,7 +175,7 @@ Foam::LESModels::vanDriestDelta::vanDriestDelta
 
 void Foam::LESModels::vanDriestDelta::read(const dictionary& dict)
 {
-    const dictionary& coeffDict(dict.subDict(type() + "Coeffs"));
+    const dictionary& coeffDict(dict.typeDict(type()));
 
     geometricDelta_().read(coeffDict);
     dict.readIfPresent<scalar>("kappa", kappa_);

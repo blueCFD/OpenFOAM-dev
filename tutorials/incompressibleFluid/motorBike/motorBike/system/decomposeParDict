@@ -19,7 +19,7 @@ numberOfSubdomains  8;
 decomposer      hierarchical;
 distributor     ptscotch;
 
-hierarchicalCoeffs
+hierarchical
 {
     n               (4 2 1);
     order           xyz;

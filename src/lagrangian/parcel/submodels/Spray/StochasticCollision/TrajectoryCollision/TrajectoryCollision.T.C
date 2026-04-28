@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -138,8 +138,8 @@ Foam::TrajectoryCollision<CloudType>::TrajectoryCollision
 )
 :
     ORourkeCollision<CloudType>(dict, owner, typeName),
-    cSpace_(this->coeffDict().template lookup<scalar>("cSpace")),
-    cTime_(this->coeffDict().template lookup<scalar>("cTime"))
+    cSpace_(this->typeDict().template lookup<scalar>("cSpace")),
+    cTime_(this->typeDict().template lookup<scalar>("cTime"))
 {}
 
 

@@ -40,7 +40,7 @@ Foam::PackingModels::Explicit<CloudType>::Explicit
     (
         CorrectionLimitingMethod::New
         (
-            this->coeffDict().subDict(CorrectionLimitingMethod::typeName)
+            this->typeDict().subDict(CorrectionLimitingMethod::typeName)
         )
     )
 {}

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -60,7 +60,7 @@ Foam::trimModel::~trimModel()
 
 void Foam::trimModel::read(const dictionary& dict)
 {
-    coeffs_ = dict.optionalSubDict(name_ + "Coeffs");
+    coeffs_ = dict.optionalTypeDict(name_);
 }
 
 

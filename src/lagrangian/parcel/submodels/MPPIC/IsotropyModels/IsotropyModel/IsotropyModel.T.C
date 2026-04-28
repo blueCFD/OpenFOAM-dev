@@ -50,7 +50,7 @@ Foam::IsotropyModel<CloudType>::IsotropyModel
     (
         TimeScaleModel::New
         (
-            this->coeffDict().subDict(TimeScaleModel::typeName)
+            this->typeDict().subDict(TimeScaleModel::typeName)
         )
     )
 {}

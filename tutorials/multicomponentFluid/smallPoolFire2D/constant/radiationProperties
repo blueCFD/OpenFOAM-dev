@@ -18,7 +18,7 @@ radiation on;
 
 radiationModel  fvDOM;
 
-fvDOMCoeffs
+fvDOM
 {
     nPhi        4;      // azimuthal angles in PI/2 on X-Y.(from Y to X)
     nTheta      0;      // polar angles in PI (from Z to X-Y plane)
@@ -31,7 +31,7 @@ solverFreq 10;
 
 absorptionEmissionModel greyMeanReaction;
 
-constantCoeffs
+constant
 {
     absorptivity    0.01;
     emissivity      0.01;

@@ -16,7 +16,7 @@ FoamFile
 
 radiationModel  fvDOM;
 
-fvDOMCoeffs
+fvDOM
 {
     nPhi        3;      // azimuthal angles in PI/2 on X-Y.(from Y to X)
     nTheta      5;      // polar angles in PI (from Z to X-Y plane)
@@ -29,7 +29,7 @@ solverFreq 10;
 
 absorptionEmissionModel constant;
 
-constantCoeffs
+constant
 {
    absorptivity    0.5;
    emissivity      0.5;

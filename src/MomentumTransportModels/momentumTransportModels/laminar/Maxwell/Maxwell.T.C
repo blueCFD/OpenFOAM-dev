@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,9 +49,9 @@ Maxwell<BasicMomentumTransportModel>::readModeCoefficients
 
     if (modeCoefficients_.size())
     {
-        if (this->coeffDict().found(name))
+        if (this->typeDict().found(name))
         {
-            IOWarningInFunction(this->coeffDict())
+            IOWarningInFunction(this->typeDict())
                 << "Using 'modes' list, '" << name << "' entry will be ignored."
                 << endl;
         }
@@ -80,7 +80,7 @@ Maxwell<BasicMomentumTransportModel>::readModeCoefficients
             (
                 name,
                 dims,
-                this->coeffDict().lookup(name)
+                this->typeDict().lookup(name)
             )
         );
     }
@@ -146,7 +146,7 @@ Maxwell<BasicMomentumTransportModel>::Maxwell
         viscosity
     ),
 
-    modeCoefficients_(this->coeffDict().subOrEmptyDict("modes")),
+    modeCoefficients_(this->typeDict().subOrEmptyDict("modes")),
 
     nModes_(modeCoefficients_.size() ? modeCoefficients_.size() : 1),
 
@@ -239,7 +239,7 @@ bool Maxwell<BasicMomentumTransportModel>::read()
     {
         if (modeCoefficients_.size())
         {
-            this->coeffDict().lookup("modes") >> modeCoefficients_;
+            this->typeDict().lookup("modes") >> modeCoefficients_;
         }
 
         nuM_ = readModeCoefficients("nuM", dimKinematicViscosity);

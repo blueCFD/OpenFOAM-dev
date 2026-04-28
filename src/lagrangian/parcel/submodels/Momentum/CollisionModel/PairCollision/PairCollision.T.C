@@ -534,7 +534,7 @@ Foam::PairCollision<CloudType>::PairCollision
     (
         PairModel<CloudType>::New
         (
-            this->coeffDict(),
+            this->typeDict(),
             this->owner()
         )
     ),
@@ -542,23 +542,23 @@ Foam::PairCollision<CloudType>::PairCollision
     (
         WallModel<CloudType>::New
         (
-            this->coeffDict(),
+            this->typeDict(),
             this->owner()
         )
     ),
     il_
     (
         owner.mesh(),
-        this->coeffDict().template lookup<scalar>("maxInteractionDistance"),
+        this->typeDict().template lookup<scalar>("maxInteractionDistance"),
         Switch
         (
-            this->coeffDict().lookupOrDefault
+            this->typeDict().lookupOrDefault
             (
                 "writeReferredParticleCloud",
                 false
             )
         ),
-        this->coeffDict().lookupOrDefault("U", word("U"))
+        this->typeDict().lookupOrDefault("U", word("U"))
     )
 {}
 

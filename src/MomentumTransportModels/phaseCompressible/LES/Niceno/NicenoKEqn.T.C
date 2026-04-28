@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,9 +63,9 @@ NicenoKEqn<BasicMomentumTransportModel>::NicenoKEqn
 
     gasTurbulencePtr_(nullptr),
 
-    alphaInversion_("alphaInversion", this->coeffDict(), 0.3),
-    Cp_("Cp", this->coeffDict(), this->Ck_.value()),
-    Cmub_("Cmub", this->coeffDict(), 0.6)
+    alphaInversion_("alphaInversion", this->typeDict(), 0.3),
+    Cp_("Cp", this->typeDict(), this->Ck_.value()),
+    Cmub_("Cmub", this->typeDict(), 0.6)
 {}
 
 
@@ -76,9 +76,9 @@ bool NicenoKEqn<BasicMomentumTransportModel>::read()
 {
     if (kEqn<BasicMomentumTransportModel>::read())
     {
-        alphaInversion_.readIfPresent(this->coeffDict());
-        Cp_.readIfPresent(this->coeffDict());
-        Cmub_.readIfPresent(this->coeffDict());
+        alphaInversion_.readIfPresent(this->typeDict());
+        Cp_.readIfPresent(this->typeDict());
+        Cmub_.readIfPresent(this->typeDict());
 
         return true;
     }

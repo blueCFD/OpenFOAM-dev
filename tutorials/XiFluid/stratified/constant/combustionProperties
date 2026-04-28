@@ -40,7 +40,7 @@ flameWrinkling
 {
     model           transport;
 
-    equilibrium
+    eq
     {
         model           Gulder;
     }

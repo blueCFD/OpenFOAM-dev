@@ -44,7 +44,7 @@ Foam::autoPtr<Foam::extrudeModel> Foam::extrudeModel::New
     else
     {
         modelType = dict.lookup<word>(typeName);
-        modelDictPtr = &dict.optionalSubDict(modelType + "Coeffs");
+        modelDictPtr = &dict.optionalTypeDict(modelType);
     }
     const dictionary& modelDict = *modelDictPtr;
 

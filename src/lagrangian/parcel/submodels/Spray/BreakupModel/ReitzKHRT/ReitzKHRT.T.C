@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,12 +44,12 @@ Foam::ReitzKHRT<CloudType>::ReitzKHRT
 {
     if (!this->defaultCoeffs(true))
     {
-        this->coeffDict().lookup("B0") >> b0_;
-        this->coeffDict().lookup("B1") >> b1_;
-        this->coeffDict().lookup("Ctau") >> cTau_;
-        this->coeffDict().lookup("CRT") >> cRT_;
-        this->coeffDict().lookup("msLimit") >> msLimit_;
-        this->coeffDict().lookup("WeberLimit") >> weberLimit_;
+        this->typeDict().lookup("B0") >> b0_;
+        this->typeDict().lookup("B1") >> b1_;
+        this->typeDict().lookup("Ctau") >> cTau_;
+        this->typeDict().lookup("CRT") >> cRT_;
+        this->typeDict().lookup("msLimit") >> msLimit_;
+        this->typeDict().lookup("WeberLimit") >> weberLimit_;
     }
 }
 

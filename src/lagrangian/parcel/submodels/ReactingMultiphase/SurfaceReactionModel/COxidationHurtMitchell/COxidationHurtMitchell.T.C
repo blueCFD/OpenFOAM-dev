@@ -36,7 +36,7 @@ Foam::COxidationHurtMitchell<CloudType>::COxidationHurtMitchell
 )
 :
     SurfaceReactionModel<CloudType>(dict, owner, typeName),
-    Sb_(this->coeffDict().template lookup<scalar>("Sb")),
+    Sb_(this->typeDict().template lookup<scalar>("Sb")),
     CsLocalId_(-1),
     ashLocalId_(-1),
     O2GlobalId_(owner.composition().carrierId("O2")),
@@ -62,7 +62,7 @@ Foam::COxidationHurtMitchell<CloudType>::COxidationHurtMitchell
     const scalar YSolidTot = owner.composition().YMixture0()[idSolid];
     Info<< "    C(s): particle mass fraction = " << YCloc*YSolidTot << endl;
 
-    if (this->coeffDict().readIfPresent("heatOfReaction", heatOfReaction_))
+    if (this->typeDict().readIfPresent("heatOfReaction", heatOfReaction_))
     {
         Info<< "    Using user specified heat of reaction: "
             << heatOfReaction_ << " [J/kg]" << endl;

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,22 +49,22 @@ BrunDripping::BrunDripping
     ejectionModel(dict, film),
     ubarStar_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
        .lookupOrDefault("ubarStar", 1.62208)
     ),
     dCoeff_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
        .lookupOrDefault("dCoeff", 3.3)
     ),
     deltaStable_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
        .lookupOrDefault("deltaStable", scalar(0))
     ),
     minParticlesPerParcel_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
        .lookupOrDefault("minParticlesPerParcel", 1)
     )
 {}

@@ -43,7 +43,7 @@ setSize () {
 
     runApplication -a foamDictionary -entry cells -set "($_xCells 16 1)" \
                    system/blockMeshDict
-    runApplication -a foamDictionary -entry fvDOMCoeffs/nPhi -set "$_nPhi" \
+    runApplication -a foamDictionary -entry fvDOM/nPhi -set "$_nPhi" \
                    constant/radiationProperties
 }
 

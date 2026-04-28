@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -57,8 +57,8 @@ LESeddyViscosity<BasicMomentumTransportModel>::LESeddyViscosity
         viscosity
     ),
 
-    Ck_("Ck", this->coeffDict(), 0.094),
-    Ce_("Ce", this->coeffDict(), 1.048)
+    Ck_("Ck", this->typeDict(), 0.094),
+    Ce_("Ce", this->typeDict(), 1.048)
 {}
 
 
@@ -69,8 +69,8 @@ bool LESeddyViscosity<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<LESModel<BasicMomentumTransportModel>>::read())
     {
-        Ck_.readIfPresent(this->coeffDict());
-        Ce_.readIfPresent(this->coeffDict());
+        Ck_.readIfPresent(this->typeDict());
+        Ce_.readIfPresent(this->typeDict());
 
         return true;
     }

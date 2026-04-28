@@ -32,15 +32,15 @@ LES
     turbulence          on;
     #print
 
-    cubeRootVolCoeffs
+    cubeRootVol
     {
         deltaCoeff      1;
     }
 
-    smoothCoeffs
+    smooth
     {
         delta           cubeRootVol;
-        cubeRootVolCoeffs
+        cubeRootVol
         {
             deltaCoeff      1;
         }

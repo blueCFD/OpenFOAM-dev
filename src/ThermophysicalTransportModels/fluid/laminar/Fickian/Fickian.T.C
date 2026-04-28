@@ -151,7 +151,7 @@ Fickian<BasicThermophysicalTransportModel>::Fickian
 
     DTFuncs_
     (
-        this->coeffDict().found("DT")
+        this->typeDict().found("DT")
       ? this->thermo().species().size()
       : 0
     )
@@ -167,7 +167,7 @@ bool Fickian<BasicThermophysicalTransportModel>::read()
     {
         const speciesTable& species = this->thermo().species();
 
-        const dictionary& coeffDict = this->coeffDict();
+        const dictionary& coeffDict = this->typeDict();
 
         coeffDict.lookup("mixtureDiffusionCoefficients")
             >> mixtureDiffusionCoefficients_;

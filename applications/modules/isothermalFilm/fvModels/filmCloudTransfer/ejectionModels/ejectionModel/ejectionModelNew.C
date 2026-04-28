@@ -52,7 +52,7 @@ Foam::autoPtr<Foam::ejectionModel> Foam::ejectionModel::New
 
     return autoPtr<ejectionModel>
     (
-        cstrIter()(dict.optionalSubDict(modelType + "Coeffs"), film)
+        cstrIter()(dict.optionalTypeDict(modelType), film)
     );
 }
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,7 +42,7 @@ Foam::RASModels::kineticTheoryModel::continuousPhase() const
     {
         if (fluid.movingPhases().size() != 2)
         {
-            FatalIOErrorInFunction(coeffDict())
+            FatalIOErrorInFunction(typeDict())
                 << "Continuous phase name must be specified "
                 << "when there are more than two moving phases."
                 << exit(FatalIOError);
@@ -91,65 +91,65 @@ Foam::RASModels::kineticTheoryModel::kineticTheoryModel
 
     continuousPhaseName_
     (
-        coeffDict().lookupOrDefault("continuousPhase", word::null)
+        typeDict().lookupOrDefault("continuousPhase", word::null)
     ),
 
     viscosityModel_
     (
         kineticTheoryModels::viscosityModel::New
         (
-            coeffDict()
+            typeDict()
         )
     ),
     conductivityModel_
     (
         kineticTheoryModels::conductivityModel::New
         (
-            coeffDict()
+            typeDict()
         )
     ),
     radialModel_
     (
         kineticTheoryModels::radialModel::New
         (
-            coeffDict()
+            typeDict()
         )
     ),
     granularPressureModel_
     (
         kineticTheoryModels::granularPressureModel::New
         (
-            coeffDict()
+            typeDict()
         )
     ),
     frictionalStressModel_
     (
         kineticTheoryModels::frictionalStressModel::New
         (
-            coeffDict()
+            typeDict()
         )
     ),
 
-    equilibrium_(coeffDict().lookup("equilibrium")),
-    e_("e", dimless, coeffDict()),
+    equilibrium_(typeDict().lookup("equilibrium")),
+    e_("e", dimless, typeDict()),
     alphaMinFriction_
     (
         "alphaMinFriction",
         dimless,
-        coeffDict()
+        typeDict()
     ),
     residualAlpha_
     (
         "residualAlpha",
         dimless,
-        coeffDict()
+        typeDict()
     ),
 
     maxNut_
     (
         "maxNut",
         dimensionSet(0, 2, -1, 0, 0),
-        coeffDict().lookupOrDefault<scalar>("maxNut", 1000)
+        typeDict().lookupOrDefault<scalar>("maxNut", 1000)
     ),
 
     Theta_
@@ -239,7 +239,7 @@ bool Foam::RASModels::kineticTheoryModel::read()
         read()
     )
     {
-        const dictionary& coeffDict = this->coeffDict();
+        const dictionary& coeffDict = this->typeDict();
         coeffDict.lookup("equilibrium") >> equilibrium_;
         e_.readIfPresent(coeffDict);
         alphaMinFriction_.readIfPresent(coeffDict);

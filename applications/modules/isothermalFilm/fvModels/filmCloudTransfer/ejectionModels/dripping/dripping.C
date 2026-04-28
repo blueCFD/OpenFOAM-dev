@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -49,12 +49,12 @@ dripping::dripping
     ejectionModel(dict, film),
     deltaStable_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
        .lookup<scalar>("deltaStable")
     ),
     minParticlesPerParcel_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
        .lookupOrDefault("minParticlesPerParcel", 1)
     ),
     parcelDistribution_
@@ -62,7 +62,7 @@ dripping::dripping
         distribution::New
         (
             dimLength,
-            dict.optionalSubDict(typeName + "Coeffs")
+            dict.optionalTypeDict(typeName)
            .subDict("parcelDistribution"),
             0,
             0

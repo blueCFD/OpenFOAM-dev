@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -63,10 +63,10 @@ LaheyKEpsilon<BasicMomentumTransportModel>::LaheyKEpsilon
 
     gasTurbulencePtr_(nullptr),
 
-    alphaInversion_("alphaInversion", this->coeffDict(), 0.3),
-    Cp_("Cp", this->coeffDict(), 0.25),
-    C4_("C4", this->coeffDict(), this->C2_.value()),
-    Cmub_("Cmub", this->coeffDict(), 0.6)
+    alphaInversion_("alphaInversion", this->typeDict(), 0.3),
+    Cp_("Cp", this->typeDict(), 0.25),
+    C4_("C4", this->typeDict(), this->C2_.value()),
+    Cmub_("Cmub", this->typeDict(), 0.6)
 {}
 
 
@@ -77,10 +77,10 @@ bool LaheyKEpsilon<BasicMomentumTransportModel>::read()
 {
     if (kEpsilon<BasicMomentumTransportModel>::read())
     {
-        alphaInversion_.readIfPresent(this->coeffDict());
-        Cp_.readIfPresent(this->coeffDict());
-        C4_.readIfPresent(this->coeffDict());
-        Cmub_.readIfPresent(this->coeffDict());
+        alphaInversion_.readIfPresent(this->typeDict());
+        Cp_.readIfPresent(this->typeDict());
+        C4_.readIfPresent(this->typeDict());
+        Cmub_.readIfPresent(this->typeDict());
 
         return true;
     }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -241,19 +241,19 @@ kOmegaSST<MomentumTransportModel, BasicMomentumTransportModel>::kOmegaSST
         viscosity
     ),
 
-    alphaK1_("alphaK1", this->coeffDict(), 0.85),
-    alphaK2_("alphaK2", this->coeffDict(), 1.0),
-    alphaOmega1_("alphaOmega1", this->coeffDict(), 0.5),
-    alphaOmega2_("alphaOmega2", this->coeffDict(), 0.856),
-    gamma1_("gamma1", this->coeffDict(), 5.0/9.0),
-    gamma2_("gamma2", this->coeffDict(), 0.44),
-    beta1_("beta1", this->coeffDict(), 0.075),
-    beta2_("beta2", this->coeffDict(), 0.0828),
-    betaStar_("betaStar", this->coeffDict(), 0.09),
-    a1_("a1", this->coeffDict(), 0.31),
-    b1_("b1", this->coeffDict(), 1.0),
-    c1_("c1", this->coeffDict(), 10.0),
-    F3_(this->coeffDict().template lookupOrDefault<Switch>("F3", false)),
+    alphaK1_("alphaK1", this->typeDict(), 0.85),
+    alphaK2_("alphaK2", this->typeDict(), 1.0),
+    alphaOmega1_("alphaOmega1", this->typeDict(), 0.5),
+    alphaOmega2_("alphaOmega2", this->typeDict(), 0.856),
+    gamma1_("gamma1", this->typeDict(), 5.0/9.0),
+    gamma2_("gamma2", this->typeDict(), 0.44),
+    beta1_("beta1", this->typeDict(), 0.075),
+    beta2_("beta2", this->typeDict(), 0.0828),
+    betaStar_("betaStar", this->typeDict(), 0.09),
+    a1_("a1", this->typeDict(), 0.31),
+    b1_("b1", this->typeDict(), 1.0),
+    c1_("c1", this->typeDict(), 10.0),
+    F3_(this->typeDict().template lookupOrDefault<Switch>("F3", false)),
 
     k_
     (
@@ -292,19 +292,19 @@ bool kOmegaSST<MomentumTransportModel, BasicMomentumTransportModel>::read()
 {
     if (MomentumTransportModel::read())
     {
-        alphaK1_.readIfPresent(this->coeffDict());
-        alphaK2_.readIfPresent(this->coeffDict());
-        alphaOmega1_.readIfPresent(this->coeffDict());
-        alphaOmega2_.readIfPresent(this->coeffDict());
-        gamma1_.readIfPresent(this->coeffDict());
-        gamma2_.readIfPresent(this->coeffDict());
-        beta1_.readIfPresent(this->coeffDict());
-        beta2_.readIfPresent(this->coeffDict());
-        betaStar_.readIfPresent(this->coeffDict());
-        a1_.readIfPresent(this->coeffDict());
-        b1_.readIfPresent(this->coeffDict());
-        c1_.readIfPresent(this->coeffDict());
-        F3_.readIfPresent("F3", this->coeffDict());
+        alphaK1_.readIfPresent(this->typeDict());
+        alphaK2_.readIfPresent(this->typeDict());
+        alphaOmega1_.readIfPresent(this->typeDict());
+        alphaOmega2_.readIfPresent(this->typeDict());
+        gamma1_.readIfPresent(this->typeDict());
+        gamma2_.readIfPresent(this->typeDict());
+        beta1_.readIfPresent(this->typeDict());
+        beta2_.readIfPresent(this->typeDict());
+        betaStar_.readIfPresent(this->typeDict());
+        a1_.readIfPresent(this->typeDict());
+        b1_.readIfPresent(this->typeDict());
+        c1_.readIfPresent(this->typeDict());
+        F3_.readIfPresent("F3", this->typeDict());
 
         return true;
     }

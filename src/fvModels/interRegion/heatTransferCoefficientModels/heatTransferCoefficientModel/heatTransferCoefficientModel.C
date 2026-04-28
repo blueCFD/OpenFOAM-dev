@@ -92,7 +92,7 @@ Foam::fv::heatTransferCoefficientModel::New
     return
         cstrIter()
         (
-            dict.optionalSubDict(heatTransferCoefficientModelType + "Coeffs"),
+            dict.optionalTypeDict(heatTransferCoefficientModelType),
             mesh
         );
 }
@@ -126,7 +126,7 @@ Foam::fv::heatTransferCoefficientModel::New
     return
         cstrIter()
         (
-            dict.optionalSubDict(heatTransferCoefficientModelType + "Coeffs"),
+            dict.optionalTypeDict(heatTransferCoefficientModelType),
             model
         );
 }

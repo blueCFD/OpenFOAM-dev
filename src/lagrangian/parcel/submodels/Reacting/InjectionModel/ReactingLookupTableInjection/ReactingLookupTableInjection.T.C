@@ -36,10 +36,10 @@ Foam::ReactingLookupTableInjection<CloudType>::ReactingLookupTableInjection
 )
 :
     InjectionModel<CloudType>(dict, owner, modelName, typeName),
-    inputFileName_(this->coeffDict().lookup("inputFile")),
+    inputFileName_(this->typeDict().lookup("inputFile")),
     duration_(this->readDuration(dict, owner)),
     parcelsPerSecond_(this->readParcelsPerSecond(dict, owner)),
-    randomise_(readBool(this->coeffDict().lookup("randomise"))),
+    randomise_(readBool(this->typeDict().lookup("randomise"))),
     injectors_
     (
         IOobject

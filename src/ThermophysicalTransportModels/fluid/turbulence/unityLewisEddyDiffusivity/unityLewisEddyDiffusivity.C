@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -88,8 +88,8 @@ unityLewisEddyDiffusivity
     Prt_
     (
         allowDefaultPrt
-      ? dimensioned<scalar>("Prt", dimless, this->coeffDict(), 1)
-      : dimensioned<scalar>("Prt", dimless, this->coeffDict())
+      ? dimensioned<scalar>("Prt", dimless, this->typeDict(), 1)
+      : dimensioned<scalar>("Prt", dimless, this->typeDict())
     ),
 
     alphat_
@@ -118,7 +118,7 @@ bool unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>::read()
 {
     if (TurbulenceThermophysicalTransportModel::read())
     {
-        Prt_.readIfPresent(this->coeffDict());
+        Prt_.readIfPresent(this->typeDict());
 
         return true;
     }

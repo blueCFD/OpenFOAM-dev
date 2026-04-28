@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ azizChen::azizChen
 )
 :
     pairPotential(name, azizChen),
-    azizChenCoeffs_(azizChen.subDict(typeName + "Coeffs")),
+    azizChenCoeffs_(azizChen.typeDict(typeName)),
     epsilon_(azizChenCoeffs_.template lookup<scalar>("epsilon")),
     rm_(azizChenCoeffs_.template lookup<scalar>("rm")),
     A_(azizChenCoeffs_.template lookup<scalar>("A")),
@@ -100,7 +100,7 @@ bool azizChen::read(const dictionary& azizChen)
 {
     pairPotential::read(azizChen);
 
-    azizChenCoeffs_ = azizChen.subDict(typeName + "Coeffs");
+    azizChenCoeffs_ = azizChen.typeDict(typeName);
 
     azizChenCoeffs_.lookup("epsilon") >> epsilon_;
     azizChenCoeffs_.lookup("rm") >> rm_;

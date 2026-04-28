@@ -69,7 +69,7 @@ Foam::structuredRenumber::structuredRenumber
     structuredRenumber
     (
         renumberDict,
-        renumberDict.optionalSubDict(typeName + "Coeffs")
+        renumberDict.optionalTypeDict(typeName)
     )
 {}
 

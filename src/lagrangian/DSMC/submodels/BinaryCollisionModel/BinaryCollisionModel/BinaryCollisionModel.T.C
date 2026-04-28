@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ Foam::BinaryCollisionModel<CloudType>::BinaryCollisionModel
 :
     dict_(dict),
     owner_(owner),
-    coeffDict_(dict.subDict(type + "Coeffs"))
+    coeffDict_(dict.typeDict(type))
 {}
 
 
@@ -85,7 +85,7 @@ Foam::BinaryCollisionModel<CloudType>::dict() const
 
 template<class CloudType>
 const Foam::dictionary&
-Foam::BinaryCollisionModel<CloudType>::coeffDict() const
+Foam::BinaryCollisionModel<CloudType>::typeDict() const
 {
     return coeffDict_;
 }

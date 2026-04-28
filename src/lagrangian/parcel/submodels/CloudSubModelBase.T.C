@@ -41,8 +41,7 @@ Foam::CloudSubModelBase<CloudType>::CloudSubModelBase
     CloudType& owner,
     const dictionary& dict,
     const word& baseName,
-    const word& modelType,
-    const word& dictExt
+    const word& modelType
 )
 :
     subModelBase
@@ -50,8 +49,7 @@ Foam::CloudSubModelBase<CloudType>::CloudSubModelBase
         owner.outputProperties(),
         dict,
         baseName,
-        modelType,
-        dictExt
+        modelType
     ),
     owner_(owner)
 {}

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -112,8 +112,8 @@ WALE<BasicMomentumTransportModel>::WALE
         viscosity
     ),
 
-    Ck_("Ck", this->coeffDict(), 0.094),
-    Cw_("Cw", this->coeffDict(), 0.325)
+    Ck_("Ck", this->typeDict(), 0.094),
+    Cw_("Cw", this->typeDict(), 0.325)
 {}
 
 
@@ -124,8 +124,8 @@ bool WALE<BasicMomentumTransportModel>::read()
 {
     if (LESeddyViscosity<BasicMomentumTransportModel>::read())
     {
-        Ck_.readIfPresent(this->coeffDict());
-        Cw_.readIfPresent(this->coeffDict());
+        Ck_.readIfPresent(this->typeDict());
+        Cw_.readIfPresent(this->typeDict());
 
         return true;
     }

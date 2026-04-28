@@ -133,9 +133,9 @@ template<class BasicThermophysicalTransportModel>
 const Foam::dictionary& Foam::laminarThermophysicalTransportModel
 <
     BasicThermophysicalTransportModel
->::coeffDict() const
+>::typeDict() const
 {
-    return this->subOrEmptyDict("laminar").optionalSubDict(type() + "Coeffs");
+    return this->subOrEmptyDict("laminar").optionalTypeDict(type());
 }
 
 

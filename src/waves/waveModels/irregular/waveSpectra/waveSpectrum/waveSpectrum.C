@@ -163,7 +163,7 @@ Foam::waveSpectrum::New(const dictionary& dict, const scalar g)
             << exit(FatalError);
     }
 
-    return cstrIter()(dict.optionalSubDict(type + "Coeffs"), g);
+    return cstrIter()(dict.optionalTypeDict(type), g);
 }
 
 

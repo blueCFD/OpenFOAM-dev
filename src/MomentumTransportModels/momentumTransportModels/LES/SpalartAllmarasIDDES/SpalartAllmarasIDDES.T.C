@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -235,9 +235,9 @@ SpalartAllmarasIDDES<BasicMomentumTransportModel>::SpalartAllmarasIDDES
         phi,
         viscosity
     ),
-    fwStar_("fwStar", this->coeffDict(), 0.424),
-    cl_("cl", this->coeffDict(), 3.55),
-    ct_("ct", this->coeffDict(), 1.63),
+    fwStar_("fwStar", this->typeDict(), 0.424),
+    cl_("cl", this->typeDict(), 3.55),
+    ct_("ct", this->typeDict(), 1.63),
     IDDESDelta_(refCast<IDDESDelta>(this->delta_()))
 {}
 
@@ -249,9 +249,9 @@ bool SpalartAllmarasIDDES<BasicMomentumTransportModel>::read()
 {
     if (SpalartAllmarasDES<BasicMomentumTransportModel>::read())
     {
-        fwStar_.readIfPresent(this->coeffDict());
-        cl_.readIfPresent(this->coeffDict());
-        ct_.readIfPresent(this->coeffDict());
+        fwStar_.readIfPresent(this->typeDict());
+        cl_.readIfPresent(this->typeDict());
+        ct_.readIfPresent(this->typeDict());
 
         return true;
     }

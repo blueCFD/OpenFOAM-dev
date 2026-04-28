@@ -281,23 +281,23 @@ Foam::point Foam::plane::aPoint() const
     const point& refPt = refPoint();
 
     // ax + by + cz + d = 0
-    FixedList<scalar, 4> planeCoeffs = this->planeCoeffs();
+    FixedList<scalar, 4> plane = this->planeCoeffs();
 
     const scalar perturbX = refPt.x() + 1e-3;
     const scalar perturbY = refPt.y() + 1e-3;
     const scalar perturbZ = refPt.z() + 1e-3;
 
-    if (mag(planeCoeffs[2]) < small)
+    if (mag(plane[2]) < small)
     {
-        if (mag(planeCoeffs[1]) < small)
+        if (mag(plane[1]) < small)
         {
             const scalar x =
                 -1.0
                 *(
-                     planeCoeffs[3]
-                   + planeCoeffs[1]*perturbY
-                   + planeCoeffs[2]*perturbZ
-                 )/planeCoeffs[0];
+                     plane[3]
+                   + plane[1]*perturbY
+                   + plane[2]*perturbZ
+                 )/plane[0];
 
             return point
             (
@@ -310,10 +310,10 @@ Foam::point Foam::plane::aPoint() const
         const scalar y =
             -1.0
             *(
-                 planeCoeffs[3]
-               + planeCoeffs[0]*perturbX
-               + planeCoeffs[2]*perturbZ
-             )/planeCoeffs[1];
+                 plane[3]
+               + plane[0]*perturbX
+               + plane[2]*perturbZ
+             )/plane[1];
 
         return point
         (
@@ -327,10 +327,10 @@ Foam::point Foam::plane::aPoint() const
         const scalar z =
             -1.0
             *(
-                 planeCoeffs[3]
-               + planeCoeffs[0]*perturbX
-               + planeCoeffs[1]*perturbY
-             )/planeCoeffs[2];
+                 plane[3]
+               + plane[0]*perturbX
+               + plane[1]*perturbY
+             )/plane[2];
 
         return point
         (

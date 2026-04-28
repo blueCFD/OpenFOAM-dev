@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -127,15 +127,15 @@ LienLeschziner::LienLeschziner
         viscosity
     ),
 
-    Ceps1_("Ceps1", coeffDict(), 1.44),
-    Ceps2_("Ceps2", coeffDict(), 1.92),
-    sigmak_("sigmak", coeffDict(), 1.0),
-    sigmaEps_("sigmaEps", coeffDict(), 1.3),
-    Cmu_("Cmu", coeffDict(), 0.09),
-    kappa_("kappa", coeffDict(), 0.41),
-    Anu_("Anu", coeffDict(), 0.016),
-    Aeps_("Aeps", coeffDict(), 0.263),
-    AE_("AE", coeffDict(), 0.00222),
+    Ceps1_("Ceps1", typeDict(), 1.44),
+    Ceps2_("Ceps2", typeDict(), 1.92),
+    sigmak_("sigmak", typeDict(), 1.0),
+    sigmaEps_("sigmaEps", typeDict(), 1.3),
+    Cmu_("Cmu", typeDict(), 0.09),
+    kappa_("kappa", typeDict(), 0.41),
+    Anu_("Anu", typeDict(), 0.016),
+    Aeps_("Aeps", typeDict(), 0.263),
+    AE_("AE", typeDict(), 0.00222),
 
     k_
     (
@@ -174,15 +174,15 @@ bool LienLeschziner::read()
 {
     if (eddyViscosity<incompressible::RASModel>::read())
     {
-        Ceps1_.readIfPresent(coeffDict());
-        Ceps2_.readIfPresent(coeffDict());
-        sigmak_.readIfPresent(coeffDict());
-        sigmaEps_.readIfPresent(coeffDict());
-        Cmu_.readIfPresent(coeffDict());
-        kappa_.readIfPresent(coeffDict());
-        Anu_.readIfPresent(coeffDict());
-        Aeps_.readIfPresent(coeffDict());
-        AE_.readIfPresent(coeffDict());
+        Ceps1_.readIfPresent(typeDict());
+        Ceps2_.readIfPresent(typeDict());
+        sigmak_.readIfPresent(typeDict());
+        sigmaEps_.readIfPresent(typeDict());
+        Cmu_.readIfPresent(typeDict());
+        kappa_.readIfPresent(typeDict());
+        Anu_.readIfPresent(typeDict());
+        Aeps_.readIfPresent(typeDict());
+        AE_.readIfPresent(typeDict());
 
         return true;
     }

@@ -31,7 +31,7 @@ porousToAir
 
     heatTransferCoefficientModel constant;
 
-    constantCoeffs
+    constant
     {
         htc             10;
     }

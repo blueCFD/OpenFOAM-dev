@@ -15,12 +15,12 @@ FoamFile
 
 type           porosityForce;
 
-porosityForceCoeffs
+porosityForce
 {
     type           DarcyForchheimer;
     cellZone       <cellZoneName>; // Specify the name of the cellZone
 
-    DarcyForchheimerCoeffs
+    DarcyForchheimer
     {
         // Negative coeffs are multiplied by largest positive coeff,
         // taking the magnitude, e.g. for -1000, coeff = |1e7*-1000| = 1e10
@@ -36,7 +36,7 @@ porosityForceCoeffs
         }
     }
 
-    fixedCoeffCoeffs
+    fixedCoeff
     {
         alpha      [0 0 -1 0 0 0 0] (100 -1000 -1000);
         beta       [0 -1 0 0 0 0 0] (0 0 0);

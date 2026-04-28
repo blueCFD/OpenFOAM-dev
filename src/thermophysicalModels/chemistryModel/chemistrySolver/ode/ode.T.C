@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -31,7 +31,7 @@ template<class ChemistryModel>
 Foam::ode<ChemistryModel>::ode(const fluidMulticomponentThermo& thermo)
 :
     chemistrySolver<ChemistryModel>(thermo),
-    odeSolver_(ODESolver::New(*this, this->subDict("odeCoeffs"))),
+    odeSolver_(ODESolver::New(*this, this->typeDict("ode"))),
     cTp_(this->nEqns())
 {}
 

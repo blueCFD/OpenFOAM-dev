@@ -40,22 +40,22 @@ Foam::FieldActivatedInjection<CloudType>::FieldActivatedInjection
 )
 :
     InjectionModel<CloudType>(dict, owner, modelName, typeName),
-    factor_(this->coeffDict().template lookup<scalar>("factor")),
+    factor_(this->typeDict().template lookup<scalar>("factor")),
     referenceField_
     (
         owner.parent().objectRegistry::template lookupObject<volScalarField>
         (
-            this->coeffDict().lookup("referenceField")
+            this->typeDict().lookup("referenceField")
         )
     ),
     thresholdField_
     (
         owner.parent().objectRegistry::template lookupObject<volScalarField>
         (
-            this->coeffDict().lookup("thresholdField")
+            this->typeDict().lookup("thresholdField")
         )
     ),
-    positionsFile_(this->coeffDict().lookup("positionsFile")),
+    positionsFile_(this->typeDict().lookup("positionsFile")),
     positions_
     (
         IOobject
@@ -74,17 +74,17 @@ Foam::FieldActivatedInjection<CloudType>::FieldActivatedInjection
     massTotal_(this->readMassTotal(dict, owner)),
     nParcelsPerInjector_
     (
-        this->coeffDict().template lookup<label>("parcelsPerInjector")
+        this->typeDict().template lookup<label>("parcelsPerInjector")
     ),
     nParcelsInjected_(positions_.size(), 0),
-    U0_(this->coeffDict().lookup("U0")),
+    U0_(this->typeDict().lookup("U0")),
     diameters_(positions_.size()),
     sizeDistribution_
     (
         distribution::New
         (
             dimLength,
-            this->coeffDict().subDict("sizeDistribution"),
+            this->typeDict().subDict("sizeDistribution"),
             this->sizeSampleQ(),
             owner.rndGen().generator()
         )

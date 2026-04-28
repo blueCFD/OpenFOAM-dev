@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -137,7 +137,7 @@ Description
     \verbatim
     method          scotch;
 
-    scotchCoeffs
+    scotch
     {
         writeGraph true;
     }
@@ -181,7 +181,7 @@ Description
     \verbatim
     method          scotch;
 
-    scotchCoeffs
+    scotch
     {
         // writeGraph true;
         strategy "m{asc=b{width=3,bnd=d{pass=40,dif=1,rem=0}[...],type=h}";

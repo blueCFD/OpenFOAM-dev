@@ -22,7 +22,7 @@ distributor     ptscotch;
 // distributor     zoltan;
 // libs            ("libzoltanDecomp.so");
 
-hierarchicalCoeffs
+hierarchical
 {
     n               (3 2 1);
     order           xyz;

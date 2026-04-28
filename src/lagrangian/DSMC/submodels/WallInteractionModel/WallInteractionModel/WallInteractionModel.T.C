@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ Foam::WallInteractionModel<CloudType>::WallInteractionModel
 :
     dict_(dict),
     owner_(owner),
-    coeffDict_(dict.subDict(type + "Coeffs"))
+    coeffDict_(dict.typeDict(type))
 {}
 
 
@@ -82,7 +82,7 @@ const Foam::dictionary& Foam::WallInteractionModel<CloudType>::dict() const
 
 template<class CloudType>
 const Foam::dictionary&
-Foam::WallInteractionModel<CloudType>::coeffDict() const
+Foam::WallInteractionModel<CloudType>::typeDict() const
 {
     return coeffDict_;
 }

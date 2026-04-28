@@ -409,7 +409,7 @@ MaxwellStefan<BasicThermophysicalTransportModel>::MaxwellStefan
 
     DTFuncs_
     (
-        this->coeffDict().found("DT")
+        this->typeDict().found("DT")
       ? this->thermo().species().size()
       : 0
     ),
@@ -447,7 +447,7 @@ bool MaxwellStefan<BasicThermophysicalTransportModel>::read()
     {
         const speciesTable& species = this->thermo().species();
 
-        const dictionary& coeffDict = this->coeffDict();
+        const dictionary& coeffDict = this->typeDict();
         const dictionary& Ddict = coeffDict.subDict("D");
 
         // Read the array of specie binary mass diffusion coefficient functions

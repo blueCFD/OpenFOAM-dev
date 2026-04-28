@@ -127,7 +127,7 @@ Foam::autoPtr<Foam::relativeVelocityModel> Foam::relativeVelocityModel::New
         (
             cstrIter()
             (
-                dict.optionalSubDict(modelType + "Coeffs"),
+                dict.optionalTypeDict(modelType),
                 mixture,
                 g
             )

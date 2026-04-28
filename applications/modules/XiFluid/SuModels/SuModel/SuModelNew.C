@@ -59,7 +59,7 @@ Foam::autoPtr<Foam::SuModel> Foam::SuModel::New
     (
         cstrIter()
         (
-            SuDict.optionalSubDict(modelType + "Coeffs"),
+            SuDict.optionalTypeDict(modelType),
             thermo,
             momentumTransport
         )

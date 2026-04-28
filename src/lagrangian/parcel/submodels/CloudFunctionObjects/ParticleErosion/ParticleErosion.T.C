@@ -76,12 +76,12 @@ Foam::ParticleErosion<CloudType>::ParticleErosion
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
     QPtr_(nullptr),
     patchIndices_(),
-    p_(this->coeffDict().template lookup<scalar>("p")),
-    psi_(this->coeffDict().template lookupOrDefault<scalar>("psi", 2.0)),
-    K_(this->coeffDict().template lookupOrDefault<scalar>("K", 2.0))
+    p_(this->typeDict().template lookup<scalar>("p")),
+    psi_(this->typeDict().template lookupOrDefault<scalar>("psi", 2.0)),
+    K_(this->typeDict().template lookupOrDefault<scalar>("K", 2.0))
 {
     const wordList allPatchNames = owner.mesh().poly().boundary().names();
-    wordList patchName(this->coeffDict().lookup("patches"));
+    wordList patchName(this->typeDict().lookup("patches"));
 
     labelHashSet uniquePatchIDs;
     forAllReverse(patchName, i)

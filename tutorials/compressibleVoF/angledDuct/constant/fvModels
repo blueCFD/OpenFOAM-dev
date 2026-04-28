@@ -18,7 +18,7 @@ porosity1
 {
     type            porosityForce;
 
-    porosityForceCoeffs
+    porosityForce
     {
         cellZone        porosity;
 

@@ -56,7 +56,7 @@ Foam::SurfaceFilmModel<CloudType>::SurfaceFilmModel
     g_(owner.g()),
     ejectedParcelType_
     (
-        this->coeffDict().lookupOrDefault("ejectedParcelType", -1)
+        this->typeDict().lookupOrDefault("ejectedParcelType", -1)
     ),
     massParcelPatch_(0),
     diameterParcelPatch_(0),

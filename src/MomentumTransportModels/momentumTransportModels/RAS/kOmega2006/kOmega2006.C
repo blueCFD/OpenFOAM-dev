@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -157,13 +157,13 @@ kOmega2006<BasicMomentumTransportModel>::kOmega2006
         viscosity
     ),
 
-    betaStar_("betaStar", this->coeffDict(), 0.09),
-    beta0_("beta0", this->coeffDict(), 0.0708),
-    gamma_("gamma", this->coeffDict(), 0.52),
-    Clim_("Clim", this->coeffDict(), 0.875),
-    sigmaDo_("sigmaDo", this->coeffDict(), 0.125),
-    alphaK_("alphaK", this->coeffDict(), 0.6),
-    alphaOmega_("alphaOmega", this->coeffDict(), 0.5),
+    betaStar_("betaStar", this->typeDict(), 0.09),
+    beta0_("beta0", this->typeDict(), 0.0708),
+    gamma_("gamma", this->typeDict(), 0.52),
+    Clim_("Clim", this->typeDict(), 0.875),
+    sigmaDo_("sigmaDo", this->typeDict(), 0.125),
+    alphaK_("alphaK", this->typeDict(), 0.6),
+    alphaOmega_("alphaOmega", this->typeDict(), 0.5),
 
     k_
     (
@@ -202,12 +202,12 @@ bool kOmega2006<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<RASModel<BasicMomentumTransportModel>>::read())
     {
-        betaStar_.readIfPresent(this->coeffDict());
-        beta0_.readIfPresent(this->coeffDict());
-        gamma_.readIfPresent(this->coeffDict());
-        sigmaDo_.readIfPresent(this->coeffDict());
-        alphaK_.readIfPresent(this->coeffDict());
-        alphaOmega_.readIfPresent(this->coeffDict());
+        betaStar_.readIfPresent(this->typeDict());
+        beta0_.readIfPresent(this->typeDict());
+        gamma_.readIfPresent(this->typeDict());
+        sigmaDo_.readIfPresent(this->typeDict());
+        alphaK_.readIfPresent(this->typeDict());
+        alphaOmega_.readIfPresent(this->typeDict());
 
         return true;
     }

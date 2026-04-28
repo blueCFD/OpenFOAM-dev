@@ -165,12 +165,12 @@ curvatureSeparation::curvatureSeparation
     gradNHat_(fvc::grad(film_.nHat)),
     deltaByR1Min_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
        .lookupOrDefault<scalar>("deltaByR1Min", scalar(0))
     ),
     deltaStable_
     (
-        dict.optionalSubDict(typeName + "Coeffs")
+        dict.optionalTypeDict(typeName)
       .lookupOrDefault("deltaStable", scalar(0))
     )
 {

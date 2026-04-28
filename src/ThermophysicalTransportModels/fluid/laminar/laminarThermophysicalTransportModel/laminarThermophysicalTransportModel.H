@@ -57,7 +57,7 @@ protected:
     // Protected Member Functions
 
         //- Const access to the coefficients dictionary
-        const dictionary& coeffDict() const;
+        const dictionary& typeDict() const;
 
         //- Effective thermal turbulent diffusivity of mixture [kg/m/s]
         //  Used for the implicit energy correction on the temperature laplacian

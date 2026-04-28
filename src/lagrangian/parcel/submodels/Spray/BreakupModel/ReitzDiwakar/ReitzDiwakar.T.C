@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -42,10 +42,10 @@ Foam::ReitzDiwakar<CloudType>::ReitzDiwakar
 {
     if (!this->defaultCoeffs(true))
     {
-        this->coeffDict().lookup("Cbag") >> Cbag_;
-        this->coeffDict().lookup("Cb") >> Cb_;
-        this->coeffDict().lookup("Cstrip") >> Cstrip_;
-        this->coeffDict().lookup("Cs") >> Cs_;
+        this->typeDict().lookup("Cbag") >> Cbag_;
+        this->typeDict().lookup("Cb") >> Cb_;
+        this->typeDict().lookup("Cstrip") >> Cstrip_;
+        this->typeDict().lookup("Cs") >> Cs_;
     }
 }
 

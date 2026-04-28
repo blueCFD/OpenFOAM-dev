@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -107,11 +107,11 @@ kOmega<BasicMomentumTransportModel>::kOmega
         viscosity
     ),
 
-    betaStar_("betaStar", this->coeffDict(), 0.09),
-    beta_("beta", this->coeffDict(), 0.072),
-    gamma_("gamma", this->coeffDict(), 0.52),
-    alphaK_("alphaK", this->coeffDict(), 0.5),
-    alphaOmega_("alphaOmega", this->coeffDict(), 0.5),
+    betaStar_("betaStar", this->typeDict(), 0.09),
+    beta_("beta", this->typeDict(), 0.072),
+    gamma_("gamma", this->typeDict(), 0.52),
+    alphaK_("alphaK", this->typeDict(), 0.5),
+    alphaOmega_("alphaOmega", this->typeDict(), 0.5),
 
     k_
     (
@@ -150,11 +150,11 @@ bool kOmega<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<RASModel<BasicMomentumTransportModel>>::read())
     {
-        betaStar_.readIfPresent(this->coeffDict());
-        beta_.readIfPresent(this->coeffDict());
-        gamma_.readIfPresent(this->coeffDict());
-        alphaK_.readIfPresent(this->coeffDict());
-        alphaOmega_.readIfPresent(this->coeffDict());
+        betaStar_.readIfPresent(this->typeDict());
+        beta_.readIfPresent(this->typeDict());
+        gamma_.readIfPresent(this->typeDict());
+        alphaK_.readIfPresent(this->typeDict());
+        alphaOmega_.readIfPresent(this->typeDict());
 
         return true;
     }

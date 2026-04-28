@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -572,7 +572,7 @@ Foam::CloudFilmTransfer<CloudType>::CloudFilmTransfer
     CpFilmPatch_(0),
     interactionType_
     (
-        interactionTypeNames_.read(this->coeffDict().lookup("interactionType"))
+        interactionTypeNames_.read(this->typeDict().lookup("interactionType"))
     ),
     deltaWet_(0.0),
     splashParcelType_(0),
@@ -587,14 +587,14 @@ Foam::CloudFilmTransfer<CloudType>::CloudFilmTransfer
 
     if (interactionType_ == interactionType::splashBai)
     {
-        this->coeffDict().lookup("deltaWet") >> deltaWet_;
+        this->typeDict().lookup("deltaWet") >> deltaWet_;
         splashParcelType_ =
-            this->coeffDict().lookupOrDefault("splashParcelType", -1);
+            this->typeDict().lookupOrDefault("splashParcelType", -1);
         parcelsPerSplash_ =
-            this->coeffDict().lookupOrDefault("parcelsPerSplash", 2);
-        this->coeffDict().lookup("Adry") >> Adry_;
-        this->coeffDict().lookup("Awet") >> Awet_;
-        this->coeffDict().lookup("Cf") >> Cf_;
+            this->typeDict().lookupOrDefault("parcelsPerSplash", 2);
+        this->typeDict().lookup("Adry") >> Adry_;
+        this->typeDict().lookup("Awet") >> Awet_;
+        this->typeDict().lookup("Cf") >> Cf_;
     }
 }
 

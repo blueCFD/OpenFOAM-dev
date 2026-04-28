@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -91,7 +91,7 @@ Foam::LESModels::cubeRootVolDelta::cubeRootVolDelta
     LESdelta(name, turbulence),
     deltaCoeff_
     (
-        dict.optionalSubDict(type() + "Coeffs").lookupOrDefault<scalar>
+        dict.optionalTypeDict(type()).lookupOrDefault<scalar>
         (
             "deltaCoeff",
             1
@@ -106,7 +106,7 @@ Foam::LESModels::cubeRootVolDelta::cubeRootVolDelta
 
 void Foam::LESModels::cubeRootVolDelta::read(const dictionary& dict)
 {
-    dict.optionalSubDict(type() + "Coeffs").readIfPresent<scalar>
+    dict.optionalTypeDict(type()).readIfPresent<scalar>
     (
         "deltaCoeff",
         deltaCoeff_

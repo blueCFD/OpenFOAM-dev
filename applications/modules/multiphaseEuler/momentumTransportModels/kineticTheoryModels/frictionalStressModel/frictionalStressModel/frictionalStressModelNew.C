@@ -52,7 +52,7 @@ Foam::kineticTheoryModels::frictionalStressModel::New
     }
 
     const dictionary& coeffDict =
-        dict.optionalSubDict(frictionalStressModelType + "Coeffs");
+        dict.optionalTypeDict(frictionalStressModelType);
 
     return autoPtr<frictionalStressModel>(cstrIter()(coeffDict));
 }

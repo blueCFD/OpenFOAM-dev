@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ lennardJones::lennardJones
 )
 :
     pairPotential(name, pairPotentialProperties),
-    lennardJonesCoeffs_(pairPotentialProperties.subDict(typeName + "Coeffs")),
+    lennardJonesCoeffs_(pairPotentialProperties.typeDict(typeName)),
     sigma_(lennardJonesCoeffs_.template lookup<scalar>("sigma")),
     epsilon_(lennardJonesCoeffs_.template lookup<scalar>("epsilon"))
 {
@@ -80,7 +80,7 @@ bool lennardJones::read(const dictionary& pairPotentialProperties)
 {
     pairPotential::read(pairPotentialProperties);
 
-    lennardJonesCoeffs_ = pairPotentialProperties.subDict(typeName + "Coeffs");
+    lennardJonesCoeffs_ = pairPotentialProperties.typeDict(typeName);
 
     lennardJonesCoeffs_.lookup("sigma") >> sigma_;
     lennardJonesCoeffs_.lookup("epsilon") >> epsilon_;

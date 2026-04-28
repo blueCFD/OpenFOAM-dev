@@ -100,7 +100,7 @@ public:
 
     // Member Functions
 
-        //- Read the coefficients from the optional ".*Coeffs" sub-dictionary
+        //- Read the coefficients from the optional model sub-dictionary
         //  of the given dictionary
         bool read(const dictionary& dict);
 

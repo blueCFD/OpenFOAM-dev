@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,7 +77,7 @@ continuousGasKEpsilon<BasicMomentumTransportModel>::continuousGasKEpsilon
         this->nut_
     ),
 
-    alphaInversion_("alphaInversion", this->coeffDict(), 0.7)
+    alphaInversion_("alphaInversion", this->typeDict(), 0.7)
 {}
 
 
@@ -88,7 +88,7 @@ bool continuousGasKEpsilon<BasicMomentumTransportModel>::read()
 {
     if (kEpsilon<BasicMomentumTransportModel>::read())
     {
-        alphaInversion_.readIfPresent(this->coeffDict());
+        alphaInversion_.readIfPresent(this->typeDict());
 
         return true;
     }

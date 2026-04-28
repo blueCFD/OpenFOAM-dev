@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -117,9 +117,9 @@ public:
 
     // Member Functions
 
-        const dictionary& coeffDict() const
+        const dictionary& typeDict() const
         {
-            return optionalSubDict(type() + "Coeffs");
+            return optionalTypeDict(type());
         }
 
         //- Return the laminar viscosity

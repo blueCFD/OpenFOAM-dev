@@ -65,7 +65,7 @@ Foam::FreeStream<CloudType>::FreeStream
 
     const dictionary& numberDensitiesDict
     (
-        this->coeffDict().subDict("numberDensities")
+        this->typeDict().subDict("numberDensities")
     );
 
     List<word> molecules(numberDensitiesDict.toc());

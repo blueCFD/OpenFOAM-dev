@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -65,7 +65,7 @@ strainRateFunction
             "function",
             dimless/dimTime,
             dimKinematicViscosity,
-            viscosityProperties.optionalSubDict(typeName + "Coeffs")
+            viscosityProperties.optionalTypeDict(typeName)
         )
     )
 {
@@ -89,10 +89,7 @@ strainRateFunction::read
         "function",
         dimless/dimTime,
         dimKinematicViscosity,
-        viscosityProperties.optionalSubDict
-        (
-            typeName + "Coeffs"
-        )
+        viscosityProperties.optionalTypeDict(typeName)
     );
 
     return true;

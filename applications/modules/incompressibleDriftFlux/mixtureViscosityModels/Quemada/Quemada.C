@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,12 +53,12 @@ Foam::mixtureViscosityModels::Quemada::Quemada
 )
 :
     mixtureViscosityModel(mixture),
-    q_(optionalSubDict(typeName + "Coeffs").lookupOrDefault("q", scalar(2))),
+    q_(optionalTypeDict(typeName).lookupOrDefault("q", scalar(2))),
     muMax_
     (
         "muMax",
         dimDynamicViscosity,
-        optionalSubDict(typeName + "Coeffs").lookup("muMax")
+        optionalTypeDict(typeName).lookup("muMax")
     )
 {}
 
@@ -84,7 +84,7 @@ bool Foam::mixtureViscosityModels::Quemada::read()
 {
     if (mixtureViscosityModel::read())
     {
-        const dictionary& dict = coeffDict();
+        const dictionary& dict = typeDict();
 
         dict.lookup("q") >> q_;
         muMax_.read(dict);

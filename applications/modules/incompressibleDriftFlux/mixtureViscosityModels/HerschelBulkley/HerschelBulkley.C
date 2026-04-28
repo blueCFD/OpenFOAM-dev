@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,9 +54,9 @@ Foam::mixtureViscosityModels::HerschelBulkley::HerschelBulkley
 )
 :
     mixtureViscosityModel(mixture),
-    n_("n", dimless, coeffDict()),
-    k_("k", dimDynamicViscosity*pow(dimTime, n_ - 1), coeffDict()),
-    tau0_("tau0", dimDynamicViscosity/dimTime, coeffDict())
+    n_("n", dimless, typeDict()),
+    k_("k", dimDynamicViscosity*pow(dimTime, n_ - 1), typeDict()),
+    tau0_("tau0", dimDynamicViscosity/dimTime, typeDict())
 {}
 
 
@@ -84,7 +84,7 @@ bool Foam::mixtureViscosityModels::HerschelBulkley::read()
 {
     if (mixtureViscosityModel::read())
     {
-        const dictionary& dict = coeffDict();
+        const dictionary& dict = typeDict();
 
         n_.read(dict);
         k_.read(dict);

@@ -78,7 +78,7 @@ Foam::autoPtr<Foam::packingDispersionModel> Foam::packingDispersionModel::New
             (
                 cstrIter()
                 (
-                    dict.optionalSubDict(modelType + "Coeffs"),
+                    dict.optionalTypeDict(modelType),
                     relativeVelocity
                 )
             );

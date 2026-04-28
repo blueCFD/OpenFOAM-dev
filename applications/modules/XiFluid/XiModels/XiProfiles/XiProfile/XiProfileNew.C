@@ -57,7 +57,7 @@ Foam::autoPtr<Foam::XiProfile> Foam::XiProfile::New
     (
         cstrIter()
         (
-            XiProfileDict.optionalSubDict(modelType + "Coeffs"),
+            XiProfileDict.optionalTypeDict(modelType),
             b
         )
     );

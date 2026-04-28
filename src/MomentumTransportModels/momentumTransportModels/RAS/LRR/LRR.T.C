@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -94,25 +94,25 @@ LRR<BasicMomentumTransportModel>::LRR
         viscosity
     ),
 
-    Cmu_("Cmu", this->coeffDict(), 0.09),
-    C1_("C1", this->coeffDict(), 1.8),
-    C2_("C2", this->coeffDict(), 0.6),
-    Ceps1_("Ceps1", this->coeffDict(), 1.44),
-    Ceps2_("Ceps2", this->coeffDict(), 1.92),
-    Cs_("Cs", this->coeffDict(), 0.25),
-    Ceps_("Ceps", this->coeffDict(), 0.15),
+    Cmu_("Cmu", this->typeDict(), 0.09),
+    C1_("C1", this->typeDict(), 1.8),
+    C2_("C2", this->typeDict(), 0.6),
+    Ceps1_("Ceps1", this->typeDict(), 1.44),
+    Ceps2_("Ceps2", this->typeDict(), 1.92),
+    Cs_("Cs", this->typeDict(), 0.25),
+    Ceps_("Ceps", this->typeDict(), 0.15),
 
     wallReflection_
     (
-        this->coeffDict().template lookupOrDefault<Switch>
+        this->typeDict().template lookupOrDefault<Switch>
         (
             "wallReflection",
             true
         )
     ),
-    kappa_("kappa", this->coeffDict(), 0.41),
-    Cref1_("Cref1", this->coeffDict(), 0.5),
-    Cref2_("Cref2", this->coeffDict(), 0.3),
+    kappa_("kappa", this->typeDict(), 0.41),
+    Cref1_("Cref1", this->typeDict(), 0.5),
+    Cref2_("Cref2", this->typeDict(), 0.3),
 
     k_
     (
@@ -155,18 +155,18 @@ bool LRR<BasicMomentumTransportModel>::read()
 {
     if (ReynoldsStress<RASModel<BasicMomentumTransportModel>>::read())
     {
-        Cmu_.readIfPresent(this->coeffDict());
-        C1_.readIfPresent(this->coeffDict());
-        C2_.readIfPresent(this->coeffDict());
-        Ceps1_.readIfPresent(this->coeffDict());
-        Ceps2_.readIfPresent(this->coeffDict());
-        Cs_.readIfPresent(this->coeffDict());
-        Ceps_.readIfPresent(this->coeffDict());
+        Cmu_.readIfPresent(this->typeDict());
+        C1_.readIfPresent(this->typeDict());
+        C2_.readIfPresent(this->typeDict());
+        Ceps1_.readIfPresent(this->typeDict());
+        Ceps2_.readIfPresent(this->typeDict());
+        Cs_.readIfPresent(this->typeDict());
+        Ceps_.readIfPresent(this->typeDict());
 
-        wallReflection_.readIfPresent("wallReflection", this->coeffDict());
-        kappa_.readIfPresent(this->coeffDict());
-        Cref1_.readIfPresent(this->coeffDict());
-        Cref2_.readIfPresent(this->coeffDict());
+        wallReflection_.readIfPresent("wallReflection", this->typeDict());
+        kappa_.readIfPresent(this->typeDict());
+        Cref1_.readIfPresent(this->typeDict());
+        Cref2_.readIfPresent(this->typeDict());
 
         return true;
     }

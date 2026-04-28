@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -128,10 +128,10 @@ LamBremhorstKE::LamBremhorstKE
         viscosity
     ),
 
-    Cmu_("Cmu", coeffDict(), 0.09),
-    Ceps1_("Ceps1", coeffDict(), 1.44),
-    Ceps2_("Ceps2", coeffDict(), 1.92),
-    sigmaEps_("alphaEps", coeffDict(), 1.3),
+    Cmu_("Cmu", typeDict(), 0.09),
+    Ceps1_("Ceps1", typeDict(), 1.44),
+    Ceps2_("Ceps2", typeDict(), 1.92),
+    sigmaEps_("alphaEps", typeDict(), 1.3),
 
     k_
     (
@@ -170,10 +170,10 @@ bool LamBremhorstKE::read()
 {
     if (eddyViscosity<incompressible::RASModel>::read())
     {
-        Cmu_.readIfPresent(coeffDict());
-        Ceps1_.readIfPresent(coeffDict());
-        Ceps2_.readIfPresent(coeffDict());
-        sigmaEps_.readIfPresent(coeffDict());
+        Cmu_.readIfPresent(typeDict());
+        Ceps1_.readIfPresent(typeDict());
+        Ceps2_.readIfPresent(typeDict());
+        sigmaEps_.readIfPresent(typeDict());
 
         return true;
     }

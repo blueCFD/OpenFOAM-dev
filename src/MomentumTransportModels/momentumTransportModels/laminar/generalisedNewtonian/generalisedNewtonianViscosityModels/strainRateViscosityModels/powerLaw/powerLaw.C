@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -77,7 +77,7 @@ bool Foam::laminarModels::generalisedNewtonianViscosityModels::powerLaw::read
     strainRateViscosityModel::read(viscosityProperties);
 
     const dictionary& coeffs =
-        viscosityProperties.optionalSubDict(typeName + "Coeffs");
+        viscosityProperties.optionalTypeDict(typeName);
 
     k_.read(coeffs);
     n_.read(coeffs);

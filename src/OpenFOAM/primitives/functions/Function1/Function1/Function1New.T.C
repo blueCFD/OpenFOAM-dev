@@ -100,28 +100,7 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
             << exit(FatalIOError);
     }
 
-    const bool haveCoeffsDict = dict.found(name + "Coeffs");
-
-    autoPtr<Function1<Type>> funcPtr
-    (
-        dictCstrIter()
-        (
-            name,
-            units,
-            haveCoeffsDict ? dict.subDict(name + "Coeffs") : dict
-        )
-    );
-
-    if (haveCoeffsDict)
-    {
-        IOWarningInFunction(dict)
-            << "Using deprecated "
-            << (name + "Coeffs") << " sub-dictionary."<< nl
-            << "    Please use the simpler form" << endl;
-        funcPtr->write(Info, units);
-    }
-
-    return funcPtr;
+    return dictCstrIter()(name, units, dict);
 }
 
 
@@ -196,9 +175,8 @@ Foam::autoPtr<Foam::Function1<Type>> Foam::Function1<Type>::New
     }
 
     FatalIOErrorInFunction(e.stream())
-        << "A " << (e.keyword() + "Coeffs") << " sub-dictionary is not "
-        << "supported. The " << e.keyword() << " entry should be the "
-        << "sub-dictionary." << exit(FatalIOError);
+        << "Unable to construct Function1 for " << e.keyword()
+        << exit(FatalIOError);
 
     return autoPtr<Function1<Type>>(nullptr);
 }

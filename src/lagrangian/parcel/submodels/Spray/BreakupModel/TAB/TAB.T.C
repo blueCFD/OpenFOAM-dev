@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,7 +35,7 @@ Foam::TAB<CloudType>::TAB
 )
 :
     BreakupModel<CloudType>(dict, owner, typeName, true),
-    SMDCalcMethod_(this->coeffDict().lookup("SMDCalculationMethod"))
+    SMDCalcMethod_(this->typeDict().lookup("SMDCalculationMethod"))
 {
     // calculate the inverse function of the Rossin-Rammler Distribution
     const scalar xx0 = 12.0;

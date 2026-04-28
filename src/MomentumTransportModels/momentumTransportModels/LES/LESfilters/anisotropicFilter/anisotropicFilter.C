@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -119,7 +119,7 @@ Foam::anisotropicFilter::anisotropicFilter
     LESfilter(mesh),
     widthCoeff_
     (
-        bd.optionalSubDict(type() + "Coeffs").lookup<scalar>("widthCoeff")
+        bd.optionalTypeDict(type()).lookup<scalar>("widthCoeff")
     ),
     coeff_
     (
@@ -154,7 +154,7 @@ Foam::anisotropicFilter::anisotropicFilter
 
 void Foam::anisotropicFilter::read(const dictionary& bd)
 {
-    bd.optionalSubDict(type() + "Coeffs").lookup("widthCoeff") >> widthCoeff_;
+    bd.optionalTypeDict(type()).lookup("widthCoeff") >> widthCoeff_;
 }
 
 

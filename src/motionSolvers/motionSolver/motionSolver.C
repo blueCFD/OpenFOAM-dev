@@ -104,7 +104,7 @@ Foam::autoPtr<Foam::motionSolver> Foam::motionSolver::New
         (
             name,
             mesh,
-            solverDict.optionalSubDict(solverTypeName + "Coeffs")
+            solverDict.optionalTypeDict(solverTypeName)
         )
     );
 }

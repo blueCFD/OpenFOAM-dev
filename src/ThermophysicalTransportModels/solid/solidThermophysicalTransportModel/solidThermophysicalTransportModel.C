@@ -113,9 +113,9 @@ Foam::solidThermophysicalTransportModel::New(const solidThermo& thermo)
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 const Foam::dictionary&
-Foam::solidThermophysicalTransportModel::coeffDict() const
+Foam::solidThermophysicalTransportModel::typeDict() const
 {
-    return optionalSubDict(type() + "Coeffs");
+    return optionalTypeDict(type());
 }
 
 

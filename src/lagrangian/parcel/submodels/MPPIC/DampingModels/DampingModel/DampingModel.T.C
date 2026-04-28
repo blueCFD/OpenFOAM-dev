@@ -49,7 +49,7 @@ Foam::DampingModel<CloudType>::DampingModel
     (
         TimeScaleModel::New
         (
-            this->coeffDict().subDict(TimeScaleModel::typeName)
+            this->typeDict().subDict(TimeScaleModel::typeName)
         )
     )
 {}

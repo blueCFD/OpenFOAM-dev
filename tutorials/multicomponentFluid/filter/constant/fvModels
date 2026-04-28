@@ -29,7 +29,7 @@ filter1
 {
     type            porosityForce;
 
-    porosityForceCoeffs
+    porosityForce
     {
         cellZone        filter;
 

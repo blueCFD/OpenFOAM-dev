@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -291,10 +291,14 @@ Foam::decompositionMethods::parMetis::parMetis
     itr_(1000)
 {
     // Check for user supplied weights and decomp options
-    if (decompositionDict.found("parMetisCoeffs"))
+    if
+    (
+        decompositionDict.found("parMetis")
+     || decompositionDict.found("parMetisCoeffs")
+    )
     {
         const dictionary& parMetisCoeffs =
-            decompositionDict.subDict("parMetisCoeffs");
+            decompositionDict.typeDict("parMetis");
 
         Info<< type() << ": reading coefficients:" << endl;
 

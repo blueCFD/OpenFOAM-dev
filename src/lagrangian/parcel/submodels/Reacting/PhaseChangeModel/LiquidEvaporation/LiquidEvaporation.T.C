@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -73,13 +73,13 @@ Foam::LiquidEvaporation<CloudType>::LiquidEvaporation
     liquids_(owner.thermo().liquids()),
     condensation_
     (
-        this->coeffDict().template lookupOrDefault<Switch>
+        this->typeDict().template lookupOrDefault<Switch>
         (
             "condensation",
             false
         )
     ),
-    activeLiquids_(this->coeffDict().lookup("activeLiquids")),
+    activeLiquids_(this->typeDict().lookup("activeLiquids")),
     liqToCarrierMap_(activeLiquids_.size(), -1),
     liqToLiqMap_(activeLiquids_.size(), -1)
 {

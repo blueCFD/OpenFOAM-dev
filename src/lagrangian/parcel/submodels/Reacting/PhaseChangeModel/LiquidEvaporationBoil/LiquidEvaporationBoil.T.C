@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -72,7 +72,7 @@ Foam::LiquidEvaporationBoil<CloudType>::LiquidEvaporationBoil
 :
     PhaseChangeModel<CloudType>(dict, owner, typeName),
     liquids_(owner.thermo().liquids()),
-    activeLiquids_(this->coeffDict().lookup("activeLiquids")),
+    activeLiquids_(this->typeDict().lookup("activeLiquids")),
     liqToCarrierMap_(activeLiquids_.size(), -1),
     liqToLiqMap_(activeLiquids_.size(), -1)
 {

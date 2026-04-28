@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -160,23 +160,23 @@ LienCubicKE::LienCubicKE
         viscosity
     ),
 
-    Ceps1_("Ceps1", coeffDict(), 1.44),
-    Ceps2_("Ceps2", coeffDict(), 1.92),
-    sigmak_("sigmak", coeffDict(), 1.0),
-    sigmaEps_("sigmaEps", coeffDict(), 1.3),
-    Cmu_("Cmu", coeffDict(), 0.09),
-    Cmu1_("Cmu1", coeffDict(), 1.25),
-    Cmu2_("Cmu2", coeffDict(), 0.9),
-    Cbeta_("Cbeta", coeffDict(), 1000.0),
-    Cbeta1_("Cbeta1", coeffDict(), 3.0),
-    Cbeta2_("Cbeta2", coeffDict(), 15.0),
-    Cbeta3_("Cbeta3", coeffDict(), -19.0),
-    Cgamma1_("Cgamma1", coeffDict(), 16.0),
-    Cgamma2_("Cgamma2", coeffDict(), 16.0),
-    Cgamma4_("Cgamma4", coeffDict(), -80.0),
-    kappa_("kappa", coeffDict(), 0.41),
-    Anu_("Anu", coeffDict(), 0.0198),
-    AE_("AE", coeffDict(), 0.00375),
+    Ceps1_("Ceps1", typeDict(), 1.44),
+    Ceps2_("Ceps2", typeDict(), 1.92),
+    sigmak_("sigmak", typeDict(), 1.0),
+    sigmaEps_("sigmaEps", typeDict(), 1.3),
+    Cmu_("Cmu", typeDict(), 0.09),
+    Cmu1_("Cmu1", typeDict(), 1.25),
+    Cmu2_("Cmu2", typeDict(), 0.9),
+    Cbeta_("Cbeta", typeDict(), 1000.0),
+    Cbeta1_("Cbeta1", typeDict(), 3.0),
+    Cbeta2_("Cbeta2", typeDict(), 15.0),
+    Cbeta3_("Cbeta3", typeDict(), -19.0),
+    Cgamma1_("Cgamma1", typeDict(), 16.0),
+    Cgamma2_("Cgamma2", typeDict(), 16.0),
+    Cgamma4_("Cgamma4", typeDict(), -80.0),
+    kappa_("kappa", typeDict(), 0.41),
+    Anu_("Anu", typeDict(), 0.0198),
+    AE_("AE", typeDict(), 0.00375),
 
     k_
     (
@@ -215,23 +215,23 @@ bool LienCubicKE::read()
 {
     if (nonlinearEddyViscosity<incompressible::RASModel>::read())
     {
-        Ceps1_.readIfPresent(coeffDict());
-        Ceps2_.readIfPresent(coeffDict());
-        sigmak_.readIfPresent(coeffDict());
-        sigmaEps_.readIfPresent(coeffDict());
-        Cmu_.readIfPresent(coeffDict());
-        Cmu1_.readIfPresent(coeffDict());
-        Cmu2_.readIfPresent(coeffDict());
-        Cbeta_.readIfPresent(coeffDict());
-        Cbeta1_.readIfPresent(coeffDict());
-        Cbeta2_.readIfPresent(coeffDict());
-        Cbeta3_.readIfPresent(coeffDict());
-        Cgamma1_.readIfPresent(coeffDict());
-        Cgamma2_.readIfPresent(coeffDict());
-        Cgamma4_.readIfPresent(coeffDict());
-        kappa_.readIfPresent(coeffDict());
-        Anu_.readIfPresent(coeffDict());
-        AE_.readIfPresent(coeffDict());
+        Ceps1_.readIfPresent(typeDict());
+        Ceps2_.readIfPresent(typeDict());
+        sigmak_.readIfPresent(typeDict());
+        sigmaEps_.readIfPresent(typeDict());
+        Cmu_.readIfPresent(typeDict());
+        Cmu1_.readIfPresent(typeDict());
+        Cmu2_.readIfPresent(typeDict());
+        Cbeta_.readIfPresent(typeDict());
+        Cbeta1_.readIfPresent(typeDict());
+        Cbeta2_.readIfPresent(typeDict());
+        Cbeta3_.readIfPresent(typeDict());
+        Cgamma1_.readIfPresent(typeDict());
+        Cgamma2_.readIfPresent(typeDict());
+        Cgamma4_.readIfPresent(typeDict());
+        kappa_.readIfPresent(typeDict());
+        Anu_.readIfPresent(typeDict());
+        AE_.readIfPresent(typeDict());
 
         return true;
     }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -160,21 +160,21 @@ Foam::CellZoneInjection<CloudType>::CellZoneInjection
 )
 :
     InjectionModel<CloudType>(dict, owner, modelName, typeName),
-    cellZoneName_(this->coeffDict().lookup("cellZone")),
+    cellZoneName_(this->typeDict().lookup("cellZone")),
     massTotal_(this->readMassTotal(dict, owner)),
-    numberDensity_(this->coeffDict().template lookup<scalar>("numberDensity")),
+    numberDensity_(this->typeDict().template lookup<scalar>("numberDensity")),
     injectorCoordinates_(),
     injectorCells_(),
     injectorTetFaces_(),
     injectorTetPts_(),
     diameters_(),
-    U0_(this->coeffDict().lookup("U0")),
+    U0_(this->typeDict().lookup("U0")),
     sizeDistribution_
     (
         distribution::New
         (
             dimLength,
-            this->coeffDict().subDict("sizeDistribution"),
+            this->typeDict().subDict("sizeDistribution"),
             this->sizeSampleQ(),
             owner.rndGen().generator()
         )

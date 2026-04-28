@@ -62,7 +62,7 @@ eddyDiffusivity<TurbulenceThermophysicalTransportModel>::eddyDiffusivity
         thermo
     ),
 
-    Prt_("Prt", dimless, this->coeffDict()),
+    Prt_("Prt", dimless, this->typeDict()),
 
     alphat_
     (
@@ -90,7 +90,7 @@ bool eddyDiffusivity<TurbulenceThermophysicalTransportModel>::read()
 {
     if (TurbulenceThermophysicalTransportModel::read())
     {
-        Prt_.read(this->coeffDict());
+        Prt_.read(this->typeDict());
 
         return true;
     }

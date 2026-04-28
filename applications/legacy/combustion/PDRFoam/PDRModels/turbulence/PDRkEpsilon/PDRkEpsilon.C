@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -83,7 +83,7 @@ PDRkEpsilon::PDRkEpsilon
         modelName
     ),
 
-    C4_("C4", coeffDict(), 0.1)
+    C4_("C4", typeDict(), 0.1)
 {}
 
 
@@ -99,7 +99,7 @@ bool PDRkEpsilon::read()
 {
     if (RASModel::read())
     {
-        C4_.readIfPresent(coeffDict());
+        C4_.readIfPresent(typeDict());
         return true;
     }
     else

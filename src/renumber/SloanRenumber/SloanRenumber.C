@@ -92,10 +92,8 @@ Foam::SloanRenumber::SloanRenumber(const dictionary& renumberDict)
     renumberMethod(renumberDict),
     reverse_
     (
-        renumberDict.optionalSubDict
-        (
-            typeName + "Coeffs"
-        ).lookupOrDefault<Switch>("reverse", false)
+        renumberDict.optionalTypeDict(typeName)
+       .lookupOrDefault<Switch>("reverse", false)
     )
 {}
 

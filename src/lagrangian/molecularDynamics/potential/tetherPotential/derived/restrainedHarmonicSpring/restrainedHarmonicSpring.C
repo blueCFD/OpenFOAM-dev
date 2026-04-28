@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ restrainedHarmonicSpring::restrainedHarmonicSpring
     tetherPotential(name, tetherPotentialProperties),
     restrainedHarmonicSpringCoeffs_
     (
-        tetherPotentialProperties.subDict(typeName + "Coeffs")
+        tetherPotentialProperties.typeDict(typeName)
     ),
     springConstant_
     (
@@ -116,7 +116,7 @@ bool restrainedHarmonicSpring::read
     tetherPotential::read(tetherPotentialProperties);
 
     restrainedHarmonicSpringCoeffs_ =
-        tetherPotentialProperties.subDict(typeName + "Coeffs");
+        tetherPotentialProperties.typeDict(typeName);
 
     restrainedHarmonicSpringCoeffs_.lookup("springConstant") >> springConstant_;
     restrainedHarmonicSpringCoeffs_.lookup("rR") >> rR_;

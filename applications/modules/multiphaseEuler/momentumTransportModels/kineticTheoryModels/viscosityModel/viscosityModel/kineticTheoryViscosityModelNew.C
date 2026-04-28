@@ -52,7 +52,7 @@ Foam::kineticTheoryModels::viscosityModel::New
     }
 
     const dictionary& coeffDict =
-        dict.optionalSubDict(viscosityModelType + "Coeffs");
+        dict.optionalTypeDict(viscosityModelType);
 
     return autoPtr<viscosityModel>(cstrIter()(coeffDict));
 }

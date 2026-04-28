@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -47,7 +47,7 @@ namespace Foam
 Foam::springRenumber::springRenumber(const dictionary& renumberDict)
 :
     renumberMethod(renumberDict),
-    dict_(renumberDict.optionalSubDict(typeName+"Coeffs")),
+    dict_(renumberDict.optionalTypeDict(typeName)),
     maxCo_(dict_.lookup<scalar>("maxCo")),
     maxIter_(dict_.lookup<label>("maxIter")),
     freezeFraction_(dict_.lookup<scalar>("freezeFraction"))

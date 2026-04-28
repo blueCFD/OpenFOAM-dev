@@ -19,18 +19,18 @@ numberOfSubdomains  2;
 
 method          hierarchical;
 
-simpleCoeffs
+simple
 {
     n           (2 2 1);
 }
 
-hierarchicalCoeffs
+hierarchical
 {
     n           (2 1 1);
     order       xyz;
 }
 
-manualCoeffs
+manual
 {
     dataFile    "decompositionData";
 }

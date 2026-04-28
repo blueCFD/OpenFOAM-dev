@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -97,16 +97,16 @@ v2f<BasicMomentumTransportModel>::v2f
     ),
     v2fBase(),
 
-    Cmu_("Cmu", this->coeffDict(), 0.22),
-    CmuKEps_("CmuKEps", this->coeffDict(), 0.09),
-    C1_("C1", this->coeffDict(), 1.4),
-    C2_("C2", this->coeffDict(), 0.3),
-    CL_("CL", this->coeffDict(), 0.23),
-    Ceta_("Ceta", this->coeffDict(), 70.0),
-    Ceps2_("Ceps2", this->coeffDict(), 1.9),
-    Ceps3_("Ceps3", this->coeffDict(), -0.33),
-    sigmaK_("sigmaK", this->coeffDict(), 1.0),
-    sigmaEps_("sigmaEps", this->coeffDict(), 1.3),
+    Cmu_("Cmu", this->typeDict(), 0.22),
+    CmuKEps_("CmuKEps", this->typeDict(), 0.09),
+    C1_("C1", this->typeDict(), 1.4),
+    C2_("C2", this->typeDict(), 0.3),
+    CL_("CL", this->typeDict(), 0.23),
+    Ceta_("Ceta", this->typeDict(), 70.0),
+    Ceps2_("Ceps2", this->typeDict(), 1.9),
+    Ceps3_("Ceps3", this->typeDict(), -0.33),
+    sigmaK_("sigmaK", this->typeDict(), 1.0),
+    sigmaEps_("sigmaEps", this->typeDict(), 1.3),
 
     k_
     (
@@ -173,16 +173,16 @@ bool v2f<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<RASModel<BasicMomentumTransportModel>>::read())
     {
-        Cmu_.readIfPresent(this->coeffDict());
-        CmuKEps_.readIfPresent(this->coeffDict());
-        C1_.readIfPresent(this->coeffDict());
-        C2_.readIfPresent(this->coeffDict());
-        CL_.readIfPresent(this->coeffDict());
-        Ceta_.readIfPresent(this->coeffDict());
-        Ceps2_.readIfPresent(this->coeffDict());
-        Ceps3_.readIfPresent(this->coeffDict());
-        sigmaK_.readIfPresent(this->coeffDict());
-        sigmaEps_.readIfPresent(this->coeffDict());
+        Cmu_.readIfPresent(this->typeDict());
+        CmuKEps_.readIfPresent(this->typeDict());
+        C1_.readIfPresent(this->typeDict());
+        C2_.readIfPresent(this->typeDict());
+        CL_.readIfPresent(this->typeDict());
+        Ceta_.readIfPresent(this->typeDict());
+        Ceps2_.readIfPresent(this->typeDict());
+        Ceps3_.readIfPresent(this->typeDict());
+        sigmaK_.readIfPresent(this->typeDict());
+        sigmaEps_.readIfPresent(this->typeDict());
 
         return true;
     }

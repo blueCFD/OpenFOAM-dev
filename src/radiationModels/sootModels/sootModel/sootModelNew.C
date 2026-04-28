@@ -73,7 +73,7 @@ Foam::radiationModels::sootModel::New
 
     return autoPtr<sootModel>
     (
-        cstrIter()(dict.optionalSubDict(modelType + "Coeffs"), mesh, modelType)
+        cstrIter()(dict.optionalTypeDict(modelType), mesh, modelType)
     );
 }
 

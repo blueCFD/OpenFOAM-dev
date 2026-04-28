@@ -56,7 +56,7 @@ Foam::compressible::cavitationModel::New
     (
         cstrIter()
         (
-            dict.optionalSubDict(modelType + "Coeffs"),
+            dict.optionalTypeDict(modelType),
             phases,
             liquidIndex
         )

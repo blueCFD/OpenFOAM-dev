@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -95,14 +95,14 @@ mixtureKEpsilon<BasicMomentumTransportModel>::mixtureKEpsilon
 
     gasTurbulencePtr_(nullptr),
 
-    Cmu_("Cmu", this->coeffDict(), 0.09),
-    C1_("C1", this->coeffDict(), 1.44),
-    C2_("C2", this->coeffDict(), 1.92),
-    C3_("C3", this->coeffDict(), C2_.value()),
-    Cp_("Cp", this->coeffDict(), 0.25),
-    alphap_("alphap", this->coeffDict(), 1),
-    sigmak_("sigmak", this->coeffDict(), 1.0),
-    sigmaEps_("sigmaEps", this->coeffDict(), 1.3),
+    Cmu_("Cmu", this->typeDict(), 0.09),
+    C1_("C1", this->typeDict(), 1.44),
+    C2_("C2", this->typeDict(), 1.92),
+    C3_("C3", this->typeDict(), C2_.value()),
+    Cp_("Cp", this->typeDict(), 0.25),
+    alphap_("alphap", this->typeDict(), 1),
+    sigmak_("sigmak", this->typeDict(), 1.0),
+    sigmaEps_("sigmaEps", this->typeDict(), 1.3),
 
     k_
     (
@@ -226,13 +226,13 @@ bool mixtureKEpsilon<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<RASModel<BasicMomentumTransportModel>>::read())
     {
-        Cmu_.readIfPresent(this->coeffDict());
-        C1_.readIfPresent(this->coeffDict());
-        C2_.readIfPresent(this->coeffDict());
-        C3_.readIfPresent(this->coeffDict());
-        Cp_.readIfPresent(this->coeffDict());
-        sigmak_.readIfPresent(this->coeffDict());
-        sigmaEps_.readIfPresent(this->coeffDict());
+        Cmu_.readIfPresent(this->typeDict());
+        C1_.readIfPresent(this->typeDict());
+        C2_.readIfPresent(this->typeDict());
+        C3_.readIfPresent(this->typeDict());
+        Cp_.readIfPresent(this->typeDict());
+        sigmak_.readIfPresent(this->typeDict());
+        sigmaEps_.readIfPresent(this->typeDict());
 
         return true;
     }

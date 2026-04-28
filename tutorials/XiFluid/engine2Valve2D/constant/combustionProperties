@@ -42,7 +42,7 @@ flameWrinkling
 {
     model           equilibrium;
 
-    equilibrium
+    eq
     {
         model           Gulder;
         SuMin           0.001;

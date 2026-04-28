@@ -51,7 +51,7 @@ Foam::PackingModel<CloudType>::PackingModel
     (
         ParticleStressModel::New
         (
-            this->coeffDict().subDict(ParticleStressModel::typeName)
+            this->typeDict().subDict(ParticleStressModel::typeName)
         )
     )
 {}

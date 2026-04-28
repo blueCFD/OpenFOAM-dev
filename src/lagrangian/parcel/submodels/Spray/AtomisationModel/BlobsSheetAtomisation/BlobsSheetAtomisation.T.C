@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,8 +35,8 @@ Foam::BlobsSheetAtomisation<CloudType>::BlobsSheetAtomisation
 )
 :
     AtomisationModel<CloudType>(dict, owner, typeName),
-    B_(this->coeffDict().template lookup<scalar>("B")),
-    angle_(this->coeffDict().template lookup<scalar>("angle"))
+    B_(this->typeDict().template lookup<scalar>("B")),
+    angle_(this->typeDict().template lookup<scalar>("angle"))
 {}
 
 

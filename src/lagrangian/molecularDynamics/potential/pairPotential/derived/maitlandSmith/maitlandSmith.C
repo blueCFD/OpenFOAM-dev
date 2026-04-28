@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -54,7 +54,7 @@ maitlandSmith::maitlandSmith
 )
 :
     pairPotential(name, maitlandSmith),
-    maitlandSmithCoeffs_(maitlandSmith.subDict(typeName + "Coeffs")),
+    maitlandSmithCoeffs_(maitlandSmith.typeDict(typeName)),
     m_(maitlandSmithCoeffs_.template lookup<scalar>("m")),
     gamma_(maitlandSmithCoeffs_.template lookup<scalar>("gamma")),
     rm_(maitlandSmithCoeffs_.template lookup<scalar>("rm")),
@@ -82,7 +82,7 @@ bool maitlandSmith::read(const dictionary& maitlandSmith)
 {
     pairPotential::read(maitlandSmith);
 
-    maitlandSmithCoeffs_ = maitlandSmith.subDict(typeName + "Coeffs");
+    maitlandSmithCoeffs_ = maitlandSmith.typeDict(typeName);
 
     maitlandSmithCoeffs_.lookup("m") >> m_;
     maitlandSmithCoeffs_.lookup("gamma") >> gamma_;

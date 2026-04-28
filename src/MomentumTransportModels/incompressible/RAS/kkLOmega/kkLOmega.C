@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -249,34 +249,34 @@ kkLOmega::kkLOmega
         viscosity
     ),
 
-    A0_("A0", coeffDict(), 4.04),
-    As_("As", coeffDict(), 2.12),
-    Av_("Av", coeffDict(), 6.75),
-    Abp_("Abp", coeffDict(), 0.6),
-    Anat_("Anat", coeffDict(), 200),
-    Ats_("Ats", coeffDict(), 200),
-    CbpCrit_("CbpCrit", coeffDict(), 1.2),
-    Cnc_("Cnc", coeffDict(), 0.1),
-    CnatCrit_("CnatCrit", coeffDict(), 1250),
-    Cint_("Cint", coeffDict(), 0.75),
-    CtsCrit_("CtsCrit", coeffDict(), 1000),
-    CrNat_("CrNat", coeffDict(), 0.02),
-    C11_("C11", coeffDict(), 3.4e-6),
-    C12_("C12", coeffDict(), 1.0e-10),
-    CR_("CR", coeffDict(), 0.12),
-    CalphaTheta_("CalphaTheta", coeffDict(), 0.035),
-    Css_("Css", coeffDict(), 1.5),
-    CtauL_("CtauL", coeffDict(), 4360),
-    Cw1_("Cw1", coeffDict(), 0.44),
-    Cw2_("Cw2", coeffDict(), 0.92),
-    Cw3_("Cw3", coeffDict(), 0.3),
-    CwR_("CwR", coeffDict(), 1.5),
-    Clambda_("Clambda", coeffDict(), 2.495),
-    CmuStd_("CmuStd", coeffDict(), 0.09),
-    Prtheta_("Prtheta", coeffDict(), 0.85),
-    Sigmak_("Sigmak", coeffDict(), 1),
-    Sigmaw_("Sigmaw", coeffDict(), 1.17),
-    omegaMin_("omegaMin", dimless/dimTime, coeffDict(), small),
+    A0_("A0", typeDict(), 4.04),
+    As_("As", typeDict(), 2.12),
+    Av_("Av", typeDict(), 6.75),
+    Abp_("Abp", typeDict(), 0.6),
+    Anat_("Anat", typeDict(), 200),
+    Ats_("Ats", typeDict(), 200),
+    CbpCrit_("CbpCrit", typeDict(), 1.2),
+    Cnc_("Cnc", typeDict(), 0.1),
+    CnatCrit_("CnatCrit", typeDict(), 1250),
+    Cint_("Cint", typeDict(), 0.75),
+    CtsCrit_("CtsCrit", typeDict(), 1000),
+    CrNat_("CrNat", typeDict(), 0.02),
+    C11_("C11", typeDict(), 3.4e-6),
+    C12_("C12", typeDict(), 1.0e-10),
+    CR_("CR", typeDict(), 0.12),
+    CalphaTheta_("CalphaTheta", typeDict(), 0.035),
+    Css_("Css", typeDict(), 1.5),
+    CtauL_("CtauL", typeDict(), 4360),
+    Cw1_("Cw1", typeDict(), 0.44),
+    Cw2_("Cw2", typeDict(), 0.92),
+    Cw3_("Cw3", typeDict(), 0.3),
+    CwR_("CwR", typeDict(), 1.5),
+    Clambda_("Clambda", typeDict(), 2.495),
+    CmuStd_("CmuStd", typeDict(), 0.09),
+    Prtheta_("Prtheta", typeDict(), 0.85),
+    Sigmak_("Sigmak", typeDict(), 1),
+    Sigmaw_("Sigmaw", typeDict(), 1.17),
+    omegaMin_("omegaMin", dimless/dimTime, typeDict(), small),
     kt_
     (
         IOobject
@@ -343,34 +343,34 @@ bool kkLOmega::read()
 {
     if (eddyViscosity<incompressible::RASModel>::read())
     {
-        A0_.readIfPresent(coeffDict());
-        As_.readIfPresent(coeffDict());
-        Av_.readIfPresent(coeffDict());
-        Abp_.readIfPresent(coeffDict());
-        Anat_.readIfPresent(coeffDict());
-        Abp_.readIfPresent(coeffDict());
-        Ats_.readIfPresent(coeffDict());
-        CbpCrit_.readIfPresent(coeffDict());
-        Cnc_.readIfPresent(coeffDict());
-        CnatCrit_.readIfPresent(coeffDict());
-        Cint_.readIfPresent(coeffDict());
-        CtsCrit_.readIfPresent(coeffDict());
-        CrNat_.readIfPresent(coeffDict());
-        C11_.readIfPresent(coeffDict());
-        C12_.readIfPresent(coeffDict());
-        CR_.readIfPresent(coeffDict());
-        CalphaTheta_.readIfPresent(coeffDict());
-        Css_.readIfPresent(coeffDict());
-        CtauL_.readIfPresent(coeffDict());
-        Cw1_.readIfPresent(coeffDict());
-        Cw2_.readIfPresent(coeffDict());
-        Cw3_.readIfPresent(coeffDict());
-        CwR_.readIfPresent(coeffDict());
-        Clambda_.readIfPresent(coeffDict());
-        CmuStd_.readIfPresent(coeffDict());
-        Prtheta_.readIfPresent(coeffDict());
-        Sigmak_.readIfPresent(coeffDict());
-        Sigmaw_.readIfPresent(coeffDict());
+        A0_.readIfPresent(typeDict());
+        As_.readIfPresent(typeDict());
+        Av_.readIfPresent(typeDict());
+        Abp_.readIfPresent(typeDict());
+        Anat_.readIfPresent(typeDict());
+        Abp_.readIfPresent(typeDict());
+        Ats_.readIfPresent(typeDict());
+        CbpCrit_.readIfPresent(typeDict());
+        Cnc_.readIfPresent(typeDict());
+        CnatCrit_.readIfPresent(typeDict());
+        Cint_.readIfPresent(typeDict());
+        CtsCrit_.readIfPresent(typeDict());
+        CrNat_.readIfPresent(typeDict());
+        C11_.readIfPresent(typeDict());
+        C12_.readIfPresent(typeDict());
+        CR_.readIfPresent(typeDict());
+        CalphaTheta_.readIfPresent(typeDict());
+        Css_.readIfPresent(typeDict());
+        CtauL_.readIfPresent(typeDict());
+        Cw1_.readIfPresent(typeDict());
+        Cw2_.readIfPresent(typeDict());
+        Cw3_.readIfPresent(typeDict());
+        CwR_.readIfPresent(typeDict());
+        Clambda_.readIfPresent(typeDict());
+        CmuStd_.readIfPresent(typeDict());
+        Prtheta_.readIfPresent(typeDict());
+        Sigmak_.readIfPresent(typeDict());
+        Sigmaw_.readIfPresent(typeDict());
 
         return true;
     }

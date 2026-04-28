@@ -52,7 +52,7 @@ Foam::kineticTheoryModels::conductivityModel::New
     }
 
     const dictionary& coeffDict =
-        dict.optionalSubDict(conductivityModelType + "Coeffs");
+        dict.optionalTypeDict(conductivityModelType);
 
     return autoPtr<conductivityModel>(cstrIter()(coeffDict));
 }

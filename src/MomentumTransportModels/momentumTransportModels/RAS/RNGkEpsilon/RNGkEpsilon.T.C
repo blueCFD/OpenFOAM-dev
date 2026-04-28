@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -111,14 +111,14 @@ RNGkEpsilon<BasicMomentumTransportModel>::RNGkEpsilon
         viscosity
     ),
 
-    Cmu_("Cmu", this->coeffDict(), 0.0845),
-    C1_("C1", this->coeffDict(), 1.42),
-    C2_("C2", this->coeffDict(), 1.68),
-    C3_("C3", this->coeffDict(), 0),
-    sigmak_("sigmak", this->coeffDict(), 0.71942),
-    sigmaEps_("sigmaEps", this->coeffDict(), 0.71942),
-    eta0_("eta0", this->coeffDict(), 4.38),
-    beta_("beta", this->coeffDict(), 0.012),
+    Cmu_("Cmu", this->typeDict(), 0.0845),
+    C1_("C1", this->typeDict(), 1.42),
+    C2_("C2", this->typeDict(), 1.68),
+    C3_("C3", this->typeDict(), 0),
+    sigmak_("sigmak", this->typeDict(), 0.71942),
+    sigmaEps_("sigmaEps", this->typeDict(), 0.71942),
+    eta0_("eta0", this->typeDict(), 4.38),
+    beta_("beta", this->typeDict(), 0.012),
 
     k_
     (
@@ -157,14 +157,14 @@ bool RNGkEpsilon<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<RASModel<BasicMomentumTransportModel>>::read())
     {
-        Cmu_.readIfPresent(this->coeffDict());
-        C1_.readIfPresent(this->coeffDict());
-        C2_.readIfPresent(this->coeffDict());
-        C3_.readIfPresent(this->coeffDict());
-        sigmak_.readIfPresent(this->coeffDict());
-        sigmaEps_.readIfPresent(this->coeffDict());
-        eta0_.readIfPresent(this->coeffDict());
-        beta_.readIfPresent(this->coeffDict());
+        Cmu_.readIfPresent(this->typeDict());
+        C1_.readIfPresent(this->typeDict());
+        C2_.readIfPresent(this->typeDict());
+        C3_.readIfPresent(this->typeDict());
+        sigmak_.readIfPresent(this->typeDict());
+        sigmaEps_.readIfPresent(this->typeDict());
+        eta0_.readIfPresent(this->typeDict());
+        beta_.readIfPresent(this->typeDict());
 
         return true;
     }

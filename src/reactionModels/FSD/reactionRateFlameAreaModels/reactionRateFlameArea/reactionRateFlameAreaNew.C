@@ -69,7 +69,7 @@ Foam::autoPtr<Foam::reactionRateFlameArea> Foam::reactionRateFlameArea::New
         (
             modelType,
             dict,
-            dict.optionalSubDict(modelType + "Coeffs"),
+            dict.optionalTypeDict(modelType),
             mesh,
             combModel
         )

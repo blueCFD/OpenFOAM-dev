@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,11 +35,11 @@ Foam::LISAAtomisation<CloudType>::LISAAtomisation
 )
 :
     AtomisationModel<CloudType>(dict, owner, typeName),
-    Cl_(this->coeffDict().template lookup<scalar>("Cl")),
-    cTau_(this->coeffDict().template lookup<scalar>("cTau")),
-    lisaExp_(this->coeffDict().template lookup<scalar>("lisaExp")),
-    injectorDirection_(this->coeffDict().lookup("injectorDirection")),
-    SMDCalcMethod_(this->coeffDict().lookup("SMDCalculationMethod"))
+    Cl_(this->typeDict().template lookup<scalar>("Cl")),
+    cTau_(this->typeDict().template lookup<scalar>("cTau")),
+    lisaExp_(this->typeDict().template lookup<scalar>("lisaExp")),
+    injectorDirection_(this->typeDict().lookup("injectorDirection")),
+    SMDCalcMethod_(this->typeDict().lookup("SMDCalculationMethod"))
 {
     // Note: Would be good if this could be picked up from the injector
     injectorDirection_ /= mag(injectorDirection_);

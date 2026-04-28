@@ -52,7 +52,7 @@ Foam::kineticTheoryModels::granularPressureModel::New
     }
 
     const dictionary& coeffDict =
-        dict.optionalSubDict(granularPressureModelType + "Coeffs");
+        dict.optionalTypeDict(granularPressureModelType);
 
     return autoPtr<granularPressureModel>(cstrIter()(coeffDict));
 }

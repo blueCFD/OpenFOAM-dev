@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -178,15 +178,15 @@ SpalartAllmaras<BasicMomentumTransportModel>::SpalartAllmaras
         viscosity
     ),
 
-    sigmaNut_("sigmaNut", this->coeffDict(), 0.66666),
-    kappa_("kappa", this->coeffDict(), 0.41),
-    Cb1_("Cb1", this->coeffDict(), 0.1355),
-    Cb2_("Cb2", this->coeffDict(), 0.622),
+    sigmaNut_("sigmaNut", this->typeDict(), 0.66666),
+    kappa_("kappa", this->typeDict(), 0.41),
+    Cb1_("Cb1", this->typeDict(), 0.1355),
+    Cb2_("Cb2", this->typeDict(), 0.622),
     Cw1_(Cb1_/sqr(kappa_) + (1.0 + Cb2_)/sigmaNut_),
-    Cw2_("Cw2", this->coeffDict(), 0.3),
-    Cw3_("Cw3", this->coeffDict(), 2.0),
-    Cv1_("Cv1", this->coeffDict(), 7.1),
-    Cs_("Cs", this->coeffDict(), 0.3),
+    Cw2_("Cw2", this->typeDict(), 0.3),
+    Cw3_("Cw3", this->typeDict(), 2.0),
+    Cv1_("Cv1", this->typeDict(), 7.1),
+    Cs_("Cs", this->typeDict(), 0.3),
 
     nuTilda_
     (
@@ -210,16 +210,16 @@ bool SpalartAllmaras<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<RASModel<BasicMomentumTransportModel>>::read())
     {
-        sigmaNut_.readIfPresent(this->coeffDict());
-        kappa_.readIfPresent(this->coeffDict());
+        sigmaNut_.readIfPresent(this->typeDict());
+        kappa_.readIfPresent(this->typeDict());
 
-        Cb1_.readIfPresent(this->coeffDict());
-        Cb2_.readIfPresent(this->coeffDict());
+        Cb1_.readIfPresent(this->typeDict());
+        Cb2_.readIfPresent(this->typeDict());
         Cw1_ = Cb1_/sqr(kappa_) + (1.0 + Cb2_)/sigmaNut_;
-        Cw2_.readIfPresent(this->coeffDict());
-        Cw3_.readIfPresent(this->coeffDict());
-        Cv1_.readIfPresent(this->coeffDict());
-        Cs_.readIfPresent(this->coeffDict());
+        Cw2_.readIfPresent(this->typeDict());
+        Cw3_.readIfPresent(this->typeDict());
+        Cv1_.readIfPresent(this->typeDict());
+        Cs_.readIfPresent(this->typeDict());
 
         return true;
     }

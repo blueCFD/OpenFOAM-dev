@@ -39,47 +39,47 @@ Foam::PatchFlowRateInjection<CloudType>::PatchFlowRateInjection
 )
 :
     InjectionModel<CloudType>(dict, owner, modelName,typeName),
-    patchInjectionBase(owner.mesh(), this->coeffDict().lookup("patchName")),
-    phiName_(this->coeffDict().template lookupOrDefault<word>("phi", "phi")),
-    rhoName_(this->coeffDict().template lookupOrDefault<word>("rho", "rho")),
+    patchInjectionBase(owner.mesh(), this->typeDict().lookup("patchName")),
+    phiName_(this->typeDict().template lookupOrDefault<word>("phi", "phi")),
+    rhoName_(this->typeDict().template lookupOrDefault<word>("rho", "rho")),
     duration_(this->readDuration(dict, owner)),
     volumeRatio_
     (
-        this->coeffDict().found("concentration")
-     || this->coeffDict().found("volumeRatio")
+        this->typeDict().found("concentration")
+     || this->typeDict().found("volumeRatio")
       ? Function1<scalar>::New
         (
-            this->coeffDict().found("volumeRatio")
+            this->typeDict().found("volumeRatio")
           ? "volumeRatio"
           : "concentration",
             this->owner().time().userUnits(),
             dimless,
-            this->coeffDict()
+            this->typeDict()
         )
       : autoPtr<Function1<scalar>>()
     ),
     massRatio_
     (
-        this->coeffDict().found("massRatio")
+        this->typeDict().found("massRatio")
       ? Function1<scalar>::New
         (
             "massRatio",
             this->owner().time().userUnits(),
             dimless,
-            this->coeffDict()
+            this->typeDict()
         )
       : autoPtr<Function1<scalar>>()
     ),
     parcelConcentration_
     (
-        this->coeffDict().template lookup<scalar>("parcelConcentration")
+        this->typeDict().template lookup<scalar>("parcelConcentration")
     ),
     sizeDistribution_
     (
         distribution::New
         (
             dimLength,
-            this->coeffDict().subDict("sizeDistribution"),
+            this->typeDict().subDict("sizeDistribution"),
             this->sizeSampleQ(),
             owner.rndGen().generator()
         )
@@ -87,18 +87,18 @@ Foam::PatchFlowRateInjection<CloudType>::PatchFlowRateInjection
 {
     if (volumeRatio_.valid() && massRatio_.valid())
     {
-        FatalIOErrorInFunction(this->coeffDict())
+        FatalIOErrorInFunction(this->typeDict())
             << "keywords volumeRatio (or concentration) and "
             << "massRatio both defined in dictionary "
-            << this->coeffDict().name() << exit(FatalIOError);
+            << this->typeDict().name() << exit(FatalIOError);
     }
 
     if (!volumeRatio_.valid() && !massRatio_.valid())
     {
-        FatalIOErrorInFunction(this->coeffDict())
+        FatalIOErrorInFunction(this->typeDict())
             << "keyword volumeRatio or massRatio is "
             << "undefined in dictionary "
-            << this->coeffDict().name() << exit(FatalIOError);
+            << this->typeDict().name() << exit(FatalIOError);
     }
 }
 

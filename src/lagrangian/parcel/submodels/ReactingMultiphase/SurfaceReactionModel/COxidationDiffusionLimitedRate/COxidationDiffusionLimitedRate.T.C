@@ -38,8 +38,8 @@ Foam::COxidationDiffusionLimitedRate<CloudType>::COxidationDiffusionLimitedRate
 )
 :
     SurfaceReactionModel<CloudType>(dict, owner, typeName),
-    Sb_(this->coeffDict().template lookup<scalar>("Sb")),
-    D_(this->coeffDict().template lookup<scalar>("D")),
+    Sb_(this->typeDict().template lookup<scalar>("Sb")),
+    D_(this->typeDict().template lookup<scalar>("D")),
     CsLocalId_(-1),
     O2GlobalId_(owner.composition().carrierId("O2")),
     CO2GlobalId_(owner.composition().carrierId("CO2")),

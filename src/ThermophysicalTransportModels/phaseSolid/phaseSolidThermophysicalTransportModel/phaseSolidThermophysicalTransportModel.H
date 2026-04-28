@@ -69,7 +69,7 @@ protected:
     // Protected Member Functions
 
         //- Const access to the coefficients dictionary
-        const dictionary& coeffDict() const;
+        const dictionary& typeDict() const;
 
 
 public:

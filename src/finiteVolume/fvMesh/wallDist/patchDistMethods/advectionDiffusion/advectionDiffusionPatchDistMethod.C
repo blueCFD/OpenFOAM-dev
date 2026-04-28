@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ Foam::patchDistMethods::advectionDiffusion::advectionDiffusion
 )
 :
     patchDistMethod(mesh, patchIDs),
-    coeffs_(dict.optionalSubDict(type() + "Coeffs")),
+    coeffs_(dict.optionalTypeDict(type())),
     pdmPredictor_
     (
         patchDistMethod::New

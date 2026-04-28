@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -159,11 +159,11 @@ realizableKE<BasicMomentumTransportModel>::realizableKE
         viscosity
     ),
 
-    A0_("A0", this->coeffDict(), 4.0),
+    A0_("A0", this->typeDict(), 4.0),
     C2_
-    ("C2", this->coeffDict(), 1.9),
-    sigmak_("sigmak", this->coeffDict(), 1.0),
-    sigmaEps_("sigmaEps", this->coeffDict(), 1.2),
+    ("C2", this->typeDict(), 1.9),
+    sigmak_("sigmak", this->typeDict(), 1.0),
+    sigmaEps_("sigmaEps", this->typeDict(), 1.2),
 
     k_
     (
@@ -202,10 +202,10 @@ bool realizableKE<BasicMomentumTransportModel>::read()
 {
     if (eddyViscosity<RASModel<BasicMomentumTransportModel>>::read())
     {
-        A0_.readIfPresent(this->coeffDict());
-        C2_.readIfPresent(this->coeffDict());
-        sigmak_.readIfPresent(this->coeffDict());
-        sigmaEps_.readIfPresent(this->coeffDict());
+        A0_.readIfPresent(this->typeDict());
+        C2_.readIfPresent(this->typeDict());
+        sigmak_.readIfPresent(this->typeDict());
+        sigmaEps_.readIfPresent(this->typeDict());
 
         return true;
     }

@@ -35,7 +35,7 @@ Foam::autoPtr<Foam::XiEqModel> Foam::XiEqModel::New
     const volScalarField& Su
 )
 {
-    const dictionary& XiEqDict = XiDict.subDict("equilibrium");
+    const dictionary& XiEqDict = XiDict.subDict("eq");
 
     const word modelType(XiEqDict.lookup("model"));
 
@@ -59,7 +59,7 @@ Foam::autoPtr<Foam::XiEqModel> Foam::XiEqModel::New
     (
         cstrIter()
         (
-            XiEqDict.optionalSubDict(modelType + "Coeffs"),
+            XiEqDict.optionalTypeDict(modelType),
             thermo,
             turbulence,
             Su

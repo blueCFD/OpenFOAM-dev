@@ -36,10 +36,10 @@ SingleKineticRateDevolatilisation
 )
 :
     DevolatilisationModel<CloudType>(dict, owner, typeName),
-    volatileData_(this->coeffDict().lookup("volatileData")),
+    volatileData_(this->typeDict().lookup("volatileData")),
     YVolatile0_(volatileData_.size()),
     volatileToGasMap_(volatileData_.size()),
-    residualCoeff_(this->coeffDict().template lookup<scalar>("residualCoeff"))
+    residualCoeff_(this->typeDict().template lookup<scalar>("residualCoeff"))
 {
     if (volatileData_.empty())
     {

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2021 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -114,7 +114,7 @@ Foam::radiationModel::radiationModel(const word& type, const volScalarField& T)
     mesh_(T.mesh()),
     time_(T.time()),
     T_(T),
-    coeffs_(subOrEmptyDict(type + "Coeffs")),
+    coeffs_(typeOrEmptyDict(type)),
     solverFreq_(1),
     firstIter_(true),
     absorptionEmission_(nullptr),
@@ -147,7 +147,7 @@ Foam::radiationModel::radiationModel
     mesh_(T.mesh()),
     time_(T.time()),
     T_(T),
-    coeffs_(subOrEmptyDict(type + "Coeffs")),
+    coeffs_(typeOrEmptyDict(type)),
     solverFreq_(1),
     firstIter_(true),
     absorptionEmission_(nullptr),
@@ -185,7 +185,7 @@ bool Foam::radiationModel::read()
 {
     if (regIOobject::read())
     {
-        coeffs_ = subOrEmptyDict(type() + "Coeffs");
+        coeffs_ = typeOrEmptyDict(type());
 
         solverFreq_ = lookupOrDefault<label>("solverFreq", 1);
         solverFreq_ = max(1, solverFreq_);

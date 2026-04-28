@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -206,7 +206,7 @@ kEpsilonLopesdaCosta<BasicMomentumTransportModel>::kEpsilonLopesdaCosta
             this->mesh_
         ),
         this->mesh_,
-        dimensioned<scalar>("Cmu", this->coeffDict(), 0.09)
+        dimensioned<scalar>("Cmu", this->typeDict(), 0.09)
     ),
     C1_
     (
@@ -217,7 +217,7 @@ kEpsilonLopesdaCosta<BasicMomentumTransportModel>::kEpsilonLopesdaCosta
             this->mesh_
         ),
         this->mesh_,
-        dimensioned<scalar>("C1", this->coeffDict(), 1.44)
+        dimensioned<scalar>("C1", this->typeDict(), 1.44)
     ),
     C2_
     (
@@ -228,7 +228,7 @@ kEpsilonLopesdaCosta<BasicMomentumTransportModel>::kEpsilonLopesdaCosta
             this->mesh_
         ),
         this->mesh_,
-        dimensioned<scalar>("C2", this->coeffDict(), 1.92)
+        dimensioned<scalar>("C2", this->typeDict(), 1.92)
     ),
     sigmak_
     (
@@ -239,7 +239,7 @@ kEpsilonLopesdaCosta<BasicMomentumTransportModel>::kEpsilonLopesdaCosta
             this->mesh_
         ),
         this->mesh_,
-        dimensioned<scalar>("sigmak", this->coeffDict(), 1.0)
+        dimensioned<scalar>("sigmak", this->typeDict(), 1.0)
     ),
     sigmaEps_
     (
@@ -250,7 +250,7 @@ kEpsilonLopesdaCosta<BasicMomentumTransportModel>::kEpsilonLopesdaCosta
             this->mesh_
         ),
         this->mesh_,
-        dimensioned<scalar>("sigmaEps", this->coeffDict(), 1.3)
+        dimensioned<scalar>("sigmaEps", this->typeDict(), 1.3)
     ),
 
     CdAv_

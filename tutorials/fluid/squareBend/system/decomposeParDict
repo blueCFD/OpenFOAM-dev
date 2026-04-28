@@ -18,18 +18,18 @@ numberOfSubdomains 8;
 
 method          hierarchical;
 
-simpleCoeffs
+simple
 {
     n               (8 1 1);
 }
 
-hierarchicalCoeffs
+hierarchical
 {
     n               (4 2 1);
     order           xyz;
 }
 
-manualCoeffs
+manual
 {
     dataFile        "";
 }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -105,10 +105,10 @@ anisotropic<SolidThermophysicalTransportModel>::anisotropic
 :
     SolidThermophysicalTransportModel(typeName, alpha, thermo),
     TopoChangeableMeshObject(*this),
-    coordinateSystem_(coordinateSystem::New(thermo.mesh(), this->coeffDict())),
+    coordinateSystem_(coordinateSystem::New(thermo.mesh(), this->typeDict())),
     boundaryAligned_
     (
-        this->coeffDict().template lookupOrDefault<Switch>
+        this->typeDict().template lookupOrDefault<Switch>
         (
             "boundaryAligned",
             false
@@ -116,9 +116,9 @@ anisotropic<SolidThermophysicalTransportModel>::anisotropic
     ),
     aligned_(thermo.mesh().boundary().size(), true)
 {
-    if (this->coeffDict().found("zones"))
+    if (this->typeDict().found("zones"))
     {
-        const dictionary& zonesDict(this->coeffDict().subDict("zones"));
+        const dictionary& zonesDict(this->typeDict().subDict("zones"));
 
         Info<< "    Reading coordinate system for zones:" << endl;
 

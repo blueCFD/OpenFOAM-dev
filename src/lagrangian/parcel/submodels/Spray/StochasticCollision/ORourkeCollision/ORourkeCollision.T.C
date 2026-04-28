@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -301,7 +301,7 @@ Foam::ORourkeCollision<CloudType>::ORourkeCollision
 )
 :
     StochasticCollisionModel<CloudType>(dict, owner, modelName),
-    coalescence_(this->coeffDict().lookup("coalescence"))
+    coalescence_(this->typeDict().lookup("coalescence"))
 {}
 
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -98,10 +98,10 @@ LarsenBorgnakkeVariableHardSphere
 )
 :
     BinaryCollisionModel<CloudType>(dict, cloud, typeName),
-    Tref_(this->coeffDict().template lookup<scalar>("Tref")),
+    Tref_(this->typeDict().template lookup<scalar>("Tref")),
     relaxationCollisionNumber_
     (
-        this->coeffDict().template lookup<scalar>("relaxationCollisionNumber")
+        this->typeDict().template lookup<scalar>("relaxationCollisionNumber")
     )
 {}
 

@@ -18,18 +18,18 @@ numberOfSubdomains 8;
 
 method          scotch;
 
-simpleCoeffs
+simple
 {
     n               (2 1 1);
 }
 
-hierarchicalCoeffs
+hierarchical
 {
     n               (2 1 1);
     order           xyz;
 }
 
-manualCoeffs
+manual
 {
     dataFile        "";
 }

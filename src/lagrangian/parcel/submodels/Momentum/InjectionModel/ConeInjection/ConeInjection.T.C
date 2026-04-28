@@ -35,7 +35,7 @@ template<class CloudType>
 void Foam::ConeInjection<CloudType>::setInjectionMethod()
 {
     const word injectionMethod =
-        this->coeffDict().template lookupOrDefault<word>
+        this->typeDict().template lookupOrDefault<word>
         (
             "injectionMethod",
             word::null
@@ -52,9 +52,9 @@ void Foam::ConeInjection<CloudType>::setInjectionMethod()
         injectionMethod_ = imDisc;
 
         dInner_ =
-            this->coeffDict().template lookup<scalar>("dInner", dimLength);
+            this->typeDict().template lookup<scalar>("dInner", dimLength);
         dOuter_ =
-            this->coeffDict().template lookup<scalar>("dOuter", dimLength);
+            this->typeDict().template lookup<scalar>("dOuter", dimLength);
     }
     else
     {
@@ -69,7 +69,7 @@ template<class CloudType>
 void Foam::ConeInjection<CloudType>::setFlowType()
 {
     const word flowType =
-        this->coeffDict().template lookupOrDefault<word>
+        this->typeDict().template lookupOrDefault<word>
         (
             "flowType",
             word::null
@@ -86,7 +86,7 @@ void Foam::ConeInjection<CloudType>::setFlowType()
                 "Umag",
                 this->owner().time().userUnits(),
                 dimVelocity,
-                this->coeffDict()
+                this->typeDict()
             ).ptr()
         );
     }
@@ -101,7 +101,7 @@ void Foam::ConeInjection<CloudType>::setFlowType()
                 "Pinj",
                 this->owner().time().userUnits(),
                 dimPressure,
-                this->coeffDict()
+                this->typeDict()
             ).ptr()
         );
     }
@@ -110,9 +110,9 @@ void Foam::ConeInjection<CloudType>::setFlowType()
         flowType_ = ftFlowRateAndDischarge;
 
         dInner_ =
-            this->coeffDict().template lookup<scalar>("dInner", dimLength);
+            this->typeDict().template lookup<scalar>("dInner", dimLength);
         dOuter_ =
-            this->coeffDict().template lookup<scalar>("dOuter", dimLength);
+            this->typeDict().template lookup<scalar>("dOuter", dimLength);
 
         Cd_.reset
         (
@@ -121,7 +121,7 @@ void Foam::ConeInjection<CloudType>::setFlowType()
                 "Cd",
                 this->owner().time().userUnits(),
                 dimless,
-                this->coeffDict()
+                this->typeDict()
             ).ptr()
         );
     }
@@ -155,7 +155,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
             "position",
             this->owner().time().userUnits(),
             dimLength,
-            this->coeffDict()
+            this->typeDict()
         )
     ),
     direction_
@@ -165,7 +165,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
             "direction",
             this->owner().time().userUnits(),
             dimless,
-            this->coeffDict()
+            this->typeDict()
         )
     ),
     injectorCoordinates_(barycentric::uniform(NaN)),
@@ -182,7 +182,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
             "thetaInner",
             this->owner().time().userUnits(),
             units::degrees,
-            this->coeffDict()
+            this->typeDict()
         )
     ),
     thetaOuter_
@@ -192,7 +192,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
             "thetaOuter",
             this->owner().time().userUnits(),
             units::degrees,
-            this->coeffDict()
+            this->typeDict()
         )
     ),
     sizeDistribution_
@@ -200,7 +200,7 @@ Foam::ConeInjection<CloudType>::ConeInjection
         distribution::New
         (
             dimLength,
-            this->coeffDict().subDict("sizeDistribution"),
+            this->typeDict().subDict("sizeDistribution"),
             this->sizeSampleQ(),
             owner.rndGen().generator()
         )

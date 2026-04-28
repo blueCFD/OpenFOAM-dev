@@ -54,7 +54,7 @@ Foam::radiationModels::scatterModel::New
 
     return autoPtr<scatterModel>
     (
-        cstrIter()(dict.optionalSubDict(modelType + "Coeffs"), mesh)
+        cstrIter()(dict.optionalTypeDict(modelType), mesh)
     );
 }
 

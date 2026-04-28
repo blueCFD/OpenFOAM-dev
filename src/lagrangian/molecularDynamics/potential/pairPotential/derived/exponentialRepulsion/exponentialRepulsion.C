@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ exponentialRepulsion::exponentialRepulsion
     pairPotential(name, exponentialRepulsion),
     exponentialRepulsionCoeffs_
     (
-        exponentialRepulsion.subDict(typeName + "Coeffs")
+        exponentialRepulsion.typeDict(typeName)
     ),
     rm_(exponentialRepulsionCoeffs_.template lookup<scalar>("rm")),
     epsilon_(exponentialRepulsionCoeffs_.template lookup<scalar>("epsilon"))
@@ -78,7 +78,7 @@ bool exponentialRepulsion::read(const dictionary& exponentialRepulsion)
     pairPotential::read(exponentialRepulsion);
 
     exponentialRepulsionCoeffs_ =
-        exponentialRepulsion.subDict(typeName + "Coeffs");
+        exponentialRepulsion.typeDict(typeName);
 
     exponentialRepulsionCoeffs_.lookup("rm") >> rm_;
     exponentialRepulsionCoeffs_.lookup("epsilon") >> epsilon_;

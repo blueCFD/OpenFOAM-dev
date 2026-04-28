@@ -287,7 +287,7 @@ void Foam::waveModels::irregular::write(Ostream& os) const
 
     writeEntry(os, "spectrum", spectrum_->type());
 
-    os  << indent << word(spectrum_->type() + "Coeffs") << nl
+    os  << indent << spectrum_->type() << nl
         << indent << token::BEGIN_BLOCK << nl << incrIndent;
     spectrum_->write(os);
     os  << decrIndent

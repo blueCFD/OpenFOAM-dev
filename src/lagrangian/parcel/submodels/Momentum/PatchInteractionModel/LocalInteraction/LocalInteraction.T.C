@@ -91,7 +91,7 @@ Foam::LocalInteraction<CloudType>::LocalInteraction
     massEscape_(this->owner().mesh().poly().boundary().size(), scalar(0)),
     nStick_(this->owner().mesh().poly().boundary().size(), 0),
     massStick_(this->owner().mesh().poly().boundary().size(), scalar(0)),
-    writeFields_(this->coeffDict().lookupOrDefault("writeFields", false)),
+    writeFields_(this->typeDict().lookupOrDefault("writeFields", false)),
     massEscapePtr_(nullptr),
     massStickPtr_(nullptr)
 {
@@ -115,15 +115,15 @@ Foam::LocalInteraction<CloudType>::LocalInteraction
 
     // Get the patch-settings dictionaries
     dictionary patchesDict;
-    if (this->coeffDict().isDict("patches"))
+    if (this->typeDict().isDict("patches"))
     {
-        patchesDict = this->coeffDict().subDict("patches");
+        patchesDict = this->typeDict().subDict("patches");
     }
     else
     {
         const List<wordReAndDictionary> patchNameAndDicts
         (
-            this->coeffDict().lookup("patches")
+            this->typeDict().lookup("patches")
         );
 
         forAll(patchNameAndDicts, dicti)

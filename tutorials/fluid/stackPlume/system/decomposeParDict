@@ -24,12 +24,12 @@ numberOfSubdomains  4;
 
 method              hierarchical;
 
-simpleCoeffs
+simple
 {
     n               (2 2 1); // total must match numberOfSubdomains
 }
 
-hierarchicalCoeffs
+hierarchical
 {
     n               (2 2 1); // total must match numberOfSubdomains
     order           xyz;

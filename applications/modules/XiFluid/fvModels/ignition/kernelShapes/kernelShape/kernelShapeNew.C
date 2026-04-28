@@ -58,7 +58,7 @@ Foam::autoPtr<Foam::kernelShape> Foam::kernelShape::New
         cstrIter()
         (
             mesh,
-            kernelShapeDict.optionalSubDict(type + "Coeffs")
+            kernelShapeDict.optionalTypeDict(type)
         )
     );
 }

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,7 +37,7 @@ Foam::StandardWallInteraction<CloudType>::StandardWallInteraction
     PatchInteractionModel<CloudType>(dict, cloud, typeName),
     interactionType_
     (
-        this->wordToInteractionType(this->coeffDict().lookup("type"))
+        this->wordToInteractionType(this->typeDict().lookup("type"))
     ),
     e_(0),
     mu_(0),
@@ -52,7 +52,7 @@ Foam::StandardWallInteraction<CloudType>::StandardWallInteraction
         {
             FatalErrorInFunction
                 << "Unknown patch interaction type "
-                << this->coeffDict().template lookup<word>("type")
+                << this->typeDict().template lookup<word>("type")
                 << ". Valid types are:"
                 << PatchInteractionModel<CloudType>::interactionTypeNames_
                 << nl << exit(FatalError);
@@ -62,8 +62,8 @@ Foam::StandardWallInteraction<CloudType>::StandardWallInteraction
 
         case PatchInteractionModel<CloudType>::itRebound:
         {
-            e_ = this->coeffDict().template lookupOrDefault<scalar>("e", 1);
-            mu_ = this->coeffDict().template lookupOrDefault<scalar>("mu", 0);
+            e_ = this->typeDict().template lookupOrDefault<scalar>("e", 1);
+            mu_ = this->typeDict().template lookupOrDefault<scalar>("mu", 0);
 
             break;
         }

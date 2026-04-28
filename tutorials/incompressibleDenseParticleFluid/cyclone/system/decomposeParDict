@@ -24,7 +24,7 @@ libs            ("libzoltanDecomp.so");
 // distributor     parMetis;
 // libs            ("libparMetisDecomp.so");
 
-simpleCoeffs
+simple
 {
     n           (2 2 3);
 }

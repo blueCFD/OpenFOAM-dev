@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2019 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -56,7 +56,7 @@ pitchForkRing::pitchForkRing
     tetherPotential(name, tetherPotentialProperties),
     pitchForkRingCoeffs_
     (
-        tetherPotentialProperties.subDict(typeName + "Coeffs")
+        tetherPotentialProperties.typeDict(typeName)
     ),
     mu_(pitchForkRingCoeffs_.template lookup<scalar>("mu")),
     alpha_(pitchForkRingCoeffs_.template lookup<scalar>("alpha")),
@@ -99,7 +99,7 @@ bool pitchForkRing::read(const dictionary& tetherPotentialProperties)
     tetherPotential::read(tetherPotentialProperties);
 
     pitchForkRingCoeffs_ =
-        tetherPotentialProperties.subDict(typeName + "Coeffs");
+        tetherPotentialProperties.typeDict(typeName);
 
     pitchForkRingCoeffs_.lookup("mu") >> mu_;
     pitchForkRingCoeffs_.lookup("alpha") >> alpha_;

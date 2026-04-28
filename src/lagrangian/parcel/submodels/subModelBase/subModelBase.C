@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -51,8 +51,7 @@ Foam::subModelBase::subModelBase
     dictionary& properties,
     const dictionary& dict,
     const word& baseName,
-    const word& modelType,
-    const word& dictExt
+    const word& modelType
 )
 :
     modelName_(word::null),
@@ -60,7 +59,7 @@ Foam::subModelBase::subModelBase
     dict_(dict),
     baseName_(baseName),
     modelType_(modelType),
-    coeffDict_(dict.optionalSubDict(modelType + dictExt))
+    coeffDict_(dict.optionalTypeDict(modelType))
 {}
 
 
@@ -125,7 +124,7 @@ const Foam::word& Foam::subModelBase::modelType() const
 }
 
 
-const Foam::dictionary& Foam::subModelBase::coeffDict() const
+const Foam::dictionary& Foam::subModelBase::typeDict() const
 {
     return coeffDict_;
 }

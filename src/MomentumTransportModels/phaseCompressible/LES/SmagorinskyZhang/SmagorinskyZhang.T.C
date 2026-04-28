@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -61,7 +61,7 @@ SmagorinskyZhang<BasicMomentumTransportModel>::SmagorinskyZhang
 
     gasTurbulencePtr_(nullptr),
 
-    Cmub_("Cmub", this->coeffDict(), 0.6)
+    Cmub_("Cmub", this->typeDict(), 0.6)
 {}
 
 
@@ -72,7 +72,7 @@ bool SmagorinskyZhang<BasicMomentumTransportModel>::read()
 {
     if (Smagorinsky<BasicMomentumTransportModel>::read())
     {
-        Cmub_.readIfPresent(this->coeffDict());
+        Cmub_.readIfPresent(this->typeDict());
 
         return true;
     }

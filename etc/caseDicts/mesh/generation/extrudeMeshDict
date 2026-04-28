@@ -45,19 +45,19 @@ linearRadial:    linear extrusion in radial direction
 sphericalRadial: spherical radial extrusion with radii function
 */
 
-planeCoeffs
+plane
 {
     thickness    0.5;
 }
 
-linearNormalCoeffs
+linearNormal
 {
     nLayers      10;
     expansionRatio 1.0;
     thickness    0.5;
 }
 
-linearDirectionCoeffs
+linearDirection
 {
     nLayers      10;
     expansionRatio 1.0;
@@ -65,14 +65,14 @@ linearDirectionCoeffs
     thickness    0.5;
 }
 
-wedgeCoeffs
+wedge
 {
     axisPt       (0 0 0);
     axis         (1 0 0);
     angle        5;
 }
 
-sectorCoeffs
+sector
 {
     nLayers      10;
     expansionRatio 1.0;
@@ -81,7 +81,7 @@ sectorCoeffs
     angle        360;
 }
 
-linearRadialCoeffs
+linearRadial
 {
     nLayers      10;
     expansionRatio 1.0;
@@ -89,7 +89,7 @@ linearRadialCoeffs
     Rsurface     0.1;
 }
 
-sphericalRadialCoeffs
+sphericalRadial
 {
     nLayers      10;
     expansionRatio 1.0;

@@ -133,14 +133,14 @@ Foam::PatchPostProcessing<CloudType>::PatchPostProcessing
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
     maxStoredParcels_
     (
-        this->coeffDict().template lookup<scalar>("maxStoredParcels")
+        this->typeDict().template lookup<scalar>("maxStoredParcels")
     ),
     patchIndices_(),
     times_(),
     patchData_()
 {
     const wordList allPatchNames = owner.mesh().poly().boundary().names();
-    wordList patchName(this->coeffDict().lookup("patches"));
+    wordList patchName(this->typeDict().lookup("patches"));
 
     labelHashSet uniquePatchIDs;
     forAllReverse(patchName, i)

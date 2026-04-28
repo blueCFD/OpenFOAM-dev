@@ -19,7 +19,7 @@ numberOfSubdomains  8;
 method              scotch;
 //method              hierarchical;
 
-hierarchicalCoeffs
+hierarchical
 {
     n               (4 2 1);
     order           xyz;

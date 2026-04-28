@@ -366,7 +366,7 @@ private:
     // Private Member Functions
 
         //- Get the coefficient dictionary
-        const dictionary& coeffDict() const;
+        const dictionary& typeDict() const;
 
         //- Do pre-calculations relating to coalescence and breakup
         void precomputeCoalescenceAndBreakup();

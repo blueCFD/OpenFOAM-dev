@@ -52,7 +52,7 @@ Foam::kineticTheoryModels::radialModel::New
     }
 
     const dictionary& coeffDict =
-        dict.optionalSubDict(radialModelType + "Coeffs");
+        dict.optionalTypeDict(radialModelType);
 
     return autoPtr<radialModel>(cstrIter()(coeffDict));
 }

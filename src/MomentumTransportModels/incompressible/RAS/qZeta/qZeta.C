@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -118,11 +118,11 @@ qZeta::qZeta
         viscosity
     ),
 
-    Cmu_("Cmu", coeffDict(), 0.09),
-    C1_("C1", coeffDict(), 1.44),
-    C2_("C2", coeffDict(), 1.92),
-    sigmaZeta_("sigmaZeta", coeffDict(), 1.3),
-    anisotropic_(coeffDict().lookupOrDefault<Switch>("anisotropic", false)),
+    Cmu_("Cmu", typeDict(), 0.09),
+    C1_("C1", typeDict(), 1.44),
+    C2_("C2", typeDict(), 1.92),
+    sigmaZeta_("sigmaZeta", typeDict(), 1.3),
+    anisotropic_(typeDict().lookupOrDefault<Switch>("anisotropic", false)),
     qMin_("qMin", sqrt(kMin_)),
 
     k_
@@ -189,11 +189,11 @@ bool qZeta::read()
 {
     if (eddyViscosity<incompressible::RASModel>::read())
     {
-        Cmu_.readIfPresent(coeffDict());
-        C1_.readIfPresent(coeffDict());
-        C2_.readIfPresent(coeffDict());
-        sigmaZeta_.readIfPresent(coeffDict());
-        anisotropic_.readIfPresent("anisotropic", coeffDict());
+        Cmu_.readIfPresent(typeDict());
+        C1_.readIfPresent(typeDict());
+        C2_.readIfPresent(typeDict());
+        sigmaZeta_.readIfPresent(typeDict());
+        anisotropic_.readIfPresent("anisotropic", typeDict());
 
         qMin_.readIfPresent(*this);
 

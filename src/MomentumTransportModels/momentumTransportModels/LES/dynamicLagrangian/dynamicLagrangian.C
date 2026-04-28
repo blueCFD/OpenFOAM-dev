@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -104,10 +104,10 @@ dynamicLagrangian<BasicMomentumTransportModel>::dynamicLagrangian
         ),
         this->mesh_
     ),
-    theta_("theta", this->coeffDict(), 1.5),
+    theta_("theta", this->typeDict(), 1.5),
 
     simpleFilter_(U.mesh()),
-    filterPtr_(LESfilter::New(U.mesh(), this->coeffDict())),
+    filterPtr_(LESfilter::New(U.mesh(), this->typeDict())),
     filter_(filterPtr_()),
 
     flm0_("flm0", flm_.dimensions(), 0.0),
@@ -122,8 +122,8 @@ bool dynamicLagrangian<BasicMomentumTransportModel>::read()
 {
     if (LESeddyViscosity<BasicMomentumTransportModel>::read())
     {
-        filter_.read(this->coeffDict());
-        theta_.readIfPresent(this->coeffDict());
+        filter_.read(this->typeDict());
+        theta_.readIfPresent(this->typeDict());
 
         return true;
     }

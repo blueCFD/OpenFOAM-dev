@@ -59,10 +59,10 @@ Foam::PackingModels::Implicit<CloudType>::Implicit
     ),
     phiCorrect_(nullptr),
     uCorrect_(nullptr),
-    applyLimiting_(this->coeffDict().lookup("applyLimiting")),
-    applyGravity_(this->coeffDict().lookup("applyGravity")),
-    alphaMin_(this->coeffDict().template lookup<scalar>("alphaMin")),
-    rhoMin_(this->coeffDict().template lookup<scalar>("rhoMin"))
+    applyLimiting_(this->typeDict().lookup("applyLimiting")),
+    applyGravity_(this->typeDict().lookup("applyGravity")),
+    alphaMin_(this->typeDict().template lookup<scalar>("alphaMin")),
+    rhoMin_(this->typeDict().template lookup<scalar>("rhoMin"))
 {
     alpha_ = this->owner().alpha();
 }

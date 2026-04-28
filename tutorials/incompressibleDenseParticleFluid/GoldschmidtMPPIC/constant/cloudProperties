@@ -85,7 +85,7 @@ subModels
 
     patchInteractionModel localInteraction;
 
-    localInteractionCoeffs
+    localInteraction
     {
         patches
         (
