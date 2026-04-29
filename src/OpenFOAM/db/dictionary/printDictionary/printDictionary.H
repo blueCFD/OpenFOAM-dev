@@ -39,6 +39,7 @@ SourceFiles
 #include "HashTable.T.H"
 #include "tmpNrc.H"
 #include "dictionary.H"
+#include "ListOps.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -62,7 +63,11 @@ private:
 
         //- Set the default dictionary pointers for the sub-dictionaries
         //  of the given dictionary
-        static void setSubDefaults(const dictionary& dict);
+        static void setSubDefaults
+        (
+            const dictionary& dict,
+            dictionary& defaults
+        );
 
         //- Print the given dictionary and its accumulated defaults
         static void print(const dictionary& dict, const dictionary& defaults);
@@ -80,26 +85,49 @@ private:
         static HashTable<tmpNrc<dictionary>, const dictionary*, Hash<void*>>
             dictPtrToDefaults_;
 
-        //- Pointer to the dictionary to be printed
-        const dictionary* dictPtr_;
+        //- The dictionaries to be printed
+        UPtrList<const dictionary> dicts_;
 
-        //- Name of the dictionary to be printed
-        const fileName dictName_;
+        //- Names of the dictionaries to be printed
+        List<fileName> dictNames_;
+
+
+    // Private Constructors
+
+        //- Construct null
+        printDictionary();
+
+
+    // Private Member Functions
+
+        //- Add a dictionary to the list to be printed
+        void add(const dictionary& dict);
+
+        //- Add a dictionary name to the list to be printed
+        void add(const fileName& dictName);
 
 
 public:
 
     // Constructors
 
-        //- Construct for model sub-dictionary. Use this for things like
-        //  fvModels which read a sub-dictionary, and do not own or construct
-        //  their own IOdictionary.
-        printDictionary(const dictionary& dict);
+        //- Construct adding a dictionary to the list to be printed
+        template<class ... Args>
+        printDictionary(const dictionary& dict, const Args& ... args)
+        :
+            printDictionary(args ...)
+        {
+            add(dict);
+        }
 
-        //- Construct for a dictionary name. Use this for classes like
-        //  momentumTransportModels which do own and construct their
-        //  IOdictionary as part of their construction.
-        printDictionary(const fileName& dictName);
+        //- Construct adding a dictionary name to the list to be printed
+        template<class ... Args>
+        printDictionary(const fileName& dictName, const Args& ... args)
+        :
+            printDictionary(args ...)
+        {
+            add(dictName);
+        }
 
 
     //- Destructor
@@ -121,7 +149,7 @@ public:
         }
 
         //- Return if a dictionary is marked to be printed
-        static bool prints(const word& dictName)
+        static bool prints(const fileName& dictName)
         {
             return dictNameToDictPtrs_.found(dictName);
         }

@@ -77,14 +77,9 @@ Foam::ThermophysicalTransportModel<MomentumTransportModel, ThermoModel>::New
             << exit(FatalError);
     }
 
-    Info<< incrIndent;
+    printDictionary print(momentumTransport.path(true)/typeName);
 
-    autoPtr<ThermophysicalTransportModel> modelPtr =
-        cstrIter()(momentumTransport, thermo);
-
-    Info<< decrIndent;
-
-    return modelPtr;
+    return cstrIter()(momentumTransport, thermo);
 }
 
 

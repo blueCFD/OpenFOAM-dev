@@ -20,7 +20,7 @@ laminar
 {
     model               Maxwell; // Giesekus; // PTT;
 
-    MaxwellCoeffs
+    Maxwell
     {
         nuM             0.002;
 
@@ -40,7 +40,7 @@ laminar
         // );
     }
 
-    GiesekusCoeffs
+    Giesekus
     {
         nuM             0.002;
 
@@ -63,7 +63,7 @@ laminar
         // );
     }
 
-    PTTCoeffs
+    PTT
     {
         nuM             0.002;
 

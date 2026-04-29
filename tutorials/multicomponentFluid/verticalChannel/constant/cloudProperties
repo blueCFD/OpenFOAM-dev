@@ -129,17 +129,17 @@ subModels
 
     radiation       off;
 
-    standardWallInteractionCoeffs
+    standardWallInteraction
     {
         type            rebound;
     }
 
-    RanzMarshallCoeffs
+    RanzMarshall
     {
         BirdCorrection  off;
     }
 
-    singlePhaseMixtureCoeffs
+    singlePhaseMixture
     {
         phases
         (
@@ -150,7 +150,7 @@ subModels
         );
     }
 
-    liquidEvaporationCoeffs
+    liquidEvaporation
     {
         enthalpyTransfer enthalpyDifference;
 

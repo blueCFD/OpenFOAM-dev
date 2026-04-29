@@ -28,24 +28,18 @@ License
 // * * * * * * * * * * * * * * * * Selector  * * * * * * * * * * * * * * * * //
 
 Foam::autoPtr<Foam::saturationTemperatureModel>
-Foam::saturationTemperatureModel::New(const dictionary& dict)
-{
-    return New(NullObjectRef<word>(), dict);
-}
-
-
-Foam::autoPtr<Foam::saturationTemperatureModel>
 Foam::saturationTemperatureModel::New
 (
     const word& name,
     const dictionary& dict
 )
 {
-    if (!isNull(name) && !dict.isDict(name))
-    {
-        Istream& is(dict.lookup(name, false));
+    const bool isDict = dict.isDict(name);
 
-        token firstToken(is);
+    if (!isDict)
+    {
+        token firstToken(dict.lookup(name, false));
+
         if (!firstToken.isWord())
         {
             return autoPtr<saturationTemperatureModel>
@@ -58,18 +52,12 @@ Foam::saturationTemperatureModel::New
         }
     }
 
-    const bool isType = isNull(name);
-    const bool isDict = !isType && dict.isDict(name);
+    const dictionary& modelDict = dict.subDict(name);
 
-    const word modelTypeName =
-        isType ? dict.lookup<word>("type")
-      : isDict ? dict.subDict(name).lookup<word>("type")
-      : dict.lookup<word>(name);
+    const word modelTypeName = modelDict.lookup<word>("type");
 
-    const dictionary& coeffDict =
-        isType ? dict
-      : isDict ? dict.subDict(name)
-      : dict.optionalSubDict(name + "Coeffs");
+    const dictionary& modelCoeffsDict =
+        modelDict.optionalTypeDict(modelTypeName);
 
     Info<< indentOrNl << "Selecting " << typeName
         << " " << modelTypeName << endl;
@@ -80,16 +68,16 @@ Foam::saturationTemperatureModel::New
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
         FatalIOErrorInFunction(dict)
-            << "Unknown " << typeName << " << type "
+            << "Unknown " << typeName << " type "
             << modelTypeName << endl << endl
             << "Valid " << typeName << " types are : " << endl
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
     }
 
-    printDictionary print(coeffDict);
+    printDictionary print(modelDict, modelCoeffsDict);
 
-    return cstrIter()(coeffDict);
+    return cstrIter()(modelCoeffsDict);
 }
 
 

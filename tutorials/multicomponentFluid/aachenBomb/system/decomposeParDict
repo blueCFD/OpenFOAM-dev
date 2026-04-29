@@ -29,7 +29,7 @@ simple
     n           (2 2 3);
 }
 
-zoltanCoeffs
+zoltan
 {
     lb_method   rcb;
 }

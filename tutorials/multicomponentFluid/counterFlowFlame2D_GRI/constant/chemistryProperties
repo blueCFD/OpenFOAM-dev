@@ -24,7 +24,7 @@ cpuLoad         on;
 
 initialChemicalTimeStep 1e-07;
 
-odeCoeffs
+ode
 {
     solver          seulex;
     absTol          1e-8;

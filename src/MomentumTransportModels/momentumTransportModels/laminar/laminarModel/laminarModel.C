@@ -156,7 +156,18 @@ template<class BasicMomentumTransportModel>
 const Foam::dictionary&
 Foam::laminarModel<BasicMomentumTransportModel>::typeDict() const
 {
-    return this->laminarDict().optionalTypeDict(type());
+    return typeDict(this->type());
+}
+
+
+template<class BasicMomentumTransportModel>
+const Foam::dictionary&
+Foam::laminarModel<BasicMomentumTransportModel>::typeDict
+(
+    const word& type
+) const
+{
+    return this->laminarDict().optionalTypeDict(type);
 }
 
 

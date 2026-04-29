@@ -117,17 +117,17 @@ ShihQuadraticKE::ShihQuadraticKE
         viscosity
     ),
 
-    Ceps1_("Ceps1", typeDict(), 1.44),
-    Ceps2_("Ceps2", typeDict(), 1.92),
-    sigmak_("sigmak", typeDict(), 1.0),
-    sigmaEps_("sigmaEps", typeDict(), 1.3),
-    Cmu_("Cmu", typeDict(), 0.09),
-    Cmu1_("Cmu1", typeDict(), 1.25),
-    Cmu2_("Cmu2", typeDict(), 0.9),
-    Cbeta_("Cbeta", typeDict(), 1000.0),
-    Cbeta1_("Cbeta1", typeDict(), 3.0),
-    Cbeta2_("Cbeta2", typeDict(), 15.0),
-    Cbeta3_("Cbeta3", typeDict(), -19.0),
+    Ceps1_("Ceps1", typeDict(type), 1.44),
+    Ceps2_("Ceps2", typeDict(type), 1.92),
+    sigmak_("sigmak", typeDict(type), 1.0),
+    sigmaEps_("sigmaEps", typeDict(type), 1.3),
+    Cmu_("Cmu", typeDict(type), 0.09),
+    Cmu1_("Cmu1", typeDict(type), 1.25),
+    Cmu2_("Cmu2", typeDict(type), 0.9),
+    Cbeta_("Cbeta", typeDict(type), 1000.0),
+    Cbeta1_("Cbeta1", typeDict(type), 3.0),
+    Cbeta2_("Cbeta2", typeDict(type), 15.0),
+    Cbeta3_("Cbeta3", typeDict(type), -19.0),
 
     k_
     (

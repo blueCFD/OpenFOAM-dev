@@ -235,9 +235,9 @@ SpalartAllmarasIDDES<BasicMomentumTransportModel>::SpalartAllmarasIDDES
         phi,
         viscosity
     ),
-    fwStar_("fwStar", this->typeDict(), 0.424),
-    cl_("cl", this->typeDict(), 3.55),
-    ct_("ct", this->typeDict(), 1.63),
+    fwStar_("fwStar", this->typeDict(type), 0.424),
+    cl_("cl", this->typeDict(type), 3.55),
+    ct_("ct", this->typeDict(type), 1.63),
     IDDESDelta_(refCast<IDDESDelta>(this->delta_()))
 {}
 

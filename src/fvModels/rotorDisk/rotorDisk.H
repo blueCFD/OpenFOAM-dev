@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -46,7 +46,7 @@ Usage
         trimModel       fixed;      // Trim model; fixed or targetCoeff
         // see fixedTrim.H or targetCoeffTrim.H for documentation
 
-        flapCoeffs
+        flap
         {
             beta0           0;  // Coning angle [deg]
             beta1c          0;  // Lateral flapping coeff (cos coeff)

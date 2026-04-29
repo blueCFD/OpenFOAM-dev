@@ -124,12 +124,12 @@ subModels
         );
     }
 
-    RanzMarshallCoeffs
+    RanzMarshall
     {
         BirdCorrection  true;
     }
 
-    singlePhaseMixtureCoeffs
+    singlePhaseMixture
     {
         phases
         (
@@ -140,7 +140,7 @@ subModels
         );
     }
 
-    liquidEvaporationCoeffs
+    liquidEvaporation
     {
         enthalpyTransfer enthalpyDifference;
 

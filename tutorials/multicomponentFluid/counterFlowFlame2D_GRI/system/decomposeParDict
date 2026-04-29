@@ -30,7 +30,7 @@ hierarchical
     order       xyz;
 }
 
-zoltanCoeffs
+zoltan
 {
     lb_method   rcb;
 }

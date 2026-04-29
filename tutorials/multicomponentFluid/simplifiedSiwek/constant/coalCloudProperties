@@ -119,19 +119,19 @@ subModels
 
     radiation       on;
 
-    standardWallInteractionCoeffs
+    standardWallInteraction
     {
         type            rebound;
         e               1;
         mu              0;
     }
 
-    RanzMarshallCoeffs
+    RanzMarshall
     {
         BirdCorrection  true;
     }
 
-    singleMixtureFractionCoeffs
+    singleMixtureFraction
     {
         phases
         (
@@ -156,7 +156,7 @@ subModels
         YSolidTot0      0.763;
     }
 
-    liquidEvaporationCoeffs
+    liquidEvaporation
     {
         enthalpyTransfer enthalpyDifference;
 
@@ -166,7 +166,7 @@ subModels
         );
     }
 
-    constantRateDevolatilisationCoeffs
+    constantRateDevolatilisation
     {
         volatileData
         (
@@ -177,7 +177,7 @@ subModels
         residualCoeff   0.001;
     }
 
-    COxidationKineticDiffusionLimitedRateCoeffs
+    COxidationKineticDiffusionLimitedRate
     {
         Sb              1;
         C1              5.0E-12;

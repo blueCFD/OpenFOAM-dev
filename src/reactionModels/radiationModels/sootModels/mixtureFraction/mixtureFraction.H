@@ -43,7 +43,7 @@ Description
 
     sootModel mixtureFraction;
 
-    mixtureFractionCoeffs
+    mixtureFraction
     {
         nuSoot              0.015;
         Wsoot               12;

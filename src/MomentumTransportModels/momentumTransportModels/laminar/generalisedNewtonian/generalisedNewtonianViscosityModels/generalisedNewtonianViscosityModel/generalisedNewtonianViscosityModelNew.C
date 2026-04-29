@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "generalisedNewtonianViscosityModel.H"
-#include "dictionary.H"
+#include "printDictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,16 +54,13 @@ Foam::laminarModels::generalisedNewtonianViscosityModel::New
             << exit(FatalIOError);
     }
 
-    Info<< incrIndent;
-
-    autoPtr<generalisedNewtonianViscosityModel> modelPtr
+    printDictionary print
     (
-        cstrIter()(viscosityProperties, viscosity, U)
+        viscosityProperties,
+        viscosityProperties.optionalTypeDict(modelType)
     );
 
-    Info<< decrIndent;
-
-    return modelPtr;
+    return cstrIter()(viscosityProperties, viscosity, U);
 }
 
 

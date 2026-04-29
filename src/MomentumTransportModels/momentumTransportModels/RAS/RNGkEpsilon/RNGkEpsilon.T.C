@@ -111,14 +111,14 @@ RNGkEpsilon<BasicMomentumTransportModel>::RNGkEpsilon
         viscosity
     ),
 
-    Cmu_("Cmu", this->typeDict(), 0.0845),
-    C1_("C1", this->typeDict(), 1.42),
-    C2_("C2", this->typeDict(), 1.68),
-    C3_("C3", this->typeDict(), 0),
-    sigmak_("sigmak", this->typeDict(), 0.71942),
-    sigmaEps_("sigmaEps", this->typeDict(), 0.71942),
-    eta0_("eta0", this->typeDict(), 4.38),
-    beta_("beta", this->typeDict(), 0.012),
+    Cmu_("Cmu", this->typeDict(type), 0.0845),
+    C1_("C1", this->typeDict(type), 1.42),
+    C2_("C2", this->typeDict(type), 1.68),
+    C3_("C3", this->typeDict(type), 0),
+    sigmak_("sigmak", this->typeDict(type), 0.71942),
+    sigmaEps_("sigmaEps", this->typeDict(type), 0.71942),
+    eta0_("eta0", this->typeDict(type), 4.38),
+    beta_("beta", this->typeDict(type), 0.012),
 
     k_
     (

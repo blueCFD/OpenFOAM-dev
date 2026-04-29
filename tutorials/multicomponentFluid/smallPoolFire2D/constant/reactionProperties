@@ -17,13 +17,13 @@ FoamFile
 reactionModel  infinitelyFastChemistry;
 //reactionModel  FSD;
 
-infinitelyFastChemistryCoeffs
+infinitelyFastChemistry
 {
     semiImplicit no;
     C           5.0;
 }
 
-FSDCoeffs
+FSD
 {
     Cv          0.1;
     ftVarMin    1e-2;
@@ -34,7 +34,7 @@ FSDCoeffs
 
     semiImplicit        no;
 
-    relaxationCoeffs
+    relaxation
     {
         C                     2.0;
         alpha                 1.0;

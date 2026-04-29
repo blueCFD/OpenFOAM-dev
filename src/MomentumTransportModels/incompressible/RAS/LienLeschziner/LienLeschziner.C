@@ -127,15 +127,15 @@ LienLeschziner::LienLeschziner
         viscosity
     ),
 
-    Ceps1_("Ceps1", typeDict(), 1.44),
-    Ceps2_("Ceps2", typeDict(), 1.92),
-    sigmak_("sigmak", typeDict(), 1.0),
-    sigmaEps_("sigmaEps", typeDict(), 1.3),
-    Cmu_("Cmu", typeDict(), 0.09),
-    kappa_("kappa", typeDict(), 0.41),
-    Anu_("Anu", typeDict(), 0.016),
-    Aeps_("Aeps", typeDict(), 0.263),
-    AE_("AE", typeDict(), 0.00222),
+    Ceps1_("Ceps1", typeDict(type), 1.44),
+    Ceps2_("Ceps2", typeDict(type), 1.92),
+    sigmak_("sigmak", typeDict(type), 1.0),
+    sigmaEps_("sigmaEps", typeDict(type), 1.3),
+    Cmu_("Cmu", typeDict(type), 0.09),
+    kappa_("kappa", typeDict(type), 0.41),
+    Anu_("Anu", typeDict(type), 0.016),
+    Aeps_("Aeps", typeDict(type), 0.263),
+    AE_("AE", typeDict(type), 0.00222),
 
     k_
     (

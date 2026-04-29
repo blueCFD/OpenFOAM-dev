@@ -41,7 +41,7 @@ Usage
     \verbatim
         packingDispersionModel Usher;
 
-        UsherCoeffs
+        Usher
         {
             alphaGel        0.1;
             alphap          0.8;
@@ -59,7 +59,7 @@ Usage
     \verbatim
         packingDispersionModel Usher;
 
-        UsherCoeffs
+        Usher
         {
             alphaGel        0.025;
             alphap          0.09;

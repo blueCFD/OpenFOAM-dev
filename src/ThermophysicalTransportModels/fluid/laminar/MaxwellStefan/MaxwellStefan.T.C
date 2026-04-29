@@ -409,7 +409,7 @@ MaxwellStefan<BasicThermophysicalTransportModel>::MaxwellStefan
 
     DTFuncs_
     (
-        this->typeDict().found("DT")
+        this->typeDict(type).found("DT")
       ? this->thermo().species().size()
       : 0
     ),

@@ -100,7 +100,11 @@ Foam::laminarThermophysicalTransportModel
                 << exit(FatalError);
         }
 
-        printDictionary print(laminarDict.name());
+        printDictionary print
+        (
+            laminarDict.name(),
+            laminarDict.optionalTypeDict(modelType).name()
+        );
 
         return autoPtr<laminarThermophysicalTransportModel>
         (
@@ -113,8 +117,6 @@ Foam::laminarThermophysicalTransportModel
             << "Selecting default laminar thermophysical transport model "
             << laminarThermophysicalTransportModels::unityLewisFourier<
                BasicThermophysicalTransportModel>::typeName << endl;
-
-        printDictionary print(header.name());
 
         return autoPtr<laminarThermophysicalTransportModel>
         (
@@ -135,7 +137,17 @@ const Foam::dictionary& Foam::laminarThermophysicalTransportModel
     BasicThermophysicalTransportModel
 >::typeDict() const
 {
-    return this->subOrEmptyDict("laminar").optionalTypeDict(type());
+    return typeDict(this->type());
+}
+
+
+template<class BasicThermophysicalTransportModel>
+const Foam::dictionary& Foam::laminarThermophysicalTransportModel
+<
+    BasicThermophysicalTransportModel
+>::typeDict(const word& type) const
+{
+    return this->subOrEmptyDict("laminar").optionalTypeDict(type);
 }
 
 

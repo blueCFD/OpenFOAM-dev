@@ -20,7 +20,7 @@ RAS
 {
     model           kEpsilon;
 
-    kEpsilonCoeffs
+    kEpsilon
     {
         Prt 0.85;
     }

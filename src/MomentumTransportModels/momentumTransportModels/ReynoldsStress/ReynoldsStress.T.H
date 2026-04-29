@@ -100,7 +100,7 @@ public:
         //- Construct from components
         ReynoldsStress
         (
-            const word& modelName,
+            const word& type,
             const alphaField& alpha,
             const rhoField& rho,
             const volVectorField& U,

@@ -31,7 +31,7 @@ Description
 Usage
     Example usage, here employing the Darcy-Forchheimer model:
     \verbatim
-    interRegionPorosityForceCoeffs
+    interRegionPorosityForce
     {
         type            DarcyForchheimer;
 

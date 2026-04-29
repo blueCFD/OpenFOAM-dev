@@ -38,7 +38,7 @@ constant
     E               0;
 }
 
-greyMeanReactionCoeffs
+greyMeanReaction
 {
     lookUpTableFileName     none;
 
@@ -186,7 +186,7 @@ scatterModel    none;
 
 sootModel       mixtureFraction;
 
-mixtureFractionCoeffs
+mixtureFraction
 {
     // CH4 + 2O2 + 7.5N2 = CO2 + 2H2O + 7.5N2 + nuSoot soot
     nuSoot              0.055;

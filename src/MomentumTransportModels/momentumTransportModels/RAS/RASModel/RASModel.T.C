@@ -57,10 +57,10 @@ Foam::RASModel<BasicMomentumTransportModel>::RASModel
 
     viscosityModel_
     (
-        typeDict().found("viscosityModel")
+        typeDict(type).found("viscosityModel")
       ? laminarModels::generalisedNewtonianViscosityModel::New
         (
-            typeDict(),
+            typeDict(type),
             viscosity,
             U
         )
@@ -68,7 +68,7 @@ Foam::RASModel<BasicMomentumTransportModel>::RASModel
         (
             new laminarModels::generalisedNewtonianViscosityModels::Newtonian
             (
-                typeDict(),
+                typeDict(type),
                 viscosity,
                 U
             )
@@ -129,7 +129,12 @@ Foam::RASModel<BasicMomentumTransportModel>::New
             << exit(FatalError);
     }
 
-    printDictionary print(RASdict.name());
+    printDictionary print
+    (
+        RASdict.name(),
+        RASdict.optionalTypeDict(modelType).name()
+    );
+
     return cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
 }
 
@@ -148,7 +153,15 @@ template<class BasicMomentumTransportModel>
 const Foam::dictionary&
 Foam::RASModel<BasicMomentumTransportModel>::typeDict() const
 {
-    return this->RASDict().optionalTypeDict(type());
+    return typeDict(this->type());
+}
+
+
+template<class BasicMomentumTransportModel>
+const Foam::dictionary&
+Foam::RASModel<BasicMomentumTransportModel>::typeDict(const word& type) const
+{
+    return this->RASDict().optionalTypeDict(type);
 }
 
 

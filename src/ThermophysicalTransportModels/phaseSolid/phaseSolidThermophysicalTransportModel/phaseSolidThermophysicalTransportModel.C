@@ -124,7 +124,14 @@ Foam::phaseSolidThermophysicalTransportModel::New
 const Foam::dictionary&
 Foam::phaseSolidThermophysicalTransportModel::typeDict() const
 {
-    return optionalTypeDict(type());
+    return typeDict(type());
+}
+
+
+const Foam::dictionary&
+Foam::phaseSolidThermophysicalTransportModel::typeDict(const word& type) const
+{
+    return optionalTypeDict(type);
 }
 
 

@@ -120,7 +120,8 @@ public:
         eddyDiffusivity
         (
             const momentumTransportModel& momentumTransport,
-            const thermoModel& thermo
+            const thermoModel& thermo,
+            const word& type = typeName
         );
 
 

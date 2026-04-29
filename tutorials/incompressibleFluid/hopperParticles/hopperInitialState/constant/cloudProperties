@@ -78,7 +78,7 @@ subModels
 
     collisionModel pairCollision;
 
-    pairCollisionCoeffs
+    pairCollision
     {
         // Maximum possible particle diameter expected at any time
         maxInteractionDistance  0.006;
@@ -87,7 +87,7 @@ subModels
 
         pairModel pairSpringSliderDashpot;
 
-        pairSpringSliderDashpotCoeffs
+        pairSpringSliderDashpot
         {
             useEquivalentSize   no;
             alpha               0.12;
@@ -99,7 +99,7 @@ subModels
 
         wallModel    wallLocalSpringSliderDashpot;
 
-        wallLocalSpringSliderDashpotCoeffs
+        wallLocalSpringSliderDashpot
         {
             useEquivalentSize no;
             collisionResolutionSteps 12;

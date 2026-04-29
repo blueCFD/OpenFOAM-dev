@@ -241,17 +241,17 @@ SpalartAllmarasDES<BasicMomentumTransportModel>::SpalartAllmarasDES
         viscosity
     ),
 
-    sigmaNut_("sigmaNut", this->typeDict(), 0.66666),
-    kappa_("kappa", this->typeDict(), 0.41),
-    Cb1_("Cb1", this->typeDict(), 0.1355),
-    Cb2_("Cb2", this->typeDict(), 0.622),
+    sigmaNut_("sigmaNut", this->typeDict(type), 0.66666),
+    kappa_("kappa", this->typeDict(type), 0.41),
+    Cb1_("Cb1", this->typeDict(type), 0.1355),
+    Cb2_("Cb2", this->typeDict(type), 0.622),
     Cw1_(Cb1_/sqr(kappa_) + (1.0 + Cb2_)/sigmaNut_),
-    Cw2_("Cw2", this->typeDict(), 0.3),
-    Cw3_("Cw3", this->typeDict(), 2.0),
-    Cv1_("Cv1", this->typeDict(), 7.1),
-    Cs_("Cs", this->typeDict(), 0.3),
-    CDES_("CDES", this->typeDict(), 0.65),
-    ck_("ck", this->typeDict(), 0.07),
+    Cw2_("Cw2", this->typeDict(type), 0.3),
+    Cw3_("Cw3", this->typeDict(type), 2.0),
+    Cv1_("Cv1", this->typeDict(type), 7.1),
+    Cs_("Cs", this->typeDict(type), 0.3),
+    CDES_("CDES", this->typeDict(type), 0.65),
+    ck_("ck", this->typeDict(type), 0.07),
 
     nuTilda_
     (

@@ -56,9 +56,9 @@ Usage
         normalVelocity
         {
             type            uniformFixedValue;
-            uniformValue    sine;
-            uniformValueCoeffs
+            uniformValue
             {
+                type      sine;
                 frequency 1;
                 amplitude table
                 (

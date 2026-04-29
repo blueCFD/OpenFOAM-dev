@@ -61,7 +61,7 @@ pair
         rCut            1.0e-9;
         rMin            0.1e-9;
         dr              1e-13;
-        lennardJonesCoeffs
+        lennardJones
         {
             sigma       3.154e-10;
             epsilon     1.07690722e-21;
@@ -76,7 +76,7 @@ pair
         rCut            1e-9;
         rMin            2e-11;
         dr              2e-12;
-        dampedCoulombCoeffs
+        dampedCoulomb
         {
             alpha       2e9;
         }
@@ -94,7 +94,7 @@ tether
     O
     {
         tetherPotential restrainedHarmonicSpring;
-        restrainedHarmonicSpringCoeffs
+        restrainedHarmonicSpring
         {
             springConstant  0.277;
             rR              1.2e-9;

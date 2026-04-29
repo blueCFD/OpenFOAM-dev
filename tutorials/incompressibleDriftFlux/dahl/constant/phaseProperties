@@ -18,7 +18,7 @@ phases (sludge water);
 
 relativeVelocityModel simple;
 
-"(simple|general)Coeffs"
+"simple|general"
 {
     Vc              2.241e-4;
     a               285.84;

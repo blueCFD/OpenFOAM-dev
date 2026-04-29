@@ -107,8 +107,8 @@ kOmegaSSTDES<BasicMomentumTransportModel>::kOmegaSSTDES
         viscosity
     ),
 
-    CDES_("CDES", this->typeDict(), 0.61),
-    FSST_(this->typeDict().lookupOrDefault("FSST", 2))
+    CDES_("CDES", this->typeDict(type), 0.61),
+    FSST_(this->typeDict(type).lookupOrDefault("FSST", 2))
 {}
 
 

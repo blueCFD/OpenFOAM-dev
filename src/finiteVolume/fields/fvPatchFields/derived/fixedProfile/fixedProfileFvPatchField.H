@@ -42,9 +42,9 @@ Usage
     <patchName>
     {
         type            fixedProfile;
-        profile         table;
-        profileCoeffs
+        profile
         {
+            type                table;
             file                "UProfile";
             format              csv;
             nHeaderLine         0;

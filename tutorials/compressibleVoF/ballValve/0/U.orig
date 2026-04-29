@@ -25,6 +25,7 @@ boundaryField
     inlet
     {
         type            pressureInletOutletVelocity;
+        value           uniform (6 0 0);
     }
     lowerOutlet
     {

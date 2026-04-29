@@ -38,7 +38,7 @@ Description
 
     The model coefficients are
     \verbatim
-        kOmegaSSTSASCoeffs
+        kOmegaSSTSAS
         {
             // Default SST coefficients
             alphaK1     0.85;

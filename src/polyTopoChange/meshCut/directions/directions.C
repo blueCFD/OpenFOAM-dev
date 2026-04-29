@@ -317,7 +317,7 @@ Foam::directions::directions
 
     if (coordSystem == "global")
     {
-        const dictionary& globalDict = dict.optionalSubDict("globalCoeffs");
+        const dictionary& globalDict = dict.optionalTypeDict("global");
 
         vector e1(globalDict.lookup("e1"));
         check2D(correct2DPtr, e1);
@@ -349,7 +349,7 @@ Foam::directions::directions
     }
     else if (coordSystem == "patchLocal")
     {
-        const dictionary& patchDict = dict.optionalSubDict("patchLocalCoeffs");
+        const dictionary& patchDict = dict.optionalTypeDict("patchLocal");
 
         const word patchName(patchDict.lookup("patch"));
 

@@ -159,11 +159,11 @@ realizableKE<BasicMomentumTransportModel>::realizableKE
         viscosity
     ),
 
-    A0_("A0", this->typeDict(), 4.0),
+    A0_("A0", this->typeDict(type), 4.0),
     C2_
-    ("C2", this->typeDict(), 1.9),
-    sigmak_("sigmak", this->typeDict(), 1.0),
-    sigmaEps_("sigmaEps", this->typeDict(), 1.2),
+    ("C2", this->typeDict(type), 1.9),
+    sigmak_("sigmak", this->typeDict(type), 1.0),
+    sigmaEps_("sigmaEps", this->typeDict(type), 1.2),
 
     k_
     (

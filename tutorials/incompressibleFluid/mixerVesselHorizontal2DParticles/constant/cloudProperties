@@ -88,7 +88,7 @@ subModels
 
     patchInteractionModel standardWallInteraction;
 
-    standardWallInteractionCoeffs
+    standardWallInteraction
     {
         type rebound;
         e    0.97;
@@ -101,7 +101,7 @@ subModels
 
     collisionModel pairCollision;
 
-    pairCollisionCoeffs
+    pairCollision
     {
         maxInteractionDistance  0.0025;
 
@@ -109,7 +109,7 @@ subModels
 
         pairModel pairSpringSliderDashpot;
 
-        pairSpringSliderDashpotCoeffs
+        pairSpringSliderDashpot
         {
             useEquivalentSize   no;
             alpha               0.02;
@@ -121,7 +121,7 @@ subModels
 
         wallModel wallSpringSliderDashpot;
 
-        wallSpringSliderDashpotCoeffs
+        wallSpringSliderDashpot
         {
             useEquivalentSize no;
             collisionResolutionSteps 12;

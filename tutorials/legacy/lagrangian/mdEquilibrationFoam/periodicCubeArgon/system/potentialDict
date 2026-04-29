@@ -56,7 +56,7 @@ pair
         rCut            1.0e-9;
         rMin            0.15e-9;
         dr              5e-14;
-        maitlandSmithCoeffs
+        maitlandSmith
         {
             m           13.0;
             gamma       7.5;
@@ -64,7 +64,7 @@ pair
             epsilon     1.990108438e-21;
         }
         energyScalingFunction   doubleSigmoid;
-        doubleSigmoidCoeffs
+        doubleSigmoid
         {
             shift1      0.9e-9;
             scale1      0.3e11;
@@ -80,7 +80,7 @@ pair
         rCut            1.0e-9;
         rMin            0.1e-9;
         dr              2e-12;
-        dampedCoulombCoeffs
+        dampedCoulomb
         {
             alpha       2e9;
         }
@@ -97,7 +97,7 @@ tether
     O
     {
         tetherPotential restrainedHarmonicSpring;
-        restrainedHarmonicSpringCoeffs
+        restrainedHarmonicSpring
         {
             springConstant  0.277;
             rR              1.2e-9;

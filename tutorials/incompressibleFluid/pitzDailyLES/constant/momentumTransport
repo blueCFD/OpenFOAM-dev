@@ -25,7 +25,7 @@ LES
 
     delta           cubeRootVol;
 
-    dynamicKEqnCoeffs
+    dynamicKEqn
     {
         filter simple;
     }
@@ -35,7 +35,7 @@ LES
         deltaCoeff      1;
     }
 
-    PrandtlCoeffs
+    Prandtl
     {
         delta           cubeRootVol;
         cubeRootVol
@@ -57,7 +57,7 @@ LES
         Cdelta          0.158;
     }
 
-    vanDriestCoeffs
+    vanDriest
     {
         delta           cubeRootVol;
         cubeRootVol

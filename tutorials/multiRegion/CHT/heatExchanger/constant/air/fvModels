@@ -34,7 +34,7 @@ porosity
 
     libs            ("libinterRegionFvModels.so");
 
-    interRegionPorosityForceCoeffs
+    interRegionPorosityForce
     {
         nbrRegion       porous;
 

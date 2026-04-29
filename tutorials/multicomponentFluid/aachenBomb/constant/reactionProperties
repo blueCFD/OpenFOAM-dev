@@ -16,7 +16,7 @@ FoamFile
 
 reactionModel PaSR;
 
-PaSRCoeffs
+PaSR
 {
     Cmix                1.0;
 }

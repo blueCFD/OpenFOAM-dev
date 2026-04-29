@@ -107,11 +107,11 @@ kOmega<BasicMomentumTransportModel>::kOmega
         viscosity
     ),
 
-    betaStar_("betaStar", this->typeDict(), 0.09),
-    beta_("beta", this->typeDict(), 0.072),
-    gamma_("gamma", this->typeDict(), 0.52),
-    alphaK_("alphaK", this->typeDict(), 0.5),
-    alphaOmega_("alphaOmega", this->typeDict(), 0.5),
+    betaStar_("betaStar", this->typeDict(type), 0.09),
+    beta_("beta", this->typeDict(type), 0.072),
+    gamma_("gamma", this->typeDict(type), 0.52),
+    alphaK_("alphaK", this->typeDict(type), 0.5),
+    alphaOmega_("alphaOmega", this->typeDict(type), 0.5),
 
     k_
     (

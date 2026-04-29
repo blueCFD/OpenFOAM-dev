@@ -166,6 +166,12 @@ public:
                 return indentLevel_;
             }
 
+            //- Return the number of characters in an indent
+            unsigned short indentSize() const
+            {
+                return indentLevel_*indentSize_;
+            }
+
             //- Incrememt the indent level
             void incrIndent()
             {

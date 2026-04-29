@@ -94,19 +94,19 @@ SSG<BasicMomentumTransportModel>::SSG
         viscosity
     ),
 
-    Cmu_("Cmu", this->typeDict(), 0.09),
-    C1_("C1", this->typeDict(), 3.4),
-    C1s_("C1s", this->typeDict(), 1.8),
-    C2_("C2", this->typeDict(), 4.2),
-    C3_("C3", this->typeDict(), 0.8),
-    C3s_("C3s", this->typeDict(), 1.3),
-    C4_("C4", this->typeDict(), 1.25),
-    C5_("C5", this->typeDict(), 0.4),
+    Cmu_("Cmu", this->typeDict(type), 0.09),
+    C1_("C1", this->typeDict(type), 3.4),
+    C1s_("C1s", this->typeDict(type), 1.8),
+    C2_("C2", this->typeDict(type), 4.2),
+    C3_("C3", this->typeDict(type), 0.8),
+    C3s_("C3s", this->typeDict(type), 1.3),
+    C4_("C4", this->typeDict(type), 1.25),
+    C5_("C5", this->typeDict(type), 0.4),
 
-    Ceps1_("Ceps1", this->typeDict(), 1.44),
-    Ceps2_("Ceps2", this->typeDict(), 1.92),
-    Cs_("Cs", this->typeDict(), 0.25),
-    Ceps_("Ceps", this->typeDict(), 0.15),
+    Ceps1_("Ceps1", this->typeDict(type), 1.44),
+    Ceps2_("Ceps2", this->typeDict(type), 1.92),
+    Cs_("Cs", this->typeDict(type), 0.25),
+    Ceps_("Ceps", this->typeDict(type), 0.15),
 
     k_
     (

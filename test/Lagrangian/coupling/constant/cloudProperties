@@ -95,7 +95,7 @@ subModels
 
     patchInteractionModel standardWallInteraction;
 
-    standardWallInteractionCoeffs
+    standardWallInteraction
     {
         type rebound;
         e    0.97;

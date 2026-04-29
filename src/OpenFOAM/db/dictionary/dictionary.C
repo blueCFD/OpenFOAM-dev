@@ -884,14 +884,14 @@ const Foam::dictionary& Foam::dictionary::typeDict
         entryPtr = lookupEntryPtr(typeName + "Coeffs", false, true);
     }
 
-    if (entryPtr == nullptr)
+    if (entryPtr && entryPtr->isDict())
     {
-        // Generate error message using the typeName keyword
-        return subDict(typeName);
+        return entryPtr->dict();
     }
     else
     {
-        return entryPtr->dict();
+        // Generate error message using the typeName keyword
+        return subDict(typeName);
     }
 }
 
@@ -908,13 +908,13 @@ const Foam::dictionary& Foam::dictionary::typeOrEmptyDict
         entryPtr = lookupEntryPtr(typeName + "Coeffs", false, true);
     }
 
-    if (entryPtr == nullptr)
+    if (entryPtr && entryPtr->isDict())
     {
-        return null;
+        return entryPtr->dict();
     }
     else
     {
-        return entryPtr->dict();
+        return null;
     }
 }
 
@@ -931,7 +931,7 @@ const Foam::dictionary& Foam::dictionary::optionalTypeDict
         entryPtr = lookupEntryPtr(typeName + "Coeffs", false, true);
     }
 
-    if (entryPtr)
+    if (entryPtr && entryPtr->isDict())
     {
         return entryPtr->dict();
     }

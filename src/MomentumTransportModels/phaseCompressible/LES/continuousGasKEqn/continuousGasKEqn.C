@@ -60,7 +60,7 @@ continuousGasKEqn<BasicMomentumTransportModel>::continuousGasKEqn
 
     liquidTurbulencePtr_(nullptr),
 
-    alphaInversion_("alphaInversion", this->typeDict(), 0.7)
+    alphaInversion_("alphaInversion", this->typeDict(type), 0.7)
 {}
 
 

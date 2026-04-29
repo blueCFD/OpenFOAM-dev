@@ -47,7 +47,8 @@ lambdaThixotropic<BasicMomentumTransportModel>::lambdaThixotropic
     const volVectorField& U,
     const surfaceScalarField& alphaRhoPhi,
     const surfaceScalarField& phi,
-    const viscosity& viscosity
+    const viscosity& viscosity,
+    const word& type
 )
 :
     linearViscousStress<laminarModel<BasicMomentumTransportModel>>
@@ -61,21 +62,31 @@ lambdaThixotropic<BasicMomentumTransportModel>::lambdaThixotropic
         viscosity
     ),
 
-    a_("a", dimless/dimTime, this->typeDict()),
-    b_("b", dimless, this->typeDict()),
-    d_("d", dimless, this->typeDict()),
-    c_("c", pow(dimTime, d_.value() - scalar(1)), this->typeDict()),
-    nu0_("nu0", dimKinematicViscosity, this->typeDict()),
-    nuInf_("nuInf", dimKinematicViscosity, this->typeDict()),
+    a_("a", dimless/dimTime, this->typeDict(type)),
+    b_("b", dimless, this->typeDict(type)),
+    d_("d", dimless, this->typeDict(type)),
+    c_("c", pow(dimTime, d_.value() - scalar(1)), this->typeDict(type)),
+    nu0_("nu0", dimKinematicViscosity, this->typeDict(type)),
+    nuInf_("nuInf", dimKinematicViscosity, this->typeDict(type)),
     K_(1 - sqrt(nuInf_/nu0_)),
-    BinghamPlastic_(this->typeDict().found("sigmay")),
+    BinghamPlastic_(this->typeDict(type).found("sigmay")),
     sigmay_
     (
         BinghamPlastic_
-      ? dimensionedScalar("sigmay", dimPressure/dimDensity, this->typeDict())
-      : dimensionedScalar("sigmay", dimPressure/dimDensity, 0)
+      ? dimensionedScalar
+        (
+            "sigmay",
+            dimPressure/dimDensity,
+            this->typeDict(type)
+        )
+      : dimensionedScalar
+        (
+            "sigmay",
+            dimPressure/dimDensity,
+            0
+        )
     ),
-    residualAlpha_("residualAlpha", dimless, this->typeDict(), 1e-6),
+    residualAlpha_("residualAlpha", dimless, this->typeDict(type), 1e-6),
     lambda_
     (
         IOobject

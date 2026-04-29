@@ -61,7 +61,7 @@ SmagorinskyZhang<BasicMomentumTransportModel>::SmagorinskyZhang
 
     gasTurbulencePtr_(nullptr),
 
-    Cmub_("Cmub", this->typeDict(), 0.6)
+    Cmub_("Cmub", this->typeDict(type), 0.6)
 {}
 
 

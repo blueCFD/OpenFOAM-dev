@@ -29,7 +29,7 @@ mover
     oscillation
     {
         solidBodyMotionFunction oscillatingLinearMotion;
-        oscillatingLinearMotionCoeffs
+        oscillatingLinearMotion
         {
             amplitude     (0.1 0 0);
             omega         18.8945578;
@@ -39,7 +39,7 @@ mover
     rotation
     {
         solidBodyMotionFunction  rotatingMotion;
-        rotatingMotionCoeffs
+        rotatingMotion
         {
             origin        (0 0.02 0);
             axis          (0 0 1);

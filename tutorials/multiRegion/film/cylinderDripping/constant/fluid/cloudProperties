@@ -91,12 +91,12 @@ subModels
 
     radiation       off;
 
-    standardWallInteractionCoeffs
+    standardWallInteraction
     {
         type            rebound;
     }
 
-    singlePhaseMixtureCoeffs
+    singlePhaseMixture
     {
         phases
         (
@@ -107,7 +107,7 @@ subModels
         );
     }
 
-    cloudFilmTransferCoeffs
+    cloudFilmTransfer
     {
         interactionType absorb;
     }

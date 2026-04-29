@@ -43,14 +43,14 @@ disk
     rhoRef          1000;
     rhoInf          1;
 
-    fixedTrimCoeffs
+    fixedTrim
     {
          theta0         0;
          theta1c        0;
          theta1s        0;
     }
 
-    flapCoeffs
+    flap
     {
         beta0           0;  // Coning angle [deg]
         beta1c          0;  // Lateral flapping coeff (cos coeff)

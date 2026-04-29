@@ -60,7 +60,7 @@ buoyantKEpsilon<BasicMomentumTransportModel>::buoyantKEpsilon
         type
     ),
 
-    Cg_("Cg", this->typeDict(), 1.0)
+    Cg_("Cg", this->typeDict(type), 1.0)
 {}
 
 

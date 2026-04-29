@@ -20,7 +20,7 @@ laminar
 {
     model               Maxwell;
 
-    MaxwellCoeffs
+    Maxwell
     {
         nuM             1;
         lambda          5;

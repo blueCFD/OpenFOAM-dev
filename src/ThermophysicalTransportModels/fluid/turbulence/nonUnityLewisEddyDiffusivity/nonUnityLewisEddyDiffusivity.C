@@ -44,18 +44,19 @@ nonUnityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>::
 nonUnityLewisEddyDiffusivity
 (
     const momentumTransportModel& momentumTransport,
-    const thermoModel& thermo
+    const thermoModel& thermo,
+    const word& type
 )
 :
     unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>
     (
-        typeName,
+        type,
         momentumTransport,
         thermo,
         false
     ),
 
-    Sct_("Sct", dimless, this->typeDict())
+    Sct_("Sct", dimless, this->typeDict(type))
 {}
 
 

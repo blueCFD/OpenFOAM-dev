@@ -32,7 +32,7 @@ WallInteractionModel            MaxwellianThermal;
 
 BinaryCollisionModel            VariableHardSphere;
 
-VariableHardSphereCoeffs
+VariableHardSphere
 {
     Tref        273;
 }
@@ -43,7 +43,7 @@ VariableHardSphereCoeffs
 
 InflowBoundaryModel             FreeStream;
 
-FreeStreamCoeffs
+FreeStream
 {
     numberDensities
     {

@@ -112,8 +112,8 @@ WALE<BasicMomentumTransportModel>::WALE
         viscosity
     ),
 
-    Ck_("Ck", this->typeDict(), 0.094),
-    Cw_("Cw", this->typeDict(), 0.325)
+    Ck_("Ck", this->typeDict(type), 0.094),
+    Cw_("Cw", this->typeDict(type), 0.325)
 {}
 
 

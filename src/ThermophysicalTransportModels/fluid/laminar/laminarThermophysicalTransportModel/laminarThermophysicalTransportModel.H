@@ -59,6 +59,9 @@ protected:
         //- Const access to the coefficients dictionary
         const dictionary& typeDict() const;
 
+        //- Const access to the coefficients dictionary
+        const dictionary& typeDict(const word&) const;
+
         //- Effective thermal turbulent diffusivity of mixture [kg/m/s]
         //  Used for the implicit energy correction on the temperature laplacian
         tmp<volScalarField> alphaEff() const

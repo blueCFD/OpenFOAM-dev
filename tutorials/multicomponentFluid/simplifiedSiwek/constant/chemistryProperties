@@ -23,12 +23,12 @@ chemistry       on;
 
 initialChemicalTimeStep 1e-07;
 
-EulerImplicitCoeffs
+EulerImplicit
 {
     cTauChem        0.05;
 }
 
-odeCoeffs
+ode
 {
     solver          seulex;
     absTol          1e-8;

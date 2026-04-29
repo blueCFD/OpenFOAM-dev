@@ -32,7 +32,7 @@ WallInteractionModel            MaxwellianThermal;
 
 BinaryCollisionModel            LarsenBorgnakkeVariableHardSphere;
 
-LarsenBorgnakkeVariableHardSphereCoeffs
+LarsenBorgnakkeVariableHardSphere
 {
     Tref                        273;
     relaxationCollisionNumber   5.0;
@@ -44,7 +44,7 @@ LarsenBorgnakkeVariableHardSphereCoeffs
 
 InflowBoundaryModel             FreeStream;
 
-FreeStreamCoeffs
+FreeStream
 {
     numberDensities
     {

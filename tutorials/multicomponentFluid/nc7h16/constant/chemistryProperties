@@ -23,7 +23,7 @@ chemistry       on;
 
 initialChemicalTimeStep 1e-7;
 
-odeCoeffs
+ode
 {
     solver          seulex;
     absTol          1e-12;

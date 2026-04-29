@@ -25,6 +25,7 @@ License
 
 #include "printDictionary.H"
 #include "dictionary.H"
+#include "stringOps.H"
 
 
 // * * * * * * * * * * * Private Static Member Functions * * * * * * * * * * //
@@ -37,14 +38,16 @@ void Foam::printDictionary::setDefaults(const dictionary& dict)
         tmpNrc<dictionary>(new dictionary(dict.parent(), dictionary()))
     );
 
-    setSubDefaults(dict);
+    setSubDefaults(dict, printDictionary::defaults(dict));
 }
 
 
-void Foam::printDictionary::setSubDefaults(const dictionary& dict)
+void Foam::printDictionary::setSubDefaults
+(
+    const dictionary& dict,
+    dictionary& defaults
+)
 {
-    dictionary& defaults = printDictionary::defaults(dict);
-
     forAllConstIter(dictionary, dict, iter)
     {
         if (!iter().isDict()) continue;
@@ -53,15 +56,18 @@ void Foam::printDictionary::setSubDefaults(const dictionary& dict)
 
         defaults.set(iter().keyword(), dictionary());
 
-        const dictionary& subDefaults = defaults.subDict(iter().keyword());
+        dictionary& subDefaults = defaults.subDict(iter().keyword());
 
-        dictPtrToDefaults_.set
-        (
-            &subDict,
-            tmpNrc<dictionary>(subDefaults)
-        );
+        if (!dictPtrToDefaults_.found(&subDict))
+        {
+            dictPtrToDefaults_.set
+            (
+                &subDict,
+                tmpNrc<dictionary>(subDefaults)
+            );
+        }
 
-        setSubDefaults(subDict);
+        setSubDefaults(subDict, subDefaults);
     }
 }
 
@@ -80,10 +86,30 @@ void Foam::printDictionary::print
         {
             Info<< iter();
         }
-        else
+        else if (defaults.isDict(iter().keyword()))
         {
             Info<< indent << iter().keyword();
             print(iter().dict(), defaults.subDict(iter().keyword()));
+        }
+        else
+        {
+            Info<< indent << iter().keyword()
+                << nl << indent << token::BEGIN_BLOCK << nl << incrIndent;
+
+            iter().dict().write(Info, false);
+
+            OStringStream oss;
+            oss << "/* #print must be specified after the " << iter().keyword()
+                << " sub-dictionary in order for its defaults to be printed */";
+
+            Info<<
+                stringOps::breakIntoIndentedLines
+                (
+                    oss.str(),
+                    80,
+                    Info().indentSize()
+                ).c_str() << endl
+                << decrIndent << indent << token::END_BLOCK << nl;
         }
     }
 
@@ -93,7 +119,7 @@ void Foam::printDictionary::print
         nDefaultsEntries += !iter().isDict();
     }
 
-    if (nDefaultsEntries) Info<< indent << "/* Defaults */" << endl;
+    if (nDefaultsEntries) Info<< indent << "/* defaults */" << endl;
 
     forAllConstIter(dictionary, defaults, iter)
     {
@@ -107,29 +133,44 @@ void Foam::printDictionary::print
 }
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-Foam::printDictionary::printDictionary(const dictionary& dict)
-:
-    dictPtr_(&dict),
-    dictName_(fileName::null)
+void Foam::printDictionary::add(const dictionary& dict)
 {
-    if (dictNameToDictPtrs_.found(dict.name()))
+    if (findIndex(dicts_, &dict) != -1) return;
+
+    dicts_.append(&dict);
+    dictNames_.append(fileName::null);
+
+    if
+    (
+        dictNameToDictPtrs_.found(dict.name())
+     && dictNameToDictPtrs_[dict.name()] != nullptr
+    )
     {
         setDefaults(dict);
     }
-
-    Info<< incrIndent;
 }
 
 
-Foam::printDictionary::printDictionary(const fileName& dictName)
-:
-    dictPtr_(nullptr),
-    dictName_(dictName)
+void Foam::printDictionary::add(const fileName& dictName)
 {
-    dictNameToDictPtrs_.set(dictName, nullptr);
+    if (findIndex(dictNames_, dictName) != -1) return;
 
+    dicts_.append(nullptr);
+    dictNames_.append(dictName);
+
+    dictNameToDictPtrs_.set(dictName, nullptr);
+}
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::printDictionary::printDictionary()
+:
+    dicts_(),
+    dictNames_()
+{
     Info<< incrIndent;
 }
 
@@ -138,21 +179,27 @@ Foam::printDictionary::printDictionary(const fileName& dictName)
 
 Foam::printDictionary::~printDictionary()
 {
-    const dictionary* dictPtr =
-        dictPtr_ && dictPtrToDefaults_.found(dictPtr_)
-      ? dictPtr_
-      : dictName_ != fileName::null && dictNameToDictPtrs_[dictName_]
-      ? dictNameToDictPtrs_[dictName_]
-      : nullptr;
-
-    if (dictPtr && dictPtrToDefaults_[dictPtr].isTmp())
+    forAll(dicts_, i)
     {
-        Info<< indent << dictPtr->name().relativePath().c_str();
+        const dictionary* dictPtr =
+            dicts_.set(i)
+         && dictPtrToDefaults_.found(&dicts_[i])
+          ? &dicts_[i]
+          : dictNames_[i] != fileName::null
+         && dictNameToDictPtrs_.found(dictNames_[i])
+         && dictPtrToDefaults_.found(dictNameToDictPtrs_[dictNames_[i]])
+          ? dictNameToDictPtrs_[dictNames_[i]]
+          : nullptr;
 
-        print(*dictPtr, dictPtrToDefaults_[dictPtr]());
+        if (dictPtr && dictPtrToDefaults_[dictPtr].isTmp())
+        {
+            Info<< indent << dictPtr->name().relativePath().c_str();
 
-        dictPtrToDefaults_.erase(dictPtr);
-        dictNameToDictPtrs_.erase(dictPtr->name());
+            print(*dictPtr, dictPtrToDefaults_[dictPtr]());
+
+            dictPtrToDefaults_.erase(dictPtr);
+            dictNameToDictPtrs_.erase(dictPtr->name());
+        }
     }
 
     Info<< decrIndent;

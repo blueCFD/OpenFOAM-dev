@@ -128,10 +128,10 @@ LamBremhorstKE::LamBremhorstKE
         viscosity
     ),
 
-    Cmu_("Cmu", typeDict(), 0.09),
-    Ceps1_("Ceps1", typeDict(), 1.44),
-    Ceps2_("Ceps2", typeDict(), 1.92),
-    sigmaEps_("alphaEps", typeDict(), 1.3),
+    Cmu_("Cmu", typeDict(type), 0.09),
+    Ceps1_("Ceps1", typeDict(type), 1.44),
+    Ceps2_("Ceps2", typeDict(type), 1.92),
+    sigmaEps_("alphaEps", typeDict(type), 1.3),
 
     k_
     (

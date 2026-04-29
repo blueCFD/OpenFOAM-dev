@@ -166,17 +166,17 @@ subModels
 
     radiation       off;
 
-    standardWallInteractionCoeffs
+    standardWallInteraction
     {
         type            rebound;
     }
 
-    RanzMarshallCoeffs
+    RanzMarshall
     {
         BirdCorrection  true;
     }
 
-    singlePhaseMixtureCoeffs
+    singlePhaseMixture
     {
         phases
         (
@@ -187,14 +187,14 @@ subModels
         );
     }
 
-    liquidEvaporationBoilCoeffs
+    liquidEvaporationBoil
     {
         enthalpyTransfer enthalpyDifference;
 
         activeLiquids    ( C7H16 );
     }
 
-    ReitzDiwakarCoeffs
+    ReitzDiwakar
     {
         solveOscillationEq yes;
         Cbag            6;
@@ -204,7 +204,7 @@ subModels
     }
 
 /*
-    ReitzKHRTCoeffs
+    ReitzKHRT
     {
         solveOscillationEq yes;
         B0              0.61;
@@ -215,7 +215,7 @@ subModels
         WeberLimit      6;
     }
 */
-    TABCoeffs
+    TAB
     {
         y0              0;
         yDot0           0;

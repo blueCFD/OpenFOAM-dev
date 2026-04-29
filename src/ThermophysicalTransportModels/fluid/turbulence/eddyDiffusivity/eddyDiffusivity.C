@@ -52,17 +52,18 @@ template<class TurbulenceThermophysicalTransportModel>
 eddyDiffusivity<TurbulenceThermophysicalTransportModel>::eddyDiffusivity
 (
     const momentumTransportModel& momentumTransport,
-    const thermoModel& thermo
+    const thermoModel& thermo,
+    const word& type
 )
 :
     TurbulenceThermophysicalTransportModel
     (
-        typeName,
+        type,
         momentumTransport,
         thermo
     ),
 
-    Prt_("Prt", dimless, this->typeDict()),
+    Prt_("Prt", dimless, this->typeDict(type)),
 
     alphat_
     (

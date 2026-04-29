@@ -179,7 +179,7 @@ dynamicKEqn<BasicMomentumTransportModel>::dynamicKEqn
     ),
 
     simpleFilter_(this->mesh_),
-    filterPtr_(LESfilter::New(this->mesh_, this->typeDict())),
+    filterPtr_(LESfilter::New(this->mesh_, this->typeDict(type))),
     filter_(filterPtr_())
 {
     bound(k_, this->kMin_);

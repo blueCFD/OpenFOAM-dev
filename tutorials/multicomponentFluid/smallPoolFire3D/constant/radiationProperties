@@ -39,7 +39,7 @@ constant
     E               0;
 }
 
-greyMeanReactionCoeffs
+greyMeanReaction
 {
     lookUpTableFileName      none;
 

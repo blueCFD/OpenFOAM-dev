@@ -22,7 +22,7 @@ RAS
 
     turbulence      on;
 
-    buoyantKEpsilonCoeffs
+    buoyantKEpsilon
     {
         Cg      0.85;
     }

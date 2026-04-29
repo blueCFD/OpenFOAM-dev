@@ -241,19 +241,19 @@ kOmegaSST<MomentumTransportModel, BasicMomentumTransportModel>::kOmegaSST
         viscosity
     ),
 
-    alphaK1_("alphaK1", this->typeDict(), 0.85),
-    alphaK2_("alphaK2", this->typeDict(), 1.0),
-    alphaOmega1_("alphaOmega1", this->typeDict(), 0.5),
-    alphaOmega2_("alphaOmega2", this->typeDict(), 0.856),
-    gamma1_("gamma1", this->typeDict(), 5.0/9.0),
-    gamma2_("gamma2", this->typeDict(), 0.44),
-    beta1_("beta1", this->typeDict(), 0.075),
-    beta2_("beta2", this->typeDict(), 0.0828),
-    betaStar_("betaStar", this->typeDict(), 0.09),
-    a1_("a1", this->typeDict(), 0.31),
-    b1_("b1", this->typeDict(), 1.0),
-    c1_("c1", this->typeDict(), 10.0),
-    F3_(this->typeDict().template lookupOrDefault<Switch>("F3", false)),
+    alphaK1_("alphaK1", this->typeDict(type), 0.85),
+    alphaK2_("alphaK2", this->typeDict(type), 1.0),
+    alphaOmega1_("alphaOmega1", this->typeDict(type), 0.5),
+    alphaOmega2_("alphaOmega2", this->typeDict(type), 0.856),
+    gamma1_("gamma1", this->typeDict(type), 5.0/9.0),
+    gamma2_("gamma2", this->typeDict(type), 0.44),
+    beta1_("beta1", this->typeDict(type), 0.075),
+    beta2_("beta2", this->typeDict(type), 0.0828),
+    betaStar_("betaStar", this->typeDict(type), 0.09),
+    a1_("a1", this->typeDict(type), 0.31),
+    b1_("b1", this->typeDict(type), 1.0),
+    c1_("c1", this->typeDict(type), 10.0),
+    F3_(this->typeDict(type).template lookupOrDefault<Switch>("F3", false)),
 
     k_
     (

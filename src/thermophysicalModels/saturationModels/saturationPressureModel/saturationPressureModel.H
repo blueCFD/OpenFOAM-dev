@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -106,7 +106,7 @@ public:
     TypeName("saturationPressureModel");
 
 
-    //- Declare runtime construction
+    //- Declare runtime construction from dictionary
     declareRunTimeSelectionTable
     (
         autoPtr,
@@ -117,6 +117,17 @@ public:
     );
 
 
+    //- Declare runtime default construction
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        saturationPressureModel,
+        ,
+        (),
+        ()
+    );
+
+
     // Constructors
 
         //- Default construct
@@ -124,12 +135,6 @@ public:
 
 
     // Selectors
-
-        //- Select with dictionary
-        static autoPtr<saturationPressureModel> New
-        (
-            const dictionary& dict
-        );
 
         //- Select with name within a dictionary
         static autoPtr<saturationPressureModel> New

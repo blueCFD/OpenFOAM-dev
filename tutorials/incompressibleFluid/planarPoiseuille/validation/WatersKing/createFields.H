@@ -23,7 +23,7 @@ IOdictionary momentumTransport
     )
 );
 const dictionary& MaxwellCoeffs =
-    momentumTransport.subDict("laminar").subDict("MaxwellCoeffs");
+    momentumTransport.subDict("laminar").typeDict("Maxwell");
 const scalar nu1 = MaxwellCoeffs.lookup<scalar>("nuM");
 const scalar lambda = MaxwellCoeffs.lookup<scalar>("lambda");
 

@@ -154,6 +154,7 @@ public:
     typedef typename SolidThermophysicalTransportModel::alphaField
         alphaField;
 
+
     //- Runtime type information
     TypeName("anisotropic");
 
@@ -164,7 +165,8 @@ public:
         anisotropic
         (
             const alphaField& alpha,
-            const solidThermo& thermo
+            const solidThermo& thermo,
+            const word& type = typeName
         );
 
 

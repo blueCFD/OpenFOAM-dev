@@ -28,24 +28,28 @@ License
 // * * * * * * * * * * * * * * * * Selector  * * * * * * * * * * * * * * * * //
 
 Foam::autoPtr<Foam::saturationPressureModel>
-Foam::saturationPressureModel::New(const dictionary& dict)
-{
-    return New(NullObjectRef<word>(), dict);
-}
-
-
-Foam::autoPtr<Foam::saturationPressureModel>
 Foam::saturationPressureModel::New
 (
     const word& name,
     const dictionary& dict
 )
 {
-    if (!isNull(name) && !dict.isDict(name))
+    auto unknown = [&](const word& modelTypeName)
     {
-        Istream& is(dict.lookup(name, false));
+        FatalIOErrorInFunction(dict)
+            << "Unknown " << typeName << " type "
+            << modelTypeName << endl << endl
+            << "Valid " << typeName << " types are : " << endl
+            << dictionaryConstructorTablePtr_->sortedToc()
+            << exit(FatalIOError);
+    };
 
-        token firstToken(is);
+    const bool isDict = dict.isDict(name);
+
+    if (!isDict)
+    {
+        token firstToken(dict.lookup(name, false));
+
         if (!firstToken.isWord())
         {
             return autoPtr<saturationPressureModel>
@@ -56,20 +60,36 @@ Foam::saturationPressureModel::New
                 )
             );
         }
+
+        const word modelTypeName = firstToken.wordToken();
+
+        // !!! Assume all models are on the dictionary selection table
+        dictionaryConstructorTable::iterator dictCstrIter =
+            dictionaryConstructorTablePtr_->find(modelTypeName);
+        if (dictCstrIter == dictionaryConstructorTablePtr_->end())
+        {
+            unknown(modelTypeName);
+        }
+
+        ConstructorTable::iterator cstrIter =
+            ConstructorTablePtr_->find(modelTypeName);
+        if (cstrIter == ConstructorTablePtr_->end())
+        {
+            FatalIOErrorInFunction(dict)
+                << name << " must be a sub-dictionary in order to select a "
+                << typeName << " of type " << modelTypeName
+                << exit(FatalIOError);
+        }
+
+        return cstrIter()();
     }
 
-    const bool isType = isNull(name);
-    const bool isDict = !isType && dict.isDict(name);
+    const dictionary& modelDict = dict.subDict(name);
 
-    const word modelTypeName =
-        isType ? dict.lookup<word>("type")
-      : isDict ? dict.subDict(name).lookup<word>("type")
-      : dict.lookup<word>(name);
+    const word modelTypeName = modelDict.lookup<word>("type");
 
-    const dictionary& coeffDict =
-        isType ? dict
-      : isDict ? dict.subDict(name)
-      : dict.optionalSubDict(name + "Coeffs");
+    const dictionary& modelCoeffsDict =
+        modelDict.optionalTypeDict(modelTypeName);
 
     Info<< indentOrNl
         << "Selecting " << typeName << " " << modelTypeName << endl;
@@ -79,17 +99,12 @@ Foam::saturationPressureModel::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalIOErrorInFunction(dict)
-            << "Unknown " << typeName << " << type "
-            << modelTypeName << endl << endl
-            << "Valid " << typeName << " types are : " << endl
-            << dictionaryConstructorTablePtr_->sortedToc()
-            << exit(FatalIOError);
+        unknown(modelTypeName);
     }
 
-    printDictionary print(coeffDict);
+    printDictionary print(modelDict, modelCoeffsDict);
 
-    return cstrIter()(coeffDict);
+    return cstrIter()(modelCoeffsDict);
 }
 
 

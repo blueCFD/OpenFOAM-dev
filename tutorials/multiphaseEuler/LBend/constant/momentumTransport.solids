@@ -22,7 +22,7 @@ RAS
 
     turbulence      on;
 
-    kineticTheoryCoeffs
+    kineticTheory
     {
         equilibrium             off;
 
@@ -36,7 +36,7 @@ RAS
         frictionalStressModel       Schaeffer;
         radialModel                 CarnahanStarling;
 
-        SchaefferCoeffs
+        Schaeffer
         {
             phi                     36;
         }

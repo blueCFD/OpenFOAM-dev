@@ -63,14 +63,18 @@ kOmegaSSTSato<BasicMomentumTransportModel>::kOmegaSSTSato
 
     phase_(refCast<const phaseModel>(viscosity)),
 
-    hasDispersedPhaseNames_(this->typeDict().found("dispersedPhases")),
+    hasDispersedPhaseNames_(this->typeDict(type).found("dispersedPhases")),
 
     dispersedPhaseNames_
     (
-        this->typeDict().lookupOrDefault("dispersedPhases", hashedWordList())
+        this->typeDict(type).lookupOrDefault
+        (
+            "dispersedPhases",
+            hashedWordList()
+        )
     ),
 
-    Cmub_("Cmub", this->typeDict(), 0.6)
+    Cmub_("Cmub", this->typeDict(type), 0.6)
 {}
 
 

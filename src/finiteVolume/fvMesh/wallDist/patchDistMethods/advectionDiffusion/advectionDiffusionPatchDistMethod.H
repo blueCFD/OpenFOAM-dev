@@ -73,7 +73,7 @@ Description
             // of the normal-to-wall field
             nRequired false;
 
-            advectionDiffusionCoeffs
+            advectionDiffusion
             {
                 method    Poisson;
                 epsilon   0.1;

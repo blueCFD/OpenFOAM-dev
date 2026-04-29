@@ -20,7 +20,7 @@ VoFCavitation
 
     model   SchnerrSauer;
 
-    KunzCoeffs
+    Kunz
     {
         pSat    2300;   // Saturation pressure
 
@@ -32,7 +32,7 @@ VoFCavitation
         Cv      1000;
     }
 
-    MerkleCoeffs
+    Merkle
     {
         pSat    2300;   // Saturation pressure
 
@@ -44,7 +44,7 @@ VoFCavitation
         Cv      1e-03;
     }
 
-    SchnerrSauerCoeffs
+    SchnerrSauer
     {
         pSat    2300;   // Saturation pressure
 

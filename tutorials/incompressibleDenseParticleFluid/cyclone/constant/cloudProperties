@@ -124,7 +124,7 @@ subModels
 
     packingModel implicit;
 
-    explicitCoeffs
+    explicit
     {
         particleStressModel
         {
@@ -141,7 +141,7 @@ subModels
         }
     }
 
-    implicitCoeffs
+    implicit
     {
         alphaMin 0.0001;
         rhoMin 1.0;
@@ -161,7 +161,7 @@ subModels
 
     isotropyModel stochastic;
 
-    stochasticCoeffs
+    stochastic
     {
         timeScaleModel
         {

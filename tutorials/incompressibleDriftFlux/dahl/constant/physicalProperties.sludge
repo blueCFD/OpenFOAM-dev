@@ -16,7 +16,7 @@ FoamFile
 
 viscosityModel  BinghamPlastic;
 
-"(plastic|BinghamPlastic)Coeffs"
+"plastic|BinghamPlastic"
 {
     coeff       0.00023143;
     exponent    179.26;

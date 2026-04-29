@@ -100,15 +100,19 @@ Foam::solidThermophysicalTransportModels::
 anisotropic<SolidThermophysicalTransportModel>::anisotropic
 (
     const alphaField& alpha,
-    const solidThermo& thermo
+    const solidThermo& thermo,
+    const word& type
 )
 :
-    SolidThermophysicalTransportModel(typeName, alpha, thermo),
+    SolidThermophysicalTransportModel(type, alpha, thermo),
     TopoChangeableMeshObject(*this),
-    coordinateSystem_(coordinateSystem::New(thermo.mesh(), this->typeDict())),
+    coordinateSystem_
+    (
+        coordinateSystem::New(thermo.mesh(), this->typeDict(type))
+    ),
     boundaryAligned_
     (
-        this->typeDict().template lookupOrDefault<Switch>
+        this->typeDict(type).template lookupOrDefault<Switch>
         (
             "boundaryAligned",
             false
@@ -116,9 +120,9 @@ anisotropic<SolidThermophysicalTransportModel>::anisotropic
     ),
     aligned_(thermo.mesh().boundary().size(), true)
 {
-    if (this->typeDict().found("zones"))
+    if (this->typeDict(type).found("zones"))
     {
-        const dictionary& zonesDict(this->typeDict().subDict("zones"));
+        const dictionary& zonesDict(this->typeDict(type).subDict("zones"));
 
         Info<< "    Reading coordinate system for zones:" << endl;
 

@@ -17,7 +17,7 @@ FoamFile
 
 reactionModel infinitelyFastChemistry;
 
-infinitelyFastChemistryCoeffs
+infinitelyFastChemistry
 {
     semiImplicit no;
     C       5.0;

@@ -128,7 +128,7 @@ subModels
 
     dampingModel relaxation;
 
-    relaxationCoeffs
+    relaxation
     {
         timeScaleModel
         {
@@ -140,7 +140,7 @@ subModels
 
     isotropyModel stochastic;
 
-    stochasticCoeffs
+    stochastic
     {
         timeScaleModel
         {

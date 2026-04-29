@@ -30,7 +30,7 @@ mover
     rotatingTable
     {
         solidBodyMotionFunction rotatingMotion;
-        rotatingMotionCoeffs
+        rotatingMotion
         {
             origin          (0 0.1 0);
             axis            (0 0 1);
@@ -42,7 +42,7 @@ mover
     rotatingBox
     {
         solidBodyMotionFunction oscillatingRotatingMotion;
-        oscillatingRotatingMotionCoeffs
+        oscillatingRotatingMotion
         {
             origin          (0 0 0);
             amplitude       (45 0 0);   // 45 degrees max tilt

@@ -22,7 +22,7 @@ laminar
 
     viscosityModel  CrossPowerLaw;
 
-    CrossPowerLawCoeffs
+    CrossPowerLaw
     {
         nu0         [0 2 -1 0 0 0 0]  0.01;
         nuInf       [0 2 -1 0 0 0 0]  10;

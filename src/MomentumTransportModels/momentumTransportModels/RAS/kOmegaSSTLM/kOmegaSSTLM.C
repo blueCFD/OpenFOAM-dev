@@ -82,7 +82,11 @@ tmp<volScalarField::Internal> kOmegaSSTLM<BasicMomentumTransportModel>::Fthetat
     const volScalarField::Internal& omega = this->omega_();
     const volScalarField::Internal& y = this->y()();
 
-    const volScalarField::Internal delta(375*Omega*nu*ReThetat_()*y/sqr(Us));
+    const volScalarField::Internal yBydelta
+    (
+        sqr(Us)
+       /max(375*Omega*nu*ReThetat_(), sqr(deltaU_))
+    );
     const volScalarField::Internal ReOmega(sqr(y)*omega/nu);
     const volScalarField::Internal Fwake(exp(-sqr(ReOmega/1e5)));
 
@@ -93,7 +97,7 @@ tmp<volScalarField::Internal> kOmegaSSTLM<BasicMomentumTransportModel>::Fthetat
         (
             max
             (
-                Fwake*exp(-pow4((y/delta))),
+                Fwake*exp(-pow4(yBydelta)),
                 (1 - sqr((gammaInt_() - 1.0/ce2_)/(1 - 1.0/ce2_)))
             ),
             scalar(1)
@@ -355,14 +359,14 @@ kOmegaSSTLM<BasicMomentumTransportModel>::kOmegaSSTLM
         viscosity
     ),
 
-    ca1_("ca1", this->typeDict(), 2),
-    ca2_("ca2", this->typeDict(), 0.06),
-    ce1_("ce1", this->typeDict(), 1),
-    ce2_("ce2", this->typeDict(), 50),
-    cThetat_("cThetat", this->typeDict(), 0.03),
-    sigmaThetat_("sigmaThetat", this->typeDict(), 2),
-    lambdaErr_(this->typeDict().lookupOrDefault("lambdaErr", 1e-6)),
-    maxLambdaIter_(this->typeDict().lookupOrDefault("maxLambdaIter", 10)),
+    ca1_("ca1", this->typeDict(type), 2),
+    ca2_("ca2", this->typeDict(type), 0.06),
+    ce1_("ce1", this->typeDict(type), 1),
+    ce2_("ce2", this->typeDict(type), 50),
+    cThetat_("cThetat", this->typeDict(type), 0.03),
+    sigmaThetat_("sigmaThetat", this->typeDict(type), 2),
+    lambdaErr_(this->typeDict(type).lookupOrDefault("lambdaErr", 1e-6)),
+    maxLambdaIter_(this->typeDict(type).lookupOrDefault("maxLambdaIter", 10)),
     deltaU_("deltaU", dimVelocity, small),
 
     ReThetat_

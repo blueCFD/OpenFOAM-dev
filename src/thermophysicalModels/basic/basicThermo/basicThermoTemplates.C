@@ -295,6 +295,8 @@ Foam::autoPtr<Thermo> Foam::basicThermo::New
             Thermo::fvMeshConstructorTablePtr_
         );
 
+    printDictionary print(thermoDict.dictionary::name());
+
     return autoPtr<Thermo>(cstrIter()(mesh, phaseName));
 }
 

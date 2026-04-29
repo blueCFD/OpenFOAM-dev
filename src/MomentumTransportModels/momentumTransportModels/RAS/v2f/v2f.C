@@ -97,16 +97,16 @@ v2f<BasicMomentumTransportModel>::v2f
     ),
     v2fBase(),
 
-    Cmu_("Cmu", this->typeDict(), 0.22),
-    CmuKEps_("CmuKEps", this->typeDict(), 0.09),
-    C1_("C1", this->typeDict(), 1.4),
-    C2_("C2", this->typeDict(), 0.3),
-    CL_("CL", this->typeDict(), 0.23),
-    Ceta_("Ceta", this->typeDict(), 70.0),
-    Ceps2_("Ceps2", this->typeDict(), 1.9),
-    Ceps3_("Ceps3", this->typeDict(), -0.33),
-    sigmaK_("sigmaK", this->typeDict(), 1.0),
-    sigmaEps_("sigmaEps", this->typeDict(), 1.3),
+    Cmu_("Cmu", this->typeDict(type), 0.22),
+    CmuKEps_("CmuKEps", this->typeDict(type), 0.09),
+    C1_("C1", this->typeDict(type), 1.4),
+    C2_("C2", this->typeDict(type), 0.3),
+    CL_("CL", this->typeDict(type), 0.23),
+    Ceta_("Ceta", this->typeDict(type), 70.0),
+    Ceps2_("Ceps2", this->typeDict(type), 1.9),
+    Ceps3_("Ceps3", this->typeDict(type), -0.33),
+    sigmaK_("sigmaK", this->typeDict(type), 1.0),
+    sigmaEps_("sigmaEps", this->typeDict(type), 1.3),
 
     k_
     (

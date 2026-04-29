@@ -92,9 +92,6 @@ class faceZone
         //- Build primitive patch
         void calcFaceZonePatch() const;
 
-        //- Return map of local face indices
-        const Map<label>& faceLookupMap() const;
-
         //- Check addressing
         void checkAddressing() const;
 

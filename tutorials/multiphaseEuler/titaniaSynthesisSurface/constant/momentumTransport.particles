@@ -22,7 +22,7 @@ RAS
 
     turbulence      on;
 
-    phasePressureCoeffs
+    phasePressure
     {
         preAlphaExp     500;
         expMax          1000;

@@ -22,7 +22,7 @@ mover
 
     motionSolver        sixDoFRigidBodyMotion;
 
-    sixDoFRigidBodyMotionCoeffs
+    sixDoFRigidBodyMotion
     {
         patches         (floatingObject);
         innerDistance   0.05;

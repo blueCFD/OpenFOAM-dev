@@ -28,7 +28,7 @@ hierarchical
     order           xyz;
 }
 
-zoltanCoeffs
+zoltan
 {
     lb_method       hypergraph;
     lb_approach     partition;

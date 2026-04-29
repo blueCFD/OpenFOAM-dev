@@ -129,6 +129,14 @@ protected:
             const dimensionSet& dims
         ) const;
 
+        //- Read a coefficient for all modes and return as a list
+        PtrList<dimensionedScalar> readModeCoefficients
+        (
+            const word& type,
+            const word& name,
+            const dimensionSet& dims
+        ) const;
+
         //- Return the sum of the given list of mode viscosities
         dimensionedScalar sumNuM(const PtrList<dimensionedScalar>& nuM) const;
 

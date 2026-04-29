@@ -74,8 +74,16 @@ Foam::ubMixtureMaps::uInhomogeneousEGRbInhomogeneous::prompt
     const PtrList<volScalarField>& Yu
 ) const
 {
+    const uInhomogeneousEGRMixture& uIEGR =
+        uMixtureCast<uInhomogeneousEGRMixture>();
+
     PtrList<volScalarField::Internal> Yp(1);
-    Yp.set(bInhomogeneousMixture::FT, Yu[uInhomogeneousEGRMixture::FU]());
+    Yp.set
+    (
+        bInhomogeneousMixture::FT,
+        Yu[uInhomogeneousEGRMixture::FU]()
+      + Yu[uInhomogeneousEGRMixture::EGR]()/(uIEGR.stoicRatio() + 1)
+    );
 
     return Yp;
 }

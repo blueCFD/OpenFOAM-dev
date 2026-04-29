@@ -157,13 +157,13 @@ kOmega2006<BasicMomentumTransportModel>::kOmega2006
         viscosity
     ),
 
-    betaStar_("betaStar", this->typeDict(), 0.09),
-    beta0_("beta0", this->typeDict(), 0.0708),
-    gamma_("gamma", this->typeDict(), 0.52),
-    Clim_("Clim", this->typeDict(), 0.875),
-    sigmaDo_("sigmaDo", this->typeDict(), 0.125),
-    alphaK_("alphaK", this->typeDict(), 0.6),
-    alphaOmega_("alphaOmega", this->typeDict(), 0.5),
+    betaStar_("betaStar", this->typeDict(type), 0.09),
+    beta0_("beta0", this->typeDict(type), 0.0708),
+    gamma_("gamma", this->typeDict(type), 0.52),
+    Clim_("Clim", this->typeDict(type), 0.875),
+    sigmaDo_("sigmaDo", this->typeDict(type), 0.125),
+    alphaK_("alphaK", this->typeDict(type), 0.6),
+    alphaOmega_("alphaOmega", this->typeDict(type), 0.5),
 
     k_
     (

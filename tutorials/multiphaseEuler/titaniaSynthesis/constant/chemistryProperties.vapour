@@ -23,12 +23,12 @@ chemistry   on;
 
 initialChemicalTimeStep 1e-07;
 
-EulerImplicitCoeffs
+EulerImplicit
 {
     cTauChem                1;
 }
 
-odeCoeffs
+ode
 {
     solver      Rosenbrock43;
     absTol      1e-8;

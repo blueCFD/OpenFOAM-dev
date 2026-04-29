@@ -153,11 +153,7 @@ const Foam::HashTable<Foam::unitSet>& Foam::units::table()
 
         // Get the relevant part of the control dictionary
         const dictionary& unitSetDict =
-            unitsDict().found("set")
-          ? unitsDict().subDict(unitsDict().lookup<word>("set"))
-          : unitsDict().found("unitSet")
-          ? unitsDict().subDict(unitsDict().lookup<word>("unitSet") + "Coeffs")
-          : unitsDict().subDict(unitsDict().lookup<word>("set"));
+            unitsDict().subDict(unitsDict().lookup<word>("set"));
 
         // Read fundamental units
         HashTable<label> fundamentalUnits;

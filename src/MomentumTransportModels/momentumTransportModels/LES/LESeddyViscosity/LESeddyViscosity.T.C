@@ -57,8 +57,8 @@ LESeddyViscosity<BasicMomentumTransportModel>::LESeddyViscosity
         viscosity
     ),
 
-    Ck_("Ck", this->typeDict(), 0.094),
-    Ce_("Ce", this->typeDict(), 1.048)
+    Ck_("Ck", this->typeDict(type), 0.094),
+    Ce_("Ce", this->typeDict(type), 1.048)
 {}
 
 

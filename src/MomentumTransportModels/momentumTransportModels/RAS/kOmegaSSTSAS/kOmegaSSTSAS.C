@@ -115,11 +115,11 @@ kOmegaSSTSAS<BasicMomentumTransportModel>::kOmegaSSTSAS
         viscosity
     ),
 
-    Cs_("Cs", this->typeDict(), 0.11),
-    kappa_("kappa", this->typeDict(), 0.41),
-    zeta2_("zeta2", this->typeDict(), 3.51),
-    sigmaPhi_("sigmaPhi", this->typeDict(), 2.0/3.0),
-    C_("C", this->typeDict(), 2),
+    Cs_("Cs", this->typeDict(type), 0.11),
+    kappa_("kappa", this->typeDict(type), 0.41),
+    zeta2_("zeta2", this->typeDict(type), 3.51),
+    sigmaPhi_("sigmaPhi", this->typeDict(type), 2.0/3.0),
+    C_("C", this->typeDict(type), 2),
 
     delta_
     (
@@ -127,7 +127,7 @@ kOmegaSSTSAS<BasicMomentumTransportModel>::kOmegaSSTSAS
         (
             this->groupName("delta"),
             *this,
-            this->typeDict()
+            this->typeDict(type)
         )
     )
 {}

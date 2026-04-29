@@ -104,10 +104,10 @@ dynamicLagrangian<BasicMomentumTransportModel>::dynamicLagrangian
         ),
         this->mesh_
     ),
-    theta_("theta", this->typeDict(), 1.5),
+    theta_("theta", this->typeDict(type), 1.5),
 
     simpleFilter_(U.mesh()),
-    filterPtr_(LESfilter::New(U.mesh(), this->typeDict())),
+    filterPtr_(LESfilter::New(U.mesh(), this->typeDict(type))),
     filter_(filterPtr_()),
 
     flm0_("flm0", flm_.dimensions(), 0.0),

@@ -118,11 +118,11 @@ qZeta::qZeta
         viscosity
     ),
 
-    Cmu_("Cmu", typeDict(), 0.09),
-    C1_("C1", typeDict(), 1.44),
-    C2_("C2", typeDict(), 1.92),
-    sigmaZeta_("sigmaZeta", typeDict(), 1.3),
-    anisotropic_(typeDict().lookupOrDefault<Switch>("anisotropic", false)),
+    Cmu_("Cmu", typeDict(type), 0.09),
+    C1_("C1", typeDict(type), 1.44),
+    C2_("C2", typeDict(type), 1.92),
+    sigmaZeta_("sigmaZeta", typeDict(type), 1.3),
+    anisotropic_(typeDict(type).lookupOrDefault<Switch>("anisotropic", false)),
     qMin_("qMin", sqrt(kMin_)),
 
     k_

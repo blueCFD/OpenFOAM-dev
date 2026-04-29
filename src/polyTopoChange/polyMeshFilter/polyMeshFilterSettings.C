@@ -35,9 +35,9 @@ Foam::polyMeshFilterSettings::polyMeshFilterSettings(const dictionary& dict)
     (
         dict_.lookupOrDefault<Switch>("controlMeshQuality", false)
     ),
-    collapseEdgesCoeffDict_(dict_.subDict("collapseEdgesCoeffs")),
-    collapseFacesCoeffDict_(dict_.subOrEmptyDict("collapseFacesCoeffs")),
-    meshQualityCoeffDict_(dict_.subOrEmptyDict("controlMeshQualityCoeffs")),
+    collapseEdgesCoeffDict_(dict_.typeDict("collapseEdges")),
+    collapseFacesCoeffDict_(dict_.typeOrEmptyDict("collapseFaces")),
+    meshQualityCoeffDict_(dict_.typeOrEmptyDict("controlMeshQuality")),
     minLen_(collapseEdgesCoeffDict_.lookup<scalar>("minimumEdgeLength")),
     maxCos_
     (

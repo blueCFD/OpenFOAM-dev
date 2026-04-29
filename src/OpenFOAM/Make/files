@@ -434,7 +434,7 @@ $(dummyAgglomeration)/dummyAgglomeration.C
 
 GAMGProcAgglomerations = $(GAMG)/GAMGProcAgglomerations
 $(GAMGProcAgglomerations)/GAMGProcAgglomeration/GAMGProcAgglomeration.C
-$(GAMGProcAgglomerations)/all/allGAMGProcAgglomeration.C
+$(GAMGProcAgglomerations)/allGAMGProcAgglomeration/allGAMGProcAgglomeration.C
 $(GAMGProcAgglomerations)/manual/manualGAMGProcAgglomeration.C
 $(GAMGProcAgglomerations)/sequential/sequentialGAMGProcAgglomeration.C
 $(GAMGProcAgglomerations)/none/noneGAMGProcAgglomeration.C

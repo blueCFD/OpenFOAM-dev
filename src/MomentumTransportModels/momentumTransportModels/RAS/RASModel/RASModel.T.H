@@ -82,6 +82,9 @@ protected:
         //- Const access to the coefficients dictionary
         const dictionary& typeDict() const;
 
+        //- Const access to the coefficients dictionary
+        const dictionary& typeDict(const word&) const;
+
 
 public:
 

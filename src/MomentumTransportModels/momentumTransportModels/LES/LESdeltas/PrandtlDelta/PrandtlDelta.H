@@ -38,7 +38,7 @@ Description
 
     kappa           0.41;
 
-    PrandtlCoeffs
+    Prandtl
     {
         delta   cubeRootVol;
 

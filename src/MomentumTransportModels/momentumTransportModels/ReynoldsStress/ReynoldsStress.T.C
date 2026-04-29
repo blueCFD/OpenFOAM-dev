@@ -120,7 +120,7 @@ Foam::ReynoldsStress<BasicMomentumTransportModel>::RSource() const
 template<class BasicMomentumTransportModel>
 Foam::ReynoldsStress<BasicMomentumTransportModel>::ReynoldsStress
 (
-    const word& modelName,
+    const word& type,
     const alphaField& alpha,
     const rhoField& rho,
     const volVectorField& U,
@@ -131,7 +131,7 @@ Foam::ReynoldsStress<BasicMomentumTransportModel>::ReynoldsStress
 :
     BasicMomentumTransportModel
     (
-        modelName,
+        type,
         alpha,
         rho,
         U,
@@ -140,7 +140,7 @@ Foam::ReynoldsStress<BasicMomentumTransportModel>::ReynoldsStress
         viscosity
     ),
 
-    couplingFactor_("couplingFactor", this->typeDict(), 1),
+    couplingFactor_("couplingFactor", this->typeDict(type), 1),
 
     R_
     (

@@ -63,10 +63,10 @@ LaheyKEpsilon<BasicMomentumTransportModel>::LaheyKEpsilon
 
     gasTurbulencePtr_(nullptr),
 
-    alphaInversion_("alphaInversion", this->typeDict(), 0.3),
-    Cp_("Cp", this->typeDict(), 0.25),
-    C4_("C4", this->typeDict(), this->C2_.value()),
-    Cmub_("Cmub", this->typeDict(), 0.6)
+    alphaInversion_("alphaInversion", this->typeDict(type), 0.3),
+    Cp_("Cp", this->typeDict(type), 0.25),
+    C4_("C4", this->typeDict(type), this->C2_.value()),
+    Cmub_("Cmub", this->typeDict(type), 0.6)
 {}
 
 

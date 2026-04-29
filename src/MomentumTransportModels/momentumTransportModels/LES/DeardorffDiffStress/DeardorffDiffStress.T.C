@@ -70,10 +70,10 @@ DeardorffDiffStress<BasicMomentumTransportModel>::DeardorffDiffStress
         viscosity
     ),
 
-    Ck_("Ck", this->typeDict(), 0.094),
-    Cm_("Cm", this->typeDict(), 4.13),
-    Ce_("Ce", this->typeDict(), 1.05),
-    Cs_("Cs", this->typeDict(), 0.25)
+    Ck_("Ck", this->typeDict(type), 0.094),
+    Cm_("Cm", this->typeDict(type), 4.13),
+    Ce_("Ce", this->typeDict(type), 1.05),
+    Cs_("Cs", this->typeDict(type), 0.25)
 {
     if (type == typeName)
     {

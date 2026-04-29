@@ -110,12 +110,12 @@ kEpsilon<BasicMomentumTransportModel>::kEpsilon
         viscosity
     ),
 
-    Cmu_("Cmu", this->typeDict(), 0.09),
-    C1_("C1", this->typeDict(), 1.44),
-    C2_("C2", this->typeDict(), 1.92),
-    C3_("C3", this->typeDict(), 0),
-    sigmak_("sigmak", this->typeDict(), 1.0),
-    sigmaEps_("sigmaEps", this->typeDict(), 1.3),
+    Cmu_("Cmu", this->typeDict(type), 0.09),
+    C1_("C1", this->typeDict(type), 1.44),
+    C2_("C2", this->typeDict(type), 1.92),
+    C3_("C3", this->typeDict(type), 0),
+    sigmak_("sigmak", this->typeDict(type), 1.0),
+    sigmaEps_("sigmaEps", this->typeDict(type), 1.3),
 
     k_
     (

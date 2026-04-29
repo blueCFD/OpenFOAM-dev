@@ -94,25 +94,25 @@ LRR<BasicMomentumTransportModel>::LRR
         viscosity
     ),
 
-    Cmu_("Cmu", this->typeDict(), 0.09),
-    C1_("C1", this->typeDict(), 1.8),
-    C2_("C2", this->typeDict(), 0.6),
-    Ceps1_("Ceps1", this->typeDict(), 1.44),
-    Ceps2_("Ceps2", this->typeDict(), 1.92),
-    Cs_("Cs", this->typeDict(), 0.25),
-    Ceps_("Ceps", this->typeDict(), 0.15),
+    Cmu_("Cmu", this->typeDict(type), 0.09),
+    C1_("C1", this->typeDict(type), 1.8),
+    C2_("C2", this->typeDict(type), 0.6),
+    Ceps1_("Ceps1", this->typeDict(type), 1.44),
+    Ceps2_("Ceps2", this->typeDict(type), 1.92),
+    Cs_("Cs", this->typeDict(type), 0.25),
+    Ceps_("Ceps", this->typeDict(type), 0.15),
 
     wallReflection_
     (
-        this->typeDict().template lookupOrDefault<Switch>
+        this->typeDict(type).template lookupOrDefault<Switch>
         (
             "wallReflection",
             true
         )
     ),
-    kappa_("kappa", this->typeDict(), 0.41),
-    Cref1_("Cref1", this->typeDict(), 0.5),
-    Cref2_("Cref2", this->typeDict(), 0.3),
+    kappa_("kappa", this->typeDict(type), 0.41),
+    Cref1_("Cref1", this->typeDict(type), 0.5),
+    Cref2_("Cref2", this->typeDict(type), 0.3),
 
     k_
     (

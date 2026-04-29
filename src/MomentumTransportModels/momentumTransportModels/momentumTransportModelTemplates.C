@@ -39,17 +39,15 @@ inline Foam::autoPtr<MomentumTransportModel> Foam::momentumTransportModel::New
     const viscosity& viscosity
 )
 {
-    const word modelType
-    (
-        IOdictionary
+    IOobject modelDictIO =
+        momentumTransportModel::readModelDict
         (
-            momentumTransportModel::readModelDict
-            (
-                U.db(),
-                alphaRhoPhi.group()
-            )
-        ).lookup("simulationType")
-    );
+            U.db(),
+            alphaRhoPhi.group()
+        );
+
+    const word modelType =
+        IOdictionary(modelDictIO).lookup<word>("simulationType");
 
     Info<< indentOrNl << "Selecting momentum transport model type "
         << modelType << endl;
@@ -73,14 +71,9 @@ inline Foam::autoPtr<MomentumTransportModel> Foam::momentumTransportModel::New
             << exit(FatalError);
     }
 
-    Info<< incrIndent;
+    printDictionary print(modelDictIO.objectPath(true));
 
-    autoPtr<MomentumTransportModel> modelPtr =
-        cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
-
-    Info<< decrIndent;
-
-    return modelPtr;
+    return cstrIter()(alpha, rho, U, alphaRhoPhi, phi, viscosity);
 }
 
 

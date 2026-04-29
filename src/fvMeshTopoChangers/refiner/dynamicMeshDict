@@ -16,7 +16,7 @@ FoamFile
 topoChanger          refiner;
 
 
-mixerFvMeshCoeffs
+mixerFvMesh
 {
     coordinateSystem
     {
@@ -36,7 +36,7 @@ mixerFvMeshCoeffs
 }
 
 // Refinement
-dynamicRefineFvMeshCoeffs
+dynamicRefineFvMesh
 {
     // Refine every refineInterval timesteps
     refineInterval 3;

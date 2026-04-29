@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -159,7 +159,8 @@ public:
         FickianEddyDiffusivity
         (
             const momentumTransportModel& momentumTransport,
-            const thermoModel& thermo
+            const thermoModel& thermo,
+            const word& type = typeName
         );
 
 

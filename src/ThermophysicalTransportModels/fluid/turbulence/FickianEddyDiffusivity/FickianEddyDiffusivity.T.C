@@ -39,17 +39,18 @@ FickianEddyDiffusivity<TurbulenceThermophysicalTransportModel>::
 FickianEddyDiffusivity
 (
     const momentumTransportModel& momentumTransport,
-    const thermoModel& thermo
+    const thermoModel& thermo,
+    const word& type
 )
 :
     Fickian<unityLewisEddyDiffusivity<TurbulenceThermophysicalTransportModel>>
     (
-        typeName,
+        type,
         momentumTransport,
         thermo
     ),
 
-    Sct_("Sct", dimless, this->typeDict())
+    Sct_("Sct", dimless, this->typeDict(type))
 {
     read();
 }

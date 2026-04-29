@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -67,7 +67,7 @@ Usage
     The Zoltan lb_method and lb_approach can be changed by adding the
     corresponding entries to the optional zoltanCeoffs sub-dictionary, e.g.:
 
-    zoltanCoeffs
+    zoltan
     {
         lb_method       hypergraph;
         lb_approach     partition;

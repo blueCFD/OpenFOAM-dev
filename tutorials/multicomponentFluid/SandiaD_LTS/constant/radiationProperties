@@ -24,7 +24,7 @@ solverFreq 1;
 
 absorptionEmissionModel greyMeanReaction;
 
-greyMeanReactionCoeffs
+greyMeanReaction
 {
     lookUpTableFileName      none;
 

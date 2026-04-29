@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2015-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2015-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -35,6 +35,7 @@ namespace saturationModels
 {
     defineTypeNameAndDebug(ArdenBuck, 0);
     addToRunTimeSelectionTable(saturationPressureModel, ArdenBuck, dictionary);
+    addToRunTimeSelectionTable(saturationPressureModel, ArdenBuck, );
 
     static const coefficient zeroC("zeroC", dimTemperature, 273.15);
     static const coefficient A("A", dimPressure, 611.21);
@@ -87,6 +88,12 @@ Foam::saturationModels::ArdenBuck::lnPSat(const FieldType& T) const
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::saturationModels::ArdenBuck::ArdenBuck()
+:
+    saturationPressureModel()
+{}
+
 
 Foam::saturationModels::ArdenBuck::ArdenBuck(const dictionary& dict)
 :

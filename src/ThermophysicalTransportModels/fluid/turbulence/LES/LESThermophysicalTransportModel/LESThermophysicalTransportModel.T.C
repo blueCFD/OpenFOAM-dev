@@ -101,7 +101,11 @@ Foam::LESThermophysicalTransportModel
                 << exit(FatalError);
         }
 
-        printDictionary print(LESdict.name());
+        printDictionary print
+        (
+            LESdict.name(),
+            LESdict.optionalTypeDict(modelType).name()
+        );
 
         return autoPtr<LESThermophysicalTransportModel>
         (
@@ -122,8 +126,6 @@ Foam::LESThermophysicalTransportModel
         Info<< indentOrNl
             << "Selecting default LES thermophysical transport model "
             <<  LESunityLewisEddyDiffusivity::typeName << endl;
-
-        printDictionary print(header.name());
 
         return autoPtr<LESThermophysicalTransportModel>
         (
@@ -147,7 +149,17 @@ const Foam::dictionary& Foam::LESThermophysicalTransportModel
     BasicThermophysicalTransportModel
 >::typeDict() const
 {
-    return this->subOrEmptyDict("LES").optionalTypeDict(type());
+    return typeDict(this->type());
+}
+
+
+template<class BasicThermophysicalTransportModel>
+const Foam::dictionary& Foam::LESThermophysicalTransportModel
+<
+    BasicThermophysicalTransportModel
+>::typeDict(const word& type) const
+{
+    return this->subOrEmptyDict("LES").optionalTypeDict(type);
 }
 
 

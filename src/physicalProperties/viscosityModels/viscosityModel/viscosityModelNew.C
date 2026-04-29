@@ -52,6 +52,8 @@ Foam::autoPtr<Foam::viscosityModel> Foam::viscosityModel::New
             << exit(FatalIOError);
     }
 
+    printDictionary print(dict.dictionary::name());
+
     return autoPtr<viscosityModel>(cstrIter()(mesh, group));
 }
 

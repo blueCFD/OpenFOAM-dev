@@ -40,7 +40,7 @@ Description
 
     Usage:
 
-        SingleKineticRateDevolatilisationCoeffs
+        SingleKineticRateDevolatilisation
         {
             volatileData
             (

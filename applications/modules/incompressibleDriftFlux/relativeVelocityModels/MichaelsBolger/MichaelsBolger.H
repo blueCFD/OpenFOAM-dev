@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -40,7 +40,7 @@ Usage
     \verbatim
         relativeVelocityModel MichaelsBolger;
 
-        MichaelsBolgerCoeffs
+        MichaelsBolger
         {
             a0          0;    // Extended Michaels & Bolger coefficient,
             a1          4.65; // Exponent

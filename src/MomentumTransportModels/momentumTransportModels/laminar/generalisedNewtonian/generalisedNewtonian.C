@@ -47,7 +47,8 @@ generalisedNewtonian<BasicMomentumTransportModel>::generalisedNewtonian
     const volVectorField& U,
     const surfaceScalarField& alphaRhoPhi,
     const surfaceScalarField& phi,
-    const viscosity& viscosity
+    const viscosity& viscosity,
+    const word& type
 )
 :
     linearViscousStress<laminarModel<BasicMomentumTransportModel>>
@@ -65,7 +66,7 @@ generalisedNewtonian<BasicMomentumTransportModel>::generalisedNewtonian
     (
         generalisedNewtonianViscosityModel::New
         (
-            this->typeDict(),
+            this->typeDict(type),
             viscosity,
             U
         )

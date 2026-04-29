@@ -45,13 +45,26 @@ Maxwell<BasicMomentumTransportModel>::readModeCoefficients
     const dimensionSet& dims
 ) const
 {
+    return readModeCoefficients(this->type(), name, dims);
+}
+
+
+template<class BasicMomentumTransportModel>
+PtrList<dimensionedScalar>
+Maxwell<BasicMomentumTransportModel>::readModeCoefficients
+(
+    const word& type,
+    const word& name,
+    const dimensionSet& dims
+) const
+{
     PtrList<dimensionedScalar> modeCoeffs(nModes_);
 
     if (modeCoefficients_.size())
     {
-        if (this->typeDict().found(name))
+        if (this->typeDict(type).found(name))
         {
-            IOWarningInFunction(this->typeDict())
+            IOWarningInFunction(this->typeDict(type))
                 << "Using 'modes' list, '" << name << "' entry will be ignored."
                 << endl;
         }
@@ -80,7 +93,7 @@ Maxwell<BasicMomentumTransportModel>::readModeCoefficients
             (
                 name,
                 dims,
-                this->typeDict().lookup(name)
+                this->typeDict(type).lookup(name)
             )
         );
     }
@@ -146,7 +159,7 @@ Maxwell<BasicMomentumTransportModel>::Maxwell
         viscosity
     ),
 
-    modeCoefficients_(this->typeDict().subOrEmptyDict("modes")),
+    modeCoefficients_(this->typeDict(type).subOrEmptyDict("modes")),
 
     nModes_(modeCoefficients_.size() ? modeCoefficients_.size() : 1),
 

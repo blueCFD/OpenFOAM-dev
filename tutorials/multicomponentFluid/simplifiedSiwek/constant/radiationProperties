@@ -20,7 +20,7 @@ radiationModel  P1;
 
 absorptionEmissionModel binary;
 
-binaryCoeffs
+binary
 {
     model1
     {
@@ -35,7 +35,7 @@ binaryCoeffs
     model2
     {
         absorptionEmissionModel cloud;
-        cloudCoeffs
+        cloud
         {
             cloudNames
             (
@@ -48,7 +48,7 @@ binaryCoeffs
 
 scatterModel    cloud;
 
-cloudCoeffs
+cloud
 {
     cloudNames
     (

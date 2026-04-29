@@ -32,7 +32,7 @@ WallInteractionModel            SpecularReflection;
 
 BinaryCollisionModel            LarsenBorgnakkeVariableHardSphere;
 
-LarsenBorgnakkeVariableHardSphereCoeffs
+LarsenBorgnakkeVariableHardSphere
 {
     Tref                        273;
     relaxationCollisionNumber   5.0;

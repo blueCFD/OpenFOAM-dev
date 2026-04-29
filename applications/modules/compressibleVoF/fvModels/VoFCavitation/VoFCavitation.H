@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ Usage
 
         model   SchnerrSauer;
 
-        KunzCoeffs
+        Kunz
         {
             pSat    2300;   // Saturation pressure
 
@@ -46,7 +46,7 @@ Usage
             Cv      1000;
         }
 
-        MerkleCoeffs
+        Merkle
         {
             pSat    2300;   // Saturation pressure
 
@@ -56,7 +56,7 @@ Usage
             Cv      1e-03;
         }
 
-        SchnerrSauerCoeffs
+        SchnerrSauer
         {
             pSat    2300;   // Saturation pressure
 

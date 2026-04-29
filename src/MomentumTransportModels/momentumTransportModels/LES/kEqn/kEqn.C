@@ -98,7 +98,7 @@ kEqn<BasicMomentumTransportModel>::kEqn
         this->mesh_
     ),
 
-    Ck_("Ck", this->typeDict(), 0.094)
+    Ck_("Ck", this->typeDict(type), 0.094)
 {
     bound(k_, this->kMin_);
 }

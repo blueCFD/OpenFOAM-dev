@@ -24,7 +24,7 @@ filmCloudTransfer
         // model   BrunDripping;
         // model   curvatureSeparation;
 
-        drippingCoeffs
+        dripping
         {
             deltaStable 5e-4;
 
@@ -41,14 +41,14 @@ filmCloudTransfer
             }
         }
 
-        BrunDrippingCoeffs
+        BrunDripping
         {
             deltaStable 5e-4;
 
             dCoeff      1;
         }
 
-        curvatureSeparationCoeffs
+        curvatureSeparation
         {
             deltaStable 5e-4;
         }

@@ -22,7 +22,7 @@ RAS
 
     turbulence      on;
 
-    kineticTheoryCoeffs
+    kineticTheory
     {
         equilibrium             on;
 
@@ -35,7 +35,7 @@ RAS
         frictionalStressModel       JohnsonJackson;
         radialModel                 SinclairJackson;
 
-        JohnsonJacksonCoeffs
+        JohnsonJackson
         {
             Fr                      0.05;
             eta                     2;
@@ -45,7 +45,7 @@ RAS
         }
     }
 
-    phasePressureCoeffs
+    phasePressure
     {
         preAlphaExp     500;
         expMax          1000;

@@ -16,7 +16,7 @@ FoamFile
 
 reactionModel  EDC;
 
-EDCCoeffs
+EDC
 {
     version v2005;
 }

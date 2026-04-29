@@ -88,8 +88,8 @@ unityLewisEddyDiffusivity
     Prt_
     (
         allowDefaultPrt
-      ? dimensioned<scalar>("Prt", dimless, this->typeDict(), 1)
-      : dimensioned<scalar>("Prt", dimless, this->typeDict())
+      ? dimensioned<scalar>("Prt", dimless, this->typeDict(type), 1)
+      : dimensioned<scalar>("Prt", dimless, this->typeDict(type))
     ),
 
     alphat_
