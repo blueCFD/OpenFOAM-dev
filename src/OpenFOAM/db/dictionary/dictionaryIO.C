@@ -544,8 +544,13 @@ bool Foam::readConfigFile
     // Insert the 'field' and/or 'fields' and 'objects' entries corresponding
     // to both the arguments and the named arguments
     DynamicList<wordAndDictionary> fieldArgs;
+    bool print = false;
     forAll(args, i)
     {
+        if (const_cast<const wordRe&>(args[i].first()).strip(" \n") == "print")
+        {
+            print = true;
+        }
         fieldArgs.append
         (
             wordAndDictionary
@@ -782,6 +787,11 @@ bool Foam::readConfigFile
     // Merge this configuration dictionary into parentDict
     parentDict.merge(funcArgsDict);
     parentDict.subDict(entryName).name() = funcDict.name();
+
+    if (print)
+    {
+        printDictionary::set(parentDict.subDict(entryName));
+    }
 
     return true;
 }

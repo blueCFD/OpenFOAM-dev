@@ -10,9 +10,4 @@ runApplication foamSetupCHT
 
 runApplication foamMultiRun
 
-echo
-echo "Creating files for paraview post-processing"
-echo
-paraFoam -touchAll
-
 # ----------------------------------------------------------------- end-of-file

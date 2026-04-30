@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,6 +53,7 @@ Foam::functionObjects::cloudBoundaryCollisionFlux::cloudBoundaryCollisionFlux
 )
 :
     cloudFvMeshFunctionObject(name, runTime, dict),
+    prociPtr_(nullptr),
     faceiPtr_(nullptr),
     qPtr_(nullptr),
     phiName_(phiName),
@@ -103,9 +104,27 @@ void Foam::functionObjects::cloudBoundaryCollisionFlux::preCrossFaces
     const LagrangianInternalScalarDynamicField& fraction
 )
 {
+    if (Pstream::parRun())
+    {
+        prociPtr_.set
+        (
+            new LagrangianLabelDynamicField
+            (
+                IOobject
+                (
+                    name() + ":proci",
+                    time_.name(),
+                    cloud().mesh()
+                ),
+                cloud().mesh(),
+                dimensioned<label>(dimless, -1)
+            )
+        );
+    }
+
     faceiPtr_.set
     (
-        new LagrangianLabelField
+        new LagrangianLabelDynamicField
         (
             IOobject
             (
@@ -120,7 +139,7 @@ void Foam::functionObjects::cloudBoundaryCollisionFlux::preCrossFaces
 
     qPtr_.set
     (
-        new LagrangianScalarField
+        new LagrangianScalarDynamicField
         (
             IOobject
             (
@@ -151,6 +170,12 @@ void Foam::functionObjects::cloudBoundaryCollisionFlux::preCrossFaces
 
     const Foam::cloud& c = cloud();
 
+    if (Pstream::parRun())
+    {
+        SubField<label> proci(subMesh.sub(prociPtr_->primitiveFieldRef()));
+        proci = Pstream::myProcNo();
+    }
+
     SubField<label> facei(subMesh.sub(faceiPtr_->primitiveFieldRef()));
     facei = subMesh.sub(c.mesh().facei());
 
@@ -175,7 +200,16 @@ void Foam::functionObjects::cloudBoundaryCollisionFlux::postCrossFaces
 
     const Foam::cloud& c = cloud();
 
-    const SubField<label> facei0(subMesh.sub(faceiPtr_->primitiveFieldRef()));
+    auto proci0EqualsProci = [&](const label subi)
+    {
+        if (!Pstream::parRun()) return true;
+
+        return
+            prociPtr_->primitiveFieldRef()[subi + subMesh.start()]
+         == Pstream::myProcNo();
+    };
+
+    const SubField<label> facei0 = subMesh.sub(faceiPtr_->primitiveFieldRef());
     const SubField<label> facei = subMesh.sub(c.mesh().facei());
 
     LagrangianSubScalarSubField q(subMesh.sub(qPtr_()));
@@ -185,11 +219,8 @@ void Foam::functionObjects::cloudBoundaryCollisionFlux::postCrossFaces
 
     forAll(subMesh, subi)
     {
-        if (facei0[subi] != facei[subi]) continue;
-
-        const LagrangianState state = c.mesh().state(subi + subMesh.start());
-
-        if (state != LagrangianState::inCell) continue;
+        // The particle must be on the same face to count as a collision
+        if (!proci0EqualsProci(subi) || facei0[subi] != facei[subi]) continue;
 
         const label bFacei = facei[subi] - mesh().nInternalFaces();
 
@@ -198,11 +229,12 @@ void Foam::functionObjects::cloudBoundaryCollisionFlux::postCrossFaces
 
         forAll(patchis, i)
         {
+            const scalar fraction =
+                 magSfb[patchis[i]][patchFaceis[i]]
+                /mesh().magFaceAreas()[facei[subi]];
+
             phib_[patchis[i]][patchFaceis[i]] +=
-                q[subi]
-               /time_.deltaTValue()
-               *magSfb[patchis[i]][patchFaceis[i]]
-               /mesh().magFaceAreas()[facei[subi]];
+                fraction*q[subi]/time_.deltaTValue();
         }
     }
 }
@@ -213,6 +245,7 @@ void Foam::functionObjects::cloudBoundaryCollisionFlux::postCrossFaces
     const LagrangianInternalScalarDynamicField& fraction
 )
 {
+    prociPtr_.clear();
     faceiPtr_.clear();
     qPtr_.clear();
 }

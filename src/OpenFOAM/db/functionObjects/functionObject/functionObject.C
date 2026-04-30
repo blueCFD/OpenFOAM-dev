@@ -76,17 +76,15 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
     const dictionary& dict
 )
 {
-    const word functionType(dict.lookup("type"));
+    const word type(dict.lookup("type"));
 
-    if (debug)
-    {
-        Info<< indentOrNl << "Selecting function " << functionType << endl;
-    }
+    Info<< indentOrNl << "Selecting " << type
+        << " with name " << name << endl;
 
     if
     (
         !dictionaryConstructorTablePtr_
-     || dictionaryConstructorTablePtr_->find(functionType)
+     || dictionaryConstructorTablePtr_->find(type)
         == dictionaryConstructorTablePtr_->end()
     )
     {
@@ -100,31 +98,33 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
             )
         )
         {
-            libs.open("lib" + functionType.remove(':') + ".so", false);
+            libs.open("lib" + type.remove(':') + ".so", false);
         }
 
         if (!dictionaryConstructorTablePtr_)
         {
             FatalErrorInFunction
                 << "Unknown function type "
-                << functionType << nl << nl
+                << type << nl << nl
                 << "Table of functionObjects is empty"
                 << exit(FatalError);
         }
     }
 
     dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(functionType);
+        dictionaryConstructorTablePtr_->find(type);
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
         FatalErrorInFunction
             << "Unknown function type "
-            << functionType << nl << nl
+            << type << nl << nl
             << "Valid functions are : " << nl
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalError);
     }
+
+    printDictionary print(dict);
 
     return autoPtr<functionObject>(cstrIter()(name, runTime, dict));
 }

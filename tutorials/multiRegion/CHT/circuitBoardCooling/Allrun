@@ -27,6 +27,4 @@ fi
 
 runApplication foamMultiRun
 
-paraFoam -touchAll
-
 #------------------------------------------------------------------------------

@@ -8,9 +8,6 @@ runApplication blockMesh
 runApplication extrudeMesh
 runApplication splitMeshRegions -cellZones all
 
-paraFoam -region fluid -touch
-paraFoam -region solid -touch
-
 runApplication decomposePar -allRegions
 
 runParallel foamMultiRun

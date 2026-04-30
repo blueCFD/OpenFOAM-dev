@@ -10,9 +10,6 @@ runApplication createZones
 
 runApplication splitMeshRegions -cellZones "gas solid"
 
-paraFoam -region gas -touch
-paraFoam -region solid -touch
-
 runApplication decomposePar -allRegions
 
 runParallel foamMultiRun

@@ -97,9 +97,8 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
 {
     const word type(dict.lookup("type"));
 
-    Info<< indentOrNl << "Selecting " << typeName
-        << " with name " << name
-        << " of type " << type << endl;
+    Info<< indentOrNl << "Selecting " << type
+        << " with name " << name << endl;
 
     if
     (
@@ -145,10 +144,7 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
 
     printDictionary print(dict);
 
-    return autoPtr<fvModel>
-    (
-        cstrIter()(name, type, mesh, dict)
-    );
+    return autoPtr<fvModel>(cstrIter()(name, type, mesh, dict));
 }
 
 

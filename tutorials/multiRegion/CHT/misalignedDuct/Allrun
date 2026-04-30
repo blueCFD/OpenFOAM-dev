@@ -12,8 +12,6 @@ rm -f 0/cellToRegion 0/*/cellToRegion
 
 runApplication createNonConformalCouples
 
-paraFoam -touchAll
-
 runApplication foamMultiRun
 
 #------------------------------------------------------------------------------

@@ -31,10 +31,6 @@ runApplication -s film foamDictionary -set \
      entry0/surface/isExtrudedRegion=yes" \
      constant/film/polyMesh/boundary
 
-printf "\n%s\n" "Creating files for paraview post-processing"
-paraFoam -touchAll
-echo
-
 # Serial run
 #runApplication foamMultiRun
 

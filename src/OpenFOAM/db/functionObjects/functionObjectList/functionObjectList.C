@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -86,6 +86,11 @@ bool Foam::functionObjectList::readDict()
         label nFunc = 0;
 
         const dictionary& functionsDict = *this;
+
+        Info<< indentOrNl << "Constructing functionObjects from "
+            << relativeObjectPath().c_str() << endl;
+
+        printDictionary print(functionsDict);
 
         libs.open
         (

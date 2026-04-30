@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -292,6 +292,14 @@ void Foam::string::strip(const string& str)
     {
         resize(i1 - i0);
     }
+}
+
+
+Foam::string Foam::string::strip(const string& str) const
+{
+    string result(*this);
+    result.strip(str);
+    return result;
 }
 
 

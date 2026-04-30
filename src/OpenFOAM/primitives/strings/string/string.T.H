@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -243,6 +243,9 @@ public:
 
         //- Strip characters from the start and end of the string
         void strip(const string&);
+
+        //- Strip characters from the start and end of the string
+        string strip(const string&) const;
 
         //- Find the closing character. Brackets counting algorithm. The
         //  opening bracket character is taken to be the one at the starting

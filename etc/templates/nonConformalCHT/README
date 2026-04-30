@@ -79,6 +79,5 @@ Running the Solver
 
 Post-Processing
 ===============
-+ In order to post-process with ParaView, run "paraFoam -touchAll", then open
-  paraview and open the individual ".OpenFOAM" dummy files for individual mesh
-  regions.
++ In order to post-process with ParaView, run "paraFoam -region <regionName>"
+  to open a specific region, or "paraFoam -allRegions" to open all the regions.

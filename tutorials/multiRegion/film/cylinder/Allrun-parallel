@@ -16,8 +16,4 @@ runParallel foamMultiRun
 
 runApplication reconstructPar -allRegions
 
-printf "\n%s\n" "Creating files for paraview post-processing"
-paraFoam -touchAll
-echo
-
 #------------------------------------------------------------------------------

@@ -82,9 +82,8 @@ Foam::autoPtr<Foam::fvConstraint> Foam::fvConstraint::New
 {
     const word type(dict.lookup("type"));
 
-    Info<< indentOrNl << "Selecting " << typeName
-        << " with name " << name
-        << " of type " << type << endl;
+    Info<< indentOrNl << "Selecting " << type
+        << " with name " << name << endl;
 
     if
     (

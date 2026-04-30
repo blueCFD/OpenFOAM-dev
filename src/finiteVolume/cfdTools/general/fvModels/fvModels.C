@@ -54,7 +54,7 @@ Foam::IOobject Foam::fvModels::createIOobject
     if (io.headerOk())
     {
         Info<< indentOrNl << "Constructing " << typeName << " from "
-            << io.relativeObjectPath() << endl;
+            << io.relativeObjectPath().c_str() << endl;
 
         io.readOpt() = IOobject::MUST_READ_IF_MODIFIED;
         return io;

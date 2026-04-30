@@ -12,10 +12,6 @@ runApplication foamDictionary -entry internalField -set "uniform 348" 0/solid/T
 
 runApplication decomposePar -allRegions
 
-printf "\n%s\n" "Creating files for paraview post-processing"
-paraFoam -touchAll
-echo
-
 runParallel foamMultiRun
 
 runApplication reconstructPar -allRegions

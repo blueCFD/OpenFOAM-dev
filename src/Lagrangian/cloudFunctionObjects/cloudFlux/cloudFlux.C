@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -69,11 +69,12 @@ void Foam::functionObjects::cloudFlux::crossPatchFaces
 
         forAll(patchis, i)
         {
+            const scalar fraction =
+                 magSfb[patchis[i]][patchFaceis[i]]
+                /mesh().magFaceAreas()[facei[subi]];
+
             phi_.boundaryFieldRef()[patchis[i]][patchFaceis[i]] +=
-                sign
-               *dqdt[subi]
-               *magSfb[patchis[i]][patchFaceis[i]]
-               /mesh().magFaceAreas()[facei[subi]];
+                sign*fraction*dqdt[subi];
         }
     }
 }
@@ -167,10 +168,9 @@ void Foam::functionObjects::cloudFlux::preCrossFaces
         {
             if (states[subi] != LagrangianState::onInternalFace) continue;
 
-            phi_.internalFieldRef()[facei[subi]] +=
-                (owner[facei[subi]] == celli[subi] ? +1 : -1)
-               *dqdt[subi]
-               /mesh().time().deltaTValue();
+            const label sign = owner[facei[subi]] == celli[subi] ? +1 : -1;
+
+            phi_.internalFieldRef()[facei[subi]] += sign*dqdt[subi];
         }
     }
 }

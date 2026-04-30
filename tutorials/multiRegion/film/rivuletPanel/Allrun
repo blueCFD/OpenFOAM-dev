@@ -16,10 +16,6 @@ runApplication -s 1 reconstructPar -allRegions
 
 runApplication -s 2 decomposePar -fields -allRegions
 
-printf "\n%s\n" "Creating files for paraview post-processing"
-paraFoam -touchAll
-echo
-
 runParallel foamMultiRun
 
 runApplication reconstructPar -allRegions
