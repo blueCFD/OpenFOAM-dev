@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -126,7 +126,8 @@ void Foam::RBD::restraints::propellerDiskForce::restrain
 
     if (model_.debug)
     {
-        Info<< " location " << propPtr->centre()
+        Info<< indent
+            << "location " << propPtr->centre()
             << " force " << force
             << " moment " << moment
             << endl;

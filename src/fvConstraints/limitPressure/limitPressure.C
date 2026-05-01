@@ -177,7 +177,7 @@ bool Foam::fv::limitPressure::constrain(volScalarField& p) const
 
             if (pMin < pMin_.value())
             {
-                Info<< "limitPressure: min " << pMin << endl;
+                Info<< indent << "limitPressure: min " << pMin << endl;
                 p = max(p, pMin_);
                 constrained = true;
             }
@@ -189,7 +189,7 @@ bool Foam::fv::limitPressure::constrain(volScalarField& p) const
 
             if (pMax > pMax_.value())
             {
-                Info<< "limitPressure: max " << pMax << endl;
+                Info<< indent << "limitPressure: max " << pMax << endl;
                 p = min(p, pMax_);
                 constrained = true;
             }

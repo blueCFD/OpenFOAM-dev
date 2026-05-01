@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -74,7 +74,7 @@ bool Foam::functionObjects::writeDictionary::tryDirectory
         {
             if (firstDict)
             {
-                Info<< type() << " " << name() << " write:" << nl << endl;
+                Info<< type() << " " << name() << " write:" << endl;
 
                 IOobject::writeDivider(Info);
                 Info<< endl;
@@ -136,19 +136,20 @@ bool Foam::functionObjects::writeDictionary::read(const dictionary& dict)
 
     digests_.setSize(dictNames_.size(), SHA1Digest());
 
-    Info<< type() << " " << name() << ": monitoring dictionaries:" << nl;
+    Info<< indent << "monitoring dictionaries:" << nl;
+    Info<< incrIndent;
     if (dictNames_.size())
     {
         forAll(dictNames_, i)
         {
-            Info<< "    " << dictNames_[i] << endl;
+            Info<< indent << "" << dictNames_[i] << endl;
         }
     }
     else
     {
-        Info<< "    none" << nl;
+        Info<< indent << "none" << nl;
     }
-    Info<< endl;
+    Info<< decrIndent;
 
     return true;
 }
@@ -174,7 +175,8 @@ bool Foam::functionObjects::writeDictionary::write()
             {
                 if (firstDict)
                 {
-                    Info<< type() << " " << name() << " write:" << nl << endl;
+                    Info<< indent
+                        << type() << " " << name() << " write:" << endl;
 
                     IOobject::writeDivider(Info);
                     Info<< endl;
@@ -204,8 +206,8 @@ bool Foam::functionObjects::writeDictionary::write()
 
             if (!processed)
             {
-                Info<< "    Unable to locate dictionary " << dictNames_[i]
-                    << nl << endl;
+                Info<< indent << "Unable to locate dictionary " << dictNames_[i]
+                    << endl;
             }
             else
             {

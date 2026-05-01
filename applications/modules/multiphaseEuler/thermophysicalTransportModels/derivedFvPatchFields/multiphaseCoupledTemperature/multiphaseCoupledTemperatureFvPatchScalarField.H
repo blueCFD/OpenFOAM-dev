@@ -82,14 +82,6 @@ protected:
             tmp<scalarField>& qNbr
         ) const;
 
-        //- Get the neighbour patch wall temperature and heat-flux
-        //  when wall thermal resistance is specified
-        virtual void getNbr
-        (
-            tmp<scalarField>& TwNbr,
-            tmp<scalarField>& qNbr
-        ) const;
-
 
 public:
 

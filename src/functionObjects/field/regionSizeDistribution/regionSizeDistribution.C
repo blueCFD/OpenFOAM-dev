@@ -133,16 +133,18 @@ void Foam::functionObjects::regionSizeDistribution::writeAlphaFields
     liquidCore.correctBoundaryConditions();
     backgroundAlpha.correctBoundaryConditions();
 
-    Info<< "    Volume of liquid-core = "
+    Info<< indent << "Volume of liquid-core = "
         << fvc::domainIntegrate(liquidCore).value()
         << endl;
-    Info<< "    Volume of background  = "
+    Info<< indent << "Volume of background  = "
         << fvc::domainIntegrate(backgroundAlpha).value()
         << endl;
 
-    Info<< "    Writing liquid-core field to " << liquidCore.name() << endl;
+    Info<< indent
+        << "Writing liquid-core field to " << liquidCore.name() << endl;
     liquidCore.write();
-    Info<< "    Writing background field to " << backgroundAlpha.name() << endl;
+    Info<< indent
+        << "Writing background field to " << backgroundAlpha.name() << endl;
     backgroundAlpha.write();
 }
 
@@ -393,16 +395,16 @@ bool Foam::functionObjects::regionSizeDistribution::execute()
 
 bool Foam::functionObjects::regionSizeDistribution::write()
 {
-    Info<< type() << " " << name() << " write:" << nl;
+    Info<< indent << type() << " " << name() << " write:" << nl;
 
     autoPtr<volScalarField> alphaPtr;
     if (obr_.foundObject<volScalarField>(alphaName_))
     {
-        Info<< "    Looking up field " << alphaName_ << endl;
+        Info<< indent << "Looking up field " << alphaName_ << endl;
     }
     else
     {
-        Info<< "    Reading field " << alphaName_ << endl;
+        Info<< indent << "Reading field " << alphaName_ << endl;
         alphaPtr.reset
         (
             new volScalarField
@@ -428,7 +430,7 @@ bool Foam::functionObjects::regionSizeDistribution::write()
        : obr_.lookupObject<volScalarField>(alphaName_)
     );
 
-    Info<< "    Volume of alpha          = "
+    Info<< indent << "Volume of alpha          = "
         << fvc::domainIntegrate(alpha).value()
         << endl;
 
@@ -436,9 +438,9 @@ bool Foam::functionObjects::regionSizeDistribution::write()
     const scalar maxDropletVol = 1.0/6.0*pow(maxDiam_, 3);
     const scalar delta = (maxDiam_-minDiam_)/nBins_;
 
-    Info<< "    Mesh volume              = " << meshVol << endl;
-    Info<< "    Maximum droplet diameter = " << maxDiam_ << endl;
-    Info<< "    Maximum droplet volume   = " << maxDropletVol << endl;
+    Info<< indent << "Mesh volume              = " << meshVol << endl;
+    Info<< indent << "Maximum droplet diameter = " << maxDiam_ << endl;
+    Info<< indent << "Maximum droplet volume   = " << maxDropletVol << endl;
 
 
     // Determine blocked faces
@@ -494,7 +496,7 @@ bool Foam::functionObjects::regionSizeDistribution::write()
 
     regionSplit regions(mesh_, blockedFace);
 
-    Info<< "    Determined " << regions.nRegions()
+    Info<< indent << "Determined " << regions.nRegions()
         << " disconnected regions" << endl;
 
 
@@ -513,7 +515,7 @@ bool Foam::functionObjects::regionSizeDistribution::write()
             mesh_,
             dimensionedScalar(dimless, 0)
         );
-        Info<< "    Dumping region as volScalarField to " << region.name()
+        Info<< indent << "Dumping region as volScalarField to " << region.name()
             << endl;
 
         forAll(regions, celli)
@@ -544,7 +546,7 @@ bool Foam::functionObjects::regionSizeDistribution::write()
 
     if (debug)
     {
-        Info<< "    " << tab << "Region"
+        Info<< indent << "" << tab << "Region"
             << tab << "Volume(mesh)"
             << tab << "Volume(" << alpha.name() << "):"
             << tab << "nCells"
@@ -564,7 +566,7 @@ bool Foam::functionObjects::regionSizeDistribution::write()
             ++vIter, ++aIter, ++numIter
         )
         {
-            Info<< "    " << tab << vIter.key()
+            Info<< indent << "" << tab << vIter.key()
                 << tab << vIter()
                 << tab << aIter()
                 << tab << numIter()
@@ -574,19 +576,15 @@ bool Foam::functionObjects::regionSizeDistribution::write()
             alphaSumVol += aIter();
             nCells += numIter();
         }
-        Info<< "    " << tab << "Total:"
+        Info<< indent << "" << tab << "Total:"
             << tab << meshSumVol
             << tab << alphaSumVol
             << tab << nCells
             << endl;
-        Info<< endl;
     }
 
-
-
-
     {
-        Info<< "    Patch connected regions (liquid core):" << endl;
+        Info<< indent << "Patch connected regions (liquid core):" << endl;
         Info<< tab << "    Region"
             << tab << "Volume(mesh)"
             << tab << "Volume(" << alpha.name() << "):"
@@ -594,17 +592,16 @@ bool Foam::functionObjects::regionSizeDistribution::write()
         forAllConstIter(Map<label>, patchRegions, iter)
         {
             label regionI = iter.key();
-            Info<< "    " << tab << iter.key()
+            Info<< indent << "" << tab << iter.key()
                 << tab << allRegionVolume[regionI]
                 << tab << allRegionAlphaVolume[regionI] << endl;
 
         }
-        Info<< endl;
     }
 
     {
-        Info<< "    Background regions:" << endl;
-        Info<< "    " << tab << "Region"
+        Info<< indent << "Background regions:" << endl;
+        Info<< indent << "" << tab << "Region"
             << tab << "Volume(mesh)"
             << tab << "Volume(" << alpha.name() << "):"
             << endl;
@@ -625,12 +622,11 @@ bool Foam::functionObjects::regionSizeDistribution::write()
              && vIter() >= maxDropletVol
             )
             {
-                Info<< "    " << tab << vIter.key()
+                Info<< indent << "" << tab << vIter.key()
                     << tab << vIter()
                     << tab << aIter() << endl;
             }
         }
-        Info<< endl;
     }
 
 
@@ -715,8 +711,8 @@ bool Foam::functionObjects::regionSizeDistribution::write()
 
         // Write to log
         {
-            Info<< "    Bins:" << endl;
-            Info<< "    " << tab << "Bin"
+            Info<< indent << "Bins:" << endl;
+            Info<< indent << "" << tab << "Bin"
                 << tab << "Min diameter"
                 << tab << "Count:"
                 << endl;
@@ -724,7 +720,7 @@ bool Foam::functionObjects::regionSizeDistribution::write()
             scalar diam = 0.0;
             forAll(binCount, binI)
             {
-                Info<< "    " << tab << binI
+                Info<< indent << "" << tab << binI
                     << tab << diam
                     << tab << binCount[binI] << endl;
                 diam += delta;

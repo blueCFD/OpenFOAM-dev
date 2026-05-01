@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,7 @@ Foam::profileModelList::profileModelList
     {
         wordList modelNames(dict.toc());
 
-        Info<< "    Constructing blade profiles:" << endl;
+        Info<< indent << "Constructing blade profiles:" << endl;
 
         if (modelNames.size() > 0)
         {
@@ -58,7 +58,7 @@ Foam::profileModelList::profileModelList
         }
         else
         {
-            Info<< "        none" << endl;
+            Info<< indent << "    none" << endl;
         }
     }
 }

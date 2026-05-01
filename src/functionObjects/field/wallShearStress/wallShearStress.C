@@ -123,8 +123,6 @@ bool Foam::functionObjects::wallShearStress::read(const dictionary& dict)
 
     patchSet_ = mesh_.poly().boundary().patchSet(dict, true);
 
-    Info<< type() << " " << name() << ":" << nl;
-
     const polyBoundaryMesh& pbm = mesh_.poly().boundary();
 
     if (patchSet_.empty())
@@ -137,12 +135,13 @@ bool Foam::functionObjects::wallShearStress::read(const dictionary& dict)
             }
         }
 
-        Info<< "    processing all wall patches" << nl << endl;
+        Info<< indent << "processing all wall patches" << endl;
     }
     else
     {
-        Info<< "    processing wall patches: " << nl;
+        Info<< indent << "processing wall patches:" << nl;
 
+        Info<< incrIndent;
         labelHashSet filteredPatchSet;
         forAllConstIter(labelHashSet, patchSet_, iter)
         {
@@ -151,16 +150,16 @@ bool Foam::functionObjects::wallShearStress::read(const dictionary& dict)
 
             if (isA<wallPolyPatch>(pbm[patchi]))
             {
-                Info<< "        " << pbm[patchi].name() << endl;
+                Info<< indent << pbm[patchi].name() << endl;
             }
             else
             {
-                Info<< "        " << pbm[patchi].name()
-                    << "    type " << pbm[patchi].type() << endl;
+                Info<< indent
+                    << pbm[patchi].name()
+                    << " type " << pbm[patchi].type() << endl;
             }
         }
-
-        Info<< endl;
+        Info<< decrIndent;
 
         patchSet_ = filteredPatchSet;
     }

@@ -55,6 +55,12 @@ Foam::autoPtr<Foam::SuModel> Foam::SuModel::New
             << exit(FatalIOError);
     }
 
+    printDictionary print
+    (
+        SuDict,
+        SuDict.optionalTypeDict(modelType)
+    );
+
     return autoPtr<SuModel>
     (
         cstrIter()

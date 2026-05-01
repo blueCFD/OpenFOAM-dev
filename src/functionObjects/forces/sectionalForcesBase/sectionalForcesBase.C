@@ -444,7 +444,7 @@ void Foam::functionObjects::sectionalForcesBase::addFluid
             << functionObject::typeName << "s::"
             << type() << ":" << nl
             << "    force = " << force[0] << nl
-            << "    moment = " << moment[0] << nl << endl;
+            << "    moment = " << moment[0] << endl;
     }
 }
 

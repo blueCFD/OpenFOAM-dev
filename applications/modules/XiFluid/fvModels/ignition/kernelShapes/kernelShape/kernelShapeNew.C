@@ -53,6 +53,12 @@ Foam::autoPtr<Foam::kernelShape> Foam::kernelShape::New
             << exit(FatalIOError);
     }
 
+    printDictionary print
+    (
+        kernelShapeDict,
+        kernelShapeDict.optionalTypeDict(type)
+    );
+
     return autoPtr<kernelShape>
     (
         cstrIter()

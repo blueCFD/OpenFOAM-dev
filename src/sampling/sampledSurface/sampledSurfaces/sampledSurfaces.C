@@ -225,12 +225,13 @@ bool Foam::functionObjects::sampledSurfaces::read(const dictionary& dict)
 
         if (this->size())
         {
-            Info<< "Reading surface description:" << nl;
+            Info<< indent << "Reading surface description:" << nl;
+            Info << incrIndent;
             forAll(*this, si)
             {
-                Info<< "    " << operator[](si).name() << nl;
+                Info<< indent << operator[](si).name() << nl;
             }
-            Info<< endl;
+            Info << decrIndent;
         }
     }
 

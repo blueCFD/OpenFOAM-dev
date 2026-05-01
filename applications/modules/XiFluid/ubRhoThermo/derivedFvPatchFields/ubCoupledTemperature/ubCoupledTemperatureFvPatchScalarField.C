@@ -166,33 +166,6 @@ void Foam::ubCoupledTemperatureFvPatchScalarField::getNbr
 }
 
 
-void Foam::ubCoupledTemperatureFvPatchScalarField::getNbr
-(
-    tmp<scalarField>& TrefNbr,
-    tmp<scalarField>& qNbr
-) const
-{
-    const solvers::XiFluid& XiFluid
-    (
-        patch().mesh()
-       .lookupObject<solvers::XiFluid>(solver::typeName)
-    );
-
-    const ubRhoThermo& thermo = XiFluid.thermo;
-    const uRhoMulticomponentThermo& uThermo = thermo.uThermo();
-    const bRhoMulticomponentThermo& bThermo = thermo.bThermo();
-
-    const scalarField& alphau =
-        thermo.alphau().boundaryField()[patch().index()];
-    const scalarField& alphab =
-        thermo.alphab().boundaryField()[patch().index()];
-
-    TrefNbr =
-       alphau*uThermo.T().boundaryField()[patch().index()]
-     + alphab*bThermo.T().boundaryField()[patch().index()];
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::ubCoupledTemperatureFvPatchScalarField::

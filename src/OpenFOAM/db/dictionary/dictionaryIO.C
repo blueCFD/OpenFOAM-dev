@@ -551,14 +551,17 @@ bool Foam::readConfigFile
         {
             print = true;
         }
-        fieldArgs.append
-        (
-            wordAndDictionary
+        else
+        {
+            fieldArgs.append
             (
-                expandArg(args[i].first(), funcDict, args[i].second()),
-                dictionary::null
-            )
-        );
+                wordAndDictionary
+                (
+                    expandArg(args[i].first(), funcDict, args[i].second()),
+                    dictionary::null
+                )
+            );
+        }
     }
     forAll(namedArgs, i)
     {

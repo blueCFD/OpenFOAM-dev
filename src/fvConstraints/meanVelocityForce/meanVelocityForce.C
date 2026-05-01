@@ -112,7 +112,7 @@ Foam::fv::meanVelocityForce::meanVelocityForce
     );
     if (propsFile.good())
     {
-        Info<< "    Reading pressure gradient from file" << endl;
+        Info<< indent << "Reading pressure gradient from file" << endl;
         dictionary propsDict(dictionary::null, propsFile);
         propsDict.lookup("gradient") >> gradP0_;
     }
@@ -239,7 +239,8 @@ bool Foam::fv::meanVelocityForce::constrain(volVectorField& U) const
 
     const scalar gradP = gradP0_ + dGradP_;
 
-    Info<< "Pressure gradient source: uncorrected Ubar = " << magUbarAve
+    Info<< indent
+        << "Pressure gradient source: uncorrected Ubar = " << magUbarAve
         << ", pressure gradient = " << gradP << endl;
 
     writeProps(gradP);

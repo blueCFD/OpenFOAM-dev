@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2014-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2014-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -173,7 +173,8 @@ void Foam::fv::solidificationMelting::update
 
     if (debug)
     {
-        Info<< type() << ": " << name()
+        Info<< indent
+            << type() << ": " << name()
             << " - updating phase indicator" << endl;
     }
 
@@ -229,7 +230,8 @@ void Foam::fv::solidificationMelting::apply
 {
     if (debug)
     {
-        Info<< type() << ": applying source to " << eqn.psi().name() << endl;
+        Info<< indent
+            << type() << ": applying source to " << eqn.psi().name() << endl;
     }
 
     const volScalarField Cp(this->Cp());
@@ -349,7 +351,8 @@ void Foam::fv::solidificationMelting::addSup
 {
     if (debug)
     {
-        Info<< type() << ": applying source to " << eqn.psi().name() << endl;
+        Info<< indent
+            << type() << ": applying source to " << eqn.psi().name() << endl;
     }
 
     const volScalarField Cp(this->Cp());

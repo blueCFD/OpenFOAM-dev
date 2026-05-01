@@ -135,7 +135,8 @@ void Foam::fv::codedFvModel::addSupType
     {
         if (debug)
         {
-            Info<< "codedFvModel::addSup for source " << name() << endl;
+            Info<< indent
+                << "codedFvModel::addSup for source " << name() << endl;
         }
 
         redirectFvModel().addSup(field, eqn);
@@ -155,7 +156,8 @@ void Foam::fv::codedFvModel::addSupType
     {
         if (debug)
         {
-            Info<< "codedFvModel::addSup for source " << name() << endl;
+            Info<< indent
+                << "codedFvModel::addSup for source " << name() << endl;
         }
 
         redirectFvModel().addSup(rho, field, eqn);
@@ -176,7 +178,8 @@ void Foam::fv::codedFvModel::addSupType
     {
         if (debug)
         {
-            Info<< "codedFvModel::addSup for source " << name() << endl;
+            Info<< indent
+                << "codedFvModel::addSup for source " << name() << endl;
         }
 
         redirectFvModel().addSup(alpha, rho, field, eqn);

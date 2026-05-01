@@ -60,6 +60,12 @@ Foam::autoPtr<Foam::laminarFlameSpeed> Foam::laminarFlameSpeed::New
        .optionalSubDict(dict.lookupOrDefault<word>("fuel", "unknown"))
     );
 
+    printDictionary print
+    (
+        dict,
+        dict.optionalTypeDict(model)
+    );
+
     return autoPtr<laminarFlameSpeed>(cstrIter()(dict, coeffDict, uThermo));
 }
 

@@ -172,7 +172,8 @@ bool Foam::functionObjects::checkMesh::execute()
 
             if (stopAt_ != Time::stopAtControl::endTime)
             {
-                Info<< "    Stopping at " << Time::stopAtControlNames[stopAt_]
+                Info<< indent
+                    << "Stopping at " << Time::stopAtControlNames[stopAt_]
                     << endl;
 
                 time_.stopAt(stopAt_);

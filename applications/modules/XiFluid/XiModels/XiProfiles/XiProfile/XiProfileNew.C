@@ -53,6 +53,12 @@ Foam::autoPtr<Foam::XiProfile> Foam::XiProfile::New
             << exit(FatalIOError);
     }
 
+    printDictionary print
+    (
+        XiProfileDict,
+        XiProfileDict.optionalTypeDict(modelType)
+    );
+
     return autoPtr<XiProfile>
     (
         cstrIter()

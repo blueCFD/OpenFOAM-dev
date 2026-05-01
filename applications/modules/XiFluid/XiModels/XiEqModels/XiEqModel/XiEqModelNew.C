@@ -55,6 +55,12 @@ Foam::autoPtr<Foam::XiEqModel> Foam::XiEqModel::New
             << exit(FatalIOError);
     }
 
+    printDictionary print
+    (
+        XiEqDict,
+        XiEqDict.optionalTypeDict(modelType)
+    );
+
     return autoPtr<XiEqModel>
     (
         cstrIter()

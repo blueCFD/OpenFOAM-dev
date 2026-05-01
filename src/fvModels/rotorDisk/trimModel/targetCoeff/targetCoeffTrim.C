@@ -112,7 +112,8 @@ void Foam::targetCoeffTrim::correctTrim
             calcType = "coefficients";
         }
 
-        Info<< type() << ":" << nl
+        Info<< indent
+            << type() << ":" << nl
             << "    solving for target trim " << calcType << nl;
 
         const scalar rhoRef = rotor_.rhoRef();
@@ -166,24 +167,27 @@ void Foam::targetCoeffTrim::correctTrim
 
         if (iter == nIter_)
         {
-            Info<< "    solution not converged in " << iter
+            Info<< indent << "solution not converged in " << iter
                 << " iterations, final residual = " << err
                 << "(" << tol_ << ")" << endl;
         }
         else
         {
-            Info<< "    final residual = " << err << "(" << tol_
+            Info<< indent << "final residual = " << err << "(" << tol_
                 << "), iterations = " << iter << endl;
         }
 
-        Info<< "    current and target " << calcType << nl
-            << "        thrust  = " << old[0]*rhoRef << ", " << target_[0] << nl
-            << "        pitch   = " << old[1]*rhoRef << ", " << target_[1] << nl
-            << "        roll    = " << old[2]*rhoRef << ", " << target_[2] << nl
-            << "    new pitch angles [deg]:" << nl
-            << "        theta0  = " << radToDeg(theta_[0]) << nl
-            << "        theta1c = " << radToDeg(theta_[1]) << nl
-            << "        theta1s = " << radToDeg(theta_[2]) << nl
+        Info<< indent << "current and target " << calcType << nl
+            << indent << " thrust  = " << old[0]*rhoRef
+            << ", " << target_[0] << nl
+            << indent << " pitch   = " << old[1]*rhoRef
+            << ", " << target_[1] << nl
+            << indent << " roll    = " << old[2]*rhoRef
+            << ", " << target_[2] << nl
+            << indent << " new pitch angles [deg]:" << nl
+            << indent << " theta0  = " << radToDeg(theta_[0]) << nl
+            << indent << " theta1c = " << radToDeg(theta_[1]) << nl
+            << indent << " theta1s = " << radToDeg(theta_[2]) << nl
             << endl;
     }
 }

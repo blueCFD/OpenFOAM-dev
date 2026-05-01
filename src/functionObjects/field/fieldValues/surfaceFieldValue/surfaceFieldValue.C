@@ -686,24 +686,22 @@ bool Foam::functionObjects::fieldValues::surfaceFieldValue::read
     changeMesh();
 
     // Report configuration
-    Info<< type() << ' ' << name() << " read:" << nl;
-    Info<< "    number of faces = " << nFaces_ << nl;
+    Info<< indent << "number of faces = " << nFaces_ << nl;
     if (nFaces_)
     {
-        Info<< "    area = " << area_ << nl;
+        Info<< indent << "area = " << area_ << nl;
     }
-    Info<< "    operation = " << operationTypeNames_[operation_] << nl;
+    Info<< indent << "operation = " << operationTypeNames_[operation_] << nl;
     if (weightFieldNames_.size() == 1)
     {
-        Info<< "    weight field = " << weightFieldNames_[0] << nl;
+        Info<< indent << "weight field = " << weightFieldNames_[0] << nl;
     }
     if (weightFieldNames_.size() > 1)
     {
-        Info<< "    weight fields =";
+        Info<< indent << "weight fields =";
         forAll(weightFieldNames_, i) Info<< ' ' << weightFieldNames_[i];
         Info<< nl;
     }
-    Info<< endl;
 
     return true;
 }

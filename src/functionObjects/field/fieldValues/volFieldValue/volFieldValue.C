@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -262,28 +262,26 @@ bool Foam::functionObjects::fieldValues::volFieldValue::read
     dict.readIfPresent("scaleFactor", scaleFactor_);
 
     // Report configuration
-    Info<< type() << ' ' << name() << " read:" << nl;
-    Info<< "    number of cells = " << zone_.nGlobalCells() << nl;
+    Info<< indent << "number of cells = " << zone_.nGlobalCells() << nl;
     if (zone_.nGlobalCells())
     {
-        Info<< "    volume = " << zone_.V() << nl;
+        Info<< indent << "volume = " << zone_.V() << nl;
     }
-    Info<< "    operation = " << operationTypeNames_[operation_] << nl;
+    Info<< indent << "operation = " << operationTypeNames_[operation_] << nl;
     if (weightFieldNames_.size() == 1)
     {
-        Info<< "    weight field = " << weightFieldNames_[0] << nl;
+        Info<< indent << "weight field = " << weightFieldNames_[0] << nl;
     }
     if (weightFieldNames_.size() > 1)
     {
-        Info<< "    weight fields =";
+        Info<< indent << "weight fields =";
         forAll(weightFieldNames_, i) Info<< ' ' << weightFieldNames_[i];
         Info<< nl;
     }
     if (scaleFactor_ != scalar(1))
     {
-        Info<< "    scale factor = " << scaleFactor_;
+        Info<< indent << "scale factor = " << scaleFactor_;
     }
-    Info<< endl;
 
     return true;
 }

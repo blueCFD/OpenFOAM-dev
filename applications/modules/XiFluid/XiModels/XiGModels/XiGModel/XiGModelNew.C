@@ -55,6 +55,12 @@ Foam::autoPtr<Foam::XiGModel> Foam::XiGModel::New
             << exit(FatalIOError);
     }
 
+    printDictionary print
+    (
+        XiGDict,
+        XiGDict.optionalTypeDict(modelType)
+    );
+
     return autoPtr<XiGModel>
     (
         cstrIter()

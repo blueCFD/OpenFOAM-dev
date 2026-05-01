@@ -56,7 +56,6 @@ Usage
     <patchName>
     {
         type            coupledTemperature;
-        qs              uniform 100;    // Optional source heat flux [W/m^2]
         value           uniform 300;
     }
     \endverbatim
@@ -142,14 +141,6 @@ protected:
         (
             tmp<scalarField>& sumKappaTByDeltaNbr,
             tmp<scalarField>& sumKappaByDeltaNbr,
-            tmp<scalarField>& qNbr
-        ) const;
-
-        //- Get the neighbour patch wall temperature and heat-flux
-        //  when wall thermal resistance is specified
-        virtual void getNbr
-        (
-            tmp<scalarField>& TwNbr,
             tmp<scalarField>& qNbr
         ) const;
 

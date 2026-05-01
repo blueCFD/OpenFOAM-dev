@@ -1,5 +1,6 @@
 derivedFvPatchFields/tractionDisplacement/tractionDisplacementFvPatchVectorField.C
 derivedFvPatchFields/hydrostaticDisplacement/hydrostaticDisplacementFvPatchVectorField.C
+derivedFvPatchFields/displacementGapHeatTransferCoefficient/displacementGapHeatTransferCoefficient_DimensionedFieldFunction.C
 solidDisplacement.C
 
 LIB = $(FOAM_LIBBIN)/libsolidDisplacementSolver

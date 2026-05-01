@@ -143,8 +143,6 @@ bool Foam::functionObjects::wallHeatFlux::read(const dictionary& dict)
 
     patchSet_ = mesh_.poly().boundary().patchSet(dict, true);
 
-    Info<< type() << " " << name() << ":" << nl;
-
     if (patchSet_.empty())
     {
         forAll(pbm, patchi)
@@ -155,11 +153,13 @@ bool Foam::functionObjects::wallHeatFlux::read(const dictionary& dict)
             }
         }
 
-        Info<< "    processing all wall patches" << nl << endl;
+        Info<< indent << "processing all wall patches" << endl;
     }
     else
     {
-        Info<< "    processing wall patches: " << nl;
+        Info<< indent << "processing wall patches:" << nl;
+
+        Info<< incrIndent;
         labelHashSet filteredPatchSet;
         forAllConstIter(labelHashSet, patchSet_, iter)
         {
@@ -167,7 +167,7 @@ bool Foam::functionObjects::wallHeatFlux::read(const dictionary& dict)
             if (isA<wallPolyPatch>(pbm[patchi]))
             {
                 filteredPatchSet.insert(patchi);
-                Info<< "        " << pbm[patchi].name() << endl;
+                Info<< indent << pbm[patchi].name() << endl;
             }
             else
             {
@@ -176,8 +176,7 @@ bool Foam::functionObjects::wallHeatFlux::read(const dictionary& dict)
                     << "type patch: " << pbm[patchi].name() << endl;
             }
         }
-
-        Info<< endl;
+        Info<< decrIndent;
 
         patchSet_ = filteredPatchSet;
     }

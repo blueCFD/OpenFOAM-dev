@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -145,12 +145,13 @@ void Foam::fv::rotorDisk::calculate
         reduce(dragEff, sumOp<scalar>());
         reduce(liftEff, sumOp<scalar>());
 
-        Info<< type() << " output:" << nl
-            << "    min/max(AOA)   = " << radToDeg(AOAmin) << ", "
+        Info<< indent
+            << type() << " output:" << nl
+            << indent << " min/max(AOA)   = " << radToDeg(AOAmin) << ", "
             << radToDeg(AOAmax) << nl
-            << "    Effective power = " << powerEff << nl
-            << "    Effective drag = " << dragEff << nl
-            << "    Effective lift = " << liftEff << endl;
+            << indent << " Effective power = " << powerEff << nl
+            << indent << " Effective drag = " << dragEff << nl
+            << indent << " Effective lift = " << liftEff << endl;
     }
 }
 

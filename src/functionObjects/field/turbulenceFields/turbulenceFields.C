@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -120,20 +120,21 @@ bool Foam::functionObjects::turbulenceFields::read(const dictionary& dict)
         prefix_ = word::null;
     }
 
-    Info<< type() << " " << name() << ": ";
     if (fieldSet_.size())
     {
-        Info<< "storing fields:" << nl;
+        Info<< indent << "storing fields:" << nl;
+        Info<< incrIndent;
         forAllConstIter(wordHashSet, fieldSet_, iter)
         {
-            Info<< "    "
-                << IOobject::groupName(prefix_ + iter.key(), phaseName_) << nl;
+            Info<< indent
+                << IOobject::groupName(prefix_ + iter.key(), phaseName_)
+                << endl;
         }
-        Info<< endl;
+        Info<< decrIndent;
     }
     else
     {
-        Info<< "no fields requested to be stored" << nl << endl;
+        Info<< indent << "no fields requested to be stored" << endl;
     }
 
     return true;

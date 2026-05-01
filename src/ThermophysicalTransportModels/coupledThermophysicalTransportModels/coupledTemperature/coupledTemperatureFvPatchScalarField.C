@@ -78,28 +78,6 @@ void Foam::coupledTemperatureFvPatchScalarField::getNbr
 }
 
 
-void Foam::coupledTemperatureFvPatchScalarField::getNbr
-(
-    tmp<scalarField>& TrefNbr,
-    tmp<scalarField>& qNbr
-) const
-{
-    const thermophysicalTransportModel& ttm =
-        patch().mesh()
-       .lookupType<thermophysicalTransportModel>();
-
-    const fvPatchScalarField& Tp =
-        patch().lookupPatchField<volScalarField, scalar>
-        (
-            internalField().name()
-        );
-
-    TrefNbr = Tp;
-
-    qNbr = ttm.qCorr(patch().index());
-}
-
-
 void Foam::coupledTemperatureFvPatchScalarField::add
 (
     tmp<scalarField>& result,
@@ -436,31 +414,52 @@ void Foam::coupledTemperatureFvPatchScalarField::updateCoeffs()
         tmp<scalarField> sumKappaByDeltaNbr;
         tmp<scalarField> qNbr;
 
+        coupledTemperatureNbr.getNbr
+        (
+            sumKappaTByDeltaNbr,
+            sumKappaByDeltaNbr,
+            qNbr
+        );
+
+        // Include the effect of the optional neighbour insulation layer
+        if (coupledTemperatureNbr.h_.valid())
+        {
+            const_cast<coupledTemperatureFvPatchScalarField&>
+            (
+                coupledTemperatureNbr
+            ).h_->update();
+
+            const scalarField hFactor
+            (
+                coupledTemperatureNbr.h_()
+               /(coupledTemperatureNbr.h_() + sumKappaByDeltaNbr())
+            );
+            sumKappaTByDeltaNbr.ref() *= hFactor;
+            sumKappaByDeltaNbr.ref() *= hFactor;
+        }
+
+        tmp<scalarField> sumKappaTByDeltaNbrMapped
+        (
+            mapper.fromNeighbour(sumKappaTByDeltaNbr)
+        );
+
+        tmp<scalarField> sumKappaByDeltaNbrMapped
+        (
+            mapper.fromNeighbour(sumKappaByDeltaNbr)
+        );
+
+        // Include the effect of the optional insulation layer
         if (h_.valid())
         {
-            // Get the neighbour wall temperature and flux correction
-            tmp<scalarField> TwNbr;
-            coupledTemperatureNbr.getNbr(TwNbr, qNbr);
+            h_->update();
 
-            add(sumKappaByDelta, h_());
-            add
-            (
-                sumKappaTByDelta,
-                h_()*mapper.fromNeighbour(TwNbr)
-            );
+            const scalarField hFactor(h_()/(h_() + sumKappaByDeltaNbrMapped()));
+            sumKappaTByDeltaNbrMapped.ref() *= hFactor;
+            sumKappaByDeltaNbrMapped.ref() *= hFactor;
         }
-        else
-        {
-            coupledTemperatureNbr.getNbr
-            (
-                sumKappaTByDeltaNbr,
-                sumKappaByDeltaNbr,
-                qNbr
-            );
 
-            add(sumKappaTByDelta, mapper.fromNeighbour(sumKappaTByDeltaNbr));
-            add(sumKappaByDelta, mapper.fromNeighbour(sumKappaByDeltaNbr));
-        }
+        add(sumKappaTByDelta, sumKappaTByDeltaNbrMapped);
+        add(sumKappaByDelta, sumKappaByDeltaNbrMapped);
 
         if (qNbr.valid())
         {

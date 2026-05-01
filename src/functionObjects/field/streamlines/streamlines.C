@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -82,8 +82,6 @@ Foam::functionObjects::streamlines::~streamlines()
 
 bool Foam::functionObjects::streamlines::read(const dictionary& dict)
 {
-    Info<< type() << " " << name() << ":" << nl;
-
     dict.lookup("fields") >> fields_;
 
     UName_ = dict.lookupOrDefault("U", word("U"));
@@ -117,15 +115,15 @@ bool Foam::functionObjects::streamlines::read(const dictionary& dict)
     {
         nSubCycle_ = max(dict.lookup<scalar>("nSubCycle"), 1);
         trackLength_ = vGreat;
-        Info<< "    automatic track length specified through"
-            << " number of sub cycles : " << nSubCycle_ << nl << endl;
+        Info<< indent << "automatic track length specified through"
+            << " number of sub cycles : " << nSubCycle_ << endl;
     }
     else
     {
         nSubCycle_ = 1;
         dict.lookup("trackLength") >> trackLength_;
-        Info<< "    fixed track length specified : "
-            << trackLength_ << nl << endl;
+        Info<< indent << "    fixed track length specified : "
+            << trackLength_ << endl;
     }
 
     interpolationScheme_ =
@@ -167,7 +165,7 @@ bool Foam::functionObjects::streamlines::execute()
 
 bool Foam::functionObjects::streamlines::write()
 {
-    Info<< type() << " " << name() << " write:" << nl;
+    Info<< indent << type() << " " << name() << " write:" << nl;
 
     // Create list of available fields
     wordList fieldNames;
@@ -270,7 +268,7 @@ bool Foam::functionObjects::streamlines::write()
 
         // Report the number of successful seeds
         const label nSeeds = returnReduce(particles.size(), sumOp<label>());
-        Info << "    Seeded " << nSeeds << " particles" << endl;
+        Info<< indent << "    Seeded " << nSeeds << " particles" << endl;
 
         // Create tracking data
         streamlinesParticle::trackingData td
@@ -332,7 +330,7 @@ bool Foam::functionObjects::streamlines::write()
     }
 
     // Report the total number of samples
-    Info<< "    Sampled " << allPositions.size() << " locations" << endl;
+    Info<< indent << "Sampled " << allPositions.size() << " locations" << endl;
 
     // Bin-sort by track and trackPart to build an ordering
     labelList order(allPositions.size());
