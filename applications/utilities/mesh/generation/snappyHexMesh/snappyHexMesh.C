@@ -648,7 +648,6 @@ void writeMesh
 
 int main(int argc, char *argv[])
 {
-    Foam::argList::removeOption("noFunctionObjects");
     #include "addNoOverwriteOption.H"
     Foam::argList::addBoolOption
     (
@@ -677,7 +676,7 @@ int main(int argc, char *argv[])
     #include "addMeshOption.H"
     #include "addRegionOption.H"
 
-    #include "setRootCase.H"
+    #include "setRootCaseNoFunctionObjects.H"
     #include "createTimeNoFunctionObjects.H"
     #include "createSpecifiedMeshNoChangers.H"
 

@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      createPatchDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+patches
+{
+    fixed
+    {
+        // Dictionary to construct new patch from
+        patchInfo
+        {
+            type mappedWall;
+            neighbourRegion heatsink;
+            neighbourPatch fixed;
+        }
+
+        // Construct from zone
+        constructFrom zone;
+
+        // Generate zone
+        zone
+        {
+            type        box;
+
+            zone
+            {
+                type        patch;
+                patch       bottomSurface;
+            }
+
+            boxes
+            (
+                (0 -0.001 0)(0.01 0.001 1)
+                (0.09 -0.001 0)(0.1 0.001 1)
+            );
+        }
+    }
+}
+
+// ************************************************************************* //

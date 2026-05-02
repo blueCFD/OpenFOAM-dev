@@ -1,8 +1,7 @@
-Foam::argList args(argc, argv);
-if (!args.checkRootCase())
-{
-    Foam::FatalError.exit();
-}
+argList::addBoolOption
+(
+    "noFunctionObjects",
+    "do not execute functionObjects"
+);
 
-//Hack by blueCAPE Lda 2009
-#include "forceLoadLibraries.H"
+#include "setRootCaseNoFunctionObjects.H"
