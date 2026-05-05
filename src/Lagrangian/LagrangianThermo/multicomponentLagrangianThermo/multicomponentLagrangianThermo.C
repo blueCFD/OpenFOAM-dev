@@ -31,6 +31,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(multicomponentLagrangianThermo, 0);
+    defineRunTimeSelectionTable(multicomponentLagrangianThermo, LagrangianMesh);
 }
 
 
@@ -158,6 +159,24 @@ Foam::multicomponentLagrangianThermo::implementation::implementation
 }
 
 
+// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
+
+Foam::autoPtr<Foam::multicomponentLagrangianThermo>
+Foam::multicomponentLagrangianThermo::New
+(
+    const LagrangianMesh& mesh,
+    const word& phaseName
+)
+{
+    return
+        basicLagrangianThermo::New<multicomponentLagrangianThermo>
+        (
+            mesh,
+            phaseName
+        );
+}
+
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 Foam::multicomponentLagrangianThermo::~multicomponentLagrangianThermo()
@@ -211,6 +230,8 @@ void Foam::multicomponentLagrangianThermo::implementation::normaliseY
 
     forAll(Y(), i)
     {
+        if (i == defaultSpeciei_) continue;
+
         LagrangianSubScalarSubField subYi(subMesh.sub(Y_[i]));
         subYi = max(subYi, scalar(0));
         Yt += subYi;
