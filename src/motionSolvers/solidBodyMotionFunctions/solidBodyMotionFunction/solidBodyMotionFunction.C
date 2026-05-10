@@ -38,17 +38,13 @@ namespace Foam
 
 Foam::solidBodyMotionFunction::solidBodyMotionFunction
 (
+    const word& name,
     const dictionary& SBMFCoeffs,
     const Time& runTime
 )
 :
-    SBMFCoeffs_
-    (
-        SBMFCoeffs.optionalTypeDict
-        (
-            SBMFCoeffs.lookup<word>("solidBodyMotionFunction")
-        )
-    ),
+    name_(name),
+    SBMFCoeffs_(SBMFCoeffs),
     time_(runTime)
 {}
 
@@ -61,9 +57,12 @@ Foam::solidBodyMotionFunction::~solidBodyMotionFunction()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-bool Foam::solidBodyMotionFunction::read(const dictionary& SBMFCoeffs)
+bool Foam::solidBodyMotionFunction::read(const dictionary& dict)
 {
-    SBMFCoeffs_ = SBMFCoeffs.optionalTypeDict(type());
+    SBMFCoeffs_ =
+        dict.isDict(name_)
+      ? dict.subDict(name_)
+      : dict;
 
     return true;
 }
@@ -72,6 +71,21 @@ bool Foam::solidBodyMotionFunction::read(const dictionary& SBMFCoeffs)
 void Foam::solidBodyMotionFunction::writeData(Ostream& os) const
 {
     os << SBMFCoeffs_;
+}
+
+
+// * * * * * * * * * * * * * * * IOstream Functions  * * * * * * * * * * * * //
+
+void Foam::writeEntry(Ostream& os, const solidBodyMotionFunction& f)
+{
+    writeKeyword(os, f.name())
+        << nl << indent << token::BEGIN_BLOCK << nl << incrIndent;
+
+    writeEntry(os, "type", f.type());
+
+    f.writeData(os);
+
+    os  << decrIndent << indent << token::END_BLOCK << endl;
 }
 
 

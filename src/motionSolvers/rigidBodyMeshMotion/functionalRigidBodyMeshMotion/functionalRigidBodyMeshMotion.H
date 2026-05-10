@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::singleRigidBodyMeshMotion
+    Foam::functionalRigidBodyMeshMotion
 
 Description
     Solid-body motion of the mesh specified by a run-time selectable motion
@@ -30,14 +30,14 @@ Description
     distance to the object surface to move the mesh points.
 
 SourceFiles
-    singleRigidBodyMeshMotion.C
+    functionalRigidBodyMeshMotion.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef singleRigidBodyMeshMotion_H
-#define singleRigidBodyMeshMotion_H
+#ifndef functionalRigidBodyMeshMotion_H
+#define functionalRigidBodyMeshMotion_H
 
-#include "points0MotionSolver.H"
+#include "multiRigidBodyMeshMotion.H"
 #include "solidBodyMotionFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -46,61 +46,38 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-             Class singleRigidBodyMeshMotion Declaration
+             Class functionalRigidBodyMeshMotion Declaration
 \*---------------------------------------------------------------------------*/
 
-class singleRigidBodyMeshMotion
+class functionalRigidBodyMeshMotion
 :
-    public points0MotionSolver
+    public multiRigidBodyMeshMotion
 {
     // Private Data
 
-        //- The motion control function
-        autoPtr<solidBodyMotionFunction> SBMFPtr_;
-
-        //- The patches to which the motion applies
-        wordReList patches_;
-
-        //- Patches to integrate forces
-        const labelHashSet patchSet_;
-
-        //- Center of gravity read from dictionary
-        vector CofG_;
-
-        //- Inner morphing distance (limit of solid-body region)
-        const scalar di_;
-
-        //- Outer morphing distance (limit of linear interpolation region)
-        const scalar do_;
-
-        //- Current interpolation scale (1 at patches, 0 at distance_)
-        pointScalarField scale_;
+        //- Body motion control functions
+        PtrList<solidBodyMotionFunction> SBMFs_;
 
 
     // Private Member Functions
 
-        //- Calculate the interpolation scale
-        void calcScale();
+        //- Return the list of transformation for each body from time 0
+        virtual List<septernion> transforms0() const;
 
-        //- Calculate the point locations given a transformation and a centre
-        //  of gravity
-        tmp<pointField> calcPoints
-        (
-            const septernion& s,
-            const vector& CofG
-        ) const;
+        //- Move the bodies
+        virtual void moveBodies();
 
 
 public:
 
     //- Runtime type information
-    TypeName("interpolatingSolidBody");
+    TypeName("functionalRigidBodyMotion");
 
 
     // Constructors
 
         //- Construct from polyMesh and dictionary
-        singleRigidBodyMeshMotion
+        functionalRigidBodyMeshMotion
         (
             const word& name,
             const polyMesh&,
@@ -108,32 +85,20 @@ public:
         );
 
         //- Disallow default bitwise copy construction
-        singleRigidBodyMeshMotion
+        functionalRigidBodyMeshMotion
         (
-            const singleRigidBodyMeshMotion&
+            const functionalRigidBodyMeshMotion&
         ) = delete;
 
 
     //- Destructor
-    ~singleRigidBodyMeshMotion();
-
-
-    // Member Functions
-
-        //- Return point location obtained from the current motion field
-        virtual tmp<pointField> newPoints();
-
-        //-  Update local data for topology changes
-        virtual void topoChange(const polyTopoChangeMap&);
-
-        //- Update from another mesh using the given map
-        virtual void mapMesh(const polyMeshMap&);
+    ~functionalRigidBodyMeshMotion();
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const singleRigidBodyMeshMotion&) = delete;
+        void operator=(const functionalRigidBodyMeshMotion&) = delete;
 };
 
 
