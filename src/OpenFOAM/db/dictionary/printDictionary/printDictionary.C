@@ -27,11 +27,75 @@ License
 #include "dictionary.H"
 #include "stringOps.H"
 
+// * * * * * * * * * * * * Private Static Data Members * * * * * * * * * * * //
+
+namespace Foam
+{
+    HashTable<Tuple2<const dictionary*, label>, fileName, Hash<fileName>>
+        printDictionary::dictNameToDictPtrAndCount_;
+
+    HashTable<tmpNrc<dictionary>, const dictionary*, Hash<void*>>
+        printDictionary::dictPtrToDefaults_;
+}
+
 
 // * * * * * * * * * * * Private Static Member Functions * * * * * * * * * * //
 
+void Foam::printDictionary::removeDefaults
+(
+    const dictionary* dictPtr,
+    HashSet<const dictionary*, Hash<void*>>& removeDictPtrs
+)
+{
+    typedef
+        HashTable<tmpNrc<dictionary>, const dictionary*, Hash<void*>>
+        dictPtrToDefaultsType;
+
+    if (!dictPtrToDefaults_.found(dictPtr)) return;
+
+    const dictionary& defaults = dictPtrToDefaults_[dictPtr]();
+
+    forAllConstIter(dictionary, defaults, iter)
+    {
+        if (!iter().isDict()) continue;
+
+        const dictionary& subDefaults = iter().dict();
+
+        forAllConstIter(dictPtrToDefaultsType, dictPtrToDefaults_, jter)
+        {
+            if (&jter()() == &subDefaults)
+            {
+                removeDefaults(jter.key(), removeDictPtrs);
+                break;
+            }
+        }
+    }
+
+    removeDictPtrs.insert(dictPtr);
+}
+
+
+void Foam::printDictionary::removeDefaults(const dictionary* dictPtr)
+{
+    typedef
+        HashSet<const dictionary*, Hash<void*>>
+        removeDictPtrsType;
+
+    removeDictPtrsType removeDictPtrs;
+
+    removeDefaults(dictPtr, removeDictPtrs);
+
+    forAllConstIter(removeDictPtrsType, removeDictPtrs, iter)
+    {
+        dictPtrToDefaults_.erase(iter.key());
+    }
+}
+
+
 void Foam::printDictionary::setDefaults(const dictionary& dict)
 {
+    removeDefaults(&dict);
+
     dictPtrToDefaults_.set
     (
         &dict,
@@ -137,17 +201,13 @@ void Foam::printDictionary::print
 
 void Foam::printDictionary::add(const dictionary& dict)
 {
-    if (findIndex(dicts_, &dict) != -1) return;
-
-    dicts_.append(&dict);
-    dictNames_.append(fileName::null);
-
-    if
-    (
-        dictNameToDictPtrs_.found(dict.name())
-     && dictNameToDictPtrs_[dict.name()] != nullptr
-    )
+    if (dictNameToDictPtrAndCount_.found(dict.name()))
     {
+        dicts_.append(&dict);
+        dictNames_.append(fileName::null);
+
+        dictNameToDictPtrAndCount_[dict.name()].second() ++;
+
         setDefaults(dict);
     }
 }
@@ -155,12 +215,14 @@ void Foam::printDictionary::add(const dictionary& dict)
 
 void Foam::printDictionary::add(const fileName& dictName)
 {
-    if (findIndex(dictNames_, dictName) != -1) return;
-
     dicts_.append(nullptr);
     dictNames_.append(dictName);
 
-    dictNameToDictPtrs_.set(dictName, nullptr);
+    dictNameToDictPtrAndCount_.set
+    (
+        dictName,
+        Tuple2<const dictionary*, label>(nullptr, 1)
+    );
 }
 
 
@@ -181,24 +243,25 @@ Foam::printDictionary::~printDictionary()
 {
     forAll(dicts_, i)
     {
-        const dictionary* dictPtr =
-            dicts_.set(i)
-         && dictPtrToDefaults_.found(&dicts_[i])
-          ? &dicts_[i]
-          : dictNames_[i] != fileName::null
-         && dictNameToDictPtrs_.found(dictNames_[i])
-         && dictPtrToDefaults_.found(dictNameToDictPtrs_[dictNames_[i]])
-          ? dictNameToDictPtrs_[dictNames_[i]]
-          : nullptr;
+        const word& dictName =
+            dicts_.set(i) ? dicts_[i].name() : dictNames_[i];
 
-        if (dictPtr && dictPtrToDefaults_[dictPtr].isTmp())
+        if (!dictNameToDictPtrAndCount_.found(dictName)) continue;
+
+        Tuple2<const dictionary*, label>& dictPtrAndCount =
+            dictNameToDictPtrAndCount_[dictName];
+        const dictionary* dictPtr = dictPtrAndCount.first();
+        label& count = dictPtrAndCount.second();
+
+        count --;
+
+        if (!dictPtrToDefaults_.found(dictPtr)) continue;
+
+        if (dictPtr && count == 0 && dictPtrToDefaults_[dictPtr].isTmp())
         {
             Info<< indent << dictPtr->name().relativePath().c_str();
 
             print(*dictPtr, dictPtrToDefaults_[dictPtr]());
-
-            dictPtrToDefaults_.erase(dictPtr);
-            dictNameToDictPtrs_.erase(dictPtr->name());
         }
     }
 
@@ -210,34 +273,21 @@ Foam::printDictionary::~printDictionary()
 
 void Foam::printDictionary::set(const dictionary& dict)
 {
-    if
-    (
-        dictNameToDictPtrs_.found(dict.name())
-     && dictNameToDictPtrs_[dict.name()] != &dict
-    )
+    if (dictNameToDictPtrAndCount_.found(dict.name()))
     {
         setDefaults(dict);
     }
 
-    dictNameToDictPtrs_.set(dict.name(), &dict);
-}
+    const label count =
+        dictNameToDictPtrAndCount_.found(dict.name())
+      ? dictNameToDictPtrAndCount_[dict.name()].second()
+      : 0;
 
-
-void Foam::printDictionary::unset(const dictionary& dict)
-{
-    if
+    dictNameToDictPtrAndCount_.set
     (
-        dictNameToDictPtrs_.found(dict.name())
-     && dictNameToDictPtrs_[dict.name()] == &dict
-    )
-    {
-        dictNameToDictPtrs_.erase(dict.name());
-    }
-
-    if (dictPtrToDefaults_.found(&dict))
-    {
-        dictPtrToDefaults_.erase(&dict);
-    }
+        dict.name(),
+        Tuple2<const dictionary*, label>(&dict, count)
+    );
 }
 
 
