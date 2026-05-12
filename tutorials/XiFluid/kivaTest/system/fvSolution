@@ -20,43 +20,27 @@ solvers
     {
         solver          PCG;
         preconditioner  DIC;
-        tolerance       1e-06;
-        relTol          0.1;
+        tolerance       1e-8;
+        relTol          0.01;
     }
 
     pFinal
     {
         $p;
-        tolerance       1e-06;
+        tolerance       1e-8;
         relTol          0;
     }
 
-    rho
+    "rho.*"
     {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-05;
-        relTol          0.1;
+        solver          diagonal;
     }
 
-    rhoFinal
-    {
-        $rho;
-        tolerance       1e-05;
-        relTol          0;
-    }
-
-    "(U|ft|fu|egr|b|Su|Xi|fu.u|egr.u|ft.b|h.u|h.b|k|epsilon)"
+    "(U|ft|fu|egr|b|Su|Xi|fu.u|egr.u|ft.b|h.u|h.b|k|epsilon).*"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0.1;
-    }
-
-    "(U|ft|fu|egr|b|Su|Xi|fu.u|egr.u|ft.b|h.u|h.b|k|epsilon)Final"
-    {
-        $U;
+        tolerance       1e-8;
         relTol          0;
     }
 }
@@ -64,9 +48,16 @@ solvers
 PIMPLE
 {
     nCorrectors     2;
-    nNonOrthogonalCorrectors 1;
-    momentumPredictor yes;
+    nNonOrthogonalCorrectors 2;
     correctPhi      no;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        ".*"       1;
+    }
 }
 
 

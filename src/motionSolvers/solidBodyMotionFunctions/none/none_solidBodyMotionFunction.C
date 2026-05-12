@@ -2,14 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-2024 FS Dynamics Portugal: Changes are tracked at:
-                 https://github.com/blueCFD/OpenFOAM-dev
-------------------------------------------------------------------------------
 License
-    This file is a derivative work of OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -26,48 +23,71 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "rhoFluidThermo.H"
+#include "none_solidBodyMotionFunction.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(rhoFluidThermo, 0);
-    defineRunTimeSelectionTable(rhoFluidThermo, fvMesh);
-}
-
-
-// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
-
-Foam::autoPtr<Foam::rhoFluidThermo> Foam::rhoFluidThermo::New
-(
-    const fvMesh& mesh,
-    const word& phaseName
-)
+namespace solidBodyMotionFunctions
 {
-    return basicThermo::New<rhoFluidThermo>(mesh, phaseName);
+    defineTypeNameAndDebug(none, 0);
+    addToRunTimeSelectionTable
+    (
+        solidBodyMotionFunction,
+        none,
+        dictionary
+    );
 }
+}
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::solidBodyMotionFunctions::none::none
+(
+    const word& name,
+    const Time& runTime
+)
+:
+    solidBodyMotionFunction(name, dictionary::null, runTime)
+{}
+
+
+Foam::solidBodyMotionFunctions::none::none
+(
+    const word& name,
+    const dictionary& SBMFCoeffs,
+    const Time& runTime
+)
+:
+    solidBodyMotionFunction(name, SBMFCoeffs, runTime)
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::rhoFluidThermo::~rhoFluidThermo()
+Foam::solidBodyMotionFunctions::none::~none()
 {}
 
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::rhoFluidThermo::renameRho()
+Foam::septernion Foam::solidBodyMotionFunctions::none::transformation() const
 {
-    rho().rename(phasePropertyName(Foam::typedName<rhoFluidThermo>("rho")));
-    return rho();
+    return septernion::I;
 }
 
 
-void Foam::rhoFluidThermo::correctRho(const volScalarField& dp)
+bool Foam::solidBodyMotionFunctions::none::read(const dictionary&)
 {
-    rho() += psi()*dp;
+    return true;
 }
+
+
+void Foam::solidBodyMotionFunctions::none::writeData(Ostream& os) const
+{}
 
 
 // ************************************************************************* //
