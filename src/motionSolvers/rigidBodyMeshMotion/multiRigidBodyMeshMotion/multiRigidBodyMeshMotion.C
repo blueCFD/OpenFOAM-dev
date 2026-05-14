@@ -46,29 +46,28 @@ Foam::List<Foam::scalar>& Foam::multiRigidBodyMeshMotion::weights
 ) const
 {
     // Initialise to 1 for the far-field weight
-    scalar sum1mw = 1;
-    // const scalar w0 = bodyMeshes_[bodyMeshes_.size() - 1].weight_[pointi];
-    // scalar sum1mw = max(1, w0/(1 + small - w0));
+    scalar sumw = 1;
 
+    // Accumulate the weighted body and exterior weights
     forAll(bodyMeshes_, bi)
-    // for(label bi = 0; bi<bodyMeshes_.size() - 1; bi++)
     {
-        w[bi] = bodyMeshes_[bi].weight_[pointi];
-        sum1mw += w[bi]/(1 + small - w[bi]);
-    }
-
-    // Calculate the limiter for wi/(1 - wi) to ensure the sum(wi) = 1
-    const scalar lambda = 1/sum1mw;
-
-    // Limit wi/(1 - wi) and sum the resulting wi
-    scalar sumw = 0;
-    for(label bi = 0; bi<bodyMeshes_.size() - 1; bi++)
-    {
-        w[bi] = lambda*w[bi]/(1 + small - w[bi]);
+        const scalar wbi = bodyMeshes_[bi].weight_[pointi];
+        w[bi] = wbi/pow(max(1 - wbi, small), 0.62);
         sumw += w[bi];
     }
 
-    // Calculate the weight for the far-field
+    // Calculate the limiter for wbi/(1 - wbi) to ensure the sum(wbi) = 1
+    const scalar lambda = 1/sumw;
+
+    // Sum the limited body weights except the exterior weight
+    sumw = 0;
+    for(label bi=0; bi<bodyMeshes_.size() - 1; bi++)
+    {
+        w[bi] = lambda*w[bi];
+        sumw += w[bi];
+    }
+
+    // Calculate the exterior weight
     w[bodyMeshes_.size() - 1] = 1 - sumw;
 
     return w;
@@ -99,6 +98,10 @@ void Foam::multiRigidBodyMeshMotion::bodyMesh::calcWeights
         weight_.primitiveFieldRef() = weight(pDist.primitiveField());
 
         pointConstraints::New(pMesh).constrain(weight_);
+    }
+    else
+    {
+        weight_.primitiveFieldRef() = 0;
     }
 }
 
@@ -242,9 +245,11 @@ Foam::multiRigidBodyMeshMotion::multiRigidBodyMeshMotion
     }
 
     // Calculate scaling factor everywhere for each meshed body
+    // from the current mesh points
     forAll(bodyMeshes_, bi)
     {
-        bodyMeshes_[bi].calcWeights(points0());
+        // bodyMeshes_[bi].calcWeights(points0());
+        bodyMeshes_[bi].calcWeights(mesh.points());
     }
 }
 
@@ -303,10 +308,13 @@ Foam::multiRigidBodyMeshMotion::newPoints()
     tmp<pointField> tpoints(new pointField(points0.size()));
     pointField& points(tpoints.ref());
 
-    // Update the displacements
-    List<septernion> transforms0(this->transforms0());
+    // Calculate the transformations of all the bodies and the exterior
+    const List<septernion> transforms0(this->transforms0());
+
+    // Storage for the body weights
     List<scalar> w(transforms0.size());
 
+    // Transform the points with the SLERP average of the body transformations
     forAll(points0, pointi)
     {
         points[pointi] =
@@ -320,8 +328,6 @@ Foam::multiRigidBodyMeshMotion::newPoints()
 
 void Foam::multiRigidBodyMeshMotion::topoChange(const polyTopoChangeMap& map)
 {
-    // pointMesh already updates pointFields
-
     // Get the new points either from the map or the mesh
     const pointField& points = mesh().points();
 
@@ -392,10 +398,14 @@ void Foam::multiRigidBodyMeshMotion::topoChange(const polyTopoChangeMap& map)
             }
         }
 
-        // Interpolate indirectly mapped points
-        List<septernion> transforms0(this->transforms0());
+        // Calculate the transformations of all the bodies and the exterior
+        const List<septernion> transforms0(this->transforms0());
+
+        // Storage for the body weights
         List<scalar> w(transforms0.size());
 
+        // Inverse Transform the points with the SLERP average
+        // of the body transformations
         forAll(newPoints0, pointi)
         {
             const label oldPointi = map.pointMap()[pointi];
@@ -409,8 +419,43 @@ void Foam::multiRigidBodyMeshMotion::topoChange(const polyTopoChangeMap& map)
         }
     }
 
-    // Move into base class storage and mark as to-be-written
+    // Move into base class storage
     points0_.primitiveFieldRef() = newPoints0;
+
+    // Mark the changed points0 to be written automatically
+    points0_.writeOpt() = IOobject::AUTO_WRITE;
+    points0_.instance() = mesh().time().name();
+}
+
+
+void Foam::multiRigidBodyMeshMotion::mapMesh(const polyMeshMap& map)
+{
+    points0MotionSolver::mapMesh(map);
+
+    pointField& points0 = this->points0();
+
+    // Calculate scaling factor everywhere for each meshed body
+    forAll(bodyMeshes_, bi)
+    {
+        bodyMeshes_[bi].calcWeights(points0);
+    }
+
+    // Calculate the transformations of all the bodies and the exterior
+    const List<septernion> transforms0(this->transforms0());
+
+    // Storage for the body weights
+    List<scalar> w(transforms0.size());
+
+    // Inverse Transform the points0 with the SLERP average
+    // of the body transformations
+    forAll(points0, pointi)
+    {
+        points0[pointi] =
+            average(transforms0, weights(pointi, w))
+           .invTransformPoint(points0[pointi]);
+    }
+
+    // Mark the changed points0 to be written automatically
     points0_.writeOpt() = IOobject::AUTO_WRITE;
     points0_.instance() = mesh().time().name();
 }
