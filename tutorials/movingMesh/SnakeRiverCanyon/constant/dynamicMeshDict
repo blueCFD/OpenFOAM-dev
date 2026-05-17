@@ -17,11 +17,9 @@ FoamFile
 
 mover
 {
-    type            motionSolver;
+    type            displacementSBRStress;
 
     libs            ("libfvMotionSolvers.so");
-
-    motionSolver    displacementSBRStress;
 
     // diffusivity  uniform;
     // diffusivity  directional (1 200 0);

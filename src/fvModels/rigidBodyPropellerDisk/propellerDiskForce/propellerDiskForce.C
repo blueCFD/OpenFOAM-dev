@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "propellerDiskForce.H"
-#include "rigidBodyMeshMotion.H"
+#include "rigidBodyMotion_pointMeshMover.H"
 #include "fvModels.H"
 #include "rigidBodyPropellerDisk.H"
 #include "addToRunTimeSelectionTable.H"
@@ -80,10 +80,10 @@ void Foam::RBD::restraints::propellerDiskForce::restrain
     const rigidBodyModelState& state
 ) const
 {
-    const rigidBodyMeshMotion& mover =
-        refCast<const rigidBodyMeshMotion>(model_);
+    const pointMeshMovers::rigidBodyMotion& mover =
+        refCast<const pointMeshMovers::rigidBodyMotion>(model_);
 
-    const fvMesh& mesh = refCast<const fvMesh>(mover.mesh());
+    const fvMesh& mesh = refCast<const fvMesh>(mover.poly());
 
     // Lookup the fvModels for this mesh
     const fvModels& fvModels(fvModels::New(mesh));
