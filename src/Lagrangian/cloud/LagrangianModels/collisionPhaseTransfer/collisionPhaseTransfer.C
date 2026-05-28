@@ -153,6 +153,12 @@ Foam::Lagrangian::collisionPhaseTransfer::collisionPhaseTransfer
 :
     LagrangianSource(name, mesh),
     cloudLagrangianModel(static_cast<const LagrangianModel&>(*this)),
+    minFraction_
+    (
+        isCloud<clouds::grouped>()
+      ? modelDict.lookup<scalar>("minFraction", units::fraction)
+      : NaN
+    ),
     alphac_
     (
         cloud<clouds::carried>().carrierField
@@ -178,10 +184,16 @@ Foam::Lagrangian::collisionPhaseTransfer::collisionPhaseTransfer
 Foam::wordList
 Foam::Lagrangian::collisionPhaseTransfer::addSupFields() const
 {
-    return
+    const bool isGrouped = isCloud<clouds::grouped>();
+
+    wordList result(isGrouped + 1, word::null);
+
+    result[isGrouped ? 1 : 0] =
         isCloud<clouds::massive>()
-      ? wordList({word::null, clouds::massive::mName})
-      : wordList({word::null, clouds::shaped::vName});
+      ? clouds::massive::mName
+      : clouds::shaped::vName;
+
+    return result;
 }
 
 
@@ -287,11 +299,19 @@ void Foam::Lagrangian::collisionPhaseTransfer::calculate
             cloud<clouds::grouped>().number(subMesh)
         );
 
+        // The hit probability is thus far uniform across all particles within
+        // the parcel. Sampling each particle individually and summing up the
+        // successes to get the number is equivalent to sampling a normal
+        // distribution for the number. So sample the normal distribution in
+        // order to randomise the collisions for the entire parcel.
         Phit.maxMin(scalar(0), scalar(1));
-
         Phit += sqrt(Phit*(1 - Phit)/number)*sampleStandardNormal();
-
         Phit.maxMin(scalar(0), scalar(1));
+
+        // Clamp the probability to zero if the fraction is below the minimum
+        // permitted. This prevents small transfers and positive feedback in
+        // regions with negligible phase fraction.
+        Phit *= pos(Phit - minFraction_/max(number, scalar(1)));
     }
 
     // If this is not the final iteration then rewind the generator so that the

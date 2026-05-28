@@ -23,55 +23,30 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "thermal.H"
+#include "fluidLagrangianThermo.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+#include "pureMixture.H"
+
+#include "liquidPropertiesSelector.H"
+#include "sensibleInternalEnergy.H"
+#include "thermo.H"
+
+#include "makeLagrangianThermo.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace clouds
-{
-    defineTypeNameAndDebug(thermal, 0);
+    typedef
+        species::thermo<liquidPropertiesSelector, sensibleInternalEnergy>
+        liquidSensibleInternalEnergy;
+
+    makeLagrangianThermo
+    (
+        fluidLagrangianThermo,
+        pureMixture,
+        liquidSensibleInternalEnergy
+    );
 }
-}
-
-
-// * * * * * * * * * * * * * * Private Constructors  * * * * * * * * * * * * //
-
-Foam::clouds::thermal::thermal
-(
-    const cloud& c,
-    const shaped& shapedCloud,
-    basicLagrangianThermo* thermoPtr
-)
-:
-    autoPtr<basicLagrangianThermo>(thermoPtr),
-    massive(c, shapedCloud, thermoPtr->rho()),
-    cloud_(c),
-    T(thermo().T()),
-    e(thermo().e()),
-    Cv(thermo().Cv()),
-    kappa(thermo().kappa())
-{}
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::clouds::thermal::thermal
-(
-    const cloud& c,
-    const shaped& shapedCloud,
-    const carried& carriedCloud
-)
-:
-    thermal(c, shapedCloud, basicLagrangianThermo::New(c.mesh()).ptr())
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::clouds::thermal::~thermal()
-{}
-
 
 // ************************************************************************* //
