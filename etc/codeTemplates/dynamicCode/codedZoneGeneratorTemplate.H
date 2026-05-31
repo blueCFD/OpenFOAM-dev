@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2025-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) YEAR OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,98 +21,78 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::functionObjects::cloudMassFlux
-
 Description
-    Function to write the mass flux field for a cloud
-
-Usage
-    \table
-        Property      | Description                  | Required? | Default
-        cloud         | Name of the cloud            | yes       |
-    \endtable
-
-    Example specification:
-    \verbatim
-    cloudMassFlux1
-    {
-        type            cloudMassFlux;
-        libs            ("libLagrangianCloudFunctionObjects.so");
-        cloud           cloud;
-    }
-    \endverbatim
+    Template for use with dynamic code generation of a zoneGenerator.
 
 SourceFiles
-    cloudMassFlux.C
+    zoneGeneratorTemplate.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef cloudMassFlux_functionObject_H
-#define cloudMassFlux_functionObject_H
+#ifndef codedZoneGeneratorTemplate_H
+#define codedZoneGeneratorTemplate_H
 
-#include "cloudFlux.H"
+#include "coded_zoneGenerator.H"
+
+//{{{ begin codeInclude
+${codeInclude}
+//}}} end codeInclude
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace functionObjects
-{
 
 /*---------------------------------------------------------------------------*\
-                       Class cloudMassFlux Declaration
+                              A Coded zoneGenerator
 \*---------------------------------------------------------------------------*/
 
-class cloudMassFlux
+class ${typeName}ZoneGenerator
 :
-    public cloudFlux
+    public zoneGenerator
 {
-private:
-
-    // Private Member Functions
-
-        //- Return the property for which to compute the flux
-        virtual tmp<LagrangianSubScalarSubField> q
-        (
-            const LagrangianSubScalarSubField& fraction
-        ) const;
+    // Private Data
 
 
 public:
 
     //- Runtime type information
-    TypeName("cloudMassFlux");
+    TypeName("${typeName}");
 
 
     // Constructors
 
         //- Construct from Time and dictionary
-        cloudMassFlux
+        ${typeName}ZoneGenerator
         (
             const word& name,
-            const Time& runTime,
-            const dictionary& dict
+            const polyMesh& mesh,
+            const dictionary&
         );
 
         //- Disallow default bitwise copy construction
-        cloudMassFlux(const cloudMassFlux&) = delete;
+        ${typeName}ZoneGenerator(const ${typeName}ZoneGenerator&) = delete;
 
 
     //- Destructor
-    virtual ~cloudMassFlux();
+    virtual ~${typeName}ZoneGenerator();
+
+
+    // Member Functions
+
+        //- Generate and return the zoneSet
+        virtual zoneSet generate() const;
 
 
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const cloudMassFlux&) = delete;
+        void operator=(const ${typeName}ZoneGenerator&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace functionObjects
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
