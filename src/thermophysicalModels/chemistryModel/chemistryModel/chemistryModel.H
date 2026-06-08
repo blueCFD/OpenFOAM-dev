@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -25,37 +25,7 @@ Class
     Foam::chemistryModel
 
 Description
-    Extends base chemistry model by adding a thermo package, and ODE functions.
-    Introduces chemistry equation system and evaluation of chemical source terms
-    with optional support for TDAC mechanism reduction and tabulation.
-
-    References:
-    \verbatim
-        Contino, F., Jeanmart, H., Lucchini, T., & D’Errico, G. (2011).
-        Coupling of in situ adaptive tabulation and dynamic adaptive chemistry:
-        An effective method for solving combustion in engine simulations.
-        Proceedings of the Combustion Institute, 33(2), 3057-3064.
-
-        Contino, F., Lucchini, T., D'Errico, G., Duynslaegher, C.,
-        Dias, V., & Jeanmart, H. (2012).
-        Simulations of advanced combustion modes using detailed chemistry
-        combined with tabulation and mechanism reduction techniques.
-        SAE International Journal of Engines,
-        5(2012-01-0145), 185-196.
-
-        Contino, F., Foucher, F., Dagaut, P., Lucchini, T., D’Errico, G., &
-        Mounaïm-Rousselle, C. (2013).
-        Experimental and numerical analysis of nitric oxide effect on the
-        ignition of iso-octane in a single cylinder HCCI engine.
-        Combustion and Flame, 160(8), 1476-1483.
-
-        Contino, F., Masurier, J. B., Foucher, F., Lucchini, T., D’Errico, G., &
-        Dagaut, P. (2014).
-        CFD simulations using the TDAC method to model iso-octane combustion
-        for a large range of ozone seeding and temperature conditions
-        in a single cylinder HCCI engine.
-        Fuel, 137, 179-184.
-    \endverbatim
+    Base class for chemistry models
 
 SourceFiles
     chemistryModelI.H
@@ -66,15 +36,7 @@ SourceFiles
 #ifndef chemistryModel_H
 #define chemistryModel_H
 
-#include "odeChemistryModel.H"
-#include "ReactionList.T.H"
-#include "ODESystem.H"
-#include "jacobianType.H"
-#include "volFields.H"
-#include "multicomponentMixture.H"
-#include "chemistryReductionMethod.H"
-#include "chemistryTabulationMethod.H"
-#include "DynamicField.T.H"
+#include "fluidMulticomponentThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -85,115 +47,48 @@ namespace Foam
                      Class chemistryModel Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class ThermoType>
 class chemistryModel
 :
-    public odeChemistryModel
+    public IOdictionary
 {
-    // Private classes
+protected:
 
-        //- Class to define scope of reaction evaluation. Runs pre-evaluate
-        //  hook on all reactions on construction and post-evaluate on
-        //  destruction.
-        class reactionEvaluationScope
-        {
-            const chemistryModel<ThermoType>& chemistry_;
+    // Protected data
 
-        public:
+        //- Reference to the mesh
+        const fvMesh& mesh_;
 
-            reactionEvaluationScope
-            (
-                const chemistryModel<ThermoType>& chemistry
-            )
-            :
-                chemistry_(chemistry)
-            {
-                forAll(chemistry_.reactions_, i)
-                {
-                    chemistry_.reactions_[i].preEvaluate();
-                }
-            }
+        //- Reference to the thermo
+        const fluidMulticomponentThermo& thermo_;
 
-            ~reactionEvaluationScope()
-            {
-                forAll(chemistry_.reactions_, i)
-                {
-                    chemistry_.reactions_[i].postEvaluate();
-                }
-            }
-        };
+        //- Chemistry activation switch
+        Switch chemistry_;
 
+        //- Initial chemical time step
+        const scalar deltaTChemIni_;
 
-    // Private data
+        //- Maximum chemical time step
+        const scalar deltaTChemMax_;
 
-        //- Switch to select performance logging
-        Switch log_;
-
-        //- Switch to enable per-cell CPU load caching for load-balancing
-        Switch cpuLoad_;
-
-        //- Type of the Jacobian to be calculated
-        const chemistryModels::jacobianType jacobianType_;
-
-        //- Reference to the multi component mixture
-        const multicomponentMixture<ThermoType>& mixture_;
-
-        //- Thermodynamic data of the species
-        const PtrList<ThermoType>& specieThermos_;
-
-        //- Reactions
-        const ReactionList<ThermoType> reactions_;
-
-        //- List of reaction rate per specie [kg/m^3/s]
-        PtrList<volScalarField::Internal> RR_;
-
-        //- Temporary mass fraction field
-        mutable scalarField Y_;
-
-        //- Temporary simplified mechanism mass fraction field
-        DynamicField<scalar> sY_;
-
-        //- Temporary concentration field
-        mutable scalarField c_;
-
-        //- Temporary simplified mechanism concentration field
-        DynamicField<scalar> sc_;
-
-        //- Specie-temperature-pressure workspace fields
-        mutable FixedList<scalarField, 5> YTpWork_;
-
-        //- Specie-temperature-pressure workspace matrices
-        mutable FixedList<scalarSquareMatrix, 2> YTpYTpWork_;
-
-        //- Mechanism reduction method
-        autoPtr<chemistryReductionMethod<ThermoType>> mechRedPtr_;
-
-        //- Mechanism reduction method reference
-        chemistryReductionMethod<ThermoType>& mechRed_;
-
-        //- Tabulation method
-        autoPtr<chemistryTabulationMethod> tabulationPtr_;
-
-        //- Tabulation method reference
-        chemistryTabulationMethod& tabulation_;
-
-        //- Log file for average time spent solving the chemistry
-        autoPtr<OFstream> cpuSolveFile_;
-
-
-    // Private Member Functions
-
-        //- Solve the reaction system for the given time step
-        //  of given type and return the characteristic time
-        //  Variable number of species added
-        template<class DeltaTType>
-        scalar solve(const DeltaTType& deltaT);
+        //- Latest estimation of integration step
+        volScalarField::Internal deltaTChem_;
 
 
 public:
 
     //- Runtime type information
     TypeName("chemistryModel");
+
+
+    //- Declare run-time constructor selection tables
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        chemistryModel,
+        thermo,
+        (const fluidMulticomponentThermo& thermo),
+        (thermo)
+    );
 
 
     // Constructors
@@ -205,102 +100,76 @@ public:
         chemistryModel(const chemistryModel&) = delete;
 
 
+    // Selectors
+
+        //- Select based on fluid reaction thermo
+        static autoPtr<chemistryModel> New
+        (
+            const fluidMulticomponentThermo& thermo
+        );
+
+
     //- Destructor
     virtual ~chemistryModel();
 
 
     // Member Functions
 
-        // Access
+        //- Return const access to the mesh
+        inline const fvMesh& mesh() const;
 
-            //- Return reference to the mixture
-            inline const multicomponentMixture<ThermoType>& mixture() const;
+        //- Return const access to the thermo
+        inline const fluidMulticomponentThermo& thermo() const;
 
-            //- The reactions
-            inline const PtrList<Reaction<ThermoType>>& reactions() const;
+        //- Chemistry activation switch
+        inline Switch chemistry() const;
 
-            //- Thermodynamic data of the species
-            inline const PtrList<ThermoType>& specieThermos() const;
+        //- The number of species
+        virtual label nSpecie() const = 0;
 
+        //- The number of reactions
+        virtual label nReaction() const = 0;
 
-        // Overrides to basicChemistryModel functions
+        //- Return the latest estimation of integration step
+        inline const volScalarField::Internal& deltaTChem() const;
 
-            //- The number of reactions
-            virtual inline label nReaction() const;
+        //- Return reaction rates of the species [kg/m^3/s]
+        virtual const PtrList<volScalarField::Internal>& RR() const = 0;
 
-            //- Return reaction rates of the species [kg/m^3/s]
-            virtual inline const PtrList<volScalarField::Internal>& RR() const;
+        //- Return the name of reactioni
+        virtual inline const word& reactionName
+        (
+            const label reactioni
+        ) const = 0;
 
-            //- Return the name of reactioni
-            virtual inline const word& reactionName
-            (
-                const label reactioni
-            ) const;
+        //- Return the rate of reactioni [kmol/m^3/s]
+        virtual tmp<volScalarField::Internal> reactionRR
+        (
+            const label reactioni
+        ) const = 0;
 
-            //- Return the rate of reactioni [kmol/m^3/s]
-            virtual tmp<volScalarField::Internal> reactionRR
-            (
-                const label reactioni
-            ) const;
+        //- Return reaction rates of the species in reactioni [kg/m^3/s]
+        virtual PtrList<volScalarField::Internal> specieReactionRR
+        (
+            const label reactioni
+        ) const = 0;
 
-            //- Return reaction rates of the species in reactioni [kg/m^3/s]
-            virtual PtrList<volScalarField::Internal> specieReactionRR
-            (
-                const label reactioni
-            ) const;
+        //- Calculates the reaction rates
+        virtual void calculate() = 0;
 
-            //- Calculates the reaction rates
-            virtual void calculate();
+        //- Solve the reaction system for the given time step
+        //  and return the characteristic time
+        virtual scalar solve(const scalar deltaT) = 0;
 
-            //- Solve the reaction system for the given time step
-            //  and return the characteristic time
-            virtual scalar solve(const scalar deltaT);
+        //- Solve the reaction system for the given time step
+        //  and return the characteristic time
+        virtual scalar solve(const scalarField& deltaT) = 0;
 
-            //- Solve the reaction system for the given time step
-            //  and return the characteristic time
-            virtual scalar solve(const scalarField& deltaT);
+        //- Return the chemical time scale
+        virtual tmp<volScalarField> tc() const = 0;
 
-            //- Return the chemical time scale
-            virtual tmp<volScalarField> tc() const;
-
-            //- Return the heat release rate [kg/m/s^3]
-            virtual tmp<volScalarField> Qdot() const;
-
-
-        // Overrides to ODESystem
-
-            //- Calculate the ODE derivatives
-            virtual void derivatives
-            (
-                const scalar t,
-                const scalarField& YTp,
-                const label li,
-                scalarField& dYTpdt
-            ) const;
-
-            //- Calculate the ODE jacobian
-            virtual void jacobian
-            (
-                const scalar t,
-                const scalarField& YTp,
-                const label li,
-                scalarField& dYTpdt,
-                scalarSquareMatrix& J
-            ) const;
-
-
-        // ODE solution functions
-
-            //- Solve the ODE system
-            virtual void solve
-            (
-                scalar& p,
-                scalar& T,
-                scalarField& Y,
-                const label li,
-                scalar& deltaT,
-                scalar& subDeltaT
-            ) const = 0;
+        //- Return the heat release rate [kg/m/s^3]
+        virtual tmp<volScalarField> Qdot() const = 0;
 
 
     // Member Operators
@@ -317,12 +186,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "chemistryModelI.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-    #include "chemistryModel.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

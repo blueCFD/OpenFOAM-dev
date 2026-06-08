@@ -1,30 +1,24 @@
-basicChemistryModel/basicChemistryModel.C
-basicChemistryModel/basicChemistryModelNew.C
+chemistryModel/chemistryModel.C
+chemistryModel/chemistryModelNew.C
 
-chemistryModel/jacobianType/jacobianType.C
+standard/standard_chemistryModel.C
+standard/standardChemistryModels.C
 
-chemistrySolver/chemistrySolver/chemistrySolvers.C
-chemistrySolver/noChemistrySolver/noChemistrySolvers.C
-chemistrySolver/EulerImplicit/EulerImplicitChemistrySolvers.C
-chemistrySolver/ode/odeChemistrySolvers.C
+Standard/reduction/chemistryReductionMethod/chemistryReductionMethods.C
+Standard/reduction/noChemistryReduction/noChemistryReductionMethods.C
+Standard/reduction/DAC/DACChemistryReductionMethods.C
+Standard/reduction/DRG/DRGChemistryReductionMethods.C
+Standard/reduction/DRGEP/DRGEPChemistryReductionMethods.C
+Standard/reduction/EFA/EFAChemistryReductionMethods.C
+Standard/reduction/PFA/PFAChemistryReductionMethods.C
 
-odeChemistryModel/odeChemistryModel.C
-
-chemistryModel/reduction/chemistryReductionMethod/chemistryReductionMethods.C
-chemistryModel/reduction/noChemistryReduction/noChemistryReductionMethods.C
-chemistryModel/reduction/DAC/DACChemistryReductionMethods.C
-chemistryModel/reduction/DRG/DRGChemistryReductionMethods.C
-chemistryModel/reduction/DRGEP/DRGEPChemistryReductionMethods.C
-chemistryModel/reduction/EFA/EFAChemistryReductionMethods.C
-chemistryModel/reduction/PFA/PFAChemistryReductionMethods.C
-
-chemistryModel/tabulation/chemistryTabulationMethod/chemistryTabulationMethod.C
-chemistryModel/tabulation/chemistryTabulationMethod/chemistryTabulationMethodNew.C
-chemistryModel/tabulation/noChemistryTabulation/noChemistryTabulation.C
-chemistryModel/tabulation/ISAT/ISAT.C
-chemistryModel/tabulation/ISAT/chemPointISAT/chemPointISAT.C
-chemistryModel/tabulation/ISAT/binaryNode/binaryNode.C
-chemistryModel/tabulation/ISAT/binaryTree/binaryTree.C
+Standard/tabulation/chemistryTabulationMethod/chemistryTabulationMethod.C
+Standard/tabulation/chemistryTabulationMethod/chemistryTabulationMethodNew.C
+Standard/tabulation/noChemistryTabulation/noChemistryTabulation.C
+Standard/tabulation/ISAT/ISAT.C
+Standard/tabulation/ISAT/chemPointISAT/chemPointISAT.C
+Standard/tabulation/ISAT/binaryNode/binaryNode.C
+Standard/tabulation/ISAT/binaryTree/binaryTree.C
 
 reaction/makeReactions.C
 

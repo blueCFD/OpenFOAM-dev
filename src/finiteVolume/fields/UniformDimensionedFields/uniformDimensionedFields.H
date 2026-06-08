@@ -25,6 +25,7 @@ InClass
     Foam::UniformDimensionedField
 
 Description
+    Typedefs for UniformDimensionedField
 
 SourceFiles
     uniformDimensionedFields.C
@@ -44,12 +45,11 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-typedef UniformDimensionedField<scalar> uniformDimensionedScalarField;
-typedef UniformDimensionedField<vector> uniformDimensionedVectorField;
-typedef UniformDimensionedField<sphericalTensor>
-    uniformDimensionedSphericalTensorField;
-typedef UniformDimensionedField<symmTensor> uniformDimensionedSymmTensorField;
-typedef UniformDimensionedField<tensor> uniformDimensionedTensorField;
+#define typedefUniformDimensionedTypeField(Type, nullArg)                      \
+    typedef UniformDimensionedField<Type>                                      \
+        CAT3(uniformDimensioned, CAPITALIZE(Type), Field);                     \
+
+FOR_ALL_FIELD_TYPES(typedefUniformDimensionedTypeField);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

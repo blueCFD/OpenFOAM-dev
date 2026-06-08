@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,56 +23,31 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "chemistryModel.H"
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class ThermoType>
-inline const Foam::multicomponentMixture<ThermoType>&
-Foam::chemistryModel<ThermoType>::mixture() const
+inline const Foam::fvMesh& Foam::chemistryModel::mesh() const
 {
-    return mixture_;
+    return mesh_;
 }
 
 
-template<class ThermoType>
-inline const Foam::PtrList<Foam::Reaction<ThermoType>>&
-Foam::chemistryModel<ThermoType>::reactions() const
+inline const Foam::fluidMulticomponentThermo&
+Foam::chemistryModel::thermo() const
 {
-    return reactions_;
+    return thermo_;
 }
 
 
-template<class ThermoType>
-inline const Foam::PtrList<ThermoType>&
-Foam::chemistryModel<ThermoType>::specieThermos() const
+inline Foam::Switch Foam::chemistryModel::chemistry() const
 {
-    return specieThermos_;
+    return chemistry_;
 }
 
 
-template<class ThermoType>
-inline Foam::label Foam::chemistryModel<ThermoType>::nReaction() const
+inline const Foam::DimensionedField<Foam::scalar, Foam::fvMesh>&
+Foam::chemistryModel::deltaTChem() const
 {
-    return reactions_.size();
-}
-
-
-template<class ThermoType>
-inline const Foam::word& Foam::chemistryModel<ThermoType>::reactionName
-(
-    const label reactioni
-) const
-{
-    return reactions_[reactioni].name();
-}
-
-
-template<class ThermoType>
-inline const Foam::PtrList<Foam::DimensionedField<Foam::scalar, Foam::fvMesh>>&
-Foam::chemistryModel<ThermoType>::RR() const
-{
-    return RR_;
+    return deltaTChem_;
 }
 
 
