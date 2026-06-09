@@ -25,10 +25,32 @@ Class
     Foam::chemistryModels::standard
 
 Description
-    Concrete base class for Foam::chemistryModels::Standard
+    Non-templated Base class for Foam::chemistryModels::Standard
+
+    With run-time selected ODE solver
+
+    Example of \c standard \c chemistryModel specification in
+    constant/chemistryProperties using the \c seulex ODE solver to integrate
+    the included reaction system:
+    \verbatim
+    type            standard;
+
+    initialChemicalTimeStep 1e-7;
+
+    ode
+    {
+        solver          seulex;
+        absTol          1e-8;
+        relTol          1e-1;
+    }
+
+    #include "reactions"
+    \endverbatim
 
 See also
+    Foam::chemistryModel
     Foam::chemistryModels::Standard
+    Foam::generatedCellZone
 
 SourceFiles
     standard_chemistryModelI.H
@@ -40,7 +62,8 @@ SourceFiles
 #define standard_chemistryModel_H
 
 #include "chemistryModel.H"
-#include "ODESystem.H"
+#include "ODESolver.H"
+#include "generatedCellZone.H"
 #include "OFstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -78,6 +101,9 @@ protected:
         //- Jacobian type names
         static const NamedEnum<jacobianType, 2> jacobianTypeNames;
 
+        //- Optional cellZone to limit where the chemistry is integrated
+        generatedCellZone zone_;
+
         //- Reference to the field of specie mass fractions
         const PtrList<volScalarField>& Yvf_;
 
@@ -94,6 +120,12 @@ protected:
         //- Temporary map from simplified to complete concentration fields
         //  sc -> c
         mutable DynamicList<label> sToc_;
+
+        //- ODE solver
+        mutable autoPtr<ODESolver> odeSolver_;
+
+        // ODE solver data
+        mutable scalarField cTp_;
 
 
 public:

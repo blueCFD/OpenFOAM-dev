@@ -65,9 +65,7 @@ Foam::chemistryModels::Standard<ThermoType>::Standard
     ),
     mechRed_(*mechRedPtr_),
     tabulationPtr_(chemistryTabulationMethod::New(*this, *this)),
-    tabulation_(*tabulationPtr_),
-    odeSolver_(ODESolver::New(*this, typeDict("ode"))),
-    cTp_(nEqns())
+    tabulation_(*tabulationPtr_)
 {
     // Create the fields for the chemistry sources
     forAll(RR_, fieldi)
@@ -476,8 +474,11 @@ Foam::chemistryModels::Standard<ThermoType>::reactionRR
 
     const Reaction<ThermoType>& R = reactions_[reactioni];
 
-    forAll(rhovf, celli)
+    const label nZoneCells = zone_.nCells();
+    for(label zci = 0; zci<nZoneCells; zci++)
     {
+        const label celli = zone_.celli(zci);
+
         const scalar rho = rhovf[celli];
         const scalar T = Tvf[celli];
         const scalar p = pvf[celli];
@@ -545,8 +546,11 @@ Foam::chemistryModels::Standard<ThermoType>::specieReactionRR
 
     const Reaction<ThermoType>& R = reactions_[reactioni];
 
-    forAll(rhovf, celli)
+    const label nZoneCells = zone_.nCells();
+    for(label zci = 0; zci<nZoneCells; zci++)
     {
+        const label celli = zone_.celli(zci);
+
         const scalar rho = rhovf[celli];
         const scalar T = Tvf[celli];
         const scalar p = pvf[celli];
@@ -589,6 +593,14 @@ void Foam::chemistryModels::Standard<ThermoType>::calculate()
         return;
     }
 
+    if (!zone_.all())
+    {
+        forAll(RR_, fieldi)
+        {
+            RR_[fieldi] = Zero;
+        }
+    }
+
     tmp<volScalarField> trhovf(this->thermo().rho());
     const volScalarField& rhovf = trhovf();
 
@@ -599,8 +611,11 @@ void Foam::chemistryModels::Standard<ThermoType>::calculate()
 
     reactionEvaluationScope scope(*this);
 
-    forAll(rhovf, celli)
+    const label nZoneCells = zone_.nCells();
+    for(label zci = 0; zci<nZoneCells; zci++)
     {
+        const label celli = zone_.celli(zci);
+
         const scalar rho = rhovf[celli];
         const scalar T = Tvf[celli];
         const scalar p = pvf[celli];
@@ -660,6 +675,14 @@ Foam::scalar Foam::chemistryModels::Standard<ThermoType>::solve
         return great;
     }
 
+    if (!zone_.all())
+    {
+        forAll(RR_, fieldi)
+        {
+            RR_[fieldi] = Zero;
+        }
+    }
+
     const volScalarField& rho0vf =
         this->mesh().template lookupObject<volScalarField>
         (
@@ -683,8 +706,12 @@ Foam::scalar Foam::chemistryModels::Standard<ThermoType>::solve
     tabulation_.reset();
     chemistryCpuLoad.resetCpuTime();
 
-    forAll(rho0vf, celli)
+    zone_.regenerate();
+    const label nZoneCells = zone_.nCells();
+    for(label zci = 0; zci<nZoneCells; zci++)
     {
+        const label celli = zone_.celli(zci);
+
         const scalar rho0 = rho0vf[celli];
 
         scalar p = p0vf[celli];
@@ -907,8 +934,11 @@ Foam::chemistryModels::Standard<ThermoType>::tc() const
 
     reactionEvaluationScope scope(*this);
 
-    forAll(rhovf, celli)
+    const label nZoneCells = zone_.nCells();
+    for(label zci = 0; zci<nZoneCells; zci++)
     {
+        const label celli = zone_.celli(zci);
+
         const scalar rho = rhovf[celli];
         const scalar T = Tvf[celli];
         const scalar p = pvf[celli];
@@ -993,8 +1023,11 @@ Foam::chemistryModels::Standard<ThermoType>::Qdot() const
 
     forAll(Yvf_, i)
     {
-        forAll(Qdot, celli)
+        const label nZoneCells = zone_.nCells();
+        for(label zci = 0; zci<nZoneCells; zci++)
         {
+            const label celli = zone_.celli(zci);
+
             const scalar hi = specieThermos_[i].hf();
             Qdot[celli] -= hi*RR_[i][celli];
         }

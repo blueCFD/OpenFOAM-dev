@@ -52,11 +52,14 @@ Foam::chemistryModels::standard::standard
 :
     chemistryModel(thermo),
     ODESystem(),
+    zone_(mesh(), *this, true),
     Yvf_(this->thermo().Y()),
     nSpecie_(Yvf_.size()),
     reduction_(false),
     cTos_(nSpecie_, -1),
-    sToc_(nSpecie_)
+    sToc_(nSpecie_),
+    odeSolver_(ODESolver::New(*this, typeDict("ode"))),
+    cTp_(nEqns())
 {}
 
 
