@@ -2,7 +2,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 # 2014-02-21 blueCAPE Lda: Modifications for blueCFD-Core 2.3
@@ -126,23 +126,45 @@ system)
     if [ -d "$paraviewBinDir" ]
     then
         export ParaView_DIR=$(dirname $paraviewBinDir)
-        export ParaView_LIB_DIR=$(unset LD_LIBRARY_PATH && \
-                                  ldd $paraviewBinDir/paraview | \
-                                  grep -o -e "/.*/libpqCore-pv.*.so" \
-                                          -e "/.*/pqCore-pv.*.dll" | \
-                                  xargs dirname)
+
         export ParaView_VERSION=$(unset LD_LIBRARY_PATH && \
-                                  pvdataserver --version 2> /dev/null | \
+                                  $pvserverExe --version 2> /dev/null | \
                                   awk '{print $NF}')
         export ParaView_MAJOR=${ParaView_VERSION%.*}
-        export ParaView_INCLUDE_DIR=$ParaView_DIR/include/paraview-$ParaView_MAJOR
-        export PV_PLUGIN_PATH=$FOAM_LIBBIN/paraview-$ParaView_MAJOR
 
-        # Add to the library path
-        _foamAppendLib $ParaView_LIB_DIR $PV_PLUGIN_PATH
+        # Set the ParaView installation
+        export ParaView_LIB_DIR=$(unset LD_LIBRARY_PATH && ldd $pvserverExe | \
+                                  grep -o "/[^ ]\+/libvtk.*-pv$ParaView_MAJOR\.so[^ ]*" | \
+                                  head -n 1 | xargs dirname)
+        export ParaView_INCLUDE_DIR=$ParaView_DIR/include/paraview-$ParaView_MAJOR
+        export LD_LIBRARY_PATH=$ParaView_LIB_DIR:$LD_LIBRARY_PATH
+
+        # Optionally look for a separate VTK installation
+        vtkMajor=$(ldd $pvserverExe | \
+                   sed -n "s/[ \t]\+libvtkCommonCore-\([^ ]\+\).so[^ ]* => .*/\1/p")
+        vtkLibDir=$(unset LD_LIBRARY_PATH && ldd $pvserverExe | \
+                    grep -o "/[^ ]\+/libvtk.*-$vtkMajor\.so[^ ]*" |
+                    head -n 1 | xargs dirname)
+        vtkIncludeDir=$ParaView_DIR/include/vtk-$vtkMajor
+        if [ -n "$vtkMajor" ] && [ -d "$vtkLibDir" ] && [ -d "$vtkIncludeDir" ]
+        then
+            export VTK_LIB_DIR=$vtkLibDir
+            export VTK_INCLUDE_DIR=$vtkIncludeDir
+            if [ "$VTK_LIB_DIR" != "$ParaView_LIB_DIR" ]
+            then
+                export LD_LIBRARY_PATH=$VTK_LIB_DIR:$LD_LIBRARY_PATH
+            fi
+        else
+            export VTK_LIB_DIR=$ParaView_LIB_DIR
+            export VTK_INCLUDE_DIR=$ParaView_INCLUDE_DIR
+        fi
+
+        # Set the plugin directory
+        export PV_PLUGIN_PATH=$FOAM_LIBBIN/paraview-$ParaView_MAJOR
+        export LD_LIBRARY_PATH=$PV_PLUGIN_PATH:$LD_LIBRARY_PATH
     fi
 
-    unset pvserverExe paraviewBinDir
+    unset pvserverExe paraviewBinDir vtkMajor vtkLibDir vtkIncludeDir
     ;;
 
 paraviewopenfoam)
@@ -161,6 +183,9 @@ paraviewopenfoam)
         export ParaView_LIB_DIR=$(echo "$ParaView_DIR"/lib* | tr ' ' ':')
         export ParaView_INCLUDE_DIR=$ParaView_DIR/include/paraview-$ParaView_MAJOR
         export PV_PLUGIN_PATH=$FOAM_LIBBIN/paraview-$ParaView_MAJOR
+
+        export VTK_LIB_DIR=$ParaView_LIB_DIR
+        export VTK_INCLUDE_DIR=$ParaView_INCLUDE_DIR
 
         # Add to the path and the library path
         _foamAppendPath "${ParaView_DIR}/bin"
@@ -189,6 +214,9 @@ OpenFOAM | ThirdParty)
         export ParaView_MAJOR=${ParaView_VERSION%.*}
         export ParaView_INCLUDE_DIR=$paraviewDir/include/paraview-$ParaView_MAJOR
         export PV_PLUGIN_PATH=$FOAM_LIBBIN/paraview-$ParaView_MAJOR
+
+        export VTK_LIB_DIR=$ParaView_LIB_DIR
+        export VTK_INCLUDE_DIR=$ParaView_INCLUDE_DIR
 
         # Add to the path and the library path
         _foamAppendPath "${ParaView_DIR}/bin"
@@ -220,6 +248,11 @@ then
     echo "    ParaView_DIR         : $ParaView_DIR"
     echo "    ParaView_LIB_DIR     : $ParaView_LIB_DIR"
     echo "    ParaView_INCLUDE_DIR : $ParaView_INCLUDE_DIR"
+    if [ "$ParaView_TYPE" == "system" ]
+    then
+        echo "    VTK_LIB_DIR          : $VTK_LIB_DIR"
+        echo "    VTK_INCLUDE_DIR      : $VTK_INCLUDE_DIR"
+    fi
     echo "    PV_PLUGIN_PATH       : $PV_PLUGIN_PATH"
 fi
 
