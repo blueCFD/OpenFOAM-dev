@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 2024 FS Dynamics Portugal: Changes are tracked at:
@@ -27,8 +27,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "solidThermo.H"
+#include "solidZonalThermo.H"
 
 #include "pureMixture.H"
+#include "zonalMixture.H"
 
 #include "forSolids.H"
 
@@ -36,13 +38,19 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#define makeSolidThermo(BaseThermo, Mixture, ThermoPhysics)                    \
+                                                                               \
+    defineThermo(BaseThermo, Mixture, ThermoPhysics);                          \
+                                                                               \
+    addThermo(basicThermo, BaseThermo, Mixture, ThermoPhysics);                \
+    addThermo(solidThermo, BaseThermo, Mixture, ThermoPhysics)
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
 namespace Foam
 {
-    #if defined( WIN32 ) || defined( WIN64 )
-    #define derivedThermoName derivedThermoName_()
-    #endif
-
-    forSolids(makeThermo, solidThermo, pureMixture);
+    forSolids(makeSolidThermo, solidThermo, pureMixture);
+    forSolids(makeSolidThermo, solidZonalThermo, zonalMixture);
 }
 
 // ************************************************************************* //

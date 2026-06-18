@@ -33,6 +33,7 @@ License
 #include "DistanceFunction_DimensionedFieldFunction.T.H"
 #include "Coded_DimensionedFieldFunction.T.H"
 #include "Surfaces_DimensionedFieldFunction.T.H"
+#include "FieldFunction_DimensionedFieldFunction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -69,6 +70,11 @@ License
         addDimensionedFieldFunction                                            \
         (                                                                      \
             Surfaces,                                                          \
+            DimensionedField##Type##fvMesh##Field                              \
+        );                                                                     \
+        addDimensionedFieldFunction                                            \
+        (                                                                      \
+            FieldFunction,                                                     \
             DimensionedField##Type##fvMesh##Field                              \
         );                                                                     \
     }

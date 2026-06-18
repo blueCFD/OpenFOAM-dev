@@ -32,6 +32,7 @@ License
 #include "Zonal_DimensionedFieldFunction.T.H"
 #include "DistanceFunction_DimensionedFieldFunction.T.H"
 #include "Coded_DimensionedFieldFunction.T.H"
+#include "FieldFunction_DimensionedFieldFunction.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,7 +51,7 @@ License
             TimeFunction,                                                      \
             DimensionedField##Type##pointMesh##Field                           \
         );                                                                     \
-         addDimensionedFieldFunction                                           \
+        addDimensionedFieldFunction                                            \
         (                                                                      \
             Zonal,                                                             \
             DimensionedField##Type##pointMesh##Field                           \
@@ -63,6 +64,11 @@ License
         addDimensionedFieldFunction                                            \
         (                                                                      \
             Coded,                                                             \
+            DimensionedField##Type##pointMesh##Field                           \
+        );                                                                     \
+        addDimensionedFieldFunction                                            \
+        (                                                                      \
+            FieldFunction,                                                     \
             DimensionedField##Type##pointMesh##Field                           \
         );                                                                     \
     }
