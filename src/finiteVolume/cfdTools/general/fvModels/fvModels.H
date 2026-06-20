@@ -38,10 +38,9 @@ SourceFiles
 #include "fvModel.H"
 #include "PtrListDictionary.T.H"
 #include "DemandDrivenMeshObject.T.H"
+#include "IOdictionary.H"
 #include "HashSet.T.H"
-#include "volFields.H"
 #include "geometricOneField.H"
-#include "fvMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,8 +59,13 @@ Ostream& operator<<(Ostream& os, const fvModels& models);
 
 class fvModels
 :
-    public DemandDrivenMeshObject<fvMesh, TopoChangeableMeshObject, fvModels>,
-    public dictionary,
+    public DemandDrivenMeshObject
+    <
+        fvMesh,
+        TopoChangeableMeshObject,
+        fvModels,
+        IOdictionary
+    >,
     public PtrListDictionary<fvModel>
 {
     // Private Data
@@ -91,19 +95,13 @@ class fvModels
         ) const;
 
 
-
 protected:
 
-    friend class DemandDrivenMeshObject
-    <
-        fvMesh,
-        TopoChangeableMeshObject,
-        fvModels
-    >;
+    friend class DemandDrivenMeshObject;
 
     // Protected Constructors
 
-        //- Construct from components with list of field names
+        //- Construct from fvMesh
         explicit fvModels(const fvMesh& mesh);
 
 
@@ -123,7 +121,8 @@ public:
         <
             fvMesh,
             TopoChangeableMeshObject,
-            fvModels
+            fvModels,
+            IOdictionary
         >::New;
 
 
@@ -133,13 +132,6 @@ public:
 
 
     // Member Functions
-
-        //- Declare fvModels to be a global dictionary
-        virtual bool global() const
-        {
-            return true;
-        }
-
 
         // Checks
 
@@ -273,14 +265,6 @@ public:
             //- Read the fvModels dictionary if it has changed
             //  and update the models
             virtual bool read();
-
-            //- ReadData function which reads the fvModels dictionary
-            //  required for regIOobject read operation
-            virtual bool readData(Istream&);
-
-            //- writeData function required by regIOobject but not used
-            //  for this class, writeObject is used instead
-            virtual bool writeData(Ostream& os) const;
 
             //- Write the fvModels
             virtual bool writeObject

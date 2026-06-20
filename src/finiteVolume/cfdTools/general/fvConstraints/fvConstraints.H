@@ -38,6 +38,7 @@ SourceFiles
 #include "fvConstraint.H"
 #include "PtrListDictionary.T.H"
 #include "DemandDrivenMeshObject.T.H"
+#include "IOdictionary.H"
 #include "HashSet.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -61,9 +62,9 @@ class fvConstraints
     <
         fvMesh,
         TopoChangeableMeshObject,
-        fvConstraints
+        fvConstraints,
+        IOdictionary
     >,
-    public dictionary,
     public PtrListDictionary<fvConstraint>
 {
     // Private Data
@@ -84,6 +85,16 @@ class fvConstraints
         void checkApplied() const;
 
 
+protected:
+
+    friend class DemandDrivenMeshObject;
+
+    // Protected Constructors
+
+        //- Construct from fvMesh
+        explicit fvConstraints(const fvMesh& mesh);
+
+
 public:
 
     //- Runtime type information
@@ -91,9 +102,6 @@ public:
 
 
     // Constructors
-
-        //- Construct from components with list of field names
-        fvConstraints(const fvMesh& mesh);
 
         //- Disallow default bitwise copy construction
         fvConstraints(const fvConstraints&) = delete;
@@ -103,7 +111,8 @@ public:
         <
             fvMesh,
             TopoChangeableMeshObject,
-            fvConstraints
+            fvConstraints,
+            IOdictionary
         >::New;
 
 
@@ -113,13 +122,6 @@ public:
 
 
     // Member Functions
-
-        //- Declare fvConstraints to be a global dictionary
-        virtual bool global() const
-        {
-            return true;
-        }
-
 
         // Checks
 
@@ -157,13 +159,6 @@ public:
 
 
         // IO
-
-            //- ReadData function which reads the fvConstraints dictionary
-            //  required for regIOobject read operation
-            virtual bool readData(Istream&);
-
-            //- Write data to Ostream
-            virtual bool writeData(Ostream& os) const;
 
             //- Read the fvConstraints dictionary if it has changed
             //  and update the constraints

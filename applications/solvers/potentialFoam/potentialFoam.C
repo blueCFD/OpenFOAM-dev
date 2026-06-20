@@ -42,7 +42,7 @@ Description
 #include "fixedValueFvPatchFields.H"
 #include "zeroGradientFvPatchFields.H"
 #include "findRefCell.H"
-#include "IOMRFZoneList.H"
+#include "MRFZones.T.H"
 #include "adjustPhi.H"
 
 #include "fvcFlux.H"
