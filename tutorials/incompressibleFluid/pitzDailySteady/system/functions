@@ -14,8 +14,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#includeFunc filterObjectsAsFiles
-
 #includeFunc streamlinesLine
 (
     name=streamlines,
@@ -24,7 +22,5 @@ FoamFile
     nPoints=10,
     fields=(p k U)
 )
-
-#includeFunc writeObjects(kEpsilon:G)
 
 // ************************************************************************* //
