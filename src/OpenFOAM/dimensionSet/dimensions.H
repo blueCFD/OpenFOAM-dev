@@ -46,6 +46,8 @@ namespace dimensions
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+extern const dimensionSet invalid;
+
 extern const dimensionSet dimless;
 
 extern const dimensionSet mass;
@@ -66,21 +68,38 @@ extern const dimensionSet momentum;
 extern const dimensionSet acceleration;
 
 extern const dimensionSet density;
+extern const dimensionSet momentumDensity;
 extern const dimensionSet force;
 extern const dimensionSet energy;
+extern const dimensionSet kineticEnergy;
+extern const dimensionSet kineticEnergyDensity;
 extern const dimensionSet power;
 
 extern const dimensionSet pressure;
 extern const dimensionSet kinematicPressure;
 extern const dimensionSet compressibility;
+
 extern const dimensionSet gasConstant;
 extern const dimensionSet specificHeatCapacity;
+
 extern const dimensionSet kinematicViscosity;
 extern const dimensionSet dynamicViscosity;
 extern const dimensionSet thermalConductivity;
+extern const dimensionSet dynamicDiffusivity;
+
+extern const dimensionSet turbulentKineticEnergy;
+extern const dimensionSet kinematicStress;
+extern const dimensionSet ReynoldsStress;
+extern const dimensionSet turbulentEpsilon;
+extern const dimensionSet turbulentOmega;
+extern const dimensionSet turbulentViscosity;
 
 extern const dimensionSet volumetricFlux;
 extern const dimensionSet massFlux;
+extern const dimensionSet heatFlux;
+
+extern const dimensionSet magneticFluxDensity;
+extern const dimensionSet magneticFluxPressure;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -93,15 +112,16 @@ extern const HashTable<dimensionSet> table;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-extern const dimensionSet& dimless;
+using dimensions::dimless;
+
+// Deprecated dim-prefixed named dimensionSets
+// provided for backward compatibility
 
 extern const dimensionSet& dimMass;
 extern const dimensionSet& dimLength;
 extern const dimensionSet& dimTime;
 extern const dimensionSet& dimTemperature;
 extern const dimensionSet& dimMoles;
-extern const dimensionSet& dimCurrent;
-extern const dimensionSet& dimLuminousIntensity;
 
 extern const dimensionSet& dimArea;
 extern const dimensionSet& dimVolume;
@@ -109,7 +129,6 @@ extern const dimensionSet& dimVolume;
 extern const dimensionSet& dimRate;
 
 extern const dimensionSet& dimVelocity;
-extern const dimensionSet& dimMomentum;
 extern const dimensionSet& dimAcceleration;
 
 extern const dimensionSet& dimDensity;
@@ -118,9 +137,6 @@ extern const dimensionSet& dimEnergy;
 extern const dimensionSet& dimPower;
 
 extern const dimensionSet& dimPressure;
-extern const dimensionSet& dimKinematicPressure;
-extern const dimensionSet& dimCompressibility;
-extern const dimensionSet& dimGasConstant;
 extern const dimensionSet& dimSpecificHeatCapacity;
 extern const dimensionSet& dimKinematicViscosity;
 extern const dimensionSet& dimDynamicViscosity;

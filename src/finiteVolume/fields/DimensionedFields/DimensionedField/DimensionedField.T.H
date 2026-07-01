@@ -166,7 +166,7 @@ public:
             const IOobject&,
             const GeoMesh& mesh,
             const dimensionSet&,
-            const bool checkIOFlags = true
+            const bool checkIOFlags
         );
 
         //- Construct from components
@@ -178,20 +178,22 @@ public:
             const bool checkIOFlags = true
         );
 
-        //- Construct from Istream
-        DimensionedField
-        (
-            const IOobject&,
-            const GeoMesh& mesh,
-            const word& fieldDictEntry="value"
-        );
-
         //- Construct from dictionary
         DimensionedField
         (
             const IOobject&,
             const GeoMesh& mesh,
             const dictionary& fieldDict,
+            const dimensionSet& dims = dimensions::invalid,
+            const word& fieldDictEntry="value"
+        );
+
+        //- Construct from dictionary constructed from IOobject
+        DimensionedField
+        (
+            const IOobject&,
+            const GeoMesh& mesh,
+            const dimensionSet& dims = dimensions::invalid,
             const word& fieldDictEntry="value"
         );
 
