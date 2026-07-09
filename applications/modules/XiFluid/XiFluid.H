@@ -152,6 +152,9 @@ protected:
 
     // Unburnt and burnt gas momentumTransport
 
+        surfaceScalarField alphaPhiu_;
+        surfaceScalarField alphaPhib_;
+
         ubMomentumTransportModel uMomentumTransport_;
         ubMomentumTransportModel bMomentumTransport_;
 
@@ -209,7 +212,6 @@ protected:
         void uSolve
         (
             const volScalarField::Internal& bStab,
-            const surfaceScalarField& phib,
             const volScalarField::Internal& bSource
         );
 
@@ -217,7 +219,6 @@ protected:
         void bSolve
         (
             const volScalarField::Internal& cStab,
-            const surfaceScalarField& phic,
             const volScalarField::Internal& bSource
         );
 
@@ -238,7 +239,7 @@ protected:
             const volScalarField& alpha,
             const volScalarField& bc,
             const volScalarField::Internal& bcStab,
-            const surfaceScalarField& phibc,
+            const surfaceScalarField& alphaPhiub,
             const volScalarField& D,
             const thermophysicalTransportModel& thermophysicalTransport,
             const fvScalarMatrix& source,
@@ -251,7 +252,6 @@ protected:
             volScalarField& fu,
             const word& fuName,
             const volScalarField::Internal& bStab,
-            const surfaceScalarField& phib,
             const fvScalarMatrix& source
         );
 
@@ -261,7 +261,6 @@ protected:
             volScalarField& fb,
             const word& fbName,
             const volScalarField::Internal& cStab,
-            const surfaceScalarField& phic,
             const fvScalarMatrix& source
         );
 
@@ -269,7 +268,6 @@ protected:
         void HuSolve
         (
             const volScalarField::Internal& bStab,
-            const surfaceScalarField& phib,
             const volScalarField::Internal& bSource
         );
 
@@ -277,7 +275,6 @@ protected:
         void HbSolve
         (
             const volScalarField::Internal& cStab,
-            const surfaceScalarField& phic,
             const volScalarField::Internal& bSource
         );
 

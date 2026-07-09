@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2018-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2018-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -44,7 +44,9 @@ Usage
         phi       | The name of the flux field    | no       | phi
         rho       | The name of the density field | no       | rho
         nCorr     | The maximum number of correctors | no       | 5
-        schemesField | The name of the field from which schemes are taken | \\
+        schemesField | The name of the field for the schemes | \\
+        no | age
+        solverField | The name of the field for the solver setting | \\
         no | age
         diffusion | Switch to turn on/off the diffusion term | no | off
         tolerance  | Solver residual control       | no       | 1e-5
@@ -60,6 +62,7 @@ Usage
         writeControl    writeTime;
 
         schemesField    k;
+        solverField     k;
     }
     \endverbatim
 
@@ -97,11 +100,11 @@ class age
         //- The name of the density field
         word rhoName_;
 
-        //- Number of corrections
-        int nCorr_;
-
         //- Name of field from which schemes are taken
         word schemesField_;
+
+        //- Name of field whose solver is used (optional)
+        word solverField_;
 
         //- Switch to turn on/off the diffusion term
         Switch diffusion_;

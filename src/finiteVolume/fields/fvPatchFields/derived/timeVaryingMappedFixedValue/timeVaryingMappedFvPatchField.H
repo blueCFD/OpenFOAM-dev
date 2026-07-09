@@ -44,6 +44,19 @@ Description
     the \c sample \c functionObject is used to obtain the patch field data for
     mapping.
 
+    If the surface from which the data was obtained changes in time, e.g. when
+    sampled from a case with a changing mesh, a separate points file may be
+    provided in each time directory alongside the field data, i.e.
+    dataDir/\<time\>/\<sample\>/\<points name\>. Points files found in the
+    time directories take precedence over the static points file.
+
+    Note: unfortunately if the points files exist in any of the time directories
+    they MUST exist in ALL of the time directories and read from each.  It would
+    be much better if this functionality were changed for consistency with
+    polyMesh and on restart the time directories are scanned backwards for the
+    most recent points file, that way the points files are only read for times
+    at which they change.
+
     The default mode of operation (mapMethod planarInterpolation) is to project
     the points onto a plane (constructed from the first three points) and
     construct a 2D triangulation and finds for the face centres the triangle it
@@ -83,9 +96,7 @@ SourceFiles
 #define timeVaryingMappedFvPatchField_H
 
 #include "fvPatchField.H"
-#include "FixedList.T.H"
 #include "instantList.H"
-#include "pointToPointPlanarInterpolation.H"
 #include "Function1.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -93,12 +104,9 @@ SourceFiles
 namespace Foam
 {
 
-/*---------------------------------------------------------------------------*\
-                Class timeVaryingMappedFvPatchFieldName Declaration
-\*---------------------------------------------------------------------------*/
-
+// Forward declaration of classes
+class pointToPointPlanarInterpolation;
 TemplateName(timeVaryingMappedFvPatchField);
-
 
 /*---------------------------------------------------------------------------*\
                 Class timeVaryingMappedFvPatchField Declaration
@@ -143,6 +151,9 @@ class timeVaryingMappedFvPatchField
         //- 2D interpolation (for 'planarInterpolation' mapMethod)
         autoPtr<pointToPointPlanarInterpolation> mapperPtr_;
 
+        //- Path of the points file from which the mapper was constructed
+        fileName mapperPointsFile_;
+
         //- List of boundaryData time directories
         instantList sampleTimes_;
 
@@ -169,6 +180,15 @@ class timeVaryingMappedFvPatchField
 
         //- Helper function to find the field files
         fileName findFieldFile(const word& timeName) const;
+
+        //- Helper function to find the points file for the given sample
+        //  time. Returns the points file in the time directory if present,
+        //  otherwise the static points file.
+        fileName findPointsFile(const word& timeName) const;
+
+        //- Return the mapper for the given sample time, updating it if the
+        //  points file differs from that from which it was constructed
+        const pointToPointPlanarInterpolation& mapper(const word& timeName);
 
         //- Find boundary data in between current time and interpolate
         void checkTable();

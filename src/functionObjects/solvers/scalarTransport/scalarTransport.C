@@ -119,7 +119,6 @@ Foam::functionObjects::scalarTransport::scalarTransport
     fieldName_(dict.lookupOrDefault<word>("field", "s")),
     diffusivity_(diffusivityType::none),
     D_(0),
-    nCorr_(0),
     s_
     (
         IOobject
@@ -174,6 +173,7 @@ bool Foam::functionObjects::scalarTransport::read(const dictionary& dict)
     phiName_ = dict.lookupOrDefault<word>("phi", "phi");
     rhoName_ = dict.lookupOrDefault<word>("rho", "rho");
     schemesField_ = dict.lookupOrDefault<word>("schemesField", fieldName_);
+    solverField_ = dict.lookupOrDefault<word>("solverField", fieldName_);
 
     diffusivity_ = diffusivityTypeNames_.read(dict.lookup("diffusivity"));
 
@@ -191,12 +191,6 @@ bool Foam::functionObjects::scalarTransport::read(const dictionary& dict)
             dict.lookup("alphat") >> alphat_;
             break;
     }
-
-    nCorr_ = dict.lookupOrDefaultBackwardsCompatible<label>
-    (
-        {"nCorrectors", "nCorr"},
-        0
-    );
 
     return true;
 }
@@ -217,11 +211,19 @@ bool Foam::functionObjects::scalarTransport::execute()
 
     const word divScheme("div(phi," + schemesField_ + ")");
 
+    const int nCorr =
+        mesh_.solution().solverDict(solverField_)
+       .lookupOrDefaultBackwardsCompatible<label>
+        (
+            {"nCorrectors", "nCorr"},
+            0
+        );
+
     // Set under-relaxation coeff
     scalar relaxCoeff = 0.0;
-    if (mesh_.solution().relaxEquation(schemesField_))
+    if (mesh_.solution().relaxEquation(solverField_))
     {
-        relaxCoeff = mesh_.solution().equationRelaxationFactor(schemesField_);
+        relaxCoeff = mesh_.solution().equationRelaxationFactor(solverField_);
     }
 
     const Foam::fvModels& fvModels(Foam::fvModels::New(mesh_));
@@ -240,7 +242,7 @@ bool Foam::functionObjects::scalarTransport::execute()
         }
         else
         {
-            for (int i=0; i<=nCorr_; i++)
+            for (int i=0; i<=nCorr; i++)
             {
                 fvScalarMatrix sEqn
                 (
@@ -252,14 +254,22 @@ bool Foam::functionObjects::scalarTransport::execute()
 
                 if (diffusivity_ != diffusivityType::none)
                 {
-                    sEqn -= fvm::laplacian(D(), s_);
+                    const volScalarField D(this->D());
+
+                    sEqn -=
+                        fvm::laplacian
+                        (
+                            D,
+                            s_,
+                            "laplacian(" + D.name() + "," + schemesField_ + ")"
+                        );
                 }
 
                 sEqn.relax(relaxCoeff);
 
                 fvConstraints.constrain(sEqn);
 
-                sEqn.solve(schemesField_);
+                sEqn.solve(solverField_);
 
                 fvConstraints.constrain(s_);
             }
@@ -270,7 +280,7 @@ bool Foam::functionObjects::scalarTransport::execute()
         const volScalarField& rho =
             mesh_.lookupObject<volScalarField>(rhoName_);
 
-        for (int i=0; i<=nCorr_; i++)
+        for (int i=0; i<=nCorr; i++)
         {
             fvScalarMatrix sEqn
             (
@@ -282,14 +292,22 @@ bool Foam::functionObjects::scalarTransport::execute()
 
             if (diffusivity_ != diffusivityType::none)
             {
-                sEqn -= fvm::laplacian(rho*D(), s_);
+                const volScalarField D(this->D());
+
+                sEqn -=
+                    fvm::laplacian
+                    (
+                        rho*D,
+                        s_,
+                        "laplacian(" + D.name() + "," + schemesField_ + ")"
+                    );
             }
 
             sEqn.relax(relaxCoeff);
 
             fvConstraints.constrain(sEqn);
 
-            sEqn.solve(schemesField_);
+            sEqn.solve(solverField_);
 
             fvConstraints.constrain(s_);
         }
@@ -343,10 +361,17 @@ void Foam::functionObjects::scalarTransport::subCycleMULES()
     // and boundedness of the explicit advection
     if (diffusivity_ != diffusivityType::none)
     {
+        const volScalarField D(this->D());
+
         fvScalarMatrix sEqn
         (
             fvm::ddt(s_) - fvc::ddt(s_)
-          - fvm::laplacian(D(), s_)
+          - fvm::laplacian
+            (
+                D,
+                s_,
+                "laplacian(" + D.name() + "," + schemesField_ + ")"
+            )
         );
 
         sEqn.solve(controls.subDict("diffusivity"));
@@ -363,6 +388,13 @@ void Foam::functionObjects::scalarTransport::subCycleMULES()
 void Foam::functionObjects::scalarTransport::solveMULES()
 {
     const dictionary& controls = mesh_.solution().solverDict(fieldName_);
+
+    const int nCorr = controls.lookupOrDefaultBackwardsCompatible<label>
+    (
+        {"nCorrectors", "nCorr"},
+        0
+    );
+
     const bool MULESCorr(controls.lookupOrDefault<Switch>("MULESCorr", false));
 
     const MULES::control MULEScontrols(mesh().solution().solverDict(s_.name()));
@@ -562,7 +594,7 @@ void Foam::functionObjects::scalarTransport::solveMULES()
         tsPhiCorr0_ = tsPhiUD;
     }
 
-    for (int sCorr=0; sCorr<nCorr_; sCorr++)
+    for (int sCorr=0; sCorr<nCorr; sCorr++)
     {
         // Split operator
         tmp<surfaceScalarField> tsPhiUn

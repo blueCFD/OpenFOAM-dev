@@ -32,11 +32,8 @@ divSchemes
 
     div(phi,b)          Gauss vanLeer;
 
-    div(phib,h.u)       Gauss limitedLinear 1;
-    div(phib,K)         Gauss limitedLinear 1;
-
-    div(phic,h.b)       Gauss limitedLinear 1;
-    div(phic,K)         Gauss limitedLinear 1;
+    div(alphaPhi,h)     Gauss limitedLinear 1;
+    div(alphaPhi,K)     Gauss limitedLinear 1;
 
     div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }

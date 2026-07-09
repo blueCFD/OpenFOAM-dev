@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     | Website:  https://openfoam.org
-#   \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # 2016-03-15 blueCAPE Lda: Modifications for blueCFD-Core 2.3-2
@@ -90,16 +90,18 @@ Usage: $Script [OPTION] [dir]
        $Script [OPTION] target [dir [MakeDir]]
 
 options:
-  -silent   | -s    Quiet mode (does not echo commands)
   -all      | -a    wmake all sub-directories, running Allwmake if present
-  -queue    | -q    wmakeCollect all sub-directories, running Allwmake if present
-  -non-stop | -k    Compile without stopping when errors occur
+  -help     | -h    Print the usage
   -j                Compile using all local cores/hyperthreads
   -j <N>    | -j<N> Compile using N cores/hyperthreads
   -no-scheduler     Compile without wmakeScheduler
+  -non-stop | -k    Compile without stopping when errors occur
+  -page     | -p    pipes wmake ouput to pager to scroll for 'error'
+                    hit 'space bar' to scroll through output, 'q' to quit
+  -queue    | -q    wmakeCollect all sub-directories, running Allwmake if present
+  -silent   | -s    Quiet mode (does not echo commands)
   -update           Update lnInclude directories, dep files, remove deprecated
                     files and directories
-  -help     | -h    Print the usage
 
 
 A general, easy-to-use make system for multi-platform development
@@ -150,6 +152,7 @@ useAllCores()
 # Default to compiling the local target only
 all=
 update=
+page=""
 
 while [ "$#" -gt 0 ]
 do
@@ -160,6 +163,10 @@ do
             ;;
         -s | -silent)
             export WM_QUIET=1
+            ;;
+        -p | -page)
+            page="2>&1 | less -RX"
+            export WM_COLOUR=1
             ;;
         -a | -all | all)
             all="all"
@@ -520,8 +527,8 @@ fi
 #------------------------------------------------------------------------------
 
 # shellcheck disable=SC2093,SC2086
-exec $make -f "$WM_DIR/makefiles/general" MAKE_DIR="$MakeDir" \
-     OBJECTS_DIR="$objectsDir" $targetType ${ADDITIONAL_WMAKE_ARGS}
+eval exec $make -f "$WM_DIR/makefiles/general" MAKE_DIR="$MakeDir" \
+     OBJECTS_DIR="$objectsDir" $targetType $page
 
 
 #------------------------------------------------------------------------------
