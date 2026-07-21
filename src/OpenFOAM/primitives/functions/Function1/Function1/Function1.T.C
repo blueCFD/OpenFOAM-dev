@@ -108,6 +108,25 @@ Foam::tmp<Foam::Field<Type>> Foam::FieldFunction1<Type, Function1Type>::value
 
 template<class Type, class Function1Type>
 Foam::tmp<Foam::Field<Type>>
+Foam::FieldFunction1<Type, Function1Type>::derivative
+(
+    const scalarField& x
+) const
+{
+    tmp<Field<Type>> tfld(new Field<Type>(x.size()));
+    Field<Type>& fld = tfld.ref();
+
+    forAll(x, i)
+    {
+        fld[i] = static_cast<const Function1Type&>(*this).derivative(x[i]);
+    }
+
+    return tfld;
+}
+
+
+template<class Type, class Function1Type>
+Foam::tmp<Foam::Field<Type>>
 Foam::FieldFunction1<Type, Function1Type>::integral
 (
     const scalarField& x1,
@@ -178,7 +197,7 @@ void Foam::writeEntry
     const Function1<Type>& f1
 )
 {
-    writeEntry(os, {xUnits, valueUnits}, f1);
+    writeEntry(os, Function1s::unitSets({xUnits, valueUnits}), f1);
 }
 
 

@@ -276,7 +276,7 @@ Foam::radiationModels::viewFactor::viewFactor(const volScalarField& T)
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensions::heatFlux
+        dimensions::heatFluxDensity
     ),
     Fmatrix_(),
     CLU_(),
@@ -335,7 +335,7 @@ Foam::radiationModels::viewFactor::viewFactor
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensions::heatFlux
+        dimensions::heatFluxDensity
     ),
     Fmatrix_(),
     CLU_(),
@@ -682,7 +682,7 @@ Foam::tmp<Foam::volScalarField> Foam::radiationModels::viewFactor::Rp() const
         mesh_,
         dimensionedScalar
         (
-            dimMass/pow3(dimTime)/dimLength/pow4(dimTemperature),
+            dimensions::powerDensity/pow4(dimensions::temperature),
             0
         )
     );
@@ -696,7 +696,7 @@ Foam::radiationModels::viewFactor::Ru() const
     (
         "Ru",
         mesh_,
-        dimensionedScalar(dimMass/dimLength/pow3(dimTime), 0)
+        dimensionedScalar(dimensions::powerDensity, 0)
     );
 }
 

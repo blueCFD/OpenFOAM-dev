@@ -9,14 +9,18 @@ thermophysicalFunctions/binaryDiffusionCoefficient/binaryDiffusionCoefficient.C
 thermophysicalFunctions/FullerDiffusionCoefficient/FullerDiffusionCoefficient.C
 
 NSRDS = thermophysicalFunctions/NSRDS
-$(NSRDS)/NSRDS0/NSRDS0.C
-$(NSRDS)/NSRDS1/NSRDS1.C
-$(NSRDS)/NSRDS2/NSRDS2.C
-$(NSRDS)/NSRDS3/NSRDS3.C
-$(NSRDS)/NSRDS4/NSRDS4.C
-$(NSRDS)/NSRDS5/NSRDS5.C
-$(NSRDS)/NSRDS6/NSRDS6.C
-$(NSRDS)/NSRDS7/NSRDS7.C
-$(NSRDS)/NSRDS14/NSRDS14.C
+$(NSRDS)/NSRDS0/NSRDS0.T.C
+$(NSRDS)/NSRDS1/NSRDS1.T.C
+$(NSRDS)/NSRDS2/NSRDS2.T.C
+$(NSRDS)/NSRDS3/NSRDS3.T.C
+$(NSRDS)/NSRDS4/NSRDS4.T.C
+$(NSRDS)/NSRDS5/NSRDS5.T.C
+$(NSRDS)/NSRDS6/NSRDS6.T.C
+$(NSRDS)/NSRDS7/NSRDS7.T.C
+$(NSRDS)/NSRDS14/NSRDS14.T.C
+
+thermophysicalFunctions/Antoine/Antoine.T.C
+thermophysicalFunctions/AntoineExtended/AntoineExtended.T.C
+thermophysicalFunctions/ArdenBuck/ArdenBuck.C
 
 LIB = $(FOAM_LIBBIN)/libspecie

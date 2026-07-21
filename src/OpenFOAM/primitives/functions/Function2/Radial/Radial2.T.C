@@ -67,7 +67,7 @@ void Foam::Function2s::Radial<Type>::write
     const unitSets& units
 ) const
 {
-    writeEntry(os, {units.x + units.y, units.value}, value_());
+    writeEntry(os, units.x + units.y, units.value, value_());
 }
 
 

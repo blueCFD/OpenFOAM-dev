@@ -29,7 +29,6 @@ License
 #include "fvcSnGrad.H"
 #include "fvmSup.H"
 #include "surfaceInterpolate.H"
-#include "Function2Evaluate.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,7 +50,7 @@ void Fickian<BasicThermophysicalTransportModel>::updateDm() const
     {
         forAll(Y, i)
         {
-            Dm_.set(i, evaluate(DmFuncs_[i], dimKinematicViscosity, p, T));
+            Dm_.set(i, DmFuncs_[i].value(p, T));
         }
     }
     else
@@ -63,7 +62,7 @@ void Fickian<BasicThermophysicalTransportModel>::updateDm() const
             (
                 "sumXbyD",
                 T.mesh(),
-                dimless/dimKinematicViscosity/Wm.dimensions()
+                inv(dimensions::kinematicDiffusivity)/Wm.dimensions()
             )
         );
 
@@ -81,20 +80,8 @@ void Fickian<BasicThermophysicalTransportModel>::updateDm() const
                             this->thermo().Wi(j)
                            *(
                                 i < j
-                              ? evaluate
-                                (
-                                    DFuncs_[i][j],
-                                    dimKinematicViscosity,
-                                    p,
-                                    T
-                                )
-                              : evaluate
-                                (
-                                    DFuncs_[j][i],
-                                    dimKinematicViscosity,
-                                    p,
-                                    T
-                                )
+                              ? DFuncs_[i][j].value(p, T)
+                              : DFuncs_[j][i].value(p, T)
                            )
                        );
                 }
@@ -181,12 +168,12 @@ bool Fickian<BasicThermophysicalTransportModel>::read()
                 DmFuncs_.set
                 (
                     i,
-                    Function2<scalar>::New
+                    DimensionedFunction2<scalar>::New
                     (
                         species[i],
-                        dimPressure,
-                        dimTemperature,
-                        dimKinematicViscosity,
+                        dimensions::pressure,
+                        dimensions::temperature,
+                        dimensions::kinematicDiffusivity,
                         Ddict
                     ).ptr()
                 );
@@ -243,12 +230,12 @@ bool Fickian<BasicThermophysicalTransportModel>::read()
                         DFuncs_[i].set
                         (
                             j,
-                            Function2<scalar>::New
+                            DimensionedFunction2<scalar>::New
                             (
                                 Dname,
-                                dimPressure,
-                                dimTemperature,
-                                dimKinematicViscosity,
+                                dimensions::pressure,
+                                dimensions::temperature,
+                                dimensions::kinematicDiffusivity,
                                 Ddict
                             ).ptr()
                         );
@@ -268,12 +255,12 @@ bool Fickian<BasicThermophysicalTransportModel>::read()
                 DTFuncs_.set
                 (
                     i,
-                    Function2<scalar>::New
+                    DimensionedFunction2<scalar>::New
                     (
                         species[i],
-                        dimPressure,
-                        dimTemperature,
-                        dimDynamicViscosity,
+                        dimensions::pressure,
+                        dimensions::temperature,
+                        dimensions::dynamicDiffusivity,
                         DTdict
                     ).ptr()
                 );
@@ -374,7 +361,11 @@ tmp<surfaceScalarField> Fickian<BasicThermophysicalTransportModel>::q() const
             (
                 "sumJ",
                 Y[0].mesh(),
-                dimensionedScalar(dimMass/dimArea/dimTime, 0)
+                dimensionedScalar
+                (
+                    dimensions::massFluxDensity,
+                    0
+                )
             )
         );
 
@@ -384,7 +375,11 @@ tmp<surfaceScalarField> Fickian<BasicThermophysicalTransportModel>::q() const
             (
                 "sumJh",
                 Y[0].mesh(),
-                dimensionedScalar(sumJ.dimensions()*dimEnergy/dimMass, 0)
+                dimensionedScalar
+                (
+                    sumJ.dimensions()*dimensions::specificEnergy,
+                    0
+                )
             )
         );
 
@@ -498,7 +493,11 @@ tmp<fvScalarMatrix> Fickian<BasicThermophysicalTransportModel>::divq
         (
             "sumJ",
             he.mesh(),
-            dimensionedScalar(dimMass/dimArea/dimTime, 0)
+            dimensionedScalar
+            (
+                dimensions::massFluxDensity,
+                0
+            )
         )
     );
 
@@ -555,13 +554,7 @@ tmp<surfaceScalarField> Fickian<BasicThermophysicalTransportModel>::j
             BasicThermophysicalTransportModel::j(Yi)
           - fvc::interpolate
             (
-                evaluate
-                (
-                    DTFuncs_[this->thermo().specieIndex(Yi)],
-                    dimDynamicViscosity,
-                    p,
-                    T
-                )
+                DTFuncs_[this->thermo().specieIndex(Yi)].value(p, T)
             )
            *fvc::snGrad(T)/fvc::interpolate(T);
     }
@@ -613,13 +606,7 @@ tmp<fvScalarMatrix> Fickian<BasicThermophysicalTransportModel>::divj
             (
                 fvc::interpolate
                 (
-                    evaluate
-                    (
-                        DTFuncs_[this->thermo().specieIndex(Yi)],
-                        dimDynamicViscosity,
-                        p,
-                        T
-                    )
+                    DTFuncs_[this->thermo().specieIndex(Yi)].value(p, T)
                 )
                *fvc::snGrad(T)/fvc::interpolate(T)
                *T.mesh().magSf()

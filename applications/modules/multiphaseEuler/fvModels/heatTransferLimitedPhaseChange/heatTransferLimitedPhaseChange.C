@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -53,11 +53,12 @@ void Foam::fv::heatTransferLimitedPhaseChange::readCoeffs
     const dictionary& dict
 )
 {
-    saturationModelPtr_.reset
+    Tsat_.reset
     (
-        saturationTemperatureModel::New
+        DimensionedFunction1<scalar>::New
         (
             "saturationTemperature",
+            {dimPressure, dimTemperature},
             dict
         ).ptr()
     );
@@ -79,7 +80,11 @@ void Foam::fv::heatTransferLimitedPhaseChange::readCoeffs
                     IOobject::NO_WRITE
                 ),
                 mesh(),
-                dimensionedScalar(dimDensity/dimTime/dimPressure, 0)
+                dimensionedScalar
+                (
+                    dimensions::density/dimensions::time/dimensions::pressure,
+                    0
+                )
             )
         );
     }
@@ -100,7 +105,7 @@ void Foam::fv::heatTransferLimitedPhaseChange::correctMDot() const
     const volScalarField::Internal& T2 = phase2_.thermo().T();
 
     // Saturation temperature
-    const volScalarField::Internal Tsat(saturationModelPtr_->Tsat(p));
+    const volScalarField::Internal Tsat(Tsat_->value(p));
     infoField("Tsat", Tsat);
 
     // Latent heat
@@ -123,10 +128,7 @@ void Foam::fv::heatTransferLimitedPhaseChange::correctMDot() const
     if (pressureImplicit_)
     {
         // Saturation temperature derivative w.r.t. pressure
-        const volScalarField::Internal TsatPrime
-        (
-            saturationModelPtr_->TsatPrime(p)
-        );
+        const volScalarField::Internal TsatPrime(Tsat_->derivative(p));
 
         dmDotdpPtr_() = (1 - f)*dmDotdpPtr_() - f*(H1 + H2)*TsatPrime/L;
     }
@@ -150,7 +152,7 @@ Foam::fv::heatTransferLimitedPhaseChange::heatTransferLimitedPhaseChange
     fluid_(solver_.fluid),
     phase1_(fluid_.phases()[phaseNames().first()]),
     phase2_(fluid_.phases()[phaseNames().second()]),
-    saturationModelPtr_(nullptr),
+    Tsat_(nullptr),
     pressureImplicit_(false),
     pressureEquationIndex_(-1),
     mDot_
@@ -164,7 +166,7 @@ Foam::fv::heatTransferLimitedPhaseChange::heatTransferLimitedPhaseChange
             IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimDensity/dimTime, 0)
+        dimensionedScalar(dimensions::density/dimensions::time, 0)
     ),
     dmDotdpPtr_(nullptr)
 {

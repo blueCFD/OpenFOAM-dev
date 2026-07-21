@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "tabulatedSolidTransport.H"
-#include "IOstreams.H"
+#include "delimitDictionary.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -39,7 +39,7 @@ Foam::tabulatedSolidTransport<Thermo>::tabulatedSolidTransport
     kappa_
     (
         "kappa",
-        {dimTemperature, dimThermalConductivity},
+        {dimensions::temperature, dimensions::thermalConductivity},
         dict.subDict("transport").subDict("kappa")
     )
 {}
@@ -55,9 +55,12 @@ void Foam::tabulatedSolidTransport<Thermo>::tabulatedSolidTransport::write
 {
     Thermo::write(os);
 
-    dictionary dict("transport");
-    dict.add("kappa", kappa_.values());
-    os  << indent << dict.dictName() << dict;
+    const delimitDictionary delimit(os, "transport"), delimitKappa(os, "kappa");
+    kappa_.write
+    (
+        os,
+        {dimensions::temperature, dimensions::thermalConductivity}
+    );
 }
 
 

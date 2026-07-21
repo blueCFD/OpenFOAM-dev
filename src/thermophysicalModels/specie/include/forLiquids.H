@@ -33,14 +33,18 @@ License
 #include "adiabaticPerfectFluid.H"
 #include "rhoConst.H"
 #include "rPolynomial.H"
+#include "NSRDS.T.H"
 
 #include "eConstThermo.H"
 #include "hConstThermo.H"
+#include "NSRDSThermo.T.H"
+#include "NSRDS14Thermo.T.H"
 
 #include "sensibleEnthalpy.H"
 #include "sensibleInternalEnergy.H"
 
 #include "constTransport.H"
+#include "NSRDSTransport.T.H"
 
 #include "thermo.H"
 
@@ -113,6 +117,43 @@ License
 
 #define forCoeffEnergyLiquids(Macro, Args...)                                  \
     forCoeffEnergyLiquidTransports(Macro, Args)
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#define forNSRDSLiquidEqns(Mu, He, Cp, Macro, Args...)                         \
+    forThermo(Mu, He, Cp, NSRDS, specie, Macro, Args);                         \
+
+#define forNSRDSLiquidThermos(Mu, He, Macro, Args...)                          \
+    forNSRDSLiquidEqns(Mu, He, NSRDSThermo, Macro, Args);                      \
+    forNSRDSLiquidEqns(Mu, He, NSRDS14Thermo, Macro, Args)
+
+#define forNSRDSLiquidEnergies(Mu, Macro, Args...)                             \
+    forNSRDSLiquidThermos(Mu, sensibleEnthalpy, Macro, Args);                  \
+    forNSRDSLiquidThermos(Mu, sensibleInternalEnergy, Macro, Args)
+
+#define forNSRDSLiquidTransports(Macro, Args...)                               \
+    forNSRDSLiquidEnergies(NSRDSTransport, Macro, Args)
+
+#define forNSRDSLiquids(Macro, Args...)                                        \
+    forNSRDSLiquidTransports(Macro, Args)
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#define forNSRDSEnergyLiquidEqns(Mu, He, Cp, Macro, Args...)                   \
+    forThermo(Mu, He, Cp, NSRDS, specie, Macro, Args);                         \
+
+#define forNSRDSEnergyLiquidThermos(Mu, He, Macro, Args...)                    \
+    forNSRDSEnergyLiquidEqns(Mu, He, NSRDSThermo, Macro, Args);                \
+    forNSRDSEnergyLiquidEqns(Mu, He, NSRDS14Thermo, Macro, Args)
+
+#define forNSRDSEnergyLiquidEnergies(Mu, Macro, Args...)                       \
+    forNSRDSEnergyLiquidThermos(Mu, sensibleInternalEnergy, Macro, Args)
+
+#define forNSRDSEnergyLiquidTransports(Macro, Args...)                         \
+    forNSRDSEnergyLiquidEnergies(NSRDSTransport, Macro, Args)
+
+#define forNSRDSEnergyLiquids(Macro, Args...)                                  \
+    forNSRDSEnergyLiquidTransports(Macro, Args)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

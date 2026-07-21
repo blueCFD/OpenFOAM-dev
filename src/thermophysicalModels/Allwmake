@@ -12,6 +12,4 @@ wmake $targetType chemistryModel
 
 wmake $targetType solidThermo
 
-wmake $targetType saturationModels
-
 #------------------------------------------------------------------------------

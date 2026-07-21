@@ -41,7 +41,7 @@ SourceFiles
 #define binaryDiffusionCoefficient_H
 
 #include "Function2.T.H"
-#include "Polynomial.T.H"
+#include "FixedPolynomial.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,7 +61,7 @@ class binaryDiffusionCoefficient
     // Private Data
 
         //- Polynomial coefficients
-        Polynomial<5> coeffs_;
+        FixedPolynomial<scalar, 5> coeffs_;
 
 
 public:
@@ -76,7 +76,7 @@ public:
         binaryDiffusionCoefficient
         (
             const word& name,
-            const Polynomial<5> coeffs
+            const FixedPolynomial<scalar, 5> coeffs
         );
 
         //- Construct from name and dictionary

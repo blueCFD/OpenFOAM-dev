@@ -67,7 +67,7 @@ Foam::radiationModels::radiativeIntensityRay::radiativeIntensityRay
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar(dimMass/pow3(dimTime), 0)
+        dimensionedScalar(dimensions::heatFluxDensity, 0)
     ),
     qr_
     (
@@ -80,7 +80,7 @@ Foam::radiationModels::radiativeIntensityRay::radiativeIntensityRay
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar(dimMass/pow3(dimTime), 0)
+        dimensionedScalar(dimensions::heatFluxDensity, 0)
     ),
     qin_
     (
@@ -93,7 +93,7 @@ Foam::radiationModels::radiativeIntensityRay::radiativeIntensityRay
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar(dimMass/pow3(dimTime), 0)
+        dimensionedScalar(dimensions::heatFluxDensity, 0)
     ),
     qem_
     (
@@ -106,7 +106,7 @@ Foam::radiationModels::radiativeIntensityRay::radiativeIntensityRay
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar(dimMass/pow3(dimTime), 0)
+        dimensionedScalar(dimensions::heatFluxDensity, 0)
     ),
     d_(Zero),
     dAve_(Zero),
@@ -192,7 +192,7 @@ Foam::radiationModels::radiativeIntensityRay::radiativeIntensityRay
             ILambda_.set
             (
                 lambdaI,
-                new volScalarField(IHeader, mesh_, dimensions::heatFlux)
+                new volScalarField(IHeader, mesh_, dimensions::heatFluxDensity)
             );
         }
         else
@@ -213,7 +213,7 @@ Foam::radiationModels::radiativeIntensityRay::radiativeIntensityRay
                             IOobject::NO_WRITE
                         ),
                         mesh_,
-                        dimensions::heatFlux
+                        dimensions::heatFluxDensity
                     )
                 );
             }
@@ -284,7 +284,7 @@ Foam::scalar Foam::radiationModels::radiativeIntensityRay::correct()
 
 void Foam::radiationModels::radiativeIntensityRay::addIntensity()
 {
-    I_ = dimensionedScalar(dimMass/pow3(dimTime), 0);
+    I_ = dimensionedScalar(dimensions::heatFluxDensity, 0);
 
     forAll(ILambda_, lambdaI)
     {

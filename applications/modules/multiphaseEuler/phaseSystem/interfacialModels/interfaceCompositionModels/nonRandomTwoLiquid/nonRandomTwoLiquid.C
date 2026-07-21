@@ -74,8 +74,8 @@ Foam::interfaceCompositionModels::nonRandomTwoLiquid::nonRandomTwoLiquid
         interface.mesh(),
         dimensionedScalar(dimless, 1)
     ),
-    beta12_("", dimless/dimTemperature, 0),
-    beta21_("", dimless/dimTemperature, 0)
+    beta12_("", dimless/dimensions::temperature, 0),
+    beta21_("", dimless/dimensions::temperature, 0)
 {
     if (species().size() != 2)
     {
@@ -106,29 +106,31 @@ Foam::interfaceCompositionModels::nonRandomTwoLiquid::nonRandomTwoLiquid
     beta12_ = dimensionedScalar
     (
         "beta12",
-        dimless/dimTemperature,
+        dimless/dimensions::temperature,
         dict.subDict(species1Name_).lookup("beta")
     );
     beta21_ = dimensionedScalar
     (
         "beta21",
-        dimless/dimTemperature,
+        dimless/dimensions::temperature,
         dict.subDict(species2Name_).lookup("beta")
     );
 
-    saturationModel12_.reset
+    interaction12_.reset
     (
-        saturationPressureModel::New
+        DimensionedFunction1<scalar>::New
         (
             "interaction",
+            {dimTemperature, dimless},
             dict.subDict(species1Name_)
         ).ptr()
     );
-    saturationModel21_.reset
+    interaction21_.reset
     (
-        saturationPressureModel::New
+        DimensionedFunction1<scalar>::New
         (
             "interaction",
+            {dimTemperature, dimless},
             dict.subDict(species2Name_)
         ).ptr()
     );
@@ -180,8 +182,8 @@ void Foam::interfaceCompositionModels::nonRandomTwoLiquid::update
     const volScalarField alpha12(alpha12_ + Tf*beta12_);
     const volScalarField alpha21(alpha21_ + Tf*beta21_);
 
-    const volScalarField tau12(saturationModel12_->lnPSat(Tf));
-    const volScalarField tau21(saturationModel21_->lnPSat(Tf));
+    const volScalarField tau12(interaction12_->value(Tf));
+    const volScalarField tau21(interaction21_->value(Tf));
 
     const volScalarField G12(exp(- alpha12*tau12));
     const volScalarField G21(exp(- alpha21*tau21));

@@ -31,7 +31,6 @@ License
 #include "fvmLaplacian.H"
 #include "surfaceInterpolate.H"
 #include "speciesTable.H"
-#include "Function2Evaluate.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -258,7 +257,7 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::updateDii() const
             }
         }
 
-        Dii_.set(i, evaluate(DFuncs_[i][i], dimKinematicViscosity, p, T));
+        Dii_.set(i, DFuncs_[i][i].value(p, T));
 
         Dij[i].setSize(Y.size());
 
@@ -266,11 +265,7 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::updateDii() const
         {
             if (j > i)
             {
-                Dij[i].set
-                (
-                    j,
-                    evaluate(DFuncs_[i][j], dimKinematicViscosity, p, T)
-                );
+                Dij[i].set(j, DFuncs_[i][j].value(p, T));
             }
             else if (j < i)
             {
@@ -310,10 +305,7 @@ void MaxwellStefan<BasicThermophysicalTransportModel>::updateDii() const
         {
             if (i != d)
             {
-                jexp_[i] -= fvc::interpolate
-                (
-                    evaluate(DTFuncs_[i], dimDynamicViscosity, p, T)
-                )*gradTbyT;
+                jexp_[i] -= fvc::interpolate(DTFuncs_[i].value(p, T))*gradTbyT;
             }
         }
     }
@@ -495,12 +487,12 @@ bool MaxwellStefan<BasicThermophysicalTransportModel>::read()
                     DFuncs_[i].set
                     (
                         j,
-                        Function2<scalar>::New
+                        DimensionedFunction2<scalar>::New
                         (
                             Dname,
-                            dimPressure,
-                            dimTemperature,
-                            dimKinematicViscosity,
+                            dimensions::pressure,
+                            dimensions::temperature,
+                            dimensions::kinematicDiffusivity,
                             Ddict
                         ).ptr()
                     );
@@ -519,12 +511,12 @@ bool MaxwellStefan<BasicThermophysicalTransportModel>::read()
                 DTFuncs_.set
                 (
                     i,
-                    Function2<scalar>::New
+                    DimensionedFunction2<scalar>::New
                     (
                         species[i],
-                        dimPressure,
-                        dimTemperature,
-                        dimDynamicViscosity,
+                        dimensions::pressure,
+                        dimensions::temperature,
+                        dimensions::dynamicDiffusivity,
                         DTdict
                     ).ptr()
                 );
@@ -627,7 +619,11 @@ MaxwellStefan<BasicThermophysicalTransportModel>::q() const
             (
                 "sumJ",
                 Y[0].mesh(),
-                dimensionedScalar(dimMass/dimArea/dimTime, 0)
+                dimensionedScalar
+                (
+                    dimensions::massFluxDensity,
+                    0
+                )
             )
         );
 
@@ -637,7 +633,11 @@ MaxwellStefan<BasicThermophysicalTransportModel>::q() const
             (
                 "sumJh",
                 Y[0].mesh(),
-                dimensionedScalar(sumJ.dimensions()*dimEnergy/dimMass, 0)
+                dimensionedScalar
+                (
+                    sumJ.dimensions()*dimensions::specificEnergy,
+                    0
+                )
             )
         );
 
@@ -755,7 +755,11 @@ tmp<fvScalarMatrix> MaxwellStefan<BasicThermophysicalTransportModel>::divq
         (
             "sumJ",
             he.mesh(),
-            dimensionedScalar(dimMass/dimArea/dimTime, 0)
+            dimensionedScalar
+            (
+                dimensions::massFluxDensity,
+                0
+            )
         )
     );
 
@@ -819,7 +823,11 @@ tmp<surfaceScalarField> MaxwellStefan<BasicThermophysicalTransportModel>::j
                     this->thermo().phaseName()
                 ),
                 Yi.mesh(),
-                dimensionedScalar(dimMass/dimArea/dimTime, 0)
+                dimensionedScalar
+                (
+                    dimensions::massFluxDensity,
+                    0
+                )
             )
         );
 

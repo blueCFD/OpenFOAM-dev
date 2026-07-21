@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2016-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2016-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,36 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "logPolynomialTransport.H"
-#include "IOstreams.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class Thermo, int PolySize>
+Foam::logPolynomialTransport<Thermo, PolySize>::logPolynomialTransport
+(
+    const word& name,
+    const dictionary& dict,
+    const dictionary& subDict
+)
+:
+    Thermo(name, dict),
+    muLogCoeffs_
+    (
+        subDict.lookup<FixedPolynomial<scalar, PolySize>>
+        (
+            "muLogCoeffs<" + Foam::name(PolySize) + '>',
+            Function1s::unitSets({units::none, units::none})
+        )
+    ),
+    kappaLogCoeffs_
+    (
+        subDict.lookup<FixedPolynomial<scalar, PolySize>>
+        (
+            "kappaLogCoeffs<" + Foam::name(PolySize) + '>',
+            Function1s::unitSets({units::none, units::none})
+        )
+    )
+{}
+
 
 template<class Thermo, int PolySize>
 Foam::logPolynomialTransport<Thermo, PolySize>::logPolynomialTransport
@@ -35,21 +62,7 @@ Foam::logPolynomialTransport<Thermo, PolySize>::logPolynomialTransport
     const dictionary& dict
 )
 :
-    Thermo(name, dict),
-    muLogCoeffs_
-    (
-        dict.subDict("transport").lookup
-        (
-            "muLogCoeffs<" + Foam::name(PolySize) + '>'
-        )
-    ),
-    kappaLogCoeffs_
-    (
-        dict.subDict("transport").lookup
-        (
-            "kappaLogCoeffs<" + Foam::name(PolySize) + '>'
-        )
-    )
+    logPolynomialTransport(name, dict, dict.subDict("transport"))
 {}
 
 
@@ -58,25 +71,20 @@ Foam::logPolynomialTransport<Thermo, PolySize>::logPolynomialTransport
 template<class Thermo, int PolySize>
 void Foam::logPolynomialTransport<Thermo, PolySize>::write(Ostream& os) const
 {
-    os  << this->name() << endl;
-    os  << token::BEGIN_BLOCK << incrIndent << nl;
-
     Thermo::write(os);
 
-    dictionary dict("transport");
-    dict.add
+    writeEntry
     (
-        word("muLogCoeffs<" + Foam::name(PolySize) + '>'),
-        muLogCoeffs_
+        os,
+        "transport",
+        dictionary::entries
+        (
+            word("muLogCoeffs<" + Foam::name(PolySize) + '>'),
+            muLogCoeffs_,
+            word("kappaLogCoeffs<" + Foam::name(PolySize) + '>'),
+            kappaLogCoeffs_
+        )
     );
-    dict.add
-    (
-        word("kappaLogCoeffs<" + Foam::name(PolySize) + '>'),
-        kappaLogCoeffs_
-    );
-    os  << indent << dict.dictName() << dict;
-
-    os  << decrIndent << token::END_BLOCK << nl;
 }
 
 

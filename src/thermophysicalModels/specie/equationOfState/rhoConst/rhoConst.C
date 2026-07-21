@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2012-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "rhoConst.H"
-#include "IOstreams.H"
+#include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -32,7 +32,14 @@ template<class Specie>
 Foam::rhoConst<Specie>::rhoConst(const word& name, const dictionary& dict)
 :
     Specie(name, dict),
-    rho_(dict.subDict("equationOfState").lookup<scalar>("rho"))
+    rho_
+    (
+        dict.subDict("equationOfState").lookup<scalar>
+        (
+            "rho",
+            dimensions::density
+        )
+    )
 {}
 
 
@@ -43,10 +50,7 @@ void Foam::rhoConst<Specie>::write(Ostream& os) const
 {
     Specie::write(os);
 
-    dictionary dict("equationOfState");
-    dict.add("rho", rho_);
-
-    os  << indent << dict.dictName() << dict;
+    writeEntry(os, "equationOfState", dictionary::entries("rho", rho_));
 }
 
 

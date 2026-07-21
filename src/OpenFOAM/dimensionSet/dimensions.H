@@ -66,10 +66,11 @@ extern const dimensionSet rate;
 extern const dimensionSet velocity;
 extern const dimensionSet momentum;
 extern const dimensionSet acceleration;
+extern const dimensionSet force;
 
 extern const dimensionSet density;
 extern const dimensionSet momentumDensity;
-extern const dimensionSet force;
+extern const dimensionSet forceDensity;
 
 extern const dimensionSet energy;
 extern const dimensionSet energyDensity;
@@ -96,8 +97,9 @@ extern const dimensionSet compressibility;
 
 extern const dimensionSet kinematicViscosity;
 extern const dimensionSet dynamicViscosity;
-extern const dimensionSet thermalConductivity;
+extern const dimensionSet kinematicDiffusivity;
 extern const dimensionSet dynamicDiffusivity;
+extern const dimensionSet thermalConductivity;
 
 extern const dimensionSet turbulentKineticEnergy;
 extern const dimensionSet kinematicStress;
@@ -107,13 +109,20 @@ extern const dimensionSet turbulentOmega;
 extern const dimensionSet turbulentViscosity;
 
 extern const dimensionSet volumetricFlux;
+extern const dimensionSet volumetricFluxDensity;
+
 extern const dimensionSet massFlux;
+extern const dimensionSet massFluxDensity;
+
 extern const dimensionSet heatFlux;
+extern const dimensionSet heatFluxDensity;
 
 extern const dimensionSet charge;
 extern const dimensionSet chargeDensity;
 extern const dimensionSet electricPotential;
+extern const dimensionSet electricalConductivity;
 
+extern const dimensionSet magneticFlux;
 extern const dimensionSet magneticFluxDensity;
 extern const dimensionSet magneticFluxPressure;
 

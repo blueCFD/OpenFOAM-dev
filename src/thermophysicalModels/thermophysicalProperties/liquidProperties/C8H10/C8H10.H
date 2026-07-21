@@ -36,14 +36,14 @@ SourceFiles
 #define C8H10_H
 
 #include "liquidProperties.H"
-#include "NSRDS0.H"
-#include "NSRDS1.H"
-#include "NSRDS2.H"
-#include "NSRDS3.H"
-#include "NSRDS4.H"
-#include "NSRDS5.H"
-#include "NSRDS6.H"
-#include "NSRDS7.H"
+#include "NSRDS0.T.H"
+#include "NSRDS1.T.H"
+#include "NSRDS2.T.H"
+#include "NSRDS3.T.H"
+#include "NSRDS4.T.H"
+#include "NSRDS5.T.H"
+#include "NSRDS6.T.H"
+#include "NSRDS7.T.H"
 #include "APIdiffusionCoefficient.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

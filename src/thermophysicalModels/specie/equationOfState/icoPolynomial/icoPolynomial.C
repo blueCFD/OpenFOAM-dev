@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "icoPolynomial.H"
-#include "IOstreams.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -37,12 +36,16 @@ Foam::icoPolynomial<Specie, PolySize>::icoPolynomial
 :
     Specie(name, dict),
     rhoCoeffs_
-(
-    dict.subDict("equationOfState").lookup
     (
-        "rhoCoeffs<" + Foam::name(PolySize) + '>'
+        dict.subDict("equationOfState").lookup
+        <
+            FixedPolynomial<scalar, PolySize>
+        >
+        (
+            "rhoCoeffs<" + Foam::name(PolySize) + '>',
+            Function1s::unitSets({dimensions::temperature, dimensions::density})
+        )
     )
-)
 {}
 
 
@@ -53,14 +56,15 @@ void Foam::icoPolynomial<Specie, PolySize>::write(Ostream& os) const
 {
     Specie::write(os);
 
-    dictionary dict("equationOfState");
-    dict.add
+    writeEntry
     (
-        word("rhoCoeffs<" + Foam::name(PolySize) + '>'),
-        rhoCoeffs_
+        os,
+        "equationOfState",
+        dictionary::entries
+        (
+            word("rhoCoeffs<" + Foam::name(PolySize) + '>'), rhoCoeffs_
+        )
     );
-
-    os  << indent << dict.dictName() << dict;
 }
 
 

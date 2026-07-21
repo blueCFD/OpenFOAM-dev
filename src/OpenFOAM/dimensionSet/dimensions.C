@@ -94,6 +94,7 @@ const Foam::dimensionSet Foam::dimensions::acceleration
     "acceleration",
     velocity/time
 );
+const Foam::dimensionSet Foam::dimensions::force("force", mass*acceleration);
 
 const Foam::dimensionSet Foam::dimensions::density("density", mass/volume);
 const Foam::dimensionSet Foam::dimensions::momentumDensity
@@ -101,7 +102,11 @@ const Foam::dimensionSet Foam::dimensions::momentumDensity
     "momentumDensity",
     momentum/volume
 );
-const Foam::dimensionSet Foam::dimensions::force("force", mass*acceleration);
+const Foam::dimensionSet Foam::dimensions::forceDensity
+(
+    "forceDensity",
+    force/volume
+);
 
 const Foam::dimensionSet Foam::dimensions::energy("energy", force*length);
 const Foam::dimensionSet Foam::dimensions::energyDensity
@@ -188,15 +193,20 @@ const Foam::dimensionSet Foam::dimensions::dynamicViscosity
     "dynamicViscosity",
     density*kinematicViscosity
 );
-const Foam::dimensionSet Foam::dimensions::thermalConductivity
+const Foam::dimensionSet Foam::dimensions::kinematicDiffusivity
 (
-    "thermalConductivity",
-    power/length/temperature
+    "kinematicDiffusivity",
+    kinematicViscosity
 );
 const Foam::dimensionSet Foam::dimensions::dynamicDiffusivity
 (
     "dynamicDiffusivity",
     dynamicViscosity
+);
+const Foam::dimensionSet Foam::dimensions::thermalConductivity
+(
+    "thermalConductivity",
+    power/length/temperature
 );
 
 const Foam::dimensionSet Foam::dimensions::turbulentKineticEnergy
@@ -235,12 +245,29 @@ const Foam::dimensionSet Foam::dimensions::volumetricFlux
     "volumetricFlux",
     area*velocity
 );
+const Foam::dimensionSet Foam::dimensions::volumetricFluxDensity
+(
+    "volumetricFluxDensity",
+    volumetricFlux/area
+);
+
 const Foam::dimensionSet Foam::dimensions::massFlux
 (
     "massFlux",
     density*volumetricFlux
 );
-const Foam::dimensionSet Foam::dimensions::heatFlux("heatFlux", power/area);
+const Foam::dimensionSet Foam::dimensions::massFluxDensity
+(
+    "massFluxDensity",
+    massFlux/area
+);
+
+const Foam::dimensionSet Foam::dimensions::heatFlux("heatFlux", power);
+const Foam::dimensionSet Foam::dimensions::heatFluxDensity
+(
+    "heatFluxDensity",
+    heatFlux/area
+);
 
 const Foam::dimensionSet Foam::dimensions::charge
 (
@@ -257,11 +284,21 @@ const Foam::dimensionSet Foam::dimensions::electricPotential
     "electricPotential",
     power/current
 );
+const Foam::dimensionSet Foam::dimensions::electricalConductivity
+(
+    "electricalConductivity",
+    sqr(dimensions::current)/dimensions::length/dimensions::power
+);
 
+const Foam::dimensionSet Foam::dimensions::magneticFlux
+(
+    "magneticFlux",
+    force*length/current
+);
 const Foam::dimensionSet Foam::dimensions::magneticFluxDensity
 (
     "magneticFluxDensity",
-    force/(length*current)
+    magneticFlux/area
 );
 const Foam::dimensionSet Foam::dimensions::magneticFluxPressure
 (

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2020-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2020-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,67 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "hTabulatedThermo.H"
-#include "IOstreams.H"
+#include "delimitDictionary.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class EquationOfState>
+Foam::hTabulatedThermo<EquationOfState>::hTabulatedThermo
+(
+    const word& name,
+    const dictionary& dict,
+    const dictionary& subDict
+)
+:
+    EquationOfState(name, dict),
+    hf_
+    (
+        subDict.lookupBackwardsCompatible<scalar>
+        (
+            {"hf", "Hf"},
+            dimensions::specificEnergy
+        )
+    ),
+    sf_
+    (
+        subDict.lookupBackwardsCompatible<scalar>
+        (
+            {"sf", "Sf"},
+            dimensions::specificEntropy
+        )
+    ),
+    hs_
+    (
+        "hs",
+        {
+            dimensions::pressure,
+            dimensions::temperature,
+            dimensions::specificEnergy
+        },
+        subDict.subDictBackwardsCompatible({"hs", "Hs"})
+    ),
+    Cp_
+    (
+        "Cp",
+        {
+            dimensions::pressure,
+            dimensions::temperature,
+            dimensions::specificHeatCapacity
+        },
+        subDict.subDict("Cp")
+    ),
+    Cv_
+    (
+        "Cv",
+        {
+            dimensions::pressure,
+            dimensions::temperature,
+            dimensions::specificHeatCapacity
+        },
+        subDict.subDict("Cv")
+    )
+{}
+
 
 template<class EquationOfState>
 Foam::hTabulatedThermo<EquationOfState>::hTabulatedThermo
@@ -35,39 +93,7 @@ Foam::hTabulatedThermo<EquationOfState>::hTabulatedThermo
     const dictionary& dict
 )
 :
-    EquationOfState(name, dict),
-    hf_
-    (
-        dict
-       .subDict("thermodynamics")
-       .lookupBackwardsCompatible<scalar>({"hf", "Hf"})
-    ),
-    sf_
-    (
-        dict
-       .subDict("thermodynamics")
-       .lookupBackwardsCompatible<scalar>({"sf", "Sf"})
-    ),
-    hs_
-    (
-        "hs",
-        {dimPressure, dimTemperature, dimEnergy/dimMass},
-        dict
-       .subDict("thermodynamics")
-       .subDictBackwardsCompatible({"hs", "Hs"})
-    ),
-    Cp_
-    (
-        "Cp",
-        {dimPressure, dimTemperature, dimSpecificHeatCapacity},
-        dict.subDict("thermodynamics").subDict("Cp")
-    ),
-    Cv_
-    (
-        "Cv",
-        {dimPressure, dimTemperature, dimSpecificHeatCapacity},
-        dict.subDict("thermodynamics").subDict("Cv")
-    )
+    hTabulatedThermo(name, dict, dict.subDict("thermodynamics"))
 {}
 
 
@@ -81,23 +107,33 @@ void Foam::hTabulatedThermo<EquationOfState>::write
 {
     EquationOfState::write(os);
 
-    dictionary dict("thermodynamics");
-    dict.add("hf", hf_);
-    dict.add("sf", sf_);
-
-    dictionary hsDict("hs");
-    hsDict.add("values", hs_.values());
-    dict.add("hs", hsDict);
-
-    dictionary CpDict("Cp");
-    CpDict.add("values", Cp_.values());
-    dict.add("Cp", CpDict);
-
-    dictionary CvDict("Cv");
-    CvDict.add("values", Cv_.values());
-    dict.add("Cv", CvDict);
-
-    os  << indent << dict.dictName() << dict;
+    const delimitDictionary delimit(os, "thermodynamics");
+    writeEntry(os, "hf", hf_);
+    writeEntry(os, "sf", sf_);
+    {
+        const delimitDictionary delimitHs(os, "hs");
+        hs_.write
+        (
+            os,
+            {dimensions::temperature, dimensions::specificHeatCapacity}
+        );
+    }
+    {
+        const delimitDictionary delimitCp(os, "Cp");
+        Cp_.write
+        (
+            os,
+            {dimensions::temperature, dimensions::specificHeatCapacity}
+        );
+    }
+    {
+        const delimitDictionary delimitCv(os, "Cv");
+        Cv_.write
+        (
+            os,
+            {dimensions::temperature, dimensions::specificHeatCapacity}
+        );
+    }
 }
 
 
