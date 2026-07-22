@@ -26,11 +26,9 @@ License
 #include "MRFZone.T.H"
 #include "MRFPatchField.H"
 #include "fvMesh.H"
-#include "volFields.H"
-#include "fvMatrices.H"
 #include "geometricOneField.H"
-#include "faceSet.H"
 #include "syncTools.H"
+#include "polyTopoChangeMap.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -372,12 +370,24 @@ bool Foam::MRFZone::read(const dictionary& dict)
 }
 
 
-void Foam::MRFZone::update()
+void Foam::MRFZone::topoChange(const polyTopoChangeMap& map)
 {
-    if (mesh_.topoChanged())
-    {
-        setMRFFaces();
-    }
+    zone_.topoChange(map);
+    setMRFFaces();
+}
+
+
+void Foam::MRFZone::mapMesh(const polyMeshMap& map)
+{
+    zone_.mapMesh(map);
+    setMRFFaces();
+}
+
+
+void Foam::MRFZone::distribute(const polyDistributionMap& map)
+{
+    zone_.distribute(map);
+    setMRFFaces();
 }
 
 
