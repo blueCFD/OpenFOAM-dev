@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011-2016 blueCAPE: Avoid defining 'GNU_SOURCE' for MinGW builds.
@@ -161,7 +161,7 @@ Foam::label Foam::decompositionMethods::ptscotch::decompose
             // Total number of vertices (vertglbnbr)
             str << globalCells.size();
             // Total number of connections (edgeglbnbr)
-            str << ' ' << returnReduce(xadj[xadjSize-1], sumOp<label>())
+            str << ' ' << returnReduce(xadj[xadjSize-1], sumOp())
                 << nl;
             // Local number of vertices (vertlocnbr)
             str << xadjSize-1;
@@ -213,7 +213,7 @@ Foam::label Foam::decompositionMethods::ptscotch::decompose
     labelList velotab;
 
     // Check for externally provided cellweights and if so initialise weights
-    if (returnReduce(cellWeights.size(), sumOp<label>()))
+    if (returnReduce(cellWeights.size(), sumOp()))
     {
         if (cellWeights.size() != xadjSize-1)
         {

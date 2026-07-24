@@ -397,7 +397,7 @@ void extractSurface
         patchSize.insert(pp.name(), pp.size());
         nFaces += pp.size();
     }
-    Pstream::mapCombineGather(patchSize, plusEqOp<label>());
+    Pstream::mapCombineGather(patchSize, plusEqOp());
 
 
     // Allocate zone/patch for all patches
@@ -482,21 +482,21 @@ void extractSurface
         pointField allPoints = ListListOps::combine<pointField>
         (
             gatheredPoints,
-            accessOp<pointField>()
+            accessOp()
         );
         gatheredPoints.clear();
 
         faceList allFaces = ListListOps::combine<faceList>
         (
             gatheredFaces,
-            accessOp<faceList>()
+            accessOp()
         );
         gatheredFaces.clear();
 
         labelList allZones = ListListOps::combine<labelList>
         (
             gatheredZones,
-            accessOp<labelList>()
+            accessOp()
         );
         gatheredZones.clear();
 
@@ -588,7 +588,7 @@ void removeZeroSizedPatches(fvMesh& mesh)
         if
         (
             pp.constraint()
-         || returnReduce(pp.size(), sumOp<label>())
+         || returnReduce(pp.size(), sumOp())
         )
         {
             oldToNew[patchi] = newPatchi++;
@@ -1265,7 +1265,7 @@ int main(int argc, char *argv[])
         bool preBalance = returnReduce
         (
             (mesh.nCells() >= refineParams.maxLocalCells()),
-            orOp<bool>()
+            orOp()
         );
 
 
@@ -1310,7 +1310,7 @@ int main(int argc, char *argv[])
         const label nErrors = returnReduce
         (
             wrongFaces.size(),
-            sumOp<label>()
+            sumOp()
         );
 
         if (nErrors > 0)

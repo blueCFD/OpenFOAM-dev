@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
  2011 blueCAPE: Avoid defining 'GNU_SOURCE' for MinGW builds.
@@ -127,7 +127,7 @@ Foam::label Foam::decompositionMethods::scotch::decompose
                 << " Decomposing all of graph on master processor." << endl;
         }
         globalIndex globalCells(xadj.size()-1);
-        label nTotalConnections = returnReduce(adjncy.size(), sumOp<label>());
+        label nTotalConnections = returnReduce(adjncy.size(), sumOp());
 
         // Send all to master. Use scheduled to save some storage.
         if (Pstream::master())
