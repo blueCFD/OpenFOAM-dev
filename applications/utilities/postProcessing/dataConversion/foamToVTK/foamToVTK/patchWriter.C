@@ -127,7 +127,7 @@ Foam::patchWriter::patchWriter
             const face& f = pp.localFaces()[facei];
 
             vertLabels.append(f.size());
-            vtkWriteOps::insert(SubField<label>(f) + offset, vertLabels);
+            vtkWriteOps::insert(eval(SubField<label>(f) + offset), vertLabels);
         }
         offset += pp.nPoints();
     }

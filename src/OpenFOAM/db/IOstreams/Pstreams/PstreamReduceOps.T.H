@@ -35,6 +35,7 @@ Description
 #include "Pstream.T.H"
 #include "ops.H"
 #include "vector2D.H"
+#include "IOstreams.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
