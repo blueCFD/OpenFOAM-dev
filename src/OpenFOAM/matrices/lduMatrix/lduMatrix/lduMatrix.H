@@ -52,7 +52,6 @@ SourceFiles
 
 #include "lduMesh.H"
 #include "primitiveFieldsFwd.H"
-#include "FieldField.T.H"
 #include "lduInterfaceFieldPtrsList.H"
 #include "typeInfo.T.H"
 #include "autoPtr.H"

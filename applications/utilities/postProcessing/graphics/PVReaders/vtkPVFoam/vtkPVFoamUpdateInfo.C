@@ -38,7 +38,9 @@ License
 #include "entry.H"
 #include "cloud.H"
 #include "pointMesh.H"
+#include "pointPatchField.H"
 #include "LagrangianMesh.T.H"
+#include "LagrangianPatchField.T.H"
 
 // VTK includes
 #include "vtkDataArraySelection.h"

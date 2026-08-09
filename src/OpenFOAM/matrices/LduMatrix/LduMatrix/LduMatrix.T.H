@@ -52,7 +52,6 @@ SourceFiles
 
 #include "lduMesh.H"
 #include "Field.T.H"
-#include "FieldField.T.H"
 #include "LduInterfaceFieldPtrsList.T.H"
 #include "SolverPerformance.T.H"
 #include "typeInfo.T.H"

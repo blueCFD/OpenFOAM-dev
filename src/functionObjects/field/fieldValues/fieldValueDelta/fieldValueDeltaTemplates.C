@@ -24,6 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "GeometricField.T.H"
+#include "fvPatchField.H"
+#include "fvsPatchField.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
