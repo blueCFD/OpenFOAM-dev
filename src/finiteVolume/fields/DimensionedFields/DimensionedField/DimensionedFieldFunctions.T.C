@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "DimensionedFieldReuseFunctions.T.H"
+#include "transform.H"
 
 #define TEMPLATE                                                               \
     template                                                                   \
